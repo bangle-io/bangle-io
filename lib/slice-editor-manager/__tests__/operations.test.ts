@@ -1,6 +1,7 @@
 import { BangleEditor } from '@bangle.dev/core';
 import { Selection } from '@bangle.dev/pm';
 
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement } from '@bangle.io/utils';
@@ -57,9 +58,10 @@ describe('operations: forEachEditor', () => {
 
     forEachEditor(mockCb)(state);
 
-    expect(mockCb).toBeCalledTimes(2);
+    expect(mockCb).toBeCalledTimes(MAX_OPEN_EDITORS);
     expect(mockCb).nthCalledWith(1, editorA, 0);
     expect(mockCb).nthCalledWith(2, editorB, 1);
+    expect(mockCb).nthCalledWith(3, undefined, 2);
     expect(getEditor(0)(state)).toBe(editorA);
     expect(getEditor(1)(state)).toBe(editorB);
     expect(getEditor(4)(state)).toBe(undefined);
@@ -82,7 +84,7 @@ describe('operations: forEachEditor', () => {
 
     forEachEditor(mockCb)(state);
 
-    expect(mockCb).toBeCalledTimes(2);
+    expect(mockCb).toBeCalledTimes(MAX_OPEN_EDITORS);
 
     expect(mockCb).nthCalledWith(1, editorA, 0);
     expect(mockCb).nthCalledWith(2, undefined, 1);

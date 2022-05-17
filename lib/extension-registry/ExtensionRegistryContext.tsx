@@ -16,7 +16,7 @@ export function useExtensionRegistryContext() {
 export function ExtensionRegistryContextProvider({
   children,
 }: {
-  children: JSX.Element;
+  children: React.ReactNode;
 }) {
   const { sliceState } = useSliceState(extensionRegistrySliceKey);
 

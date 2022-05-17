@@ -7,13 +7,13 @@ import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
 } from '@bangle.io/constants';
+import { wsNameToPathname } from '@bangle.io/slice-page';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { wsNameToPathname } from '@bangle.io/ws-path';
 
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
-import { WsNamePage } from './pages/WsNamePage';
+import { WorkspacePage } from './pages/WorkspacePage';
 
 export function Routes() {
   const [location] = useLocation();
@@ -30,7 +30,7 @@ export function Routes() {
   return (
     <Switch>
       <Route path="/ws/:wsName">
-        <WsNamePage />
+        <WorkspacePage />
       </Route>
       <Route path="/ws-auth/:wsName">
         {(params) => <WorkspaceNativefsAuthBlockade wsName={params.wsName} />}

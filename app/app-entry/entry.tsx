@@ -17,10 +17,9 @@ import {
 } from '@bangle.io/extension-registry';
 import { BaseHistory, createTo } from '@bangle.io/history';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
-import { usePageContext } from '@bangle.io/slice-page';
+import { pathMatcher, usePageContext } from '@bangle.io/slice-page';
 import { UIManager } from '@bangle.io/slice-ui';
 import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
-import { pathMatcher } from '@bangle.io/ws-path';
 
 import { AppContainer } from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';

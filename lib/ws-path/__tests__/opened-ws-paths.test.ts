@@ -2,7 +2,7 @@ import { OpenedWsPaths } from '../opened-ws-paths';
 
 describe('OpenedWsPaths', () => {
   test('works', () => {
-    let result = new OpenedWsPaths(['a', 'b']);
+    let result = OpenedWsPaths.createFromArray(['a', 'b']);
 
     expect(result.primaryWsPath).toBe('a');
     expect(result.secondaryWsPath).toBe('b');
@@ -10,69 +10,73 @@ describe('OpenedWsPaths', () => {
 
   test('compare', () => {
     expect(
-      new OpenedWsPaths(['a', 'b']).equal(new OpenedWsPaths(['a', 'b'])),
+      OpenedWsPaths.createFromArray(['a', 'b']).equal(
+        OpenedWsPaths.createFromArray(['a', 'b']),
+      ),
     ).toBe(true);
 
-    let result = new OpenedWsPaths(['a', 'b']);
+    let result = OpenedWsPaths.createFromArray(['a', 'b']);
     expect(result.equal(result)).toBe(true);
   });
 
   test('getCount', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     expect(result.openCount).toBe(1);
 
-    result = new OpenedWsPaths([undefined, undefined]);
+    result = OpenedWsPaths.createFromArray([undefined, undefined]);
     expect(result.openCount).toBe(0);
 
-    result = new OpenedWsPaths(['a', 'n']);
+    result = OpenedWsPaths.createFromArray(['a', 'n']);
     expect(result.openCount).toBe(2);
   });
 
   test('undefined undefined result same value', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
 
-    expect(result.equal(new OpenedWsPaths(['a', undefined as any]))).toBe(true);
     expect(
-      new OpenedWsPaths(['a', undefined as any]).equal(
-        new OpenedWsPaths(['a', undefined as any]),
+      result.equal(OpenedWsPaths.createFromArray(['a', undefined as any])),
+    ).toBe(true);
+    expect(
+      OpenedWsPaths.createFromArray(['a', undefined as any]).equal(
+        OpenedWsPaths.createFromArray(['a', undefined as any]),
       ),
     ).toBe(true);
 
     expect(
-      new OpenedWsPaths([undefined as any, undefined as any]).equal(
-        new OpenedWsPaths([undefined as any, undefined as any]),
+      OpenedWsPaths.createFromArray([undefined as any, undefined as any]).equal(
+        OpenedWsPaths.createFromArray([undefined as any, undefined as any]),
       ),
     ).toBe(true);
 
     expect(
-      new OpenedWsPaths([undefined as any, undefined as any]).equal(
-        new OpenedWsPaths(['a', undefined as any]),
+      OpenedWsPaths.createFromArray([undefined as any, undefined as any]).equal(
+        OpenedWsPaths.createFromArray(['a', undefined as any]),
       ),
     ).toBe(false);
   });
 
   test('has', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     expect(result.has(undefined)).toBe(false);
   });
 
   test('allBelongToSameWsName', () => {
-    let result = new OpenedWsPaths(['hello:one.md', undefined]);
+    let result = OpenedWsPaths.createFromArray(['hello:one.md', undefined]);
     expect(result.allBelongToSameWsName('hello')).toBe(true);
 
-    result = new OpenedWsPaths(['hello:one.md', undefined]);
+    result = OpenedWsPaths.createFromArray(['hello:one.md', undefined]);
     expect(result.allBelongToSameWsName()).toBe(true);
 
-    result = new OpenedWsPaths(['hello:one.md', 'bye:one.md']);
+    result = OpenedWsPaths.createFromArray(['hello:one.md', 'bye:one.md']);
     expect(result.allBelongToSameWsName()).toBe(false);
 
-    result = new OpenedWsPaths(['hello:one.md', 'bye:one.md']);
+    result = OpenedWsPaths.createFromArray(['hello:one.md', 'bye:one.md']);
     expect(result.allBelongToSameWsName('bye')).toBe(false);
 
-    result = new OpenedWsPaths(['hello:one.md', 'hello:one.md']);
+    result = OpenedWsPaths.createFromArray(['hello:one.md', 'hello:one.md']);
     expect(result.allBelongToSameWsName('bye')).toBe(false);
 
-    result = new OpenedWsPaths(['hello:one.md', 'hello:one.md']);
+    result = OpenedWsPaths.createFromArray(['hello:one.md', 'hello:one.md']);
     expect(result.allBelongToSameWsName('hello')).toBe(true);
 
     result = OpenedWsPaths.createEmpty();
@@ -80,13 +84,16 @@ describe('OpenedWsPaths', () => {
   });
 
   test('getWsNames', () => {
-    let result = new OpenedWsPaths(['hello:one.md', undefined]);
+    let result = OpenedWsPaths.createFromArray(['hello:one.md', undefined]);
     expect(result.getWsNames()).toEqual(['hello']);
 
-    result = new OpenedWsPaths(['hello:one.md', 'hello:two/two.md']);
+    result = OpenedWsPaths.createFromArray([
+      'hello:one.md',
+      'hello:two/two.md',
+    ]);
     expect(result.getWsNames()).toEqual(['hello']);
 
-    result = new OpenedWsPaths(['hello:one.md', 'bye:two/two.md']);
+    result = OpenedWsPaths.createFromArray(['hello:one.md', 'bye:two/two.md']);
     expect(result.getWsNames()).toEqual(['hello', 'bye']);
   });
 
@@ -94,6 +101,7 @@ describe('OpenedWsPaths', () => {
     expect(OpenedWsPaths.createFromArray([])).toMatchInlineSnapshot(`
       OpenedWsPaths {
         "wsPaths": Array [
+          undefined,
           undefined,
           undefined,
         ],
@@ -106,30 +114,31 @@ describe('OpenedWsPaths', () => {
         "wsPaths": Array [
           "hello:one.md",
           undefined,
+          undefined,
         ],
       }
     `);
   });
 
   test('hasSomeOpenedWsPaths', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     expect(result.hasSomeOpenedWsPaths()).toBe(true);
 
-    result = new OpenedWsPaths(['a', 'a']);
+    result = OpenedWsPaths.createFromArray(['a', 'a']);
     expect(result.hasSomeOpenedWsPaths()).toBe(true);
 
-    result = new OpenedWsPaths([undefined, undefined]);
+    result = OpenedWsPaths.createFromArray([undefined, undefined]);
     expect(result.hasSomeOpenedWsPaths()).toBe(false);
   });
 
   test('getByIndex', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     expect(result.getByIndex(0)).toBe('a');
     expect(result.getByIndex(1)).toBe(undefined);
   });
 
   test('forEach 1', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     let called: any = [];
 
     result.forEachWsPath((wsPath, i) => {
@@ -139,7 +148,7 @@ describe('OpenedWsPaths', () => {
   });
 
   test('forEach 2', () => {
-    let result = new OpenedWsPaths(['a', 'b']);
+    let result = OpenedWsPaths.createFromArray(['a', 'b']);
     let called: any = [];
 
     result.forEachWsPath((wsPath, i) => {
@@ -152,68 +161,102 @@ describe('OpenedWsPaths', () => {
   });
 
   test('closeIfFound', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     expect(result.closeIfFound('b')).toBe(result);
     expect(result.closeIfFound('a')).not.toBe(result);
 
     expect(
-      result.closeIfFound('a').equal(new OpenedWsPaths([undefined, undefined])),
+      result
+        .closeIfFound('a')
+        .equal(OpenedWsPaths.createFromArray([undefined, undefined])),
     ).toBe(true);
 
     expect(
-      new OpenedWsPaths(['x', 'x'])
+      OpenedWsPaths.createFromArray(['x', 'x'])
         .closeIfFound('x')
-        .equal(new OpenedWsPaths([undefined, undefined])),
+        .equal(OpenedWsPaths.createFromArray([undefined, undefined])),
     ).toBe(true);
   });
 
   test('updateIfFound', () => {
-    let result = new OpenedWsPaths(['a', undefined]);
+    let result = OpenedWsPaths.createFromArray(['a', undefined]);
     expect(result.updateIfFound('b', 'c')).toBe(result);
     expect(result.updateIfFound('a', 'c')).not.toBe(result);
 
     expect(
-      result.updateIfFound('a', 'c').equal(new OpenedWsPaths(['c', undefined])),
+      result
+        .updateIfFound('a', 'c')
+        .equal(OpenedWsPaths.createFromArray(['c', undefined])),
     ).toBe(true);
 
     expect(
-      new OpenedWsPaths(['x', 'x'])
+      OpenedWsPaths.createFromArray(['x', 'x'])
         .updateIfFound('x', 'c')
-        .equal(new OpenedWsPaths(['c', 'c'])),
-    ).toBe(true);
-  });
-
-  test('shrink', () => {
-    let result = new OpenedWsPaths([undefined, 'a']);
-
-    expect(result.shrink().equal(new OpenedWsPaths(['a', undefined]))).toBe(
-      true,
-    );
-
-    result = new OpenedWsPaths([undefined, undefined]);
-
-    expect(
-      result.shrink().equal(new OpenedWsPaths([undefined, undefined])),
+        .equal(OpenedWsPaths.createFromArray(['c', 'c'])),
     ).toBe(true);
   });
 
   test('close all', () => {
-    let result = new OpenedWsPaths([undefined, 'a']);
+    let result = OpenedWsPaths.createFromArray([undefined, 'a']);
 
     expect(
-      result.closeAll().equal(new OpenedWsPaths([undefined, undefined])),
+      result
+        .closeAll()
+        .equal(OpenedWsPaths.createFromArray([undefined, undefined])),
     ).toBe(true);
   });
 
   test('updateByIndex', () => {
-    let result = new OpenedWsPaths([undefined, 'a']);
+    let result = OpenedWsPaths.createFromArray([undefined, 'a']);
 
     expect(
-      result.updateByIndex(0, 'b').equal(new OpenedWsPaths(['b', 'a'])),
+      result
+        .updateByIndex(0, 'b')
+        .equal(OpenedWsPaths.createFromArray(['b', 'a'])),
     ).toBe(true);
 
     expect(
-      result.updateByIndex(1, 'c').equal(new OpenedWsPaths([undefined, 'c'])),
+      result
+        .updateByIndex(1, 'c')
+        .equal(OpenedWsPaths.createFromArray([undefined, 'c'])),
     ).toBe(true);
+  });
+
+  describe('tryUpgradeSecondary', () => {
+    test('works', () => {
+      let result = OpenedWsPaths.createFromArray([undefined, 'a']);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray(['a', undefined])),
+      ).toBe(true);
+
+      result = OpenedWsPaths.createFromArray([undefined, undefined]);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray([undefined, undefined])),
+      ).toBe(true);
+    });
+
+    test('only affects primary and secondary', () => {
+      let result = OpenedWsPaths.createFromArray([undefined, 'a', 'b']);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray(['a', undefined, 'b'])),
+      ).toBe(true);
+
+      result = OpenedWsPaths.createFromArray([undefined, undefined, 'b']);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray([undefined, undefined, 'b'])),
+      ).toBe(true);
+    });
   });
 });

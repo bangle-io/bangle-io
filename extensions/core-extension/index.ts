@@ -2,11 +2,13 @@ import { ui, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
+  CORE_OPERATIONS_CLOSE_MINI_EDITOR,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_OPERATIONS_NEW_NOTE,
   CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+  CORE_OPERATIONS_OPEN_IN_MINI_EDITOR,
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
@@ -22,7 +24,8 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { WorkspaceSliceAction } from '@bangle.io/shared-types';
 import {
-  focusEditor,
+  focusPrimaryEditor,
+  focusSecondaryEditor,
   isEditingAllowed,
   toggleEditing,
 } from '@bangle.io/slice-editor-manager';
@@ -49,9 +52,9 @@ import {
 } from './dialogs/NoteNameChangeDialog';
 import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
-  closeEditor,
   deleteActiveNote,
   downloadWorkspace,
+  openMiniEditor,
   openNewNoteDialog,
   openNewWorkspaceDialog,
   removeWorkspace,
@@ -121,6 +124,16 @@ const extension = Extension.create({
         name: CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
         title: 'Show/Hide editor split screen',
         keybinding: 'Mod-\\',
+        keywords: ['hide'],
+      },
+      {
+        name: CORE_OPERATIONS_OPEN_IN_MINI_EDITOR,
+        title: 'Open in mini editor',
+        keywords: ['preview'],
+      },
+      {
+        name: CORE_OPERATIONS_CLOSE_MINI_EDITOR,
+        title: 'Close mini editor',
         keywords: ['hide'],
       },
       {
@@ -234,14 +247,34 @@ const extension = Extension.create({
               return true;
             }
 
+            case CORE_OPERATIONS_OPEN_IN_MINI_EDITOR: {
+              openMiniEditor()(bangleStore.state, bangleStore.dispatch);
+
+              return true;
+            }
+            case CORE_OPERATIONS_CLOSE_MINI_EDITOR: {
+              return workspace.closeMiniEditor()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
+            }
+
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
-                closeEditor(payload)(bangleStore.state, bangleStore.dispatch);
+                workspace.closeOpenedEditor(payload)(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
+
+                return true;
+              } else {
+                workspace.closeOpenedEditor(undefined)(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
 
                 return true;
               }
-
-              return false;
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
@@ -273,13 +306,13 @@ const extension = Extension.create({
               return true;
             }
             case 'operation::@bangle.io/core-extension:focus-primary-editor': {
-              focusEditor(0)(bangleStore.state);
+              focusPrimaryEditor()(bangleStore.state);
 
               return true;
             }
 
             case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
-              focusEditor(1)(bangleStore.state);
+              focusSecondaryEditor()(bangleStore.state);
 
               return true;
             }

@@ -38,7 +38,6 @@
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
@@ -48,6 +47,7 @@
   },
   "devDependencies": {
     "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.43",

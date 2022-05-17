@@ -1,15 +1,14 @@
+import { MAX_OPEN_EDITORS, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import {
   getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
   pageSliceKey,
-} from '@bangle.io/slice-page';
-import {
-  OpenedWsPaths,
   wsNameToPathname,
   wsPathToPathname,
-} from '@bangle.io/ws-path';
+} from '@bangle.io/slice-page';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceDispatchType, workspaceSliceKey } from './common';
 import {
@@ -37,6 +36,34 @@ export const sliceHasError = () => {
     Boolean(workspaceSliceKey.getSliceStateAsserted(state).error),
   );
 };
+
+export function closeMiniEditor() {
+  return workspaceSliceKey.op((state, dispatch) => {
+    return closeOpenedEditor(MINI_EDITOR_INDEX)(state, dispatch);
+  });
+}
+
+// removes the wsPath at index from the currently opened wsPaths
+// if no param is passed closes primary and secondary editor.
+export function closeOpenedEditor(index?: number) {
+  return workspaceSliceKey.op((state, dispatch) => {
+    if (typeof index === 'number') {
+      if (index >= MAX_OPEN_EDITORS) {
+        return false;
+      }
+      updateOpenedWsPaths((openedWsPaths) =>
+        openedWsPaths.updateByIndex(index, undefined).optimizeSpace(),
+      )(state, dispatch);
+    } else {
+      updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
+        state,
+        dispatch,
+      );
+    }
+
+    return true;
+  });
+}
 
 // Navigation ops
 export const updateOpenedWsPaths = (
@@ -91,11 +118,28 @@ export const updateOpenedWsPaths = (
       return false;
     }
 
-    historyUpdateOpenedWsPaths(
-      newOpened,
-      wsName,
-      opts,
-    )(state, pageSliceKey.getDispatch(dispatch));
+    // If primary or secondary are changing let the update happen via the  history
+    // so that we can record the changes in browser history. Any other wsPaths in
+    // openedWsPaths donot need to be recorded in history, so update them directly.
+    // TODO: This is a bit confusing
+    if (
+      sliceState.openedWsPaths.primaryWsPath !== newOpened.primaryWsPath ||
+      sliceState.openedWsPaths.secondaryWsPath !== newOpened.secondaryWsPath
+    ) {
+      historyUpdateOpenedWsPaths(
+        newOpened,
+        wsName,
+        opts,
+      )(state, pageSliceKey.getDispatch(dispatch));
+    } else {
+      dispatch({
+        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+        value: {
+          wsName: wsName,
+          openedWsPaths: newOpened,
+        },
+      });
+    }
 
     return true;
   };
@@ -147,10 +191,10 @@ export const pushWsPath = (
 
     return updateOpenedWsPaths((openedWsPath) => {
       if (secondary) {
-        return openedWsPath.updateByIndex(1, wsPath);
+        return openedWsPath.updateSecondaryWsPath(wsPath);
       }
 
-      return openedWsPath.updateByIndex(0, wsPath);
+      return openedWsPath.updatePrimaryWsPath(wsPath);
     })(state, dispatch);
   };
 };

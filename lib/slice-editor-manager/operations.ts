@@ -2,7 +2,11 @@ import { BangleEditor } from '@bangle.dev/core';
 import type { EditorState, EditorView, Node } from '@bangle.dev/pm';
 import { Selection, Transaction } from '@bangle.dev/pm';
 
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import { getScrollParentElement } from '@bangle.io/utils';
 
@@ -21,6 +25,30 @@ export function toggleEditing() {
 export function isEditingAllowed() {
   return editorManagerSliceKey.queryOp((state) => {
     return editorManagerSliceKey.getSliceStateAsserted(state).editingAllowed;
+  });
+}
+
+export function getPrimaryEditor() {
+  return editorManagerSliceKey.queryOp((state) => {
+    return getEditor(PRIMARY_EDITOR_INDEX)(state);
+  });
+}
+
+export function focusPrimaryEditor() {
+  return editorManagerSliceKey.queryOp((state) => {
+    return focusEditor(PRIMARY_EDITOR_INDEX)(state);
+  });
+}
+
+export function getSecondaryEditor() {
+  return editorManagerSliceKey.queryOp((state) => {
+    return getEditor(SECONDARY_EDITOR_INDEX)(state);
+  });
+}
+
+export function focusSecondaryEditor() {
+  return editorManagerSliceKey.queryOp((state) => {
+    return focusEditor(SECONDARY_EDITOR_INDEX)(state);
   });
 }
 

@@ -1,11 +1,11 @@
 /* stylelint-disable-next-line selector-class-pattern */
-.B-core-editor_display-page > .bangle-editor {
+.B-editor_display-page > .bangle-editor {
   font-size: 1rem;
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
-.B-core-editor_display-popup > .bangle-editor {
-  font-size: 0.84rem;
+.B-editor_display-popup > .bangle-editor {
+  font-size: 0.8rem;
 }
 
 /* Overrides */

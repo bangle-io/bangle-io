@@ -3,9 +3,13 @@ import { sleep } from '@bangle.dev/utils';
 import { AppState } from '@bangle.io/create-store';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { goToLocation, pageSliceKey } from '@bangle.io/slice-page';
+import {
+  goToLocation,
+  pageSliceKey,
+  wsNameToPathname,
+} from '@bangle.io/slice-page';
 import { asssertNotUndefined } from '@bangle.io/utils';
-import { validWsName, wsNameToPathname } from '@bangle.io/ws-path';
+import { validWsName } from '@bangle.io/ws-path';
 
 import {
   WorkspaceAppStore,

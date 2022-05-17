@@ -1,13 +1,13 @@
 import { editor, workspace } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
+  MINI_EDITOR_INDEX,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   notificationSliceKey,
   showNotification,
@@ -18,6 +18,8 @@ import {
   uiSliceKey,
 } from '@bangle.io/slice-ui';
 import {
+  deleteNote,
+  deleteWorkspace,
   refreshWsPaths,
   updateOpenedWsPaths,
   WorkspaceDispatchType,
@@ -236,8 +238,7 @@ export function deleteActiveNote() {
         }"? It cannot be undone.`,
       )
     ) {
-      workspace
-        .deleteNote(focusedWsPath)(state, dispatch, store)
+      deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
           showNotification({
             severity: 'success',
@@ -300,20 +301,23 @@ export function splitEditor() {
   };
 }
 
-export function closeEditor(editorId: EditorIdType) {
+export function openMiniEditor() {
   return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
-    if (typeof editorId === 'number') {
-      updateOpenedWsPaths((openedWsPaths) =>
-        openedWsPaths.updateByIndex(editorId, undefined).shrink(),
+    const workspaceSliceState = workspaceSliceKey.getSliceStateAsserted(state);
+
+    const targetWsPath =
+      editor.getFocusedWsPath()(state) ||
+      workspaceSliceState.openedWsPaths.primaryWsPath;
+
+    if (targetWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateMiniEditorWsPath(targetWsPath),
       )(state, dispatch);
-    } else {
-      updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
-        state,
-        dispatch,
-      );
+
+      return true;
     }
 
-    return true;
+    return false;
   };
 }
 
@@ -356,7 +360,7 @@ export function removeWorkspace(wsName?: string) {
         `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
       )
     ) {
-      await workspace.deleteWorkspace(wsName)(state, dispatch, store);
+      await deleteWorkspace(wsName)(state, dispatch, store);
 
       showNotification({
         severity: 'success',

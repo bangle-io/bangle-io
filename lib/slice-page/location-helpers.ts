@@ -3,8 +3,12 @@
 import { Key, pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
-import { resolvePath } from './helpers';
-import type { Location, OpenedWsPaths } from './opened-ws-paths';
+import { OpenedWsPaths, resolvePath } from '@bangle.io/ws-path';
+
+export interface Location {
+  pathname?: string;
+  search?: string;
+}
 
 const convertPathToRegexp = (path: string) => {
   let keys: Key[] = [];

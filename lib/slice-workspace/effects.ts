@@ -1,11 +1,11 @@
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
-import { pageSliceKey } from '@bangle.io/slice-page';
 import {
-  OpenedWsPaths,
+  pageSliceKey,
   pathnameToWsName,
   pathnameToWsPath,
   searchToWsPath,
-} from '@bangle.io/ws-path';
+} from '@bangle.io/slice-page';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
@@ -271,10 +271,10 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const incomingOpenedWsPaths = OpenedWsPaths.createFromArray([
-        pathnameToWsPath(location.pathname),
-        searchToWsPath(location.search),
-      ]);
+      // Only touch primary and secondary in case of a location update
+      const incomingOpenedWsPaths = openedWsPaths
+        .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
+        .updateSecondaryWsPath(searchToWsPath(location.search));
 
       if (!workspacesInfo) {
         return;

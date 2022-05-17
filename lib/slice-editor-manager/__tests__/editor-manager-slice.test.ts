@@ -3,14 +3,18 @@
  */
 import { Selection } from '@bangle.dev/pm';
 
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils';
-import { getScrollParentElement } from '@bangle.io/utils';
+import { getScrollParentElement, makeArrayOfSize } from '@bangle.io/utils';
 
-import { geEditorScrollPosition, getInitialSelection } from '..';
 import { editorManagerSliceKey } from '../constants';
 import { editorManagerSlice } from '../editor-manager-slice';
-import { getEditor } from '../operations';
+import {
+  geEditorScrollPosition,
+  getInitialSelection,
+  getPrimaryEditor,
+} from '../operations';
 import { createTestEditor } from './test-utils';
 
 jest.mock('@bangle.io/utils', () => {
@@ -54,7 +58,7 @@ describe('set editor action', () => {
       },
     });
 
-    expect(getEditor(0)(store.state)).toBe(mockEditor);
+    expect(getPrimaryEditor()(store.state)).toBe(mockEditor);
 
     expect(
       editorManagerSliceKey.getSliceState(store.state)?.primaryEditor,
@@ -101,7 +105,7 @@ describe('set editor action', () => {
       },
     });
 
-    expect(getEditor(0)(store.state)).toBe(mockEditor2);
+    expect(getPrimaryEditor()(store.state)).toBe(mockEditor2);
 
     let mockEditor3 = createTestEditor('test:third.md');
 
@@ -363,10 +367,10 @@ describe('serializing state', () => {
       sliceFields: { editorManagerSlice: editorManagerSlice() },
     });
 
-    expect(json.editorManagerSlice.data.editorConfig.selections).toEqual([
-      { 'test:one.md': Selection.near(pmNode.resolve(5)).toJSON() },
-      null,
-    ]);
+    expect(json.editorManagerSlice.data.editorConfig.selections[0]).toEqual({
+      'test:one.md': Selection.near(pmNode.resolve(5)).toJSON(),
+    });
+    expect(json.editorManagerSlice.data.editorConfig.selections[1]).toBeNull();
 
     expect(json).toMatchSnapshot();
 
@@ -446,17 +450,18 @@ describe('serializing state', () => {
 
     expect(json.editorManagerSlice.data.editorConfig.selections)
       .toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "test:first.md": Object {
-              "anchor": 7,
-              "head": 7,
-              "type": "text",
-            },
+      Array [
+        Object {
+          "test:first.md": Object {
+            "anchor": 7,
+            "head": 7,
+            "type": "text",
           },
-          null,
-        ]
-      `);
+        },
+        null,
+        null,
+      ]
+    `);
   });
 
   test('overwrites pre-existing scroll position when serializing', () => {

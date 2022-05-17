@@ -1,12 +1,12 @@
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  MINI_EDITOR_INDEX,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import { MaybeWsPath, resolvePath } from './helpers';
-
-export interface Location {
-  pathname?: string;
-  search?: string;
-}
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -47,6 +47,10 @@ export class OpenedWsPaths {
     }
   }
 
+  get miniEditorWsPath() {
+    return this.wsPaths[MINI_EDITOR_INDEX] ?? undefined;
+  }
+
   get openCount() {
     let count = 0;
     this.forEachWsPath((wsPath) => {
@@ -59,15 +63,15 @@ export class OpenedWsPaths {
   }
 
   get primaryWsPath() {
-    return this.wsPaths[0] ?? undefined;
+    return this.wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
   }
 
   get secondaryWsPath() {
-    return this.wsPaths[1] ?? undefined;
+    return this.wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
   }
 
   // if no wsName is provided, will match against the internal wsName
-  allBelongToSameWsName(wsName?: string) {
+  allBelongToSameWsName(wsName?: string): boolean {
     if (!this.hasSomeOpenedWsPaths()) {
       return true;
     }
@@ -155,20 +159,28 @@ export class OpenedWsPaths {
     });
   }
 
-  // starting undefined wsPaths
-  shrink() {
-    const items = this.wsPaths.filter((r) => r);
-
-    const arr: any = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
-      return items[k] || undefined;
-    });
-
-    return this.updateAllWsPaths(arr);
+  // Run a bunch of algorithms to optimize the space of editors.
+  optimizeSpace() {
+    return this.tryUpgradeSecondary();
   }
 
   toArray() {
     // mapping undefined to null since undefined is not serializable
     return Array.from(this.wsPaths).map((r) => (r ? r : null));
+  }
+
+  // If primaryWsPath is empty, try moving secondary to primary.
+  // If primaryWsPath is not empty, do no nothing
+  tryUpgradeSecondary() {
+    const { secondaryWsPath, primaryWsPath } = this;
+
+    if (secondaryWsPath != null && primaryWsPath == null) {
+      return this.updatePrimaryWsPath(secondaryWsPath).updateSecondaryWsPath(
+        undefined,
+      );
+    }
+
+    return this;
   }
 
   update(openedWsPath: OpenedWsPaths): OpenedWsPaths {
@@ -183,7 +195,7 @@ export class OpenedWsPaths {
   }
 
   updateAllWsPaths(wsPaths: MaybeWsPath[]) {
-    const result = new OpenedWsPaths(wsPaths);
+    const result = OpenedWsPaths.createFromArray(wsPaths);
 
     // avoid changing instance
     if (result.equal(this)) {
@@ -219,11 +231,15 @@ export class OpenedWsPaths {
     return ret;
   }
 
+  updateMiniEditorWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(MINI_EDITOR_INDEX, wsPath);
+  }
+
   updatePrimaryWsPath(wsPath: MaybeWsPath) {
-    return this.updateByIndex(0, wsPath);
+    return this.updateByIndex(PRIMARY_EDITOR_INDEX, wsPath);
   }
 
   updateSecondaryWsPath(wsPath: MaybeWsPath) {
-    return this.updateByIndex(1, wsPath);
+    return this.updateByIndex(SECONDARY_EDITOR_INDEX, wsPath);
   }
 }

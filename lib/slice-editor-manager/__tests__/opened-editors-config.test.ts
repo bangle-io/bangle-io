@@ -1,6 +1,11 @@
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import { OpenedEditorsConfig } from '../opened-editors-config';
+
+function createNullArray(size: number) {
+  return createEmptyArray(size).map(() => null);
+}
 
 test('works empty', () => {
   const config = new OpenedEditorsConfig({
@@ -12,8 +17,10 @@ test('works empty', () => {
       "scrollPositions": Array [
         null,
         null,
+        null,
       ],
       "selections": Array [
+        null,
         null,
         null,
       ],
@@ -45,8 +52,12 @@ test('shrinks with bigger arrays automatically', () => {
         Object {
           "test:magic.md": 1,
         },
+        Object {
+          "test:magic.md": 2,
+        },
       ],
       "selections": Array [
+        null,
         null,
         null,
       ],
@@ -55,7 +66,7 @@ test('shrinks with bigger arrays automatically', () => {
 
   expect(config.getScrollPosition('test:magic.md', 0)).toBe(0);
   expect(config.getScrollPosition('test:magic.md', 1)).toBe(1);
-  expect(config.getScrollPosition('test:magic.md', 2)).toBeUndefined();
+  expect(config.getScrollPosition('test:magic.md', 2)).toBe(2);
   expect(config.getScrollPosition('test:magic.md', 30)).toBeUndefined();
 });
 
@@ -74,23 +85,25 @@ describe('selection', () => {
     });
 
     expect(config).toMatchInlineSnapshot(`
-          OpenedEditorsConfig {
-            "scrollPositions": Array [
-              null,
-              null,
-            ],
-            "selections": Array [
-              Object {
-                "test:magic.md": Object {
-                  "anchor": 2004,
-                  "head": 2004,
-                  "type": "text",
-                },
-              },
-              null,
-            ],
-          }
-      `);
+      OpenedEditorsConfig {
+        "scrollPositions": Array [
+          null,
+          null,
+          null,
+        ],
+        "selections": Array [
+          Object {
+            "test:magic.md": Object {
+              "anchor": 2004,
+              "head": 2004,
+              "type": "text",
+            },
+          },
+          null,
+          null,
+        ],
+      }
+    `);
 
     expect(config.getSelection('test:magic.md', 0)).toEqual({
       anchor: 2004,
@@ -238,6 +251,7 @@ describe('selection', () => {
         "scrollPositions": Array [
           null,
           null,
+          null,
         ],
         "selections": Array [
           Object {
@@ -247,6 +261,7 @@ describe('selection', () => {
               "type": "text",
             },
           },
+          null,
           null,
         ],
       }
@@ -278,8 +293,8 @@ describe('serializing', () => {
     expect(config.getScrollPosition('test:magic.md', 0)).toBeUndefined();
     expect(config.getSelection('test:magic.md', 0)).toBeUndefined();
     expect(config.toJsonObj()).toEqual({
-      scrollPositions: [null, null],
-      selections: [null, null],
+      scrollPositions: createNullArray(MAX_OPEN_EDITORS),
+      selections: createNullArray(MAX_OPEN_EDITORS),
     });
   });
 
@@ -319,6 +334,7 @@ describe('serializing', () => {
           'test:wonder.md': 3,
           'test:wonder2.md': 5,
         },
+        null,
       ],
       selections: [
         {
@@ -333,6 +349,7 @@ describe('serializing', () => {
             type: 'text',
           },
         },
+        null,
         null,
       ],
     });

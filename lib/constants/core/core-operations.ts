@@ -24,6 +24,10 @@ export const CORE_OPERATIONS_NEW_WORKSPACE =
 
 export const CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT =
   'operation::@bangle.io/core-extension:TOGGLE_EDITOR_SPLIT';
+export const CORE_OPERATIONS_OPEN_IN_MINI_EDITOR =
+  'operation::@bangle.io/core-extension:OPEN_IN_MINI_EDITOR';
+export const CORE_OPERATIONS_CLOSE_MINI_EDITOR =
+  'operation::@bangle.io/core-extension:CLOSE_MINI_EDITOR';
 
 export const CORE_OPERATIONS_CLOSE_EDITOR =
   'operation::@bangle.io/core-extension:CLOSE_EDITOR';

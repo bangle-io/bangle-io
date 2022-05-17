@@ -72,9 +72,10 @@ describe('workspace slice state', () => {
     });
     expect(newState.openedWsPaths).not.toBe(orginal);
 
-    expect(newState.openedWsPaths.toArray()).toEqual([
-      'test-ws:one.md',
-      'test-ws:two.md',
-    ]);
+    expect(
+      newState.openedWsPaths.equal(
+        OpenedWsPaths.createFromArray(['test-ws:one.md', 'test-ws:two.md']),
+      ),
+    ).toBe(true);
   });
 });

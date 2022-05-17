@@ -1,0 +1,19 @@
+.B-editor-container_mini-editor {
+  background-color: var(--BV-window-popup-editor-bg-color);
+  color: var(--BV-window-popup-editor-color);
+
+  /* setting width and height are important otherwise
+      tippy confuses and causes issue with scroll
+    */
+  width: 400px;
+  height: min(50vh, 600px);
+  z-index: var(--BV-window-popup-editor-z-index);
+  border: 1px solid var(--BV-window-border-color-0);
+  box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;
+  border-radius: 0.25rem;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  bottom: 0;
+  right: 30px;
+}

@@ -1,5 +1,9 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import * as editorManagerContext from '@bangle.io/slice-editor-manager';
@@ -84,11 +88,12 @@ export function e2eHelpers() {
           )?.editors;
 
           if (editors) {
-            e2eHelpers._primaryEditor = editors[0];
-            e2eHelpers._secondaryEditor = editors[1];
+            e2eHelpers._primaryEditor = editors[PRIMARY_EDITOR_INDEX];
+            e2eHelpers._secondaryEditor = editors[SECONDARY_EDITOR_INDEX];
 
-            if (!e2eHelpers._editorSchema && editors[0]) {
-              e2eHelpers._editorSchema = editors[0]?.view.state.schema;
+            if (!e2eHelpers._editorSchema && editors[PRIMARY_EDITOR_INDEX]) {
+              e2eHelpers._editorSchema =
+                editors[PRIMARY_EDITOR_INDEX]?.view.state.schema;
             }
           }
         },

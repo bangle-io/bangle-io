@@ -377,6 +377,23 @@ export function createEmptyArray(size: number) {
   });
 }
 
+// Adds 1 or more emptyValue to the array to make it of `size` length.
+// Returns a new array.
+// If size is smaller than `array`'s length, it will trim the array to match the size.
+export function makeArrayOfSize<T>(
+  size: number,
+  emptyValue: undefined | null,
+  array: T[],
+): Array<T | typeof emptyValue> {
+  return Array.from({ length: size }, (_, k) => {
+    if (k < array.length) {
+      return array[k];
+    }
+
+    return emptyValue;
+  });
+}
+
 /**
  * From react https://github.com/facebook/fbjs/blob/main/packages/fbjs/src/core/shallowEqual.js#L39-L67
  * Performs equality by iterating through keys on an object and returning false

@@ -1,16 +1,15 @@
+import { OpenedWsPaths } from '@bangle.io/ws-path';
+
 import {
   locationSetWsPath,
-  OpenedWsPaths,
-  searchToWsPath,
-  wsPathToSearch,
-} from '..';
-import {
   pathMatcher,
   pathnameToWsName,
   pathnameToWsPath,
+  searchToWsPath,
   wsNameToPathname,
   wsPathToPathname,
-} from '../pathname-helpers';
+  wsPathToSearch,
+} from '../location-helpers';
 
 describe('pathMatcher', () => {
   test('works with exact strings', () => {

@@ -2,11 +2,13 @@
  * @jest-environment jsdom
  */
 
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import {
   getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/slice-page';
+import { makeArrayOfSize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { goToWorkspaceAuthRoute } from '..';
@@ -82,8 +84,10 @@ describe('updateOpenedWsPaths', () => {
     expect(res).toBe(true);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
-      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
-    ).toEqual(['my-ws:one.md', null]);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]
+        ?.toArray()
+        .filter(Boolean),
+    ).toEqual(['my-ws:one.md']);
 
     expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
       1,
@@ -128,16 +132,15 @@ describe('updateOpenedWsPaths', () => {
       return r.updateByIndex(0, 'my-ws:two.md');
     })(store.state, store.dispatch);
 
-    expect(existingOpenedWsPaths?.toArray()).toEqual([
-      'my-ws:test-note.md',
-      null,
-    ]);
+    expect(existingOpenedWsPaths?.primaryWsPath).toEqual('my-ws:test-note.md');
+    expect(existingOpenedWsPaths?.secondaryWsPath).toBeFalsy();
 
     expect(res).toBe(true);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
       historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
-    ).toEqual(['my-ws:two.md', null]);
+    ).toEqual(makeArrayOfSize(MAX_OPEN_EDITORS, null, ['my-ws:two.md', null]));
+
     expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
       1,
       expect.any(OpenedWsPaths),
@@ -213,8 +216,11 @@ describe('pushWsPath', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
-      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
-    ).toEqual(['my-ws:test-note.md', null]);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray()[0],
+    ).toEqual('my-ws:test-note.md');
+    expect(
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray()[1],
+    ).toEqual(null);
 
     expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
       1,
@@ -244,8 +250,11 @@ describe('pushWsPath', () => {
     );
 
     expect(
-      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
-    ).toEqual(['my-ws:some-other-test-note.md', 'my-ws:test-note.md']);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray()[0],
+    ).toEqual('my-ws:some-other-test-note.md');
+    expect(
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray()[1],
+    ).toEqual('my-ws:test-note.md');
 
     expect(global.open).toBeCalledTimes(0);
   });
@@ -274,7 +283,11 @@ describe('goToWsNameRoute', () => {
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
       1,
-      { wsPaths: ['my-ws:hello.md', undefined] },
+      {
+        wsPaths: makeArrayOfSize(MAX_OPEN_EDITORS, undefined, [
+          'my-ws:hello.md',
+        ]),
+      },
       'my-ws',
       { replace: false },
     );
@@ -349,7 +362,9 @@ describe('goToWorkspaceAuthRoute', () => {
     expect(goToLocation).toBeCalledTimes(1);
     expect(goToLocation).nthCalledWith(
       1,
-      '/ws-auth/my-ws?error_code=SOME_CODE&ws_paths=%5B%22my-ws%3Asome-other-test-note.md%22%2Cnull%5D',
+      `/ws-auth/my-ws?error_code=SOME_CODE&ws_paths=${encodeURIComponent(
+        `["my-ws:some-other-test-note.md",null,null]`,
+      )}`,
       { replace: true },
     );
   });

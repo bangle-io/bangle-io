@@ -9,6 +9,7 @@ import {
   Extension,
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
+import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import {
@@ -46,6 +47,7 @@ export function createBasicTestStore<
   extensions = [],
   useMemoryHistorySlice = true,
   useEditorCoreExtension = true,
+  useEditorManagerSlice = false,
   // slice key purely for getting the types of the store correct
   sliceKey,
   scheduler,
@@ -61,6 +63,7 @@ export function createBasicTestStore<
   extensions?: Extension[];
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
+  useEditorManagerSlice?: boolean;
   onError?: ApplicationStore<SL, A>['onError'];
   opts?: any;
 } = {}) {
@@ -90,6 +93,7 @@ export function createBasicTestStore<
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
         pageSlice(),
         workspaceSlice(),
+        useEditorManagerSlice ? editorManagerSlice() : undefined,
         notificationSlice(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),

@@ -134,6 +134,7 @@ export function editorManagerSlice(): Slice<
 
         return newState;
       },
+
       stateFromJSON(_, value: any) {
         if (!value || value.version !== JSON_SCHEMA_VERSION) {
           return initialEditorSliceState;
@@ -155,6 +156,7 @@ export function editorManagerSlice(): Slice<
 
       stateToJSON(sliceState) {
         let newEditorConfig = sliceState.editorConfig;
+
         for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
           const editor = sliceState.editors[i];
 

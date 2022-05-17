@@ -1,4 +1,6 @@
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
+import { makeArrayOfSize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
@@ -20,6 +22,7 @@ describe('serialization works', () => {
           "data": Object {
             "error": null,
             "openedWsPaths": Array [
+              null,
               null,
               null,
             ],
@@ -53,6 +56,7 @@ describe('serialization works', () => {
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "wsPaths": Array [
+              undefined,
               undefined,
               undefined,
             ],
@@ -93,6 +97,7 @@ describe('serialization works', () => {
             "wsPaths": Array [
               undefined,
               undefined,
+              undefined,
             ],
           },
           "recentlyUsedWsPaths": undefined,
@@ -118,6 +123,7 @@ describe('serialization works', () => {
           "data": Object {
             "error": null,
             "openedWsPaths": Array [
+              null,
               null,
               null,
             ],
@@ -174,10 +180,10 @@ describe('serialization works', () => {
     ).toEqual({
       workspace: {
         data: {
-          openedWsPaths: [
+          openedWsPaths: makeArrayOfSize(MAX_OPEN_EDITORS, null, [
             'bangle-help:test-path/k.md',
             'bangle-help:getting started.md',
-          ],
+          ]),
           recentlyUsedWsPaths: null,
           wsName: 'bangle-help',
           wsPaths: null,
@@ -471,7 +477,7 @@ describe('derived state', () => {
     expect(workspaceSliceKey.getSliceState(state)?.wsName).toBe('test');
     expect(
       workspaceSliceKey.getSliceState(state)?.openedWsPaths.toArray(),
-    ).toEqual(['test:k.md', null]);
+    ).toEqual(makeArrayOfSize(MAX_OPEN_EDITORS, null, ['test:k.md', null]));
   });
 
   test('derives wsPath', () => {

@@ -1,6 +1,7 @@
 import * as idb from 'idb-keyval';
 
 import {
+  MAX_OPEN_EDITORS,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
@@ -10,6 +11,7 @@ import {
   getPageLocation,
   pageSliceKey,
   syncPageLocation,
+  wsPathToSearch,
 } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
@@ -19,8 +21,7 @@ import {
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
 } from '@bangle.io/test-utils';
-import { BaseError, sleep } from '@bangle.io/utils';
-import { wsPathToSearch } from '@bangle.io/ws-path';
+import { BaseError, createEmptyArray, sleep } from '@bangle.io/utils';
 
 import {
   getNote,
@@ -319,7 +320,7 @@ describe('updateLocationEffect', () => {
         name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
         value: {
           openedWsPaths: {
-            wsPaths: [undefined, undefined],
+            wsPaths: createEmptyArray(MAX_OPEN_EDITORS),
           },
           wsName: 'test-ws',
         },
