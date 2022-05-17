@@ -1,3 +1,7 @@
+### May 17, 2022
+
+- **Feature:** A mini-editor which stays fixed at the bottom right of the screen. To use it search for `Mini editor` in Operation Palette.
+
 ### Feb 4, 2022
 
 - **Feature:** We are launching experimental support for storing your notes on Github.
