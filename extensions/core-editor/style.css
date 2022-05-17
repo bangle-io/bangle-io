@@ -64,6 +64,7 @@ h5 .B-core-editor_deco-collapse {
     background-color: unset;
   }
 }
+
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor a {
   color: var(--BV-window-link-color);

@@ -6,7 +6,7 @@
       tippy confuses and causes issue with scroll
     */
   width: 400px;
-  height: min(40vh, 500px);
+  height: min(50vh, 600px);
   z-index: var(--BV-window-popup-editor-z-index);
   border: 1px solid var(--BV-window-border-color-0);
   box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;

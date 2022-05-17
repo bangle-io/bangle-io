@@ -321,12 +321,6 @@ export function openMiniEditor() {
   };
 }
 
-export function closeMiniEditor() {
-  return workspaceSliceKey.op((state, dispatch) => {
-    return workspace.closeWsPath(MINI_EDITOR_INDEX)(state, dispatch);
-  });
-}
-
 export function removeWorkspace(wsName?: string) {
   return async (
     state: AppState,

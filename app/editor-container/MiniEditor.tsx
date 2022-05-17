@@ -55,10 +55,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   );
 
   const onClose = useCallback(() => {
-    workspace.closeWsPath(MINI_EDITOR_INDEX)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
+    workspace.closeMiniEditor()(bangleStore.state, bangleStore.dispatch);
   }, [bangleStore]);
 
   const onExpand = useCallback(() => {
@@ -110,7 +107,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
           </ActionButton>
         </div>
       </div>
-      <div className="px-2 overflow-y-auto">
+      <div className="px-2 overflow-y-auto pl-6">
         <Editor
           editorId={MINI_EDITOR_INDEX}
           wsPath={wsPath}

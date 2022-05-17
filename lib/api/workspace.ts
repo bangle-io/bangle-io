@@ -2,7 +2,8 @@ import { AppState } from '@bangle.io/create-store';
 import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 
 export {
-  closeWsPath,
+  closeMiniEditor,
+  closeOpenedEditor,
   createNote,
   createWorkspace,
   deleteNote,

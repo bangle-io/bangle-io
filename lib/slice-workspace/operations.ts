@@ -1,4 +1,4 @@
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { MAX_OPEN_EDITORS, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import {
   getPageLocation,
@@ -37,8 +37,15 @@ export const sliceHasError = () => {
   );
 };
 
+export function closeMiniEditor() {
+  return workspaceSliceKey.op((state, dispatch) => {
+    return closeOpenedEditor(MINI_EDITOR_INDEX)(state, dispatch);
+  });
+}
+
 // removes the wsPath at index from the currently opened wsPaths
-export function closeWsPath(index?: number) {
+// if no param is passed closes primary and secondary editor.
+export function closeOpenedEditor(index?: number) {
   return workspaceSliceKey.op((state, dispatch) => {
     if (typeof index === 'number') {
       if (index >= MAX_OPEN_EDITORS) {

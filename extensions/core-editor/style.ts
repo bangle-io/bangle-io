@@ -4,4 +4,3 @@ import '@bangle.dev/react-menu/style.css';
 import '@bangle.dev/table/style.css';
 import '@bangle.dev/tooltip/style.css';
 import './style.css';
-import './editor-sizing.css';

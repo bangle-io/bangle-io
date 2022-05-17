@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { notification, workspace } from '@bangle.io/api';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
@@ -12,10 +13,31 @@ import { MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { EmptyEditorPage } from './EmptyEditorPage';
 
 export function WorkspacePage() {
-  const { openedWsPaths } = useWorkspaceContext();
+  const { openedWsPaths, bangleStore } = useWorkspaceContext();
   const { widescreen } = useUIManagerContext();
 
   const { primaryWsPath, secondaryWsPath, miniEditorWsPath } = openedWsPaths;
+
+  let mini = null;
+
+  if (miniEditorWsPath) {
+    if (widescreen) {
+      mini = <MiniEditor wsPath={miniEditorWsPath} />;
+    }
+  }
+
+  useEffect(() => {
+    if (miniEditorWsPath && !widescreen) {
+      notification.showNotification({
+        title: 'Mini Editor is not available in small screens',
+        uid: 'mini-editor-not-available',
+        severity: 'warning',
+        transient: true,
+      })(bangleStore.state, bangleStore.dispatch);
+
+      workspace.closeMiniEditor()(bangleStore.state, bangleStore.dispatch);
+    }
+  }, [miniEditorWsPath, bangleStore, widescreen]);
 
   return (
     <>
@@ -37,7 +59,7 @@ export function WorkspacePage() {
           />
         )}
       </MultiColumnMainContent>
-      {miniEditorWsPath && <MiniEditor wsPath={miniEditorWsPath} />}
+      {mini}
     </>
   );
 }

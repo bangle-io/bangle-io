@@ -16,7 +16,8 @@ export {
   writeNote,
 } from './file-operations';
 export {
-  closeWsPath,
+  closeMiniEditor,
+  closeOpenedEditor,
   getWsName,
   goToWorkspaceAuthRoute,
   goToWorkspaceHomeRoute,

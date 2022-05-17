@@ -2078,6 +2078,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor": "workspace:*"
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"

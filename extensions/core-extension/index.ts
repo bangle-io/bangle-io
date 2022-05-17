@@ -254,19 +254,22 @@ const extension = Extension.create({
               return true;
             }
             case CORE_OPERATIONS_CLOSE_MINI_EDITOR: {
-              return closeMiniEditor()(bangleStore.state, bangleStore.dispatch);
+              return workspace.closeMiniEditor()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
-                workspace.closeWsPath(payload)(
+                workspace.closeOpenedEditor(payload)(
                   bangleStore.state,
                   bangleStore.dispatch,
                 );
 
                 return true;
               } else {
-                workspace.closeWsPath(undefined)(
+                workspace.closeOpenedEditor(undefined)(
                   bangleStore.state,
                   bangleStore.dispatch,
                 );
