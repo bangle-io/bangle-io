@@ -74,24 +74,22 @@ test.describe.parallel('backlink workflow', () => {
     // // Hover to see if it is correctly shown
     await page.hover('.B-inline-backlink_backlink');
 
-    await page.locator('.B-core-editor_display-popup').waitFor();
+    await page.locator('.B-editor_display-popup').waitFor();
 
-    await expect(page.locator('.B-core-editor_display-popup')).toHaveText(
+    await expect(page.locator('.B-editor_display-popup')).toHaveText(
       /this is the zeroth note note-1/,
       { useInnerText: true },
     );
 
     // // This block exists because I was unable to click using regular way
-    const popupPara = await page.$(
-      '.B-core-editor_display-popup .bangle-editor p',
-    );
-    const coOrdinates = await popupPara?.boundingBox();
+    const popupPara = await page.$('.B-editor_display-popup .bangle-editor p');
+    const coordinates = await popupPara?.boundingBox();
 
-    if (!coOrdinates) {
+    if (!coordinates) {
       throw new Error('Coordinates not set');
     }
 
-    await page.mouse.click(coOrdinates.x, coOrdinates.y);
+    await page.mouse.click(coordinates.x, coordinates.y);
     await page.keyboard.press('ArrowLeft'); // just move arrow to extreme left
     await page.keyboard.press('ArrowLeft');
     // Type in the popup

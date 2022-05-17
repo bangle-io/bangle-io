@@ -52,7 +52,6 @@ import {
 } from './dialogs/NoteNameChangeDialog';
 import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
-  closeMiniEditor,
   deleteActiveNote,
   downloadWorkspace,
   openMiniEditor,
