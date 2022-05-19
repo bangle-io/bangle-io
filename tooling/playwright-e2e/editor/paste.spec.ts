@@ -28,7 +28,7 @@ const pasteSliceJson = async (page: Page, sliceJson: object) => {
   }, sliceJson);
 };
 
-test.describe.parallel('Pasting rich test', () => {
+test.describe('Pasting rich test', () => {
   test('heading', async ({ page, context }) => {
     await pasteSliceJson(page, {
       content: [

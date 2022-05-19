@@ -15,7 +15,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   await clearEditor(page, 0);
 });
 
-test.describe.parallel('creating node above or below', () => {
+test.describe('creating node above or below', () => {
   test('above a paragraph', async ({ page }) => {
     await page.keyboard.type('### Hello world!', { delay: 10 });
     await page.keyboard.press('Enter');

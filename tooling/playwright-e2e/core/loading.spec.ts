@@ -17,7 +17,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe.parallel('loading', () => {
+test.describe('loading', () => {
   test('basic test', async ({ page, baseURL }) => {
     const title = await page.title();
     expect(title).toMatch('getting started.md - bangle.io');

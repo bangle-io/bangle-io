@@ -12,7 +12,7 @@ import {
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
-test.describe.parallel('collab', () => {
+test.describe('collab', () => {
   test('Split screen and typing in secondary works', async ({ page }) => {
     const wsName = await createWorkspace(page);
     const wsPath = await createNewNote(page, wsName, 'test123');

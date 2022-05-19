@@ -6,7 +6,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe.parallel('worker', () => {
+test.describe('worker', () => {
   test('Typing a note should enable blockReload', async ({ page }) => {
     const wsName1 = await createWorkspace(page);
 

@@ -14,7 +14,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe.parallel('emoji', () => {
+test.describe('emoji', () => {
   test('Emoji works in heading', async ({ page }) => {
     const wsName = await createWorkspace(page);
 
