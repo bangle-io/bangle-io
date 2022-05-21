@@ -414,6 +414,69 @@ describe('updateLocationEffect', () => {
       undefined,
     );
   });
+
+  test('retains mini-editor in case of location change but wsName stays', async () => {
+    const { store } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+    });
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws');
+
+    updateOpenedWsPaths((newOpened) =>
+      newOpened.updateMiniEditorWsPath('test-ws:two.md'),
+    )(store.state, store.dispatch);
+
+    expect(
+      workspaceSliceKey.getSliceStateAsserted(store.state).openedWsPaths
+        .miniEditorWsPath,
+    ).toBe('test-ws:two.md');
+
+    syncPageLocation({
+      pathname: pageSliceKey.getSliceStateAsserted(store.state).location
+        .pathname,
+      search: wsPathToSearch('test-ws:three.md', ''),
+    })(store.state, pageSliceKey.getDispatch(store.dispatch));
+
+    await sleep(0);
+
+    const newOpenedWsPaths = workspaceSliceKey.getSliceStateAsserted(
+      store.state,
+    ).openedWsPaths;
+
+    expect(newOpenedWsPaths.miniEditorWsPath).toBe('test-ws:two.md');
+    expect(newOpenedWsPaths.primaryWsPath).toEqual('test-ws:two.md');
+    expect(newOpenedWsPaths.secondaryWsPath).toEqual('test-ws:three.md');
+  });
+
+  test('resets mini-editor in case of location update with wsName change', async () => {
+    const { store } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+    });
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws2');
+    await setupMockWorkspaceWithNotes(store, 'test-ws');
+
+    updateOpenedWsPaths((newOpened) =>
+      newOpened.updateMiniEditorWsPath('test-ws:two.md'),
+    )(store.state, store.dispatch);
+
+    expect(
+      workspaceSliceKey.getSliceStateAsserted(store.state).openedWsPaths
+        .miniEditorWsPath,
+    ).toBe('test-ws:two.md');
+
+    syncPageLocation({
+      pathname: '/ws/test-ws2',
+    })(store.state, pageSliceKey.getDispatch(store.dispatch));
+
+    await sleep(0);
+
+    const newOpenedWsPaths = workspaceSliceKey.getSliceStateAsserted(
+      store.state,
+    ).openedWsPaths;
+
+    expect(newOpenedWsPaths.miniEditorWsPath).toBeUndefined();
+  });
 });
 
 describe('workspaceErrorHandler', () => {

@@ -272,9 +272,16 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
       }
 
       // Only touch primary and secondary in case of a location update
-      const incomingOpenedWsPaths = openedWsPaths
+      // to keep mini editor state unchanged.
+      let incomingOpenedWsPaths = openedWsPaths
         .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
         .updateSecondaryWsPath(searchToWsPath(location.search));
+
+      // remove mini editor if we change workspace
+      if (wsName !== incomingWsName) {
+        incomingOpenedWsPaths =
+          incomingOpenedWsPaths.updateMiniEditorWsPath(undefined);
+      }
 
       if (!workspacesInfo) {
         return;
