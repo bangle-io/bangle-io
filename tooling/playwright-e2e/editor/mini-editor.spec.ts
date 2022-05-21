@@ -12,7 +12,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-const MINI_EDITOR_SELECTOR = '.B-editor-container_mini-editor';
+const MINI_EDITOR_SELECTOR = '.B-editor-container_mini-editor-wrapper';
 test.describe('miniEditor', () => {
   test('shows and closes mini editor', async ({ page }) => {
     const wsName = await createWorkspace(page);

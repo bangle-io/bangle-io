@@ -4,7 +4,7 @@ exports[`MiniEditor works 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_mini-editor"
+      class="B-editor-container_mini-editor-wrapper"
     >
       <div
         class="flex flex-row px-2 py-1 text-sm  justify-between"
