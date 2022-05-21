@@ -9,6 +9,7 @@ import {
   SELECTOR_TIMEOUT,
   sleep,
   waitForEditorTextToContain,
+  waitForWsPathToLoad,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -16,7 +17,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 });
 
 test.describe('backlink workflow', () => {
-  const setup = async (page: Page): Promise<string> => {
+  const setup = async (page: Page) => {
     let wsName = await createWorkspace(page);
 
     const wsPath = await createNewNote(page, wsName, 'note-0');
@@ -53,7 +54,7 @@ test.describe('backlink workflow', () => {
       timeout: 4 * SELECTOR_TIMEOUT,
     });
 
-    return wsName;
+    return { wsName, note0WsPath: wsPath };
   };
 
   test('Creating', async ({ page }) => {
@@ -68,9 +69,13 @@ test.describe('backlink workflow', () => {
 
   test('Hovering and clicking works', async ({ page }) => {
     test.slow();
-    await setup(page);
+
+    await page.pause();
+    const { note0WsPath } = await setup(page);
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
+
+    await page.locator('.B-inline-backlink_backlink').waitFor();
     // // Hover to see if it is correctly shown
     await page.hover('.B-inline-backlink_backlink');
 
@@ -90,12 +95,21 @@ test.describe('backlink workflow', () => {
     }
 
     await page.mouse.click(coordinates.x, coordinates.y);
-    await page.keyboard.press('ArrowLeft'); // just move arrow to extreme left
-    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft', { delay: 15 }); // just move arrow to extreme left
+    await page.keyboard.press('ArrowLeft', { delay: 15 });
     // Type in the popup
     await page.keyboard.type('AWESOME ', { delay: 5 });
 
+    await expect(page.locator('.B-editor_display-popup')).toHaveText(
+      /AWESOME this is the zeroth note/,
+      { useInnerText: true },
+    );
+
     await clickBacklinkHandle(page, 'note-0');
+
+    await sleep(200);
+    await waitForWsPathToLoad(page, 0, { wsPath: note0WsPath });
+
     await waitForEditorTextToContain(
       page,
       0,
@@ -107,7 +121,7 @@ test.describe('backlink workflow', () => {
   test('note widget shows backlinks', async ({ page }) => {
     test.slow();
 
-    const wsName = await setup(page);
+    const { wsName } = await setup(page);
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
 
@@ -128,8 +142,9 @@ test.describe('backlink workflow', () => {
 });
 
 async function clickBacklinkHandle(page: Page, text: string) {
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click(`.bangle-editor button:has-text("${text}")`),
-  ]);
+  let loc = page.locator(`.bangle-editor button:has-text("${text}")`);
+
+  await loc.waitFor();
+
+  await Promise.all([page.waitForNavigation(), loc.click()]);
 }

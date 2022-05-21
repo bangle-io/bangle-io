@@ -383,24 +383,12 @@ export async function waitForEditorTextToContain(
   editorId: number,
   text: string,
   attempt = 0,
-): Promise<boolean> {
-  if (
-    (
-      await page.innerText(
-        `.B-editor-container_editor-${editorId} .bangle-editor`,
-      )
-    ).includes(text)
-  ) {
-    return true;
-  }
+): Promise<void> {
+  let loc = page.locator(
+    `.B-editor-container_editor-${editorId} .bangle-editor`,
+  );
 
-  if (attempt < RECURSIVE_RETRY_MAX) {
-    await sleep();
-
-    return waitForEditorTextToContain(page, editorId, text, attempt + 1);
-  }
-
-  throw new Error('failed waitForEditorTextToContain');
+  await expect(loc).toContainText(text, { timeout: 10000, useInnerText: true });
 }
 
 export async function getItemsInPalette(
