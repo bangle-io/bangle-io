@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 
+import { workspace } from '@bangle.io/api';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
@@ -16,8 +17,8 @@ import { resolvePath } from '@bangle.io/ws-path';
 import { MiniEditor } from '../MiniEditor';
 
 describe('MiniEditor', () => {
-  test('works', async () => {
-    let { store } = createBasicTestStore({
+  const setup = async () => {
+    let { store, getActionNames } = createBasicTestStore({
       extensions: [],
       useEditorCoreExtension: true,
       useEditorManagerSlice: true,
@@ -31,7 +32,7 @@ describe('MiniEditor', () => {
       [wsPath, `# hello mars`],
     ]);
 
-    const { container } = render(
+    const { container, getByLabelText } = render(
       <div>
         <TestStoreProvider
           editorManagerContextProvider={true}
@@ -47,7 +48,22 @@ describe('MiniEditor', () => {
       await sleep(0);
     });
 
+    return { container, getByLabelText, getActionNames };
+  };
+
+  test('works', async () => {
+    const { container } = await setup();
     expect(container.innerHTML).toContain('hello mars');
     expect(container).toMatchSnapshot();
+  });
+
+  test('minimize works', async () => {
+    const { container, getByLabelText } = await setup();
+
+    expect(container.innerHTML).toContain('hello mars');
+
+    fireEvent.click(getByLabelText('Minimize'));
+
+    expect(container.innerHTML).not.toContain('hello mars');
   });
 });

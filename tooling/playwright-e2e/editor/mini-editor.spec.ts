@@ -111,7 +111,7 @@ test.describe('miniEditor', () => {
     // clicking on expand should open the note1 in primary
     await Promise.all([
       page.waitForNavigation(),
-      locator.locator('[aria-label="Expand"]').click(),
+      locator.locator('[aria-label="Expand to full screen"]').click(),
     ]);
 
     await expect(page).toHaveURL(new RegExp('note1'));

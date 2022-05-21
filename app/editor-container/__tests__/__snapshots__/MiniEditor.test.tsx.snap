@@ -11,7 +11,7 @@ exports[`MiniEditor works 1`] = `
         style="width: 100%;"
       >
         <div
-          class="font-semibold truncate"
+          class="font-semibold truncate select-none"
           style="display: flex; align-items: center;"
         >
           <span
@@ -24,7 +24,22 @@ exports[`MiniEditor works 1`] = `
           class="flex flex-row"
         >
           <button
-            aria-label="Expand"
+            aria-label="Minimize"
+            class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
+            type="button"
+          >
+            <svg
+              class="fill-current  w-4 h-4 "
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6.343 7.757L4.93 9.172 12 16.242l7.071-7.07-1.414-1.415L12 13.414 6.343 7.757z"
+              />
+            </svg>
+          </button>
+          <button
+            aria-label="Expand to full screen"
             class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
             type="button"
           >
@@ -62,7 +77,7 @@ exports[`MiniEditor works 1`] = `
         </div>
       </div>
       <div
-        class="px-2 overflow-y-auto pl-6"
+        class="px-2 overflow-y-auto pl-6 B-editor-container_mini-editor"
       >
         <div
           class="B-editor_display-popup "

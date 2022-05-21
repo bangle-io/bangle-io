@@ -1,7 +1,6 @@
 import { editor, workspace } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
-  MINI_EDITOR_INDEX,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
