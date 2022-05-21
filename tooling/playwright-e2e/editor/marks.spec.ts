@@ -16,7 +16,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await clearEditor(page, 0);
 });
 
-test.describe.parallel('Italics markdown shortcut', () => {
+test.describe('Italics markdown shortcut', () => {
   test('typing _ triggers italics', async ({ page }) => {
     await page.keyboard.type('Hello _world_!', { delay: 10 });
     expect(await getEditorDebugString(page, 0)).toBe(
@@ -46,7 +46,7 @@ test.describe.parallel('Italics markdown shortcut', () => {
   });
 });
 
-test.describe.parallel('link', () => {
+test.describe('link', () => {
   test('typing a link should convert to a link mark', async ({ page }) => {
     await page.keyboard.type('Hello google.com ', { delay: 10 });
     expect(await getEditorDebugString(page, 0)).toBe(

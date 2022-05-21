@@ -17,7 +17,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe.parallel('workspace', () => {
+test.describe('workspace', () => {
   test('Create a new workspace when already in a workspace', async ({
     page,
   }) => {

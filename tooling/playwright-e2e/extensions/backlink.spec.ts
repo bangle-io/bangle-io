@@ -15,7 +15,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe.parallel('backlink workflow', () => {
+test.describe('backlink workflow', () => {
   const setup = async (page: Page): Promise<string> => {
     let wsName = await createWorkspace(page);
 

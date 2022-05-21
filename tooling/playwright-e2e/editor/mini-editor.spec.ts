@@ -13,7 +13,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 });
 
 const MINI_EDITOR_SELECTOR = '.B-editor-container_mini-editor';
-test.describe.parallel('miniEditor', () => {
+test.describe('miniEditor', () => {
   test('shows and closes mini editor', async ({ page }) => {
     const wsName = await createWorkspace(page);
     await createNewNote(page, wsName, 'test123');
