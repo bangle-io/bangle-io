@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 
@@ -16,7 +16,12 @@ import {
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
-import { ArrowsExpand, CloseIcon } from '@bangle.io/ui-components';
+import {
+  ArrowsExpand,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CloseIcon,
+} from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
 export function MiniEditor({ wsPath }: { wsPath: string }) {
@@ -24,6 +29,8 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   const { bangleStore } = useEditorManagerContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
   const extensionRegistry = useExtensionRegistryContext();
+
+  const [isMinimized, updateIsMinimized] = useState(false);
 
   const getDocument = useCallback(
     (wsPath: string) => {
@@ -74,7 +81,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   );
 
   return (
-    <div className="B-editor-container_mini-editor">
+    <div className="B-editor-container_mini-editor-wrapper">
       <div
         className="flex flex-row px-2 py-1 text-sm  justify-between"
         style={{
@@ -83,17 +90,38 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
         }}
       >
         <div
-          className="font-semibold truncate"
+          className="font-semibold truncate select-none"
           style={{ display: 'flex', alignItems: 'center' }}
         >
           <span className="truncate">{fileNameWithoutExt}</span>
         </div>
         <div className="flex flex-row">
+          {isMinimized ? (
+            <ActionButton
+              isQuiet="hoverBg"
+              ariaLabel="Maximize"
+              onPress={() => {
+                updateIsMinimized((e) => !e);
+              }}
+            >
+              <ButtonContent size="small" icon={<ChevronUpIcon />} />
+            </ActionButton>
+          ) : (
+            <ActionButton
+              isQuiet="hoverBg"
+              ariaLabel="Minimize"
+              onPress={() => {
+                updateIsMinimized((e) => !e);
+              }}
+            >
+              <ButtonContent size="small" icon={<ChevronDownIcon />} />
+            </ActionButton>
+          )}
           <ActionButton
             isQuiet="hoverBg"
-            ariaLabel="Expand"
+            ariaLabel="Expand to full screen"
             onPress={onExpand}
-            tooltip={<TooltipWrapper>Expand</TooltipWrapper>}
+            tooltip={<TooltipWrapper>Expand to full screen</TooltipWrapper>}
           >
             <ButtonContent size="small" icon={<ArrowsExpand />} />
           </ActionButton>
@@ -107,19 +135,21 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
           </ActionButton>
         </div>
       </div>
-      <div className="px-2 overflow-y-auto pl-6">
-        <Editor
-          editorId={MINI_EDITOR_INDEX}
-          wsPath={wsPath}
-          bangleStore={bangleStore}
-          dispatchSerialOperation={dispatchSerialOperation}
-          extensionRegistry={extensionRegistry}
-          getDocument={getDocument}
-          onEditorReady={onEditorReady}
-          onEditorUnmount={onEditorUnmount}
-          editorDisplayType={EditorDisplayType.Popup}
-        />
-      </div>
+      {isMinimized ? null : (
+        <div className="px-2 overflow-y-auto pl-6 B-editor-container_mini-editor">
+          <Editor
+            editorId={MINI_EDITOR_INDEX}
+            wsPath={wsPath}
+            bangleStore={bangleStore}
+            dispatchSerialOperation={dispatchSerialOperation}
+            extensionRegistry={extensionRegistry}
+            getDocument={getDocument}
+            onEditorReady={onEditorReady}
+            onEditorUnmount={onEditorUnmount}
+            editorDisplayType={EditorDisplayType.Popup}
+          />
+        </div>
+      )}
     </div>
   );
 }

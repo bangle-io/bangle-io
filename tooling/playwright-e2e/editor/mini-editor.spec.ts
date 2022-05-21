@@ -12,7 +12,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-const MINI_EDITOR_SELECTOR = '.B-editor-container_mini-editor';
+const MINI_EDITOR_SELECTOR = '.B-editor-container_mini-editor-wrapper';
 test.describe('miniEditor', () => {
   test('shows and closes mini editor', async ({ page }) => {
     const wsName = await createWorkspace(page);
@@ -111,7 +111,7 @@ test.describe('miniEditor', () => {
     // clicking on expand should open the note1 in primary
     await Promise.all([
       page.waitForNavigation(),
-      locator.locator('[aria-label="Expand"]').click(),
+      locator.locator('[aria-label="Expand to full screen"]').click(),
     ]);
 
     await expect(page).toHaveURL(new RegExp('note1'));
