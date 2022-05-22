@@ -11,7 +11,7 @@ exports[`MiniEditor works 1`] = `
         style="width: 100%;"
       >
         <div
-          class="font-semibold truncate select-none"
+          class="font-semibold flex-grow cursor-pointer truncate select-none"
           style="display: flex; align-items: center;"
         >
           <span

@@ -90,8 +90,11 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
         }}
       >
         <div
-          className="font-semibold truncate select-none"
+          className="font-semibold flex-grow cursor-pointer truncate select-none"
           style={{ display: 'flex', alignItems: 'center' }}
+          onClick={() => {
+            updateIsMinimized((e) => !e);
+          }}
         >
           <span className="truncate">{fileNameWithoutExt}</span>
         </div>
