@@ -68,13 +68,9 @@ exports[`renders when widescreen=false 1`] = `
           Activitybar
         </div>
       </div>
-      <main
-        class="B-ui-dhancha_main-content"
-      >
-        <div>
-          Main content
-        </div>
-      </main>
+      <div>
+        Note sidebar
+      </div>
     </div>
   </div>
 </div>
