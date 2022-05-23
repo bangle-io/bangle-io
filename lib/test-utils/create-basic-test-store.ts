@@ -22,7 +22,7 @@ import {
   BaseStorageProvider,
   IndexedDbStorageProvider,
 } from '@bangle.io/storage';
-import { asssertNotUndefined, sleep } from '@bangle.io/utils';
+import { assertNotUndefined, sleep } from '@bangle.io/utils';
 
 import { createPMNode } from './create-pm-node';
 import { createTestStore } from './create-test-store';
@@ -169,7 +169,7 @@ export async function setupMockWorkspaceWithNotes(
     noteWsPaths,
     store,
     createTestNote: async (wsPath: string, str: string, open: boolean) => {
-      asssertNotUndefined(store, 'store must be defined');
+      assertNotUndefined(store, 'store must be defined');
       await createNote(wsPath, {
         open,
         doc: createPMNode([], str.trim()),

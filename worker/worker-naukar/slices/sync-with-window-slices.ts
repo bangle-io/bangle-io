@@ -6,7 +6,7 @@ import {
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/store-sync';
-import { asssertNotUndefined } from '@bangle.io/utils';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 const actionFilter = (action: BaseAction) =>
   workerSyncWhiteListedActions.some((rule) => action.name.startsWith(rule));
@@ -24,7 +24,7 @@ export function syncWithWindowSlices() {
       key: sliceKey,
       state: {
         init(opts: NaukarStateConfig) {
-          asssertNotUndefined(opts.port, 'port needs to be provided');
+          assertNotUndefined(opts.port, 'port needs to be provided');
 
           return {
             port: opts.port,

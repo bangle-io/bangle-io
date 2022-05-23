@@ -12,7 +12,7 @@ import {
   workspaceSliceKey,
   writeFile,
 } from '@bangle.io/slice-workspace';
-import { assertSignal, asssertNotUndefined } from '@bangle.io/utils';
+import { assertNotUndefined, assertSignal } from '@bangle.io/utils';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { fzfSearchNoteWsPaths } from './abortable-services/fzf-search-notes-ws-path';
@@ -47,7 +47,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
 
     const _getDoc = async (wsPath: string) => {
       const store = storeRef.current;
-      asssertNotUndefined(store, 'store cannot be undefined');
+      assertNotUndefined(store, 'store cannot be undefined');
 
       return getNote(wsPath)(store.state, store.dispatch, store);
     };
@@ -55,7 +55,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
     const _getFile = async (wsPath: string) => {
       const store = storeRef.current;
 
-      asssertNotUndefined(store, 'store cannot be undefined');
+      assertNotUndefined(store, 'store cannot be undefined');
 
       return getFile(wsPath)(store.state, store.dispatch, store);
     };
@@ -63,7 +63,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
     const _saveFile = async (wsPath: string, file: File) => {
       const store = storeRef.current;
 
-      asssertNotUndefined(store, 'store cannot be undefined');
+      assertNotUndefined(store, 'store cannot be undefined');
 
       await writeFile(wsPath, file)(store.state, store.dispatch, store);
     };
