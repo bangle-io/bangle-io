@@ -56,7 +56,9 @@ export class LocalFileEntryManager {
       const remoteFileEntry = await getRemoteFileEntry?.(uid);
 
       if (remoteFileEntry) {
-        await this.updateFileEntry(remoteFileEntry.fork().markDeleted());
+        await this.updateFileEntry(
+          remoteFileEntry.forkLocalFileEntry().markDeleted(),
+        );
       }
       // if file doesn't exist locally or source
       // do nothing
@@ -133,7 +135,7 @@ export class LocalFileEntryManager {
 
     if (remoteFileEntry) {
       // update our local entry
-      await this.updateFileEntry(remoteFileEntry.fork());
+      await this.updateFileEntry(remoteFileEntry.forkLocalFileEntry());
 
       return this.readFile(uid, getRemoteFileEntry);
     }
@@ -141,7 +143,7 @@ export class LocalFileEntryManager {
     return undefined;
   }
 
-  // overwrites the current entry with the provided one
+  // removes (completely) file entry from the storage
   async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
     return this.persistenceProvider.delete(uid);
   }
@@ -364,7 +366,7 @@ export class RemoteFileEntry extends BaseFileEntry {
     });
   }
 
-  fork(): LocalFileEntry {
+  forkLocalFileEntry(): LocalFileEntry {
     return new LocalFileEntry({
       ...this,
       source: {

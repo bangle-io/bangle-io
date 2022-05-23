@@ -56,7 +56,9 @@ export async function syncUntouchedEntries(
       if (remoteFileEntry) {
         log('updating entry', entry.uid);
 
-        await fileEntryManager.updateFileEntry(remoteFileEntry.fork());
+        await fileEntryManager.updateFileEntry(
+          remoteFileEntry.forkLocalFileEntry(),
+        );
 
         // only count files which actually needed to be updated
         if (entry.sha !== remoteFileEntry.sha) {
@@ -88,7 +90,7 @@ export async function pushModifiedOrCreatedEntries(
   getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
 ) {
   const entries = (await fileEntryManager.getAllEntries(wsName + ':')).filter(
-    (entry) => entry.isModified || entry.isNew,
+    (entry) => entry.isModified || entry.isNew || entry.isDeleted,
   );
 
   console.log('to push', entries);

@@ -612,7 +612,7 @@ describe('LocalFileEntry', () => {
       deleted: undefined,
     });
 
-    const localFileFork = (await res.fork()).markDeleted();
+    const localFileFork = (await res.forkLocalFileEntry()).markDeleted();
 
     expect(localFileFork.deleted).toEqual(expect.any(Number));
 
@@ -631,7 +631,7 @@ describe('LocalFileEntry', () => {
       deleted: undefined,
     });
 
-    const localFileFork = await res.fork();
+    const localFileFork = await res.forkLocalFileEntry();
 
     expect(localFileFork.isModified).toBe(false);
     expect(localFileFork.isNew).toBe(false);

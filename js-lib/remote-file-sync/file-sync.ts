@@ -37,7 +37,7 @@ const isModifiedWrtAncestor = ({
 /**
  * Definitions:
  * - Undefined: A file doesn't exist after looking back some amount of history.
- * - Defined: A file existed though it may or may not be deleted.
+ * - Defined: A file existed though it may or may not be deleted depending on the `deleted` field.
  *
  * Case A: Both files are defined and are equal
  * Case B: Both files are undefined
@@ -76,11 +76,11 @@ export async function fileSync<T extends SyncFileEntry>(
     return undefined;
   }
 
-  // Case C: One of files is undefined
+  // Case C: fileEntryA is undefined
   else if (!fileEntryA && fileEntryB) {
     return syncOneIsDefined(fileEntryB, 'fileB', 'fileA');
   }
-  // Case C: One of files is undefined
+  // Case C: fileEntryB is undefined
   else if (fileEntryA && !fileEntryB) {
     return syncOneIsDefined(fileEntryA, 'fileA', 'fileB');
   }

@@ -228,7 +228,9 @@ export function discardLocalChanges(
               deleted: undefined,
             });
             log('resetting file entry', entry.uid);
-            await fileEntryManager.updateFileEntry(remoteFileEntry.fork());
+            await fileEntryManager.updateFileEntry(
+              remoteFileEntry.forkLocalFileEntry(),
+            );
           } else {
             log('removing file entry', entry.uid);
             await fileEntryManager.removeFileEntry(entry.uid);
