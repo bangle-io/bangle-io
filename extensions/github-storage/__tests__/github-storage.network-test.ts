@@ -224,7 +224,7 @@ describe('pull changes', () => {
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -260,7 +260,7 @@ describe('pull changes', () => {
     // delete test-1 and modify the other
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -302,7 +302,7 @@ describe('pull changes', () => {
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -348,7 +348,7 @@ describe('pull changes', () => {
     // make an external change
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -385,7 +385,7 @@ describe('pull changes', () => {
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -423,7 +423,7 @@ describe('pull changes', () => {
     // external change: delete test-2
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -477,7 +477,7 @@ describe('discard local changes', () => {
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -524,7 +524,7 @@ describe('discard local changes', () => {
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await github.getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),

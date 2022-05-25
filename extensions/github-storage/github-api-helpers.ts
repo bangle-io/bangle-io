@@ -79,6 +79,7 @@ async function makeV3GetApi({
       throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
     });
   }
+
   console.debug(
     'Github API limit left',
     res.headers.get('X-RateLimit-Remaining'),
@@ -130,7 +131,11 @@ async function makeGraphql({
       code: GITHUB_API_ERROR,
     });
   }
-  console.debug('Github Graphql limit left', json.data?.rateLimit?.remaining);
+
+  console.debug(
+    'Github graphql API limit left',
+    res.headers.get('X-RateLimit-Remaining'),
+  );
 
   return json.data;
 }
@@ -297,7 +302,6 @@ export async function getTree({
   wsName: string;
   config: GithubConfig;
 }): Promise<{ sha: string; tree: Array<{ url: string; wsPath: string }> }> {
-  await getLatestCommitSha({ config, abortSignal });
   const makeRequest = async (
     attempt = 0,
     lastErrorMessage?: string,
@@ -447,8 +451,6 @@ export async function pushChanges({
         code: INVALID_GITHUB_RESPONSE,
       });
     }
-
-    return [r.filename, r.contents_url];
   });
 }
 
@@ -475,62 +477,6 @@ export async function getFileBlob({
     return new File([r.data], fileName);
   });
 }
-
-// export async function readGhFile({
-//   wsPath,
-//   config,
-// }: {
-//   wsPath: string;
-//   config: GithubConfig;
-// }) {
-//   const { wsName } = resolvePath(wsPath);
-//   return makeV3Api({
-//     isBlob: true,
-//     path: `/repos/${config.owner}/${config.repoName}/contents/${
-//       resolvePath(wsPath).filePath
-//     }?ref=${config.branch}`,
-//     token: config.githubToken,
-//     headers: {
-//       Accept: 'application/vnd.github.v3.raw+json',
-//     },
-//   }).then(
-//     (r) => {
-//       return new File([r], resolvePath(wsPath).fileName);
-//     },
-//     (error) => {
-//       if (
-//         error instanceof Error &&
-//         error.message.includes(
-//           'The requested blob is too large to fetch via the API',
-//         )
-//       ) {
-//         return getTree({
-//           wsName,
-//           abortSignal: new AbortController().signal,
-//           config: {
-//             branch: config.branch,
-//             owner: config.owner,
-//             githubToken: config.githubToken,
-//             repoName: wsName,
-//           },
-//           treeSha: config.branch,
-//         }).then((result) => {
-//           const matchingItem = result.tree.find((item) => {
-//             return wsPath === fromFsPath(wsName + '/' + item.path);
-//           });
-
-//           if (!matchingItem) {
-//             throw error;
-//           }
-
-//           return matchingItem.getFileBlob();
-//         });
-//       } else {
-//         throw error;
-//       }
-//     },
-//   );
-// }
 
 export async function getLatestCommitSha({
   config,

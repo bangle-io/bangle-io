@@ -20,7 +20,7 @@ const createFileEntry = (
 
 describe('File states', () => {
   test('Case A works when files are same', async () => {
-    const result = await fileSync(
+    const result = fileSync(
       createFileEntry({ sha: '123sha' }),
       createFileEntry({ sha: '123sha' }),
     );
@@ -29,12 +29,12 @@ describe('File states', () => {
   });
 
   test('Case B works when both files are undefined', async () => {
-    const result = await fileSync();
+    const result = fileSync();
     expect(result).toBeUndefined();
   });
 
   test('Case C works when file B is undefined but file A is defined', async () => {
-    const result = await fileSync(createFileEntry({ sha: '123sha' }));
+    const result = fileSync(createFileEntry({ sha: '123sha' }));
 
     expect(result).toEqual({
       action: 'set',
@@ -44,10 +44,7 @@ describe('File states', () => {
   });
 
   test('Case C works when file A is undefined but file A is defined', async () => {
-    const result = await fileSync(
-      undefined,
-      createFileEntry({ sha: '123sha' }),
-    );
+    const result = fileSync(undefined, createFileEntry({ sha: '123sha' }));
 
     expect(result).toEqual({
       action: 'set',
@@ -57,7 +54,7 @@ describe('File states', () => {
   });
 
   test('Case C works when file A is undefined but file B is deleted', async () => {
-    const result = await fileSync(
+    const result = fileSync(
       undefined,
       createFileEntry({ sha: '123sha', deleted: 12 }),
     );
@@ -66,21 +63,93 @@ describe('File states', () => {
   });
 
   test('Case C works when file B is undefined but file A is deleted', async () => {
-    const result = await fileSync(
-      createFileEntry({ sha: '123sha', deleted: 12 }),
-    );
+    const result = fileSync(createFileEntry({ sha: '123sha', deleted: 12 }));
 
     expect(result).toEqual(undefined);
   });
 
   describe('Case D both are defined', () => {
+    test('Case D: Misc when sha is same, one is deleted and source is not defined', async () => {
+      let result = fileSync(
+        createFileEntry({ sha: '123sha', deleted: 1 }),
+        createFileEntry({ sha: '123sha' }),
+      );
+
+      expect(result).toEqual({
+        action: 'conflict',
+      });
+
+      result = fileSync(
+        createFileEntry({ sha: '123sha' }),
+        createFileEntry({ sha: '123sha', deleted: 1 }),
+      );
+
+      expect(result).toEqual({
+        action: 'conflict',
+      });
+    });
+
+    test('Case D: Misc when sha is same but file A is deleted', async () => {
+      const result = fileSync(
+        createFileEntry({ sha: '123sha', deleted: 1 }),
+        createFileEntry({ sha: '123sha' }),
+        createFileEntry({ sha: '123sha' }),
+      );
+
+      expect(result).toEqual({
+        action: 'delete',
+        target: 'fileB',
+      });
+    });
+
+    test('Case D: Misc when sha is same but file B is deleted', async () => {
+      const result = fileSync(
+        createFileEntry({ sha: '123sha' }),
+        createFileEntry({ sha: '123sha', deleted: 1 }),
+        createFileEntry({ sha: '123sha' }),
+      );
+
+      expect(result).toEqual({
+        action: 'delete',
+        target: 'fileA',
+      });
+    });
+
+    test('Case D: Misc when sha is different and one of the file is deleted', async () => {
+      let result = fileSync(
+        createFileEntry({ sha: 'abcsha' }),
+        createFileEntry({ sha: '123sha', deleted: 1 }),
+        createFileEntry({ sha: '123sha' }),
+      );
+
+      // it should overwrite the deletion of fileB
+      expect(result).toEqual({
+        action: 'set',
+        file: expect.any(File),
+        target: 'fileB',
+      });
+
+      // fileA was modified and also deleted
+      result = fileSync(
+        createFileEntry({ sha: 'abcsha', deleted: 1 }),
+        createFileEntry({ sha: '123sha' }),
+        createFileEntry({ sha: '123sha' }),
+      );
+
+      // it should delete fileB
+      expect(result).toEqual({
+        action: 'delete',
+        target: 'fileB',
+      });
+    });
+
     test('Case D.2 throws error if ancestor file is not defined', async () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc' }),
         createFileEntry({ sha: 'def' }),
       );
 
-      await expect(result).resolves.toEqual({ action: 'conflict' });
+      await expect(result).toEqual({ action: 'conflict' });
     });
 
     test('Case D.1.1 no change', async () => {
@@ -91,7 +160,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'abc' }),
       );
 
-      await expect(result).resolves.toBeUndefined();
+      await expect(result).toBeUndefined();
     });
 
     test('Case D.1.2 A:no change, B:modified', async () => {
@@ -101,7 +170,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'abc' }),
       );
 
-      await expect(result).resolves.toEqual({
+      await expect(result).toEqual({
         action: 'set',
         file: {
           content: 'I am the content of image',
@@ -112,7 +181,15 @@ describe('File states', () => {
       });
     });
 
-    test.todo('ancestor file entry isDeleted');
+    test('ancestor file entry isDeleted', () => {
+      const result = fileSync(
+        createFileEntry({ sha: '123sha' }),
+        createFileEntry({ sha: '123sha' }),
+        createFileEntry({ sha: '123sha', deleted: 1 }),
+      );
+
+      expect(result).toEqual(undefined);
+    });
 
     test('Case D.1.3 A:no change, B:deleted', async () => {
       const result = fileSync(
@@ -121,7 +198,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'abc' }),
       );
 
-      await expect(result).resolves.toEqual({
+      await expect(result).toEqual({
         action: 'delete',
         target: 'fileA',
       });
@@ -142,7 +219,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'abc' }),
       );
 
-      await expect(result).resolves.toEqual({
+      await expect(result).toEqual({
         action: 'set',
         file: {
           content: 'I am the content of image',
@@ -153,14 +230,14 @@ describe('File states', () => {
       });
     });
 
-    test('Case D.1.5 throws error if both modified', async () => {
+    test('Case D.1.5 conflict if both modified', async () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc' }),
         createFileEntry({ sha: 'def' }),
         createFileEntry({ sha: 'xyz' }),
       );
 
-      await expect(result).resolves.toEqual({ action: 'conflict' });
+      await expect(result).toEqual({ action: 'conflict' });
     });
 
     test('Case D.1.6 A:modified, B:deleted; should target b', async () => {
@@ -170,7 +247,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'xyz' }),
       );
 
-      await expect(result).resolves.toEqual({
+      await expect(result).toEqual({
         action: 'set',
         file: {
           content: 'I am the content of image',
@@ -188,7 +265,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'abc' }),
       );
 
-      await expect(result).resolves.toEqual({
+      await expect(result).toEqual({
         action: 'delete',
         target: 'fileB',
       });
@@ -201,7 +278,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'xyz' }),
       );
 
-      await expect(result).resolves.toEqual({
+      await expect(result).toEqual({
         action: 'set',
         file: {
           content: 'I am the content of image',
@@ -219,7 +296,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'abc' }),
       );
 
-      await expect(result).resolves.toEqual(undefined);
+      await expect(result).toEqual(undefined);
     });
   });
 });

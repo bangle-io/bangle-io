@@ -77,7 +77,7 @@ export class GithubRepoTree {
     wsMetadata: GithubWsMetadata,
     abortSignal: AbortSignal,
   ) {
-    const { wsName, fileName } = wsPathHelpers.resolvePath(wsPath);
+    const { wsName, fileName } = wsPathHelpers.resolvePath(wsPath, true);
     const data = await GithubRepoTree.getData(
       wsPathHelpers.resolvePath(wsPath).wsName,
       wsMetadata,

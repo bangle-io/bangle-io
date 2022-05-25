@@ -158,7 +158,7 @@ Files Added:
 Files Deleted:
 ${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
 
-  if (deletions.length === 0 && Object.keys(additions).length === 0) {
+  if (deletions.length === 0 && additions.length === 0) {
     return [];
   }
 

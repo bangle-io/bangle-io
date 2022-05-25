@@ -42,7 +42,7 @@ export function githubStorageSlice() {
         }
       },
     },
-    sideEffect: [pullGithubChangesEffect],
+    sideEffect: [],
     onError: (error: any, store) => {
       return handleError(error, store);
     },

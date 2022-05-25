@@ -44,11 +44,11 @@ const isModifiedWrtAncestor = ({
  * Case C: One of files is undefined
  * Case D: Files are different
  */
-export async function fileSync<T extends SyncFileEntry>(
+export function fileSync<T extends SyncFileEntry>(
   fileEntryA?: T,
   fileEntryB?: T,
   ancestorFileEntry?: T,
-): Promise<
+):
   | undefined
   | {
       action: 'conflict';
@@ -64,10 +64,15 @@ export async function fileSync<T extends SyncFileEntry>(
       target: 'fileA' | 'fileB';
       // the file value to use witht the action
       file: File;
-    }
-> {
+    } {
   // Case A: Both files are defined and are equal
-  if (fileEntryA && fileEntryB && fileEntryA.sha === fileEntryB.sha) {
+  if (
+    fileEntryA &&
+    fileEntryB &&
+    fileEntryA.sha === fileEntryB.sha &&
+    fileEntryA.deleted === undefined &&
+    fileEntryB.deleted === undefined
+  ) {
     return undefined;
   }
 
@@ -98,7 +103,7 @@ export async function fileSync<T extends SyncFileEntry>(
   }
 }
 
-async function syncBothAreDefined(
+function syncBothAreDefined(
   fileEntryA: SyncFileEntry,
   fileEntryB: SyncFileEntry,
   ancestorFileEntry?: SyncFileEntry | undefined,
@@ -229,7 +234,7 @@ async function syncBothAreDefined(
   );
 }
 
-async function syncOneIsDefined(
+function syncOneIsDefined(
   // fileEntryX is the fileEntry that is defined
   fileEntryX: SyncFileEntry,
   fileIdentifierX: 'fileA' | 'fileB',

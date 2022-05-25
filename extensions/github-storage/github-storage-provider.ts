@@ -41,7 +41,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     const { wsName } = resolvePath(wsPath);
-
+    debugger;
     await this.fileEntryManager.deleteFile(
       wsPath,
       this.makeGetRemoteFileEntryCb(
@@ -70,6 +70,8 @@ export class GithubStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<string[]> {
     const wsMetadata = opts.readWorkspaceMetadata(wsName) as GithubWsMetadata;
+    // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
+    // lets make sure we can retry it.
     await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
 
     const files = await this.fileEntryManager.listFiles(
