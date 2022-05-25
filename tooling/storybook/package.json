@@ -53,7 +53,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   }
 }

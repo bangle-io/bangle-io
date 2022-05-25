@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "^17.0.43",
-    "react": "^17.0.2"
+    "react": "^18.1.0"
   },
   "license": "AGPL-3.0-or-later"
 }

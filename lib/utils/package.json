@@ -31,8 +31,8 @@
     "@bangle.io/shared-types": "workspace:*",
     "dayjs": "^1.10.7",
     "debounce-fn": "^5.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "tslib": "^2.3.1",
     "typescript": "^4.5.5",
     "w3c-keyname": "^2.2.4"
@@ -47,7 +47,7 @@
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
-    "react-test-renderer": "^17.0.2"
+    "react-test-renderer": "^18.1.0"
   },
   "license": "AGPL-3.0-or-later"
 }

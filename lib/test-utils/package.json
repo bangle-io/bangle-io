@@ -43,8 +43,8 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "idb-keyval": "^5.1.5",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "tslib": "^2.3.1",
     "type-fest": "^2.12.0",
     "typescript": "^4.5.5"
