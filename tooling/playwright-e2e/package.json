@@ -26,9 +26,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@babel/core": "^7.17.8",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-typescript": "^7.16.7",
+    "@babel/core": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "@babel/preset-typescript": "^7.17.12",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
