@@ -47,6 +47,8 @@ if (!githubOwner) {
   );
 }
 
+let defaultNoteWsPath: string;
+
 beforeEach(async () => {
   githubWsMetadata = {
     owner: githubOwner,
@@ -78,7 +80,9 @@ beforeEach(async () => {
     githubWsMetadata,
   )(store.state, store.dispatch, store);
 
-  await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
+  defaultNoteWsPath = `${wsName}:welcome-to-bangle.md`;
+
+  await getNoteAsString(defaultNoteWsPath);
 });
 
 let wsName: string, store: BangleApplicationStore;
@@ -86,7 +90,7 @@ let abortController = new AbortController();
 
 afterAll(async () => {
   // wait for network requests to finish
-  await sleep(100);
+  await sleep(200);
 });
 
 afterEach(async () => {
@@ -112,7 +116,7 @@ const pullChanges = async () => {
 describe('pull changes', () => {
   test('if remote note changes, its updates are applied correctly', async () => {
     // this note is automatically created when setting up the workspace
-    let note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
+    let note = await getNoteAsString(defaultNoteWsPath);
     expect(note?.toString()).toContain('Welcome to Bangle.io');
 
     expect(await localFileEntryManager.getAllEntries()).toEqual([
@@ -124,7 +128,7 @@ describe('pull changes', () => {
           file: expect.any(File),
           sha: '97168e50a1841a6a409d9c1a3439913798b9f0f9',
         },
-        uid: `${wsName}:welcome-to-bangle.md`,
+        uid: defaultNoteWsPath,
       },
     ]);
 
@@ -157,14 +161,15 @@ describe('pull changes', () => {
     });
 
     // try getting the note
-    note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
+    note = await getNoteAsString(defaultNoteWsPath);
     // note should still point to the old content
     // because we have not synced yet.
-    expect(note?.toString()).toContain('Welcome to Bangle.io');
-
+    expect(note?.toString()).toEqual(
+      `doc(heading("Welcome to Bangle.io"), paragraph("This is a sample note to get things started."))`,
+    );
     await pullChanges();
 
-    note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
+    note = await getNoteAsString(defaultNoteWsPath);
 
     // note should now be updated
     expect(note?.toString()).toEqual('doc(paragraph("I am changed content"))');
@@ -178,7 +183,7 @@ describe('pull changes', () => {
           file: expect.any(File),
           sha: 'abfe362253258d3aa6deaadbada5c02e52d0b7ad',
         },
-        uid: `${wsName}:welcome-to-bangle.md`,
+        uid: defaultNoteWsPath,
       },
     ]);
 
@@ -208,14 +213,14 @@ describe('pull changes', () => {
     });
 
     // try getting the note
-    let note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
+    let note = await getNoteAsString(defaultNoteWsPath);
     // note should still point to the old content
     // because we have not synced yet.
     expect(note?.toString()).toContain('Welcome to Bangle.io');
 
     await pullChanges();
 
-    note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
+    note = await getNoteAsString(defaultNoteWsPath);
     // note should now be deleted
     expect(note).toBeUndefined();
   });
@@ -292,7 +297,7 @@ describe('pull changes', () => {
       expect(
         await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
           .wsPaths,
-      ).toEqual([`${wsName}:test-2.md`, `${wsName}:welcome-to-bangle.md`]);
+      ).toEqual([`${wsName}:test-2.md`, defaultNoteWsPath]);
     });
   });
 
