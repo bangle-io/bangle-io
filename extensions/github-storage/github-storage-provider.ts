@@ -1,4 +1,4 @@
-import { resolvePath } from '@bangle.io/api/ws-path-helpers';
+import { wsPathHelpers } from '@bangle.io/api';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
@@ -6,7 +6,7 @@ import { BaseError } from '@bangle.io/utils';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
-import { GithubRepoTree } from './github-repo-tree';
+import { getFileBlobFromTree, getRepoTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
 
 const LOG = false;
@@ -20,6 +20,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   description = '';
   hidden = true;
 
+  private getTree = getRepoTree();
   private fileEntryManager = localFileEntryManager;
 
   async createFile(
@@ -27,7 +28,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     await this.fileEntryManager.createFile(
       wsPath,
@@ -40,8 +41,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    const { wsName } = resolvePath(wsPath);
-    debugger;
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
     await this.fileEntryManager.deleteFile(
       wsPath,
       this.makeGetRemoteFileEntryCb(
@@ -72,10 +72,14 @@ export class GithubStorageProvider implements BaseStorageProvider {
     const wsMetadata = opts.readWorkspaceMetadata(wsName) as GithubWsMetadata;
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
-    await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
+    const { tree } = await this.getTree({
+      wsName,
+      config: { repoName: wsName, ...wsMetadata },
+      abortSignal,
+    });
 
     const files = await this.fileEntryManager.listFiles(
-      await GithubRepoTree.getWsPaths(wsName, wsMetadata, abortSignal),
+      [...tree.keys()],
       wsName + ':',
     );
 
@@ -87,12 +91,23 @@ export class GithubStorageProvider implements BaseStorageProvider {
     useCache: boolean,
     abortSignal: AbortSignal = new AbortController().signal,
   ) {
-    return async (wsPath: string) => {
-      const file = await GithubRepoTree.getFileBlob(
-        wsPath,
-        wsMetadata,
+    return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
+      const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
+
+      const config = { repoName: wsName, ...wsMetadata };
+
+      const tree = await this.getTree({
+        wsName,
+        config,
         abortSignal,
-      );
+      });
+
+      const file = await getFileBlobFromTree({
+        wsPath,
+        config,
+        abortSignal,
+        tree,
+      });
 
       if (!file) {
         return undefined;
@@ -128,7 +143,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   }
 
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     const file = await this.fileEntryManager.readFile(
       wsPath,

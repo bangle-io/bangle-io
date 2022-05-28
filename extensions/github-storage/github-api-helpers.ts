@@ -1,5 +1,6 @@
 import { wsPathHelpers } from '@bangle.io/api';
-import { BaseError, getLast } from '@bangle.io/utils';
+import type { UnPromisify } from '@bangle.io/shared-types';
+import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
 
@@ -13,27 +14,52 @@ export interface GithubConfig extends GithubTokenConfig {
   repoName: string;
 }
 
+export interface GHTree {
+  sha: string;
+  tree: Map<string, { sha: string; url: string; wsPath: string }>;
+}
+
 // Only one of them is required
 export const ALLOWED_GH_SCOPES = ['repo', 'public_repo'];
 
+// TODO centralize this thing
 const allowedFilePath = (path: string) => {
   if (path.includes(':')) {
+    console.debug(
+      "@bangle.io/github-storage: Found path with invalid char ':'",
+      path,
+    );
+
     return false;
   }
   if (path.includes('//')) {
+    console.debug(
+      "@bangle.io/github-storage: Found path with invalid char '//'",
+      path,
+    );
+
     return false;
   }
   if (path.length > 150) {
+    console.debug(
+      "@bangle.io/github-storage: Found path larger than the limit'",
+      path,
+    );
+
     return false;
   }
 
   const fileName = getLast(path.split('/'));
 
   if (fileName === undefined) {
+    console.debug('@bangle.io/github-storage: Filename not found', path);
+
     return false;
   }
 
   if (fileName.startsWith('.')) {
+    console.debug("GithubStorage: Filename starts with '.'", path);
+
     return false;
   }
 
@@ -213,7 +239,7 @@ export async function getScopes({
 }: {
   token: GithubTokenConfig['githubToken'];
   abortSignal?: AbortSignal;
-}) {
+}): Promise<string | null> {
   const { headers } = await makeV3GetApi({
     path: '',
     token: token,
@@ -222,6 +248,7 @@ export async function getScopes({
 
   return headers.get('X-OAuth-Scopes');
 }
+
 export async function* getRepos({
   token,
 }: {
@@ -293,15 +320,51 @@ export async function* getRepos({
   } while (hasNextPage);
 }
 
-export async function getTree({
+/**
+ * A higher order function which will provide you a tree data structure of repository.
+ * Behind the scenes (implementation details):
+ * 1. it will make sure to avoid making multiple calls to the github api,
+ *    if the latest commit hash hasn't changed since the last call.
+ * 2. it will also make sure to only allow one request at a time to the github api.
+ */
+export function getRepoTree() {
+  let prevResult: undefined | UnPromisify<ReturnType<typeof _getTree>>;
+  let queue = serialExecuteQueue();
+
+  const cb: typeof _getTree = async (arg) => {
+    const { config, abortSignal } = arg;
+
+    if (prevResult) {
+      let head = await getLatestCommitSha({ config, abortSignal: abortSignal });
+
+      if (head === prevResult.sha) {
+        return prevResult;
+      }
+    }
+
+    const result = await _getTree(arg);
+
+    prevResult = result;
+
+    return result;
+  };
+
+  const serialCb: typeof cb = (arg) => {
+    return queue.add(() => cb(arg));
+  };
+
+  return serialCb;
+}
+
+async function _getTree({
   abortSignal,
   wsName,
   config,
 }: {
-  abortSignal: AbortSignal;
+  abortSignal?: AbortSignal;
   wsName: string;
   config: GithubConfig;
-}): Promise<{ sha: string; tree: Array<{ url: string; wsPath: string }> }> {
+}): Promise<GHTree> {
   const makeRequest = async (
     attempt = 0,
     lastErrorMessage?: string,
@@ -361,25 +424,36 @@ export async function getTree({
     .filter((t) => {
       return allowedFilePath(t.path);
     })
-    .map((t: any) => {
-      const wsPath = wsPathHelpers.fromFsPath(wsName + '/' + t.path);
+    .map(
+      (t: {
+        path: string;
+        url: string;
+        sha: string;
+      }): [string, { url: string; wsPath: string; sha: string }] => {
+        const wsPath = wsPathHelpers.fromFsPath(wsName + '/' + t.path);
 
-      if (!wsPath) {
-        throw new BaseError({
-          message: 'File path contains invalid characters :' + t.path,
-          code: INVALID_GITHUB_RESPONSE,
-        });
-      }
+        // TODO allowedFilePath takes care of this check, should we still do it here?
+        if (!wsPath) {
+          throw new BaseError({
+            message: 'File path contains invalid characters :' + t.path,
+            code: INVALID_GITHUB_RESPONSE,
+          });
+        }
 
-      return {
-        url: t.url,
-        wsPath,
-      };
-    });
+        return [
+          wsPath,
+          {
+            url: t.url,
+            wsPath,
+            sha: t.sha,
+          },
+        ];
+      },
+    );
 
   return {
     sha,
-    tree: list,
+    tree: new Map(list),
   };
 }
 
@@ -454,6 +528,37 @@ export async function pushChanges({
   });
 }
 
+/**
+ * Returns a file corresponding to the given wsPath from
+ * github tree.
+ */
+export async function getFileBlobFromTree({
+  wsPath,
+  tree,
+  config,
+  abortSignal,
+}: {
+  wsPath: string;
+  tree: GHTree;
+  config: GithubConfig;
+  abortSignal?: AbortSignal;
+}): Promise<File | undefined> {
+  const match = tree.tree.get(wsPath);
+
+  if (!match) {
+    return undefined;
+  }
+
+  const { fileName } = wsPathHelpers.resolvePath(wsPath, true);
+
+  return getFileBlob({
+    config,
+    abortSignal,
+    fileBlobUrl: match.url,
+    fileName: fileName,
+  });
+}
+
 export async function getFileBlob({
   fileBlobUrl,
   config,
@@ -463,8 +568,8 @@ export async function getFileBlob({
   fileName: string;
   fileBlobUrl: string;
   config: GithubConfig;
-  abortSignal: AbortSignal;
-}) {
+  abortSignal?: AbortSignal;
+}): Promise<File> {
   return makeV3GetApi({
     isBlob: true,
     path: fileBlobUrl,
@@ -483,8 +588,8 @@ export async function getLatestCommitSha({
   abortSignal,
 }: {
   config: GithubConfig;
-  abortSignal: AbortSignal;
-}) {
+  abortSignal?: AbortSignal;
+}): Promise<string> {
   let path = `/repos/${config.owner}/${config.repoName}/commits/${
     config.branch
   }?cacheBust=${Math.floor(Date.now() / 1000)}`;
@@ -502,19 +607,31 @@ export async function getLatestCommitSha({
     ).data;
   };
 
-  return makeRequest().then(
-    (r) => {
-      return r.sha;
-    },
-    (error) => {
-      if (error.message.includes('Git Repository is empty.')) {
-        return initializeRepo({ config }).then((sha) => {
-          return makeRequest();
-        });
-      }
+  let resp;
+
+  try {
+    resp = await makeRequest();
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes('Git Repository is empty.')
+    ) {
+      await initializeRepo({ config });
+      resp = await makeRequest();
+    } else {
       throw error;
-    },
-  );
+    }
+  }
+
+  const sha = resp?.sha;
+
+  if (typeof sha !== 'string') {
+    throw new BaseError({
+      message: 'Invalid github response for getLatestCommitSha',
+    });
+  }
+
+  return sha;
 }
 
 export async function initializeRepo({

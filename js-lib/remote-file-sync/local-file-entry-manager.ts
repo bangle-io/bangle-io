@@ -286,7 +286,10 @@ export class LocalFileEntry extends BaseFileEntry {
     if (this.isNew) {
       return false;
     }
-    if (this.deleted) {
+    // TODO what does it mean if source is deleted
+    // we are marking isUntouched = false to a deleted file, but
+    // we want to keep it isUntouched = true if the source was also deleted.
+    if (this.isDeleted) {
       return false;
     }
     if (this.isModified) {

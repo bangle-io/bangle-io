@@ -3,11 +3,8 @@ import {
   BangleApplicationStore,
   BangleAppState,
   notification,
-  ui,
   workspace,
-  wsPathHelpers,
 } from '@bangle.io/api';
-import { RELOAD_APPLICATION_DIALOG_NAME } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
 import {
   LocalFileEntryManager,
@@ -17,9 +14,9 @@ import { BaseError, isAbortError } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { handleError } from './error-handling';
-import { GithubRepoTree } from './github-repo-tree';
+import { getRepoTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
-import { syncUntouchedEntries } from './sync';
+import { houseKeeping, pushLocalChanges } from './sync2';
 
 const LOG = true;
 const log = LOG
@@ -104,6 +101,8 @@ export function syncWithGithub(
       }
 
       const workspaceStore = workspace.workspaceSliceKey.getStore(store);
+      const { openedWsPaths } =
+        workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
       const storageOpts = workspace.getStorageProviderOpts()(
         workspaceStore.state,
         workspaceStore.dispatch,
@@ -112,49 +111,79 @@ export function syncWithGithub(
         wsName,
       ) as GithubWsMetadata;
 
-      await GithubRepoTree.refreshCachedData(
+      const wsPaths = openedWsPaths
+        .toArray()
+        .filter((r): r is string => typeof r === 'string');
+      const getTree = getRepoTree();
+      const tree = await getTree({
         wsName,
-        wsMetadata,
-        new AbortController().signal,
-      );
+        config: { ...wsMetadata, repoName: wsName },
+      });
 
-      const { deletedWsPaths, updatedWsPaths } = await syncUntouchedEntries(
-        abortSignal,
+      const { removedWsPaths, updatedWsPaths } = await houseKeeping({
         fileEntryManager,
+        ghConfig: wsMetadata,
+        retainedWsPaths: new Set(wsPaths),
+        tree,
         wsName,
-        wsMetadata,
-      );
+      });
 
-      if (
-        needsEditorReset({
-          openedWsPaths: workspace.workspaceSliceKey.getSliceStateAsserted(
-            workspaceStore.state,
-          ).openedWsPaths,
-          updatedWsPaths,
-          deletedWsPaths,
-        })
-      ) {
-        ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(state, dispatch);
+      await pushLocalChanges({
+        wsName,
+        ghConfig: wsMetadata,
+        tree,
+        fileEntryManager,
+        abortSignal,
+      });
 
-        return;
+      // const { deletedWsPaths, updatedWsPaths } = await syncUntouchedEntries(
+      //   abortSignal,
+      //   fileEntryManager,
+      //   wsName,
+      //   wsMetadata,
+      // );
+
+      // if (
+      //   needsEditorReset({
+      //     openedWsPaths: workspace.workspaceSliceKey.getSliceStateAsserted(
+      //       workspaceStore.state,
+      //     ).openedWsPaths,
+      //     updatedWsPaths,
+      //     deletedWsPaths,
+      //   })
+      // ) {
+      //   ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(state, dispatch);
+
+      //   return;
+      // }
+
+      // const total = (updatedWsPaths.length || 0) + (deletedWsPaths.length || 0);
+
+      if (updatedWsPaths.length === 0 && removedWsPaths.length === 0) {
+        notification.showNotification({
+          severity: 'info',
+          title: 'Everything upto date',
+          uid: 'no-changes',
+        })(store.state, store.dispatch);
+      }
+      if (updatedWsPaths.length > 0) {
+        notification.showNotification({
+          severity: 'info',
+          title: `Synced ${updatedWsPaths.length} file${
+            updatedWsPaths.length === 1 ? '' : 's'
+          }`,
+          uid: 'sync done ' + Math.random(),
+        })(store.state, store.dispatch);
       }
 
-      const total = (updatedWsPaths.length || 0) + (deletedWsPaths.length || 0);
-
-      if (showNotification) {
-        if (total === 0) {
-          notification.showNotification({
-            severity: 'info',
-            title: 'Everything upto date',
-            uid: 'no-changes',
-          })(store.state, store.dispatch);
-        } else {
-          notification.showNotification({
-            severity: 'info',
-            title: `Synced ${total} file${total === 1 ? '' : 's'}`,
-            uid: 'sync done ' + Math.random(),
-          })(store.state, store.dispatch);
-        }
+      if (removedWsPaths.length > 0) {
+        notification.showNotification({
+          severity: 'info',
+          title: `Cleaned ${removedWsPaths.length} file${
+            removedWsPaths.length === 1 ? '' : 's'
+          }`,
+          uid: 'sync done ' + Math.random(),
+        })(store.state, store.dispatch);
       }
 
       return undefined;
@@ -183,21 +212,6 @@ export function syncWithGithub(
       }
     }
   };
-}
-
-function needsEditorReset({
-  openedWsPaths,
-  updatedWsPaths,
-  deletedWsPaths,
-}: {
-  openedWsPaths: wsPathHelpers.OpenedWsPaths;
-  updatedWsPaths: string[];
-  deletedWsPaths: string[];
-}) {
-  return (
-    updatedWsPaths.some((path) => openedWsPaths.has(path)) ||
-    deletedWsPaths.some((path) => openedWsPaths.has(path))
-  );
 }
 
 export function discardLocalChanges(

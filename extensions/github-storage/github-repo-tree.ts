@@ -2,7 +2,7 @@ import * as idb from 'idb-keyval';
 
 import { wsPathHelpers } from '@bangle.io/api';
 
-import { getFileBlob, getTree } from './github-api-helpers';
+import { getFileBlob, getRepoTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
 
 interface Leaf {
@@ -18,6 +18,7 @@ interface GHData {
 }
 
 export class GithubRepoTree {
+  private static getTree = getRepoTree();
   private static async fetchData(
     wsName: string,
     wsMetadata: GithubWsMetadata,
@@ -25,7 +26,7 @@ export class GithubRepoTree {
   ): Promise<GHData> {
     // TODO can move to checking if the gitsha is different using
     // graphql to optimize the request and save v3 api calls
-    const ghRepoTree = await getTree({
+    const ghRepoTree = await GithubRepoTree.getTree({
       wsName,
       abortSignal: abortSignal,
       config: {

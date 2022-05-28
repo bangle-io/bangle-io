@@ -1,22 +1,18 @@
-import waitForExpect from 'wait-for-expect';
-
 import {
   BangleApplicationStore,
-  notification,
   workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
-import { LocalFileEntry, RemoteFileEntry } from '@bangle.io/remote-file-sync';
+import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
-import { assertNotUndefined, randomStr, sleep } from '@bangle.io/utils';
+import { randomStr, sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
-import { syncWithGithub } from '../operations';
-import { pushLocalChanges } from '../sync2';
+import { houseKeeping, pushLocalChanges } from '../sync2';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -46,6 +42,8 @@ if (!githubOwner) {
 }
 
 let defaultNoteWsPath: string;
+let wsName: string, store: BangleApplicationStore;
+let abortController = new AbortController();
 
 beforeEach(async () => {
   githubWsMetadata = {
@@ -84,9 +82,6 @@ beforeEach(async () => {
   await getNoteAsString(defaultNoteWsPath);
 });
 
-let wsName: string, store: BangleApplicationStore;
-let abortController = new AbortController();
-
 afterAll(async () => {
   // wait for network requests to finish
   await sleep(200);
@@ -112,8 +107,9 @@ const getLocalFileEntries = async () => {
   );
 };
 
+let getTree = github.getRepoTree();
 const getRemoteFileEntries = async () => {
-  const tree = await github.getTree({
+  const tree = await getTree({
     abortSignal: abortController.signal,
     config: {
       repoName: wsName,
@@ -124,53 +120,69 @@ const getRemoteFileEntries = async () => {
 
   return Object.fromEntries(
     await Promise.all(
-      tree.tree.map(async (item): Promise<[string, RemoteFileEntry]> => {
-        const { wsName, fileName } = wsPathHelpers.resolvePath(
-          item.wsPath,
-          true,
-        );
-        const file = await github.getFileBlob({
-          abortSignal: abortController.signal,
-          config: {
-            repoName: wsName,
-            ...githubWsMetadata,
-          },
-          fileBlobUrl: item.url,
-          fileName,
-        });
+      [...tree.tree.values()].map(
+        async (item): Promise<[string, RemoteFileEntry]> => {
+          const { wsName, fileName } = wsPathHelpers.resolvePath(
+            item.wsPath,
+            true,
+          );
+          const file = await github.getFileBlob({
+            abortSignal: abortController.signal,
+            config: {
+              repoName: wsName,
+              ...githubWsMetadata,
+            },
+            fileBlobUrl: item.url,
+            fileName,
+          });
 
-        return [
-          item.wsPath,
-          await RemoteFileEntry.newFile({
-            uid: item.wsPath,
-            file: file,
-            deleted: undefined,
-          }),
-        ];
-      }),
+          return [
+            item.wsPath,
+            await RemoteFileEntry.newFile({
+              uid: item.wsPath,
+              file: file,
+              deleted: undefined,
+            }),
+          ];
+        },
+      ),
     ),
   );
 };
 
-const push = async ({
-  entries,
-  sha,
-}: {
-  entries: Parameters<typeof pushLocalChanges>[0];
-  sha?: string;
-}) => {
-  return pushLocalChanges(
-    entries,
-    abortController.signal,
+const push = async () => {
+  return pushLocalChanges({
+    abortSignal: abortController.signal,
+    fileEntryManager: localFileEntryManager,
+    ghConfig: githubWsMetadata,
+    tree: await getTree({
+      abortSignal: abortController.signal,
+      config: {
+        repoName: wsName,
+        ...githubWsMetadata,
+      },
+      wsName,
+    }),
     wsName,
-    githubWsMetadata,
-    sha ||
-      (await github.getBranchHead({
-        abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
-      })),
-    localFileEntryManager,
-  );
+  });
+};
+
+const runHouseKeeping = async (retainedWsPaths: Set<string>) => {
+  return houseKeeping({
+    abortSignal: abortController.signal,
+    fileEntryManager: localFileEntryManager,
+    ghConfig: githubWsMetadata,
+    retainedWsPaths,
+    tree: await getTree({
+      abortSignal: abortController.signal,
+      config: {
+        repoName: wsName,
+        ...githubWsMetadata,
+      },
+      wsName,
+    }),
+    wsName,
+  });
 };
 
 describe('pushLocalChanges', () => {
@@ -194,24 +206,7 @@ describe('pushLocalChanges', () => {
     expect(localEntries[test1WsPath]?.isUntouched).toEqual(false);
     expect(localEntries[test1WsPath]?.source).toBe(undefined);
 
-    await push({
-      entries: new Map([
-        [
-          defaultNoteWsPath,
-          {
-            local: localEntries[defaultNoteWsPath]!,
-            remote: remoteEntries[defaultNoteWsPath],
-          },
-        ],
-        [
-          test1WsPath,
-          {
-            local: localEntries[test1WsPath]!,
-            remote: remoteEntries[test1WsPath],
-          },
-        ],
-      ]),
-    });
+    await push();
 
     remoteEntries = await getRemoteFileEntries();
 
@@ -239,24 +234,7 @@ describe('pushLocalChanges', () => {
     expect(localEntries[test1WsPath]?.isUntouched).toEqual(false);
     expect(localEntries[test1WsPath]?.source).toBeDefined();
 
-    await push({
-      entries: new Map([
-        [
-          defaultNoteWsPath,
-          {
-            local: localEntries[defaultNoteWsPath]!,
-            remote: remoteEntries[defaultNoteWsPath],
-          },
-        ],
-        [
-          test1WsPath,
-          {
-            local: localEntries[test1WsPath]!,
-            remote: remoteEntries[test1WsPath],
-          },
-        ],
-      ]),
-    });
+    await push();
 
     remoteEntries = await getRemoteFileEntries();
     localEntries = await getLocalFileEntries();
@@ -317,12 +295,6 @@ describe('pushLocalChanges', () => {
         deletions: [],
       });
 
-      await syncWithGithub(
-        wsName,
-        abortController.signal,
-        localFileEntryManager,
-      )(store.state, store.dispatch, store);
-
       // syncing with github will create a local entry for test-1.md
       expect(await getNoteAsString(test1WsPath)).toContain(`I am test-1`);
       expect(await getNoteAsString(test2WsPath)).toContain(`I am test-2`);
@@ -360,31 +332,7 @@ describe('pushLocalChanges', () => {
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
 
       // push the deletion to github
-      await push({
-        entries: new Map([
-          [
-            defaultNoteWsPath,
-            {
-              local: localEntries[defaultNoteWsPath]!,
-              remote: remoteEntries[defaultNoteWsPath],
-            },
-          ],
-          [
-            test1WsPath,
-            {
-              local: localEntries[test1WsPath]!,
-              remote: remoteEntries[test1WsPath],
-            },
-          ],
-          [
-            test2WsPath,
-            {
-              local: localEntries[test2WsPath]!,
-              remote: remoteEntries[test2WsPath],
-            },
-          ],
-        ]),
-      });
+      await push();
 
       // remote entry for test1 & test2 should become undefined
       remoteEntries = await getRemoteFileEntries();
@@ -438,31 +386,7 @@ describe('pushLocalChanges', () => {
       let remoteEntries = await getRemoteFileEntries();
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
 
-      await push({
-        entries: new Map([
-          [
-            defaultNoteWsPath,
-            {
-              local: localEntries[defaultNoteWsPath]!,
-              remote: remoteEntries[defaultNoteWsPath],
-            },
-          ],
-          [
-            test1WsPath,
-            {
-              local: localEntries[test1WsPath]!,
-              remote: remoteEntries[test1WsPath],
-            },
-          ],
-          [
-            test2WsPath,
-            {
-              local: localEntries[test2WsPath]!,
-              remote: remoteEntries[test2WsPath],
-            },
-          ],
-        ]),
-      });
+      await push();
 
       remoteEntries = await getRemoteFileEntries();
       localEntries = await getLocalFileEntries();
@@ -478,5 +402,109 @@ describe('pushLocalChanges', () => {
       );
       expect(await getNoteAsString(test2WsPath)).toBeUndefined();
     });
+  });
+});
+
+describe('house keeping', () => {
+  test('creates local for files that are in retained list but do not exist locally', async () => {
+    let test1WsPath = `${wsName}:bunny/test-1.md`;
+    let test2WsPath = `${wsName}:bunny/test-2.md`;
+
+    // Make a direct remote change outside the realm of our app
+    await github.pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await github.getLatestCommitSha({
+        abortSignal: abortController.signal,
+        config: { ...githubWsMetadata, repoName: wsName },
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config: { ...githubWsMetadata, repoName: wsName },
+      additions: [
+        {
+          path: wsPathHelpers.resolvePath(test1WsPath).filePath,
+          base64Content: btoa('I am test-1'),
+        },
+        {
+          path: wsPathHelpers.resolvePath(test2WsPath).filePath,
+          base64Content: btoa('I am test-2'),
+        },
+      ],
+      deletions: [],
+    });
+
+    let localEntries = await getLocalFileEntries();
+    expect(Object.keys(localEntries).sort()).toEqual([defaultNoteWsPath]);
+
+    await runHouseKeeping(new Set([test1WsPath, test2WsPath]));
+
+    // should pull in the notes in retained list and remove defaultNoteWsPath
+    localEntries = await getLocalFileEntries();
+    expect(Object.keys(localEntries).sort()).toEqual([
+      test1WsPath,
+      test2WsPath,
+    ]);
+  });
+
+  test('removes local entry for files that are not modified', async () => {
+    let localEntries = await getLocalFileEntries();
+
+    expect(Object.keys(localEntries).sort()).toEqual([
+      `${wsName}:welcome-to-bangle.md`,
+    ]);
+
+    await runHouseKeeping(new Set());
+
+    localEntries = await getLocalFileEntries();
+
+    // should remove welcome to bangle
+    expect(Object.keys(localEntries).sort()).toEqual([]);
+  });
+
+  test('does not remove a file if it is in retained list', async () => {
+    let localEntries = await getLocalFileEntries();
+
+    expect(Object.keys(localEntries)).toEqual([defaultNoteWsPath]);
+
+    await runHouseKeeping(new Set([defaultNoteWsPath]));
+
+    localEntries = await getLocalFileEntries();
+
+    // should not remove welcome to bangle since it was in retained list
+    expect(Object.keys(localEntries)).toEqual([defaultNoteWsPath]);
+  });
+
+  test('removes a local entry that has been synced to github', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    let localEntries = await getLocalFileEntries();
+
+    expect(Object.keys(localEntries).sort()).toEqual([
+      `${wsName}:bunny/test-1.md`,
+      defaultNoteWsPath,
+    ]);
+
+    await runHouseKeeping(new Set());
+
+    localEntries = await getLocalFileEntries();
+    let remoteEntries = await getRemoteFileEntries();
+
+    // removes default but not test-1 since it was not synced to github
+    expect(Object.keys(localEntries).sort()).toEqual([
+      `${wsName}:bunny/test-1.md`,
+    ]);
+
+    // sync test-1 with github
+    await push();
+
+    await runHouseKeeping(new Set());
+
+    localEntries = await getLocalFileEntries();
+
+    // should remove all
+    expect(Object.keys(localEntries).sort()).toEqual([]);
   });
 });

@@ -15,10 +15,8 @@ import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
 import { discardLocalChanges, syncWithGithub } from '../operations';
 
-let githubWsMetadata: GithubWsMetadata;
-
 jest.setTimeout(30000);
-jest.retryTimes(3);
+// jest.retryTimes(3);
 
 // WARNING: This is a network test and depends on github API.
 //          It will create a bunch of repositories and commits.
@@ -42,7 +40,11 @@ if (!githubOwner) {
   );
 }
 
+let githubWsMetadata: GithubWsMetadata;
 let defaultNoteWsPath: string;
+let wsName: string, store: BangleApplicationStore;
+let abortController = new AbortController();
+let getTree = github.getRepoTree();
 
 beforeEach(async () => {
   githubWsMetadata = {
@@ -79,9 +81,6 @@ beforeEach(async () => {
 
   await getNoteAsString(defaultNoteWsPath);
 });
-
-let wsName: string, store: BangleApplicationStore;
-let abortController = new AbortController();
 
 afterAll(async () => {
   // wait for network requests to finish
@@ -132,7 +131,7 @@ describe('pull changes', () => {
       abortSignal: abortController.signal,
       config: { ...githubWsMetadata, repoName: wsName },
     });
-    const tree = await github.getTree({
+    const tree = await getTree({
       config: { ...githubWsMetadata, repoName: wsName },
       wsName,
       abortSignal: abortController.signal,
@@ -243,13 +242,7 @@ describe('pull changes', () => {
       deletions: [],
     });
 
-    // since we haven't pulled the changes yet, the note should still point to the old content
-    // where test-X notes donot exist
-    expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
-    expect(await getNoteAsString(wsName + ':test-2.md')).toBeUndefined();
-
-    await pullChanges();
-
+    // app should make a network request and get this new note
     expect(await getNoteAsString(wsName + ':test-1.md')).toMatchInlineSnapshot(
       `"doc(paragraph(\\"I am test-1\\"))"`,
     );
@@ -257,7 +250,7 @@ describe('pull changes', () => {
       `"doc(paragraph(\\"I am test-2\\"))"`,
     );
 
-    // delete test-1 and modify the other
+    // // Make a direct remote change: delete test-1 and modify the other
     await github.pushChanges({
       abortSignal: abortController.signal,
       headSha: await github.getBranchHead({
@@ -321,11 +314,10 @@ describe('pull changes', () => {
       deletions: [],
     });
 
-    await pullChanges();
+    workspace.pushWsPath(`${wsName}:test-2.md`)(store.state, store.dispatch);
 
-    // create a local entry of this note, it is needed for updating this note
-    await getNoteAsString(wsName + ':test-2.md');
-    await getNoteAsString(wsName + ':test-1.md');
+    await sleep(0);
+    await pullChanges();
 
     // locally modify test-2 note
     const modifiedText = `test-2 hello I am modified`;
@@ -334,13 +326,6 @@ describe('pull changes', () => {
       createPMNode([], modifiedText),
     )(store.state, store.dispatch, store);
 
-    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
-      modifiedText,
-    );
-
-    await pullChanges();
-
-    // it should retain the local update
     expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
       modifiedText,
     );
@@ -367,7 +352,9 @@ describe('pull changes', () => {
       deletions: [],
     });
 
-    await pullChanges();
+    await expect(pullChanges()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Conflicts not yet supported. 1 conflicts detected"`,
+    );
 
     // only test-1 file's content should be updated
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
