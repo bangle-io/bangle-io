@@ -151,7 +151,7 @@ async function makeGraphql({
   }
 
   if (json.errors && json.errors.length > 0) {
-    console.log('Github Graphql API error', json.errors[0]);
+    console.warn('Github Graphql API error', json.errors[0]);
     throw new BaseError({
       message: json.errors[0].message,
       code: GITHUB_API_ERROR,

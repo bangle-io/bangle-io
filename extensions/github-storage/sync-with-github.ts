@@ -130,7 +130,7 @@ export async function pushLocalChanges({
   ghConfig: GithubWsMetadata;
   tree: GHTree;
   wsName: string;
-}): Promise<void> {
+}): Promise<number> {
   const repoName = wsName;
   const config = { ...ghConfig, repoName: wsName };
   const localEntries = await fileEntryManager.getAllEntries(wsName + ':');
@@ -238,6 +238,8 @@ export async function pushLocalChanges({
       abortSignal,
     },
   );
+
+  return githubDelete.length + githubUpdate.length;
 }
 
 /**

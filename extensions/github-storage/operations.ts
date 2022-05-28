@@ -16,7 +16,7 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
-import { houseKeeping, pushLocalChanges } from './sync2';
+import { houseKeeping, pushLocalChanges } from './sync-with-github';
 
 const LOG = true;
 const log = LOG
@@ -128,7 +128,7 @@ export function syncWithGithub(
         wsName,
       });
 
-      await pushLocalChanges({
+      const pushedCount = await pushLocalChanges({
         wsName,
         ghConfig: wsMetadata,
         tree,
@@ -159,29 +159,20 @@ export function syncWithGithub(
 
       // const total = (updatedWsPaths.length || 0) + (deletedWsPaths.length || 0);
 
-      if (updatedWsPaths.length === 0 && removedWsPaths.length === 0) {
+      let changeCount =
+        updatedWsPaths.length + removedWsPaths.length + pushedCount;
+
+      if (changeCount === 0) {
         notification.showNotification({
           severity: 'info',
           title: 'Everything upto date',
           uid: 'no-changes',
         })(store.state, store.dispatch);
       }
-      if (updatedWsPaths.length > 0) {
+      if (changeCount > 0) {
         notification.showNotification({
           severity: 'info',
-          title: `Synced ${updatedWsPaths.length} file${
-            updatedWsPaths.length === 1 ? '' : 's'
-          }`,
-          uid: 'sync done ' + Math.random(),
-        })(store.state, store.dispatch);
-      }
-
-      if (removedWsPaths.length > 0) {
-        notification.showNotification({
-          severity: 'info',
-          title: `Cleaned ${removedWsPaths.length} file${
-            removedWsPaths.length === 1 ? '' : 's'
-          }`,
+          title: `Synced ${changeCount} file${changeCount === 1 ? '' : 's'}`,
           uid: 'sync done ' + Math.random(),
         })(store.state, store.dispatch);
       }
@@ -189,8 +180,6 @@ export function syncWithGithub(
       return undefined;
     } catch (error) {
       if (isAbortError(error)) {
-        console.log('aborted');
-
         return undefined;
       }
 

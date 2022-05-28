@@ -12,12 +12,12 @@ import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
-import { houseKeeping, pushLocalChanges } from '../sync2';
+import { houseKeeping, pushLocalChanges } from '../sync-with-github';
 
 let githubWsMetadata: GithubWsMetadata;
 
 jest.setTimeout(30000);
-jest.retryTimes(3);
+jest.retryTimes(2);
 
 // WARNING: This is a network test and depends on github API.
 //          It will create a bunch of repositories and commits.
