@@ -114,6 +114,9 @@ export function Notification({
               hintPos="left"
               className="ml-3"
               onClick={async () => {
+                if (b.dismissOnClick) {
+                  onDismiss();
+                }
                 dispatchSerialOperation({ name: b.operation });
               }}
               hint={b.hint}

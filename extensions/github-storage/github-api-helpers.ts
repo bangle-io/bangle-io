@@ -210,7 +210,7 @@ export async function getScopes({
   abortSignal?: AbortSignal;
 }) {
   const { headers } = await makeV3GetApi({
-    path: '',
+    path: `?cacheBust=${Math.floor(Date.now() / 1000)}`,
     token: token,
     abortSignal,
   });
