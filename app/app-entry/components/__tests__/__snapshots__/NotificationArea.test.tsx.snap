@@ -35,7 +35,9 @@ exports[`NotificationArea renders with content 2`] = `
           </div>
           <div
             class="flex-grow"
-          />
+          >
+            Title One
+          </div>
           <div>
             <button
               aria-label="dismiss"
@@ -100,7 +102,9 @@ exports[`NotificationArea renders with content 2`] = `
           </div>
           <div
             class="flex-grow"
-          />
+          >
+            Title Two
+          </div>
           <div>
             <button
               aria-label="dismiss"
@@ -133,7 +137,17 @@ exports[`NotificationArea renders with content 2`] = `
       </div>
       <div
         class="flex flex-row-reverse w-full mt-3"
-      />
+      >
+        <button
+          aria-label="test-btn"
+          class="ml-3 B-ui-components_text-button py-1 px-2 border border-transparent rounded-sm focus:ring-1 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200 "
+          data-bangle-editor-break="true"
+          data-bangle-editor-pos="left"
+          type="button"
+        >
+          Test Op
+        </button>
+      </div>
     </div>
   </div>
 </div>

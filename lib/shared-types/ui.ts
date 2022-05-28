@@ -11,5 +11,7 @@ export interface NotificationPayloadType {
     title: string;
     hint?: string;
     operation: SerialOperationNameType;
+    // whether to dismiss the notification on clicking of the button
+    dismissOnClick?: boolean;
   }>;
 }

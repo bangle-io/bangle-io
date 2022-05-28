@@ -49,6 +49,7 @@ export function handleError(
               title: 'Update token',
               hint: `Update your Github token`,
               operation: OPERATION_UPDATE_GITHUB_TOKEN,
+              dismissOnClick: true,
             },
           ],
         })(store.state, store.dispatch);
