@@ -220,14 +220,6 @@ async function syncEntries(
       uid,
     };
 
-    let remote: typeof local | undefined = rawRemote
-      ? {
-          deleted: undefined,
-          sha: rawRemote.sha,
-          uid,
-        }
-      : undefined;
-
     const ancestor: typeof local | undefined = localEntry.source
       ? {
           deleted: undefined,
@@ -235,6 +227,27 @@ async function syncEntries(
           uid,
         }
       : undefined;
+
+    let remote: typeof local | undefined;
+
+    if (rawRemote) {
+      remote = {
+        deleted: undefined,
+        sha: rawRemote.sha,
+        uid,
+      };
+    }
+    // if a remote entry is not present but we have ancestor information,
+    // it means the remote entry was deleted sometime ago.
+    // We can conclude this because we can only have the ancestor info
+    // if the remote entry was present in the past.
+    else if (!rawRemote && ancestor) {
+      remote = {
+        deleted: Date.now(),
+        sha: ancestor.sha,
+        uid,
+      };
+    }
 
     const sync = fileSync({
       fileA: local,
