@@ -3108,7 +3108,7 @@ __metadata:
   dependencies:
     "@bangle.io/base-error": "workspace:*"
     base64-js: ^1.5.1
-    ts-pattern: ^3.3.5
+    ts-pattern: ^4.0.2
     type-fest: ^2.12.0
   languageName: unknown
   linkType: soft
@@ -23290,10 +23290,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-pattern@npm:^3.3.5":
-  version: 3.3.5
-  resolution: "ts-pattern@npm:3.3.5"
-  checksum: c6f7b9b9014b3f1a7c896267c1b227c7bea46bdc323dd66ac990e3b81f385aeb8abe5de2e694351fe13ae03c2dccb0e0a6869e43007cbe8516762700b309f43d
+"ts-pattern@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "ts-pattern@npm:4.0.2"
+  checksum: 1156c3dea42b9b9373d1c7c96bcd24d82a37701ab7fdd399178d58c350153c2322455d27459c8cb0d8fa445958632ffa776ed612fd656ffd35a94c79d5d3d5b8
   languageName: node
   linkType: hard
 

@@ -7252,7 +7252,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],
             ["base64-js", "npm:1.5.1"],
-            ["ts-pattern", "npm:3.3.5"],
+            ["ts-pattern", "npm:4.0.2"],
             ["type-fest", "npm:2.12.0"]
           ],
           "linkType": "SOFT",
@@ -33039,10 +33039,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ts-pattern", [
-        ["npm:3.3.5", {
-          "packageLocation": "./.yarn/cache/ts-pattern-npm-3.3.5-757eda8e1b-c6f7b9b901.zip/node_modules/ts-pattern/",
+        ["npm:4.0.2", {
+          "packageLocation": "./.yarn/cache/ts-pattern-npm-4.0.2-fd3a52f722-1156c3dea4.zip/node_modules/ts-pattern/",
           "packageDependencies": [
-            ["ts-pattern", "npm:3.3.5"]
+            ["ts-pattern", "npm:4.0.2"]
           ],
           "linkType": "HARD",
         }]

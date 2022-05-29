@@ -24,7 +24,7 @@
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "base64-js": "^1.5.1",
-    "ts-pattern": "^3.3.5"
+    "ts-pattern": "^4.0.2"
   },
   "devDependencies": {
     "type-fest": "^2.12.0"
