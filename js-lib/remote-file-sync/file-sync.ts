@@ -3,36 +3,49 @@ import { match } from 'ts-pattern';
 export interface SyncFileEntry {
   readonly uid: string;
   readonly sha: string;
-  readonly file: File;
   readonly deleted: number | undefined;
 }
 
-const fileEqual = (
-  a?: SyncFileEntry,
-  b?: SyncFileEntry,
-): boolean | undefined => {
+enum TriState {
+  Yes = 'Yes',
+  No = 'No',
+  Unknown = 'Unknown',
+}
+
+function handleTriState<F, G, H>(
+  val: TriState,
+  obj: { onYes: () => F; onNo: () => G; onUnknown: () => H },
+): F | G | H {
+  return match(val)
+    .with(TriState.Yes, obj.onYes)
+    .with(TriState.No, obj.onNo)
+    .with(TriState.Unknown, obj.onUnknown)
+    .exhaustive();
+}
+
+function fileEqual<R extends { sha: string }>(a?: R, b?: R): TriState {
   if (a && b) {
-    return a.sha === b.sha;
+    return a.sha === b.sha ? TriState.Yes : TriState.No;
   }
 
-  return undefined;
-};
+  return TriState.Unknown;
+}
 
-const isModifiedWrtAncestor = ({
+function isModifiedWrtAncestor<R extends { sha: string }>({
   fileEntry,
   ancestorFileEntry,
 }: {
-  fileEntry: SyncFileEntry;
-  ancestorFileEntry: SyncFileEntry;
-}) => {
+  fileEntry: R | undefined;
+  ancestorFileEntry: R | undefined;
+}): TriState {
   const res = fileEqual(fileEntry, ancestorFileEntry);
 
-  if (typeof res === 'boolean') {
-    return !res;
-  }
-
-  return undefined;
-};
+  return handleTriState(res, {
+    onYes: () => TriState.No,
+    onNo: () => TriState.Yes,
+    onUnknown: () => TriState.Unknown,
+  });
+}
 
 /**
  * Definitions:
@@ -44,11 +57,15 @@ const isModifiedWrtAncestor = ({
  * Case C: One of files is undefined
  * Case D: Files are different
  */
-export function fileSync<T extends SyncFileEntry>(
-  fileEntryA?: T,
-  fileEntryB?: T,
-  ancestorFileEntry?: T,
-):
+export function fileSync<T extends SyncFileEntry>({
+  fileA,
+  fileB,
+  ancestor,
+}: {
+  fileA: T | undefined;
+  fileB: T | undefined;
+  ancestor: T | undefined;
+}):
   | undefined
   | {
       action: 'conflict';
@@ -62,37 +79,35 @@ export function fileSync<T extends SyncFileEntry>(
       action: 'set';
       // the target identifier to take action on
       target: 'fileA' | 'fileB';
-      // the file value to use witht the action
-      file: File;
     } {
   // Case A: Both files are defined and are equal
   if (
-    fileEntryA &&
-    fileEntryB &&
-    fileEntryA.sha === fileEntryB.sha &&
-    fileEntryA.deleted === undefined &&
-    fileEntryB.deleted === undefined
+    fileA &&
+    fileB &&
+    fileA.sha === fileB.sha &&
+    fileA.deleted === undefined &&
+    fileB.deleted === undefined
   ) {
     return undefined;
   }
 
   // Case B: Both files are undefined
-  else if (!fileEntryA && !fileEntryB) {
+  else if (!fileA && !fileB) {
     return undefined;
   }
 
   // Case C: fileEntryA is undefined
-  else if (!fileEntryA && fileEntryB) {
-    return syncOneIsDefined(fileEntryB, 'fileB', 'fileA');
+  else if (!fileA && fileB) {
+    return syncOneIsDefined(fileB, 'fileB', 'fileA');
   }
   // Case C: fileEntryB is undefined
-  else if (fileEntryA && !fileEntryB) {
-    return syncOneIsDefined(fileEntryA, 'fileA', 'fileB');
+  else if (fileA && !fileB) {
+    return syncOneIsDefined(fileA, 'fileA', 'fileB');
   }
 
   // Case D files are both defined
-  else if (fileEntryA && fileEntryB) {
-    return syncBothAreDefined(fileEntryA, fileEntryB, ancestorFileEntry);
+  else if (fileA && fileB) {
+    return syncBothAreDefined(fileA, fileB, ancestorFileEntry);
   }
 
   // Our cases above should be exhaustive i.e. it should
@@ -103,10 +118,10 @@ export function fileSync<T extends SyncFileEntry>(
   }
 }
 
-function syncBothAreDefined(
-  fileEntryA: SyncFileEntry,
-  fileEntryB: SyncFileEntry,
-  ancestorFileEntry?: SyncFileEntry | undefined,
+function syncBothAreDefined<T extends SyncFileEntry>(
+  fileEntryA: T,
+  fileEntryB: T,
+  ancestorFileEntry?: T | undefined,
 ) {
   // Case D.2 ancestorFileEntry is not defined
   if (!ancestorFileEntry) {
@@ -128,8 +143,8 @@ function syncBothAreDefined(
     fileEntry,
     ancestorFileEntry,
   }: {
-    fileEntry: SyncFileEntry;
-    ancestorFileEntry: SyncFileEntry;
+    fileEntry: T;
+    ancestorFileEntry: T;
   }): FileState => {
     if (fileEntry.deleted) {
       return FileState.Deleted;
@@ -140,13 +155,17 @@ function syncBothAreDefined(
       fileEntry,
     });
 
-    if (isModified === true) {
-      return FileState.Modified;
-    } else if (isModified === false) {
-      return FileState.NoChange;
-    } else {
-      throw new Error('Invalid file state');
-    }
+    return handleTriState(isModified, {
+      onYes: () => {
+        return FileState.Modified;
+      },
+      onNo: () => {
+        return FileState.NoChange;
+      },
+      onUnknown: () => {
+        throw new Error('Invalid file state');
+      },
+    });
   };
 
   const fileStateA = getFileState({
@@ -178,7 +197,6 @@ function syncBothAreDefined(
         // update target A to match it with fileB
         return {
           action: 'set' as const,
-          file: fileEntryB.file,
           target: 'fileA' as const,
         };
       })
@@ -193,7 +211,6 @@ function syncBothAreDefined(
       .with([FileState.Modified, FileState.NoChange], () => {
         return {
           action: 'set' as const,
-          file: fileEntryA.file,
           target: 'fileB' as const,
         };
       })
@@ -207,7 +224,6 @@ function syncBothAreDefined(
       .with([FileState.Modified, FileState.Deleted], () => {
         return {
           action: 'set' as const,
-          file: fileEntryA.file,
           target: 'fileB' as const,
         };
       })
@@ -222,7 +238,6 @@ function syncBothAreDefined(
       .with([FileState.Deleted, FileState.Modified], () => {
         return {
           action: 'set' as const,
-          file: fileEntryB.file,
           target: 'fileA' as const,
         };
       })
@@ -234,9 +249,9 @@ function syncBothAreDefined(
   );
 }
 
-function syncOneIsDefined(
+function syncOneIsDefined<T extends SyncFileEntry>(
   // fileEntryX is the fileEntry that is defined
-  fileEntryX: SyncFileEntry,
+  fileEntryX: T,
   fileIdentifierX: 'fileA' | 'fileB',
   // Y is the fileEntry that is undefined
   fileIdentifierY: 'fileA' | 'fileB',
@@ -258,7 +273,6 @@ function syncOneIsDefined(
   // update the fileY no matter what ancestor.
   return {
     action: 'set' as const,
-    file: fileEntryX.file,
     target: fileIdentifierY,
   };
 }
