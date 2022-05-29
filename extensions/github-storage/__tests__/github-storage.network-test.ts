@@ -102,8 +102,8 @@ afterAll(async () => {
 });
 
 afterEach(async () => {
-  abortController.abort();
-  store.destroy();
+  abortController?.abort();
+  store?.destroy();
 });
 
 const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
@@ -684,7 +684,9 @@ describe('new note creation', () => {
     );
 
     await sleep(0);
-    await expect(pullChanges()).rejects.toThrowErrorMatchingInlineSnapshot();
+    await expect(pullChanges()).rejects.toThrowError(
+      'Conflicts not yet supported. 1 conflicts detected',
+    );
 
     // the local note stays as is
     expect(await getNoteAsString(wsPath)).toEqual(

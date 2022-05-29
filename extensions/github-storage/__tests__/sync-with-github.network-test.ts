@@ -88,8 +88,8 @@ afterAll(async () => {
 });
 
 afterEach(async () => {
-  abortController.abort();
-  store.destroy();
+  abortController?.abort();
+  store?.destroy();
 });
 
 const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
