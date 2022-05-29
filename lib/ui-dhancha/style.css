@@ -76,6 +76,7 @@ body {
   height: var(--BV-ui-dhancha-activitybar-mobile-width);
   background-color: var(--BV-ui-dhancha-activitybar-bg-color);
   position: sticky;
+  border-bottom: 1px solid transparent;
   top: 0;
   width: 100%;
   z-index: 10;
@@ -86,6 +87,7 @@ body {
   flex-direction: column;
   height: 100vh;
   position: relative;
+  border-bottom: unset;
   top: unset;
 }
 
@@ -105,21 +107,12 @@ body {
   border-left: 1px solid var(--BV-ui-dhancha-note-border-color);
 }
 
-/* The position of the menu when not hidden (and default) */
-
 /* the .up and .down are added in small screens */
 .B-ui-dhancha_activitybar.B-ui-dhancha_up {
-  /* How long to get back up */
-  transition: transform 0.25s;
-  transition-timing-function: ease-in;
-  transform: translate(0, 0);
-  will-change: transform;
+  border-bottom-color: transparent;
+  transition: border-bottom-color 0.3s ease-in;
 }
 
 .B-ui-dhancha_activitybar.B-ui-dhancha_down {
-  /* How long to scroll down */
-  transition: transform 0.6s;
-  transition-timing-function: ease-in;
-  transform: translate(0, -6rem);
-  will-change: transform;
+  border-bottom-color: var(--BV-window-border-color-0);
 }

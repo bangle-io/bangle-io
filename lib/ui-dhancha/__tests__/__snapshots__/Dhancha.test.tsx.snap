@@ -53,7 +53,7 @@ exports[`renders 1`] = `
 </div>
 `;
 
-exports[`renders when widescreen=false 1`] = `
+exports[`renders when widescreen=false and there is no workspaceSidebar 1`] = `
 <div>
   <div>
     <div
@@ -75,6 +75,29 @@ exports[`renders when widescreen=false 1`] = `
           Main content
         </div>
       </main>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders when widescreen=false and there is workspaceSidebar 1`] = `
+<div>
+  <div>
+    <div
+      class="B-ui-dhancha_container"
+    >
+      <div
+        aria-label="Activity Bar"
+        class="B-ui-dhancha_activitybar"
+        role="navigation"
+      >
+        <div>
+          Activitybar
+        </div>
+      </div>
+      <div>
+        Workspace sidebar
+      </div>
     </div>
   </div>
 </div>

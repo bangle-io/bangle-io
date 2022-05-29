@@ -1,4 +1,4 @@
-.B-activitybar_button {
+.B-activitybar_button.BU_widescreen {
   border-left: 2px solid var(--BV-activitybar-bg-color);
 }
 

@@ -6598,6 +6598,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@storybook/react", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:6.4.19"],
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],
             ["@types/react", "npm:17.0.43"],
