@@ -16,6 +16,7 @@ export interface GithubConfig extends GithubTokenConfig {
 
 export interface GHTree {
   sha: string;
+  // a map of wsPath and the mentioned object below
   tree: Map<string, { sha: string; url: string; wsPath: string }>;
 }
 

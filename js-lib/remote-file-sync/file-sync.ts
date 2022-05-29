@@ -1,10 +1,13 @@
 import { match } from 'ts-pattern';
 
-export interface SyncFileEntry {
+export interface FileSyncObj {
   readonly uid: string;
   readonly sha: string;
-  readonly deleted: number | undefined;
+  readonly deleted?: number;
 }
+
+const NOOP = { action: 'noop' as const, target: undefined };
+const CONFLICT = { action: 'conflict' as const, target: undefined };
 
 enum TriState {
   Yes = 'Yes',
@@ -57,7 +60,7 @@ function isModifiedWrtAncestor<R extends { sha: string }>({
  * Case C: One of files is undefined
  * Case D: Files are different
  */
-export function fileSync<T extends SyncFileEntry>({
+export function fileSync<T extends FileSyncObj>({
   fileA,
   fileB,
   ancestor,
@@ -66,9 +69,10 @@ export function fileSync<T extends SyncFileEntry>({
   fileB: T | undefined;
   ancestor: T | undefined;
 }):
-  | undefined
+  | { action: 'noop'; target: undefined }
   | {
       action: 'conflict';
+      target: undefined;
     }
   | {
       action: 'delete';
@@ -88,12 +92,12 @@ export function fileSync<T extends SyncFileEntry>({
     fileA.deleted === undefined &&
     fileB.deleted === undefined
   ) {
-    return undefined;
+    return NOOP;
   }
 
   // Case B: Both files are undefined
   else if (!fileA && !fileB) {
-    return undefined;
+    return NOOP;
   }
 
   // Case C: fileEntryA is undefined
@@ -107,7 +111,7 @@ export function fileSync<T extends SyncFileEntry>({
 
   // Case D files are both defined
   else if (fileA && fileB) {
-    return syncBothAreDefined(fileA, fileB, ancestorFileEntry);
+    return syncBothAreDefined(fileA, fileB, ancestor);
   }
 
   // Our cases above should be exhaustive i.e. it should
@@ -118,7 +122,7 @@ export function fileSync<T extends SyncFileEntry>({
   }
 }
 
-function syncBothAreDefined<T extends SyncFileEntry>(
+function syncBothAreDefined<T extends FileSyncObj>(
   fileEntryA: T,
   fileEntryB: T,
   ancestorFileEntry?: T | undefined,
@@ -127,9 +131,7 @@ function syncBothAreDefined<T extends SyncFileEntry>(
   if (!ancestorFileEntry) {
     // this happens when a new file is created
     // at both places at the same time
-    return {
-      action: 'conflict' as const,
-    };
+    return CONFLICT;
   }
 
   // Case D.1 ancestorFileEntry is defined
@@ -190,7 +192,7 @@ function syncBothAreDefined<T extends SyncFileEntry>(
     match<[FileState, FileState]>([fileStateA, fileStateB])
       // Case D.1.1
       .with([FileState.NoChange, FileState.NoChange], () => {
-        return undefined;
+        return NOOP;
       })
       // Case D.1.2
       .with([FileState.NoChange, FileState.Modified], () => {
@@ -216,9 +218,7 @@ function syncBothAreDefined<T extends SyncFileEntry>(
       })
       // Case D.1.5
       .with([FileState.Modified, FileState.Modified], () => {
-        return {
-          action: 'conflict' as const,
-        };
+        return CONFLICT;
       })
       // Case D.1.6
       .with([FileState.Modified, FileState.Deleted], () => {
@@ -243,13 +243,13 @@ function syncBothAreDefined<T extends SyncFileEntry>(
       })
       // Case D.1.9
       .with([FileState.Deleted, FileState.Deleted], () => {
-        return undefined;
+        return NOOP;
       })
       .exhaustive()
   );
 }
 
-function syncOneIsDefined<T extends SyncFileEntry>(
+function syncOneIsDefined<T extends FileSyncObj>(
   // fileEntryX is the fileEntry that is defined
   fileEntryX: T,
   fileIdentifierX: 'fileA' | 'fileB',
@@ -266,7 +266,7 @@ function syncOneIsDefined<T extends SyncFileEntry>(
   // C.1 if file is deleted, do nothing as the Y location
   // file is undefined.
   if (fileEntryX.deleted) {
-    return undefined;
+    return NOOP;
   }
 
   // for anything other than deleted we want to

@@ -1,9 +1,9 @@
-import type { SyncFileEntry } from '../file-sync';
+import type { FileSyncObj } from '../file-sync';
 import { fileSync } from '../file-sync';
 
 const createFileEntry = (
-  fileEntry: Partial<SyncFileEntry> = {},
-): SyncFileEntry => ({
+  fileEntry: Partial<FileSyncObj> = {},
+): FileSyncObj => ({
   uid: 'test:one.md',
   deleted: undefined,
   sha: '3edsds',
@@ -18,7 +18,10 @@ describe('File states', () => {
       ancestor: undefined,
     });
 
-    expect(result).toBeUndefined();
+    expect(result).toEqual({
+      action: 'noop',
+      target: undefined,
+    });
   });
 
   test('Case B works when both files are undefined', async () => {
@@ -27,7 +30,10 @@ describe('File states', () => {
       fileB: undefined,
       ancestor: undefined,
     });
-    expect(result).toBeUndefined();
+    expect(result).toEqual({
+      action: 'noop',
+      target: undefined,
+    });
   });
 
   test('Case C works when file B is undefined but file A is defined', async () => {
@@ -63,7 +69,10 @@ describe('File states', () => {
       ancestor: undefined,
     });
 
-    expect(result).toEqual(undefined);
+    expect(result).toEqual({
+      action: 'noop',
+      target: undefined,
+    });
   });
 
   test('Case C works when file B is undefined but file A is deleted', async () => {
@@ -73,7 +82,10 @@ describe('File states', () => {
       ancestor: undefined,
     });
 
-    expect(result).toEqual(undefined);
+    expect(result).toEqual({
+      action: 'noop',
+      target: undefined,
+    });
   });
 
   describe('Case D both are defined', () => {
@@ -86,6 +98,7 @@ describe('File states', () => {
 
       expect(result).toEqual({
         action: 'conflict',
+        target: undefined,
       });
 
       result = fileSync({
@@ -96,6 +109,7 @@ describe('File states', () => {
 
       expect(result).toEqual({
         action: 'conflict',
+        target: undefined,
       });
     });
 
@@ -171,7 +185,10 @@ describe('File states', () => {
         ancestor: undefined,
       });
 
-      await expect(result).toBeUndefined();
+      await expect(result).toEqual({
+        action: 'noop',
+        target: undefined,
+      });
     });
 
     test('Case D.1.2 A:no change, B:modified', async () => {
@@ -194,7 +211,10 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: '123sha', deleted: 1 }),
       });
 
-      expect(result).toEqual(undefined);
+      expect(result).toEqual({
+        action: 'noop',
+        target: undefined,
+      });
     });
 
     test('Case D.1.3 A:no change, B:deleted', async () => {
@@ -288,7 +308,10 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'abc' }),
       });
 
-      await expect(result).toEqual(undefined);
+      await expect(result).toEqual({
+        action: 'noop',
+        target: undefined,
+      });
     });
   });
 });

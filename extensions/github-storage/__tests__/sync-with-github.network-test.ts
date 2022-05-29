@@ -12,7 +12,7 @@ import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
-import { houseKeeping, pushLocalChanges } from '../sync-with-github';
+import { pushLocalChanges } from '../sync-with-github';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -150,25 +150,8 @@ const getRemoteFileEntries = async () => {
   );
 };
 
-const push = async () => {
+const push = async (retainedWsPaths = new Set<string>()) => {
   return pushLocalChanges({
-    abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager,
-    ghConfig: githubWsMetadata,
-    tree: await getTree({
-      abortSignal: abortController.signal,
-      config: {
-        repoName: wsName,
-        ...githubWsMetadata,
-      },
-      wsName,
-    }),
-    wsName,
-  });
-};
-
-const runHouseKeeping = async (retainedWsPaths: Set<string>) => {
-  return houseKeeping({
     abortSignal: abortController.signal,
     fileEntryManager: localFileEntryManager,
     ghConfig: githubWsMetadata,
@@ -332,17 +315,17 @@ describe('pushLocalChanges', () => {
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
 
       // push the deletion to github
-      await push();
+      await push(new Set([test1WsPath, test2WsPath]));
 
       // remote entry for test1 & test2 should become undefined
       remoteEntries = await getRemoteFileEntries();
       expect(remoteEntries[test1WsPath]).toBe(undefined);
       expect(remoteEntries[test2WsPath]).toBe(undefined);
 
-      // local entry should stay as deleted
+      // once changes have been pushed to github, local entries should be removed
+      // completely from the system
       localEntries = await getLocalFileEntries();
-      expect(localEntries[test1WsPath]?.isDeleted).toBe(true);
-
+      expect(localEntries[test1WsPath]).toBeUndefined();
       expect(await getNoteAsString(test1WsPath)).toBeUndefined();
     });
 
@@ -386,7 +369,7 @@ describe('pushLocalChanges', () => {
       let remoteEntries = await getRemoteFileEntries();
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
 
-      await push();
+      await push(new Set([test1WsPath, test2WsPath]));
 
       remoteEntries = await getRemoteFileEntries();
       localEntries = await getLocalFileEntries();
@@ -394,8 +377,9 @@ describe('pushLocalChanges', () => {
       expect(remoteEntries[test1WsPath]?.uid).toBeDefined();
       expect(remoteEntries[test2WsPath]).toBe(undefined);
 
-      expect(localEntries[test2WsPath]?.isModified).toBe(false);
-      expect(localEntries[test2WsPath]?.isDeleted).toBe(true);
+      // once github changes have been pushed, local entry for test2 should be removed
+      // completely from the system
+      expect(localEntries[test2WsPath]).toBeUndefined();
 
       expect(await getNoteAsString(test1WsPath)).toContain(
         'I am updated test-1',
@@ -435,7 +419,7 @@ describe('house keeping', () => {
     let localEntries = await getLocalFileEntries();
     expect(Object.keys(localEntries).sort()).toEqual([defaultNoteWsPath]);
 
-    await runHouseKeeping(new Set([test1WsPath, test2WsPath]));
+    await push(new Set([test1WsPath, test2WsPath]));
 
     // should pull in the notes in retained list and remove defaultNoteWsPath
     localEntries = await getLocalFileEntries();
@@ -452,7 +436,7 @@ describe('house keeping', () => {
       `${wsName}:welcome-to-bangle.md`,
     ]);
 
-    await runHouseKeeping(new Set());
+    await push(new Set());
 
     localEntries = await getLocalFileEntries();
 
@@ -465,7 +449,7 @@ describe('house keeping', () => {
 
     expect(Object.keys(localEntries)).toEqual([defaultNoteWsPath]);
 
-    await runHouseKeeping(new Set([defaultNoteWsPath]));
+    await push(new Set([defaultNoteWsPath]));
 
     localEntries = await getLocalFileEntries();
 
@@ -487,7 +471,7 @@ describe('house keeping', () => {
       defaultNoteWsPath,
     ]);
 
-    await runHouseKeeping(new Set());
+    await push(new Set());
 
     localEntries = await getLocalFileEntries();
     let remoteEntries = await getRemoteFileEntries();
@@ -500,7 +484,7 @@ describe('house keeping', () => {
     // sync test-1 with github
     await push();
 
-    await runHouseKeeping(new Set());
+    await push(new Set());
 
     localEntries = await getLocalFileEntries();
 
