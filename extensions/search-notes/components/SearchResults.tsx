@@ -5,6 +5,7 @@ import { NodeSelection, Selection } from '@bangle.dev/pm';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
@@ -79,6 +80,7 @@ export function SearchResults({
   const {
     openedWsPaths: { primaryWsPath },
   } = useWorkspaceContext();
+  const { widescreen, bangleStore } = useUIManagerContext();
   const [currentlyClicked, updateCurrentlyClicked] = useState<null | {
     wsPath: string;
     match: SearchMatch;
@@ -212,7 +214,17 @@ export function SearchResults({
                         : '',
                     )}
                     onClick={() => {
-                      if (primaryEditor && primaryEditor.destroyed !== true) {
+                      // if not in a widescreen close the sidebar
+                      // after click
+                      if (!widescreen) {
+                        changeSidebar(null)(
+                          bangleStore.state,
+                          bangleStore.dispatch,
+                        );
+                      } else if (
+                        primaryEditor &&
+                        primaryEditor.destroyed !== true
+                      ) {
                         updateCurrentlyClicked({
                           wsPath: r.uid,
                           match: matchObj,
