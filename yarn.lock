@@ -2168,8 +2168,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2200,8 +2200,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2261,8 +2261,8 @@ __metadata:
     "@sentry/tracing": ^6.18.1
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     comlink: ^4.3.1
     prop-types: ^15.7.2
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
@@ -2298,8 +2298,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2418,8 +2418,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2458,8 +2458,8 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2497,8 +2497,8 @@ __metadata:
     "@react-aria/ssr": ^3.1.2
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2531,8 +2531,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2549,8 +2549,8 @@ __metadata:
     "@bangle.io/is-abort-error": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2584,8 +2584,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2613,8 +2613,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
@@ -2670,8 +2670,8 @@ __metadata:
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2696,7 +2696,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/fzf-search@workspace:js-lib/fzf-search"
   dependencies:
-    "@types/react": ^17.0.43
+    "@types/react": ^17.0.45
     fzf: ^0.5.1
     react: ^17.0.2
     tslib: ^2.3.1
@@ -2722,8 +2722,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     base64-js: ^1.5.1
     idb-keyval: ^5.1.5
     react: ^17.0.2
@@ -2764,8 +2764,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2808,8 +2808,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2833,8 +2833,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     chrono-node: ^2.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2864,8 +2864,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     emoji-lookup-data: ^1.3.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2884,8 +2884,8 @@ __metadata:
     "@bangle.dev/tooltip": 0.28.11
     "@bangle.dev/utils": 0.28.11
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2933,8 +2933,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
@@ -2965,8 +2965,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -2990,8 +2990,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -3028,8 +3028,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -3063,7 +3063,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@playwright/test": ^1.21.1
-    "@types/prettier": ^2.4.4
+    "@types/prettier": ^2.6.3
     http-server: ^0.12.3
     prettier: ^2.6.0
     tslib: ^2.3.1
@@ -3093,8 +3093,8 @@ __metadata:
     "@bangle.dev/test-helpers": 0.28.11
     "@bangle.dev/tooltip": 0.28.11
     "@bangle.dev/utils": 0.28.11
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -3160,8 +3160,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -3257,8 +3257,8 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.11.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     reselect: ^4.1.5
@@ -3294,8 +3294,8 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.0
     react: ^17.0.2
     tslib: ^2.3.1
@@ -3313,8 +3313,8 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -3345,8 +3345,8 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/history": ^4.7.11
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3417,8 +3417,8 @@ __metadata:
     "@storybook/react": ^6.5.5
     "@storybook/testing-library": ^0.0.11
     "@storybook/theming": ^6.5.5
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     babel-loader: ^8.2.5
     postcss: ^8.4.12
     react: ^17.0.2
@@ -3468,8 +3468,8 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3502,8 +3502,8 @@ __metadata:
     "@storybook/react": ^6.5.5
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
@@ -3547,13 +3547,12 @@ __metadata:
     "@react-types/menu": ^3.5.3
     "@react-types/select": ^3.5.5
     "@react-types/shared": ^3.12.0
-    "@stitches/react": ^1.2.7
     "@storybook/react": ^6.5.5
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3573,8 +3572,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     autoprefixer: ^10.4.4
     framer-motion: ^5.0.1
     postcss: ^8.4.12
@@ -3606,8 +3605,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     dayjs: ^1.10.7
     debounce-fn: ^5.0.0
     react: ^17.0.2
@@ -3661,7 +3660,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@sentry/browser": ^6.18.1
-    "@zip.js/zip.js": ^2.4.5
+    "@zip.js/zip.js": ^2.4.12
     fast-deep-equal: ^3.1.3
     idb-keyval: ^5.1.5
     tslib: ^2.3.1
@@ -3707,8 +3706,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.1
@@ -3726,8 +3725,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -5429,15 +5428,6 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^1.7.0
   checksum: 7d3aef54e17c1073101cb64d953157c19d62a40e261a30923fa1ee337b049c5f29cc47b1f0c477880f42b5659848ba9ab897607ac8ea4acd5c30ddcfac57fca6
-  languageName: node
-  linkType: hard
-
-"@stitches/react@npm:^1.2.7":
-  version: 1.2.7
-  resolution: "@stitches/react@npm:1.2.7"
-  peerDependencies:
-    react: ">= 16.3.0"
-  checksum: f4a66d208607a5f72d902d06388c0e3c5cec6cccc207e3b01228d3dc8e5b09742f4191fe932fac84c19ece825df174009025ba5939511501914785ed26a2c767
   languageName: node
   linkType: hard
 
@@ -7234,7 +7224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^27.4.1":
+"@types/jest@npm:*":
   version: 27.4.1
   resolution: "@types/jest@npm:27.4.1"
   dependencies:
@@ -7251,6 +7241,16 @@ __metadata:
     jest-diff: ^26.0.0
     pretty-format: ^26.0.0
   checksum: ae39675412f08d884926254e9b12bfd2b5a4e4d204c94d3148cb942174a474930d0c60540133c968f22241d4712b7940c96cbc883096eb326a4d5b206fb78bd0
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^27.5.1":
+  version: 27.5.1
+  resolution: "@types/jest@npm:27.5.1"
+  dependencies:
+    jest-matcher-utils: ^27.0.0
+    pretty-format: ^27.0.0
+  checksum: be20e39f7aaf17179109c0060d0a0489cec2034d4e2e28a631284c7ecd13c5ae52f62697a33a0e89b03b6cfe54e9d5e8c2bd387ab2bd90d6071d68c63b86d1e3
   languageName: node
   linkType: hard
 
@@ -7406,10 +7406,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prettier@npm:^2.0.0, @types/prettier@npm:^2.1.5, @types/prettier@npm:^2.4.4":
+"@types/prettier@npm:^2.0.0, @types/prettier@npm:^2.1.5":
   version: 2.4.4
   resolution: "@types/prettier@npm:2.4.4"
   checksum: 2c2cc57efd49c7d8907415a72f96c84a6dd8696dd3bf8aa4ca3a667427bebf71cbfbc912673624bdfc935d272d1c008c639cf155f6449315990a4dc110f0d216
+  languageName: node
+  linkType: hard
+
+"@types/prettier@npm:^2.6.3":
+  version: 2.6.3
+  resolution: "@types/prettier@npm:2.6.3"
+  checksum: e1836699ca189fff6d2a73dc22e028b6a6f693ed1180d5998ac29fa197caf8f85aa92cb38db642e4a370e616b451cb5722ad2395dab11c78e025a1455f37d1f0
   languageName: node
   linkType: hard
 
@@ -7557,12 +7564,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:*, @types/react-dom@npm:>=16.9.0, @types/react-dom@npm:^17.0.14":
+"@types/react-dom@npm:*, @types/react-dom@npm:>=16.9.0":
   version: 17.0.14
   resolution: "@types/react-dom@npm:17.0.14"
   dependencies:
     "@types/react": "*"
   checksum: b54cd0ef573236b3d87fe7493e6d1c36d8b4ca37a3b46364272a5c91ac178e3296b68ea1aeb299ce68f12ad663c5720ee890d0539b14881c6754bdcbdb0befa0
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^17.0.17":
+  version: 17.0.17
+  resolution: "@types/react-dom@npm:17.0.17"
+  dependencies:
+    "@types/react": ^17
+  checksum: 23caf98aa03e968811560f92a2c8f451694253ebe16b670929b24eaf0e7fa62ba549abe9db0ac028a9d8a9086acd6ab9c6c773f163fa21224845edbc00ba6232
   languageName: node
   linkType: hard
 
@@ -7584,7 +7600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16.9.0, @types/react@npm:^17.0.43":
+"@types/react@npm:*, @types/react@npm:>=16.9.0":
   version: 17.0.43
   resolution: "@types/react@npm:17.0.43"
   dependencies:
@@ -7592,6 +7608,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 981b0993f5b3ea9d3488b8cc883201e8ae47ba7732929f788f450a79fd72829e658080d5084e67caa008e58d989b0abc1d5f36ff0a1cda09315ea3a3c0c9dc11
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^17, @types/react@npm:^17.0.45":
+  version: 17.0.45
+  resolution: "@types/react@npm:17.0.45"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 3cc13a02824c13f6fa4807a83abd065ac1d9943359e76bd995cc7cd2b4148c1176ebd54a30a9f4eb8a0f141ff359d712876f256c4fee707e4290607ef8410b3e
   languageName: node
   linkType: hard
 
@@ -7753,7 +7780,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.15.0, @typescript-eslint/eslint-plugin@npm:^5.5.0":
+"@typescript-eslint/eslint-plugin@npm:^5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/eslint-plugin@npm:5.26.0"
+  dependencies:
+    "@typescript-eslint/scope-manager": 5.26.0
+    "@typescript-eslint/type-utils": 5.26.0
+    "@typescript-eslint/utils": 5.26.0
+    debug: ^4.3.4
+    functional-red-black-tree: ^1.0.1
+    ignore: ^5.2.0
+    regexpp: ^3.2.0
+    semver: ^7.3.7
+    tsutils: ^3.21.0
+  peerDependencies:
+    "@typescript-eslint/parser": ^5.0.0
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: ea75e57dfb6f95f39d7a4a90f25d5618548ca6026e8836c0962c141908f3bfb6d4a744d7597934572fa25e88c97efb8b9cd25e85785474256d5ebe58f9c1df30
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/eslint-plugin@npm:^5.5.0":
   version: 5.15.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.15.0"
   dependencies:
@@ -7787,7 +7837,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.15.0, @typescript-eslint/parser@npm:^5.5.0":
+"@typescript-eslint/parser@npm:^5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/parser@npm:5.26.0"
+  dependencies:
+    "@typescript-eslint/scope-manager": 5.26.0
+    "@typescript-eslint/types": 5.26.0
+    "@typescript-eslint/typescript-estree": 5.26.0
+    debug: ^4.3.4
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 3c13a989d1c5aa3d9050203ca53fa28642fe49b9f09b668b7c424f13bfc8352e0a57d2ae16c55cd9b4f9fb98d730a440b0270a94c827938579df8097f90bdfac
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/parser@npm:^5.5.0":
   version: 5.15.0
   resolution: "@typescript-eslint/parser@npm:5.15.0"
   dependencies:
@@ -7824,6 +7891,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/scope-manager@npm:5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/scope-manager@npm:5.26.0"
+  dependencies:
+    "@typescript-eslint/types": 5.26.0
+    "@typescript-eslint/visitor-keys": 5.26.0
+  checksum: 56db69b8dc3502261c403c1217f32fb7e8244c1f192c3b486733ad8cd3e7672b365d2c6da7ec8ff40113c4da507c04f4e00b6104ca68579c19525cac828a631b
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/type-utils@npm:5.15.0":
   version: 5.15.0
   resolution: "@typescript-eslint/type-utils@npm:5.15.0"
@@ -7840,6 +7917,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/type-utils@npm:5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/type-utils@npm:5.26.0"
+  dependencies:
+    "@typescript-eslint/utils": 5.26.0
+    debug: ^4.3.4
+    tsutils: ^3.21.0
+  peerDependencies:
+    eslint: "*"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: cafd9fba76df8b184adcb5e6f66e3f0c3b8c6e98debe585abde9d3c4372feee0bc156ed5eed89cd0747938e45c8a4d3d65c43dd561b47e8e12a0207c85e2dc6f
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/types@npm:5.15.0":
   version: 5.15.0
   resolution: "@typescript-eslint/types@npm:5.15.0"
@@ -7851,6 +7944,13 @@ __metadata:
   version: 5.17.0
   resolution: "@typescript-eslint/types@npm:5.17.0"
   checksum: 06ed4c3c3f0a05bee9c23b6cb5eb679336c0f4769beb28848e8ce674f726fec88adba059f20e0b0f7271685d7f5480931b3bcafcf6b60044b93da162e29f3f68
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/types@npm:5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/types@npm:5.26.0"
+  checksum: 98798616d832da8e5ef61f050e4e72ed921a162cb4ce2b2dfe0a317c66998157e832f449aeab21a1fdfd806e7134091bc1a9446b1089f4687786b646ad8738e7
   languageName: node
   linkType: hard
 
@@ -7890,6 +7990,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/typescript-estree@npm:5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/typescript-estree@npm:5.26.0"
+  dependencies:
+    "@typescript-eslint/types": 5.26.0
+    "@typescript-eslint/visitor-keys": 5.26.0
+    debug: ^4.3.4
+    globby: ^11.1.0
+    is-glob: ^4.0.3
+    semver: ^7.3.7
+    tsutils: ^3.21.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 2cf147629474952725593da64827a7e4e39f79614019529d0d6e5b89236c55f3607c6b4a24f160dbc5978f4cfd60f96fcb573a770c2877f8e29d7552b40e2135
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/utils@npm:5.15.0":
   version: 5.15.0
   resolution: "@typescript-eslint/utils@npm:5.15.0"
@@ -7922,6 +8040,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/utils@npm:5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/utils@npm:5.26.0"
+  dependencies:
+    "@types/json-schema": ^7.0.9
+    "@typescript-eslint/scope-manager": 5.26.0
+    "@typescript-eslint/types": 5.26.0
+    "@typescript-eslint/typescript-estree": 5.26.0
+    eslint-scope: ^5.1.1
+    eslint-utils: ^3.0.0
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  checksum: c16828ba6bfbe3b0b6e9dadeece1cfd2345141bcd13824f99fe210c76e5ddb11f6f79e61705cafa421c549657da12d1700a1316d24c2eeaee6179b08f512b5fb
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/visitor-keys@npm:5.15.0":
   version: 5.15.0
   resolution: "@typescript-eslint/visitor-keys@npm:5.15.0"
@@ -7939,6 +8073,16 @@ __metadata:
     "@typescript-eslint/types": 5.17.0
     eslint-visitor-keys: ^3.0.0
   checksum: 333468277b50e2fc381ba1b99ccb410046c422e0329c791c51bea62e705edd16ba97f75b668c6945a3ea3dc43b89a1739693ea60bfa241c67ce42e8b474e5048
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:5.26.0":
+  version: 5.26.0
+  resolution: "@typescript-eslint/visitor-keys@npm:5.26.0"
+  dependencies:
+    "@typescript-eslint/types": 5.26.0
+    eslint-visitor-keys: ^3.3.0
+  checksum: 4a5085d19e677f3b44ca4455bba85fd1a3be4d7d2e96bb22738a7497f6f4d16bfdee51059454a78b1e108d8e1593b1a31be40764a66448945118277cff5eff02
   languageName: node
   linkType: hard
 
@@ -8341,10 +8485,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zip.js/zip.js@npm:^2.4.5":
-  version: 2.4.5
-  resolution: "@zip.js/zip.js@npm:2.4.5"
-  checksum: c2d7d9a7b61f600c4e7d06f1d087076ddab11c7e235539573c86e83f2c3d0286c2fba7ebd23d577c15230fd6220234a5257d08516f2ce839c498f50a609baae8
+"@zip.js/zip.js@npm:^2.4.12":
+  version: 2.4.12
+  resolution: "@zip.js/zip.js@npm:2.4.12"
+  checksum: c49ced7526bf8c9a729640ba44c24bdef011de9ceb782f25682e35ccdd5e27c9f30763289f640f1bcc82dae534d0194378303ef098c024b646822e4ee140e33c
   languageName: node
   linkType: hard
 
@@ -9431,13 +9575,13 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/jest": ^27.4.1
-    "@types/prettier": ^2.4.4
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/jest": ^27.5.1
+    "@types/prettier": ^2.6.3
+    "@types/react": ^17.0.45
+    "@types/react-dom": ^17.0.17
     "@types/wicg-file-system-access": ^2020.9.5
-    "@typescript-eslint/eslint-plugin": ^5.15.0
-    "@typescript-eslint/parser": ^5.15.0
+    "@typescript-eslint/eslint-plugin": ^5.26.0
+    "@typescript-eslint/parser": ^5.26.0
     "@vitejs/plugin-react-refresh": ^1.3.6
     autoprefixer: ^10.4.4
     babel-eslint: ^10.1.0
@@ -11323,7 +11467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3":
+"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -21317,6 +21461,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.7":
+  version: 7.3.7
+  resolution: "semver@npm:7.3.7"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
   languageName: node
   linkType: hard
 
