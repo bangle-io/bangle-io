@@ -358,7 +358,7 @@ export function assertSignal(signal: AbortSignal) {
 }
 
 // Throws an abort error if a signal is already aborted.
-export function asssertNotUndefined(
+export function assertNotUndefined(
   value: unknown,
   message: string,
 ): asserts value {

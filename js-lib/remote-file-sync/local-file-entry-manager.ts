@@ -56,7 +56,9 @@ export class LocalFileEntryManager {
       const remoteFileEntry = await getRemoteFileEntry?.(uid);
 
       if (remoteFileEntry) {
-        await this.updateFileEntry(remoteFileEntry.fork().markDeleted());
+        await this.updateFileEntry(
+          remoteFileEntry.forkLocalFileEntry().markDeleted(),
+        );
       }
       // if file doesn't exist locally or source
       // do nothing
@@ -133,7 +135,7 @@ export class LocalFileEntryManager {
 
     if (remoteFileEntry) {
       // update our local entry
-      await this.updateFileEntry(remoteFileEntry.fork());
+      await this.updateFileEntry(remoteFileEntry.forkLocalFileEntry());
 
       return this.readFile(uid, getRemoteFileEntry);
     }
@@ -141,7 +143,7 @@ export class LocalFileEntryManager {
     return undefined;
   }
 
-  // overwrites the current entry with the provided one
+  // removes (completely) file entry from the storage
   async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
     return this.persistenceProvider.delete(uid);
   }
@@ -284,7 +286,10 @@ export class LocalFileEntry extends BaseFileEntry {
     if (this.isNew) {
       return false;
     }
-    if (this.deleted) {
+    // TODO what does it mean if source is deleted
+    // we are marking isUntouched = false to a deleted file, but
+    // we want to keep it isUntouched = true if the source was also deleted.
+    if (this.isDeleted) {
       return false;
     }
     if (this.isModified) {
@@ -364,7 +369,7 @@ export class RemoteFileEntry extends BaseFileEntry {
     });
   }
 
-  fork(): LocalFileEntry {
+  forkLocalFileEntry(): LocalFileEntry {
     return new LocalFileEntry({
       ...this,
       source: {

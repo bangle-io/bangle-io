@@ -7,7 +7,7 @@ import {
   extensionRegistrySliceKey,
 } from '@bangle.io/extension-registry';
 import { StorageOpts } from '@bangle.io/storage';
-import { asssertNotUndefined } from '@bangle.io/utils';
+import { assertNotUndefined } from '@bangle.io/utils';
 import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
@@ -40,7 +40,7 @@ function getStorageProvider() {
   return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
-    asssertNotUndefined(
+    assertNotUndefined(
       wsName,
       'wsName must be defined before accessing storage provider',
     );
@@ -67,7 +67,7 @@ function getNoteFormatProvider() {
   return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
-    asssertNotUndefined(
+    assertNotUndefined(
       wsName,
       'wsName must be defined before accessing getNoteFormatProvider',
     );

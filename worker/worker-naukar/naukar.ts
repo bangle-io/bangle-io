@@ -5,7 +5,7 @@ import type { Manager } from '@bangle.dev/collab-server';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
-  asssertNotUndefined,
+  assertNotUndefined,
   BaseError,
   getSelfType,
   isWorkerGlobalScope,
@@ -42,7 +42,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   // main-dispatch-end
 
   const handleCollabRequest: Manager['handleRequest'] = async (...args) => {
-    asssertNotUndefined(
+    assertNotUndefined(
       storeRef.current,
       'handleCollabRequest called but store is not yet defined',
     );
@@ -51,7 +51,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
     let editorManager = getEditorManager()(store.state, store.dispatch);
 
-    asssertNotUndefined(
+    assertNotUndefined(
       editorManager,
       'handleCollabRequest called but editorManager is not yet defined',
     );

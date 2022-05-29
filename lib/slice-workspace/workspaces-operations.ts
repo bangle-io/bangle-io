@@ -8,7 +8,7 @@ import {
   pageSliceKey,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
-import { asssertNotUndefined } from '@bangle.io/utils';
+import { assertNotUndefined } from '@bangle.io/utils';
 import { validWsName } from '@bangle.io/ws-path';
 
 import {
@@ -42,7 +42,7 @@ export function listWorkspaces() {
         store.state,
       );
 
-      asssertNotUndefined(workspacesInfo, 'workspacesInfo cannot be undefined');
+      assertNotUndefined(workspacesInfo, 'workspacesInfo cannot be undefined');
 
       // only return the not deleted ones
       return Object.values(workspacesInfo).filter((r) => !r.deleted);

@@ -10,20 +10,13 @@ import { randomStr, sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
-import {
-  createRepo,
-  getLatestCommitSha,
-  getTree,
-  pushChanges,
-} from '../github-api-helpers';
+import * as github from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
 import { discardLocalChanges, syncWithGithub } from '../operations';
 
-let githubWsMetadata: GithubWsMetadata;
-
 jest.setTimeout(30000);
-jest.retryTimes(3);
+jest.retryTimes(2);
 
 // WARNING: This is a network test and depends on github API.
 //          It will create a bunch of repositories and commits.
@@ -47,7 +40,11 @@ if (!githubOwner) {
   );
 }
 
+let githubWsMetadata: GithubWsMetadata;
 let defaultNoteWsPath: string;
+let wsName: string, store: BangleApplicationStore;
+let abortController = new AbortController();
+let getTree = github.getRepoTree();
 
 beforeEach(async () => {
   githubWsMetadata = {
@@ -58,7 +55,7 @@ beforeEach(async () => {
 
   abortController = new AbortController();
   wsName = 'bangle-test-' + randomStr() + Date.now();
-  await createRepo({
+  await github.createRepo({
     description: 'Created by Bangle.io tests',
     config: {
       ...githubWsMetadata,
@@ -84,9 +81,6 @@ beforeEach(async () => {
 
   await getNoteAsString(defaultNoteWsPath);
 });
-
-let wsName: string, store: BangleApplicationStore;
-let abortController = new AbortController();
 
 afterAll(async () => {
   // wait for network requests to finish
@@ -133,7 +127,7 @@ describe('pull changes', () => {
     ]);
 
     // SHAs via these two APIs should always match as per Github API
-    const sha = await getLatestCommitSha({
+    const sha = await github.getLatestCommitSha({
       abortSignal: abortController.signal,
       config: { ...githubWsMetadata, repoName: wsName },
     });
@@ -146,7 +140,7 @@ describe('pull changes', () => {
     expect(sha).toEqual(tree.sha);
 
     // Make a direct remote change outside the realm of our app
-    await pushChanges({
+    await github.pushChanges({
       abortSignal: abortController.signal,
       headSha: sha,
       commitMessage: { headline: 'Test: external update' },
@@ -193,13 +187,13 @@ describe('pull changes', () => {
   });
 
   test('if last remote note is deleted and repo becomes empty', async () => {
-    const sha = await getLatestCommitSha({
+    const sha = await github.getLatestCommitSha({
       abortSignal: abortController.signal,
       config: { ...githubWsMetadata, repoName: wsName },
     });
 
     // Make a direct remote change outside the realm of our app
-    await pushChanges({
+    await github.pushChanges({
       abortSignal: abortController.signal,
       headSha: sha,
       commitMessage: { headline: 'Test: external update' },
@@ -225,11 +219,11 @@ describe('pull changes', () => {
     expect(note).toBeUndefined();
   });
 
-  test('remote changes: deleted and another is modified', async () => {
+  test('variety of remote changes: deleted and another is modified', async () => {
     // Make a direct remote change outside the realm of our app
-    await pushChanges({
+    await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -248,13 +242,7 @@ describe('pull changes', () => {
       deletions: [],
     });
 
-    // since we haven't pulled the changes yet, the note should still point to the old content
-    // where test-X notes donot exist
-    expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
-    expect(await getNoteAsString(wsName + ':test-2.md')).toBeUndefined();
-
-    await pullChanges();
-
+    // app should make a network request and get this new note
     expect(await getNoteAsString(wsName + ':test-1.md')).toMatchInlineSnapshot(
       `"doc(paragraph(\\"I am test-1\\"))"`,
     );
@@ -262,10 +250,10 @@ describe('pull changes', () => {
       `"doc(paragraph(\\"I am test-2\\"))"`,
     );
 
-    // delete one and modify the other
-    await pushChanges({
+    // // Make a direct remote change: delete test-1 and modify the other
+    await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -286,6 +274,7 @@ describe('pull changes', () => {
 
     await pullChanges();
 
+    // local copy test-1 should be deleted
     expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
     expect(await getNoteAsString(wsName + ':test-2.md')).toMatchInlineSnapshot(
       `"doc(paragraph(\\"I am test-2 but modified\\"))"`,
@@ -294,6 +283,7 @@ describe('pull changes', () => {
     workspace.refreshWsPaths()(store.state, store.dispatch);
 
     await waitForExpect(async () => {
+      // store should only have two files left, the test-2.md and the default note
       expect(
         await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
           .wsPaths,
@@ -301,11 +291,88 @@ describe('pull changes', () => {
     });
   });
 
-  test('a note which was locally modified should not updated when pulling changes', async () => {
+  test('a note which was locally modified should not be updated when pulling changes', async () => {
     // Make a direct remote change outside the realm of our app
-    await pushChanges({
+    await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await getLatestCommitSha({
+      headSha: await github.getBranchHead({
+        abortSignal: abortController.signal,
+        config: { ...githubWsMetadata, repoName: wsName },
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config: { ...githubWsMetadata, repoName: wsName },
+      additions: [
+        {
+          path: 'test-1.md',
+          base64Content: btoa('I am test-1'),
+        },
+        {
+          path: 'test-2.md',
+          base64Content: btoa('I am test-2'),
+        },
+      ],
+      deletions: [],
+    });
+
+    workspace.pushWsPath(`${wsName}:test-2.md`)(store.state, store.dispatch);
+
+    await sleep(0);
+    await pullChanges();
+
+    // locally modify test-2 note
+    const modifiedText = `test-2 hello I am modified`;
+    await workspace.writeNote(
+      `${wsName}:test-2.md`,
+      createPMNode([], modifiedText),
+    )(store.state, store.dispatch, store);
+
+    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
+      modifiedText,
+    );
+
+    // make an external change
+    await github.pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await github.getBranchHead({
+        abortSignal: abortController.signal,
+        config: { ...githubWsMetadata, repoName: wsName },
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config: { ...githubWsMetadata, repoName: wsName },
+      additions: [
+        {
+          path: 'test-1.md',
+          base64Content: btoa('I am test-1 updated remotely'),
+        },
+        {
+          path: 'test-2.md',
+          base64Content: btoa('I am test-2 updated remotely'),
+        },
+      ],
+      deletions: [],
+    });
+
+    await expect(pullChanges()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Conflicts not yet supported. 1 conflicts detected"`,
+    );
+
+    // only test-1 file's content should be updated
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
+      'I am test-1 updated remotely',
+    );
+
+    // note 2 should not be updated as it was locally modified
+    // FYI: this is a merge conflict situation
+    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
+      modifiedText,
+    );
+  });
+
+  test('a note which was locally modified should not be updated if it was deleted upstream', async () => {
+    // Make a direct remote change outside the realm of our app
+    await github.pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -326,55 +393,38 @@ describe('pull changes', () => {
 
     await pullChanges();
 
-    // get note to create a locally entry which is needed for writing
+    // create a local entry of note, it is needed for updating this note
     await getNoteAsString(wsName + ':test-2.md');
 
+    // locally modify test-2 note
     const modifiedText = `test-2 hello I am modified`;
-    const docModified = createPMNode([], modifiedText);
-
-    await workspace.writeNote(`${wsName}:test-2.md`, docModified)(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await workspace.writeNote(
+      `${wsName}:test-2.md`,
+      createPMNode([], modifiedText),
+    )(store.state, store.dispatch, store);
 
     expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
       modifiedText,
     );
 
-    await pullChanges();
-
-    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
-      modifiedText,
-    );
-
-    await pushChanges({
+    // external change: delete test-2
+    await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
-      commitMessage: { headline: 'Test: external update 1' },
+      commitMessage: { headline: 'Test: external update 2' },
       config: { ...githubWsMetadata, repoName: wsName },
-      additions: [
-        {
-          path: 'test-1.md',
-          base64Content: btoa('I am test-1 updated remotely'),
-        },
+      additions: [],
+      deletions: [
         {
           path: 'test-2.md',
-          base64Content: btoa('I am test-2 updated remotely'),
         },
       ],
-      deletions: [],
     });
 
     await pullChanges();
-
-    // only test-1 file's content should be updated
-    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
-      'I am test-1 updated remotely',
-    );
 
     expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
       modifiedText,
@@ -410,11 +460,11 @@ describe('discard local changes', () => {
     expect(await getNoteAsString(wsPath)).toEqual(undefined);
   });
 
-  test('updated file local is reverted', async () => {
+  test('locally modified file is reverted', async () => {
     // Make a direct remote change outside the realm of our app
-    await pushChanges({
+    await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
@@ -459,9 +509,9 @@ describe('discard local changes', () => {
 
   test('deleted file locally is placed back', async () => {
     // Make a direct remote change outside the realm of our app
-    await pushChanges({
+    await github.pushChanges({
       abortSignal: abortController.signal,
-      headSha: await getLatestCommitSha({
+      headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),

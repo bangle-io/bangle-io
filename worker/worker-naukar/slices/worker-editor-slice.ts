@@ -15,7 +15,7 @@ import {
   workspaceSliceKey,
   writeNote,
 } from '@bangle.io/slice-workspace';
-import { asssertNotUndefined } from '@bangle.io/utils';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 import { setupCollabManager } from '../collab-manager';
 import {
@@ -62,11 +62,11 @@ export function editorManagerReset(extensionRegistry: ExtensionRegistry) {
     const editorManager =
       workerEditorSliceKey.getSliceStateAsserted(state).editorManager;
 
-    asssertNotUndefined(
+    assertNotUndefined(
       editorManager,
       'cannot reset an undefined editor manager',
     );
-    asssertNotUndefined(
+    assertNotUndefined(
       disk,
       'cannot reset an editor manager with undefined disk',
     );
@@ -118,7 +118,7 @@ export function editorManagerSlice() {
 }
 
 export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
-  asssertNotUndefined(
+  assertNotUndefined(
     config.extensionRegistry,
     'extensionRegistry needs to be defined',
   );
@@ -227,7 +227,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
 
 export const flushNaukarEffect = workerEditorSliceKey.effect(
   (state, config) => {
-    asssertNotUndefined(
+    assertNotUndefined(
       config.extensionRegistry,
       'extensionRegistry needs to be defined',
     );
