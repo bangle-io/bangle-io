@@ -27,7 +27,6 @@
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "base64-js": "^1.5.1",
     "idb-keyval": "^5.1.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

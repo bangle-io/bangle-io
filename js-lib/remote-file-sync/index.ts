@@ -7,3 +7,4 @@ export {
   LocalFileEntryManager,
   RemoteFileEntry,
 } from './local-file-entry-manager';
+export { fileToBase64 } from './read-file-as-text';
