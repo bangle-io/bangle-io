@@ -16,7 +16,7 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
-import { houseKeeping, pushLocalChanges } from './sync-with-github';
+import { pushLocalChanges } from './sync-with-github';
 
 const LOG = true;
 const log = LOG
@@ -120,22 +120,16 @@ export function syncWithGithub(
         config: { ...wsMetadata, repoName: wsName },
       });
 
-      const { removedWsPaths, updatedWsPaths } = await houseKeeping({
-        fileEntryManager,
+      const changeCount = await pushLocalChanges({
+        wsName,
         ghConfig: wsMetadata,
         retainedWsPaths: new Set(wsPaths),
-        tree,
-        wsName,
-      });
-
-      const pushedCount = await pushLocalChanges({
-        wsName,
-        ghConfig: wsMetadata,
         tree,
         fileEntryManager,
         abortSignal,
       });
 
+      // TODO reload application until we figure out better way to reset editor
       // const { deletedWsPaths, updatedWsPaths } = await syncUntouchedEntries(
       //   abortSignal,
       //   fileEntryManager,
@@ -158,9 +152,6 @@ export function syncWithGithub(
       // }
 
       // const total = (updatedWsPaths.length || 0) + (deletedWsPaths.length || 0);
-
-      let changeCount =
-        updatedWsPaths.length + removedWsPaths.length + pushedCount;
 
       if (changeCount === 0) {
         notification.showNotification({

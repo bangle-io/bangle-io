@@ -41,6 +41,7 @@ export class LocalFileEntryManager {
     );
   }
 
+  // Soft delete the file entry
   async deleteFile(
     uid: string,
     getRemoteFileEntry?: (uid: string) => Promise<RemoteFileEntry | undefined>,
@@ -68,7 +69,10 @@ export class LocalFileEntryManager {
   async getAllEntries(uidPrefix: string = ''): Promise<LocalFileEntry[]> {
     return this.persistenceProvider.getValues().then((entries) => {
       return entries
-        .map((r) => LocalFileEntry.fromPlainObj(r))
+        .filter(Boolean)
+        .map((r) => {
+          return LocalFileEntry.fromPlainObj(r);
+        })
         .filter((r) => r.uid.startsWith(uidPrefix));
     });
   }
@@ -144,6 +148,7 @@ export class LocalFileEntryManager {
   }
 
   // removes (completely) file entry from the storage
+  // USE WITH CAUTION! prefer deleteFile in most cases
   async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
     return this.persistenceProvider.delete(uid);
   }

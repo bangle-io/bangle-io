@@ -6,7 +6,7 @@ import {
   workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
-import { LocalFileEntry } from '@bangle.io/remote-file-sync/local-file-entry-manager';
+import { LocalFileEntry } from '@bangle.io/remote-file-sync';
 import {
   ActionButton,
   ButtonContent,
