@@ -6,9 +6,10 @@ import {
   useOverlay,
   usePreventScroll,
 } from '@react-aria/overlays';
-import React, { useCallback } from 'react';
+import { useViewportSize } from '@react-aria/utils';
+import React, { useCallback, useEffect } from 'react';
 
-import { cx } from '@bangle.io/utils';
+import { cx, usePrevious } from '@bangle.io/utils';
 
 import { Button } from '../Button/Button';
 import { LoadingCircleIcon } from '../Icons';
@@ -72,6 +73,35 @@ export function Dialog({
   const { dialogProps, titleProps } = useDialog({ role: 'alertdialog' }, ref);
 
   usePreventScroll();
+
+  let viewport = useViewportSize();
+
+  let prevHeight = usePrevious(viewport.height);
+
+  // This hook exists to deal with iOS issues where the dialog
+  // input can get hidden by the keyboard.
+
+  useEffect(() => {
+    const diff = prevHeight && viewport.height - prevHeight;
+
+    // Once the keyboard is dismissed, the dialog will be scrolled to
+    // be at top.
+    if (diff && diff > 100) {
+      if (ref.current) {
+        ref.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // there keyboard was shown, scroll into the element that is in focus.
+    if (diff && diff < -100) {
+      let active = document.activeElement;
+      let container = ref.current;
+
+      if (container && active && container.contains(active)) {
+        active.scrollIntoView();
+      }
+    }
+  }, [viewport.height, prevHeight]);
 
   return (
     <OverlayContainer
