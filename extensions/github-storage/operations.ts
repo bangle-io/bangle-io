@@ -12,10 +12,9 @@ import {
 } from '@bangle.io/remote-file-sync';
 import { BaseError, isAbortError } from '@bangle.io/utils';
 
-import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
+import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
-import { sliceKey } from './github-storage-slice';
 import { GithubWsMetadata } from './helpers';
 import { pushLocalChanges } from './sync-with-github';
 
@@ -89,7 +88,7 @@ export function syncWithGithub(
   wsName: string,
   abortSignal: AbortSignal,
   fileEntryManager: LocalFileEntryManager,
-  showNotification?: boolean,
+  verboseNotifications = true,
 ) {
   return async (
     state: BangleAppState,
@@ -102,12 +101,14 @@ export function syncWithGithub(
       }
 
       if (isSyncPending()(state)) {
-        notification.showNotification({
-          severity: 'warning',
-          title: 'Sync already in progress',
-          uid: 'gh-sync-in-progress' + Date.now(),
-          transient: true,
-        })(store.state, store.dispatch);
+        if (verboseNotifications === true) {
+          notification.showNotification({
+            severity: 'warning',
+            title: 'Sync already in progress',
+            uid: 'gh-sync-in-progress' + Date.now(),
+            transient: true,
+          })(store.state, store.dispatch);
+        }
 
         return undefined;
       }
@@ -177,12 +178,14 @@ export function syncWithGithub(
 
       if (typeof changeCount === 'number') {
         if (changeCount === 0) {
-          notification.showNotification({
-            severity: 'info',
-            title: 'Everything upto date',
-            uid: 'no-changes',
-            transient: true,
-          })(store.state, store.dispatch);
+          if (verboseNotifications === true) {
+            notification.showNotification({
+              severity: 'info',
+              title: 'Everything upto date',
+              uid: 'no-changes',
+              transient: true,
+            })(store.state, store.dispatch);
+          }
         }
         if (changeCount > 0) {
           notification.showNotification({
@@ -203,14 +206,12 @@ export function syncWithGithub(
       if (error instanceof BaseError) {
         handleError(error as any, store);
 
-        if (showNotification) {
-          notification.showNotification({
-            severity: 'error',
-            title: 'Error syncing',
-            content: error.message,
-            uid: 'sync error ' + Math.random(),
-          })(store.state, store.dispatch);
-        }
+        notification.showNotification({
+          severity: 'error',
+          title: 'Error syncing',
+          content: error.message,
+          uid: 'sync error ' + Math.random(),
+        })(store.state, store.dispatch);
 
         return false;
       } else {
@@ -301,8 +302,8 @@ export function discardLocalChanges(
 }
 
 function isSyncPending() {
-  return sliceKey.queryOp((state) => {
-    const res = sliceKey.getSliceState(state);
+  return ghSliceKey.queryOp((state) => {
+    const res = ghSliceKey.getSliceState(state);
 
     if (!res) {
       return true;
@@ -318,12 +319,12 @@ function startSync(
   wsMetadata: GithubWsMetadata,
   fileEntryManager: LocalFileEntryManager,
 ) {
-  return sliceKey.asyncOp(async (_, dispatch, store) => {
+  return ghSliceKey.asyncOp(async (_, dispatch, store) => {
     if (isSyncPending()(store.state)) {
       return { status: 'pending' as const };
     }
 
-    sliceKey.getDispatch(store.dispatch)({
+    ghSliceKey.getDispatch(store.dispatch)({
       name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
       value: {
         syncState: true,

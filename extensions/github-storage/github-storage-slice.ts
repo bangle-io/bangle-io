@@ -1,27 +1,20 @@
-import { Slice, SliceKey } from '@bangle.io/api';
+import { page, Slice, workspace } from '@bangle.io/api';
 
+import { ghSliceKey } from './common';
 import { handleError } from './error-handling';
+import { localFileEntryManager } from './file-entry-manager';
+import { syncWithGithub } from './operations';
 
 const LOG = true;
 const debug = LOG
   ? console.debug.bind(console, 'github-storage-slice')
   : () => {};
 
-export const sliceKey = new SliceKey<
-  {
-    syncState: boolean;
-  },
-  {
-    name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
-    value: {
-      syncState: boolean;
-    };
-  }
->('slice::@bangle.io/github-storage:slice-key');
+const SYNC_INTERVAL = 1000 * 60;
 
 export function githubStorageSlice() {
   return new Slice({
-    key: sliceKey,
+    key: ghSliceKey,
     state: {
       init() {
         return {
@@ -42,7 +35,56 @@ export function githubStorageSlice() {
         }
       },
     },
-    sideEffect: [],
+    sideEffect() {
+      let interval: ReturnType<typeof setInterval> | undefined;
+
+      return {
+        deferredOnce(store) {
+          interval = setInterval(() => {
+            const wsName = workspace.getWsName()(
+              workspace.workspaceSliceKey.getState(store.state),
+            );
+
+            if (wsName) {
+              debug('Period Github sync in background');
+              syncWithGithub(
+                wsName,
+                new AbortController().signal,
+                localFileEntryManager,
+                false,
+              )(store.state, store.dispatch, store);
+            }
+          }, SYNC_INTERVAL);
+        },
+        destroy() {
+          if (interval) {
+            clearInterval(interval);
+          }
+        },
+        update(store, prevState) {
+          const didChange = page.pageLifeCycleTransitionedTo(
+            ['passive', 'terminated', 'hidden'],
+            prevState,
+          )(store.state);
+
+          if (didChange) {
+            const wsName = workspace.getWsName()(
+              workspace.workspaceSliceKey.getState(store.state),
+            );
+
+            if (wsName) {
+              debug('Running Github sync in background');
+              syncWithGithub(
+                wsName,
+                new AbortController().signal,
+                localFileEntryManager,
+                false,
+              )(store.state, store.dispatch, store);
+            }
+          }
+        },
+      };
+    },
     onError: (error: any, store) => {
       return handleError(error, store);
     },
