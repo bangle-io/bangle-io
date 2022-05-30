@@ -78,7 +78,6 @@ beforeEach(async () => {
   });
 
   ({ store } = createBasicTestStore({
-    slices: [],
     extensions: [GithubStorageExt],
     onError: (err) => {
       throw err;
@@ -114,11 +113,21 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const pullChanges = async () => {
   notification.clearAllNotifications()(store.state, store.dispatch);
-  await syncWithGithub(wsName, abortController.signal, localFileEntryManager)(
-    store.state,
-    store.dispatch,
-    store,
-  );
+  let result = await syncWithGithub(
+    wsName,
+    abortController.signal,
+    localFileEntryManager,
+  )(store.state, store.dispatch, store);
+
+  if (result === 'merge-conflict') {
+    throw new Error('Encountered conflicts');
+  }
+
+  if (!result) {
+    throw new Error('Unexpected state of sync');
+  }
+
+  return result;
 };
 
 /**
@@ -365,7 +374,7 @@ describe('pull changes', () => {
   });
 
   describe('T5: remote modified, local modified - conflict', () => {
-    test('product a conflict', async () => {
+    test('produces a conflict', async () => {
       // Make a direct remote change outside the realm of our app
       // setup up the two test notes
       await github.pushChanges({
@@ -429,7 +438,7 @@ describe('pull changes', () => {
       });
 
       await expect(pullChanges()).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Conflicts not yet supported. 1 conflicts detected"`,
+        `"Encountered conflicts"`,
       );
 
       // file should still be able to read the new changes
@@ -684,9 +693,7 @@ describe('new note creation', () => {
     );
 
     await sleep(0);
-    await expect(pullChanges()).rejects.toThrowError(
-      'Conflicts not yet supported. 1 conflicts detected',
-    );
+    await expect(pullChanges()).rejects.toThrowError('Encountered conflicts');
 
     // the local note stays as is
     expect(await getNoteAsString(wsPath)).toEqual(

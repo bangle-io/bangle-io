@@ -95,7 +95,7 @@ test('updating and removing notifications', () => {
   let action2 = {
     name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION' as const,
     value: {
-      uid: 'test-1',
+      uids: ['test-1'],
     },
   };
 
@@ -132,7 +132,7 @@ test('removing not found notification preserves state instance', () => {
   let newState = state.applyAction({
     name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
     value: {
-      uid: 'not-found',
+      uids: ['not-found'],
     },
   });
 

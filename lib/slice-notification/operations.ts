@@ -5,6 +5,9 @@ import { notificationSliceKey } from './notification-slice';
 
 export function showNotification(notification: NotificationPayloadType) {
   return notificationSliceKey.op((_, dispatch) => {
+    if (notification.transient && !notification.createdAt) {
+      notification.createdAt = Date.now();
+    }
     dispatch({
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
       value: notification,
@@ -15,13 +18,13 @@ export function showNotification(notification: NotificationPayloadType) {
 export function dismissNotification({
   uid,
 }: {
-  uid: NotificationPayloadType['uid'];
+  uid: NotificationPayloadType['uid'] | Array<NotificationPayloadType['uid']>;
 }) {
   return notificationSliceKey.op((_, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
       value: {
-        uid,
+        uids: Array.isArray(uid) ? uid : [uid],
       },
     });
   });

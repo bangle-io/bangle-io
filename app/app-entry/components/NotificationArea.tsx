@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import { notification, useSerialOperationContext } from '@bangle.io/api';
 import { useSliceState } from '@bangle.io/bangle-store-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
@@ -16,12 +16,41 @@ import {
   InformationCircleIcon,
   TextButton,
 } from '@bangle.io/ui-components';
+import { useInterval } from '@bangle.io/utils';
+
+const CLEAR_INTERVAL = 8000;
 
 export function NotificationArea() {
   const {
     store,
     sliceState: { notifications },
   } = useSliceState(notificationSliceKey);
+
+  useInterval(
+    () => {
+      let currentTime = Date.now();
+      let toRemove = notifications
+        .filter((n) => {
+          return (
+            n.transient &&
+            n.createdAt &&
+            CLEAR_INTERVAL < currentTime - n.createdAt
+          );
+        })
+        .map((n) => {
+          return n.uid;
+        });
+
+      if (toRemove.length > 0) {
+        notification.dismissNotification({ uid: toRemove })(
+          store.state,
+          store.dispatch,
+        );
+      }
+    },
+    [notifications, store],
+    2000,
+  );
 
   return (
     <div className="fixed bottom-0 right-0 z-50">

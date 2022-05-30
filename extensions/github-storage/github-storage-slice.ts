@@ -1,21 +1,21 @@
-import { Slice, SliceKey, workspace } from '@bangle.io/api';
+import { Slice, SliceKey } from '@bangle.io/api';
 
 import { handleError } from './error-handling';
-import { localFileEntryManager } from './file-entry-manager';
-import { isCurrentWorkspaceGithubStored, syncWithGithub } from './operations';
 
 const LOG = true;
 const debug = LOG
   ? console.debug.bind(console, 'github-storage-slice')
   : () => {};
 
-const sliceKey = new SliceKey<
+export const sliceKey = new SliceKey<
   {
-    refreshGithubCounter: number;
+    syncState: boolean;
   },
   {
-    name: 'action::@bangle.io/github-storage:INCREMENT_REFRESH_GITHUB_COUNTER';
-    value: {};
+    name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
+    value: {
+      syncState: boolean;
+    };
   }
 >('slice::@bangle.io/github-storage:slice-key');
 
@@ -25,19 +25,19 @@ export function githubStorageSlice() {
     state: {
       init() {
         return {
-          refreshGithubCounter: 0,
+          syncState: false,
         };
       },
-      apply(action, value, appState) {
+      apply(action, state) {
         switch (action.name) {
-          case 'action::@bangle.io/github-storage:INCREMENT_REFRESH_GITHUB_COUNTER': {
+          case 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE': {
             return {
-              ...value,
-              refreshGithubCounter: value.refreshGithubCounter + 1,
+              ...state,
+              syncState: action.value.syncState,
             };
           }
           default: {
-            return value;
+            return state;
           }
         }
       },
@@ -48,31 +48,3 @@ export function githubStorageSlice() {
     },
   });
 }
-
-const pullGithubChangesEffect = sliceKey.effect(() => {
-  return {
-    async deferredUpdate(store, prevState) {
-      const wsName = workspace.workspaceSliceKey.getValueIfChanged(
-        'wsName',
-        store.state,
-        prevState,
-      );
-
-      if (!wsName) {
-        return;
-      }
-
-      if (!isCurrentWorkspaceGithubStored(wsName)(store.state)) {
-        return;
-      }
-
-      debug('running pullGithubChangesEffect');
-
-      await syncWithGithub(
-        wsName,
-        new AbortController().signal,
-        localFileEntryManager,
-      )(store.state, store.dispatch, store);
-    },
-  };
-});

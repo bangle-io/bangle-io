@@ -95,6 +95,7 @@ export function createBasicTestStore<
         workspaceSlice(),
         useEditorManagerSlice ? editorManagerSlice() : undefined,
         notificationSlice(),
+        ...extensionRegistry.getSlices(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
       opts: {

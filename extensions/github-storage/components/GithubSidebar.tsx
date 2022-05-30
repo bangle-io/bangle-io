@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  notification,
   useBangleStoreContext,
   useSerialOperationContext,
   workspace,
@@ -98,12 +99,19 @@ function ModifiedEntries({
   );
 
   return !modifiedEntries || modifiedEntries.length === 0 ? (
-    <div className="px-3">Nothing to sync</div>
+    <div className="px-3 text-lg">Everything is synced 🧘‍♂️!</div>
   ) : (
     <div>
       <div className="px-4 my-4">
         <ActionButton
           onPress={() => {
+            notification.showNotification({
+              title: 'Starting sync',
+              severity: 'info',
+              uid: 'starting-sync' + Date.now(),
+              transient: true,
+            })(store.state, store.dispatch);
+
             dispatchSerialOperation({ name: OPERATION_SYNC_GITHUB_CHANGES });
           }}
           ariaLabel="Press sync to push any local changes and pull any new remote changes"

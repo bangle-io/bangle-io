@@ -12,7 +12,7 @@ export const notificationSliceKey = new SliceKey<
     }
   | {
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION';
-      value: { uid: string };
+      value: { uids: string[] };
     }
   | {
       name: 'action::@bangle.io/slice-notification:CLEAR_ALL';
@@ -53,12 +53,16 @@ export function notificationSlice() {
           }
 
           case 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION': {
-            const { uid } = action.value;
+            const { uids } = action.value;
 
-            if (state.notifications.some((n) => n.uid === uid)) {
+            let newNotifications = state.notifications.filter((n) => {
+              return !uids.includes(n.uid);
+            });
+
+            if (newNotifications.length !== state.notifications.length) {
               return {
                 ...state,
-                notifications: state.notifications.filter((n) => n.uid !== uid),
+                notifications: newNotifications,
               };
             }
 
@@ -108,10 +112,10 @@ export function notificationSlice() {
         return notificationSliceKey.actionSerializer(
           actionName,
           (action) => ({
-            uid: action.value.uid,
+            uids: action.value.uids,
           }),
           (serialVal) => ({
-            uid: serialVal.uid,
+            uids: serialVal.uids,
           }),
         );
       },
