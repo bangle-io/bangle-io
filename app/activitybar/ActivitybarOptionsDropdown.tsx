@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
+  CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_NEW_NOTE,
   CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
@@ -10,8 +11,13 @@ import {
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
   CorePalette,
 } from '@bangle.io/constants';
+import { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import { togglePaletteType, toggleTheme } from '@bangle.io/slice-ui';
+import {
+  changeSidebar,
+  togglePaletteType,
+  toggleTheme,
+} from '@bangle.io/slice-ui';
 import {
   DropdownMenu,
   MenuItem,
@@ -20,6 +26,7 @@ import {
 import {
   BangleIcon,
   DiscordIcon,
+  GiftIcon,
   PrettyKeybinding,
   SettingsIcon,
   TwitterIcon,
@@ -29,6 +36,7 @@ import { cx } from '@bangle.io/utils';
 import { buttonStyling } from './ActivitybarButton';
 
 export const ActionPaletteKey = 'ActionPalette';
+export const DiscordKey = 'Discord';
 export const NewNoteKey = 'NewNote';
 export const NewWorkspaceKey = 'NewWorkspace';
 export const NotesPaletteKey = 'NotesPalette';
@@ -36,10 +44,11 @@ export const ReportIssueKey = 'ReportIssue';
 export const SwitchWorkspaceKey = 'SwitchWorkspace';
 export const ToggleThemeKey = 'ToggleTheme';
 export const TwitterKey = 'Twitter';
-export const DiscordKey = 'Discord';
+export const WhatsNewKey = 'WhatsNewKey';
 
 type AllKeysType =
   | typeof ActionPaletteKey
+  | typeof DiscordKey
   | typeof NewNoteKey
   | typeof NewWorkspaceKey
   | typeof NotesPaletteKey
@@ -47,14 +56,18 @@ type AllKeysType =
   | typeof SwitchWorkspaceKey
   | typeof ToggleThemeKey
   | typeof TwitterKey
-  | typeof DiscordKey;
+  | typeof WhatsNewKey;
 
 export function ActivitybarOptionsDropdown({
   widescreen,
   operationKeybindings,
+  sidebarItems,
+  activeSidebar,
 }: {
   widescreen: boolean;
   operationKeybindings: SerialOperationKeybindingMapping;
+  sidebarItems?: SidebarType[];
+  activeSidebar?: string;
 }) {
   const store = useBangleStoreContext();
 
@@ -107,15 +120,45 @@ export function ActivitybarOptionsDropdown({
           window?.open('https://twitter.com/bangle_io', '_blank');
           break;
         }
+        case WhatsNewKey: {
+          store.dispatch({
+            name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+            value: {
+              dialogName: CHANGELOG_MODAL_NAME,
+            },
+          });
+          break;
+        }
         default: {
-          // hack to catch switch slipping
-          let val: never = key;
-          throw new Error('Unknown menu key type ' + val);
+          const match = sidebarItems?.find((i) => i.name === k);
+
+          if (match) {
+            if (match.name !== activeSidebar) {
+              changeSidebar(match.name)(store.state, store.dispatch);
+            }
+          }
         }
       }
     },
-    [store, dispatchSerialOperation],
+    [store, activeSidebar, dispatchSerialOperation, sidebarItems],
   );
+
+  const sidebarChildren: any =
+    sidebarItems?.map((item) => {
+      return (
+        <MenuItem
+          key={item.name}
+          textValue={item.title}
+          aria-label={item.title}
+        >
+          {item.title}
+          {React.cloneElement(item.activitybarIcon, {
+            className:
+              (item.activitybarIcon.props.className || '') + ' w-5 h-5',
+          })}
+        </MenuItem>
+      );
+    }) || null;
 
   return (
     <DropdownMenu
@@ -144,13 +187,21 @@ export function ActivitybarOptionsDropdown({
           textValue="switch workspace"
         >
           <span>Switch workspace</span>
-          <PrettyKeybinding
-            rawKey={
-              operationKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || ''
-            }
-          />
+          {widescreen && (
+            <PrettyKeybinding
+              rawKey={
+                operationKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] ||
+                ''
+              }
+            />
+          )}
         </MenuItem>
       </MenuSection>
+      {sidebarChildren && (
+        <MenuSection aria-label="activitybar section">
+          {sidebarChildren}
+        </MenuSection>
+      )}
       <MenuSection aria-label="ui section">
         <MenuItem aria-label="Switch Dark/Light theme" key={ToggleThemeKey}>
           Switch Dark/Light theme
@@ -163,11 +214,13 @@ export function ActivitybarOptionsDropdown({
           aria-label="notes palette"
         >
           <span>Notes palette</span>
-          <PrettyKeybinding
-            rawKey={
-              operationKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''
-            }
-          />
+          {widescreen && (
+            <PrettyKeybinding
+              rawKey={
+                operationKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''
+              }
+            />
+          )}
         </MenuItem>
         <MenuItem
           key={ActionPaletteKey}
@@ -175,14 +228,25 @@ export function ActivitybarOptionsDropdown({
           aria-label="operation palette"
         >
           <span>Operation palette</span>
-          <PrettyKeybinding
-            rawKey={
-              operationKeybindings[CORE_PALETTES_TOGGLE_OPERATION_PALETTE] || ''
-            }
-          />
+          {widescreen && (
+            <PrettyKeybinding
+              rawKey={
+                operationKeybindings[CORE_PALETTES_TOGGLE_OPERATION_PALETTE] ||
+                ''
+              }
+            />
+          )}
         </MenuItem>
       </MenuSection>
       <MenuSection aria-label="links section">
+        <MenuItem
+          key={WhatsNewKey}
+          textValue="whats new"
+          aria-label="whats new"
+        >
+          <span>Whats new</span>
+          <GiftIcon className="w-5 h-5" />
+        </MenuItem>
         <MenuItem
           key={ReportIssueKey}
           textValue="report issue"

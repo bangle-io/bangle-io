@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
+import { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import {
   toggleEditing,
@@ -13,7 +14,6 @@ import {
   FileDocumentIcon,
   NoEditIcon,
 } from '@bangle.io/ui-components';
-import { cx } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarButton } from './ActivitybarButton';
@@ -23,10 +23,14 @@ export function ActivitybarMobile({
   primaryWsPath,
   wsName,
   operationKeybindings,
+  sidebarItems,
+  activeSidebar,
 }: {
   primaryWsPath?: string;
   wsName?: string;
   operationKeybindings: SerialOperationKeybindingMapping;
+  sidebarItems?: SidebarType[];
+  activeSidebar?: string;
 }) {
   const bangleStore = useBangleStoreContext();
   const { editingAllowed } = useEditorManagerContext();
@@ -66,6 +70,8 @@ export function ActivitybarMobile({
         <div className="mr-2">
           <ActivitybarOptionsDropdown
             operationKeybindings={operationKeybindings}
+            sidebarItems={sidebarItems}
+            activeSidebar={activeSidebar}
             widescreen={false}
           />
         </div>

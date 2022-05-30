@@ -59,6 +59,19 @@ test('renders correctly', () => {
   expect(result.container).toMatchSnapshot();
 });
 
+test('renders mobile correctly', () => {
+  let result = render(
+    <div>
+      <ActivitybarOptionsDropdown
+        operationKeybindings={operationKeybindings}
+        widescreen={false}
+      />
+    </div>,
+  );
+
+  expect(result.container).toMatchSnapshot();
+});
+
 test('clicking the button shows dropdown', async () => {
   let result = render(
     <div>

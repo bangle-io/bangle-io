@@ -37,7 +37,7 @@ const extension = Extension.create<SearchNotesExtensionState>({
     sidebars: [
       {
         name: SIDEBAR_NAME,
-        title: '🔍 Search notes',
+        title: 'Search notes',
         hint: `Search notes\n` + keyDisplayValue(key),
         activitybarIcon: React.createElement(SearchIcon, {}),
         ReactComponent: SearchNotesSidebar,

@@ -18,6 +18,7 @@ test('handles error', () => {
   let result = render(
     <div>
       <WorkspaceSidebar
+        widescreen
         onDismiss={jest.fn()}
         sidebar={{
           name: 'sidebar::test-sidebar',
@@ -30,7 +31,7 @@ test('handles error', () => {
           },
           hint: 'test-hint',
         }}
-      ></WorkspaceSidebar>
+      />
     </div>,
   );
   expect(result.container.innerHTML).toContain('Blah blah');
@@ -40,6 +41,7 @@ test('renders', () => {
   let result = render(
     <div>
       <WorkspaceSidebar
+        widescreen
         onDismiss={jest.fn()}
         sidebar={{
           name: 'sidebar::test-sidebar',
@@ -50,7 +52,7 @@ test('renders', () => {
           },
           hint: 'test-hint',
         }}
-      ></WorkspaceSidebar>
+      />
     </div>,
   );
 
@@ -63,6 +65,7 @@ test('calls the dismiss button', () => {
   let result = render(
     <div>
       <WorkspaceSidebar
+        widescreen
         onDismiss={onDismiss}
         sidebar={{
           name: 'sidebar::test-sidebar',
@@ -73,7 +76,7 @@ test('calls the dismiss button', () => {
           },
           hint: 'test-hint',
         }}
-      ></WorkspaceSidebar>
+      />
     </div>,
   );
 

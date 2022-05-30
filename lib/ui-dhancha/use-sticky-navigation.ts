@@ -40,10 +40,9 @@ function setupStickyNavigation(element: HTMLElement) {
       return;
     }
 
-    const goingUp = window.pageYOffset > 1 && window.pageYOffset > previousY;
-    previousY = window.pageYOffset;
+    const isNotAtTop = window.pageYOffset > 10;
 
-    if (goingUp) {
+    if (isNotAtTop) {
       removeUp();
     } else {
       addUp();

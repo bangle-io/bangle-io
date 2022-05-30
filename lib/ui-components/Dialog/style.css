@@ -36,19 +36,29 @@
     rgb(11 19 22 / 21%) 0 10px 20px -14px;
 }
 
-body.BU_widescreen .B-ui-components_dialog-content-container {
-  margin-top: unset;
+body .B-ui-components_dialog-content-container {
+  width: 100%;
+  overflow-y: scroll;
+
+  /* this exists for making dialog scrollable for iOS devices */
+  padding-bottom: 60vh;
+  -webkit-overflow-scrolling: touch;
 }
 
-.B-ui-components_dialog-content-container.BU_small {
+body.BU_widescreen .B-ui-components_dialog-content-container {
+  padding-bottom: unset;
+  overflow-y: unset;
+}
+
+body.BU_widescreen .B-ui-components_dialog-content-container.BU_small {
   width: 400px;
 }
 
-.B-ui-components_dialog-content-container.BU_medium {
+body.BU_widescreen .B-ui-components_dialog-content-container.BU_medium {
   width: 500px;
 }
 
-.B-ui-components_dialog-content-container.BU_large {
+body.BU_widescreen .B-ui-components_dialog-content-container.BU_large {
   width: 640px;
 }
 

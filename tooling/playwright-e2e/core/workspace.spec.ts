@@ -107,9 +107,7 @@ test.describe('workspace', () => {
 
     expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
 
-    expect(await page.$eval('body', (el) => el.innerText)).toContain(
-      `🙈 Invalid path`,
-    );
+    await expect(page.locator('body')).toContainText(`🙈 Invalid path`);
   });
 
   test('Opening an invalid file name in secondary', async ({

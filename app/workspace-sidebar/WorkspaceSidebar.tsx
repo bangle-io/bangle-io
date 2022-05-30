@@ -6,14 +6,20 @@ import {
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
-import { ChevronLeftIcon, ErrorBoundary } from '@bangle.io/ui-components';
+import {
+  ChevronLeftIcon,
+  CloseIcon,
+  ErrorBoundary,
+} from '@bangle.io/ui-components';
 
 export function WorkspaceSidebar({
   onDismiss,
   sidebar,
+  widescreen,
 }: {
   onDismiss: () => void;
   sidebar: SidebarType;
+  widescreen: boolean;
 }) {
   return (
     <div className="flex flex-col flex-grow h-full overflow-y-scroll B-workspace-sidebar_workspace-sidebar">
@@ -28,18 +34,10 @@ export function WorkspaceSidebar({
             tooltipDelay={250}
             tooltipPlacement="bottom"
           >
-            <ButtonContent icon={<ChevronLeftIcon />}></ButtonContent>
+            <ButtonContent
+              icon={widescreen ? <ChevronLeftIcon /> : <CloseIcon />}
+            />
           </ActionButton>
-          {/* <ActionButton
-            isQuiet="hoverBg"
-            onPress={() => {}}
-            ariaLabel={'view available actions'}
-            tooltip={<TooltipWrapper>View available actions</TooltipWrapper>}
-            tooltipDelay={250}
-            tooltipPlacement="bottom"
-          >
-            <ButtonContent icon={<MoreIcon />}></ButtonContent>
-          </ActionButton> */}
         </span>
       </div>
       <ErrorBoundary>

@@ -28,7 +28,7 @@ test('renders', () => {
   expect(result.container).toMatchSnapshot();
 });
 
-test('renders when widescreen=false', () => {
+test('renders when widescreen=false and there is workspaceSidebar', () => {
   let result = render(
     <div>
       <Dhancha
@@ -43,8 +43,27 @@ test('renders when widescreen=false', () => {
 
   expect(result.container.innerHTML).toContain('Activitybar');
   expect(result.container.innerHTML).not.toContain('Note sidebar');
+  expect(result.container.innerHTML).not.toContain('Main content');
+  expect(result.container.innerHTML).toContain('Workspace sidebar');
+
+  expect(result.container).toMatchSnapshot();
+});
+
+test('renders when widescreen=false and there is no workspaceSidebar', () => {
+  let result = render(
+    <div>
+      <Dhancha
+        widescreen={false}
+        activitybar={<div>Activitybar</div>}
+        mainContent={<div>Main content</div>}
+        noteSidebar={<div>Note sidebar</div>}
+      />
+    </div>,
+  );
+
+  expect(result.container.innerHTML).toContain('Activitybar');
+  expect(result.container.innerHTML).not.toContain('Note sidebar');
   expect(result.container.innerHTML).toContain('Main content');
-  expect(result.container.innerHTML).not.toContain('Workspace sidebar');
 
   expect(result.container).toMatchSnapshot();
 });

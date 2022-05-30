@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
@@ -29,23 +29,16 @@ export function Activitybar({
     useUIManagerContext();
   const { bangleStore } = useWorkspaceContext();
 
-  if (!widescreen) {
-    return (
-      <ActivitybarMobile
-        operationKeybindings={operationKeybindings}
-        wsName={wsName}
-        primaryWsPath={primaryWsPath}
-      />
-    );
-  }
-
-  const sidebarItems = sidebars
-    .filter((r) => {
+  const sidebarItems = useMemo(() => {
+    return sidebars.filter((r) => {
       return r.activitybarIconShow
         ? r.activitybarIconShow(bangleStore.state)
         : true;
-    })
-    .map((r) => {
+    });
+  }, [sidebars, bangleStore]);
+
+  const sideBarComponents = useMemo(() => {
+    return sidebarItems.map((r) => {
       const active = sidebar === r.name;
 
       return (
@@ -63,6 +56,19 @@ export function Activitybar({
         />
       );
     });
+  }, [sidebarItems, bangleStore, sidebar, widescreen]);
+
+  if (!widescreen) {
+    return (
+      <ActivitybarMobile
+        operationKeybindings={operationKeybindings}
+        wsName={wsName}
+        primaryWsPath={primaryWsPath}
+        sidebarItems={sidebarItems}
+        activeSidebar={sidebar || undefined}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen">
@@ -82,7 +88,7 @@ export function Activitybar({
         }
       />
 
-      {sidebarItems}
+      {sideBarComponents}
       <div className="flex-grow"></div>
       <ActivitybarButton
         isActive={false}
