@@ -70,7 +70,6 @@ test.describe('backlink workflow', () => {
   test('Hovering and clicking works', async ({ page }) => {
     test.slow();
 
-    await page.pause();
     const { note0WsPath } = await setup(page);
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
