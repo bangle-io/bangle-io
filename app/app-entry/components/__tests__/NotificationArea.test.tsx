@@ -102,7 +102,7 @@ describe('NotificationArea', () => {
     expect(uiDispatchMock).toBeCalledTimes(1);
     expect(uiDispatchMock).toHaveBeenCalledWith({
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
-      value: { uid: 'second' },
+      value: { uids: ['second'] },
     });
   });
 
@@ -135,7 +135,7 @@ describe('NotificationArea', () => {
     expect(uiDispatchMock).nthCalledWith(1, {
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
       value: {
-        uid: 'one',
+        uids: ['one'],
       },
     });
   });

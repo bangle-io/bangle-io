@@ -10,7 +10,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
     {
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
       value: {
-        uid: 'test-1',
+        uids: ['test-1'],
       },
     },
   ],

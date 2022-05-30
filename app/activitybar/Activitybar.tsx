@@ -32,10 +32,10 @@ export function Activitybar({
   const sidebarItems = useMemo(() => {
     return sidebars.filter((r) => {
       return r.activitybarIconShow
-        ? r.activitybarIconShow(bangleStore.state)
+        ? r.activitybarIconShow(wsName, bangleStore.state)
         : true;
     });
-  }, [sidebars, bangleStore]);
+  }, [sidebars, bangleStore, wsName]);
 
   const sideBarComponents = useMemo(() => {
     return sidebarItems.map((r) => {

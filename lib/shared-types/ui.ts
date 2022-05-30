@@ -7,6 +7,8 @@ export interface NotificationPayloadType {
   severity?: 'error' | 'warning' | 'info' | 'success';
   // if notification needs to clear automatically
   transient?: boolean;
+  // DO NOT use this field as it is internal
+  createdAt?: number;
   buttons?: Array<{
     title: string;
     hint?: string;

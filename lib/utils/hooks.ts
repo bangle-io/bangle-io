@@ -247,16 +247,16 @@ export function usePrevious<T>(value: T | undefined): T | undefined {
 export function useInterval<T extends (...args: any[]) => any>(
   callback: T,
   deps: DependencyList,
-  delay: number,
+  interval: number,
 ) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoCb = useCallback(callback, deps);
 
   useEffect(() => {
-    let id = setInterval(memoCb, delay);
+    let id = setInterval(memoCb, interval);
 
     return () => {
       clearInterval(id);
     };
-  }, [memoCb, delay]);
+  }, [memoCb, interval]);
 }
