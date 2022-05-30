@@ -9,8 +9,6 @@ import {
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
   OPERATION_NEW_GITHUB_WORKSPACE,
-  OPERATION_PULL_GITHUB_CHANGES,
-  OPERATION_PUSH_GITHUB_CHANGES,
   OPERATION_SYNC_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
   UPDATE_GITHUB_TOKEN_DIALOG,
@@ -58,9 +56,7 @@ const extension = Extension.create({
         ReactComponent: GithubSidebar,
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
-        activitybarIconShow: (appState) => {
-          const wsName = workspace.getWsName()(appState);
-
+        activitybarIconShow: (wsName, appState) => {
           return wsName
             ? isCurrentWorkspaceGithubStored(wsName)(appState)
             : false;
@@ -80,16 +76,6 @@ const extension = Extension.create({
         title: 'Github: Update personal access token',
       },
       {
-        name: OPERATION_PULL_GITHUB_CHANGES,
-        title: 'Github: Pull changes',
-        hidden: false,
-      },
-      {
-        name: OPERATION_PUSH_GITHUB_CHANGES,
-        title: 'Github: Push changes',
-        hidden: true,
-      },
-      {
         name: OPERATION_SYNC_GITHUB_CHANGES,
         title: 'Github: Sync changes',
       },
@@ -104,7 +90,7 @@ const extension = Extension.create({
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
-            case OPERATION_PULL_GITHUB_CHANGES: {
+            case OPERATION_SYNC_GITHUB_CHANGES: {
               abortController.abort();
               abortController = new AbortController();
               const wsName = workspace.getWsName()(store.state);
@@ -120,9 +106,6 @@ const extension = Extension.create({
               )(store.state, store.dispatch, store);
 
               return true;
-            }
-            case OPERATION_SYNC_GITHUB_CHANGES: {
-              return false;
             }
 
             case OPERATION_NEW_GITHUB_WORKSPACE: {

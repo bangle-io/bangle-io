@@ -31,7 +31,7 @@ export async function pushLocalChanges({
   retainedWsPaths: Set<string>;
   tree: GHTree;
   wsName: string;
-}): Promise<number> {
+}) {
   const repoName = wsName;
   const config = { ...ghConfig, repoName: wsName };
   const localEntries = await fileEntryManager.getAllEntries(wsName + ':');
@@ -74,9 +74,10 @@ export async function pushLocalChanges({
     await syncEntries(localEntriesMap, tree);
 
   if (conflicts.length > 0) {
-    throw new Error(
-      `Conflicts not yet supported. ${conflicts.length} conflicts detected`,
-    );
+    return {
+      status: 'merge-conflict' as const,
+      count: conflicts.length,
+    };
   }
 
   // add, update and delete files in github
@@ -194,12 +195,14 @@ export async function pushLocalChanges({
     },
   );
 
-  return (
-    localDelete.length +
-    localUpdate.length +
-    remoteDelete.length +
-    remoteUpdate.length
-  );
+  return {
+    status: 'success' as const,
+    count:
+      localDelete.length +
+      localUpdate.length +
+      remoteDelete.length +
+      remoteUpdate.length,
+  };
 }
 
 async function syncEntries(

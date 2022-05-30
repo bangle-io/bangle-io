@@ -15,6 +15,7 @@ import { BaseError, isAbortError } from '@bangle.io/utils';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
+import { sliceKey } from './github-storage-slice';
 import { GithubWsMetadata } from './helpers';
 import { pushLocalChanges } from './sync-with-github';
 
@@ -100,6 +101,17 @@ export function syncWithGithub(
         return undefined;
       }
 
+      if (isSyncPending()(state)) {
+        notification.showNotification({
+          severity: 'warning',
+          title: 'Sync already in progress',
+          uid: 'gh-sync-in-progress' + Date.now(),
+          transient: true,
+        })(store.state, store.dispatch);
+
+        return undefined;
+      }
+
       const workspaceStore = workspace.workspaceSliceKey.getStore(store);
       const { openedWsPaths } =
         workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
@@ -114,20 +126,28 @@ export function syncWithGithub(
       const wsPaths = openedWsPaths
         .toArray()
         .filter((r): r is string => typeof r === 'string');
-      const getTree = getRepoTree();
-      const tree = await getTree({
-        wsName,
-        config: { ...wsMetadata, repoName: wsName },
-      });
 
-      const changeCount = await pushLocalChanges({
+      const result = await startSync(
         wsName,
-        ghConfig: wsMetadata,
-        retainedWsPaths: new Set(wsPaths),
-        tree,
+        new Set(wsPaths),
+        wsMetadata,
         fileEntryManager,
-        abortSignal,
-      });
+      )(store.state, store.dispatch, store);
+
+      if (result.status === 'merge-conflict') {
+        notification.showNotification({
+          severity: 'error',
+          title: 'Error syncing',
+          content: `Encountered ${result.count} merge conflict`,
+          uid: 'sync error ' + Math.random(),
+        })(store.state, store.dispatch);
+
+        return result.status;
+      }
+
+      if (result.status === 'pending') {
+        return result.status;
+      }
 
       // TODO reload application until we figure out better way to reset editor
       // const { deletedWsPaths, updatedWsPaths } = await syncUntouchedEntries(
@@ -153,22 +173,28 @@ export function syncWithGithub(
 
       // const total = (updatedWsPaths.length || 0) + (deletedWsPaths.length || 0);
 
-      if (changeCount === 0) {
-        notification.showNotification({
-          severity: 'info',
-          title: 'Everything upto date',
-          uid: 'no-changes',
-        })(store.state, store.dispatch);
-      }
-      if (changeCount > 0) {
-        notification.showNotification({
-          severity: 'info',
-          title: `Synced ${changeCount} file${changeCount === 1 ? '' : 's'}`,
-          uid: 'sync done ' + Math.random(),
-        })(store.state, store.dispatch);
+      const { count: changeCount } = result;
+
+      if (typeof changeCount === 'number') {
+        if (changeCount === 0) {
+          notification.showNotification({
+            severity: 'info',
+            title: 'Everything upto date',
+            uid: 'no-changes',
+            transient: true,
+          })(store.state, store.dispatch);
+        }
+        if (changeCount > 0) {
+          notification.showNotification({
+            severity: 'info',
+            title: `Synced ${changeCount} file${changeCount === 1 ? '' : 's'}`,
+            uid: 'sync done ' + Math.random(),
+            transient: true,
+          })(store.state, store.dispatch);
+        }
       }
 
-      return undefined;
+      return true;
     } catch (error) {
       if (isAbortError(error)) {
         return undefined;
@@ -186,7 +212,7 @@ export function syncWithGithub(
           })(store.state, store.dispatch);
         }
 
-        return undefined;
+        return false;
       } else {
         throw error;
       }
@@ -205,6 +231,10 @@ export function discardLocalChanges(
   ) => {
     try {
       if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
+        return;
+      }
+
+      if (isSyncPending()(state)) {
         return;
       }
 
@@ -236,6 +266,22 @@ export function discardLocalChanges(
         },
       );
 
+      const storageOpts = workspace.getStorageProviderOpts()(
+        store.state,
+        store.dispatch,
+      );
+
+      const wsMetadata = storageOpts.readWorkspaceMetadata(
+        wsName,
+      ) as GithubWsMetadata;
+
+      await startSync(
+        wsName,
+        new Set(),
+        wsMetadata,
+        fileEntryManager,
+      )(store.state, store.dispatch, store);
+
       return;
     } catch (error) {
       if (error instanceof Error) {
@@ -252,4 +298,63 @@ export function discardLocalChanges(
       }
     }
   };
+}
+
+function isSyncPending() {
+  return sliceKey.queryOp((state) => {
+    const res = sliceKey.getSliceState(state);
+
+    if (!res) {
+      return true;
+    }
+
+    return res.syncState;
+  });
+}
+
+function startSync(
+  wsName: string,
+  retainedWsPaths: Set<string>,
+  wsMetadata: GithubWsMetadata,
+  fileEntryManager: LocalFileEntryManager,
+) {
+  return sliceKey.asyncOp(async (_, dispatch, store) => {
+    if (isSyncPending()(store.state)) {
+      return { status: 'pending' as const };
+    }
+
+    sliceKey.getDispatch(store.dispatch)({
+      name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
+      value: {
+        syncState: true,
+      },
+    });
+
+    const getTree = getRepoTree();
+    const tree = await getTree({
+      wsName,
+      config: { ...wsMetadata, repoName: wsName },
+    });
+
+    let pushPromise = pushLocalChanges({
+      wsName,
+      ghConfig: wsMetadata,
+      retainedWsPaths,
+      tree,
+      fileEntryManager,
+      // TODO currently this is not abortable
+      abortSignal: new AbortController().signal,
+    });
+
+    pushPromise.finally(() => {
+      store.dispatch({
+        name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
+        value: {
+          syncState: false,
+        },
+      });
+    });
+
+    return pushPromise;
+  });
 }
