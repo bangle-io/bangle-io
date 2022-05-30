@@ -85,6 +85,7 @@ export function AppContainer() {
             <WorkspaceSidebar
               onDismiss={onDismissSidebar}
               sidebar={currentSidebar}
+              widescreen={widescreen}
             />
           )
         }

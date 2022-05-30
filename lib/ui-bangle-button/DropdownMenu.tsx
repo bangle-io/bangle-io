@@ -49,7 +49,7 @@ export function DropdownMenu({
   buttonClassName?: string;
   buttonStyle?: React.CSSProperties;
   buttonStyling?: StylingProps;
-  children?: JSX.Element[] | JSX.Element;
+  children?: JSX.Element | JSX.Element[];
   className?: string;
   disabledKeys?: TreeProps<typeof children>['disabledKeys'];
   isButtonQuiet?: boolean;
