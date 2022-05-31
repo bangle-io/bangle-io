@@ -2168,6 +2168,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"

@@ -1,3 +1,5 @@
+import { SliceKey } from '@bangle.io/api';
+
 export const GITHUB_STORAGE_PROVIDER_NAME = 'github-storage';
 export const OPERATION_NEW_GITHUB_WORKSPACE =
   'operation::@bangle.io/github-storage:new-workspace';
@@ -21,3 +23,14 @@ export const NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG =
 
 export const UPDATE_GITHUB_TOKEN_DIALOG =
   'dialog::@bangle.io/github-storage:UPDATE_GITHUB_TOKEN_DIALOG';
+export const ghSliceKey = new SliceKey<
+  {
+    syncState: boolean;
+  },
+  {
+    name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
+    value: {
+      syncState: boolean;
+    };
+  }
+>('slice::@bangle.io/github-storage:slice-key');

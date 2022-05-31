@@ -4898,6 +4898,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/utils", "workspace:lib/utils"],
