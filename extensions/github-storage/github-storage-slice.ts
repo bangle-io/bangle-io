@@ -36,17 +36,16 @@ export function githubStorageSlice() {
       },
     },
     sideEffect() {
-      let interval: ReturnType<typeof setInterval> | undefined;
-
       return {
-        deferredOnce(store) {
-          interval = setInterval(() => {
+        deferredOnce(store, signal) {
+          const interval = setInterval(() => {
             const wsName = workspace.getWsName()(
               workspace.workspaceSliceKey.getState(store.state),
             );
 
             if (wsName) {
               debug('Period Github sync in background');
+              // TODO if there were merge conflicts, this will become very noisy
               syncWithGithub(
                 wsName,
                 new AbortController().signal,
@@ -55,12 +54,12 @@ export function githubStorageSlice() {
               )(store.state, store.dispatch, store);
             }
           }, SYNC_INTERVAL);
-        },
-        destroy() {
-          if (interval) {
+
+          signal.addEventListener('abort', () => {
             clearInterval(interval);
-          }
+          });
         },
+
         update(store, prevState) {
           const didChange = page.pageLifeCycleTransitionedTo(
             ['passive', 'terminated', 'hidden'],
