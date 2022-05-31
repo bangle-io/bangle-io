@@ -10,7 +10,7 @@ const debug = LOG
   ? console.debug.bind(console, 'github-storage-slice')
   : () => {};
 
-const SYNC_INTERVAL = 1000 * 60;
+const SYNC_INTERVAL = 5 * 1000 * 60;
 
 export function githubStorageSlice() {
   return new Slice({

@@ -114,7 +114,7 @@ export function syncWithGithub(
       }
 
       const workspaceStore = workspace.workspaceSliceKey.getStore(store);
-      const { openedWsPaths } =
+      const { openedWsPaths, recentlyUsedWsPaths } =
         workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
       const storageOpts = workspace.getStorageProviderOpts()(
         workspaceStore.state,
@@ -124,13 +124,14 @@ export function syncWithGithub(
         wsName,
       ) as GithubWsMetadata;
 
-      const wsPaths = openedWsPaths
-        .toArray()
-        .filter((r): r is string => typeof r === 'string');
+      const toRetain: string[] = [
+        ...openedWsPaths.toArray(),
+        ...(recentlyUsedWsPaths || []),
+      ].filter((r): r is string => typeof r === 'string');
 
       const result = await startSync(
         wsName,
-        new Set(wsPaths),
+        new Set(toRetain),
         wsMetadata,
         fileEntryManager,
       )(store.state, store.dispatch, store);
