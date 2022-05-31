@@ -1726,6 +1726,76 @@ describe('store', () => {
     });
   });
 
+  describe('deferred once', () => {
+    test('when store is destroyed, deferredOnce abortSignal is called', () => {
+      const key1 = new SliceKey<number, any>('one');
+
+      const onAbort = jest.fn();
+      const deferredOnce = jest.fn();
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value;
+            }
+
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            deferredOnce(_, signal) {
+              deferredOnce();
+              signal.addEventListener('abort', () => {
+                onAbort();
+              });
+            },
+          };
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1],
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: (cb) => {
+          let destroyed = false;
+          Promise.resolve().then(() => {
+            if (!destroyed) {
+              cb();
+            }
+          });
+
+          return () => {
+            destroyed = true;
+          };
+        },
+      });
+
+      expect(deferredOnce).toBeCalledTimes(1);
+      expect(onAbort).not.toBeCalled();
+
+      store.dispatch({ name: 'for-a', value: { n: 99 } });
+      expect(onAbort).not.toBeCalled();
+
+      expect(key1.getSliceStateAsserted(store.state)).toEqual({ n: 99 });
+
+      store.destroy();
+
+      store.dispatch({ name: 'for-a', value: { n: 19 } });
+
+      expect(onAbort).toBeCalledTimes(1);
+      expect(deferredOnce).toBeCalledTimes(1);
+
+      expect(key1.getSliceStateAsserted(store.state)).toEqual({ n: 99 });
+    });
+  });
+
   describe('infinite errors', () => {
     test('throws error if many errors are thrown in short span', () => {
       let state = AppState.create({
