@@ -82,7 +82,7 @@ export function fileSync<T extends FileSyncObj>({
   | {
       action: 'set';
       // the target identifier to take action on
-      target: 'fileA' | 'fileB';
+      target: 'fileA' | 'fileB' | 'ancestor';
     } {
   // Case A: Both files are defined and are equal
   if (
@@ -92,6 +92,18 @@ export function fileSync<T extends FileSyncObj>({
     fileA.deleted === undefined &&
     fileB.deleted === undefined
   ) {
+    // Its not expected the ancestor to be different
+    // when both fileA and fileB have the same sha. This
+    // can only happen if the ancestor failed to be updated.
+    // This if condition handles that case and suggests
+    // to fix it.
+    if (ancestor && fileA.sha !== ancestor.sha) {
+      return {
+        action: 'set' as const,
+        target: 'ancestor' as const,
+      };
+    }
+
     return NOOP;
   }
 

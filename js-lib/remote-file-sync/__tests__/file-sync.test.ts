@@ -24,6 +24,19 @@ describe('File states', () => {
     });
   });
 
+  test('Case A works when files are same, but ancestor sha is out of date', async () => {
+    const result = fileSync({
+      fileA: createFileEntry({ sha: '123sha' }),
+      fileB: createFileEntry({ sha: '123sha' }),
+      ancestor: createFileEntry({ sha: 'oldsha' }),
+    });
+
+    expect(result).toEqual({
+      action: 'set',
+      target: 'ancestor',
+    });
+  });
+
   test('Case B works when both files are undefined', async () => {
     const result = fileSync({
       fileA: undefined,

@@ -19,7 +19,8 @@ const createManager = () => {
 
       return Promise.resolve();
     },
-    getValues: () => Promise.resolve(Array.from(store.values())),
+    getValues: (keyPrefix: string) =>
+      Promise.resolve(Array.from(store.values())),
     delete: (key: string) => {
       store.delete(key);
 
