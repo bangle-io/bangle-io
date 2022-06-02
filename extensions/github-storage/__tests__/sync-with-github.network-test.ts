@@ -100,7 +100,7 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (await localFileEntryManager.getAllEntries()).map((entry) => [
+    (await localFileEntryManager.getAllEntries('')).map((entry) => [
       entry.uid,
       entry,
     ]),
@@ -490,5 +490,45 @@ describe('house keeping', () => {
 
     // should remove all
     expect(Object.keys(localEntries).sort()).toEqual([]);
+  });
+
+  test('if source gets out of sync it gets fixed in next sync', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    await push(new Set([test1WsPath]));
+
+    let localEntries = await getLocalFileEntries();
+
+    let remoteEntries = await getRemoteFileEntries();
+
+    expect(remoteEntries[test1WsPath]).toBeDefined();
+
+    const sha = localEntries[test1WsPath]?.sha;
+    const sourceSha = localEntries[test1WsPath]?.source?.sha;
+
+    expect(sha).toBe(sourceSha);
+
+    // // corrupt the source
+    await localFileEntryManager.updateFileSource(
+      test1WsPath,
+      new Blob(['hi'], { type: 'text/plain' }) as any,
+    );
+
+    localEntries = await getLocalFileEntries();
+
+    const corruptedSourceSha = localEntries[test1WsPath]?.source?.sha;
+
+    expect(corruptedSourceSha).not.toEqual(sourceSha);
+
+    await push(new Set([test1WsPath]));
+
+    localEntries = await getLocalFileEntries();
+
+    // // source should get back to original
+    expect(localEntries[test1WsPath]?.source?.sha).toBe(sourceSha);
   });
 });

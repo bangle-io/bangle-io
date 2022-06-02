@@ -254,7 +254,7 @@ export function discardLocalChanges(
               deleted: undefined,
             });
             log('resetting file entry', entry.uid);
-            await fileEntryManager.updateFileEntry(
+            await fileEntryManager.overwriteFileEntry(
               remoteFileEntry.forkLocalFileEntry(),
             );
           } else {
