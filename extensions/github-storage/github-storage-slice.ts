@@ -43,7 +43,9 @@ export function githubStorageSlice() {
               workspace.workspaceSliceKey.getState(store.state),
             );
 
-            if (wsName) {
+            const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
+
+            if (wsName && pageLifecycle === 'active') {
               debug('Period Github sync in background');
               // TODO if there were merge conflicts, this will become very noisy
               syncWithGithub(
