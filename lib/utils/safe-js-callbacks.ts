@@ -158,3 +158,70 @@ export function safeIdleRefCallback(cb: () => void, timeout?: number) {
     { timeout },
   );
 }
+
+/**
+ * Acquires a lock using the `ifAvailable` mode with the give `name`.
+ * If the lock is not available returns without providing a lock.
+ * If lock is available returns a callback which _must_ be called
+ * once the lock is no longer needed.
+ * @param name
+ * @returns
+ */
+export async function acquireLockIfAvailable(
+  name: string,
+): Promise<(() => Promise<void>) | void> {
+  if (typeof navigator === 'undefined' || !navigator.locks) {
+    return async () => {};
+  }
+
+  let lockPromise: Promise<void>;
+
+  const releaseLock = await new Promise<(() => void) | null>(
+    (exposeValue, reject) => {
+      lockPromise = navigator.locks
+        .request(
+          name,
+          {
+            ifAvailable: true,
+          },
+          // The moment this promise resolves, the lock is release
+          async (lock) => {
+            // since we are using ifAvailable, if lock === null would mean
+            // there is no lock available
+            if (lock === null) {
+              exposeValue(null);
+
+              return;
+            }
+
+            await new Promise<void>((_releaseLock) => {
+              // expose the `_releaseLock` callback externally so that
+              // we can manually release the lock (see the cleanup function).
+              // Note: calling `_releaseLock` will resolve this Promise
+              // and hence the lock too will be released.
+              exposeValue(_releaseLock);
+            });
+          },
+        )
+        .catch((error) => {
+          reject(error);
+        });
+    },
+  );
+
+  // If the lock is not available, return without providing a lock
+  if (!releaseLock) {
+    return undefined;
+  }
+
+  const timer = setTimeout(() => {
+    console.error(`Lock "${name}" for too long! This is likely a bug.`);
+  }, 60 * 1000);
+
+  // This function should be called when the release of lock is needed
+  return async () => {
+    releaseLock();
+    await lockPromise;
+    clearTimeout(timer);
+  };
+}
