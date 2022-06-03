@@ -1,1 +1,4 @@
-export { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
+export {
+  getCurrentPageLifeCycle,
+  pageLifeCycleTransitionedTo,
+} from '@bangle.io/slice-page';
