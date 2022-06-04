@@ -144,11 +144,11 @@ export class LocalFileEntryManager {
   }
 
   // USE WITH CAUTION! prefer deleteFile in most cases
+  // removes (completely) file entry from the storage
   async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
     return this.persistenceProvider.delete(uid);
   }
 
-  // removes (completely) file entry from the storage
   async updateFileSource(uid: string, sourceFile: File) {
     const fileEntry = await this._getFileEntry(uid);
 
