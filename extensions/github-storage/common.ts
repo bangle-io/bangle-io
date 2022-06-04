@@ -34,3 +34,5 @@ export const ghSliceKey = new SliceKey<
     };
   }
 >('slice::@bangle.io/github-storage:slice-key');
+
+export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';

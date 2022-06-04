@@ -10,9 +10,14 @@ import {
   LocalFileEntryManager,
   RemoteFileEntry,
 } from '@bangle.io/remote-file-sync';
-import { BaseError, isAbortError } from '@bangle.io/utils';
+import {
+  acquireLockIfAvailable,
+  BaseError,
+  isAbortError,
+  sleep,
+} from '@bangle.io/utils';
 
-import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME } from './common';
+import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME, LOCK_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
@@ -95,6 +100,24 @@ export function syncWithGithub(
     dispatch: BangleAppDispatch,
     store: BangleApplicationStore,
   ) => {
+    const releaseLock = await acquireLockIfAvailable(LOCK_NAME + ':' + wsName);
+
+    if (!releaseLock) {
+      if (verboseNotifications === true) {
+        console.debug('Sync already in progress for this workspace');
+        notification.showNotification({
+          severity: 'warning',
+          title: 'Sync already in progress for this workspace',
+          uid: 'gh-sync-in-progress' + Date.now(),
+          transient: true,
+        })(store.state, store.dispatch);
+      }
+
+      return undefined;
+    }
+
+    await sleep(5000);
+
     try {
       if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
         return undefined;
@@ -218,6 +241,8 @@ export function syncWithGithub(
       } else {
         throw error;
       }
+    } finally {
+      await releaseLock();
     }
   };
 }
