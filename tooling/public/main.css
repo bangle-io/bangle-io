@@ -141,6 +141,15 @@ html[data-theme='dark'] #dialog-container {
   --BV-backlink-backlink-not-found-hover-bg-color: var(--BV-base-400);
 }
 
+body.BU_smallscreen {
+  --BV-activitybar-bg-color: var(--BV-base-100);
+  --BV-activitybar-button-active-color: var(--BV-base-900);
+  --BV-activitybar-button-hover-bg-color: var(--BV-base-300);
+  --BV-activitybar-button-hover-color: var(--BV-base-900);
+  --BV-activitybar-button-color: var(--BV-base-800);
+  --BV-activitybar-button-pressed-bg-color: var(--BV-base-200);
+}
+
 .dark-theme,
 html[data-theme='dark'] {
   --BV-base-50: #080808;

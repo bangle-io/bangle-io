@@ -527,5 +527,5 @@ export async function waitForEditorIdToLoad(page: Page, editorId: number) {
 }
 
 export async function waitForNotification(page: Page, text: string) {
-  await page.locator(`text=${text}`).waitFor();
+  await page.locator(`.app-entry_notification:has-text("${text}")`).waitFor();
 }

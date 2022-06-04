@@ -60,7 +60,7 @@ const allowedFilePath = (path: string) => {
   }
 
   if (fileName.startsWith('.')) {
-    console.debug("GithubStorage: Filename starts with '.'", path);
+    console.debug('@bangle.io/github-storage: Filename starts with "."', path);
 
     return false;
   }

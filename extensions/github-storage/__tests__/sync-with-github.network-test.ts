@@ -1,3 +1,5 @@
+import waitForExpect from 'wait-for-expect';
+
 import {
   BangleApplicationStore,
   workspace,
@@ -385,6 +387,40 @@ describe('pushLocalChanges', () => {
         'I am updated test-1',
       );
       expect(await getNoteAsString(test2WsPath)).toBeUndefined();
+    });
+  });
+
+  test('ignores files with unsupported characters', async () => {
+    const test1WsPath = `${wsName}:bunny/:test-1.md`;
+    const test2WsPath = `${wsName}:bunny/test-2.md`;
+    await github.pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await github.getLatestCommitSha({
+        abortSignal: abortController.signal,
+        config: { ...githubWsMetadata, repoName: wsName },
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config: { ...githubWsMetadata, repoName: wsName },
+      additions: [
+        {
+          path: wsPathHelpers.resolvePath(test1WsPath).filePath,
+          base64Content: btoa('I am test-1'),
+        },
+        {
+          path: wsPathHelpers.resolvePath(test2WsPath).filePath,
+          base64Content: btoa('I am test-2'),
+        },
+      ],
+      deletions: [],
+    });
+
+    workspace.refreshWsPaths()(store.state, store.dispatch);
+
+    await waitForExpect(async () => {
+      expect(
+        await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
+          .wsPaths,
+      ).toEqual([`${wsName}:test-2.md`, defaultNoteWsPath]);
     });
   });
 });

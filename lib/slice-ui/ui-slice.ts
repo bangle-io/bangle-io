@@ -325,8 +325,14 @@ function setRootWidescreenClass(widescreen?: boolean) {
   if (widescreen) {
     root?.classList.add('BU_widescreen');
     body?.classList.add('BU_widescreen');
+
+    root?.classList.remove('BU_smallscreen');
+    body?.classList.remove('BU_smallscreen');
   } else {
     root?.classList.remove('BU_widescreen');
     body?.classList.remove('BU_widescreen');
+
+    root?.classList.add('BU_smallscreen');
+    body?.classList.add('BU_smallscreen');
   }
 }
