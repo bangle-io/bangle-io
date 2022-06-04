@@ -14,7 +14,6 @@ import {
   acquireLockIfAvailable,
   BaseError,
   isAbortError,
-  sleep,
 } from '@bangle.io/utils';
 
 import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME, LOCK_NAME } from './common';
@@ -116,8 +115,6 @@ export function syncWithGithub(
       return undefined;
     }
 
-    await sleep(5000);
-
     try {
       if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
         return undefined;
@@ -137,8 +134,17 @@ export function syncWithGithub(
       }
 
       const workspaceStore = workspace.workspaceSliceKey.getStore(store);
-      const { openedWsPaths, recentlyUsedWsPaths } =
-        workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+      const {
+        openedWsPaths,
+        recentlyUsedWsPaths,
+        wsName: currentWsName,
+      } = workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      // ensure that the current workspace is the one we are syncing
+      if (currentWsName !== wsName) {
+        return undefined;
+      }
+
       const storageOpts = workspace.getStorageProviderOpts()(
         workspaceStore.state,
         workspaceStore.dispatch,
@@ -358,6 +364,7 @@ function startSync(
     });
 
     const getTree = getRepoTree();
+
     const tree = await getTree({
       wsName,
       config: { ...wsMetadata, repoName: wsName },
