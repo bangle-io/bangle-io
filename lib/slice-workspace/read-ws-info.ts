@@ -10,20 +10,14 @@ import { WorkspaceInfoReg } from './workspace-slice-state';
 
 export const WORKSPACE_KEY = 'workspaces/2';
 
-export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
-  let wsInfos: WorkspaceInfo[] = (await idb.get(WORKSPACE_KEY)) || [];
-
+function processWorkspacesInfo(wsInfos: WorkspaceInfo[]) {
   if (!Array.isArray(wsInfos)) {
     wsInfos = [];
   }
 
   const reg = Object.fromEntries(
     wsInfos.map((r) => {
-      // stopgap for older data struct which didn't have lastModified field
-      if (typeof r.lastModified === undefined) {
-        r.lastModified = Date.now();
-      }
-      if (typeof r.deleted === undefined) {
+      if (typeof r.deleted === 'undefined') {
         r.deleted = false;
       }
 
@@ -37,21 +31,30 @@ export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
   return reg;
 }
 
+export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
+  let wsInfos: WorkspaceInfo[] = (await idb.get(WORKSPACE_KEY)) || [];
+
+  return processWorkspacesInfo(wsInfos);
+}
+
 export async function saveWorkspacesInfo(state: AppState): Promise<void> {
-  const workspacesState = workspaceSliceKey.getSliceStateAsserted(state);
-  // read existing data so that we do can do a non destructive merge
-  let existing = await readWorkspacesInfoReg();
+  await idb.update(WORKSPACE_KEY, (oldValue) => {
+    const workspacesState = workspaceSliceKey.getSliceStateAsserted(state);
+    // read existing data so that we do can do a non destructive merge
 
-  if (workspacesState.workspacesInfo) {
-    existing = mergeWsInfoRegistries(existing, workspacesState.workspacesInfo);
-  }
+    let existing = processWorkspacesInfo(oldValue);
 
-  await idb.set(
-    WORKSPACE_KEY,
-    Object.values(existing).filter(
+    if (workspacesState.workspacesInfo) {
+      existing = mergeWsInfoRegistries(
+        existing,
+        workspacesState.workspacesInfo,
+      );
+    }
+
+    return Object.values(existing).filter(
       (wsInfo) => wsInfo.name !== HELP_FS_WORKSPACE_NAME,
-    ),
-  );
+    );
+  });
 }
 
 export function mergeWsInfoRegistries(

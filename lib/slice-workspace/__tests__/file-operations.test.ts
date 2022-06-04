@@ -43,16 +43,16 @@ describe('renameNote', () => {
     store.destroy();
   });
 
-  test('returns false when wsName is not defined', async () => {
-    let { store, dispatchSpy } = createBasicTestStore();
+  test('returns error when wsName is not defined', async () => {
+    let { store } = createBasicTestStore();
 
-    const res = await renameNote(
-      'my-ws:test-note.md',
-      'my-ws:new-test-note.md',
-    )(store.state, store.dispatch, store);
-
-    expect(res).toBe(false);
-    expect(dispatchSpy).toBeCalledTimes(0);
+    await expect(
+      renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
+        store.state,
+        store.dispatch,
+        store,
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Workspace my-ws not found"`);
   });
 
   test('works when the file to be renamed is opened', async () => {
@@ -204,9 +204,9 @@ describe('getNote', () => {
     await sleep(0);
 
     let priorLen = getActionNames().length;
-    expect(
-      await getNote('my-ws:test-note.md')(store.state, store.dispatch, store),
-    ).toEqual(undefined);
+    await expect(
+      getNote('my-ws:test-note.md')(store.state, store.dispatch, store),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Workspace my-ws not found"`);
 
     expect(getActionNames().length).toBe(priorLen);
   });
@@ -274,15 +274,13 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    await createNote(wsPath, { doc, open: false })(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    expect(await getNote(wsPath)(store.state, store.dispatch, store)).toBe(
-      undefined,
-    );
+    expect(
+      await createNote(wsPath, { doc, open: false })(
+        store.state,
+        store.dispatch,
+        store,
+      ),
+    ).toBe(false);
   });
 
   test('when open is false', async () => {

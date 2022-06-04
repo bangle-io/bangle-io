@@ -20,6 +20,7 @@ import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_DELETED_MODIFY_ERROR,
   WORKSPACE_NOT_FOUND_ERROR,
+  WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
   WorkspaceError,
 } from './errors';
 import { storageProviderFromExtensionRegistry } from './helpers';
@@ -77,8 +78,15 @@ export function createWorkspace(
         .extensionRegistry,
     );
 
+    if (!storageProvider) {
+      throw new WorkspaceError({
+        message: `Cannot create "${wsName}" as the storage provider "${type}" is not registered`,
+        code: WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
+      });
+    }
+
     const wsMetadata =
-      (await storageProvider?.newWorkspaceMetadata?.(wsName, opts)) || {};
+      (await storageProvider.newWorkspaceMetadata(wsName, opts)) || {};
 
     let workspace: WorkspaceInfo = {
       deleted: false,

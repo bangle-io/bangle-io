@@ -39,6 +39,19 @@ class FakeIdb implements IdbType {
     return;
   };
 
+  update = async (
+    key: IDBValidKey,
+    updater: (oldValue: any | undefined) => any,
+    customStore?: any,
+  ) => {
+    const oldValue = (customStore || mockStore).get(key);
+    const newValue = updater(oldValue);
+
+    (customStore || mockStore).set(key, newValue);
+
+    return;
+  };
+
   set = async (key: IDBValidKey, value: any, customStore?: any) => {
     (customStore || mockStore).set(key, value);
   };

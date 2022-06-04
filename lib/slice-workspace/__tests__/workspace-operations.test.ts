@@ -219,7 +219,7 @@ describe('deleteWorkspace', () => {
 
   test('deleting a workspace adds a delete field', async () => {
     const { store } = createBasicTestStore();
-    await createWorkspace('test-1', WorkspaceTypeNative, {})(
+    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
       store.state,
       store.dispatch,
       store,
@@ -233,7 +233,7 @@ describe('deleteWorkspace', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: WorkspaceTypeNative,
+        type: WorkspaceTypeBrowser,
       },
     ]);
   });
@@ -241,7 +241,7 @@ describe('deleteWorkspace', () => {
   test('redirects correctly for a deleted workspace', async () => {
     const { store } = createBasicTestStore();
 
-    await createWorkspace('test-1', WorkspaceTypeNative, {
+    await createWorkspace('test-1', WorkspaceTypeBrowser, {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
