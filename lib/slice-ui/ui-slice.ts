@@ -298,10 +298,16 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           // Add event listener
           window.addEventListener('resize', handleResize);
 
-          abortSignal.addEventListener('abort', () => {
-            handleResize.cancel();
-            window.removeEventListener('resize', handleResize);
-          });
+          abortSignal.addEventListener(
+            'abort',
+            () => {
+              handleResize.cancel();
+              window.removeEventListener('resize', handleResize);
+            },
+            {
+              once: true,
+            },
+          );
         },
       };
     },
@@ -325,8 +331,14 @@ function setRootWidescreenClass(widescreen?: boolean) {
   if (widescreen) {
     root?.classList.add('BU_widescreen');
     body?.classList.add('BU_widescreen');
+
+    root?.classList.remove('BU_smallscreen');
+    body?.classList.remove('BU_smallscreen');
   } else {
     root?.classList.remove('BU_widescreen');
     body?.classList.remove('BU_widescreen');
+
+    root?.classList.add('BU_smallscreen');
+    body?.classList.add('BU_smallscreen');
   }
 }

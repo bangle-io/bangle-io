@@ -28,9 +28,15 @@ export async function listAllTags(
   signal?: AbortSignal,
 ): Promise<string[]> {
   let destroyed = false;
-  signal?.addEventListener('abort', (e) => {
-    destroyed = true;
-  });
+  signal?.addEventListener(
+    'abort',
+    (e) => {
+      destroyed = true;
+    },
+    {
+      once: true,
+    },
+  );
 
   const result = new Set<string>();
 

@@ -26,6 +26,7 @@ import {
 import {
   BangleIcon,
   DiscordIcon,
+  DotsVerticalIcon,
   GiftIcon,
   PrettyKeybinding,
   SettingsIcon,
@@ -171,7 +172,13 @@ export function ActivitybarOptionsDropdown({
         'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
         widescreen && 'bu-widescreen',
       )}
-      buttonChildren={<SettingsIcon className="h-7 w-7" />}
+      buttonChildren={
+        widescreen ? (
+          <SettingsIcon className="h-7 w-7" />
+        ) : (
+          <DotsVerticalIcon className="h-5 w-5" />
+        )
+      }
       onAction={handleDropdown}
     >
       <MenuSection aria-label="misc section">

@@ -36,7 +36,7 @@ export function ActivitybarMobile({
   const { editingAllowed } = useEditorManagerContext();
 
   return (
-    <div className="flex flex-row ml-3 text-gray-100 align-center B-activitybar_activitybar w-full mr-3">
+    <div className="flex flex-row px-3 align-center B-activitybar_activitybar w-full">
       <div className="flex flex-row items-center flex-none">
         <ActivitybarButton
           hint="See files palette"
@@ -59,7 +59,7 @@ export function ActivitybarMobile({
           );
         }}
       >
-        <span>
+        <span className="font-semibold text-s">
           {primaryWsPath
             ? resolvePath(primaryWsPath).fileName
             : wsName || 'bangle-io'}
@@ -67,14 +67,6 @@ export function ActivitybarMobile({
       </div>
       <div className="flex-1"></div>
       <div className="flex flex-row items-center flex-none">
-        <div className="mr-2">
-          <ActivitybarOptionsDropdown
-            operationKeybindings={operationKeybindings}
-            sidebarItems={sidebarItems}
-            activeSidebar={activeSidebar}
-            widescreen={false}
-          />
-        </div>
         <div className="mr-2">
           <ActivitybarButton
             hint={editingAllowed ? 'Disable edit' : 'Enable edit'}
@@ -86,12 +78,21 @@ export function ActivitybarMobile({
               editingAllowed ? (
                 <EditIcon
                   className={'w-5 h-5'}
-                  fill={'var(--BV-accent-primary-1)'}
+                  fill={'var(--BV-accent-primary-0)'}
                 />
               ) : (
                 <NoEditIcon className="w-5 h-5" />
               )
             }
+          />
+        </div>
+
+        <div className="mr-2">
+          <ActivitybarOptionsDropdown
+            operationKeybindings={operationKeybindings}
+            sidebarItems={sidebarItems}
+            activeSidebar={activeSidebar}
+            widescreen={false}
           />
         </div>
       </div>

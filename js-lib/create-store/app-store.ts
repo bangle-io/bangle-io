@@ -407,9 +407,15 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
     private sideEffects: Array<StoreSideEffectType<any, A, S>>,
     private scheduler: SchedulerType,
   ) {
-    this.abortController.signal.addEventListener('abort', () => {
-      this.scheduledCallback?.();
-    });
+    this.abortController.signal.addEventListener(
+      'abort',
+      () => {
+        this.scheduledCallback?.();
+      },
+      {
+        once: true,
+      },
+    );
   }
 
   private get isAborted() {

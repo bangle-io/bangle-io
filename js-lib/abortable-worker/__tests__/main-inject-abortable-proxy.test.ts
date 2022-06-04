@@ -38,10 +38,16 @@ describe('abortable worker', () => {
         let timer = setTimeout(() => {
           res();
         }, 500);
-        signal.addEventListener('abort', () => {
-          clearInterval(timer);
-          rej(new DOMException('Aborted', 'AbortError'));
-        });
+        signal.addEventListener(
+          'abort',
+          () => {
+            clearInterval(timer);
+            rej(new DOMException('Aborted', 'AbortError'));
+          },
+          {
+            once: true,
+          },
+        );
       });
     });
 

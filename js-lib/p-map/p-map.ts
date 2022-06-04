@@ -38,10 +38,16 @@ export async function pMap<Element, NewElement>(
     let resolvingCount = 0;
     let currentIndex = 0;
     let destroyed = false;
-    abortSignal?.addEventListener('abort', (e) => {
-      destroyed = true;
-      reject(new DOMException('Aborted', 'AbortError'));
-    });
+    abortSignal?.addEventListener(
+      'abort',
+      (e) => {
+        destroyed = true;
+        reject(new DOMException('Aborted', 'AbortError'));
+      },
+      {
+        once: true,
+      },
+    );
 
     const next = () => {
       if (isRejected || destroyed) {

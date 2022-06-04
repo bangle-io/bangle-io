@@ -74,7 +74,6 @@ body {
   flex-direction: row;
   flex-shrink: 0;
   height: var(--BV-ui-dhancha-activitybar-mobile-width);
-  background-color: var(--BV-ui-dhancha-activitybar-bg-color);
   position: sticky;
   border-bottom: 1px solid transparent;
   top: 0;

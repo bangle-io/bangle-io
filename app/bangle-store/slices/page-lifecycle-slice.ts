@@ -38,9 +38,13 @@ export function pageLifeCycleSlice() {
             lifecycle.addEventListener('statechange', handler);
 
             handler({ newState: lifecycle.state, oldState: undefined });
-            abortSignal.addEventListener('abort', () => {
-              lifecycle.removeEventListener('statechange', handler);
-            });
+            abortSignal.addEventListener(
+              'abort',
+              () => {
+                lifecycle.removeEventListener('statechange', handler);
+              },
+              { once: true },
+            );
           },
         };
       },

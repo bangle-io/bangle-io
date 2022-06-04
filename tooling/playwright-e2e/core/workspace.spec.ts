@@ -11,6 +11,7 @@ import {
   pushWsPathToSecondary,
   runOperation,
   waitForEditorFocus,
+  waitForNotification,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -234,5 +235,27 @@ test.describe('workspace', () => {
     );
     await longSleep(100);
     expect(await getAllWsPaths(page)).toEqual([n1]);
+  });
+});
+
+test.describe('in invalid path', () => {
+  test('creating new note', async ({ page, baseURL }) => {
+    const wsName1 = await createWorkspace(page);
+
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 5000,
+        waitUntil: 'networkidle',
+      }),
+      page.goto(baseURL + `/ws/${wsName1}/wrong-ws-path`, {
+        waitUntil: 'networkidle',
+      }),
+    ]);
+
+    expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
+
+    await runOperation(page, 'operation::@bangle.io/core-extension:NEW_NOTE');
+
+    await waitForNotification(page, 'Please first select a workspace');
   });
 });

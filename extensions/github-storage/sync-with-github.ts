@@ -1,4 +1,3 @@
-import { getWsName } from '@bangle.io/api/workspace';
 import { pMap } from '@bangle.io/p-map';
 import {
   fileSync,

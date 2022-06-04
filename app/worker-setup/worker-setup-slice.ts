@@ -111,10 +111,16 @@ const loadWorkerModuleEffect: SideEffect = (_, config) => {
         startStoreSync()(store.state, store.dispatch);
       });
 
-      abortSignal.addEventListener('abort', () => {
-        destroyed = true;
-        terminate?.();
-      });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          destroyed = true;
+          terminate?.();
+        },
+        {
+          once: true,
+        },
+      );
     },
   };
 };
