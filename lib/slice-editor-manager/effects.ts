@@ -147,13 +147,19 @@ export const watchEditorScrollEffect: SideEffect = () => {
         window.addEventListener('scroll', deb, opts);
       }
 
-      abortSignal.addEventListener('abort', () => {
-        deb.cancel();
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          deb.cancel();
 
-        if (isWindow) {
-          window.removeEventListener('scroll', deb, opts);
-        }
-      });
+          if (isWindow) {
+            window.removeEventListener('scroll', deb, opts);
+          }
+        },
+        {
+          once: true,
+        },
+      );
     },
   };
 };

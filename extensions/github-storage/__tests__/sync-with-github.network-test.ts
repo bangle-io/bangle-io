@@ -391,7 +391,6 @@ describe('pushLocalChanges', () => {
   });
 
   test('ignores files with unsupported characters', async () => {
-    const test1WsPath = `${wsName}:bunny/:test-1.md`;
     const test2WsPath = `${wsName}:bunny/test-2.md`;
     await github.pushChanges({
       abortSignal: abortController.signal,
@@ -403,7 +402,7 @@ describe('pushLocalChanges', () => {
       config: { ...githubWsMetadata, repoName: wsName },
       additions: [
         {
-          path: wsPathHelpers.resolvePath(test1WsPath).filePath,
+          path: 'bunny/:test-1.md',
           base64Content: btoa('I am test-1'),
         },
         {
@@ -420,7 +419,7 @@ describe('pushLocalChanges', () => {
       expect(
         await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
           .wsPaths,
-      ).toEqual([`${wsName}:test-2.md`, defaultNoteWsPath]);
+      ).toEqual([`${wsName}:bunny`, test2WsPath, defaultNoteWsPath]);
     });
   });
 });

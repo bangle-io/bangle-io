@@ -1748,9 +1748,15 @@ describe('store', () => {
           return {
             deferredOnce(_, signal) {
               deferredOnce();
-              signal.addEventListener('abort', () => {
-                onAbort();
-              });
+              signal.addEventListener(
+                'abort',
+                () => {
+                  onAbort();
+                },
+                {
+                  once: true,
+                },
+              );
             },
           };
         },

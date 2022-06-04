@@ -215,12 +215,18 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
         },
       });
 
-      abortSignal.addEventListener('abort', () => {
-        const { disk, editorManager } =
-          workerEditorSliceKey.getSliceStateAsserted(store.state);
-        disk?.flushAll();
-        editorManager?.destroy();
-      });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          const { disk, editorManager } =
+            workerEditorSliceKey.getSliceStateAsserted(store.state);
+          disk?.flushAll();
+          editorManager?.destroy();
+        },
+        {
+          once: true,
+        },
+      );
     },
   };
 });

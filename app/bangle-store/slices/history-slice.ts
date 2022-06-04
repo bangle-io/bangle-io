@@ -134,9 +134,13 @@ const watchHistoryEffect: SliceSideEffect<
         pathname: browserHistory.pathname,
       })(store.state, pageSliceKey.getDispatch(store.dispatch));
 
-      abortSignal.addEventListener('abort', () => {
-        browserHistory.destroy();
-      });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          browserHistory.destroy();
+        },
+        { once: true },
+      );
     },
   };
 };

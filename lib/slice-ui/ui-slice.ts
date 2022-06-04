@@ -298,10 +298,16 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           // Add event listener
           window.addEventListener('resize', handleResize);
 
-          abortSignal.addEventListener('abort', () => {
-            handleResize.cancel();
-            window.removeEventListener('resize', handleResize);
-          });
+          abortSignal.addEventListener(
+            'abort',
+            () => {
+              handleResize.cancel();
+              window.removeEventListener('resize', handleResize);
+            },
+            {
+              once: true,
+            },
+          );
         },
       };
     },

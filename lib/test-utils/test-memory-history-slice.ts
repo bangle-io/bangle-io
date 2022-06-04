@@ -106,9 +106,15 @@ const mockHistoryEffect = historySliceKey.effect(() => {
         pathname: history.pathname,
       })(store.state, pageSliceKey.getDispatch(store.dispatch));
 
-      abortSignal.addEventListener('abort', () => {
-        history.destroy();
-      });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          history.destroy();
+        },
+        {
+          once: true,
+        },
+      );
     },
   };
 });

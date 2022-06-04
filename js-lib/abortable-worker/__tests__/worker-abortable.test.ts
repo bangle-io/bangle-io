@@ -61,10 +61,16 @@ describe('workerAbortable', () => {
         let timer = setTimeout(() => {
           res();
         }, 500);
-        signal.addEventListener('abort', () => {
-          clearInterval(timer);
-          rej(new DOMException('Aborted', 'AbortError'));
-        });
+        signal.addEventListener(
+          'abort',
+          () => {
+            clearInterval(timer);
+            rej(new DOMException('Aborted', 'AbortError'));
+          },
+          {
+            once: true,
+          },
+        );
       });
     });
     let methods = workerAbortable(({ abortWrapper }) => {
@@ -87,10 +93,16 @@ describe('workerAbortable', () => {
         let timer = setTimeout(() => {
           res(true);
         }, 0);
-        signal.addEventListener('abort', () => {
-          clearInterval(timer);
-          rej(new DOMException('Aborted', 'AbortError'));
-        });
+        signal.addEventListener(
+          'abort',
+          () => {
+            clearInterval(timer);
+            rej(new DOMException('Aborted', 'AbortError'));
+          },
+          {
+            once: true,
+          },
+        );
       });
     });
     let methods = workerAbortable(({ abortWrapper }) => {
@@ -130,10 +142,16 @@ describe('workerAbortable', () => {
         let timer = setTimeout(() => {
           res(false);
         }, 10);
-        signal.addEventListener('abort', () => {
-          clearInterval(timer);
-          rej(new DOMException('Aborted', 'AbortError'));
-        });
+        signal.addEventListener(
+          'abort',
+          () => {
+            clearInterval(timer);
+            rej(new DOMException('Aborted', 'AbortError'));
+          },
+          {
+            once: true,
+          },
+        );
       });
     });
 

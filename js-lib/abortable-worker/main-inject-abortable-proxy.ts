@@ -42,10 +42,14 @@ export function mainInjectAbortableProxy<
 
           const uid = prop + objectUid(abortSignal);
 
-          abortSignal.addEventListener('abort', () => {
-            console.debug('aborting ' + uid);
-            _target.__signalWorkerToAbort(uid);
-          });
+          abortSignal.addEventListener(
+            'abort',
+            () => {
+              console.debug('aborting ' + uid);
+              _target.__signalWorkerToAbort(uid);
+            },
+            { once: true },
+          );
 
           return Reflect.apply(Reflect.get(_target, prop), null, [
             uid,

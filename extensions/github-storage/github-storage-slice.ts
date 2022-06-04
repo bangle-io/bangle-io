@@ -57,9 +57,13 @@ export function githubStorageSlice() {
             }
           }, SYNC_INTERVAL);
 
-          signal.addEventListener('abort', () => {
-            clearInterval(interval);
-          });
+          signal.addEventListener(
+            'abort',
+            () => {
+              clearInterval(interval);
+            },
+            { once: true },
+          );
         },
 
         update(store, prevState) {
