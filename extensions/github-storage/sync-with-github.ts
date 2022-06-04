@@ -11,6 +11,7 @@ import {
   commitToGithub,
   getFileBlobFromTree,
   GHTree,
+  GithubConfig,
 } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
 
@@ -46,22 +47,12 @@ export async function pushLocalChanges({
     retainedWsPaths,
     async (wsPath) => {
       if (!localEntriesMap.has(wsPath)) {
-        const remoteFile = await getFileBlobFromTree({
-          wsPath,
+        await overwriteLocalEntryFromRemote({
           config,
+          fileEntryManager,
           tree,
+          wsPath,
         });
-
-        if (remoteFile) {
-          const remoteEntry = await RemoteFileEntry.newFile({
-            uid: wsPath,
-            file: remoteFile,
-            deleted: undefined,
-          });
-          await fileEntryManager.updateFileEntry(
-            remoteEntry.forkLocalFileEntry(),
-          );
-        }
       }
     },
     {
@@ -70,8 +61,14 @@ export async function pushLocalChanges({
     },
   );
 
-  const { remoteDelete, remoteUpdate, conflicts, localUpdate, localDelete } =
-    await syncEntries(localEntriesMap, tree);
+  const {
+    remoteDelete,
+    remoteUpdate,
+    conflicts,
+    localUpdate,
+    localDelete,
+    localSourceUpdate,
+  } = await syncEntries(localEntriesMap, tree);
 
   if (conflicts.length > 0) {
     return {
@@ -117,31 +114,16 @@ export async function pushLocalChanges({
     },
   );
 
+  // update the local files
   await pMap(
-    localUpdate,
+    [...localUpdate, ...localSourceUpdate],
     async (wsPath) => {
-      const remoteFile = await getFileBlobFromTree({
-        wsPath: wsPath,
+      await overwriteLocalEntryFromRemote({
         config,
+        fileEntryManager,
         tree,
+        wsPath,
       });
-
-      if (remoteFile) {
-        const remoteEntry = await RemoteFileEntry.newFile({
-          uid: wsPath,
-          file: remoteFile,
-          deleted: undefined,
-        });
-
-        await fileEntryManager.updateFileEntry(
-          remoteEntry.forkLocalFileEntry(),
-        );
-      } else {
-        // this should ideally not happen since we are are grabbing the file
-        // by the sha from the tree, but since it is an external thing can't
-        // be guaranteed.
-        console.error('Expected remote file to exist: ', wsPath);
-      }
     },
     {
       concurrency: 5,
@@ -214,6 +196,10 @@ async function syncEntries(
   const remoteUpdate: Array<{ wsPath: string; file: File }> = [];
   const localDelete: string[] = [];
   const localUpdate: string[] = [];
+  const localSourceUpdate: string[] = [];
+  const REMOTE_FILE = 'fileB';
+  const LOCAL_FILE = 'fileA';
+  const ANCESTOR_FILE = 'ancestor';
 
   for (const [uid, localEntry] of localEntries) {
     const rawRemote = tree.tree.get(uid);
@@ -258,7 +244,6 @@ async function syncEntries(
       ancestor,
     });
 
-    const isRemoteChange = sync.target === 'fileB';
     const syncAction = sync.action;
 
     if (syncAction === 'noop') {
@@ -267,19 +252,44 @@ async function syncEntries(
       conflicts.push(uid);
       continue;
     } else if (syncAction === 'delete') {
-      if (isRemoteChange) {
-        remoteDelete.push(uid);
-      } else {
-        localDelete.push(uid);
+      let target = sync.target;
+      switch (target) {
+        case REMOTE_FILE: {
+          remoteDelete.push(uid);
+          continue;
+        }
+        case LOCAL_FILE: {
+          localDelete.push(uid);
+          continue;
+        }
+        default: {
+          let val: never = target;
+          throw new Error('Unknown target');
+        }
       }
-      continue;
     } else if (syncAction === 'set') {
-      if (isRemoteChange) {
-        remoteUpdate.push({ wsPath: uid, file: localEntry.file });
-      } else {
-        localUpdate.push(uid);
+      let target = sync.target;
+      switch (target) {
+        case REMOTE_FILE: {
+          remoteUpdate.push({ wsPath: uid, file: localEntry.file });
+          continue;
+        }
+        case LOCAL_FILE: {
+          localUpdate.push(uid);
+          continue;
+        }
+        // This case ideally should not happen, unless
+        // a previous sync encountered an error
+        case ANCESTOR_FILE: {
+          // adding it to localUpdate will update the ancestor
+          localSourceUpdate.push(uid);
+          continue;
+        }
+        default: {
+          let val: never = target;
+          throw new Error('Unknown target');
+        }
       }
-      continue;
     }
 
     let val: never = syncAction;
@@ -292,5 +302,43 @@ async function syncEntries(
     remoteUpdate,
     localDelete,
     localUpdate,
+    localSourceUpdate,
   };
+}
+
+/**
+ * Caution this will overwrite the local file with the remote file
+ * regardless of whether local file is modified or not
+ */
+async function overwriteLocalEntryFromRemote({
+  config,
+  fileEntryManager,
+  tree,
+  wsPath,
+}: {
+  config: GithubConfig;
+  fileEntryManager: LocalFileEntryManager;
+  tree: GHTree;
+  wsPath: string;
+}) {
+  const remoteFile = await getFileBlobFromTree({
+    wsPath: wsPath,
+    config,
+    tree,
+  });
+
+  if (remoteFile) {
+    const remoteEntry = await RemoteFileEntry.newFile({
+      uid: wsPath,
+      file: remoteFile,
+      deleted: undefined,
+    });
+
+    await fileEntryManager.overwriteFileEntry(remoteEntry.forkLocalFileEntry());
+  } else {
+    // this should ideally not happen since we are are grabbing the file
+    // by the sha from the tree, but since it is an external thing can't
+    // be guaranteed.
+    console.error('Expected remote file to exist: ', wsPath);
+  }
 }

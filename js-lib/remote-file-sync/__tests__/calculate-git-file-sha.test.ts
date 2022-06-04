@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { readFile } from 'fs/promises';
 
 import { calculateGitFileSha } from '../calculate-git-file-sha';
 import { readFileBlob } from './test-helpers';
