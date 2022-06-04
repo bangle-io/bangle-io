@@ -99,23 +99,7 @@ export function syncWithGithub(
     dispatch: BangleAppDispatch,
     store: BangleApplicationStore,
   ) => {
-    const releaseLock = await acquireLockIfAvailable(LOCK_NAME + ':' + wsName);
-
-    if (!releaseLock) {
-      if (verboseNotifications === true) {
-        console.debug('Sync already in progress for this workspace');
-        notification.showNotification({
-          severity: 'warning',
-          title: 'Sync already in progress for this workspace',
-          uid: 'gh-sync-in-progress' + Date.now(),
-          transient: true,
-        })(store.state, store.dispatch);
-      }
-
-      return undefined;
-    }
-
-    try {
+    async function sync() {
       if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
         return undefined;
       }
@@ -228,6 +212,26 @@ export function syncWithGithub(
       }
 
       return true;
+    }
+
+    const releaseLock = await acquireLockIfAvailable(LOCK_NAME + ':' + wsName);
+
+    if (!releaseLock) {
+      if (verboseNotifications === true) {
+        console.debug('Sync already in progress for this workspace');
+        notification.showNotification({
+          severity: 'warning',
+          title: 'Sync already in progress for this workspace',
+          uid: 'gh-sync-in-progress' + Date.now(),
+          transient: true,
+        })(store.state, store.dispatch);
+      }
+
+      return undefined;
+    }
+
+    try {
+      return await sync();
     } catch (error) {
       if (isAbortError(error)) {
         return undefined;
@@ -363,32 +367,30 @@ function startSync(
       },
     });
 
-    const getTree = getRepoTree();
+    try {
+      const getTree = getRepoTree();
 
-    const tree = await getTree({
-      wsName,
-      config: { ...wsMetadata, repoName: wsName },
-    });
+      const tree = await getTree({
+        wsName,
+        config: { ...wsMetadata, repoName: wsName },
+      });
 
-    let pushPromise = pushLocalChanges({
-      wsName,
-      ghConfig: wsMetadata,
-      retainedWsPaths,
-      tree,
-      fileEntryManager,
-      // TODO currently this is not abortable
-      abortSignal: new AbortController().signal,
-    });
-
-    pushPromise.finally(() => {
+      return await pushLocalChanges({
+        wsName,
+        ghConfig: wsMetadata,
+        retainedWsPaths,
+        tree,
+        fileEntryManager,
+        // TODO currently this is not abortable
+        abortSignal: new AbortController().signal,
+      });
+    } finally {
       store.dispatch({
         name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
         value: {
           syncState: false,
         },
       });
-    });
-
-    return pushPromise;
+    }
   });
 }
