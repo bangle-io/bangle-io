@@ -77,13 +77,6 @@ export class LocalFileEntryManager {
     });
   }
 
-  private isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
-    return (
-      typeof fileEntry?.deleted === 'number' &&
-      Date.now() - fileEntry.deleted < DELETE_TOLERANCE
-    );
-  }
-
   // returns all local and remote file uids that have not been deleted
   async listFiles(
     remoteFileUids: string[],
@@ -111,12 +104,12 @@ export class LocalFileEntryManager {
     return Array.from(new Set([...localFiles, ...remoteFiles])).sort();
   }
 
-  // use with caution!! overwrites the file entry completely with the provided one
   // if no prior file entry exists, it will be created
   async overwriteFileEntry(fileEntry: LocalFileEntry): Promise<void> {
     return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
 
+  // use with caution!! overwrites the file entry completely with the provided one
   async readFile(
     uid: string,
     getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
@@ -143,12 +136,12 @@ export class LocalFileEntryManager {
     return undefined;
   }
 
-  // USE WITH CAUTION! prefer deleteFile in most cases
   // removes (completely) file entry from the storage
   async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
     return this.persistenceProvider.delete(uid);
   }
 
+  // USE WITH CAUTION! prefer deleteFile in most cases
   async updateFileSource(uid: string, sourceFile: File) {
     const fileEntry = await this._getFileEntry(uid);
 
@@ -165,7 +158,7 @@ export class LocalFileEntryManager {
   async writeFile(uid: string, file: File) {
     const fileEntry = await this._getFileEntry(uid);
 
-    if (this.isRecentlyDeleted(fileEntry)) {
+    if (this._isRecentlyDeleted(fileEntry)) {
       throw new BaseError({
         message: 'Cannot write as file is deleted',
         code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
@@ -180,6 +173,13 @@ export class LocalFileEntryManager {
         code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
       });
     }
+  }
+
+  private _isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
+    return (
+      typeof fileEntry?.deleted === 'number' &&
+      Date.now() - fileEntry.deleted < DELETE_TOLERANCE
+    );
   }
 
   private async _getFileEntry(

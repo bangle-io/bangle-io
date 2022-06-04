@@ -20,8 +20,8 @@ export class GithubStorageProvider implements BaseStorageProvider {
   description = '';
   hidden = true;
 
-  private getTree = getRepoTree();
-  private fileEntryManager = localFileEntryManager;
+  private _fileEntryManager = localFileEntryManager;
+  private _getTree = getRepoTree();
 
   async createFile(
     wsPath: string,
@@ -30,23 +30,21 @@ export class GithubStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
-    await this.fileEntryManager.createFile(
+    await this._fileEntryManager.createFile(
       wsPath,
       file,
-      this.makeGetRemoteFileEntryCb(
+      this._makeGetRemoteFileEntryCb(
         opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
-        false,
       ),
     );
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
-    await this.fileEntryManager.deleteFile(
+    await this._fileEntryManager.deleteFile(
       wsPath,
-      this.makeGetRemoteFileEntryCb(
+      this._makeGetRemoteFileEntryCb(
         opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
-        false,
       ),
     );
   }
@@ -72,53 +70,18 @@ export class GithubStorageProvider implements BaseStorageProvider {
     const wsMetadata = opts.readWorkspaceMetadata(wsName) as GithubWsMetadata;
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
-    const { tree } = await this.getTree({
+    const { tree } = await this._getTree({
       wsName,
       config: { repoName: wsName, ...wsMetadata },
       abortSignal,
     });
 
-    const files = await this.fileEntryManager.listFiles(
+    const files = await this._fileEntryManager.listFiles(
       [...tree.keys()],
       wsName + ':',
     );
 
     return files;
-  }
-
-  private makeGetRemoteFileEntryCb(
-    wsMetadata: GithubWsMetadata,
-    useCache: boolean,
-    abortSignal: AbortSignal = new AbortController().signal,
-  ) {
-    return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
-      const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
-
-      const config = { repoName: wsName, ...wsMetadata };
-
-      const tree = await this.getTree({
-        wsName,
-        config,
-        abortSignal,
-      });
-
-      const file = await getFileBlobFromTree({
-        wsPath,
-        config,
-        abortSignal,
-        tree,
-      });
-
-      if (!file) {
-        return undefined;
-      }
-
-      return RemoteFileEntry.newFile({
-        uid: wsPath,
-        file: file,
-        deleted: undefined,
-      });
-    };
   }
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {
@@ -145,11 +108,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
-    const file = await this.fileEntryManager.readFile(
+    const file = await this._fileEntryManager.readFile(
       wsPath,
-      this.makeGetRemoteFileEntryCb(
+      this._makeGetRemoteFileEntryCb(
         opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
-        false,
       ),
     );
 
@@ -184,6 +146,40 @@ export class GithubStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     log('writeFile', wsPath, file);
-    await this.fileEntryManager.writeFile(wsPath, file);
+    await this._fileEntryManager.writeFile(wsPath, file);
+  }
+
+  private _makeGetRemoteFileEntryCb(
+    wsMetadata: GithubWsMetadata,
+    abortSignal: AbortSignal = new AbortController().signal,
+  ) {
+    return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
+      const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
+
+      const config = { repoName: wsName, ...wsMetadata };
+
+      const tree = await this._getTree({
+        wsName,
+        config,
+        abortSignal,
+      });
+
+      const file = await getFileBlobFromTree({
+        wsPath,
+        config,
+        abortSignal,
+        tree,
+      });
+
+      if (!file) {
+        return undefined;
+      }
+
+      return RemoteFileEntry.newFile({
+        uid: wsPath,
+        file: file,
+        deleted: undefined,
+      });
+    };
   }
 }
