@@ -72,6 +72,8 @@ export async function pushLocalChanges({
   } = await syncEntries(localEntriesMap, tree);
 
   if (conflicts.length > 0) {
+    console.log(conflicts);
+
     return {
       status: 'merge-conflict' as const,
       count: conflicts.length,

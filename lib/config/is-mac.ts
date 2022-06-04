@@ -71,7 +71,7 @@ const getBrowserInfo = () => {
   return `${browserName} ${browserVersion}`.toLocaleLowerCase();
 };
 
-const browserInfo = getBrowserInfo();
+export const browserInfo = getBrowserInfo();
 
 export const isFirefox = browserInfo.includes('firefox');
 export const isSafari = browserInfo.includes('safari');
