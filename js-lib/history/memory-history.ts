@@ -2,25 +2,25 @@ import { BaseHistory } from './base-history';
 import { Location } from './types';
 
 export class MemoryHistory implements BaseHistory {
-  private currentLoc: Location;
+  private _currentLoc: Location;
 
   // TODO implement base
   constructor(
-    private base = '',
-    private onChange: (location: Location) => void,
+    private _base = '',
+    private _onChange: (location: Location) => void,
   ) {
-    this.currentLoc = {
+    this._currentLoc = {
       pathname: '',
       search: '',
     };
   }
 
   get pathname() {
-    return this.currentLoc.pathname;
+    return this._currentLoc.pathname;
   }
 
   get search() {
-    return this.currentLoc.search;
+    return this._currentLoc.search;
   }
 
   destroy(): void {}
@@ -34,10 +34,10 @@ export class MemoryHistory implements BaseHistory {
         : parsed.search,
     };
 
-    if (!isLocationEqual(newLoc, this.currentLoc)) {
-      this.currentLoc = newLoc;
+    if (!isLocationEqual(newLoc, this._currentLoc)) {
+      this._currentLoc = newLoc;
       Promise.resolve().then(() => {
-        this.onChange(newLoc);
+        this._onChange(newLoc);
       });
     }
   }

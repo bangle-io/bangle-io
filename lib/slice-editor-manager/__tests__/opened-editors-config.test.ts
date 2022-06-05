@@ -14,12 +14,12 @@ test('works empty', () => {
   });
   expect(config).toMatchInlineSnapshot(`
     OpenedEditorsConfig {
-      "scrollPositions": Array [
+      "_scrollPositions": Array [
         null,
         null,
         null,
       ],
-      "selections": Array [
+      "_selections": Array [
         null,
         null,
         null,
@@ -45,7 +45,7 @@ test('shrinks with bigger arrays automatically', () => {
   });
   expect(config).toMatchInlineSnapshot(`
     OpenedEditorsConfig {
-      "scrollPositions": Array [
+      "_scrollPositions": Array [
         Object {
           "test:magic.md": 0,
         },
@@ -56,7 +56,7 @@ test('shrinks with bigger arrays automatically', () => {
           "test:magic.md": 2,
         },
       ],
-      "selections": Array [
+      "_selections": Array [
         null,
         null,
         null,
@@ -86,12 +86,12 @@ describe('selection', () => {
 
     expect(config).toMatchInlineSnapshot(`
       OpenedEditorsConfig {
-        "scrollPositions": Array [
+        "_scrollPositions": Array [
           null,
           null,
           null,
         ],
-        "selections": Array [
+        "_selections": Array [
           Object {
             "test:magic.md": Object {
               "anchor": 2004,
@@ -248,12 +248,12 @@ describe('selection', () => {
 
     expect(config).toMatchInlineSnapshot(`
       OpenedEditorsConfig {
-        "scrollPositions": Array [
+        "_scrollPositions": Array [
           null,
           null,
           null,
         ],
-        "selections": Array [
+        "_selections": Array [
           Object {
             "test:wonder.md": Object {
               "anchor": 24,

@@ -11,7 +11,7 @@ const DELETE_TOLERANCE = 2000;
 
 export class LocalFileEntryManager {
   constructor(
-    private persistenceProvider: {
+    private _persistenceProvider: {
       get: (key: string) => Promise<any | undefined>;
       set: (key: string, obj: any) => Promise<void>;
       getValues: (keyPrefix: string) => Promise<any[]>;
@@ -70,7 +70,7 @@ export class LocalFileEntryManager {
   }
 
   async getAllEntries(uidPrefix: string): Promise<LocalFileEntry[]> {
-    return this.persistenceProvider.getValues(uidPrefix).then((entries) => {
+    return this._persistenceProvider.getValues(uidPrefix).then((entries) => {
       return entries.map((r) => {
         return LocalFileEntry.fromPlainObj(r);
       });
@@ -106,7 +106,7 @@ export class LocalFileEntryManager {
 
   // if no prior file entry exists, it will be created
   async overwriteFileEntry(fileEntry: LocalFileEntry): Promise<void> {
-    return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
+    return this._persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
 
   // use with caution!! overwrites the file entry completely with the provided one
@@ -138,7 +138,7 @@ export class LocalFileEntryManager {
 
   // removes (completely) file entry from the storage
   async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
-    return this.persistenceProvider.delete(uid);
+    return this._persistenceProvider.delete(uid);
   }
 
   // USE WITH CAUTION! prefer deleteFile in most cases
@@ -185,7 +185,7 @@ export class LocalFileEntryManager {
   private async _getFileEntry(
     uid: string,
   ): Promise<LocalFileEntry | undefined> {
-    const obj = await this.persistenceProvider.get(uid);
+    const obj = await this._persistenceProvider.get(uid);
 
     if (obj) {
       return LocalFileEntry.fromPlainObj(obj);

@@ -2,6 +2,7 @@ import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import {
   ApplicationStore,
   BaseAction,
+  OnErrorType,
   Slice,
   SliceKey,
 } from '@bangle.io/create-store';
@@ -64,7 +65,7 @@ export function createBasicTestStore<
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
   useEditorManagerSlice?: boolean;
-  onError?: ApplicationStore<SL, A>['onError'];
+  onError?: OnErrorType<S, A>;
   opts?: any;
 } = {}) {
   let extensionRegistry = createExtensionRegistry(

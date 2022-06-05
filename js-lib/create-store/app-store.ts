@@ -62,25 +62,8 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     );
   }
 
-  private sideEffects: Array<StoreSideEffectType<any, A, S>> = [];
-  private destroyed = false;
-
-  private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
-  private actionSerializers: {
-    [k: string]: ReturnType<
-      ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
-    >;
-  } = {};
-
-  private currentRunId = 0;
-  private destroyController = new AbortController();
-  private lastSeenStateCache = new WeakMap<
-    StoreSideEffectType<any, A, S>,
-    AppState<S, A>
-  >();
-
   dispatch = (action: A) => {
-    if (this.destroyed) {
+    if (this._destroyed) {
       return;
     }
 
@@ -89,31 +72,26 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     this._dispatchAction(this, action);
   };
 
-  private infiniteErrors = {
-    count: 0,
-    lastSeen: 0,
-  };
-
   errorHandler = (error: Error, key?: string): void => {
-    if (this.destroyController.signal.aborted) {
+    if (this._destroyController.signal.aborted) {
       return;
     }
 
-    this.infiniteErrors.count++;
+    this._infiniteErrors.count++;
 
-    console.debug('store handling error:', error.message, this.infiniteErrors);
+    console.debug('store handling error:', error.message, this._infiniteErrors);
 
-    if (this.infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
+    if (this._infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
       if (
-        Date.now() - this.infiniteErrors.lastSeen <=
+        Date.now() - this._infiniteErrors.lastSeen <=
         INFINITE_ERROR_THRESHOLD_TIME
       ) {
         this.destroy();
-        console.log(`this.infiniteErrors ${this.infiniteErrors.count}`);
+        console.log(`this.infiniteErrors ${this._infiniteErrors.count}`);
         console.error(error);
         throw new Error('AppStore: avoiding possible infinite errors');
       }
-      this.infiniteErrors.lastSeen = Date.now();
+      this._infiniteErrors.lastSeen = Date.now();
     }
 
     if (isAbortError(error)) {
@@ -121,7 +99,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     }
 
     // check the store handler first
-    if (this.onError?.(error, this) === true) {
+    if (this._onError?.(error, this) === true) {
       return;
     }
 
@@ -152,15 +130,41 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     throw error;
   };
 
+  private _infiniteErrors = {
+    count: 0,
+    lastSeen: 0,
+  };
+
+  private _lastSeenStateCache = new WeakMap<
+    StoreSideEffectType<any, A, S>,
+    AppState<S, A>
+  >();
+
+  private _destroyController = new AbortController();
+
+  private _currentRunId = 0;
+
+  private _actionSerializers: {
+    [k: string]: ReturnType<
+      ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
+    >;
+  } = {};
+
+  private _deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
+
+  private _destroyed = false;
+
+  private _sideEffects: Array<StoreSideEffectType<any, A, S>> = [];
+
   constructor(
     private _state: AppState<S, A>,
     private _dispatchAction: DispatchActionType<S, A>,
     public storeName: string,
-    private scheduler?: SchedulerType,
-    private disableSideEffects = false,
-    private onError?: OnErrorType<S, A>,
+    private _scheduler?: SchedulerType,
+    private _disableSideEffects = false,
+    private _onError?: OnErrorType<S, A>,
   ) {
-    this.setup();
+    this._setup();
   }
 
   get state(): AppState<S, A> {
@@ -168,17 +172,9 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   }
 
   destroy() {
-    this.destroyController.abort();
-    this.destroySideEffects();
-    this.destroyed = true;
-  }
-
-  private destroySideEffects() {
-    this.deferredRunner?.abort();
-    this.sideEffects.forEach(({ effect }) => {
-      effect.destroy?.();
-    });
-    this.sideEffects = [];
+    this._destroyController.abort();
+    this._destroySideEffects();
+    this._destroyed = true;
   }
 
   parseAction({
@@ -190,7 +186,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     serializedValue: any;
     storeName: string;
   }): A | false {
-    const serializer = this.actionSerializers[name];
+    const serializer = this._actionSerializers[name];
 
     if (!serializer) {
       // console.debug('ActionSerialization: No parser found for ' + name);
@@ -213,60 +209,12 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     return action;
   }
 
-  private runSideEffects(runId: number) {
-    for (const sideEffect of this.sideEffects) {
-      // make sure the runId is the currentRunId
-      if (runId !== this.currentRunId) {
-        return;
-      }
-      // Some effects can lag behind a couple of state transitions
-      // if an effect before them dispatches an action.
-      // Note: if it is the first time an effect is running
-      // the previouslySeenState would be the initial state
-      const previouslySeenState =
-        this.lastSeenStateCache.get(sideEffect) || sideEffect.initialState;
-
-      // `previouslySeenState` needs to always be the one that the effect.update has seen before or the initial state.
-      // Here we are saving the this.state before calling update, because an update can dispatch an action and
-      // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
-      this.lastSeenStateCache.set(sideEffect, this.state);
-
-      try {
-        // effect.update() call should always be the last in this loop, since it can trigger dispatches
-        // which changes the runId causing the loop to break.
-        sideEffect.effect.update?.(
-          this,
-          previouslySeenState,
-          this.state.getSliceState(sideEffect.key),
-          previouslySeenState.getSliceState(sideEffect.key),
-        );
-      } catch (err) {
-        // avoid disrupting the update calls of other
-        // side-effects
-        if (err instanceof Error) {
-          this.errorHandler(err, sideEffect.key);
-        } else {
-          throw err;
-        }
-      }
-    }
-
-    if (this.scheduler) {
-      this.deferredRunner?.abort();
-      this.deferredRunner = new DeferredSideEffectsRunner(
-        this.sideEffects,
-        this.scheduler,
-      );
-      this.deferredRunner.run(this, this.errorHandler);
-    }
-  }
-
   serializeAction(action: A) {
     if (action.fromStore) {
       throw new Error('Cannot serialize an action that came from other store');
     }
 
-    const serializer = this.actionSerializers[action.name];
+    const serializer = this._actionSerializers[action.name];
 
     if (!serializer) {
       return false;
@@ -280,38 +228,29 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     return { name: action.name, serializedValue, storeName: this.storeName };
   }
 
-  private setup() {
-    this.setupActionSerializers();
-    this.setupSideEffects();
-  }
-
-  private setupActionSerializers() {
-    this.actionSerializers = {};
-
-    for (const slice of this._state.getSlices()) {
-      const actions = slice.spec.actions;
-
-      if (actions) {
-        for (const act in actions) {
-          if (this.actionSerializers[act]) {
-            throw new Error(`A serializer for ${act} already exists`);
-          }
-          const actionSerializers = (actions as any)[act];
-
-          if (actionSerializers) {
-            this.actionSerializers[act] = actionSerializers(act);
-          }
-        }
-      }
-    }
-  }
-
-  private setupSideEffects() {
-    if (this.disableSideEffects) {
+  updateState(state: AppState<S, A>) {
+    if (this._destroyed) {
       return;
     }
 
-    this.destroySideEffects();
+    const prevState = this._state;
+
+    this._state = state;
+
+    if (!this._disableSideEffects) {
+      if (prevState.config !== this._state.config) {
+        this._setup();
+      }
+      this._runSideEffects(++this._currentRunId);
+    }
+  }
+
+  private _setupSideEffects() {
+    if (this._disableSideEffects) {
+      return;
+    }
+
+    this._destroySideEffects();
 
     const initialAppSate = this._state;
 
@@ -334,14 +273,14 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
           .forEach((sideEffect) => {
             let result = sideEffect?.(initialAppSate, this._state.config.opts);
 
-            if (!this.scheduler && result?.deferredUpdate) {
+            if (!this._scheduler && result?.deferredUpdate) {
               throw new RangeError(
                 "Scheduler needs to be defined for using Slice's deferredUpdate",
               );
             }
 
             if (result) {
-              this.sideEffects.push({
+              this._sideEffects.push({
                 effect: result,
                 key: slice.key,
                 initialState: initialAppSate,
@@ -357,10 +296,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     // run all the once handlers
     allDeferredOnce.forEach(([key, def]) => {
-      if (!this.destroyController.signal.aborted) {
+      if (!this._destroyController.signal.aborted) {
         (async () => {
           try {
-            await def(this, this.destroyController.signal);
+            await def(this, this._destroyController.signal);
           } catch (error) {
             if (error instanceof Error) {
               this.errorHandler(error, key);
@@ -375,42 +314,109 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     });
   }
 
-  updateState(state: AppState<S, A>) {
-    if (this.destroyed) {
-      return;
-    }
+  private _setupActionSerializers() {
+    this._actionSerializers = {};
 
-    const prevState = this._state;
+    for (const slice of this._state.getSlices()) {
+      const actions = slice.spec.actions;
 
-    this._state = state;
+      if (actions) {
+        for (const act in actions) {
+          if (this._actionSerializers[act]) {
+            throw new Error(`A serializer for ${act} already exists`);
+          }
+          const actionSerializers = (actions as any)[act];
 
-    if (!this.disableSideEffects) {
-      if (prevState.config !== this._state.config) {
-        this.setup();
+          if (actionSerializers) {
+            this._actionSerializers[act] = actionSerializers(act);
+          }
+        }
       }
-      this.runSideEffects(++this.currentRunId);
     }
+  }
+
+  private _setup() {
+    this._setupActionSerializers();
+    this._setupSideEffects();
+  }
+
+  private _runSideEffects(runId: number) {
+    for (const sideEffect of this._sideEffects) {
+      // make sure the runId is the currentRunId
+      if (runId !== this._currentRunId) {
+        return;
+      }
+      // Some effects can lag behind a couple of state transitions
+      // if an effect before them dispatches an action.
+      // Note: if it is the first time an effect is running
+      // the previouslySeenState would be the initial state
+      const previouslySeenState =
+        this._lastSeenStateCache.get(sideEffect) || sideEffect.initialState;
+
+      // `previouslySeenState` needs to always be the one that the effect.update has seen before or the initial state.
+      // Here we are saving the this.state before calling update, because an update can dispatch an action and
+      // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
+      this._lastSeenStateCache.set(sideEffect, this.state);
+
+      try {
+        // effect.update() call should always be the last in this loop, since it can trigger dispatches
+        // which changes the runId causing the loop to break.
+        sideEffect.effect.update?.(
+          this,
+          previouslySeenState,
+          this.state.getSliceState(sideEffect.key),
+          previouslySeenState.getSliceState(sideEffect.key),
+        );
+      } catch (err) {
+        // avoid disrupting the update calls of other
+        // side-effects
+        if (err instanceof Error) {
+          this.errorHandler(err, sideEffect.key);
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    if (this._scheduler) {
+      this._deferredRunner?.abort();
+      this._deferredRunner = new DeferredSideEffectsRunner(
+        this._sideEffects,
+        this._scheduler,
+      );
+      this._deferredRunner.run(this, this.errorHandler);
+    }
+  }
+
+  private _destroySideEffects() {
+    this._deferredRunner?.abort();
+    this._sideEffects.forEach(({ effect }) => {
+      effect.destroy?.();
+    });
+    this._sideEffects = [];
   }
 }
 
 export class DeferredSideEffectsRunner<S, A extends BaseAction> {
-  static deferredlastSeenStateCache = new WeakMap<
+  static deferredLastSeenStateCache = new WeakMap<
     StoreSideEffectType<any, any, any>,
     AppState<any, any>
   >();
 
-  private scheduledCallback: ReturnType<SchedulerType> | undefined;
-
-  private abortController = new AbortController();
+  private _abortController = new AbortController();
+  private _cleanupCb: ReturnType<SchedulerType> | undefined;
 
   constructor(
-    private sideEffects: Array<StoreSideEffectType<any, A, S>>,
-    private scheduler: SchedulerType,
+    private _sideEffects: Array<StoreSideEffectType<any, A, S>>,
+    private _scheduler: SchedulerType,
   ) {
-    this.abortController.signal.addEventListener(
+    this._abortController.signal.addEventListener(
       'abort',
       () => {
-        this.scheduledCallback?.();
+        // If the deferred runner is cancelled, this is needed to call the cleanup function
+        // of the scheduler or else the scheduler will continue calling the function we passed
+        // in `._scheduler`.
+        this._cleanupCb?.();
       },
       {
         once: true,
@@ -418,42 +424,38 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
     );
   }
 
-  private get isAborted() {
-    return this.abortController.signal.aborted;
-  }
-
   abort() {
-    this.abortController.abort();
+    this._abortController.abort();
   }
 
   run(
     store: ApplicationStore<S>,
     errorHandler: ApplicationStore['errorHandler'],
   ) {
-    if (this.scheduledCallback) {
+    if (this._cleanupCb) {
       throw new RangeError('Cannot re-run finished deferred side effects');
     }
 
-    if (this.isAborted) {
+    if (this._isAborted) {
       return;
     }
 
-    this.scheduledCallback = this.scheduler(async () => {
-      if (this.isAborted) {
+    this._cleanupCb = this._scheduler(async () => {
+      if (this._isAborted) {
         return;
       }
 
-      for await (const _sideEffect of this.sideEffects) {
-        if (!this.isAborted) {
+      for await (const _sideEffect of this._sideEffects) {
+        if (!this._isAborted) {
           // coverting it to async-iife allows us to handle both sync and async errors
           (async (sideEffect) => {
             try {
               const previouslySeenState =
-                DeferredSideEffectsRunner.deferredlastSeenStateCache.get(
+                DeferredSideEffectsRunner.deferredLastSeenStateCache.get(
                   sideEffect,
                 ) || sideEffect.initialState;
 
-              DeferredSideEffectsRunner.deferredlastSeenStateCache.set(
+              DeferredSideEffectsRunner.deferredLastSeenStateCache.set(
                 sideEffect,
                 store.state,
               );
@@ -461,12 +463,12 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
               await sideEffect.effect.deferredUpdate?.(
                 store,
                 previouslySeenState,
-                this.abortController.signal,
+                this._abortController.signal,
               );
             } catch (error) {
               if (isAbortError(error)) {
                 return;
-              } else if (!this.isAborted && error instanceof Error) {
+              } else if (!this._isAborted && error instanceof Error) {
                 errorHandler(error, sideEffect.key);
               } else {
                 throw error;
@@ -476,6 +478,10 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
         }
       }
     });
+  }
+
+  private get _isAborted() {
+    return this._abortController.signal.aborted;
   }
 }
 

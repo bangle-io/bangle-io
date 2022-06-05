@@ -55,7 +55,7 @@ describe('serialization works', () => {
         "mainFields": Object {
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
-            "wsPaths": Array [
+            "_wsPaths": Array [
               undefined,
               undefined,
               undefined,
@@ -94,7 +94,7 @@ describe('serialization works', () => {
         "mainFields": Object {
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
-            "wsPaths": Array [
+            "_wsPaths": Array [
               undefined,
               undefined,
               undefined,

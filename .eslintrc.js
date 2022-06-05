@@ -62,6 +62,12 @@ module.exports = {
             format: ['PascalCase'],
           },
           {
+            selector: 'memberLike',
+            modifiers: ['private'],
+            format: ['camelCase'],
+            leadingUnderscore: 'require',
+          },
+          {
             selector: 'interface',
             format: ['PascalCase'],
             custom: {

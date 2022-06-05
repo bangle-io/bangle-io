@@ -320,7 +320,7 @@ describe('updateLocationEffect', () => {
         name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
         value: {
           openedWsPaths: {
-            wsPaths: createEmptyArray(MAX_OPEN_EDITORS),
+            _wsPaths: createEmptyArray(MAX_OPEN_EDITORS),
           },
           wsName: 'test-ws',
         },
