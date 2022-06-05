@@ -15,9 +15,8 @@ import {
   updateInitialSelection,
   updateScrollPosition,
 } from './operations';
-import type { SideEffect } from './types';
 
-export const initialSelectionEffect: SideEffect = () => {
+export const initialSelectionEffect = editorManagerSliceKey.effect(() => {
   return {
     update(store, prevState) {
       // save the selection and scroll position of any editor that was closed
@@ -31,7 +30,7 @@ export const initialSelectionEffect: SideEffect = () => {
       }
     },
   };
-};
+});
 
 // This effect does:
 // 1. Focus on the correct editor on initial mount.
@@ -45,7 +44,7 @@ export const initialSelectionEffect: SideEffect = () => {
 // Since we do not know when will the action for setting the editor
 // at `focusedEditorId` will be dispatched we pause auto focusing on any other editorId
 // for the cooldown period.
-export const focusEditorEffect: SideEffect = (state) => {
+export const focusEditorEffect = editorManagerSliceKey.effect((state) => {
   const initialSliceState = editorManagerSliceKey.getSliceState(state);
 
   // This exists to preserve focused editor during page reloads
@@ -113,13 +112,13 @@ export const focusEditorEffect: SideEffect = (state) => {
       }
     },
   };
-};
+});
 
 // Preserve the scroll state when editors unmount
 // note: we cannot simply update the scroll position when editor unmounts
 // like selection because the dom is no longer having height when the editor
 // unmounts
-export const watchEditorScrollEffect: SideEffect = () => {
+export const watchEditorScrollEffect = editorManagerSliceKey.effect(() => {
   return {
     deferredOnce(store, abortSignal) {
       const updateScrollPos = () => {
@@ -162,9 +161,9 @@ export const watchEditorScrollEffect: SideEffect = () => {
       );
     },
   };
-};
+});
 
-export const trimWhiteSpaceEffect: SideEffect = () => {
+export const trimWhiteSpaceEffect = editorManagerSliceKey.effect(() => {
   return {
     update: (store, prevState) => {
       const pageTransitioned = pageLifeCycleTransitionedTo(
@@ -187,4 +186,4 @@ export const trimWhiteSpaceEffect: SideEffect = () => {
       }
     },
   };
-};
+});

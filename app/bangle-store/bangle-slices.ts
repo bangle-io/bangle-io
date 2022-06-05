@@ -74,15 +74,13 @@ export function bangleStateSlices({
 
         return true;
       },
-      sideEffect: [
-        () => {
-          return {
-            deferredUpdate(store) {
-              onUpdate?.(store);
-            },
-          };
-        },
-      ],
+      sideEffect() {
+        return {
+          deferredUpdate(store) {
+            onUpdate?.(store);
+          },
+        };
+      },
     }),
   ];
 }

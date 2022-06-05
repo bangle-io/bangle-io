@@ -25,7 +25,7 @@ export function pageLifeCycleSlice() {
   return new Slice({
     key: key,
     sideEffect: [
-      function watchPageLifeCycleEffect() {
+      key.effect(function watchPageLifeCycleEffect() {
         return {
           deferredOnce(store, abortSignal) {
             const handler = (event: PageLifeCycleEvent) => {
@@ -47,9 +47,9 @@ export function pageLifeCycleSlice() {
             );
           },
         };
-      },
+      }),
 
-      function blockReload() {
+      key.effect(function blockReload() {
         return {
           update(store, prevState) {
             const blockReload = pageSliceKey.getValueIfChanged(
@@ -69,7 +69,7 @@ export function pageLifeCycleSlice() {
             }
           },
         };
-      },
+      }),
     ],
   });
 }

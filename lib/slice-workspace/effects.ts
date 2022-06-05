@@ -32,7 +32,7 @@ const log = LOG
   ? console.debug.bind(console, 'slice-workspace effects')
   : () => {};
 
-export const errorHandlerEffect: SideEffect = () => {
+export const errorHandlerEffect = workspaceSliceKey.effect(() => {
   let lastErrorSeen: Error | undefined;
 
   return {
@@ -124,9 +124,9 @@ export const errorHandlerEffect: SideEffect = () => {
       throw new Error('Unable to handler error ' + error.message);
     },
   };
-};
+});
 
-export const refreshWsPathsEffect: SideEffect = () => {
+export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
   let abort = new AbortController();
 
   return {
@@ -199,7 +199,7 @@ export const refreshWsPathsEffect: SideEffect = () => {
       });
     },
   };
-};
+});
 
 // react to wsInfo deletion
 export const wsDeleteEffect = workspaceSliceKey.effect(() => {
