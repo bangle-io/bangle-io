@@ -95,10 +95,11 @@ describe('operations: getEditorState', () => {
   test('works', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
     let value = {};
+    const editor: any = { view: { state: value } };
     state = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
-        editor: { view: { state: value } } as BangleEditor,
+        editor,
         editorId: 1,
       },
     });

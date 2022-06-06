@@ -19,7 +19,33 @@ module.exports = {
 
     {
       files: ['**/*.ts?(x)'],
+      parserOptions: {
+        project: ['./tsconfig.json'],
+      },
       rules: {
+        /**
+         * Require consistent usage of type exports.
+         *
+         * 🔧 Fixable - https://typescript-eslint.io/rules/consistent-type-exports/
+         */
+        '@typescript-eslint/consistent-type-exports': [
+          'warn',
+          { fixMixedExportsWithInlineTypeSpecifier: true },
+        ],
+        '@typescript-eslint/consistent-type-imports': [
+          'error',
+          { disallowTypeAnnotations: false },
+        ],
+        /**
+         * Require using function property types in method signatures.
+         *
+         * These have enhanced typechecking, whereas method signatures do not.
+         *
+         * 🔧 Fixable - https://typescript-eslint.io/rules/method-signature-style/
+         */
+        '@typescript-eslint/method-signature-style': 'error',
+
+        '@typescript-eslint/no-base-to-string': 'error',
         '@typescript-eslint/array-type': [
           'error',
           {
@@ -39,6 +65,7 @@ module.exports = {
           'error',
           {
             assertionStyle: 'as',
+            objectLiteralTypeAssertions: 'allow-as-parameter',
           },
         ],
         '@typescript-eslint/ban-types': [
@@ -74,6 +101,11 @@ module.exports = {
               regex: '^I[A-Z]',
               match: false,
             },
+          },
+          // Anything type-like should be written in PascalCase.
+          {
+            selector: 'typeLike',
+            format: ['PascalCase'],
           },
         ],
       },
@@ -192,7 +224,7 @@ module.exports = {
   },
   settings: {
     'jest': {
-      version: '27',
+      version: '28',
     },
     'react': {
       version: '17',

@@ -9,11 +9,6 @@ import type { Location } from './location-helpers';
 export const PAGE_BLOCK_RELOAD_ACTION_NAME =
   'action::@bangle.io/slice-page:BLOCK_RELOAD';
 
-export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
-  name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
-  value: { block: boolean };
-};
-
 export type PageDispatchType = ApplicationStore<
   PageSliceStateType,
   PageSliceAction
@@ -44,7 +39,10 @@ export interface PageSliceStateType {
 }
 
 export type PageSliceAction =
-  | PAGE_BLOCK_RELOAD_ACTION_TYPE
+  | {
+      name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
+      value: { block: boolean };
+    }
   | {
       name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE';
       value: { current?: PageLifeCycleState; previous?: PageLifeCycleState };

@@ -204,9 +204,9 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       name: name,
       value: value,
       fromStore: storeName,
-    } as A;
+    };
 
-    return action;
+    return action as A;
   }
 
   serializeAction(action: A) {
