@@ -70,7 +70,7 @@ export interface ApplicationConfig<
   dialogs?: DialogType[];
   operationHandler?: SerialOperationHandler2<OpType>;
   noteSidebarWidgets?: NoteSidebarWidget[];
-  slices?: Array<Slice<any>>;
+  slices?: Slice[];
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;
   // return true if the error was handled by your callback
@@ -91,13 +91,13 @@ export interface SidebarType {
   ) => boolean;
   hint: string;
   name: `sidebar::${string}`;
-  ReactComponent: React.ComponentType<{}>;
+  ReactComponent: React.ComponentType;
   title: string;
 }
 
 export interface DialogType {
   name: `dialog::${string}`;
-  ReactComponent: React.ComponentType<{}>;
+  ReactComponent: React.ComponentType;
 }
 
 interface Config<T, OpType extends SerialOperationDefinitionType> {

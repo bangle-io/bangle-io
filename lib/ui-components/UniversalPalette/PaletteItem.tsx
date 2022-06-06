@@ -32,7 +32,7 @@ export function PaletteItemUI({
 }: {
   allowHover?: boolean;
   item: ItemType;
-  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   isActive?: boolean;
   className?: string;
   scrollIntoViewIfNeeded?: boolean;

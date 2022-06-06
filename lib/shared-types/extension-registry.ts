@@ -31,7 +31,7 @@ export type SerialOperationKeybindingMapping = Record<
 
 export interface NoteSidebarWidget {
   name: `note-sidebar-widget::${string}`;
-  ReactComponent: React.ComponentType<{}>;
+  ReactComponent: React.ComponentType;
   title: string;
 }
 

@@ -31,7 +31,7 @@ export function usePaletteDriver(
     (
       event:
         | React.KeyboardEvent<HTMLInputElement>
-        | React.MouseEvent<HTMLDivElement, MouseEvent>,
+        | React.MouseEvent<HTMLDivElement>,
     ) => {
       event.preventDefault();
       event.stopPropagation();

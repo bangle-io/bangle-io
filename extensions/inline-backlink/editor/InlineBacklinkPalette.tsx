@@ -82,7 +82,7 @@ function InlineBacklinkPaletteInner({
   const view = useEditorViewContext();
   const { wsName, noteWsPaths = EMPTY_ARRAY } = useWorkspaceContext();
 
-  const match = useFzfSearch<string>(noteWsPaths, query, {
+  const match = useFzfSearch(noteWsPaths, query, {
     limit: FZF_SEARCH_LIMIT,
     selector: (item) => resolvePath(item, true).filePath,
     tiebreakers: [byLengthAsc],

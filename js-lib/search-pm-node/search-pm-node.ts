@@ -31,7 +31,7 @@ export async function searchPmNode(
   signal: AbortSignal,
   query: string,
   docUids: string[],
-  getDoc: (uid: string) => Promise<Node<any> | undefined>,
+  getDoc: (uid: string) => Promise<Node | undefined>,
   atomSearchTypes: AtomSearchTypes[] = [],
   {
     concurrency = DEFAULT_CONCURRENCY,

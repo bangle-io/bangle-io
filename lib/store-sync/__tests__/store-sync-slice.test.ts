@@ -75,8 +75,8 @@ let dummySlice = new Slice<{ counter: number }, DummyAction>({
 });
 
 function setup(
-  store1Config: Partial<StoreSyncConfigType<any>> = {},
-  store2Config: Partial<StoreSyncConfigType<any>> = {},
+  store1Config: Partial<StoreSyncConfigType> = {},
+  store2Config: Partial<StoreSyncConfigType> = {},
 ) {
   const { port1, port2 } = new MessageChannel();
 

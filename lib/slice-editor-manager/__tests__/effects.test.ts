@@ -83,7 +83,7 @@ const createStore = (jsonData?: {
     },
     storeName: 'editor-store',
     state: jsonData
-      ? AppState.stateFromJSON<any, any>({
+      ? AppState.stateFromJSON<any>({
           slices: [editorManagerSlice()],
           json: {
             editorManagerSlice: {
@@ -105,7 +105,7 @@ describe('focusEditorEffect', () => {
   const dateNow = Date.now;
 
   beforeEach(() => {
-    (Date.now as jest.Mock<any>) = jest.fn(() => 1000);
+    (Date.now as jest.Mock) = jest.fn(() => 1000);
   });
 
   afterEach(() => {
@@ -118,7 +118,7 @@ describe('focusEditorEffect', () => {
     const { store } = createStore();
 
     // advance the clock
-    (Date.now as jest.Mock<any>).mockImplementation(
+    (Date.now as jest.Mock).mockImplementation(
       () => FOCUS_EDITOR_ON_LOAD_COOLDOWN + 1000 + 1,
     );
 
@@ -133,7 +133,7 @@ describe('focusEditorEffect', () => {
     expect(focusSpy1).toBeCalledTimes(1);
 
     // advance the clock
-    (Date.now as jest.Mock<any>).mockImplementation(
+    (Date.now as jest.Mock).mockImplementation(
       () => 2 * FOCUS_EDITOR_ON_LOAD_COOLDOWN + 1000 + 1,
     );
 
@@ -206,7 +206,7 @@ describe('focusEditorEffect', () => {
 
     // advance the clock so we can test the default
     // focusing behaviour
-    (Date.now as jest.Mock<any>).mockImplementation(
+    (Date.now as jest.Mock).mockImplementation(
       () => 2 * FOCUS_EDITOR_ON_LOAD_COOLDOWN + 1000 + 1,
     );
 
@@ -252,7 +252,7 @@ describe('focusEditorEffect', () => {
 
     // advance the clock so we can test the default
     // focusing behavior
-    (Date.now as jest.Mock<any>).mockImplementation(
+    (Date.now as jest.Mock).mockImplementation(
       () => 2 * FOCUS_EDITOR_ON_LOAD_COOLDOWN + 1000 + 1,
     );
 
@@ -277,7 +277,7 @@ describe('focusEditorEffect', () => {
   });
 
   test('sets focus on the correct editor on mount', () => {
-    (Date.now as jest.Mock<any>).mockImplementation(() => 1000);
+    (Date.now as jest.Mock).mockImplementation(() => 1000);
 
     let mockEditorFirst = createTestEditor();
     let mockEditorSecond = createTestEditor();
@@ -333,7 +333,7 @@ describe('focusEditorEffect', () => {
     expect(focusSpy3).toBeCalledTimes(0);
 
     // advance the clock
-    (Date.now as jest.Mock<any>).mockImplementation(
+    (Date.now as jest.Mock).mockImplementation(
       () => FOCUS_EDITOR_ON_LOAD_COOLDOWN + 1000 + 1,
     );
 

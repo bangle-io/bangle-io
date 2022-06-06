@@ -34,7 +34,7 @@ export function useOnClickBacklink({
   const { wsName, noteWsPaths, bangleStore } = useWorkspaceContext();
 
   return useCallback(
-    (event: React.MouseEvent<any, MouseEvent>) => {
+    (event: React.MouseEvent<any>) => {
       event.preventDefault();
 
       if (!wsName || !noteWsPaths) {

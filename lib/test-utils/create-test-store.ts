@@ -52,7 +52,7 @@ export function createTestStore<
   getActionNames: () => string[];
 } {
   let actionsDispatched: BaseAction[] = [];
-  const store = ApplicationStore.create<any, any>({
+  const store = ApplicationStore.create({
     scheduler: scheduler,
     storeName: 'test-store',
     onError,

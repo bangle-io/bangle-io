@@ -16,7 +16,6 @@ module.exports = {
     {
       files: '*.jsx',
     },
-
     {
       files: ['**/*.ts?(x)'],
       parserOptions: {
@@ -101,7 +100,7 @@ module.exports = {
         '@typescript-eslint/no-extraneous-class': 'error',
         '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
         // '@typescript-eslint/no-unnecessary-condition': 'error',
-        // '@typescript-eslint/no-unnecessary-type-arguments': 'error',
+        '@typescript-eslint/no-unnecessary-type-arguments': 'error',
         '@typescript-eslint/prefer-literal-enum-member': 'error',
         '@typescript-eslint/prefer-reduce-type-parameter': 'error',
         '@typescript-eslint/prefer-ts-expect-error': 'error',

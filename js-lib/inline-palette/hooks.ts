@@ -42,7 +42,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
     index: number,
   ) => {
     isActive: boolean;
-    onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+    onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   };
   dismissPalette: () => boolean;
 } {
@@ -114,7 +114,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
     (item: T, index: number) => {
       return {
         isActive: activeIndex === index,
-        onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        onClick: (e: React.MouseEvent<HTMLDivElement>) => {
           if (executeHandler(index)(view.state, view.dispatch, view)) {
             e.preventDefault();
           }

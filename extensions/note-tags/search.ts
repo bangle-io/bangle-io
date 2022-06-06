@@ -24,7 +24,7 @@ export function _listTags(doc: Node) {
  */
 export async function listAllTags(
   wsPaths: string[],
-  getDoc: (wsPath: string) => Promise<Node<any> | undefined>,
+  getDoc: (wsPath: string) => Promise<Node | undefined>,
   signal?: AbortSignal,
 ): Promise<string[]> {
   let destroyed = false;
@@ -98,13 +98,15 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
     };
   }, [noteWsPaths, getNoteForTags, isVisible]);
 
-  const fzfItems = useFzfSearch<string>(allTags, query, {
+  const fzfItems = useFzfSearch(allTags, query, {
     limit: FZF_SEARCH_LIMIT,
     tiebreakers: [byLengthAsc],
     selector: (item) => item,
   });
 
   return useMemo(() => {
-    return fzfItems.map((r) => r.item);
+    let r = fzfItems.map((r) => r.item);
+
+    return r;
   }, [fzfItems]);
 }

@@ -94,7 +94,7 @@ export class ExtensionRegistry {
     >;
   };
 
-  private _slices: Array<Slice<any, any>>;
+  private _slices: Slice[];
 
   private _noteFormatProviders: {
     [noteFormatProviderName: string]: Exclude<

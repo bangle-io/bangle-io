@@ -56,31 +56,28 @@ export class SliceKey<
   }
 
   callAsyncOp<T>(
-    store: ApplicationStore<any, any>,
+    store: ApplicationStore,
     asyncOp: (
-      state: AppState<any, any>,
-      dispatch: ApplicationStore<any, any>['dispatch'],
-      store: ApplicationStore<any, any>,
+      state: AppState,
+      dispatch: ApplicationStore['dispatch'],
+      store: ApplicationStore,
     ) => T,
   ) {
     return asyncOp(store.state, store.dispatch, store);
   }
 
   callOp<T>(
-    state: AppState<any, any>,
-    dispatch: ApplicationStore<any, any>['dispatch'],
-    op: (
-      state: AppState<any, any>,
-      dispatch: ApplicationStore<any, any>['dispatch'],
-    ) => T,
+    state: AppState,
+    dispatch: ApplicationStore['dispatch'],
+    op: (state: AppState, dispatch: ApplicationStore['dispatch']) => T,
   ) {
     return op(state, dispatch);
   }
 
   // return[1] - the first dependency name that change
   didChange<K extends keyof SL>(
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+    state: AppState | Readonly<AppState>,
+    prevState: AppState | Readonly<AppState>,
   ) {
     return <T extends K[]>(...dependencies: [...T]) => {
       let changed = false;
@@ -106,7 +103,7 @@ export class SliceKey<
   }
 
   getDispatch(
-    dispatch: ApplicationStore<any, any>['dispatch'],
+    dispatch: ApplicationStore['dispatch'],
   ): ApplicationStore<SL, A>['dispatch'] {
     return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
@@ -117,15 +114,11 @@ export class SliceKey<
     return state.getSliceByKey(this.key);
   }
 
-  getSliceState(
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-  ): SL | undefined {
+  getSliceState(state: AppState | Readonly<AppState>): SL | undefined {
     return state.getSliceState(this.key);
   }
 
-  getSliceStateAsserted(
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-  ): SL {
+  getSliceStateAsserted(state: AppState | Readonly<AppState>): SL {
     const sliceState: SL | undefined = state.getSliceState(this.key);
 
     if (sliceState === undefined) {
@@ -161,8 +154,8 @@ export class SliceKey<
   //  use `valueChanged` if you expect `undefined` to be a valid value.
   getValueIfChanged<T extends keyof SL>(
     field: T,
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+    state: AppState | Readonly<AppState>,
+    prevState: AppState | Readonly<AppState>,
   ): SL[T] | undefined {
     return this.valueChanged(field, state, prevState)
       ? this.getSliceStateAsserted(state)[field]
@@ -186,8 +179,8 @@ export class SliceKey<
 
   valueChanged(
     field: keyof SL,
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+    state: AppState | Readonly<AppState>,
+    prevState: AppState | Readonly<AppState>,
   ): boolean {
     return (
       this.getSliceStateAsserted(state)[field] !==
