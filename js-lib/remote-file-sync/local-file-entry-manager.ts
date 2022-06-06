@@ -86,7 +86,7 @@ export class LocalFileEntryManager {
     const localFiles = localEntries
       .filter((fileEntry) => {
         // only include files that are modified and not deleted
-        return fileEntry.isModified === true && fileEntry.deleted == null;
+        return fileEntry.isModified && fileEntry.deleted == null;
       })
       .map((r) => r.uid);
 

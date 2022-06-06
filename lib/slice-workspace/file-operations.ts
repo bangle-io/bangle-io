@@ -156,16 +156,18 @@ export const getNote = (wsPath: string) => {
 };
 
 export const checkFileExists = (wsPath: string) => {
-  return workspaceSliceKey.asyncOp(async (_, dispatch, store) => {
-    const { wsName } = resolvePath(wsPath);
+  return workspaceSliceKey.asyncOp(
+    async (_, dispatch, store): Promise<boolean> => {
+      const { wsName } = resolvePath(wsPath);
 
-    const storageProvider = getStorageProvider(wsName)(store.state);
+      const storageProvider = getStorageProvider(wsName)(store.state);
 
-    return storageProvider.fileExists(
-      wsPath,
-      getStorageProviderOpts()(store.state, dispatch),
-    );
-  });
+      return storageProvider.fileExists(
+        wsPath,
+        getStorageProviderOpts()(store.state, dispatch),
+      );
+    },
+  );
 };
 
 export const createNote = (

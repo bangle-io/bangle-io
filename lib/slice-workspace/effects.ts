@@ -101,7 +101,7 @@ export const errorHandlerEffect = workspaceSliceKey.effect(() => {
             .extensionRegistry,
         );
 
-        if (errorHandler && errorHandler(error as any, store) === true) {
+        if (errorHandler && errorHandler(error as any, store)) {
           store.dispatch({
             name: 'action::@bangle.io/slice-workspace:set-error',
             value: {

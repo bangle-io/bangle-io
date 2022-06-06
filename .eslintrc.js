@@ -99,7 +99,7 @@ module.exports = {
         '@typescript-eslint/no-base-to-string': 'error',
         '@typescript-eslint/no-duplicate-imports': 'error',
         '@typescript-eslint/no-extraneous-class': 'error',
-        // '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+        '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
         // '@typescript-eslint/no-unnecessary-condition': 'error',
         // '@typescript-eslint/no-unnecessary-type-arguments': 'error',
         '@typescript-eslint/prefer-literal-enum-member': 'error',

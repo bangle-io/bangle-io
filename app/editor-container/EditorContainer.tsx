@@ -183,7 +183,7 @@ export function useHandleWsPath(incomingWsPath?: string) {
       ).then(
         (r) => {
           if (!destroyedRef.current) {
-            if (r === true) {
+            if (r) {
               updateFileExists('FOUND');
             } else {
               updateFileExists('NOT_FOUND');

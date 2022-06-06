@@ -52,10 +52,7 @@ export function e2eHelpers() {
             )?.editors;
 
           e2eHelpers.e2eHealthCheck = async () => {
-            assertOk(
-              (await naukarProxy.status()) === true,
-              'naukarProxy.status failed',
-            );
+            assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
 
             assertOk(
               (await naukarProxy.testHandlesBaseError(
@@ -64,16 +61,13 @@ export function e2eHelpers() {
               'naukarProxy.testHandlesBaseError failed',
             );
             assertOk(
-              (await naukarProxy.testIsWorkerEnv()) === true,
+              await naukarProxy.testIsWorkerEnv(),
               'naukarProxy.testIsWorkerEnv failed',
             );
 
             // one more status at end to make sure worker is
             // still alive
-            assertOk(
-              (await naukarProxy.status()) === true,
-              'naukarProxy.status failed',
-            );
+            assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
 
             return true;
           };

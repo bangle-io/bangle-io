@@ -87,10 +87,10 @@ export class SliceKey<
       let fieldChanged: K | undefined = undefined;
 
       dependencies.forEach((field) => {
-        if (changed === false) {
+        if (!changed) {
           changed = this.valueChanged(field, state, prevState);
 
-          if (changed === true) {
+          if (changed) {
             fieldChanged = field;
           }
         }
