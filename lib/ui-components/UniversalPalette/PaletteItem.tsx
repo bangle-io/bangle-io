@@ -1,4 +1,5 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import {
   cx,

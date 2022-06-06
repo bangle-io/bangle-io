@@ -4,7 +4,7 @@ import {
   BangleStoreChanged,
   BangleStoreContext,
 } from '@bangle.io/bangle-store-context';
-import { ApplicationStore } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 import { ExtensionRegistryContextProvider } from '@bangle.io/extension-registry';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';

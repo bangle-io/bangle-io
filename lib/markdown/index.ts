@@ -1,7 +1,8 @@
 import { heading } from '@bangle.dev/base-components';
 import type { SpecRegistry } from '@bangle.dev/core';
 import * as markdown from '@bangle.dev/markdown';
-import { Fragment, Node, Slice } from '@bangle.dev/pm';
+import type { Node } from '@bangle.dev/pm';
+import { Fragment, Slice } from '@bangle.dev/pm';
 import { findChildren } from '@bangle.dev/utils';
 
 const { flattenFragmentJSON } = heading;

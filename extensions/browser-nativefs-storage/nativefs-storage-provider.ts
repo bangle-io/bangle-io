@@ -6,7 +6,7 @@ import {
   NativeBrowserFileSystem,
 } from '@bangle.io/baby-fs';
 import { WorkspaceTypeNative } from '@bangle.io/constants';
-import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
+import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal } from '@bangle.io/utils';
 
 const allowedFile = (name: string) => {
@@ -29,7 +29,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     const { wsName } = resolvePath(wsPath);
 
-    await this.getFs(wsName, opts).unlink(wsPathHelpers.toFSPath(wsPath));
+    await this._getFs(wsName, opts).unlink(wsPathHelpers.toFSPath(wsPath));
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -37,7 +37,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     const { wsName } = resolvePath(wsPath);
 
     try {
-      await this.getFs(wsName, opts).stat(path);
+      await this._getFs(wsName, opts).stat(path);
 
       return true;
     } catch (error) {
@@ -54,23 +54,12 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     const path = wsPathHelpers.toFSPath(wsPath);
     const { wsName } = resolvePath(wsPath);
 
-    const stat = await this.getFs(wsName, opts).stat(path);
+    const stat = await this._getFs(wsName, opts).stat(path);
 
     return {
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
     };
-  }
-
-  private getFs(wsName: string, opts: StorageOpts) {
-    const rootDirHandle: FileSystemDirectoryHandle =
-      opts.readWorkspaceMetadata(wsName).rootDirHandle;
-
-    return new NativeBrowserFileSystem({
-      rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle: FileSystemFileHandle) =>
-        allowedFile(fileHandle.name),
-    });
   }
 
   async listAllFiles(
@@ -80,7 +69,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   ): Promise<string[]> {
     let files: string[] = [];
 
-    const rawPaths: string[] = await this.getFs(wsName, opts).opendirRecursive(
+    const rawPaths: string[] = await this._getFs(wsName, opts).opendirRecursive(
       wsName,
     );
 
@@ -120,7 +109,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
     const { wsName } = resolvePath(wsPath);
 
-    return this.getFs(wsName, opts).readFile(wsPathHelpers.toFSPath(wsPath));
+    return this._getFs(wsName, opts).readFile(wsPathHelpers.toFSPath(wsPath));
   }
 
   async renameFile(
@@ -130,7 +119,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     const { wsName } = resolvePath(wsPath);
 
-    await this.getFs(wsName, opts).rename(
+    await this._getFs(wsName, opts).rename(
       wsPathHelpers.toFSPath(wsPath),
       wsPathHelpers.toFSPath(newWsPath),
     );
@@ -144,6 +133,17 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     const path = wsPathHelpers.toFSPath(wsPath);
     const { wsName } = resolvePath(wsPath);
 
-    await this.getFs(wsName, opts).writeFile(path, file);
+    await this._getFs(wsName, opts).writeFile(path, file);
+  }
+
+  private _getFs(wsName: string, opts: StorageOpts) {
+    const rootDirHandle: FileSystemDirectoryHandle =
+      opts.readWorkspaceMetadata(wsName).rootDirHandle;
+
+    return new NativeBrowserFileSystem({
+      rootDirHandle: rootDirHandle,
+      allowedFile: (fileHandle: FileSystemFileHandle) =>
+        allowedFile(fileHandle.name),
+    });
   }
 }

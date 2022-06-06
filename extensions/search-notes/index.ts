@@ -6,9 +6,9 @@ import { Extension } from '@bangle.io/extension-registry';
 import { SearchIcon } from '@bangle.io/ui-components';
 
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
+import type { SearchNotesExtensionState } from './constants';
 import {
   extensionName,
-  SearchNotesExtensionState,
   SHOW_SEARCH_SIDEBAR_OPERATION,
   SIDEBAR_NAME,
 } from './constants';

@@ -1,10 +1,11 @@
 import { FocusRing } from '@react-aria/focus';
-import { AriaTextFieldOptions, useTextField } from '@react-aria/textfield';
+import type { AriaTextFieldOptions } from '@react-aria/textfield';
+import { useTextField } from '@react-aria/textfield';
 import React from 'react';
 
 import { cx } from '@bangle.io/utils';
 
-import { SizeType } from '../misc';
+import type { SizeType } from '../misc';
 
 export function TextField(
   props: AriaTextFieldOptions<'input'> & {

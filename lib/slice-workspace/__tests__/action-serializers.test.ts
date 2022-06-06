@@ -1,8 +1,8 @@
 import { BaseError } from '@bangle.io/base-error';
-import { ActionTestFixtureType } from '@bangle.io/test-utils';
+import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { WorkspaceSliceAction } from '../common';
+import type { WorkspaceSliceAction } from '../common';
 import { storageProviderHelpers } from '../storage-provider-helpers';
 import { createStore, createWsInfo } from './test-utils';
 

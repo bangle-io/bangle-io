@@ -9,7 +9,8 @@ import {
   setupMockWorkspaceWithNotes,
   TestStoreProvider,
 } from '@bangle.io/test-utils';
-import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
+import type { RecencyRecords } from '@bangle.io/utils';
+import { sleep, useRecencyMonitor } from '@bangle.io/utils';
 
 import { workspaceSliceKey } from '../common';
 import { getOpenedWsPaths, updateOpenedWsPaths } from '../operations';

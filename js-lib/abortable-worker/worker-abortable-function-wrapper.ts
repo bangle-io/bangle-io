@@ -1,6 +1,7 @@
 import { isAbortError } from '@bangle.io/is-abort-error';
 
-import { AbortControllers, WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
+import type { AbortControllers } from './util';
+import { WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
 
 export type AbortableFunc<R extends any[], X> = (
   abort: AbortSignal,

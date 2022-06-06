@@ -8,7 +8,7 @@ import * as React from 'react';
 
 import { cx } from '@bangle.io/utils';
 
-import { SizeType } from '../misc';
+import type { SizeType } from '../misc';
 import { ListBox } from '../Select/ListBox';
 import { Popover } from '../Select/Popover';
 

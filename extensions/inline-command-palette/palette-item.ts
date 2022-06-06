@@ -1,4 +1,4 @@
-import { Command } from '@bangle.dev/pm';
+import type { Command } from '@bangle.dev/pm';
 
 export const PALETTE_ITEM_REGULAR_TYPE = 'REGULAR_TYPE';
 export const PALETTE_ITEM_HINT_TYPE = 'HINT_TYPE';

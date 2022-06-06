@@ -6,7 +6,8 @@ import {
   orderedList,
   paragraph,
 } from '@bangle.dev/base-components';
-import { EditorState, EditorView, setBlockType } from '@bangle.dev/pm';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
+import { setBlockType } from '@bangle.dev/pm';
 import { rafCommandExec } from '@bangle.dev/utils';
 
 import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';

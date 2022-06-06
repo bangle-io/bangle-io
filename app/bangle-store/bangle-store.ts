@@ -12,11 +12,8 @@ import {
 } from '@bangle.io/utils';
 import { checkModuleWorkerSupport } from '@bangle.io/worker-setup';
 
-import {
-  BangleActionTypes,
-  BangleSliceTypes,
-  bangleStateSlices,
-} from './bangle-slices';
+import type { BangleActionTypes, BangleSliceTypes } from './bangle-slices';
+import { bangleStateSlices } from './bangle-slices';
 
 assertNonWorkerGlobalScope();
 
@@ -179,6 +176,8 @@ function scheduler() {
       () => {
         safeRequestAnimationFrame(() => {
           if (!destroyed) {
+            console.count('called');
+
             cb();
           }
         });
@@ -189,6 +188,7 @@ function scheduler() {
     );
 
     return () => {
+      console.count('destroyed');
       destroyed = true;
       safeCancelIdleCallback(id);
     };

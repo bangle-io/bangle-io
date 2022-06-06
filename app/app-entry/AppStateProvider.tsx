@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { initializeBangleStore } from '@bangle.io/bangle-store';
+import type { initializeBangleStore } from '@bangle.io/bangle-store';
 import {
   BangleStoreChanged,
   BangleStoreContext,

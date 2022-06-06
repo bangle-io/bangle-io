@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { useSliceState } from '@bangle.io/bangle-store-context';
 
 import { extensionRegistrySliceKey } from './common';
-import { ExtensionRegistry } from './ExtensionRegistry';
+import type { ExtensionRegistry } from './ExtensionRegistry';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
   undefined as any,

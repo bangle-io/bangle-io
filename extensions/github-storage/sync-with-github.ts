@@ -1,19 +1,14 @@
 import { pMap } from '@bangle.io/p-map';
-import {
-  fileSync,
+import type {
   LocalFileEntry,
   LocalFileEntryManager,
-  RemoteFileEntry,
 } from '@bangle.io/remote-file-sync';
+import { fileSync, RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { assertSignal } from '@bangle.io/utils';
 
-import {
-  commitToGithub,
-  getFileBlobFromTree,
-  GHTree,
-  GithubConfig,
-} from './github-api-helpers';
-import { GithubWsMetadata } from './helpers';
+import type { GHTree, GithubConfig } from './github-api-helpers';
+import { commitToGithub, getFileBlobFromTree } from './github-api-helpers';
+import type { GithubWsMetadata } from './helpers';
 
 const LOG = true;
 const log = LOG ? console.log.bind(console, 'GithubSync') : () => {};

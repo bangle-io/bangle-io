@@ -1,9 +1,11 @@
 /// <reference path="./missing-types.d.ts" />
 // Note: pathname in this file refers to the one used in window.location.pathname
-import { Key, pathToRegexp } from 'path-to-regexp';
+import type { Key } from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
-import { OpenedWsPaths, resolvePath } from '@bangle.io/ws-path';
+import type { OpenedWsPaths } from '@bangle.io/ws-path';
+import { resolvePath } from '@bangle.io/ws-path';
 
 export interface Location {
   pathname?: string;

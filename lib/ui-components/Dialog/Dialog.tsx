@@ -13,7 +13,7 @@ import { cx, usePrevious } from '@bangle.io/utils';
 
 import { Button } from '../Button/Button';
 import { LoadingCircleIcon } from '../Icons';
-import { SizeType } from '../misc';
+import type { SizeType } from '../misc';
 
 export type CTAConfig = {
   isDestructive?: boolean;

@@ -1,6 +1,6 @@
 import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 
-import { PageSliceAction } from '../common';
+import type { PageSliceAction } from '../common';
 import { createStore } from './test-utils';
 
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively

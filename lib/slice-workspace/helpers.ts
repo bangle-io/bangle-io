@@ -1,12 +1,13 @@
 import { WorkspaceTypeHelp } from '@bangle.io/constants';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
 import type { NoteFormatProvider } from '@bangle.io/shared-types';
-import { BaseStorageProvider, HelpFsStorageProvider } from '@bangle.io/storage';
+import type { BaseStorageProvider } from '@bangle.io/storage';
+import { HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { storageProviderHelpers } from './storage-provider-helpers';
-import { WorkspaceSliceState } from './workspace-slice-state';
+import type { WorkspaceSliceState } from './workspace-slice-state';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {

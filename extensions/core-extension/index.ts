@@ -20,7 +20,7 @@ import {
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { WorkspaceSliceAction } from '@bangle.io/shared-types';
 import {
@@ -33,7 +33,8 @@ import {
   notificationSliceKey,
   showNotification,
 } from '@bangle.io/slice-notification';
-import { toggleTheme, UiContextAction } from '@bangle.io/slice-ui';
+import type { UiContextAction } from '@bangle.io/slice-ui';
+import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
   CORE_OPERATIONS_DELETE_ACTIVE_NOTE,

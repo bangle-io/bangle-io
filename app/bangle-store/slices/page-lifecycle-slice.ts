@@ -3,11 +3,8 @@
 import lifecycle from 'page-lifecycle';
 
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import {
-  PageLifeCycleState,
-  pageSliceKey,
-  setPageLifeCycleState,
-} from '@bangle.io/slice-page';
+import type { PageLifeCycleState } from '@bangle.io/slice-page';
+import { pageSliceKey, setPageLifeCycleState } from '@bangle.io/slice-page';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 const pendingSymbol = Symbol('pending');
@@ -25,7 +22,7 @@ export function pageLifeCycleSlice() {
   return new Slice({
     key: key,
     sideEffect: [
-      function watchPageLifeCycleEffect() {
+      key.effect(function watchPageLifeCycleEffect() {
         return {
           deferredOnce(store, abortSignal) {
             const handler = (event: PageLifeCycleEvent) => {
@@ -47,9 +44,9 @@ export function pageLifeCycleSlice() {
             );
           },
         };
-      },
+      }),
 
-      function blockReload() {
+      key.effect(function blockReload() {
         return {
           update(store, prevState) {
             const blockReload = pageSliceKey.getValueIfChanged(
@@ -69,7 +66,7 @@ export function pageLifeCycleSlice() {
             }
           },
         };
-      },
+      }),
     ],
   });
 }

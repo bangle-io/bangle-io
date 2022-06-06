@@ -1,15 +1,11 @@
 import { WorkspaceTypeNative } from '@bangle.io/constants';
-import { Slice, SliceKey, SliceSideEffect } from '@bangle.io/create-store';
-import { BaseHistory, BrowserHistory, createTo } from '@bangle.io/history';
-import {
-  pageSliceKey,
-  PageSliceStateType,
-  syncPageLocation,
-} from '@bangle.io/slice-page';
-import {
-  workspaceSliceKey,
-  WorkspaceSliceState,
-} from '@bangle.io/slice-workspace';
+import { Slice, SliceKey } from '@bangle.io/create-store';
+import type { BaseHistory } from '@bangle.io/history';
+import { BrowserHistory, createTo } from '@bangle.io/history';
+import type { PageSliceStateType } from '@bangle.io/slice-page';
+import { pageSliceKey, syncPageLocation } from '@bangle.io/slice-page';
+import type { WorkspaceSliceState } from '@bangle.io/slice-workspace';
+import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
@@ -68,10 +64,7 @@ export function historySlice() {
 }
 
 // sets up history and watches for any changes in it
-const applyPendingNavigation: SliceSideEffect<
-  HistoryStateType,
-  HistorySliceAction
-> = () => {
+const applyPendingNavigation = historySliceKey.effect(() => {
   let lastProcessed: PageSliceStateType['pendingNavigation'];
 
   return {
@@ -108,13 +101,10 @@ const applyPendingNavigation: SliceSideEffect<
       }
     },
   };
-};
+});
 
 // sets up history and watches for any changes in it
-const watchHistoryEffect: SliceSideEffect<
-  HistoryStateType,
-  HistorySliceAction
-> = () => {
+const watchHistoryEffect = historySliceKey.effect(() => {
   return {
     deferredOnce(store, abortSignal) {
       const browserHistory = new BrowserHistory('', (location) => {
@@ -143,14 +133,11 @@ const watchHistoryEffect: SliceSideEffect<
       );
     },
   };
-};
+});
 
 // Persist rootDirectory handle in the browser history to
 // prevent release of the authorized native browser FS permission on reload
-export const saveWorkspaceInfoEffect: SliceSideEffect<
-  HistoryStateType,
-  HistorySliceAction
-> = () => {
+export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
   let lastWorkspaceInfos: WorkspaceSliceState['workspacesInfo'] | undefined =
     undefined;
 
@@ -185,4 +172,4 @@ export const saveWorkspaceInfoEffect: SliceSideEffect<
       }
     },
   };
-};
+});

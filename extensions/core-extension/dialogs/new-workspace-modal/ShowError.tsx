@@ -5,6 +5,7 @@ import { CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
+import type { WorkspaceCreateErrorTypes } from './common';
 import {
   CLICKED_TOO_SOON_ERROR,
   ERROR_PICKING_DIRECTORY_ERROR,
@@ -12,7 +13,6 @@ import {
   UNKNOWN_ERROR,
   WORKSPACE_AUTH_REJECTED_ERROR,
   WORKSPACE_NAME_ALREADY_EXISTS_ERROR,
-  WorkspaceCreateErrorTypes,
 } from './common';
 
 export function ShowError({

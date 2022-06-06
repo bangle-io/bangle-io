@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { BaseError } from '@bangle.io/utils';
+import type { initializeBangleStore } from '@bangle.io/bangle-store';
+import type { BaseError } from '@bangle.io/utils';
 
 export class ErrorBoundary extends React.Component<{
   store: ReturnType<typeof initializeBangleStore>;

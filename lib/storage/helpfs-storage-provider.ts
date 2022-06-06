@@ -5,7 +5,7 @@ import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { HELP_FS_INDEX_WS_PATH, WorkspaceTypeHelp } from '@bangle.io/constants';
 import { toFSPath } from '@bangle.io/ws-path';
 
-import { BaseStorageProvider, StorageOpts } from './base-storage';
+import type { BaseStorageProvider, StorageOpts } from './base-storage';
 import { IndexedDbStorageProvider } from './indexed-db-storage-provider';
 
 function readFileFromUnpkg(wsPath: string) {
@@ -60,7 +60,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
   description = '';
   hidden = true;
 
-  private idbProvider = new IndexedDbStorageProvider();
+  private _idbProvider = new IndexedDbStorageProvider();
 
   async createFile(
     wsPath: string,
@@ -75,7 +75,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return;
     }
 
-    await this.idbProvider.deleteFile(wsPath, opts);
+    await this._idbProvider.deleteFile(wsPath, opts);
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -83,11 +83,11 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return true;
     }
 
-    return this.idbProvider.fileExists(wsPath, opts);
+    return this._idbProvider.fileExists(wsPath, opts);
   }
 
   async fileStat(wsPath: string, opts: StorageOpts) {
-    return this.idbProvider.fileStat(wsPath, opts);
+    return this._idbProvider.fileStat(wsPath, opts);
   }
 
   async listAllFiles(
@@ -98,7 +98,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     return [
       ...new Set([
         HELP_FS_INDEX_WS_PATH,
-        ...(await this.idbProvider.listAllFiles(abortSignal, wsName, opts)),
+        ...(await this._idbProvider.listAllFiles(abortSignal, wsName, opts)),
       ]),
     ];
   }
@@ -112,7 +112,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return res;
     }
 
-    return this.idbProvider.readFile(wsPath, opts);
+    return this._idbProvider.readFile(wsPath, opts);
   }
 
   async renameFile(
@@ -123,7 +123,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
     }
-    await this.idbProvider.renameFile(wsPath, newWsPath, opts);
+    await this._idbProvider.renameFile(wsPath, newWsPath, opts);
   }
 
   async writeFile(
@@ -134,6 +134,6 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
     }
-    await this.idbProvider.writeFile(wsPath, file, opts);
+    await this._idbProvider.writeFile(wsPath, file, opts);
   }
 }

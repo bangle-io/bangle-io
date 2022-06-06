@@ -21,7 +21,7 @@ import { isAbortError } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
-import { ExtensionPaletteType } from './config';
+import type { ExtensionPaletteType } from './config';
 
 const FZF_SEARCH_LIMIT = 64;
 const RECENT_SHOW_LIMIT = 6;

@@ -1,4 +1,4 @@
-import { BangleEditor } from '@bangle.dev/core';
+import type { BangleEditor } from '@bangle.dev/core';
 
 import {
   getEditorPluginMetadata,

@@ -1,7 +1,7 @@
 declare namespace jest {
   interface Matchers<R> {
-    toEqualDocument(value: any): any;
-    toEqualDocAndSelection(value: any): any;
+    toEqualDocument: (value: any) => any;
+    toEqualDocAndSelection: (value: any) => any;
   }
 }
 

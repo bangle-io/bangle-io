@@ -14,23 +14,23 @@ export class OpenedEditorsConfig {
     });
   }
 
-  private selections: Array<{ [wsPath: string]: JsonObject | null } | null>;
-  private scrollPositions: Array<{ [wsPath: string]: number | null } | null>;
+  private _scrollPositions: Array<{ [wsPath: string]: number | null } | null>;
+  private _selections: Array<{ [wsPath: string]: JsonObject | null } | null>;
 
   constructor({
     selections,
     scrollPositions,
   }: {
-    selections: OpenedEditorsConfig['selections'];
-    scrollPositions: OpenedEditorsConfig['scrollPositions'];
+    selections: OpenedEditorsConfig['_selections'];
+    scrollPositions: OpenedEditorsConfig['_scrollPositions'];
   }) {
-    this.selections = createEmptyArray(MAX_OPEN_EDITORS).map((r, i) => {
+    this._selections = createEmptyArray(MAX_OPEN_EDITORS).map((r, i) => {
       let res = selections[i];
 
       return res == null ? null : res;
     });
 
-    this.scrollPositions = createEmptyArray(MAX_OPEN_EDITORS).map((r, i) => {
+    this._scrollPositions = createEmptyArray(MAX_OPEN_EDITORS).map((r, i) => {
       let res = scrollPositions[i];
 
       return res == null ? null : res;
@@ -42,7 +42,7 @@ export class OpenedEditorsConfig {
       return undefined;
     }
 
-    const result = this.scrollPositions[editorId]?.[wsPath];
+    const result = this._scrollPositions[editorId]?.[wsPath];
 
     return result == null ? undefined : result;
   }
@@ -52,14 +52,14 @@ export class OpenedEditorsConfig {
       return undefined;
     }
 
-    const result = this.selections[editorId]?.[wsPath];
+    const result = this._selections[editorId]?.[wsPath];
 
     return result == null ? undefined : result;
   }
 
   toJsonObj() {
-    const selections = this.selections;
-    const scrollPositions = this.scrollPositions;
+    const selections = this._selections;
+    const scrollPositions = this._scrollPositions;
 
     return { selections, scrollPositions };
   }
@@ -73,7 +73,7 @@ export class OpenedEditorsConfig {
       return this;
     }
 
-    const newScrollPositions = [...this.scrollPositions];
+    const newScrollPositions = [...this._scrollPositions];
 
     let result = newScrollPositions[editorId];
 
@@ -86,7 +86,7 @@ export class OpenedEditorsConfig {
     result[wsPath] = scrollPosition == null ? null : scrollPosition;
 
     return new OpenedEditorsConfig({
-      selections: this.selections,
+      selections: this._selections,
       scrollPositions: newScrollPositions,
     });
   }
@@ -99,7 +99,7 @@ export class OpenedEditorsConfig {
     if (typeof editorId !== 'number') {
       return this;
     }
-    const newSelections = [...this.selections];
+    const newSelections = [...this._selections];
 
     let result = newSelections[editorId];
 
@@ -113,7 +113,7 @@ export class OpenedEditorsConfig {
 
     return new OpenedEditorsConfig({
       selections: newSelections,
-      scrollPositions: this.scrollPositions,
+      scrollPositions: this._scrollPositions,
     });
   }
 }

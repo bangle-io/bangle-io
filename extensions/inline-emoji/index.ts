@@ -1,5 +1,5 @@
 import { emoji, emojiMarkdownItPlugin } from '@bangle.dev/emoji';
-import { EditorView } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 
 import { Extension } from '@bangle.io/extension-registry';

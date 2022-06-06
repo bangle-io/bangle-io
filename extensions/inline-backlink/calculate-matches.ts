@@ -1,4 +1,4 @@
-import { EditorState } from '@bangle.dev/pm';
+import type { EditorState } from '@bangle.dev/pm';
 import { findChildrenByType } from '@bangle.dev/utils';
 import { wikiLink } from '@bangle.dev/wiki-link';
 

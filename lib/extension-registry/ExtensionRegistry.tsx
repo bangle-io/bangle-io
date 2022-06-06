@@ -3,7 +3,7 @@ import React from 'react';
 import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
-import { Slice } from '@bangle.io/create-store';
+import type { Slice } from '@bangle.io/create-store';
 import type {
   EditorWatchPluginState,
   SerialOperationDefinitionType,
@@ -12,7 +12,7 @@ import type {
   SerialOperationNameType,
 } from '@bangle.io/shared-types';
 
-import { ApplicationConfig, EditorConfig, Extension } from './Extension';
+import type { ApplicationConfig, EditorConfig, Extension } from './Extension';
 
 type Unnest<T> = T extends Array<infer U> ? U : T;
 
@@ -34,57 +34,9 @@ export class ExtensionRegistry {
   specRegistry: SpecRegistry;
   // TODO move this to a method
   markdownItPlugins: any[];
-  private renderReactNodeViewLookup: Exclude<
-    EditorConfig['renderReactNodeView'],
-    undefined
-  >;
-
-  private serialOperationHandlers: Set<SerialOperationHandler>;
-  private registeredSerialOperations: SerialOperationDefinitionType[];
-  private editorConfig: EditorConfig[];
-  private operationKeybindingMapping: SerialOperationKeybindingMapping;
-  private operationHandlers: Array<
-    Exclude<ApplicationConfig['operationHandler'], undefined>
-  >;
-
-  private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
-  private storageProviders: {
-    [storageProviderName: string]: Exclude<
-      ApplicationConfig['storageProvider'],
-      undefined
-    >;
-  };
-
-  private noteFormatProviders: {
-    [noteFormatProviderName: string]: Exclude<
-      ApplicationConfig['noteFormatProvider'],
-      undefined
-    >;
-  };
-
-  private slices: Array<Slice<any, any>>;
-  private onStorageErrorHandlers: {
-    [storageProviderName: string]: Exclude<
-      ApplicationConfig['onStorageError'],
-      undefined
-    >;
-  };
-
-  private editorWatchPluginStates: Exclude<
-    EditorConfig['watchPluginStates'],
-    undefined
-  >;
-
-  private noteSidebarWidgets: Exclude<
-    ApplicationConfig['noteSidebarWidgets'],
-    undefined
-  >;
-
-  private dialogs: Exclude<ApplicationConfig['dialogs'], undefined>;
-
   extensionsInitialState: { [name: string]: any };
   renderExtensionEditorComponents = () => {
-    const result = this.editorConfig
+    const result = this._editorConfig
       .map((e) => {
         const { ReactComponent } = e;
 
@@ -100,7 +52,7 @@ export class ExtensionRegistry {
   };
 
   renderApplicationComponents = () => {
-    const result = this.extensions
+    const result = this._extensions
       .map((extension) => {
         const { ReactComponent } = extension.application;
 
@@ -116,64 +68,118 @@ export class ExtensionRegistry {
   };
 
   registerSerialOperationHandler = (cb: SerialOperationHandler) => {
-    this.serialOperationHandlers.add(cb);
+    this._serialOperationHandlers.add(cb);
 
     return () => {
-      this.serialOperationHandlers.delete(cb);
+      this._serialOperationHandlers.delete(cb);
     };
   };
 
+  private _dialogs: Exclude<ApplicationConfig['dialogs'], undefined>;
+
+  private _noteSidebarWidgets: Exclude<
+    ApplicationConfig['noteSidebarWidgets'],
+    undefined
+  >;
+
+  private _editorWatchPluginStates: Exclude<
+    EditorConfig['watchPluginStates'],
+    undefined
+  >;
+
+  private _onStorageErrorHandlers: {
+    [storageProviderName: string]: Exclude<
+      ApplicationConfig['onStorageError'],
+      undefined
+    >;
+  };
+
+  private _slices: Array<Slice<any, any>>;
+
+  private _noteFormatProviders: {
+    [noteFormatProviderName: string]: Exclude<
+      ApplicationConfig['noteFormatProvider'],
+      undefined
+    >;
+  };
+
+  private _storageProviders: {
+    [storageProviderName: string]: Exclude<
+      ApplicationConfig['storageProvider'],
+      undefined
+    >;
+  };
+
+  private _sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
+
+  private _operationHandlers: Array<
+    Exclude<ApplicationConfig['operationHandler'], undefined>
+  >;
+
+  private _operationKeybindingMapping: SerialOperationKeybindingMapping;
+
+  private _editorConfig: EditorConfig[];
+
+  private _registeredSerialOperations: SerialOperationDefinitionType[];
+
+  private _serialOperationHandlers: Set<SerialOperationHandler>;
+
+  private _renderReactNodeViewLookup: Exclude<
+    EditorConfig['renderReactNodeView'],
+    undefined
+  >;
+
   constructor(
-    private extensions: Extension[] = [],
+    private _extensions: Extension[] = [],
     // TODO move this to an extension
     _markdownItPlugins: any[] = [],
   ) {
-    this.validate();
+    this._validate();
 
     this.extensionsInitialState = Object.fromEntries(
-      extensions.map((r) => [r.name, r.initialState]),
+      _extensions.map((r) => [r.name, r.initialState]),
     );
 
-    this.editorConfig = extensions.map((e) => e.editor);
+    this._editorConfig = _extensions.map((e) => e.editor);
     this.specRegistry = new SpecRegistry([
-      ...filterFlatMap(this.editorConfig, 'specs'),
+      ...filterFlatMap(this._editorConfig, 'specs'),
     ]);
     this.markdownItPlugins = [
       ..._markdownItPlugins,
-      ...filterFlatMap(this.editorConfig, 'markdownItPlugins'),
+      ...filterFlatMap(this._editorConfig, 'markdownItPlugins'),
     ];
-    this.renderReactNodeViewLookup = Object.fromEntries(
-      filterFlatMap(this.editorConfig, 'renderReactNodeView', false).flatMap(
+    this._renderReactNodeViewLookup = Object.fromEntries(
+      filterFlatMap(this._editorConfig, 'renderReactNodeView', false).flatMap(
         (obj) => Object.entries(obj),
       ),
     );
 
-    const applicationConfig = extensions.map((e) => e.application);
+    const applicationConfig = _extensions.map((e) => e.application);
 
-    this.serialOperationHandlers = new Set();
+    this._serialOperationHandlers = new Set();
 
-    this.editorWatchPluginStates = filterFlatMap(
-      this.editorConfig,
+    this._editorWatchPluginStates = filterFlatMap(
+      this._editorConfig,
       'watchPluginStates',
     );
-    this.registeredSerialOperations = filterFlatMap(
+    this._registeredSerialOperations = filterFlatMap(
       applicationConfig,
       'operations',
     );
-    this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
-    assertUniqueName(this.sidebars, 'sidebars');
+    this._sidebars = filterFlatMap(applicationConfig, 'sidebars');
+    assertUniqueName(this._sidebars, 'sidebars');
 
-    this.dialogs = filterFlatMap(applicationConfig, 'dialogs');
-    assertUniqueName(this.dialogs, 'dialogs');
+    this._dialogs = filterFlatMap(applicationConfig, 'dialogs');
+    assertUniqueName(this._dialogs, 'dialogs');
 
-    this.noteSidebarWidgets = filterFlatMap(
+    this._noteSidebarWidgets = filterFlatMap(
       applicationConfig,
       'noteSidebarWidgets',
     );
-    assertUniqueName(this.noteSidebarWidgets, 'noteSidebarWidgets');
+    assertUniqueName(this._noteSidebarWidgets, 'noteSidebarWidgets');
 
-    this.slices = filterFlatMap(applicationConfig, 'slices');
-    this.operationHandlers = extensions
+    this._slices = filterFlatMap(applicationConfig, 'slices');
+    this._operationHandlers = _extensions
       .map((e) => e.application.operationHandler)
       .filter(
         (
@@ -184,7 +190,7 @@ export class ExtensionRegistry {
         > => operationHandler != null,
       );
 
-    this.operationKeybindingMapping =
+    this._operationKeybindingMapping =
       this._getSerialOperationKeybindingMapping();
 
     const storageProviders = filterFlatMap(
@@ -192,18 +198,18 @@ export class ExtensionRegistry {
       'storageProvider',
     );
     assertUniqueName(storageProviders, 'storageProviders');
-    this.storageProviders = Object.fromEntries(
+    this._storageProviders = Object.fromEntries(
       storageProviders.map((r) => [r.name, r]),
     );
 
-    this.noteFormatProviders = Object.fromEntries(
+    this._noteFormatProviders = Object.fromEntries(
       filterFlatMap(applicationConfig, 'noteFormatProvider').map((r) => [
         r.name,
         r,
       ]),
     );
 
-    this.onStorageErrorHandlers = Object.fromEntries(
+    this._onStorageErrorHandlers = Object.fromEntries(
       applicationConfig
         .filter((r) => Boolean(r.storageProvider) && Boolean(r.onStorageError))
         .map((a) => [a.storageProvider!.name, a.onStorageError!]),
@@ -211,65 +217,65 @@ export class ExtensionRegistry {
   }
 
   getDialog(name: string) {
-    return this.dialogs.find((d) => d.name === name);
+    return this._dialogs.find((d) => d.name === name);
   }
 
   getEditorWatchPluginStates(): EditorWatchPluginState[] {
-    return this.editorWatchPluginStates;
+    return this._editorWatchPluginStates;
   }
 
   getNoteFormatProvider(name: string) {
-    return this.noteFormatProviders[name];
+    return this._noteFormatProviders[name];
   }
 
   getNoteSidebarWidgets() {
-    return this.noteSidebarWidgets;
+    return this._noteSidebarWidgets;
   }
 
   getOnStorageErrorHandlers(name: string) {
-    return this.onStorageErrorHandlers[name];
+    return this._onStorageErrorHandlers[name];
   }
 
   getOperationHandlers() {
-    return this.operationHandlers;
+    return this._operationHandlers;
   }
 
   getPlugins() {
     return [
-      ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
-      ...filterFlatMap(this.editorConfig, 'plugins'),
+      ...filterFlatMap(this._editorConfig, 'highPriorityPlugins'),
+      ...filterFlatMap(this._editorConfig, 'plugins'),
     ];
   }
 
   getRegisteredOperationKeybinding(
     name: SerialOperationNameType,
   ): string | undefined {
-    return this.registeredSerialOperations.find((a) => a.name === name)
+    return this._registeredSerialOperations.find((a) => a.name === name)
       ?.keybinding;
   }
 
   getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
-    return this.registeredSerialOperations;
+    return this._registeredSerialOperations;
   }
 
   getSerialOperationHandlers() {
-    return this.serialOperationHandlers;
+    return this._serialOperationHandlers;
   }
 
   getSerialOperationKeybindingMapping() {
-    return this.operationKeybindingMapping;
+    return this._operationKeybindingMapping;
   }
 
   getSidebars() {
-    return this.sidebars;
+    return this._sidebars;
   }
 
   getSlices() {
-    return this.slices;
+    return this._slices;
   }
 
   getStorageProvider(name: string) {
-    return this.storageProviders[name];
+    return this._storageProviders[name];
   }
 
   renderReactNodeViews({
@@ -277,13 +283,13 @@ export class ExtensionRegistry {
   }: {
     nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
   }): React.ReactNode {
-    return this.renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.({
+    return this._renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.({
       nodeViewRenderArg,
     });
   }
 
-  private validate() {
-    assertUniqueName(this.extensions, 'extensions');
+  private _validate() {
+    assertUniqueName(this._extensions, 'extensions');
   }
 
   private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {

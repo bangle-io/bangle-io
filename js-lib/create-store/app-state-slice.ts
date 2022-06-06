@@ -23,23 +23,24 @@ export interface BaseAction extends BaseBaseAction {}
 // A - action
 // SL - Slice's state
 // S - AppState
-export interface SliceStateField<SL, A extends BaseAction, S> {
-  init(
-    this: Slice<SL, A, S>,
-    config: { [key: string]: any },
-    appState: AppState<S, A>,
-  ): SL;
-  apply?(
+export interface SliceStateField<
+  SL,
+  A extends BaseAction,
+  S,
+  C extends { [key: string]: any } = any,
+> {
+  init: (this: Slice<SL, A, S>, config: C, appState: AppState<S, A>) => SL;
+  apply?: (
     this: Slice<SL, A, S>,
     action: A,
     value: SL,
     appState: AppState<S, A>,
-  ): SL;
+  ) => SL;
 
   stateToJSON?: (this: Slice<SL, A, S>, value: SL) => JsonValue;
   stateFromJSON?: (
     this: Slice<SL, A, S>,
-    config: { [key: string]: any },
+    config: C,
     value: JsonValue,
     appState: AppState<S, A>,
   ) => SL;

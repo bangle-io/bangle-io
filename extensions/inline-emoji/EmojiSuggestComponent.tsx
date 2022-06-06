@@ -1,13 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import reactDOM from 'react-dom';
 
-import type { EditorView } from '@bangle.dev/pm';
-import { PluginKey } from '@bangle.dev/pm';
+import type { EditorView, PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
-import {
-  GetEmojiGroupsType,
-  selectEmoji,
-} from '@bangle.dev/react-emoji-suggest/dist/emoji-suggest';
+import type { GetEmojiGroupsType } from '@bangle.dev/react-emoji-suggest/dist/emoji-suggest';
+import { selectEmoji } from '@bangle.dev/react-emoji-suggest/dist/emoji-suggest';
 import {
   getSquareDimensions,
   resolveCounter,

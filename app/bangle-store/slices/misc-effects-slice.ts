@@ -1,9 +1,9 @@
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import {
+import type {
   WorkspaceSliceAction,
-  workspaceSliceKey,
   WorkspaceSliceState,
 } from '@bangle.io/slice-workspace';
+import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();

@@ -1,7 +1,8 @@
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
-import {
+import type {
   ApplicationStore,
   BaseAction,
+  OnErrorType,
   Slice,
   SliceKey,
 } from '@bangle.io/create-store';
@@ -18,10 +19,8 @@ import {
   listWorkspaces,
   workspaceSlice,
 } from '@bangle.io/slice-workspace';
-import {
-  BaseStorageProvider,
-  IndexedDbStorageProvider,
-} from '@bangle.io/storage';
+import type { BaseStorageProvider } from '@bangle.io/storage';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { assertNotUndefined, sleep } from '@bangle.io/utils';
 
 import { createPMNode } from './create-pm-node';
@@ -64,7 +63,7 @@ export function createBasicTestStore<
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
   useEditorManagerSlice?: boolean;
-  onError?: ApplicationStore<SL, A>['onError'];
+  onError?: OnErrorType<S, A>;
   opts?: any;
 } = {}) {
   let extensionRegistry = createExtensionRegistry(

@@ -1,18 +1,13 @@
 import * as Comlink from 'comlink';
 
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
-import {
-  ApplicationStore,
-  BaseAction,
-  Slice,
-  SliceKey,
-  SliceSideEffect,
-} from '@bangle.io/create-store';
-import type { BangleStateConfig, UnPromisify } from '@bangle.io/shared-types';
+import type { ApplicationStore, BaseAction } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
+import type { UnPromisify } from '@bangle.io/shared-types';
+import type { StoreSyncConfigType } from '@bangle.io/store-sync';
 import {
   isStoreSyncReady,
   startStoreSync,
-  StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/store-sync';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
@@ -36,8 +31,6 @@ type StateType = {
 export const workerStoreSyncKey = new SliceKey<StateType>(
   'worker-setup-slice-storeSyncKey',
 );
-
-type SideEffect = SliceSideEffect<StateType, any, BangleStateConfig>;
 
 /**
  * A slice which handles handles communication of the store actions with the
@@ -65,7 +58,7 @@ export function workerSetupSlices() {
   ];
 }
 
-const loadWorkerModuleEffect: SideEffect = (_, config) => {
+const loadWorkerModuleEffect = workerStoreSyncKey.effect((_, config) => {
   if (typeof config.useWebWorker !== 'boolean') {
     throw new Error('useWebWorker is required');
   }
@@ -123,4 +116,4 @@ const loadWorkerModuleEffect: SideEffect = (_, config) => {
       );
     },
   };
-};
+});

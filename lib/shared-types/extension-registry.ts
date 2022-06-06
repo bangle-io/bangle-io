@@ -51,17 +51,17 @@ export interface NoteFormatProvider {
 
   description: string;
 
-  serializeNote(
+  serializeNote: (
     doc: Node,
     specRegistry: SpecRegistry,
     fileName: string,
-  ): string;
+  ) => string;
 
   // Return PMNode if parsing is successful, otherwise return undefined
-  parseNote(
+  parseNote: (
     value: string,
     specRegistry: SpecRegistry,
     // only applicable if dealing with prosemirror specific markdown
     markdownPlugins: any[],
-  ): Node | undefined;
+  ) => Node | undefined;
 }

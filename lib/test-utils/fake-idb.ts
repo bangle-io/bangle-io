@@ -1,4 +1,4 @@
-import * as IDB from 'idb-keyval';
+import type * as IDB from 'idb-keyval';
 
 const mockStore = new Map<IDBValidKey, any>();
 let customStores = new Map<string, typeof mockStore>();
@@ -35,6 +35,19 @@ class FakeIdb implements IdbType {
 
   del = async (key: IDBValidKey, customStore?: any) => {
     (customStore || mockStore).delete(key);
+
+    return;
+  };
+
+  update = async (
+    key: IDBValidKey,
+    updater: (oldValue: any | undefined) => any,
+    customStore?: any,
+  ) => {
+    const oldValue = (customStore || mockStore).get(key);
+    const newValue = updater(oldValue);
+
+    (customStore || mockStore).set(key, newValue);
 
     return;
   };

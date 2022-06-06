@@ -1,7 +1,7 @@
 // This is a simple helper to verify the types are correct
 // usage can be:
 
-import { SliceKey } from '@bangle.io/create-store';
+import type { SliceKey } from '@bangle.io/create-store';
 
 export function assertActionName<
   R extends string,

@@ -3,7 +3,7 @@ export interface BaseHistory {
 
   readonly search: string | undefined;
 
-  destroy(): void;
+  destroy: () => void;
 
-  navigate(to: string, obj?: { replace?: boolean }): void;
+  navigate: (to: string, obj?: { replace?: boolean }) => void;
 }

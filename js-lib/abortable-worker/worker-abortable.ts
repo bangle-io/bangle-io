@@ -1,8 +1,6 @@
-import { AbortControllers } from './util';
-import {
-  AbortableFunc,
-  workerAbortableMethodWrapper,
-} from './worker-abortable-function-wrapper';
+import type { AbortControllers } from './util';
+import type { AbortableFunc } from './worker-abortable-function-wrapper';
+import { workerAbortableMethodWrapper } from './worker-abortable-function-wrapper';
 
 type Callback<T> = ({
   abortWrapper,

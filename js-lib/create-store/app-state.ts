@@ -96,7 +96,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
   constructor(public config: AppStateConfig<S, A, Op>) {}
   applyAction(rootAction: A): AppState<S, A, Op> {
-    let newInstance = this.applyInner(rootAction);
+    let newInstance = this._applyInner(rootAction);
 
     let actions: A[] = [rootAction];
     let seen: Array<{ state: AppState; n: number }> | null = null;
@@ -134,7 +134,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
             }
           }
           actions.push(newAction as A);
-          newInstance = newInstance.applyInner(newAction);
+          newInstance = newInstance._applyInner(newAction);
           haveNew = true;
         }
         if (seen) {
@@ -146,26 +146,6 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
         return newInstance;
       }
     }
-  }
-
-  private applyInner<AA extends BaseAction>(action: AA): AppState<S, A, Op> {
-    let newInstance = new AppState(this.config);
-
-    this.config.fields.forEach((field) => {
-      if (field.apply) {
-        newInstance.slicesCurrentState[field.name] = field.apply(
-          action,
-          this.getSliceState(field.name),
-          newInstance,
-        );
-      } else {
-        newInstance.slicesCurrentState[field.name] = this.getSliceState(
-          field.name,
-        );
-      }
-    });
-
-    return newInstance;
   }
 
   getSliceByKey<SL, A extends BaseAction, S>(
@@ -201,6 +181,26 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     }
 
     return result;
+  }
+
+  private _applyInner<AA extends BaseAction>(action: AA): AppState<S, A, Op> {
+    let newInstance = new AppState(this.config);
+
+    this.config.fields.forEach((field) => {
+      if (field.apply) {
+        newInstance.slicesCurrentState[field.name] = field.apply(
+          action,
+          this.getSliceState(field.name),
+          newInstance,
+        );
+      } else {
+        newInstance.slicesCurrentState[field.name] = this.getSliceState(
+          field.name,
+        );
+      }
+    });
+
+    return newInstance;
   }
 }
 

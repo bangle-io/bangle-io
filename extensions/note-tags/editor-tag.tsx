@@ -1,20 +1,17 @@
 import React, { useCallback } from 'react';
 
-import {
-  BaseRawNodeSpec,
-  domSerializationHelpers,
-  NodeView,
-  RawSpecs,
-} from '@bangle.dev/core';
+import type { BaseRawNodeSpec, RawSpecs } from '@bangle.dev/core';
+import { domSerializationHelpers, NodeView } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
-import { EditorState, EditorView, keymap } from '@bangle.dev/pm';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
+import { keymap } from '@bangle.dev/pm';
 
 import {
   search,
   useBangleStoreContext,
   useSerialOperationContext,
 } from '@bangle.io/api';
-import { RenderReactNodeView } from '@bangle.io/extension-registry';
+import type { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {
   inlinePalette,
   queryInlinePaletteActive,

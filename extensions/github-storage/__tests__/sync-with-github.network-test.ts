@@ -1,10 +1,7 @@
 import waitForExpect from 'wait-for-expect';
 
-import {
-  BangleApplicationStore,
-  workspace,
-  wsPathHelpers,
-} from '@bangle.io/api';
+import type { BangleApplicationStore } from '@bangle.io/api';
+import { workspace, wsPathHelpers } from '@bangle.io/api';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
 import { randomStr, sleep } from '@bangle.io/utils';
@@ -12,7 +9,7 @@ import { randomStr, sleep } from '@bangle.io/utils';
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
-import { GithubWsMetadata } from '../helpers';
+import type { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
 import { pushLocalChanges } from '../sync-with-github';
 

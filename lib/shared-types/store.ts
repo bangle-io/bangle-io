@@ -1,4 +1,4 @@
-import { ApplicationStore } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
 export interface BangleStateConfig {

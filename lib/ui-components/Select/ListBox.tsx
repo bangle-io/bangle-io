@@ -1,10 +1,6 @@
 import { CheckIcon } from '@heroicons/react/solid';
-import {
-  AriaListBoxOptions,
-  useListBox,
-  useListBoxSection,
-  useOption,
-} from '@react-aria/listbox';
+import type { AriaListBoxOptions } from '@react-aria/listbox';
+import { useListBox, useListBoxSection, useOption } from '@react-aria/listbox';
 import { useSeparator } from '@react-aria/separator';
 import type { ListState } from '@react-stately/list';
 import type { Node } from '@react-types/shared';

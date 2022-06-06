@@ -1,5 +1,6 @@
 import { FocusRing } from '@react-aria/focus';
-import React, { ReactNode, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import React, { useCallback } from 'react';
 
 import { cx } from '@bangle.io/utils';
 

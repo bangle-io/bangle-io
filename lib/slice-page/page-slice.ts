@@ -1,12 +1,12 @@
 import { Slice } from '@bangle.io/create-store';
 import { assertActionName } from '@bangle.io/utils';
 
-import {
+import type {
   ExtractPageSliceAction,
   PageSliceAction,
-  pageSliceKey,
   PageSliceStateType,
 } from './common';
+import { pageSliceKey } from './common';
 
 export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,

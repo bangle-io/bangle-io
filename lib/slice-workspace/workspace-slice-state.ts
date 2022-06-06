@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
 
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
+import type { OpenedWsPaths } from '@bangle.io/ws-path';
+import { isValidNoteWsPath } from '@bangle.io/ws-path';
 
 export type WorkspaceStateKeys = keyof ConstructorParameters<
   typeof WorkspaceSliceState

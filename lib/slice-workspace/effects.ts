@@ -7,7 +7,8 @@ import {
 } from '@bangle.io/slice-page';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { SideEffect, workspaceSliceKey } from './common';
+import type { SideEffect } from './common';
+import { workspaceSliceKey } from './common';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { getStorageProviderOpts } from './file-operations';
 import {
@@ -32,7 +33,7 @@ const log = LOG
   ? console.debug.bind(console, 'slice-workspace effects')
   : () => {};
 
-export const errorHandlerEffect: SideEffect = () => {
+export const errorHandlerEffect = workspaceSliceKey.effect(() => {
   let lastErrorSeen: Error | undefined;
 
   return {
@@ -124,9 +125,9 @@ export const errorHandlerEffect: SideEffect = () => {
       throw new Error('Unable to handler error ' + error.message);
     },
   };
-};
+});
 
-export const refreshWsPathsEffect: SideEffect = () => {
+export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
   let abort = new AbortController();
 
   return {
@@ -199,7 +200,7 @@ export const refreshWsPathsEffect: SideEffect = () => {
       });
     },
   };
-};
+});
 
 // react to wsInfo deletion
 export const wsDeleteEffect = workspaceSliceKey.effect(() => {

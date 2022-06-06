@@ -2,7 +2,20 @@
 
 exports[`store basic tests destroys 1`] = `
 Object {
+  "_actionSerializers": Object {},
+  "_currentRunId": 0,
+  "_destroyController": Any<AbortController>,
+  "_destroyed": true,
+  "_disableSideEffects": false,
   "_dispatchAction": [Function],
+  "_infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
+  "_lastSeenStateCache": WeakMap {},
+  "_onError": undefined,
+  "_scheduler": undefined,
+  "_sideEffects": Array [],
   "_state": AppState {
     "config": AppStateConfig {
       "fields": Array [
@@ -80,28 +93,28 @@ Object {
       "two$": 2,
     },
   },
-  "actionSerializers": Object {},
-  "currentRunId": 0,
-  "destroyController": Any<AbortController>,
-  "destroyed": true,
-  "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
-  "infiniteErrors": Object {
-    "count": 0,
-    "lastSeen": 0,
-  },
-  "lastSeenStateCache": WeakMap {},
-  "onError": undefined,
-  "scheduler": undefined,
-  "sideEffects": Array [],
   "storeName": "test-store",
 }
 `;
 
 exports[`store basic tests sets up properly 1`] = `
 Object {
+  "_actionSerializers": Object {},
+  "_currentRunId": 0,
+  "_destroyController": Any<AbortController>,
+  "_destroyed": false,
+  "_disableSideEffects": false,
   "_dispatchAction": [Function],
+  "_infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
+  "_lastSeenStateCache": WeakMap {},
+  "_onError": undefined,
+  "_scheduler": undefined,
+  "_sideEffects": Array [],
   "_state": AppState {
     "config": AppStateConfig {
       "fields": Array [
@@ -179,96 +192,28 @@ Object {
       "two$": 2,
     },
   },
-  "actionSerializers": Object {},
-  "currentRunId": 0,
-  "destroyController": Any<AbortController>,
-  "destroyed": false,
-  "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
-  "infiniteErrors": Object {
-    "count": 0,
-    "lastSeen": 0,
-  },
-  "lastSeenStateCache": WeakMap {},
-  "onError": undefined,
-  "scheduler": undefined,
-  "sideEffects": Array [],
   "storeName": "test-store",
 }
 `;
 
 exports[`store deferred side effects does not call deferred update when scheduler is not provided 1`] = `
 Object {
+  "_actionSerializers": Object {},
+  "_currentRunId": 0,
+  "_destroyController": Any<AbortController>,
+  "_destroyed": false,
+  "_disableSideEffects": false,
   "_dispatchAction": [Function],
-  "_state": AppState {
-    "config": AppStateConfig {
-      "fields": Array [],
-      "opts": undefined,
-      "slices": Array [
-        Slice {
-          "key": "slice$2",
-          "spec": Object {
-            "sideEffect": [MockFunction] {
-              "calls": Array [
-                Array [
-                  [Circular],
-                  undefined,
-                ],
-              ],
-              "results": Array [
-                Object {
-                  "type": "return",
-                  "value": Object {
-                    "deferredUpdate": [MockFunction],
-                  },
-                },
-              ],
-            },
-          },
-        },
-      ],
-      "slicesByKey": Object {
-        "slice$2": Slice {
-          "key": "slice$2",
-          "spec": Object {
-            "sideEffect": [MockFunction] {
-              "calls": Array [
-                Array [
-                  [Circular],
-                  undefined,
-                ],
-              ],
-              "results": Array [
-                Object {
-                  "type": "return",
-                  "value": Object {
-                    "deferredUpdate": [MockFunction],
-                  },
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
-    "slicesCurrentState": Object {},
-  },
-  "actionSerializers": Object {},
-  "currentRunId": 0,
-  "destroyController": Any<AbortController>,
-  "destroyed": false,
-  "disableSideEffects": false,
-  "dispatch": [Function],
-  "errorHandler": [Function],
-  "infiniteErrors": Object {
+  "_infiniteErrors": Object {
     "count": 0,
     "lastSeen": 0,
   },
-  "lastSeenStateCache": WeakMap {},
-  "onError": undefined,
-  "scheduler": [Function],
-  "sideEffects": Array [
+  "_lastSeenStateCache": WeakMap {},
+  "_onError": undefined,
+  "_scheduler": [Function],
+  "_sideEffects": Array [
     Object {
       "effect": Object {
         "deferredUpdate": [MockFunction],
@@ -329,13 +274,81 @@ Object {
       "key": "slice$2",
     },
   ],
+  "_state": AppState {
+    "config": AppStateConfig {
+      "fields": Array [],
+      "opts": undefined,
+      "slices": Array [
+        Slice {
+          "key": "slice$2",
+          "spec": Object {
+            "sideEffect": [MockFunction] {
+              "calls": Array [
+                Array [
+                  [Circular],
+                  undefined,
+                ],
+              ],
+              "results": Array [
+                Object {
+                  "type": "return",
+                  "value": Object {
+                    "deferredUpdate": [MockFunction],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+      "slicesByKey": Object {
+        "slice$2": Slice {
+          "key": "slice$2",
+          "spec": Object {
+            "sideEffect": [MockFunction] {
+              "calls": Array [
+                Array [
+                  [Circular],
+                  undefined,
+                ],
+              ],
+              "results": Array [
+                Object {
+                  "type": "return",
+                  "value": Object {
+                    "deferredUpdate": [MockFunction],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    "slicesCurrentState": Object {},
+  },
+  "dispatch": [Function],
+  "errorHandler": [Function],
   "storeName": "test-store",
 }
 `;
 
 exports[`store empty store 1`] = `
 Object {
+  "_actionSerializers": Object {},
+  "_currentRunId": 0,
+  "_destroyController": Any<AbortController>,
+  "_destroyed": false,
+  "_disableSideEffects": false,
   "_dispatchAction": [Function],
+  "_infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
+  "_lastSeenStateCache": WeakMap {},
+  "_onError": undefined,
+  "_scheduler": undefined,
+  "_sideEffects": Array [],
   "_state": AppState {
     "config": AppStateConfig {
       "fields": Array [],
@@ -345,21 +358,8 @@ Object {
     },
     "slicesCurrentState": Object {},
   },
-  "actionSerializers": Object {},
-  "currentRunId": 0,
-  "destroyController": Any<AbortController>,
-  "destroyed": false,
-  "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
-  "infiniteErrors": Object {
-    "count": 0,
-    "lastSeen": 0,
-  },
-  "lastSeenStateCache": WeakMap {},
-  "onError": undefined,
-  "scheduler": undefined,
-  "sideEffects": Array [],
   "storeName": "test-store",
 }
 `;

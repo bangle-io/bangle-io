@@ -1,7 +1,7 @@
 import _debounceFn from 'debounce-fn';
 import { keyName } from 'w3c-keyname';
 
-import { EditorView } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, isMobile, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
@@ -212,8 +212,7 @@ export function calcIsTouchDevice(): boolean {
   if ('maxTouchPoints' in navigator) {
     hasTouchScreen = navigator.maxTouchPoints > 0;
   } else if ('msMaxTouchPoints' in navigator) {
-    // @ts-ignore
-    hasTouchScreen = navigator.msMaxTouchPoints > 0;
+    hasTouchScreen = (navigator as any).msMaxTouchPoints > 0;
   } else {
     var mQ =
       typeof window !== 'undefined' &&
@@ -226,7 +225,6 @@ export function calcIsTouchDevice(): boolean {
       hasTouchScreen = true; // deprecated, but good fallback
     } else {
       // Only as a last resort, fall back to user agent sniffing
-      // @ts-ignore
       var UA = navigator.userAgent;
       hasTouchScreen =
         /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||

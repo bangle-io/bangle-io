@@ -13,7 +13,8 @@ import {
 import { useDebouncedValue } from '@bangle.io/utils';
 
 import { NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG } from '../common';
-import { getRepos, RepositoryInfo } from '../github-api-helpers';
+import type { RepositoryInfo } from '../github-api-helpers';
+import { getRepos } from '../github-api-helpers';
 
 const MIN_HEIGHT = 200;
 
@@ -100,13 +101,13 @@ export function NewGithubWorkspaceRepoPickerDialog() {
   const groupedItems = useMemo(() => {
     return Array.from(
       Object.entries(
-        repoList.reduce((prev, cur) => {
+        repoList.reduce<{ [key: string]: RepositoryInfo[] }>((prev, cur) => {
           let array = prev[cur.owner] || [];
           prev[cur.owner] = array;
           array.push(cur);
 
           return prev;
-        }, {} as { [key: string]: RepositoryInfo[] }),
+        }, {}),
       ),
     );
   }, [repoList]);

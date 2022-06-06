@@ -284,7 +284,7 @@ describe('goToWsNameRoute', () => {
     expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
       1,
       {
-        wsPaths: makeArrayOfSize(MAX_OPEN_EDITORS, undefined, [
+        _wsPaths: makeArrayOfSize(MAX_OPEN_EDITORS, undefined, [
           'my-ws:hello.md',
         ]),
       },

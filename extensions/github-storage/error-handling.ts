@@ -1,15 +1,13 @@
 import { notification } from '@bangle.io/api';
 import { CORE_OPERATIONS_OPEN_GITHUB_ISSUE } from '@bangle.io/constants';
-import {
-  ErrorCode as RemoteSyncErrorCode,
-  ErrorCodeType as RemoteFileSyncErrorCodeType,
-} from '@bangle.io/remote-file-sync';
+import type { ErrorCodeType as RemoteFileSyncErrorCodeType } from '@bangle.io/remote-file-sync';
+import { ErrorCode as RemoteSyncErrorCode } from '@bangle.io/remote-file-sync';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { isIndexedDbException } from '@bangle.io/storage';
 
 import { OPERATION_UPDATE_GITHUB_TOKEN } from './common';
+import type { ErrorCodesType } from './errors';
 import {
-  ErrorCodesType,
   GITHUB_API_ERROR,
   GITHUB_STORAGE_NOT_ALLOWED,
   INVALID_GITHUB_FILE_FORMAT,

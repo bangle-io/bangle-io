@@ -4,7 +4,8 @@ import { assertActionName } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ActionSerializers } from './action-serializers';
-import { WorkspaceSliceAction, workspaceSliceKey } from './common';
+import type { WorkspaceSliceAction } from './common';
+import { workspaceSliceKey } from './common';
 import {
   errorHandlerEffect,
   refreshWorkspacesEffect,
@@ -16,10 +17,8 @@ import { WorkspaceError } from './errors';
 import { sliceHasError } from './operations';
 import { mergeWsInfoRegistries } from './read-ws-info';
 import { storageProviderHelpers } from './storage-provider-helpers';
-import {
-  WorkspaceSliceState,
-  WorkspaceStateKeys,
-} from './workspace-slice-state';
+import type { WorkspaceStateKeys } from './workspace-slice-state';
+import { WorkspaceSliceState } from './workspace-slice-state';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
 

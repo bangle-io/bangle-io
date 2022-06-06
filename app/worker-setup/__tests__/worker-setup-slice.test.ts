@@ -8,7 +8,8 @@ import {
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import { createTestStore } from '@bangle.io/test-utils';
-import { exponentialBackoff, sleep } from '@bangle.io/utils';
+import type { exponentialBackoff } from '@bangle.io/utils';
+import { sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';

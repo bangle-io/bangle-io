@@ -6,7 +6,8 @@ import {
 } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
-import { MaybeWsPath, resolvePath } from './helpers';
+import type { MaybeWsPath } from './helpers';
+import { resolvePath } from './helpers';
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -39,8 +40,8 @@ export class OpenedWsPaths {
     return new OpenedWsPaths(safeArray);
   }
 
-  constructor(private wsPaths: MaybeWsPath[]) {
-    if (wsPaths.length !== MAX_OPEN_EDITORS) {
+  constructor(private _wsPaths: MaybeWsPath[]) {
+    if (_wsPaths.length !== MAX_OPEN_EDITORS) {
       throw new Error(
         `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
       );
@@ -48,7 +49,7 @@ export class OpenedWsPaths {
   }
 
   get miniEditorWsPath() {
-    return this.wsPaths[MINI_EDITOR_INDEX] ?? undefined;
+    return this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
   }
 
   get openCount() {
@@ -63,11 +64,11 @@ export class OpenedWsPaths {
   }
 
   get primaryWsPath() {
-    return this.wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
+    return this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
   }
 
   get secondaryWsPath() {
-    return this.wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
+    return this._wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
   }
 
   // if no wsName is provided, will match against the internal wsName
@@ -103,7 +104,7 @@ export class OpenedWsPaths {
 
   // does not shrink the size but filters out
   equal(compareWith: OpenedWsPaths) {
-    if (compare(this.wsPaths, compareWith.wsPaths)) {
+    if (compare(this._wsPaths, compareWith._wsPaths)) {
       return true;
     }
 
@@ -111,7 +112,7 @@ export class OpenedWsPaths {
   }
 
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
-    this.wsPaths.forEach((p, i) => {
+    this._wsPaths.forEach((p, i) => {
       if (p) {
         cb(p, i);
       }
@@ -119,11 +120,11 @@ export class OpenedWsPaths {
   }
 
   getByIndex(index: number) {
-    if (index >= this.wsPaths.length) {
+    if (index >= this._wsPaths.length) {
       throw new Error('getByIndex: Out of bound operation');
     }
 
-    return this.wsPaths[index];
+    return this._wsPaths[index];
   }
 
   // Returns the unique wsName (workspace name) of all the paths.
@@ -147,14 +148,14 @@ export class OpenedWsPaths {
       return false;
     }
 
-    return this.wsPaths.includes(wsPath);
+    return this._wsPaths.includes(wsPath);
   }
 
   /**
    * check if there are any wsPath in this
    */
   hasSomeOpenedWsPaths() {
-    return this.wsPaths.some((r) => {
+    return this._wsPaths.some((r) => {
       return r != null;
     });
   }
@@ -166,7 +167,7 @@ export class OpenedWsPaths {
 
   toArray() {
     // mapping undefined to null since undefined is not serializable
-    return Array.from(this.wsPaths).map((r) => (r ? r : null));
+    return Array.from(this._wsPaths).map((r) => (r ? r : null));
   }
 
   // If primaryWsPath is empty, try moving secondary to primary.
@@ -206,11 +207,11 @@ export class OpenedWsPaths {
   }
 
   updateByIndex(index: number, wsPath: MaybeWsPath) {
-    if (index >= this.wsPaths.length) {
+    if (index >= this._wsPaths.length) {
       throw new Error('updateByIndex: Out of bound operation');
     }
 
-    const items = this.wsPaths.slice(0);
+    const items = this._wsPaths.slice(0);
     items[index] = wsPath;
 
     return this.updateAllWsPaths(items);

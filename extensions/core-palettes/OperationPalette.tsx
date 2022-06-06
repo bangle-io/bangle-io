@@ -5,7 +5,7 @@ import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { TerminalIcon, UniversalPalette } from '@bangle.io/ui-components';
 
-import { ExtensionPaletteType } from './config';
+import type { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
 
 const identifierPrefix = '>';

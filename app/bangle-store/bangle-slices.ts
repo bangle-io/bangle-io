@@ -1,15 +1,16 @@
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
-import {
-  EditorManagerAction,
-  editorManagerSlice,
-} from '@bangle.io/slice-editor-manager';
+import type { EditorManagerAction } from '@bangle.io/slice-editor-manager';
+import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import {
   notificationSlice,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
-import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
-import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
+import type { PageSliceAction } from '@bangle.io/slice-page';
+import { pageSlice } from '@bangle.io/slice-page';
+import type { UiContextAction } from '@bangle.io/slice-ui';
+import { uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
@@ -74,15 +75,13 @@ export function bangleStateSlices({
 
         return true;
       },
-      sideEffect: [
-        () => {
-          return {
-            deferredUpdate(store) {
-              onUpdate?.(store);
-            },
-          };
-        },
-      ],
+      sideEffect() {
+        return {
+          deferredUpdate(store) {
+            onUpdate?.(store);
+          },
+        };
+      },
     }),
   ];
 }

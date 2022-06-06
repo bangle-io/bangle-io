@@ -1,5 +1,5 @@
 import { EXECUTE_SEARCH_OPERATION } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
+import type { AppState } from '@bangle.io/create-store';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 
 export function searchByTag(

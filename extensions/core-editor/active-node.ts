@@ -1,4 +1,5 @@
-import { Decoration, DecorationSet, EditorState, Plugin } from '@bangle.dev/pm';
+import type { EditorState } from '@bangle.dev/pm';
+import { Decoration, DecorationSet, Plugin } from '@bangle.dev/pm';
 
 export function activeNode() {
   return new Plugin({

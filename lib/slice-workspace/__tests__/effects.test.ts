@@ -5,7 +5,7 @@ import {
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
-import { ApplicationStore } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import {
   getPageLocation,
@@ -320,7 +320,7 @@ describe('updateLocationEffect', () => {
         name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
         value: {
           openedWsPaths: {
-            wsPaths: createEmptyArray(MAX_OPEN_EDITORS),
+            _wsPaths: createEmptyArray(MAX_OPEN_EDITORS),
           },
           wsName: 'test-ws',
         },

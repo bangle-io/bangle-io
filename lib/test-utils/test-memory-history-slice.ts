@@ -1,10 +1,8 @@
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import { BaseHistory, createTo, MemoryHistory } from '@bangle.io/history';
-import {
-  pageSliceKey,
-  PageSliceStateType,
-  syncPageLocation,
-} from '@bangle.io/slice-page';
+import type { BaseHistory } from '@bangle.io/history';
+import { createTo, MemoryHistory } from '@bangle.io/history';
+import type { PageSliceStateType } from '@bangle.io/slice-page';
+import { pageSliceKey, syncPageLocation } from '@bangle.io/slice-page';
 import { assertActionName } from '@bangle.io/utils';
 
 const historySliceKey = new SliceKey<

@@ -1,5 +1,5 @@
-import { CorePalette } from '@bangle.io/constants';
-import { UniversalPalette } from '@bangle.io/ui-components';
+import type { CorePalette } from '@bangle.io/constants';
+import type { UniversalPalette } from '@bangle.io/ui-components';
 
 export const extensionName = '@bangle.io/core-palettes';
 

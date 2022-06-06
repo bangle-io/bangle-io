@@ -2,7 +2,8 @@ import './style';
 
 import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useRef, useState } from 'react';
-import { BaseLocationHook, Router } from 'wouter';
+import type { BaseLocationHook } from 'wouter';
+import { Router } from 'wouter';
 
 import { SerialOperationContextProvider } from '@bangle.io/api/internal';
 import {
@@ -15,7 +16,8 @@ import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
-import { BaseHistory, createTo } from '@bangle.io/history';
+import type { BaseHistory } from '@bangle.io/history';
+import { createTo } from '@bangle.io/history';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { pathMatcher, usePageContext } from '@bangle.io/slice-page';
 import { UIManager } from '@bangle.io/slice-ui';

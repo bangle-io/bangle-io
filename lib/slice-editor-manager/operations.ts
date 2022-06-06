@@ -1,17 +1,22 @@
-import { BangleEditor } from '@bangle.dev/core';
-import type { EditorState, EditorView, Node } from '@bangle.dev/pm';
-import { Selection, Transaction } from '@bangle.dev/pm';
+import type { BangleEditor } from '@bangle.dev/core';
+import type {
+  EditorState,
+  EditorView,
+  Node,
+  Transaction,
+} from '@bangle.dev/pm';
+import { Selection } from '@bangle.dev/pm';
 
 import {
   MAX_OPEN_EDITORS,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
+import type { AppState } from '@bangle.io/create-store';
 import { getScrollParentElement } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
-import { EditorDispatchType, EditorIdType } from './types';
+import type { EditorDispatchType, EditorIdType } from './types';
 import { calculateScrollPosition, calculateSelection } from './utils';
 
 export function toggleEditing() {

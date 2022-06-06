@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { ItemType } from './PaletteItem';
+import type { ItemType } from './PaletteItem';
 
 export function useActivePaletteItem(items: ItemType[], counter: number) {
   return useMemo(() => {

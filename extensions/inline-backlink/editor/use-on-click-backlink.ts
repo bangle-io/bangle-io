@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
-import { EditorState, EditorView } from '@bangle.dev/pm';
+import type { EditorState } from '@bangle.dev/pm';
+import { EditorView } from '@bangle.dev/pm';
 
 import { notification } from '@bangle.io/api';
 import {

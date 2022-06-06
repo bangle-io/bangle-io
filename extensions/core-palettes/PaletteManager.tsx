@@ -5,13 +5,11 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  PaletteOnExecuteItem,
-  UniversalPalette,
-} from '@bangle.io/ui-components';
+import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
+import { UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
-import {
+import type {
   PaletteManagerImperativeHandle,
   PaletteManagerReactComponentProps,
 } from './config';

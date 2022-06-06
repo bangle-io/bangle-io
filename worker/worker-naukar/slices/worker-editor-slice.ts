@@ -1,9 +1,9 @@
-import { Manager } from '@bangle.dev/collab-server';
+import type { Manager } from '@bangle.dev/collab-server';
 import { DebouncedDisk } from '@bangle.dev/disk';
-import { Node } from '@bangle.dev/pm';
+import type { Node } from '@bangle.dev/pm';
 
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import type { NaukarStateConfig } from '@bangle.io/shared-types';
 import {
   blockReload,

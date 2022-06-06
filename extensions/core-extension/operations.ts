@@ -6,23 +6,25 @@ import {
   RENAME_NOTE_DIALOG_NAME,
   WorkerErrorCode,
 } from '@bangle.io/constants';
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
   notificationSliceKey,
   showNotification,
 } from '@bangle.io/slice-notification';
-import {
+import type {
   UiContextAction,
   UiContextDispatchType,
-  uiSliceKey,
 } from '@bangle.io/slice-ui';
+import { uiSliceKey } from '@bangle.io/slice-ui';
+import type {
+  WorkspaceDispatchType,
+  WorkspaceSliceAction,
+} from '@bangle.io/slice-workspace';
 import {
   deleteNote,
   deleteWorkspace,
   refreshWsPaths,
   updateOpenedWsPaths,
-  WorkspaceDispatchType,
-  WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';

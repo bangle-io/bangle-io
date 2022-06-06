@@ -1,4 +1,4 @@
-import { EditorView } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
 import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
 
 import { Extension } from '@bangle.io/extension-registry';

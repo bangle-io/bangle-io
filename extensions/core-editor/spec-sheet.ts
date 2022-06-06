@@ -17,7 +17,7 @@ import {
   text,
   underline,
 } from '@bangle.dev/base-components';
-import { RawSpecs } from '@bangle.dev/core';
+import type { RawSpecs } from '@bangle.dev/core';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 

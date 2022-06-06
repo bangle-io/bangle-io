@@ -19,26 +19,14 @@ module.exports = {
 
     {
       files: ['**/*.ts?(x)'],
+      parserOptions: {
+        project: ['./tsconfig.json'],
+      },
       rules: {
         '@typescript-eslint/array-type': [
           'error',
           {
             default: 'array-simple',
-          },
-        ],
-        '@typescript-eslint/explicit-member-accessibility': [
-          'error',
-          {
-            accessibility: 'no-public',
-            overrides: {
-              parameterProperties: 'off',
-            },
-          },
-        ],
-        '@typescript-eslint/consistent-type-assertions': [
-          'error',
-          {
-            assertionStyle: 'as',
           },
         ],
         '@typescript-eslint/ban-types': [
@@ -54,12 +42,46 @@ module.exports = {
             extendDefaults: false,
           },
         ],
-
+        '@typescript-eslint/consistent-type-assertions': [
+          'error',
+          {
+            assertionStyle: 'as',
+            objectLiteralTypeAssertions: 'allow-as-parameter',
+          },
+        ],
+        '@typescript-eslint/consistent-type-exports': [
+          'warn',
+          {
+            fixMixedExportsWithInlineTypeSpecifier: true,
+          },
+        ],
+        '@typescript-eslint/consistent-type-imports': [
+          'error',
+          {
+            disallowTypeAnnotations: false,
+          },
+        ],
+        '@typescript-eslint/explicit-member-accessibility': [
+          'error',
+          {
+            accessibility: 'no-public',
+            overrides: {
+              parameterProperties: 'off',
+            },
+          },
+        ],
+        '@typescript-eslint/method-signature-style': 'error',
         '@typescript-eslint/naming-convention': [
           'error',
           {
             selector: 'class',
             format: ['PascalCase'],
+          },
+          {
+            selector: 'memberLike',
+            modifiers: ['private'],
+            format: ['camelCase'],
+            leadingUnderscore: 'require',
           },
           {
             selector: 'interface',
@@ -69,7 +91,21 @@ module.exports = {
               match: false,
             },
           },
+          {
+            selector: 'typeLike',
+            format: ['PascalCase'],
+          },
         ],
+        '@typescript-eslint/no-base-to-string': 'error',
+        '@typescript-eslint/no-duplicate-imports': 'error',
+        '@typescript-eslint/no-extraneous-class': 'error',
+        // '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+        // '@typescript-eslint/no-unnecessary-condition': 'error',
+        // '@typescript-eslint/no-unnecessary-type-arguments': 'error',
+        '@typescript-eslint/prefer-literal-enum-member': 'error',
+        '@typescript-eslint/prefer-reduce-type-parameter': 'error',
+        '@typescript-eslint/prefer-ts-expect-error': 'error',
+        '@typescript-eslint/switch-exhaustiveness-check': 'error',
       },
     },
   ],
@@ -186,7 +222,7 @@ module.exports = {
   },
   settings: {
     'jest': {
-      version: '27',
+      version: '28',
     },
     'react': {
       version: '17',

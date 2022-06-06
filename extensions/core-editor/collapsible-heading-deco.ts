@@ -1,9 +1,8 @@
 import { heading } from '@bangle.dev/base-components';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
 import {
   Decoration,
   DecorationSet,
-  EditorState,
-  EditorView,
   Plugin,
   PluginKey,
   Selection,

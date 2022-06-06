@@ -1,10 +1,11 @@
-import {
-  ApplicationStore,
-  AppState,
+import type {
   BaseAction,
+  OnErrorType,
+  SchedulerType,
   SliceArray,
   SliceKey,
 } from '@bangle.io/create-store';
+import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
 if (typeof jest === 'undefined') {
   throw new Error('Can only be with jest');
@@ -41,8 +42,8 @@ export function createTestStore<
   sliceKey?: SliceKey<SL, A, S, C>;
   slices?: SliceArray<any, any>;
   opts?: C;
-  scheduler?: ApplicationStore['scheduler'];
-  onError?: ApplicationStore<SL, A>['onError'];
+  scheduler?: SchedulerType;
+  onError?: OnErrorType<SL, A>;
 }): {
   store: ApplicationStore<SL, A>;
   dispatchSpy: jest.SpyInstance;

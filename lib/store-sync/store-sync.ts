@@ -1,10 +1,9 @@
-import {
+import type {
   ApplicationStore,
   AppState,
   BaseAction,
-  Slice,
-  SliceKey,
 } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import {
   assertActionName,
   exponentialBackoff,
@@ -114,7 +113,7 @@ export function storeSyncSlice<
     },
 
     sideEffect: [
-      (initialState) => {
+      syncStoreKey.effect((initialState) => {
         const pingController = new AbortController();
         const { port, actionReceiveFilter } =
           configKey.getSliceStateAsserted(initialState);
@@ -187,9 +186,9 @@ export function storeSyncSlice<
             }
           },
         };
-      },
+      }),
 
-      () => {
+      syncStoreKey.effect(() => {
         return {
           update(store, _, sliceState) {
             const ready = sliceState.startSync && sliceState.portReady;
@@ -221,7 +220,7 @@ export function storeSyncSlice<
             }
           },
         };
-      },
+      }),
     ],
   });
 }

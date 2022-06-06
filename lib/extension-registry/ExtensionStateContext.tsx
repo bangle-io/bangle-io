@@ -3,14 +3,14 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useExtensionRegistryContext } from './ExtensionRegistryContext';
 
 class AllExtensionStore {
-  private store: { [key: string]: any };
+  private _store: { [key: string]: any };
 
   constructor(initialValues: { [key: string]: any }) {
-    this.store = Object.assign({}, initialValues);
+    this._store = Object.assign({}, initialValues);
   }
 
   getExtensionState<T>(key: string): T {
-    return this.store[key];
+    return this._store[key];
   }
 
   updateExtensionState<T>(key: string, value: T) {
@@ -18,7 +18,7 @@ class AllExtensionStore {
       typeof value === 'function' ? value(this.getExtensionState(key)) : value;
 
     return new AllExtensionStore(
-      Object.assign({}, this.store, { [key]: newValue }),
+      Object.assign({}, this._store, { [key]: newValue }),
     );
   }
 }

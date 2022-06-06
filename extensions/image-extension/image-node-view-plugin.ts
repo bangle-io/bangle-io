@@ -1,5 +1,5 @@
 import { NodeView } from '@bangle.dev/core';
-import { EditorState } from '@bangle.dev/pm';
+import type { EditorState } from '@bangle.dev/pm';
 
 export function imageNodeViewPlugin() {
   return ({ schema }: { schema: EditorState['schema'] }) => [
