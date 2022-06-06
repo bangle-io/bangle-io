@@ -4,7 +4,7 @@ import {
   initialBangleStore,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
-import { ApplicationStore } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 
 import { editorManagerSliceKey } from './constants';
 import { initialEditorSliceState } from './editor-manager-slice';

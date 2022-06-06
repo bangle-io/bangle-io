@@ -1,6 +1,6 @@
 import { sleep } from '@bangle.dev/utils';
 
-import { AppState } from '@bangle.io/create-store';
+import type { AppState } from '@bangle.io/create-store';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
@@ -11,11 +11,8 @@ import {
 import { assertNotUndefined } from '@bangle.io/utils';
 import { validWsName } from '@bangle.io/ws-path';
 
-import {
-  WorkspaceAppStore,
-  WorkspaceDispatchType,
-  workspaceSliceKey,
-} from './common';
+import type { WorkspaceAppStore, WorkspaceDispatchType } from './common';
+import { workspaceSliceKey } from './common';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_DELETED_MODIFY_ERROR,

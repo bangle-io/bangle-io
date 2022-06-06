@@ -1,11 +1,12 @@
-import { CorePalette } from '@bangle.io/constants';
-import { ApplicationStore, Slice, SliceKey } from '@bangle.io/create-store';
+import type { CorePalette } from '@bangle.io/constants';
+import type { ApplicationStore } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { ThemeType } from '@bangle.io/shared-types';
+import type { useWindowSize } from '@bangle.io/utils';
 import {
   assertActionName,
   checkWidescreen,
   rafSchedule,
-  useWindowSize,
 } from '@bangle.io/utils';
 
 import { applyTheme } from './apply-theme';

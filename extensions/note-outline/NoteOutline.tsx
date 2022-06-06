@@ -25,9 +25,9 @@ import {
   safeScrollIntoViewIfNeeded,
 } from '@bangle.io/utils';
 
+import type { HeadingNodes } from './config';
 import {
   HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN,
-  HeadingNodes,
   WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
   watchHeadingsPluginKey,
 } from './config';

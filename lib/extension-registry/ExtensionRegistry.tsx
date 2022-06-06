@@ -3,7 +3,7 @@ import React from 'react';
 import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
-import { Slice } from '@bangle.io/create-store';
+import type { Slice } from '@bangle.io/create-store';
 import type {
   EditorWatchPluginState,
   SerialOperationDefinitionType,
@@ -12,7 +12,7 @@ import type {
   SerialOperationNameType,
 } from '@bangle.io/shared-types';
 
-import { ApplicationConfig, EditorConfig, Extension } from './Extension';
+import type { ApplicationConfig, EditorConfig, Extension } from './Extension';
 
 type Unnest<T> = T extends Array<infer U> ? U : T;
 

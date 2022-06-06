@@ -2,7 +2,7 @@ import type { Node } from '@bangle.dev/pm';
 
 import { readFileAsText } from '@bangle.io/baby-fs';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
-import { StorageOpts } from '@bangle.io/storage';
+import type { StorageOpts } from '@bangle.io/storage';
 import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';

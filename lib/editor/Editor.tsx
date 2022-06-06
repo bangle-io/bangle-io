@@ -8,9 +8,9 @@ import React, {
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 import type { Node, Selection } from '@bangle.dev/pm';
+import type { RenderNodeViewsFunction } from '@bangle.dev/react';
 import {
   BangleEditor as ReactBangleEditor,
-  RenderNodeViewsFunction,
   useEditorState,
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';

@@ -13,7 +13,8 @@ import {
 import { useDebouncedValue } from '@bangle.io/utils';
 
 import { NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG } from '../common';
-import { getRepos, RepositoryInfo } from '../github-api-helpers';
+import type { RepositoryInfo } from '../github-api-helpers';
+import { getRepos } from '../github-api-helpers';
 
 const MIN_HEIGHT = 200;
 

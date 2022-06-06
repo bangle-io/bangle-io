@@ -1,5 +1,5 @@
 import { MAX_OPEN_EDITORS, MINI_EDITOR_INDEX } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
+import type { AppState } from '@bangle.io/create-store';
 import {
   getPageLocation,
   goToLocation,
@@ -8,9 +8,10 @@ import {
   wsNameToPathname,
   wsPathToPathname,
 } from '@bangle.io/slice-page';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { WorkspaceDispatchType, workspaceSliceKey } from './common';
+import type { WorkspaceDispatchType } from './common';
+import { workspaceSliceKey } from './common';
 import {
   getPrevOpenedWsPathsFromSearch,
   savePrevOpenedWsPathsToSearch,

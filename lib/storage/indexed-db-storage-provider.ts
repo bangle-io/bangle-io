@@ -7,7 +7,7 @@ import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import { assertSignal } from '@bangle.io/utils';
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
-import { BaseStorageProvider, StorageOpts } from './base-storage';
+import type { BaseStorageProvider, StorageOpts } from './base-storage';
 
 export class IndexedDbStorageProvider implements BaseStorageProvider {
   // TODO setting it to string for easier subclassing while testing

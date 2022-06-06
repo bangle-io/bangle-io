@@ -5,7 +5,7 @@ import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { HELP_FS_INDEX_WS_PATH, WorkspaceTypeHelp } from '@bangle.io/constants';
 import { toFSPath } from '@bangle.io/ws-path';
 
-import { BaseStorageProvider, StorageOpts } from './base-storage';
+import type { BaseStorageProvider, StorageOpts } from './base-storage';
 import { IndexedDbStorageProvider } from './indexed-db-storage-provider';
 
 function readFileFromUnpkg(wsPath: string) {

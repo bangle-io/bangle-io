@@ -1,6 +1,7 @@
 import './style.css';
 
-import React, { ReactNode, useRef } from 'react';
+import type { ReactNode } from 'react';
+import React, { useRef } from 'react';
 
 import { useStickyNavigation } from './use-sticky-navigation';
 

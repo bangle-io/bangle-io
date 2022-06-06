@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
+import type { BaseAction, SliceKey } from '@bangle.io/create-store';
 import {
   ApplicationStore,
   AppState as ApplicationState,
-  BaseAction,
-  SliceKey,
 } from '@bangle.io/create-store';
 
 export const initialBangleStore = ApplicationStore.create({

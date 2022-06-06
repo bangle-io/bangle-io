@@ -1,13 +1,13 @@
 import { wsPathHelpers } from '@bangle.io/api';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
-import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
+import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import { getFileBlobFromTree, getRepoTree } from './github-api-helpers';
-import { GithubWsMetadata } from './helpers';
+import type { GithubWsMetadata } from './helpers';
 
 const LOG = false;
 const log = LOG

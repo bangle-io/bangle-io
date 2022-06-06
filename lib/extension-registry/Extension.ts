@@ -1,9 +1,10 @@
-import React from 'react';
+import type React from 'react';
 
 import type { RawSpecs } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import type {
   BangleApplicationStore,
   EditorWatchPluginState,
@@ -14,7 +15,7 @@ import type {
 } from '@bangle.io/shared-types';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 
-import { EditorPluginDefinition } from './PluginType';
+import type { EditorPluginDefinition } from './PluginType';
 
 const _check = Symbol();
 

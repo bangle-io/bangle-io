@@ -1,8 +1,5 @@
-import {
-  ApplicationStore,
-  ExtractAction,
-  SliceKey,
-} from '@bangle.io/create-store';
+import type { ApplicationStore, ExtractAction } from '@bangle.io/create-store';
+import { SliceKey } from '@bangle.io/create-store';
 
 import type { Location } from './location-helpers';
 

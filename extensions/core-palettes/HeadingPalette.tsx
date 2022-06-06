@@ -7,7 +7,7 @@ import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
-import { ExtensionPaletteType } from './config';
+import type { ExtensionPaletteType } from './config';
 
 const identifierPrefix = '#';
 

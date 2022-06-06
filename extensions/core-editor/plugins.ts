@@ -16,13 +16,8 @@ import {
   strike,
   underline,
 } from '@bangle.dev/base-components';
-import {
-  EditorView,
-  keymap,
-  NodeSelection,
-  Plugin,
-  PluginKey,
-} from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
+import { keymap, NodeSelection, Plugin, PluginKey } from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';

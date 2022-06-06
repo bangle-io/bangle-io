@@ -5,7 +5,7 @@ import type {
   Slice,
   SliceSideEffect,
 } from './app-state-slice';
-import { ApplicationStore } from './app-store';
+import type { ApplicationStore } from './app-store';
 
 const keys: { [k: string]: number } = Object.create(null);
 

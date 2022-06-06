@@ -8,11 +8,11 @@ import { forEachEditor } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { isAbortError, useDebouncedValue } from '@bangle.io/utils';
 
+import type { SearchNotesExtensionState } from './constants';
 import {
   DEBOUNCE_MAX_WAIT,
   DEBOUNCE_WAIT,
   extensionName,
-  SearchNotesExtensionState,
   searchPluginKey,
 } from './constants';
 import { searchNotes } from './search-notes';

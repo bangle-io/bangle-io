@@ -11,7 +11,7 @@ import {
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
   CorePalette,
 } from '@bangle.io/constants';
-import { SidebarType } from '@bangle.io/extension-registry';
+import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import {
   changeSidebar,

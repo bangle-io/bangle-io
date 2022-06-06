@@ -1,17 +1,13 @@
 import * as Comlink from 'comlink';
 
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
-import {
-  ApplicationStore,
-  BaseAction,
-  Slice,
-  SliceKey,
-} from '@bangle.io/create-store';
+import type { ApplicationStore, BaseAction } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { UnPromisify } from '@bangle.io/shared-types';
+import type { StoreSyncConfigType } from '@bangle.io/store-sync';
 import {
   isStoreSyncReady,
   startStoreSync,
-  StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/store-sync';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';

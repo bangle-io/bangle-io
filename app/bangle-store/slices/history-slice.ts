@@ -1,15 +1,11 @@
 import { WorkspaceTypeNative } from '@bangle.io/constants';
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import { BaseHistory, BrowserHistory, createTo } from '@bangle.io/history';
-import {
-  pageSliceKey,
-  PageSliceStateType,
-  syncPageLocation,
-} from '@bangle.io/slice-page';
-import {
-  workspaceSliceKey,
-  WorkspaceSliceState,
-} from '@bangle.io/slice-workspace';
+import type { BaseHistory } from '@bangle.io/history';
+import { BrowserHistory, createTo } from '@bangle.io/history';
+import type { PageSliceStateType } from '@bangle.io/slice-page';
+import { pageSliceKey, syncPageLocation } from '@bangle.io/slice-page';
+import type { WorkspaceSliceState } from '@bangle.io/slice-workspace';
+import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();

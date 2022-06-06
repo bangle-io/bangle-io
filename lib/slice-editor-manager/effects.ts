@@ -1,4 +1,4 @@
-import { BangleEditor } from '@bangle.dev/core';
+import type { BangleEditor } from '@bangle.dev/core';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';

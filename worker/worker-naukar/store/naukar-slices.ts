@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser';
 
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import {
   notificationSlice,

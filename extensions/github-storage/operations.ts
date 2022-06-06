@@ -1,15 +1,12 @@
-import {
+import type {
   BangleAppDispatch,
   BangleApplicationStore,
   BangleAppState,
-  notification,
-  workspace,
 } from '@bangle.io/api';
+import { notification, workspace } from '@bangle.io/api';
 import { pMap } from '@bangle.io/p-map';
-import {
-  LocalFileEntryManager,
-  RemoteFileEntry,
-} from '@bangle.io/remote-file-sync';
+import type { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
+import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import {
   acquireLockIfAvailable,
   BaseError,
@@ -19,7 +16,7 @@ import {
 import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME, LOCK_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
-import { GithubWsMetadata } from './helpers';
+import type { GithubWsMetadata } from './helpers';
 import { pushLocalChanges } from './sync-with-github';
 
 const LOG = true;

@@ -6,12 +6,11 @@ import {
   getEditorIntersectionObserverPluginState,
 } from '@bangle.io/utils';
 
+import type { HeadingNodes, WatchPluginState } from './config';
 import {
-  HeadingNodes,
   WATCH_HEADINGS_PLUGIN_DEBOUNCE_MAX_WAIT,
   WATCH_HEADINGS_PLUGIN_DEBOUNCE_WAIT,
   watchHeadingsPluginKey,
-  WatchPluginState,
 } from './config';
 
 export function watchHeadingsPlugin() {

@@ -1,4 +1,5 @@
-import { Extension, RenderReactNodeView } from '@bangle.io/extension-registry';
+import type { RenderReactNodeView } from '@bangle.io/extension-registry';
+import { Extension } from '@bangle.io/extension-registry';
 
 const extensionName = 'extension-example';
 

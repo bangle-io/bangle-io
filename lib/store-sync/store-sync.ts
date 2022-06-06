@@ -1,10 +1,9 @@
-import {
+import type {
   ApplicationStore,
   AppState,
   BaseAction,
-  Slice,
-  SliceKey,
 } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import {
   assertActionName,
   exponentialBackoff,

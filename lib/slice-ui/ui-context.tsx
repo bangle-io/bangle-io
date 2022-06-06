@@ -4,14 +4,10 @@ import {
   initialBangleStore,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
-import { ApplicationStore } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 
-import {
-  initialState,
-  UiContextAction,
-  uiSliceKey,
-  UISliceState,
-} from './ui-slice';
+import type { UiContextAction, UISliceState } from './ui-slice';
+import { initialState, uiSliceKey } from './ui-slice';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};

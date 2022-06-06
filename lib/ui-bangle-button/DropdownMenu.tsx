@@ -1,4 +1,4 @@
-import { Placement } from '@popperjs/core';
+import type { Placement } from '@popperjs/core';
 import { useToggleButton } from '@react-aria/button';
 import { FocusScope } from '@react-aria/focus';
 import { useFocus, useHover } from '@react-aria/interactions';
@@ -6,14 +6,17 @@ import { useMenu, useMenuItem, useMenuSection } from '@react-aria/menu';
 import { useSeparator } from '@react-aria/separator';
 import { mergeProps } from '@react-aria/utils';
 import { useToggleState } from '@react-stately/toggle';
-import { TreeProps, TreeState, useTreeState } from '@react-stately/tree';
+import type { TreeProps, TreeState } from '@react-stately/tree';
+import { useTreeState } from '@react-stately/tree';
 import type { Node } from '@react-types/shared';
-import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import reactDOM from 'react-dom';
 
 import { cx, useKeybindings, useWatchClickOutside } from '@bangle.io/utils';
 
-import { BaseButton, StylingProps } from './BaseButton';
+import type { StylingProps } from './BaseButton';
+import { BaseButton } from './BaseButton';
 import { useTooltipPositioner } from './use-positioner';
 
 export {

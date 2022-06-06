@@ -1,12 +1,11 @@
-import {
-  ApplicationStore,
-  AppState,
+import type {
   BaseAction,
   OnErrorType,
   SchedulerType,
   SliceArray,
   SliceKey,
 } from '@bangle.io/create-store';
+import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
 if (typeof jest === 'undefined') {
   throw new Error('Can only be with jest');

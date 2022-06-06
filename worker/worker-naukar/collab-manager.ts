@@ -1,7 +1,7 @@
 import { Manager } from '@bangle.dev/collab-server';
-import { Disk } from '@bangle.dev/disk';
+import type { Disk } from '@bangle.dev/disk';
 
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
 const SLOW_FACTOR = 2;
 

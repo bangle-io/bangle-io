@@ -13,14 +13,13 @@ import { Dialog } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
+import type { WorkspaceCreateErrorTypes, WorkspaceStorageType } from './common';
 import {
   BROWSER,
   defaultStorageType,
   FILE_SYSTEM,
   INVALID_WORKSPACE_NAME_ERROR,
   WORKSPACE_NAME_ALREADY_EXISTS_ERROR,
-  WorkspaceCreateErrorTypes,
-  WorkspaceStorageType,
 } from './common';
 import { ShowError } from './ShowError';
 import { StorageTypeDropdown } from './StorageTypeDropdown';

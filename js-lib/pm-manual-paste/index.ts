@@ -5,7 +5,8 @@ import {
   // @ts-ignore
 } from 'prosemirror-view';
 
-import { DOMSerializer, EditorView, Slice } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
+import { DOMSerializer, Slice } from '@bangle.dev/pm';
 
 export function sliceManualPaste(editorView: EditorView, slice: Slice) {
   const { dom } = __serializeForClipboard(editorView, slice);

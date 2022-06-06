@@ -1,11 +1,8 @@
-import { CorePalette } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
+import type { CorePalette } from '@bangle.io/constants';
+import type { AppState } from '@bangle.io/create-store';
 
-import {
-  UI_CONTEXT_TOGGLE_THEME,
-  UiContextDispatchType,
-  uiSliceKey,
-} from './ui-slice';
+import type { UiContextDispatchType } from './ui-slice';
+import { UI_CONTEXT_TOGGLE_THEME, uiSliceKey } from './ui-slice';
 
 export function toggleTheme() {
   return (state: AppState, dispatch: UiContextDispatchType) => {

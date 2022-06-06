@@ -3,7 +3,7 @@ import React, { useCallback, useImperativeHandle } from 'react';
 import { CorePalette } from '@bangle.io/constants';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 
-import { ExtensionPaletteType } from './config';
+import type { ExtensionPaletteType } from './config';
 
 const identifierPrefix = '?';
 

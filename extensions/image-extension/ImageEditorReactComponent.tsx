@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { EditorState, EditorView, NodeSelection } from '@bangle.dev/pm';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
+import { NodeSelection } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 import {
   FloatingMenu,

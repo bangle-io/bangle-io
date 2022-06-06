@@ -20,11 +20,8 @@ import {
   text,
   underline,
 } from '@bangle.dev/base-components';
-import {
-  BangleEditor as CoreBangleEditor,
-  Plugin,
-  SpecRegistry,
-} from '@bangle.dev/core';
+import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
+import { Plugin, SpecRegistry } from '@bangle.dev/core';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { StorageOpts } from '../base-storage';
+import type { StorageOpts } from '../base-storage';
 import { IndexedDbStorageProvider } from '../indexed-db-storage-provider';
 
 let idbProvider = new IndexedDbStorageProvider();

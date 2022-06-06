@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import { EditorState } from '@bangle.dev/pm';
+import type { EditorState } from '@bangle.dev/pm';
 
 import { EditorDisplayType } from '@bangle.io/constants';
-import { RenderReactNodeView } from '@bangle.io/extension-registry';
+import type { RenderReactNodeView } from '@bangle.io/extension-registry';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
 import { getEditorPluginMetadata } from '@bangle.io/utils';

@@ -3,10 +3,12 @@ import { useButton } from '@react-aria/button';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
 import type { PressEvents } from '@react-types/shared';
-import React, { MutableRefObject, ReactNode, useCallback, useRef } from 'react';
+import type { MutableRefObject, ReactNode } from 'react';
+import React, { useCallback, useRef } from 'react';
 import reactDOM from 'react-dom';
 
-import { BaseButton, BaseButtonProps, StylingProps } from './BaseButton';
+import type { BaseButtonProps, StylingProps } from './BaseButton';
+import { BaseButton } from './BaseButton';
 import { useTooltipPositioner } from './use-positioner';
 
 export function ActionButton({

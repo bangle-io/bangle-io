@@ -1,4 +1,4 @@
-import { SpecRegistry } from '@bangle.dev/core';
+import type { SpecRegistry } from '@bangle.dev/core';
 
 export type WsPath = string;
 export type WsName = string;
@@ -30,35 +30,35 @@ export interface BaseStorageProvider {
   readonly hidden?: boolean;
   readonly name: string;
 
-  createFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+  createFile: (wsPath: WsPath, file: File, opts: StorageOpts) => Promise<void>;
 
-  deleteFile(wsPath: WsPath, opts: StorageOpts): Promise<void>;
+  deleteFile: (wsPath: WsPath, opts: StorageOpts) => Promise<void>;
 
-  fileExists(wsPath: WsPath, opts: StorageOpts): Promise<boolean>;
+  fileExists: (wsPath: WsPath, opts: StorageOpts) => Promise<boolean>;
 
-  fileStat(wsPath: WsPath, opts: StorageOpts): Promise<FileStat>;
+  fileStat: (wsPath: WsPath, opts: StorageOpts) => Promise<FileStat>;
 
-  readFile(wsPath: WsPath, opts: StorageOpts): Promise<File | undefined>;
+  readFile: (wsPath: WsPath, opts: StorageOpts) => Promise<File | undefined>;
 
-  listAllFiles(
+  listAllFiles: (
     abortSignal: AbortSignal,
     wsName: WsName,
     opts: StorageOpts,
-  ): Promise<WsPath[]>;
+  ) => Promise<WsPath[]>;
 
   // return any metadata associated with this newly created workspace
-  newWorkspaceMetadata(
+  newWorkspaceMetadata: (
     wsName: string,
     createOpts: any,
-  ): Promise<{ [key: string]: any }> | Promise<void> | void;
+  ) => Promise<{ [key: string]: any }> | Promise<void> | void;
 
-  renameFile(
+  renameFile: (
     wsPath: WsPath,
     newWsPath: WsPath,
     opts: StorageOpts,
-  ): Promise<void>;
+  ) => Promise<void>;
 
-  writeFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+  writeFile: (wsPath: WsPath, file: File, opts: StorageOpts) => Promise<void>;
 
   searchFile?: (
     abortSignal: AbortSignal,

@@ -11,11 +11,10 @@ import type { Mutable } from 'type-fest';
 
 import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
-import {
-  initialEditorSliceState,
-  useEditorManagerContext,
-} from '@bangle.io/slice-editor-manager';
-import { initialState, useUIManagerContext } from '@bangle.io/slice-ui';
+import type { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { initialEditorSliceState } from '@bangle.io/slice-editor-manager';
+import type { useUIManagerContext } from '@bangle.io/slice-ui';
+import { initialState } from '@bangle.io/slice-ui';
 import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';

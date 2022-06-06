@@ -1,11 +1,9 @@
 import { INFINITE_ERROR_SAMPLE, INFINITE_ERROR_THRESHOLD_TIME } from '..';
 import { AppState } from '../app-state';
-import { Slice, SliceSideEffect } from '../app-state-slice';
-import {
-  ApplicationStore,
-  DeferredSideEffectsRunner,
-  SchedulerType,
-} from '../app-store';
+import type { SliceSideEffect } from '../app-state-slice';
+import { Slice } from '../app-state-slice';
+import type { SchedulerType } from '../app-store';
+import { ApplicationStore, DeferredSideEffectsRunner } from '../app-store';
 import { SliceKey } from '../slice-key';
 
 function sleep(t = 20): Promise<void> {

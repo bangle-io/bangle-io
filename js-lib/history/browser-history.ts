@@ -1,11 +1,11 @@
-import { BaseHistory } from './base-history';
+import type { BaseHistory } from './base-history';
 import { createTo } from './create-to';
 import {
   eventPushState,
   eventReplaceState,
   historyEvents,
 } from './patch-history';
-import { Location } from './types';
+import type { Location } from './types';
 
 export class BrowserHistory implements BaseHistory {
   private _historyState: any;

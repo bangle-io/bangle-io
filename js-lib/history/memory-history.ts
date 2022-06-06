@@ -1,5 +1,5 @@
-import { BaseHistory } from './base-history';
-import { Location } from './types';
+import type { BaseHistory } from './base-history';
+import type { Location } from './types';
 
 export class MemoryHistory implements BaseHistory {
   private _currentLoc: Location;

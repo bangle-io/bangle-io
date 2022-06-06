@@ -1,7 +1,8 @@
 import type { JsonArray } from 'type-fest';
 
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
-import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
+import type { Slice } from '@bangle.io/create-store';
+import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
   Extension,
   extensionRegistrySlice,
@@ -11,9 +12,9 @@ import { pageSlice } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createExtensionRegistry } from '@bangle.io/test-utils';
 
-import { WorkspaceSliceAction } from '../common';
+import type { WorkspaceSliceAction } from '../common';
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
-import {
+import type {
   WorkspaceSliceState,
   WorkspaceStateKeys,
 } from '../workspace-slice-state';

@@ -7,7 +7,8 @@ import {
 } from '@bangle.io/slice-page';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { SideEffect, workspaceSliceKey } from './common';
+import type { SideEffect } from './common';
+import { workspaceSliceKey } from './common';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { getStorageProviderOpts } from './file-operations';
 import {

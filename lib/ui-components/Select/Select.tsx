@@ -10,7 +10,7 @@ import React from 'react';
 
 import { cx } from '@bangle.io/utils';
 
-import { SizeType } from '../misc';
+import type { SizeType } from '../misc';
 import { ListBox } from './ListBox';
 import { Popover } from './Popover';
 

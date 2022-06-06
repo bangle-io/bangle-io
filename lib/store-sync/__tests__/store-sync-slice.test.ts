@@ -2,10 +2,10 @@ import { Slice, staticSlice } from '@bangle.io/create-store';
 import { createTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
+import type { StoreSyncConfigType } from '../store-sync';
 import {
   isStoreSyncReady,
   startStoreSync,
-  StoreSyncConfigType,
   storeSyncSlice,
 } from '../store-sync';
 

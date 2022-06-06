@@ -1,4 +1,4 @@
-import * as IDB from 'idb-keyval';
+import type * as IDB from 'idb-keyval';
 
 const mockStore = new Map<IDBValidKey, any>();
 let customStores = new Map<string, typeof mockStore>();

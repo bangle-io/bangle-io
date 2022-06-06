@@ -1,5 +1,5 @@
 import { BangleEditor, BangleEditorState } from '@bangle.dev/core';
-import { Node } from '@bangle.dev/pm';
+import type { Node } from '@bangle.dev/pm';
 import { valuePlugin } from '@bangle.dev/utils';
 
 import { initialBangleStore } from '@bangle.io/bangle-store-context';
@@ -7,7 +7,10 @@ import {
   EditorDisplayType,
   EditorPluginMetadataKey,
 } from '@bangle.io/constants';
-import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
+import type {
+  Extension,
+  ExtensionRegistry,
+} from '@bangle.io/extension-registry';
 import { markdownParser } from '@bangle.io/markdown';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 

@@ -4,7 +4,8 @@ import reactDOM from 'react-dom';
 import { EditorDisplayType } from '@bangle.io/constants';
 import { cx } from '@bangle.io/utils';
 
-import { Editor, EditorProps } from './Editor';
+import type { EditorProps } from './Editor';
+import { Editor } from './Editor';
 
 export interface PopupEditorProps {
   popupContainerProps: {

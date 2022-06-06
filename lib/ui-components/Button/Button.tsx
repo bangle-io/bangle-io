@@ -2,7 +2,8 @@ import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
-import React, { ReactNode, useMemo, useRef } from 'react';
+import type { ReactNode } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import type { FirstParameter } from '@bangle.io/shared-types';
 import { cx, isTouchDevice } from '@bangle.io/utils';

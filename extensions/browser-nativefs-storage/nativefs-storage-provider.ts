@@ -6,7 +6,7 @@ import {
   NativeBrowserFileSystem,
 } from '@bangle.io/baby-fs';
 import { WorkspaceTypeNative } from '@bangle.io/constants';
-import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
+import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal } from '@bangle.io/utils';
 
 const allowedFile = (name: string) => {

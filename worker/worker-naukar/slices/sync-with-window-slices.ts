@@ -1,11 +1,9 @@
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
-import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
+import type { BaseAction } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { NaukarStateConfig } from '@bangle.io/shared-types';
-import {
-  startStoreSync,
-  StoreSyncConfigType,
-  storeSyncSlice,
-} from '@bangle.io/store-sync';
+import type { StoreSyncConfigType } from '@bangle.io/store-sync';
+import { startStoreSync, storeSyncSlice } from '@bangle.io/store-sync';
 import { assertNotUndefined } from '@bangle.io/utils';
 
 const actionFilter = (action: BaseAction) =>

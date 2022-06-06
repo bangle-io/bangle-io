@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import reactDOM from 'react-dom';
 
-import { EditorState, EditorView } from '@bangle.dev/pm';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';

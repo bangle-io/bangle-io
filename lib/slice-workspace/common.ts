@@ -2,14 +2,14 @@ import {
   HELP_FS_WORKSPACE_NAME,
   WorkspaceTypeHelp,
 } from '@bangle.io/constants';
-import {
+import type {
   ApplicationStore,
   ExtractAction,
-  SliceKey,
   SliceSideEffect,
 } from '@bangle.io/create-store';
+import { SliceKey } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type {
   WorkspaceInfoReg,

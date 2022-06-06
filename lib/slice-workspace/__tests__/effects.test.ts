@@ -5,7 +5,7 @@ import {
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
-import { ApplicationStore } from '@bangle.io/create-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import {
   getPageLocation,

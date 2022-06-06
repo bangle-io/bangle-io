@@ -1,6 +1,6 @@
 import { isAbortError } from '@bangle.io/is-abort-error';
 
-import { AppState } from './app-state';
+import type { AppState } from './app-state';
 import type {
   ActionsSerializersType,
   BaseAction,

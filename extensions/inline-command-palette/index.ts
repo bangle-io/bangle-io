@@ -1,4 +1,5 @@
-import { EditorView, keymap } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
+import { keymap } from '@bangle.dev/pm';
 
 import { keybindings } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';

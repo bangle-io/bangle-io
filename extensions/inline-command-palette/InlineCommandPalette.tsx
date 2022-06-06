@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import reactDOM from 'react-dom';
 
-import { EditorView } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
 import {

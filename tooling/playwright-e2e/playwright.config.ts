@@ -1,5 +1,6 @@
 // playwright.config.ts
-import { devices, PlaywrightTestConfig } from '@playwright/test';
+import type { PlaywrightTestConfig } from '@playwright/test';
+import { devices } from '@playwright/test';
 
 // eslint-disable-next-line
 const isCI = (process.env as any).CI;

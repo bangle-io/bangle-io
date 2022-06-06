@@ -6,7 +6,8 @@ import {
 } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
-import { MaybeWsPath, resolvePath } from './helpers';
+import type { MaybeWsPath } from './helpers';
+import { resolvePath } from './helpers';
 
 /**
  * This exists to keep null and undefined value interchangeable

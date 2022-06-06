@@ -1,4 +1,4 @@
-import { BangleEditor } from '@bangle.dev/core';
+import type { BangleEditor } from '@bangle.dev/core';
 import { Selection } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
@@ -36,8 +36,8 @@ beforeEach(() => {
 describe('operations: forEachEditor', () => {
   test('works', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
-    const editorA = {} as BangleEditor;
-    const editorB = {} as BangleEditor;
+    const editorA: any = {};
+    const editorB: any = {};
 
     state = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
@@ -70,7 +70,7 @@ describe('operations: forEachEditor', () => {
 
   test('works 2', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
-    const editorA = {} as BangleEditor;
+    const editorA: any = {};
 
     state = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
@@ -124,7 +124,7 @@ describe('setEditorReady', () => {
   test('does not work on undefined editorId', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
-    let mockEditor = {} as BangleEditor;
+    let mockEditor: any = {};
 
     const dispatch = jest.fn();
     setEditorReady(undefined, 'test:one.md', mockEditor)(state, dispatch);
@@ -141,7 +141,7 @@ describe('setEditorReady', () => {
       value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
     });
 
-    let mockEditor = {} as BangleEditor;
+    let mockEditor: any = {};
 
     const dispatch = jest.fn();
 
@@ -200,7 +200,7 @@ describe('getInitialSelection', () => {
 describe('setEditorUnmounted', () => {
   test('works 1', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
-    const editorA = {} as BangleEditor;
+    const editorA: any = {};
 
     let stateA = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
@@ -226,8 +226,8 @@ describe('setEditorUnmounted', () => {
 
   test('does not unset if editor instance do not match', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
-    const editorA = {} as BangleEditor;
-    const editorB = {} as BangleEditor;
+    const editorA: any = {};
+    const editorB: any = {};
 
     let stateA = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
@@ -247,8 +247,8 @@ describe('setEditorUnmounted', () => {
 describe('didSomeEditorChange', () => {
   test('works 1', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
-    const editorA = {} as BangleEditor;
-    const editorB = {} as BangleEditor;
+    const editorA: any = {};
+    const editorB: any = {};
 
     let stateA = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
@@ -271,8 +271,8 @@ describe('didSomeEditorChange', () => {
 
   test('works 2', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
-    const editorA = {} as BangleEditor;
-    const editorB = {} as BangleEditor;
+    const editorA: any = {};
+    const editorB: any = {};
 
     let stateA = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',

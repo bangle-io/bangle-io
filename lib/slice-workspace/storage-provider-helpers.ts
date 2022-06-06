@@ -1,4 +1,4 @@
-import { BaseStorageProvider } from '@bangle.io/storage';
+import type { BaseStorageProvider } from '@bangle.io/storage';
 
 const STORAGE_PROVIDER_ERROR_PREFIX =
   '@bangle.io/slice-workspace:storage-provider-error:';

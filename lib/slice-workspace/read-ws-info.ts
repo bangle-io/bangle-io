@@ -1,12 +1,12 @@
 import * as idb from 'idb-keyval';
 
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
+import type { AppState } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo, workspaceSliceKey } from './common';
-import { WorkspaceInfoReg } from './workspace-slice-state';
+import type { WorkspaceInfoReg } from './workspace-slice-state';
 
 export const WORKSPACE_KEY = 'workspaces/2';
 

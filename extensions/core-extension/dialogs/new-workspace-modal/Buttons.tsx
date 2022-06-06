@@ -9,13 +9,13 @@ import {
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, FocusRing } from '@bangle.io/ui-components';
 
+import type { WorkspaceCreateErrorTypes } from './common';
 import {
   BROWSE_BUTTON_ID,
   CLICKED_TOO_SOON_ERROR,
   ERROR_PICKING_DIRECTORY_ERROR,
   UNKNOWN_ERROR,
   WORKSPACE_AUTH_REJECTED_ERROR,
-  WorkspaceCreateErrorTypes,
 } from './common';
 
 export function PickStorageDirectory({

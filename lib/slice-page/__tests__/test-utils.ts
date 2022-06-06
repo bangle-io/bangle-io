@@ -1,8 +1,5 @@
-import {
-  ApplicationStore,
-  AppState,
-  BaseAction,
-} from '@bangle.io/create-store';
+import type { BaseAction } from '@bangle.io/create-store';
+import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
 import { pageSlice } from '../page-slice';
 

@@ -1,7 +1,7 @@
 import _debounceFn from 'debounce-fn';
 import { keyName } from 'w3c-keyname';
 
-import { EditorView } from '@bangle.dev/pm';
+import type { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, isMobile, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';

@@ -1,6 +1,6 @@
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import type { NaukarStateConfig } from '@bangle.io/shared-types';
 
 import { naukarSlices } from './naukar-slices';

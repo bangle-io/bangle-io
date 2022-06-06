@@ -1,11 +1,11 @@
 import { useSliceState } from '@bangle.io/bangle-store-context';
 
-import {
+import type {
   PageDispatchType,
   PageSliceAction,
-  pageSliceKey,
   PageSliceStateType,
 } from './common';
+import { pageSliceKey } from './common';
 
 export function usePageContext() {
   const { sliceState: pageState, store } = useSliceState<

@@ -1,13 +1,7 @@
 import type { Options } from 'debounce-fn';
 import debounceFn from 'debounce-fn';
-import {
-  DependencyList,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import type { DependencyList } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { rafSchedule } from './safe-js-callbacks';
 import { keybindingsHelper } from './utility';

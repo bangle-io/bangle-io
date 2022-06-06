@@ -1,5 +1,5 @@
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
-import {
+import type {
   ApplicationStore,
   BaseAction,
   OnErrorType,
@@ -19,10 +19,8 @@ import {
   listWorkspaces,
   workspaceSlice,
 } from '@bangle.io/slice-workspace';
-import {
-  BaseStorageProvider,
-  IndexedDbStorageProvider,
-} from '@bangle.io/storage';
+import type { BaseStorageProvider } from '@bangle.io/storage';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { assertNotUndefined, sleep } from '@bangle.io/utils';
 
 import { createPMNode } from './create-pm-node';
