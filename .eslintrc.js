@@ -23,49 +23,10 @@ module.exports = {
         project: ['./tsconfig.json'],
       },
       rules: {
-        /**
-         * Require consistent usage of type exports.
-         *
-         * 🔧 Fixable - https://typescript-eslint.io/rules/consistent-type-exports/
-         */
-        '@typescript-eslint/consistent-type-exports': [
-          'warn',
-          { fixMixedExportsWithInlineTypeSpecifier: true },
-        ],
-        '@typescript-eslint/consistent-type-imports': [
-          'error',
-          { disallowTypeAnnotations: false },
-        ],
-        /**
-         * Require using function property types in method signatures.
-         *
-         * These have enhanced typechecking, whereas method signatures do not.
-         *
-         * 🔧 Fixable - https://typescript-eslint.io/rules/method-signature-style/
-         */
-        '@typescript-eslint/method-signature-style': 'error',
-
-        '@typescript-eslint/no-base-to-string': 'error',
         '@typescript-eslint/array-type': [
           'error',
           {
             default: 'array-simple',
-          },
-        ],
-        '@typescript-eslint/explicit-member-accessibility': [
-          'error',
-          {
-            accessibility: 'no-public',
-            overrides: {
-              parameterProperties: 'off',
-            },
-          },
-        ],
-        '@typescript-eslint/consistent-type-assertions': [
-          'error',
-          {
-            assertionStyle: 'as',
-            objectLiteralTypeAssertions: 'allow-as-parameter',
           },
         ],
         '@typescript-eslint/ban-types': [
@@ -81,7 +42,35 @@ module.exports = {
             extendDefaults: false,
           },
         ],
-
+        '@typescript-eslint/consistent-type-assertions': [
+          'error',
+          {
+            assertionStyle: 'as',
+            objectLiteralTypeAssertions: 'allow-as-parameter',
+          },
+        ],
+        '@typescript-eslint/consistent-type-exports': [
+          'warn',
+          {
+            fixMixedExportsWithInlineTypeSpecifier: true,
+          },
+        ],
+        '@typescript-eslint/consistent-type-imports': [
+          'error',
+          {
+            disallowTypeAnnotations: false,
+          },
+        ],
+        '@typescript-eslint/explicit-member-accessibility': [
+          'error',
+          {
+            accessibility: 'no-public',
+            overrides: {
+              parameterProperties: 'off',
+            },
+          },
+        ],
+        '@typescript-eslint/method-signature-style': 'error',
         '@typescript-eslint/naming-convention': [
           'error',
           {
@@ -102,12 +91,21 @@ module.exports = {
               match: false,
             },
           },
-          // Anything type-like should be written in PascalCase.
           {
             selector: 'typeLike',
             format: ['PascalCase'],
           },
         ],
+        '@typescript-eslint/no-base-to-string': 'error',
+        '@typescript-eslint/no-duplicate-imports': 'error',
+        '@typescript-eslint/no-extraneous-class': 'error',
+        // '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+        // '@typescript-eslint/no-unnecessary-condition': 'error',
+        // '@typescript-eslint/no-unnecessary-type-arguments': 'error',
+        '@typescript-eslint/prefer-literal-enum-member': 'error',
+        '@typescript-eslint/prefer-reduce-type-parameter': 'error',
+        '@typescript-eslint/prefer-ts-expect-error': 'error',
+        '@typescript-eslint/switch-exhaustiveness-check': 'error',
       },
     },
   ],

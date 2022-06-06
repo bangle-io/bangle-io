@@ -2,37 +2,26 @@ let envVars: any = {};
 // Done this way to allow for bundlers
 // to do a string replace.
 try {
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.buildTime = process.env.BUILD_TIME;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.nodeEnv = process.env.NODE_ENV;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.releaseId = process.env.RELEASE_ID;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.deployBranch = process.env.DEPLOY_BRANCH;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.releaseVersion = process.env.RELEASE_VERSION;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.appEnv = process.env.APP_ENV;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.commitHash = process.env.COMMIT_HASH;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.helpDocsVersion = process.env.HELP_DOCS_VERSION;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.bangleHot = process.env.BANGLE_HOT;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.changelogText = process.env.CHANGELOG_TEXT;
-  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   envVars.netlifyBuildContext = process.env.NETLIFY_BUILD_CONTEXT;
 } catch (err) {}

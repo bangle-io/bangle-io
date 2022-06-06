@@ -25,13 +25,14 @@ interface LockManager {
   request: ((
     name: string,
     callback: (lock: Lock) => Promise<any>,
-  ) => Promise<undefined>) & (<T extends LockManagerRequestOptions>(
-    name: string,
-    options: T,
-    callback: (
-      lock: T['ifAvailable'] extends true ? Lock | null : Lock,
-    ) => Promise<any>,
-  ) => Promise<undefined>);
+  ) => Promise<undefined>) &
+    (<T extends LockManagerRequestOptions>(
+      name: string,
+      options: T,
+      callback: (
+        lock: T['ifAvailable'] extends true ? Lock | null : Lock,
+      ) => Promise<any>,
+    ) => Promise<undefined>);
   query: () => Promise<LockManagerSnapshot>;
 }
 

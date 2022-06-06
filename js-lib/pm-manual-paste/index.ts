@@ -2,7 +2,7 @@ import {
   __parseFromClipboard,
   __serializeForClipboard,
   // Cant get the type to work
-  // @ts-ignore
+  // @ts-expect-error
 } from 'prosemirror-view';
 
 import type { EditorView } from '@bangle.dev/pm';

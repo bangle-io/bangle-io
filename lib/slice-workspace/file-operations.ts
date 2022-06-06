@@ -58,7 +58,7 @@ function getNoteFormatProvider(wsName: string) {
 
     if (!provider) {
       throw new WorkspaceError({
-        message: `Note storage provider  not found.`,
+        message: `Note storage provider not found.`,
         code: NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR,
       });
     }

@@ -101,13 +101,13 @@ export function NewGithubWorkspaceRepoPickerDialog() {
   const groupedItems = useMemo(() => {
     return Array.from(
       Object.entries(
-        repoList.reduce((prev, cur) => {
+        repoList.reduce<{ [key: string]: RepositoryInfo[] }>((prev, cur) => {
           let array = prev[cur.owner] || [];
           prev[cur.owner] = array;
           array.push(cur);
 
           return prev;
-        }, {} as { [key: string]: RepositoryInfo[] }),
+        }, {}),
       ),
     );
   }, [repoList]);
