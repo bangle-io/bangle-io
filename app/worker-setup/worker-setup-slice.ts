@@ -3,7 +3,6 @@ import * as Comlink from 'comlink';
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import type { ApplicationStore, BaseAction } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import type { UnPromisify } from '@bangle.io/shared-types';
 import type { StoreSyncConfigType } from '@bangle.io/store-sync';
 import {
   isStoreSyncReady,
@@ -66,7 +65,7 @@ const loadWorkerModuleEffect = workerStoreSyncKey.effect((_, config) => {
   let setNaukarReadyCalled = false;
   let naukar:
     | undefined
-    | UnPromisify<ReturnType<typeof loadNaukarModule>>['naukar'];
+    | Awaited<ReturnType<typeof loadNaukarModule>>['naukar'];
 
   return {
     deferredUpdate(store) {

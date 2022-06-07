@@ -1,6 +1,5 @@
 import { browserInfo, wsPathHelpers } from '@bangle.io/api';
 import { fileToBase64 } from '@bangle.io/remote-file-sync';
-import type { UnPromisify } from '@bangle.io/shared-types';
 import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
@@ -330,7 +329,7 @@ export async function* getRepos({
  * 2. it will also make sure to only allow one request at a time to the github api.
  */
 export function getRepoTree() {
-  let prevResult: undefined | UnPromisify<ReturnType<typeof _getTree>>;
+  let prevResult: undefined | Awaited<ReturnType<typeof _getTree>>;
   let queue = serialExecuteQueue();
 
   const cb: typeof _getTree = async (arg) => {
