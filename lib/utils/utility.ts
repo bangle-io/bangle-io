@@ -217,7 +217,7 @@ export function calcIsTouchDevice(): boolean {
     var mQ =
       typeof window !== 'undefined' &&
       window.matchMedia &&
-      matchMedia('(pointer:coarse)');
+      window.matchMedia('(pointer:coarse)');
 
     if (mQ && mQ.media === '(pointer:coarse)') {
       hasTouchScreen = !!mQ.matches;
