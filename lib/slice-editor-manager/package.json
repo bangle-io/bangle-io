@@ -43,8 +43,8 @@
     "@bangle.dev/test-helpers": "0.28.11",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/dom": "^8.11.3",
-    "@types/react": "^17.0.43",
-    "@types/react-dom": "^17.0.14"
+    "@types/react": "^17.0.45",
+    "@types/react-dom": "^17.0.17"
   },
   "license": "AGPL-3.0-or-later"
 }

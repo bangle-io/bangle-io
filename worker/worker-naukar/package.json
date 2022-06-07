@@ -42,7 +42,7 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@sentry/browser": "^7.0.0",
-    "@zip.js/zip.js": "^2.4.5",
+    "@zip.js/zip.js": "^2.4.12",
     "fast-deep-equal": "^3.1.3",
     "idb-keyval": "^5.1.5",
     "tslib": "^2.4.0",
