@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.18.0",
-    "@babel/preset-env": "^7.18.0",
+    "@babel/preset-env": "^7.18.2",
     "@babel/preset-typescript": "^7.17.12",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
