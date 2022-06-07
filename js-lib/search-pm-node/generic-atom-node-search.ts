@@ -3,10 +3,10 @@ import type { Node } from '@bangle.dev/pm';
 import type { SearchMatch } from './types';
 
 export function genericAtomNodeSearch(
-  doc: Node<any>,
-  node: Node<any>,
+  doc: Node,
+  node: Node,
   pos: number,
-  parent: Node<any>,
+  parent: Node,
   query: string,
   {
     caseSensitive,

@@ -80,7 +80,7 @@ export function WatchWorkspace() {
   // that an external modification was made. We cannot do the same (check and remove active wsPaths from history)
   // for any internal changes due to race conditions like closing a wsPath which didnt show up in `fileWsPaths` yet.
   useEffect(() => {
-    if (fileWsPaths && checkCurrentEditors.current === true) {
+    if (fileWsPaths && checkCurrentEditors.current) {
       checkCurrentEditors.current = false;
       updateOpenedWsPaths(
         (openedWsPaths) => {

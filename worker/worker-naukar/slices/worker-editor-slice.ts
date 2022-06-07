@@ -196,7 +196,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
             needsBlock !==
             pageSliceKey.getSliceStateAsserted(store.state).blockReload
           ) {
-            if (needsBlock === true) {
+            if (needsBlock) {
               blockReload(true)(
                 store.state,
                 pageSliceKey.getDispatch(store.dispatch),

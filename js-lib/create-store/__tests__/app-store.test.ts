@@ -74,7 +74,7 @@ describe('store', () => {
           value: { n: number };
         };
 
-    let state: AppState<any, any>, store: ApplicationStore<any, ActionType>;
+    let state: AppState, store: ApplicationStore<any, ActionType>;
 
     beforeEach(() => {
       const slice1 = new Slice({
@@ -163,7 +163,7 @@ describe('store', () => {
     const key2 = new SliceKey<number>('two');
 
     const setup = (effects1: any) => {
-      let state: AppState<any, any>, store: ApplicationStore<any>;
+      let state: AppState, store: ApplicationStore;
 
       const slice1 = new Slice({
         key: key1,
@@ -627,9 +627,7 @@ describe('store', () => {
     describe('deferred for single slice', () => {
       const setup = (
         scheduler: SchedulerType,
-        deferredUpdate: ReturnType<
-          SliceSideEffect<any, any, any>
-        >['deferredUpdate'],
+        deferredUpdate: ReturnType<SliceSideEffect<any, any>>['deferredUpdate'],
       ) => {
         const sideEffect = jest.fn(() => ({
           deferredUpdate,

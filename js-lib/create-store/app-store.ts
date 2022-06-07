@@ -400,7 +400,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 export class DeferredSideEffectsRunner<S, A extends BaseAction> {
   static deferredLastSeenStateCache = new WeakMap<
     StoreSideEffectType<any, any, any>,
-    AppState<any, any>
+    AppState
   >();
 
   private _abortController = new AbortController();

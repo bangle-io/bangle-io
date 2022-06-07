@@ -221,10 +221,7 @@ export function SearchResults({
                           bangleStore.state,
                           bangleStore.dispatch,
                         );
-                      } else if (
-                        primaryEditor &&
-                        primaryEditor.destroyed !== true
-                      ) {
+                      } else if (primaryEditor && !primaryEditor.destroyed) {
                         updateCurrentlyClicked({
                           wsPath: r.uid,
                           match: matchObj,

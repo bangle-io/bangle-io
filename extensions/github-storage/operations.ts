@@ -102,7 +102,7 @@ export function syncWithGithub(
       }
 
       if (isSyncPending()(state)) {
-        if (verboseNotifications === true) {
+        if (verboseNotifications) {
           notification.showNotification({
             severity: 'warning',
             title: 'Sync already in progress',
@@ -189,7 +189,7 @@ export function syncWithGithub(
 
       if (typeof changeCount === 'number') {
         if (changeCount === 0) {
-          if (verboseNotifications === true) {
+          if (verboseNotifications) {
             notification.showNotification({
               severity: 'info',
               title: 'Everything upto date',
@@ -214,7 +214,7 @@ export function syncWithGithub(
     const releaseLock = await acquireLockIfAvailable(LOCK_NAME + ':' + wsName);
 
     if (!releaseLock) {
-      if (verboseNotifications === true) {
+      if (verboseNotifications) {
         console.debug('Sync already in progress for this workspace');
         notification.showNotification({
           severity: 'warning',

@@ -8,7 +8,7 @@ export const Input = React.forwardRef<
   {
     style?: any;
     showClear?: boolean;
-    onClear?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    onClear?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     className?: string;
     value?: string;
     label?: string;

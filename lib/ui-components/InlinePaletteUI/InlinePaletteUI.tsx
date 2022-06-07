@@ -30,7 +30,7 @@ export function InlinePaletteRow({
   dataId: string;
   title?: string;
   isActive?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   rightIcon?: JSX.Element | null;
   rightHoverIcon?: JSX.Element | null;
   leftNode?: JSX.Element | null;

@@ -7,7 +7,7 @@ import { syncWithWindowSlices } from '../sync-with-window-slices';
 const Port = (): MessagePort => ({
   close: jest.fn(),
   start: jest.fn(),
-  onmessage(ev: MessageEvent<any>) {},
+  onmessage(ev: MessageEvent) {},
   postMessage: jest.fn(() => {}),
   addEventListener() {},
   removeEventListener() {},

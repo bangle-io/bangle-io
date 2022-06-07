@@ -59,7 +59,7 @@ export function keybindingsHelper(bindings: {
     if (event.metaKey) {
       name = 'Meta-' + name;
     }
-    if (shift !== false && event.shiftKey) {
+    if (shift && event.shiftKey) {
       name = 'Shift-' + name;
     }
 

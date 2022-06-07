@@ -70,7 +70,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
                       height: 16,
                       width: 16,
                     }}
-                    onClick={async (e: React.MouseEvent<any, MouseEvent>) => {
+                    onClick={async (e: React.MouseEvent<any>) => {
                       e.stopPropagation();
                       dispatchSerialOperation({
                         name: CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,

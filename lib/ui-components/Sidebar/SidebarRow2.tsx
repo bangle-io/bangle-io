@@ -18,7 +18,7 @@ export function Row2({
   extraInfoOnNewLine = false,
 }: {
   item: ItemType;
-  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   className?: string;
   titleClassName?: string;
   extraInfoClassName?: string;

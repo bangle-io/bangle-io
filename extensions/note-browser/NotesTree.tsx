@@ -240,7 +240,7 @@ const RenderItems = ({
     const depth = splittedPath.length;
     const name = removeExtension(splittedPath.pop() || 'Unknown file name');
 
-    const onClick = (event: React.MouseEvent<any, MouseEvent>) => {
+    const onClick = (event: React.MouseEvent<any>) => {
       if (isDir) {
         toggleCollapse((array) => {
           if (array.includes(path)) {
@@ -324,7 +324,7 @@ function RenderRow({
   isActive: boolean;
   isCollapsed: boolean;
   bangleStore: BangleApplicationStore;
-  onClick: (event: React.MouseEvent<any, MouseEvent>) => void;
+  onClick: (event: React.MouseEvent<any>) => void;
   createNewFile: (path?: string) => void;
 }) {
   const elementRef = useRef<HTMLDivElement>(null);
