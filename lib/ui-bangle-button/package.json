@@ -22,7 +22,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@popperjs/core": "^2.11.4",
+    "@popperjs/core": "^2.11.5",
     "@react-aria/button": "^3.4.4",
     "@react-aria/focus": "^3.5.5",
     "@react-aria/interactions": "^3.8.4",
