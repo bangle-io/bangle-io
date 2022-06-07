@@ -64,7 +64,7 @@
     "@bangle.io/workspace-sidebar": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@react-aria/overlays": "^3.8.2",
-    "@sentry/tracing": "^6.18.1",
+    "@sentry/tracing": "^7.0.0",
     "comlink": "^4.3.1",
     "prop-types": "^15.7.2",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
