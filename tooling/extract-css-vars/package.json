@@ -28,8 +28,8 @@
     "postcss-custom-properties": "^12.1.5",
     "postcss-discard-comments": "^5.1.1",
     "prettier": "^2.6.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.3"
   },
   "license": "AGPL-3.0-or-later"
 }
