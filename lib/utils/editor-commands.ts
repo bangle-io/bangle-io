@@ -17,7 +17,7 @@ export function trimEndWhiteSpaceBeforeCursor(): Command {
     }
     const textBefore = nodeBefore?.text;
 
-    if (textBefore && nodeBefore?.type.name === 'text') {
+    if (textBefore && nodeBefore.type.name === 'text') {
       const whiteSpaceChars = textBefore.length - textBefore.trimEnd().length;
 
       if (whiteSpaceChars > 0) {

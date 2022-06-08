@@ -144,7 +144,7 @@ describe('NewWorkspaceModalBrowser', () => {
       );
 
       expect(
-        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace').hasAttribute('disabled'),
       ).toBe(true);
 
       await waitFor(() => {
@@ -155,7 +155,7 @@ describe('NewWorkspaceModalBrowser', () => {
       });
 
       expect(
-        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace').hasAttribute('disabled'),
       ).toBe(false);
 
       act(() => {
@@ -185,7 +185,7 @@ describe('NewWorkspaceModalBrowser', () => {
       );
 
       expect(
-        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace').hasAttribute('disabled'),
       ).toBe(true);
 
       await waitFor(async () => {
@@ -201,7 +201,7 @@ describe('NewWorkspaceModalBrowser', () => {
       });
 
       expect(
-        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace').hasAttribute('disabled'),
       ).toBe(true);
 
       expect(

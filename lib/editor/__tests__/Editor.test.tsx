@@ -303,7 +303,7 @@ describe('useGetEditorState', () => {
       }),
     );
 
-    expect(result.current?.pmState.toJSON()).toMatchInlineSnapshot(`
+    expect(result.current.pmState.toJSON()).toMatchInlineSnapshot(`
       Object {
         "doc": Object {
           "content": Array [
@@ -320,7 +320,7 @@ describe('useGetEditorState', () => {
         },
       }
     `);
-    expect(result.current?.specRegistry).toBeTruthy();
+    expect(result.current.specRegistry).toBeTruthy();
   });
 
   test('when initial selection is provided', () => {
@@ -343,13 +343,13 @@ describe('useGetEditorState', () => {
       }),
     );
 
-    expect(result.current?.pmState.toJSON().selection).toEqual({
+    expect(result.current.pmState.toJSON().selection).toEqual({
       anchor: 5,
       head: 5,
       type: 'text',
     });
 
-    expect(result.current?.pmState.toJSON()).toMatchInlineSnapshot(`
+    expect(result.current.pmState.toJSON()).toMatchInlineSnapshot(`
       Object {
         "doc": Object {
           "content": Array [
@@ -376,6 +376,6 @@ describe('useGetEditorState', () => {
         },
       }
     `);
-    expect(result.current?.specRegistry).toBeTruthy();
+    expect(result.current.specRegistry).toBeTruthy();
   });
 });

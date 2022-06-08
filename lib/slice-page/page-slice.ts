@@ -137,11 +137,11 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
           return {
             pendingNavigation: {
               location: {
-                pathname: pendingNavigation?.location?.pathname ?? null,
-                search: pendingNavigation?.location?.search ?? null,
+                pathname: pendingNavigation.location.pathname ?? null,
+                search: pendingNavigation.location.search ?? null,
               },
-              replaceHistory: pendingNavigation?.replaceHistory ?? null,
-              preserve: pendingNavigation?.preserve ?? null,
+              replaceHistory: pendingNavigation.replaceHistory ?? null,
+              preserve: pendingNavigation.preserve ?? null,
             },
           };
         };

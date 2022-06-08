@@ -118,7 +118,7 @@ function _readFileLegacy(file: File | Blob): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener('loadend', (e) => {
-      const text = (e?.srcElement as any)?.result;
+      const text = (e.srcElement as any)?.result;
       resolve(text);
     });
     reader.readAsText(file);

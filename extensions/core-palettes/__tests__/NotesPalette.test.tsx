@@ -65,7 +65,7 @@ describe('useSearchWsPaths', () => {
     await act(async () => {
       await waitForNextUpdate();
     });
-    expect(result?.current).toEqual({ other: [], recent: [] });
+    expect(result.current).toEqual({ other: [], recent: [] });
   });
 
   test('renders correctly', async () => {

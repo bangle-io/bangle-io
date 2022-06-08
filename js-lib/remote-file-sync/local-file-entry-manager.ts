@@ -124,7 +124,7 @@ export class LocalFileEntryManager {
       return fileEntry.file;
     }
 
-    const remoteFileEntry = await getRemoteFileEntry?.(uid);
+    const remoteFileEntry = await getRemoteFileEntry(uid);
 
     if (remoteFileEntry) {
       // update our local entry

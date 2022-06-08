@@ -16,7 +16,7 @@ const maxItems = 500;
 
 function getEmojis(queryText = '') {
   let result = aliasEmojiPair
-    .filter(([item]) => item?.includes(queryText))
+    .filter(([item]) => (item ? item.includes(queryText) : false))
     .slice(0, maxItems);
 
   return [

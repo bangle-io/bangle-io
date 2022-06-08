@@ -26,7 +26,7 @@ export function AppStateProvider({
     safeRequestIdleCallback(() => {
       if (
         typeof window !== 'undefined' &&
-        window.location?.hash?.includes('debug_pm')
+        window.location.hash.includes('debug_pm')
       ) {
         const primaryEditor = editorManagerSliceKey.getSliceState(
           bangleStore.state,

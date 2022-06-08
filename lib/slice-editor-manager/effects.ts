@@ -50,7 +50,7 @@ export const focusEditorEffect = editorManagerSliceKey.effect((state) => {
   // This exists to preserve focused editor during page reloads
   let editorNeedsFocusOnPageLoad: number | undefined =
     typeof initialSliceState?.focusedEditorId === 'number'
-      ? initialSliceState?.focusedEditorId
+      ? initialSliceState.focusedEditorId
       : 0;
 
   let mounted = Date.now();

@@ -182,7 +182,7 @@ describe('NewWorkspaceModalFileSystem', () => {
     );
 
     expect(
-      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace').hasAttribute('disabled'),
     ).toBe(true);
 
     act(() => {
@@ -192,13 +192,13 @@ describe('NewWorkspaceModalFileSystem', () => {
     await waitFor(() => {
       const dropdown = result.getByLabelText('pick directory');
 
-      expect(dropdown?.innerHTML).toContain('test-dir-name');
+      expect(dropdown.innerHTML).toContain('test-dir-name');
     });
 
     expect(pickADirectory).toBeCalledTimes(1);
 
     expect(
-      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace').hasAttribute('disabled'),
     ).toBe(false);
 
     act(() => {
@@ -268,7 +268,7 @@ describe('NewWorkspaceModalFileSystem', () => {
       `);
 
     expect(
-      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace').hasAttribute('disabled'),
     ).toBe(true);
   });
 
@@ -306,7 +306,7 @@ describe('NewWorkspaceModalFileSystem', () => {
     expect(pickADirectory).toBeCalledTimes(1);
 
     expect(
-      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace').hasAttribute('disabled'),
     ).toBe(true);
 
     act(() => {
@@ -322,7 +322,7 @@ describe('NewWorkspaceModalFileSystem', () => {
     expect(pickADirectory).toBeCalledTimes(2);
 
     expect(
-      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace').hasAttribute('disabled'),
     ).toBe(false);
   });
 });

@@ -71,7 +71,7 @@ const mockHistoryEffect = historySliceKey.effect(() => {
       lastProcessed = pendingNavigation;
 
       if (pendingNavigation.preserve) {
-        history?.navigate(createTo(pendingNavigation.location, history), {
+        history.navigate(createTo(pendingNavigation.location, history), {
           replace: pendingNavigation.replaceHistory,
         });
       } else {
@@ -80,7 +80,7 @@ const mockHistoryEffect = historySliceKey.effect(() => {
         if (pendingNavigation.location.search) {
           to += '?' + pendingNavigation.location.search;
         }
-        history?.navigate(to, {
+        history.navigate(to, {
           replace: pendingNavigation.replaceHistory,
         });
       }

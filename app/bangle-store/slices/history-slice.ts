@@ -86,7 +86,7 @@ const applyPendingNavigation = historySliceKey.effect(() => {
       lastProcessed = pendingNavigation;
 
       if (pendingNavigation.preserve) {
-        history?.navigate(createTo(pendingNavigation.location, history), {
+        history.navigate(createTo(pendingNavigation.location, history), {
           replace: pendingNavigation.replaceHistory,
         });
       } else {
@@ -95,7 +95,7 @@ const applyPendingNavigation = historySliceKey.effect(() => {
         if (pendingNavigation.location.search) {
           to += '?' + pendingNavigation.location.search;
         }
-        history?.navigate(to, {
+        history.navigate(to, {
           replace: pendingNavigation.replaceHistory,
         });
       }
@@ -158,7 +158,7 @@ export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
           .filter((r) => !r.deleted)
           .map((r) => {
             if (r.type === WorkspaceTypeNative) {
-              return r?.metadata?.rootDirHandle;
+              return r.metadata.rootDirHandle;
             }
 
             return undefined;

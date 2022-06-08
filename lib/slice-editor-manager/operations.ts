@@ -72,7 +72,7 @@ export function focusEditor(editorId: EditorIdType = 0) {
     const editor = getEditor(editorId)(state);
 
     if (editor) {
-      editor?.focusView();
+      editor.focusView();
 
       return true;
     }

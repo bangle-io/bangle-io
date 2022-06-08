@@ -268,7 +268,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       if (slice.spec.sideEffect) {
         // since sideEffect can be an array or single
         // flatten it for further use
-        ([] as Array<SliceSideEffect<any, A>>)
+        ([] as Array<SliceSideEffect<any, A> | undefined>)
           .concat(slice.spec.sideEffect)
           .forEach((sideEffect) => {
             let result = sideEffect?.(initialAppSate, this._state.config.opts);
