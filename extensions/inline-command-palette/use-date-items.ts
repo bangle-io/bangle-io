@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';
-import type { UnPromisify } from '@bangle.io/shared-types';
 import { getDayJs, useDestroyRef } from '@bangle.io/utils';
 
 import { palettePluginKey } from './config';
@@ -39,12 +38,12 @@ const baseItem = PaletteItem.create({
   },
 });
 
-type ChronoLibrariesType = UnPromisify<ReturnType<typeof getTimeLibrary>>;
+type ChronoLibrariesType = Awaited<ReturnType<typeof getTimeLibrary>>;
 let _libraries:
   | undefined
   | {
       chrono: ReturnType<typeof import('./chrono').getChrono>;
-      dayjs: UnPromisify<ReturnType<typeof getDayJs>>;
+      dayjs: Awaited<ReturnType<typeof getDayJs>>;
     } = undefined;
 async function getTimeLibrary() {
   if (!_libraries) {

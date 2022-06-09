@@ -98,7 +98,7 @@ export class BrowserHistory implements BaseHistory {
 }
 
 const getCurrentPathname = (): string => {
-  return getDocumentLocation()?.pathname;
+  return getDocumentLocation().pathname;
 };
 
 const currentPathname = (base: string, path = getCurrentPathname()) =>

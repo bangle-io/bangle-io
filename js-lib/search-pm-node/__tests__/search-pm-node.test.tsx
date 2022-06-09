@@ -188,7 +188,7 @@ describe('Plain text search', () => {
               ),
             },
           ])
-        )?.[0]?.matches,
+        )[0]?.matches,
       ).toEqual([
         {
           parent: 'listItem',
@@ -660,7 +660,7 @@ describe('understands atom node searching', () => {
     ]);
 
     expect(results).toHaveLength(1);
-    expect(results?.[0]?.matches).toEqual([
+    expect(results[0]?.matches).toEqual([
       {
         match: ['hello I am a ', '[[awesome-wikiLink]]', ''],
         parent: 'paragraph',
@@ -693,7 +693,7 @@ describe('understands atom node searching', () => {
     ]);
 
     expect(results).toHaveLength(1);
-    expect(results?.[0]?.matches).toEqual([
+    expect(results[0]?.matches).toEqual([
       {
         match: ['I am a list\nhello I am a ', '[[awesome-wikiLink]]', ''],
         parent: 'paragraph',
@@ -717,7 +717,7 @@ describe('understands atom node searching', () => {
     ]);
 
     expect(results).toHaveLength(1);
-    expect(results?.[0]?.matches).toEqual([
+    expect(results[0]?.matches).toEqual([
       {
         match: ['I am a ', '[[awesome-wikiLink]]', ' in this small world'],
         parent: 'paragraph',
@@ -743,7 +743,7 @@ describe('understands atom node searching', () => {
     ]);
 
     expect(results).toHaveLength(1);
-    expect(results?.[0]?.matches).toEqual([
+    expect(results[0]?.matches).toEqual([
       {
         match: [
           '…as once in the eyes of breath you helplessly want to compare to nobody you ',
@@ -772,7 +772,7 @@ describe('understands atom node searching', () => {
     ]);
 
     expect(results).toHaveLength(1);
-    expect(results?.[0]?.matches).toEqual([
+    expect(results[0]?.matches).toEqual([
       {
         match: ['I am🖼️ a ', '[[awesome-wikiLink]]', ' in this small world'],
         parent: 'paragraph',

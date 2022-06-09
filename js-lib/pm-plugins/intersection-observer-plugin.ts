@@ -120,8 +120,9 @@ export function intersectionObserverPlugin({
         });
 
         const stateSame =
-          prevDispatched?.maxStartPosition === state.maxStartPosition &&
-          prevDispatched?.minStartPosition === state.minStartPosition;
+          prevDispatched &&
+          prevDispatched.maxStartPosition === state.maxStartPosition &&
+          prevDispatched.minStartPosition === state.minStartPosition;
 
         if (intersection > 0 && !stateSame) {
           editorView.dispatch(editorView.state.tr.setMeta(pluginKey, state));

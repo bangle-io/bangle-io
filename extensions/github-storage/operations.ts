@@ -34,13 +34,15 @@ export function isCurrentWorkspaceGithubStored(wsName: string) {
 }
 
 export const readGithubTokenFromStore = () => {
-  return workspace.workspaceSliceKey.queryOp((state) => {
+  return workspace.workspaceSliceKey.queryOp((state): string | undefined => {
     const wsName = workspace.getWsName()(state);
 
     if (wsName && isCurrentWorkspaceGithubStored(wsName)(state)) {
       const metadata = workspace.getWorkspaceMetadata(wsName)(state);
 
-      return metadata?.githubToken as string | undefined;
+      return typeof metadata.githubToken === 'string'
+        ? metadata.githubToken
+        : undefined;
     }
 
     return undefined;

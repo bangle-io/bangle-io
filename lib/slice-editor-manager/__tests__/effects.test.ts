@@ -526,7 +526,7 @@ describe('trimWhiteSpaceEffect', () => {
 
     mockEditor.focusView();
 
-    jest.spyOn(mockEditor?.view, 'hasFocus').mockImplementation(() => true);
+    jest.spyOn(mockEditor.view, 'hasFocus').mockImplementation(() => true);
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',

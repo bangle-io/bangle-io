@@ -29,7 +29,7 @@ export class MemoryHistory implements BaseHistory {
     const parsed = new URL('http://bangle.io' + to);
     const newLoc = {
       pathname: parsed.pathname,
-      search: parsed.search?.startsWith('?')
+      search: parsed.search.startsWith('?')
         ? parsed.search.slice(1)
         : parsed.search,
     };

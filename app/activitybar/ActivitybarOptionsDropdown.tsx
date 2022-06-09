@@ -99,7 +99,7 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case ReportIssueKey: {
-          window?.open(
+          window.open(
             'https://github.com/bangle-io/bangle-io/issues',
             '_blank',
           );
@@ -114,11 +114,11 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case DiscordKey: {
-          window?.open('https://discord.gg/GvvbWJrVQY', '_blank');
+          window.open('https://discord.gg/GvvbWJrVQY', '_blank');
           break;
         }
         case TwitterKey: {
-          window?.open('https://twitter.com/bangle_io', '_blank');
+          window.open('https://twitter.com/bangle_io', '_blank');
           break;
         }
         case WhatsNewKey: {

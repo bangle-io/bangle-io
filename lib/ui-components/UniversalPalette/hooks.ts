@@ -46,7 +46,7 @@ export function usePaletteDriver(
         }
       }
 
-      const uid = event.currentTarget?.getAttribute('data-id');
+      const uid = event.currentTarget.getAttribute('data-id');
       onExecuteItem(
         uid
           ? () => uid

@@ -43,7 +43,7 @@ export function uncaughtExceptionNotification(error: Error) {
   return notificationSliceKey.op((state, dispatch) => {
     let content: string = 'Please try reloading the app or report the issue. ';
 
-    content += error?.name + ':' + error?.message;
+    content += error.name + ':' + error.message;
 
     showNotification({
       severity: 'error',

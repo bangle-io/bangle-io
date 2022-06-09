@@ -17,7 +17,7 @@ import { bangleStateSlices } from './bangle-slices';
 
 assertNonWorkerGlobalScope();
 
-const LOG = true || window.location?.hash?.includes('debug_store');
+const LOG = true;
 
 let log = LOG ? console.debug.bind(console, 'bangle-store') : () => {};
 

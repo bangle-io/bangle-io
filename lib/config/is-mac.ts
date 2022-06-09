@@ -81,7 +81,7 @@ function testPlatform(re: RegExp) {
   if (typeof window !== 'undefined' && window.navigator != null) {
     const platform =
       (window.navigator as any)['userAgentData']?.platform ||
-      window.navigator?.platform;
+      window.navigator.platform;
 
     return re.test(platform);
   }

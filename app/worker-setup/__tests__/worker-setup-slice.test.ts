@@ -120,26 +120,26 @@ test('works', async () => {
   ]);
 
   expect(
-    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port1
+    workerStoreSyncKey.getSliceStateAsserted(store.state).msgChannel.port1
       .postMessage,
   ).toBeCalledWith({
     type: 'pong',
   });
   expect(
-    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port1
+    workerStoreSyncKey.getSliceStateAsserted(store.state).msgChannel.port1
       .postMessage,
   ).toBeCalledWith({
     type: 'ping',
   });
 
   expect(
-    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port2
+    workerStoreSyncKey.getSliceStateAsserted(store.state).msgChannel.port2
       .postMessage,
   ).toBeCalledWith({
     type: 'pong',
   });
   expect(
-    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port2
+    workerStoreSyncKey.getSliceStateAsserted(store.state).msgChannel.port2
       .postMessage,
   ).toBeCalledWith({
     type: 'ping',

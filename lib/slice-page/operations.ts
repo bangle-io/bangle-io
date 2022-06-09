@@ -70,7 +70,7 @@ export function pageLifeCycleTransitionedTo(
 
 export function getCurrentPageLifeCycle() {
   return (state: AppState) => {
-    return pageSliceKey.getSliceState(state)?.lifeCycleState?.current;
+    return pageSliceKey.getSliceState(state)?.lifeCycleState.current;
   };
 }
 

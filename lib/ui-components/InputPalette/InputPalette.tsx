@@ -64,7 +64,7 @@ export function InputPalette({
   };
 
   useEffect(() => {
-    updateError?.(undefined);
+    updateError(undefined);
     updateSpinner(false);
   }, [inputValue, updateError]);
 

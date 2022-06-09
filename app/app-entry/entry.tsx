@@ -35,7 +35,7 @@ const useRouterHook: BaseLocationHook = () => {
   const { pageState } = usePageContext();
 
   const { sliceState } = useSliceState(historySliceKey);
-  const history = sliceState?.history;
+  const history = sliceState.history;
 
   const to =
     history && pageState ? createTo(pageState.location, history) || '' : '';
@@ -44,7 +44,7 @@ const useRouterHook: BaseLocationHook = () => {
   const navigate = history
     ? history.navigate.bind(history)
     : (...args: Parameters<BaseHistory['navigate']>) => {
-        pendingCalls.current?.push(args);
+        pendingCalls.current.push(args);
       };
 
   // apply any navigation calls that we might have missed during the

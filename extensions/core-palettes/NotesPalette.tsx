@@ -9,7 +9,6 @@ import React, {
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
-import type { UnPromisify } from '@bangle.io/shared-types';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
@@ -257,7 +256,7 @@ export function useSearchWsPaths(query: string) {
 
 function useSearchNotePaths(query: string, wsName: string | undefined) {
   const [result, updateResult] = useState<
-    | UnPromisify<ReturnType<typeof naukarProxy.abortableFzfSearchNoteWsPaths>>
+    | Awaited<ReturnType<typeof naukarProxy.abortableFzfSearchNoteWsPaths>>
     | undefined
   >(undefined);
 

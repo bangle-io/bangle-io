@@ -21,7 +21,7 @@ export function ExtensionRegistryContextProvider({
   const { sliceState } = useSliceState(extensionRegistrySliceKey);
 
   return (
-    <ExtensionRegistryContext.Provider value={sliceState?.extensionRegistry!}>
+    <ExtensionRegistryContext.Provider value={sliceState.extensionRegistry!}>
       {children}
     </ExtensionRegistryContext.Provider>
   );

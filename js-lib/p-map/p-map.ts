@@ -38,7 +38,7 @@ export async function pMap<Element, NewElement>(
     let resolvingCount = 0;
     let currentIndex = 0;
     let destroyed = false;
-    abortSignal?.addEventListener(
+    abortSignal.addEventListener(
       'abort',
       (e) => {
         destroyed = true;

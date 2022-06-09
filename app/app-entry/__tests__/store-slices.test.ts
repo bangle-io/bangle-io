@@ -104,6 +104,7 @@ describe('worker and window constraints', () => {
       const naukarSlice = naukarSlices.find((r) => r.key === sliceKeyName);
 
       if (
+        !slice ||
         slice?.spec.actions == undefined ||
         naukarSlice?.spec.actions == undefined
       ) {
@@ -112,11 +113,11 @@ describe('worker and window constraints', () => {
 
       // since slices are instantiated from same class, their specification should be
       // identical
-      expect(Object.keys(slice?.spec.actions)).toEqual(
-        Object.keys(naukarSlice?.spec.actions),
+      expect(Object.keys(slice.spec.actions)).toEqual(
+        Object.keys(naukarSlice.spec.actions),
       );
 
-      for (const action of Object.keys(naukarSlice?.spec.actions)) {
+      for (const action of Object.keys(naukarSlice.spec.actions)) {
         // the action must pass through the sync filter or else states will not be kept
         // in sync.
         expect(

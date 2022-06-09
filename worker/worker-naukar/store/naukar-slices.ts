@@ -34,7 +34,7 @@ export function naukarSlices({
     // keep this at the end
     new Slice({
       onError(error, store) {
-        Sentry?.captureException(error);
+        Sentry.captureException(error);
         console.error(error);
         Promise.resolve().then(() => {
           uncaughtExceptionNotification(error)(store.state, store.dispatch);
