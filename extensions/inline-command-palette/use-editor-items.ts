@@ -11,6 +11,7 @@ import { setBlockType } from '@bangle.dev/pm';
 import { rafCommandExec } from '@bangle.dev/utils';
 
 import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 import {
   chainedInsertParagraphAbove,
@@ -34,6 +35,8 @@ const setHeadingBlockType =
   (level: number) =>
   (state: EditorState, dispatch: EditorView['dispatch'] | undefined) => {
     const type = state.schema.nodes.heading;
+
+    assertNotUndefined(type, 'heading must be defined');
 
     return setBlockType(type, { level })(state, dispatch);
   };

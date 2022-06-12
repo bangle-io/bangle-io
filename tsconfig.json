@@ -38,9 +38,6 @@
     ".yarn/__virtual__"
   ],
   "typeAcquisition": {
-    "include": [
-      "jest",
-      "wicg-file-system-access"
-    ]
+    "include": []
   },
 }

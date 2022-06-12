@@ -9,6 +9,7 @@ import {
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 import { palettePluginKey, tagNodeName } from './config';
 import { useSearchAllTags } from './search';
@@ -26,6 +27,8 @@ export const createTagNode = (tagValue: string): Command => {
     if (tagValue === '') {
       return false;
     }
+
+    assertNotUndefined(nodeType, 'tag nodeType must be defined');
 
     return replaceSuggestionMarkWith(
       palettePluginKey,

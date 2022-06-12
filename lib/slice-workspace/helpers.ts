@@ -155,7 +155,7 @@ export const markdownFormatProvider: NoteFormatProvider = {
   extensions: ['md'],
 
   serializeNote(doc, specRegistry) {
-    return markdownSerializer(doc, specRegistry);
+    return markdownSerializer(doc, specRegistry) || '';
   },
 
   parseNote(value, specRegistry, plugins) {

@@ -68,13 +68,15 @@ export const markdownParser = (
   specRegistry: SpecRegistry,
   markdownItPlugins: any[],
 ) => {
-  return getParser(specRegistry, markdownItPlugins).parse(markdownStr);
+  return (
+    getParser(specRegistry, markdownItPlugins)?.parse(markdownStr) ?? undefined
+  );
 };
 
 export const markdownSerializer = (doc: Node, specRegistry: SpecRegistry) => {
   doc = uncollapseHeadings(doc, specRegistry);
 
-  const text = getSerializer(specRegistry).serialize(doc);
+  const text = getSerializer(specRegistry)?.serialize(doc);
 
   return text;
 };

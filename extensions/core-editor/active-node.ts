@@ -1,13 +1,17 @@
 import type { EditorState } from '@bangle.dev/pm';
-import { Decoration, DecorationSet, Plugin } from '@bangle.dev/pm';
+import { Decoration, DecorationSet, Plugin, PluginKey } from '@bangle.dev/pm';
 
+const extName = '@bangle.io/core-editor';
 export function activeNode() {
+  const key = new PluginKey(extName + ':active_node');
+
   return new Plugin({
+    key,
     state: {
-      init(_, state) {
+      init: (_, state) => {
         return buildDeco(state);
       },
-      apply(tr, old, oldState, newState) {
+      apply: (tr, old, oldState, newState) => {
         if (!tr.selectionSet) {
           return old;
         }
@@ -16,8 +20,8 @@ export function activeNode() {
       },
     },
     props: {
-      decorations(state: EditorState) {
-        return this.getState(state);
+      decorations(state) {
+        return key.getState(state);
       },
     },
   });
