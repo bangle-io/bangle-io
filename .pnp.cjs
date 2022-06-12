@@ -27688,7 +27688,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-modules-local-by-default", "npm:3.0.3"],\
             ["icss-utils", "npm:4.1.1"],\
             ["postcss", "npm:7.0.39"],\
-            ["postcss-selector-parser", "npm:6.0.9"],\
+            ["postcss-selector-parser", "npm:6.0.10"],\
             ["postcss-value-parser", "npm:4.2.0"]\
           ],\
           "linkType": "HARD"\
@@ -27707,7 +27707,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/postcss", null],\
             ["icss-utils", "virtual:971821457782a89227a901050afacf0444bcd6d5cb6c3e5d5a26df3186f9df0ac94304546b675af2276cabfe704aa8605d055bc46cee3107f75e0d68ebe9e921#npm:5.1.0"],\
             ["postcss", "npm:8.4.14"],\
-            ["postcss-selector-parser", "npm:6.0.9"],\
+            ["postcss-selector-parser", "npm:6.0.10"],\
             ["postcss-value-parser", "npm:4.2.0"]\
           ],\
           "packagePeers": [\
@@ -27723,7 +27723,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["postcss-modules-scope", "npm:2.2.0"],\
             ["postcss", "npm:7.0.39"],\
-            ["postcss-selector-parser", "npm:6.0.9"]\
+            ["postcss-selector-parser", "npm:6.0.10"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -27740,7 +27740,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-modules-scope", "virtual:971821457782a89227a901050afacf0444bcd6d5cb6c3e5d5a26df3186f9df0ac94304546b675af2276cabfe704aa8605d055bc46cee3107f75e0d68ebe9e921#npm:3.0.0"],\
             ["@types/postcss", null],\
             ["postcss", "npm:8.4.14"],\
-            ["postcss-selector-parser", "npm:6.0.9"]\
+            ["postcss-selector-parser", "npm:6.0.10"]\
           ],\
           "packagePeers": [\
             "@types/postcss",\
@@ -27795,7 +27795,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-nested", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.6"],\
             ["@types/postcss", null],\
             ["postcss", "npm:8.4.14"],\
-            ["postcss-selector-parser", "npm:6.0.9"]\
+            ["postcss-selector-parser", "npm:6.0.10"]\
           ],\
           "packagePeers": [\
             "@types/postcss",\
@@ -27840,15 +27840,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/postcss-selector-parser-npm-6.0.10-a4d7aaa270-46afaa60e3.zip/node_modules/postcss-selector-parser/",\
           "packageDependencies": [\
             ["postcss-selector-parser", "npm:6.0.10"],\
-            ["cssesc", "npm:3.0.0"],\
-            ["util-deprecate", "npm:1.0.2"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:6.0.9", {\
-          "packageLocation": "./.yarn/cache/postcss-selector-parser-npm-6.0.9-461f2da22f-f8161ab4d3.zip/node_modules/postcss-selector-parser/",\
-          "packageDependencies": [\
-            ["postcss-selector-parser", "npm:6.0.9"],\
             ["cssesc", "npm:3.0.0"],\
             ["util-deprecate", "npm:1.0.2"]\
           ],\
@@ -31503,7 +31494,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-media-query-parser", "npm:0.2.3"],\
             ["postcss-resolve-nested-selector", "npm:0.1.1"],\
             ["postcss-safe-parser", "virtual:a0931690898942a33d70fd8d20a55a46c0e06b8ef27621b92bc8142f6b51abedf7c52c0180d3666cc36a5cd3d553a27941cecb746a799a3a57f31593058e1e68#npm:6.0.0"],\
-            ["postcss-selector-parser", "npm:6.0.9"],\
+            ["postcss-selector-parser", "npm:6.0.10"],\
             ["postcss-value-parser", "npm:4.2.0"],\
             ["resolve-from", "npm:5.0.0"],\
             ["specificity", "npm:0.4.1"],\
