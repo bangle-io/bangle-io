@@ -175,13 +175,6 @@ export class LocalFileEntryManager {
     }
   }
 
-  private _isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
-    return (
-      typeof fileEntry?.deleted === 'number' &&
-      Date.now() - fileEntry.deleted < DELETE_TOLERANCE
-    );
-  }
-
   private async _getFileEntry(
     uid: string,
   ): Promise<LocalFileEntry | undefined> {
@@ -192,6 +185,13 @@ export class LocalFileEntryManager {
     }
 
     return undefined;
+  }
+
+  private _isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
+    return (
+      typeof fileEntry?.deleted === 'number' &&
+      Date.now() - fileEntry.deleted < DELETE_TOLERANCE
+    );
   }
 }
 

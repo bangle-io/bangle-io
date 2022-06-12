@@ -288,16 +288,16 @@ export class ExtensionRegistry {
     });
   }
 
-  private _validate() {
-    assertUniqueName(this._extensions, 'extensions');
-  }
-
   private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {
     const operations = this.getRegisteredOperations()
       .filter((r) => typeof r.keybinding === 'string')
       .map((r): [SerialOperationNameType, string] => [r.name, r.keybinding!]);
 
     return Object.fromEntries(operations);
+  }
+
+  private _validate() {
+    assertUniqueName(this._extensions, 'extensions');
   }
 }
 

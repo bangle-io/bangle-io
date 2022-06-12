@@ -245,6 +245,88 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     }
   }
 
+  private _destroySideEffects() {
+    this._deferredRunner?.abort();
+    this._sideEffects.forEach(({ effect }) => {
+      effect.destroy?.();
+    });
+    this._sideEffects = [];
+  }
+
+  private _runSideEffects(runId: number) {
+    for (const sideEffect of this._sideEffects) {
+      // make sure the runId is the currentRunId
+      if (runId !== this._currentRunId) {
+        return;
+      }
+      // Some effects can lag behind a couple of state transitions
+      // if an effect before them dispatches an action.
+      // Note: if it is the first time an effect is running
+      // the previouslySeenState would be the initial state
+      const previouslySeenState =
+        this._lastSeenStateCache.get(sideEffect) || sideEffect.initialState;
+
+      // `previouslySeenState` needs to always be the one that the effect.update has seen before or the initial state.
+      // Here we are saving the this.state before calling update, because an update can dispatch an action and
+      // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
+      this._lastSeenStateCache.set(sideEffect, this.state);
+
+      try {
+        // effect.update() call should always be the last in this loop, since it can trigger dispatches
+        // which changes the runId causing the loop to break.
+        sideEffect.effect.update?.(
+          this,
+          previouslySeenState,
+          this.state.getSliceState(sideEffect.key),
+          previouslySeenState.getSliceState(sideEffect.key),
+        );
+      } catch (err) {
+        // avoid disrupting the update calls of other
+        // side-effects
+        if (err instanceof Error) {
+          this.errorHandler(err, sideEffect.key);
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    if (this._scheduler) {
+      this._deferredRunner?.abort();
+      this._deferredRunner = new DeferredSideEffectsRunner(
+        this._sideEffects,
+        this._scheduler,
+      );
+      this._deferredRunner.run(this, this.errorHandler);
+    }
+  }
+
+  private _setup() {
+    this._setupActionSerializers();
+    this._setupSideEffects();
+  }
+
+  private _setupActionSerializers() {
+    this._actionSerializers = {};
+
+    for (const slice of this._state.getSlices()) {
+      const actions = slice.spec.actions;
+
+      if (actions) {
+        for (const act in actions) {
+          if (this._actionSerializers[act]) {
+            throw new Error(`A serializer for ${act} already exists`);
+          }
+          const actionSerializers = (actions as any)[act];
+
+          if (actionSerializers) {
+            this._actionSerializers[act] = actionSerializers(act);
+          }
+        }
+      }
+    }
+  }
+
   private _setupSideEffects() {
     if (this._disableSideEffects) {
       return;
@@ -312,88 +394,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
         })();
       }
     });
-  }
-
-  private _setupActionSerializers() {
-    this._actionSerializers = {};
-
-    for (const slice of this._state.getSlices()) {
-      const actions = slice.spec.actions;
-
-      if (actions) {
-        for (const act in actions) {
-          if (this._actionSerializers[act]) {
-            throw new Error(`A serializer for ${act} already exists`);
-          }
-          const actionSerializers = (actions as any)[act];
-
-          if (actionSerializers) {
-            this._actionSerializers[act] = actionSerializers(act);
-          }
-        }
-      }
-    }
-  }
-
-  private _setup() {
-    this._setupActionSerializers();
-    this._setupSideEffects();
-  }
-
-  private _runSideEffects(runId: number) {
-    for (const sideEffect of this._sideEffects) {
-      // make sure the runId is the currentRunId
-      if (runId !== this._currentRunId) {
-        return;
-      }
-      // Some effects can lag behind a couple of state transitions
-      // if an effect before them dispatches an action.
-      // Note: if it is the first time an effect is running
-      // the previouslySeenState would be the initial state
-      const previouslySeenState =
-        this._lastSeenStateCache.get(sideEffect) || sideEffect.initialState;
-
-      // `previouslySeenState` needs to always be the one that the effect.update has seen before or the initial state.
-      // Here we are saving the this.state before calling update, because an update can dispatch an action and
-      // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
-      this._lastSeenStateCache.set(sideEffect, this.state);
-
-      try {
-        // effect.update() call should always be the last in this loop, since it can trigger dispatches
-        // which changes the runId causing the loop to break.
-        sideEffect.effect.update?.(
-          this,
-          previouslySeenState,
-          this.state.getSliceState(sideEffect.key),
-          previouslySeenState.getSliceState(sideEffect.key),
-        );
-      } catch (err) {
-        // avoid disrupting the update calls of other
-        // side-effects
-        if (err instanceof Error) {
-          this.errorHandler(err, sideEffect.key);
-        } else {
-          throw err;
-        }
-      }
-    }
-
-    if (this._scheduler) {
-      this._deferredRunner?.abort();
-      this._deferredRunner = new DeferredSideEffectsRunner(
-        this._sideEffects,
-        this._scheduler,
-      );
-      this._deferredRunner.run(this, this.errorHandler);
-    }
-  }
-
-  private _destroySideEffects() {
-    this._deferredRunner?.abort();
-    this._sideEffects.forEach(({ effect }) => {
-      effect.destroy?.();
-    });
-    this._sideEffects = [];
   }
 }
 

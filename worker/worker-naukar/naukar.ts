@@ -66,7 +66,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   }
 
   return {
-    // app state
+    // setup up store and store syncing
     async sendMessagePort(port: MessageChannel['port2']) {
       storeRef.current = initializeNaukarStore({ port, extensionRegistry });
     },
@@ -113,5 +113,13 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     ...abortableServices({ storeRef }),
   };
 }
+
+// enforce that naukar returns the correct type
+function assertCorrectReturn<
+  R extends (...args: any[]) => any,
+  T extends { [k: string]: R },
+  F extends (...args: any[]) => T,
+>(func: F): void {}
+assertCorrectReturn(createNaukar);
 
 export type WorkerAPI = ReturnType<typeof createNaukar>;

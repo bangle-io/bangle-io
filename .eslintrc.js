@@ -189,6 +189,9 @@ module.exports = {
           ],
 
           'methods': [{ type: 'method', sort: 'alphabetical' }],
+          'conventional-private-methods': [
+            { type: 'method', sort: 'alphabetical', name: '/_.+/' },
+          ],
           'static-methods': [
             { type: 'method', sort: 'alphabetical', static: true },
           ],

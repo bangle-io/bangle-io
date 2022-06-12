@@ -37,15 +37,15 @@ export abstract class BaseFileSystem {
   //!! data - has to a blob
   abstract writeFile(filePath: string, data: File): Promise<void>;
 
-  _verifyFileType(file: File) {
-    if (!(file instanceof File)) {
-      throw Error('BabyFs: Provided data is not of File type');
-    }
-  }
-
   _verifyFilePath(filePath: string) {
     if (filePath.startsWith('/')) {
       throw Error('BabyFs: filePath must not start with /');
+    }
+  }
+
+  _verifyFileType(file: File) {
+    if (!(file instanceof File)) {
+      throw Error('BabyFs: Provided data is not of File type');
     }
   }
 
