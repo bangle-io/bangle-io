@@ -3,12 +3,12 @@ import reactDOM from 'react-dom';
 
 import type { EditorView, PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
-import type { GetEmojiGroupsType } from '@bangle.dev/react-emoji-suggest/dist/emoji-suggest';
-import { selectEmoji } from '@bangle.dev/react-emoji-suggest/dist/emoji-suggest';
+import type { GetEmojiGroupsType } from '@bangle.dev/react-emoji-suggest';
 import {
   getSquareDimensions,
   resolveCounter,
-} from '@bangle.dev/react-emoji-suggest/dist/utils';
+  selectEmoji,
+} from '@bangle.dev/react-emoji-suggest';
 import { suggestTooltip } from '@bangle.dev/tooltip';
 
 import { UniversalPalette } from '@bangle.io/ui-components';

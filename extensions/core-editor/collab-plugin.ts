@@ -1,6 +1,6 @@
 import { collabClient } from '@bangle.dev/collab-client';
+import type { CollabRequestType } from '@bangle.dev/collab-server';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
-import type { CollabRequestType } from '@bangle.dev/collab-server/dist/types';
 import { uuid } from '@bangle.dev/utils';
 
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';

@@ -18,6 +18,7 @@ import {
   queryInlinePaletteText,
   replaceSuggestionMarkWith,
 } from '@bangle.io/inline-palette';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 import {
   BANNED_CHARS,
@@ -101,6 +102,8 @@ function breakTag(key: string) {
           )(state, dispatch, view);
         }
         const nodeType = state.schema.nodes[tagNodeName];
+
+        assertNotUndefined(nodeType, 'tag nodeType must be defined');
 
         return replaceSuggestionMarkWith(
           palettePluginKey,

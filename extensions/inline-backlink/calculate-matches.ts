@@ -13,7 +13,7 @@ import {
 export const getAllWikiLinks = weakCache((state: EditorState): string[] => {
   const wikiLinks = findChildrenByType(
     state.doc,
-    state.schema.nodes[wikiLink.spec().name],
+    state.schema.nodes[wikiLink.spec().name]!,
   );
 
   const result = wikiLinks

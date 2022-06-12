@@ -12,7 +12,7 @@ import {
 } from '@bangle.io/inline-palette';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
-import { insertAt } from '@bangle.io/utils';
+import { assertNotUndefined, insertAt } from '@bangle.io/utils';
 import {
   removeExtension,
   resolvePath,
@@ -33,6 +33,8 @@ const createBacklinkNode = (wsPath: string, allNoteWsPaths: string[]) => {
   ) => {
     const nodeType = state.schema.nodes[backlinkNodeName];
     const backlinkPath = getBacklinkPath(wsPath, allNoteWsPaths);
+
+    assertNotUndefined(nodeType, 'wikiLink must be defined');
 
     return replaceSuggestionMarkWith(
       palettePluginKey,

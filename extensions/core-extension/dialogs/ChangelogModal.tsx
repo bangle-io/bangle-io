@@ -107,7 +107,7 @@ function ChangelogDisplay() {
         },
       }),
     ],
-    initialValue: parser.parse(getMarkdown()),
+    initialValue: parser.parse(getMarkdown()) || '',
   });
 
   return (

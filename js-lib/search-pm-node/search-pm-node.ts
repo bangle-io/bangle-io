@@ -66,7 +66,7 @@ export async function searchPmNode(
           matches: [],
         };
         doc.descendants((node, pos, parent) => {
-          if (perFileMatchCount > perFileMatchMax) {
+          if (perFileMatchCount > perFileMatchMax || !parent) {
             return false;
           }
 
