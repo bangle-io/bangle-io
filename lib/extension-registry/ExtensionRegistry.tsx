@@ -77,13 +77,21 @@ export class ExtensionRegistry {
 
   private _dialogs: Exclude<ApplicationConfig['dialogs'], undefined>;
 
-  private _noteSidebarWidgets: Exclude<
-    ApplicationConfig['noteSidebarWidgets'],
+  private _editorConfig: EditorConfig[];
+  private _editorWatchPluginStates: Exclude<
+    EditorConfig['watchPluginStates'],
     undefined
   >;
 
-  private _editorWatchPluginStates: Exclude<
-    EditorConfig['watchPluginStates'],
+  private _noteFormatProviders: {
+    [noteFormatProviderName: string]: Exclude<
+      ApplicationConfig['noteFormatProvider'],
+      undefined
+    >;
+  };
+
+  private _noteSidebarWidgets: Exclude<
+    ApplicationConfig['noteSidebarWidgets'],
     undefined
   >;
 
@@ -94,14 +102,20 @@ export class ExtensionRegistry {
     >;
   };
 
-  private _slices: Slice[];
+  private _operationHandlers: Array<
+    Exclude<ApplicationConfig['operationHandler'], undefined>
+  >;
 
-  private _noteFormatProviders: {
-    [noteFormatProviderName: string]: Exclude<
-      ApplicationConfig['noteFormatProvider'],
-      undefined
-    >;
-  };
+  private _operationKeybindingMapping: SerialOperationKeybindingMapping;
+  private _registeredSerialOperations: SerialOperationDefinitionType[];
+  private _renderReactNodeViewLookup: Exclude<
+    EditorConfig['renderReactNodeView'],
+    undefined
+  >;
+
+  private _serialOperationHandlers: Set<SerialOperationHandler>;
+  private _sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
+  private _slices: Slice[];
 
   private _storageProviders: {
     [storageProviderName: string]: Exclude<
@@ -109,25 +123,6 @@ export class ExtensionRegistry {
       undefined
     >;
   };
-
-  private _sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
-
-  private _operationHandlers: Array<
-    Exclude<ApplicationConfig['operationHandler'], undefined>
-  >;
-
-  private _operationKeybindingMapping: SerialOperationKeybindingMapping;
-
-  private _editorConfig: EditorConfig[];
-
-  private _registeredSerialOperations: SerialOperationDefinitionType[];
-
-  private _serialOperationHandlers: Set<SerialOperationHandler>;
-
-  private _renderReactNodeViewLookup: Exclude<
-    EditorConfig['renderReactNodeView'],
-    undefined
-  >;
 
   constructor(
     private _extensions: Extension[] = [],

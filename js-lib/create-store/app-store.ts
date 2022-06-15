@@ -130,6 +130,16 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     throw error;
   };
 
+  private _actionSerializers: {
+    [k: string]: ReturnType<
+      ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
+    >;
+  } = {};
+
+  private _currentRunId = 0;
+  private _deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
+  private _destroyController = new AbortController();
+  private _destroyed = false;
   private _infiniteErrors = {
     count: 0,
     lastSeen: 0,
@@ -139,20 +149,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     StoreSideEffectType<any, A, S>,
     AppState<S, A>
   >();
-
-  private _destroyController = new AbortController();
-
-  private _currentRunId = 0;
-
-  private _actionSerializers: {
-    [k: string]: ReturnType<
-      ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
-    >;
-  } = {};
-
-  private _deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
-
-  private _destroyed = false;
 
   private _sideEffects: Array<StoreSideEffectType<any, A, S>> = [];
 
