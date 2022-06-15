@@ -290,6 +290,18 @@ describe('seialization to markdown', () => {
           </para>
         </doc>,
       ),
+    ).toEqual('#hello#world');
+  });
+
+  test('serializes two tags with space in between 1', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <para>
+            <tag tagValue="hello" /> <tag tagValue="world" />
+          </para>
+        </doc>,
+      ),
     ).toEqual('#hello #world');
   });
 
@@ -304,7 +316,7 @@ describe('seialization to markdown', () => {
           </para>
         </doc>,
       ),
-    ).toEqual('#hello- #world');
+    ).toEqual('#hello-#world');
   });
 
   test('serializes two tags in list', async () => {
@@ -365,7 +377,7 @@ describe('seialization to markdown', () => {
     ).toMatchInlineSnapshot(`
       "- hey
 
-        - #hello 
+        - #hello
 
           #world"
 `);

@@ -151,13 +151,6 @@ export function editorTagSpec(): RawSpecs {
     },
     markdown: {
       toMarkdown: (state, node) => {
-        // check if there is no white space
-        if (!state.out.endsWith(' ') && state.out !== '') {
-          // prefix with whitespace so that tags
-          // don't get fused to the previous node
-          state.out += ' ';
-        }
-
         const { tagValue } = node.attrs;
         state.text('#' + tagValue, false);
       },

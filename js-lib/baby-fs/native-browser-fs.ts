@@ -52,8 +52,9 @@ function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
 }
 
 export class NativeBrowserFileSystem extends BaseFileSystem {
-  private _allowedFile: (f: FileSystemFileHandle) => boolean;
   private _allowedDir: (entry: FileSystemDirectoryHandle) => boolean;
+  private _allowedFile: (f: FileSystemFileHandle) => boolean;
+
   private _resolveFileHandle: ReturnType<typeof resolveFileHandle>;
   private _rootDirHandle: FileSystemDirectoryHandle;
 

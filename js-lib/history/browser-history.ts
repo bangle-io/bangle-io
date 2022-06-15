@@ -8,7 +8,6 @@ import {
 import type { Location } from './types';
 
 export class BrowserHistory implements BaseHistory {
-  private _historyState: any;
   private _checkForUpdates = () => {
     const current = calcLocation(this._base);
 
@@ -19,9 +18,9 @@ export class BrowserHistory implements BaseHistory {
     this.refreshHistoryState();
   };
 
-  private _historyCounter = 0;
-
   private _currentLoc: Location;
+  private _historyCounter = 0;
+  private _historyState: any;
 
   private _host = typeof window !== 'undefined' ? window : undefined;
 

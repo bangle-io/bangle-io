@@ -19,9 +19,9 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.29.0",
-    "@bangle.dev/pm": "0.29.0",
-    "@bangle.dev/utils": "0.29.0",
+    "@bangle.dev/core": "0.30.0",
+    "@bangle.dev/pm": "0.30.0",
+    "@bangle.dev/utils": "0.30.0",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",

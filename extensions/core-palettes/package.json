@@ -19,9 +19,9 @@
   "main": "index.tsx",
   "module": "index.tsx",
   "dependencies": {
-    "@bangle.dev/core": "0.29.0",
-    "@bangle.dev/pm": "0.29.0",
-    "@bangle.dev/utils": "0.29.0",
+    "@bangle.dev/core": "0.30.0",
+    "@bangle.dev/pm": "0.30.0",
+    "@bangle.dev/utils": "0.30.0",
     "@bangle.io/api": "workspace:*",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/config": "workspace:*",
