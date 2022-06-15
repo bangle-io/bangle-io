@@ -19,10 +19,10 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.29.0",
-    "@bangle.dev/markdown": "0.29.0",
-    "@bangle.dev/markdown-front-matter": "0.29.0",
-    "@bangle.dev/pm": "0.29.0",
+    "@bangle.dev/core": "0.30.0",
+    "@bangle.dev/markdown": "0.30.0",
+    "@bangle.dev/markdown-front-matter": "0.30.0",
+    "@bangle.dev/pm": "0.30.0",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",
@@ -39,7 +39,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@bangle.dev/test-helpers": "0.29.0",
+    "@bangle.dev/test-helpers": "0.30.0",
     "@bangle.io/extension-registry": "workspace:*"
   },
   "license": "AGPL-3.0-or-later"
