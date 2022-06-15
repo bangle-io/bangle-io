@@ -20290,18 +20290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-view@npm:*, prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.13.3":
-  version: 1.26.0
-  resolution: "prosemirror-view@npm:1.26.0"
-  dependencies:
-    prosemirror-model: ^1.16.0
-    prosemirror-state: ^1.0.0
-    prosemirror-transform: ^1.1.0
-  checksum: fe727fb3f0f9018d0739d6f9868ad218c54687cfc009aa1855315b3e8a46cd6932cd22ae80f7a0bbbb63aefd566a5b5da5ed834b39145650b30b8831c7ac150a
-  languageName: node
-  linkType: hard
-
-"prosemirror-view@npm:^1.26.1":
+"prosemirror-view@npm:*, prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.13.3, prosemirror-view@npm:^1.26.1":
   version: 1.26.1
   resolution: "prosemirror-view@npm:1.26.1"
   dependencies:

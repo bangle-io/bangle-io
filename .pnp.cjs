@@ -28255,7 +28255,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-dropcursor", "npm:1.5.0"],\
             ["prosemirror-state", "npm:1.4.0"],\
             ["prosemirror-transform", "npm:1.6.0"],\
-            ["prosemirror-view", "npm:1.26.0"]\
+            ["prosemirror-view", "npm:1.26.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -28269,7 +28269,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-model", "npm:1.18.0"],\
             ["prosemirror-state", "npm:1.4.0"],\
             ["prosemirror-transform", "npm:1.6.0"],\
-            ["prosemirror-view", "npm:1.26.0"]\
+            ["prosemirror-view", "npm:1.26.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -28304,7 +28304,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["prosemirror-keymap", "npm:1.2.0"],\
             ["prosemirror-state", "npm:1.4.0"],\
-            ["prosemirror-view", "npm:1.26.0"],\
+            ["prosemirror-view", "npm:1.26.1"],\
             ["w3c-keyname", "npm:2.2.4"]\
           ],\
           "linkType": "HARD"\
@@ -28351,7 +28351,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-state", "npm:1.4.0"],\
             ["prosemirror-model", "npm:1.18.0"],\
             ["prosemirror-transform", "npm:1.6.0"],\
-            ["prosemirror-view", "npm:1.26.0"]\
+            ["prosemirror-view", "npm:1.26.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -28365,7 +28365,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-model", "npm:1.18.0"],\
             ["prosemirror-state", "npm:1.4.0"],\
             ["prosemirror-transform", "npm:1.6.0"],\
-            ["prosemirror-view", "npm:1.26.0"]\
+            ["prosemirror-view", "npm:1.26.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -28407,16 +28407,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["prosemirror-view", [\
-        ["npm:1.26.0", {\
-          "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.26.0-c1e9fa8089-fe727fb3f0.zip/node_modules/prosemirror-view/",\
-          "packageDependencies": [\
-            ["prosemirror-view", "npm:1.26.0"],\
-            ["prosemirror-model", "npm:1.18.0"],\
-            ["prosemirror-state", "npm:1.4.0"],\
-            ["prosemirror-transform", "npm:1.6.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.26.1", {\
           "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.26.1-e2f84c8332-a9dc0c2916.zip/node_modules/prosemirror-view/",\
           "packageDependencies": [\
