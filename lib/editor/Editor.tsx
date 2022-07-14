@@ -41,12 +41,12 @@ export interface EditorProps {
   className?: string;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType?: EditorDisplayType;
-  editorId?: EditorIdType;
+  editorId: EditorIdType;
   extensionRegistry: ExtensionRegistry;
   getDocument: (wsPath: string) => Promise<Node | undefined>;
   wsPath: string;
-  onEditorReady?: (editor: CoreBangleEditor, editorId?: EditorIdType) => void;
-  onEditorUnmount?: (editor: CoreBangleEditor, editorId?: EditorIdType) => void;
+  onEditorReady?: (editor: CoreBangleEditor, editorId: EditorIdType) => void;
+  onEditorUnmount?: (editor: CoreBangleEditor, editorId: EditorIdType) => void;
 }
 
 export function Editor(props: EditorProps) {

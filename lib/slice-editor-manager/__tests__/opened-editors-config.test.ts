@@ -23,8 +23,10 @@ test('works empty', () => {
         null,
         null,
         null,
+        null,
       ],
       "_selections": Array [
+        null,
         null,
         null,
         null,
@@ -68,8 +70,12 @@ test('shrinks with bigger arrays automatically', () => {
         Object {
           "test:magic.md": 2,
         },
+        Object {
+          "test:magic.md": 3,
+        },
       ],
       "_selections": Array [
+        null,
         null,
         null,
         null,
@@ -107,6 +113,7 @@ describe('selection', () => {
           null,
           null,
           null,
+          null,
         ],
         "_selections": Array [
           Object {
@@ -116,6 +123,7 @@ describe('selection', () => {
               "type": "text",
             },
           },
+          null,
           null,
           null,
         ],
@@ -279,6 +287,7 @@ describe('selection', () => {
           null,
           null,
           null,
+          null,
         ],
         "_selections": Array [
           Object {
@@ -288,6 +297,7 @@ describe('selection', () => {
               "type": "text",
             },
           },
+          null,
           null,
           null,
         ],
@@ -372,6 +382,7 @@ describe('serializing', () => {
           'test:wonder2.md': 5,
         },
         null,
+        null,
       ],
       selections: [
         {
@@ -386,6 +397,7 @@ describe('serializing', () => {
             type: 'text',
           },
         },
+        null,
         null,
         null,
       ],

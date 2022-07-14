@@ -167,30 +167,6 @@ test('mounting unmounting calls setEditorUnmounted', async () => {
   expect(onEditorUnmount).nthCalledWith(1, expect.any(BangleEditor), 1);
 });
 
-test('works without editorId', async () => {
-  act(() => {
-    result = render(
-      <div>
-        <Editor
-          wsPath="something:blah.md"
-          className="test-class"
-          dispatchSerialOperation={dispatchSerialOperation}
-          extensionRegistry={extensionRegistry}
-          bangleStore={bangleStore}
-          getDocument={getNoteMock}
-        />
-      </div>,
-    );
-  });
-
-  await waitFor(() => {
-    expect(result.container.innerHTML).toContain('class="test-class');
-  });
-
-  expect(result!.container.innerHTML).toContain('Hello world! I am a test');
-  expect(result!.container).toMatchSnapshot();
-});
-
 test('revokes editor proxy', async () => {
   let onEditorReady = jest.fn();
   let onEditorUnmount = jest.fn();

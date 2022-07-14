@@ -9,6 +9,7 @@ Object {
           null,
           null,
           null,
+          null,
         ],
         "selections": Array [
           Object {
@@ -18,6 +19,7 @@ Object {
               "type": "text",
             },
           },
+          null,
           null,
           null,
         ],

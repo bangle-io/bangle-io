@@ -554,6 +554,7 @@ describe('serializing state', () => {
         },
         null,
         null,
+        null,
       ]
     `);
   });

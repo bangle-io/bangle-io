@@ -29,6 +29,7 @@ describe('serialization works', () => {
               null,
               null,
               null,
+              null,
             ],
             "recentlyUsedWsPaths": null,
             "refreshCounter": 0,
@@ -60,6 +61,7 @@ describe('serialization works', () => {
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": Array [
+              undefined,
               undefined,
               undefined,
               undefined,
@@ -102,6 +104,7 @@ describe('serialization works', () => {
               undefined,
               undefined,
               undefined,
+              undefined,
             ],
           },
           "recentlyUsedWsPaths": undefined,
@@ -127,6 +130,7 @@ describe('serialization works', () => {
           "data": Object {
             "error": null,
             "openedWsPaths": Array [
+              null,
               null,
               null,
               null,

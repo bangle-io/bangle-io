@@ -1,3 +1,8 @@
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
+
 import { OpenedWsPaths } from '../opened-ws-paths';
 
 describe('OpenedWsPaths', () => {
@@ -104,6 +109,7 @@ describe('OpenedWsPaths', () => {
           undefined,
           undefined,
           undefined,
+          undefined,
         ],
       }
     `);
@@ -113,6 +119,7 @@ describe('OpenedWsPaths', () => {
       OpenedWsPaths {
         "_wsPaths": Array [
           "hello:one.md",
+          undefined,
           undefined,
           undefined,
         ],
@@ -133,8 +140,8 @@ describe('OpenedWsPaths', () => {
 
   test('getByIndex', () => {
     let result = OpenedWsPaths.createFromArray(['a', undefined]);
-    expect(result.getByIndex(0)).toBe('a');
-    expect(result.getByIndex(1)).toBe(undefined);
+    expect(result.getByIndex(PRIMARY_EDITOR_INDEX)).toBe('a');
+    expect(result.getByIndex(SECONDARY_EDITOR_INDEX)).toBe(undefined);
   });
 
   test('forEach 1', () => {

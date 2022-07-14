@@ -57,6 +57,7 @@ test('returns wsPaths correctly', async () => {
       "test-ws:note1.md",
       null,
       null,
+      null,
     ]
   `);
 
@@ -164,6 +165,7 @@ test('updates the newly opened ws path only', async () => {
     Array [
       "test-ws:note1.md",
       "test-ws:note2.md",
+      null,
       null,
     ]
   `);
