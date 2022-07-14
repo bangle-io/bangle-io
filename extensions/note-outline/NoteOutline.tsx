@@ -72,11 +72,16 @@ export function NoteOutline() {
       if (sOperation.name === WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP) {
         const editorId: unknown = sOperation.value?.editorId;
 
-        // change is from an editor which doesnt have id or the operation
-        // is for a different editorId
-        if (typeof editorId !== 'number' || editorId !== focusedEditorId) {
+        if (focusedEditorId == null) {
           return false;
         }
+
+        // change is from an editor which doesnt have id or the operation
+        // is for a different editorId
+        if (editorId !== focusedEditorId) {
+          return false;
+        }
+
         updateHeadingNodes();
 
         return true;

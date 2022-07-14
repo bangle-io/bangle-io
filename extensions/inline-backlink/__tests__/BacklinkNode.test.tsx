@@ -5,6 +5,10 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 import { notification } from '@bangle.io/api';
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import {
   getNote,
@@ -42,7 +46,7 @@ const setup = async ([firstNote, ...otherNotes]: Array<
   let { container } = render(
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       <Editor
-        editorId={1}
+        editorId={SECONDARY_EDITOR_INDEX}
         wsPath={wsPath}
         className="test-class"
         dispatchSerialOperation={() => {}}
@@ -181,14 +185,18 @@ describe('clicking node', () => {
     await act(() => sleep(0));
     // make sure current path is hello-world.md
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual(wsPath);
 
     await clickSetup(screen.getByText(/monako/i));
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:monako.md');
   });
 
@@ -206,7 +214,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/note1.md');
   });
 
@@ -224,7 +234,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/note1.md');
   });
 
@@ -242,7 +254,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual(wsPath);
 
     expect(
@@ -270,7 +284,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/note1.md');
   });
 
@@ -289,7 +305,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/NoTe1.md');
   });
 
@@ -308,7 +326,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:note1.md');
   });
 
@@ -327,7 +347,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:tel/note1.md');
   });
 
@@ -343,10 +365,14 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual(wsPath);
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(1),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(SECONDARY_EDITOR_INDEX),
     ).toEqual('test-ws:note1.md');
   });
 
@@ -366,7 +392,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/hello/note2.md');
   });
 
@@ -386,7 +414,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/note2.md');
   });
 
@@ -406,7 +436,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:note2.md');
   });
 
@@ -426,7 +458,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:note2.md');
   });
 
@@ -446,7 +480,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:note2.md');
   });
 
@@ -466,7 +502,9 @@ describe('clicking node', () => {
     await act(() => sleep(0));
 
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(store.state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toEqual('test-ws:magic/some/note2.md');
   });
 });

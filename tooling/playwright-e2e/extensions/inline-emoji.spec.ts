@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -22,7 +24,7 @@ test.describe('emoji', () => {
     await longSleep();
 
     const editorHandle = page.locator('.bangle-editor');
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
     await sleep();
     await editorHandle.type('# Wow :', { delay: 3 });
     await editorHandle.press('ArrowDown');
@@ -32,9 +34,9 @@ test.describe('emoji', () => {
 
     expect(html.includes('😉')).toBe(true);
 
-    expect(await getEditorDebugString(page, 0)).toMatchSnapshot(
-      'emonji in headings',
-    );
+    expect(
+      await getEditorDebugString(page, PRIMARY_EDITOR_INDEX),
+    ).toMatchSnapshot('emonji in headings');
   });
 
   test('Emoji works in para', async ({ page }) => {
@@ -44,7 +46,7 @@ test.describe('emoji', () => {
 
     const editorHandle = page.locator('.bangle-editor');
 
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
     await editorHandle.type('life is good :zeb', { delay: 1 });
     await editorHandle.press('Enter');
@@ -60,7 +62,7 @@ test.describe('emoji', () => {
 
     const editorHandle = page.locator('.bangle-editor');
 
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
     await editorHandle.type('- I am a list :zeb', { delay: 1 });
     await editorHandle.press('Enter');

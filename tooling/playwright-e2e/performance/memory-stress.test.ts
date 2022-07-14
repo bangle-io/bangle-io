@@ -2,6 +2,8 @@ import { chromium, expect, test } from '@playwright/test';
 import fs from 'fs/promises';
 import path from 'path';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   createWorkspaceFromBackup,
   getAllWsPaths,
@@ -58,9 +60,9 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
 
     // Make sure the editor instance is for the currently opened editor
     await page.waitForFunction(
-      ([w]) => {
+      ([w, primaryIndex]: [string, number]) => {
         const win: any = window;
-        const editor = win._e2eHelpers._getEditors()?.[0];
+        const editor = win._e2eHelpers._getEditors()?.[primaryIndex];
 
         if (!editor) {
           return false;
@@ -71,7 +73,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
             ?.wsPath === w
         );
       },
-      [w],
+      [w, PRIMARY_EDITOR_INDEX] as [string, number],
     );
 
     // save a weak reference to the editor, so that we can later check

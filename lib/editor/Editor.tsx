@@ -27,6 +27,7 @@ import type {
 } from '@bangle.io/shared-types';
 // TODO decouple this component from slice-editor-manager
 // these should be generic and accepted as a prop
+import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import { getInitialSelection } from '@bangle.io/slice-editor-manager';
 import { cx } from '@bangle.io/utils';
 
@@ -40,12 +41,12 @@ export interface EditorProps {
   className?: string;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType?: EditorDisplayType;
-  editorId?: number;
+  editorId?: EditorIdType;
   extensionRegistry: ExtensionRegistry;
   getDocument: (wsPath: string) => Promise<Node | undefined>;
   wsPath: string;
-  onEditorReady?: (editor: CoreBangleEditor, editorId?: number) => void;
-  onEditorUnmount?: (editor: CoreBangleEditor, editorId?: number) => void;
+  onEditorReady?: (editor: CoreBangleEditor, editorId?: EditorIdType) => void;
+  onEditorUnmount?: (editor: CoreBangleEditor, editorId?: EditorIdType) => void;
 }
 
 export function Editor(props: EditorProps) {
@@ -161,7 +162,7 @@ function EditorInner2({
   className?: string;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
-  editorId?: number;
+  editorId?: EditorIdType;
   extensionRegistry: ExtensionRegistry;
   initialValue: any;
   initialSelection: Selection | undefined;
@@ -231,7 +232,7 @@ export function useGetEditorState({
 }: {
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
-  editorId?: number;
+  editorId?: EditorIdType;
   extensionRegistry: ExtensionRegistry;
   initialSelection: Selection | undefined;
   initialValue: any;

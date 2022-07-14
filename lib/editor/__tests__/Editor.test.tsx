@@ -8,7 +8,11 @@ import React from 'react';
 import { BangleEditor } from '@bangle.dev/core';
 import { Node, Selection } from '@bangle.dev/pm';
 
-import { EditorDisplayType } from '@bangle.io/constants';
+import {
+  EditorDisplayType,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { getInitialSelection } from '@bangle.io/slice-editor-manager';
 import {
   createBasicTestStore,
@@ -76,7 +80,7 @@ test('basic renders', async () => {
     result = render(
       <div>
         <Editor
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           wsPath="something:blah.md"
           className="test-class"
           bangleStore={bangleStore}
@@ -101,7 +105,7 @@ test('calls getInitialSelection correctly', async () => {
     result = render(
       <div>
         <Editor
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           wsPath="something:blah.md"
           className="test-class"
           bangleStore={bangleStore}
@@ -133,7 +137,7 @@ test('mounting unmounting calls setEditorUnmounted', async () => {
     result = render(
       <div>
         <Editor
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           wsPath="something:blah.md"
           className="test-class"
           bangleStore={bangleStore}
@@ -201,7 +205,7 @@ test('revokes editor proxy', async () => {
     result = render(
       <div>
         <Editor
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           wsPath="something:blah.md"
           className="test-class"
           bangleStore={bangleStore}
@@ -245,7 +249,7 @@ test('changing of wsPath works', async () => {
     result = render(
       <div>
         <Editor
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           className="test-class"
           wsPath="something:one.md"
           dispatchSerialOperation={dispatchSerialOperation}
@@ -267,7 +271,7 @@ test('changing of wsPath works', async () => {
     result.rerender(
       <div>
         <Editor
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           wsPath="something:two.md"
           className="test-class"
           dispatchSerialOperation={dispatchSerialOperation}
@@ -292,7 +296,7 @@ describe('useGetEditorState', () => {
   test('generates correct state', () => {
     const { result } = renderHook(() =>
       useGetEditorState({
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         extensionRegistry,
         initialValue: '',
         wsPath: 'something:one.md',
@@ -328,7 +332,7 @@ describe('useGetEditorState', () => {
 
     const { result } = renderHook(() =>
       useGetEditorState({
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         extensionRegistry,
         initialValue: pmNode,
         wsPath: 'something:one.md',

@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
+
+import {
   createNewNote,
   createWorkspace,
   getEditorDebugString,
@@ -19,9 +24,15 @@ test.describe('collab', () => {
 
     await splitScreen(page);
 
-    let primaryText = await getEditorDebugString(page, 0, { wsPath });
+    let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX, {
+      wsPath,
+    });
 
-    let secondaryText = await getEditorDebugString(page, 1, { wsPath });
+    let secondaryText = await getEditorDebugString(
+      page,
+      SECONDARY_EDITOR_INDEX,
+      { wsPath },
+    );
 
     expect(primaryText).toMatchSnapshot({
       name: 'Split screen and typing in secondary works',
@@ -34,9 +45,13 @@ test.describe('collab', () => {
 
     await longSleep();
 
-    secondaryText = await getEditorDebugString(page, 1, { wsPath });
+    secondaryText = await getEditorDebugString(page, SECONDARY_EDITOR_INDEX, {
+      wsPath,
+    });
     expect(secondaryText).toMatch(/manthanoy/);
-    primaryText = await getEditorDebugString(page, 0, { wsPath });
+    primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX, {
+      wsPath,
+    });
     expect(primaryText).toBe(secondaryText);
   });
 
@@ -46,9 +61,15 @@ test.describe('collab', () => {
 
     await splitScreen(page);
 
-    await getEditorLocator(page, 1, { focus: true, wsPath });
+    await getEditorLocator(page, SECONDARY_EDITOR_INDEX, {
+      focus: true,
+      wsPath,
+    });
 
-    const primary = await getEditorLocator(page, 0, { focus: true, wsPath });
+    const primary = await getEditorLocator(page, PRIMARY_EDITOR_INDEX, {
+      focus: true,
+      wsPath,
+    });
 
     await primary.press('Enter', { delay: 10 });
 
@@ -56,12 +77,15 @@ test.describe('collab', () => {
 
     await longSleep();
 
-    let primaryText = await getEditorDebugString(page, 0);
+    let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
     expect(primaryText).toMatch(/manthanoy/);
 
-    let secondaryText = await getEditorDebugString(page, 1);
+    let secondaryText = await getEditorDebugString(
+      page,
+      SECONDARY_EDITOR_INDEX,
+    );
     expect(secondaryText).toMatch(/manthanoy/);
-    primaryText = await getEditorDebugString(page, 0);
+    primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
     expect(primaryText).toBe(secondaryText);
   });
 });

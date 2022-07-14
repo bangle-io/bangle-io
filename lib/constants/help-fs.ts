@@ -1,5 +1,3 @@
-import type { WorkspaceInfo } from '@bangle.io/shared-types';
-
 import { WorkspaceTypeHelp } from './workspace';
 
 export const HELP_FS_WORKSPACE_NAME = 'bangle-help';

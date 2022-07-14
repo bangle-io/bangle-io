@@ -3,6 +3,12 @@ import { expect } from '@playwright/test';
 import os from 'os';
 import prettier from 'prettier';
 
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
+import type { EditorIdType } from '@bangle.io/shared-types';
+
 import { filePathToWsPath, resolvePath } from './bangle-helpers';
 
 export const isDarwin = os.platform() === 'darwin';
@@ -137,7 +143,7 @@ export async function pushWsPathToPrimary(
   );
 
   if (waitForEditorToLoad) {
-    await waitForEditorIdToLoad(page, 0);
+    await waitForEditorIdToLoad(page, PRIMARY_EDITOR_INDEX);
   }
 }
 export async function pushWsPathToSecondary(
@@ -151,7 +157,7 @@ export async function pushWsPathToSecondary(
   );
 
   if (waitForEditorToLoad) {
-    await waitForEditorIdToLoad(page, 1);
+    await waitForEditorIdToLoad(page, SECONDARY_EDITOR_INDEX);
   }
 }
 
@@ -203,8 +209,8 @@ export async function createNewNote(
     throw new Error('unable to create note');
   }
 
-  // currently new notes are created in editorId==0
-  const editorId = 0;
+  // currently new notes are created in primary editor
+  const editorId = PRIMARY_EDITOR_INDEX;
 
   await waitForWsPathToLoad(page, editorId, { wsPath });
 
@@ -218,7 +224,7 @@ async function waitForPrimaryEditorFocus(page: Page) {
 }
 export async function waitForEditorFocus(
   page: Page,
-  editorId: number,
+  editorId: EditorIdType,
   { wsPath }: { wsPath?: string } = {},
 ) {
   await page
@@ -234,7 +240,11 @@ export async function waitForEditorFocus(
   );
 }
 
-export async function clearEditor(page: Page, editorId: number, attempt = 0) {
+export async function clearEditor(
+  page: Page,
+  editorId: EditorIdType,
+  attempt = 0,
+) {
   await getEditorLocator(page, editorId, { focus: true });
   await waitForEditorFocus(page, editorId);
 
@@ -274,7 +284,7 @@ export async function getPrimaryEditorHandler(
 ) {
   await page.isVisible(`.B-editor-container_editor-0 .bangle-editor`);
 
-  await waitForEditorIdToLoad(page, 0);
+  await waitForEditorIdToLoad(page, PRIMARY_EDITOR_INDEX);
 
   await page.waitForFunction(() => {
     return (window as any)._e2eHelpers._primaryEditor?.destroyed === false;
@@ -292,10 +302,10 @@ export async function getPrimaryEditorHandler(
 
 export async function getEditorLocator(
   page: Page,
-  editorId: number,
+  editorId: EditorIdType,
   { focus = false, wsPath }: { focus?: boolean; wsPath?: string } = {},
 ) {
-  const loc = page.locator(`.B-editor-container_editor-${0} .bangle-editor`);
+  const loc = page.locator(`.B-editor-container_editor-0 .bangle-editor`);
 
   await loc.waitFor();
 
@@ -328,7 +338,7 @@ export function longSleep(t = 70) {
 
 export async function getEditorDebugString(
   page: Page,
-  editorId: number,
+  editorId: EditorIdType,
   { wsPath }: { wsPath?: string } = {},
 ) {
   await getEditorLocator(page, editorId, { wsPath });
@@ -341,7 +351,10 @@ export async function getEditorDebugString(
   );
 }
 
-export async function getEditorSelectionJson(page: Page, editorId: number) {
+export async function getEditorSelectionJson(
+  page: Page,
+  editorId: EditorIdType,
+) {
   return await page.evaluate(
     async ([editorId]) =>
       (window as any)[
@@ -381,7 +394,7 @@ export async function getSecondaryEditorDebugString(page: Page) {
 
 export async function waitForEditorTextToContain(
   page: Page,
-  editorId: number,
+  editorId: EditorIdType,
   text: string,
   attempt = 0,
 ): Promise<void> {
@@ -456,11 +469,11 @@ export async function getWsPathsShownInFilePalette(page: Page) {
   return wsPaths;
 }
 
-export async function getEditorJSON(page: Page, editorId: number) {
+export async function getEditorJSON(page: Page, editorId: EditorIdType) {
   await getEditorLocator(page, editorId);
 
   return page.evaluate(
-    async (editorId: number) =>
+    async (editorId: EditorIdType) =>
       (window as any)[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
     editorId,
   );
@@ -492,7 +505,7 @@ export async function isIntersectingViewport(loc: Locator) {
 
 export async function waitForWsPathToLoad(
   page: Page,
-  editorId: number,
+  editorId: EditorIdType,
   { wsPath }: { wsPath: string },
 ) {
   return page.waitForFunction(
@@ -503,7 +516,10 @@ export async function waitForWsPathToLoad(
   );
 }
 
-export async function waitForEditorIdToLoad(page: Page, editorId: number) {
+export async function waitForEditorIdToLoad(
+  page: Page,
+  editorId: EditorIdType,
+) {
   return page.waitForFunction(
     ({ editorId }) => {
       try {

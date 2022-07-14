@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -12,7 +14,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
   const wsName = await createWorkspace(page);
   await createNewNote(page, wsName, 'test123');
-  await clearEditor(page, 0);
+  await clearEditor(page, PRIMARY_EDITOR_INDEX);
 });
 
 test.describe('creating node above or below', () => {
@@ -29,7 +31,7 @@ test.describe('creating node above or below', () => {
 
     await page.keyboard.type('para above!', { delay: 10 });
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -83,7 +85,7 @@ test.describe('creating node above or below', () => {
 
     await page.keyboard.type('para below!', { delay: 10 });
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -135,7 +137,7 @@ test.describe('creating node above or below', () => {
 
     await page.keyboard.type('para above!', { delay: 10 });
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           content: [
@@ -178,7 +180,7 @@ test.describe('creating node above or below', () => {
 
     await page.keyboard.type('para below!', { delay: 10 });
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -221,7 +223,7 @@ test.describe('creating node above or below', () => {
 
     await page.keyboard.type('list item above', { delay: 10 });
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -284,7 +286,7 @@ test.describe('creating node above or below', () => {
 
     await page.keyboard.type('list item below', { delay: 10 });
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {

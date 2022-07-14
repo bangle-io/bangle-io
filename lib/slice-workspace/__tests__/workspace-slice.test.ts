@@ -1,4 +1,8 @@
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import { makeArrayOfSize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -495,11 +499,15 @@ describe('derived state', () => {
     });
 
     expect(
-      workspaceSliceKey.getSliceState(state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey
+        .getSliceState(state)
+        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
     ).toBe(undefined);
 
     expect(
-      workspaceSliceKey.getSliceState(state)?.openedWsPaths.getByIndex(1),
+      workspaceSliceKey
+        .getSliceState(state)
+        ?.openedWsPaths.getByIndex(SECONDARY_EDITOR_INDEX),
     ).toBe('bangle-help:getting started.md');
   });
 

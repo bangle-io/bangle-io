@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 
@@ -6,6 +6,7 @@ import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   setEditorReady,
   setEditorUnmounted,
@@ -49,7 +50,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   );
 
   const onEditorReady = useCallback(
-    (editor: CoreBangleEditor, editorId?: number) => {
+    (editor: CoreBangleEditor, editorId: EditorIdType) => {
       if (wsPath) {
         setEditorReady(
           editorId,
@@ -71,7 +72,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   }, [wsPath, onClose, bangleStore]);
 
   const onEditorUnmount = useCallback(
-    (editor: CoreBangleEditor, editorId?: number) => {
+    (editor: CoreBangleEditor, editorId: EditorIdType) => {
       setEditorUnmounted(editorId, editor)(
         bangleStore.state,
         bangleStore.dispatch,

@@ -11,7 +11,7 @@ import type { EditorState, EditorView } from '@bangle.dev/pm';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor, typeText } from '@bangle.dev/test-helpers';
 
-import { EditorDisplayType } from '@bangle.io/constants';
+import { EditorDisplayType, PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import type { EditorWatchPluginState } from '@bangle.io/shared-types';
 import { createBasicTestStore } from '@bangle.io/test-utils';
 
@@ -59,7 +59,7 @@ test('works', async () => {
         dispatchSerialOperation: jest.fn(),
         editorDisplayType: EditorDisplayType.Page,
         wsPath: 'test:my-path.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         bangleStore: initialBangleStore,
       },
       [],
@@ -100,7 +100,7 @@ describe('plugin state assertions', () => {
             dispatchSerialOperation,
             editorDisplayType: EditorDisplayType.Page,
             wsPath: 'test:my-path.md',
-            editorId: 0,
+            editorId: PRIMARY_EDITOR_INDEX,
             bangleStore: initialBangleStore,
           },
           watchPluginStates,
@@ -144,7 +144,7 @@ describe('plugin state assertions', () => {
     expect(dispatchSerialOperation).toBeCalledTimes(1);
     expect(dispatchSerialOperation).nthCalledWith(1, {
       name: 'operation::my-op:watch',
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
 
     // new updates should trigger another call
@@ -154,7 +154,7 @@ describe('plugin state assertions', () => {
     expect(dispatchSerialOperation).toBeCalledTimes(2);
     expect(dispatchSerialOperation).nthCalledWith(2, {
       name: 'operation::my-op:watch',
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
   });
 
@@ -212,11 +212,11 @@ describe('plugin state assertions', () => {
     expect(dispatchSerialOperation).toBeCalledTimes(2);
     expect(dispatchSerialOperation).nthCalledWith(1, {
       name: 'operation::plugin-1:watch',
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
     expect(dispatchSerialOperation).nthCalledWith(2, {
       name: 'operation::plugin-2:watch',
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
 
     stopPlugin2StateUpdates = true;
@@ -228,7 +228,7 @@ describe('plugin state assertions', () => {
     expect(dispatchSerialOperation).toBeCalledTimes(3);
     expect(dispatchSerialOperation).nthCalledWith(3, {
       name: 'operation::plugin-1:watch',
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
   });
 });

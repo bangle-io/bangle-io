@@ -4,10 +4,11 @@ import {
   EditorPluginMetadataKey,
   intersectionObserverPluginKey,
 } from '@bangle.io/constants';
+import type { EditorIdType } from '@bangle.io/shared-types';
 
 import { findWrappingScrollable } from './utility';
 
-export function getScrollParentElement(editorId: number) {
+export function getScrollParentElement(editorId: EditorIdType) {
   const editor = document.querySelector(
     '.B-editor-container_editor-' + editorId,
   );

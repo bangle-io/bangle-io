@@ -6,6 +6,7 @@ import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
+  PRIMARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import type {
   Extension,
@@ -61,7 +62,7 @@ export function createEditorFromMd(
         valuePlugin(EditorPluginMetadataKey, {
           wsPath: 'test:my-test.md',
           editorDisplayType: EditorDisplayType.Page,
-          editorId: 0,
+          editorId: PRIMARY_EDITOR_INDEX,
           bangleStore: initialBangleStore,
           dispatchSerialOperation: () => {},
           ...pluginMetadata,
@@ -112,7 +113,7 @@ export function createEditorFromNode(
         valuePlugin(EditorPluginMetadataKey, {
           wsPath: 'test:my-test.md',
           editorDisplayType: EditorDisplayType.Page,
-          editorId: 0,
+          editorId: PRIMARY_EDITOR_INDEX,
           bangleStore: initialBangleStore,
           dispatchSerialOperation: () => {},
           ...pluginMetadata,

@@ -10,6 +10,7 @@ import {
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { EditorIdType } from '@bangle.io/shared-types';
 import {
   setEditorReady,
   setEditorUnmounted,
@@ -32,7 +33,7 @@ export function EditorContainer({
   wsPath: incomingWsPath,
 }: {
   widescreen: boolean;
-  editorId: number;
+  editorId: EditorIdType;
   wsPath: string | undefined;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
@@ -72,7 +73,7 @@ export function EditorContainer({
   }, [dispatchSerialOperation, editorId]);
 
   const onEditorReady = useCallback(
-    (editor: CoreBangleEditor, editorId?: number) => {
+    (editor: CoreBangleEditor, editorId: EditorIdType) => {
       if (wsPath) {
         setEditorReady(
           editorId,
@@ -90,7 +91,7 @@ export function EditorContainer({
     [wsPath, bangleStore],
   );
   const onEditorUnmount = useCallback(
-    (editor: CoreBangleEditor, editorId?: number) => {
+    (editor: CoreBangleEditor, editorId: EditorIdType) => {
       setEditorUnmounted(editorId, editor)(
         bangleStore.state,
         bangleStore.dispatch,

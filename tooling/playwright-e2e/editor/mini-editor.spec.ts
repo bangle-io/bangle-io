@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   createNewNote,
   createWorkspace,
@@ -88,7 +90,9 @@ test.describe('miniEditor', () => {
     await sleep();
 
     // check if text was updated in primary editor
-    expect(await getEditorDebugString(page, 0)).toMatch('AWESOME');
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toMatch(
+      'AWESOME',
+    );
   });
 
   test('expand button works', async ({ page }) => {

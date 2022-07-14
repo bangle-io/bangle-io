@@ -2,6 +2,7 @@ import type { EditorState } from '@bangle.dev/pm';
 import { Decoration, DecorationSet, Plugin, PluginKey } from '@bangle.dev/pm';
 
 const extName = '@bangle.io/core-editor';
+
 export function activeNode() {
   const key = new PluginKey(extName + ':active_node');
 

@@ -4,6 +4,7 @@
 import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import { SECONDARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import {
@@ -87,7 +88,7 @@ test('basic renders', async () => {
     result = render(
       <div>
         <EditorContainer
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           widescreen={true}
           wsPath="something:blah.md"
         />
@@ -103,7 +104,7 @@ test('basic renders', async () => {
 
   expect(Editor).lastCalledWith(
     {
-      editorId: 1,
+      editorId: SECONDARY_EDITOR_INDEX,
       wsPath: 'something:blah.md',
       className: `B-editor-container_editor B-editor-container_editor-1`,
       extensionRegistry: undefined,
@@ -125,7 +126,7 @@ test('renders correctly when file does not exist', async () => {
     result = render(
       <div>
         <EditorContainer
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           widescreen={true}
           wsPath="something:blah.md"
         />
@@ -159,7 +160,7 @@ test('changing of wsPath works', async () => {
     result = render(
       <div>
         <EditorContainer
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           widescreen={true}
           wsPath="something:one.md"
         />
@@ -175,7 +176,7 @@ test('changing of wsPath works', async () => {
 
   expect(Editor).lastCalledWith(
     {
-      editorId: 1,
+      editorId: SECONDARY_EDITOR_INDEX,
       wsPath: 'something:one.md',
       className: `B-editor-container_editor B-editor-container_editor-1`,
       extensionRegistry: undefined,
@@ -192,7 +193,7 @@ test('changing of wsPath works', async () => {
     result.rerender(
       <div>
         <EditorContainer
-          editorId={1}
+          editorId={SECONDARY_EDITOR_INDEX}
           widescreen={true}
           wsPath="something:two.md"
         />
@@ -206,7 +207,7 @@ test('changing of wsPath works', async () => {
 
   expect(Editor).lastCalledWith(
     {
-      editorId: 1,
+      editorId: SECONDARY_EDITOR_INDEX,
       wsPath: 'something:two.md',
       className: `B-editor-container_editor B-editor-container_editor-1`,
       extensionRegistry: undefined,
