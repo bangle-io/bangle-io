@@ -31,6 +31,7 @@
     "@bangle.dev/core": "0.30.0",
     "@bangle.dev/pm": "0.30.0",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "type-fest": "^2.12.0"
