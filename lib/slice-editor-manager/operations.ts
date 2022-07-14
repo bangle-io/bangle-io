@@ -8,7 +8,6 @@ import type {
 import { Selection } from '@bangle.dev/pm';
 
 import {
-  MAX_OPEN_EDITORS,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
@@ -17,7 +16,11 @@ import { getScrollParentElement } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import type { EditorDispatchType, EditorIdType } from './types';
-import { calculateScrollPosition, calculateSelection } from './utils';
+import {
+  calculateScrollPosition,
+  calculateSelection,
+  getEachEditorIterable,
+} from './utils';
 
 export function toggleEditing() {
   return editorManagerSliceKey.op((_, dispatch) => {
@@ -63,11 +66,11 @@ export function getEditor(editorId: EditorIdType) {
       return undefined;
     }
 
-    return editorManagerSliceKey.getSliceState(state)?.editors[editorId];
+    return editorManagerSliceKey.getSliceState(state)?.mainEditors[editorId];
   };
 }
 
-export function focusEditor(editorId: EditorIdType = 0) {
+export function focusEditor(editorId: EditorIdType = PRIMARY_EDITOR_INDEX) {
   return (state: AppState): boolean => {
     const editor = getEditor(editorId)(state);
 
@@ -80,7 +83,9 @@ export function focusEditor(editorId: EditorIdType = 0) {
     return false;
   };
 }
-export function updateFocusedEditor(editorId: EditorIdType = 0) {
+export function updateFocusedEditor(
+  editorId: EditorIdType = PRIMARY_EDITOR_INDEX,
+) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
     dispatch({
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
@@ -126,11 +131,11 @@ export function forEachEditor(
       return;
     }
 
-    editorManagerState.editors.forEach((editor, index) => {
-      if (index != null) {
-        cb(editor, index);
-      }
-    });
+    for (const { editor, editorId } of getEachEditorIterable(
+      editorManagerState,
+    )) {
+      cb(editor, editorId);
+    }
   };
 }
 
@@ -246,7 +251,7 @@ export function setEditorUnmounted(
 }
 // Gets the editor selection saved in the slice state
 export function getInitialSelection(
-  editorId: number,
+  editorId: EditorIdType,
   wsPath: string,
   doc: Node,
 ) {
@@ -287,9 +292,10 @@ export function getInitialSelection(
 // or an editor was removed.
 export function didSomeEditorChange(prevState: AppState) {
   return (state: AppState): boolean => {
-    for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-      const currentEditor = getEditor(i)(state);
-      const prevEditor = getEditor(i)(prevState);
+    for (const { editor: currentEditor, editorId } of getEachEditorIterable(
+      editorManagerSliceKey.getSliceStateAsserted(state),
+    )) {
+      const prevEditor = getEditor(editorId)(prevState);
 
       if (currentEditor === prevEditor) {
         continue;

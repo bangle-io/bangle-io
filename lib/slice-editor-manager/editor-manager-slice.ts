@@ -1,5 +1,9 @@
 import { isMobile } from '@bangle.io/config';
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
 import { assertActionName, createEmptyArray } from '@bangle.io/utils';
 
@@ -12,7 +16,12 @@ import {
 } from './effects';
 import { OpenedEditorsConfig } from './opened-editors-config';
 import type { EditorManagerAction, EditorSliceState } from './types';
-import { calculateScrollPosition, calculateSelection } from './utils';
+import {
+  assertValidEditorId,
+  calculateScrollPosition,
+  calculateSelection,
+  getEachEditorIterable,
+} from './utils';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'editorManagerSlice') : () => {};
@@ -21,7 +30,7 @@ export const JSON_SCHEMA_VERSION = 'editor-slice/2';
 
 export const initialEditorSliceState: EditorSliceState = {
   focusedEditorId: undefined,
-  editors: createEmptyArray(MAX_OPEN_EDITORS),
+  mainEditors: createEmptyArray(MAX_OPEN_EDITORS),
   editorConfig: OpenedEditorsConfig.fromJsonObj({
     selections: [],
     scrollPositions: [],
@@ -47,17 +56,21 @@ const applyState = (
     case 'action::@bangle.io/slice-editor-manager:set-editor': {
       const { editorId, editor } = action.value;
 
-      if (editorId >= MAX_OPEN_EDITORS) {
-        throw new Error('editorId is out of range');
+      const newEditors: EditorSliceState['mainEditors'] = [
+        ...state.mainEditors,
+      ];
+
+      // TODO fix this setting of the editor
+      assertValidEditorId(editorId);
+
+      // TODO fix this setting of the editor
+      if (typeof editorId === 'number') {
+        newEditors[editorId] = editor;
       }
-
-      const newEditors: EditorSliceState['editors'] = [...state.editors];
-
-      newEditors[editorId] = editor;
 
       return {
         ...state,
-        editors: newEditors,
+        mainEditors: newEditors,
       };
     }
 
@@ -129,8 +142,8 @@ export function editorManagerSlice(): Slice<
         }
 
         // derived state
-        newState.primaryEditor = newState.editors[0];
-        newState.secondaryEditor = newState.editors[1];
+        newState.primaryEditor = newState.mainEditors[PRIMARY_EDITOR_INDEX];
+        newState.secondaryEditor = newState.mainEditors[SECONDARY_EDITOR_INDEX];
 
         return newState;
       },
@@ -157,16 +170,17 @@ export function editorManagerSlice(): Slice<
       stateToJSON(sliceState) {
         let newEditorConfig = sliceState.editorConfig;
 
-        for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-          const editor = sliceState.editors[i];
-
+        for (const { editor, editorId } of getEachEditorIterable(sliceState)) {
           if (editor) {
-            const { editorId, selectionJson, wsPath } = calculateSelection(
-              i,
+            const { selectionJson, wsPath } = calculateSelection(
+              editorId,
               editor,
             );
 
-            const scroll = calculateScrollPosition(i, editor)?.scrollPosition;
+            const scroll = calculateScrollPosition(
+              editorId,
+              editor,
+            )?.scrollPosition;
             newEditorConfig = newEditorConfig.updateSelection(
               selectionJson,
               wsPath,
@@ -183,12 +197,8 @@ export function editorManagerSlice(): Slice<
         return {
           version: JSON_SCHEMA_VERSION,
           data: {
-            ...initialEditorSliceState,
-            editors: [],
             focusedEditorId: sliceState.focusedEditorId,
             editorConfig: newEditorConfig.toJsonObj(),
-            primaryEditor: undefined,
-            secondaryEditor: undefined,
           },
         };
       },
