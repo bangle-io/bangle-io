@@ -75,15 +75,15 @@ describe('set editor action', () => {
   test('setting out of range editorId', () => {
     let mockEditor = createTestEditor();
     let store = createStore();
-    expect(() =>
-      store.dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:set-editor',
-        value: {
-          editor: mockEditor,
-          editorId: 10000,
-        },
-      }),
-    ).toThrowError('editorId is out of range');
+    const state = store.state;
+    store.dispatch({
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
+      value: {
+        editor: mockEditor,
+        editorId: 10000,
+      },
+    });
+    expect(store.state).toStrictEqual(state);
   });
 
   test('replacing editor', () => {
@@ -151,14 +151,16 @@ describe('update focus action', () => {
     ).toBe(1);
   });
 
-  test('throws error for out of bound editorId', () => {
+  test('invalid editorId has no effect on state', () => {
     let store = createStore();
-    expect(() => {
-      store.dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
-        value: { editorId: 1000000 },
-      });
-    }).toThrowError('editorId is out of range');
+    let state = store.state;
+
+    store.dispatch({
+      name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
+      value: { editorId: 1000000 },
+    });
+
+    expect(store.state).toStrictEqual(state);
   });
 });
 

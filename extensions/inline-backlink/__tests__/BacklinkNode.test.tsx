@@ -10,11 +10,7 @@ import {
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
-import {
-  getNote,
-  pushWsPath,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { pushWsPath, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
@@ -30,6 +26,7 @@ const setup = async ([firstNote, ...otherNotes]: Array<
 > = []) => {
   let { store, extensionRegistry } = createBasicTestStore({
     extensions: [inlineBackLinkExtension],
+    useEditorManagerSlice: true,
   });
   const [wsPath, md] = firstNote || [];
 
@@ -44,17 +41,16 @@ const setup = async ([firstNote, ...otherNotes]: Array<
   ]);
 
   let { container } = render(
-    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+    <TestStoreProvider
+      editorManagerContextProvider
+      bangleStore={store}
+      bangleStoreChanged={0}
+    >
       <Editor
         editorId={SECONDARY_EDITOR_INDEX}
         wsPath={wsPath}
         className="test-class"
-        dispatchSerialOperation={() => {}}
         extensionRegistry={extensionRegistry}
-        bangleStore={store}
-        getDocument={(wsPath) =>
-          getNote(wsPath)(store.state, store.dispatch, store)
-        }
       />
     </TestStoreProvider>,
   );

@@ -15,6 +15,7 @@ import {
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';
 
+import { useSerialOperationContext } from '@bangle.io/api';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -28,7 +29,13 @@ import type {
 // TODO decouple this component from slice-editor-manager
 // these should be generic and accepted as a prop
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
-import { getInitialSelection } from '@bangle.io/slice-editor-manager';
+import {
+  getInitialSelection,
+  setEditorReady,
+  setEditorUnmounted,
+  useEditorManagerContext,
+} from '@bangle.io/slice-editor-manager';
+import { getNote } from '@bangle.io/slice-workspace';
 import { cx } from '@bangle.io/utils';
 
 import { watchPluginHost } from './watch-plugin-host';
@@ -37,16 +44,11 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
 export interface EditorProps {
-  bangleStore: BangleApplicationStore;
   className?: string;
-  dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType?: EditorDisplayType;
   editorId: EditorIdType;
   extensionRegistry: ExtensionRegistry;
-  getDocument: (wsPath: string) => Promise<Node | undefined>;
   wsPath: string;
-  onEditorReady?: (editor: CoreBangleEditor, editorId: EditorIdType) => void;
-  onEditorUnmount?: (editor: CoreBangleEditor, editorId: EditorIdType) => void;
 }
 
 export function Editor(props: EditorProps) {
@@ -56,17 +58,16 @@ export function Editor(props: EditorProps) {
 }
 
 function EditorInner({
-  bangleStore,
   className,
-  dispatchSerialOperation,
   editorDisplayType = EditorDisplayType.Page,
   editorId,
   extensionRegistry,
   wsPath,
-  getDocument,
-  onEditorReady,
-  onEditorUnmount,
 }: EditorProps) {
+  const { bangleStore } = useEditorManagerContext();
+
+  const { dispatchSerialOperation } = useSerialOperationContext();
+
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
@@ -74,17 +75,23 @@ function EditorInner({
 
   useEffect(() => {
     let destroyed = false;
+    debugger;
+    getNote(wsPath)(bangleStore.state, bangleStore.dispatch, bangleStore)
+      .then((doc) => {
+        if (!destroyed) {
+          setInitialDoc(doc);
+        }
+      })
+      .catch((err) => {
+        bangleStore.errorHandler(err);
 
-    getDocument(wsPath).then((doc) => {
-      if (!destroyed) {
-        setInitialDoc(doc);
-      }
-    });
+        return undefined;
+      });
 
     return () => {
       destroyed = true;
     };
-  }, [getDocument, wsPath]);
+  }, [wsPath, bangleStore]);
 
   const editorRef = useRef<ReturnType<typeof Proxy.revocable> | null>(null);
 
@@ -93,9 +100,14 @@ function EditorInner({
       // See the code below for explaination on why this exist.
       const proxiedEditor = Proxy.revocable(editor, {});
       editorRef.current = proxiedEditor;
-      onEditorReady?.(proxiedEditor.proxy, editorId);
+
+      setEditorReady(
+        editorId,
+        wsPath,
+        proxiedEditor.proxy,
+      )(bangleStore.state, bangleStore.dispatch);
     },
-    [onEditorReady, editorId],
+    [bangleStore, wsPath, editorId],
   );
 
   useEffect(() => {
@@ -104,7 +116,11 @@ function EditorInner({
 
       if (editorProxy) {
         editorRef.current = null;
-        onEditorUnmount?.(editorProxy.proxy as any, editorId);
+
+        setEditorUnmounted(editorId, editorProxy.proxy as any)(
+          bangleStore.state,
+          bangleStore.dispatch,
+        );
 
         // Avoiding MEMORY LEAK
         // Editor object is a pretty massive object and writing idiomatic react
@@ -124,7 +140,7 @@ function EditorInner({
         }, 100);
       }
     };
-  }, [editorId, wsPath, onEditorUnmount]);
+  }, [editorId, bangleStore]);
 
   const initialSelection =
     editorId != null && initialValue

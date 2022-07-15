@@ -50,8 +50,14 @@ export function* getEachEditorIterable(
   }
 }
 
-export function assertValidEditorId(editorId: EditorIdType) {
-  if (typeof editorId !== 'number' || editorId >= MAX_OPEN_EDITORS) {
-    throw new Error('editorId is out of range');
+export function isValidEditorId(editorId: EditorIdType): boolean {
+  return editorId >= 0 && editorId < MAX_OPEN_EDITORS;
+}
+
+export function assertValidEditorId(
+  editorId: EditorIdType,
+): asserts editorId is EditorIdType {
+  if (!isValidEditorId(editorId)) {
+    throw new Error('editorId is out of range or invalid');
   }
 }

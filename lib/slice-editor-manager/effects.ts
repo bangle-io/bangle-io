@@ -15,7 +15,6 @@ import {
   updateInitialSelection,
   updateScrollPosition,
 } from './operations';
-import type { EditorIdType } from './types';
 import { getEachEditorIterable } from './utils';
 
 export const initialSelectionEffect = editorManagerSliceKey.effect(() => {
@@ -51,11 +50,12 @@ export const focusEditorEffect = editorManagerSliceKey.effect((state) => {
   const initialSliceState = editorManagerSliceKey.getSliceState(state);
 
   // This exists to preserve focused editor during page reloads
-  let editorNeedsFocusOnPageLoad: EditorIdType =
-    initialSliceState?.focusedEditorId != null
-      ? initialSliceState.focusedEditorId
-      : PRIMARY_EDITOR_INDEX;
+  let defaultFocusedEditorId =
+    initialSliceState?.focusedEditorId == null
+      ? PRIMARY_EDITOR_INDEX
+      : initialSliceState.focusedEditorId;
 
+  let initialFocusDone = false;
   let mounted = Date.now();
 
   return {
@@ -77,16 +77,20 @@ export const focusEditorEffect = editorManagerSliceKey.effect((state) => {
           !currentEditor.destroyed &&
           prevEditor !== currentEditor;
 
-        if (editorNeedsFocusOnPageLoad === editorId && isNewEditor) {
+        if (
+          defaultFocusedEditorId === editorId &&
+          isNewEditor &&
+          !initialFocusDone
+        ) {
           currentEditor.focusView();
-          editorNeedsFocusOnPageLoad = undefined;
+          initialFocusDone = true;
 
           return;
         }
 
         // do not attempt to focus on any newly mounted editor, if conditions do not match
         // This is so as to avoid competing with the `editorNeedsFocusOnPageLoad`.
-        if (!editorNeedsFocusOnPageLoad && isNewEditor && !cooldown) {
+        if (initialFocusDone && isNewEditor && !cooldown) {
           currentEditor.focusView();
 
           return;

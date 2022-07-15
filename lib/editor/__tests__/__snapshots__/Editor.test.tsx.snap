@@ -2,22 +2,17 @@
 
 exports[`basic renders 1`] = `
 <div>
-  <div>
+  <div
+    class="test-class B-editor_display-page "
+  >
     <div
-      class="test-class B-editor_display-page "
+      class="ProseMirror bangle-editor"
+      contenteditable="true"
+      translate="no"
     >
-      <div
-        class="ProseMirror bangle-editor"
-        contenteditable="true"
-        translate="no"
-      >
-        <h1>
-          Hola
-        </h1>
-        <p>
-          Hello world! I am a test
-        </p>
-      </div>
+      <p>
+        Hello world! I am a test
+      </p>
     </div>
   </div>
 </div>

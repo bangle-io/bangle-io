@@ -14,12 +14,7 @@ if (typeof jest === 'undefined') {
 // creates a store with provided slices
 // if you need a store with batteries included, use
 // createBasicTestStore
-export function createTestStore<
-  SL = any,
-  A extends BaseAction = any,
-  S = SL,
-  C extends { [key: string]: any } = any,
->({
+export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
   slices = [],
   opts,
   // slice key purely for getting the types of the store correct
@@ -39,9 +34,9 @@ export function createTestStore<
   },
 }: {
   // for getting the types right
-  sliceKey?: SliceKey<SL, A, S, C>;
+  sliceKey?: SliceKey<SL, A, S>;
   slices?: SliceArray<any, any>;
-  opts?: C;
+  opts?: any;
   scheduler?: SchedulerType;
   onError?: OnErrorType<SL, A>;
 }): {

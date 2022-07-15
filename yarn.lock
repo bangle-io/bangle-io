@@ -2614,6 +2614,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3

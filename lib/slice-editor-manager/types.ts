@@ -8,7 +8,7 @@ import type { JsonObject } from '@bangle.io/shared-types';
 
 import type { OpenedEditorsConfig } from './opened-editors-config';
 
-export type EditorIdType = number | undefined;
+export type EditorIdType = number;
 
 export type EditorDispatchType = ApplicationStore<
   EditorSliceState,
@@ -23,7 +23,7 @@ export interface EditorSliceState {
   // but an editor will never reused once it is detroyed.
   // Please see https://github.com/bangle-io/bangle-io/blob/dev/lib/editor/Editor.tsx for
   // an indepth explaination.
-  focusedEditorId: EditorIdType;
+  focusedEditorId: EditorIdType | undefined;
   mainEditors: Array<BangleEditor | undefined>;
   editorConfig: OpenedEditorsConfig;
   primaryEditor: BangleEditor | undefined;

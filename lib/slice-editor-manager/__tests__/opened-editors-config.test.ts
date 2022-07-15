@@ -40,7 +40,6 @@ test('works empty', () => {
   expect(
     config.getScrollPosition('test:magic.md', SECONDARY_EDITOR_INDEX),
   ).toBeUndefined();
-  expect(config.getScrollPosition('test:magic.md', undefined)).toBeUndefined();
   expect(
     config.getSelection('test:magic.md', SECONDARY_EDITOR_INDEX),
   ).toBeUndefined();
@@ -48,7 +47,6 @@ test('works empty', () => {
     config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX),
   ).toBeUndefined();
   expect(config.getSelection('test:magic.md', 100)).toBeUndefined();
-  expect(config.getSelection('test:magic.md', undefined)).toBeUndefined();
 });
 
 test('shrinks with bigger arrays automatically', () => {
@@ -176,7 +174,7 @@ describe('selection', () => {
     ).toBeUndefined();
   });
 
-  test('updateSelection with undefined editorId keeps the same', () => {
+  test('updateSelection with invalid editorId keeps the same', () => {
     let config = OpenedEditorsConfig.fromJsonObj({
       selections: [
         {
@@ -196,13 +194,13 @@ describe('selection', () => {
         type: 'text',
       },
       'test:wonder.md',
-      undefined,
+      313,
     );
 
-    expect(newConfig).toBe(config);
+    expect(newConfig).toEqual(config);
   });
 
-  test('updateScrollPosition with undefined editorId keeps the same', () => {
+  test('updateScrollPosition with incorrect editorId keeps the same', () => {
     let config = OpenedEditorsConfig.fromJsonObj({
       selections: [
         {
@@ -215,13 +213,9 @@ describe('selection', () => {
       ],
     });
 
-    const newConfig = config.updateScrollPosition(
-      3,
-      'test:wonder.md',
-      undefined,
-    );
+    const newConfig = config.updateScrollPosition(3, 'test:wonder.md', -1);
 
-    expect(newConfig).toBe(config);
+    expect(newConfig).toEqual(config);
   });
 
   test('updates selection of the different wsPath but same editorId', () => {

@@ -17,10 +17,10 @@ import {
 import { OpenedEditorsConfig } from './opened-editors-config';
 import type { EditorManagerAction, EditorSliceState } from './types';
 import {
-  assertValidEditorId,
   calculateScrollPosition,
   calculateSelection,
   getEachEditorIterable,
+  isValidEditorId,
 } from './utils';
 
 const LOG = false;
@@ -56,17 +56,14 @@ const applyState = (
     case 'action::@bangle.io/slice-editor-manager:set-editor': {
       const { editorId, editor } = action.value;
 
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
+
       const newEditors: EditorSliceState['mainEditors'] = [
         ...state.mainEditors,
       ];
-
-      // TODO fix this setting of the editor
-      assertValidEditorId(editorId);
-
-      // TODO fix this setting of the editor
-      if (typeof editorId === 'number') {
-        newEditors[editorId] = editor;
-      }
+      newEditors[editorId] = editor;
 
       return {
         ...state,
@@ -77,8 +74,8 @@ const applyState = (
     case 'action::@bangle.io/slice-editor-manager:on-focus-update': {
       const editorId = action.value.editorId;
 
-      if (typeof editorId === 'number' && editorId >= MAX_OPEN_EDITORS) {
-        throw new Error('editorId is out of range');
+      if (!isValidEditorId(editorId)) {
+        return state;
       }
 
       return {
@@ -89,6 +86,10 @@ const applyState = (
 
     case 'action::@bangle.io/slice-editor-manager:update-scroll-position': {
       const { editorId, wsPath, scrollPosition } = action.value;
+
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
 
       const newEditorConfig = state.editorConfig.updateScrollPosition(
         scrollPosition,
@@ -104,6 +105,10 @@ const applyState = (
 
     case 'action::@bangle.io/slice-editor-manager:update-initial-selection-json': {
       const { editorId, wsPath, selectionJson } = action.value;
+
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
 
       const newEditorConfig = state.editorConfig.updateSelection(
         selectionJson,

@@ -86,7 +86,6 @@ export function BacklinkNode({
       />
       {isTooltipVisible && backlinksWsPath && (
         <LinkPreview
-          bangleStore={bangleStore}
           disablePreview={disablePopup}
           positionProps={{ ...tooltipHoverProps, ...tooltipProps.attributes }}
           ref={setTooltipElement}

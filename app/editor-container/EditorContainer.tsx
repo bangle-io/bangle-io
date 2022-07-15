@@ -42,21 +42,6 @@ export function EditorContainer({
   const { dispatchSerialOperation } = useSerialOperationContext();
   const extensionRegistry = useExtensionRegistryContext();
 
-  const getDocument = useCallback(
-    (wsPath: string) => {
-      return getNote(wsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      ).catch((err) => {
-        bangleStore.errorHandler(err);
-
-        return undefined;
-      });
-    },
-    [bangleStore],
-  );
-
   const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
 
   const onPressSecondaryEditor = useCallback(() => {
@@ -71,34 +56,6 @@ export function EditorContainer({
       value: editorId,
     });
   }, [dispatchSerialOperation, editorId]);
-
-  const onEditorReady = useCallback(
-    (editor: CoreBangleEditor, editorId: EditorIdType) => {
-      if (wsPath) {
-        setEditorReady(
-          editorId,
-          wsPath,
-          editor,
-        )(bangleStore.state, bangleStore.dispatch);
-
-        // TODO this is currently used by the integration tests
-        // we need a better way to do this
-        if (typeof window !== 'undefined') {
-          (window as any)[`editor-${editorId}`] = { editor, wsPath };
-        }
-      }
-    },
-    [wsPath, bangleStore],
-  );
-  const onEditorUnmount = useCallback(
-    (editor: CoreBangleEditor, editorId: EditorIdType) => {
-      setEditorUnmounted(editorId, editor)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
-    },
-    [bangleStore],
-  );
 
   let children;
 
@@ -117,13 +74,8 @@ export function EditorContainer({
       <Editor
         editorId={editorId}
         wsPath={wsPath}
-        bangleStore={bangleStore}
-        dispatchSerialOperation={dispatchSerialOperation}
         extensionRegistry={extensionRegistry}
         className={`B-editor-container_editor B-editor-container_editor-${editorId}`}
-        getDocument={getDocument}
-        onEditorReady={onEditorReady}
-        onEditorUnmount={onEditorUnmount}
       />
     );
   }

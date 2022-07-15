@@ -12,6 +12,7 @@ export {
   forEachEditor,
   getEditor,
   getEditorState,
+  getEditorView,
   getInitialSelection,
   isEditingAllowed,
   setEditorReady,

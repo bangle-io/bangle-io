@@ -68,7 +68,6 @@ describe('operations: forEachEditor', () => {
     expect(getEditor(PRIMARY_EDITOR_INDEX)(state)).toBe(editorA);
     expect(getEditor(SECONDARY_EDITOR_INDEX)(state)).toBe(editorB);
     expect(getEditor(4)(state)).toBe(undefined);
-    expect(getEditor(undefined)(state)).toBe(undefined);
   });
 
   test('works 2', () => {
@@ -111,10 +110,12 @@ describe('operations: getEditorState', () => {
     expect(getEditorState(PRIMARY_EDITOR_INDEX)(state)).toBe(undefined);
   });
 
-  test('undefined editorId', () => {
+  test('incorrect editorId', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
-    expect(getEditorState(undefined)(state)).toBe(undefined);
+    expect(() => getEditorState(-1)(state)).toThrowError(
+      'editorId is out of range or invalid',
+    );
   });
 });
 
@@ -124,13 +125,15 @@ describe('setEditorReady', () => {
     scrollParent = {};
     getScrollParentElementMock.mockImplementation((): any => scrollParent);
   });
-  test('does not work on undefined editorId', () => {
+  test('does not work on incorrect editorId', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
     let mockEditor: any = {};
 
     const dispatch = jest.fn();
-    setEditorReady(undefined, 'test:one.md', mockEditor)(state, dispatch);
+    expect(() => {
+      setEditorReady(-1, 'test:one.md', mockEditor)(state, dispatch);
+    }).toThrowError('editorId is out of range or invalid');
 
     expect(scrollParent).toEqual({});
     expect(dispatch).toHaveBeenCalledTimes(0);

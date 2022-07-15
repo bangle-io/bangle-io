@@ -142,15 +142,10 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
       {isMinimized ? null : (
         <div className="px-2 overflow-y-auto pl-6 B-editor-container_mini-editor">
           <Editor
-            editorId={MINI_EDITOR_INDEX}
-            wsPath={wsPath}
-            bangleStore={bangleStore}
-            dispatchSerialOperation={dispatchSerialOperation}
-            extensionRegistry={extensionRegistry}
-            getDocument={getDocument}
-            onEditorReady={onEditorReady}
-            onEditorUnmount={onEditorUnmount}
             editorDisplayType={EditorDisplayType.Popup}
+            editorId={MINI_EDITOR_INDEX}
+            extensionRegistry={extensionRegistry}
+            wsPath={wsPath}
           />
         </div>
       )}

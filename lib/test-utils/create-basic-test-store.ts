@@ -10,6 +10,7 @@ import {
   Extension,
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
+import type { BangleStateConfig } from '@bangle.io/shared-types';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
@@ -64,7 +65,7 @@ export function createBasicTestStore<
   useEditorCoreExtension?: boolean;
   useEditorManagerSlice?: boolean;
   onError?: OnErrorType<S, A>;
-  opts?: any;
+  opts?: Partial<BangleStateConfig>;
 } = {}) {
   let extensionRegistry = createExtensionRegistry(
     [
@@ -82,6 +83,12 @@ export function createBasicTestStore<
     },
   );
 
+  const defOpts: BangleStateConfig = {
+    saveState: jest.fn(),
+    extensionRegistry,
+    useWebWorker: false,
+  };
+
   const { store, actionsDispatched, dispatchSpy, getActionNames, getAction } =
     createTestStore({
       sliceKey,
@@ -98,7 +105,7 @@ export function createBasicTestStore<
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
       opts: {
-        extensionRegistry,
+        ...defOpts,
         ...opts,
       },
     });
