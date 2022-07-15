@@ -38,7 +38,7 @@ export function EditorContainer({
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
-  const { focusedEditorId, bangleStore } = useEditorManagerContext();
+  const { focusedEditorId } = useEditorManagerContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
   const extensionRegistry = useExtensionRegistryContext();
 

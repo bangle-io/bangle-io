@@ -26,8 +26,6 @@ import type {
   EditorPluginMetadata,
   ExtensionRegistry,
 } from '@bangle.io/shared-types';
-// TODO decouple this component from slice-editor-manager
-// these should be generic and accepted as a prop
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   getInitialSelection,
@@ -75,7 +73,6 @@ function EditorInner({
 
   useEffect(() => {
     let destroyed = false;
-    debugger;
     getNote(wsPath)(bangleStore.state, bangleStore.dispatch, bangleStore)
       .then((doc) => {
         if (!destroyed) {
