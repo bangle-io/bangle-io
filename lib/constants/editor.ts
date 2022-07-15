@@ -24,6 +24,6 @@ export const intersectionObserverPluginKey =
 export enum EditorDisplayType {
   // Full editor experience
   Page = 'PAGE',
-  // Popup editors are floating around an element
-  Popup = 'POPUP',
+  // Floating editors are floating
+  Floating = 'Floating',
 }

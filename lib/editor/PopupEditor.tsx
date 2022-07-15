@@ -35,7 +35,7 @@ export const PopupEditor = React.forwardRef<HTMLDivElement, PopupEditorProps>(
           <Editor
             {...editorProps}
             editorId={POPUP_EDITOR_INDEX}
-            editorDisplayType={EditorDisplayType.Popup}
+            editorDisplayType={EditorDisplayType.Floating}
           />
         )}
       </div>,

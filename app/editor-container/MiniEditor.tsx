@@ -142,7 +142,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
       {isMinimized ? null : (
         <div className="px-2 overflow-y-auto pl-6 B-editor-container_mini-editor">
           <Editor
-            editorDisplayType={EditorDisplayType.Popup}
+            editorDisplayType={EditorDisplayType.Floating}
             editorId={MINI_EDITOR_INDEX}
             extensionRegistry={extensionRegistry}
             wsPath={wsPath}

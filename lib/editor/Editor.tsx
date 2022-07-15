@@ -209,7 +209,7 @@ function EditorInner2({
       displayClass = 'B-editor_display-page';
       break;
     }
-    case EditorDisplayType.Popup: {
+    case EditorDisplayType.Floating: {
       displayClass = 'B-editor_display-popup';
       break;
     }
