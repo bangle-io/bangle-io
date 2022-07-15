@@ -42,7 +42,7 @@ export function BacklinkNode({
     undefined,
   );
 
-  const disablePopup = editorDisplayType === EditorDisplayType.Popup;
+  const disablePopup = editorDisplayType === EditorDisplayType.Floating;
 
   const [isHovered, updateIsHovered] = useState(false);
   const { hoverProps: tooltipHoverProps, isHovered: isTooltipHovered } =
@@ -86,7 +86,6 @@ export function BacklinkNode({
       />
       {isTooltipVisible && backlinksWsPath && (
         <LinkPreview
-          bangleStore={bangleStore}
           disablePreview={disablePopup}
           positionProps={{ ...tooltipHoverProps, ...tooltipProps.attributes }}
           ref={setTooltipElement}

@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { SECONDARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   createNewNote,
   createWorkspace,
@@ -23,7 +25,7 @@ test('split screen shortcut works', async ({ page }) => {
   await page.keyboard.up(ctrlKey);
   await sleep();
 
-  await getEditorLocator(page, 1);
+  await getEditorLocator(page, SECONDARY_EDITOR_INDEX);
   expect(await page.$('.B-editor-container_editor-1')).not.toBeNull();
 });
 

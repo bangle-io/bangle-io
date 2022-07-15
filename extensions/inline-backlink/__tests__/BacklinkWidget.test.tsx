@@ -4,6 +4,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
@@ -121,7 +122,7 @@ test('handles abort error', async () => {
   useEditorManagerContextMock.mockImplementation(() => {
     return {
       ...getUseEditorManagerContextReturn,
-      focusedEditorId: 0,
+      focusedEditorId: PRIMARY_EDITOR_INDEX,
     };
   });
 
@@ -182,7 +183,7 @@ test('renders backlinks', async () => {
   useEditorManagerContextMock.mockImplementation(() => {
     return {
       ...getUseEditorManagerContextReturn,
-      focusedEditorId: 0,
+      focusedEditorId: PRIMARY_EDITOR_INDEX,
     };
   });
 

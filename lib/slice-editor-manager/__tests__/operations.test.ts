@@ -1,7 +1,10 @@
-import type { BangleEditor } from '@bangle.dev/core';
 import { Selection } from '@bangle.dev/pm';
 
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement } from '@bangle.io/utils';
@@ -43,14 +46,14 @@ describe('operations: forEachEditor', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
     state = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorB,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -62,10 +65,9 @@ describe('operations: forEachEditor', () => {
     expect(mockCb).nthCalledWith(1, editorA, 0);
     expect(mockCb).nthCalledWith(2, editorB, 1);
     expect(mockCb).nthCalledWith(3, undefined, 2);
-    expect(getEditor(0)(state)).toBe(editorA);
-    expect(getEditor(1)(state)).toBe(editorB);
+    expect(getEditor(PRIMARY_EDITOR_INDEX)(state)).toBe(editorA);
+    expect(getEditor(SECONDARY_EDITOR_INDEX)(state)).toBe(editorB);
     expect(getEditor(4)(state)).toBe(undefined);
-    expect(getEditor(undefined)(state)).toBe(undefined);
   });
 
   test('works 2', () => {
@@ -76,7 +78,7 @@ describe('operations: forEachEditor', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -100,18 +102,20 @@ describe('operations: getEditorState', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
-    expect(getEditorState(1)(state)).toBe(value);
-    expect(getEditorState(0)(state)).toBe(undefined);
+    expect(getEditorState(SECONDARY_EDITOR_INDEX)(state)).toBe(value);
+    expect(getEditorState(PRIMARY_EDITOR_INDEX)(state)).toBe(undefined);
   });
 
-  test('undefined editorId', () => {
+  test('incorrect editorId', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
-    expect(getEditorState(undefined)(state)).toBe(undefined);
+    expect(() => getEditorState(-1)(state)).toThrowError(
+      'editorId is out of range or invalid',
+    );
   });
 });
 
@@ -121,13 +125,15 @@ describe('setEditorReady', () => {
     scrollParent = {};
     getScrollParentElementMock.mockImplementation((): any => scrollParent);
   });
-  test('does not work on undefined editorId', () => {
+  test('does not work on incorrect editorId', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
     let mockEditor: any = {};
 
     const dispatch = jest.fn();
-    setEditorReady(undefined, 'test:one.md', mockEditor)(state, dispatch);
+    expect(() => {
+      setEditorReady(-1, 'test:one.md', mockEditor)(state, dispatch);
+    }).toThrowError('editorId is out of range or invalid');
 
     expect(scrollParent).toEqual({});
     expect(dispatch).toHaveBeenCalledTimes(0);
@@ -138,14 +144,22 @@ describe('setEditorReady', () => {
 
     state = state.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
-      value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
+      value: {
+        wsPath: 'test:one.md',
+        editorId: PRIMARY_EDITOR_INDEX,
+        scrollPosition: 9,
+      },
     });
 
     let mockEditor: any = {};
 
     const dispatch = jest.fn();
 
-    setEditorReady(0, 'test:one.md', mockEditor)(state, dispatch);
+    setEditorReady(
+      PRIMARY_EDITOR_INDEX,
+      'test:one.md',
+      mockEditor,
+    )(state, dispatch);
     expect(scrollParent).toEqual({
       scrollTop: 9,
     });
@@ -155,7 +169,7 @@ describe('setEditorReady', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
   });
@@ -183,12 +197,16 @@ describe('getInitialSelection', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.atEnd(pmNodeLong).toJSON(),
       },
     });
 
-    const selection = getInitialSelection(0, 'test:one.md', pmNodeShort)(state);
+    const selection = getInitialSelection(
+      PRIMARY_EDITOR_INDEX,
+      'test:one.md',
+      pmNodeShort,
+    )(state);
 
     expect(selection?.toJSON()).not.toEqual(
       Selection.atEnd(pmNodeLong).toJSON(),
@@ -206,20 +224,20 @@ describe('setEditorUnmounted', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
     const dispatch = jest.fn();
 
-    setEditorUnmounted(0, editorA)(stateA, dispatch);
+    setEditorUnmounted(PRIMARY_EDITOR_INDEX, editorA)(stateA, dispatch);
 
     expect(dispatch).toBeCalledTimes(1);
     expect(dispatch).nthCalledWith(1, {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: undefined,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
   });
@@ -233,13 +251,13 @@ describe('setEditorUnmounted', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
     const dispatch = jest.fn();
 
-    setEditorUnmounted(0, editorB)(stateA, dispatch);
+    setEditorUnmounted(PRIMARY_EDITOR_INDEX, editorB)(stateA, dispatch);
 
     expect(dispatch).toBeCalledTimes(0);
   });
@@ -254,14 +272,14 @@ describe('didSomeEditorChange', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
     let stateB = stateA.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorB,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -278,14 +296,14 @@ describe('didSomeEditorChange', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
     let stateB = stateA.applyAction({
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorB,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -293,7 +311,7 @@ describe('didSomeEditorChange', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editorA,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -308,7 +326,7 @@ describe('didSomeEditorChange', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: undefined,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 

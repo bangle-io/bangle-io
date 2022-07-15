@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   createNewNote,
   createWorkspace,
@@ -27,7 +29,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   // resulting in 0 search results
   await createNewNote(page, wsName, 'test-two');
 
-  await getEditorLocator(page, 0, { focus: true });
+  await getEditorLocator(page, PRIMARY_EDITOR_INDEX, { focus: true });
 });
 
 test('Is able to search note tags', async ({ page }) => {

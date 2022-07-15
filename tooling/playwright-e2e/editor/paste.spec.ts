@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -15,8 +17,8 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   let wsName = await createWorkspace(page);
   const noteName = 'my-mark-test-123';
   await createNewNote(page, wsName, noteName);
-  await clearEditor(page, 0);
-  await getEditorLocator(page, 0, { focus: true });
+  await clearEditor(page, PRIMARY_EDITOR_INDEX);
+  await getEditorLocator(page, PRIMARY_EDITOR_INDEX, { focus: true });
 });
 
 const pasteSliceJson = async (page: Page, sliceJson: object) => {
@@ -49,7 +51,7 @@ test.describe('Pasting rich test', () => {
       openStart: 1,
       openEnd: 1,
     });
-    expect(await getEditorDebugString(page, 0)).toEqual(
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       `doc(heading(\"Hello\"), paragraph)`,
     );
   });
@@ -73,7 +75,7 @@ test.describe('Pasting rich test', () => {
       openStart: 1,
       openEnd: 1,
     });
-    expect(await getEditorDebugString(page, 0)).toEqual(
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       `doc(paragraph(\"Hello\"))`,
     );
   });
@@ -113,7 +115,7 @@ test.describe('Pasting rich test', () => {
 
     await pasteSliceJson(page, sliceJson);
 
-    expect(await getEditorDebugString(page, 0)).toEqual(
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       'doc(bulletList(listItem(paragraph("Test in the house"))), paragraph)',
     );
   });
@@ -153,7 +155,7 @@ test.describe('Pasting rich test', () => {
 
     await pasteSliceJson(page, sliceJson);
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -217,7 +219,7 @@ test.describe('Pasting rich test', () => {
 
     await pasteSliceJson(page, sliceJson);
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: { collapseContent: null, level: 2 },

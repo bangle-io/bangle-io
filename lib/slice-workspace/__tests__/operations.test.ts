@@ -363,7 +363,7 @@ describe('goToWorkspaceAuthRoute', () => {
     expect(goToLocation).nthCalledWith(
       1,
       `/ws-auth/my-ws?error_code=SOME_CODE&ws_paths=${encodeURIComponent(
-        `["my-ws:some-other-test-note.md",null,null]`,
+        `["my-ws:some-other-test-note.md",null,null,null]`,
       )}`,
       { replace: true },
     );

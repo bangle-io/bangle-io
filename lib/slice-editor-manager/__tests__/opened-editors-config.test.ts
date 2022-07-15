@@ -1,4 +1,9 @@
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  MINI_EDITOR_INDEX,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import { OpenedEditorsConfig } from '../opened-editors-config';
@@ -18,8 +23,10 @@ test('works empty', () => {
         null,
         null,
         null,
+        null,
       ],
       "_selections": Array [
+        null,
         null,
         null,
         null,
@@ -27,13 +34,19 @@ test('works empty', () => {
     }
   `);
 
-  expect(config.getScrollPosition('test:magic.md', 0)).toBeUndefined();
-  expect(config.getScrollPosition('test:magic.md', 1)).toBeUndefined();
-  expect(config.getScrollPosition('test:magic.md', undefined)).toBeUndefined();
-  expect(config.getSelection('test:magic.md', 1)).toBeUndefined();
-  expect(config.getSelection('test:magic.md', 0)).toBeUndefined();
+  expect(
+    config.getScrollPosition('test:magic.md', PRIMARY_EDITOR_INDEX),
+  ).toBeUndefined();
+  expect(
+    config.getScrollPosition('test:magic.md', SECONDARY_EDITOR_INDEX),
+  ).toBeUndefined();
+  expect(
+    config.getSelection('test:magic.md', SECONDARY_EDITOR_INDEX),
+  ).toBeUndefined();
+  expect(
+    config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX),
+  ).toBeUndefined();
   expect(config.getSelection('test:magic.md', 100)).toBeUndefined();
-  expect(config.getSelection('test:magic.md', undefined)).toBeUndefined();
 });
 
 test('shrinks with bigger arrays automatically', () => {
@@ -55,8 +68,12 @@ test('shrinks with bigger arrays automatically', () => {
         Object {
           "test:magic.md": 2,
         },
+        Object {
+          "test:magic.md": 3,
+        },
       ],
       "_selections": Array [
+        null,
         null,
         null,
         null,
@@ -64,9 +81,13 @@ test('shrinks with bigger arrays automatically', () => {
     }
   `);
 
-  expect(config.getScrollPosition('test:magic.md', 0)).toBe(0);
-  expect(config.getScrollPosition('test:magic.md', 1)).toBe(1);
-  expect(config.getScrollPosition('test:magic.md', 2)).toBe(2);
+  expect(config.getScrollPosition('test:magic.md', PRIMARY_EDITOR_INDEX)).toBe(
+    0,
+  );
+  expect(
+    config.getScrollPosition('test:magic.md', SECONDARY_EDITOR_INDEX),
+  ).toBe(1);
+  expect(config.getScrollPosition('test:magic.md', MINI_EDITOR_INDEX)).toBe(2);
   expect(config.getScrollPosition('test:magic.md', 30)).toBeUndefined();
 });
 
@@ -90,6 +111,7 @@ describe('selection', () => {
           null,
           null,
           null,
+          null,
         ],
         "_selections": Array [
           Object {
@@ -101,11 +123,12 @@ describe('selection', () => {
           },
           null,
           null,
+          null,
         ],
       }
     `);
 
-    expect(config.getSelection('test:magic.md', 0)).toEqual({
+    expect(config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX)).toEqual({
       anchor: 2004,
       head: 2004,
       type: 'text',
@@ -118,10 +141,10 @@ describe('selection', () => {
         type: 'text',
       },
       'test:magic.md',
-      0,
+      PRIMARY_EDITOR_INDEX,
     );
 
-    expect(config.getSelection('test:magic.md', 0)).toEqual({
+    expect(config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX)).toEqual({
       anchor: 20,
       head: 25,
       type: 'text',
@@ -140,12 +163,18 @@ describe('selection', () => {
         },
       ],
     });
-    config = config.updateSelection(undefined, 'test:magic.md', 0);
+    config = config.updateSelection(
+      undefined,
+      'test:magic.md',
+      PRIMARY_EDITOR_INDEX,
+    );
 
-    expect(config.getSelection('test:magic.md', 0)).toBeUndefined();
+    expect(
+      config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX),
+    ).toBeUndefined();
   });
 
-  test('updateSelection with undefined editorId keeps the same', () => {
+  test('updateSelection with invalid editorId keeps the same', () => {
     let config = OpenedEditorsConfig.fromJsonObj({
       selections: [
         {
@@ -165,13 +194,13 @@ describe('selection', () => {
         type: 'text',
       },
       'test:wonder.md',
-      undefined,
+      313,
     );
 
-    expect(newConfig).toBe(config);
+    expect(newConfig).toEqual(config);
   });
 
-  test('updateScrollPosition with undefined editorId keeps the same', () => {
+  test('updateScrollPosition with incorrect editorId keeps the same', () => {
     let config = OpenedEditorsConfig.fromJsonObj({
       selections: [
         {
@@ -184,13 +213,9 @@ describe('selection', () => {
       ],
     });
 
-    const newConfig = config.updateScrollPosition(
-      3,
-      'test:wonder.md',
-      undefined,
-    );
+    const newConfig = config.updateScrollPosition(3, 'test:wonder.md', -1);
 
-    expect(newConfig).toBe(config);
+    expect(newConfig).toEqual(config);
   });
 
   test('updates selection of the different wsPath but same editorId', () => {
@@ -206,7 +231,9 @@ describe('selection', () => {
       ],
     });
 
-    expect(oldConfig.getSelection('test:wonder.md', 0)).toBe(undefined);
+    expect(oldConfig.getSelection('test:wonder.md', PRIMARY_EDITOR_INDEX)).toBe(
+      undefined,
+    );
 
     let config = oldConfig.updateSelection(
       {
@@ -215,22 +242,24 @@ describe('selection', () => {
         type: 'text',
       },
       'test:wonder.md',
-      0,
+      PRIMARY_EDITOR_INDEX,
     );
 
     expect(config).not.toBe(oldConfig);
 
-    expect(config.getSelection('test:magic.md', 0)).toEqual({
+    expect(config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX)).toEqual({
       anchor: 20,
       head: 20,
       type: 'text',
     });
 
-    expect(config.getSelection('test:wonder.md', 0)).toEqual({
-      anchor: 24,
-      head: 24,
-      type: 'text',
-    });
+    expect(config.getSelection('test:wonder.md', PRIMARY_EDITOR_INDEX)).toEqual(
+      {
+        anchor: 24,
+        head: 24,
+        type: 'text',
+      },
+    );
   });
 
   test('updatingSelection a new editorId', () => {
@@ -243,12 +272,13 @@ describe('selection', () => {
         type: 'text',
       },
       'test:wonder.md',
-      0,
+      PRIMARY_EDITOR_INDEX,
     );
 
     expect(config).toMatchInlineSnapshot(`
       OpenedEditorsConfig {
         "_scrollPositions": Array [
+          null,
           null,
           null,
           null,
@@ -261,6 +291,7 @@ describe('selection', () => {
               "type": "text",
             },
           },
+          null,
           null,
           null,
         ],
@@ -282,16 +313,26 @@ describe('scroll', () => {
         },
       ],
     });
-    config = config.updateScrollPosition(undefined, 'test:wonder.md', 0);
-    expect(config.getScrollPosition('test:magic.md', 0)).toBeUndefined();
+    config = config.updateScrollPosition(
+      undefined,
+      'test:wonder.md',
+      PRIMARY_EDITOR_INDEX,
+    );
+    expect(
+      config.getScrollPosition('test:magic.md', PRIMARY_EDITOR_INDEX),
+    ).toBeUndefined();
   });
 });
 
 describe('serializing', () => {
   test('with empty values', () => {
     let config = OpenedEditorsConfig.fromJsonObj({});
-    expect(config.getScrollPosition('test:magic.md', 0)).toBeUndefined();
-    expect(config.getSelection('test:magic.md', 0)).toBeUndefined();
+    expect(
+      config.getScrollPosition('test:magic.md', PRIMARY_EDITOR_INDEX),
+    ).toBeUndefined();
+    expect(
+      config.getSelection('test:magic.md', PRIMARY_EDITOR_INDEX),
+    ).toBeUndefined();
     expect(config.toJsonObj()).toEqual({
       scrollPositions: createNullArray(MAX_OPEN_EDITORS),
       selections: createNullArray(MAX_OPEN_EDITORS),
@@ -312,7 +353,7 @@ describe('serializing', () => {
     });
 
     config = config
-      .updateScrollPosition(3, 'test:wonder.md', 1)
+      .updateScrollPosition(3, 'test:wonder.md', SECONDARY_EDITOR_INDEX)
       .updateSelection(
         {
           anchor: 24,
@@ -320,10 +361,10 @@ describe('serializing', () => {
           type: 'text',
         },
         'test:wonder.md',
-        0,
+        PRIMARY_EDITOR_INDEX,
       )
-      .updateScrollPosition(5, 'test:wonder2.md', 1)
-      .updateScrollPosition(3, 'test:first.md', 0);
+      .updateScrollPosition(5, 'test:wonder2.md', SECONDARY_EDITOR_INDEX)
+      .updateScrollPosition(3, 'test:first.md', PRIMARY_EDITOR_INDEX);
 
     expect(config.toJsonObj()).toEqual({
       scrollPositions: [
@@ -334,6 +375,7 @@ describe('serializing', () => {
           'test:wonder.md': 3,
           'test:wonder2.md': 5,
         },
+        null,
         null,
       ],
       selections: [
@@ -349,6 +391,7 @@ describe('serializing', () => {
             type: 'text',
           },
         },
+        null,
         null,
         null,
       ],

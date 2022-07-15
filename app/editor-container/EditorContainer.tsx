@@ -10,6 +10,7 @@ import {
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { EditorIdType } from '@bangle.io/shared-types';
 import {
   setEditorReady,
   setEditorUnmounted,
@@ -32,29 +33,14 @@ export function EditorContainer({
   wsPath: incomingWsPath,
 }: {
   widescreen: boolean;
-  editorId: number;
+  editorId: EditorIdType;
   wsPath: string | undefined;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
-  const { focusedEditorId, bangleStore } = useEditorManagerContext();
+  const { focusedEditorId } = useEditorManagerContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
   const extensionRegistry = useExtensionRegistryContext();
-
-  const getDocument = useCallback(
-    (wsPath: string) => {
-      return getNote(wsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      ).catch((err) => {
-        bangleStore.errorHandler(err);
-
-        return undefined;
-      });
-    },
-    [bangleStore],
-  );
 
   const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
 
@@ -70,34 +56,6 @@ export function EditorContainer({
       value: editorId,
     });
   }, [dispatchSerialOperation, editorId]);
-
-  const onEditorReady = useCallback(
-    (editor: CoreBangleEditor, editorId?: number) => {
-      if (wsPath) {
-        setEditorReady(
-          editorId,
-          wsPath,
-          editor,
-        )(bangleStore.state, bangleStore.dispatch);
-
-        // TODO this is currently used by the integration tests
-        // we need a better way to do this
-        if (typeof window !== 'undefined') {
-          (window as any)[`editor-${editorId}`] = { editor, wsPath };
-        }
-      }
-    },
-    [wsPath, bangleStore],
-  );
-  const onEditorUnmount = useCallback(
-    (editor: CoreBangleEditor, editorId?: number) => {
-      setEditorUnmounted(editorId, editor)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
-    },
-    [bangleStore],
-  );
 
   let children;
 
@@ -116,13 +74,8 @@ export function EditorContainer({
       <Editor
         editorId={editorId}
         wsPath={wsPath}
-        bangleStore={bangleStore}
-        dispatchSerialOperation={dispatchSerialOperation}
         extensionRegistry={extensionRegistry}
         className={`B-editor-container_editor B-editor-container_editor-${editorId}`}
-        getDocument={getDocument}
-        onEditorReady={onEditorReady}
-        onEditorUnmount={onEditorUnmount}
       />
     );
   }

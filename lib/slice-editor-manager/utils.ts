@@ -1,11 +1,18 @@
 import type { BangleEditor } from '@bangle.dev/core';
 
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import type { EditorIdType } from '@bangle.io/shared-types';
 import {
   getEditorPluginMetadata,
   getScrollParentElement,
 } from '@bangle.io/utils';
 
-export const calculateSelection = (editorId: number, editor: BangleEditor) => {
+import type { EditorSliceState } from './types';
+
+export const calculateSelection = (
+  editorId: EditorIdType,
+  editor: BangleEditor,
+) => {
   const selection = editor.view.state.selection;
 
   return {
@@ -16,7 +23,7 @@ export const calculateSelection = (editorId: number, editor: BangleEditor) => {
 };
 
 export const calculateScrollPosition = (
-  editorId: number,
+  editorId: EditorIdType,
   editor: BangleEditor,
 ) => {
   const top = getScrollParentElement(editorId)?.scrollTop;
@@ -31,3 +38,26 @@ export const calculateScrollPosition = (
 
   return undefined;
 };
+
+export function* getEachEditorIterable(
+  editorManagerState: EditorSliceState,
+): Iterable<{
+  editor: BangleEditor | undefined;
+  editorId: NonNullable<EditorIdType>;
+}> {
+  for (const [index, editor] of editorManagerState.mainEditors.entries()) {
+    yield { editor, editorId: index };
+  }
+}
+
+export function isValidEditorId(editorId: EditorIdType): boolean {
+  return editorId >= 0 && editorId < MAX_OPEN_EDITORS;
+}
+
+export function assertValidEditorId(
+  editorId: EditorIdType,
+): asserts editorId is EditorIdType {
+  if (!isValidEditorId(editorId)) {
+    throw new Error('editorId is out of range or invalid');
+  }
+}

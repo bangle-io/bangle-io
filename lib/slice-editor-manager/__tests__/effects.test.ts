@@ -1,6 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
@@ -126,7 +130,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor1,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -144,7 +148,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor2,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -160,7 +164,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor1,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -178,7 +182,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor1,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -188,7 +192,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor2,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -214,7 +218,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor1,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
     expect(focusSpy1).toBeCalledTimes(1);
@@ -223,7 +227,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: editor2,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
     expect(focusSpy2).toBeCalledTimes(1);
@@ -233,7 +237,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: undefined,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -261,14 +265,14 @@ describe('focusEditorEffect', () => {
         name: 'action::@bangle.io/slice-editor-manager:set-editor',
         value: {
           editor: editor1,
-          editorId: 0,
+          editorId: PRIMARY_EDITOR_INDEX,
         },
       });
       store.dispatch({
         name: 'action::@bangle.io/slice-editor-manager:set-editor',
         value: {
           editor: editor2,
-          editorId: 1,
+          editorId: SECONDARY_EDITOR_INDEX,
         },
       });
     }
@@ -286,7 +290,7 @@ describe('focusEditorEffect', () => {
     const focusSpy2 = jest.spyOn(mockEditorSecond, 'focusView');
 
     const { store } = createStore({
-      focusedEditorId: 1,
+      focusedEditorId: SECONDARY_EDITOR_INDEX,
       editorConfig: {},
     });
 
@@ -294,7 +298,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditorFirst,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -307,7 +311,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditorSecond,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -324,7 +328,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor3,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -346,7 +350,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor4,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -361,7 +365,7 @@ describe('focusEditorEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: undefined,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -386,7 +390,7 @@ describe('initialSelectionEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -396,7 +400,7 @@ describe('initialSelectionEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor2,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -405,7 +409,7 @@ describe('initialSelectionEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:first.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: mockEditor.view.state.selection.toJSON(),
       },
     });
@@ -414,7 +418,7 @@ describe('initialSelectionEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor2,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -457,7 +461,7 @@ describe('watchEditorScrollEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -493,7 +497,7 @@ describe('watchEditorScrollEffect', () => {
         id: expect.any(String),
         name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
         value: {
-          editorId: 0,
+          editorId: PRIMARY_EDITOR_INDEX,
           scrollPosition: 5,
           wsPath: 'test:first.md',
         },
@@ -532,7 +536,7 @@ describe('trimWhiteSpaceEffect', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 

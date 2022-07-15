@@ -14,9 +14,10 @@ export function getFocusedWsPath() {
     const { focusedEditorId } = editorSliceState;
     const { openedWsPaths } = workspaceSliceState;
 
-    const focusedWsPath =
-      typeof focusedEditorId === 'number' &&
-      openedWsPaths.getByIndex(focusedEditorId);
+    if (focusedEditorId == null) {
+      return false;
+    }
+    const focusedWsPath = openedWsPaths.getByIndex(focusedEditorId);
 
     return focusedWsPath;
   };

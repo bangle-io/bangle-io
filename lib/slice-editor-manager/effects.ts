@@ -1,6 +1,6 @@
 import type { BangleEditor } from '@bangle.dev/core';
 
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
@@ -15,17 +15,19 @@ import {
   updateInitialSelection,
   updateScrollPosition,
 } from './operations';
+import { getEachEditorIterable } from './utils';
 
 export const initialSelectionEffect = editorManagerSliceKey.effect(() => {
   return {
     update(store, prevState) {
       // save the selection and scroll position of any editor that was closed
-      for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-        const currentEditor = getEditor(i)(store.state);
-        const prevEditor = getEditor(i)(prevState);
+      for (const { editor: currentEditor, editorId } of getEachEditorIterable(
+        editorManagerSliceKey.getSliceStateAsserted(store.state),
+      )) {
+        const prevEditor = getEditor(editorId)(prevState);
 
         if (prevEditor && currentEditor !== prevEditor) {
-          updateInitialSelection(i)(prevState, store.dispatch);
+          updateInitialSelection(editorId)(prevState, store.dispatch);
         }
       }
     },
@@ -48,11 +50,12 @@ export const focusEditorEffect = editorManagerSliceKey.effect((state) => {
   const initialSliceState = editorManagerSliceKey.getSliceState(state);
 
   // This exists to preserve focused editor during page reloads
-  let editorNeedsFocusOnPageLoad: number | undefined =
-    typeof initialSliceState?.focusedEditorId === 'number'
-      ? initialSliceState.focusedEditorId
-      : 0;
+  let defaultFocusedEditorId =
+    initialSliceState?.focusedEditorId == null
+      ? PRIMARY_EDITOR_INDEX
+      : initialSliceState.focusedEditorId;
 
+  let initialFocusDone = false;
   let mounted = Date.now();
 
   return {
@@ -64,25 +67,30 @@ export const focusEditorEffect = editorManagerSliceKey.effect((state) => {
 
       const cooldown = Date.now() - mounted < FOCUS_EDITOR_ON_LOAD_COOLDOWN;
 
-      for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-        const currentEditor = getEditor(i)(store.state);
-        const prevEditor = prevState && getEditor(i)(prevState);
+      for (const { editor: currentEditor, editorId } of getEachEditorIterable(
+        editorManagerSliceKey.getSliceStateAsserted(store.state),
+      )) {
+        const prevEditor = prevState && getEditor(editorId)(prevState);
 
         const isNewEditor =
           currentEditor &&
           !currentEditor.destroyed &&
           prevEditor !== currentEditor;
 
-        if (editorNeedsFocusOnPageLoad === i && isNewEditor) {
+        if (
+          defaultFocusedEditorId === editorId &&
+          isNewEditor &&
+          !initialFocusDone
+        ) {
           currentEditor.focusView();
-          editorNeedsFocusOnPageLoad = undefined;
+          initialFocusDone = true;
 
           return;
         }
 
         // do not attempt to focus on any newly mounted editor, if conditions do not match
         // This is so as to avoid competing with the `editorNeedsFocusOnPageLoad`.
-        if (!editorNeedsFocusOnPageLoad && isNewEditor && !cooldown) {
+        if (initialFocusDone && isNewEditor && !cooldown) {
           currentEditor.focusView();
 
           return;
@@ -122,11 +130,11 @@ export const watchEditorScrollEffect = editorManagerSliceKey.effect(() => {
   return {
     deferredOnce(store, abortSignal) {
       const updateScrollPos = () => {
-        for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-          const currentEditor = getEditor(i)(store.state);
-
+        for (const { editor: currentEditor, editorId } of getEachEditorIterable(
+          editorManagerSliceKey.getSliceStateAsserted(store.state),
+        )) {
           if (!currentEditor?.destroyed) {
-            updateScrollPosition(i)(store.state, store.dispatch);
+            updateScrollPosition(editorId)(store.state, store.dispatch);
           }
         }
       };

@@ -4,9 +4,9 @@ exports[`serializing state selection is serialized correctly 1`] = `
 Object {
   "editorManagerSlice": Object {
     "data": Object {
-      "editingAllowed": true,
       "editorConfig": Object {
         "scrollPositions": Array [
+          null,
           null,
           null,
           null,
@@ -21,12 +21,10 @@ Object {
           },
           null,
           null,
+          null,
         ],
       },
-      "editors": Array [],
       "focusedEditorId": undefined,
-      "primaryEditor": undefined,
-      "secondaryEditor": undefined,
     },
     "version": "editor-slice/2",
   },

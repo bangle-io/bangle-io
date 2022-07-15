@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -79,7 +81,7 @@ test.describe('loading', () => {
     const editorHandle = await page.waitForSelector('.bangle-editor', {
       timeout: SELECTOR_TIMEOUT,
     });
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
     await editorHandle.type('# Wow', { delay: 3 });
     await editorHandle.press('Enter', { delay: 20 });
@@ -98,14 +100,14 @@ test.describe('loading', () => {
 
     await createNewNote(page, wsName, newFileName);
 
-    const editorLocator = await getEditorLocator(page, 0);
+    const editorLocator = await getEditorLocator(page, PRIMARY_EDITOR_INDEX);
 
     const hasOneUnorderedListElement = () =>
       editorLocator.evaluate(
         (node) => node.querySelectorAll('ul').length === 1,
       );
 
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
     expect(await hasOneUnorderedListElement()).toBe(false);
 
     await editorLocator.type('/bullet list', { delay: 3 });
@@ -124,14 +126,14 @@ test.describe('loading', () => {
 
     await createNewNote(page, wsName, newFileName);
 
-    const editorLocator = await getEditorLocator(page, 0);
+    const editorLocator = await getEditorLocator(page, PRIMARY_EDITOR_INDEX);
 
     const hasOneH3Element = () =>
       editorLocator.evaluate(
         (node) => node.querySelectorAll('h3').length === 1,
       );
 
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
     expect(await hasOneH3Element()).toBe(false);
 

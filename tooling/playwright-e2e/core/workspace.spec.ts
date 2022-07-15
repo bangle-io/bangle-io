@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
+
 import { resolvePath } from '../bangle-helpers';
 import {
   createNewNote,
@@ -189,7 +194,7 @@ test.describe('workspace', () => {
 
     await pushWsPathToSecondary(page, n1);
 
-    await waitForEditorFocus(page, 1, { wsPath: n1 });
+    await waitForEditorFocus(page, SECONDARY_EDITOR_INDEX, { wsPath: n1 });
 
     page.on('dialog', (dialog) => dialog.accept());
 
@@ -219,7 +224,10 @@ test.describe('workspace', () => {
     await expect(page).toHaveURL(new RegExp(resolvePath(n2).fileName));
 
     await pushWsPathToSecondary(page, n1);
-    await getEditorLocator(page, 0, { focus: true, wsPath: n2 });
+    await getEditorLocator(page, PRIMARY_EDITOR_INDEX, {
+      focus: true,
+      wsPath: n2,
+    });
 
     page.on('dialog', (dialog) => dialog.accept());
 

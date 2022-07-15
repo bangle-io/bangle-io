@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -18,13 +20,13 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 
   wsName = await createWorkspace(page);
   await createNewNote(page, wsName, 'test-one');
-  await clearEditor(page, 0);
+  await clearEditor(page, PRIMARY_EDITOR_INDEX);
   await sleep();
 });
 
 async function getTagsFromDoc(page: Page) {
   // A contrived way to search and get the tag object
-  return (await getEditorJSON(page, 0)).content
+  return (await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).content
     ?.flatMap((r: any) =>
       r.content?.flatMap((rr: any) => (rr.type === 'tag' ? rr : undefined)),
     )
@@ -37,7 +39,7 @@ test('is able to create a tag using inline palette', async ({ page }) => {
 
   await longSleep();
 
-  expect(await getEditorDebugString(page, 0)).toContain(
+  expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toContain(
     `doc(paragraph, paragraph(__bangle__io__note__tags__palette_mark("#yellow")`,
   );
 
@@ -87,7 +89,7 @@ test.describe('multiple keyboard cases', () => {
 
     await page.keyboard.type('bob');
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -122,7 +124,7 @@ test.describe('multiple keyboard cases', () => {
 
     await page.keyboard.type('bob');
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           attrs: {
@@ -157,7 +159,7 @@ test.describe('multiple keyboard cases', () => {
 
     await page.keyboard.press('c');
 
-    expect(await getEditorJSON(page, 0)).toEqual({
+    expect(await getEditorJSON(page, PRIMARY_EDITOR_INDEX)).toEqual({
       content: [
         {
           content: [
@@ -182,7 +184,7 @@ test.describe('multiple keyboard cases', () => {
     await page.keyboard.type('bob');
 
     await sleep(10);
-    expect(await getEditorDebugString(page, 0)).toEqual(
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       `doc(heading("##bob"), paragraph)`,
     );
   });
@@ -212,7 +214,7 @@ test.describe('multiple keyboard cases', () => {
     await sleep(10);
 
     expect(await getTagsFromDoc(page)).toEqual([]);
-    expect(await getEditorDebugString(page, 0)).toEqual(
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       `doc(paragraph("#hello."))`,
     );
   });
@@ -228,7 +230,7 @@ test.describe('auto complete', () => {
     // we are creating a new note because currently newly created
     // tags in the same page donot show up in auto complete
     await createNewNote(page, wsName, 'test-two');
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
     await sleep();
 

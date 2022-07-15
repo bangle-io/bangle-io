@@ -8,7 +8,7 @@ import type { JsonObject } from '@bangle.io/shared-types';
 
 import type { OpenedEditorsConfig } from './opened-editors-config';
 
-export type EditorIdType = number | undefined;
+export type EditorIdType = number;
 
 export type EditorDispatchType = ApplicationStore<
   EditorSliceState,
@@ -23,8 +23,8 @@ export interface EditorSliceState {
   // but an editor will never reused once it is detroyed.
   // Please see https://github.com/bangle-io/bangle-io/blob/dev/lib/editor/Editor.tsx for
   // an indepth explaination.
-  focusedEditorId: number | undefined;
-  editors: Array<BangleEditor | undefined>;
+  focusedEditorId: EditorIdType | undefined;
+  mainEditors: Array<BangleEditor | undefined>;
   editorConfig: OpenedEditorsConfig;
   primaryEditor: BangleEditor | undefined;
   secondaryEditor: BangleEditor | undefined;
@@ -34,19 +34,19 @@ export interface EditorSliceState {
 export type EditorManagerAction =
   | {
       name: 'action::@bangle.io/slice-editor-manager:set-editor';
-      value: { editor: BangleEditor | undefined; editorId: number };
+      value: { editor: BangleEditor | undefined; editorId: EditorIdType };
     }
   | {
       name: 'action::@bangle.io/slice-editor-manager:toggle-editing';
     }
   | {
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update';
-      value: { editorId: number | undefined };
+      value: { editorId: EditorIdType };
     }
   | {
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position';
       value: {
-        editorId: number;
+        editorId: EditorIdType;
         wsPath: string;
         scrollPosition: number;
       };
@@ -54,7 +54,7 @@ export type EditorManagerAction =
   | {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json';
       value: {
-        editorId: number;
+        editorId: EditorIdType;
         wsPath: string;
         selectionJson: JsonObject;
       };

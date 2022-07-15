@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -23,12 +25,12 @@ test.describe('backlink workflow', () => {
 
     const wsPath = await createNewNote(page, wsName, 'note-0');
 
-    await getEditorLocator(page, 0, {
+    await getEditorLocator(page, PRIMARY_EDITOR_INDEX, {
       focus: true,
       wsPath,
     });
 
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
     // create note-1
     await page.keyboard.type('this is the zeroth note ', { delay: 35 });
@@ -36,17 +38,17 @@ test.describe('backlink workflow', () => {
 
     await sleep();
 
-    await waitForEditorTextToContain(page, 0, 'note-1');
+    await waitForEditorTextToContain(page, PRIMARY_EDITOR_INDEX, 'note-1');
 
     await clickBacklinkHandle(page, 'note-1');
 
     await sleep();
 
-    await waitForEditorTextToContain(page, 0, 'note-1');
+    await waitForEditorTextToContain(page, PRIMARY_EDITOR_INDEX, 'note-1');
 
     // now in note-1
     // lets create backlink to note-0
-    await clearEditor(page, 0);
+    await clearEditor(page, PRIMARY_EDITOR_INDEX);
     await page.keyboard.type('[[0', { delay: 55 });
 
     await page.keyboard.press('Enter', { delay: 30 });
@@ -108,11 +110,13 @@ test.describe('backlink workflow', () => {
     await clickBacklinkHandle(page, 'note-0');
 
     await sleep(200);
-    await waitForWsPathToLoad(page, 0, { wsPath: note0WsPath });
+    await waitForWsPathToLoad(page, PRIMARY_EDITOR_INDEX, {
+      wsPath: note0WsPath,
+    });
 
     await waitForEditorTextToContain(
       page,
-      0,
+      PRIMARY_EDITOR_INDEX,
       'AWESOME this is the zeroth note',
     );
     expect(await page.url()).toContain('note-0');

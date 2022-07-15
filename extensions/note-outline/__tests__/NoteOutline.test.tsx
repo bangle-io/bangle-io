@@ -5,6 +5,10 @@ import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { useSerialOperationHandler } from '@bangle.io/api';
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import {
   getEditor,
@@ -137,7 +141,7 @@ para 2
     useEditorManagerContextMock.mockImplementation(() => {
       return {
         ...getUseEditorManagerContextReturn,
-        focusedEditorId: 0,
+        focusedEditorId: PRIMARY_EDITOR_INDEX,
       };
     });
     const renderResult = render(
@@ -227,7 +231,7 @@ para 2
       useEditorManagerContextMock.mockImplementation(() => {
         return {
           ...getUseEditorManagerContextReturn,
-          focusedEditorId: 0,
+          focusedEditorId: PRIMARY_EDITOR_INDEX,
         };
       });
       render(
@@ -242,7 +246,7 @@ para 2
         dispatchSOpCb?.({
           name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
           value: {
-            editorId: 0,
+            editorId: PRIMARY_EDITOR_INDEX,
           },
         });
       });
@@ -253,7 +257,7 @@ para 2
       useEditorManagerContextMock.mockImplementation(() => {
         return {
           ...getUseEditorManagerContextReturn,
-          focusedEditorId: 0,
+          focusedEditorId: PRIMARY_EDITOR_INDEX,
         };
       });
       render(
@@ -268,7 +272,7 @@ para 2
         dispatchSOpCb?.({
           name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
           value: {
-            editorId: 1,
+            editorId: SECONDARY_EDITOR_INDEX,
           },
         });
       });
@@ -279,7 +283,7 @@ para 2
       useEditorManagerContextMock.mockImplementation(() => {
         return {
           ...getUseEditorManagerContextReturn,
-          focusedEditorId: 0,
+          focusedEditorId: PRIMARY_EDITOR_INDEX,
         };
       });
       render(
@@ -294,7 +298,7 @@ para 2
         dispatchSOpCb?.({
           name: 'operation::random',
           value: {
-            editorId: 1,
+            editorId: SECONDARY_EDITOR_INDEX,
           },
         });
       });

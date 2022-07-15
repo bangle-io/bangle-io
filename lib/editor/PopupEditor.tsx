@@ -1,7 +1,7 @@
 import React from 'react';
 import reactDOM from 'react-dom';
 
-import { EditorDisplayType } from '@bangle.io/constants';
+import { EditorDisplayType, POPUP_EDITOR_INDEX } from '@bangle.io/constants';
 import { cx } from '@bangle.io/utils';
 
 import type { EditorProps } from './Editor';
@@ -13,7 +13,7 @@ export interface PopupEditorProps {
     className?: string;
     positionProps: { [k: string]: any };
   };
-  editorProps: Omit<EditorProps, 'editorDisplayType'>;
+  editorProps: Omit<EditorProps, 'editorDisplayType' | 'editorId'>;
   noContent?: React.ReactNode;
 }
 
@@ -34,7 +34,8 @@ export const PopupEditor = React.forwardRef<HTMLDivElement, PopupEditorProps>(
         ) : (
           <Editor
             {...editorProps}
-            editorDisplayType={EditorDisplayType.Popup}
+            editorId={POPUP_EDITOR_INDEX}
+            editorDisplayType={EditorDisplayType.Floating}
           />
         )}
       </div>,

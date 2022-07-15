@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   clearEditor,
   createNewNote,
@@ -16,9 +18,9 @@ test('shows note sidebar correctly', async ({ page }) => {
   const wsName = await createWorkspace(page);
 
   await createNewNote(page, wsName, 'test123');
-  await waitForEditorFocus(page, 0);
+  await waitForEditorFocus(page, PRIMARY_EDITOR_INDEX);
 
-  await clearEditor(page, 0);
+  await clearEditor(page, PRIMARY_EDITOR_INDEX);
   await page.keyboard.type('## top heading');
   await page.keyboard.press('Enter');
   await page.keyboard.type('### child heading');

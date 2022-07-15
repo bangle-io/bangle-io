@@ -8,7 +8,6 @@ import type {
 import { Selection } from '@bangle.dev/pm';
 
 import {
-  MAX_OPEN_EDITORS,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
@@ -17,7 +16,13 @@ import { getScrollParentElement } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import type { EditorDispatchType, EditorIdType } from './types';
-import { calculateScrollPosition, calculateSelection } from './utils';
+import {
+  assertValidEditorId,
+  calculateScrollPosition,
+  calculateSelection,
+  getEachEditorIterable,
+  isValidEditorId,
+} from './utils';
 
 export function toggleEditing() {
   return editorManagerSliceKey.op((_, dispatch) => {
@@ -58,17 +63,19 @@ export function focusSecondaryEditor() {
 }
 
 export function getEditor(editorId: EditorIdType) {
-  return (state: AppState): BangleEditor | undefined => {
-    if (editorId == null) {
+  return editorManagerSliceKey.queryOp((state): BangleEditor | undefined => {
+    if (!isValidEditorId(editorId)) {
       return undefined;
     }
 
-    return editorManagerSliceKey.getSliceState(state)?.editors[editorId];
-  };
+    return editorManagerSliceKey.getSliceState(state)?.mainEditors[editorId];
+  });
 }
 
-export function focusEditor(editorId: EditorIdType = 0) {
+export function focusEditor(editorId: EditorIdType = PRIMARY_EDITOR_INDEX) {
   return (state: AppState): boolean => {
+    assertValidEditorId(editorId);
+
     const editor = getEditor(editorId)(state);
 
     if (editor) {
@@ -80,8 +87,12 @@ export function focusEditor(editorId: EditorIdType = 0) {
     return false;
   };
 }
-export function updateFocusedEditor(editorId: EditorIdType = 0) {
+export function updateFocusedEditor(
+  editorId: EditorIdType = PRIMARY_EDITOR_INDEX,
+) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
+    assertValidEditorId(editorId);
+
     dispatch({
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
       value: {
@@ -95,9 +106,11 @@ export function updateFocusedEditor(editorId: EditorIdType = 0) {
 
 export function updateInitialSelection(editorId: EditorIdType) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
+    assertValidEditorId(editorId);
+
     const editor = getEditor(editorId)(state);
 
-    if (!editor || typeof editorId !== 'number') {
+    if (!editor) {
       return false;
     }
 
@@ -126,19 +139,18 @@ export function forEachEditor(
       return;
     }
 
-    editorManagerState.editors.forEach((editor, index) => {
-      if (index != null) {
-        cb(editor, index);
-      }
-    });
+    for (const { editor, editorId } of getEachEditorIterable(
+      editorManagerState,
+    )) {
+      cb(editor, editorId);
+    }
   };
 }
 
 export function getEditorView(editorId: EditorIdType) {
   return (state: AppState): EditorView | undefined => {
-    if (editorId == null) {
-      return undefined;
-    }
+    assertValidEditorId(editorId);
+
     let editor = getEditor(editorId)(state);
 
     if (!editor) {
@@ -151,12 +163,16 @@ export function getEditorView(editorId: EditorIdType) {
 
 export function getEditorState(editorId: EditorIdType) {
   return (state: AppState): EditorState | undefined => {
+    assertValidEditorId(editorId);
+
     return getEditorView(editorId)(state)?.state;
   };
 }
 
 export function geEditorScrollPosition(editorId: EditorIdType, wsPath: string) {
   return (state: AppState): number | undefined => {
+    assertValidEditorId(editorId);
+
     const sliceState = editorManagerSliceKey.getSliceState(state);
 
     if (!sliceState) {
@@ -169,6 +185,8 @@ export function geEditorScrollPosition(editorId: EditorIdType, wsPath: string) {
 
 export function updateScrollPosition(editorId: EditorIdType) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
+    assertValidEditorId(editorId);
+
     const editor = getEditor(editorId)(state);
 
     if (!editor || typeof editorId !== 'number') {
@@ -196,9 +214,7 @@ export function setEditorReady(
   editor: BangleEditor,
 ) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    if (typeof editorId !== 'number') {
-      return false;
-    }
+    assertValidEditorId(editorId);
 
     const scrollParent = getScrollParentElement(editorId);
     const pos = geEditorScrollPosition(editorId, wsPath)(state);
@@ -215,6 +231,12 @@ export function setEditorReady(
       },
     });
 
+    // TODO this is currently used by the integration tests
+    // we need a better way to do this
+    if (typeof window !== 'undefined') {
+      (window as any)[`editor-${editorId}`] = { editor, wsPath };
+    }
+
     return true;
   };
 }
@@ -224,9 +246,7 @@ export function setEditorUnmounted(
   editor: BangleEditor,
 ) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    if (typeof editorId !== 'number') {
-      return false;
-    }
+    assertValidEditorId(editorId);
 
     // make sure we are unsetting the correct editor
     if (getEditor(editorId)(state) === editor) {
@@ -246,11 +266,13 @@ export function setEditorUnmounted(
 }
 // Gets the editor selection saved in the slice state
 export function getInitialSelection(
-  editorId: number,
+  editorId: EditorIdType,
   wsPath: string,
   doc: Node,
 ) {
   return (state: AppState): Selection | undefined => {
+    assertValidEditorId(editorId);
+
     const sliceState = editorManagerSliceKey.getSliceState(state);
 
     if (!sliceState) {
@@ -287,9 +309,10 @@ export function getInitialSelection(
 // or an editor was removed.
 export function didSomeEditorChange(prevState: AppState) {
   return (state: AppState): boolean => {
-    for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-      const currentEditor = getEditor(i)(state);
-      const prevEditor = getEditor(i)(prevState);
+    for (const { editor: currentEditor, editorId } of getEachEditorIterable(
+      editorManagerSliceKey.getSliceStateAsserted(state),
+    )) {
+      const prevEditor = getEditor(editorId)(prevState);
 
       if (currentEditor === prevEditor) {
         continue;
@@ -311,6 +334,8 @@ export function dispatchEditorCommand<T>(
   ) => T,
 ) {
   return (state: AppState): T | false => {
+    assertValidEditorId(editorId);
+
     const currentEditor = getEditor(editorId)(state);
 
     if (!currentEditor) {

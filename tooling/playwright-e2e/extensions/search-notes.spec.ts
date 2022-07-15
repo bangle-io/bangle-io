@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import {
   createNewNote,
   createWorkspace,
@@ -17,7 +19,7 @@ test('Is able to search for a note', async ({ page }) => {
   const wsName = await createWorkspace(page);
   await createNewNote(page, wsName, 'test-one');
 
-  await getEditorLocator(page, 0, { focus: true });
+  await getEditorLocator(page, PRIMARY_EDITOR_INDEX, { focus: true });
 
   await page.keyboard.press('Enter');
   await page.keyboard.type('i am a lovely planet from outer galaxy', {
@@ -26,7 +28,7 @@ test('Is able to search for a note', async ({ page }) => {
 
   await createNewNote(page, wsName, 'test-two');
 
-  await getEditorLocator(page, 0, { focus: true });
+  await getEditorLocator(page, PRIMARY_EDITOR_INDEX, { focus: true });
 
   await page.keyboard.press('Enter');
   await page.keyboard.type(
@@ -71,7 +73,7 @@ test('Is able to search for a note', async ({ page }) => {
   // highlights in editor
   expect(
     countOcurrences(
-      await getEditorHTML(await getEditorLocator(page, 0)),
+      await getEditorHTML(await getEditorLocator(page, PRIMARY_EDITOR_INDEX)),
       'bangle-search-match',
     ),
   ).toBe(1);

@@ -49,7 +49,7 @@ export function e2eHelpers() {
           e2eHelpers._getEditors = () =>
             editorManagerContext.editorManagerSliceKey.getSliceState(
               store.state,
-            )?.editors;
+            )?.mainEditors;
 
           e2eHelpers.e2eHealthCheck = async () => {
             assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
@@ -79,7 +79,7 @@ export function e2eHelpers() {
           }
           const editors = editorManagerSliceKey.getSliceState(
             store.state,
-          )?.editors;
+          )?.mainEditors;
 
           if (editors) {
             e2eHelpers._primaryEditor = editors[PRIMARY_EDITOR_INDEX];

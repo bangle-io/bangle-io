@@ -86,7 +86,9 @@ test.describe('mobile', () => {
 
     await page.locator('[aria-label="hide Note browser"]').click();
 
-    expect(await getPrimaryEditorDebugString(page)).toContain('Hello');
+    await expect
+      .poll(() => getPrimaryEditorDebugString(page))
+      .toContain('Hello');
   });
 });
 

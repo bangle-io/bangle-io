@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import { createNewNote, createWorkspace, waitForEditorFocus } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -12,7 +14,7 @@ test.describe('worker', () => {
 
     const wsPath = await createNewNote(page, wsName1, 'test-note.md');
 
-    await waitForEditorFocus(page, 0, { wsPath });
+    await waitForEditorFocus(page, PRIMARY_EDITOR_INDEX, { wsPath });
 
     await page.keyboard.type('Hello _world_!', { delay: 10 });
 

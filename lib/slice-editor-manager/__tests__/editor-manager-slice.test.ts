@@ -3,7 +3,10 @@
  */
 import { Selection } from '@bangle.dev/pm';
 
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement, makeArrayOfSize } from '@bangle.io/utils';
@@ -54,7 +57,7 @@ describe('set editor action', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -72,15 +75,15 @@ describe('set editor action', () => {
   test('setting out of range editorId', () => {
     let mockEditor = createTestEditor();
     let store = createStore();
-    expect(() =>
-      store.dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:set-editor',
-        value: {
-          editor: mockEditor,
-          editorId: 10000,
-        },
-      }),
-    ).toThrowError('editorId is out of range');
+    const state = store.state;
+    store.dispatch({
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
+      value: {
+        editor: mockEditor,
+        editorId: 10000,
+      },
+    });
+    expect(store.state).toStrictEqual(state);
   });
 
   test('replacing editor', () => {
@@ -93,7 +96,7 @@ describe('set editor action', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -101,7 +104,7 @@ describe('set editor action', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor2,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -113,7 +116,7 @@ describe('set editor action', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor3,
-        editorId: 1,
+        editorId: SECONDARY_EDITOR_INDEX,
       },
     });
 
@@ -131,7 +134,7 @@ describe('update focus action', () => {
     let store = createStore();
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
 
     expect(
@@ -140,7 +143,7 @@ describe('update focus action', () => {
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
-      value: { editorId: 1 },
+      value: { editorId: SECONDARY_EDITOR_INDEX },
     });
 
     expect(
@@ -148,14 +151,16 @@ describe('update focus action', () => {
     ).toBe(1);
   });
 
-  test('throws error for out of bound editorId', () => {
+  test('invalid editorId has no effect on state', () => {
     let store = createStore();
-    expect(() => {
-      store.dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
-        value: { editorId: 1000000 },
-      });
-    }).toThrowError('editorId is out of range');
+    let state = store.state;
+
+    store.dispatch({
+      name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
+      value: { editorId: 1000000 },
+    });
+
+    expect(store.state).toStrictEqual(state);
   });
 });
 
@@ -164,57 +169,115 @@ describe('setting scroll position', () => {
     let store = createStore();
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
-      value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
+      value: {
+        wsPath: 'test:one.md',
+        editorId: PRIMARY_EDITOR_INDEX,
+        scrollPosition: 9,
+      },
     });
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(9);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toBe(9);
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
-      value: { wsPath: 'test:one.md', editorId: 1, scrollPosition: 199 },
+      value: {
+        wsPath: 'test:one.md',
+        editorId: SECONDARY_EDITOR_INDEX,
+        scrollPosition: 199,
+      },
     });
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(9);
-    expect(geEditorScrollPosition(1, 'test:one.md')(store.state)).toBe(199);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toBe(9);
+    expect(
+      geEditorScrollPosition(
+        SECONDARY_EDITOR_INDEX,
+        'test:one.md',
+      )(store.state),
+    ).toBe(199);
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
-      value: { wsPath: 'test:two.md', editorId: 1, scrollPosition: 299 },
+      value: {
+        wsPath: 'test:two.md',
+        editorId: SECONDARY_EDITOR_INDEX,
+        scrollPosition: 299,
+      },
     });
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(9);
-    expect(geEditorScrollPosition(1, 'test:one.md')(store.state)).toBe(199);
-    expect(geEditorScrollPosition(1, 'test:two.md')(store.state)).toBe(299);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toBe(9);
+    expect(
+      geEditorScrollPosition(
+        SECONDARY_EDITOR_INDEX,
+        'test:one.md',
+      )(store.state),
+    ).toBe(199);
+    expect(
+      geEditorScrollPosition(
+        SECONDARY_EDITOR_INDEX,
+        'test:two.md',
+      )(store.state),
+    ).toBe(299);
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
-      value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 8 },
+      value: {
+        wsPath: 'test:one.md',
+        editorId: PRIMARY_EDITOR_INDEX,
+        scrollPosition: 8,
+      },
     });
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(8);
-    expect(geEditorScrollPosition(1, 'test:one.md')(store.state)).toBe(199);
-    expect(geEditorScrollPosition(1, 'test:two.md')(store.state)).toBe(299);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toBe(8);
+    expect(
+      geEditorScrollPosition(
+        SECONDARY_EDITOR_INDEX,
+        'test:one.md',
+      )(store.state),
+    ).toBe(199);
+    expect(
+      geEditorScrollPosition(
+        SECONDARY_EDITOR_INDEX,
+        'test:two.md',
+      )(store.state),
+    ).toBe(299);
   });
 
   test('getting non existent', () => {
     let store = createStore();
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(
-      undefined,
-    );
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toBe(undefined);
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
-      value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
+      value: {
+        wsPath: 'test:one.md',
+        editorId: PRIMARY_EDITOR_INDEX,
+        scrollPosition: 9,
+      },
     });
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(9);
-    expect(geEditorScrollPosition(1, 'test:one.md')(store.state)).toBe(
-      undefined,
-    );
-    expect(geEditorScrollPosition(0, 'test:two.md')(store.state)).toBe(
-      undefined,
-    );
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toBe(9);
+    expect(
+      geEditorScrollPosition(
+        SECONDARY_EDITOR_INDEX,
+        'test:one.md',
+      )(store.state),
+    ).toBe(undefined);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:two.md')(store.state),
+    ).toBe(undefined);
   });
 });
 
@@ -233,13 +296,18 @@ describe('setting selectionJson', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(0)).toJSON(),
       },
     });
 
-    expect(getInitialSelection(0, 'test:one.md', pmNode)(store.state))
-      .toMatchInlineSnapshot(`
+    expect(
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(store.state),
+    ).toMatchInlineSnapshot(`
         Object {
           "anchor": 1,
           "head": 1,
@@ -249,7 +317,7 @@ describe('setting selectionJson', () => {
 
     expect(
       getInitialSelection(
-        0,
+        PRIMARY_EDITOR_INDEX,
         'test:one.md',
         pmNode,
       )(store.state)?.eq(Selection.near(pmNode.resolve(0))),
@@ -259,14 +327,14 @@ describe('setting selectionJson', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(1)).toJSON(),
       },
     });
 
     expect(
       getInitialSelection(
-        0,
+        PRIMARY_EDITOR_INDEX,
         'test:one.md',
         pmNode,
       )(store.state)?.eq(Selection.near(pmNode.resolve(1))),
@@ -276,14 +344,14 @@ describe('setting selectionJson', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:two.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(11)).toJSON(),
       },
     });
 
     expect(
       getInitialSelection(
-        0,
+        PRIMARY_EDITOR_INDEX,
         'test:two.md',
         pmNode,
       )(store.state)?.eq(Selection.near(pmNode.resolve(11))),
@@ -293,32 +361,44 @@ describe('setting selectionJson', () => {
   test('getting non existent', () => {
     let store = createStore();
 
-    expect(getInitialSelection(0, 'test:one.md', pmNode)(store.state)).toBe(
-      undefined,
-    );
+    expect(
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(store.state),
+    ).toBe(undefined);
 
     store.dispatch({
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(11)).toJSON(),
       },
     });
 
     expect(
       getInitialSelection(
-        0,
+        PRIMARY_EDITOR_INDEX,
         'test:one.md',
         pmNode,
       )(store.state)?.eq(Selection.near(pmNode.resolve(11))),
     ).toBe(true);
-    expect(getInitialSelection(1, 'test:one.md', pmNode)(store.state)).toBe(
-      undefined,
-    );
-    expect(getInitialSelection(0, 'test:two.md', pmNode)(store.state)).toBe(
-      undefined,
-    );
+    expect(
+      getInitialSelection(
+        SECONDARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(store.state),
+    ).toBe(undefined);
+    expect(
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:two.md',
+        pmNode,
+      )(store.state),
+    ).toBe(undefined);
   });
 });
 
@@ -328,7 +408,7 @@ describe('any other action', () => {
     const prevState = editorManagerSliceKey.getSliceState(store.state);
     store.dispatch({
       name: 'some other action' as any,
-      value: { editorId: 0 },
+      value: { editorId: PRIMARY_EDITOR_INDEX },
     });
 
     expect(editorManagerSliceKey.getSliceState(store.state)).toBe(prevState);
@@ -350,13 +430,17 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(5)).toJSON(),
       },
     });
 
     expect(
-      getInitialSelection(0, 'test:one.md', pmNode)(store.state)?.toJSON(),
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(store.state)?.toJSON(),
     ).toEqual({
       anchor: 5,
       head: 5,
@@ -381,7 +465,11 @@ describe('serializing state', () => {
     });
 
     expect(
-      getInitialSelection(0, 'test:one.md', pmNode)(newState)?.toJSON(),
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(newState)?.toJSON(),
     ).toEqual({
       anchor: 5,
       head: 5,
@@ -395,13 +483,17 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(5)).toJSON(),
       },
     });
 
     expect(
-      getInitialSelection(0, 'test:one.md', pmNode)(store.state)?.toJSON(),
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(store.state)?.toJSON(),
     ).toEqual({
       anchor: 5,
       head: 5,
@@ -421,7 +513,11 @@ describe('serializing state', () => {
     });
 
     expect(
-      getInitialSelection(0, 'test:one.md', pmNode)(newState)?.toJSON(),
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(newState)?.toJSON(),
     ).toBe(undefined);
   });
 
@@ -440,7 +536,7 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -460,6 +556,7 @@ describe('serializing state', () => {
         },
         null,
         null,
+        null,
       ]
     `);
   });
@@ -476,7 +573,7 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -484,12 +581,14 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         scrollPosition: 2,
       },
     });
 
-    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toEqual(2);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(store.state),
+    ).toEqual(2);
 
     const json: any = store.state.stateToJSON({
       sliceFields: { editorManagerSlice: editorManagerSlice() },
@@ -502,7 +601,9 @@ describe('serializing state', () => {
     });
 
     // should pick up the latest position
-    expect(geEditorScrollPosition(0, 'test:one.md')(newState)).toEqual(5);
+    expect(
+      geEditorScrollPosition(PRIMARY_EDITOR_INDEX, 'test:one.md')(newState),
+    ).toEqual(5);
   });
 
   test('overwrites pre-existing selections when serializing', () => {
@@ -512,13 +613,17 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
         selectionJson: Selection.near(pmNode.resolve(5)).toJSON(),
       },
     });
 
     expect(
-      getInitialSelection(0, 'test:one.md', pmNode)(store.state)?.toJSON(),
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(store.state)?.toJSON(),
     ).toEqual({
       anchor: 5,
       head: 5,
@@ -535,7 +640,7 @@ describe('serializing state', () => {
       name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
-        editorId: 0,
+        editorId: PRIMARY_EDITOR_INDEX,
       },
     });
 
@@ -550,7 +655,11 @@ describe('serializing state', () => {
     });
 
     expect(
-      getInitialSelection(0, 'test:one.md', pmNode)(newState)?.toJSON(),
+      getInitialSelection(
+        PRIMARY_EDITOR_INDEX,
+        'test:one.md',
+        pmNode,
+      )(newState)?.toJSON(),
     ).toEqual(Selection.near(pmNode.resolve(2)).toJSON());
   });
 });

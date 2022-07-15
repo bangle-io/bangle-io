@@ -2,6 +2,11 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
+
+import {
   clearEditor,
   createNewNote,
   createWorkspace,
@@ -37,8 +42,10 @@ const getTopAndLastElement = async (page: Page) => {
 };
 
 const typeScrollableThings = async (page: Page) => {
-  let editorLocator = await getEditorLocator(page, 0, { focus: true });
-  await clearEditor(page, 0);
+  let editorLocator = await getEditorLocator(page, PRIMARY_EDITOR_INDEX, {
+    focus: true,
+  });
+  await clearEditor(page, PRIMARY_EDITOR_INDEX);
   await page.keyboard.type('## top element');
   await page.keyboard.press('Enter');
   for (let i = 0; i < 15; i++) {
@@ -70,7 +77,7 @@ test.describe('scroll', () => {
 
       if (screenType === 'split-screen') {
         await splitScreen(page);
-        await getEditorLocator(page, 1);
+        await getEditorLocator(page, SECONDARY_EDITOR_INDEX);
 
         // eslint-disable-next-line jest/no-conditional-expect
         expect(await page.$('.B-editor-container_editor-1')).not.toBeNull();
@@ -78,7 +85,10 @@ test.describe('scroll', () => {
 
       await typeScrollableThings(page);
 
-      const selectionJSON = await getEditorSelectionJson(page, 0);
+      const selectionJSON = await getEditorSelectionJson(
+        page,
+        PRIMARY_EDITOR_INDEX,
+      );
 
       let { topLocator, lastLocator } = await getTopAndLastElement(page);
 
@@ -88,19 +98,23 @@ test.describe('scroll', () => {
 
       await createNewNote(page, wsName, 'other-note-1');
 
-      await getEditorLocator(page, 0);
+      await getEditorLocator(page, PRIMARY_EDITOR_INDEX);
 
       await expect(page).toHaveTitle(/other-note-1/);
 
-      await waitForEditorTextToContain(page, 0, 'other-note-1');
+      await waitForEditorTextToContain(
+        page,
+        PRIMARY_EDITOR_INDEX,
+        'other-note-1',
+      );
 
-      expect(await getEditorDebugString(page, 0)).toEqual(
+      expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
         `doc(heading(\"other-note-1\"), paragraph(\"Hello world!\"))`,
       );
 
       await page.goBack({ waitUntil: 'networkidle' });
 
-      await getEditorLocator(page, 0);
+      await getEditorLocator(page, PRIMARY_EDITOR_INDEX);
 
       // make sure we are back to our previous page
       await expect(page).toHaveTitle(/test123/);
@@ -111,7 +125,9 @@ test.describe('scroll', () => {
       expect(await isIntersectingViewport(lastLocator)).toBe(true);
 
       // check if selection is preserved
-      expect(selectionJSON).toEqual(await getEditorSelectionJson(page, 0));
+      expect(selectionJSON).toEqual(
+        await getEditorSelectionJson(page, PRIMARY_EDITOR_INDEX),
+      );
     });
   }
   test('reloading preserves scroll & selection', async ({ page }) => {
@@ -130,7 +146,7 @@ test.describe('scroll', () => {
 
     await page.reload({ timeout: 8000, waitUntil: 'networkidle' });
 
-    await getEditorLocator(page, 0);
+    await getEditorLocator(page, PRIMARY_EDITOR_INDEX);
 
     // make sure we are back to our previous page
     await expect(page).toHaveTitle(/test123/);
@@ -148,7 +164,7 @@ test.describe('scroll', () => {
 
     expect(await isIntersectingViewport(topLocator)).toBe(false);
     expect(await isIntersectingViewport(lastLocator)).toBe(true);
-    expect(await getEditorDebugString(page, 0)).toEqual(
+    expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       `doc(heading(\"top element\"), heading(\"0\"), heading(\"1\"), heading(\"2\"), heading(\"3\"), heading(\"4\"), heading(\"5\"), heading(\"6\"), heading(\"7\"), heading(\"8\"), heading(\"9\"), heading(\"10\"), heading(\"11\"), heading(\"12\"), heading(\"13\"), heading(\"14\"), heading(\"last element\"), heading(\"My existence at the bottom proves that I was spared from a reload.\"), paragraph)`,
     );
   });
@@ -164,14 +180,14 @@ test.describe('scroll', () => {
       'operation::@bangle.io/core-extension:TOGGLE_EDITOR_SPLIT',
     );
 
-    await getEditorLocator(page, 1, { wsPath });
+    await getEditorLocator(page, SECONDARY_EDITOR_INDEX, { wsPath });
 
     // let editor flush out changes or it will block reload
     await longSleep(300);
 
     await page.reload({ timeout: 8000, waitUntil: 'networkidle' });
 
-    await getEditorLocator(page, 1, { wsPath });
+    await getEditorLocator(page, SECONDARY_EDITOR_INDEX, { wsPath });
 
     expect(true).toBe(true);
   });
@@ -189,20 +205,20 @@ test.describe('scroll', () => {
 
     await sleep();
 
-    await waitForWsPathToLoad(page, 1, { wsPath });
+    await waitForWsPathToLoad(page, SECONDARY_EDITOR_INDEX, { wsPath });
 
     await runOperation(
       page,
       'operation::@bangle.io/core-extension:focus-primary-editor',
     );
 
-    await waitForEditorFocus(page, 0, { wsPath });
+    await waitForEditorFocus(page, PRIMARY_EDITOR_INDEX, { wsPath });
 
     // let editor flush out changes or it will block reload
     await longSleep(700);
 
     await page.reload({ waitUntil: 'networkidle' });
 
-    await waitForEditorFocus(page, 0);
+    await waitForEditorFocus(page, PRIMARY_EDITOR_INDEX);
   });
 });
