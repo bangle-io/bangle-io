@@ -37,8 +37,8 @@
     "typescript": "^4.7.3"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.30.0",
-    "@bangle.dev/pm": "0.30.0",
+    "@bangle.dev/core": "0.30.0-alpha.6",
+    "@bangle.dev/pm": "0.30.0-alpha.6",
     "@bangle.io/extension-registry": "workspace:*",
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",

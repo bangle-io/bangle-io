@@ -19,10 +19,10 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.30.0",
-    "@bangle.dev/pm": "0.30.0",
-    "@bangle.dev/react": "0.30.0",
-    "@bangle.dev/utils": "0.30.0",
+    "@bangle.dev/core": "0.30.0-alpha.6",
+    "@bangle.dev/pm": "0.30.0-alpha.6",
+    "@bangle.dev/react": "0.30.0-alpha.6",
+    "@bangle.dev/utils": "0.30.0-alpha.6",
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
@@ -41,8 +41,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.30.0",
-    "@bangle.dev/test-helpers": "0.30.0",
+    "@bangle.dev/all-base-components": "0.30.0-alpha.6",
+    "@bangle.dev/test-helpers": "0.30.0-alpha.6",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.43",
