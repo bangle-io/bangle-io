@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 
-import type { Manager } from '@bangle.dev/collab-server';
+import type { CollabManager } from '@bangle.dev/collab-server';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
@@ -12,6 +12,7 @@ import {
 } from '@bangle.io/utils';
 
 import { abortableServices } from './abortable-services';
+import { DocChangeEmitter } from './doc-change-emitter';
 import { getEditorManager } from './slices/worker-editor-slice';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
 
@@ -39,9 +40,12 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
   console.debug('Naukar running in ', envType);
 
-  // main-dispatch-end
+  const docChangeEmitter = new DocChangeEmitter();
 
-  const handleCollabRequest: Manager['handleRequest'] = async (...args) => {
+  // main-dispatch-end
+  const handleCollabRequest: CollabManager['handleRequest'] = async (
+    ...args
+  ) => {
     assertNotUndefined(
       storeRef.current,
       'handleCollabRequest called but store is not yet defined',
@@ -68,12 +72,28 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   return {
     // setup up store and store syncing
     async sendMessagePort(port: MessageChannel['port2']) {
-      storeRef.current = initializeNaukarStore({ port, extensionRegistry });
+      storeRef.current = initializeNaukarStore({
+        port,
+        extensionRegistry,
+        docChangeEmitter,
+      });
     },
 
     // collab
     handleCollabRequest,
-
+    registerDocChange(
+      onDocChange: ({
+        wsPath,
+        serverVersion,
+      }: {
+        wsPath: string;
+        serverVersion: number;
+      }) => void,
+    ) {
+      docChangeEmitter.addListener(({ wsPath, newCollabState }) => {
+        onDocChange({ wsPath, serverVersion: newCollabState.version });
+      });
+    },
     async status() {
       return true;
     },

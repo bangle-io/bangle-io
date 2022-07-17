@@ -13,6 +13,7 @@ import { workspaceSlice } from '@bangle.io/slice-workspace';
 
 import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
 import { editorManagerSlice } from '../slices/worker-editor-slice';
+import { writeNoteToDiskSlice } from '../slices/write-note-to-disk-slice';
 
 export type NaukarActionTypes = {
   name: string;
@@ -32,7 +33,7 @@ export function naukarSlices({
     editorManagerSlice(),
     notificationSlice(),
     // <-- PLOP INSERT SLICE -->
-
+    writeNoteToDiskSlice(),
     // keep this at the end
     new Slice({
       onError(error, store) {
