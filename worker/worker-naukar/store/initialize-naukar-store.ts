@@ -13,11 +13,9 @@ const MAX_DEFERRED_WAIT_TIME = 30;
 
 export function initializeNaukarStore({
   port,
-  onUpdate,
   extensionRegistry,
   docChangeEmitter,
 }: {
-  onUpdate?: (store: ApplicationStore) => void;
   port: MessagePort;
   extensionRegistry: ExtensionRegistry;
   docChangeEmitter: DocChangeEmitter;
@@ -31,7 +29,7 @@ export function initializeNaukarStore({
     storeName: WORKER_STORE_NAME,
     state: AppState.create({
       opts,
-      slices: naukarSlices({ onUpdate }),
+      slices: naukarSlices({}),
     }),
     dispatchAction: (store, action) => {
       log(action);

@@ -37,7 +37,6 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   const storeRef: StoreRef = {
     current: undefined,
   };
-
   console.debug('Naukar running in ', envType);
 
   const docChangeEmitter = new DocChangeEmitter();
@@ -53,7 +52,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
     const store = storeRef.current;
 
-    let editorManager = getEditorManager()(store.state, store.dispatch);
+    const editorManager = getEditorManager()(store.state);
 
     assertNotUndefined(
       editorManager,

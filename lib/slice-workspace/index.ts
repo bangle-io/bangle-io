@@ -18,6 +18,7 @@ export {
 export {
   closeMiniEditor,
   closeOpenedEditor,
+  getOpenedWsPaths,
   getWsName,
   goToWorkspaceAuthRoute,
   goToWorkspaceHomeRoute,
