@@ -1,28 +1,28 @@
-import { CollabManager, CollabServerState } from '@bangle.dev/collab-server';
+import type { CollabMessageBus } from '@bangle.dev/collab-manager';
+import { CollabManager, CollabServerState } from '@bangle.dev/collab-manager';
 import type { Schema } from '@bangle.dev/pm';
 
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { ExtensionRegistry } from '@bangle.io/shared-types';
 import { getNote } from '@bangle.io/slice-workspace';
 
-import type { DocChangeEmitter } from './doc-change-emitter';
-
 export const DOC_WRITE_DEBOUNCE_WAIT = 250;
 export const DOC_WRITE_DEBOUNCE_MAX_WAIT = 1000;
 
 export interface NaukarStateConfig {
   readonly extensionRegistry: ExtensionRegistry;
-  readonly docChangeEmitter: DocChangeEmitter;
   readonly port: MessagePort;
+  readonly collabMessageBus: CollabMessageBus;
 }
 
 export function setupCollabManager(
   schema: Schema,
   store: ApplicationStore,
-  docChangeEmitter: DocChangeEmitter,
+  collabMessageBus: CollabMessageBus,
 ) {
   return new CollabManager({
     schema: schema,
+    collabMessageBus,
     getInitialState: async (docName) => {
       try {
         const doc = await getNote(docName)(store.state, store.dispatch, store);
@@ -43,12 +43,6 @@ export function setupCollabManager(
       }
     },
     applyState: (docName, newCollabState, oldCollabState) => {
-      docChangeEmitter.emit({
-        wsPath: docName,
-        newCollabState,
-        oldCollabState,
-      });
-
       return true;
     },
   });

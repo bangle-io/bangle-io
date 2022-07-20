@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 
-import type { CollabManager } from '@bangle.dev/collab-server';
+import { CollabMessageBus } from '@bangle.dev/collab-manager';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
@@ -12,8 +12,7 @@ import {
 } from '@bangle.io/utils';
 
 import { abortableServices } from './abortable-services';
-import { DocChangeEmitter } from './doc-change-emitter';
-import { getEditorManager } from './slices/worker-editor-slice';
+import { setNewEditorManager } from './slices/worker-editor-slice';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
 
 const LOG = false;
@@ -39,28 +38,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   };
   console.debug('Naukar running in ', envType);
 
-  const docChangeEmitter = new DocChangeEmitter();
-
-  // main-dispatch-end
-  const handleCollabRequest: CollabManager['handleRequest'] = async (
-    ...args
-  ) => {
-    assertNotUndefined(
-      storeRef.current,
-      'handleCollabRequest called but store is not yet defined',
-    );
-
-    const store = storeRef.current;
-
-    const editorManager = getEditorManager()(store.state);
-
-    assertNotUndefined(
-      editorManager,
-      'handleCollabRequest called but editorManager is not yet defined',
-    );
-
-    return editorManager.handleRequest(...args);
-  };
+  const collabMessageBus = new CollabMessageBus({});
 
   // eslint-disable-next-line no-restricted-globals
   if (typeof self !== 'undefined') {
@@ -68,31 +46,59 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     (self as any).storeRef = storeRef;
   }
 
+  let unregisterCollabReceiveMessage = () => {};
+  let previousPort: MessagePort | undefined;
+
   return {
     // setup up store and store syncing
     async sendMessagePort(port: MessageChannel['port2']) {
       storeRef.current = initializeNaukarStore({
         port,
         extensionRegistry,
-        docChangeEmitter,
+        collabMessageBus,
       });
     },
 
     // collab
-    handleCollabRequest,
-    registerDocChange(
-      onDocChange: ({
-        wsPath,
-        serverVersion,
-      }: {
-        wsPath: string;
-        serverVersion: number;
-      }) => void,
-    ) {
-      docChangeEmitter.addListener(({ wsPath, newCollabState }) => {
-        onDocChange({ wsPath, serverVersion: newCollabState.version });
-      });
+    setNewEditorManager() {
+      assertNotUndefined(
+        storeRef.current,
+        'setNewEditorManager called but store is not yet defined',
+      );
+
+      const store = storeRef.current;
+      setNewEditorManager(extensionRegistry, collabMessageBus)(
+        store.state,
+        store.dispatch,
+        store,
+      );
     },
+    registerCollabMessagePort(port: MessageChannel['port2']) {
+      previousPort?.close();
+      unregisterCollabReceiveMessage();
+      previousPort = port;
+
+      let seen = new WeakSet();
+      // TODO implement buffering if manager is not ready yet
+      unregisterCollabReceiveMessage = collabMessageBus.receiveMessages(
+        CollabMessageBus.WILD_CARD,
+
+        (message) => {
+          // prevent posting the same message that it received
+          if (seen.has(message)) {
+            return;
+          }
+
+          port.postMessage(message);
+        },
+      );
+
+      port.onmessage = ({ data }) => {
+        seen.add(data);
+        collabMessageBus.transmit(data);
+      };
+    },
+
     async status() {
       return true;
     },

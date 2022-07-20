@@ -1,9 +1,7 @@
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
 import type { NaukarStateConfig } from '../common';
-import type { DocChangeEmitter } from '../doc-change-emitter';
 import { naukarSlices } from './naukar-slices';
 
 const LOG = false;
@@ -14,16 +12,12 @@ const MAX_DEFERRED_WAIT_TIME = 30;
 export function initializeNaukarStore({
   port,
   extensionRegistry,
-  docChangeEmitter,
-}: {
-  port: MessagePort;
-  extensionRegistry: ExtensionRegistry;
-  docChangeEmitter: DocChangeEmitter;
-}) {
+  collabMessageBus,
+}: NaukarStateConfig) {
   const opts: NaukarStateConfig = {
     port,
     extensionRegistry,
-    docChangeEmitter,
+    collabMessageBus,
   };
   const store = ApplicationStore.create({
     storeName: WORKER_STORE_NAME,

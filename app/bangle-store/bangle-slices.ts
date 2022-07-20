@@ -31,6 +31,7 @@ export type BangleActionTypes =
 
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
+// disables side effects in main because they will be handled by the worker
 function disableSideEffect(slice: Slice) {
   slice.spec.sideEffect = undefined;
 
