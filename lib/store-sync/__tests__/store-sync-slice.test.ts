@@ -1,9 +1,11 @@
+import type { ActionsSerializersType } from '@bangle.io/create-store';
 import { Slice, staticSlice } from '@bangle.io/create-store';
 import { createTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import type { StoreSyncConfigType } from '../store-sync';
 import {
+  APPLY_TRANSFER,
   isStoreSyncReady,
   startStoreSync,
   storeSyncSlice,
@@ -77,6 +79,7 @@ let dummySlice = new Slice<{ counter: number }, DummyAction>({
 function setup(
   store1Config: Partial<StoreSyncConfigType> = {},
   store2Config: Partial<StoreSyncConfigType> = {},
+  extraSlice: Slice | undefined = undefined,
 ) {
   const { port1, port2 } = new MessageChannel();
 
@@ -105,11 +108,24 @@ function setup(
     port: port2 as any,
   });
 
+  const slices1 = [configSlice1, storeSyncSlice(configKey1), dummySlice];
+
+  if (extraSlice) {
+    slices1.push(extraSlice);
+  }
+
   const { store: store1 } = createTestStore({
-    slices: [configSlice1, storeSyncSlice(configKey1), dummySlice],
+    slices: slices1,
   });
+
+  const slices2 = [configSlice2, storeSyncSlice(configKey2), dummySlice];
+
+  if (extraSlice) {
+    slices2.push(extraSlice);
+  }
+
   const { store: store2 } = createTestStore({
-    slices: [configSlice2, storeSyncSlice(configKey2), dummySlice],
+    slices: slices2,
   });
 
   return {
@@ -344,4 +360,148 @@ test('when there is a delay in second store', async () => {
   await sleep(0);
 
   expect(dummySlice.getSliceState(store2.state)).toEqual({ counter: 5 });
+});
+
+describe('transferring values', () => {
+  const toTransfer = 'my-kitty';
+  type Action = {
+    name: 'action::transfer-action:transfer';
+    value: {
+      kitty: string;
+    };
+  };
+  const transferSetup = async (
+    serializer = () => {
+      return {
+        toJSON(action: Action) {
+          return {
+            kitty: action.value.kitty,
+            [APPLY_TRANSFER]: 'kitty',
+          };
+        },
+        fromJSON(obj: any) {
+          return {
+            kitty: obj.kitty,
+          };
+        },
+      };
+    },
+  ) => {
+    let testSlice = new Slice<{ kitty: string | undefined }, Action>({
+      state: {
+        init() {
+          return { kitty: undefined };
+        },
+        apply(action, state) {
+          if (action.name === 'action::transfer-action:transfer') {
+            return {
+              ...state,
+              kitty: action.value.kitty,
+            };
+          }
+
+          return state;
+        },
+      },
+      actions: {
+        'action::transfer-action:transfer': serializer,
+      },
+    });
+
+    let { store1, store2, port1 } = setup({}, {}, testSlice);
+
+    startStoreSync()(store1.state, store1.dispatch);
+    startStoreSync()(store2.state, store2.dispatch);
+
+    return {
+      store1,
+      store2,
+      port1,
+      testSlice,
+    };
+  };
+
+  test('transfers value between the store', async () => {
+    const onError = jest.fn();
+    const { store1, store2, testSlice, port1 } = await transferSetup(
+      undefined,
+      onError,
+    );
+
+    store1.dispatch({
+      name: 'action::transfer-action:transfer',
+      value: {
+        kitty: toTransfer,
+      },
+    });
+
+    expect(testSlice.getSliceState(store1.state)).toEqual({
+      kitty: toTransfer,
+    });
+
+    await sleep(0);
+
+    expect(isStoreSyncReady()(store1.state)).toBe(true);
+    expect(isStoreSyncReady()(store2.state)).toBe(true);
+
+    expect(testSlice.getSliceState(store2.state)).toEqual({
+      kitty: toTransfer,
+    });
+
+    expect(port1.postMessage).lastCalledWith(
+      {
+        type: 'action',
+        action: {
+          name: 'action::transfer-action:transfer',
+          serializedValue: {
+            kitty: 'my-kitty',
+          },
+          storeName: 'test-store',
+        },
+      },
+      ['my-kitty'],
+    );
+  });
+
+  test('throws error if transfer value is undefined', async () => {
+    const { store1 } = await transferSetup();
+
+    expect(() =>
+      store1.dispatch({
+        name: 'action::transfer-action:transfer',
+        value: {
+          kitty: undefined,
+        },
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"transfer value with key \\"kitty\\" must not be undefined"`,
+    );
+  });
+
+  test('throws error if transfer key is of not string type', async () => {
+    const { store1 } = await transferSetup(() => {
+      return {
+        toJSON(action: Action) {
+          return {
+            kitty: action.value.kitty,
+            [APPLY_TRANSFER]: {} as any,
+          };
+        },
+        fromJSON(obj: any) {
+          return {
+            kitty: obj.kitty,
+          };
+        },
+      };
+    });
+
+    expect(() =>
+      store1.dispatch({
+        name: 'action::transfer-action:transfer',
+        value: {
+          kitty: undefined,
+        },
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(`"transferKey must be a string"`);
+  });
 });

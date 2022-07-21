@@ -10,8 +10,6 @@ import {
   isWorkerGlobalScope,
 } from '@bangle.io/utils';
 
-export const APPLY_TRANSFER = Symbol('apply-transfer');
-
 type SyncAction =
   | {
       name: 'action::@bangle.io/store-sync:start-sync';
@@ -37,6 +35,13 @@ const log = LOG
       `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync`,
     )
   : () => {};
+
+const logWarn = console.warn.bind(
+  console,
+  `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync`,
+);
+
+export const APPLY_TRANSFER = Symbol('apply-transfer');
 
 const MAX_PING_PONG_TRY = 15;
 
@@ -210,12 +215,46 @@ export function storeSyncSlice<
 
                   if (serializedAction) {
                     log('sending message', action.name);
-                    port.postMessage({
-                      type: 'action',
-                      action: serializedAction,
-                    });
+
+                    let transferKey = (serializedAction.serializedValue as any)[
+                      APPLY_TRANSFER
+                    ];
+
+                    if (transferKey) {
+                      if (typeof transferKey !== 'string') {
+                        throw new Error('transferKey must be a string');
+                      }
+
+                      let serializedValue: any =
+                        serializedAction.serializedValue;
+
+                      log('transferring :', transferKey);
+
+                      const value = serializedValue[transferKey];
+
+                      if (value == null) {
+                        throw new Error(
+                          `transfer value with key "${transferKey}" must not be undefined`,
+                        );
+                      }
+
+                      delete serializedValue[APPLY_TRANSFER];
+
+                      port.postMessage(
+                        {
+                          type: 'action',
+                          action: serializedAction,
+                        },
+                        [value],
+                      );
+                    } else {
+                      port.postMessage({
+                        type: 'action',
+                        action: serializedAction,
+                      });
+                    }
                   } else {
-                    console.warn('No serialization found for ', action.name);
+                    logWarn('No serialization found for ', action.name);
                   }
                 }
               }
