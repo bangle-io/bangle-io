@@ -4,7 +4,7 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { NaukarStateConfig } from '../common';
 import { naukarSlices } from './naukar-slices';
 
-const LOG = false;
+const LOG = true;
 let log = LOG ? console.debug.bind(console, 'naukar-store') : () => {};
 
 const MAX_DEFERRED_WAIT_TIME = 30;
@@ -26,7 +26,8 @@ export function initializeNaukarStore({
       slices: naukarSlices({}),
     }),
     dispatchAction: (store, action) => {
-      log(action);
+      log(action.name, action.id);
+
       let newState = store.state.applyAction(action);
       store.updateState(newState);
       // log(newState);

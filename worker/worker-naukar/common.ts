@@ -6,6 +6,8 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import type { ExtensionRegistry } from '@bangle.io/shared-types';
 import { getNote } from '@bangle.io/slice-workspace';
 
+import { updateCollabStateInfo } from './slices/write-note-to-disk-slice';
+
 export const DOC_WRITE_DEBOUNCE_WAIT = 250;
 export const DOC_WRITE_DEBOUNCE_MAX_WAIT = 1000;
 
@@ -43,6 +45,13 @@ export function setupCollabManager(
       }
     },
     applyState: (docName, newCollabState, oldCollabState) => {
+      queueMicrotask(() => {
+        updateCollabStateInfo({
+          wsPath: docName,
+          collabState: newCollabState,
+        })(store.state, store.dispatch);
+      });
+
       return true;
     },
   });

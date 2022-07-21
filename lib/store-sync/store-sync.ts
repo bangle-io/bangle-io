@@ -213,7 +213,7 @@ export function storeSyncSlice<
                       action: serializedAction,
                     });
                   } else {
-                    log('No serialization found for ', action.name);
+                    console.warn('No serialization found for ', action.name);
                   }
                 }
               }

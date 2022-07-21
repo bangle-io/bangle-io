@@ -4,15 +4,9 @@ import { CollabMessageBus } from '@bangle.dev/collab-manager';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import {
-  assertNotUndefined,
-  BaseError,
-  getSelfType,
-  isWorkerGlobalScope,
-} from '@bangle.io/utils';
+import { BaseError, getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
 
 import { abortableServices } from './abortable-services';
-import { setNewEditorManager } from './slices/worker-editor-slice';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
 
 const LOG = false;
@@ -59,21 +53,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
       });
     },
 
-    // collab
-    setNewEditorManager() {
-      assertNotUndefined(
-        storeRef.current,
-        'setNewEditorManager called but store is not yet defined',
-      );
-
-      const store = storeRef.current;
-      setNewEditorManager(extensionRegistry, collabMessageBus)(
-        store.state,
-        store.dispatch,
-        store,
-      );
-    },
-    registerCollabMessagePort(port: MessageChannel['port2']) {
+    async registerCollabMessagePort(port: MessageChannel['port2']) {
       previousPort?.close();
       unregisterCollabReceiveMessage();
       previousPort = port;

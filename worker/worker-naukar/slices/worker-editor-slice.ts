@@ -1,6 +1,10 @@
-import type { CollabManager } from '@bangle.dev/collab-server';
+import type {
+  CollabManager,
+  CollabMessageBus,
+} from '@bangle.dev/collab-manager';
 
 import { Slice, SliceKey } from '@bangle.io/create-store';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   getOpenedWsPaths,
   workspaceSliceKey,
@@ -61,10 +65,6 @@ export function editorManagerSlice() {
           config.extensionRegistry,
           'extensionRegistry needs to be defined',
         );
-        assertNotUndefined(
-          config.docChangeEmitter,
-          'docChangeEmitter needs to be defined',
-        );
 
         return {
           deferredUpdate(store) {
@@ -83,8 +83,9 @@ export function editorManagerSlice() {
               }
             });
           },
+
           deferredOnce(store, abortSignal) {
-            const { extensionRegistry, docChangeEmitter } = config;
+            const { extensionRegistry, collabMessageBus } = config;
 
             store.dispatch({
               name: 'action::@bangle.io/worker-naukar:set-editor-manager',
@@ -92,7 +93,7 @@ export function editorManagerSlice() {
                 editorManager: setupCollabManager(
                   extensionRegistry.specRegistry.schema,
                   store,
-                  docChangeEmitter,
+                  collabMessageBus,
                 ),
               },
             });
