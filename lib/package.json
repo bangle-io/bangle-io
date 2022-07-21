@@ -12,6 +12,7 @@
     "shared-operations",
     "shared-types",
     "slice-editor-manager",
+    "slice-editor-sync",
     "slice-notification",
     "slice-page",
     "slice-ui",

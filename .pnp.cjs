@@ -245,6 +245,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-editor-manager"\
       },\
       {\
+        "name": "@bangle.io/slice-editor-sync",\
+        "reference": "workspace:lib/slice-editor-sync"\
+      },\
+      {\
         "name": "@bangle.io/slice-notification",\
         "reference": "workspace:lib/slice-notification"\
       },\
@@ -369,6 +373,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/shared", ["workspace:app/shared"]],\
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],\
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],\
+      ["@bangle.io/slice-editor-sync", ["workspace:lib/slice-editor-sync"]],\
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],\
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
@@ -6375,6 +6380,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["reselect", "npm:4.1.5"],\
             ["tslib", "npm:2.4.0"],\
             ["type-fest", "npm:2.12.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/slice-editor-sync", [\
+        ["workspace:lib/slice-editor-sync", {\
+          "packageLocation": "./lib/slice-editor-sync/",\
+          "packageDependencies": [\
+            ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.11"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.11"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
+            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@testing-library/dom", "npm:8.12.0"],\
+            ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"]\
           ],\
           "linkType": "SOFT"\

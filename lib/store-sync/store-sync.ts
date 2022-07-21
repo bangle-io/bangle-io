@@ -10,6 +10,8 @@ import {
   isWorkerGlobalScope,
 } from '@bangle.io/utils';
 
+export const APPLY_TRANSFER = Symbol('apply-transfer');
+
 type SyncAction =
   | {
       name: 'action::@bangle.io/store-sync:start-sync';
