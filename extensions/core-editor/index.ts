@@ -5,7 +5,6 @@ import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { dispatchEditorCommand } from '@bangle.io/slice-editor-manager';
 
-import { coreEditorSlice } from './core-editor-slice';
 import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
@@ -21,7 +20,7 @@ const extension = Extension.create({
     markdownItPlugins: [frontMatterMarkdownItPlugin],
   },
   application: {
-    slices: [coreEditorSlice()],
+    slices: [],
     operations: [
       {
         name: 'operation::@bangle.io/core-editor:collapse-heading',
