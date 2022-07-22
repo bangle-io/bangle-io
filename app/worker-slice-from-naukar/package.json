@@ -22,7 +22,7 @@
   "publishConfig": {},
   "dependencies": {
     "@bangle.dev/collab-client": "0.30.0-alpha.13",
-    "@bangle.dev/collab-manager": "0.30.0-alpha.13",
+    "@bangle.dev/collab-comms": "0.30.0-alpha.13",
     "@bangle.dev/core": "0.30.0-alpha.13",
     "@bangle.dev/pm": "0.30.0-alpha.13",
     "@bangle.io/create-store": "workspace:*",

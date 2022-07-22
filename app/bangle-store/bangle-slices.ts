@@ -4,6 +4,7 @@ import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import type { EditorManagerAction } from '@bangle.io/slice-editor-manager';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
+import { editorSyncSlice } from '@bangle.io/slice-editor-sync';
 import {
   notificationSlice,
   uncaughtExceptionNotification,
@@ -16,6 +17,7 @@ import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
+import { workerSliceFromNaukarSlice } from '@bangle.io/worker-slice-from-naukar';
 
 import { e2eHelpers } from './e2e-helpers';
 import { historySlice } from './slices/history-slice';
@@ -62,7 +64,10 @@ export function bangleStateSlices({
     saveStateSlice(),
     miscEffectsSlice(),
     notificationSlice(),
+    workerSliceFromNaukarSlice(),
+    editorSyncSlice(),
     // <-- PLOP INSERT SLICE -->
+
     ...extensionSlices,
 
     e2eHelpers(),

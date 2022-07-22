@@ -2454,7 +2454,6 @@ __metadata:
   dependencies:
     "@bangle.dev/base-components": 0.30.0-alpha.13
     "@bangle.dev/collab-client": 0.30.0-alpha.13
-    "@bangle.dev/collab-manager": 0.30.0-alpha.13
     "@bangle.dev/core": 0.30.0-alpha.13
     "@bangle.dev/emoji": 0.30.0-alpha.13
     "@bangle.dev/markdown": 0.30.0-alpha.13
@@ -2733,8 +2732,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/github-storage@workspace:extensions/github-storage"
   dependencies:
-    "@bangle.dev/collab-client": 0.30.0-alpha.13
-    "@bangle.dev/collab-manager": 0.30.0-alpha.13
     "@bangle.dev/core": 0.30.0-alpha.13
     "@bangle.dev/pm": 0.30.0-alpha.13
     "@bangle.io/api": "workspace:*"
@@ -3749,7 +3746,7 @@ __metadata:
   resolution: "@bangle.io/worker-slice-from-naukar@workspace:app/worker-slice-from-naukar"
   dependencies:
     "@bangle.dev/collab-client": 0.30.0-alpha.13
-    "@bangle.dev/collab-manager": 0.30.0-alpha.13
+    "@bangle.dev/collab-comms": 0.30.0-alpha.13
     "@bangle.dev/core": 0.30.0-alpha.13
     "@bangle.dev/pm": 0.30.0-alpha.13
     "@bangle.dev/test-helpers": 0.30.0-alpha.13

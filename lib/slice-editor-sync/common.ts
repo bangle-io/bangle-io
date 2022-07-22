@@ -21,4 +21,4 @@ export const editorSyncKey = new SliceKey<
     unregister: () => void;
   },
   EditorSyncActions
->('worker-slice-from-naukar');
+>('@bangle.io/slice-editor-sync-key');

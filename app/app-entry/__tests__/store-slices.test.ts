@@ -34,6 +34,8 @@ test('exhaustive main slices list', () => {
     expect.stringMatching(/slice\$/),
     'miscEffectsSlice$',
     'notificationSliceKey$',
+    '@bangle.io/worker-slice-from-naukar-key$',
+    '@bangle.io/slice-editor-sync-key$',
     expect.stringMatching(/slice\$/),
     expect.stringMatching(/slice\$/),
   ]);
@@ -48,6 +50,9 @@ test('exhaustive naukar slices list', () => {
     workspaceSliceKey.key,
     'workerEditorSlice$',
     'notificationSliceKey$',
+    'write-note-to-disk-key$',
+    '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/worker-slice-from-naukar-key$',
     expect.stringMatching(/slice\$/),
   ]);
 });
@@ -59,22 +64,31 @@ test('slices common worker and main', () => {
     'slice-workspace$',
     'extension-registry-slice$',
     'notificationSliceKey$',
+    '@bangle.io/worker-slice-from-naukar-key$',
+    '@bangle.io/slice-editor-sync-key$',
   ]);
 });
 
 describe('worker and window constraints', () => {
-  const fixture = commonInBoth
-    .map((r) => r.key)
-    .filter(
-      (r) =>
-        // store sync needs effect to be runing in both places worker and window, so
-        // we remove it from tests
-        r !== 'store-sync$',
-    );
+  const sideEffectInBoth = ['store-sync$'];
+  const sideEffectInWorkerOnly = [
+    'page-slice$',
+    'store-sync$',
+    'slice-workspace$',
+    'extension-registry-slice$',
+    'notificationSliceKey$',
+  ];
+
+  const sideEffectInWindowOnly = [
+    '@bangle.io/worker-slice-from-naukar-key$',
+    '@bangle.io/slice-editor-sync-key$',
+  ];
+
+  const keys = commonInBoth.map((r) => r.key);
 
   // test to make sure side-effects only run at one place - workers
   // unless noted.
-  test.each(fixture)(
+  test.each(keys)(
     `%# slice %s must have side effects disabled in window and enabled in worker`,
     (sliceKeyName) => {
       const slice = mainSlices.find((r) => r.key === sliceKeyName);
@@ -87,17 +101,21 @@ describe('worker and window constraints', () => {
       const hasSideEffectInWorker = naukarSlice!.spec.sideEffect;
 
       // if there are side effects, they should only be defined in worker
-      // and not main window
-      if (hasSideEffectInWindow || hasSideEffectInWorker) {
+      // and not main window and similary for other cases
+      if (hasSideEffectInWindow && hasSideEffectInWorker) {
         // eslint-disable-next-line jest/no-conditional-expect
-        expect(hasSideEffectInWindow).toBeUndefined();
+        expect(sideEffectInBoth).toContain(sliceKeyName);
+      } else if (hasSideEffectInWindow && !hasSideEffectInWorker) {
         // eslint-disable-next-line jest/no-conditional-expect
-        expect(hasSideEffectInWorker).toBeTruthy();
+        expect(sideEffectInWindowOnly).toContain(sliceKeyName);
+      } else if (!hasSideEffectInWindow && hasSideEffectInWorker) {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(sideEffectInWorkerOnly).toContain(sliceKeyName);
       }
     },
   );
 
-  test.each(fixture)(
+  test.each(keys.filter((r) => r !== 'store-sync$'))(
     `%# slice %s actions must be white listed for sync`,
     (sliceKeyName) => {
       const slice = mainSlices.find((r) => r.key === sliceKeyName);
