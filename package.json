@@ -123,6 +123,7 @@
     "lint-staged": ">=12",
     "mini-css-extract-plugin": "^1.6.2",
     "minimist": "^1.2.5",
+    "plop": "^3.1.1",
     "pnp-webpack-plugin": "^1.7.0",
     "postcss": "^8.4.12",
     "postcss-custom-properties": "^12.1.5",

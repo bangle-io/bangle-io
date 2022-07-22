@@ -11,6 +11,7 @@
     "markdown",
     "shared-operations",
     "shared-types",
+    "slice-kushan",
     "slice-editor-manager",
     "slice-notification",
     "slice-page",
