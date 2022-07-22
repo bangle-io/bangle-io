@@ -423,10 +423,7 @@ describe('transferring values', () => {
 
   test('transfers value between the store', async () => {
     const onError = jest.fn();
-    const { store1, store2, testSlice, port1 } = await transferSetup(
-      undefined,
-      onError,
-    );
+    const { store1, store2, testSlice, port1 } = await transferSetup(undefined);
 
     store1.dispatch({
       name: 'action::transfer-action:transfer',

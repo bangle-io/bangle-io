@@ -27,7 +27,6 @@ test('serialization', () => {
     value: {
       port: messageChannel.port1,
       messageChannel: messageChannel,
-      q,
     },
   };
 
