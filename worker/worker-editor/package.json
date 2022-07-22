@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/worker-naukar",
+  "name": "@bangle.io/worker-editor",
   "version": "0.0.0",
   "authors": [
     {
@@ -20,32 +20,36 @@
   "module": "index.ts",
   "publishConfig": {},
   "dependencies": {
+    "@bangle.dev/collab-client": "0.30.0-alpha.13",
+    "@bangle.dev/collab-comms": "0.30.0-alpha.13",
+    "@bangle.dev/collab-manager": "0.30.0-alpha.13",
+    "@bangle.dev/core": "0.30.0-alpha.13",
     "@bangle.dev/pm": "0.30.0-alpha.13",
-    "@bangle.io/abortable-worker": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
-    "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/fzf-search": "workspace:*",
-    "@bangle.io/search-pm-node": "workspace:*",
+    "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-sync": "workspace:*",
-    "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/store-sync": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/worker-editor": "workspace:*",
     "@bangle.io/worker-slice-from-naukar": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@sentry/browser": "^6.18.1",
-    "@zip.js/zip.js": "^2.4.5",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },
   "devDependencies": {
-    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/api": "workspace:*",
+    "@bangle.io/editor": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/slice-editor-manager": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
+    "@testing-library/react": "^12.1.3",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "license": "AGPL-3.0-or-later"
 }

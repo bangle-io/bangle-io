@@ -32,7 +32,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@playwright/test": "^1.21.1",
+    "@playwright/test": "^1.24.0",
     "prettier": "^2.6.0",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
