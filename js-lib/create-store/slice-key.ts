@@ -74,6 +74,10 @@ export class SliceKey<
     return op(state, dispatch);
   }
 
+  callQueryOp<T>(state: AppState, queryOp: (state: AppState) => T) {
+    return queryOp(state);
+  }
+
   // return[1] - the first dependency name that change
   didChange<K extends keyof SL>(
     state: AppState | Readonly<AppState>,
