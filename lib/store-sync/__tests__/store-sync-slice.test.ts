@@ -238,6 +238,65 @@ test('syncs two store', async () => {
   expect(dummySlice.getSliceState(store2.state)).toEqual({ counter: 2 });
 });
 
+test('works with an action with no value', async () => {
+  let testSlice = new Slice<
+    { kitty: string | undefined },
+    {
+      name: 'action::dummy-test-slice:one';
+      value: undefined;
+    }
+  >({
+    state: {
+      init() {
+        return { kitty: undefined };
+      },
+      apply(action, state) {
+        if (action.name === 'action::dummy-test-slice:one') {
+          return {
+            ...state,
+            kitty: 'cute-kitty',
+          };
+        }
+
+        return state;
+      },
+    },
+    actions: {
+      'action::dummy-test-slice:one': () => {
+        return {
+          toJSON(action) {
+            return null;
+          },
+          fromJSON(obj) {
+            return null;
+          },
+        };
+      },
+    },
+  });
+  const { store1, store2 } = setup({}, {}, testSlice);
+
+  startStoreSync()(store1.state, store1.dispatch);
+  startStoreSync()(store2.state, store2.dispatch);
+
+  store1.dispatch({
+    name: 'action::dummy-test-slice:one',
+    value: undefined,
+  });
+
+  await sleep(0);
+
+  expect(isStoreSyncReady()(store1.state)).toBe(true);
+  expect(isStoreSyncReady()(store2.state)).toBe(true);
+
+  expect(testSlice.getSliceState(store1.state)).toEqual({
+    kitty: 'cute-kitty',
+  });
+  expect(testSlice.getSliceState(store2.state)).toEqual({
+    kitty: 'cute-kitty',
+  });
+});
+
 test('actionSendFilter works', async () => {
   const { store1, store2 } = setup({
     actionReceiveFilter: () => true,

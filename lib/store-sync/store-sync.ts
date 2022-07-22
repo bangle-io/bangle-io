@@ -41,7 +41,7 @@ const logWarn = console.warn.bind(
   `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync`,
 );
 
-export const APPLY_TRANSFER = Symbol('apply-transfer');
+export const APPLY_TRANSFER: unique symbol = Symbol('apply-transfer');
 
 const MAX_PING_PONG_TRY = 15;
 
@@ -215,10 +215,13 @@ export function storeSyncSlice<
 
                   if (serializedAction) {
                     log('sending message', action.name);
+                    const { serializedValue } = serializedAction;
 
-                    let transferKey = (serializedAction.serializedValue as any)[
-                      APPLY_TRANSFER
-                    ];
+                    let transferKey = serializedValue
+                      ? (serializedValue as Record<string | symbol, unknown>)[
+                          APPLY_TRANSFER
+                        ]
+                      : undefined;
 
                     if (transferKey) {
                       if (typeof transferKey !== 'string') {
