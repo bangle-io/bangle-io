@@ -1,0 +1,41 @@
+import { createBasicTestStore } from '@bangle.io/test-utils';
+
+import { {{sliceCamelName name}}Key } from '../common';
+import { {{sliceCamelName name}}Slice } from '../{{name}}';
+
+const setup = async ({} = {}) => {
+  const { store, ...helpers } = createBasicTestStore({
+    slices: [{{sliceCamelName name}}Slice()],
+  });
+
+  return {
+    store,
+    ...helpers,
+  };
+};
+test('works', async () => {
+  const { store } = await setup({});
+
+  expect({{sliceCamelName name}}Key.getSliceState(store.state)).toEqual({
+    apple: '',
+    banana: 0,
+  });
+});
+
+describe('actions', () => {
+  test('updates apple', async () => {
+    const { store } = await setup({});
+
+    store.dispatch({
+      name: 'action::@bangle.io/{{name}}:update-apple',
+      value: {
+        apple: 'apples',
+      },
+    });
+
+    expect({{sliceCamelName name}}Key.getSliceState(store.state)).toEqual({
+      apple: 'apples',
+      banana: 0,
+    });
+  });
+});

@@ -31,7 +31,6 @@
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
-    "@bangle.io/slice-kushan": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",

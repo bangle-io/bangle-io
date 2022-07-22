@@ -2325,7 +2325,6 @@ __metadata:
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-kushan": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
@@ -3274,9 +3273,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/slice-kushan@workspace:*, @bangle.io/slice-kushan@workspace:lib/slice-kushan":
+"@bangle.io/slice-kafka-apache@workspace:lib/slice-kafka-apache":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-kushan@workspace:lib/slice-kushan"
+  resolution: "@bangle.io/slice-kafka-apache@workspace:lib/slice-kafka-apache"
   dependencies:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"

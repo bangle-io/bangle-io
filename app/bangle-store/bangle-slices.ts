@@ -1,3 +1,4 @@
+// <-- PLOP INSERT SLICE IMPORT -->
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
@@ -60,7 +61,7 @@ export function bangleStateSlices({
     saveStateSlice(),
     miscEffectsSlice(),
     notificationSlice(),
-
+    // <-- PLOP INSERT SLICE -->
     ...extensionSlices,
 
     e2eHelpers(),

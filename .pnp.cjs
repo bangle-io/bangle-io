@@ -241,8 +241,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-editor-manager"\
       },\
       {\
-        "name": "@bangle.io/slice-kushan",\
-        "reference": "workspace:lib/slice-kushan"\
+        "name": "@bangle.io/slice-kafka-apache",\
+        "reference": "workspace:lib/slice-kafka-apache"\
       },\
       {\
         "name": "@bangle.io/slice-notification",\
@@ -369,7 +369,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/shared", ["workspace:app/shared"]],\
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],\
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],\
-      ["@bangle.io/slice-kushan", ["workspace:lib/slice-kushan"]],\
+      ["@bangle.io/slice-kafka-apache", ["workspace:lib/slice-kafka-apache"]],\
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],\
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
@@ -5124,7 +5124,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared", "workspace:app/shared"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.io/slice-kushan", "workspace:lib/slice-kushan"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
@@ -6315,11 +6314,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
-      ["@bangle.io/slice-kushan", [\
-        ["workspace:lib/slice-kushan", {\
-          "packageLocation": "./lib/slice-kushan/",\
+      ["@bangle.io/slice-kafka-apache", [\
+        ["workspace:lib/slice-kafka-apache", {\
+          "packageLocation": "./lib/slice-kafka-apache/",\
           "packageDependencies": [\
-            ["@bangle.io/slice-kushan", "workspace:lib/slice-kushan"],\
+            ["@bangle.io/slice-kafka-apache", "workspace:lib/slice-kafka-apache"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
