@@ -139,6 +139,13 @@ export class OpenedWsPaths {
     return [...wsNames];
   }
 
+  // Returns the unique wsPaths
+  getWsPaths(): string[] {
+    return Array.from(
+      new Set(this.toArray().filter((r): r is string => typeof r === 'string')),
+    );
+  }
+
   /**
    * check if wsPath is in any of the location wspaths
    * @param wsPath
