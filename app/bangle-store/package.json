@@ -22,7 +22,7 @@
     "@bangle.io/test-utils": "worksapce:*"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.30.0-alpha.11",
+    "@bangle.dev/pm": "0.30.0-alpha.13",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
@@ -31,6 +31,7 @@
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
+    "@bangle.io/slice-editor-sync": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",

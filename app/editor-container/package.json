@@ -25,10 +25,10 @@
     "react": "*"
   },
   "dependencies": {
-    "@bangle.dev/all-base-components": "0.30.0-alpha.11",
-    "@bangle.dev/core": "0.30.0-alpha.11",
-    "@bangle.dev/pm": "0.30.0-alpha.11",
-    "@bangle.dev/react": "0.30.0-alpha.11",
+    "@bangle.dev/all-base-components": "0.30.0-alpha.13",
+    "@bangle.dev/core": "0.30.0-alpha.13",
+    "@bangle.dev/pm": "0.30.0-alpha.13",
+    "@bangle.dev/react": "0.30.0-alpha.13",
     "@bangle.io/api": "workspace:*",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",

@@ -1,7 +1,7 @@
 {
   "name": "@bangle.io/pm-manual-paste",
   "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
-  "version": "0.30.0-alpha.11",
+  "version": "0.30.0-alpha.13",
   "homepage": "https://bangle.dev",
   "authors": [
     {
@@ -29,7 +29,7 @@
     "types": "dist/index.d.ts"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.30.0-alpha.11",
+    "@bangle.dev/pm": "0.30.0-alpha.13",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },
