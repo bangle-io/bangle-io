@@ -80,6 +80,12 @@ module.exports = function main(
         message: 'will this run in window? (y/n)',
         default: 'y',
       },
+      {
+        type: 'input',
+        name: 'addToWorkerSlices',
+        message: 'will this run in worker? (y/n)',
+        default: 'n',
+      },
     ],
     actions: [
       {
@@ -135,8 +141,9 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
             );
             fileContents = fileContents.replace(
               '// <-- PLOP INSERT SLICE -->',
-              `// <-- PLOP INSERT SLICE -->
-              ${sliceCamelName(data.name)}Slice(),`,
+              `${sliceCamelName(data.name)}Slice(),` +
+                '\n' +
+                `// <-- PLOP INSERT SLICE -->`,
             );
           }
 
@@ -148,6 +155,42 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
         path: 'app/bangle-store/package.json',
         transform: (fileContents, data) => {
           if (data.addToWindowSlices === 'y') {
+            let newData = JSON.parse(fileContents);
+            newData.dependencies[`@bangle.io/${data.name}`] = 'workspace:*';
+
+            return JSON.stringify(newData, null, 2);
+          }
+
+          return fileContents;
+        },
+      },
+
+      {
+        type: 'modify',
+        path: 'worker/worker-naukar/store/naukar-slices.ts',
+        transform: (fileContents, data) => {
+          if (data.addToWorkerSlices === 'y') {
+            fileContents = fileContents.replace(
+              '// <-- PLOP INSERT SLICE IMPORT -->',
+              `// <-- PLOP INSERT SLICE IMPORT -->
+import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
+            );
+            fileContents = fileContents.replace(
+              '// <-- PLOP INSERT SLICE -->',
+              `${sliceCamelName(data.name)}Slice(),` +
+                '\n' +
+                `// <-- PLOP INSERT SLICE -->`,
+            );
+          }
+
+          return fileContents;
+        },
+      },
+      {
+        type: 'modify',
+        path: 'worker/worker-naukar/package.json',
+        transform: (fileContents, data) => {
+          if (data.addToWorkerSlices === 'y') {
             let newData = JSON.parse(fileContents);
             newData.dependencies[`@bangle.io/${data.name}`] = 'workspace:*';
 

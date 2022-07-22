@@ -1,3 +1,4 @@
+// <-- PLOP INSERT SLICE IMPORT -->
 import * as Sentry from '@sentry/browser';
 
 import type { ApplicationStore } from '@bangle.io/create-store';
@@ -30,6 +31,7 @@ export function naukarSlices({
     workspaceSlice(),
     editorManagerSlice(),
     notificationSlice(),
+    // <-- PLOP INSERT SLICE -->
 
     // keep this at the end
     new Slice({
