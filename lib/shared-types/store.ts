@@ -7,4 +7,9 @@ export interface BangleStateConfig {
   readonly useWebWorker: boolean;
 }
 
+export interface NaukarStateConfig {
+  readonly extensionRegistry: ExtensionRegistry;
+  readonly port: MessagePort;
+}
+
 export type BangleApplicationStore = ApplicationStore;

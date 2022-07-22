@@ -1,8 +1,10 @@
-import { createTestStore } from '@bangle.io/test-utils';
+import {
+  createTestStore,
+  setupMockMessageChannel,
+} from '@bangle.io/test-utils';
 import { isWorkerGlobalScope, sleep } from '@bangle.io/utils';
 
 import { editorSyncSlice } from '../slice-editor-sync';
-import { setupMockMessageChannel } from './test-helpers';
 
 const isWorkerGlobalScopeMock = jest.mocked(isWorkerGlobalScope);
 

@@ -2,11 +2,13 @@
 
 import { APPLY_TRANSFER } from '@bangle.io/store-sync';
 import type { ActionTestFixtureType } from '@bangle.io/test-utils';
-import { createTestStore } from '@bangle.io/test-utils';
+import {
+  createTestStore,
+  setupMockMessageChannel,
+} from '@bangle.io/test-utils';
 
 import type { EditorSyncActions } from '../common';
 import { editorSyncSlice } from '../slice-editor-sync';
-import { setupMockMessageChannel } from './test-helpers';
 
 let cleanup = () => {};
 beforeEach(() => {

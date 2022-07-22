@@ -1,10 +1,10 @@
 import { CollabMessageBus, MessageType } from '@bangle.dev/collab-comms';
 
 import { AppState } from '@bangle.io/create-store';
+import { setupMockMessageChannel } from '@bangle.io/test-utils';
 
 import { editorSyncKey } from '../common';
 import { editorSyncSlice } from '../slice-editor-sync';
-import { setupMockMessageChannel } from './test-helpers';
 
 let cleanup = () => {};
 beforeEach(() => {
