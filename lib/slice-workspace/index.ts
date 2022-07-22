@@ -6,6 +6,7 @@ export {
   checkFileExists,
   createNote,
   deleteNote,
+  docToFile,
   getFile,
   getNote,
   getStorageProviderName,
