@@ -424,7 +424,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:e64cf7335bd9c7ca85467e49bf1edf9453ecb85a4fb92fc2ff58d9b8b9c53cdc69dd01b8b8bc4c71213a400e37b715b62402c2fe567a0ef13bd394bf4769f057#npm:7.18.2"],\
             ["@babel/preset-react", "virtual:6e4445ea532b1c0efb8b747dbc50f44ee9db8eed593937ea4b7e2ac28ecef343ceed44d5facb831dbf3dcf4533384a5926793e65128ccc571fa3c8f9f5b8126d#npm:7.17.12"],\
             ["@babel/preset-typescript", "virtual:6e4445ea532b1c0efb8b747dbc50f44ee9db8eed593937ea4b7e2ac28ecef343ceed44d5facb831dbf3dcf4533384a5926793e65128ccc571fa3c8f9f5b8126d#npm:7.17.12"],\
-            ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
@@ -3678,34 +3678,34 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/all-base-components", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-all-base-components-npm-0.30.0-alpha.13-e52b59a272-c879f3ef32.zip/node_modules/@bangle.dev/all-base-components/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-all-base-components-npm-0.30.0-alpha.15-c8b735bfcd-3ecd9c57dd.zip/node_modules/@bangle.dev/all-base-components/",\
           "packageDependencies": [\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@types/jest", "npm:27.5.2"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@bangle.dev/base-components", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-base-components-npm-0.30.0-alpha.13-106f5f39c7-c8c4d1db25.zip/node_modules/@bangle.dev/base-components/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-base-components-npm-0.30.0-alpha.15-bb49ae0b5a-4707eace09.zip/node_modules/@bangle.dev/base-components/",\
           "packageDependencies": [\
-            ["@bangle.dev/base-components", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/base-components", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-base-components-virtual-22eebd36b3/0/cache/@bangle.dev-base-components-npm-0.30.0-alpha.13-106f5f39c7-c8c4d1db25.zip/node_modules/@bangle.dev/base-components/",\
+        ["virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-base-components-virtual-b50faae25c/0/cache/@bangle.dev-base-components-npm-0.30.0-alpha.15-bb49ae0b5a-4707eace09.zip/node_modules/@bangle.dev/base-components/",\
           "packageDependencies": [\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm-commands", "virtual:f83f69b5594d31aa07d0f64983d699fd3fecbc0240b6ce12f7de9b65a0a1a5433a4eaa8af05fd3b496ce8d535feb2dfe5f53c1f7b33ffff2fe5282f43ea860f1#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm-commands", "virtual:3d70f8e8391d008de11ad0af82b68d0cada669ab3c2fea0c5eca00f03648a68faa758369ed875123a2f05d34fc81f7465e12cbc2809eb3d143874005f85948d1#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -3720,21 +3720,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/collab-client", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-collab-client-npm-0.30.0-alpha.13-5618a47386-6c2274a816.zip/node_modules/@bangle.dev/collab-client/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-collab-client-npm-0.30.0-alpha.15-65678c6b2c-40f4b70569.zip/node_modules/@bangle.dev/collab-client/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-client", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/collab-client", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-478923e6b5/0/cache/@bangle.dev-collab-client-npm-0.30.0-alpha.13-5618a47386-6c2274a816.zip/node_modules/@bangle.dev/collab-client/",\
+        ["virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-72257b587b/0/cache/@bangle.dev-collab-client-npm-0.30.0-alpha.15-65678c6b2c-40f4b70569.zip/node_modules/@bangle.dev/collab-client/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"],\
@@ -3751,33 +3751,31 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/collab-comms", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-collab-comms-npm-0.30.0-alpha.13-9d48609013-284e23a0f7.zip/node_modules/@bangle.dev/collab-comms/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-collab-comms-npm-0.30.0-alpha.15-429b78f2f0-2a95582550.zip/node_modules/@bangle.dev/collab-comms/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:9d486090130ec2f136caa85dcae41e5aecd5f4a18842fb4a4687acb6bd0dc56eb13ae1695d643027c97557420f9e5969a8e3122f46baf8417218c2159cd8b616#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
             ["@types/jest", "npm:27.5.2"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@bangle.dev/collab-manager", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-collab-manager-npm-0.30.0-alpha.13-9e1749590f-703b9feab9.zip/node_modules/@bangle.dev/collab-manager/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-collab-manager-npm-0.30.0-alpha.15-e50b4b95ac-c008ee1ec0.zip/node_modules/@bangle.dev/collab-manager/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-manager", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/collab-manager", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-manager-virtual-166fbc865f/0/cache/@bangle.dev-collab-manager-npm-0.30.0-alpha.13-9e1749590f-703b9feab9.zip/node_modules/@bangle.dev/collab-manager/",\
+        ["virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-manager-virtual-fa8ea2eaeb/0/cache/@bangle.dev-collab-manager-npm-0.30.0-alpha.15-e50b4b95ac-c008ee1ec0.zip/node_modules/@bangle.dev/collab-manager/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/disk", "virtual:166fbc865fc97400c5506664736e684c65e20f7824463b38a928e27311ff9aa18b6b380d46579c7c3e6767d6513c72502dbcf1b420745d646f74f77ea1af536d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"],\
@@ -3793,21 +3791,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/core", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.30.0-alpha.13-5567c55b74-845712717c.zip/node_modules/@bangle.dev/core/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.30.0-alpha.15-2752ba8847-00643860cd.zip/node_modules/@bangle.dev/core/",\
           "packageDependencies": [\
-            ["@bangle.dev/core", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/core", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-core-virtual-b22cbbd308/0/cache/@bangle.dev-core-npm-0.30.0-alpha.13-5567c55b74-845712717c.zip/node_modules/@bangle.dev/core/",\
+        ["virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-core-virtual-47f1ddd453/0/cache/@bangle.dev-core-npm-0.30.0-alpha.15-2752ba8847-00643860cd.zip/node_modules/@bangle.dev/core/",\
           "packageDependencies": [\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm-commands", "virtual:f83f69b5594d31aa07d0f64983d699fd3fecbc0240b6ce12f7de9b65a0a1a5433a4eaa8af05fd3b496ce8d535feb2dfe5f53c1f7b33ffff2fe5282f43ea860f1#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/shared-types", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm-commands", "virtual:3d70f8e8391d008de11ad0af82b68d0cada669ab3c2fea0c5eca00f03648a68faa758369ed875123a2f05d34fc81f7465e12cbc2809eb3d143874005f85948d1#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/shared-types", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__pm", null]\
           ],\
           "packagePeers": [\
@@ -3817,45 +3815,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@bangle.dev/disk", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-disk-npm-0.30.0-alpha.13-368698b6e6-a85a23ebed.zip/node_modules/@bangle.dev/disk/",\
-          "packageDependencies": [\
-            ["@bangle.dev/disk", "npm:0.30.0-alpha.13"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["virtual:166fbc865fc97400c5506664736e684c65e20f7824463b38a928e27311ff9aa18b6b380d46579c7c3e6767d6513c72502dbcf1b420745d646f74f77ea1af536d#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-disk-virtual-2b225f7cda/0/cache/@bangle.dev-disk-npm-0.30.0-alpha.13-368698b6e6-a85a23ebed.zip/node_modules/@bangle.dev/disk/",\
-          "packageDependencies": [\
-            ["@bangle.dev/disk", "virtual:166fbc865fc97400c5506664736e684c65e20f7824463b38a928e27311ff9aa18b6b380d46579c7c3e6767d6513c72502dbcf1b420745d646f74f77ea1af536d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@types/bangle.dev__pm", null],\
-            ["@types/jest", "npm:27.5.2"]\
-          ],\
-          "packagePeers": [\
-            "@bangle.dev/pm",\
-            "@types/bangle.dev__pm"\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@bangle.dev/emoji", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-emoji-npm-0.30.0-alpha.13-fad628749d-a45f155fda.zip/node_modules/@bangle.dev/emoji/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-emoji-npm-0.30.0-alpha.15-d91f5eb759-fab291366c.zip/node_modules/@bangle.dev/emoji/",\
           "packageDependencies": [\
-            ["@bangle.dev/emoji", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/emoji", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-emoji-virtual-b5f508ad75/0/cache/@bangle.dev-emoji-npm-0.30.0-alpha.13-fad628749d-a45f155fda.zip/node_modules/@bangle.dev/emoji/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-emoji-virtual-7959b867d6/0/cache/@bangle.dev-emoji-npm-0.30.0-alpha.15-d91f5eb759-fab291366c.zip/node_modules/@bangle.dev/emoji/",\
           "packageDependencies": [\
-            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"],\
@@ -3871,12 +3845,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/jest-utils", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-jest-utils-npm-0.30.0-alpha.13-93eb265812-c5e93d1946.zip/node_modules/@bangle.dev/jest-utils/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-jest-utils-npm-0.30.0-alpha.15-25058e3c40-01f7108255.zip/node_modules/@bangle.dev/jest-utils/",\
           "packageDependencies": [\
-            ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
             ["@types/jest", "npm:27.5.2"],\
             ["prettier", "npm:2.6.2"]\
           ],\
@@ -3884,20 +3858,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/markdown", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-markdown-npm-0.30.0-alpha.13-3a262a6ed0-965e54f28f.zip/node_modules/@bangle.dev/markdown/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-markdown-npm-0.30.0-alpha.15-445b9b0b10-435eb3860a.zip/node_modules/@bangle.dev/markdown/",\
           "packageDependencies": [\
-            ["@bangle.dev/markdown", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/markdown", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-virtual-8525e59bca/0/cache/@bangle.dev-markdown-npm-0.30.0-alpha.13-3a262a6ed0-965e54f28f.zip/node_modules/@bangle.dev/markdown/",\
+        ["virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-virtual-b10996fb43/0/cache/@bangle.dev-markdown-npm-0.30.0-alpha.15-445b9b0b10-435eb3860a.zip/node_modules/@bangle.dev/markdown/",\
           "packageDependencies": [\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"],\
@@ -3914,20 +3888,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/markdown-front-matter", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-markdown-front-matter-npm-0.30.0-alpha.13-b3e6bac5f1-dcf999fc71.zip/node_modules/@bangle.dev/markdown-front-matter/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-markdown-front-matter-npm-0.30.0-alpha.15-c41ed93d1f-496844bdd3.zip/node_modules/@bangle.dev/markdown-front-matter/",\
           "packageDependencies": [\
-            ["@bangle.dev/markdown-front-matter", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/markdown-front-matter", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-front-matter-virtual-0f2bd4a016/0/cache/@bangle.dev-markdown-front-matter-npm-0.30.0-alpha.13-b3e6bac5f1-dcf999fc71.zip/node_modules/@bangle.dev/markdown-front-matter/",\
+        ["virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-front-matter-virtual-9f83a42ba8/0/cache/@bangle.dev-markdown-front-matter-npm-0.30.0-alpha.15-c41ed93d1f-496844bdd3.zip/node_modules/@bangle.dev/markdown-front-matter/",\
           "packageDependencies": [\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -3942,10 +3916,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/pm", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-pm-npm-0.30.0-alpha.13-e697abf19b-6d5212c858.zip/node_modules/@bangle.dev/pm/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-pm-npm-0.30.0-alpha.15-bc39227d7e-d52b88aa90.zip/node_modules/@bangle.dev/pm/",\
           "packageDependencies": [\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@types/jest", "npm:27.5.2"],\
             ["prosemirror-commands", "npm:1.3.0"],\
             ["prosemirror-dropcursor", "npm:1.5.0"],\
@@ -3964,19 +3938,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/pm-commands", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-pm-commands-npm-0.30.0-alpha.13-d21eb6b8e4-6ea9e3494a.zip/node_modules/@bangle.dev/pm-commands/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-pm-commands-npm-0.30.0-alpha.15-887adb0a51-bf5595f777.zip/node_modules/@bangle.dev/pm-commands/",\
           "packageDependencies": [\
-            ["@bangle.dev/pm-commands", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/pm-commands", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f83f69b5594d31aa07d0f64983d699fd3fecbc0240b6ce12f7de9b65a0a1a5433a4eaa8af05fd3b496ce8d535feb2dfe5f53c1f7b33ffff2fe5282f43ea860f1#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-pm-commands-virtual-762ce4152f/0/cache/@bangle.dev-pm-commands-npm-0.30.0-alpha.13-d21eb6b8e4-6ea9e3494a.zip/node_modules/@bangle.dev/pm-commands/",\
+        ["virtual:3d70f8e8391d008de11ad0af82b68d0cada669ab3c2fea0c5eca00f03648a68faa758369ed875123a2f05d34fc81f7465e12cbc2809eb3d143874005f85948d1#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-pm-commands-virtual-fb8f491cb0/0/cache/@bangle.dev-pm-commands-npm-0.30.0-alpha.15-887adb0a51-bf5595f777.zip/node_modules/@bangle.dev/pm-commands/",\
           "packageDependencies": [\
-            ["@bangle.dev/pm-commands", "virtual:f83f69b5594d31aa07d0f64983d699fd3fecbc0240b6ce12f7de9b65a0a1a5433a4eaa8af05fd3b496ce8d535feb2dfe5f53c1f7b33ffff2fe5282f43ea860f1#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm-commands", "virtual:3d70f8e8391d008de11ad0af82b68d0cada669ab3c2fea0c5eca00f03648a68faa758369ed875123a2f05d34fc81f7465e12cbc2809eb3d143874005f85948d1#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
           ],\
@@ -3988,20 +3962,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/react", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-react-npm-0.30.0-alpha.13-82975f6abb-9bfc032641.zip/node_modules/@bangle.dev/react/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-react-npm-0.30.0-alpha.15-b86d59acf6-804706d06e.zip/node_modules/@bangle.dev/react/",\
           "packageDependencies": [\
-            ["@bangle.dev/react", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/react", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-virtual-8e00f42393/0/cache/@bangle.dev-react-npm-0.30.0-alpha.13-82975f6abb-9bfc032641.zip/node_modules/@bangle.dev/react/",\
+        ["virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-virtual-912b089e5d/0/cache/@bangle.dev-react-npm-0.30.0-alpha.15-b86d59acf6-804706d06e.zip/node_modules/@bangle.dev/react/",\
           "packageDependencies": [\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"],\
@@ -4026,23 +4000,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/react-emoji-suggest", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-react-emoji-suggest-npm-0.30.0-alpha.13-e7979b7113-2612a51028.zip/node_modules/@bangle.dev/react-emoji-suggest/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-react-emoji-suggest-npm-0.30.0-alpha.15-268572638a-4b2a442814.zip/node_modules/@bangle.dev/react-emoji-suggest/",\
           "packageDependencies": [\
-            ["@bangle.dev/react-emoji-suggest", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/react-emoji-suggest", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-emoji-suggest-virtual-7ebe9512b7/0/cache/@bangle.dev-react-emoji-suggest-npm-0.30.0-alpha.13-e7979b7113-2612a51028.zip/node_modules/@bangle.dev/react-emoji-suggest/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-emoji-suggest-virtual-3b85542de2/0/cache/@bangle.dev-react-emoji-suggest-npm-0.30.0-alpha.15-268572638a-4b2a442814.zip/node_modules/@bangle.dev/react-emoji-suggest/",\
           "packageDependencies": [\
-            ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__emoji", null],\
             ["@types/bangle.dev__react", null],\
@@ -4071,23 +4045,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/react-menu", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-react-menu-npm-0.30.0-alpha.13-c5fcc298c0-ed03cd6006.zip/node_modules/@bangle.dev/react-menu/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-react-menu-npm-0.30.0-alpha.15-fb969a3eff-e84c6f215c.zip/node_modules/@bangle.dev/react-menu/",\
           "packageDependencies": [\
-            ["@bangle.dev/react-menu", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/react-menu", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-menu-virtual-7d1a523197/0/cache/@bangle.dev-react-menu-npm-0.30.0-alpha.13-c5fcc298c0-ed03cd6006.zip/node_modules/@bangle.dev/react-menu/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-menu-virtual-dd37bc00fc/0/cache/@bangle.dev-react-menu-npm-0.30.0-alpha.15-fb969a3eff-e84c6f215c.zip/node_modules/@bangle.dev/react-menu/",\
           "packageDependencies": [\
-            ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/bangle.dev__react", null],\
@@ -4117,22 +4091,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/react-stopwatch", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-react-stopwatch-npm-0.30.0-alpha.13-527e76e8af-73ef12b498.zip/node_modules/@bangle.dev/react-stopwatch/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-react-stopwatch-npm-0.30.0-alpha.15-14794537ce-e8cd39eda1.zip/node_modules/@bangle.dev/react-stopwatch/",\
           "packageDependencies": [\
-            ["@bangle.dev/react-stopwatch", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/react-stopwatch", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-stopwatch-virtual-d507610ee2/0/cache/@bangle.dev-react-stopwatch-npm-0.30.0-alpha.13-527e76e8af-73ef12b498.zip/node_modules/@bangle.dev/react-stopwatch/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-stopwatch-virtual-777dfc39bc/0/cache/@bangle.dev-react-stopwatch-npm-0.30.0-alpha.15-14794537ce-e8cd39eda1.zip/node_modules/@bangle.dev/react-stopwatch/",\
           "packageDependencies": [\
-            ["@bangle.dev/react-stopwatch", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/react-stopwatch", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__markdown", null],\
             ["@types/bangle.dev__pm", null],\
@@ -4161,20 +4135,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/search", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-search-npm-0.30.0-alpha.13-9ab8116ccd-ae716d938a.zip/node_modules/@bangle.dev/search/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-search-npm-0.30.0-alpha.15-76e8bc1d25-f9fa481568.zip/node_modules/@bangle.dev/search/",\
           "packageDependencies": [\
-            ["@bangle.dev/search", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/search", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-search-virtual-9e63bf6a08/0/cache/@bangle.dev-search-npm-0.30.0-alpha.13-9ab8116ccd-ae716d938a.zip/node_modules/@bangle.dev/search/",\
+        ["virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-search-virtual-10a74b993e/0/cache/@bangle.dev-search-npm-0.30.0-alpha.15-76e8bc1d25-f9fa481568.zip/node_modules/@bangle.dev/search/",\
           "packageDependencies": [\
-            ["@bangle.dev/search", "virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/search", "virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -4189,33 +4163,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/shared-types", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-shared-types-npm-0.30.0-alpha.13-f83f69b559-0bdb7799f6.zip/node_modules/@bangle.dev/shared-types/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-shared-types-npm-0.30.0-alpha.15-3d70f8e839-2730fa2ca5.zip/node_modules/@bangle.dev/shared-types/",\
           "packageDependencies": [\
-            ["@bangle.dev/shared-types", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm-commands", "virtual:f83f69b5594d31aa07d0f64983d699fd3fecbc0240b6ce12f7de9b65a0a1a5433a4eaa8af05fd3b496ce8d535feb2dfe5f53c1f7b33ffff2fe5282f43ea860f1#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/shared-types", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm-commands", "virtual:3d70f8e8391d008de11ad0af82b68d0cada669ab3c2fea0c5eca00f03648a68faa758369ed875123a2f05d34fc81f7465e12cbc2809eb3d143874005f85948d1#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["prosemirror-markdown", "npm:1.9.3"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@bangle.dev/table", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-table-npm-0.30.0-alpha.13-e03909c7a8-83f4e3c980.zip/node_modules/@bangle.dev/table/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-table-npm-0.30.0-alpha.15-623fb49da0-c91523f269.zip/node_modules/@bangle.dev/table/",\
           "packageDependencies": [\
-            ["@bangle.dev/table", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/table", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-table-virtual-c5c923e520/0/cache/@bangle.dev-table-npm-0.30.0-alpha.13-e03909c7a8-83f4e3c980.zip/node_modules/@bangle.dev/table/",\
+        ["virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-table-virtual-b7b6df262f/0/cache/@bangle.dev-table-npm-0.30.0-alpha.15-623fb49da0-c91523f269.zip/node_modules/@bangle.dev/table/",\
           "packageDependencies": [\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -4230,13 +4204,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/test-helpers", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-test-helpers-npm-0.30.0-alpha.13-b744868b52-f8aa370975.zip/node_modules/@bangle.dev/test-helpers/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-test-helpers-npm-0.30.0-alpha.15-2b26322a6f-5e08c83cd0.zip/node_modules/@bangle.dev/test-helpers/",\
           "packageDependencies": [\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/jest", "npm:27.5.2"],\
             ["@types/markdown-it", "npm:12.2.3"],\
             ["@types/prettier", "npm:2.6.3"],\
@@ -4248,20 +4222,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/timestamp", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-timestamp-npm-0.30.0-alpha.13-1f12350824-03a137af6f.zip/node_modules/@bangle.dev/timestamp/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-timestamp-npm-0.30.0-alpha.15-9b2cff472b-c4423c3c58.zip/node_modules/@bangle.dev/timestamp/",\
           "packageDependencies": [\
-            ["@bangle.dev/timestamp", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/timestamp", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-timestamp-virtual-b84df51b32/0/cache/@bangle.dev-timestamp-npm-0.30.0-alpha.13-1f12350824-03a137af6f.zip/node_modules/@bangle.dev/timestamp/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-timestamp-virtual-6fe9b804df/0/cache/@bangle.dev-timestamp-npm-0.30.0-alpha.15-9b2cff472b-c4423c3c58.zip/node_modules/@bangle.dev/timestamp/",\
           "packageDependencies": [\
-            ["@bangle.dev/timestamp", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/timestamp", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -4276,20 +4250,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/tooltip", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-tooltip-npm-0.30.0-alpha.13-e56e87ea22-6b5946a133.zip/node_modules/@bangle.dev/tooltip/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-tooltip-npm-0.30.0-alpha.15-0384f3cceb-b78f53428b.zip/node_modules/@bangle.dev/tooltip/",\
           "packageDependencies": [\
-            ["@bangle.dev/tooltip", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/tooltip", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-tooltip-virtual-cd4cc6c5e4/0/cache/@bangle.dev-tooltip-npm-0.30.0-alpha.13-e56e87ea22-6b5946a133.zip/node_modules/@bangle.dev/tooltip/",\
+        ["virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-tooltip-virtual-69b9073c7f/0/cache/@bangle.dev-tooltip-npm-0.30.0-alpha.15-0384f3cceb-b78f53428b.zip/node_modules/@bangle.dev/tooltip/",\
           "packageDependencies": [\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@popperjs/core", "npm:2.11.5"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
@@ -4305,20 +4279,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/trailing-node", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-trailing-node-npm-0.30.0-alpha.13-43593b11ed-d07b6e852b.zip/node_modules/@bangle.dev/trailing-node/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-trailing-node-npm-0.30.0-alpha.15-75c3538d85-49d2f20d3d.zip/node_modules/@bangle.dev/trailing-node/",\
           "packageDependencies": [\
-            ["@bangle.dev/trailing-node", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/trailing-node", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-trailing-node-virtual-29c0eea4c2/0/cache/@bangle.dev-trailing-node-npm-0.30.0-alpha.13-43593b11ed-d07b6e852b.zip/node_modules/@bangle.dev/trailing-node/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-trailing-node-virtual-12d746ed5a/0/cache/@bangle.dev-trailing-node-npm-0.30.0-alpha.15-75c3538d85-49d2f20d3d.zip/node_modules/@bangle.dev/trailing-node/",\
           "packageDependencies": [\
-            ["@bangle.dev/trailing-node", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/trailing-node", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -4333,40 +4307,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/utils", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-utils-npm-0.30.0-alpha.13-013277d97e-65f8974504.zip/node_modules/@bangle.dev/utils/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-utils-npm-0.30.0-alpha.15-d26632b69d-b4677b35ec.zip/node_modules/@bangle.dev/utils/",\
           "packageDependencies": [\
-            ["@bangle.dev/utils", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/utils", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:9d486090130ec2f136caa85dcae41e5aecd5f4a18842fb4a4687acb6bd0dc56eb13ae1695d643027c97557420f9e5969a8e3122f46baf8417218c2159cd8b616#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-utils-virtual-b66f596b65/0/cache/@bangle.dev-utils-npm-0.30.0-alpha.13-013277d97e-65f8974504.zip/node_modules/@bangle.dev/utils/",\
+        ["virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-utils-virtual-a7f00a886c/0/cache/@bangle.dev-utils-npm-0.30.0-alpha.15-d26632b69d-b4677b35ec.zip/node_modules/@bangle.dev/utils/",\
           "packageDependencies": [\
-            ["@bangle.dev/utils", "virtual:9d486090130ec2f136caa85dcae41e5aecd5f4a18842fb4a4687acb6bd0dc56eb13ae1695d643027c97557420f9e5969a8e3122f46baf8417218c2159cd8b616#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", null],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"],\
             ["prosemirror-model", "npm:1.18.1"],\
             ["prosemirror-state", "npm:1.4.1"],\
-            ["prosemirror-utils-bangle", "virtual:94a1f76ba307a4223fdd53f7fa2b587d7fed76b57e5006f60803629df525284b4dc838c0d73fa5a254fc1ddda736751a87a6c2c5c5761221a4f68a0d32c85033#npm:0.0.4"]\
-          ],\
-          "packagePeers": [\
-            "@bangle.dev/pm",\
-            "@types/bangle.dev__pm"\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-utils-virtual-94a1f76ba3/0/cache/@bangle.dev-utils-npm-0.30.0-alpha.13-013277d97e-65f8974504.zip/node_modules/@bangle.dev/utils/",\
-          "packageDependencies": [\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@types/bangle.dev__pm", null],\
-            ["@types/jest", "npm:27.5.2"],\
-            ["prosemirror-model", "npm:1.18.1"],\
-            ["prosemirror-state", "npm:1.4.1"],\
-            ["prosemirror-utils-bangle", "virtual:94a1f76ba307a4223fdd53f7fa2b587d7fed76b57e5006f60803629df525284b4dc838c0d73fa5a254fc1ddda736751a87a6c2c5c5761221a4f68a0d32c85033#npm:0.0.4"]\
+            ["prosemirror-utils-bangle", "virtual:a7f00a886cc6fbe75c3b8f5ab47239bc9227983ecc34a7c30d4e23add63530540219d9344318f6d2b249b02d6413897252485fcaf3c1ded8c715b15e93a87419#npm:0.0.4"]\
           ],\
           "packagePeers": [\
             "@bangle.dev/pm",\
@@ -4376,21 +4333,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.dev/wiki-link", [\
-        ["npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/cache/@bangle.dev-wiki-link-npm-0.30.0-alpha.13-ca74b4474f-ada3d5edb1.zip/node_modules/@bangle.dev/wiki-link/",\
+        ["npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/cache/@bangle.dev-wiki-link-npm-0.30.0-alpha.15-5e91092597-1995edd627.zip/node_modules/@bangle.dev/wiki-link/",\
           "packageDependencies": [\
-            ["@bangle.dev/wiki-link", "npm:0.30.0-alpha.13"]\
+            ["@bangle.dev/wiki-link", "npm:0.30.0-alpha.15"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.13", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-wiki-link-virtual-def39b5d89/0/cache/@bangle.dev-wiki-link-npm-0.30.0-alpha.13-ca74b4474f-ada3d5edb1.zip/node_modules/@bangle.dev/wiki-link/",\
+        ["virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-wiki-link-virtual-d22e39c02d/0/cache/@bangle.dev-wiki-link-npm-0.30.0-alpha.15-5e91092597-1995edd627.zip/node_modules/@bangle.dev/wiki-link/",\
           "packageDependencies": [\
-            ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/bangle.dev__core", null],\
             ["@types/bangle.dev__pm", null],\
             ["@types/jest", "npm:27.5.2"]\
@@ -4409,8 +4366,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/abortable-worker/",\
           "packageDependencies": [\
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],\
             ["@bangle.io/object-uid", "workspace:js-lib/object-uid"],\
             ["tslib", "npm:2.4.0"],\
@@ -4483,10 +4440,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:lib/api", {\
           "packageLocation": "./lib/api/",\
           "packageDependencies": [\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -4517,14 +4474,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-app-entry-virtual-d1b5e8020e/1/app/app-entry/",\
           "packageDependencies": [\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
@@ -4590,14 +4547,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/app-entry/",\
           "packageDependencies": [\
             ["@bangle.io/app-entry", "workspace:app/app-entry"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
@@ -4674,7 +4631,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/bangle-store/",\
           "packageDependencies": [\
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -4755,10 +4712,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/browser-storage/",\
           "packageDependencies": [\
             ["@bangle.io/browser-storage", "workspace:extensions/browser-storage"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
@@ -4791,7 +4748,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/constants/",\
           "packageDependencies": [\
             ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/pm-plugins", "workspace:js-lib/pm-plugins"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -4831,22 +4788,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/core-editor/",\
           "packageDependencies": [\
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react-stopwatch", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/timestamp", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/trailing-node", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react-stopwatch", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/timestamp", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/trailing-node", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
@@ -4873,12 +4830,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/core-extension/",\
           "packageDependencies": [\
             ["@bangle.io/core-extension", "workspace:extensions/core-extension"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
@@ -4914,9 +4871,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-core-palettes-virtual-0abd1a1f9c/1/extensions/core-palettes/",\
           "packageDependencies": [\
             ["@bangle.io/core-palettes", "virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -4948,9 +4905,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/core-palettes/",\
           "packageDependencies": [\
             ["@bangle.io/core-palettes", "workspace:extensions/core-palettes"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -5003,12 +4960,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-editor-virtual-89010b89ea/1/lib/editor/",\
           "packageDependencies": [\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5038,12 +4995,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/editor/",\
           "packageDependencies": [\
             ["@bangle.io/editor", "workspace:lib/editor"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5069,10 +5026,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-editor-container-virtual-bdc579f147/1/app/editor-container/",\
           "packageDependencies": [\
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -5107,10 +5064,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/editor-container/",\
           "packageDependencies": [\
             ["@bangle.io/editor-container", "workspace:app/editor-container"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -5156,9 +5113,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/example-extension/",\
           "packageDependencies": [\
             ["@bangle.io/example-extension", "workspace:extensions/example-extension"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5174,10 +5131,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/extension-registry/",\
           "packageDependencies": [\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
@@ -5243,8 +5200,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/github-storage/",\
           "packageDependencies": [\
             ["@bangle.io/github-storage", "workspace:extensions/github-storage"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],\
@@ -5286,13 +5243,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/image-extension/",\
           "packageDependencies": [\
             ["@bangle.io/image-extension", "workspace:extensions/image-extension"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5318,14 +5275,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/inline-backlink/",\
           "packageDependencies": [\
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -5364,11 +5321,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/inline-command-palette/",\
           "packageDependencies": [\
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -5392,15 +5349,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/inline-emoji/",\
           "packageDependencies": [\
             ["@bangle.io/inline-emoji", "workspace:extensions/inline-emoji"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5425,11 +5382,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/inline-palette/",\
           "packageDependencies": [\
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@types/react", "npm:17.0.43"],\
             ["@types/react-dom", "npm:17.0.14"],\
@@ -5455,13 +5412,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/markdown/",\
           "packageDependencies": [\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.0"],\
@@ -5503,9 +5460,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/note-outline/",\
           "packageDependencies": [\
             ["@bangle.io/note-outline", "workspace:extensions/note-outline"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -5536,8 +5493,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-note-sidebar-virtual-91048a0e99/1/app/note-sidebar/",\
           "packageDependencies": [\
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5565,8 +5522,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/note-sidebar/",\
           "packageDependencies": [\
             ["@bangle.io/note-sidebar", "workspace:app/note-sidebar"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5592,14 +5549,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/note-tags/",\
           "packageDependencies": [\
             ["@bangle.io/note-tags", "workspace:extensions/note-tags"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/base-components", "virtual:e52b59a2721eba04f56ca9a9ffc5aaec12bb89ee8bf546eedd3ad3fef10c9795f277fcf430e3419a4bae1e663226b75ad1a13bae49bef457b1c72f6f5c3ed584#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -5672,7 +5629,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/pm-manual-paste/",\
           "packageDependencies": [\
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"]\
           ],\
@@ -5684,13 +5641,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/pm-plugins/",\
           "packageDependencies": [\
             ["@bangle.io/pm-plugins", "workspace:js-lib/pm-plugins"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@types/react", "npm:17.0.43"],\
             ["@types/react-dom", "npm:17.0.14"],\
             ["react", "npm:17.0.2"],\
@@ -5741,10 +5698,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/search-notes/",\
           "packageDependencies": [\
             ["@bangle.io/search-notes", "workspace:extensions/search-notes"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/search", "virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/search", "virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -5779,12 +5736,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/search-pm-node/",\
           "packageDependencies": [\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.30.0-alpha.15"],\
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"]\
@@ -5797,12 +5754,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/shared/",\
           "packageDependencies": [\
             ["@bangle.io/shared", "workspace:app/shared"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],\
             ["@bangle.io/browser-storage", "workspace:extensions/browser-storage"],\
@@ -5835,9 +5792,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/shared-types/",\
           "packageDependencies": [\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -5856,11 +5813,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/slice-editor-manager/",\
           "packageDependencies": [\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -5888,8 +5845,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/slice-editor-sync/",\
           "packageDependencies": [\
             ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
-            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -5967,9 +5924,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/slice-workspace/",\
           "packageDependencies": [\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
@@ -6007,6 +5964,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["tslib", "npm:2.4.0"],\
@@ -6020,11 +5979,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/storage/",\
           "packageDependencies": [\
             ["@bangle.io/storage", "workspace:lib/storage"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -6112,11 +6071,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/test-utils/",\
           "packageDependencies": [\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
@@ -6267,12 +6226,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/utils/",\
           "packageDependencies": [\
             ["@bangle.io/utils", "workspace:lib/utils"],\
-            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/utils", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -6300,11 +6259,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./worker/worker-editor/",\
           "packageDependencies": [\
             ["@bangle.io/worker-editor", "workspace:worker/worker-editor"],\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
@@ -6337,7 +6296,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./worker/worker-naukar/",\
           "packageDependencies": [\
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/config", "workspace:lib/config"],\
@@ -6415,11 +6374,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/worker-slice-from-naukar/",\
           "packageDependencies": [\
             ["@bangle.io/worker-slice-from-naukar", "workspace:app/worker-slice-from-naukar"],\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/core", "virtual:b744868b528a3b765dfb7be29a3c250c365a63a55b5d8fbaaad55339bfb9f45e966db1ac1f0415eb258773a92ba67d647df5f0cea80eef57ccb5ecfa5a481b61#npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/pm", "npm:0.30.0-alpha.13"],\
-            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -15502,7 +15461,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:e64cf7335bd9c7ca85467e49bf1edf9453ecb85a4fb92fc2ff58d9b8b9c53cdc69dd01b8b8bc4c71213a400e37b715b62402c2fe567a0ef13bd394bf4769f057#npm:7.18.2"],\
             ["@babel/preset-react", "virtual:6e4445ea532b1c0efb8b747dbc50f44ee9db8eed593937ea4b7e2ac28ecef343ceed44d5facb831dbf3dcf4533384a5926793e65128ccc571fa3c8f9f5b8126d#npm:7.17.12"],\
             ["@babel/preset-typescript", "virtual:6e4445ea532b1c0efb8b747dbc50f44ee9db8eed593937ea4b7e2ac28ecef343ceed44d5facb831dbf3dcf4533384a5926793e65128ccc571fa3c8f9f5b8126d#npm:7.17.12"],\
-            ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.13"],\
+            ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
@@ -28458,10 +28417,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:94a1f76ba307a4223fdd53f7fa2b587d7fed76b57e5006f60803629df525284b4dc838c0d73fa5a254fc1ddda736751a87a6c2c5c5761221a4f68a0d32c85033#npm:0.0.4", {\
-          "packageLocation": "./.yarn/__virtual__/prosemirror-utils-bangle-virtual-79c57f2c04/0/cache/prosemirror-utils-bangle-npm-0.0.4-afcf52a725-cabfda58eb.zip/node_modules/prosemirror-utils-bangle/",\
+        ["virtual:a7f00a886cc6fbe75c3b8f5ab47239bc9227983ecc34a7c30d4e23add63530540219d9344318f6d2b249b02d6413897252485fcaf3c1ded8c715b15e93a87419#npm:0.0.4", {\
+          "packageLocation": "./.yarn/__virtual__/prosemirror-utils-bangle-virtual-bff2b074bc/0/cache/prosemirror-utils-bangle-npm-0.0.4-afcf52a725-cabfda58eb.zip/node_modules/prosemirror-utils-bangle/",\
           "packageDependencies": [\
-            ["prosemirror-utils-bangle", "virtual:94a1f76ba307a4223fdd53f7fa2b587d7fed76b57e5006f60803629df525284b4dc838c0d73fa5a254fc1ddda736751a87a6c2c5c5761221a4f68a0d32c85033#npm:0.0.4"],\
+            ["prosemirror-utils-bangle", "virtual:a7f00a886cc6fbe75c3b8f5ab47239bc9227983ecc34a7c30d4e23add63530540219d9344318f6d2b249b02d6413897252485fcaf3c1ded8c715b15e93a87419#npm:0.0.4"],\
             ["@types/prosemirror-model", null],\
             ["@types/prosemirror-state", null],\
             ["prosemirror-model", "npm:1.18.1"],\
