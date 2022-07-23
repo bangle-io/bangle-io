@@ -1,0 +1,48 @@
+import type { ActionTestFixtureType } from '@bangle.io/test-utils';
+import { createTestStore } from '@bangle.io/test-utils';
+
+import type { {{slicePascalCase name}}Action } from '../common';
+import { {{sliceCamelName name}}Slice } from '../{{name}}';
+
+// This shape (Record<actionName, action[]>) exists so the we can exhaustively
+// make sure every action's serialization has been tested
+const testFixtures: ActionTestFixtureType<{{slicePascalCase name}}Action> = {
+  'action::@bangle.io/{{name}}:update-apple': [
+    {
+      name: 'action::@bangle.io/{{name}}:update-apple',
+      value: {
+        apple: '1',
+      },
+    },
+    {
+      name: 'action::@bangle.io/{{name}}:update-apple',
+      value: {
+        apple: '2',
+      },
+    },
+  ],
+  'action::@bangle.io/{{name}}:update-banana': [
+    {
+      name: 'action::@bangle.io/{{name}}:update-banana',
+      value: { banana: 1 },
+    },
+    {
+      name: 'action::@bangle.io/{{name}}:update-banana',
+      value: { banana: 2 },
+    },
+  ],
+};
+
+const fixtures = Object.values(testFixtures).flatMap(
+  (r: {{slicePascalCase name}}Action[]) => r,
+);
+
+const { store } = createTestStore({
+  slices: [{{sliceCamelName name}}Slice()],
+});
+
+test.each(fixtures)(`%# workspace actions serialization`, (action) => {
+  const res = store.parseAction(store.serializeAction(action) as any);
+
+  expect(res).toEqual({ ...action, fromStore: 'test-store' });
+});

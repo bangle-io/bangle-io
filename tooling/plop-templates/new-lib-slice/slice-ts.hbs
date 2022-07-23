@@ -1,0 +1,75 @@
+import { Slice } from '@bangle.io/create-store';
+import { assertActionName } from '@bangle.io/utils';
+
+import { {{sliceCamelName name}}Key } from './common';
+
+export function {{sliceCamelName name}}Slice() {
+  assertActionName('@bangle.io/{{name}}', {{sliceCamelName name}}Key);
+
+  return new Slice({
+    key: {{sliceCamelName name}}Key,
+    state: {
+      init() {
+        return {
+          apple: '',
+          banana: 0,
+        };
+      },
+      apply(action, state) {
+        switch (action.name) {
+          case 'action::@bangle.io/{{name}}:update-apple': {
+            return {
+              ...state,
+              apple: action.value.apple,
+            };
+          }
+
+          case 'action::@bangle.io/{{name}}:update-banana': {
+            return {
+              ...state,
+            };
+          }
+
+          default: {
+            return state;
+          }
+        }
+      },
+    },
+    actions: {
+      'action::@bangle.io/{{name}}:update-apple': (actionName) => {
+        return {{sliceCamelName name}}Key.actionSerializer(
+          actionName,
+          (action) => ({
+            apple: action.value.apple,
+          }),
+          (serialVal) => ({
+            apple: serialVal.apple,
+          }),
+        );
+      },
+      'action::@bangle.io/{{name}}:update-banana': (actionName) => {
+        return {{sliceCamelName name}}Key.actionSerializer(
+          actionName,
+          (action) => ({
+            banana: action.value.banana,
+          }),
+          (serialVal) => ({
+            banana: serialVal.banana,
+          }),
+        );
+      },
+    },
+    sideEffect: [mySideEffect],
+  });
+}
+
+const mySideEffect = {{sliceCamelName name}}Key.effect(() => {
+  return {
+    deferredUpdate(store, signal) {
+      const { apple } = {{sliceCamelName name}}Key.getSliceStateAsserted(store.state);
+      console.log('I am working yo {{sliceCamelName name}}', apple);
+    },
+    update(store, prevState) {},
+  };
+});

@@ -1,0 +1,23 @@
+import { SliceKey } from '@bangle.io/create-store';
+
+export type {{slicePascalCase name}}Action =
+  | {
+      name: 'action::@bangle.io/{{name}}:update-apple';
+      value: {
+        apple: string;
+      };
+    }
+  | {
+      name: 'action::@bangle.io/{{name}}:update-banana';
+      value: {
+        banana: number;
+      };
+    };
+
+export const {{sliceCamelName name}}Key = new SliceKey<
+  {
+    apple: string;
+    banana: number;
+  },
+  {{slicePascalCase name}}Action
+>('@bangle.io/{{name}}/slice-key');
