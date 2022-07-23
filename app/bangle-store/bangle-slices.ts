@@ -15,6 +15,7 @@ import type { UiContextAction } from '@bangle.io/slice-ui';
 import { uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
+import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
 import { workerSliceFromNaukarSlice } from '@bangle.io/worker-slice-from-naukar';
@@ -66,6 +67,7 @@ export function bangleStateSlices({
     notificationSlice(),
     workerSliceFromNaukarSlice(),
     editorSyncSlice(),
+    workspaceOpenedDocInfoSlice(),
     // <-- PLOP INSERT SLICE -->
 
     ...extensionSlices,

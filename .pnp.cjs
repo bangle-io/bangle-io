@@ -265,6 +265,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-workspace"\
       },\
       {\
+        "name": "@bangle.io/slice-workspace-opened-doc-info",\
+        "reference": "workspace:lib/slice-workspace-opened-doc-info"\
+      },\
+      {\
         "name": "@bangle.io/storage",\
         "reference": "workspace:lib/storage"\
       },\
@@ -382,6 +386,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],\
+      ["@bangle.io/slice-workspace-opened-doc-info", ["workspace:lib/slice-workspace-opened-doc-info"]],\
       ["@bangle.io/storage", ["workspace:lib/storage"]],\
       ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],\
       ["@bangle.io/storybook", ["workspace:tooling/storybook"]],\
@@ -433,6 +438,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:12.1.3"],\
             ["@testing-library/user-event", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:13.5.0"],\
             ["@types/jest", "npm:28.1.1"],\
+            ["@types/node", "npm:18.0.6"],\
             ["@types/prettier", "npm:2.6.3"],\
             ["@types/react", "npm:17.0.43"],\
             ["@types/react-dom", "npm:17.0.14"],\
@@ -4682,6 +4688,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
+            ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -5650,6 +5657,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@playwright/test", "npm:1.24.0"],\
+            ["@types/node", "npm:18.0.6"],\
             ["@types/prettier", "npm:2.6.3"],\
             ["http-server", "npm:0.12.3"],\
             ["prettier", "npm:2.6.2"],\
@@ -5993,6 +6001,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/slice-workspace-opened-doc-info", [\
+        ["workspace:lib/slice-workspace-opened-doc-info", {\
+          "packageLocation": "./lib/slice-workspace-opened-doc-info/",\
+          "packageDependencies": [\
+            ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["tslib", "npm:2.4.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/storage", [\
         ["workspace:lib/storage", {\
           "packageLocation": "./lib/storage/",\
@@ -6329,6 +6351,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
+            ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
             ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -12717,6 +12740,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/node", "npm:16.11.6"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:18.0.6", {\
+          "packageLocation": "./.yarn/cache/@types-node-npm-18.0.6-1bdee507ca-780f8885a6.zip/node_modules/@types/node/",\
+          "packageDependencies": [\
+            ["@types/node", "npm:18.0.6"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@types/node-fetch", [\
@@ -15486,6 +15516,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:12.1.3"],\
             ["@testing-library/user-event", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:13.5.0"],\
             ["@types/jest", "npm:28.1.1"],\
+            ["@types/node", "npm:18.0.6"],\
             ["@types/prettier", "npm:2.6.3"],\
             ["@types/react", "npm:17.0.43"],\
             ["@types/react-dom", "npm:17.0.14"],\

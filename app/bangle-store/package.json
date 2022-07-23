@@ -36,6 +36,7 @@
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/slice-workspace-opened-doc-info": "workspace:*",
     "@bangle.io/storage": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
