@@ -2,33 +2,61 @@ import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 import { createTestStore } from '@bangle.io/test-utils';
 
 import type { WorkspaceOpenedDocInfoAction } from '../common';
+import {
+  BULK_UPDATE_CURRENT_DISK_SHA,
+  SYNC_ENTRIES,
+  UPDATE_ENTRY,
+} from '../common';
 import { workspaceOpenedDocInfoSlice } from '../slice-workspace-opened-doc-info';
 
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
 // make sure every action's serialization has been tested
 const testFixtures: ActionTestFixtureType<WorkspaceOpenedDocInfoAction> = {
-  'action::@bangle.io/slice-workspace-opened-doc-info:update-apple': [
+  [SYNC_ENTRIES]: [
     {
-      name: 'action::@bangle.io/slice-workspace-opened-doc-info:update-apple',
+      name: SYNC_ENTRIES,
       value: {
-        apple: '1',
+        additions: ['a', 'b'],
+        removals: ['c', 'd'],
       },
     },
     {
-      name: 'action::@bangle.io/slice-workspace-opened-doc-info:update-apple',
+      name: SYNC_ENTRIES,
       value: {
-        apple: '2',
+        additions: [],
+        removals: [],
       },
     },
   ],
-  'action::@bangle.io/slice-workspace-opened-doc-info:update-banana': [
+  [UPDATE_ENTRY]: [
     {
-      name: 'action::@bangle.io/slice-workspace-opened-doc-info:update-banana',
-      value: { banana: 1 },
+      name: UPDATE_ENTRY,
+      value: {
+        wsPath: 'a',
+        info: {
+          pendingWrite: true,
+        },
+      },
     },
     {
-      name: 'action::@bangle.io/slice-workspace-opened-doc-info:update-banana',
-      value: { banana: 2 },
+      name: UPDATE_ENTRY,
+      value: {
+        wsPath: 'a',
+        info: {
+          lastKnownDiskSha: 'a',
+          currentDiskShaTimestamp: 1,
+        },
+      },
+    },
+  ],
+  [BULK_UPDATE_CURRENT_DISK_SHA]: [
+    {
+      name: BULK_UPDATE_CURRENT_DISK_SHA,
+      value: { data: [{ wsPath: 'a', currentDiskSha: 'a' }] },
+    },
+    {
+      name: BULK_UPDATE_CURRENT_DISK_SHA,
+      value: { data: [{ wsPath: 'a', currentDiskSha: null }] },
     },
   ],
 };

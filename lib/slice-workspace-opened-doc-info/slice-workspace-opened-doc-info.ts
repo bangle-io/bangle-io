@@ -1,7 +1,17 @@
 import { Slice } from '@bangle.io/create-store';
+import {
+  getOpenedWsPaths,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import { assertActionName } from '@bangle.io/utils';
 
-import { workspaceOpenedDocInfoKey } from './common';
+import type { OpenedFile } from './common';
+import {
+  BULK_UPDATE_CURRENT_DISK_SHA,
+  SYNC_ENTRIES,
+  UPDATE_ENTRY,
+  workspaceOpenedDocInfoKey,
+} from './common';
 
 export function workspaceOpenedDocInfoSlice() {
   assertActionName(
@@ -14,71 +24,176 @@ export function workspaceOpenedDocInfoSlice() {
     state: {
       init() {
         return {
-          apple: '',
-          banana: 0,
+          openedFiles: {},
         };
       },
       apply(action, state) {
         switch (action.name) {
-          case 'action::@bangle.io/slice-workspace-opened-doc-info:update-apple': {
+          case SYNC_ENTRIES: {
+            const { removals, additions } = action.value;
+
+            if (removals.length === 0 && additions.length === 0) {
+              return state;
+            }
+
+            const newOpenedFiles = { ...state.openedFiles };
+            removals.forEach((wsPath) => {
+              delete newOpenedFiles[wsPath];
+            });
+            additions.forEach((wsPath) => {
+              newOpenedFiles[wsPath] = {
+                wsPath,
+                pendingWrite: false,
+              };
+            });
+
             return {
               ...state,
-              apple: action.value.apple,
+              openedFiles: newOpenedFiles,
             };
           }
 
-          case 'action::@bangle.io/slice-workspace-opened-doc-info:update-banana': {
+          case UPDATE_ENTRY: {
+            const { openedFiles } = state;
+
+            const entry = openedFiles[action.value.wsPath];
+
+            if (!entry) {
+              return state;
+            }
+
+            // do a merge of entry updating any that was provided
+            const newEntry: OpenedFile = {
+              ...entry,
+              ...action.value.info,
+            };
+
+            const newOpenedFiles = {
+              ...openedFiles,
+              [action.value.wsPath]: newEntry,
+            };
+
             return {
               ...state,
+              openedFiles: newOpenedFiles,
             };
           }
 
-          default: {
-            return state;
+          case BULK_UPDATE_CURRENT_DISK_SHA: {
+            const { openedFiles } = state;
+
+            const { data } = action.value;
+
+            if (data.length === 0) {
+              return state;
+            }
+
+            const newOpenedFiles = { ...openedFiles };
+
+            for (const { wsPath, currentDiskSha } of data) {
+              const entry = newOpenedFiles[wsPath];
+
+              if (!entry) {
+                continue;
+              }
+
+              newOpenedFiles[wsPath] = {
+                ...entry,
+                currentDiskSha: currentDiskSha || undefined,
+                currentDiskShaTimestamp: Date.now(),
+              };
+            }
+
+            return {
+              ...state,
+              openedFiles: newOpenedFiles,
+            };
           }
         }
+
+        return state;
       },
     },
     actions: {
-      'action::@bangle.io/slice-workspace-opened-doc-info:update-apple': (
-        actionName,
-      ) => {
+      [SYNC_ENTRIES]: (actionName) => {
         return workspaceOpenedDocInfoKey.actionSerializer(
           actionName,
           (action) => ({
-            apple: action.value.apple,
+            additions: action.value.additions,
+            removals: action.value.removals,
           }),
           (serialVal) => ({
-            apple: serialVal.apple,
+            additions: serialVal.additions,
+            removals: serialVal.removals,
           }),
         );
       },
-      'action::@bangle.io/slice-workspace-opened-doc-info:update-banana': (
-        actionName,
-      ) => {
+      [UPDATE_ENTRY]: (actionName) => {
         return workspaceOpenedDocInfoKey.actionSerializer(
           actionName,
           (action) => ({
-            banana: action.value.banana,
+            wsPath: action.value.wsPath,
+            info: action.value.info,
           }),
           (serialVal) => ({
-            banana: serialVal.banana,
+            wsPath: serialVal.wsPath,
+            info: serialVal.info,
+          }),
+        );
+      },
+      [BULK_UPDATE_CURRENT_DISK_SHA]: (actionName) => {
+        return workspaceOpenedDocInfoKey.actionSerializer(
+          actionName,
+          (action) => ({
+            data: action.value.data,
+          }),
+          (serialVal) => ({
+            data: serialVal.data,
           }),
         );
       },
     },
-    sideEffect: [mySideEffect],
+    sideEffect: [syncWithOpenedWsPathsEffect],
   });
 }
 
-const mySideEffect = workspaceOpenedDocInfoKey.effect(() => {
+const syncWithOpenedWsPathsEffect = workspaceOpenedDocInfoKey.effect(() => {
   return {
-    deferredUpdate(store, signal) {
-      const { apple } = workspaceOpenedDocInfoKey.getSliceStateAsserted(
+    async update(store) {
+      const openedWsPaths = getOpenedWsPaths()(
+        workspaceSliceKey.getState(store.state),
+      );
+
+      const { openedFiles } = workspaceOpenedDocInfoKey.getSliceStateAsserted(
         store.state,
       );
-      console.log('I am working yo workspaceOpenedDocInfo', apple);
+
+      let additions: string[] = [];
+      let removals: string[] = [];
+
+      // cleanup data that is not opened anymore
+      Object.entries(openedFiles).forEach(([wsPath]) => {
+        if (!openedWsPaths.has(wsPath)) {
+          removals.push(wsPath);
+        }
+      });
+
+      // add new data
+      openedWsPaths.getWsPaths().forEach((wsPath) => {
+        if (!openedFiles[wsPath]) {
+          additions.push(wsPath);
+        }
+      });
+
+      if (additions.length > 0 || removals.length > 0) {
+        store.dispatch({
+          name: SYNC_ENTRIES,
+          value: {
+            additions,
+            removals,
+          },
+        });
+      }
     },
-    update(store, prevState) {},
   };
 });
