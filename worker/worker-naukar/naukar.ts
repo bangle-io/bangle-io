@@ -1,7 +1,5 @@
 import * as Sentry from '@sentry/browser';
 
-import { CollabMessageBus } from '@bangle.dev/collab-manager';
-
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { BaseError, getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
@@ -32,16 +30,11 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   };
   console.debug('Naukar running in ', envType);
 
-  const collabMessageBus = new CollabMessageBus({});
-
   // eslint-disable-next-line no-restricted-globals
   if (typeof self !== 'undefined') {
     // eslint-disable-next-line no-restricted-globals, no-undef
     (self as any).storeRef = storeRef;
   }
-
-  let unregisterCollabReceiveMessage = () => {};
-  let previousPort: MessagePort | undefined;
 
   return {
     // setup up store and store syncing
@@ -49,34 +42,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
       storeRef.current = initializeNaukarStore({
         port,
         extensionRegistry,
-        collabMessageBus,
       });
-    },
-
-    async registerCollabMessagePort(port: MessageChannel['port2']) {
-      previousPort?.close();
-      unregisterCollabReceiveMessage();
-      previousPort = port;
-
-      let seen = new WeakSet();
-      // TODO implement buffering if manager is not ready yet
-      unregisterCollabReceiveMessage = collabMessageBus.receiveMessages(
-        CollabMessageBus.WILD_CARD,
-
-        (message) => {
-          // prevent posting the same message that it received
-          if (seen.has(message)) {
-            return;
-          }
-
-          port.postMessage(message);
-        },
-      );
-
-      port.onmessage = ({ data }) => {
-        seen.add(data);
-        collabMessageBus.transmit(data);
-      };
     },
 
     async status() {

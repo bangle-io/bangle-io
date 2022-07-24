@@ -13,7 +13,6 @@ import { pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
-  openedFilesSlice,
   workerEditorSlice,
   writeNoteToDiskSlice,
 } from '@bangle.io/worker-editor';
@@ -39,7 +38,6 @@ export function naukarSlices({
     workerEditorSlice(),
     notificationSlice(),
     writeNoteToDiskSlice(),
-    openedFilesSlice(),
     disableSideEffect(editorSyncSlice()),
     disableSideEffect(workerSliceFromNaukarSlice()),
     disableSideEffect(workspaceOpenedDocInfoSlice()),

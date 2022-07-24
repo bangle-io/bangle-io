@@ -12,12 +12,10 @@ const MAX_DEFERRED_WAIT_TIME = 30;
 export function initializeNaukarStore({
   port,
   extensionRegistry,
-  collabMessageBus,
 }: NaukarStateConfig) {
   const opts: NaukarStateConfig = {
     port,
     extensionRegistry,
-    collabMessageBus,
   };
   const store = ApplicationStore.create({
     storeName: WORKER_STORE_NAME,
