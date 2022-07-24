@@ -32,6 +32,7 @@
     "@bangle.io/slice-editor-sync": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/slice-workspace-opened-doc-info": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-slice-from-naukar": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
