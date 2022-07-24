@@ -7,7 +7,7 @@ import { assertActionName } from '@bangle.io/utils';
 
 import type { OpenedFile } from './common';
 import {
-  BULK_UPDATE_CURRENT_DISK_SHA,
+  BULK_UPDATE_SHAS,
   SYNC_ENTRIES,
   UPDATE_ENTRY,
   workspaceOpenedDocInfoKey,
@@ -79,7 +79,7 @@ export function workspaceOpenedDocInfoSlice() {
             };
           }
 
-          case BULK_UPDATE_CURRENT_DISK_SHA: {
+          case BULK_UPDATE_SHAS: {
             const { openedFiles } = state;
 
             const { data } = action.value;
@@ -90,7 +90,7 @@ export function workspaceOpenedDocInfoSlice() {
 
             const newOpenedFiles = { ...openedFiles };
 
-            for (const { wsPath, currentDiskSha } of data) {
+            for (const { wsPath, ...info } of data) {
               const entry = newOpenedFiles[wsPath];
 
               if (!entry) {
@@ -99,7 +99,7 @@ export function workspaceOpenedDocInfoSlice() {
 
               newOpenedFiles[wsPath] = {
                 ...entry,
-                currentDiskSha: currentDiskSha || undefined,
+                ...info,
                 currentDiskShaTimestamp: Date.now(),
               };
             }
@@ -141,7 +141,7 @@ export function workspaceOpenedDocInfoSlice() {
           }),
         );
       },
-      [BULK_UPDATE_CURRENT_DISK_SHA]: (actionName) => {
+      [BULK_UPDATE_SHAS]: (actionName) => {
         return workspaceOpenedDocInfoKey.actionSerializer(
           actionName,
           (action) => ({

@@ -2,11 +2,7 @@ import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 import { createTestStore } from '@bangle.io/test-utils';
 
 import type { WorkspaceOpenedDocInfoAction } from '../common';
-import {
-  BULK_UPDATE_CURRENT_DISK_SHA,
-  SYNC_ENTRIES,
-  UPDATE_ENTRY,
-} from '../common';
+import { BULK_UPDATE_SHAS, SYNC_ENTRIES, UPDATE_ENTRY } from '../common';
 import { workspaceOpenedDocInfoSlice } from '../slice-workspace-opened-doc-info';
 
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
@@ -49,13 +45,13 @@ const testFixtures: ActionTestFixtureType<WorkspaceOpenedDocInfoAction> = {
       },
     },
   ],
-  [BULK_UPDATE_CURRENT_DISK_SHA]: [
+  [BULK_UPDATE_SHAS]: [
     {
-      name: BULK_UPDATE_CURRENT_DISK_SHA,
+      name: BULK_UPDATE_SHAS,
       value: { data: [{ wsPath: 'a', currentDiskSha: 'a' }] },
     },
     {
-      name: BULK_UPDATE_CURRENT_DISK_SHA,
+      name: BULK_UPDATE_SHAS,
       value: { data: [{ wsPath: 'a', currentDiskSha: null }] },
     },
   ],

@@ -111,6 +111,8 @@ export class OpenedWsPaths {
     return false;
   }
 
+  // runs through wsPath of each opened editor.
+  // Note: There might be multiple editor with the same wsPath
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
     this._wsPaths.forEach((p, i) => {
       if (p) {
@@ -139,7 +141,7 @@ export class OpenedWsPaths {
     return [...wsNames];
   }
 
-  // Returns the unique wsPaths
+  // Returns the deduped array of wsPaths of all the opened editors.
   getWsPaths(): string[] {
     return Array.from(
       new Set(this.toArray().filter((r): r is string => typeof r === 'string')),

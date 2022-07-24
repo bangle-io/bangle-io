@@ -11,7 +11,7 @@ import {
 import { sleep } from '@bangle.io/utils';
 
 import {
-  BULK_UPDATE_CURRENT_DISK_SHA,
+  BULK_UPDATE_SHAS,
   SYNC_ENTRIES,
   UPDATE_ENTRY,
   workspaceOpenedDocInfoKey,
@@ -179,7 +179,7 @@ describe('action UPDATE_ENTRY', () => {
   });
 });
 
-describe('action BULK_UPDATE_CURRENT_DISK_SHA', () => {
+describe('action BULK_UPDATE_SHAS', () => {
   test('works', async () => {
     let state = AppState.create({
       slices: [workspaceOpenedDocInfoSlice()],
@@ -194,7 +194,7 @@ describe('action BULK_UPDATE_CURRENT_DISK_SHA', () => {
     });
 
     state = state.applyAction({
-      name: BULK_UPDATE_CURRENT_DISK_SHA,
+      name: BULK_UPDATE_SHAS,
       value: {
         data: [
           {
@@ -231,7 +231,7 @@ describe('action BULK_UPDATE_CURRENT_DISK_SHA', () => {
     });
 
     state = state.applyAction({
-      name: BULK_UPDATE_CURRENT_DISK_SHA,
+      name: BULK_UPDATE_SHAS,
       value: {
         data: [
           {

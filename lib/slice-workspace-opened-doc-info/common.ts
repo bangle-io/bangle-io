@@ -3,11 +3,11 @@ import { SliceKey } from '@bangle.io/create-store';
 export interface OpenedFile {
   readonly wsPath: string;
   readonly pendingWrite: boolean;
-  readonly sha?: string;
-  readonly currentDiskSha?: string;
+  readonly sha?: string | null;
+  readonly currentDiskSha?: string | null;
   // The last sha we saw on disk either during writing or reading
-  readonly lastKnownDiskSha?: string;
-  readonly currentDiskShaTimestamp?: number;
+  readonly lastKnownDiskSha?: string | null;
+  readonly currentDiskShaTimestamp?: number | null;
 }
 
 export const UPDATE_ENTRY =
@@ -16,8 +16,8 @@ export const UPDATE_ENTRY =
 export const SYNC_ENTRIES =
   'action::@bangle.io/slice-workspace-opened-doc-info:sync-entries';
 
-export const BULK_UPDATE_CURRENT_DISK_SHA =
-  'action::@bangle.io/slice-workspace-opened-doc-info:bulk-update-current-disk-sha';
+export const BULK_UPDATE_SHAS =
+  'action::@bangle.io/slice-workspace-opened-doc-info:bulk-update-shas';
 
 export type WorkspaceOpenedDocInfoAction =
   | {
@@ -35,9 +35,13 @@ export type WorkspaceOpenedDocInfoAction =
       };
     }
   | {
-      name: typeof BULK_UPDATE_CURRENT_DISK_SHA;
+      name: typeof BULK_UPDATE_SHAS;
       value: {
-        data: Array<{ wsPath: string; currentDiskSha: string | null }>;
+        data: Array<{
+          wsPath: string;
+          currentDiskSha?: string | null;
+          lastKnownDiskSha?: string | null;
+        }>;
       };
     };
 
