@@ -1,6 +1,7 @@
 import {
   MAX_OPEN_EDITORS,
   MINI_EDITOR_INDEX,
+  POPUP_EDITOR_INDEX,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
@@ -61,6 +62,10 @@ export class OpenedWsPaths {
     });
 
     return count;
+  }
+
+  get popupEditorWsPath() {
+    return this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
   }
 
   get primaryWsPath() {
@@ -243,6 +248,10 @@ export class OpenedWsPaths {
 
   updateMiniEditorWsPath(wsPath: MaybeWsPath) {
     return this.updateByIndex(MINI_EDITOR_INDEX, wsPath);
+  }
+
+  updatePopupEditorWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(POPUP_EDITOR_INDEX, wsPath);
   }
 
   updatePrimaryWsPath(wsPath: MaybeWsPath) {

@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+import type { E2ETypes } from '@bangle.io/e2e-types';
 
 import {
   clearEditor,
@@ -142,6 +143,33 @@ test.describe('backlink workflow', () => {
     ]);
 
     expect(await page.url()).toContain('note-0');
+  });
+
+  test('correctly sets popupEditorWsPath in openedWsPath', async ({ page }) => {
+    test.slow();
+
+    const { wsName } = await setup(page);
+
+    const getPopupEditorWsPath = async () =>
+      page.evaluate(() => {
+        const _newE2eHelpers2: E2ETypes = (window as any)._newE2eHelpers2;
+
+        return _newE2eHelpers2.getOpenedWsPaths().popupEditorWsPath;
+      }, []);
+
+    expect(await getPopupEditorWsPath()).toBeUndefined();
+
+    await page.hover('.B-inline-backlink_backlink');
+
+    await expect.poll(() => getPopupEditorWsPath()).toBe(`${wsName}:note-0.md`);
+
+    // hover on something else
+    await page.hover('.B-editor-container_editor-bar span');
+
+    await sleep(10);
+
+    // the path should now be undefined
+    expect(await getPopupEditorWsPath()).toBeUndefined();
   });
 });
 

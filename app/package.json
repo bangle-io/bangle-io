@@ -4,6 +4,7 @@
     "activitybar",
     "app-entry",
     "bangle-store",
+    "e2e-types",
     "editor-container",
     "note-sidebar",
     "shared",

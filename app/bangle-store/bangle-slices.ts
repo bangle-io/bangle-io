@@ -20,7 +20,7 @@ import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
 import { workerSliceFromNaukarSlice } from '@bangle.io/worker-slice-from-naukar';
 
-import { e2eHelpers } from './e2e-helpers';
+import { e2eHelpers, e2eHelpers2 } from './e2e-helpers';
 import { historySlice } from './slices/history-slice';
 import { miscEffectsSlice } from './slices/misc-effects-slice';
 import { pageLifeCycleSlice } from './slices/page-lifecycle-slice';
@@ -73,6 +73,7 @@ export function bangleStateSlices({
     ...extensionSlices,
 
     e2eHelpers(),
+    e2eHelpers2(),
     // keep this at the end
     new Slice({
       onError(error, store) {

@@ -3,7 +3,7 @@ import { CollabManager, CollabServerState } from '@bangle.dev/collab-manager';
 import type { Schema } from '@bangle.dev/pm';
 
 import type { ApplicationStore } from '@bangle.io/create-store';
-import { getNote } from '@bangle.io/slice-workspace';
+import { getNote, getOpenedWsPaths } from '@bangle.io/slice-workspace';
 
 import { queueWrite } from './write-note-to-disk-slice';
 
@@ -24,6 +24,16 @@ export function setupCollabManager(
 
           return undefined;
         }
+
+        queueMicrotask(() => {
+          // We need to make sure the wsPath requested is registered
+          // with openedWsPaths. If it is not this most likely a bug.
+          if (!getOpenedWsPaths()(store.state).has(docName)) {
+            console.error(`wsPath not found in openedWsPaths`);
+
+            return;
+          }
+        });
 
         return new CollabServerState(doc);
       } catch (error) {
