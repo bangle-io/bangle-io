@@ -3112,6 +3112,7 @@ __metadata:
   resolution: "@bangle.io/slice-editor-manager@workspace:lib/slice-editor-manager"
   dependencies:
     "@bangle.dev/all-base-components": 0.30.0-alpha.15
+    "@bangle.dev/collab-client": 0.30.0-alpha.15
     "@bangle.dev/core": 0.30.0-alpha.15
     "@bangle.dev/pm": 0.30.0-alpha.15
     "@bangle.dev/test-helpers": 0.30.0-alpha.15
@@ -3541,6 +3542,7 @@ __metadata:
     "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-slice-from-naukar": "workspace:*"

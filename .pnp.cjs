@@ -3727,10 +3727,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-72257b587b/0/cache/@bangle.dev-collab-client-npm-0.30.0-alpha.15-65678c6b2c-40f4b70569.zip/node_modules/@bangle.dev/collab-client/",\
+        ["virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.30.0-alpha.15", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-36819829e0/0/cache/@bangle.dev-collab-client-npm-0.30.0-alpha.15-65678c6b2c-40f4b70569.zip/node_modules/@bangle.dev/collab-client/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-client", "virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
@@ -4789,7 +4789,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],\
             ["@bangle.dev/base-components", "virtual:c8b735bfcd19c0fa6312d6602d6fbfa43d722b0cfcf22da05fc8871ef65e6ff91e150ac68aac4961d6c09fcd55e88d634d5b101540702c06b6cf4bca44ab0d23#npm:0.30.0-alpha.15"],\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-client", "virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.30.0-alpha.15"],\
@@ -5814,6 +5814,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.dev/all-base-components", "npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-client", "virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.dev/test-helpers", "npm:0.30.0-alpha.15"],\
@@ -6259,7 +6260,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./worker/worker-editor/",\
           "packageDependencies": [\
             ["@bangle.io/worker-editor", "workspace:worker/worker-editor"],\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-client", "virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
             ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
@@ -6275,6 +6276,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
+            ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-slice-from-naukar", "workspace:app/worker-slice-from-naukar"],\
@@ -6374,7 +6376,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/worker-slice-from-naukar/",\
           "packageDependencies": [\
             ["@bangle.io/worker-slice-from-naukar", "workspace:app/worker-slice-from-naukar"],\
-            ["@bangle.dev/collab-client", "virtual:86175b53f331a699176dc0e15496d3d26bd49633e81d190873b7111c9046cd25f3f3c30026a122cdeef073299a1be2ad56be1039b74345f42cb112a5bbe63621#npm:0.30.0-alpha.15"],\
+            ["@bangle.dev/collab-client", "virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/collab-comms", "npm:0.30.0-alpha.15"],\
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\

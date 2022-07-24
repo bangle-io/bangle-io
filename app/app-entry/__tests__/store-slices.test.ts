@@ -36,6 +36,7 @@ test('exhaustive main slices list', () => {
     'notificationSliceKey$',
     '@bangle.io/worker-slice-from-naukar-key$',
     '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
     expect.stringMatching(/slice\$/),
     expect.stringMatching(/slice\$/),
   ]);
@@ -53,6 +54,7 @@ test('exhaustive naukar slices list', () => {
     'write-note-to-disk-key$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/worker-slice-from-naukar-key$',
+    '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
     expect.stringMatching(/slice\$/),
   ]);
 });
@@ -66,6 +68,7 @@ test('slices common worker and main', () => {
     'notificationSliceKey$',
     '@bangle.io/worker-slice-from-naukar-key$',
     '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
   ]);
 });
 
@@ -80,8 +83,9 @@ describe('worker and window constraints', () => {
   ];
 
   const sideEffectInWindowOnly = [
-    '@bangle.io/worker-slice-from-naukar-key$',
     '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
+    '@bangle.io/worker-slice-from-naukar-key$',
   ];
 
   const keys = commonInBoth.map((r) => r.key);
@@ -126,7 +130,7 @@ describe('worker and window constraints', () => {
         slice?.spec.actions == undefined ||
         naukarSlice?.spec.actions == undefined
       ) {
-        throw new Error('Actions must be defined');
+        throw new Error('Action serializers must be defined');
       }
 
       // since slices are instantiated from same class, their specification should be

@@ -1,5 +1,2 @@
 export { workerSliceFromNaukarKey } from './common';
-export {
-  resetEditorAtWsPath,
-  workerSliceFromNaukarSlice,
-} from './worker-slice-from-naukar';
+export { workerSliceFromNaukarSlice } from './worker-slice-from-naukar';
