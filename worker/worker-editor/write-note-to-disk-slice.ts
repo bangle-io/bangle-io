@@ -127,6 +127,11 @@ const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
       } catch (error) {
         if (error instanceof Error) {
           console.log('received error while writing item', error.message);
+          queueMicrotask(() => {
+            updateDocInfo(item.wsPath, {
+              pendingWrite: false,
+            })(store.state, store.dispatch);
+          });
           store.errorHandler(error);
         }
       }
@@ -159,7 +164,7 @@ const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(() => {
   let interval = 2000;
   let pendingRun = false;
 
-  const getShasOfFile = async (store: ApplicationStore) => {
+  const updateShasOfFile = async (store: ApplicationStore) => {
     const openedFiles = getOpenedDocInfo()(store.state);
     const openedFilesArray = Object.values(openedFiles);
 
@@ -204,12 +209,12 @@ const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(() => {
       )(store.state);
 
       if (pageTransitionedToActive) {
-        getShasOfFile(store);
+        updateShasOfFile(store);
       }
     },
     deferredOnce(store, abortSignal) {
       const val = setInterval(() => {
-        getShasOfFile(store);
+        updateShasOfFile(store);
       }, interval);
 
       abortSignal.addEventListener(

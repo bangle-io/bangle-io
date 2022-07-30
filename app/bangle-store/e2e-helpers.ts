@@ -18,7 +18,7 @@ import { pageSliceKey } from '@bangle.io/slice-page';
 import * as workspaceContext from '@bangle.io/slice-workspace';
 import { BaseError, getEditorPluginMetadata } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-// makes life easier by adding some helpers for e2e tests
+// TODO migrate to using `e2eHelpers2` instead.
 export function e2eHelpers() {
   return new Slice({
     sideEffect() {
@@ -99,6 +99,7 @@ export function e2eHelpers() {
   });
 }
 
+// makes life easier by adding some helpers for e2e tests
 export function e2eHelpers2() {
   return new Slice({
     sideEffect() {
