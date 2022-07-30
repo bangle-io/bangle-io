@@ -166,10 +166,9 @@ test.describe('backlink workflow', () => {
     // hover on something else
     await page.hover('.B-editor-container_editor-bar span');
 
-    await sleep(10);
-
     // the path should now be undefined
-    expect(await getPopupEditorWsPath()).toBeUndefined();
+    // we do a poll because it takes a little while for the popup to disappear
+    await expect.poll(() => getPopupEditorWsPath()).toBeUndefined();
   });
 });
 
