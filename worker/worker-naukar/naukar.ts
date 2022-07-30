@@ -1,18 +1,10 @@
 import * as Sentry from '@sentry/browser';
 
-import type { Manager } from '@bangle.dev/collab-server';
-
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import {
-  assertNotUndefined,
-  BaseError,
-  getSelfType,
-  isWorkerGlobalScope,
-} from '@bangle.io/utils';
+import { BaseError, getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
 
 import { abortableServices } from './abortable-services';
-import { getEditorManager } from './slices/worker-editor-slice';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
 
 const LOG = false;
@@ -36,28 +28,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   const storeRef: StoreRef = {
     current: undefined,
   };
-
   console.debug('Naukar running in ', envType);
-
-  // main-dispatch-end
-
-  const handleCollabRequest: Manager['handleRequest'] = async (...args) => {
-    assertNotUndefined(
-      storeRef.current,
-      'handleCollabRequest called but store is not yet defined',
-    );
-
-    const store = storeRef.current;
-
-    let editorManager = getEditorManager()(store.state, store.dispatch);
-
-    assertNotUndefined(
-      editorManager,
-      'handleCollabRequest called but editorManager is not yet defined',
-    );
-
-    return editorManager.handleRequest(...args);
-  };
 
   // eslint-disable-next-line no-restricted-globals
   if (typeof self !== 'undefined') {
@@ -68,11 +39,11 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   return {
     // setup up store and store syncing
     async sendMessagePort(port: MessageChannel['port2']) {
-      storeRef.current = initializeNaukarStore({ port, extensionRegistry });
+      storeRef.current = initializeNaukarStore({
+        port,
+        extensionRegistry,
+      });
     },
-
-    // collab
-    handleCollabRequest,
 
     async status() {
       return true;

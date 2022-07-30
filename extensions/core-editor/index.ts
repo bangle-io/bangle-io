@@ -20,6 +20,7 @@ const extension = Extension.create({
     markdownItPlugins: [frontMatterMarkdownItPlugin],
   },
   application: {
+    slices: [],
     operations: [
       {
         name: 'operation::@bangle.io/core-editor:collapse-heading',

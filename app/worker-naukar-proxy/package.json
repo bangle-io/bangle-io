@@ -1,6 +1,6 @@
 {
   "name": "@bangle.io/worker-naukar-proxy",
-  "description": "A proxy to the naukar worker",
+  "description": "A proxy to the naukar worker so that main window context can interact with it",
   "version": "0.0.0",
   "authors": [
     {

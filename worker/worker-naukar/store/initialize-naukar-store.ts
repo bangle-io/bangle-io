@@ -1,24 +1,18 @@
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import type { NaukarStateConfig } from '@bangle.io/shared-types';
 
+import type { NaukarStateConfig } from '../common';
 import { naukarSlices } from './naukar-slices';
 
-const LOG = false;
+const LOG = true;
 let log = LOG ? console.debug.bind(console, 'naukar-store') : () => {};
 
 const MAX_DEFERRED_WAIT_TIME = 30;
 
 export function initializeNaukarStore({
   port,
-  onUpdate,
   extensionRegistry,
-}: {
-  onUpdate?: (store: ApplicationStore) => void;
-  port: MessagePort;
-  extensionRegistry: ExtensionRegistry;
-}) {
+}: NaukarStateConfig) {
   const opts: NaukarStateConfig = {
     port,
     extensionRegistry,
@@ -27,10 +21,11 @@ export function initializeNaukarStore({
     storeName: WORKER_STORE_NAME,
     state: AppState.create({
       opts,
-      slices: naukarSlices({ onUpdate }),
+      slices: naukarSlices({}),
     }),
     dispatchAction: (store, action) => {
-      log(action);
+      log(action.name, action.id);
+
       let newState = store.state.applyAction(action);
       store.updateState(newState);
       // log(newState);

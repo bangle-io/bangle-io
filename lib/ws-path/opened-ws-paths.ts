@@ -1,6 +1,7 @@
 import {
   MAX_OPEN_EDITORS,
   MINI_EDITOR_INDEX,
+  POPUP_EDITOR_INDEX,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
@@ -63,6 +64,10 @@ export class OpenedWsPaths {
     return count;
   }
 
+  get popupEditorWsPath() {
+    return this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
+  }
+
   get primaryWsPath() {
     return this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
   }
@@ -111,6 +116,8 @@ export class OpenedWsPaths {
     return false;
   }
 
+  // runs through wsPath of each opened editor.
+  // Note: There might be multiple editor with the same wsPath
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
     this._wsPaths.forEach((p, i) => {
       if (p) {
@@ -137,6 +144,13 @@ export class OpenedWsPaths {
     });
 
     return [...wsNames];
+  }
+
+  // Returns the deduped array of wsPaths of all the opened editors.
+  getWsPaths(): string[] {
+    return Array.from(
+      new Set(this.toArray().filter((r): r is string => typeof r === 'string')),
+    );
   }
 
   /**
@@ -234,6 +248,10 @@ export class OpenedWsPaths {
 
   updateMiniEditorWsPath(wsPath: MaybeWsPath) {
     return this.updateByIndex(MINI_EDITOR_INDEX, wsPath);
+  }
+
+  updatePopupEditorWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(POPUP_EDITOR_INDEX, wsPath);
   }
 
   updatePrimaryWsPath(wsPath: MaybeWsPath) {

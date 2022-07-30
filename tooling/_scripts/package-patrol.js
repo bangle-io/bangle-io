@@ -32,11 +32,12 @@ const getDepConstraints = async () => {
       jsLibTree.getPackageNames(),
       libTree.getPackageNames(),
       workerTree.getPackageNames(),
+      '@bangle.io/worker-slice-from-naukar', // exception this package is needed to let worker trigger things in main context
     ],
     [EXTENSIONS]: [
       jsLibTree.getPackageNames(),
       libTree.getPackageNames(),
-      '@bangle.io/worker-naukar-proxy',
+      '@bangle.io/worker-naukar-proxy', // TODO lets move this away to bangle.io/api, the blocker is that bangle.io/api is in lib folder
     ],
     [APP]: [
       jsLibTree.getPackageNames(),

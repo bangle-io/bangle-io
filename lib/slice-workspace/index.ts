@@ -6,6 +6,7 @@ export {
   checkFileExists,
   createNote,
   deleteNote,
+  docToFile,
   getFile,
   getNote,
   getStorageProviderName,
@@ -18,6 +19,7 @@ export {
 export {
   closeMiniEditor,
   closeOpenedEditor,
+  getOpenedWsPaths,
   getWsName,
   goToWorkspaceAuthRoute,
   goToWorkspaceHomeRoute,

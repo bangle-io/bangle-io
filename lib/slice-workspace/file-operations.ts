@@ -250,24 +250,29 @@ export const writeFile = (wsPath: string, file: File) => {
   );
 };
 
+export const docToFile = (wsPath: string, doc: Node) => {
+  return workspaceSliceKey.queryOp((state): File => {
+    const { fileName, wsName } = resolvePath(wsPath);
+    const { specRegistry } =
+      extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry;
+
+    const serialValue = getNoteFormatProvider(wsName)(state).serializeNote(
+      doc,
+      specRegistry,
+      fileName,
+    );
+
+    return new File([serialValue], fileName, {
+      type: 'text/plain',
+    });
+  });
+};
+
 export const writeNote = (wsPath: string, doc: Node) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<boolean> => {
-      const { specRegistry } = extensionRegistrySliceKey.getSliceStateAsserted(
-        store.state,
-      ).extensionRegistry;
-      const { fileName, wsName } = resolvePath(wsPath);
-
-      const serialValue = getNoteFormatProvider(wsName)(
-        store.state,
-      ).serializeNote(doc, specRegistry, fileName);
-
-      await writeFile(
-        wsPath,
-        new File([serialValue], fileName, {
-          type: 'text/plain',
-        }),
-      )(store.state, dispatch, store);
+      const file = docToFile(wsPath, doc)(store.state);
+      await writeFile(wsPath, file)(store.state, dispatch, store);
 
       return true;
     },

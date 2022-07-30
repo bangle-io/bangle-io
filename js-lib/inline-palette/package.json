@@ -22,11 +22,11 @@
     "access": "restricted"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.30.0",
-    "@bangle.dev/pm": "0.30.0",
-    "@bangle.dev/react": "0.30.0",
-    "@bangle.dev/tooltip": "0.30.0",
-    "@bangle.dev/utils": "0.30.0",
+    "@bangle.dev/core": "0.30.0-alpha.15",
+    "@bangle.dev/pm": "0.30.0-alpha.15",
+    "@bangle.dev/react": "0.30.0-alpha.15",
+    "@bangle.dev/tooltip": "0.30.0-alpha.15",
+    "@bangle.dev/utils": "0.30.0-alpha.15",
     "@bangle.io/utils": "workspace:*",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",

@@ -4,7 +4,10 @@ import type { EditorState } from '@bangle.dev/pm';
 
 import { EditorDisplayType } from '@bangle.io/constants';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import {
+  updateOpenedWsPaths,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 
@@ -74,6 +77,34 @@ export function BacklinkNode({
       );
     }
   }, [wsName, noteWsPaths, wikiLink, editorState]);
+
+  useEffect(() => {
+    let targetWsPath = backlinksWsPath;
+    let didSet = false;
+
+    if (targetWsPath && isTooltipVisible) {
+      didSet = true;
+      updateOpenedWsPaths((openedWsPaths) => {
+        return openedWsPaths.updatePopupEditorWsPath(targetWsPath);
+      })(bangleStore.state, bangleStore.dispatch);
+    }
+
+    return () => {
+      if (didSet) {
+        updateOpenedWsPaths((openedWsPaths) => {
+          // make sure we are unsetting the correct wsPath
+          if (
+            targetWsPath &&
+            targetWsPath === openedWsPaths.popupEditorWsPath
+          ) {
+            return openedWsPaths.updatePopupEditorWsPath(undefined);
+          }
+
+          return openedWsPaths;
+        })(bangleStore.state, bangleStore.dispatch);
+      }
+    };
+  }, [backlinksWsPath, isTooltipVisible, bangleStore]);
 
   return (
     <>

@@ -94,7 +94,7 @@ export class Slice<
 
   constructor(
     public spec: {
-      key?: SliceKey<SL, A, S>;
+      key?: SliceKey<SL, A, S, C>;
       state?: SliceStateField<SL, A, S>;
       appendAction?: (
         actions: A[],

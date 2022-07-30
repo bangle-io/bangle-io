@@ -25,6 +25,7 @@ import { trailingNode } from '@bangle.dev/trailing-node';
 
 import { intersectionObserverPluginKey } from '@bangle.io/constants';
 import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
+import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 import { activeNode } from './active-node';
 import { collabPlugin } from './collab-plugin';
@@ -40,6 +41,9 @@ const getScrollContainer = (view: EditorView) => {
 
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
 export const getPlugins = () => {
+  // Plugins should not be run in workers
+  assertNonWorkerGlobalScope();
+
   const bdDevPlugins = [
     bold.plugins(),
     code.plugins(),

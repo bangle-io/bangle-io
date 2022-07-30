@@ -176,8 +176,6 @@ function scheduler() {
       () => {
         safeRequestAnimationFrame(() => {
           if (!destroyed) {
-            console.count('called');
-
             cb();
           }
         });
@@ -188,7 +186,6 @@ function scheduler() {
     );
 
     return () => {
-      console.count('destroyed');
       destroyed = true;
       safeCancelIdleCallback(id);
     };

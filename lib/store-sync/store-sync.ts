@@ -36,6 +36,13 @@ const log = LOG
     )
   : () => {};
 
+const logWarn = console.warn.bind(
+  console,
+  `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync`,
+);
+
+export const APPLY_TRANSFER: unique symbol = Symbol('apply-transfer');
+
 const MAX_PING_PONG_TRY = 15;
 
 export function startStoreSync() {
@@ -208,12 +215,49 @@ export function storeSyncSlice<
 
                   if (serializedAction) {
                     log('sending message', action.name);
-                    port.postMessage({
-                      type: 'action',
-                      action: serializedAction,
-                    });
+                    const { serializedValue } = serializedAction;
+
+                    let transferKey = serializedValue
+                      ? (serializedValue as Record<string | symbol, unknown>)[
+                          APPLY_TRANSFER
+                        ]
+                      : undefined;
+
+                    if (transferKey) {
+                      if (typeof transferKey !== 'string') {
+                        throw new Error('transferKey must be a string');
+                      }
+
+                      let serializedValue: any =
+                        serializedAction.serializedValue;
+
+                      log('transferring :', transferKey);
+
+                      const value = serializedValue[transferKey];
+
+                      if (value == null) {
+                        throw new Error(
+                          `transfer value with key "${transferKey}" must not be undefined`,
+                        );
+                      }
+
+                      delete serializedValue[APPLY_TRANSFER];
+
+                      port.postMessage(
+                        {
+                          type: 'action',
+                          action: serializedAction,
+                        },
+                        [value],
+                      );
+                    } else {
+                      port.postMessage({
+                        type: 'action',
+                        action: serializedAction,
+                      });
+                    }
                   } else {
-                    log('No serialization found for ', action.name);
+                    logWarn('No serialization found for ', action.name);
                   }
                 }
               }

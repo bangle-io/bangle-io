@@ -1,10 +1,13 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
+import * as constants from '@bangle.io/constants';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import { Slice } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
+import type { E2ETypes } from '@bangle.io/e2e-types';
+import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import * as editorManagerContext from '@bangle.io/slice-editor-manager';
 import {
@@ -15,9 +18,10 @@ import { pageSliceKey } from '@bangle.io/slice-page';
 import * as workspaceContext from '@bangle.io/slice-workspace';
 import { BaseError, getEditorPluginMetadata } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-// makes life easier by adding some helpers for e2e tests
+// TODO migrate to using `e2eHelpers2` instead.
 export function e2eHelpers() {
   return new Slice({
+    key: new SliceKey('e2eHelpers1'),
     sideEffect() {
       let e2eHelpers: { [r: string]: any } = {};
 
@@ -90,6 +94,72 @@ export function e2eHelpers() {
                 editors[PRIMARY_EDITOR_INDEX]?.view.state.schema;
             }
           }
+        },
+      };
+    },
+  });
+}
+
+// makes life easier by adding some helpers for e2e tests
+export function e2eHelpers2() {
+  return new Slice({
+    key: new SliceKey('e2eHelpers2'),
+    sideEffect() {
+      (window as any)._newE2eHelpers2 = {};
+
+      return {
+        deferredOnce(store, abortSignal) {
+          const e2eHelpers: E2ETypes = {
+            constants,
+            e2eHealthCheck: async () => {
+              assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
+
+              assertOk(
+                (await naukarProxy.testHandlesBaseError(
+                  new BaseError({ message: 'test' }),
+                )) instanceof BaseError,
+                'naukarProxy.testHandlesBaseError failed',
+              );
+              assertOk(
+                await naukarProxy.testIsWorkerEnv(),
+                'naukarProxy.testIsWorkerEnv failed',
+              );
+
+              // one more status at end to make sure worker is
+              // still alive
+              assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
+
+              return true;
+            },
+            editorManagerSliceKey,
+            getEditorPluginMetadata,
+            naukarProxy,
+            getOpenedWsPaths: () => {
+              return workspaceContext.getOpenedWsPaths()(store.state);
+            },
+            pageSliceKey,
+            pushWsPath: workspaceContext.pushWsPath,
+            sliceManualPaste,
+            store,
+            workspaceSliceKey: workspaceContext.workspaceSliceKey,
+            pm: {
+              getEditorSchema: () => {
+                return extensionRegistrySliceKey.getSliceStateAsserted(
+                  store.state,
+                ).extensionRegistry.specRegistry.schema;
+              },
+              Slice,
+            },
+          };
+          (window as any)._newE2eHelpers2 = e2eHelpers;
+
+          abortSignal.addEventListener(
+            'abort',
+            () => {
+              (window as any)._newE2eHelpers2 = {};
+            },
+            { once: true },
+          );
         },
       };
     },

@@ -46,7 +46,7 @@ export function closeMiniEditor() {
 }
 
 // removes the wsPath at index from the currently opened wsPaths
-// if no param is passed closes primary and secondary editor.
+// if no param is passed closes all the editors
 export function closeOpenedEditor(index?: EditorIdType) {
   return workspaceSliceKey.op((state, dispatch) => {
     if (typeof index === 'number') {

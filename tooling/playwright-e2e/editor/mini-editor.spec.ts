@@ -83,6 +83,7 @@ test.describe('miniEditor', () => {
     await locator.waitFor();
     expect(await page.$(MINI_EDITOR_SELECTOR)).not.toBeNull();
     expect(await locator.textContent()).toMatch('test123');
+    await sleep();
 
     // make sure to type it in mini editor
     await locator.locator('.bangle-editor').type('AWESOME', { delay: 15 });

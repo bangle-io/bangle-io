@@ -102,6 +102,24 @@ describe('OpenedWsPaths', () => {
     expect(result.getWsNames()).toEqual(['hello', 'bye']);
   });
 
+  test('getWsPaths', () => {
+    let result = OpenedWsPaths.createFromArray(['hello:one.md', undefined]);
+    expect(result.getWsPaths()).toEqual(['hello:one.md']);
+
+    result = OpenedWsPaths.createFromArray([
+      'hello:one.md',
+      'hello:two/two.md',
+    ]);
+    expect(result.getWsPaths()).toEqual(['hello:one.md', 'hello:two/two.md']);
+
+    result = OpenedWsPaths.createFromArray([
+      'hello:one.md',
+      'bye:two/two.md',
+      'hello:one.md',
+    ]);
+    expect(result.getWsPaths()).toEqual(['hello:one.md', 'bye:two/two.md']);
+  });
+
   test('createFromArray', () => {
     expect(OpenedWsPaths.createFromArray([])).toMatchInlineSnapshot(`
       OpenedWsPaths {
