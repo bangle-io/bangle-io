@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "worker/worker-naukar"
+    "directory": "worker/worker-editor"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
