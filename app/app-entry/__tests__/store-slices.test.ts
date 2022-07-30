@@ -37,7 +37,8 @@ test('exhaustive main slices list', () => {
     '@bangle.io/worker-slice-from-naukar-key$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    expect.stringMatching(/slice\$/),
+    expect.stringMatching(/e2eHelpers1\$/),
+    expect.stringMatching(/e2eHelpers2\$/),
     expect.stringMatching(/slice\$/),
   ]);
 });

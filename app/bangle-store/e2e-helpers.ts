@@ -5,7 +5,7 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import { Slice } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { E2ETypes } from '@bangle.io/e2e-types';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
@@ -21,6 +21,7 @@ import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 // TODO migrate to using `e2eHelpers2` instead.
 export function e2eHelpers() {
   return new Slice({
+    key: new SliceKey('e2eHelpers1'),
     sideEffect() {
       let e2eHelpers: { [r: string]: any } = {};
 
@@ -102,6 +103,7 @@ export function e2eHelpers() {
 // makes life easier by adding some helpers for e2e tests
 export function e2eHelpers2() {
   return new Slice({
+    key: new SliceKey('e2eHelpers2'),
     sideEffect() {
       (window as any)._newE2eHelpers2 = {};
 
