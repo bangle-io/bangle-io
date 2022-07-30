@@ -15,5 +15,6 @@ build
 dist
 
 *.md
+*.hbs
 
 tsconfig.json
