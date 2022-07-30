@@ -5,7 +5,7 @@ import { editorSyncKey } from './common';
 export const transferPortEffect = editorSyncKey.effect(() => {
   return {
     deferredOnce(store) {
-      // donot run it in worker context, to avoid duplicate firing in worker
+      // do not run it in worker context, to avoid duplicate firing in worker
       if (isWorkerGlobalScope()) {
         return;
       }

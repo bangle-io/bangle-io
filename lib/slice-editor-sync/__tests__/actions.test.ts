@@ -1,7 +1,6 @@
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
 
 import { APPLY_TRANSFER } from '@bangle.io/store-sync';
-import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 import {
   createTestStore,
   setupMockMessageChannel,

@@ -1,6 +1,6 @@
 {
   "name": "@bangle.io/slice-editor-sync",
-  "description": "A slice that setups up communication for editor to sync between naukar (worker context) and main (window context)",
+  "description": "A slice that sets up the communication for editor to sync between naukar (worker context) and main (window context)",
   "version": "0.0.0",
   "authors": [
     {
