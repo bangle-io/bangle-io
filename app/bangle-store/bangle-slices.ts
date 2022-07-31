@@ -18,7 +18,6 @@ import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
-import { workerSliceFromNaukarSlice } from '@bangle.io/worker-slice-from-naukar';
 
 import { e2eHelpers, e2eHelpers2 } from './e2e-helpers';
 import { historySlice } from './slices/history-slice';
@@ -65,7 +64,6 @@ export function bangleStateSlices({
     saveStateSlice(),
     miscEffectsSlice(),
     notificationSlice(),
-    workerSliceFromNaukarSlice(),
     editorSyncSlice(),
     workspaceOpenedDocInfoSlice(),
     // <-- PLOP INSERT SLICE -->

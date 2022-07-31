@@ -32,7 +32,6 @@ const getDepConstraints = async () => {
       jsLibTree.getPackageNames(),
       libTree.getPackageNames(),
       workerTree.getPackageNames(),
-      '@bangle.io/worker-slice-from-naukar', // exception this package is needed to let worker trigger things in main context
     ],
     [EXTENSIONS]: [
       jsLibTree.getPackageNames(),
