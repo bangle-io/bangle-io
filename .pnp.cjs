@@ -57,10 +57,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/bangle-store"\
       },\
       {\
-        "name": "@bangle.io/e2e-types",\
-        "reference": "workspace:app/e2e-types"\
-      },\
-      {\
         "name": "@bangle.io/editor-container",\
         "reference": "workspace:app/editor-container"\
       },\
@@ -225,6 +221,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/contextual-ui-components"\
       },\
       {\
+        "name": "@bangle.io/e2e-types",\
+        "reference": "workspace:lib/e2e-types"\
+      },\
+      {\
         "name": "@bangle.io/editor",\
         "reference": "workspace:lib/editor"\
       },\
@@ -349,7 +349,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/core-extension", ["workspace:extensions/core-extension"]],\
       ["@bangle.io/core-palettes", ["virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes", "workspace:extensions/core-palettes"]],\
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],\
-      ["@bangle.io/e2e-types", ["workspace:app/e2e-types"]],\
+      ["@bangle.io/e2e-types", ["workspace:lib/e2e-types"]],\
       ["@bangle.io/editor", ["virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor", "workspace:lib/editor"]],\
       ["@bangle.io/editor-container", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container", "workspace:app/editor-container"]],\
       ["@bangle.io/env-vars", ["workspace:tooling/env-vars"]],\
@@ -427,7 +427,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
+            ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -4636,7 +4636,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
-            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
+            ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],\
@@ -4968,10 +4968,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.io/e2e-types", [\
-        ["workspace:app/e2e-types", {\
-          "packageLocation": "./app/e2e-types/",\
+        ["workspace:lib/e2e-types", {\
+          "packageLocation": "./lib/e2e-types/",\
           "packageDependencies": [\
-            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
+            ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
@@ -5651,7 +5651,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-typescript", "virtual:6e4445ea532b1c0efb8b747dbc50f44ee9db8eed593937ea4b7e2ac28ecef343ceed44d5facb831dbf3dcf4533384a5926793e65128ccc571fa3c8f9f5b8126d#npm:7.17.12"],\
             ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
+            ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@playwright/test", "npm:1.24.0"],\
@@ -6344,7 +6344,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
-            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
+            ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
@@ -15477,7 +15477,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
+            ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\

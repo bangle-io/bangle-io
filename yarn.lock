@@ -2432,9 +2432,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/e2e-types@workspace:*, @bangle.io/e2e-types@workspace:app/e2e-types":
+"@bangle.io/e2e-types@workspace:*, @bangle.io/e2e-types@workspace:lib/e2e-types":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/e2e-types@workspace:app/e2e-types"
+  resolution: "@bangle.io/e2e-types@workspace:lib/e2e-types"
   dependencies:
     "@bangle.dev/core": 0.30.0-alpha.15
     "@bangle.dev/pm": 0.30.0-alpha.15
