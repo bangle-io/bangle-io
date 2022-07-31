@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { keyDisplayValue } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';
 import { changeSidebar } from '@bangle.io/slice-ui';
 import { FolderIcon } from '@bangle.io/ui-components';
+import { keyDisplayValue } from '@bangle.io/utils';
 
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 

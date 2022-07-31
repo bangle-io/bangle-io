@@ -2,7 +2,7 @@ import { isMac } from './is-mac';
 
 // const altInMac = '⌥'; // option
 
-export function keyDisplayValue(key: string) {
+export function keyDisplayValue(key: string): string {
   if (key.includes('Mod')) {
     key = key.split('Mod').join(isMac ? '⌘' : 'Ctrl');
   }

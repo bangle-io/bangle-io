@@ -1,4 +1,3 @@
-import { isFirefox, isMac } from '@bangle.io/config';
 import type { CorePalette } from '@bangle.io/constants';
 import {
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
@@ -8,6 +7,7 @@ import {
 import type { AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import { uiSliceKey } from '@bangle.io/slice-ui';
+import { isFirefox, isMac } from '@bangle.io/utils';
 
 import { extensionName } from './config';
 import { notesPalette } from './NotesPalette';

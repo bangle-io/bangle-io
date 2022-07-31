@@ -1,11 +1,10 @@
-import { isMobile } from '@bangle.io/config';
 import {
   MAX_OPEN_EDITORS,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
-import { assertActionName, createEmptyArray } from '@bangle.io/utils';
+import { assertActionName, createEmptyArray, isMobile } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import {

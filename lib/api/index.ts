@@ -12,9 +12,9 @@ export * as ui from './ui';
 export * as workspace from './workspace';
 export * as wsPathHelpers from './ws-path-helpers';
 export { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-export { browserInfo } from '@bangle.io/config';
 export { Slice, SliceKey } from '@bangle.io/create-store';
 export { Extension } from '@bangle.io/extension-registry';
+export { browserInfo } from '@bangle.io/utils';
 
 export type { BangleApplicationStore };
 export type BangleAppState = BangleApplicationStore['state'];

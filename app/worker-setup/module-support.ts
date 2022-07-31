@@ -1,5 +1,5 @@
-import { BANGLE_HOT, isSafari } from '@bangle.io/config';
-import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
+import { BANGLE_HOT } from '@bangle.io/config';
+import { assertNonWorkerGlobalScope, isSafari } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
 
