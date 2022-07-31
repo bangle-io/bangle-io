@@ -1,6 +1,7 @@
 /* eslint-disable no-process-env */
 const path = require('path');
 const fs = require('fs');
+const { BangleConfig } = require('@bangle.io/config-template');
 
 const releaseVersion = require('../../package.json').version;
 
@@ -80,12 +81,40 @@ function getFavicon(appEnv) {
     <link rel="mask-icon" href="/favicon-dev.svg" color="#FFF0F4" />`;
 }
 
-module.exports = ({ isProduction, isVite = false }) => {
+module.exports = ({ isProduction = false, isVite = false }) => {
   const appEnv = getAppEnv(isProduction);
+
+  const hot = process.env.BANGLE_HOT ? true : false;
+  const bangleConfig = new BangleConfig({
+    build: {
+      appEnv: appEnv,
+      buildTime: new Date().toISOString(),
+      commitHash: (
+        process.env.COMMIT_REF ||
+        require('child_process')
+          .execSync('git rev-parse --short HEAD')
+          .toString()
+          .trim()
+      ).slice(0, 7),
+      deployBranch: isProduction ? process.env.BRANCH : 'local',
+      hot,
+      netlifyBuildContext: process.env.CONTEXT || '',
+      nodeEnv: isProduction ? 'production' : 'development',
+      releaseId: getReleaseId(isProduction),
+      releaseVersion: releaseVersion,
+    },
+    app: {
+      changelogText: readChangelogText(),
+      helpDocsVersion,
+    },
+  });
+
+  bangleConfig.print();
 
   return {
     helpDocsVersion,
     appEnv,
+    hot,
     htmlInjections: {
       favicon: getFavicon(appEnv),
       sentry: isProduction
@@ -96,11 +125,11 @@ module.exports = ({ isProduction, isVite = false }) => {
     ></script>`
         : '',
       bangleHelpPreload: `<link
-      rel="preload"
-      href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/getting%20started.md"
-      as="fetch"
-      crossorigin
-    />`,
+        rel="preload"
+        href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/getting%20started.md"
+        as="fetch"
+        crossorigin
+      />`,
       viteJsEntry: isVite
         ? '<script type="module" src="/app/app-entry/index.ts"></script>'
         : '',
@@ -110,31 +139,9 @@ module.exports = ({ isProduction, isVite = false }) => {
           : '',
     },
     appEnvs: {
-      'process.env.NODE_ENV': JSON.stringify(
-        isProduction ? 'production' : 'development',
+      'process.env.__BANGLE_BUILD_TIME_CONFIG__': JSON.stringify(
+        bangleConfig.serialize(),
       ),
-      'process.env.DEPLOY_BRANCH': JSON.stringify(
-        isProduction ? process.env.BRANCH : 'local',
-      ),
-      'process.env.APP_ENV': JSON.stringify(appEnv),
-      'process.env.RELEASE_VERSION': JSON.stringify(releaseVersion),
-      'process.env.RELEASE_ID': JSON.stringify(getReleaseId(isProduction)),
-      'process.env.NETLIFY_BUILD_CONTEXT': JSON.stringify(process.env.CONTEXT),
-      'process.env.COMMIT_HASH': JSON.stringify(
-        (
-          process.env.COMMIT_REF ||
-          require('child_process')
-            .execSync('git rev-parse --short HEAD')
-            .toString()
-            .trim()
-        ).slice(0, 7),
-      ),
-      'process.env.HELP_DOCS_VERSION': JSON.stringify(helpDocsVersion),
-      'process.env.BANGLE_HOT': JSON.stringify(
-        process.env.BANGLE_HOT ? true : false,
-      ),
-      'process.env.CHANGELOG_TEXT': JSON.stringify(readChangelogText()),
-      'process.env.BUILD_TIME': JSON.stringify(new Date().toISOString()),
     },
   };
 };

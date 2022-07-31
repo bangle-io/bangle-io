@@ -4735,10 +4735,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/config/",\
           "packageDependencies": [\
             ["@bangle.io/config", "workspace:lib/config"],\
+            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fconfig%40workspace%3Alib%2Fconfig"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/config-template", [\
+        ["portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fconfig%40workspace%3Alib%2Fconfig", {\
+          "packageLocation": "../bangle-io-config-template/",\
+          "packageDependencies": [\
+            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fconfig%40workspace%3Alib%2Fconfig"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fenv-vars%40workspace%3Atooling%2Fenv-vars", {\
+          "packageLocation": "../bangle-io-config-template/",\
+          "packageDependencies": [\
+            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fenv-vars%40workspace%3Atooling%2Fenv-vars"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -5125,6 +5142,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/env-vars/",\
           "packageDependencies": [\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
+            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fenv-vars%40workspace%3Atooling%2Fenv-vars"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.0"],\
