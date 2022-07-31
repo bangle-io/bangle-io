@@ -14,6 +14,7 @@ import {
   updateDocInfo,
   workspaceOpenedDocInfoKey,
 } from '@bangle.io/slice-workspace-opened-doc-info';
+import type { OpenedFile } from '@bangle.io/slice-workspace-opened-doc-info/common';
 import { assertActionName } from '@bangle.io/utils';
 
 import { workerEditorSliceKey } from './common';
@@ -110,13 +111,11 @@ const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
         })(store.state, store.dispatch);
 
         const file = docToFile(item.wsPath, item.collabState.doc)(store.state);
-
         // TODO check if file was externally modified before writing
         const [lastWrittenSha] = await Promise.all([
           cachedCalculateGitFileSha(file),
           writeFile(item.wsPath, file)(store.state, store.dispatch, store),
         ]);
-
         updateDocInfo(item.wsPath, {
           pendingWrite: false,
 
@@ -280,6 +279,10 @@ const staleDocEffect = writeNoteToDiskSliceKey.effect(() => {
 });
 
 const blockOnPendingWriteEffect = writeNoteToDiskSliceKey.effect(() => {
+  const shouldBlock = (openedFiles: OpenedFile[]) => {
+    return openedFiles.some((info) => info.pendingWrite);
+  };
+
   return {
     update(store, prevState) {
       const openedFiles = workspaceOpenedDocInfoKey.getValueIfChanged(
@@ -292,14 +295,22 @@ const blockOnPendingWriteEffect = writeNoteToDiskSliceKey.effect(() => {
         return;
       }
 
-      if (Object.values(openedFiles).some((info) => info.pendingWrite)) {
+      if (shouldBlock(Object.values(openedFiles))) {
         log('blocking on pending write');
         blockReload(true)(
           store.state,
           pageSliceKey.getDispatch(store.dispatch),
         );
-      } else {
-        log('unblocking');
+      }
+    },
+
+    // set it to 'off' at a slower cadence to do a sort of debounce
+    deferredUpdate(store, prevState, abortSignal) {
+      const openedFiles = workspaceOpenedDocInfoKey.getSliceStateAsserted(
+        store.state,
+      ).openedFiles;
+
+      if (!shouldBlock(Object.values(openedFiles))) {
         blockReload(false)(
           store.state,
           pageSliceKey.getDispatch(store.dispatch),

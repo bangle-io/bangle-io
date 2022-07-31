@@ -171,9 +171,9 @@ const syncWithOpenedWsPathsEffect = workspaceOpenedDocInfoKey.effect(() => {
       let additions: string[] = [];
       let removals: string[] = [];
 
-      // cleanup data that is not opened anymore
-      Object.entries(openedFiles).forEach(([wsPath]) => {
-        if (!openedWsPaths.has(wsPath)) {
+      // cleanup data that is not opened anymore and does not have a pending write
+      Object.entries(openedFiles).forEach(([wsPath, val]) => {
+        if (!openedWsPaths.has(wsPath) && !val.pendingWrite) {
           removals.push(wsPath);
         }
       });

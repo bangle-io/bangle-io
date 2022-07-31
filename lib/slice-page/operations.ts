@@ -8,6 +8,10 @@ import { locationSetWsPath } from './location-helpers';
 
 export function blockReload(block: boolean) {
   return (state: AppState, dispatch: PageDispatchType) => {
+    if (pageSliceKey.getSliceStateAsserted(state).blockReload === block) {
+      return;
+    }
+
     dispatch({
       name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
       value: { block: block },

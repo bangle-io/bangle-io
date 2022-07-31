@@ -19,6 +19,8 @@ export const TAB_ID: string = 'tab_' + randomStr(4);
 export const BANGLE_HOT = config.build.hot;
 export const CHANGELOG_TEXT: string = config.app.changelogText;
 
+export const DEBUG_WRITE_SLOWDOWN = config.debug?.writeSlowDown;
+
 export const sentryConfig = {
   environment: APP_ENV,
   dsn: 'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',

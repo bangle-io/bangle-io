@@ -1,8 +1,10 @@
 import type { Node } from '@bangle.dev/pm';
 
 import { readFileAsText } from '@bangle.io/baby-fs';
+import { DEBUG_WRITE_SLOWDOWN } from '@bangle.io/config';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { StorageOpts } from '@bangle.io/storage';
+import { sleep } from '@bangle.io/utils';
 import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
@@ -238,6 +240,11 @@ export const writeFile = (wsPath: string, file: File) => {
     async (_, dispatch, store): Promise<boolean> => {
       const { wsName } = resolvePath(wsPath);
       const storageProvider = getStorageProvider(wsName)(store.state);
+
+      if (DEBUG_WRITE_SLOWDOWN && DEBUG_WRITE_SLOWDOWN > 0) {
+        console.warn('Slowing down write by ' + DEBUG_WRITE_SLOWDOWN + 'ms');
+        await sleep(DEBUG_WRITE_SLOWDOWN);
+      }
 
       await storageProvider.writeFile(
         wsPath,
