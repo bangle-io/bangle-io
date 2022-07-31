@@ -2191,7 +2191,6 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"
-    "@bangle.io/worker-slice-from-naukar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     fast-deep-equal: ^3.1.3
     page-lifecycle: ^0.1.2
@@ -3569,7 +3568,6 @@ __metadata:
     "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-slice-from-naukar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
@@ -3620,7 +3618,6 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-editor": "workspace:*"
-    "@bangle.io/worker-slice-from-naukar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@sentry/browser": ^6.18.1
     "@zip.js/zip.js": ^2.4.5
@@ -3649,26 +3646,6 @@ __metadata:
     comlink: ^4.3.1
     idb-keyval: ^5.1.5
     react: ^17.0.2
-    tslib: ^2.4.0
-    typescript: ^4.7.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/worker-slice-from-naukar@workspace:*, @bangle.io/worker-slice-from-naukar@workspace:app/worker-slice-from-naukar":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/worker-slice-from-naukar@workspace:app/worker-slice-from-naukar"
-  dependencies:
-    "@bangle.dev/collab-client": 0.30.0-alpha.15
-    "@bangle.dev/collab-comms": 0.30.0-alpha.15
-    "@bangle.dev/core": 0.30.0-alpha.15
-    "@bangle.dev/pm": 0.30.0-alpha.15
-    "@bangle.dev/test-helpers": 0.30.0-alpha.15
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@testing-library/dom": ^8.11.3
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown

@@ -16,7 +16,6 @@ import {
   workerEditorSlice,
   writeNoteToDiskSlice,
 } from '@bangle.io/worker-editor';
-import { workerSliceFromNaukarSlice } from '@bangle.io/worker-slice-from-naukar';
 
 import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
 
@@ -39,7 +38,6 @@ export function naukarSlices({
     notificationSlice(),
     writeNoteToDiskSlice(),
     disableSideEffect(editorSyncSlice()),
-    disableSideEffect(workerSliceFromNaukarSlice()),
     disableSideEffect(workspaceOpenedDocInfoSlice()),
 
     // <-- PLOP INSERT SLICE -->

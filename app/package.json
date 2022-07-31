@@ -11,7 +11,6 @@
     "style",
     "worker-naukar-proxy",
     "worker-setup",
-    "worker-slice-from-naukar",
     "workspace-sidebar"
   ],
   "repository": {
