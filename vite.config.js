@@ -14,7 +14,7 @@ const config = async ({ command, mode }) => {
     isVite: true,
   });
 
-  const hot = JSON.parse(envVars.appEnvs['process.env.BANGLE_HOT']);
+  const hot = envVars.hot;
   const port = argv.port;
 
   // NOTE: we are relying on cli passing port
@@ -36,11 +36,6 @@ const config = async ({ command, mode }) => {
   // if (appEnv === 'production') {
   //   sourcemap = false;
   // }
-
-  // deleting CHANGELOG_TEXT since it becomes really long when printing
-  const printableConfig = Object.assign({}, envVars.appEnvs);
-  delete printableConfig['process.env.CHANGELOG_TEXT'];
-  console.table(printableConfig);
 
   /**
    * @type {import('vite').UserConfig}

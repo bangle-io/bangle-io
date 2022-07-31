@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "app/e2e-types"
+    "directory": "lib/e2e-types"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -31,6 +31,7 @@
     "@bangle.dev/core": "0.30.0-alpha.15",
     "@bangle.dev/pm": "0.30.0-alpha.15",
     "@bangle.dev/utils": "0.30.0-alpha.15",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/pm-manual-paste": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",

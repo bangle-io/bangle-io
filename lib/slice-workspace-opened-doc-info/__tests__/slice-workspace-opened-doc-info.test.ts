@@ -1,9 +1,10 @@
 import { AppState } from '@bangle.io/create-store';
-import { workspaceSliceKey } from '@bangle.io/slice-workspace/common';
 import {
+  getOpenedWsPaths,
   pushWsPath,
   updateOpenedWsPaths,
-} from '@bangle.io/slice-workspace/operations';
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
@@ -16,6 +17,7 @@ import {
   UPDATE_ENTRY,
   workspaceOpenedDocInfoKey,
 } from '../common';
+import { getOpenedDocInfo, updateDocInfo } from '../operations';
 import { workspaceOpenedDocInfoSlice } from '../slice-workspace-opened-doc-info';
 
 const setup = async ({} = {}) => {
@@ -329,5 +331,76 @@ describe('effects', () => {
     } as any);
 
     expect(getAction(SYNC_ENTRIES)).toHaveLength(3);
+  });
+
+  test('does not clear wsPaths which are no longer open but have pending writes', async () => {
+    const { store } = await setup({});
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws', [
+      [`test-ws:one.md`, `# Hello World 0`],
+      [`test-ws:two.md`, `# Hello World 1`],
+    ]);
+
+    workspaceSliceKey.callOp(
+      store.state,
+      store.dispatch,
+      updateOpenedWsPaths((openedWsPath) => {
+        return openedWsPath
+          .updatePrimaryWsPath('test-ws:one.md')
+          .updateSecondaryWsPath('test-ws:two.md');
+      }),
+    );
+
+    await sleep(0);
+
+    updateDocInfo('test-ws:two.md', {
+      pendingWrite: true,
+    })(store.state, store.dispatch);
+
+    // close two
+    workspaceSliceKey.callOp(
+      store.state,
+      store.dispatch,
+      updateOpenedWsPaths((openedWsPath) => {
+        return openedWsPath.closeIfFound('test-ws:two.md');
+      }),
+    );
+    await sleep(0);
+
+    // should have removed two.md
+    expect(
+      workspaceSliceKey
+        .callQueryOp(store.state, getOpenedWsPaths())
+        .toArray()
+        .filter(Boolean),
+    ).toEqual(['test-ws:one.md']);
+
+    await sleep(0);
+
+    // should keep two around as it has pending write
+    expect(getOpenedDocInfo()(store.state)).toEqual({
+      'test-ws:one.md': {
+        pendingWrite: false,
+        wsPath: 'test-ws:one.md',
+      },
+      'test-ws:two.md': {
+        pendingWrite: true,
+        wsPath: 'test-ws:two.md',
+      },
+    });
+
+    updateDocInfo('test-ws:two.md', {
+      pendingWrite: false,
+    })(store.state, store.dispatch);
+
+    await sleep(0);
+
+    // should remove it now since no more pending write
+    expect(getOpenedDocInfo()(store.state)).toEqual({
+      'test-ws:one.md': {
+        pendingWrite: false,
+        wsPath: 'test-ws:one.md',
+      },
+    });
   });
 });

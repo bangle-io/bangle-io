@@ -39,3 +39,12 @@ interface LockManager {
 interface Navigator {
   locks: LockManager;
 }
+
+declare var _e2eNaukarHelpers:
+  | undefined
+  | import('@bangle.io/e2e-types').E2ENaukarTypes;
+declare var _newE2eHelpers2:
+  | undefined
+  | import('@bangle.io/e2e-types').E2ETypes;
+
+declare var __BANGLE_INJECTED_CONFIG__: string | undefined;

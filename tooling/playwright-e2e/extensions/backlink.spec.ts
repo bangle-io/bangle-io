@@ -152,9 +152,9 @@ test.describe('backlink workflow', () => {
 
     const getPopupEditorWsPath = async () =>
       page.evaluate(() => {
-        const _newE2eHelpers2: E2ETypes = (window as any)._newE2eHelpers2;
+        const _newE2eHelpers2 = window._newE2eHelpers2;
 
-        return _newE2eHelpers2.getOpenedWsPaths().popupEditorWsPath;
+        return _newE2eHelpers2?.getOpenedWsPaths().popupEditorWsPath;
       }, []);
 
     expect(await getPopupEditorWsPath()).toBeUndefined();

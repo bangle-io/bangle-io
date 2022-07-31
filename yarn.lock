@@ -2171,6 +2171,7 @@ __metadata:
   resolution: "@bangle.io/bangle-store@workspace:app/bangle-store"
   dependencies:
     "@bangle.dev/pm": 0.30.0-alpha.15
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
@@ -2244,10 +2245,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/config-template@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@bangle.io/config-template@npm:0.0.3"
+  checksum: 36cc7b19a8c90b4e2db50790a1742c4c2da8fa9679da2e886c668a3625c416539f4c203a64d8d10e86c173aebc2d2c9a4a95948f99b584eab0ec76e28a60ecda
+  languageName: node
+  linkType: hard
+
 "@bangle.io/config@workspace:*, @bangle.io/config@workspace:lib/config":
   version: 0.0.0-use.local
   resolution: "@bangle.io/config@workspace:lib/config"
   dependencies:
+    "@bangle.io/config-template": ^0.0.3
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.0
@@ -2423,13 +2432,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/e2e-types@workspace:*, @bangle.io/e2e-types@workspace:app/e2e-types":
+"@bangle.io/e2e-types@workspace:*, @bangle.io/e2e-types@workspace:lib/e2e-types":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/e2e-types@workspace:app/e2e-types"
+  resolution: "@bangle.io/e2e-types@workspace:lib/e2e-types"
   dependencies:
     "@bangle.dev/core": 0.30.0-alpha.15
     "@bangle.dev/pm": 0.30.0-alpha.15
     "@bangle.dev/utils": 0.30.0-alpha.15
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2518,6 +2528,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
   dependencies:
+    "@bangle.io/config-template": ^0.0.3
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.0
@@ -2949,6 +2960,7 @@ __metadata:
     "@babel/core": ^7.18.2
     "@babel/preset-env": ^7.18.2
     "@babel/preset-typescript": ^7.17.12
+    "@bangle.io/config-template": ^0.0.3
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3008,6 +3020,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/scripts@workspace:tooling/_scripts"
   dependencies:
+    "@bangle.io/config-template": ^0.0.3
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3605,6 +3618,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
@@ -9624,6 +9638,7 @@ __metadata:
     "@bangle.dev/jest-utils": 0.30.0-alpha.15
     "@bangle.io/app-entry": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
     "@bangle.io/scripts": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

@@ -1,45 +1,25 @@
-let envVars: any = {};
-// Done this way to allow for bundlers
-// to do a string replace.
-try {
-  // eslint-disable-next-line no-process-env
-  envVars.buildTime = process.env.BUILD_TIME;
-  // eslint-disable-next-line no-process-env
-  envVars.nodeEnv = process.env.NODE_ENV;
-  // eslint-disable-next-line no-process-env
-  envVars.releaseId = process.env.RELEASE_ID;
-  // eslint-disable-next-line no-process-env
-  envVars.deployBranch = process.env.DEPLOY_BRANCH;
-  // eslint-disable-next-line no-process-env
-  envVars.releaseVersion = process.env.RELEASE_VERSION;
-  // eslint-disable-next-line no-process-env
-  envVars.appEnv = process.env.APP_ENV;
-  // eslint-disable-next-line no-process-env
-  envVars.commitHash = process.env.COMMIT_HASH;
-  // eslint-disable-next-line no-process-env
-  envVars.helpDocsVersion = process.env.HELP_DOCS_VERSION;
-  // eslint-disable-next-line no-process-env
-  envVars.bangleHot = process.env.BANGLE_HOT;
-  // eslint-disable-next-line no-process-env
-  envVars.changelogText = process.env.CHANGELOG_TEXT;
-  // eslint-disable-next-line no-process-env
-  envVars.netlifyBuildContext = process.env.NETLIFY_BUILD_CONTEXT;
-} catch (err) {}
+import { compileConfig } from './compile-config';
+
+export const config = compileConfig();
+export type { FinalConfig } from '@bangle.io/config-template';
+
 // appEnv can be one of the following only `production`, `staging`,
 // `local` , `dev/*` where * is the branch name
-export const APP_ENV: string = envVars.appEnv;
+export const APP_ENV: string = config.build.appEnv;
 export const IS_PRODUCTION_APP_ENV = APP_ENV === 'production';
-export const RELEASE_VERSION: string = envVars.releaseVersion;
-export const RELEASE_ID: string = envVars.releaseId;
+export const RELEASE_VERSION: string = config.build.releaseVersion;
+export const RELEASE_ID: string = config.build.releaseId;
 // a less intimidating thing that is shown in the UI
 // for production it is release version but for other env we show the whole thing
 // for better debugging
 export const FRIENDLY_ID = IS_PRODUCTION_APP_ENV ? RELEASE_VERSION : RELEASE_ID;
 
-export const HELP_DOCS_VERSION: string = envVars.helpDocsVersion;
+export const HELP_DOCS_VERSION: string = config.app.helpDocsVersion;
 export const TAB_ID: string = 'tab_' + randomStr(4);
-export const BANGLE_HOT: string = envVars.bangleHot;
-export const CHANGELOG_TEXT: string = envVars.changelogText;
+export const BANGLE_HOT = config.build.hot;
+export const CHANGELOG_TEXT: string = config.app.changelogText;
+
+export const DEBUG_WRITE_SLOWDOWN = config.debug?.writeSlowDown;
 
 export const sentryConfig = {
   environment: APP_ENV,
@@ -50,11 +30,10 @@ export const sentryConfig = {
     APP_ENV === 'production' ? 0.8 : APP_ENV === 'staging' ? 1 : 0,
 };
 
-if (envVars.nodeEnv !== 'test') {
-  console.log(envVars.appEnv + ': using ' + RELEASE_ID);
+if (config.build.nodeEnv !== 'test') {
+  console.log(config.build.appEnv + ': using ' + RELEASE_ID);
 
   console.table({
-    ...envVars,
     tabId: TAB_ID,
     isWorkerContext:
       typeof WorkerGlobalScope !== 'undefined' &&
