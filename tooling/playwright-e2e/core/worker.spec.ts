@@ -17,7 +17,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 test.describe('worker', () => {
   test.use({
     bangleDebugConfig: {
-      writeSlowDown: 500,
+      writeSlowDown: 300,
     },
   });
 
@@ -51,28 +51,30 @@ test.describe('worker', () => {
         return window._newE2eHelpers2?.pageSliceKey.getSliceState(state);
       });
 
-    expect(await pageSliceState()).toEqual({
-      // block-reload should be true since we typed and
-      // have a enabled writeSlowDown too
-      blockReload: true,
-      lifeCycleState: {
-        current: 'active',
-      },
-      location: {
-        pathname: `/ws/${wsName1}/test-note.md`,
-        search: '',
-      },
-      pendingNavigation: {
-        location: {
-          pathname: `/ws/${wsName1}/test-note.md`,
-          search: '',
-        },
-        preserve: false,
-        replaceHistory: false,
-      },
-    });
+    await sleep(50);
+
+    // block-reload should be true since we typed and
+    // have a enabled writeSlowDown too
+    expect((await pageSliceState())?.blockReload).toBe(true);
 
     // after a while it should be set blockReload to false
+    await expect
+      .poll(async () => {
+        return (await pageSliceState())?.blockReload;
+      })
+      .toBe(false);
+
+    // type again to inspect the blockReload state changes
+    await page.keyboard.type('more', { delay: 10 });
+
+    await sleep();
+
+    await expect
+      .poll(async () => {
+        return (await pageSliceState())?.blockReload;
+      })
+      .toBe(true);
+
     await expect
       .poll(async () => {
         return (await pageSliceState())?.blockReload;
