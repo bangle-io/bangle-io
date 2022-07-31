@@ -427,6 +427,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -4632,6 +4633,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],\
             ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
+            ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
@@ -4735,7 +4737,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/config/",\
           "packageDependencies": [\
             ["@bangle.io/config", "workspace:lib/config"],\
-            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fconfig%40workspace%3Alib%2Fconfig"],\
+            ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.0"],\
@@ -4745,19 +4747,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.io/config-template", [\
-        ["portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fconfig%40workspace%3Alib%2Fconfig", {\
-          "packageLocation": "../bangle-io-config-template/",\
+        ["npm:0.0.3", {\
+          "packageLocation": "./.yarn/cache/@bangle.io-config-template-npm-0.0.3-7d89ed4421-36cc7b19a8.zip/node_modules/@bangle.io/config-template/",\
           "packageDependencies": [\
-            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fconfig%40workspace%3Alib%2Fconfig"]\
+            ["@bangle.io/config-template", "npm:0.0.3"]\
           ],\
-          "linkType": "SOFT"\
-        }],\
-        ["portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fenv-vars%40workspace%3Atooling%2Fenv-vars", {\
-          "packageLocation": "../bangle-io-config-template/",\
-          "packageDependencies": [\
-            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fenv-vars%40workspace%3Atooling%2Fenv-vars"]\
-          ],\
-          "linkType": "SOFT"\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@bangle.io/constants", [\
@@ -4980,6 +4975,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
             ["@bangle.dev/pm", "npm:0.30.0-alpha.15"],\
             ["@bangle.dev/utils", "virtual:2b26322a6f37f99da36e5b1beddda6c19b4def76cbedbf7651c7f046d2a6ec391e38fb4af2d9ac1e4302dd6d3a84b26b6bc59e7601c49b498da3bd43d4b0ff24#npm:0.30.0-alpha.15"],\
+            ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -5142,7 +5138,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/env-vars/",\
           "packageDependencies": [\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
-            ["@bangle.io/config-template", "portal:/Users/kushanjoshi/code/bangle/bangle-io-config-template::locator=%40bangle.io%2Fenv-vars%40workspace%3Atooling%2Fenv-vars"],\
+            ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.0"],\
@@ -5653,6 +5649,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.18.2"],\
             ["@babel/preset-env", "virtual:e64cf7335bd9c7ca85467e49bf1edf9453ecb85a4fb92fc2ff58d9b8b9c53cdc69dd01b8b8bc4c71213a400e37b715b62402c2fe567a0ef13bd394bf4769f057#npm:7.18.2"],\
             ["@babel/preset-typescript", "virtual:6e4445ea532b1c0efb8b747dbc50f44ee9db8eed593937ea4b7e2ac28ecef343ceed44d5facb831dbf3dcf4533384a5926793e65128ccc571fa3c8f9f5b8126d#npm:7.17.12"],\
+            ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5720,6 +5717,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/_scripts/",\
           "packageDependencies": [\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
+            ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -6346,6 +6344,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
@@ -15478,6 +15477,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/jest-utils", "npm:0.30.0-alpha.15"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/e2e-types", "workspace:app/e2e-types"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\

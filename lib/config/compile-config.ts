@@ -10,6 +10,19 @@ export const compileConfig = (): FinalConfig => {
       process.env.__BANGLE_BUILD_TIME_CONFIG__!,
     );
 
+    // the e2e test runner will replace the following with the injected configuration.
+    let rawInjectedConfig = globalThis.__BANGLE_INJECTED_CONFIG__ || null;
+
+    if (rawInjectedConfig) {
+      console.warn('injecting config!');
+      const injectedConfig = BangleConfig.fromJSONString(rawInjectedConfig);
+      injectedConfig.print('injected-config');
+      transientConfig = transientConfig.merge(
+        BangleConfig.fromJSONString(rawInjectedConfig),
+      );
+    }
+
+    transientConfig.print();
     finalConfig = transientConfig.finalize();
   } catch (error) {
     console.error(error);
@@ -17,6 +30,10 @@ export const compileConfig = (): FinalConfig => {
 
   if (!finalConfig) {
     throw new Error('FinalConfig is not defined');
+  }
+
+  if (finalConfig.debug) {
+    console.warn('FinalConfig: is using debug fields!');
   }
 
   return finalConfig;

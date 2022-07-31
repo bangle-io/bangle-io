@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@bangle.dev/pm": "0.30.0-alpha.15",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/e2e-types": "workspace:*",

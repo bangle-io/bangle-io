@@ -1,5 +1,7 @@
+import { config } from '@bangle.io/config';
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
 
 import type { NaukarStateConfig } from '../common';
 import { naukarSlices } from './naukar-slices';
@@ -39,8 +41,13 @@ export function initializeNaukarStore({
     },
   });
 
+  const helpers: E2ENaukarTypes = {
+    store,
+    config,
+  };
+
   // eslint-disable-next-line no-restricted-globals
-  (self as any)._store = store;
+  self._e2eNaukarHelpers = helpers;
 
   return store;
 }

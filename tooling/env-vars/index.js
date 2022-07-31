@@ -96,7 +96,7 @@ module.exports = ({ isProduction = false, isVite = false }) => {
           .toString()
           .trim()
       ).slice(0, 7),
-      deployBranch: isProduction ? process.env.BRANCH : 'local',
+      deployBranch: (isProduction ? process.env.BRANCH : 'local') || 'local',
       hot,
       netlifyBuildContext: process.env.CONTEXT || '',
       nodeEnv: isProduction ? 'production' : 'development',

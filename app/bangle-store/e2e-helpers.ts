@@ -1,5 +1,6 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
+import { config } from '@bangle.io/config';
 import * as constants from '@bangle.io/constants';
 import {
   PRIMARY_EDITOR_INDEX,
@@ -105,11 +106,12 @@ export function e2eHelpers2() {
   return new Slice({
     key: new SliceKey('e2eHelpers2'),
     sideEffect() {
-      (window as any)._newE2eHelpers2 = {};
+      window._newE2eHelpers2 = undefined;
 
       return {
         deferredOnce(store, abortSignal) {
           const e2eHelpers: E2ETypes = {
+            config,
             constants,
             e2eHealthCheck: async () => {
               assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
@@ -151,12 +153,12 @@ export function e2eHelpers2() {
               Slice,
             },
           };
-          (window as any)._newE2eHelpers2 = e2eHelpers;
+          window._newE2eHelpers2 = e2eHelpers;
 
           abortSignal.addEventListener(
             'abort',
             () => {
-              (window as any)._newE2eHelpers2 = {};
+              window._newE2eHelpers2 = undefined;
             },
             { once: true },
           );

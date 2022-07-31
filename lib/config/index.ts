@@ -1,22 +1,23 @@
 import { compileConfig } from './compile-config';
 
-const finalConfig = compileConfig();
+export const config = compileConfig();
+export type { FinalConfig } from '@bangle.io/config-template';
 
 // appEnv can be one of the following only `production`, `staging`,
 // `local` , `dev/*` where * is the branch name
-export const APP_ENV: string = finalConfig.build.appEnv;
+export const APP_ENV: string = config.build.appEnv;
 export const IS_PRODUCTION_APP_ENV = APP_ENV === 'production';
-export const RELEASE_VERSION: string = finalConfig.build.releaseVersion;
-export const RELEASE_ID: string = finalConfig.build.releaseId;
+export const RELEASE_VERSION: string = config.build.releaseVersion;
+export const RELEASE_ID: string = config.build.releaseId;
 // a less intimidating thing that is shown in the UI
 // for production it is release version but for other env we show the whole thing
 // for better debugging
 export const FRIENDLY_ID = IS_PRODUCTION_APP_ENV ? RELEASE_VERSION : RELEASE_ID;
 
-export const HELP_DOCS_VERSION: string = finalConfig.app.helpDocsVersion;
+export const HELP_DOCS_VERSION: string = config.app.helpDocsVersion;
 export const TAB_ID: string = 'tab_' + randomStr(4);
-export const BANGLE_HOT = finalConfig.build.hot;
-export const CHANGELOG_TEXT: string = finalConfig.app.changelogText;
+export const BANGLE_HOT = config.build.hot;
+export const CHANGELOG_TEXT: string = config.app.changelogText;
 
 export const sentryConfig = {
   environment: APP_ENV,
@@ -27,11 +28,10 @@ export const sentryConfig = {
     APP_ENV === 'production' ? 0.8 : APP_ENV === 'staging' ? 1 : 0,
 };
 
-if (finalConfig.build.nodeEnv !== 'test') {
-  console.log(finalConfig.build.appEnv + ': using ' + RELEASE_ID);
+if (config.build.nodeEnv !== 'test') {
+  console.log(config.build.appEnv + ': using ' + RELEASE_ID);
 
   console.table({
-    ...finalConfig.build,
     tabId: TAB_ID,
     isWorkerContext:
       typeof WorkerGlobalScope !== 'undefined' &&

@@ -1,6 +1,7 @@
 import type { Schema } from '@bangle.dev/pm';
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
+import type { FinalConfig } from '@bangle.io/config';
 import type * as constants from '@bangle.io/constants';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { sliceManualPaste } from '@bangle.io/pm-manual-paste';
@@ -12,6 +13,7 @@ import type { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
 export interface E2ETypes {
+  config: FinalConfig;
   constants: typeof constants;
   e2eHealthCheck: () => Promise<boolean>;
   editorManagerSliceKey: typeof editorManagerSliceKey;
@@ -27,4 +29,9 @@ export interface E2ETypes {
     getEditorSchema: () => Schema;
     Slice;
   };
+}
+
+export interface E2ENaukarTypes {
+  config: FinalConfig;
+  store: ApplicationStore;
 }
