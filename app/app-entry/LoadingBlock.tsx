@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import idbReady from 'safari-14-idb-fix';
 
-import { isSafari } from '@bangle.io/config';
 import { polyfills } from '@bangle.io/shared';
+import { isSafari } from '@bangle.io/utils';
 
 import { Entry } from './entry';
 

@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 
-import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -16,7 +15,7 @@ import {
   SecondaryEditorIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { isAbortError } from '@bangle.io/utils';
+import { isAbortError, keyDisplayValue } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 

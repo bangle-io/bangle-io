@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
 import { useSerialOperationContext, workspace } from '@bangle.io/api';
-import { isFirefox } from '@bangle.io/config';
 import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
@@ -16,7 +15,11 @@ import {
   NullIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { safeScrollIntoViewIfNeeded, useLocalStorage } from '@bangle.io/utils';
+import {
+  isFirefox,
+  safeScrollIntoViewIfNeeded,
+  useLocalStorage,
+} from '@bangle.io/utils';
 import {
   filePathToWsPath,
   removeExtension,

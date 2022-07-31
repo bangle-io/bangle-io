@@ -8,7 +8,6 @@ import React, {
 
 import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { keyDisplayValue } from '@bangle.io/config';
 import {
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CorePalette,
@@ -20,6 +19,7 @@ import {
   CloseIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
+import { keyDisplayValue } from '@bangle.io/utils';
 
 import type { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';

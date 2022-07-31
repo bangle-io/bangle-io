@@ -4,9 +4,10 @@ import { keyName } from 'w3c-keyname';
 import type { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
-import { isMac, isMobile, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import { SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
 import { DuoWeakMap } from './duo-weak-map';
+import { isMac, isMobile } from './is-mac';
 
 export { serialExecuteQueue } from '@bangle.dev/utils';
 export { isAbortError } from '@bangle.io/is-abort-error';
@@ -319,29 +320,6 @@ export function findWrappingScrollable(node: Element): Element | undefined {
   }
 
   return undefined;
-}
-
-export function keyDisplayValue(key: string): string {
-  if (key.includes('Mod')) {
-    key = key.split('Mod').join(isMac ? '⌘' : 'Ctrl');
-  }
-
-  key = key
-    .split('-')
-    .map((r) => {
-      if (/^[A-Z]$/.test(r)) {
-        return `Shift-${r.toLocaleLowerCase()}`;
-      }
-
-      return r;
-    })
-    .join('-');
-
-  if (key.includes('Shift')) {
-    key = key.split('Shift').join('⇧');
-  }
-
-  return key;
 }
 
 export function generateUid(len = 10) {
