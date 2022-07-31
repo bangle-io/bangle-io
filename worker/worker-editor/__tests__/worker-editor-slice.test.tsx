@@ -20,6 +20,11 @@ import {
   editorSyncSlice,
   getCollabMessageBus,
 } from '@bangle.io/slice-editor-sync';
+import {
+  getOpenedWsPaths,
+  updateOpenedWsPaths,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
   createBasicTestStore,
@@ -34,13 +39,16 @@ import { getCollabManager } from '../operations';
 import { workerEditorSlice } from '../worker-editor-slice';
 import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
 
+let originalConsoleWarn = console.warn;
 let cleanup = () => {};
 beforeEach(() => {
+  console.warn = jest.fn();
   cleanup = setupMockMessageChannel();
 });
 
 afterEach(() => {
   cleanup();
+  console.warn = originalConsoleWarn;
 });
 
 const setup = async ({}) => {
@@ -182,4 +190,60 @@ test('should enable syncing of editors and writing to disk', async () => {
       await workspace.getNote(wsPath1)(store.state, store.dispatch, store)
     )?.toString(),
   ).toEqual('doc(heading("I can type! hello mars"))');
+});
+
+test('should call resetDoc on docs that are no longer opened', async () => {
+  const { store, extensionRegistry } = await setup({});
+  const wsPath1 = 'my-ws:test-dir/magic.md';
+  const { wsName } = resolvePath(wsPath1);
+  await setupMockWorkspaceWithNotes(store, wsName, [[wsPath1, `# hello mars`]]);
+
+  let result;
+  act(() => {
+    result = render(
+      <TestStoreProvider
+        editorManagerContextProvider
+        bangleStore={store}
+        bangleStoreChanged={0}
+      >
+        <Editor
+          editorId={PRIMARY_EDITOR_INDEX}
+          wsPath={wsPath1}
+          className="test-class"
+          extensionRegistry={extensionRegistry}
+        />
+        <Editor
+          editorId={SECONDARY_EDITOR_INDEX}
+          wsPath={wsPath1}
+          className="test-class"
+          extensionRegistry={extensionRegistry}
+        />
+      </TestStoreProvider>,
+    );
+  });
+
+  await act(() => {
+    return sleep(0);
+  });
+
+  const collabManager = getCollabManager()(store.state)!;
+
+  const resetDocSpy = jest.spyOn(collabManager, 'resetDoc');
+
+  expect(getOpenedWsPaths()(store.state).getWsPaths()).toEqual([wsPath1]);
+
+  expect(resetDocSpy).not.toHaveBeenCalled();
+
+  workspaceSliceKey.callOp(
+    store.state,
+    store.dispatch,
+    updateOpenedWsPaths((openedWsPath) => {
+      return openedWsPath.closeAll();
+    }),
+  );
+
+  await sleep(0);
+
+  expect(resetDocSpy).toBeCalledTimes(1);
+  expect(resetDocSpy).nthCalledWith(1, wsPath1);
 });

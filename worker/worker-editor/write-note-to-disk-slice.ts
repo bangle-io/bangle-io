@@ -304,7 +304,10 @@ const blockOnPendingWriteEffect = writeNoteToDiskSliceKey.effect(() => {
       }
     },
 
-    // set it to 'off' at a slower cadence to do a sort of debounce
+    // set it to 'false' at a slower cadence to do a sort of debounce
+    // for the case when we have to turn off blockReload. This helps
+    // avoid the cases in which we do `true` -> `false` -> ... -> `true`
+    // bunch of times.
     deferredUpdate(store, prevState, abortSignal) {
       const openedFiles = workspaceOpenedDocInfoKey.getSliceStateAsserted(
         store.state,
