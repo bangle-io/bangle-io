@@ -19,21 +19,19 @@ export function setupCollabManager(
       try {
         const doc = await getNote(docName)(store.state, store.dispatch, store);
 
+        // We need to make sure the wsPath currently requested is registered
+        // with openedWsPaths.
+        if (!getOpenedWsPaths()(store.state).has(docName)) {
+          console.warn('doc not opened');
+
+          return undefined;
+        }
+
         if (!doc) {
           console.warn('doc not found', docName);
 
           return undefined;
         }
-
-        queueMicrotask(() => {
-          // We need to make sure the wsPath requested is registered
-          // with openedWsPaths. If it is not this most likely a bug.
-          if (!getOpenedWsPaths()(store.state).has(docName)) {
-            console.error(`wsPath not found in openedWsPaths`);
-
-            return;
-          }
-        });
 
         return new CollabServerState(doc);
       } catch (error) {

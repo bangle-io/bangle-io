@@ -47,22 +47,6 @@ export function updateCurrentDiskSha(wsPath: string, sha: string) {
   });
 }
 
-export function updateCurrentDiskShas(wsPath: string, sha: string) {
-  return workspaceOpenedDocInfoKey.op((state, dispatch) => {
-    dispatch({
-      name: UPDATE_ENTRY,
-      value: {
-        wsPath,
-        info: {
-          currentDiskSha: sha,
-        },
-      },
-    });
-
-    return true;
-  });
-}
-
 export function updateShas(
   wsPath: string,
   {

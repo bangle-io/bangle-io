@@ -26,9 +26,7 @@ import { cachedCalculateGitFileSha, getDiskSha } from './helpers';
 import { resetCollabDoc } from './operations';
 
 const LOG = true;
-const log = LOG
-  ? console.debug.bind(console, '[worker-editor] write-note-to-disk-slice')
-  : () => {};
+const log = LOG ? console.debug.bind(console, '[worker-editor] ') : () => {};
 
 export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
   async function write(writeQueue: CollabStateInfo[], store: ApplicationStore) {
@@ -49,6 +47,7 @@ export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
         })(store.state, store.dispatch);
 
         const file = docToFile(item.wsPath, item.collabState.doc)(store.state);
+        log('[writeToDiskEffect] writing file', item.wsPath);
         // TODO check if file was externally modified before writing
         const [lastWrittenSha] = await Promise.all([
           cachedCalculateGitFileSha(file),
@@ -63,7 +62,7 @@ export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
         })(store.state, store.dispatch);
       } catch (error) {
         if (error instanceof Error) {
-          console.log('received error while writing item', error.message);
+          console.warn('received error while writing item', error.message);
           queueMicrotask(() => {
             updateDocInfo(item.wsPath, {
               pendingWrite: false,
@@ -121,6 +120,10 @@ export const calculateLastKnownDiskShaEffect = writeNoteToDiskSliceKey.effect(
             if (sha) {
               // queue it so that we can finish the current loop
               queueMicrotask(() => {
+                log(
+                  '[calculateLastKnownDiskShaEffect] updateLastKnownDiskSha',
+                  openedFile.wsPath,
+                );
                 workspaceOpenedDocInfoKey.callOp(
                   store.state,
                   store.dispatch,
@@ -135,7 +138,7 @@ export const calculateLastKnownDiskShaEffect = writeNoteToDiskSliceKey.effect(
   },
 );
 
-// Performs a git hash calculation of the current disk state of opened files
+// Check and persist git hash calculation of the current disk state of opened files
 export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
   () => {
     let pendingRun = false;
@@ -159,6 +162,10 @@ export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
           }
 
           if (sha) {
+            log(
+              '[calculateCurrentDiskShaEffect] updateCurrentDiskSha',
+              info.wsPath,
+            );
             queueMicrotask(() => {
               workspaceOpenedDocInfoKey.callOp(
                 store.state,
@@ -174,8 +181,9 @@ export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
     };
 
     return {
-      //  Page lifecycle runs in `update` as it takes priority so that
-      // when user switches back to bangle we can immediately check for staleness
+      //  Page lifecycle check runs in `update` because it is a high urgency event.
+      //  There is a high likely hood (compared to already being active) that the user
+      //  modified the file externally.
       update(store, prevState) {
         const pageTransitionedToActive = pageLifeCycleTransitionedTo(
           'active',
@@ -215,18 +223,20 @@ export const staleDocEffect = writeNoteToDiskSliceKey.effect(() => {
       }
 
       for (const info of Object.values(openedFiles)) {
+        const { pendingWrite, wsPath, currentDiskSha, lastKnownDiskSha } = info;
+
         if (
-          !info.pendingWrite &&
-          info.currentDiskSha &&
-          info.lastKnownDiskSha &&
-          info.currentDiskSha !== info.lastKnownDiskSha
+          !pendingWrite &&
+          currentDiskSha &&
+          lastKnownDiskSha &&
+          currentDiskSha !== lastKnownDiskSha
         ) {
-          const { currentDiskSha } = info;
+          log('[staleDocEffect] triggering for ', wsPath);
           queueMicrotask(() => {
             workspaceOpenedDocInfoKey.callOp(
               store.state,
               store.dispatch,
-              updateShas(info.wsPath, {
+              updateShas(wsPath, {
                 currentDiskSha: currentDiskSha,
                 lastKnownDiskSha: currentDiskSha,
               }),
@@ -261,7 +271,7 @@ export const blockOnPendingWriteEffect = writeNoteToDiskSliceKey.effect(() => {
       }
 
       if (shouldBlock(Object.values(openedFiles))) {
-        log('blocking on pending write');
+        log('[blockOnPendingWriteEffect] blocking on pending write');
         blockReload(true)(
           store.state,
           pageSliceKey.getDispatch(store.dispatch),
@@ -270,9 +280,8 @@ export const blockOnPendingWriteEffect = writeNoteToDiskSliceKey.effect(() => {
     },
 
     // set it to 'false' at a slower cadence to do a sort of debounce
-    // for the case when we have to turn off blockReload. This helps
-    // avoid the cases in which we do `true` -> `false` -> ... -> `true`
-    // bunch of times.
+    // since it is of lower priority compared to `blockReload(true)`. This helps
+    // smoothen out the `true` -> `false` -> ... -> `true`.
     deferredUpdate(store, prevState, abortSignal) {
       const openedFiles = workspaceOpenedDocInfoKey.getSliceStateAsserted(
         store.state,
