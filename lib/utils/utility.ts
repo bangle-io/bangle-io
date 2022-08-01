@@ -333,6 +333,21 @@ export function assertSignal(signal: AbortSignal) {
   }
 }
 
+export function abortableSetInterval(
+  callback: () => void,
+  signal: AbortSignal,
+  ms: number,
+): void {
+  const timer = setInterval(callback, ms);
+  signal.addEventListener(
+    'abort',
+    () => {
+      clearInterval(timer);
+    },
+    { once: true },
+  );
+}
+
 // Throws an abort error if a signal is already aborted.
 export function assertNotUndefined(
   value: unknown,

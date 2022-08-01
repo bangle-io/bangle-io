@@ -4,7 +4,6 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { collabClient } from '@bangle.dev/collab-client';
 import { CollabManager } from '@bangle.dev/collab-manager';
 
 import { workspace } from '@bangle.io/api';
@@ -13,21 +12,13 @@ import {
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
-import { Extension } from '@bangle.io/extension-registry';
-import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import { getEditor } from '@bangle.io/slice-editor-manager';
-import {
-  editorSyncSlice,
-  getCollabMessageBus,
-} from '@bangle.io/slice-editor-sync';
 import {
   getOpenedWsPaths,
   updateOpenedWsPaths,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
-  createBasicTestStore,
   setupMockMessageChannel,
   setupMockWorkspaceWithNotes,
   TestStoreProvider,
@@ -36,8 +27,7 @@ import { sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getCollabManager } from '../operations';
-import { workerEditorSlice } from '../worker-editor-slice';
-import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
+import { setup } from './test-helpers';
 
 let originalConsoleWarn = console.warn;
 let cleanup = () => {};
@@ -50,62 +40,6 @@ afterEach(() => {
   cleanup();
   console.warn = originalConsoleWarn;
 });
-
-const setup = async ({}) => {
-  const slice = workerEditorSlice();
-  const { store, extensionRegistry, ...testHelpers } = createBasicTestStore({
-    useEditorManagerSlice: true,
-    useEditorCoreExtension: true,
-    slices: [
-      editorSyncSlice(),
-      workspaceOpenedDocInfoSlice(),
-      writeNoteToDiskSlice(),
-      slice,
-    ],
-    extensions: [
-      Extension.create({
-        name: 'bangle-io-collab-client',
-        editor: {
-          plugins: [
-            function collabPlugin({
-              metadata,
-            }: {
-              metadata: EditorPluginMetadata;
-            }) {
-              return collabClient.plugins({
-                docName: metadata.wsPath,
-                clientID: 'client-' + metadata.editorId,
-                collabMessageBus: getCollabMessageBus()(
-                  metadata.bangleStore.state,
-                ),
-                cooldownTime: 0,
-              });
-            },
-          ],
-        },
-      }),
-    ],
-  });
-
-  const typeText = (editorId: number, text: string, pos?: number) => {
-    const editor = getEditor(editorId)(store.state)!;
-
-    const editorState = editor.view.state;
-
-    const tr = editorState.tr.insertText(
-      text,
-      pos == null ? editorState.selection.head : pos,
-    );
-    editor.view.dispatch(tr);
-  };
-
-  return {
-    typeText,
-    store,
-    extensionRegistry,
-    ...testHelpers,
-  };
-};
 
 test('should enable syncing of editors and writing to disk', async () => {
   const { store, extensionRegistry, typeText } = await setup({});
