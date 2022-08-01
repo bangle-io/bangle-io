@@ -9,7 +9,7 @@ process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
     deployBranch: 'local',
     hot: false,
     netlifyBuildContext: process.env.CONTEXT || '',
-    nodeEnv: 'development',
+    nodeEnv: 'test',
     releaseId: 'fake-release-id',
     releaseVersion: 'fake-release-version',
   },

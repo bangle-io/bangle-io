@@ -1,4 +1,5 @@
 import { page, Slice, workspace } from '@bangle.io/api';
+import { abortableSetInterval } from '@bangle.io/utils';
 
 import { ghSliceKey } from './common';
 import { handleError } from './error-handling';
@@ -38,31 +39,27 @@ export function githubStorageSlice() {
     sideEffect() {
       return {
         deferredOnce(store, signal) {
-          const interval = setInterval(() => {
-            const wsName = workspace.getWsName()(
-              workspace.workspaceSliceKey.getState(store.state),
-            );
-
-            const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
-
-            if (wsName && pageLifecycle === 'active') {
-              debug('Period Github sync in background');
-              // TODO if there were merge conflicts, this will become very noisy
-              syncWithGithub(
-                wsName,
-                new AbortController().signal,
-                localFileEntryManager,
-                false,
-              )(store.state, store.dispatch, store);
-            }
-          }, SYNC_INTERVAL);
-
-          signal.addEventListener(
-            'abort',
+          abortableSetInterval(
             () => {
-              clearInterval(interval);
+              const wsName = workspace.getWsName()(
+                workspace.workspaceSliceKey.getState(store.state),
+              );
+
+              const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
+
+              if (wsName && pageLifecycle === 'active') {
+                debug('Period Github sync in background');
+                // TODO if there were merge conflicts, this will become very noisy
+                syncWithGithub(
+                  wsName,
+                  new AbortController().signal,
+                  localFileEntryManager,
+                  false,
+                )(store.state, store.dispatch, store);
+              }
             },
-            { once: true },
+            signal,
+            SYNC_INTERVAL,
           );
         },
 

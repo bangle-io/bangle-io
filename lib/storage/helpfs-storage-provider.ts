@@ -30,9 +30,9 @@ function readFileFromUnpkg(wsPath: string) {
       })
       .catch((z) => {
         if (z.message === 'Failed to fetch') {
-          throw new BaseError({
-            message: `Encountered an error making request to unpkg.com`,
-          });
+          console.error('Failed to fetch helpfs');
+
+          return undefined;
         }
         throw z;
       });

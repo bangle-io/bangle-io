@@ -1,4 +1,4 @@
-import type { Schema } from '@bangle.dev/pm';
+import type { Node, Schema } from '@bangle.dev/pm';
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
 import type { FinalConfig } from '@bangle.io/config';
@@ -7,7 +7,7 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import type { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import type { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import type { pageSliceKey } from '@bangle.io/slice-page';
-import type { workspaceSliceKey } from '@bangle.io/slice-workspace';
+import type { workspaceSliceKey, writeNote } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import type { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -25,7 +25,9 @@ export interface E2ETypes {
   sliceManualPaste: typeof sliceManualPaste;
   store: ApplicationStore;
   workspaceSliceKey: typeof workspaceSliceKey;
+  writeNote: typeof writeNote;
   pm: {
+    createNodeFromMd: (md: string) => Node;
     getEditorSchema: () => Schema;
     Slice;
   };
