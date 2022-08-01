@@ -3,7 +3,7 @@ import { calculateGitFileSha } from '@bangle.io/remote-file-sync';
 import { getFile } from '@bangle.io/slice-workspace';
 import { weakCache } from '@bangle.io/utils';
 
-export const cachedCalculateGitFileSha = weakCache(calculateGitFileSha);
+export const cachedCalculateGitFileSha = weakCache(calculateGitFileSha, 'sha');
 
 // reads the file from the disk and returns its sha
 export const getDiskSha = async (

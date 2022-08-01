@@ -29,6 +29,7 @@
     "@bangle.io/e2e-types": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/history": "workspace:*",
+    "@bangle.io/markdown": "workspace:*",
     "@bangle.io/pm-manual-paste": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",

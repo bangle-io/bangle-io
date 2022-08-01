@@ -1,9 +1,5 @@
-import type { OpenedFile, WorkspaceOpenedDocInfoAction } from './common';
-import {
-  BULK_UPDATE_SHAS,
-  UPDATE_ENTRY,
-  workspaceOpenedDocInfoKey,
-} from './common';
+import type { OpenedFile } from './common';
+import { UPDATE_ENTRY, workspaceOpenedDocInfoKey } from './common';
 
 export function updateDocInfo(
   wsPath: string,
@@ -19,16 +15,74 @@ export function updateDocInfo(
   });
 }
 
-export function bulkUpdateCurrentDiskShas(
-  data: Extract<
-    WorkspaceOpenedDocInfoAction,
-    { name: typeof BULK_UPDATE_SHAS }
-  >['value']['data'],
+export function updateLastKnownDiskSha(wsPath: string, sha: string) {
+  return workspaceOpenedDocInfoKey.op((state, dispatch) => {
+    dispatch({
+      name: UPDATE_ENTRY,
+      value: {
+        wsPath,
+        info: {
+          lastKnownDiskSha: sha,
+        },
+      },
+    });
+
+    return true;
+  });
+}
+
+export function updateCurrentDiskSha(wsPath: string, sha: string) {
+  return workspaceOpenedDocInfoKey.op((state, dispatch) => {
+    dispatch({
+      name: UPDATE_ENTRY,
+      value: {
+        wsPath,
+        info: {
+          currentDiskSha: sha,
+        },
+      },
+    });
+
+    return true;
+  });
+}
+
+export function updateCurrentDiskShas(wsPath: string, sha: string) {
+  return workspaceOpenedDocInfoKey.op((state, dispatch) => {
+    dispatch({
+      name: UPDATE_ENTRY,
+      value: {
+        wsPath,
+        info: {
+          currentDiskSha: sha,
+        },
+      },
+    });
+
+    return true;
+  });
+}
+
+export function updateShas(
+  wsPath: string,
+  {
+    currentDiskSha,
+    lastKnownDiskSha,
+  }: {
+    currentDiskSha: string;
+    lastKnownDiskSha: string;
+  },
 ) {
   return workspaceOpenedDocInfoKey.op((state, dispatch) => {
     dispatch({
-      name: BULK_UPDATE_SHAS,
-      value: { data },
+      name: UPDATE_ENTRY,
+      value: {
+        wsPath,
+        info: {
+          currentDiskSha,
+          lastKnownDiskSha,
+        },
+      },
     });
 
     return true;

@@ -5,6 +5,7 @@ import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+import type { SliceSideEffect } from '@bangle.io/create-store';
 import { Editor } from '@bangle.io/editor';
 import { getEditor } from '@bangle.io/slice-editor-manager';
 import { getNote, writeNote } from '@bangle.io/slice-workspace';
@@ -20,8 +21,10 @@ import { sleep } from '@bangle.io/utils';
 import { writeNoteToDiskSliceKey } from '../common';
 import { cachedCalculateGitFileSha } from '../helpers';
 import { queueWrite } from '../write-note-to-disk-slice';
-import { staleDocEffect } from '../write-note-to-disk-slice-effects';
+import * as effects from '../write-note-to-disk-slice-effects';
 import { setup as commonSetup } from './test-helpers';
+
+type SlideEffect = SliceSideEffect<any, any>;
 
 jest.mock('../common', () => {
   const actual = jest.requireActual('../common');
@@ -41,35 +44,16 @@ jest.mock('../helpers', () => {
   };
 });
 
-jest.mock('../write-note-to-disk-slice-effects', () => {
-  const actual = jest.requireActual('../write-note-to-disk-slice-effects');
-
-  return {
-    ...actual,
-    writeToDiskEffect: jest.fn(actual.writeToDiskEffect),
-    calculateCurrentDiskShaEffect: jest.fn(
-      actual.calculateCurrentDiskShaEffect,
-    ),
-    staleDocEffect: jest.fn(actual.staleDocEffect),
-    blockOnPendingWriteEffect: jest.fn(actual.blockOnPendingWriteEffect),
-  };
-});
-
 let originalConsoleWarn = console.warn;
 let cleanup = () => {};
 
 const cachedCalculateGitFileShaSpy = jest.mocked(cachedCalculateGitFileSha);
-const staleDocEffectSpy = jest.mocked(staleDocEffect);
+
 beforeEach(() => {
   console.warn = jest.fn();
+  cachedCalculateGitFileShaSpy.mockReset();
   cachedCalculateGitFileShaSpy.mockImplementation((...args) => {
     return jest.requireActual('../helpers').cachedCalculateGitFileSha(...args);
-  });
-
-  staleDocEffectSpy.mockImplementation((...args) => {
-    return jest
-      .requireActual('../write-note-to-disk-slice-effects')
-      .staleDocEffect(...args);
   });
 
   cleanup = setupMockMessageChannel();
@@ -81,19 +65,32 @@ afterEach(async () => {
   console.warn = originalConsoleWarn;
 });
 
-const setup = async ({
-  disableStaleEffectDoc,
-}: { disableStaleEffectDoc?: boolean } = {}) => {
-  if (disableStaleEffectDoc) {
-    jest.mocked(staleDocEffect).mockImplementation(
-      writeNoteToDiskSliceKey.effect(() => {
-        return {};
-      }),
-    );
-  }
+const makeEffectsArray = ({
+  disabledStaleDocEffect,
+}: {
+  disabledStaleDocEffect?: boolean;
+} = {}): SlideEffect[] => {
+  const allEffects = [
+    effects.blockOnPendingWriteEffect,
+    effects.calculateCurrentDiskShaEffect,
+    effects.calculateLastKnownDiskShaEffect,
+    !disabledStaleDocEffect && effects.staleDocEffect,
+    effects.writeToDiskEffect,
+  ];
 
+  return allEffects.filter((r): r is SlideEffect => Boolean(r));
+};
+
+const setup = async ({
+  // either use providedEffects or use the shorthand options
+  providedEffects = makeEffectsArray(),
+}: {
+  providedEffects?: SlideEffect[];
+} = {}) => {
   const wsName = 'my-ws-' + Math.random();
-  const obj = await commonSetup({});
+  const obj = await commonSetup({
+    writeNoteToDiskEffects: providedEffects,
+  });
   const wsPath1 = `${wsName}:test-dir/magic.md`;
 
   await setupMockWorkspaceWithNotes(obj.store, wsName, [
@@ -129,7 +126,9 @@ const setup = async ({
 describe('effects', () => {
   describe('writeToDiskEffect', () => {
     test('writes to disk', async () => {
-      const { store, typeText, wsPath1 } = await setup();
+      const { store, typeText, wsPath1 } = await setup({
+        providedEffects: [effects.writeToDiskEffect],
+      });
       expect(
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
       ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
@@ -143,13 +142,37 @@ describe('effects', () => {
           await getNote(wsPath1)(store.state, store.dispatch, store)
         )?.toString(),
       ).toMatchInlineSnapshot(`"doc(heading(\\"bye hello mars\\"))"`);
+
+      const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
+
+      expect(docInfo).toEqual({
+        currentDiskSha: 'cc1f078bfb2a1127991cd52a77708dfd860ba586',
+        lastKnownDiskSha: 'cc1f078bfb2a1127991cd52a77708dfd860ba586',
+        pendingWrite: false,
+        wsPath: wsPath1,
+      });
+
+      typeText(PRIMARY_EDITOR_INDEX, 'more ', 0);
+
+      await sleep(10);
+
+      expect(
+        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
+      ).toMatchInlineSnapshot(`"<p>more </p><h1>bye hello mars</h1>"`);
+
+      expect(getOpenedDocInfo()(store.state)[wsPath1]).toEqual({
+        currentDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
+        lastKnownDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
+        pendingWrite: false,
+        wsPath: wsPath1,
+      });
     });
 
     test('updates the queue while another item is being processed', async () => {
       let resolveArray: Array<(v: string) => void> = [];
 
       cachedCalculateGitFileShaSpy.mockImplementation(() => {
-        return new Promise((res) => {
+        return new Promise((res, rej) => {
           resolveArray.push(res);
         });
       });
@@ -256,51 +279,35 @@ describe('effects', () => {
     });
   });
 
-  describe('calculateCurrentDiskShaEffect', () => {
-    test('should update shas on write', async () => {
-      const { store, typeText, wsPath1 } = await setup();
-      expect(
-        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-      ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
-
-      typeText(PRIMARY_EDITOR_INDEX, 'bye ');
-
-      await sleep(10);
+  describe('calculateLastKnownDiskShaEffect', () => {
+    test('should set sha', async () => {
+      const { store, wsPath1 } = await setup({
+        providedEffects: [effects.calculateLastKnownDiskShaEffect],
+      });
 
       const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
 
       expect(docInfo).toEqual({
         pendingWrite: expect.any(Boolean),
-        currentDiskShaTimestamp: expect.any(Number),
         wsPath: wsPath1,
-        currentDiskSha: 'cc1f078bfb2a1127991cd52a77708dfd860ba586',
-        lastKnownDiskSha: 'cc1f078bfb2a1127991cd52a77708dfd860ba586',
+        lastKnownDiskSha: '7be9985c422e362ccf92a083494a0b72c7c99fd2',
+      });
+    });
+  });
+
+  describe('calculateCurrentDiskShaEffect', () => {
+    test('should set sha', async () => {
+      const { store, wsPath1 } = await setup({
+        providedEffects: [effects.calculateCurrentDiskShaEffect],
       });
 
-      typeText(PRIMARY_EDITOR_INDEX, 'more stuff ', 1);
+      const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
 
-      await sleep(0);
-
-      expect(
-        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-      ).toEqual('<h1>more stuff bye hello mars</h1>');
-
-      await sleep(0);
-
-      const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
-
-      expect(newDocInfo).toEqual({
+      expect(docInfo).toEqual({
         pendingWrite: expect.any(Boolean),
-        currentDiskShaTimestamp: expect.any(Number),
         wsPath: wsPath1,
-        currentDiskSha: 'b5dc6dde7430c7eae5e337e18d09940329ee2379',
-        lastKnownDiskSha: 'b5dc6dde7430c7eae5e337e18d09940329ee2379',
+        currentDiskSha: '7be9985c422e362ccf92a083494a0b72c7c99fd2',
       });
-
-      expect(docInfo?.currentDiskSha).not.toBe(newDocInfo?.currentDiskSha);
-      expect(docInfo?.lastKnownDiskSha).not.toBe(newDocInfo?.lastKnownDiskSha);
-
-      store.destroy();
     });
 
     test('should keep polling disk for staleness', async () => {
@@ -308,7 +315,7 @@ describe('effects', () => {
         // if not disabled lastKnownDiskSha and currentDiskSha will
         // be made equal by `stateDocEffect`, preventing us from
         // testing effectively.
-        disableStaleEffectDoc: true,
+        providedEffects: makeEffectsArray({ disabledStaleDocEffect: true }),
       });
       expect(
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
@@ -334,6 +341,7 @@ describe('effects', () => {
 
       await sleep(5);
 
+      // shas should go out of sync
       const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
 
       expect(newDocInfo?.currentDiskSha).toEqual(
@@ -414,7 +422,5 @@ describe('effects', () => {
         block: false,
       },
     ]);
-
-    store.destroy();
   });
 });

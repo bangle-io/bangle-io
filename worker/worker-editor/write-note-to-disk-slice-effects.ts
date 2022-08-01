@@ -5,13 +5,15 @@ import {
   pageSliceKey,
 } from '@bangle.io/slice-page';
 import { docToFile, writeFile } from '@bangle.io/slice-workspace';
+import type { OpenedFile } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
-  bulkUpdateCurrentDiskShas,
   getOpenedDocInfo,
+  updateCurrentDiskSha,
   updateDocInfo,
+  updateLastKnownDiskSha,
+  updateShas,
   workspaceOpenedDocInfoKey,
 } from '@bangle.io/slice-workspace-opened-doc-info';
-import type { OpenedFile } from '@bangle.io/slice-workspace-opened-doc-info/common';
 import { abortableSetInterval } from '@bangle.io/utils';
 
 import type { CollabStateInfo } from './common';
@@ -52,9 +54,9 @@ export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
           cachedCalculateGitFileSha(file),
           writeFile(item.wsPath, file)(store.state, store.dispatch, store),
         ]);
+
         updateDocInfo(item.wsPath, {
           pendingWrite: false,
-
           // since both the shas at this time will be the same
           lastKnownDiskSha: lastWrittenSha,
           currentDiskSha: lastWrittenSha,
@@ -94,6 +96,45 @@ export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
   };
 });
 
+// Calculate lastKnownDiskSha of files that are just opened
+export const calculateLastKnownDiskShaEffect = writeNoteToDiskSliceKey.effect(
+  () => {
+    return {
+      async deferredUpdate(store, prevState) {
+        const openedFiles = workspaceOpenedDocInfoKey.getValueIfChanged(
+          'openedFiles',
+          store.state,
+          prevState,
+        );
+
+        if (!openedFiles) {
+          return;
+        }
+
+        const openedFilesArray = Object.values(openedFiles);
+
+        for (const openedFile of openedFilesArray) {
+          // lastKnownDiskSha will be undefined for newly opened files
+          if (!openedFile.lastKnownDiskSha) {
+            const sha = await getDiskSha(openedFile.wsPath, store);
+
+            if (sha) {
+              // queue it so that we can finish the current loop
+              queueMicrotask(() => {
+                workspaceOpenedDocInfoKey.callOp(
+                  store.state,
+                  store.dispatch,
+                  updateLastKnownDiskSha(openedFile.wsPath, sha),
+                );
+              });
+            }
+          }
+        }
+      },
+    };
+  },
+);
+
 // Performs a git hash calculation of the current disk state of opened files
 export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
   () => {
@@ -109,8 +150,6 @@ export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
 
       pendingRun = true;
 
-      let result: Parameters<typeof bulkUpdateCurrentDiskShas>[0] = [];
-
       await Promise.all(
         openedFilesArray.map(async (info) => {
           const sha = await getDiskSha(info.wsPath, store);
@@ -119,17 +158,17 @@ export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
             return;
           }
 
-          result.push({ wsPath: info.wsPath, currentDiskSha: sha });
+          if (sha) {
+            queueMicrotask(() => {
+              workspaceOpenedDocInfoKey.callOp(
+                store.state,
+                store.dispatch,
+                updateCurrentDiskSha(info.wsPath, sha),
+              );
+            });
+          }
         }),
       );
-
-      if (result.length > 0) {
-        workspaceOpenedDocInfoKey.callOp(
-          store.state,
-          store.dispatch,
-          bulkUpdateCurrentDiskShas(result),
-        );
-      }
 
       pendingRun = false;
     };
@@ -164,48 +203,41 @@ export const calculateCurrentDiskShaEffect = writeNoteToDiskSliceKey.effect(
 // in the memory. If they are different it will trigger a reset
 export const staleDocEffect = writeNoteToDiskSliceKey.effect(() => {
   return {
-    update(store) {
-      const { openedFiles } = workspaceOpenedDocInfoKey.getSliceStateAsserted(
+    update(store, prevState) {
+      const openedFiles = workspaceOpenedDocInfoKey.getValueIfChanged(
+        'openedFiles',
         store.state,
+        prevState,
       );
 
-      const staleDocs = Object.values(openedFiles).filter((info) => {
-        // check if the document is stale
+      if (!openedFiles) {
+        return;
+      }
+
+      for (const info of Object.values(openedFiles)) {
         if (
           !info.pendingWrite &&
           info.currentDiskSha &&
           info.lastKnownDiskSha &&
           info.currentDiskSha !== info.lastKnownDiskSha
         ) {
-          return true;
-        }
-
-        return false;
-      });
-
-      if (staleDocs.length > 0) {
-        // before resetting collab state, make the sha's same so that
-        // we don't trigger it again
-        workspaceOpenedDocInfoKey.callOp(
-          store.state,
-          store.dispatch,
-          bulkUpdateCurrentDiskShas(
-            staleDocs.map((info) => ({
-              wsPath: info.wsPath,
-              currentDiskSha: info.currentDiskSha,
-              lastKnownDiskSha: info.currentDiskSha,
-            })),
-          ),
-        );
-
-        staleDocs.forEach((info) => {
+          const { currentDiskSha } = info;
           queueMicrotask(() => {
+            workspaceOpenedDocInfoKey.callOp(
+              store.state,
+              store.dispatch,
+              updateShas(info.wsPath, {
+                currentDiskSha: currentDiskSha,
+                lastKnownDiskSha: currentDiskSha,
+              }),
+            );
+
             workerEditorSliceKey.callQueryOp(
               store.state,
               resetCollabDoc(info.wsPath),
             );
           });
-        });
+        }
       }
     },
   };

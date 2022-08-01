@@ -6,6 +6,7 @@ import { writeNoteToDiskSliceKey } from './common';
 import {
   blockOnPendingWriteEffect,
   calculateCurrentDiskShaEffect,
+  calculateLastKnownDiskShaEffect,
   staleDocEffect,
   writeToDiskEffect,
 } from './write-note-to-disk-slice-effects';
@@ -57,10 +58,11 @@ export function writeNoteToDiskSlice() {
     },
 
     sideEffect: [
-      writeToDiskEffect,
-      calculateCurrentDiskShaEffect,
-      staleDocEffect,
       blockOnPendingWriteEffect,
+      calculateCurrentDiskShaEffect,
+      calculateLastKnownDiskShaEffect,
+      staleDocEffect,
+      writeToDiskEffect,
     ],
   });
 }

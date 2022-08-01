@@ -9,6 +9,7 @@ import {
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { E2ETypes } from '@bangle.io/e2e-types';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
+import { markdownParser } from '@bangle.io/markdown';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import * as editorManagerContext from '@bangle.io/slice-editor-manager';
 import {
@@ -19,6 +20,7 @@ import { pageSliceKey } from '@bangle.io/slice-page';
 import * as workspaceContext from '@bangle.io/slice-workspace';
 import { BaseError, getEditorPluginMetadata } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
+
 // TODO migrate to using `e2eHelpers2` instead.
 export function e2eHelpers() {
   return new Slice({
@@ -141,10 +143,23 @@ export function e2eHelpers2() {
             },
             pageSliceKey,
             pushWsPath: workspaceContext.pushWsPath,
+            writeNote: workspaceContext.writeNote,
             sliceManualPaste,
             store,
             workspaceSliceKey: workspaceContext.workspaceSliceKey,
             pm: {
+              createNodeFromMd: (mdText: string) => {
+                const extensionRegistry =
+                  extensionRegistrySliceKey.getSliceStateAsserted(
+                    store.state,
+                  ).extensionRegistry;
+
+                return markdownParser(
+                  mdText,
+                  extensionRegistry.specRegistry,
+                  extensionRegistry.markdownItPlugins,
+                )!;
+              },
               getEditorSchema: () => {
                 return extensionRegistrySliceKey.getSliceStateAsserted(
                   store.state,

@@ -12,7 +12,7 @@ export interface OpenedFile {
   // the sha representing the sha currently on the disk. The faster this is updated, the faster
   // we can react to an external modification a file.
   readonly currentDiskSha?: string | null;
-  // The last sha our application wrote to the disk or read if the file was not modified.
+  // The last sha our application wrote to the disk or read (if the file was not modified).
   // Comparing this to currentDiskSha will determine if the file was modified externally.
   readonly lastKnownDiskSha?: string | null;
   readonly currentDiskShaTimestamp?: number | null;

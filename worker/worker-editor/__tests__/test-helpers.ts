@@ -1,5 +1,6 @@
 import { collabClient } from '@bangle.dev/collab-client';
 
+import type { SliceSideEffect } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import { getEditor } from '@bangle.io/slice-editor-manager';
@@ -13,16 +14,25 @@ import { createBasicTestStore } from '@bangle.io/test-utils';
 import { workerEditorSlice } from '../worker-editor-slice';
 import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
 
-export const setup = async ({}) => {
-  const slice = workerEditorSlice();
+export const setup = async ({
+  writeNoteToDiskEffects,
+}: { writeNoteToDiskEffects?: Array<SliceSideEffect<any, any>> } = {}) => {
+  const _workerEditorSlice = workerEditorSlice();
+
+  const _writeNoteToDiskSlice = writeNoteToDiskSlice();
+
+  if (writeNoteToDiskEffects) {
+    _writeNoteToDiskSlice.spec.sideEffect = writeNoteToDiskEffects;
+  }
+
   const { store, extensionRegistry, ...testHelpers } = createBasicTestStore({
     useEditorManagerSlice: true,
     useEditorCoreExtension: true,
     slices: [
       editorSyncSlice(),
       workspaceOpenedDocInfoSlice(),
-      writeNoteToDiskSlice(),
-      slice,
+      _writeNoteToDiskSlice,
+      _workerEditorSlice,
     ],
     extensions: [
       Extension.create({
