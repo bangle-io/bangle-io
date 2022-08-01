@@ -21,7 +21,7 @@
   "module": "index.ts",
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/collab-comms": "0.30.0-alpha.15",
+    "@bangle.dev/collab-comms": "0.31.0",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
@@ -31,7 +31,7 @@
     "typescript": "^4.7.3"
   },
   "devDependencies": {
-    "@bangle.dev/test-helpers": "0.30.0-alpha.15",
+    "@bangle.dev/test-helpers": "0.31.0",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/dom": "^8.11.3"
   },
