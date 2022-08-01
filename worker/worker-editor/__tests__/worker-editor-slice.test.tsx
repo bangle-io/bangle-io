@@ -46,7 +46,7 @@ test('should enable syncing of editors and writing to disk', async () => {
   const wsPath1 = 'my-ws:test-dir/magic.md';
   const { wsName } = resolvePath(wsPath1);
   await setupMockWorkspaceWithNotes(store, wsName, [[wsPath1, `# hello mars`]]);
-
+  debugger;
   let result;
   act(() => {
     result = render(
