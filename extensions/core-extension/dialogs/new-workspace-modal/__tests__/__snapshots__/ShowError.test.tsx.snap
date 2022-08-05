@@ -4,7 +4,7 @@ exports[`renders correctly ERROR_PICKING_DIRECTORY_ERROR 1`] = `
 <div>
   <div>
     <div
-      class="w-full px-4 text-center rounded"
+      class="w-full m-1 px-5 py-3 text-center rounded"
       data-testid="ERROR_PICKING_DIRECTORY"
       style="color: white;"
     >
@@ -29,7 +29,7 @@ exports[`renders correctly INVALID_WORKSPACE_NAME_ERROR 1`] = `
 <div>
   <div>
     <div
-      class="w-full px-4 text-center rounded"
+      class="w-full m-1 px-5 py-3 text-center rounded"
       data-testid="INVALID_WORKSPACE_NAME"
       style="color: white;"
     >
@@ -58,7 +58,7 @@ exports[`renders correctly UNKNOWN_ERROR 1`] = `
 <div>
   <div>
     <div
-      class="w-full px-4 text-center rounded"
+      class="w-full m-1 px-5 py-3 text-center rounded"
       data-testid="UNKNOWN_ERROR"
       style="color: white;"
     >
@@ -91,7 +91,7 @@ exports[`renders correctly WORKSPACE_AUTH_REJECTED_ERROR 1`] = `
 <div>
   <div>
     <div
-      class="w-full px-4 text-center rounded"
+      class="w-full m-1 px-5 py-3 text-center rounded"
       data-testid="WORKSPACE_AUTH_REJECTED"
       style="color: white;"
     >
@@ -104,7 +104,11 @@ exports[`renders correctly WORKSPACE_AUTH_REJECTED_ERROR 1`] = `
         class="text-left"
       >
         <div>
-          Please try again and press allow Bangle.io access to your locally saved notes.
+          Please try again and press 
+          <i>
+            allow
+          </i>
+           to let Bangle.io access your locally saved notes.
         </div>
       </div>
     </div>
@@ -116,7 +120,7 @@ exports[`renders correctly WORKSPACE_NAME_ALREADY_EXISTS_ERROR 1`] = `
 <div>
   <div>
     <div
-      class="w-full px-4 text-center rounded"
+      class="w-full m-1 px-5 py-3 text-center rounded"
       data-testid="WORKSPACE_NAME_ALREADY_EXISTS"
       style="color: white;"
     >

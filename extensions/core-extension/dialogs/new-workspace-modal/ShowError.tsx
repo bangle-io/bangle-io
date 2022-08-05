@@ -84,8 +84,8 @@ export function ShowError({
       title = 'Bangle.io was denied access to your notes.';
       content = (
         <div>
-          Please try again and press allow Bangle.io access to your locally
-          saved notes.
+          Please try again and press <i>allow</i> to let Bangle.io access your
+          locally saved notes.
         </div>
       );
       break;
@@ -116,7 +116,7 @@ export function ShowError({
 
   return (
     <div
-      className="w-full px-4 text-center rounded"
+      className="w-full m-1 px-5 py-3 text-center rounded"
       data-testid={errorType}
       style={{
         backgroundColor: 'var(--BV-severity-error-color)',

@@ -247,25 +247,29 @@ describe('NewWorkspaceModalFileSystem', () => {
 
     expect(result.getByTestId(WORKSPACE_AUTH_REJECTED_ERROR))
       .toMatchInlineSnapshot(`
+      <div
+        class="w-full m-1 px-5 py-3 text-center rounded"
+        data-testid="WORKSPACE_AUTH_REJECTED"
+        style="color: white;"
+      >
         <div
-          class="w-full px-4 text-center rounded"
-          data-testid="WORKSPACE_AUTH_REJECTED"
-          style="color: white;"
+          class="font-semibold text-left"
         >
-          <div
-            class="font-semibold text-left"
-          >
-            Bangle.io was denied access to your notes.
-          </div>
-          <div
-            class="text-left"
-          >
-            <div>
-              Please try again and press allow Bangle.io access to your locally saved notes.
-            </div>
+          Bangle.io was denied access to your notes.
+        </div>
+        <div
+          class="text-left"
+        >
+          <div>
+            Please try again and press 
+            <i>
+              allow
+            </i>
+             to let Bangle.io access your locally saved notes.
           </div>
         </div>
-      `);
+      </div>
+    `);
 
     expect(
       result.getByLabelText('Create workspace').hasAttribute('disabled'),

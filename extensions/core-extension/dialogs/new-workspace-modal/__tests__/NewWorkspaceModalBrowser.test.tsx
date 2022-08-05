@@ -211,7 +211,7 @@ describe('NewWorkspaceModalBrowser', () => {
       expect(result.getByTestId(WORKSPACE_NAME_ALREADY_EXISTS_ERROR))
         .toMatchInlineSnapshot(`
         <div
-          class="w-full px-4 text-center rounded"
+          class="w-full m-1 px-5 py-3 text-center rounded"
           data-testid="WORKSPACE_NAME_ALREADY_EXISTS"
           style="color: white;"
         >

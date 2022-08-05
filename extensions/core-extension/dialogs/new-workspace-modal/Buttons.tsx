@@ -1,3 +1,4 @@
+import { useFocusManager } from '@react-aria/focus';
 import React, { useCallback } from 'react';
 
 import {
@@ -29,39 +30,50 @@ export function PickStorageDirectory({
   ) => void;
   dirName: string | undefined;
 }) {
-  const handlePickDirectory = useCallback(async () => {
-    try {
-      const rootDirHandle = await pickADirectory();
-      updateRootDirHandle(rootDirHandle);
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message
-          .toLocaleLowerCase()
-          .includes('user activation is required')
-      ) {
-        setError(CLICKED_TOO_SOON_ERROR);
+  const focusManager = useFocusManager();
 
-        return;
-      }
-      if (
-        error instanceof BaseFileSystemError &&
-        (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
-          error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
-      ) {
-        setError(WORKSPACE_AUTH_REJECTED_ERROR);
+  const handlePickDirectory = useCallback(
+    async (e) => {
+      try {
+        const rootDirHandle = await pickADirectory();
+        updateRootDirHandle(rootDirHandle);
 
-        return;
-      }
-      if (error instanceof BaseFileSystemError) {
-        setError(ERROR_PICKING_DIRECTORY_ERROR);
+        if (e.pointerType === 'keyboard') {
+          requestAnimationFrame(() => {
+            focusManager.focusNext({ wrap: true });
+          });
+        }
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message
+            .toLocaleLowerCase()
+            .includes('user activation is required')
+        ) {
+          setError(CLICKED_TOO_SOON_ERROR);
 
-        return;
+          return;
+        }
+        if (
+          error instanceof BaseFileSystemError &&
+          (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
+            error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
+        ) {
+          setError(WORKSPACE_AUTH_REJECTED_ERROR);
+
+          return;
+        }
+        if (error instanceof BaseFileSystemError) {
+          setError(ERROR_PICKING_DIRECTORY_ERROR);
+
+          return;
+        }
+        setError(UNKNOWN_ERROR);
+        throw error;
       }
-      setError(UNKNOWN_ERROR);
-      throw error;
-    }
-  }, [updateRootDirHandle, setError]);
+    },
+    [updateRootDirHandle, focusManager, setError],
+  );
 
   return (
     <>

@@ -4867,6 +4867,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
+            ["@react-aria/focus", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.5.5"],\
             ["@react-aria/ssr", "virtual:60b2931e1c2b893234deb15b966aa631cf82038c500c1c2335fb383c27884612b434bc94b038aac732182c0d1689bb9c00c2b3f410b741f9bbe55ede7c8b233e#npm:3.1.2"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],\
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],\
@@ -12400,15 +12401,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@types/eslint", [\
-        ["npm:7.28.2", {\
-          "packageLocation": "./.yarn/cache/@types-eslint-npm-7.28.2-6d17ad4f82-d177f3eec2.zip/node_modules/@types/eslint/",\
-          "packageDependencies": [\
-            ["@types/eslint", "npm:7.28.2"],\
-            ["@types/estree", "npm:0.0.51"],\
-            ["@types/json-schema", "npm:7.0.11"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:7.29.0", {\
           "packageLocation": "./.yarn/cache/@types-eslint-npm-7.29.0-46534a7300-df13991c55.zip/node_modules/@types/eslint/",\
           "packageDependencies": [\
@@ -12424,7 +12416,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-eslint-scope-npm-3.7.3-e9b64dad2c-6772b05e1b.zip/node_modules/@types/eslint-scope/",\
           "packageDependencies": [\
             ["@types/eslint-scope", "npm:3.7.3"],\
-            ["@types/eslint", "npm:7.28.2"],\
+            ["@types/eslint", "npm:7.29.0"],\
             ["@types/estree", "npm:0.0.51"]\
           ],\
           "linkType": "HARD"\
