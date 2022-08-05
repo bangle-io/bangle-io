@@ -1,9 +1,7 @@
-import type { FzfResultItem } from '@bangle.io/fzf-search';
-import { byLengthAsc, Fzf } from '@bangle.io/fzf-search';
-import { assertSignal, sleep } from '@bangle.io/utils';
+import type { FzfOptions } from '@bangle.io/fzf-search';
+import { byLengthAsc, byStartAsc, Fzf } from '@bangle.io/fzf-search';
+import { assertSignal } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
-
-const NOTE_WS_PATH_CHUNK_SIZE = 1000;
 
 export function fzfSearchNoteWsPaths(
   getNoteWsPaths: () => undefined | string[],
@@ -18,32 +16,21 @@ export function fzfSearchNoteWsPaths(
 
     assertSignal(abortSignal);
 
-    const CHUNK_SIZE = NOTE_WS_PATH_CHUNK_SIZE;
-
     if (!wsPaths || wsPaths.length === 0) {
       return [];
     }
 
-    let result: FzfResultItem[] = [];
+    const options: FzfOptions = {
+      limit: limit,
+      selector: (item) => resolvePath(item, true).filePath,
+      fuzzy: query.length <= 4 ? 'v1' : 'v2',
+      tiebreakers: [byLengthAsc, byStartAsc],
+    };
 
-    // TODO chunking like this is not ideal as fzf doesnt see
-    // all the data at once and ends up applying limit to
-    // each chunk
-    for (let i = 0; i < wsPaths.length; i += CHUNK_SIZE) {
-      assertSignal(abortSignal);
-      const chunk = wsPaths.slice(i, i + CHUNK_SIZE);
-      const fzf = new Fzf(chunk, {
-        limit: limit,
-        selector: (item) => resolvePath(item, true).filePath,
-        tiebreakers: [byLengthAsc],
-      });
+    const fzf = new Fzf(wsPaths, options);
 
-      result = result.concat(fzf.find(query));
-      // introduce sleep to add async-ness
-      // this will help abort if needed
-      await sleep(8);
-    }
+    const result = fzf.find(query);
 
-    return result.slice(0, limit);
+    return result;
   };
 }

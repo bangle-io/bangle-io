@@ -1,10 +1,10 @@
-import type { FzfOptions, FzfResultItem } from 'fzf';
-import { byLengthAsc, byStartAsc, Fzf } from 'fzf';
+import type { AsyncFzfOptions, FzfOptions, FzfResultItem } from 'fzf';
+import { Fzf } from 'fzf';
 import type { ArrayElement, SyncOptionsTuple } from 'fzf/dist/types/finders';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-export type { FzfOptions, FzfResultItem };
-export { byLengthAsc, byStartAsc, Fzf };
+export type { AsyncFzfOptions, FzfOptions, FzfResultItem };
+export { AsyncFzf, byLengthAsc, byStartAsc, Fzf } from 'fzf';
 
 /**
  *
