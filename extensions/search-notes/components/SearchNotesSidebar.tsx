@@ -1,38 +1,38 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  useBangleStoreContext,
+  useSliceState,
+} from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
 
-import { useHighlightEditors, useSearchNotesState } from '../hooks';
+import { searchNotesSliceKey } from '../constants';
+import { updateSliceState } from '../search-notes-slice';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
 export function SearchNotesSidebar() {
-  const [
-    { pendingSearch, searchResults, searchQuery },
-    updateSearchNotesState,
-  ] = useSearchNotesState();
+  const bangleStore = useBangleStoreContext();
   const { wsName } = useWorkspaceContext();
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
-  const bangleStore = useBangleStoreContext();
+  const {
+    sliceState: { pendingSearch, searchResults, searchQuery },
+    store,
+  } = useSliceState(searchNotesSliceKey);
+
   useEffect(() => {
     updateCollapseAllCounter(0);
   }, [searchQuery, wsName]);
 
   const updateSearchQuery = useCallback(
     (query) => {
-      updateSearchNotesState((state) => ({
-        ...state,
-        searchQuery: query,
-      }));
+      updateSliceState({ searchQuery: query })(store.state, store.dispatch);
     },
-    [updateSearchNotesState],
+    [store],
   );
-
-  useHighlightEditors();
 
   if (!wsName) {
     return (

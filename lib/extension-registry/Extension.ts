@@ -46,13 +46,9 @@ export type RegisterSerialOperationHandlerType = (
 
 export type SerialOperationHandler2<
   OpType extends SerialOperationDefinitionType,
-> = (
-  bangleStore: ApplicationStore,
-  abortSignal: AbortSignal,
-) => {
-  destroy?: () => void;
+> = () => {
   handle: (
-    serialOperation: OpType,
+    serialOperation: { name: OpType['name']; value?: any },
     payload: any,
     store: ApplicationStore,
   ) => boolean | void;
