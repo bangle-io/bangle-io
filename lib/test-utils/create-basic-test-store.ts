@@ -14,6 +14,7 @@ import type { BangleStateConfig } from '@bangle.io/shared-types';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
+import { uiSlice } from '@bangle.io/slice-ui';
 import {
   createNote,
   createWorkspace,
@@ -48,6 +49,7 @@ export function createBasicTestStore<
   useMemoryHistorySlice = true,
   useEditorCoreExtension = true,
   useEditorManagerSlice = false,
+  useUISlice = false,
   // slice key purely for getting the types of the store correct
   sliceKey,
   scheduler,
@@ -64,6 +66,7 @@ export function createBasicTestStore<
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
   useEditorManagerSlice?: boolean;
+  useUISlice?: boolean;
   onError?: OnErrorType<S, A>;
   opts?: Partial<BangleStateConfig>;
 } = {}) {
@@ -101,6 +104,7 @@ export function createBasicTestStore<
         workspaceSlice(),
         useEditorManagerSlice ? editorManagerSlice() : undefined,
         notificationSlice(),
+        useUISlice ? uiSlice() : undefined,
         ...extensionRegistry.getSlices(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
@@ -183,4 +187,10 @@ export async function setupMockWorkspaceWithNotes(
       })(store.state, store.dispatch, store);
     },
   };
+}
+
+function disableSideEffect(slice: Slice) {
+  slice.spec.sideEffect = undefined;
+
+  return slice;
 }

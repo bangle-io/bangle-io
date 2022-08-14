@@ -212,9 +212,11 @@ describe('operation handlers', () => {
       Array [
         Object {
           "name": "operation::bangle-io-core:show-search-sidebar",
+          "value": undefined,
         },
         Object {
           "name": "operation::bangle-io-core:show-search-sidebar2",
+          "value": undefined,
         },
       ]
     `);

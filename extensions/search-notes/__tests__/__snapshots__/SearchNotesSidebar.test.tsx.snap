@@ -154,7 +154,9 @@ exports[`show search results 1`] = `
           </span>
         </div>
       </div>
-      <span>
+      <a
+        class="rounded-sm block B-search-notes_search-result-text-match  mt-3 B-search-notes_last-item "
+      >
         <div
           class="B-ui-components_sidebar-row2 BU_hover pl-3 "
           data-id="search-result-text-match-0"
@@ -201,7 +203,7 @@ exports[`show search results 1`] = `
             />
           </div>
         </div>
-      </span>
+      </a>
     </div>
   </div>
 </div>

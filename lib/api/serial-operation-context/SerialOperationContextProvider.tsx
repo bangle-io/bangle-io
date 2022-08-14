@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
@@ -39,22 +33,9 @@ export function SerialOperationContextProvider({
     );
   }, [extensionRegistry]);
 
-  const [abort] = useState(() => new AbortController());
-
   const [operationHandlers] = useState(() => {
-    return extensionRegistry
-      .getOperationHandlers()
-      .map((r) => r(bangleStore, abort.signal));
+    return extensionRegistry.getOperationHandlers().map((r) => r());
   });
-
-  useEffect(() => {
-    return () => {
-      abort.abort();
-      operationHandlers.forEach((o) => {
-        o.destroy?.();
-      });
-    };
-  }, [abort, operationHandlers]);
 
   const dispatchSerialOperation = useCallback<
     SerialOperationContextType['dispatchSerialOperation']
@@ -83,7 +64,7 @@ export function SerialOperationContextProvider({
       }
 
       for (const handler of operationHandlers) {
-        let result = handler.handle(operation, value, bangleStore);
+        let result = handler.handle({ name, value }, value, bangleStore);
 
         if (result) {
           return;

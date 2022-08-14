@@ -8,6 +8,7 @@ import {
   getEditorLocator,
   SELECTOR_TIMEOUT,
   sleep,
+  waitForEditorFocus,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -16,6 +17,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   const wsName = await createWorkspace(page);
 
   await createNewNote(page, wsName, 'test-one');
+  await waitForEditorFocus(page, PRIMARY_EDITOR_INDEX);
 
   await page.keyboard.press('Enter');
   await page.keyboard.type(
@@ -35,7 +37,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 test('Is able to search note tags', async ({ page }) => {
   await page.click('button[aria-label^="Search notes"]');
 
-  await page.type('input[aria-label="Search"]', 'tag:cosmic', {
+  await page.locator('input[aria-label="Search"]').type('tag:cosmic', {
     delay: 10,
   });
 

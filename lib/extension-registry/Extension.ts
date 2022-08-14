@@ -46,19 +46,14 @@ export type RegisterSerialOperationHandlerType = (
 
 export type SerialOperationHandler2<
   OpType extends SerialOperationDefinitionType,
-> = (
-  bangleStore: ApplicationStore,
-  abortSignal: AbortSignal,
-) => {
-  destroy?: () => void;
+> = () => {
   handle: (
-    serialOperation: OpType,
+    serialOperation: { name: OpType['name']; value?: any },
     payload: any,
     store: ApplicationStore,
   ) => boolean | void;
 };
 export interface ApplicationConfig<
-  T = any,
   OpType extends SerialOperationDefinitionType = any,
 > {
   name: string;
@@ -100,25 +95,17 @@ export interface DialogType {
   ReactComponent: React.ComponentType;
 }
 
-interface Config<T, OpType extends SerialOperationDefinitionType> {
-  application: ApplicationConfig<T, OpType>;
+interface Config<OpType extends SerialOperationDefinitionType> {
+  application: ApplicationConfig<OpType>;
   editor: EditorConfig;
-  initialState?: any;
   name: string;
 }
 
-export class Extension<
-  T = unknown,
-  OpType extends SerialOperationDefinitionType = any,
-> {
-  static create<
-    T = undefined,
-    OpType extends SerialOperationDefinitionType = any,
-  >(config: {
+export class Extension<OpType extends SerialOperationDefinitionType = any> {
+  static create<OpType extends SerialOperationDefinitionType = any>(config: {
     name: string;
-    initialState?: T;
     editor?: Omit<EditorConfig, 'name'>;
-    application?: Omit<ApplicationConfig<T, OpType>, 'name'>;
+    application?: Omit<ApplicationConfig<OpType>, 'name'>;
   }) {
     const { name } = config;
 
@@ -134,7 +121,6 @@ export class Extension<
 
     const editor = Object.assign({}, config.editor, { name });
     const application = Object.assign({}, config.application, { name });
-    const initialState = config.initialState;
 
     const {
       specs,
@@ -309,24 +295,19 @@ export class Extension<
       }
     }
 
-    return new Extension<T, OpType>(
-      { name, editor, application, initialState },
-      _check,
-    );
+    return new Extension<OpType>({ name, editor, application }, _check);
   }
 
   name: string;
   editor: EditorConfig;
-  initialState?: any;
-  application: ApplicationConfig<T, OpType>;
+  application: ApplicationConfig<OpType>;
 
-  constructor(ext: Config<T, OpType>, check: typeof _check) {
+  constructor(ext: Config<OpType>, check: typeof _check) {
     if (check !== _check) {
       throw new Error('Instantiate class via `Extension.create({})`');
     }
     this.name = ext.name;
     this.editor = ext.editor;
-    this.initialState = ext.initialState;
     this.application = ext.application;
   }
 }

@@ -2,6 +2,8 @@ import type { AppState } from '@bangle.io/create-store';
 import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 
+export { forEachEditor } from '@bangle.io/slice-editor-manager';
+
 export function getFocusedWsPath() {
   return (state: AppState) => {
     const workspaceSliceState = workspaceSliceKey.getSliceState(state);

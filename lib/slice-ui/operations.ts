@@ -12,6 +12,17 @@ export function toggleTheme() {
   };
 }
 
+export function setSidebar(sidebar: string | null) {
+  return (state: AppState, dispatch: UiContextDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
+      value: {
+        type: sidebar,
+      },
+    });
+  };
+}
+
 export function changeSidebar(sidebar: string | null) {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     const { sidebar: currentSidebar } = uiSliceKey.getSliceState(state) || {};

@@ -1,38 +1,64 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  useBangleStoreContext,
+  useSliceState,
+} from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
+import { useDebouncedValue } from '@bangle.io/utils';
 
-import { useHighlightEditors, useSearchNotesState } from '../hooks';
+import { searchNotesSliceKey } from '../constants';
+import { updateInputSearchQuery } from '../search-notes-slice';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
 export function SearchNotesSidebar() {
-  const [
-    { pendingSearch, searchResults, searchQuery },
-    updateSearchNotesState,
-  ] = useSearchNotesState();
+  const bangleStore = useBangleStoreContext();
   const { wsName } = useWorkspaceContext();
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
-  const bangleStore = useBangleStoreContext();
+  const {
+    sliceState: {
+      pendingSearch,
+      searchResults,
+      searchQuery,
+      externalInputChange: externalChange,
+    },
+    store,
+  } = useSliceState(searchNotesSliceKey);
+  const [rawSearchQuery, updateRawSearchQuery] = useState(searchQuery || '');
+
+  const [lastExternalChange, setLastExternalChange] = useState(externalChange);
+
+  const localSearchQuery = useDebouncedValue(rawSearchQuery, {
+    wait: 30,
+  });
+
+  useEffect(() => {
+    // reset the current input state if there was an external
+    // change made to the search query
+    if (lastExternalChange !== externalChange) {
+      setLastExternalChange(externalChange);
+      updateRawSearchQuery(searchQuery);
+    } else {
+      if (localSearchQuery !== searchQuery) {
+        // else sync the local state with the global state
+        updateInputSearchQuery(localSearchQuery)(store.state, store.dispatch);
+      }
+    }
+  }, [
+    externalChange,
+    searchQuery,
+    localSearchQuery,
+    store,
+    lastExternalChange,
+  ]);
+
   useEffect(() => {
     updateCollapseAllCounter(0);
-  }, [searchQuery, wsName]);
-
-  const updateSearchQuery = useCallback(
-    (query) => {
-      updateSearchNotesState((state) => ({
-        ...state,
-        searchQuery: query,
-      }));
-    },
-    [updateSearchNotesState],
-  );
-
-  useHighlightEditors();
+  }, [localSearchQuery, wsName]);
 
   if (!wsName) {
     return (
@@ -57,8 +83,8 @@ export function SearchNotesSidebar() {
     <Sidebar.Container className="B-search-notes_search-notes">
       <Sidebar.ItemContainer className="px-2 mt-2">
         <SearchInput
-          searchQuery={searchQuery}
-          updateSearchQuery={updateSearchQuery}
+          searchQuery={rawSearchQuery}
+          updateSearchQuery={updateRawSearchQuery}
         />
       </Sidebar.ItemContainer>
       <Sidebar.ItemContainer className="flex flex-row justify-between px-2 my-1 text-xs">

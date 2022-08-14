@@ -12,10 +12,7 @@ import {
 } from '@bangle.io/bangle-store';
 import { useSliceState } from '@bangle.io/bangle-store-context';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import {
-  ExtensionRegistryContextProvider,
-  ExtensionStateContextProvider,
-} from '@bangle.io/extension-registry';
+import { ExtensionRegistryContextProvider } from '@bangle.io/extension-registry';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
@@ -129,18 +126,16 @@ export function Entry() {
             >
               <UIManager>
                 <ExtensionRegistryContextProvider>
-                  <ExtensionStateContextProvider>
-                    <WorkspaceContextProvider>
-                      <SWReloadPrompt />
-                      <WatchWorkspace />
-                      <WatchUI />
-                      <EditorManager>
-                        <SerialOperationContextProvider>
-                          <AppContainer />
-                        </SerialOperationContextProvider>
-                      </EditorManager>
-                    </WorkspaceContextProvider>
-                  </ExtensionStateContextProvider>
+                  <WorkspaceContextProvider>
+                    <SWReloadPrompt />
+                    <WatchWorkspace />
+                    <WatchUI />
+                    <EditorManager>
+                      <SerialOperationContextProvider>
+                        <AppContainer />
+                      </SerialOperationContextProvider>
+                    </EditorManager>
+                  </WorkspaceContextProvider>
                 </ExtensionRegistryContextProvider>
               </UIManager>
             </AppStateProvider>
