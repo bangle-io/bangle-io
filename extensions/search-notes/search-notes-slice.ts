@@ -18,10 +18,28 @@ export function searchNotesSlice() {
     key: searchNotesSliceKey,
     state: {
       init() {
-        return { searchQuery: '', pendingSearch: false, searchResults: null };
+        return {
+          searchQuery: '',
+          externalInputChange: 0,
+          pendingSearch: false,
+          searchResults: null,
+        };
       },
       apply(action, state) {
         switch (action.name) {
+          case 'action::@bangle.io/search-notes:input-search-query': {
+            return {
+              ...state,
+              searchQuery: action.value.query,
+            };
+          }
+          case 'action::@bangle.io/search-notes:external-search-query-update': {
+            return {
+              ...state,
+              searchQuery: action.value.query,
+              externalInputChange: state.externalInputChange + 1,
+            };
+          }
           case 'action::@bangle.io/search-notes:update-state': {
             return {
               ...state,
@@ -48,7 +66,6 @@ const wsNameEffect = searchNotesSliceKey.effect(() => {
         )
       ) {
         updateSliceState({
-          searchQuery: '',
           searchResults: null,
           pendingSearch: false,
         })(store.state, store.dispatch);
@@ -167,7 +184,27 @@ const highlightEditorsEffect = searchNotesSliceKey.effect(() => {
   };
 });
 
-export function updateSliceState(val: Partial<SearchNotesExtensionState>) {
+export function updateInputSearchQuery(query: string) {
+  return searchNotesSliceKey.op((state, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/search-notes:input-search-query',
+      value: { query },
+    });
+  });
+}
+
+export function externalUpdateInputSearchQuery(query: string) {
+  return searchNotesSliceKey.op((state, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/search-notes:external-search-query-update',
+      value: { query },
+    });
+  });
+}
+
+export function updateSliceState(
+  val: Omit<Partial<SearchNotesExtensionState>, 'searchQuery'>,
+) {
   return searchNotesSliceKey.op((state, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/search-notes:update-state',

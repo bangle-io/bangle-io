@@ -16,7 +16,7 @@ import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
-import { searchNotesSliceKey, SIDEBAR_NAME } from '../constants';
+import { SEARCH_SIDEBAR_NAME, searchNotesSliceKey } from '../constants';
 import searchNotesExtension from '../index';
 import { updateSliceState } from '../search-notes-slice';
 
@@ -123,7 +123,6 @@ test('show search results', async () => {
   const { container, rerender } = render();
 
   updateSliceState({
-    searchQuery: '',
     searchResults: [searchResultItem],
     pendingSearch: false,
   })(store.state, store.dispatch);
@@ -151,15 +150,28 @@ test('typing in input triggers extension state update', async () => {
   render();
   const input = screen.getByLabelText('Search', { selector: 'input' });
 
-  act(() => {
+  await act(async () => {
     fireEvent.change(input, { target: { value: 'hello' } });
+
+    // wait for debounce
+    await sleep(100);
   });
 
   expect(
     searchNotesSliceKey.getSliceStateAsserted(store.state).searchQuery,
   ).toEqual('hello');
 
-  await sleep(0);
+  expect(
+    getAction('action::@bangle.io/search-notes:input-search-query'),
+  ).toEqual([
+    {
+      id: expect.any(String),
+      name: 'action::@bangle.io/search-notes:input-search-query',
+      value: {
+        query: 'hello',
+      },
+    },
+  ]);
 
   expect(getAction('action::@bangle.io/search-notes:update-state')).toEqual([
     {
@@ -167,18 +179,9 @@ test('typing in input triggers extension state update', async () => {
       name: 'action::@bangle.io/search-notes:update-state',
       value: {
         pendingSearch: false,
-        searchQuery: '',
         searchResults: null,
       },
     },
-    {
-      id: expect.any(String),
-      name: 'action::@bangle.io/search-notes:update-state',
-      value: {
-        searchQuery: 'hello',
-      },
-    },
-
     {
       id: expect.any(String),
       name: 'action::@bangle.io/search-notes:update-state',
@@ -187,7 +190,6 @@ test('typing in input triggers extension state update', async () => {
         searchResults: null,
       },
     },
-
     {
       id: expect.any(String),
       name: 'action::@bangle.io/search-notes:update-state',
@@ -205,7 +207,6 @@ test('pendingSearch shows a spinner', async () => {
   const { rerender } = render();
 
   updateSliceState({
-    searchQuery: '',
     searchResults: [],
     pendingSearch: true,
   })(store.state, store.dispatch);
@@ -215,7 +216,6 @@ test('pendingSearch shows a spinner', async () => {
   expect(Boolean(screen.queryByLabelText('search spinner'))).toBe(true);
 
   updateSliceState({
-    searchQuery: '',
     searchResults: [],
     pendingSearch: false,
   })(store.state, store.dispatch);
@@ -240,11 +240,9 @@ describe('operations', () => {
 
     const { store, render } = await setup();
 
-    render();
+    ui.setSidebar(SEARCH_SIDEBAR_NAME)(store.state, store.dispatch);
 
-    expect(ui.uiSliceKey.getSliceStateAsserted(store.state).sidebar).toBe(
-      undefined,
-    );
+    render();
 
     searchNotesExtension.application.operationHandler?.().handle(
       {
@@ -255,7 +253,7 @@ describe('operations', () => {
     );
 
     expect(ui.uiSliceKey.getSliceStateAsserted(store.state).sidebar).toBe(
-      SIDEBAR_NAME,
+      SEARCH_SIDEBAR_NAME,
     );
 
     // for the delayed input focus
@@ -291,10 +289,27 @@ describe('operations', () => {
     );
 
     expect(ui.uiSliceKey.getSliceStateAsserted(store.state).sidebar).toBe(
-      SIDEBAR_NAME,
+      SEARCH_SIDEBAR_NAME,
     );
 
     expect(searchNotesSliceKey.getSliceStateAsserted(store.state)).toEqual({
+      externalChange: 1,
+      pendingSearch: false,
+      searchQuery: 'hello world',
+      searchResults: null,
+    });
+
+    searchNotesExtension.application.operationHandler?.().handle(
+      {
+        name: EXECUTE_SEARCH_OPERATION,
+        value: 'hello world',
+      },
+      'hello world',
+      store,
+    );
+
+    expect(searchNotesSliceKey.getSliceStateAsserted(store.state)).toEqual({
+      externalChange: 2,
       pendingSearch: false,
       searchQuery: 'hello world',
       searchResults: null,
@@ -325,8 +340,9 @@ describe('search results', () => {
 
     const input = screen.getByLabelText('Search', { selector: 'input' });
 
-    act(() => {
+    await act(async () => {
       fireEvent.change(input, { target: { value: 'hello' } });
+      await sleep(100);
     });
 
     rerender();
@@ -364,21 +380,25 @@ describe('search results', () => {
       },
     );
 
+    expect(
+      getAction('action::@bangle.io/search-notes:input-search-query'),
+    ).toEqual([
+      {
+        id: expect.any(String),
+        name: 'action::@bangle.io/search-notes:input-search-query',
+        value: {
+          query: 'hello',
+        },
+      },
+    ]);
+
     expect(getAction('action::@bangle.io/search-notes:update-state')).toEqual([
       {
         id: expect.any(String),
         name: 'action::@bangle.io/search-notes:update-state',
         value: {
           pendingSearch: false,
-          searchQuery: '',
           searchResults: null,
-        },
-      },
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/search-notes:update-state',
-        value: {
-          searchQuery: 'hello',
         },
       },
       {

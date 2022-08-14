@@ -10,11 +10,14 @@ import { keyDisplayValue, sleep } from '@bangle.io/utils';
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
 import {
   extensionName,
+  SEARCH_SIDEBAR_NAME,
   SHOW_SEARCH_SIDEBAR_OPERATION,
-  SIDEBAR_NAME,
 } from './constants';
 import { searchPlugin } from './editor-plugins';
-import { searchNotesSlice, updateSliceState } from './search-notes-slice';
+import {
+  externalUpdateInputSearchQuery,
+  searchNotesSlice,
+} from './search-notes-slice';
 
 const key = 'Mod-F';
 
@@ -37,15 +40,21 @@ const extension = Extension.create({
     ],
     operationHandler() {
       function showSidebar(bangleStore: BangleApplicationStore) {
-        sleep(0).then(() => {
+        if (
+          ui.uiSliceKey.getSliceStateAsserted(bangleStore.state).sidebar ===
+          SEARCH_SIDEBAR_NAME
+        ) {
           const inputEl = document.querySelector<HTMLInputElement>(
             'input[aria-label="Search"]',
           );
           inputEl?.focus();
           inputEl?.select();
-        });
-
-        ui.setSidebar(SIDEBAR_NAME)(bangleStore.state, bangleStore.dispatch);
+        } else {
+          ui.setSidebar(SEARCH_SIDEBAR_NAME)(
+            bangleStore.state,
+            bangleStore.dispatch,
+          );
+        }
       }
 
       return {
@@ -59,7 +68,7 @@ const extension = Extension.create({
             case EXECUTE_SEARCH_OPERATION: {
               showSidebar(bangleStore);
 
-              updateSliceState({ searchQuery: payload })(
+              externalUpdateInputSearchQuery(payload)(
                 bangleStore.state,
                 bangleStore.dispatch,
               );
@@ -75,7 +84,7 @@ const extension = Extension.create({
     },
     sidebars: [
       {
-        name: SIDEBAR_NAME,
+        name: SEARCH_SIDEBAR_NAME,
         title: 'Search notes',
         hint: `Search notes\n` + keyDisplayValue(key),
         activitybarIcon: React.createElement(SearchIcon, {}),
