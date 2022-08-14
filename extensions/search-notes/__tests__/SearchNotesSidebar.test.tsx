@@ -293,7 +293,7 @@ describe('operations', () => {
     );
 
     expect(searchNotesSliceKey.getSliceStateAsserted(store.state)).toEqual({
-      externalChange: 1,
+      externalInputChange: 1,
       pendingSearch: false,
       searchQuery: 'hello world',
       searchResults: null,
@@ -309,7 +309,7 @@ describe('operations', () => {
     );
 
     expect(searchNotesSliceKey.getSliceStateAsserted(store.state)).toEqual({
-      externalChange: 2,
+      externalInputChange: 2,
       pendingSearch: false,
       searchQuery: 'hello world',
       searchResults: null,

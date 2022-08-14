@@ -34,7 +34,6 @@ export class ExtensionRegistry {
   specRegistry: SpecRegistry;
   // TODO move this to a method
   markdownItPlugins: any[];
-  extensionsInitialState: { [name: string]: any };
   renderExtensionEditorComponents = () => {
     const result = this._editorConfig
       .map((e) => {
@@ -130,10 +129,6 @@ export class ExtensionRegistry {
     _markdownItPlugins: any[] = [],
   ) {
     this._validate();
-
-    this.extensionsInitialState = Object.fromEntries(
-      _extensions.map((r) => [r.name, r.initialState]),
-    );
 
     this._editorConfig = _extensions.map((e) => e.editor);
     this.specRegistry = new SpecRegistry([
