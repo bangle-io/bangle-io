@@ -17,10 +17,23 @@ const Port = (): MessagePort => ({
   },
 });
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 test('sets up', async () => {
   const port = Port();
 
   const { store } = createTestStore({
+    signal,
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -51,6 +64,7 @@ test('destroys', async () => {
   const port = Port();
 
   const { store } = createTestStore({
+    signal,
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -76,6 +90,7 @@ test('sends actions to the port', async () => {
   });
 
   const { store } = createTestStore({
+    signal,
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -120,6 +135,7 @@ test('handles actions coming from port', async () => {
   });
 
   const { store } = createTestStore({
+    signal,
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -161,6 +177,7 @@ test('blocks actions which are not recognized', async () => {
   });
 
   const { store, actionsDispatched } = createTestStore({
+    signal,
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,

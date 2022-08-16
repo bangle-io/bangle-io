@@ -38,7 +38,7 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
     };
   },
 }: {
-  signal?: AbortSignal;
+  signal: AbortSignal;
   storeName?: string;
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S>;

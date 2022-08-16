@@ -5,6 +5,17 @@ import type { WorkspaceOpenedDocInfoAction } from '../common';
 import { BULK_UPDATE_SHAS, SYNC_ENTRIES, UPDATE_ENTRY } from '../common';
 import { workspaceOpenedDocInfoSlice } from '../slice-workspace-opened-doc-info';
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
 // make sure every action's serialization has been tested
 const testFixtures: ActionTestFixtureType<WorkspaceOpenedDocInfoAction> = {
@@ -61,11 +72,11 @@ const fixtures = Object.values(testFixtures).flatMap(
   (r: WorkspaceOpenedDocInfoAction[]) => r,
 );
 
-const { store } = createTestStore({
-  slices: [workspaceOpenedDocInfoSlice()],
-});
-
 test.each(fixtures)(`%# workspace actions serialization`, (action) => {
+  const { store } = createTestStore({
+    signal,
+    slices: [workspaceOpenedDocInfoSlice()],
+  });
   const res = store.parseAction(store.serializeAction(action) as any);
 
   expect(res).toEqual({ ...action, fromStore: 'test-store' });

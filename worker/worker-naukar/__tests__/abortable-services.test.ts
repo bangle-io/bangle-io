@@ -22,8 +22,20 @@ jest.mock('@bangle.io/search-pm-node', () => {
   return { ...rest, searchPmNode };
 });
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 let setup = () => {
-  const { store } = createBasicTestStore();
+  const { store } = createBasicTestStore({ signal });
 
   let services = mainInjectAbortableProxy(
     abortableServices({

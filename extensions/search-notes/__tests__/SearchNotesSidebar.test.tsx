@@ -31,6 +31,17 @@ jest.mock('@bangle.io/worker-naukar-proxy', () => {
 let abortableSearchWsForPmNodeMock = jest.mocked(
   naukarProxy.abortableSearchWsForPmNode,
 );
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
 
 const setup = async (
   wsName: string | null = 'test-ws',
@@ -41,6 +52,7 @@ const setup = async (
   ],
 ) => {
   let { store, getActionNames, getAction } = createBasicTestStore({
+    signal,
     extensions: [searchNotesExtension],
     useEditorManagerSlice: true,
     useUISlice: true,

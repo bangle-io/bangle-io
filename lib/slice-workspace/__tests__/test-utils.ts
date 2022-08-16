@@ -90,6 +90,7 @@ export const createStore = ({
   };
 
   let result = createTestStore({
+    signal,
     storeName: 'workspace-store',
     disableSideEffects,
     state: data
@@ -104,16 +105,6 @@ export const createStore = ({
           ] as Slice[],
         }),
   });
-
-  signal.addEventListener(
-    'abort',
-    () => {
-      result.store.destroy();
-    },
-    {
-      once: true,
-    },
-  );
 
   return result;
 };

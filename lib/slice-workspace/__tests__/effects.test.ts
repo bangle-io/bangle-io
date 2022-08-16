@@ -45,9 +45,11 @@ const getDispatch = (store: ApplicationStore) =>
 let idbSetSpy: jest.SpyInstance;
 
 let abortController = new AbortController();
+let signal = abortController.signal;
 
 beforeEach(() => {
   abortController = new AbortController();
+  signal = abortController.signal;
   idbSetSpy?.mockClear();
   idbSetSpy = jest.spyOn(idb, 'set');
 });
@@ -61,6 +63,7 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store, dispatchSpy } = createBasicTestStore({
+      signal,
       storageProvider: storageProvider,
     });
 
@@ -109,6 +112,7 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
+      signal,
       storageProvider: storageProvider,
     });
 
@@ -129,6 +133,7 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
+      signal,
       storageProvider: storageProvider,
     });
 
@@ -154,6 +159,7 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
+      signal,
       storageProvider: storageProvider,
     });
 
@@ -352,6 +358,7 @@ describe('updateLocationEffect', () => {
 
   test('dispatching same location does not trigger update', async () => {
     const { store, getActionNames } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -378,6 +385,7 @@ describe('updateLocationEffect', () => {
 
   test('invalid wsPaths check', async () => {
     const { store } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -399,6 +407,7 @@ describe('updateLocationEffect', () => {
 
   test('handles workspace not found error', async () => {
     const { store } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -424,6 +433,7 @@ describe('updateLocationEffect', () => {
 
   test('retains mini-editor in case of location change but wsName stays', async () => {
     const { store } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -457,6 +467,7 @@ describe('updateLocationEffect', () => {
 
   test('resets mini-editor in case of location update with wsName change', async () => {
     const { store } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -511,6 +522,7 @@ describe('workspaceErrorHandler', () => {
     });
 
     const { store, actionsDispatched } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
       onError: onRootError,
       extensions: [
@@ -615,6 +627,7 @@ describe('workspaceErrorHandler', () => {
       return true;
     });
     const { store } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
       extensions: [
         Extension.create({

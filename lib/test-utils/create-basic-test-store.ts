@@ -56,7 +56,7 @@ export function createBasicTestStore<
   signal,
   storageProvider = new IndexedDbStorageProvider(),
 }: {
-  signal?: AbortSignal;
+  signal: AbortSignal;
   storageProvider?: BaseStorageProvider;
   scheduler?: any;
   // for getting the types right
@@ -69,7 +69,7 @@ export function createBasicTestStore<
   useUISlice?: boolean;
   onError?: OnErrorType<S, A>;
   opts?: Partial<BangleStateConfig>;
-} = {}) {
+}) {
   let extensionRegistry = createExtensionRegistry(
     [
       Extension.create({
@@ -126,7 +126,7 @@ export function createBasicTestStore<
 }
 
 export async function setupMockWorkspaceWithNotes(
-  store?: ApplicationStore,
+  store: ApplicationStore,
   wsName = 'test-ws-1',
   // Array of [wsPath, MarkdownString]
   noteWsPaths: Array<[string, string]> = [
@@ -135,9 +135,6 @@ export async function setupMockWorkspaceWithNotes(
   ],
   destroyAfterInit = false,
 ) {
-  if (!store) {
-    store = createBasicTestStore().store;
-  }
   if (
     (await listWorkspaces()(store.state, store.dispatch, store)).find(
       (r) => r.name === wsName,

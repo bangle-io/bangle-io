@@ -64,7 +64,12 @@ const scheduler = (cb: () => void) => {
   };
 };
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
 beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
   (global as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
@@ -86,12 +91,14 @@ beforeEach(() => {
 
 afterEach(async () => {
   await naukarProxy.testDestroyStore();
+  abortController.abort();
 
   (global as any).MessageChannel = undefined;
 });
 
 test('works', async () => {
   const { store, actionsDispatched } = createTestStore({
+    signal,
     slices: [...workerSetupSlices(), pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -150,6 +157,7 @@ test('sends actions correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store, actionsDispatched } = createTestStore({
+    signal,
     slices: [...slices, pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -236,6 +244,7 @@ test('sends slice-page action correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store } = createTestStore({
+    signal,
     slices: [...slices, pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -264,6 +273,7 @@ test('sends workspaces slice action correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store } = createTestStore({
+    signal,
     slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     opts: {
       useWebWorker: false,
@@ -293,6 +303,7 @@ test('sends workspace slice action correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store } = createTestStore({
+    signal,
     slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     opts: {
       useWebWorker: false,

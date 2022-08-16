@@ -30,6 +30,18 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 test('returns wsPaths correctly', async () => {
   let records: RecencyRecords = [{ key: 'test-ws:note1.md', timestamps: [1] }],
     updateRecord = jest.fn();
@@ -37,7 +49,7 @@ test('returns wsPaths correctly', async () => {
     return { records, updateRecord };
   });
 
-  const { store, dispatchSpy } = createBasicTestStore({});
+  const { store, dispatchSpy } = createBasicTestStore({ signal });
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       {children}
@@ -80,7 +92,7 @@ test('removes non existent wsPaths', async () => {
     return { records, updateRecord };
   });
 
-  const { store, dispatchSpy } = createBasicTestStore({});
+  const { store, dispatchSpy } = createBasicTestStore({ signal });
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       {children}
@@ -110,7 +122,7 @@ test('works when no wsName', async () => {
     return { records, updateRecord };
   });
 
-  const { store, dispatchSpy } = createBasicTestStore({});
+  const { store, dispatchSpy } = createBasicTestStore({ signal });
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       {children}
@@ -132,7 +144,9 @@ test('updates the newly opened ws path only', async () => {
 
   let bangleStoreChanged = 0;
 
-  const { store } = createBasicTestStore({});
+  const { store } = createBasicTestStore({
+    signal,
+  });
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider
       bangleStore={store}

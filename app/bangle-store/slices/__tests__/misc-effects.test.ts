@@ -15,6 +15,18 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { historySlice } from '../history-slice';
 import { lastWorkspaceUsed, miscEffectsSlice } from '../misc-effects-slice';
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 describe('last seen workspace', () => {
   let originalLocalStorage: typeof localStorage;
 
@@ -71,14 +83,19 @@ describe('last seen workspace', () => {
     test('saves last workspace used', async () => {
       // fill db with existing data
       (
-        await setupMockWorkspaceWithNotes(undefined, 'test-ws', [
-          ['test-ws:hello.md', `hello world`],
-        ])
+        await setupMockWorkspaceWithNotes(
+          createBasicTestStore({
+            signal,
+          }).store,
+          'test-ws',
+          [['test-ws:hello.md', `hello world`]],
+        )
       ).store.destroy();
 
       await sleep(0);
 
       let { store } = createBasicTestStore({
+        signal,
         slices: [historySlice(), miscEffectsSlice()],
         useMemoryHistorySlice: false,
       });
@@ -108,19 +125,24 @@ describe('last seen workspace', () => {
 
     test('going through multiple workspaces', async () => {
       (
-        await setupMockWorkspaceWithNotes(undefined, 'test-ws-1', [
-          ['test-ws-1:hello.md', `hello world`],
-        ])
+        await setupMockWorkspaceWithNotes(
+          createBasicTestStore({ signal }).store,
+          'test-ws-1',
+          [['test-ws-1:hello.md', `hello world`]],
+        )
       ).store.destroy();
       (
-        await setupMockWorkspaceWithNotes(undefined, 'test-ws-2', [
-          ['test-ws-2:hello.md', `hello world`],
-        ])
+        await setupMockWorkspaceWithNotes(
+          createBasicTestStore({ signal }).store,
+          'test-ws-2',
+          [['test-ws-2:hello.md', `hello world`]],
+        )
       ).store.destroy();
 
       await sleep(0);
 
       let { store } = createBasicTestStore({
+        signal,
         slices: [historySlice(), miscEffectsSlice()],
         useMemoryHistorySlice: false,
       });
@@ -142,20 +164,31 @@ describe('last seen workspace', () => {
     });
 
     test('opening a note', async () => {
-      (
-        await setupMockWorkspaceWithNotes(undefined, 'test-ws-1', [
-          ['test-ws-1:hello.md', `hello world`],
-        ])
-      ).store.destroy();
-      (
-        await setupMockWorkspaceWithNotes(undefined, 'test-ws-2', [
-          ['test-ws-2:hello.md', `hello world`],
-        ])
-      ).store.destroy();
+      let setup = () => {
+        let { store } = createBasicTestStore({
+          signal,
+          slices: [historySlice(), miscEffectsSlice()],
+          useMemoryHistorySlice: false,
+        });
+
+        return store;
+      };
+      let store2 = setup();
+      await setupMockWorkspaceWithNotes(store2, 'test-ws-1', [
+        ['test-ws-1:hello.md', `hello world`],
+      ]);
+      store2.destroy();
+
+      store2 = setup();
+      await setupMockWorkspaceWithNotes(store2, 'test-ws-2', [
+        ['test-ws-2:hello.md', `hello world`],
+      ]);
+      store2.destroy();
 
       await sleep(0);
 
       let { store } = createBasicTestStore({
+        signal,
         slices: [historySlice(), miscEffectsSlice()],
         useMemoryHistorySlice: false,
       });

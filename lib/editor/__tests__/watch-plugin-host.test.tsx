@@ -21,7 +21,13 @@ const specRegistry = new SpecRegistry([...defaultSpecs()]);
 
 let render: (plugin: any) => ReturnType<typeof renderTestEditor>;
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+let { store: initialBangleStore } = createBasicTestStore({ signal });
 beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+  ({ store: initialBangleStore } = createBasicTestStore({ signal }));
   jest.useFakeTimers();
   render = (plugin) =>
     renderTestEditor({
@@ -31,6 +37,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  abortController.abort();
   jest.useRealTimers();
 });
 
@@ -49,8 +56,6 @@ jest.mock('@bangle.io/utils', () => {
     }),
   };
 });
-
-const { store: initialBangleStore } = createBasicTestStore({});
 
 test('works', async () => {
   const testEditor = render(
