@@ -28,8 +28,6 @@ import { assertNotUndefined, sleep } from '@bangle.io/utils';
 import { createPMNode } from './create-pm-node';
 import { createTestStore } from './create-test-store';
 import { createExtensionRegistry } from './extension-registry';
-import { clearFakeIdb } from './fake-idb';
-import * as idbHelpers from './indexedb-ws-helpers';
 import { testMemoryHistorySlice } from './test-memory-history-slice';
 
 if (typeof jest === 'undefined') {
@@ -55,8 +53,10 @@ export function createBasicTestStore<
   scheduler,
   opts,
   onError,
+  signal,
   storageProvider = new IndexedDbStorageProvider(),
 }: {
+  signal: AbortSignal;
   storageProvider?: BaseStorageProvider;
   scheduler?: any;
   // for getting the types right
@@ -69,7 +69,7 @@ export function createBasicTestStore<
   useUISlice?: boolean;
   onError?: OnErrorType<S, A>;
   opts?: Partial<BangleStateConfig>;
-} = {}) {
+}) {
   let extensionRegistry = createExtensionRegistry(
     [
       Extension.create({
@@ -94,9 +94,14 @@ export function createBasicTestStore<
 
   const { store, actionsDispatched, dispatchSpy, getActionNames, getAction } =
     createTestStore({
-      sliceKey,
-      scheduler,
       onError,
+      opts: {
+        ...defOpts,
+        ...opts,
+      },
+      scheduler,
+      signal,
+      sliceKey,
       slices: [
         extensionRegistrySlice(),
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
@@ -108,10 +113,6 @@ export function createBasicTestStore<
         ...extensionRegistry.getSlices(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
-      opts: {
-        ...defOpts,
-        ...opts,
-      },
     });
 
   return {
@@ -124,18 +125,8 @@ export function createBasicTestStore<
   };
 }
 
-export const jestHooks = {
-  beforeEach: () => {
-    idbHelpers.beforeEachHook();
-  },
-  afterEach: () => {
-    idbHelpers.afterEachHook();
-    clearFakeIdb();
-  },
-};
-
 export async function setupMockWorkspaceWithNotes(
-  store?: ApplicationStore,
+  store: ApplicationStore,
   wsName = 'test-ws-1',
   // Array of [wsPath, MarkdownString]
   noteWsPaths: Array<[string, string]> = [
@@ -144,9 +135,6 @@ export async function setupMockWorkspaceWithNotes(
   ],
   destroyAfterInit = false,
 ) {
-  if (!store) {
-    store = createBasicTestStore().store;
-  }
   if (
     (await listWorkspaces()(store.state, store.dispatch, store)).find(
       (r) => r.name === wsName,

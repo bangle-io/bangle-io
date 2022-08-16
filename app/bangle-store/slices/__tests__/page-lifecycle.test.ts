@@ -17,17 +17,27 @@ jest.mock('page-lifecycle', () => {
 });
 
 let lifeCycleMock = lifeCycle;
+let abortController = new AbortController();
+let signal = abortController.signal;
 
 beforeEach(() => {
   (lifeCycleMock.addEventListener as any).mockImplementation(() => {});
   (lifeCycleMock.removeEventListener as any).mockImplementation(() => {});
   (lifeCycleMock.removeUnsavedChanges as any).mockImplementation(() => {});
   (lifeCycleMock.addUnsavedChanges as any).mockImplementation(() => {});
+
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
 });
 
 describe('blockReloadEffect', () => {
   test('blocks', async () => {
     const { store } = createTestStore({
+      signal,
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
@@ -49,6 +59,7 @@ describe('blockReloadEffect', () => {
 
   test('repeat calling does not affect', async () => {
     const { store } = createTestStore({
+      signal,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
 
@@ -80,6 +91,7 @@ describe('blockReloadEffect', () => {
 describe('watchPageLifeCycleEffect', () => {
   test('initializes & destroys correctly', () => {
     const { store, actionsDispatched } = createTestStore({
+      signal,
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
@@ -113,6 +125,7 @@ describe('watchPageLifeCycleEffect', () => {
 
   test('dispatches correctly', () => {
     const { dispatchSpy } = createTestStore({
+      signal,
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });

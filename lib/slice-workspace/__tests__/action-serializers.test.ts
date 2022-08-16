@@ -154,8 +154,18 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
 const fixtures = Object.values(testFixtures).flatMap(
   (r: WorkspaceSliceAction[]) => r,
 );
+let abortController = new AbortController();
 
-const { store } = createStore();
+let { store } = createStore({ signal: abortController.signal });
+beforeEach(() => {
+  abortController = new AbortController();
+  ({ store } = createStore({
+    signal: abortController.signal,
+  }));
+});
+afterEach(() => {
+  abortController.abort();
+});
 
 test.each(fixtures)(`%s actions serialization`, (action) => {
   const res: any = store.parseAction(store.serializeAction(action) as any);

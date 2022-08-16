@@ -64,12 +64,25 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
   ],
 });
 
-const { store } = createTestStore({
-  sliceKey: notificationSliceKey,
-  slices: [notificationSlice()],
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
 });
 
 test.each(testFixtures)(`%s actions serialization`, (action) => {
+  const { store } = createTestStore({
+    signal,
+    sliceKey: notificationSliceKey,
+    slices: [notificationSlice()],
+  });
+
   const res = store.parseAction(store.serializeAction(action) as any);
 
   expect(res).toEqual({ ...action, fromStore: 'test-store' });

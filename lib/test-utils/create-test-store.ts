@@ -15,11 +15,16 @@ if (typeof jest === 'undefined') {
 // if you need a store with batteries included, use
 // createBasicTestStore
 export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
+  storeName = 'test-store',
+  // if state is provided, slices will not be used
   slices = [],
+  state,
   opts,
   // slice key purely for getting the types of the store correct
   sliceKey,
   onError,
+  disableSideEffects,
+  signal,
   scheduler = (cb) => {
     let destroyed = false;
     Promise.resolve().then(() => {
@@ -33,14 +38,19 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
     };
   },
 }: {
+  signal: AbortSignal;
+  storeName?: string;
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S>;
   slices?: SliceArray<any, any>;
+  state?: ApplicationStore['state'];
   opts?: any;
+  disableSideEffects?: boolean;
   scheduler?: SchedulerType;
   onError?: OnErrorType<SL, A>;
 }): {
   store: ApplicationStore<SL, A>;
+
   dispatchSpy: jest.SpyInstance;
   actionsDispatched: BaseAction[];
   getAction: (name: string) => BaseAction[];
@@ -49,20 +59,33 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
   let actionsDispatched: BaseAction[] = [];
   const store = ApplicationStore.create({
     scheduler: scheduler,
-    storeName: 'test-store',
+    storeName,
     onError,
+    disableSideEffects,
     dispatchAction: (store, action) => {
       let newState = store.state.applyAction(action);
       store.updateState(newState);
       actionsDispatched.push(action);
     },
-    state: AppState.create({
-      opts: opts,
-      slices: slices,
-    }),
+    state:
+      state ??
+      AppState.create({
+        opts: opts,
+        slices: slices,
+      }),
   });
 
   const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+  signal?.addEventListener(
+    'abort',
+    () => {
+      store.destroy();
+    },
+    {
+      once: true,
+    },
+  );
 
   return {
     store,

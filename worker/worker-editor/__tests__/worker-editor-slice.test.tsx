@@ -29,24 +29,29 @@ import { resolvePath } from '@bangle.io/ws-path';
 import { getCollabManager } from '../operations';
 import { setup } from './test-helpers';
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
 let originalConsoleWarn = console.warn;
 let cleanup = () => {};
 beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
   console.warn = jest.fn();
   cleanup = setupMockMessageChannel();
 });
 
 afterEach(() => {
+  abortController.abort();
   cleanup();
   console.warn = originalConsoleWarn;
 });
 
 test('should enable syncing of editors and writing to disk', async () => {
-  const { store, extensionRegistry, typeText } = await setup({});
+  const { store, extensionRegistry, typeText } = await setup({ signal });
   const wsPath1 = 'my-ws:test-dir/magic.md';
   const { wsName } = resolvePath(wsPath1);
   await setupMockWorkspaceWithNotes(store, wsName, [[wsPath1, `# hello mars`]]);
-  debugger;
   let result;
   act(() => {
     result = render(
@@ -127,7 +132,9 @@ test('should enable syncing of editors and writing to disk', async () => {
 });
 
 test('should call resetDoc on docs that are no longer opened', async () => {
-  const { store, extensionRegistry } = await setup({});
+  const { store, extensionRegistry } = await setup({
+    signal,
+  });
   const wsPath1 = 'my-ws:test-dir/magic.md';
   const { wsName } = resolvePath(wsPath1);
   await setupMockWorkspaceWithNotes(store, wsName, [[wsPath1, `# hello mars`]]);

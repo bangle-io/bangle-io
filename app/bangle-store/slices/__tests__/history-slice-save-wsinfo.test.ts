@@ -22,13 +22,18 @@ import { historySlice, historySliceKey } from '../history-slice';
 
 const dateNow = Date.now;
 let counter = 0;
+let abortController = new AbortController();
+let signal = abortController.signal;
 beforeEach(() => {
   // This avoid flakiness when dealing with deletion
   Date.now = jest.fn(() => counter++);
+  abortController = new AbortController();
+  signal = abortController.signal;
 });
 
 afterEach(() => {
   Date.now = dateNow;
+  abortController.abort();
 });
 
 let setup = () => {
@@ -43,6 +48,7 @@ let setup = () => {
 
   window.history.replaceState(null, '', '/');
   let { store } = createBasicTestStore({
+    signal,
     slices: [historySlice()],
     extensions: [
       Extension.create({

@@ -3,6 +3,7 @@
  */
 import { act, render } from '@testing-library/react';
 import React from 'react';
+import waitForExpect from 'wait-for-expect';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import type { SliceSideEffect } from '@bangle.io/create-store';
@@ -48,8 +49,12 @@ let originalConsoleWarn = console.warn;
 let cleanup = () => {};
 
 const cachedCalculateGitFileShaSpy = jest.mocked(cachedCalculateGitFileSha);
+let abortController = new AbortController();
+let signal = abortController.signal;
 
 beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
   console.warn = jest.fn();
   cachedCalculateGitFileShaSpy.mockReset();
   cachedCalculateGitFileShaSpy.mockImplementation((...args) => {
@@ -60,6 +65,7 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  abortController.abort();
   cleanup();
   await sleep(5);
   console.warn = originalConsoleWarn;
@@ -89,6 +95,7 @@ const setup = async ({
 } = {}) => {
   const wsName = 'my-ws-' + Math.random();
   const obj = await commonSetup({
+    signal,
     writeNoteToDiskEffects: providedEffects,
   });
   const wsPath1 = `${wsName}:test-dir/magic.md`;

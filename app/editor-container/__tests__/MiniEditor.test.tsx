@@ -5,7 +5,6 @@ import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 
-import { workspace } from '@bangle.io/api';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
@@ -16,9 +15,22 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 import { MiniEditor } from '../MiniEditor';
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 describe('MiniEditor', () => {
   const setup = async () => {
     let { store, getActionNames } = createBasicTestStore({
+      signal,
       extensions: [],
       useEditorCoreExtension: true,
       useEditorManagerSlice: true,

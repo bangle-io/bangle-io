@@ -29,20 +29,26 @@ jest.mock('@bangle.io/slice-page', () => {
   };
 });
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
 const dateNow = Date.now;
 let counter = 0;
 beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
   // This avoids the flakiness with ws deletion
   Date.now = jest.fn(() => counter++);
 });
 
 afterEach(() => {
   Date.now = dateNow;
+  abortController.abort();
 });
 
 describe('listAllFiles', () => {
   test('when blank has help-fs', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
       helpFSWorkspaceInfo(),
@@ -50,7 +56,7 @@ describe('listAllFiles', () => {
   });
 
   test('cerating a workspace', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
@@ -85,7 +91,7 @@ describe('listAllFiles', () => {
   });
 
   test('hides deleted workspaces', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
     await createWorkspace('test-0', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
@@ -123,7 +129,7 @@ describe('listAllFiles', () => {
 
 describe('createWorkspace', () => {
   test('works', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
@@ -145,7 +151,7 @@ describe('createWorkspace', () => {
   });
 
   test('throws error when workspace already exists', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
@@ -178,6 +184,7 @@ describe('createWorkspace', () => {
     );
 
     const { store } = createBasicTestStore({
+      signal,
       sliceKey: workspaceSliceKey,
       extensions: [
         Extension.create({
@@ -210,7 +217,7 @@ describe('createWorkspace', () => {
 
 describe('deleteWorkspace', () => {
   test('throws error if workspace does not exists', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await expect(
       deleteWorkspace('test-1')(store.state, store.dispatch, store),
@@ -218,7 +225,7 @@ describe('deleteWorkspace', () => {
   });
 
   test('deleting a workspace adds a delete field', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
     await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
       store.state,
       store.dispatch,
@@ -239,7 +246,7 @@ describe('deleteWorkspace', () => {
   });
 
   test('redirects correctly for a deleted workspace', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await createWorkspace('test-1', WorkspaceTypeBrowser, {
       rootDirHandle: { root: 'dummy' },
@@ -264,7 +271,7 @@ describe('deleteWorkspace', () => {
 
 describe('getWorkspaceInfo', () => {
   test('throws error if workspace does not exists', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await expect(
       getWorkspaceInfoAsync('test-1')(store.state),
@@ -272,7 +279,7 @@ describe('getWorkspaceInfo', () => {
   });
 
   test('retains instance', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({ signal });
 
     await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,

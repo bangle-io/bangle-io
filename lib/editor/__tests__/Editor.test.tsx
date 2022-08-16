@@ -34,6 +34,19 @@ const ONE_DOC_CONTENT = `Hello world! I am a test`;
 const TWO_DOC_CONTENT = `bubble gum`;
 const wsName = 'test-ws';
 
+let abortController = new AbortController();
+let signal = abortController.signal;
+
+beforeEach(() => {
+  jest.useRealTimers();
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 const setup = async () => {
   const noteWsPaths: Array<[string, string]> = [
     [`${wsName}:one.md`, ONE_DOC_CONTENT],
@@ -41,16 +54,13 @@ const setup = async () => {
   ];
 
   const { store } = createBasicTestStore({
+    signal,
     useEditorManagerSlice: true,
   });
   await setupMockWorkspaceWithNotes(store, wsName, noteWsPaths);
 
   return store;
 };
-
-beforeEach(() => {
-  jest.useRealTimers();
-});
 
 test('basic renders', async () => {
   const bangleStore = await setup();

@@ -15,8 +15,12 @@ import { workerEditorSlice } from '../worker-editor-slice';
 import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
 
 export const setup = async ({
+  signal,
   writeNoteToDiskEffects,
-}: { writeNoteToDiskEffects?: Array<SliceSideEffect<any, any>> } = {}) => {
+}: {
+  signal: AbortSignal;
+  writeNoteToDiskEffects?: Array<SliceSideEffect<any, any>>;
+}) => {
   const _workerEditorSlice = workerEditorSlice();
 
   const _writeNoteToDiskSlice = writeNoteToDiskSlice();
@@ -26,6 +30,7 @@ export const setup = async ({
   }
 
   const { store, extensionRegistry, ...testHelpers } = createBasicTestStore({
+    signal,
     useEditorManagerSlice: true,
     useEditorCoreExtension: true,
     slices: [
