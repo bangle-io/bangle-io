@@ -2,7 +2,7 @@ import type { JsonArray } from 'type-fest';
 
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import type { Slice } from '@bangle.io/create-store';
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { AppState } from '@bangle.io/create-store';
 import {
   Extension,
   extensionRegistrySlice,
@@ -10,7 +10,10 @@ import {
 import type { JsonPrimitive, WorkspaceInfo } from '@bangle.io/shared-types';
 import { pageSlice } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
-import { createExtensionRegistry } from '@bangle.io/test-utils';
+import {
+  createExtensionRegistry,
+  createTestStore,
+} from '@bangle.io/test-utils';
 
 import type { WorkspaceSliceAction } from '../common';
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
@@ -49,33 +52,24 @@ export const createStateWithWsName = (
   });
 };
 
-export const noDispatchStore = (data?: Parameters<typeof createState>[0]) => {
-  return createStore(data, jest.fn());
-};
-
 export const noSideEffectsStore = (
+  signal: AbortSignal,
   data?: Parameters<typeof createState>[0],
 ) => {
-  return createStore(data, undefined, true);
+  return createStore({ data, disableSideEffects: true, signal });
 };
 
-export const createStore = (
-  data?: Parameters<typeof createState>[0],
-  scheduler = (cb: () => void) => {
-    let destroyed = false;
-    Promise.resolve().then(() => {
-      if (!destroyed) {
-        cb();
-      }
-    });
-
-    return () => {
-      destroyed = true;
-    };
-  },
-  disableSideEffects = false,
-  additionalSlices: Slice[] = [],
-) => {
+export const createStore = ({
+  signal,
+  data,
+  disableSideEffects,
+  additionalSlices = [],
+}: {
+  signal: AbortSignal;
+  data?: Parameters<typeof createState>[0];
+  disableSideEffects?: boolean;
+  additionalSlices?: Slice[];
+}) => {
   let extensionRegistry = createExtensionRegistry(
     [
       Extension.create({
@@ -95,9 +89,9 @@ export const createStore = (
     extensionRegistry,
   };
 
-  const store = ApplicationStore.create({
-    scheduler: scheduler,
+  let result = createTestStore({
     storeName: 'workspace-store',
+    disableSideEffects,
     state: data
       ? createState(data, additionalSlices, opts)
       : AppState.create({
@@ -109,21 +103,19 @@ export const createStore = (
             ...additionalSlices,
           ] as Slice[],
         }),
-    disableSideEffects,
   });
 
-  const dispatchSpy = jest.spyOn(store, 'dispatch');
+  signal.addEventListener(
+    'abort',
+    () => {
+      result.store.destroy();
+    },
+    {
+      once: true,
+    },
+  );
 
-  return {
-    store,
-    dispatchSpy,
-    getActionNames: () => {
-      return getActionNamesDispatched(dispatchSpy);
-    },
-    getAction: (name: string) => {
-      return getActionsDispatched(dispatchSpy, name);
-    },
-  };
+  return result;
 };
 
 export const getActionNamesDispatched = (mockDispatch: jest.SpyInstance) =>

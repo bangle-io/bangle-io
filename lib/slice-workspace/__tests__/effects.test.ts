@@ -44,9 +44,16 @@ const getDispatch = (store: ApplicationStore) =>
 
 let idbSetSpy: jest.SpyInstance;
 
+let abortController = new AbortController();
+
 beforeEach(() => {
+  abortController = new AbortController();
   idbSetSpy?.mockClear();
   idbSetSpy = jest.spyOn(idb, 'set');
+});
+
+afterEach(() => {
+  abortController.abort();
 });
 
 describe('refreshWsPathsEffect', () => {
@@ -164,7 +171,9 @@ describe('refreshWsPathsEffect', () => {
 
 describe('refreshWorkspacesEffect', () => {
   test('works', async () => {
-    const { store, dispatchSpy } = createStore();
+    const { store, dispatchSpy } = createStore({
+      signal: abortController.signal,
+    });
 
     await sleep(0);
     expect(getActionNamesDispatched(dispatchSpy)).toMatchInlineSnapshot(`
@@ -247,7 +256,9 @@ describe('refreshWorkspacesEffect', () => {
   });
 
   test('does not overwrite existing values', async () => {
-    const { store } = createStore();
+    const { store } = createStore({
+      signal: abortController.signal,
+    });
 
     const testWsInfo = createWsInfo({
       name: 'testWs',
@@ -283,20 +294,16 @@ describe('refreshWorkspacesEffect', () => {
 });
 
 describe('updateLocationEffect', () => {
-  let { store, getActionNames, getAction } = createStore(
-    undefined,
-    undefined,
-    undefined,
-    [testMemoryHistorySlice()],
-  );
+  let { store, getActionNames, getAction } = createStore({
+    signal: abortController.signal,
+    additionalSlices: [testMemoryHistorySlice()],
+  });
 
   beforeEach(() => {
-    ({ store, getActionNames, getAction } = createStore(
-      undefined,
-      undefined,
-      undefined,
-      [testMemoryHistorySlice()],
-    ));
+    ({ store, getActionNames, getAction } = createStore({
+      signal: abortController.signal,
+      additionalSlices: [testMemoryHistorySlice()],
+    }));
   });
 
   test('opens a newly created workspace', async () => {

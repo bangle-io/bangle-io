@@ -60,9 +60,21 @@ let goToLocationMock = jest
   .mocked(goToLocation)
   .mockImplementation(() => () => {});
 
+let abortController = new AbortController();
+
+let signal = abortController.signal;
+
+beforeEach(() => {
+  abortController = new AbortController();
+  signal = abortController.signal;
+});
+afterEach(() => {
+  abortController.abort();
+});
+
 describe('updateOpenedWsPaths', () => {
   test('no dispatch if wsName is undefined', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: undefined,
     });
 
@@ -73,7 +85,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('works when provided with openedWsPaths', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
     });
 
@@ -98,7 +110,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('respects replace param', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
     });
 
@@ -120,7 +132,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('works when provided with openedWsPaths as a function', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:test-note.md'],
     });
@@ -150,7 +162,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('does not attempt to fix existing (in the slice state) broken paths', () => {
-    const { store, dispatchSpy } = noSideEffectsStore({
+    const { store, dispatchSpy } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:test-notemd'],
     });
@@ -165,7 +177,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('handles invalid path in secondary', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:test-note.md'],
     });
@@ -193,7 +205,7 @@ describe('pushWsPath', () => {
   });
 
   test('works with new tab', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
+    let { store, dispatchSpy } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
@@ -207,7 +219,7 @@ describe('pushWsPath', () => {
   });
 
   test('works when tab is false', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
+    let { store, dispatchSpy } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
@@ -233,7 +245,7 @@ describe('pushWsPath', () => {
   });
 
   test('works when secondary is true', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
+    let { store, dispatchSpy } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
@@ -273,7 +285,7 @@ describe('goToWsNameRoute', () => {
       search: searchParams.toString(),
     }));
 
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'old-ws',
       openedWsPaths: ['old-ws:some-other-test-note.md'],
     });
@@ -299,7 +311,7 @@ describe('goToWsNameRoute', () => {
       search: 'some_garbage',
     }));
 
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'old-ws',
       openedWsPaths: ['old-ws:some-other-test-note.md'],
     });
@@ -323,7 +335,7 @@ describe('goToWsNameRoute', () => {
       search: searchParams.toString(),
     }));
 
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'old-ws',
       openedWsPaths: [],
     });
@@ -338,7 +350,7 @@ describe('goToWsNameRoute', () => {
 
 describe('goToWorkspaceHomeRoute', () => {
   test('works', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: undefined,
       openedWsPaths: [],
     });
@@ -352,7 +364,7 @@ describe('goToWorkspaceHomeRoute', () => {
 
 describe('goToWorkspaceAuthRoute', () => {
   test('works', () => {
-    let { store } = noSideEffectsStore({
+    let { store } = noSideEffectsStore(signal, {
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
