@@ -65,7 +65,7 @@ describe('abortable worker', () => {
 
     controller.abort();
 
-    await expect(result).rejects.toMatchInlineSnapshot(`[AbortError: Aborted]`);
+    await expect(result).rejects.toMatchInlineSnapshot(`DOMException {}`);
   });
 
   test('doesnt touch methods that donot start with abortable', async () => {
