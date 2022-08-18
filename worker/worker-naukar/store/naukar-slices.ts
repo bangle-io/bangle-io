@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/browser';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
+import { dbSlice } from '@bangle.io/slice-db';
 import { editorSyncSlice } from '@bangle.io/slice-editor-sync';
 import {
   notificationSlice,
@@ -40,6 +41,7 @@ export function naukarSlices({
     disableSideEffect(editorSyncSlice()),
     disableSideEffect(workspaceOpenedDocInfoSlice()),
 
+    dbSlice(),
     // <-- PLOP INSERT SLICE -->
     // keep this at the end
     new Slice({

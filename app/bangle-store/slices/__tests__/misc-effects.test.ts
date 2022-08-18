@@ -1,6 +1,8 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
+import waitForExpect from 'wait-for-expect';
+
 import {
   goToWsNameRoute,
   updateOpenedWsPaths,
@@ -59,10 +61,13 @@ describe('last seen workspace', () => {
       expect(lastWorkspaceUsed.get()).toBeUndefined();
     });
 
-    test('works 1', () => {
+    test('works 1', async () => {
       lastWorkspaceUsed.save('test-ws');
 
-      expect(global.localStorage.setItem).toBeCalledTimes(1);
+      await waitForExpect(() => {
+        expect(global.localStorage.setItem).toBeCalledTimes(1);
+      });
+
       expect(global.localStorage.setItem).nthCalledWith(
         1,
         'workspace-context/last-workspace-used',
@@ -104,9 +109,10 @@ describe('last seen workspace', () => {
         OpenedWsPaths.createFromArray(['test-ws:hello.md']),
       )(store.state, store.dispatch);
 
-      await sleep(0);
+      await waitForExpect(() => {
+        expect(global.localStorage.setItem).toBeCalledTimes(1);
+      });
 
-      expect(global.localStorage.setItem).toBeCalledTimes(1);
       expect(global.localStorage.setItem).nthCalledWith(
         1,
         'workspace-context/last-workspace-used',
@@ -148,14 +154,15 @@ describe('last seen workspace', () => {
       });
 
       goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
-      await sleep(0);
-      // await sleep(0);
-      expect(lastWorkspaceUsed.get()).toEqual('test-ws-1');
+      await waitForExpect(() => {
+        expect(lastWorkspaceUsed.get()).toEqual('test-ws-1');
+      });
 
       goToWsNameRoute('test-ws-2')(store.state, store.dispatch);
-      await sleep(0);
 
-      expect(lastWorkspaceUsed.get()).toEqual('test-ws-2');
+      await waitForExpect(() => {
+        expect(lastWorkspaceUsed.get()).toEqual('test-ws-2');
+      });
 
       updateOpenedWsPaths(() =>
         OpenedWsPaths.createFromArray(['test-ws-2:hello.md']),
