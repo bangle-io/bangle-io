@@ -130,10 +130,14 @@ describe('workerAbortable', () => {
         let timer = setTimeout(() => {
           res(true);
         }, 10);
-        signal.addEventListener('abort', () => {
-          clearInterval(timer);
-          rej(new DOMException('Aborted', 'AbortError'));
-        });
+        signal.addEventListener(
+          'abort',
+          () => {
+            clearInterval(timer);
+            rej(new DOMException('Aborted', 'AbortError'));
+          },
+          { once: true },
+        );
       });
     });
 

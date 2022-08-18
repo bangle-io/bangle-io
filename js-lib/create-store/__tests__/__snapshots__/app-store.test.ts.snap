@@ -5,7 +5,6 @@ Object {
   "_actionSerializers": Object {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
-  "_destroyed": true,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
   "_infiniteErrors": Object {
@@ -93,6 +92,7 @@ Object {
       "two$": 2,
     },
   },
+  "destroyed": true,
   "dispatch": [Function],
   "errorHandler": [Function],
   "storeName": "test-store",
@@ -104,7 +104,6 @@ Object {
   "_actionSerializers": Object {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
-  "_destroyed": false,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
   "_infiniteErrors": Object {
@@ -192,6 +191,7 @@ Object {
       "two$": 2,
     },
   },
+  "destroyed": false,
   "dispatch": [Function],
   "errorHandler": [Function],
   "storeName": "test-store",
@@ -203,7 +203,6 @@ Object {
   "_actionSerializers": Object {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
-  "_destroyed": false,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
   "_infiniteErrors": Object {
@@ -327,6 +326,7 @@ Object {
     },
     "slicesCurrentState": Object {},
   },
+  "destroyed": false,
   "dispatch": [Function],
   "errorHandler": [Function],
   "storeName": "test-store",
@@ -338,7 +338,6 @@ Object {
   "_actionSerializers": Object {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
-  "_destroyed": false,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
   "_infiniteErrors": Object {
@@ -358,6 +357,7 @@ Object {
     },
     "slicesCurrentState": Object {},
   },
+  "destroyed": false,
   "dispatch": [Function],
   "errorHandler": [Function],
   "storeName": "test-store",

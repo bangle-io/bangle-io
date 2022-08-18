@@ -63,7 +63,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   }
 
   dispatch = (action: A) => {
-    if (this._destroyed) {
+    if (this.destroyed) {
       return;
     }
 
@@ -130,6 +130,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     throw error;
   };
 
+  destroyed = false;
   private _actionSerializers: {
     [k: string]: ReturnType<
       ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
@@ -139,7 +140,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   private _currentRunId = 0;
   private _deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
   private _destroyController = new AbortController();
-  private _destroyed = false;
+
   private _infiniteErrors = {
     count: 0,
     lastSeen: 0,
@@ -170,7 +171,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   destroy() {
     this._destroyController.abort();
     this._destroySideEffects();
-    this._destroyed = true;
+    this.destroyed = true;
   }
 
   parseAction({
@@ -225,7 +226,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   }
 
   updateState(state: AppState<S, A>) {
-    if (this._destroyed) {
+    if (this.destroyed) {
       return;
     }
 

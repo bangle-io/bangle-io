@@ -136,7 +136,7 @@ describe('store', () => {
 
     test('destroys', () => {
       store.destroy();
-      expect((store as any)._destroyed).toBe(true);
+      expect(store.destroyed).toBe(true);
       expect(store as any).toMatchSnapshot({
         _destroyController: expect.any(AbortController),
       });
