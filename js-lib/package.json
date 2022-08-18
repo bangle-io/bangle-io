@@ -6,6 +6,7 @@
     "baby-fs",
     "base-error",
     "create-store",
+    "db-key-val",
     "deep-map",
     "fake-idb",
     "fzf-search",
