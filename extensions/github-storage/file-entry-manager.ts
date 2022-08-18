@@ -1,14 +1,11 @@
 import { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
 
-import { EXTENSION_NAME } from './common';
-import type { getDatabase } from './helpers';
+import { getLocalEntriesTable } from './database';
 
-export const localFileEntryManager = (
-  db: ReturnType<typeof getDatabase> = (globalThis as any).myDb(EXTENSION_NAME),
-) => {
+export const localFileEntryManager = () => {
   return new LocalFileEntryManager({
     get: (key: string) => {
-      return db.tables.localEntries.get(key);
+      return getLocalEntriesTable().get(key);
     },
 
     set: async (key, entry) => {
@@ -16,21 +13,19 @@ export const localFileEntryManager = (
         throw new Error('entry cannot be null/undefined');
       }
 
-      await db.tables.localEntries.put(key, entry);
+      await getLocalEntriesTable().put(key, entry);
     },
 
     getValues: async (keyPrefix: string) => {
-      const results = await db.tables.localEntries.getAll();
+      const results = (await getLocalEntriesTable().getAll()) || [];
 
       return results.filter((entry) => {
-        // For some reason some values have undefined, this
-        // filters them out.
-        return Boolean(entry);
+        return entry?.uid.startsWith(keyPrefix);
       });
     },
 
     delete: async (key) => {
-      await db.tables.localEntries.delete(key);
+      await getLocalEntriesTable().delete(key);
     },
   });
 };

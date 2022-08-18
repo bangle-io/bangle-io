@@ -4,7 +4,6 @@ import { Extension, ui, workspace } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
-  databaseConfig,
   DISCARD_LOCAL_CHANGES_DIALOG,
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
@@ -23,7 +22,6 @@ import { handleError } from './error-handling';
 import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
-import { getDatabase } from './helpers';
 import { isCurrentWorkspaceGithubStored, syncWithGithub } from './operations';
 
 const extensionName = '@bangle.io/github-storage';
@@ -31,7 +29,6 @@ const extensionName = '@bangle.io/github-storage';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    database: databaseConfig,
     slices: [githubStorageSlice()],
     storageProvider: new GithubStorageProvider(),
     dialogs: [
@@ -105,7 +102,7 @@ const extension = Extension.create({
               syncWithGithub(
                 wsName,
                 abortController.signal,
-                localFileEntryManager(getDatabase(store.state)),
+                localFileEntryManager(),
               )(store.state, store.dispatch, store);
 
               return true;

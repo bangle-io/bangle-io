@@ -18,7 +18,6 @@ import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
-import { getDatabase } from '../helpers';
 import { isCurrentWorkspaceGithubStored } from '../operations';
 
 const LOG = false;
@@ -65,7 +64,7 @@ function ModifiedEntries({
 
   useEffect(() => {
     let destroyed = false;
-    localFileEntryManager(getDatabase(store.state))
+    localFileEntryManager()
       .getAllEntries(wsName + ':')
       .then((r) => {
         if (!destroyed) {

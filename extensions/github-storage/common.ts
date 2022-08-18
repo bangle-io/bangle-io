@@ -38,17 +38,3 @@ export const ghSliceKey = new SliceKey<
 >('slice::@bangle.io/github-storage:slice-key');
 
 export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';
-
-export interface GithubDBSchema {
-  localEntries: {
-    key: string;
-  };
-}
-// Make sure tables match with the schema
-const tableNames = ['localEntries' as const];
-
-export const databaseConfig = {
-  tableNames: tableNames,
-  version: 4,
-  schema: {} as any as GithubDBSchema,
-};
