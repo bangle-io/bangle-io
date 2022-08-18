@@ -6,6 +6,7 @@
     "config",
     "constants",
     "contextual-ui-components",
+    "db-app",
     "e2e-types",
     "editor",
     "extension-registry",

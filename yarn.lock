@@ -2437,6 +2437,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/db-app@workspace:*, @bangle.io/db-app@workspace:lib/db-app":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/db-app@workspace:lib/db-app"
+  dependencies:
+    "@bangle.io/db-key-val": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    idb: ^7.0.2
+    tslib: ^2.4.0
+    typescript: ^4.7.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/db-key-val@workspace:*, @bangle.io/db-key-val@workspace:js-lib/db-key-val":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/db-key-val@workspace:js-lib/db-key-val"
+  dependencies:
+    idb: ^7.0.2
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/deep-map@workspace:*, @bangle.io/deep-map@workspace:js-lib/deep-map":
   version: 0.0.0-use.local
   resolution: "@bangle.io/deep-map@workspace:js-lib/deep-map"
@@ -3319,10 +3341,10 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/db-app": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-db": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"

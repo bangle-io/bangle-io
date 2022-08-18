@@ -161,6 +161,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/create-store"\
       },\
       {\
+        "name": "@bangle.io/db-key-val",\
+        "reference": "workspace:js-lib/db-key-val"\
+      },\
+      {\
         "name": "@bangle.io/deep-map",\
         "reference": "workspace:js-lib/deep-map"\
       },\
@@ -231,6 +235,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@bangle.io/contextual-ui-components",\
         "reference": "workspace:lib/contextual-ui-components"\
+      },\
+      {\
+        "name": "@bangle.io/db-app",\
+        "reference": "workspace:lib/db-app"\
       },\
       {\
         "name": "@bangle.io/e2e-types",\
@@ -365,6 +373,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/core-extension", ["workspace:extensions/core-extension"]],\
       ["@bangle.io/core-palettes", ["virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes", "workspace:extensions/core-palettes"]],\
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],\
+      ["@bangle.io/db-app", ["workspace:lib/db-app"]],\
+      ["@bangle.io/db-key-val", ["workspace:js-lib/db-key-val"]],\
       ["@bangle.io/deep-map", ["workspace:js-lib/deep-map"]],\
       ["@bangle.io/e2e-types", ["workspace:lib/e2e-types"]],\
       ["@bangle.io/editor", ["virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor", "workspace:lib/editor"]],\
@@ -4994,6 +5004,32 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/db-app", [\
+        ["workspace:lib/db-app", {\
+          "packageLocation": "./lib/db-app/",\
+          "packageDependencies": [\
+            ["@bangle.io/db-app", "workspace:lib/db-app"],\
+            ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["idb", "npm:7.0.2"],\
+            ["tslib", "npm:2.4.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/db-key-val", [\
+        ["workspace:js-lib/db-key-val", {\
+          "packageLocation": "./js-lib/db-key-val/",\
+          "packageDependencies": [\
+            ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
+            ["idb", "npm:7.0.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/deep-map", [\
         ["workspace:js-lib/deep-map", {\
           "packageLocation": "./js-lib/deep-map/",\
@@ -6052,10 +6088,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/db-app", "workspace:lib/db-app"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/slice-db", "workspace:lib/slice-db"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
