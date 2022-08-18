@@ -1,5 +1,6 @@
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 
+export * as database from './database';
 export * as editor from './editor';
 export * as notification from './notification';
 export * as page from './page';

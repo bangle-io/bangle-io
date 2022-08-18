@@ -8,7 +8,7 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 ### Prerequisites
 
-- [Nodejs](https://nodejs.org/en/download/) > 16.0
+- [Nodejs](https://nodejs.org/en/download/) > 18.0
 
 - [Yarn](https://yarnpkg.com/) v3
 

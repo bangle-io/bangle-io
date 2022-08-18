@@ -77,7 +77,7 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
 
   const dispatchSpy = jest.spyOn(store, 'dispatch');
 
-  signal?.addEventListener(
+  signal.addEventListener(
     'abort',
     () => {
       store.destroy();

@@ -39,40 +39,6 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
   await idb.set('workspaces/2', [...existing, wsInfo]);
 };
 
-export const beforeEachHook = () => {
-  interface MockFile {
-    parts: Array<string | Blob | ArrayBuffer | ArrayBufferView>;
-    filename: string;
-    properties: FilePropertyBag;
-  }
-
-  // Global file mock
-  (global as any).File = class File implements MockFile {
-    constructor(
-      public parts: MockFile['parts'],
-      public filename: MockFile['filename'],
-      public properties: MockFile['properties'],
-    ) {
-      if (typeof this.parts[0] === 'string') {
-        this.parts[0] = new Blob(this.parts, this.properties);
-      }
-      this.filename = filename;
-      this.properties = properties;
-      this.parts = parts;
-    }
-
-    async arrayBuffer() {
-      return (this.parts[0] as any).arrayBuffer();
-    }
-
-    async text() {
-      if (typeof this.parts[0] === 'string') {
-        return this.parts[0];
-      }
-
-      return (this.parts[0] as any).text();
-    }
-  };
-};
+export const beforeEachHook = () => {};
 
 export const afterEachHook = () => {};
