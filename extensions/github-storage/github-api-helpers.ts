@@ -704,10 +704,13 @@ export async function createRepo({
   });
 
   if (!res.ok) {
+    let message = await res
+      .json()
+      .then((data) => data.message || data.errors?.[0]?.message)
+      .catch(() => 'Unknown error');
+
     throw new BaseError({
-      message: await res
-        .json()
-        .then((data) => data.message || data.errors?.[0]?.message),
+      message: message,
       code: GITHUB_API_ERROR,
     });
   }

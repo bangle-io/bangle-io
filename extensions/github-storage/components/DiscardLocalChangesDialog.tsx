@@ -5,6 +5,7 @@ import { Dialog } from '@bangle.io/ui-components';
 
 import { DISCARD_LOCAL_CHANGES_DIALOG } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
+import { getDatabase } from '../helpers';
 import {
   discardLocalChanges,
   isCurrentWorkspaceGithubStored,
@@ -71,11 +72,10 @@ export function DiscardLocalChangesDialog() {
           }
           if (wsName) {
             updateIsProcessing(true);
-            await discardLocalChanges(wsName, localFileEntryManager)(
-              bangleStore.state,
-              bangleStore.dispatch,
-              bangleStore,
-            );
+            await discardLocalChanges(
+              wsName,
+              localFileEntryManager(getDatabase(bangleStore.state)),
+            )(bangleStore.state, bangleStore.dispatch, bangleStore);
             window.location.reload();
 
             // if we reach here ask user to reload manually

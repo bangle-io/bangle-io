@@ -1,5 +1,7 @@
 import { SliceKey } from '@bangle.io/api';
 
+export const EXTENSION_NAME = '@bangle.io/github-storage';
+
 export const GITHUB_STORAGE_PROVIDER_NAME = 'github-storage';
 export const OPERATION_NEW_GITHUB_WORKSPACE =
   'operation::@bangle.io/github-storage:new-workspace';
@@ -36,3 +38,17 @@ export const ghSliceKey = new SliceKey<
 >('slice::@bangle.io/github-storage:slice-key');
 
 export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';
+
+export interface GithubDBSchema {
+  localEntries: {
+    key: string;
+  };
+}
+// Make sure tables match with the schema
+const tableNames = ['localEntries' as const];
+
+export const databaseConfig = {
+  tableNames: tableNames,
+  version: 4,
+  schema: {} as any as GithubDBSchema,
+};

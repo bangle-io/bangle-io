@@ -10,6 +10,7 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import type { GithubWsMetadata } from '../helpers';
+import { getDatabase } from '../helpers';
 import GithubStorageExt from '../index';
 import { pushLocalChanges } from '../sync-with-github';
 
@@ -100,10 +101,9 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (await localFileEntryManager.getAllEntries('')).map((entry) => [
-      entry.uid,
-      entry,
-    ]),
+    (
+      await localFileEntryManager(getDatabase(store.state)).getAllEntries('')
+    ).map((entry) => [entry.uid, entry]),
   );
 };
 
@@ -153,7 +153,7 @@ const getRemoteFileEntries = async () => {
 const push = async (retainedWsPaths = new Set<string>()) => {
   return pushLocalChanges({
     abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager,
+    fileEntryManager: localFileEntryManager(getDatabase(store.state)),
     ghConfig: githubWsMetadata,
     retainedWsPaths,
     tree: await getTree({
@@ -546,9 +546,12 @@ describe('house keeping', () => {
     expect(sha).toBe(sourceSha);
 
     // // corrupt the source
-    await localFileEntryManager.updateFileSource(
+    await localFileEntryManager(getDatabase(store.state)).updateFileSource(
       test1WsPath,
-      new Blob(['hi'], { type: 'text/plain' }) as any,
+      new File(
+        [new Blob(['hi'], { type: 'text/plain' })],
+        'test-1-corrupted.md',
+      ),
     );
 
     localEntries = await getLocalFileEntries();

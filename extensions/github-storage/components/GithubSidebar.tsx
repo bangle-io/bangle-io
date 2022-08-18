@@ -18,6 +18,7 @@ import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
+import { getDatabase } from '../helpers';
 import { isCurrentWorkspaceGithubStored } from '../operations';
 
 const LOG = false;
@@ -64,21 +65,23 @@ function ModifiedEntries({
 
   useEffect(() => {
     let destroyed = false;
-    localFileEntryManager.getAllEntries(wsName + ':').then((r) => {
-      if (!destroyed) {
-        const result = r.filter((e) => !e.isUntouched);
-        updateModifiedEntries((prevEntries) => {
-          const newWsPaths = result.map((e) => e.uid);
-          const oldWsPaths = prevEntries?.map((e) => e.uid) || [];
+    localFileEntryManager(getDatabase(store.state))
+      .getAllEntries(wsName + ':')
+      .then((r) => {
+        if (!destroyed) {
+          const result = r.filter((e) => !e.isUntouched);
+          updateModifiedEntries((prevEntries) => {
+            const newWsPaths = result.map((e) => e.uid);
+            const oldWsPaths = prevEntries?.map((e) => e.uid) || [];
 
-          if (!shallowCompareArray(newWsPaths, oldWsPaths)) {
-            return result;
-          }
+            if (!shallowCompareArray(newWsPaths, oldWsPaths)) {
+              return result;
+            }
 
-          return prevEntries;
-        });
-      }
-    });
+            return prevEntries;
+          });
+        }
+      });
 
     return () => {
       destroyed = true;
