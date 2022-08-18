@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import {

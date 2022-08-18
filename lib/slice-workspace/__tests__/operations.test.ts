@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
