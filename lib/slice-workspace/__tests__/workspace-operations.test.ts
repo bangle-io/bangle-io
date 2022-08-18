@@ -3,9 +3,10 @@ import {
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
+import { getWorkspaceInfoTable } from '@bangle.io/slice-db';
 import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
-import { createBasicTestStore, fakeIdb } from '@bangle.io/test-utils';
+import { createBasicTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo, workspaceSliceKey } from '../common';
@@ -234,7 +235,7 @@ describe('deleteWorkspace', () => {
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
-    expect(await fakeIdb.get(WORKSPACE_KEY)).toEqual([
+    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY)).toEqual([
       {
         deleted: true,
         lastModified: expect.any(Number),

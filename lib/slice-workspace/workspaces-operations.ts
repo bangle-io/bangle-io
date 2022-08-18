@@ -40,6 +40,10 @@ export function listWorkspaces() {
         store.state,
       );
 
+      if (store.destroyed) {
+        return [];
+      }
+
       assertNotUndefined(workspacesInfo, 'workspacesInfo cannot be undefined');
 
       // only return the not deleted ones

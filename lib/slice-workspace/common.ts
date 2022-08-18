@@ -21,6 +21,7 @@ let cachedHelpFs: WorkspaceInfo | undefined = undefined;
 export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
   if (!cachedHelpFs) {
     cachedHelpFs = {
+      deleted: false,
       metadata: {
         allowLocalChanges: true,
       },

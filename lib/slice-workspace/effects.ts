@@ -184,7 +184,6 @@ export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
 
       abort.abort();
       abort = new AbortController();
-
       const items = await storageProvider.listAllFiles(
         abort.signal,
         wsName,
@@ -328,9 +327,10 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
 
 export const refreshWorkspacesEffect = workspaceSliceKey.effect(() => {
   return {
-    deferredOnce(store) {
+    deferredOnce(store, abortSignal) {
       listWorkspaces()(store.state, store.dispatch, store);
     },
+
     update(store, __, sliceState, prevSliceState) {
       if (sliceHasError()(store.state)) {
         return;
