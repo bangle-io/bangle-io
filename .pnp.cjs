@@ -4653,7 +4653,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],\
             ["cross-fetch", "npm:3.1.5"],\
-            ["idb-keyval", "npm:5.1.5"],\
+            ["idb", "npm:7.0.2"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
           ],\
@@ -6261,7 +6261,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
             ["tslib", "npm:2.4.0"],\
             ["type-fest", "npm:2.12.0"],\
-            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"],\
+            ["wait-for-expect", "npm:3.0.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
