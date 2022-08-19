@@ -55,7 +55,16 @@ globalThis.File = class File {
 };
 
 require('cross-fetch/polyfill');
-require('@bangle.io/fake-idb/auto-mock');
+require('fake-indexeddb/auto');
+
+const { IDBFactory } = require('fake-indexeddb');
+
+globalThis.indexedDB = new IDBFactory();
+
+beforeEach(() => {
+  // clear idb before every test
+  globalThis.indexedDB = new IDBFactory();
+});
 
 const { fakeIdb, clearFakeIdb } = require('@bangle.io/test-utils/fake-idb');
 const idbHelpers = require('@bangle.io/test-utils/indexedb-ws-helpers');

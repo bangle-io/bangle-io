@@ -7,8 +7,6 @@
     "base-error",
     "create-store",
     "db-key-val",
-    "deep-map",
-    "fake-idb",
     "fzf-search",
     "history",
     "inline-palette",

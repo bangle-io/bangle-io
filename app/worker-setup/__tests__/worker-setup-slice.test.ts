@@ -259,8 +259,6 @@ test('sends slice-page action correctly', async () => {
 
   await blockReload(true)(store.state, store.dispatch);
 
-  // await sleep();
-
   expect(dispatchSpy).lastCalledWith({
     fromStore: 'test-store',
     id: expect.any(String),

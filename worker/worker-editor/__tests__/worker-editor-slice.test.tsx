@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { CollabManager } from '@bangle.dev/collab-manager';

@@ -149,6 +149,7 @@ describe('effects', () => {
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
       ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
 
+      await sleep(30);
       typeText(PRIMARY_EDITOR_INDEX, 'bye ');
 
       await waitFor(() => {

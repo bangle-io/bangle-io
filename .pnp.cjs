@@ -165,14 +165,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/db-key-val"\
       },\
       {\
-        "name": "@bangle.io/deep-map",\
-        "reference": "workspace:js-lib/deep-map"\
-      },\
-      {\
-        "name": "@bangle.io/fake-idb",\
-        "reference": "workspace:js-lib/fake-idb"\
-      },\
-      {\
         "name": "@bangle.io/fzf-search",\
         "reference": "workspace:js-lib/fzf-search"\
       },\
@@ -375,7 +367,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],\
       ["@bangle.io/db-app", ["workspace:lib/db-app"]],\
       ["@bangle.io/db-key-val", ["workspace:js-lib/db-key-val"]],\
-      ["@bangle.io/deep-map", ["workspace:js-lib/deep-map"]],\
       ["@bangle.io/e2e-types", ["workspace:lib/e2e-types"]],\
       ["@bangle.io/editor", ["virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor", "workspace:lib/editor"]],\
       ["@bangle.io/editor-container", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container", "workspace:app/editor-container"]],\
@@ -383,7 +374,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/example-extension", ["workspace:extensions/example-extension"]],\
       ["@bangle.io/extension-registry", ["workspace:lib/extension-registry"]],\
       ["@bangle.io/extract-css-vars", ["workspace:tooling/extract-css-vars"]],\
-      ["@bangle.io/fake-idb", ["workspace:js-lib/fake-idb"]],\
       ["@bangle.io/fzf-search", ["virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search", "workspace:js-lib/fzf-search"]],\
       ["@bangle.io/github-storage", ["workspace:extensions/github-storage"]],\
       ["@bangle.io/history", ["workspace:js-lib/history"]],\
@@ -503,6 +493,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-sort-class-members", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.14.1"],\
             ["eslint-plugin-storybook", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.12"],\
             ["eslint-plugin-testing-library", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.5.1"],\
+            ["fake-indexeddb", "npm:4.0.0"],\
             ["file-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.2.0"],\
             ["git-revision-webpack-plugin", "npm:3.0.6"],\
             ["html-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.5.0"],\
@@ -5029,16 +5020,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
-      ["@bangle.io/deep-map", [\
-        ["workspace:js-lib/deep-map", {\
-          "packageLocation": "./js-lib/deep-map/",\
-          "packageDependencies": [\
-            ["@bangle.io/deep-map", "workspace:js-lib/deep-map"],\
-            ["is-plain-obj", "npm:4.1.0"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
       ["@bangle.io/e2e-types", [\
         ["workspace:lib/e2e-types", {\
           "packageLocation": "./lib/e2e-types/",\
@@ -5276,18 +5257,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prettier", "npm:2.6.2"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["@bangle.io/fake-idb", [\
-        ["workspace:js-lib/fake-idb", {\
-          "packageLocation": "./js-lib/fake-idb/",\
-          "packageDependencies": [\
-            ["@bangle.io/fake-idb", "workspace:js-lib/fake-idb"],\
-            ["@bangle.io/deep-map", "workspace:js-lib/deep-map"],\
-            ["fake-indexeddb", "npm:4.0.0"],\
-            ["idb", "npm:7.0.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -5813,15 +5782,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/deep-map", "workspace:js-lib/deep-map"],\
             ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],\
-            ["@bangle.io/fake-idb", "workspace:js-lib/fake-idb"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["concurrently", "npm:7.0.0"],\
             ["cross-fetch", "npm:3.1.5"],\
             ["date-fns", "npm:2.28.0"],\
             ["domexception", "npm:4.0.0"],\
+            ["fake-indexeddb", "npm:4.0.0"],\
             ["globby", "npm:11.1.0"],\
             ["idb-keyval", "npm:5.1.5"],\
             ["prettier", "npm:2.6.2"],\
@@ -6238,7 +6206,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
-            ["@bangle.io/fake-idb", "workspace:js-lib/fake-idb"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -15650,6 +15617,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-sort-class-members", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.14.1"],\
             ["eslint-plugin-storybook", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.12"],\
             ["eslint-plugin-testing-library", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.5.1"],\
+            ["fake-indexeddb", "npm:4.0.0"],\
             ["file-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.2.0"],\
             ["git-revision-webpack-plugin", "npm:3.0.6"],\
             ["html-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.5.0"],\
@@ -23375,13 +23343,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/is-plain-obj-npm-2.1.0-8dffd7ae9c-cec9100678.zip/node_modules/is-plain-obj/",\
           "packageDependencies": [\
             ["is-plain-obj", "npm:2.1.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:4.1.0", {\
-          "packageLocation": "./.yarn/cache/is-plain-obj-npm-4.1.0-a4f2a92b44-6dc45da70d.zip/node_modules/is-plain-obj/",\
-          "packageDependencies": [\
-            ["is-plain-obj", "npm:4.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\
