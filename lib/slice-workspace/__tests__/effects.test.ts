@@ -6,8 +6,8 @@ import {
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import type { ApplicationStore } from '@bangle.io/create-store';
+import { getWorkspaceInfoTable } from '@bangle.io/db-app';
 import { Extension } from '@bangle.io/extension-registry';
-import { getWorkspaceInfoTable } from '@bangle.io/slice-db';
 import {
   getPageLocation,
   pageSliceKey,
