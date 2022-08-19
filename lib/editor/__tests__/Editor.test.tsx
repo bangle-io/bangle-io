@@ -201,7 +201,7 @@ test('persists editor selection', async () => {
 });
 
 test('mounting and unmounting set state correctly in editor slice', async () => {
-  const { store: bangleStore, editorReadyActions } = await setup();
+  const { store: bangleStore } = await setup();
 
   await act(async () => {
     result = render(
@@ -283,7 +283,7 @@ test('revokes editor proxy', async () => {
 });
 
 test('changing of wsPath works', async () => {
-  const { store: bangleStore, editorReadyActions } = await setup();
+  const { store: bangleStore } = await setup();
 
   await act(async () => {
     result = render(

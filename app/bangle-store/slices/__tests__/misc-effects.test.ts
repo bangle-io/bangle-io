@@ -1,7 +1,6 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import waitForExpect from 'wait-for-expect';
 
 import {
   goToWsNameRoute,
@@ -10,6 +9,7 @@ import {
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';

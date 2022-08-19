@@ -1,8 +1,10 @@
-import waitForExpect from 'wait-for-expect';
-
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, workspace } from '@bangle.io/api';
-import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
+import {
+  createBasicTestStore,
+  createPMNode,
+  waitForExpect,
+} from '@bangle.io/test-utils';
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
