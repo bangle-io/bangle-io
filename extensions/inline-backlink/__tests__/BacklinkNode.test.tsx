@@ -1,7 +1,13 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import React from 'react';
 
 import { notification } from '@bangle.io/api';
@@ -15,6 +21,7 @@ import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
   TestStoreProvider,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
@@ -35,11 +42,12 @@ afterEach(() => {
 const setup = async ([firstNote, ...otherNotes]: Array<
   [string, string]
 > = []) => {
-  let { store, extensionRegistry } = createBasicTestStore({
-    extensions: [inlineBackLinkExtension],
-    useEditorManagerSlice: true,
-    signal,
-  });
+  let { store, extensionRegistry, editorReadyActionsCount } =
+    createBasicTestStore({
+      extensions: [inlineBackLinkExtension],
+      useEditorManagerSlice: true,
+      signal,
+    });
   const [wsPath, md] = firstNote || [];
 
   if (!wsPath || !md) {
@@ -66,6 +74,12 @@ const setup = async ([firstNote, ...otherNotes]: Array<
       />
     </TestStoreProvider>,
   );
+
+  await act(async () => {
+    await waitForExpect(async () => {
+      expect(editorReadyActionsCount()).toEqual(1);
+    });
+  });
 
   return {
     container,
@@ -127,7 +141,7 @@ describe('BacklinkNode', () => {
     const wsPath = 'test-ws:my/note-path.md';
     await setup([[wsPath, `hello world [[my/note-path|monako]]`]]);
 
-    await act(() => sleep(0));
+    await act(() => sleep(10));
 
     expect(await screen.findAllByTestId('inline-backlink-button'))
       .toMatchInlineSnapshot(`
@@ -185,12 +199,18 @@ describe('clicking node', () => {
 
   test('clicks correctly when there is a match', async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { store, container } = await setup([
       [wsPath, `hello world [[monako]]`],
       ['test-ws:monako.md', 'monako content'],
     ]);
     pushWsPath(wsPath)(store.state, store.dispatch);
+
     await act(() => sleep(0));
+
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('monako');
+    });
+
     // make sure current path is hello-world.md
     expect(
       workspaceSliceKey
@@ -210,13 +230,17 @@ describe('clicking node', () => {
 
   test('picks the least nested when there are two matches', async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { store, container } = await setup([
       [wsPath, `hello world [[note1]]`],
       ['test-ws:magic/note1.md', 'some content'],
       ['test-ws:magic/some/note1.md', 'some other content'],
     ]);
     pushWsPath(wsPath)(store.state, store.dispatch);
     await act(() => sleep(0));
+
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('note1');
+    });
 
     await clickSetup(screen.getByText(/note1/i));
     await act(() => sleep(0));
@@ -230,14 +254,16 @@ describe('clicking node', () => {
 
   test('works if there is a matching extension', async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { store, container } = await setup([
       [wsPath, `hello world [[note1.md]]`],
       ['test-ws:magic/note1.md', 'some content'],
       ['test-ws:magic/some/note1.md', 'some other content'],
     ]);
     pushWsPath(wsPath)(store.state, store.dispatch);
     await act(() => sleep(0));
-
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('note1');
+    });
     await clickSetup(screen.getByText(/note1/i));
     await act(() => sleep(0));
 
@@ -250,13 +276,17 @@ describe('clicking node', () => {
 
   test('does not work if not a matching extension', async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { store, container } = await setup([
       [wsPath, `hello world [[note1.txt]]`],
       ['test-ws:magic/note1.md', 'some content'],
       ['test-ws:magic/some/note1.md', 'some other content'],
     ]);
     pushWsPath(wsPath)(store.state, store.dispatch);
     await act(() => sleep(0));
+
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('note1');
+    });
 
     await clickSetup(screen.getByText(/note1/i));
     await act(() => sleep(0));
@@ -280,14 +310,16 @@ describe('clicking node', () => {
 
   test('fall backs to  case insensitive if no case sensitive match', async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { store, container } = await setup([
       [wsPath, `hello world [[Note1]]`],
       ['test-ws:magic/note1.md', 'some content'],
     ]);
     pushWsPath(wsPath)(store.state, store.dispatch);
 
     await act(() => sleep(0));
-
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('Note1');
+    });
     await clickSetup(screen.getByText(/Note1/i));
     await act(() => sleep(0));
 
@@ -300,7 +332,7 @@ describe('clicking node', () => {
 
   test('Gets the exact match if it exists', async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { container, store } = await setup([
       [wsPath, `hello world [[NoTe1]]`],
       ['test-ws:magic/NoTe1.md', 'content a'],
       ['test-ws:note1.md', 'content b'],
@@ -308,7 +340,9 @@ describe('clicking node', () => {
     pushWsPath(wsPath)(store.state, store.dispatch);
 
     await act(() => sleep(0));
-
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('NoTe1');
+    });
     await clickSetup(screen.getByText(/NoTe1/i));
     await act(() => sleep(0));
 
@@ -321,7 +355,7 @@ describe('clicking node', () => {
 
   test("doesn't confuse if match ends with same", async () => {
     const wsPath = 'test-ws:hello-world.md';
-    const { store } = await setup([
+    const { container, store } = await setup([
       [wsPath, `hello world [[note1]]`],
       ['test-ws:magic/some-place/hotel/something-note1.md', 'content a'],
       ['test-ws:magic/some-other/place/dig/some-else-note1.md', 'content b'],
@@ -330,6 +364,10 @@ describe('clicking node', () => {
     pushWsPath(wsPath)(store.state, store.dispatch);
 
     await act(() => sleep(0));
+    await waitFor(() => {
+      expect(container.innerHTML).toContain('note1');
+    });
+
     await clickSetup(screen.getByText(/note1/i));
     await act(() => sleep(0));
 

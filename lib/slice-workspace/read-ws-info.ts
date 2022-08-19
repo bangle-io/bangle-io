@@ -1,7 +1,7 @@
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import type { AppState } from '@bangle.io/create-store';
+import { getWorkspaceInfoTable } from '@bangle.io/db-app';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { getWorkspaceInfoTable } from '@bangle.io/slice-db';
 import { shallowEqual } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo, workspaceSliceKey } from './common';

@@ -1,13 +1,11 @@
-import waitForExpect from 'wait-for-expect';
-
 import {
   MAX_OPEN_EDITORS,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import type { ApplicationStore } from '@bangle.io/create-store';
+import { getWorkspaceInfoTable } from '@bangle.io/db-app';
 import { Extension } from '@bangle.io/extension-registry';
-import { getWorkspaceInfoTable } from '@bangle.io/slice-db';
 import {
   getPageLocation,
   pageSliceKey,
@@ -21,6 +19,7 @@ import {
   setupMockWorkspace,
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import { BaseError, createEmptyArray, sleep } from '@bangle.io/utils';
 
@@ -62,7 +61,7 @@ describe('refreshWsPathsEffect', () => {
   test('refreshes on create note', async () => {
     const storageProvider = new IndexedDbStorageProvider();
 
-    const { store, dispatchSpy } = createBasicTestStore({
+    const { store, dispatchSpy, getAction } = createBasicTestStore({
       signal,
       storageProvider: storageProvider,
     });
@@ -82,16 +81,18 @@ describe('refreshWsPathsEffect', () => {
 
     expect(getRefreshCounter()).toBe(refreshCounter + 1);
 
-    await sleep(0);
-
-    expect(dispatchSpy).lastCalledWith({
-      id: expect.any(String),
-      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
-      value: {
-        wsName: 'test-ws',
-        wsPaths: expect.arrayContaining(['test-ws:one.md', 'test-ws:two.md']),
-      },
-    });
+    await waitForExpect(() =>
+      expect(
+        getAction('action::@bangle.io/slice-workspace:update-ws-paths'),
+      ).toContainEqual({
+        id: expect.any(String),
+        name: 'action::@bangle.io/slice-workspace:update-ws-paths',
+        value: {
+          wsName: 'test-ws',
+          wsPaths: expect.arrayContaining(['test-ws:one.md', 'test-ws:two.md']),
+        },
+      }),
+    );
 
     expect(listAllFilesSpy).toBeCalledTimes(1);
     expect(
@@ -181,12 +182,11 @@ describe('refreshWorkspacesEffect', () => {
       signal: abortController.signal,
     });
 
-    await sleep(10);
-    expect(getActionNamesDispatched(dispatchSpy)).toMatchInlineSnapshot(`
-      Array [
-        "action::@bangle.io/slice-workspace:set-workspace-infos",
-      ]
-    `);
+    await waitForExpect(() =>
+      expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+        'action::@bangle.io/slice-workspace:set-workspace-infos',
+      ]),
+    );
 
     expect(await getWorkspaceInfoTable().getAll()).toEqual([[]]);
 
@@ -205,22 +205,24 @@ describe('refreshWorkspacesEffect', () => {
       },
     });
 
-    await sleep(0);
-    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY))
-      .toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "lastModified": 0,
-          "metadata": Object {
-            "rootDirHandle": Object {
-              "root": "handler",
-            },
+    await waitForExpect(async () =>
+      expect((await getWorkspaceInfoTable().get(WORKSPACE_KEY))?.length).toBe(
+        1,
+      ),
+    );
+
+    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY)).toEqual([
+      {
+        lastModified: 0,
+        metadata: {
+          rootDirHandle: {
+            root: 'handler',
           },
-          "name": "testWs",
-          "type": "nativefs",
         },
-      ]
-    `);
+        name: 'testWs',
+        type: 'nativefs',
+      },
+    ]);
 
     let wsInfo2 = createWsInfo({
       name: 'testWs',
@@ -257,9 +259,12 @@ describe('refreshWorkspacesEffect', () => {
         },
       },
     });
-    await sleep(0);
 
-    expect(await getWorkspaceInfoTable().getAll()).toEqual([[modifiedWsInfo]]);
+    await waitForExpect(async () => {
+      expect(await getWorkspaceInfoTable().getAll()).toEqual([
+        [modifiedWsInfo],
+      ]);
+    });
   });
 
   test('does not overwrite existing values', async () => {
@@ -354,10 +359,11 @@ describe('updateLocationEffect', () => {
       await workspaceSliceKey.getSliceStateAsserted(store.state).wsName,
     ).toEqual(undefined);
 
-    await sleep(0);
-    expect(await getPageLocation()(store.state)).toEqual({
-      pathname: '/ws-not-found/%2Fws%2Fhello',
-      search: '',
+    await waitForExpect(async () => {
+      expect(await getPageLocation()(store.state)).toEqual({
+        pathname: '/ws-not-found/%2Fws%2Fhello',
+        search: '',
+      });
     });
   });
 

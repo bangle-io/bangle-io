@@ -1,16 +1,17 @@
-import waitForExpect from 'wait-for-expect';
-
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { workspace, wsPathHelpers } from '@bangle.io/api';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
-import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
+import {
+  createBasicTestStore,
+  createPMNode,
+  waitForExpect,
+} from '@bangle.io/test-utils';
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import type { GithubWsMetadata } from '../helpers';
-import { getDatabase } from '../helpers';
 import GithubStorageExt from '../index';
 import { pushLocalChanges } from '../sync-with-github';
 
@@ -101,9 +102,10 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (
-      await localFileEntryManager(getDatabase(store.state)).getAllEntries('')
-    ).map((entry) => [entry.uid, entry]),
+    (await localFileEntryManager().getAllEntries('')).map((entry) => [
+      entry.uid,
+      entry,
+    ]),
   );
 };
 
@@ -153,7 +155,7 @@ const getRemoteFileEntries = async () => {
 const push = async (retainedWsPaths = new Set<string>()) => {
   return pushLocalChanges({
     abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager(getDatabase(store.state)),
+    fileEntryManager: localFileEntryManager(),
     ghConfig: githubWsMetadata,
     retainedWsPaths,
     tree: await getTree({
@@ -546,7 +548,7 @@ describe('house keeping', () => {
     expect(sha).toBe(sourceSha);
 
     // // corrupt the source
-    await localFileEntryManager(getDatabase(store.state)).updateFileSource(
+    await localFileEntryManager().updateFileSource(
       test1WsPath,
       new File(
         [new Blob(['hi'], { type: 'text/plain' })],

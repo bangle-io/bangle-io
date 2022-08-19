@@ -5,10 +5,16 @@ let original = structuredClone;
 globalThis.structuredClone = newStructuredClone;
 
 function newStructuredClone(obj, transferables) {
+  if (obj instanceof File) {
+    return new File([obj.parts[0]], obj.filename, obj.properties);
+  }
+
   let hasFile = false;
   deepMap(obj, (val) => {
     if (val instanceof File) {
       hasFile = true;
+
+      return new File([val.parts[0]], val.filename, val.properties);
     }
 
     return val;

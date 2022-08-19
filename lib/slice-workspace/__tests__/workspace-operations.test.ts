@@ -2,8 +2,8 @@ import {
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
+import { getWorkspaceInfoTable } from '@bangle.io/db-app';
 import { Extension } from '@bangle.io/extension-registry';
-import { getWorkspaceInfoTable } from '@bangle.io/slice-db';
 import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore } from '@bangle.io/test-utils';

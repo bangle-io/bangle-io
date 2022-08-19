@@ -204,7 +204,7 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
   });
 
   plop.setGenerator('lib', {
-    description: 'Create js lib package',
+    description: 'Create lib package',
     prompts: [
       {
         type: 'input',

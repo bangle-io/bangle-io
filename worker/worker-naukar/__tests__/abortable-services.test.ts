@@ -3,9 +3,11 @@
  */
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import { searchPmNode } from '@bangle.io/search-pm-node';
+import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 
 import { abortableServices } from '../abortable-services';
@@ -54,6 +56,12 @@ describe('searchWsForPmNode', () => {
       ['test-ws:my-file.md', `hello world\n wow magic link`],
     ]);
 
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state).noteWsPaths
+          ?.length,
+      ).toEqual(1),
+    );
     const controller = new AbortController();
     const result = await services.abortableSearchWsForPmNode(
       controller.signal,
@@ -105,6 +113,13 @@ describe('abortableFzfSearchNoteWsPaths', () => {
       ['test-ws:rando.md', `hello world\n wow 2 `],
     ]);
 
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state).noteWsPaths
+          ?.length,
+      ).toEqual(2),
+    );
+
     const controller = new AbortController();
     const result = await services.abortableFzfSearchNoteWsPaths(
       controller.signal,
@@ -141,6 +156,13 @@ describe('abortableBackupAllFiles', () => {
       ['test-ws:my-file.md', `hello world\n wow 1 `],
       ['test-ws:rando.md', `hello world\n wow 2 `],
     ]);
+
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state).noteWsPaths
+          ?.length,
+      ).toEqual(2),
+    );
 
     const controller = new AbortController();
     await services.abortableBackupAllFiles(controller.signal, 'test-ws');

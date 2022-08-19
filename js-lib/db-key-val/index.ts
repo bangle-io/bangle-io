@@ -1,7 +1,18 @@
 import type { IDBPDatabase } from 'idb';
 
-import type { DbRecord } from './common';
-import { makeDbRecord } from './helpers';
+export function makeDbRecord<V>(key: string, value: V): DbRecord<V> {
+  return {
+    key,
+    value,
+    lastModified: Date.now(),
+  };
+}
+
+export interface DbRecord<V> {
+  key: string; // will always be the primary key
+  value: V;
+  lastModified: number;
+}
 
 export class DBKeyVal<V> {
   constructor(

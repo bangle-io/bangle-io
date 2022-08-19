@@ -1,9 +1,8 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { act, render } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
-import waitForExpect from 'wait-for-expect';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import type { SliceSideEffect } from '@bangle.io/create-store';
@@ -16,9 +15,11 @@ import {
   setupMockMessageChannel,
   setupMockWorkspaceWithNotes,
   TestStoreProvider,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
+import type { CollabStateInfo } from '../common';
 import { writeNoteToDiskSliceKey } from '../common';
 import { cachedCalculateGitFileSha } from '../helpers';
 import { queueWrite } from '../write-note-to-disk-slice';
@@ -65,9 +66,11 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-  abortController.abort();
   cleanup();
-  await sleep(5);
+  // allow for promises to resolve before we stop the store
+  await sleep(20);
+  abortController.abort();
+  await sleep(10);
   console.warn = originalConsoleWarn;
 });
 
@@ -104,7 +107,7 @@ const setup = async ({
     [wsPath1, `# hello mars`],
   ]);
 
-  let result;
+  let result: ReturnType<typeof render>;
   act(() => {
     result = render(
       <TestStoreProvider
@@ -125,15 +128,21 @@ const setup = async ({
   await act(() => {
     return sleep(0);
   });
-  await sleep(0);
 
-  return { ...obj, wsPath1, wsName };
+  await waitFor(() => {
+    expect(result!.container.innerHTML).toContain('hello mars');
+  });
+
+  // wait for collab to be ready
+  await sleep(10);
+
+  return { ...obj, wsPath1, wsName, getContainer: () => result!.container };
 };
 
 describe('effects', () => {
   describe('writeToDiskEffect', () => {
     test('writes to disk', async () => {
-      const { store, typeText, wsPath1 } = await setup({
+      const { store, typeText, wsPath1, getContainer } = await setup({
         providedEffects: [effects.writeToDiskEffect],
       });
       expect(
@@ -142,13 +151,17 @@ describe('effects', () => {
 
       typeText(PRIMARY_EDITOR_INDEX, 'bye ');
 
-      await sleep(10);
+      await waitFor(() => {
+        expect(getContainer().innerHTML).toContain('bye hello mars');
+      });
 
-      expect(
-        (
-          await getNote(wsPath1)(store.state, store.dispatch, store)
-        )?.toString(),
-      ).toMatchInlineSnapshot(`"doc(heading(\\"bye hello mars\\"))"`);
+      await waitForExpect(async () => {
+        expect(
+          (
+            await getNote(wsPath1)(store.state, store.dispatch, store)
+          )?.toString(),
+        ).toEqual(`doc(heading("bye hello mars"))`);
+      });
 
       const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
 
@@ -161,26 +174,28 @@ describe('effects', () => {
 
       typeText(PRIMARY_EDITOR_INDEX, 'more ', 0);
 
-      await sleep(10);
+      await waitForExpect(() =>
+        expect(
+          getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
+        ).toEqual(`<p>more </p><h1>bye hello mars</h1>`),
+      );
 
-      expect(
-        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-      ).toMatchInlineSnapshot(`"<p>more </p><h1>bye hello mars</h1>"`);
-
-      expect(getOpenedDocInfo()(store.state)[wsPath1]).toEqual({
-        currentDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
-        lastKnownDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
-        pendingWrite: false,
-        wsPath: wsPath1,
-      });
+      await waitForExpect(() =>
+        expect(getOpenedDocInfo()(store.state)[wsPath1]).toEqual({
+          currentDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
+          lastKnownDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
+          pendingWrite: false,
+          wsPath: wsPath1,
+        }),
+      );
     });
 
     test('updates the queue while another item is being processed', async () => {
-      let resolveArray: Array<(v: string) => void> = [];
+      let resolveGitSha: Array<(v: string) => void> = [];
 
       cachedCalculateGitFileShaSpy.mockImplementation(() => {
         return new Promise((res, rej) => {
-          resolveArray.push(res);
+          resolveGitSha.push(res);
         });
       });
 
@@ -188,6 +203,25 @@ describe('effects', () => {
       expect(
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
       ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
+
+      const getWriteQueue = () => {
+        return writeNoteToDiskSliceKey.getSliceStateAsserted(store.state)
+          .writeQueue;
+      };
+
+      // there is difficult testing asserting on `doc` due to circular refs
+      const compareQueueItem = (
+        item1?: CollabStateInfo,
+        item2?: CollabStateInfo,
+      ) => {
+        expect(item1 !== undefined).toBe(true);
+        expect(item2 !== undefined).toBe(true);
+        expect(item1?.wsPath).toEqual(item2?.wsPath);
+        expect(item1?.collabState === item2?.collabState).toBe(true);
+      };
+
+      // wait for collab to initialize
+      await sleep(10);
 
       typeText(PRIMARY_EDITOR_INDEX, 'bye ');
       await sleep(0);
@@ -219,9 +253,11 @@ describe('effects', () => {
       await sleep(0);
 
       // item waits in the queue
-      expect(
-        writeNoteToDiskSliceKey.getSliceStateAsserted(store.state).writeQueue,
-      ).toEqual([item1, item2]);
+      expect(getWriteQueue().length).toBe(2);
+
+      expect(getWriteQueue()[0]?.wsPath).toBe(item1.wsPath);
+      compareQueueItem(getWriteQueue()[0], item1);
+      compareQueueItem(getWriteQueue()[1], item2);
 
       // modifying the document should update the item in queue
       const item1Modified = {
@@ -235,9 +271,9 @@ describe('effects', () => {
 
       queueWrite(item1Modified)(store.state, store.dispatch);
 
-      expect(
-        writeNoteToDiskSliceKey.getSliceStateAsserted(store.state).writeQueue,
-      ).toEqual([item1Modified, item2]);
+      // there is difficult testing asserting on `doc` due to circular refs
+      compareQueueItem(getWriteQueue()[0], item1Modified);
+      compareQueueItem(getWriteQueue()[1], item2);
 
       const item2Modified = {
         wsPath: `${wsName}:some-other-1.md`,
@@ -250,26 +286,21 @@ describe('effects', () => {
 
       queueWrite(item2Modified)(store.state, store.dispatch);
 
-      expect(
-        writeNoteToDiskSliceKey.getSliceStateAsserted(store.state).writeQueue,
-      ).toEqual([item1Modified, item2Modified]);
+      expect(getWriteQueue().length).toBe(2);
+      compareQueueItem(getWriteQueue()[0], item1Modified);
+      compareQueueItem(getWriteQueue()[1], item2Modified);
 
       // start resolving promises
-      resolveArray.forEach((resolve) => resolve('some-sha'));
+      resolveGitSha.forEach((resolve) => resolve('some-sha'));
 
-      await sleep(0);
+      await waitForExpect(() => expect(getWriteQueue().length).toBe(1));
 
-      expect(
-        writeNoteToDiskSliceKey.getSliceStateAsserted(store.state).writeQueue,
-      ).toEqual([item2Modified]);
+      expect(getWriteQueue().length).toBe(1);
+      compareQueueItem(getWriteQueue()[0], item2Modified);
 
-      resolveArray.forEach((resolve) => resolve('some-sha'));
+      resolveGitSha.forEach((resolve) => resolve('some-sha'));
 
-      await sleep(0);
-
-      expect(
-        writeNoteToDiskSliceKey.getSliceStateAsserted(store.state).writeQueue,
-      ).toEqual([]);
+      await waitForExpect(() => expect(getWriteQueue().length).toBe(0));
 
       // writes correctly
       expect(
@@ -332,11 +363,13 @@ describe('effects', () => {
 
       await sleep(10);
 
-      const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
-
       const originalSha = 'cc1f078bfb2a1127991cd52a77708dfd860ba586';
 
-      expect(docInfo?.currentDiskSha).toEqual(originalSha);
+      await waitForExpect(() => {
+        const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
+        expect(docInfo?.currentDiskSha).toEqual(originalSha);
+      });
+      const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
       expect(docInfo?.lastKnownDiskSha).toEqual(originalSha);
 
       // write a new note to make the current doc in memory stale
@@ -346,14 +379,15 @@ describe('effects', () => {
         store,
       );
 
-      await sleep(5);
+      await waitForExpect(() => {
+        // shas should go out of sync
+        const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
+        expect(newDocInfo?.currentDiskSha).toEqual(
+          'e3c742401a3b742c7849106b83f72f0063581c4f',
+        );
+      });
 
-      // shas should go out of sync
       const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
-
-      expect(newDocInfo?.currentDiskSha).toEqual(
-        'e3c742401a3b742c7849106b83f72f0063581c4f',
-      );
       expect(newDocInfo?.lastKnownDiskSha).toEqual(originalSha);
     });
   });
@@ -369,12 +403,13 @@ describe('effects', () => {
 
       await sleep(10);
 
-      const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
-
       const originalSha = 'cc1f078bfb2a1127991cd52a77708dfd860ba586';
 
-      expect(docInfo?.currentDiskSha).toEqual(originalSha);
-      expect(docInfo?.lastKnownDiskSha).toEqual(originalSha);
+      await waitForExpect(() => {
+        const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
+
+        expect(docInfo?.currentDiskSha).toEqual(originalSha);
+      });
 
       expect(
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
@@ -389,8 +424,13 @@ describe('effects', () => {
 
       await sleep(10);
 
-      const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
+      await waitForExpect(() =>
+        expect(
+          getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
+        ).toBe(`<p>overwrite</p>`),
+      );
 
+      const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
       // shas should be the same as we have loaded the file
       // that we just wrote on disk.
       expect(newDocInfo?.currentDiskSha).toEqual(
@@ -399,10 +439,6 @@ describe('effects', () => {
       expect(newDocInfo?.lastKnownDiskSha).toEqual(
         '50755dab75e4b9ac0f74fc5707827ec14ebfe6c0',
       );
-
-      expect(
-        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-      ).toMatchInlineSnapshot(`"<p>overwrite</p>"`);
     });
   });
 
@@ -414,20 +450,20 @@ describe('effects', () => {
 
     typeText(PRIMARY_EDITOR_INDEX, 'hello');
 
-    await sleep(10);
-
-    // first block and then unblock
-    expect(
-      getAction('action::@bangle.io/slice-page:BLOCK_RELOAD').map(
-        (r) => r.value,
-      ),
-    ).toEqual([
-      {
-        block: true,
-      },
-      {
-        block: false,
-      },
-    ]);
+    await waitForExpect(() => {
+      // first block and then unblock
+      expect(
+        getAction('action::@bangle.io/slice-page:BLOCK_RELOAD').map(
+          (r) => r.value,
+        ),
+      ).toEqual([
+        {
+          block: true,
+        },
+        {
+          block: false,
+        },
+      ]);
+    });
   });
 });

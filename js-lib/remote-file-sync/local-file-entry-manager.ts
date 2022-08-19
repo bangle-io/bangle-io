@@ -12,9 +12,9 @@ const DELETE_TOLERANCE = 2000;
 export class LocalFileEntryManager {
   constructor(
     private _persistenceProvider: {
-      get: (key: string) => Promise<any | undefined>;
-      set: (key: string, obj: any) => Promise<void>;
-      getValues: (keyPrefix: string) => Promise<any[]>;
+      get: (key: string) => Promise<PlainObjEntry | undefined>;
+      set: (key: string, obj: PlainObjEntry) => Promise<void>;
+      getValues: (keyPrefix: string) => Promise<PlainObjEntry[]>;
       delete: (key: string) => Promise<void>;
     },
   ) {}
@@ -195,10 +195,18 @@ export class LocalFileEntryManager {
   }
 }
 
-interface SourceType {
+export interface SourceType {
   file: File;
   sha: string;
 }
+
+export type PlainObjEntry = {
+  uid: string;
+  sha: string;
+  file: File;
+  deleted: number | undefined;
+  source: SourceType | undefined;
+};
 
 export class BaseFileEntry {
   static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
@@ -227,14 +235,13 @@ export class BaseFileEntry {
     this.deleted = deleted;
   }
 
-  toPlainObj(): {
-    [k in keyof ConstructorParameters<typeof BaseFileEntry>[0]]: any;
-  } {
+  toPlainObj(): PlainObjEntry {
     return {
       uid: this.uid,
       sha: this.sha,
       file: this.file,
       deleted: this.deleted,
+      source: undefined,
     };
   }
 }
@@ -314,9 +321,7 @@ export class LocalFileEntry extends BaseFileEntry {
     });
   }
 
-  toPlainObj(): {
-    [k in keyof ConstructorParameters<typeof LocalFileEntry>[0]]: any;
-  } {
+  toPlainObj(): PlainObjEntry {
     return {
       uid: this.uid,
       sha: this.sha,

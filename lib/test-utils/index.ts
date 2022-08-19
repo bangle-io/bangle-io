@@ -1,3 +1,7 @@
+import waitForExpect from 'wait-for-expect';
+
+waitForExpect.defaults.timeout = 600;
+waitForExpect.defaults.interval = 30;
 export * from './action-serializers';
 export * from './create-basic-test-store';
 export * from './create-editor-view';
@@ -11,3 +15,4 @@ export * as idbHelpers from './indexedb-ws-helpers';
 export * from './setup-mock-message-channel';
 export * from './test-memory-history-slice';
 export { TestStoreProvider } from './TestStoreProvider';
+export { waitForExpect };

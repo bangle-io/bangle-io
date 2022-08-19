@@ -4,7 +4,6 @@ import { abortableSetInterval } from '@bangle.io/utils';
 import { ghSliceKey } from './common';
 import { handleError } from './error-handling';
 import { localFileEntryManager } from './file-entry-manager';
-import { getDatabase } from './helpers';
 import { syncWithGithub } from './operations';
 
 const LOG = true;
@@ -54,7 +53,7 @@ export function githubStorageSlice() {
                 syncWithGithub(
                   wsName,
                   new AbortController().signal,
-                  localFileEntryManager(getDatabase(store.state)),
+                  localFileEntryManager(),
                   false,
                 )(store.state, store.dispatch, store);
               }
@@ -80,7 +79,7 @@ export function githubStorageSlice() {
               syncWithGithub(
                 wsName,
                 new AbortController().signal,
-                localFileEntryManager(getDatabase(store.state)),
+                localFileEntryManager(),
                 false,
               )(store.state, store.dispatch, store);
             }
