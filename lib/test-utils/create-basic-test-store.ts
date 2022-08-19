@@ -21,6 +21,7 @@ import {
   createWorkspace,
   listWorkspaces,
   workspaceSlice,
+  workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
@@ -124,6 +125,10 @@ export function createBasicTestStore<
     dispatchSpy,
     getActionNames,
     getAction,
+    editorReadyActionsCount: () => {
+      return getAction('action::@bangle.io/slice-editor-manager:set-editor')
+        .length;
+    },
   };
 }
 
@@ -165,6 +170,28 @@ export async function setupMockWorkspaceWithNotes(
     store.destroy();
   }
 
+  const waitForNotesToLoad = async (targetLength: number) => {
+    let counter = 0;
+
+    while (counter++ < 5) {
+      await sleep(10);
+
+      const notesLoaded =
+        workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length ===
+        targetLength;
+
+      if (notesLoaded) {
+        break;
+      }
+
+      if (counter === 4) {
+        throw new Error('Test setup error: Workspace not loaded');
+      }
+    }
+  };
+
+  await waitForNotesToLoad(noteWsPaths.length);
+
   return {
     wsName,
     noteWsPaths,
@@ -175,6 +202,10 @@ export async function setupMockWorkspaceWithNotes(
         open,
         doc: createPMNode([], str.trim()),
       })(store.state, store.dispatch, store);
+
+      let set = new Set(noteWsPaths.map((r) => r[0]));
+      set.add(wsPath);
+      await waitForNotesToLoad(set.size);
     },
   };
 }
