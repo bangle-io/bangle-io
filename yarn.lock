@@ -2200,7 +2200,6 @@ __metadata:
     page-lifecycle: ^0.1.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -2677,7 +2676,6 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -3365,7 +3363,6 @@ __metadata:
     tslib: ^2.4.0
     type-fest: ^2.12.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -3666,7 +3663,6 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -3715,7 +3711,6 @@ __metadata:
     "@zip.js/zip.js": ^2.4.5
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
