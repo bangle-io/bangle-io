@@ -1,9 +1,9 @@
 import * as idb from 'idb';
 
+import { DBKeyVal } from '@bangle.io/db-key-val';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
 import type { ExtensionDB } from './common';
-import { DBKeyVal } from './db-key-val';
 
 export function setupExtensionDbs(extensionRegistry: ExtensionRegistry) {
   const databases: { [k: string]: ExtensionDB } = {};

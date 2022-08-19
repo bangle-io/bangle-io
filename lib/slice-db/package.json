@@ -22,6 +22,7 @@
   "publishConfig": {},
   "dependencies": {
     "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/db-key-val": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
