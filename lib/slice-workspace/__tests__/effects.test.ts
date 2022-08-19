@@ -188,7 +188,9 @@ describe('refreshWorkspacesEffect', () => {
       ]),
     );
 
-    expect(await getWorkspaceInfoTable().getAll()).toEqual([[]]);
+    await waitForExpect(async () =>
+      expect(await getWorkspaceInfoTable().getAll()).toEqual([[]]),
+    );
 
     const testWsInfo = createWsInfo({
       name: 'testWs',
