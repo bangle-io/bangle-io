@@ -19,8 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
-    "@bangle.io/test-utils": "workspace:*",
-    "wait-for-expect": "^3.0.2"
+    "@bangle.io/test-utils": "workspace:*"
   },
   "dependencies": {
     "@bangle.dev/pm": "0.31.1",
