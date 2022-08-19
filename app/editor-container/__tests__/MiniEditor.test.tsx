@@ -1,16 +1,14 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
   TestStoreProvider,
 } from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { MiniEditor } from '../MiniEditor';
@@ -27,6 +25,8 @@ afterEach(() => {
   abortController.abort();
 });
 
+const DOC_CONTENT = `hello mars`;
+
 describe('MiniEditor', () => {
   const setup = async () => {
     let { store, getActionNames } = createBasicTestStore({
@@ -40,9 +40,7 @@ describe('MiniEditor', () => {
 
     const { wsName } = resolvePath(wsPath);
 
-    await setupMockWorkspaceWithNotes(store, wsName, [
-      [wsPath, `# hello mars`],
-    ]);
+    await setupMockWorkspaceWithNotes(store, wsName, [[wsPath, DOC_CONTENT]]);
 
     const { container, getByLabelText } = render(
       <div>
@@ -56,8 +54,8 @@ describe('MiniEditor', () => {
       </div>,
     );
 
-    await act(async () => {
-      await sleep(0);
+    await waitFor(() => {
+      expect(container.innerHTML).toContain(DOC_CONTENT);
     });
 
     return { container, getByLabelText, getActionNames };

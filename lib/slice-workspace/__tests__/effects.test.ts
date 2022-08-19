@@ -205,22 +205,24 @@ describe('refreshWorkspacesEffect', () => {
       },
     });
 
-    await sleep(0);
-    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY))
-      .toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "lastModified": 0,
-          "metadata": Object {
-            "rootDirHandle": Object {
-              "root": "handler",
-            },
+    await waitForExpect(async () =>
+      expect((await getWorkspaceInfoTable().get(WORKSPACE_KEY))?.length).toBe(
+        1,
+      ),
+    );
+
+    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY)).toEqual([
+      {
+        lastModified: 0,
+        metadata: {
+          rootDirHandle: {
+            root: 'handler',
           },
-          "name": "testWs",
-          "type": "nativefs",
         },
-      ]
-    `);
+        name: 'testWs',
+        type: 'nativefs',
+      },
+    ]);
 
     let wsInfo2 = createWsInfo({
       name: 'testWs',
@@ -257,9 +259,12 @@ describe('refreshWorkspacesEffect', () => {
         },
       },
     });
-    await sleep(0);
 
-    expect(await getWorkspaceInfoTable().getAll()).toEqual([[modifiedWsInfo]]);
+    await waitForExpect(async () => {
+      expect(await getWorkspaceInfoTable().getAll()).toEqual([
+        [modifiedWsInfo],
+      ]);
+    });
   });
 
   test('does not overwrite existing values', async () => {

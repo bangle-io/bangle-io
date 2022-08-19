@@ -59,13 +59,13 @@ const setup = async () => {
   });
   await setupMockWorkspaceWithNotes(store, wsName, noteWsPaths);
 
-  return store;
+  return { store };
 };
 
 test('basic renders', async () => {
-  const bangleStore = await setup();
+  const { store: bangleStore } = await setup();
 
-  act(() => {
+  await act(async () => {
     result = render(
       <TestStoreProvider
         editorManagerContextProvider
@@ -80,6 +80,10 @@ test('basic renders', async () => {
         />
       </TestStoreProvider>,
     );
+  });
+
+  await waitFor(() => {
+    expect(result!.container.innerHTML).toContain(ONE_DOC_CONTENT);
   });
 
   await waitFor(() => {
@@ -102,9 +106,9 @@ test('persists editor selection', async () => {
     return view.state.selection.toJSON();
   };
 
-  const bangleStore = await setup();
+  const { store: bangleStore } = await setup();
 
-  act(() => {
+  await act(async () => {
     result = render(
       <TestStoreProvider
         editorManagerContextProvider
@@ -159,6 +163,7 @@ test('persists editor selection', async () => {
       </TestStoreProvider>,
     );
   });
+
   await waitFor(() => {
     expect(result!.container.innerHTML).toContain(TWO_DOC_CONTENT);
   });
@@ -196,9 +201,9 @@ test('persists editor selection', async () => {
 });
 
 test('mounting and unmounting set state correctly in editor slice', async () => {
-  const bangleStore = await setup();
+  const { store: bangleStore, editorReadyActions } = await setup();
 
-  act(() => {
+  await act(async () => {
     result = render(
       <TestStoreProvider
         editorManagerContextProvider
@@ -215,6 +220,9 @@ test('mounting and unmounting set state correctly in editor slice', async () => 
     );
   });
 
+  await waitFor(() => {
+    expect(result!.container.innerHTML).toContain(ONE_DOC_CONTENT);
+  });
   await waitFor(() => {
     expect(result.container.innerHTML).toContain('class="test-class');
   });
@@ -229,16 +237,14 @@ test('mounting and unmounting set state correctly in editor slice', async () => 
 });
 
 test('revokes editor proxy', async () => {
-  const bangleStore = await setup();
-
-  jest.useFakeTimers();
+  const { store: bangleStore } = await setup();
 
   let revokeSpy = jest.fn();
   let spy = jest
     .spyOn(global.Proxy, 'revocable')
     .mockImplementation((r) => ({ proxy: r, revoke: revokeSpy }));
 
-  act(() => {
+  await act(async () => {
     result = render(
       <TestStoreProvider
         editorManagerContextProvider
@@ -256,8 +262,14 @@ test('revokes editor proxy', async () => {
   });
 
   await waitFor(() => {
+    expect(result!.container.innerHTML).toContain(ONE_DOC_CONTENT);
+  });
+
+  await waitFor(() => {
     expect(result.container.innerHTML).toContain('class="test-class');
   });
+
+  jest.useFakeTimers();
 
   act(() => {
     result.unmount();
@@ -271,9 +283,9 @@ test('revokes editor proxy', async () => {
 });
 
 test('changing of wsPath works', async () => {
-  const bangleStore = await setup();
+  const { store: bangleStore, editorReadyActions } = await setup();
 
-  act(() => {
+  await act(async () => {
     result = render(
       <TestStoreProvider
         editorManagerContextProvider
@@ -291,12 +303,16 @@ test('changing of wsPath works', async () => {
   });
 
   await waitFor(() => {
+    expect(result!.container.innerHTML).toContain(ONE_DOC_CONTENT);
+  });
+
+  await waitFor(() => {
     expect(result.container.innerHTML).toContain('class="test-class');
   });
 
   expect(result!.container.innerHTML).toContain(ONE_DOC_CONTENT);
 
-  act(() => {
+  await act(async () => {
     result.rerender(
       <TestStoreProvider
         editorManagerContextProvider
@@ -322,7 +338,7 @@ test('changing of wsPath works', async () => {
 
 describe('useGetEditorState', () => {
   test('generates correct state', async () => {
-    const bangleStore = await setup();
+    const { store: bangleStore } = await setup();
 
     const { result } = renderHook(() =>
       useGetEditorState({
@@ -359,7 +375,7 @@ describe('useGetEditorState', () => {
 
   test('when initial selection is provided', async () => {
     const pmNode = createPMNode([], `# Hello World`.trim());
-    const bangleStore = await setup();
+    const { store: bangleStore } = await setup();
 
     const { result } = renderHook(() =>
       useGetEditorState({
