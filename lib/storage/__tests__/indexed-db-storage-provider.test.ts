@@ -45,7 +45,7 @@ describe('saveFile / readFile', () => {
     const wsPath = 'test:one.file';
 
     await idbProvider.writeFile(wsPath, file, opts);
-    expect(await idbProvider.readFile(wsPath, opts)).toBe(file);
+    expect(await idbProvider.readFile(wsPath, opts)).toEqual(file);
 
     expect(await idbProvider.fileExists(wsPath, opts)).toBe(true);
 
@@ -61,11 +61,13 @@ describe('rename', () => {
     const wsPath = 'test:one.file';
 
     await idbProvider.writeFile(wsPath, file, opts);
-    expect(await idbProvider.readFile(wsPath, opts)).toBe(file);
+    expect(await idbProvider.readFile(wsPath, opts)).toEqual(file);
 
     await idbProvider.renameFile(wsPath, 'test:one-renamed.md', opts);
 
-    expect(await idbProvider.readFile('test:one-renamed.md', opts)).toBe(file);
+    expect(await idbProvider.readFile('test:one-renamed.md', opts)).toEqual(
+      file,
+    );
     expect(await idbProvider.fileExists('test:one.md', opts)).toBe(false);
   });
 });
