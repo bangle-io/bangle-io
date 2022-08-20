@@ -1,3 +1,18 @@
+require('cross-fetch/polyfill');
+require('fake-indexeddb/auto');
+
+globalThis.Blob = require('buffer').Blob;
+globalThis.crypto = require('crypto').webcrypto;
+
+const { IDBFactory } = require('fake-indexeddb');
+
+globalThis.indexedDB = new IDBFactory();
+
+beforeEach(() => {
+  // clear idb before every test
+  globalThis.indexedDB = new IDBFactory();
+});
+
 let original = structuredClone;
 // structuredClone is used by `fake-indexeddb` to clone various objects
 // We override this function to allow for perserving `File` instance when
@@ -27,9 +42,6 @@ function newStructuredClone(obj, transferables) {
   return original(obj, transferables);
 }
 
-globalThis.Blob = require('buffer').Blob;
-globalThis.crypto = require('crypto').webcrypto;
-
 globalThis.File = class File {
   constructor(parts, filename, properties) {
     this.parts = parts;
@@ -53,38 +65,6 @@ globalThis.File = class File {
     return this.parts[0].text();
   }
 };
-
-require('cross-fetch/polyfill');
-require('fake-indexeddb/auto');
-
-const { IDBFactory } = require('fake-indexeddb');
-
-globalThis.indexedDB = new IDBFactory();
-
-beforeEach(() => {
-  // clear idb before every test
-  globalThis.indexedDB = new IDBFactory();
-});
-
-const { fakeIdb, clearFakeIdb } = require('@bangle.io/test-utils/fake-idb');
-const idbHelpers = require('@bangle.io/test-utils/indexedb-ws-helpers');
-
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-
-  return { ...fakeIdb };
-});
-
-globalThis.beforeEach(() => {
-  idbHelpers.beforeEachHook();
-});
-
-globalThis.afterEach(async () => {
-  idbHelpers.afterEachHook();
-  clearFakeIdb();
-});
-
-globalThis.fakeIdb = fakeIdb;
 
 function deepMap(obj, mapFn) {
   let object = mapFn(obj);

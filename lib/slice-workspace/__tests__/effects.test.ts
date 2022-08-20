@@ -16,7 +16,6 @@ import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
   createBasicTestStore,
   createPMNode,
-  setupMockWorkspace,
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
   waitForExpect,
@@ -521,10 +520,10 @@ describe('workspaceErrorHandler', () => {
 
     const listAllFilesSpy = jest.spyOn(provider, 'listAllFiles');
 
-    await setupMockWorkspace({
-      name: wsName,
-      type: storageType,
-    });
+    // await setupMockWorkspace({
+    //   name: wsName,
+    //   type: storageType,
+    // });
 
     const onRootError = jest.fn(() => {
       return false;

@@ -37,8 +37,7 @@
   },
   "devDependencies": {
     "@bangle.io/slice-page": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*",
-    "idb-keyval": "^5.1.5"
+    "@bangle.io/slice-workspace": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"
