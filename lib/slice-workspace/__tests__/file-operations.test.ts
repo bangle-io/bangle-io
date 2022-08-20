@@ -4,6 +4,7 @@ import {
   createBasicTestStore,
   createPMNode,
   setupMockWorkspaceWithNotes,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -458,12 +459,10 @@ describe('listAllFiles', () => {
 
     await refreshWsPaths();
 
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths)
-      .toMatchInlineSnapshot(`
-            Array [
-              "kujo:one.md",
-              "kujo:two.md",
-            ]
-          `);
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths,
+      ).toEqual(['kujo:one.md', 'kujo:two.md']),
+    );
   });
 });

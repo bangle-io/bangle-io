@@ -53,7 +53,7 @@ export function githubStorageSlice() {
                 syncWithGithub(
                   wsName,
                   new AbortController().signal,
-                  localFileEntryManager,
+                  localFileEntryManager(),
                   false,
                 )(store.state, store.dispatch, store);
               }
@@ -79,7 +79,7 @@ export function githubStorageSlice() {
               syncWithGithub(
                 wsName,
                 new AbortController().signal,
-                localFileEntryManager,
+                localFileEntryManager(),
                 false,
               )(store.state, store.dispatch, store);
             }

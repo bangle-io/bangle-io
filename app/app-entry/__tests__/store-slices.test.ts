@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { bangleStateSlices } from '@bangle.io/bangle-store';
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
@@ -36,6 +36,7 @@ test('exhaustive main slices list', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
+    '@bangle.io/slice-db/slice-key$',
     expect.stringMatching(/e2eHelpers1\$/),
     expect.stringMatching(/e2eHelpers2\$/),
     expect.stringMatching(/slice\$/),
@@ -54,6 +55,7 @@ test('exhaustive naukar slices list', () => {
     'write-note-to-disk-key$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
+    '@bangle.io/slice-db/slice-key$',
     expect.stringMatching(/slice\$/),
   ]);
 });
@@ -67,6 +69,7 @@ test('slices common worker and main', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
+    '@bangle.io/slice-db/slice-key$',
   ]);
 });
 
@@ -78,6 +81,7 @@ describe('worker and window constraints', () => {
     'slice-workspace$',
     'extension-registry-slice$',
     'notificationSliceKey$',
+    '@bangle.io/slice-db/slice-key$',
   ];
 
   const sideEffectInWindowOnly = [
@@ -116,7 +120,15 @@ describe('worker and window constraints', () => {
     },
   );
 
-  test.each(keys.filter((r) => r !== 'store-sync$'))(
+  const slicesExemptFromActionWhitelist = [
+    // this slice sync up the stores and its action cannot be whitelisted
+    'store-sync$',
+    // db slice works sets up indexeddb and it is okay to not sync it across worker and main
+    // since indexeddb by default is synced between all threads.
+    '@bangle.io/slice-db/slice-key$',
+  ];
+
+  test.each(keys.filter((r) => !slicesExemptFromActionWhitelist.includes(r)))(
     `%# slice %s actions must be white listed for sync`,
     (sliceKeyName) => {
       const slice = mainSlices.find((r) => r.key === sliceKeyName);

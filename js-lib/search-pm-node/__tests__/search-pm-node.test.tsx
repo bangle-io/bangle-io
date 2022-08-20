@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 
 /** @jsx psx */

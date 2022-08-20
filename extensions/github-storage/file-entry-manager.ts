@@ -1,38 +1,31 @@
-import * as idb from 'idb-keyval';
-
 import { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
 
-const IDB_PREFIX = 'gh-store-1:';
+import { getLocalEntriesTable } from './database';
 
-export const localFileEntryManager = new LocalFileEntryManager({
-  get: (key: string) => {
-    return idb.get(IDB_PREFIX + key);
-  },
-  set: (key, entry) => {
-    if (entry == null) {
-      throw new Error('entry cannot be null/undefined');
-    }
+export const localFileEntryManager = () => {
+  return new LocalFileEntryManager({
+    get: (key: string) => {
+      return getLocalEntriesTable().get(key);
+    },
 
-    return idb.set(IDB_PREFIX + key, entry);
-  },
-  getValues: async (keyPrefix: string) => {
-    return idb.keys().then(async (keys) => {
-      const filteredKeys: string[] = keys.filter((key): key is string => {
-        if (typeof key === 'string') {
-          return key.startsWith(IDB_PREFIX + keyPrefix);
-        }
+    set: async (key, entry) => {
+      if (entry == null) {
+        throw new Error('entry cannot be null/undefined');
+      }
 
-        return false;
+      await getLocalEntriesTable().put(key, entry);
+    },
+
+    getValues: async (keyPrefix: string) => {
+      const results = (await getLocalEntriesTable().getAll()) || [];
+
+      return results.filter((entry) => {
+        return entry?.uid.startsWith(keyPrefix);
       });
+    },
 
-      const values = await idb.getMany(filteredKeys);
-
-      // For some reason some values have undefined, this
-      // filters them out.
-      return values.filter((val) => val != null);
-    });
-  },
-  delete: (key) => {
-    return idb.del(IDB_PREFIX + key);
-  },
-});
+    delete: async (key) => {
+      await getLocalEntriesTable().delete(key);
+    },
+  });
+};

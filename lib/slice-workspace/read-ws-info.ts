@@ -1,7 +1,6 @@
-import * as idb from 'idb-keyval';
-
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import type { AppState } from '@bangle.io/create-store';
+import { getWorkspaceInfoTable } from '@bangle.io/db-app';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
@@ -32,29 +31,28 @@ function processWorkspacesInfo(wsInfos: WorkspaceInfo[]) {
 }
 
 export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
-  let wsInfos: WorkspaceInfo[] = (await idb.get(WORKSPACE_KEY)) || [];
+  const wsInfos = (await getWorkspaceInfoTable().get(WORKSPACE_KEY)) || [];
 
   return processWorkspacesInfo(wsInfos);
 }
 
 export async function saveWorkspacesInfo(state: AppState): Promise<void> {
-  await idb.update(WORKSPACE_KEY, (oldValue) => {
-    const workspacesState = workspaceSliceKey.getSliceStateAsserted(state);
-    // read existing data so that we do can do a non destructive merge
+  const oldValue = (await getWorkspaceInfoTable().get(WORKSPACE_KEY)) || [];
 
-    let existing = processWorkspacesInfo(oldValue);
+  const workspacesState = workspaceSliceKey.getSliceStateAsserted(state);
+  // read existing data so that we do can do a non destructive merge
 
-    if (workspacesState.workspacesInfo) {
-      existing = mergeWsInfoRegistries(
-        existing,
-        workspacesState.workspacesInfo,
-      );
-    }
+  let existing = processWorkspacesInfo(oldValue);
 
-    return Object.values(existing).filter(
+  if (workspacesState.workspacesInfo) {
+    existing = mergeWsInfoRegistries(existing, workspacesState.workspacesInfo);
+  }
+  await getWorkspaceInfoTable().put(
+    WORKSPACE_KEY,
+    Object.values(existing).filter(
       (wsInfo) => wsInfo.name !== HELP_FS_WORKSPACE_NAME,
-    );
-  });
+    ),
+  );
 }
 
 export function mergeWsInfoRegistries(

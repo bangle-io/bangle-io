@@ -20,6 +20,7 @@ export const BANGLE_HOT = config.build.hot;
 export const CHANGELOG_TEXT: string = config.app.changelogText;
 
 export const DEBUG_WRITE_SLOWDOWN = config.debug?.writeSlowDown;
+export const IS_TEST_ENV = config.build.nodeEnv === 'test';
 
 export const sentryConfig = {
   environment: APP_ENV,

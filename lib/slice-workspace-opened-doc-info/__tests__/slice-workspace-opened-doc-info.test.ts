@@ -1,7 +1,6 @@
 import { AppState } from '@bangle.io/create-store';
 import {
   getOpenedWsPaths,
-  pushWsPath,
   updateOpenedWsPaths,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';

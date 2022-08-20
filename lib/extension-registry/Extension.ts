@@ -54,6 +54,7 @@ export type SerialOperationHandler2<
   ) => boolean | void;
 };
 export interface ApplicationConfig<
+  DBSchema extends { [tableName: string]: any } = any,
   OpType extends SerialOperationDefinitionType = any,
 > {
   name: string;
@@ -67,6 +68,11 @@ export interface ApplicationConfig<
   noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Slice[];
   storageProvider?: BaseStorageProvider;
+  database?: {
+    schema: DBSchema;
+    version: number;
+    tableNames: Array<keyof DBSchema>;
+  };
   noteFormatProvider?: NoteFormatProvider;
   // return true if the error was handled by your callback
   // and false if it cannot be handled
@@ -95,17 +101,23 @@ export interface DialogType {
   ReactComponent: React.ComponentType;
 }
 
-interface Config<OpType extends SerialOperationDefinitionType> {
-  application: ApplicationConfig<OpType>;
+interface Config<DBSchema, OpType extends SerialOperationDefinitionType> {
+  application: ApplicationConfig<DBSchema, OpType>;
   editor: EditorConfig;
   name: string;
 }
 
-export class Extension<OpType extends SerialOperationDefinitionType = any> {
-  static create<OpType extends SerialOperationDefinitionType = any>(config: {
+export class Extension<
+  DBSchema = unknown,
+  OpType extends SerialOperationDefinitionType = any,
+> {
+  static create<
+    DBSchema,
+    OpType extends SerialOperationDefinitionType = any,
+  >(config: {
     name: string;
     editor?: Omit<EditorConfig, 'name'>;
-    application?: Omit<ApplicationConfig<OpType>, 'name'>;
+    application?: Omit<ApplicationConfig<DBSchema, OpType>, 'name'>;
   }) {
     const { name } = config;
 
@@ -164,6 +176,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       operationHandler,
       storageProvider,
       noteFormatProvider,
+      database,
       onStorageError,
     } = application;
 
@@ -295,14 +308,29 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       }
     }
 
-    return new Extension<OpType>({ name, editor, application }, _check);
+    if (database) {
+      if (!database.schema) {
+        throw new Error('Extension: database must have a schema');
+      }
+      if (!database.tableNames) {
+        throw new Error('Extension: database must have a tableNames');
+      }
+      if (typeof database.version !== 'number' || database.version <= 0) {
+        throw new Error('Extension: database must have version greater than 0');
+      }
+    }
+
+    return new Extension<DBSchema, OpType>(
+      { name, editor, application },
+      _check,
+    );
   }
 
   name: string;
   editor: EditorConfig;
-  application: ApplicationConfig<OpType>;
+  application: ApplicationConfig<DBSchema, OpType>;
 
-  constructor(ext: Config<OpType>, check: typeof _check) {
+  constructor(ext: Config<DBSchema, OpType>, check: typeof _check) {
     if (check !== _check) {
       throw new Error('Instantiate class via `Extension.create({})`');
     }

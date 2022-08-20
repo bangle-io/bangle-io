@@ -34,6 +34,7 @@
     "@bangle.io/history": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-db": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
@@ -47,7 +48,8 @@
     "react-dom": "^17.0.2",
     "tslib": "^2.4.0",
     "type-fest": "^2.12.0",
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.3",
+    "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.43",

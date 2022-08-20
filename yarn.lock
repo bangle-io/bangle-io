@@ -2045,13 +2045,13 @@ __metadata:
     "@bangle.dev/core": 0.31.1
     "@bangle.dev/pm": 0.31.1
     "@bangle.dev/utils": 0.31.1
-    "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-db": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -2145,7 +2145,7 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/is-abort-error": "workspace:*"
     cross-fetch: ^3.1.5
-    idb-keyval: ^5.1.5
+    idb: ^7.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -2182,6 +2182,7 @@ __metadata:
     "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-db": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
@@ -2190,7 +2191,7 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
     "@bangle.io/storage": "workspace:*"
-    "@bangle.io/test-utils": "worksapce:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"
@@ -2435,6 +2436,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/db-app@workspace:*, @bangle.io/db-app@workspace:lib/db-app":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/db-app@workspace:lib/db-app"
+  dependencies:
+    "@bangle.io/db-key-val": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    idb: ^7.0.2
+    tslib: ^2.4.0
+    typescript: ^4.7.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/db-key-val@workspace:*, @bangle.io/db-key-val@workspace:js-lib/db-key-val":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/db-key-val@workspace:js-lib/db-key-val"
+  dependencies:
+    idb: ^7.0.2
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/e2e-types@workspace:*, @bangle.io/e2e-types@workspace:lib/e2e-types":
   version: 0.0.0-use.local
   resolution: "@bangle.io/e2e-types@workspace:lib/e2e-types"
@@ -2616,6 +2639,7 @@ __metadata:
     "@bangle.dev/pm": 0.31.1
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/p-map": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2629,12 +2653,11 @@ __metadata:
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.43
     "@types/react-dom": ^17.0.14
-    idb-keyval: ^5.1.5
+    idb: ^7.0.2
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -2800,6 +2823,14 @@ __metadata:
 "@bangle.io/is-abort-error@workspace:*, @bangle.io/is-abort-error@workspace:js-lib/is-abort-error":
   version: 0.0.0-use.local
   resolution: "@bangle.io/is-abort-error@workspace:js-lib/is-abort-error"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/jsdom-env@workspace:*, @bangle.io/jsdom-env@workspace:js-lib/jsdom-env":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/jsdom-env@workspace:js-lib/jsdom-env"
+  dependencies:
+    jest-environment-jsdom: ^28.1.3
   languageName: unknown
   linkType: soft
 
@@ -3032,6 +3063,7 @@ __metadata:
     cross-fetch: ^3.1.5
     date-fns: ^2.25.0
     domexception: ^4.0.0
+    fake-indexeddb: ^4.0.0
     globby: ^11.0.4
     idb-keyval: ^5.1.5
     prettier: ^2.6.0
@@ -3142,6 +3174,22 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     core-js: ^3.19.0
+    tslib: ^2.4.0
+    typescript: ^4.7.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/slice-db@workspace:*, @bangle.io/slice-db@workspace:lib/slice-db":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/slice-db@workspace:lib/slice-db"
+  dependencies:
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/db-key-val": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    idb: ^7.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -3275,6 +3323,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/db-app": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3288,7 +3337,6 @@ __metadata:
     "@types/history": ^4.7.11
     "@types/react": ^17.0.43
     "@types/react-dom": ^17.0.14
-    idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
@@ -3383,7 +3431,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/test-utils@worksapce:*, @bangle.io/test-utils@workspace:*, @bangle.io/test-utils@workspace:lib/test-utils":
+"@bangle.io/test-utils@workspace:*, @bangle.io/test-utils@workspace:lib/test-utils":
   version: 0.0.0-use.local
   resolution: "@bangle.io/test-utils@workspace:lib/test-utils"
   dependencies:
@@ -3401,6 +3449,7 @@ __metadata:
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-db": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3417,6 +3466,7 @@ __metadata:
     tslib: ^2.4.0
     type-fest: ^2.12.0
     typescript: ^4.7.3
+    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -3593,7 +3643,6 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -3627,6 +3676,7 @@ __metadata:
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-db": "workspace:*"
     "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3641,7 +3691,6 @@ __metadata:
     "@zip.js/zip.js": ^2.4.5
     tslib: ^2.4.0
     typescript: ^4.7.3
-    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -9655,6 +9704,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
+    "@bangle.io/jsdom-env": "workspace:*"
     "@bangle.io/scripts": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@sentry/react": ^6.18.1
@@ -9698,6 +9748,7 @@ __metadata:
     eslint-plugin-sort-class-members: ^1.14.1
     eslint-plugin-storybook: ^0.5.12
     eslint-plugin-testing-library: ^5.5.1
+    fake-indexeddb: ^4.0.0
     file-loader: ^6.2.0
     git-revision-webpack-plugin: ^3.0.6
     html-webpack-plugin: ^5.5.0
@@ -9740,6 +9791,13 @@ __metadata:
     worker-loader: ^3.0.8
   languageName: unknown
   linkType: soft
+
+"base64-arraybuffer-es6@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "base64-arraybuffer-es6@npm:0.7.0"
+  checksum: 6d2fd114df49201b476cea5d470504e5d4e8c4cd42544152b312c9bdcb824313086fe83f1ffc34262e9e276b82d46aefc6e63bb85553f016932061137b355cdf
+  languageName: node
+  linkType: hard
 
 "base64-js@npm:^1.0.2, base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
   version: 1.5.1
@@ -12177,6 +12235,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"domexception@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "domexception@npm:1.0.1"
+  dependencies:
+    webidl-conversions: ^4.0.2
+  checksum: f564a9c0915dcb83ceefea49df14aaed106b1468fbe505119e8bcb0b77e242534f3aba861978537c0fc9dc6f35b176d0ffc77b3e342820fb27a8f215e7ae4d52
+  languageName: node
+  linkType: hard
+
 "domexception@npm:^4.0.0":
   version: 4.0.0
   resolution: "domexception@npm:4.0.0"
@@ -13607,6 +13674,15 @@ __metadata:
   version: 1.4.1
   resolution: "extsprintf@npm:1.4.1"
   checksum: a2f29b241914a8d2bad64363de684821b6b1609d06ae68d5b539e4de6b28659715b5bea94a7265201603713b7027d35399d10b0548f09071c5513e65e8323d33
+  languageName: node
+  linkType: hard
+
+"fake-indexeddb@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "fake-indexeddb@npm:4.0.0"
+  dependencies:
+    realistic-structured-clone: ^3.0.0
+  checksum: 6f61d5ed77915cbb4b5c22f030f7017318edc84dbde0b24bd4e82fb4c311f30d02f890cb144aee6e7f296a917f3393ae3d989a28af6a304a3c2b2471ca7de151
   languageName: node
   linkType: hard
 
@@ -15451,6 +15527,13 @@ __metadata:
   version: 6.1.5
   resolution: "idb@npm:6.1.5"
   checksum: 45d81be3bf5d5ae6d009d62b4a7eeb873fe2a9972d235aaa5c33cd3e27947b33a01fd3fb7bbdbe795cd608d2279c55ccd2db3f8b3f486bc74bdb5eab1c1be957
+  languageName: node
+  linkType: hard
+
+"idb@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "idb@npm:7.0.2"
+  checksum: 60ebe6d5c25d9d82d400fa90e769045a9a3f44dfbc3094b105f8666f025d84f2a779e5416211572fc51f6057f8e130cb1bbfaa06cfd6f196701a8fca9f0eda17
   languageName: node
   linkType: hard
 
@@ -17799,7 +17882,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.11, lodash@npm:^4.17.12, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21":
+"lodash@npm:^4.17.11, lodash@npm:^4.17.12, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -21328,6 +21411,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"realistic-structured-clone@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "realistic-structured-clone@npm:3.0.0"
+  dependencies:
+    domexception: ^1.0.1
+    typeson: ^6.1.0
+    typeson-registry: ^1.0.0-alpha.20
+  checksum: b4521b299c8dc320a5e3ef44678f80a92b0f1837901a5fbd1c7be06808110fb0b591b417114306ec55b44ef47fd17968aacca079afc9665afbe1c528026295ec
+  languageName: node
+  linkType: hard
+
 "rechoir@npm:^0.7.0":
   version: 0.7.1
   resolution: "rechoir@npm:0.7.1"
@@ -23939,6 +24033,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tr46@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "tr46@npm:2.1.0"
+  dependencies:
+    punycode: ^2.1.1
+  checksum: ffe6049b9dca3ae329b059aada7f515b0f0064c611b39b51ff6b53897e954650f6f63d9319c6c008d36ead477c7b55e5f64c9dc60588ddc91ff720d64eb710b3
+  languageName: node
+  linkType: hard
+
 "tr46@npm:^3.0.0":
   version: 3.0.0
   resolution: "tr46@npm:3.0.0"
@@ -24230,6 +24333,24 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 137d18a77f52254a284960b16ab53d0619f57b69b5d585804b8413f798a1175ce3e774fb95e6a101868577aafe357d8fcfc9171f0dc9fc0c210e9ae59d107cc0
+  languageName: node
+  linkType: hard
+
+"typeson-registry@npm:^1.0.0-alpha.20":
+  version: 1.0.0-alpha.39
+  resolution: "typeson-registry@npm:1.0.0-alpha.39"
+  dependencies:
+    base64-arraybuffer-es6: ^0.7.0
+    typeson: ^6.0.0
+    whatwg-url: ^8.4.0
+  checksum: c6b629697acf4652aecfff7be760356d764600afc9beca253278bbfc44fae0fe635b7619201b83e497cdc30645cbce7614d12a04b5726d9b8b505f73e6a3fc2a
+  languageName: node
+  linkType: hard
+
+"typeson@npm:^6.0.0, typeson@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "typeson@npm:6.1.0"
+  checksum: 00a77b03ac8f704acb103307bad9295fe47d6b304c386297f078ec3be63875c0b81e022a4815edb9dc2c7da0a72a431345411d35c755a8510af4a420e9e46cdc
   languageName: node
   linkType: hard
 
@@ -24988,6 +25109,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webidl-conversions@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "webidl-conversions@npm:6.1.0"
+  checksum: 1f526507aa491f972a0c1409d07f8444e1d28778dfa269a9971f2e157182f3d496dc33296e4ed45b157fdb3bf535bb90c90bf10c50dcf1dd6caacb2a34cc84fb
+  languageName: node
+  linkType: hard
+
 "webidl-conversions@npm:^7.0.0":
   version: 7.0.0
   resolution: "webidl-conversions@npm:7.0.0"
@@ -25347,6 +25475,17 @@ __metadata:
     tr46: ^1.0.1
     webidl-conversions: ^4.0.2
   checksum: fecb07c87290b47d2ec2fb6d6ca26daad3c9e211e0e531dd7566e7ff95b5b3525a57d4f32640ad4adf057717e0c215731db842ad761e61d947e81010e05cf5fd
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^8.4.0":
+  version: 8.7.0
+  resolution: "whatwg-url@npm:8.7.0"
+  dependencies:
+    lodash: ^4.7.0
+    tr46: ^2.1.0
+    webidl-conversions: ^6.1.0
+  checksum: a87abcc6cefcece5311eb642858c8fdb234e51ec74196bfacf8def2edae1bfbffdf6acb251646ed6301f8cee44262642d8769c707256125a91387e33f405dd1e
   languageName: node
   linkType: hard
 

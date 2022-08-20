@@ -34,10 +34,12 @@ export function syncWithWindowSlices() {
       },
       sideEffect() {
         return {
-          deferredOnce(store) {
+          deferredOnce(store, signal) {
             // start the store sync in next cycle to let worker stabilize
             Promise.resolve().then(() => {
-              startStoreSync()(store.state, store.dispatch);
+              if (!signal.aborted) {
+                startStoreSync()(store.state, store.dispatch);
+              }
             });
           },
         };

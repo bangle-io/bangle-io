@@ -74,6 +74,10 @@ export class ExtensionRegistry {
     };
   };
 
+  private _databases: {
+    [extensionName: string]: Exclude<ApplicationConfig['database'], undefined>;
+  };
+
   private _dialogs: Exclude<ApplicationConfig['dialogs'], undefined>;
 
   private _editorConfig: EditorConfig[];
@@ -124,7 +128,7 @@ export class ExtensionRegistry {
   };
 
   constructor(
-    private _extensions: Extension[] = [],
+    private _extensions: Array<Extension<any>> = [],
     // TODO move this to an extension
     _markdownItPlugins: any[] = [],
   ) {
@@ -204,6 +208,23 @@ export class ExtensionRegistry {
         .filter((r) => Boolean(r.storageProvider) && Boolean(r.onStorageError))
         .map((a) => [a.storageProvider!.name, a.onStorageError!]),
     );
+
+    this._databases = applicationConfig.reduce<typeof this._databases>(
+      (prev, cur) => {
+        if (cur.database) {
+          if (typeof cur.name === 'string') {
+            prev[cur.name] = cur.database;
+          }
+        }
+
+        return prev;
+      },
+      {},
+    );
+  }
+
+  getDatabases() {
+    return this._databases;
   }
 
   getDialog(name: string) {

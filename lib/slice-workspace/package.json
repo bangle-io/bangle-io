@@ -40,6 +40,7 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/db-app": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
@@ -47,7 +48,6 @@
     "@bangle.io/storage": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "idb-keyval": "^5.1.5",
     "reselect": "^4.1.5",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"

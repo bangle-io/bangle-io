@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { BrowserHistory } from '@bangle.io/history';
 import { goToLocation, pageSlice, pageSliceKey } from '@bangle.io/slice-page';

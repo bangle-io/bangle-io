@@ -109,12 +109,7 @@ test('opendirRecursive root', async () => {
   await fs.writeFile('hola/hi', toFile('my-data'));
   await fs.writeFile('hola/bye', toFile('my-data'));
   const result = await fs.opendirRecursive('hola');
-  expect(result).toMatchInlineSnapshot(`
-    Array [
-      "hola/hi",
-      "hola/bye",
-    ]
-  `);
+  expect(result.sort()).toEqual(['hola/bye', 'hola/hi']);
 });
 
 test('opendirRecursive subdir', async () => {
@@ -132,12 +127,7 @@ test('opendirRecursive subdir', async () => {
   `);
 
   result = await fs.opendirRecursive('hola');
-  expect(result).toMatchInlineSnapshot(`
-    Array [
-      "hola/hi",
-      "hola/bye",
-    ]
-  `);
+  expect(result.sort()).toEqual(['hola/bye', 'hola/hi']);
 
   result = await fs.opendirRecursive('holamagic');
   expect(result).toMatchInlineSnapshot(`

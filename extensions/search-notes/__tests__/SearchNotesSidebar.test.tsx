@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -66,7 +66,7 @@ const setup = async (
     store,
     getActionNames,
     getAction,
-    render: () => {
+    render: async () => {
       let counter = 0;
       let { container, rerender } = render(
         <TestStoreProvider
@@ -100,7 +100,7 @@ const setup = async (
 
 test('renders correctly is no workspace is opened', async () => {
   const { render } = await setup(null);
-  const { container } = render();
+  const { container } = await render();
 
   expect(container).toMatchInlineSnapshot(`
     <div>
@@ -119,7 +119,7 @@ test('renders correctly is no workspace is opened', async () => {
 
 test('renders correctly workspace is opened', async () => {
   const { render } = await setup();
-  const { container } = render();
+  const { container } = await render();
 
   expect(container).toMatchSnapshot();
 });
@@ -132,7 +132,7 @@ test('show search results', async () => {
     matches: [{ parent: 'para', parentPos: 0, match: ['hello', ' world'] }],
   };
 
-  const { container, rerender } = render();
+  const { container, rerender } = await render();
 
   updateSliceState({
     searchResults: [searchResultItem],
@@ -216,7 +216,7 @@ test('typing in input triggers extension state update', async () => {
 test('pendingSearch shows a spinner', async () => {
   const { render, store } = await setup();
 
-  const { rerender } = render();
+  const { rerender } = await render();
 
   updateSliceState({
     searchResults: [],
@@ -348,7 +348,7 @@ describe('search results', () => {
 
     const { store, getAction, render } = await setup();
 
-    const { rerender } = render();
+    const { rerender } = await render();
 
     const input = screen.getByLabelText('Search', { selector: 'input' });
 

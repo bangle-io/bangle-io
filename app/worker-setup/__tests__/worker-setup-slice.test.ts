@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import {
@@ -258,8 +258,6 @@ test('sends slice-page action correctly', async () => {
   const dispatchSpy = jest.spyOn(workerStore, 'dispatch');
 
   await blockReload(true)(store.state, store.dispatch);
-
-  await sleep(0);
 
   expect(dispatchSpy).lastCalledWith({
     fromStore: 'test-store',

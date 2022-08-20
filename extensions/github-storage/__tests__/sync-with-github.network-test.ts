@@ -1,9 +1,11 @@
-import waitForExpect from 'wait-for-expect';
-
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { workspace, wsPathHelpers } from '@bangle.io/api';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
-import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
+import {
+  createBasicTestStore,
+  createPMNode,
+  waitForExpect,
+} from '@bangle.io/test-utils';
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
@@ -100,7 +102,7 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (await localFileEntryManager.getAllEntries('')).map((entry) => [
+    (await localFileEntryManager().getAllEntries('')).map((entry) => [
       entry.uid,
       entry,
     ]),
@@ -153,7 +155,7 @@ const getRemoteFileEntries = async () => {
 const push = async (retainedWsPaths = new Set<string>()) => {
   return pushLocalChanges({
     abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager,
+    fileEntryManager: localFileEntryManager(),
     ghConfig: githubWsMetadata,
     retainedWsPaths,
     tree: await getTree({
@@ -546,9 +548,12 @@ describe('house keeping', () => {
     expect(sha).toBe(sourceSha);
 
     // // corrupt the source
-    await localFileEntryManager.updateFileSource(
+    await localFileEntryManager().updateFileSource(
       test1WsPath,
-      new Blob(['hi'], { type: 'text/plain' }) as any,
+      new File(
+        [new Blob(['hi'], { type: 'text/plain' })],
+        'test-1-corrupted.md',
+      ),
     );
 
     localEntries = await getLocalFileEntries();

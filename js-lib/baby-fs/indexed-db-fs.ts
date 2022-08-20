@@ -1,4 +1,5 @@
-import * as idb from 'idb-keyval';
+import type { DBSchema } from 'idb';
+import * as idb from 'idb';
 
 import {
   BaseFileMetadata,
@@ -12,8 +13,7 @@ import {
 } from './error-codes';
 import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
 
-const idbSuffix = 3;
-export const BASE_IDB_NAME_PREFIX = 'baby-idb';
+export const BASE_IDB_NAME_PREFIX = 'baby-idb' as const;
 
 function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   return idbPromise.catch((error) => {
@@ -26,20 +26,33 @@ function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   });
 }
 
-class FileMetadata {
-  private _customMetaStore: ReturnType<typeof idb.createStore>;
+const metadataDbName = `${BASE_IDB_NAME_PREFIX}-meta-3` as const;
+const metadataTableName = `${BASE_IDB_NAME_PREFIX}-meta-store3` as const;
 
-  constructor() {
-    this._customMetaStore = idb.createStore(
-      `${BASE_IDB_NAME_PREFIX}-meta-${idbSuffix}`,
-      `${BASE_IDB_NAME_PREFIX}-meta-store${idbSuffix}`,
-    );
-  }
+export interface FileMetadataSchema extends DBSchema {
+  [metadataTableName]: {
+    key: string;
+    value: BaseFileMetadata;
+  };
+}
+
+class FileMetadata {
+  private _db = () => {
+    return idb.openDB<FileMetadataSchema>(metadataDbName, 1, {
+      upgrade(db, oldVersion) {
+        switch (oldVersion) {
+          case 0: {
+            db.createObjectStore(metadataTableName);
+          }
+        }
+      },
+    });
+  };
 
   // get the metadata, if not exists
   async del(filePath: string) {
     await catchUpstream(
-      idb.del(filePath, this._customMetaStore),
+      this._db().then((db) => db.delete(metadataTableName, filePath)),
       'Error deleting metadata',
     );
   }
@@ -50,7 +63,7 @@ class FileMetadata {
     fallback: BaseFileMetadata,
   ): Promise<BaseFileMetadata> {
     const result = await catchUpstream(
-      idb.get(filePath, this._customMetaStore),
+      this._db().then((db) => db.get(metadataTableName, filePath)),
       'Error reading metadata',
     );
 
@@ -65,7 +78,7 @@ class FileMetadata {
 
   async set(filePath: string, metadata: BaseFileMetadata) {
     await catchUpstream(
-      idb.set(filePath, metadata, this._customMetaStore),
+      this._db().then((db) => db.put(metadataTableName, metadata, filePath)),
       'Error writing metadata',
     );
   }
@@ -81,9 +94,30 @@ class FileMetadata {
   }
 }
 
+const indexedDBFileSystemDbName = `${BASE_IDB_NAME_PREFIX}-db-3` as const;
+const indexedDBFileSystemTableName =
+  `${BASE_IDB_NAME_PREFIX}-db-store-3` as const;
+
+export interface IndexedDBFileSystemSchema extends DBSchema {
+  [indexedDBFileSystemTableName]: {
+    key: string;
+    value: File;
+  };
+}
+
 export class IndexedDBFileSystem extends BaseFileSystem {
   protected _allowedFile = (filePath: string) => true;
-  protected _customStore: ReturnType<typeof idb.createStore>;
+
+  private _db = () => {
+    return idb.openDB<IndexedDBFileSystemSchema>(indexedDBFileSystemDbName, 1, {
+      upgrade(db, oldVersion) {
+        if (!db.objectStoreNames.contains(indexedDBFileSystemTableName)) {
+          db.createObjectStore(indexedDBFileSystemTableName);
+        }
+      },
+    });
+  };
+
   protected _fileMetadata: FileMetadata;
 
   constructor(opts: { allowedFile?: (f: string) => boolean } = {}) {
@@ -93,11 +127,6 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       this._allowedFile = opts.allowedFile;
     }
 
-    this._customStore = idb.createStore(
-      `${BASE_IDB_NAME_PREFIX}-db-${idbSuffix}`,
-      `${BASE_IDB_NAME_PREFIX}-db-store-${idbSuffix}`,
-    );
-
     this._fileMetadata = new FileMetadata();
   }
 
@@ -106,7 +135,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       throw new Error('dirPath must be defined');
     }
     let keys = await catchUpstream(
-      idb.keys(this._customStore),
+      this._db().then((db) => db.getAllKeys(indexedDBFileSystemTableName)),
       'Error listing files',
     );
 
@@ -130,7 +159,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     this._verifyFilePath(filePath);
 
     let result = await catchUpstream(
-      idb.get(filePath, this._customStore),
+      this._db().then((db) => db.get(indexedDBFileSystemTableName, filePath)),
       'Error reading data',
     );
 
@@ -196,7 +225,9 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     this._verifyFilePath(filePath);
 
     await catchUpstream(
-      idb.del(filePath, this._customStore),
+      this._db().then((db) =>
+        db.delete(indexedDBFileSystemTableName, filePath),
+      ),
       'Error deleting file',
     );
     await this._fileMetadata.del(filePath);
@@ -205,7 +236,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   async writeFile(filePath: string, data: File) {
     this._verifyFilePath(filePath);
     this._verifyFileType(data);
-    const prom = idb.set(filePath, data, this._customStore);
+    const prom = this._db().then((db) =>
+      db.put(indexedDBFileSystemTableName, data, filePath),
+    );
+
     await catchUpstream(prom, 'Error writing data');
     await this._fileMetadata.set(filePath, new BaseFileMetadata());
   }

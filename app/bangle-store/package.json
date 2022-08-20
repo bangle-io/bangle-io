@@ -19,7 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
-    "@bangle.io/test-utils": "worksapce:*"
+    "@bangle.io/test-utils": "workspace:*"
   },
   "dependencies": {
     "@bangle.dev/pm": "0.31.1",
@@ -33,6 +33,7 @@
     "@bangle.io/pm-manual-paste": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-db": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-editor-sync": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",

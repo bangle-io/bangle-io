@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';

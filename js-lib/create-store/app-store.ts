@@ -151,7 +151,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   >();
 
   private _sideEffects: Array<StoreSideEffectType<any, A, S>> = [];
-
   constructor(
     private _state: AppState<S, A>,
     private _dispatchAction: DispatchActionType<S, A>,
@@ -161,6 +160,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     private _onError?: OnErrorType<S, A>,
   ) {
     this._setup();
+  }
+
+  get destroyed() {
+    return this._destroyed;
   }
 
   get state(): AppState<S, A> {

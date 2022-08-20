@@ -71,7 +71,7 @@ export function DiscardLocalChangesDialog() {
           }
           if (wsName) {
             updateIsProcessing(true);
-            await discardLocalChanges(wsName, localFileEntryManager)(
+            await discardLocalChanges(wsName, localFileEntryManager())(
               bangleStore.state,
               bangleStore.dispatch,
               bangleStore,

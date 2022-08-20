@@ -6,6 +6,7 @@ export async function getVanilaFileSha(file: File) {
 
   return sha;
 }
+
 export interface GithubWsMetadata {
   githubToken: string;
   owner: string;

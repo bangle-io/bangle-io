@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment @bangle.io/jsdom-env
  */
 import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';

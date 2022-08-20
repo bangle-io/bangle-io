@@ -11,6 +11,7 @@ import {
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
+import { dbSlice } from '@bangle.io/slice-db';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
@@ -20,6 +21,7 @@ import {
   createWorkspace,
   listWorkspaces,
   workspaceSlice,
+  workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
@@ -62,7 +64,7 @@ export function createBasicTestStore<
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S, C>;
   slices?: Slice[];
-  extensions?: Extension[];
+  extensions?: Array<Extension<any>>;
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
   useEditorManagerSlice?: boolean;
@@ -110,6 +112,7 @@ export function createBasicTestStore<
         useEditorManagerSlice ? editorManagerSlice() : undefined,
         notificationSlice(),
         useUISlice ? uiSlice() : undefined,
+        dbSlice(),
         ...extensionRegistry.getSlices(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
@@ -122,6 +125,10 @@ export function createBasicTestStore<
     dispatchSpy,
     getActionNames,
     getAction,
+    editorReadyActionsCount: () => {
+      return getAction('action::@bangle.io/slice-editor-manager:set-editor')
+        .length;
+    },
   };
 }
 
@@ -163,6 +170,28 @@ export async function setupMockWorkspaceWithNotes(
     store.destroy();
   }
 
+  const waitForNotesToLoad = async (targetLength: number) => {
+    let counter = 0;
+
+    while (counter++ < 5) {
+      await sleep(10);
+
+      const notesLoaded =
+        workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length ===
+        targetLength;
+
+      if (notesLoaded) {
+        break;
+      }
+
+      if (counter === 4) {
+        throw new Error('Test setup error: Workspace not loaded');
+      }
+    }
+  };
+
+  await waitForNotesToLoad(noteWsPaths.length);
+
   return {
     wsName,
     noteWsPaths,
@@ -173,6 +202,10 @@ export async function setupMockWorkspaceWithNotes(
         open,
         doc: createPMNode([], str.trim()),
       })(store.state, store.dispatch, store);
+
+      let set = new Set(noteWsPaths.map((r) => r[0]));
+      set.add(wsPath);
+      await waitForNotesToLoad(set.size);
     },
   };
 }
