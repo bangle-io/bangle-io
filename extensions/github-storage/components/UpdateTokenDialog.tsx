@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { notification, ui, workspace } from '@bangle.io/api';
 import { Dialog, ErrorBanner, TextField } from '@bangle.io/ui-components';
@@ -6,23 +6,33 @@ import { BaseError } from '@bangle.io/utils';
 
 import { UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
-import {
-  isCurrentWorkspaceGithubStored,
-  readGithubTokenFromStore,
-  updateGithubToken,
-} from '../operations';
+import { isCurrentWorkspaceGithubStored } from '../helpers';
+import { readGithubTokenFromStore, updateGithubToken } from '../operations';
 
 export function UpdateTokenDialog() {
   const { bangleStore } = ui.useUIManagerContext();
   const wsName = workspace.getWsName()(bangleStore.state);
-  const [inputToken, updateInputToken] = useState<string | undefined>(() => {
-    return readGithubTokenFromStore()(bangleStore.state);
-  });
-  const isGithubWorkspace = wsName
-    ? isCurrentWorkspaceGithubStored(wsName)(bangleStore.state)
-    : false;
+  const [inputToken, updateInputToken] = useState<string | undefined>();
+  const [isGithubWorkspace, updateIsGithubWorkspace] = useState(false);
   const [error, updateError] = useState<Error | undefined>(undefined);
   const [isProcessing, updateIsProcessing] = useState(false);
+
+  useEffect(() => {
+    if (wsName) {
+      isCurrentWorkspaceGithubStored(wsName).then((val) =>
+        updateIsGithubWorkspace(val),
+      );
+    }
+  }, [wsName]);
+
+  useEffect(() => {
+    readGithubTokenFromStore()(bangleStore.state).then((token) => {
+      if (token) {
+        updateInputToken(token);
+      }
+    });
+  }, [bangleStore]);
+
   const dismiss = useCallback(() => {
     if (!isProcessing) {
       ui.dismissDialog(UPDATE_GITHUB_TOKEN_DIALOG)(

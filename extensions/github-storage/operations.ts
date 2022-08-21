@@ -13,10 +13,14 @@ import {
   isAbortError,
 } from '@bangle.io/utils';
 
-import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME, LOCK_NAME } from './common';
+import { ghSliceKey, LOCK_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
 import type { GithubWsMetadata } from './helpers';
+import {
+  isCurrentWorkspaceGithubStored,
+  readGhWorkspaceMetadata,
+} from './helpers';
 import { pushLocalChanges } from './sync-with-github';
 
 const LOG = true;
@@ -24,36 +28,29 @@ const log = LOG
   ? console.debug.bind(console, 'github-storage operations')
   : () => {};
 
-export function isCurrentWorkspaceGithubStored(wsName: string) {
-  return (state: BangleAppState) => {
-    return (
-      workspace.getStorageProviderName(wsName)(state) ===
-      GITHUB_STORAGE_PROVIDER_NAME
-    );
-  };
-}
-
 export const readGithubTokenFromStore = () => {
-  return workspace.workspaceSliceKey.queryOp((state): string | undefined => {
-    const wsName = workspace.getWsName()(state);
+  return workspace.workspaceSliceKey.queryOp(
+    async (state): Promise<string | undefined> => {
+      const wsName = workspace.getWsName()(state);
 
-    if (wsName && isCurrentWorkspaceGithubStored(wsName)(state)) {
-      const metadata = workspace.getWorkspaceMetadata(wsName)(state);
+      if (wsName && (await isCurrentWorkspaceGithubStored(wsName))) {
+        const metadata = await readGhWorkspaceMetadata(wsName);
 
-      return typeof metadata.githubToken === 'string'
-        ? metadata.githubToken
-        : undefined;
-    }
+        return typeof metadata?.githubToken === 'string'
+          ? metadata.githubToken
+          : undefined;
+      }
 
-    return undefined;
-  });
+      return undefined;
+    },
+  );
 };
 
 export const updateGithubToken =
   (wsName: string, token: string | undefined, showNotification = false) =>
-  (state: BangleAppState, dispatch: BangleAppDispatch) => {
-    if (isCurrentWorkspaceGithubStored(wsName)(state)) {
-      workspace.updateWorkspaceMetadata(wsName, (existing) => {
+  async (state: BangleAppState, dispatch: BangleAppDispatch) => {
+    if (await isCurrentWorkspaceGithubStored(wsName)) {
+      await workspace.updateWorkspaceMetadata(wsName, (existing) => {
         if (existing.githubToken !== token) {
           return {
             ...existing,
@@ -99,7 +96,7 @@ export function syncWithGithub(
     store: BangleApplicationStore,
   ) => {
     async function sync() {
-      if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
+      if (!(await isCurrentWorkspaceGithubStored(wsName))) {
         return undefined;
       }
 
@@ -116,7 +113,6 @@ export function syncWithGithub(
         return undefined;
       }
 
-      const workspaceStore = workspace.workspaceSliceKey.getStore(store);
       const {
         openedWsPaths,
         recentlyUsedWsPaths,
@@ -128,13 +124,11 @@ export function syncWithGithub(
         return undefined;
       }
 
-      const storageOpts = workspace.getStorageProviderOpts()(
-        workspaceStore.state,
-        workspaceStore.dispatch,
-      );
-      const wsMetadata = storageOpts.readWorkspaceMetadata(
-        wsName,
-      ) as GithubWsMetadata;
+      const wsMetadata = await readGhWorkspaceMetadata(wsName);
+
+      if (!wsMetadata) {
+        return undefined;
+      }
 
       const toRetain: string[] = [
         ...openedWsPaths.toArray(),
@@ -266,7 +260,7 @@ export function discardLocalChanges(
     store: BangleApplicationStore,
   ) => {
     try {
-      if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
+      if (!(await isCurrentWorkspaceGithubStored(wsName))) {
         return;
       }
 
@@ -302,14 +296,11 @@ export function discardLocalChanges(
         },
       );
 
-      const storageOpts = workspace.getStorageProviderOpts()(
-        store.state,
-        store.dispatch,
-      );
+      const wsMetadata = await readGhWorkspaceMetadata(wsName);
 
-      const wsMetadata = storageOpts.readWorkspaceMetadata(
-        wsName,
-      ) as GithubWsMetadata;
+      if (!wsMetadata) {
+        throw new Error('No workspace metadata found');
+      }
 
       await startSync(
         wsName,

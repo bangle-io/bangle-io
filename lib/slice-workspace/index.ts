@@ -9,7 +9,6 @@ export {
   docToFile,
   getFile,
   getNote,
-  getStorageProviderName,
   getStorageProviderOpts,
   refreshWsPaths,
   renameNote,
@@ -28,6 +27,7 @@ export {
   pushWsPath,
   updateOpenedWsPaths,
 } from './operations';
+export { readWorkspaceInfo, readWorkspaceMetadata } from './read-ws-info';
 export { workspaceSlice, workspaceSliceInitialState } from './workspace-slice';
 export type { WorkspaceSliceState } from './workspace-slice-state';
 export type { WorkspaceContextType } from './WorkspaceContext';
@@ -38,11 +38,6 @@ export {
 export {
   createWorkspace,
   deleteWorkspace,
-  getWorkspaceInfo,
-  getWorkspaceInfoAsync,
-  getWorkspaceMetadata,
-  getWorkspaceType,
   listWorkspaces,
   updateWorkspaceMetadata,
 } from './workspaces-operations';
-export { hasWorkspace } from './workspaces-operations';

@@ -39,11 +39,6 @@ export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceAction
 >('slice-workspace');
 
-export type SideEffect = SliceSideEffect<
-  WorkspaceSliceState,
-  WorkspaceSliceAction
->;
-
 export type WorkspaceSliceAction =
   | {
       name: 'action::@bangle.io/slice-workspace:set-opened-workspace';
@@ -77,6 +72,12 @@ export type WorkspaceSliceAction =
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos';
       value: {
         workspacesInfo: WorkspaceInfoReg;
+      };
+    }
+  | {
+      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info';
+      value: {
+        workspaceInfo?: WorkspaceInfo;
       };
     }
   | {

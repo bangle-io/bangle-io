@@ -32,17 +32,21 @@ export class WorkspaceSliceState {
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       refreshCounter: WorkspaceSliceState['refreshCounter'];
       workspacesInfo: WorkspaceSliceState['workspacesInfo'];
+      cachedWorkspaceInfo: WorkspaceInfo | undefined;
       wsName: WorkspaceSliceState['wsName'];
       wsPaths: WorkspaceSliceState['wsPaths'];
     },
     protected opts: any = {},
   ) {}
 
+  get cachedWorkspaceInfo() {
+    return this.mainFields.cachedWorkspaceInfo;
+  }
+
   get error(): Error | undefined {
     return this.mainFields.error;
   }
 
-  // derived
   get noteWsPaths(): string[] | undefined {
     return selectNoteWsPaths(this);
   }

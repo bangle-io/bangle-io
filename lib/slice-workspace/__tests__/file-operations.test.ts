@@ -27,13 +27,15 @@ let signal = abortController.signal;
 let { store } = createBasicTestStore({ signal });
 
 beforeEach(() => {
+  store.destroy();
   abortController = new AbortController();
   signal = abortController.signal;
   ({ store } = createBasicTestStore({ signal }));
 });
 
-afterEach(() => {
+afterEach(async () => {
   abortController.abort();
+  await sleep(0);
 });
 
 describe('renameNote', () => {
@@ -46,24 +48,34 @@ describe('renameNote', () => {
       store,
     );
 
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        'my-ws',
+      );
+    });
+
     await createNote('my-ws:test-note.md', {
       doc: doc,
     })(store.state, store.dispatch, store);
-  });
 
-  afterEach(() => {
-    store.destroy();
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state).openedWsPaths
+          .primaryWsPath,
+      ).toBe('my-ws:test-note.md');
+    });
   });
 
   test('returns error when wsName is not defined', async () => {
-    let { store } = createBasicTestStore({ signal });
     await expect(
-      renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
+      renameNote('my-wrong-ws:test-note.md', 'my-wrong-ws:new-test-note.md')(
         store.state,
         store.dispatch,
         store,
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Workspace my-ws not found"`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Workspace my-wrong-ws not found"`,
+    );
   });
 
   test('works when the file to be renamed is opened', async () => {
@@ -107,17 +119,25 @@ describe('renameNote', () => {
       store,
     );
 
-    await sleep(0);
+    await waitForExpect(() => {
+      let { openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      );
 
-    ({ openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(store.state));
-
-    expect(openedWsPaths.primaryWsPath).toBeFalsy();
-    expect(openedWsPaths.secondaryWsPath).toEqual('my-ws:new-test-note.md');
+      expect(openedWsPaths.primaryWsPath).toBeFalsy();
+      expect(openedWsPaths.secondaryWsPath).toEqual('my-ws:new-test-note.md');
+    });
   });
 
   test('works when the file to be renamed is not opened', async () => {
     await goToLocation('/ws/my-ws')(store.state, store.dispatch);
-    await sleep(0);
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey
+          .getSliceStateAsserted(store.state)
+          .openedWsPaths.hasSomeOpenedWsPaths(),
+      ).toBe(false);
+    });
 
     let { openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
       store.state,
@@ -177,26 +197,30 @@ describe('renameNote', () => {
       store,
     );
 
-    await sleep(0);
+    await waitForExpect(() => {
+      let { openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      );
 
-    let { openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
-      store.state,
-    );
-
-    expect(openedWsPaths.primaryWsPath).toEqual('my-ws:new-test-note.md');
-    expect(openedWsPaths.secondaryWsPath).toEqual('my-ws:new-test-note.md');
+      expect(openedWsPaths.primaryWsPath).toEqual('my-ws:new-test-note.md');
+      expect(openedWsPaths.secondaryWsPath).toEqual('my-ws:new-test-note.md');
+    });
   });
 });
 
 describe('getNote', () => {
   test('works', async () => {
     const doc = createPMNode([], `hello`);
-    let { store } = createBasicTestStore({ signal });
     await createWorkspace('my-ws', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
     );
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        'my-ws',
+      );
+    });
 
     await createNote('my-ws:test-note.md', {
       doc: doc,
@@ -225,7 +249,6 @@ describe('getNote', () => {
 
 describe('createNote', () => {
   const doc = createPMNode([], `hello`);
-  let { store } = createBasicTestStore({ signal });
 
   beforeEach(async () => {
     ({ store } = createBasicTestStore({ signal }));
@@ -235,6 +258,11 @@ describe('createNote', () => {
       store.dispatch,
       store,
     );
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        'my-ws',
+      );
+    });
   });
   afterEach(() => {
     store.destroy();
@@ -245,11 +273,11 @@ describe('createNote', () => {
 
     await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
-    await sleep(0);
-
-    expect(
-      (await getNote(wsPath)(store.state, store.dispatch, store))?.toString(),
-    ).toMatchInlineSnapshot(`"doc(paragraph(\\"hello\\"))"`);
+    await waitForExpect(async () => {
+      expect(
+        (await getNote(wsPath)(store.state, store.dispatch, store))?.toString(),
+      ).toEqual(`doc(paragraph("hello"))`);
+    });
 
     const { noteWsPaths } = workspaceSliceKey.getSliceStateAsserted(
       store.state,
@@ -292,6 +320,8 @@ describe('createNote', () => {
         store,
       ),
     ).toBe(false);
+
+    store.destroy();
   });
 
   test('when open is false', async () => {
@@ -313,17 +343,19 @@ describe('createNote', () => {
 
 describe('deleteNote', () => {
   const doc = createPMNode([], `hello`);
-  let { store } = createBasicTestStore({ signal });
   const wsPath = 'my-ws:test-note.md';
 
   beforeEach(async () => {
-    ({ store } = createBasicTestStore({ signal }));
-
     await createWorkspace('my-ws', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
     );
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        'my-ws',
+      );
+    });
   });
 
   afterEach(() => {
@@ -333,14 +365,14 @@ describe('deleteNote', () => {
   test('deletes when the file is opened', async () => {
     await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
-    await sleep(0);
+    await waitForExpect(() => {
+      const openedWsPaths = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      ).openedWsPaths;
 
-    const openedWsPaths = workspaceSliceKey.getSliceStateAsserted(
-      store.state,
-    ).openedWsPaths;
-
-    expect(openedWsPaths.primaryWsPath).toBe(wsPath);
-    expect(openedWsPaths.secondaryWsPath).toBeFalsy();
+      expect(openedWsPaths.primaryWsPath).toBe(wsPath);
+      expect(openedWsPaths.secondaryWsPath).toBeFalsy();
+    });
 
     await deleteNote(wsPath)(store.state, store.dispatch, store);
 
@@ -421,6 +453,11 @@ describe('checkFileExists', () => {
       store.dispatch,
       store,
     );
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        'my-ws',
+      );
+    });
   });
 
   afterEach(() => {

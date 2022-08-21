@@ -18,7 +18,7 @@ import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
-import { isCurrentWorkspaceGithubStored } from '../operations';
+import { isCurrentWorkspaceGithubStored } from '../helpers';
 
 const LOG = false;
 
@@ -31,9 +31,16 @@ export function GithubSidebar() {
   const { wsName, openedWsPaths } =
     workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
 
-  const correctStorageProvider = wsName
-    ? isCurrentWorkspaceGithubStored(wsName)(store.state)
-    : false;
+  const [correctStorageProvider, updateCorrectStorageProvider] =
+    useState(false);
+
+  useEffect(() => {
+    if (wsName) {
+      isCurrentWorkspaceGithubStored(wsName).then((val) =>
+        updateCorrectStorageProvider(val),
+      );
+    }
+  }, [wsName]);
 
   return wsName ? (
     !correctStorageProvider ? (

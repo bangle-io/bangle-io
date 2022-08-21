@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ui } from '@bangle.io/api';
 import {
@@ -22,13 +22,21 @@ const MIN_HEIGHT = 200;
 export function NewGithubWorkspaceTokenDialog() {
   const { bangleStore } = ui.useUIManagerContext();
 
-  const [inputToken, updateInputToken] = useState<string | undefined>(() => {
-    return readGithubTokenFromStore()(bangleStore.state);
-  });
+  const [inputToken, updateInputToken] = useState<string | undefined>(
+    undefined,
+  );
   const [isLoading, updateIsLoading] = useState(false);
   const [error, updateError] = useState<Error | undefined>(undefined);
 
   const deferredIsLoading = useDebouncedValue(isLoading, { wait: 100 });
+
+  useEffect(() => {
+    readGithubTokenFromStore()(bangleStore.state).then((token) => {
+      if (token) {
+        updateInputToken(token);
+      }
+    });
+  }, [bangleStore]);
 
   const onNext = useCallback(async () => {
     if (!inputToken) {

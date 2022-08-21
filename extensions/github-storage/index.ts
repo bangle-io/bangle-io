@@ -22,7 +22,7 @@ import { handleError } from './error-handling';
 import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
-import { isCurrentWorkspaceGithubStored, syncWithGithub } from './operations';
+import { syncWithGithub } from './operations';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -56,11 +56,6 @@ const extension = Extension.create({
         ReactComponent: GithubSidebar,
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
-        activitybarIconShow: (wsName, appState) => {
-          return wsName
-            ? isCurrentWorkspaceGithubStored(wsName)(appState)
-            : false;
-        },
       },
     ],
     onStorageError: (error, store) => {

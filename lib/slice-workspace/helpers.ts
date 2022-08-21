@@ -1,13 +1,16 @@
 import { WorkspaceTypeHelp } from '@bangle.io/constants';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
-import type { NoteFormatProvider } from '@bangle.io/shared-types';
+import type {
+  NoteFormatProvider,
+  WorkspaceInfo,
+} from '@bangle.io/shared-types';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import { HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { storageProviderHelpers } from './storage-provider-helpers';
-import type { WorkspaceSliceState } from './workspace-slice-state';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {
@@ -65,15 +68,6 @@ export function savePrevOpenedWsPathsToSearch(
     searchParams.append('ws_paths', JSON.stringify(openedWsPaths.toArray()));
   }
 }
-
-export const getWsInfoIfNotDeleted = (
-  wsName: string,
-  workspacesInfo: Exclude<WorkspaceSliceState['workspacesInfo'], undefined>,
-) => {
-  const wsInfo = workspacesInfo[wsName];
-
-  return wsInfo?.deleted ? undefined : wsInfo;
-};
 
 const storageProviderProxy = new WeakMap<
   BaseStorageProvider,
@@ -162,3 +156,15 @@ export const markdownFormatProvider: NoteFormatProvider = {
     return markdownParser(value, specRegistry, plugins);
   },
 };
+
+export function throwOnNotFoundWsInfo(
+  wsName: string,
+  workspaceInfo: WorkspaceInfo | undefined,
+): asserts workspaceInfo is WorkspaceInfo {
+  if (!workspaceInfo) {
+    throw new WorkspaceError({
+      message: `Workspace ${wsName} not found`,
+      code: WORKSPACE_NOT_FOUND_ERROR,
+    });
+  }
+}

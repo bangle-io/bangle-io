@@ -34,7 +34,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       wsPath,
       file,
       this._makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
+        (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
       ),
     );
   }
@@ -44,7 +44,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this._fileEntryManager().deleteFile(
       wsPath,
       this._makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
+        (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
       ),
     );
   }
@@ -67,7 +67,9 @@ export class GithubStorageProvider implements BaseStorageProvider {
     wsName: string,
     opts: StorageOpts,
   ): Promise<string[]> {
-    const wsMetadata = opts.readWorkspaceMetadata(wsName) as GithubWsMetadata;
+    const wsMetadata = (await opts.readWorkspaceMetadata(
+      wsName,
+    )) as GithubWsMetadata;
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
     const { tree } = await this._getTree({
@@ -111,7 +113,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     const file = await this._fileEntryManager().readFile(
       wsPath,
       this._makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
+        (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
       ),
     );
 

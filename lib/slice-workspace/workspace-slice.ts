@@ -7,11 +7,11 @@ import { ActionSerializers } from './action-serializers';
 import type { WorkspaceSliceAction } from './common';
 import { workspaceSliceKey } from './common';
 import {
+  cachedWorkspaceInfoEffect,
   errorHandlerEffect,
-  refreshWorkspacesEffect,
   refreshWsPathsEffect,
   updateLocationEffect,
-  wsDeleteEffect,
+  workspaceNotFoundCheckEffect,
 } from './effects';
 import { WorkspaceError } from './errors';
 import { sliceHasError } from './operations';
@@ -29,6 +29,7 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   wsName: undefined,
   openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: undefined,
+  cachedWorkspaceInfo: undefined,
   wsPaths: undefined,
   refreshCounter: 0,
   workspacesInfo: undefined,
@@ -129,7 +130,18 @@ const applyState = (
       });
     }
 
+    case 'action::@bangle.io/slice-workspace:set-cached-workspace-info': {
+      const { workspaceInfo } = action.value;
+
+      return WorkspaceSliceState.update(state, {
+        cachedWorkspaceInfo: workspaceInfo,
+      });
+    }
+
     default: {
+      // hack to catch switch slipping
+      let val: never = action;
+
       return state;
     }
   }
@@ -167,6 +179,7 @@ export function workspaceSlice() {
           wsPaths: val.wsPaths,
           refreshCounter: val.refreshCounter,
           workspacesInfo: val.workspacesInfo,
+          cachedWorkspaceInfo: val.cachedWorkspaceInfo,
           error: undefined,
         };
 
@@ -206,6 +219,7 @@ export function workspaceSlice() {
           wsPaths: data.wsPaths || undefined,
           refreshCounter: data.refreshCounter || 0,
           workspacesInfo: data.workspacesInfo || undefined,
+          cachedWorkspaceInfo: data.cachedWorkspaceInfo || undefined,
           error: undefined,
         });
       },
@@ -239,11 +253,11 @@ export function workspaceSlice() {
       return false;
     },
     sideEffect: [
-      wsDeleteEffect,
       errorHandlerEffect,
       updateLocationEffect,
       refreshWsPathsEffect,
-      refreshWorkspacesEffect,
+      workspaceNotFoundCheckEffect,
+      cachedWorkspaceInfoEffect,
     ],
   });
 }

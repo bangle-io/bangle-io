@@ -23,6 +23,22 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
     };
   },
 
+  'action::@bangle.io/slice-workspace:set-cached-workspace-info': (
+    actionName,
+  ) => {
+    const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
+      return action.value;
+    };
+    const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+      return obj;
+    };
+
+    return {
+      toJSON,
+      fromJSON,
+    };
+  },
+
   'action::@bangle.io/slice-workspace:set-error': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
       if (!action.value.error) {

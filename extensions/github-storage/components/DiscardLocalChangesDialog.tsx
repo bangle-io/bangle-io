@@ -1,14 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ui, workspace } from '@bangle.io/api';
 import { Dialog } from '@bangle.io/ui-components';
 
 import { DISCARD_LOCAL_CHANGES_DIALOG } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
-import {
-  discardLocalChanges,
-  isCurrentWorkspaceGithubStored,
-} from '../operations';
+import { isCurrentWorkspaceGithubStored } from '../helpers';
+import { discardLocalChanges } from '../operations';
 
 export function DiscardLocalChangesDialog() {
   const { bangleStore } = ui.useUIManagerContext();
@@ -17,9 +15,15 @@ export function DiscardLocalChangesDialog() {
   const [isProcessing, updateIsProcessing] = useState(false);
   const [manuallyReload, updateManuallyReload] = useState(false);
 
-  const isGithubWorkspace = wsName
-    ? isCurrentWorkspaceGithubStored(wsName)(bangleStore.state)
-    : false;
+  const [isGithubWorkspace, updateIsGithubWorkspace] = useState(false);
+
+  useEffect(() => {
+    if (wsName) {
+      isCurrentWorkspaceGithubStored(wsName).then((val) =>
+        updateIsGithubWorkspace(val),
+      );
+    }
+  }, [wsName]);
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {

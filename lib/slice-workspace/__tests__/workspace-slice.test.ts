@@ -24,6 +24,7 @@ describe('serialization works', () => {
       Object {
         "workspace": Object {
           "data": Object {
+            "cachedWorkspaceInfo": null,
             "error": null,
             "openedWsPaths": Array [
               null,
@@ -58,6 +59,7 @@ describe('serialization works', () => {
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
       WorkspaceSliceState {
         "mainFields": Object {
+          "cachedWorkspaceInfo": undefined,
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": Array [
@@ -98,6 +100,7 @@ describe('serialization works', () => {
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
       WorkspaceSliceState {
         "mainFields": Object {
+          "cachedWorkspaceInfo": undefined,
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": Array [
@@ -128,6 +131,7 @@ describe('serialization works', () => {
       Object {
         "workspace": Object {
           "data": Object {
+            "cachedWorkspaceInfo": null,
             "error": null,
             "openedWsPaths": Array [
               null,
@@ -188,6 +192,7 @@ describe('serialization works', () => {
     ).toEqual({
       workspace: {
         data: {
+          cachedWorkspaceInfo: null,
           openedWsPaths: makeArrayOfSize(MAX_OPEN_EDITORS, null, [
             'bangle-help:test-path/k.md',
             'bangle-help:getting started.md',

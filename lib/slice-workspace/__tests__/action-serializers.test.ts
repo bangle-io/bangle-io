@@ -149,6 +149,19 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
       },
     },
   ],
+
+  'action::@bangle.io/slice-workspace:set-cached-workspace-info': [
+    {
+      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info' as const,
+      value: {
+        workspaceInfo: createWsInfo({ name: 'test-ws' }),
+      },
+    },
+    {
+      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info' as const,
+      value: {},
+    },
+  ],
 };
 
 const fixtures = Object.values(testFixtures).flatMap(
@@ -158,6 +171,7 @@ let abortController = new AbortController();
 
 let { store } = createStore({ signal: abortController.signal });
 beforeEach(() => {
+  abortController.abort();
   abortController = new AbortController();
   ({ store } = createStore({
     signal: abortController.signal,
