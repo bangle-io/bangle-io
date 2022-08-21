@@ -89,7 +89,7 @@ export interface SidebarType {
   activitybarIconShow?: (
     wsName: string | undefined,
     state: BangleApplicationStore['state'],
-  ) => boolean;
+  ) => boolean | Promise<boolean>;
   hint: string;
   name: `sidebar::${string}`;
   ReactComponent: React.ComponentType;

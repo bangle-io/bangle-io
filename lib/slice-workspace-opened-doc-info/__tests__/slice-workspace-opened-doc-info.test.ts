@@ -7,6 +7,7 @@ import {
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
@@ -290,19 +291,19 @@ describe('effects', () => {
       }),
     );
 
-    await sleep(0);
-
-    expect(
-      workspaceOpenedDocInfoKey.getSliceState(store.state)?.openedFiles,
-    ).toEqual({
-      'test-ws:one.md': {
-        pendingWrite: false,
-        wsPath: 'test-ws:one.md',
-      },
-      'test-ws:two.md': {
-        pendingWrite: false,
-        wsPath: 'test-ws:two.md',
-      },
+    await waitForExpect(() => {
+      expect(
+        workspaceOpenedDocInfoKey.getSliceState(store.state)?.openedFiles,
+      ).toEqual({
+        'test-ws:one.md': {
+          pendingWrite: false,
+          wsPath: 'test-ws:one.md',
+        },
+        'test-ws:two.md': {
+          pendingWrite: false,
+          wsPath: 'test-ws:two.md',
+        },
+      });
     });
 
     expect(getAction(SYNC_ENTRIES)).toEqual([
@@ -363,6 +364,15 @@ describe('effects', () => {
       }),
     );
 
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey
+          .callQueryOp(store.state, getOpenedWsPaths())
+          .toArray()
+          .filter(Boolean),
+      ).toEqual(['test-ws:one.md', 'test-ws:two.md']),
+    );
+
     await sleep(0);
 
     updateDocInfo('test-ws:two.md', {
@@ -377,15 +387,17 @@ describe('effects', () => {
         return openedWsPath.closeIfFound('test-ws:two.md');
       }),
     );
-    await sleep(0);
 
     // should have removed two.md
-    expect(
-      workspaceSliceKey
-        .callQueryOp(store.state, getOpenedWsPaths())
-        .toArray()
-        .filter(Boolean),
-    ).toEqual(['test-ws:one.md']);
+
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey
+          .callQueryOp(store.state, getOpenedWsPaths())
+          .toArray()
+          .filter(Boolean),
+      ).toEqual(['test-ws:one.md']),
+    );
 
     await sleep(0);
 

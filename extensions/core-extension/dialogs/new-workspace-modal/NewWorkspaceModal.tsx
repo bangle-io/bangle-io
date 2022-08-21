@@ -8,7 +8,7 @@ import {
   NEW_WORKSPACE_DIALOG_NAME,
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { hasWorkspace } from '@bangle.io/slice-workspace';
+import { readWorkspaceInfo } from '@bangle.io/slice-workspace';
 import { Dialog } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
@@ -168,10 +168,8 @@ export function NewWorkspaceModal() {
         if (destroyed) {
           return;
         }
-        const existingWorkspace = await hasWorkspace(debouncedNewWorkspaceName)(
-          bangleStore.state,
-          bangleStore.dispatch,
-          bangleStore,
+        const existingWorkspace = await readWorkspaceInfo(
+          debouncedNewWorkspaceName,
         );
 
         if (destroyed) {

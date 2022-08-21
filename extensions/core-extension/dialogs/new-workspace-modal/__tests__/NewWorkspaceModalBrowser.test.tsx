@@ -8,7 +8,7 @@ import { useSerialOperationContext } from '@bangle.io/api';
 import { pickADirectory } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { hasWorkspace } from '@bangle.io/slice-workspace';
+import { readWorkspaceInfo } from '@bangle.io/slice-workspace';
 import { OverlayProvider } from '@bangle.io/ui-components';
 
 import { WORKSPACE_NAME_ALREADY_EXISTS_ERROR } from '../common';
@@ -56,7 +56,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
   return {
     ...workspaceThings,
-    hasWorkspace: jest.fn(() => () => {}),
+    readWorkspaceInfo: jest.fn(async () => undefined),
   };
 });
 
@@ -80,14 +80,14 @@ jest.mock('react-dom', () => {
   };
 });
 
-const hasWorkspaceMock = hasWorkspace as jest.MockedFunction<
-  typeof hasWorkspace
+const readWorkspaceInfoMock = readWorkspaceInfo as jest.MockedFunction<
+  typeof readWorkspaceInfo
 >;
 
 beforeEach(() => {
   let dispatchSerialOperation = jest.fn();
 
-  hasWorkspaceMock.mockImplementation(() => async () => false);
+  readWorkspaceInfoMock.mockImplementation(async () => undefined);
 
   (useUIManagerContext as any).mockImplementation(() => {
     const dispatch = jest.fn();
@@ -174,7 +174,12 @@ describe('NewWorkspaceModalBrowser', () => {
     test('shows error if name already exists', async () => {
       jest.useFakeTimers();
 
-      hasWorkspaceMock.mockImplementation(() => async () => true);
+      readWorkspaceInfoMock.mockImplementation(async () => ({
+        name: 'my-test-ws',
+        type: 'browser',
+        lastModified: 0,
+        metadata: {},
+      }));
 
       let result = render(
         <div>

@@ -4,7 +4,6 @@ import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
 import type { PageSliceStateType } from '@bangle.io/slice-page';
 import { pageSliceKey, syncPageLocation } from '@bangle.io/slice-page';
-import type { WorkspaceSliceState } from '@bangle.io/slice-workspace';
 import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
@@ -138,37 +137,29 @@ const watchHistoryEffect = historySliceKey.effect(() => {
 // Persist rootDirectory handle in the browser history to
 // prevent release of the authorized native browser FS permission on reload
 export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
-  let lastWorkspaceInfos: WorkspaceSliceState['workspacesInfo'] | undefined =
-    undefined;
+  let lastSavedWsName: string | undefined = undefined;
 
   return {
     deferredUpdate(store) {
-      const { workspacesInfo } = workspaceSliceKey.getSliceStateAsserted(
+      const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
         store.state,
       );
 
-      if (workspacesInfo && lastWorkspaceInfos !== workspacesInfo) {
+      if (cachedWorkspaceInfo && cachedWorkspaceInfo.name !== lastSavedWsName) {
         const { history } = historySliceKey.getSliceStateAsserted(store.state);
 
         if (!history || !(history instanceof BrowserHistory)) {
           return;
         }
 
-        const result = Object.values(workspacesInfo)
-          .filter((r) => !r.deleted)
-          .map((r) => {
-            if (r.type === WorkspaceTypeNative) {
-              return r.metadata.rootDirHandle;
-            }
-
-            return undefined;
-          })
-          .filter((r) => r);
-        history.updateHistoryState({
-          workspacesRootDir: result,
-        });
-
-        lastWorkspaceInfos = workspacesInfo;
+        if (cachedWorkspaceInfo.type === WorkspaceTypeNative) {
+          history.updateHistoryState({
+            workspaceRootDir: cachedWorkspaceInfo.metadata.rootDirHandle,
+          });
+        } else {
+          history.updateHistoryState({});
+        }
+        lastSavedWsName = cachedWorkspaceInfo.name;
       }
     },
   };

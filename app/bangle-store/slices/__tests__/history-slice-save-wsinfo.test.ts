@@ -11,11 +11,11 @@ import type { BrowserHistory } from '@bangle.io/history';
 import {
   createWorkspace,
   deleteWorkspace,
-  getWorkspaceInfoAsync,
   listWorkspaces,
+  readWorkspaceInfo,
 } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
-import { createBasicTestStore } from '@bangle.io/test-utils';
+import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { historySlice, historySliceKey } from '../history-slice';
@@ -83,12 +83,10 @@ describe('saveWorkspaceInfoEffect', () => {
 
     store.dispatch({ name: 'action::some-action' } as any);
 
-    await sleep(0);
-
-    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
-    expect((history as BrowserHistory).updateHistoryState).nthCalledWith(1, {
-      workspacesRootDir: [],
-    });
+    await waitForExpect(() =>
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1),
+    );
+    expect((history as BrowserHistory).updateHistoryState).nthCalledWith(1, {});
   });
 
   test('works when a nativefs workspace', async () => {
@@ -100,31 +98,38 @@ describe('saveWorkspaceInfoEffect', () => {
 
     store.dispatch({ name: 'action::some-action' } as any);
 
-    await sleep(0);
+    await waitForExpect(() =>
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1),
+    );
 
-    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
     expect((history as BrowserHistory).updateHistoryState).nthCalledWith(1, {
-      workspacesRootDir: [{ root: 'handler' }],
+      workspaceRootDir: { root: 'handler' },
     });
   });
 
-  test('ignores when a workspace is deleted', async () => {
+  test('works when workspace is deleted', async () => {
     const { store, history } = setup();
 
     await createWorkspace('testWs', WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
+    await waitForExpect(() =>
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1),
+    );
+
     await deleteWorkspace('testWs')(store.state, store.dispatch, store);
+
+    expect((history as BrowserHistory).updateHistoryState).nthCalledWith(1, {
+      workspaceRootDir: { root: 'handler' },
+    });
 
     store.dispatch({ name: 'action::some-action' } as any);
 
-    await sleep(0);
+    await sleep(50);
 
-    // expect((history as BrowserHistory).updateHistoryState).(1);
-    expect((history as BrowserHistory).updateHistoryState).lastCalledWith({
-      workspacesRootDir: [],
-    });
+    // does not call again
+    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
   });
 
   test('ignores when a workspace is already deleted in the db', async () => {
@@ -135,15 +140,19 @@ describe('saveWorkspaceInfoEffect', () => {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
+    await waitForExpect(() =>
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1),
+    );
+
     await deleteWorkspace(deletedWsName)(store.state, store.dispatch, store);
 
-    await sleep(0);
-
-    expect(
-      (await listWorkspaces()(store.state, store.dispatch, store)).map(
-        (r) => r.name,
-      ),
-    ).not.toContain(deletedWsName);
+    await waitForExpect(async () =>
+      expect(
+        (
+          await listWorkspaces()(store.state, store.dispatch, store)
+        ).map((r) => r.name),
+      ).not.toContain(deletedWsName),
+    );
 
     await sleep(0);
 
@@ -152,10 +161,8 @@ describe('saveWorkspaceInfoEffect', () => {
 
     store.dispatch({ name: 'action::some-action' } as any);
 
-    await sleep(0);
-
     await createWorkspace('testWs2', WorkspaceTypeNative, {
-      rootDirHandle: { root: 'handler' },
+      rootDirHandle: { root: 'handler2' },
     })(store.state, store.dispatch, store);
 
     expect(
@@ -166,32 +173,34 @@ describe('saveWorkspaceInfoEffect', () => {
 
     store.dispatch({ name: 'action::some-action' } as any);
 
-    await sleep(0);
+    await waitForExpect(() =>
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1),
+    );
 
-    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(2);
     expect((history as BrowserHistory).updateHistoryState).nthCalledWith(
-      2,
+      1,
 
-      { workspacesRootDir: [{ root: 'handler' }] },
+      { workspaceRootDir: { root: 'handler2' } },
     );
   });
 
-  test('dispatching multipe times does not call it again', async () => {
+  test('dispatching multiple times does not call it again', async () => {
     const { store, history } = setup();
 
     await createWorkspace('testWs', WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
-    const wsInfo = await getWorkspaceInfoAsync('testWs')(store.state);
+    const wsInfo = await readWorkspaceInfo('testWs');
 
-    await sleep(0);
+    await waitForExpect(() =>
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1),
+    );
 
-    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
     expect((history as BrowserHistory).updateHistoryState).nthCalledWith(
       1,
 
-      { workspacesRootDir: [wsInfo.metadata.rootDirHandle] },
+      { workspaceRootDir: wsInfo?.metadata.rootDirHandle },
     );
 
     let morphedStore = store as ApplicationStore;
@@ -203,7 +212,7 @@ describe('saveWorkspaceInfoEffect', () => {
     );
 
     store.dispatch({ name: 'action::some-action' } as any);
-    await sleep(0);
+    await sleep(50);
 
     expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
   });

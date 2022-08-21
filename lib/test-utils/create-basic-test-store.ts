@@ -1,3 +1,5 @@
+import waitForExpect from 'wait-for-expect';
+
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import type {
   ApplicationStore,
@@ -19,6 +21,7 @@ import { uiSlice } from '@bangle.io/slice-ui';
 import {
   createNote,
   createWorkspace,
+  getWsName,
   listWorkspaces,
   workspaceSlice,
   workspaceSliceKey,
@@ -156,7 +159,9 @@ export async function setupMockWorkspaceWithNotes(
     store,
   );
 
-  await sleep(0);
+  await waitForExpect(() => {
+    expect(getWsName()(store.state)).toBe(wsName);
+  });
 
   for (const [noteWsPath, str] of noteWsPaths) {
     await createNote(noteWsPath, {
@@ -170,27 +175,11 @@ export async function setupMockWorkspaceWithNotes(
     store.destroy();
   }
 
-  const waitForNotesToLoad = async (targetLength: number) => {
-    let counter = 0;
-
-    while (counter++ < 5) {
-      await sleep(10);
-
-      const notesLoaded =
-        workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length ===
-        targetLength;
-
-      if (notesLoaded) {
-        break;
-      }
-
-      if (counter === 4) {
-        throw new Error('Test setup error: Workspace not loaded');
-      }
-    }
-  };
-
-  await waitForNotesToLoad(noteWsPaths.length);
+  await waitForExpect(() => {
+    expect(
+      workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length,
+    ).toBe(noteWsPaths.length);
+  });
 
   return {
     wsName,
@@ -205,7 +194,12 @@ export async function setupMockWorkspaceWithNotes(
 
       let set = new Set(noteWsPaths.map((r) => r[0]));
       set.add(wsPath);
-      await waitForNotesToLoad(set.size);
+
+      await waitForExpect(() => {
+        expect(
+          workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length,
+        ).toBe(set.size);
+      });
     },
   };
 }

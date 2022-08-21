@@ -21,6 +21,7 @@ let abortController = new AbortController();
 let signal = abortController.signal;
 
 beforeEach(() => {
+  abortController.abort();
   abortController = new AbortController();
   signal = abortController.signal;
 });
@@ -210,9 +211,10 @@ describe('last seen workspace', () => {
       updateOpenedWsPaths(() =>
         OpenedWsPaths.createFromArray(['test-ws-1:hello.md']),
       )(store.state, store.dispatch);
-      await sleep(0);
 
-      expect(lastWorkspaceUsed.get()).toEqual('test-ws-1');
+      await waitForExpect(() =>
+        expect(lastWorkspaceUsed.get()).toEqual('test-ws-1'),
+      );
     });
   });
 });

@@ -6,9 +6,10 @@ import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
-  getWorkspaceInfoAsync,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
+  goToWsNameRouteNotFoundRoute,
+  readWorkspaceInfo,
 } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
@@ -24,12 +25,19 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   useEffect(() => {
     let destroyed = false;
 
-    getWorkspaceInfoAsync(wsName)(bangleStore.state).then(
+    readWorkspaceInfo(wsName).then(
       (wsInfo) => {
         if (destroyed) {
           return;
         }
-        updateWsInfo(wsInfo);
+        if (!wsInfo) {
+          goToWsNameRouteNotFoundRoute(wsName)(
+            bangleStore.state,
+            bangleStore.dispatch,
+          );
+        } else {
+          updateWsInfo(wsInfo);
+        }
       },
       (error) => {
         if (destroyed) {

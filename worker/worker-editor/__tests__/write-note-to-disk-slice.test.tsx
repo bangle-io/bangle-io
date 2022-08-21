@@ -445,9 +445,12 @@ describe('effects', () => {
 
   test('blockOnPendingWriteEffect', async () => {
     const { store, typeText, getAction } = await setup();
-    expect(
-      getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-    ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
+
+    await waitForExpect(() =>
+      expect(getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString()).toBe(
+        '<h1>hello mars</h1>',
+      ),
+    );
 
     typeText(PRIMARY_EDITOR_INDEX, 'hello');
 
