@@ -23,7 +23,6 @@ import {
   WorkspaceError,
 } from '..';
 import { workspaceSliceKey } from '../common';
-import { WORKSPACE_INFO_CACHE_REFRESH_INTERVAL } from '../config';
 import { createNote, refreshWsPaths } from '../file-operations';
 import {
   getOpenedWsPaths,

@@ -163,7 +163,6 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
 
       const { state } = store;
 
-      console.count('called');
       const wsInfo = await readWorkspaceInfo(wsName);
 
       if (!wsInfo) {
