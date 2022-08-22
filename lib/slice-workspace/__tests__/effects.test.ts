@@ -152,7 +152,7 @@ describe('refreshWsPathsEffect', () => {
   });
 
   // eslint-disable-next-line jest/no-disabled-tests
-  test.skip('refresh when workspace changes', async () => {
+  test('refresh when workspace changes', async () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
@@ -166,8 +166,7 @@ describe('refreshWsPathsEffect', () => {
     expect(listAllFilesSpy).toBeCalledTimes(1);
 
     goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
-    await sleep(0);
-    expect(listAllFilesSpy).toBeCalledTimes(2);
+    await waitForExpect(() => expect(listAllFilesSpy).toBeCalledTimes(2));
   });
 });
 

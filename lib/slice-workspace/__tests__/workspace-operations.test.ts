@@ -10,6 +10,7 @@ import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo, workspaceSliceKey } from '../common';
+import { getWsName } from '../operations';
 import { readAllWorkspacesInfo, readWorkspaceInfo } from '../read-ws-info';
 import {
   createWorkspace,
@@ -205,6 +206,34 @@ describe('createWorkspace', () => {
       name: 'test-1',
       type: 'nativefs',
     });
+  });
+
+  test('creates a workspace which was previously deleted', async () => {
+    const { store } = createBasicTestStore({ signal });
+
+    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await waitForExpect(() => expect(getWsName()(store.state)).toBe('test-1'));
+
+    await deleteWorkspace('test-1')(store.state, store.dispatch, store);
+
+    expect(await readWorkspaceInfo('test-1')).toBe(undefined);
+
+    await waitForExpect(() => expect(getWsName()(store.state)).toBe(undefined));
+
+    // create again
+    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await waitForExpect(() => expect(getWsName()(store.state)).toBe('test-1'));
+    expect(await readWorkspaceInfo('test-1')).toBeDefined();
   });
 });
 

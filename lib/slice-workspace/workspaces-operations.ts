@@ -90,7 +90,16 @@ export function createWorkspace(
       metadata: wsMetadata,
     };
 
-    await saveWorkspaceInfo(wsName, (w) => w, workspaceInfo);
+    await saveWorkspaceInfo(
+      wsName,
+      (w) => ({
+        ...w,
+        // if there was a previously deleted workspace with the same name,
+        // overwrite it
+        ...workspaceInfo,
+      }),
+      workspaceInfo,
+    );
 
     goToLocation(wsNameToPathname(wsName))(
       store.state,
