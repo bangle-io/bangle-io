@@ -426,15 +426,13 @@ describe('workspaceErrorHandler', () => {
     });
 
     expect(
-      workspaceSliceKey.getSliceStateAsserted(store.state).workspacesInfo,
-    ).toMatchObject({
-      [wsName]: {
-        deleted: false,
-        lastModified: 1,
-        metadata: {},
-        name: wsName,
-        type: 'testType',
-      },
+      workspaceSliceKey.getSliceStateAsserted(store.state).cachedWorkspaceInfo,
+    ).toEqual({
+      deleted: false,
+      lastModified: 1,
+      metadata: {},
+      name: wsName,
+      type: 'testType',
     });
 
     await createNote('my-ws:test-note.md', {

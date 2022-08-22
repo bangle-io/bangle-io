@@ -46,7 +46,6 @@ export const getUseWorkspaceContextReturn: Mutable<
   openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: [],
   refreshCounter: 0,
-  workspacesInfo: undefined,
   wsName: 'test-ws',
   wsPaths: [],
 };

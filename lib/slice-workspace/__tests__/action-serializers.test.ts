@@ -63,22 +63,6 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
   ],
 
-  'action::@bangle.io/slice-workspace:set-workspace-infos': [
-    {
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos' as const,
-      value: {
-        workspacesInfo: {},
-      },
-    },
-    {
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos' as const,
-      value: {
-        workspacesInfo: {
-          testWs: createWsInfo({ name: 'testWs' }),
-        },
-      },
-    },
-  ],
   'action::@bangle.io/slice-workspace:refresh-ws-paths': [
     {
       name: 'action::@bangle.io/slice-workspace:refresh-ws-paths' as const,

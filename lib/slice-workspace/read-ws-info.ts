@@ -21,10 +21,11 @@ export async function readWorkspaceInfo(
     allowDeleted?: boolean;
   } = {},
 ): Promise<WorkspaceInfo | undefined> {
+  let match = await getWorkspaceInfoTable().get(wsName);
+
   if (wsName === HELP_FS_WORKSPACE_NAME) {
-    return helpFSWorkspaceInfo();
+    match = helpFSWorkspaceInfo();
   }
-  const match = await getWorkspaceInfoTable().get(wsName);
 
   if (!allowDeleted && match?.deleted) {
     return undefined;

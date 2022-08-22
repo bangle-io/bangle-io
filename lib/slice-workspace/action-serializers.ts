@@ -9,20 +9,6 @@ import type {
 import { storageProviderHelpers } from './storage-provider-helpers';
 
 export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
-  'action::@bangle.io/slice-workspace:set-workspace-infos': (actionName) => {
-    const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
-      return action.value;
-    };
-    const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-      return obj;
-    };
-
-    return {
-      toJSON,
-      fromJSON,
-    };
-  },
-
   'action::@bangle.io/slice-workspace:set-cached-workspace-info': (
     actionName,
   ) => {

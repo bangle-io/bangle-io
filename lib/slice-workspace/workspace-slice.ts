@@ -15,7 +15,6 @@ import {
 } from './effects';
 import { WorkspaceError } from './errors';
 import { sliceHasError } from './operations';
-import { mergeWsInfoRegistries } from './read-ws-info';
 import { storageProviderHelpers } from './storage-provider-helpers';
 import type { WorkspaceStateKeys } from './workspace-slice-state';
 import { WorkspaceSliceState } from './workspace-slice-state';
@@ -32,7 +31,6 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   cachedWorkspaceInfo: undefined,
   wsPaths: undefined,
   refreshCounter: 0,
-  workspacesInfo: undefined,
   error: undefined,
 });
 
@@ -117,12 +115,6 @@ const applyState = (
       });
     }
 
-    case 'action::@bangle.io/slice-workspace:set-workspace-infos': {
-      return WorkspaceSliceState.update(state, {
-        workspacesInfo: action.value.workspacesInfo,
-      });
-    }
-
     case 'action::@bangle.io/slice-workspace:set-cached-workspace-info': {
       const { workspaceInfo } = action.value;
 
@@ -171,7 +163,6 @@ export function workspaceSlice() {
           recentlyUsedWsPaths: val.recentlyUsedWsPaths,
           wsPaths: val.wsPaths,
           refreshCounter: val.refreshCounter,
-          workspacesInfo: val.workspacesInfo,
           cachedWorkspaceInfo: val.cachedWorkspaceInfo,
           error: undefined,
         };
@@ -211,7 +202,6 @@ export function workspaceSlice() {
           recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
           wsPaths: data.wsPaths || undefined,
           refreshCounter: data.refreshCounter || 0,
-          workspacesInfo: data.workspacesInfo || undefined,
           cachedWorkspaceInfo: data.cachedWorkspaceInfo || undefined,
           error: undefined,
         });

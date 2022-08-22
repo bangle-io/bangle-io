@@ -17,7 +17,7 @@ import { WorkspacePage } from './pages/WorkspacePage';
 
 export function Routes() {
   const [location] = useLocation();
-  const { bangleStore, workspacesInfo } = useWorkspaceContext();
+  const { bangleStore } = useWorkspaceContext();
   useEffect(() => {
     if (location === wsNameToPathname(HELP_FS_WORKSPACE_NAME)) {
       pushWsPath(HELP_FS_INDEX_WS_PATH)(
@@ -43,11 +43,9 @@ export function Routes() {
       </Route>
       <Route path="/">
         {() => {
-          const lastWsName = lastWorkspaceUsed.get() || HELP_FS_WORKSPACE_NAME;
+          const lastWsName = lastWorkspaceUsed.get();
 
-          if (lastWsName && workspacesInfo?.[lastWsName]?.deleted) {
-            lastWorkspaceUsed.save(HELP_FS_WORKSPACE_NAME);
-
+          if (!lastWsName) {
             return <Redirect to={BANGLE_HOME_PATH} />;
           }
 
