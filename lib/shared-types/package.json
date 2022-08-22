@@ -28,9 +28,9 @@
     "typescript": "^4.7.3"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.31.1",
-    "@bangle.dev/pm": "0.31.1",
-    "@bangle.dev/utils": "0.31.1",
+    "@bangle.dev/core": "0.31.2",
+    "@bangle.dev/pm": "0.31.2",
+    "@bangle.dev/utils": "0.31.2",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
