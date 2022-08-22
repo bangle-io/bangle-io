@@ -1,33 +1,14 @@
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
-import { getWorkspaceInfoTable } from '@bangle.io/db-app';
+import {
+  getAppDb,
+  getWorkspaceInfoTable,
+  makeDbRecord,
+  WORKSPACE_INFO_TABLE,
+} from '@bangle.io/db-app';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo } from './common';
-import type { WorkspaceInfoReg } from './workspace-slice-state';
-
-const WORKSPACE_KEY = 'workspaces/2';
-
-function processWorkspacesInfo(wsInfos: WorkspaceInfo[]) {
-  if (!Array.isArray(wsInfos)) {
-    wsInfos = [];
-  }
-
-  const reg = Object.fromEntries(
-    wsInfos.map((r) => {
-      if (typeof r.deleted === 'undefined') {
-        r.deleted = false;
-      }
-
-      return [r.name, r];
-    }),
-  );
-
-  // inject the permanent help workspace type
-  reg[HELP_FS_WORKSPACE_NAME] = helpFSWorkspaceInfo();
-
-  return reg;
-}
 
 export async function readWorkspaceInfo(
   wsName: string,
@@ -40,9 +21,10 @@ export async function readWorkspaceInfo(
     allowDeleted?: boolean;
   } = {},
 ): Promise<WorkspaceInfo | undefined> {
-  const wsInfos = (await getWorkspaceInfoTable().get(WORKSPACE_KEY)) || [];
-
-  const match = wsInfos.find((r) => r.name === wsName);
+  if (wsName === HELP_FS_WORKSPACE_NAME) {
+    return helpFSWorkspaceInfo();
+  }
+  const match = await getWorkspaceInfoTable().get(wsName);
 
   if (!allowDeleted && match?.deleted) {
     return undefined;
@@ -62,51 +44,54 @@ export async function readWorkspaceMetadata(
   return (await readWorkspaceInfo(wsName, opts))?.metadata;
 }
 
-export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
-  const wsInfos = (await getWorkspaceInfoTable().get(WORKSPACE_KEY)) || [];
+export async function readAllWorkspacesInfo(
+  opts?: Parameters<typeof readWorkspaceInfo>[1],
+): Promise<WorkspaceInfo[]> {
+  const wsInfos = (await getWorkspaceInfoTable().getAll()) || [];
 
-  return processWorkspacesInfo(wsInfos);
+  return [
+    ...wsInfos
+      .filter((wsInfo) => {
+        if (opts?.allowDeleted) {
+          return true;
+        }
+
+        return !wsInfo.deleted;
+      })
+      .filter((wsInfo) => {
+        if (opts?.type) {
+          return wsInfo.type === opts.type;
+        }
+
+        return true;
+      }),
+    helpFSWorkspaceInfo(),
+  ].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function saveWorkspaceInfo(workspaceInfo: WorkspaceInfo) {
-  workspaceInfo = {
-    ...workspaceInfo,
-    lastModified: Date.now(),
-  };
-  const wsInfos = await readWorkspacesInfoReg();
-
-  let newWsInfos = mergeWsInfoRegistries(wsInfos, {
-    [workspaceInfo.name]: workspaceInfo,
-  });
-
-  await getWorkspaceInfoTable().put(
-    WORKSPACE_KEY,
-    Object.values(newWsInfos).filter(
-      (wsInfo) => wsInfo.name !== HELP_FS_WORKSPACE_NAME,
-    ),
-  );
-}
-
-// TODO WSINFO remove this one set ws-info action is gone
-export function mergeWsInfoRegistries(
-  existingReg: WorkspaceInfoReg,
-  incomingReg: WorkspaceInfoReg,
+export async function saveWorkspaceInfo(
+  wsName: string,
+  workspaceInfo: (existing: WorkspaceInfo) => WorkspaceInfo,
+  defaultValue: WorkspaceInfo,
 ) {
-  const newReg = Object.assign({}, existingReg);
-
-  Object.entries(incomingReg).forEach(([wsName, wsInfo]) => {
-    const existing = existingReg[wsName];
-
-    if (!existing || existing.lastModified < wsInfo.lastModified) {
-      newReg[wsName] = wsInfo;
-    }
-  });
-
-  if (shallowEqual(newReg, existingReg)) {
-    return existingReg;
+  if (wsName === HELP_FS_WORKSPACE_NAME) {
+    return;
   }
 
-  return newReg;
+  const db = await getAppDb();
+
+  const tx = db.transaction(WORKSPACE_INFO_TABLE, 'readwrite');
+
+  const store = tx.objectStore(WORKSPACE_INFO_TABLE);
+
+  const existing = await store.get(wsName);
+
+  const newInfo: WorkspaceInfo = {
+    ...workspaceInfo(existing?.value || defaultValue),
+    lastModified: Date.now(),
+  };
+
+  await Promise.all([store.put(makeDbRecord(wsName, newInfo)), tx.done]);
 }
 
 export async function compareWorkspaceInfo(

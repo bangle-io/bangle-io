@@ -118,15 +118,8 @@ const applyState = (
     }
 
     case 'action::@bangle.io/slice-workspace:set-workspace-infos': {
-      const existingWsInfos = state.workspacesInfo || {};
-
-      const newWsInfos = mergeWsInfoRegistries(
-        existingWsInfos,
-        action.value.workspacesInfo,
-      );
-
       return WorkspaceSliceState.update(state, {
-        workspacesInfo: newWsInfos,
+        workspacesInfo: action.value.workspacesInfo,
       });
     }
 

@@ -1,5 +1,6 @@
 import {
   WorkspaceTypeBrowser,
+  WorkspaceTypeHelp,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
@@ -9,7 +10,7 @@ import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo, workspaceSliceKey } from '../common';
-import { readWorkspaceInfo, readWorkspacesInfoReg } from '../read-ws-info';
+import { readAllWorkspacesInfo, readWorkspaceInfo } from '../read-ws-info';
 import {
   createWorkspace,
   deleteWorkspace,
@@ -226,15 +227,24 @@ describe('deleteWorkspace', () => {
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
-    expect(await readWorkspacesInfoReg()).toMatchObject({
-      'test-1': {
+    expect(await readAllWorkspacesInfo({ allowDeleted: true })).toEqual([
+      {
+        deleted: false,
+        lastModified: expect.any(Number),
+        metadata: {
+          allowLocalChanges: true,
+        },
+        name: 'bangle-help',
+        type: WorkspaceTypeHelp,
+      },
+      {
         deleted: true,
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
         type: WorkspaceTypeBrowser,
       },
-    });
+    ]);
   });
 
   test('redirects correctly for a deleted workspace', async () => {

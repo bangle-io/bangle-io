@@ -15,7 +15,7 @@ export const tables = [WORKSPACE_INFO_TABLE, DUMMY_TABLE] as const;
 export interface AppDatabase extends DBSchema {
   [WORKSPACE_INFO_TABLE]: {
     key: string;
-    value: DbRecord<WorkspaceInfo[]>;
+    value: DbRecord<WorkspaceInfo>;
   };
   [DUMMY_TABLE]: {
     key: string;

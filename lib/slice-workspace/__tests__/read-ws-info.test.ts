@@ -82,14 +82,17 @@ describe('readWorkspaceInfo', () => {
       type: 'browser',
     });
 
-    await saveWorkspaceInfo({
-      ...wsInfo!,
-      deleted: true,
-      lastModified: Date.now(),
-      metadata: {
-        test: '1234',
-      },
-    });
+    await saveWorkspaceInfo(
+      'test-ws-1',
+      (wsInfo) => ({
+        ...wsInfo,
+        deleted: true,
+        metadata: {
+          test: '1234',
+        },
+      }),
+      wsInfo!,
+    );
 
     wsInfo = await readWorkspaceInfo('test-ws-1', {
       type: 'browser',
@@ -126,13 +129,17 @@ describe('readWorkspaceMetadata', () => {
     const wsInfo = await readWorkspaceMetadata('test-ws-1');
     expect(wsInfo).toEqual({});
 
-    await saveWorkspaceInfo({
-      ...(await readWorkspaceInfo('test-ws-1'))!,
-      lastModified: Date.now(),
-      metadata: {
-        test: '1234',
-      },
-    });
+    await saveWorkspaceInfo(
+      'test-ws-1',
+      (wsInfo) => ({
+        ...wsInfo!,
+        lastModified: Date.now(),
+        metadata: {
+          test: '1234',
+        },
+      }),
+      (await readWorkspaceInfo('test-ws-1'))!,
+    );
 
     expect(await readWorkspaceMetadata('test-ws-1')).toEqual({
       test: '1234',

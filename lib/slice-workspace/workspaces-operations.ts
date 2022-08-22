@@ -25,8 +25,8 @@ import {
 import { getWsName, goToWorkspaceHomeRoute } from './operations';
 import {
   compareWorkspaceInfo,
+  readAllWorkspacesInfo,
   readWorkspaceInfo,
-  readWorkspacesInfoReg,
   saveWorkspaceInfo,
 } from './read-ws-info';
 
@@ -34,24 +34,13 @@ import {
 export function listWorkspaces() {
   return workspaceSliceKey.asyncOp(
     async (_, __, store): Promise<WorkspaceInfo[]> => {
-      const workspacesInfo = await readWorkspacesInfoReg();
-
-      // TODO WSINFO
-      store.dispatch({
-        name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-        value: {
-          workspacesInfo: workspacesInfo,
-        },
-      });
+      const workspacesInfo = await readAllWorkspacesInfo();
 
       if (store.destroyed) {
         return [];
       }
 
-      // only return the not deleted ones
-      return Object.values(workspacesInfo)
-        .filter((r) => !r.deleted)
-        .sort((a, b) => a.name.localeCompare(b.name));
+      return workspacesInfo;
     },
   );
 }
@@ -93,7 +82,7 @@ export function createWorkspace(
     const wsMetadata =
       (await storageProvider.newWorkspaceMetadata(wsName, opts)) || {};
 
-    const workspace: WorkspaceInfo = {
+    const workspaceInfo: WorkspaceInfo = {
       deleted: false,
       lastModified: Date.now(),
       name: wsName,
@@ -101,7 +90,7 @@ export function createWorkspace(
       metadata: wsMetadata,
     };
 
-    await saveWorkspaceInfo(workspace);
+    await saveWorkspaceInfo(wsName, (w) => w, workspaceInfo);
 
     goToLocation(wsNameToPathname(wsName))(
       store.state,
@@ -132,13 +121,14 @@ export function deleteWorkspace(targetWsName: string) {
       await Promise.resolve();
     }
 
-    const deletedWorkspace = {
-      ...targetWsInfo,
-      deleted: true,
-      lastModified: Date.now(),
-    };
-
-    await saveWorkspaceInfo(deletedWorkspace);
+    await saveWorkspaceInfo(
+      targetWsName,
+      (existing) => ({
+        ...existing,
+        deleted: true,
+      }),
+      targetWsInfo,
+    );
 
     return true;
   };
@@ -164,24 +154,18 @@ export function updateWorkspaceMetadata(
       });
     }
 
-    const newMetadata =
-      typeof metadata === 'function'
-        ? metadata(currentWsInfo.metadata)
-        : metadata;
-
-    if (newMetadata === currentWsInfo.metadata) {
-      return false;
-    }
-
-    const updatedWorkspace = {
-      ...currentWsInfo,
-      lastModified: Date.now(),
-      metadata: {
-        ...newMetadata,
-      },
-    };
-
-    await saveWorkspaceInfo(updatedWorkspace);
+    await saveWorkspaceInfo(
+      wsName,
+      (existing) => ({
+        ...existing,
+        metadata: {
+          ...(typeof metadata === 'function'
+            ? metadata(existing.metadata)
+            : metadata),
+        },
+      }),
+      currentWsInfo,
+    );
 
     return true;
   });

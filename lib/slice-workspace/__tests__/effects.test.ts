@@ -648,13 +648,16 @@ describe('cachedWorkspaceInfoEffect', () => {
       type: 'browser',
     });
 
-    await saveWorkspaceInfo({
-      ...wsInfo!,
-      lastModified: Date.now(),
-      metadata: {
-        test: '1234',
-      },
-    });
+    await saveWorkspaceInfo(
+      'test-ws-1',
+      (wsInfo) => ({
+        ...wsInfo!,
+        metadata: {
+          test: '1234',
+        },
+      }),
+      wsInfo!,
+    );
 
     expect(await readWorkspaceInfo('test-ws-1')).toEqual({
       deleted: false,
