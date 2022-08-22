@@ -38,6 +38,7 @@ test.describe('collab', () => {
       name: 'Split screen and typing in secondary works',
     });
     expect(secondaryText).toBe(primaryText);
+    await longSleep();
 
     await page.keyboard.press('Enter');
 
@@ -48,6 +49,7 @@ test.describe('collab', () => {
     secondaryText = await getEditorDebugString(page, SECONDARY_EDITOR_INDEX, {
       wsPath,
     });
+
     expect(secondaryText).toMatch(/manthanoy/);
     primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX, {
       wsPath,

@@ -213,14 +213,15 @@ export async function createNewNote(
   const editorId = PRIMARY_EDITOR_INDEX;
 
   await waitForWsPathToLoad(page, editorId, { wsPath });
-
   await sleep();
 
   return wsPath;
 }
 
 async function waitForPrimaryEditorFocus(page: Page) {
-  await page.isVisible('.B-editor-container_editor-0 .ProseMirror-focused');
+  await page.isVisible(
+    `.B-editor-container_editor-${PRIMARY_EDITOR_INDEX} .ProseMirror-focused`,
+  );
 }
 export async function waitForEditorFocus(
   page: Page,
@@ -264,7 +265,9 @@ export async function clearEditor(
   await sleep();
 
   text = await page
-    .locator('.B-editor-container_editor-0 .bangle-editor')
+    .locator(
+      `.B-editor-container_editor-${PRIMARY_EDITOR_INDEX} .bangle-editor`,
+    )
     .innerText();
 
   if (text.trim() !== '') {
@@ -282,7 +285,9 @@ export async function getPrimaryEditorHandler(
   page: Page,
   { focus = false } = {},
 ) {
-  await page.isVisible(`.B-editor-container_editor-0 .bangle-editor`);
+  await page.isVisible(
+    `.B-editor-container_editor-${PRIMARY_EDITOR_INDEX} .bangle-editor`,
+  );
 
   await waitForEditorIdToLoad(page, PRIMARY_EDITOR_INDEX);
 
@@ -297,7 +302,9 @@ export async function getPrimaryEditorHandler(
     await waitForPrimaryEditorFocus(page);
   }
 
-  return page.$('.B-editor-container_editor-0 .bangle-editor');
+  return page.$(
+    `.B-editor-container_editor-${PRIMARY_EDITOR_INDEX} .bangle-editor`,
+  );
 }
 
 export async function getEditorLocator(
@@ -305,7 +312,9 @@ export async function getEditorLocator(
   editorId: EditorIdType,
   { focus = false, wsPath }: { focus?: boolean; wsPath?: string } = {},
 ) {
-  const loc = page.locator(`.B-editor-container_editor-0 .bangle-editor`);
+  const loc = page.locator(
+    `.B-editor-container_editor-${PRIMARY_EDITOR_INDEX} .bangle-editor`,
+  );
 
   await loc.waitFor();
 
@@ -325,7 +334,9 @@ export async function getEditorLocator(
     await waitForEditorFocus(page, editorId);
   }
 
-  return page.locator(`.B-editor-container_editor-${editorId} .bangle-editor`);
+  return page.locator(
+    `.B-editor-container_editor-${editorId} .bangle-editor.bangle-collab-active`,
+  );
 }
 
 export function sleep(t = 20) {
@@ -399,7 +410,7 @@ export async function waitForEditorTextToContain(
   attempt = 0,
 ): Promise<void> {
   let loc = page.locator(
-    `.B-editor-container_editor-${editorId} .bangle-editor`,
+    `.B-editor-container_editor-${editorId} .bangle-editor.bangle-collab-active`,
   );
 
   await expect(loc).toContainText(text, { timeout: 10000, useInnerText: true });
@@ -508,19 +519,22 @@ export async function waitForWsPathToLoad(
   editorId: EditorIdType,
   { wsPath }: { wsPath: string },
 ) {
-  return page.waitForFunction(
-    ({ editorId, wsPath }) => {
-      return (window as any)[`editor-${editorId}`]?.wsPath === wsPath;
-    },
-    { editorId, wsPath },
-  );
+  await Promise.all([
+    page.waitForFunction(
+      ({ editorId, wsPath }) => {
+        return (window as any)[`editor-${editorId}`]?.wsPath === wsPath;
+      },
+      { editorId, wsPath },
+    ),
+    waitForEditorIdToLoad(page, editorId),
+  ]);
 }
 
 export async function waitForEditorIdToLoad(
   page: Page,
   editorId: EditorIdType,
 ) {
-  return page.waitForFunction(
+  await page.waitForFunction(
     ({ editorId }) => {
       try {
         return (
@@ -541,6 +555,12 @@ export async function waitForEditorIdToLoad(
     },
     { editorId },
   );
+
+  await page
+    .locator(
+      `.B-editor-container_editor-container-${editorId} .bangle-collab-active`,
+    )
+    .waitFor();
 }
 
 export async function waitForNotification(page: Page, text: string) {

@@ -44,7 +44,9 @@ test('resets if a newly created doc which is not modified and then its content a
   await executeOverwrite(page, wsPath1);
 
   await expect
-    .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX))
+    .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX), {
+      timeout: 2 * SELECTOR_TIMEOUT,
+    })
     .toBe(`doc(paragraph("I am ", italic("overwrite")))`);
 });
 
@@ -71,8 +73,6 @@ test('resets doc when it is created then modified and then content changes exter
 }) => {
   const wsName1 = await createWorkspace(page);
   const wsPath1 = await createNewNote(page, wsName1, 'file-1');
-
-  await sleep(50);
 
   const editorHandle = await page.waitForSelector('.bangle-editor', {
     timeout: SELECTOR_TIMEOUT,

@@ -86,7 +86,9 @@ test.describe('miniEditor', () => {
     await sleep();
 
     // make sure to type it in mini editor
-    await locator.locator('.bangle-editor').type('AWESOME', { delay: 15 });
+    await locator
+      .locator('.bangle-editor.bangle-collab-active')
+      .type('AWESOME', { delay: 15 });
 
     await sleep();
 
