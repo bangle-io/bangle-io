@@ -1,3 +1,4 @@
+import type { ApplicationStore } from '@bangle.io/create-store';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import {
   pageSliceKey,
@@ -5,27 +6,29 @@ import {
   pathnameToWsPath,
   searchToWsPath,
 } from '@bangle.io/slice-page';
+import { abortableSetInterval } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import type { SideEffect } from './common';
 import { workspaceSliceKey } from './common';
+import { WORKSPACE_INFO_CACHE_REFRESH_INTERVAL } from './config';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { getStorageProviderOpts } from './file-operations';
 import {
-  getWsInfoIfNotDeleted,
   storageProviderErrorHandlerFromExtensionRegistry,
   storageProviderFromExtensionRegistry,
   validateOpenedWsPaths,
 } from './helpers';
 import {
+  getWsName,
   goToInvalidPathRoute,
-  goToWorkspaceHomeRoute,
   goToWsNameRouteNotFoundRoute,
-  sliceHasError,
 } from './operations';
-import { saveWorkspacesInfo } from './read-ws-info';
+import { readWorkspaceInfo } from './read-ws-info';
 import { storageProviderHelpers } from './storage-provider-helpers';
-import { listWorkspaces } from './workspaces-operations';
+import {
+  clearCachedWorkspaceInfo,
+  updateCachedWorkspaceInfo,
+} from './workspaces-operations';
 
 const LOG = false;
 
@@ -127,7 +130,7 @@ export const errorHandlerEffect = workspaceSliceKey.effect(() => {
   };
 });
 
-export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
+export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
   let abort = new AbortController();
 
   return {
@@ -136,15 +139,15 @@ export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
         'refreshCounter',
         'error',
         'wsName',
-        'workspacesInfo',
       );
 
       if (!changed) {
         return;
       }
 
-      const { error, wsName, workspacesInfo } =
-        workspaceSliceKey.getSliceStateAsserted(store.state);
+      const { error, wsName } = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      );
 
       if (error) {
         log('returning early error');
@@ -152,15 +155,15 @@ export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      if (!wsName || !workspacesInfo) {
-        log('returning early wsName || workspacesInfo');
+      if (!wsName) {
+        log('returning early wsName');
 
         return;
       }
 
       const { state } = store;
 
-      const wsInfo = getWsInfoIfNotDeleted(wsName, workspacesInfo);
+      const wsInfo = await readWorkspaceInfo(wsName);
 
       if (!wsInfo) {
         log('returning early wsInfo');
@@ -201,47 +204,22 @@ export const refreshWsPathsEffect: SideEffect = workspaceSliceKey.effect(() => {
   };
 });
 
-// react to wsInfo deletion
-export const wsDeleteEffect = workspaceSliceKey.effect(() => {
-  return {
-    update(store, prevState) {
-      if (sliceHasError()(store.state)) {
-        return;
-      }
-
-      const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
-
-      const workspacesInfo = workspaceSliceKey.getValueIfChanged(
-        'workspacesInfo',
-        store.state,
-        prevState,
-      );
-
-      if (wsName && workspacesInfo?.[wsName]?.deleted === true) {
-        goToWorkspaceHomeRoute()(store.state, store.dispatch);
-
-        return;
-      }
-    },
-  };
-});
-
 // This keeps a copy of location changes within the workspace slice
 // to derive fields like wsName.
 export const updateLocationEffect = workspaceSliceKey.effect(() => {
   return {
-    deferredUpdate(store, prevState) {
-      const [workspaceOrErrorChanged] = workspaceSliceKey.didChange(
+    async deferredUpdate(store, prevState) {
+      const [errorChanged] = workspaceSliceKey.didChange(
         store.state,
         prevState,
-      )('workspacesInfo', 'error');
+      )('error');
 
       const [locationChanged] = pageSliceKey.didChange(
         store.state,
         prevState,
       )('location');
 
-      if (!locationChanged && !workspaceOrErrorChanged) {
+      if (!locationChanged && !errorChanged) {
         return;
       }
 
@@ -254,8 +232,9 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
       const { location } = pageSliceKey.getSliceStateAsserted(store.state);
       const incomingWsName = pathnameToWsName(location.pathname);
 
-      const { wsName, openedWsPaths, workspacesInfo } =
-        workspaceSliceKey.getSliceStateAsserted(store.state);
+      const { wsName, openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      );
 
       if (!incomingWsName) {
         if (wsName) {
@@ -271,25 +250,20 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      // Only touch primary and secondary in case of a location update
-      // to keep mini editor state unchanged.
-      let incomingOpenedWsPaths = openedWsPaths
+      const incomingOpenedWsPaths = (
+        wsName !== incomingWsName
+          ? // if workspace change, retain primary and secondary and clear everything else
+            OpenedWsPaths.createEmpty()
+          : // if it is the same, retain everything and update primary secondary to match
+            // the new location.
+            openedWsPaths
+      )
         .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
         .updateSecondaryWsPath(searchToWsPath(location.search));
 
-      // remove mini editor if we change workspace
-      if (wsName !== incomingWsName) {
-        incomingOpenedWsPaths =
-          incomingOpenedWsPaths.updateMiniEditorWsPath(undefined);
-      }
+      const workspaceInfo = await readWorkspaceInfo(incomingWsName);
 
-      if (!workspacesInfo) {
-        return;
-      }
-
-      const wsInfo = getWsInfoIfNotDeleted(incomingWsName, workspacesInfo);
-
-      if (!wsInfo) {
+      if (!workspaceInfo) {
         goToWsNameRouteNotFoundRoute(incomingWsName)(
           store.state,
           store.dispatch,
@@ -325,22 +299,80 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
   };
 });
 
-export const refreshWorkspacesEffect = workspaceSliceKey.effect(() => {
-  return {
-    deferredOnce(store, abortSignal) {
-      listWorkspaces()(store.state, store.dispatch, store);
-    },
+export const workspaceNotFoundCheckEffect = workspaceSliceKey.effect(() => {
+  const handle = async (store: ApplicationStore, wsName: string) => {
+    const workspaceInfo = await readWorkspaceInfo(wsName);
 
-    update(store, __, sliceState, prevSliceState) {
-      if (sliceHasError()(store.state)) {
-        return;
+    if (!workspaceInfo) {
+      // only reroute if the wsName is still the same
+      if (getWsName()(store.state) === wsName) {
+        goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
       }
 
-      const { workspacesInfo } = sliceState;
-      const { workspacesInfo: prevWorkspacesInfo } = prevSliceState;
+      return;
+    }
+  };
 
-      if (workspacesInfo && workspacesInfo !== prevWorkspacesInfo) {
-        saveWorkspacesInfo(store.state);
+  return {
+    async deferredOnce(store, signal) {
+      const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      if (wsName) {
+        handle(store, wsName);
+      }
+    },
+    async update(store, prevState) {
+      const wsName = workspaceSliceKey.getValueIfChanged(
+        'wsName',
+        store.state,
+        prevState,
+      );
+
+      if (wsName) {
+        handle(store, wsName);
+      }
+    },
+  };
+});
+
+// periodically fetches workspace info and also updates it if wsName changes
+export const cachedWorkspaceInfoEffect = workspaceSliceKey.effect(() => {
+  return {
+    async deferredOnce(store, signal) {
+      const wsName = getWsName()(store.state);
+
+      if (wsName) {
+        updateCachedWorkspaceInfo(wsName)(store.state, store.dispatch, store);
+      }
+
+      abortableSetInterval(
+        () => {
+          const wsName = getWsName()(store.state);
+
+          if (wsName) {
+            updateCachedWorkspaceInfo(wsName)(
+              store.state,
+              store.dispatch,
+              store,
+            );
+          }
+        },
+        signal,
+        WORKSPACE_INFO_CACHE_REFRESH_INTERVAL,
+      );
+    },
+    async update(store, prevState) {
+      const currentWsName = getWsName()(store.state);
+      const prevWsName = getWsName()(prevState);
+
+      if (currentWsName && currentWsName !== prevWsName) {
+        updateCachedWorkspaceInfo(currentWsName)(
+          store.state,
+          store.dispatch,
+          store,
+        );
+      } else if (!currentWsName && prevWsName) {
+        clearCachedWorkspaceInfo()(store.state, store.dispatch);
       }
     },
   };

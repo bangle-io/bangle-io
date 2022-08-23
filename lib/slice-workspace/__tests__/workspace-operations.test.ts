@@ -1,20 +1,20 @@
 import {
   WorkspaceTypeBrowser,
+  WorkspaceTypeHelp,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
-import { getWorkspaceInfoTable } from '@bangle.io/db-app';
 import { Extension } from '@bangle.io/extension-registry';
 import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
-import { createBasicTestStore } from '@bangle.io/test-utils';
+import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { helpFSWorkspaceInfo, workspaceSliceKey } from '../common';
-import { WORKSPACE_KEY } from '../read-ws-info';
+import { getWsName } from '../operations';
+import { readAllWorkspacesInfo, readWorkspaceInfo } from '../read-ws-info';
 import {
   createWorkspace,
   deleteWorkspace,
-  getWorkspaceInfoAsync,
   listWorkspaces,
 } from '../workspaces-operations';
 
@@ -67,28 +67,26 @@ describe('listAllFiles', () => {
 
     expect(goToLocation).toBeCalledTimes(1);
     expect(goToLocation).nthCalledWith(1, '/ws/test-1');
-    expect(
-      workspaceSliceKey.getSliceState(store.state)?.workspacesInfo,
-    ).toMatchObject({
-      'test-1': {
-        deleted: false,
-        lastModified: expect.any(Number),
-        metadata: {},
-        name: 'test-1',
-        type: WorkspaceTypeBrowser,
-      },
+    expect(await readWorkspaceInfo('test-1')).toMatchObject({
+      deleted: false,
+      lastModified: expect.any(Number),
+      metadata: {},
+      name: 'test-1',
+      type: WorkspaceTypeBrowser,
     });
 
-    expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
-      helpFSWorkspaceInfo(),
-      {
-        deleted: false,
-        lastModified: expect.any(Number),
-        metadata: {},
-        name: 'test-1',
-        type: WorkspaceTypeBrowser,
-      },
-    ]);
+    expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual(
+      [
+        helpFSWorkspaceInfo(),
+        {
+          deleted: false,
+          lastModified: expect.any(Number),
+          metadata: {},
+          name: 'test-1',
+          type: WorkspaceTypeBrowser,
+        },
+      ].sort((a, b) => a.name.localeCompare(b.name)),
+    );
   });
 
   test('hides deleted workspaces', async () => {
@@ -110,16 +108,15 @@ describe('listAllFiles', () => {
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
+    expect(await readWorkspaceInfo('test-1')).toBe(undefined);
     expect(
-      workspaceSliceKey.getSliceState(store.state)?.workspacesInfo,
+      await readWorkspaceInfo('test-1', { allowDeleted: true }),
     ).toMatchObject({
-      'test-1': {
-        deleted: true,
-        lastModified: expect.any(Number),
-        metadata: {},
-        name: 'test-1',
-        type: WorkspaceTypeBrowser,
-      },
+      deleted: true,
+      lastModified: expect.any(Number),
+      metadata: {},
+      name: 'test-1',
+      type: WorkspaceTypeBrowser,
     });
 
     expect(
@@ -138,16 +135,12 @@ describe('createWorkspace', () => {
       store,
     );
 
-    expect(
-      workspaceSliceKey.getSliceState(store.state)?.workspacesInfo,
-    ).toMatchObject({
-      'test-1': {
-        deleted: false,
-        lastModified: expect.any(Number),
-        metadata: {},
-        name: 'test-1',
-        type: WorkspaceTypeBrowser,
-      },
+    expect(await readWorkspaceInfo('test-1')).toMatchObject({
+      deleted: false,
+      lastModified: expect.any(Number),
+      metadata: {},
+      name: 'test-1',
+      type: WorkspaceTypeBrowser,
     });
   });
 
@@ -204,7 +197,7 @@ describe('createWorkspace', () => {
 
     expect(newWorkspaceMetadataSpy).toBeCalledTimes(1);
 
-    expect(await getWorkspaceInfoAsync('test-1')(store.state)).toEqual({
+    expect(await readWorkspaceInfo('test-1')).toEqual({
       deleted: false,
       lastModified: expect.any(Number),
       metadata: {
@@ -213,6 +206,34 @@ describe('createWorkspace', () => {
       name: 'test-1',
       type: 'nativefs',
     });
+  });
+
+  test('creates a workspace which was previously deleted', async () => {
+    const { store } = createBasicTestStore({ signal });
+
+    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await waitForExpect(() => expect(getWsName()(store.state)).toBe('test-1'));
+
+    await deleteWorkspace('test-1')(store.state, store.dispatch, store);
+
+    expect(await readWorkspaceInfo('test-1')).toBe(undefined);
+
+    await waitForExpect(() => expect(getWsName()(store.state)).toBe(undefined));
+
+    // create again
+    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await waitForExpect(() => expect(getWsName()(store.state)).toBe('test-1'));
+    expect(await readWorkspaceInfo('test-1')).toBeDefined();
   });
 });
 
@@ -235,7 +256,16 @@ describe('deleteWorkspace', () => {
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
-    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY)).toEqual([
+    expect(await readAllWorkspacesInfo({ allowDeleted: true })).toEqual([
+      {
+        deleted: false,
+        lastModified: expect.any(Number),
+        metadata: {
+          allowLocalChanges: true,
+        },
+        name: 'bangle-help',
+        type: WorkspaceTypeHelp,
+      },
       {
         deleted: true,
         lastModified: expect.any(Number),
@@ -252,9 +282,10 @@ describe('deleteWorkspace', () => {
     await createWorkspace('test-1', WorkspaceTypeBrowser, {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
-
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
-      'test-1',
+    await waitForExpect(() =>
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        'test-1',
+      ),
     );
 
     expect(goToLocation).nthCalledWith(1, '/ws/test-1');
@@ -267,49 +298,5 @@ describe('deleteWorkspace', () => {
     );
 
     expect(getPageLocation()(store.state)?.pathname).toEqual('/');
-  });
-});
-
-describe('getWorkspaceInfo', () => {
-  test('throws error if workspace does not exists', async () => {
-    const { store } = createBasicTestStore({ signal });
-
-    await expect(
-      getWorkspaceInfoAsync('test-1')(store.state),
-    ).rejects.toThrowError(`Workspace test-1 not found`);
-  });
-
-  test('retains instance', async () => {
-    const { store } = createBasicTestStore({ signal });
-
-    await createWorkspace('test-1', WorkspaceTypeBrowser)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    const wsInfo = await getWorkspaceInfoAsync('test-1')(store.state);
-
-    await createWorkspace('test-2', WorkspaceTypeBrowser)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    await createWorkspace('test-3', WorkspaceTypeBrowser)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    await deleteWorkspace('test-2')(store.state, store.dispatch, store);
-
-    await createWorkspace('test-4', WorkspaceTypeBrowser)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    expect(await getWorkspaceInfoAsync('test-1')(store.state)).toBe(wsInfo);
   });
 });

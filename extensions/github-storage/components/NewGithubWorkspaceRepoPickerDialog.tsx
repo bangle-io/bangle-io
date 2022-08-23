@@ -12,7 +12,10 @@ import {
 } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
-import { NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG } from '../common';
+import {
+  GITHUB_STORAGE_PROVIDER_NAME,
+  NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
+} from '../common';
 import type { RepositoryInfo } from '../github-api-helpers';
 import { getRepos } from '../github-api-helpers';
 
@@ -46,11 +49,15 @@ export function NewGithubWorkspaceRepoPickerDialog() {
     }
     try {
       updateIsLoading(true);
-      await workspace.createWorkspace(selectedRepo.name, 'github-storage', {
-        githubToken: githubToken,
-        owner: selectedRepo.owner,
-        branch: selectedRepo.branch,
-      })(bangleStore.state, bangleStore.dispatch, bangleStore);
+      await workspace.createWorkspace(
+        selectedRepo.name,
+        GITHUB_STORAGE_PROVIDER_NAME,
+        {
+          githubToken: githubToken,
+          owner: selectedRepo.owner,
+          branch: selectedRepo.branch,
+        },
+      )(bangleStore.state, bangleStore.dispatch, bangleStore);
       (window as any).fathom?.trackGoal('JSUCQKTL', 0);
       onDismiss();
     } catch (error) {

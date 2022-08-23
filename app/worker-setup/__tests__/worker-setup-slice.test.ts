@@ -281,20 +281,21 @@ test('sends workspaces slice action correctly', async () => {
 
   await sleep(0);
 
-  const workerStore: any = await naukarProxy.testGetStore();
+  await naukarProxy.testGetStore();
 
-  const dispatchSpy = jest.spyOn(workerStore, 'dispatch');
+  const result = await listWorkspaces()(store.state, store.dispatch, store);
 
-  await listWorkspaces()(store.state, store.dispatch, store);
-
-  await sleep(0);
-
-  expect(dispatchSpy).lastCalledWith({
-    fromStore: 'test-store',
-    id: expect.any(String),
-    name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-    value: expect.anything(),
-  });
+  expect(result).toEqual([
+    {
+      deleted: false,
+      lastModified: expect.any(Number),
+      metadata: {
+        allowLocalChanges: true,
+      },
+      name: 'bangle-help',
+      type: 'helpfs',
+    },
+  ]);
 });
 
 test('sends workspace slice action correctly', async () => {

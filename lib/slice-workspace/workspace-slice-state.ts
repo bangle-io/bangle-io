@@ -8,10 +8,6 @@ export type WorkspaceStateKeys = keyof ConstructorParameters<
   typeof WorkspaceSliceState
 >[0];
 
-export interface WorkspaceInfoReg {
-  [wsName: string]: WorkspaceInfo;
-}
-
 export class WorkspaceSliceState {
   static update(
     existing: WorkspaceSliceState,
@@ -31,18 +27,21 @@ export class WorkspaceSliceState {
       openedWsPaths: WorkspaceSliceState['openedWsPaths'];
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       refreshCounter: WorkspaceSliceState['refreshCounter'];
-      workspacesInfo: WorkspaceSliceState['workspacesInfo'];
+      cachedWorkspaceInfo: WorkspaceInfo | undefined;
       wsName: WorkspaceSliceState['wsName'];
       wsPaths: WorkspaceSliceState['wsPaths'];
     },
     protected opts: any = {},
   ) {}
 
+  get cachedWorkspaceInfo() {
+    return this.mainFields.cachedWorkspaceInfo;
+  }
+
   get error(): Error | undefined {
     return this.mainFields.error;
   }
 
-  // derived
   get noteWsPaths(): string[] | undefined {
     return selectNoteWsPaths(this);
   }
@@ -58,10 +57,6 @@ export class WorkspaceSliceState {
   // returns the current wsName refreshing for
   get refreshCounter(): number {
     return this.mainFields.refreshCounter;
-  }
-
-  get workspacesInfo(): WorkspaceInfoReg | undefined {
-    return this.mainFields.workspacesInfo;
   }
 
   get wsName(): string | undefined {

@@ -39,15 +39,15 @@ export const getUseUIManagerContextReturn: Mutable<
 export const getUseWorkspaceContextReturn: Mutable<
   ReturnType<typeof useWorkspaceContext>
 > = {
-  wsName: 'test-ws',
-  recentlyUsedWsPaths: [],
-  wsPaths: [],
+  bangleStore: initialBangleStore,
+  cachedWorkspaceInfo: undefined,
+  error: undefined,
   noteWsPaths: [],
   openedWsPaths: OpenedWsPaths.createEmpty(),
-  bangleStore: initialBangleStore,
+  recentlyUsedWsPaths: [],
   refreshCounter: 0,
-  error: undefined,
-  workspacesInfo: undefined,
+  wsName: 'test-ws',
+  wsPaths: [],
 };
 
 export const getUseEditorManagerContextReturn: ReturnType<

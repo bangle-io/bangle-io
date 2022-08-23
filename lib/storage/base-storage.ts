@@ -16,11 +16,11 @@ export interface FileStat {
 
 export interface StorageOpts {
   specRegistry: SpecRegistry;
-  readWorkspaceMetadata: (wsName: string) => { [key: string]: any };
+  readWorkspaceMetadata: (wsName: string) => Promise<{ [key: string]: any }>;
   updateWorkspaceMetadata: (
     wsName: string,
     metadata: { [key: string]: any },
-  ) => void;
+  ) => Promise<void>;
 }
 
 export interface BaseStorageProvider {

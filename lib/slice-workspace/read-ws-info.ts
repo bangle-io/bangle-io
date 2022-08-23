@@ -1,77 +1,167 @@
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
-import type { AppState } from '@bangle.io/create-store';
-import { getWorkspaceInfoTable } from '@bangle.io/db-app';
+import {
+  getAppDb,
+  getWorkspaceInfoTable,
+  makeDbRecord,
+  WORKSPACE_INFO_TABLE,
+} from '@bangle.io/db-app';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
-import { helpFSWorkspaceInfo, workspaceSliceKey } from './common';
-import type { WorkspaceInfoReg } from './workspace-slice-state';
+import { helpFSWorkspaceInfo } from './common';
 
-export const WORKSPACE_KEY = 'workspaces/2';
+export async function readWorkspaceInfo(
+  wsName: string,
+  {
+    // whether to return if matching workspace info is deleted
+    allowDeleted = false,
+    type,
+  }: {
+    type?: WorkspaceInfo['type'];
+    allowDeleted?: boolean;
+  } = {},
+): Promise<WorkspaceInfo | undefined> {
+  let match = await getWorkspaceInfoTable().get(wsName);
 
-function processWorkspacesInfo(wsInfos: WorkspaceInfo[]) {
-  if (!Array.isArray(wsInfos)) {
-    wsInfos = [];
+  if (wsName === HELP_FS_WORKSPACE_NAME) {
+    match = helpFSWorkspaceInfo();
   }
 
-  const reg = Object.fromEntries(
-    wsInfos.map((r) => {
-      if (typeof r.deleted === 'undefined') {
-        r.deleted = false;
-      }
-
-      return [r.name, r];
-    }),
-  );
-
-  // inject the permanent help workspace type
-  reg[HELP_FS_WORKSPACE_NAME] = helpFSWorkspaceInfo();
-
-  return reg;
-}
-
-export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
-  const wsInfos = (await getWorkspaceInfoTable().get(WORKSPACE_KEY)) || [];
-
-  return processWorkspacesInfo(wsInfos);
-}
-
-export async function saveWorkspacesInfo(state: AppState): Promise<void> {
-  const oldValue = (await getWorkspaceInfoTable().get(WORKSPACE_KEY)) || [];
-
-  const workspacesState = workspaceSliceKey.getSliceStateAsserted(state);
-  // read existing data so that we do can do a non destructive merge
-
-  let existing = processWorkspacesInfo(oldValue);
-
-  if (workspacesState.workspacesInfo) {
-    existing = mergeWsInfoRegistries(existing, workspacesState.workspacesInfo);
+  if (!allowDeleted && match?.deleted) {
+    return undefined;
   }
-  await getWorkspaceInfoTable().put(
-    WORKSPACE_KEY,
-    Object.values(existing).filter(
-      (wsInfo) => wsInfo.name !== HELP_FS_WORKSPACE_NAME,
-    ),
-  );
+
+  if (type) {
+    return match && match.type === type ? match : undefined;
+  }
+
+  return match;
 }
 
-export function mergeWsInfoRegistries(
-  existingReg: WorkspaceInfoReg,
-  incomingReg: WorkspaceInfoReg,
+export async function readWorkspaceMetadata(
+  wsName: string,
+  opts?: Parameters<typeof readWorkspaceInfo>[1],
+): Promise<WorkspaceInfo['metadata'] | undefined> {
+  return (await readWorkspaceInfo(wsName, opts))?.metadata;
+}
+
+export async function updateWorkspaceMetadata(
+  wsName: string,
+  metadata: (
+    existingMetadata: WorkspaceInfo['metadata'],
+  ) => WorkspaceInfo['metadata'],
 ) {
-  const newReg = Object.assign({}, existingReg);
+  const currentWsInfo = await readWorkspaceInfo(wsName);
 
-  Object.entries(incomingReg).forEach(([wsName, wsInfo]) => {
-    const existing = existingReg[wsName];
-
-    if (!existing || existing.lastModified < wsInfo.lastModified) {
-      newReg[wsName] = wsInfo;
-    }
-  });
-
-  if (shallowEqual(newReg, existingReg)) {
-    return existingReg;
+  if (!currentWsInfo) {
+    return false;
   }
 
-  return newReg;
+  return await saveWorkspaceInfo(
+    wsName,
+    (existing) => ({
+      ...existing,
+      metadata: {
+        ...(typeof metadata === 'function'
+          ? metadata(existing.metadata)
+          : metadata),
+      },
+    }),
+    currentWsInfo,
+  );
+}
+
+export async function readAllWorkspacesInfo(
+  opts?: Parameters<typeof readWorkspaceInfo>[1],
+): Promise<WorkspaceInfo[]> {
+  const wsInfos = (await getWorkspaceInfoTable().getAll()) || [];
+
+  return [
+    ...wsInfos
+      .filter((wsInfo) => {
+        if (opts?.allowDeleted) {
+          return true;
+        }
+
+        return !wsInfo.deleted;
+      })
+      .filter((wsInfo) => {
+        if (opts?.type) {
+          return wsInfo.type === opts.type;
+        }
+
+        return true;
+      }),
+    helpFSWorkspaceInfo(),
+  ].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function saveWorkspaceInfo(
+  wsName: string,
+  workspaceInfo: (existing: WorkspaceInfo) => WorkspaceInfo,
+  defaultValue: WorkspaceInfo,
+) {
+  if (wsName === HELP_FS_WORKSPACE_NAME) {
+    return false;
+  }
+
+  const db = await getAppDb();
+
+  const tx = db.transaction(WORKSPACE_INFO_TABLE, 'readwrite');
+
+  const store = tx.objectStore(WORKSPACE_INFO_TABLE);
+
+  const existing = await store.get(wsName);
+
+  const newInfo: WorkspaceInfo = {
+    ...workspaceInfo(existing?.value || defaultValue),
+    lastModified: Date.now(),
+  };
+
+  await Promise.all([store.put(makeDbRecord(wsName, newInfo)), tx.done]);
+
+  return true;
+}
+
+export async function compareWorkspaceInfo(
+  a: WorkspaceInfo,
+  b: WorkspaceInfo,
+): Promise<boolean> {
+  const { metadata: metadataA, ...aWithoutMetadata } = a;
+  const { metadata: metadataB, ...bWithoutMetadata } = b;
+
+  if (!shallowEqual(aWithoutMetadata, bWithoutMetadata)) {
+    return false;
+  }
+
+  if (shallowEqual(a.metadata, b.metadata)) {
+    return true;
+  }
+
+  // since file handles work differently, we need to compare them individually
+  if (Object.keys(a.metadata).length !== Object.keys(b.metadata).length) {
+    return false;
+  }
+
+  for (const [key, valueA] of Object.entries(a.metadata)) {
+    const valueB = b.metadata[key];
+
+    if (
+      valueA instanceof FileSystemHandle &&
+      valueB instanceof FileSystemHandle
+    ) {
+      if (!(await valueA.isSameEntry(valueB))) {
+        return false;
+      }
+      continue;
+    }
+
+    if (valueA !== valueB) {
+      return false;
+    }
+
+    continue;
+  }
+
+  return true;
 }

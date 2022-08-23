@@ -64,6 +64,7 @@ test.describe('mobile', () => {
         'Switch workspace',
         'Note browser',
         'Search notes',
+        'Github sync',
         'Switch Dark/Light theme',
         'Notes palette',
         'Operation palette',

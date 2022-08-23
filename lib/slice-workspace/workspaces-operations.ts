@@ -8,7 +8,6 @@ import {
   pageSliceKey,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
-import { assertNotUndefined } from '@bangle.io/utils';
 import { validWsName } from '@bangle.io/ws-path';
 
 import type { WorkspaceAppStore, WorkspaceDispatchType } from './common';
@@ -16,38 +15,32 @@ import { workspaceSliceKey } from './common';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_DELETED_MODIFY_ERROR,
-  WORKSPACE_NOT_FOUND_ERROR,
   WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
   WorkspaceError,
 } from './errors';
-import { storageProviderFromExtensionRegistry } from './helpers';
-import { goToWorkspaceHomeRoute } from './operations';
-import { readWorkspacesInfoReg, saveWorkspacesInfo } from './read-ws-info';
+import {
+  storageProviderFromExtensionRegistry,
+  throwOnNotFoundWsInfo,
+} from './helpers';
+import { getWsName, goToWorkspaceHomeRoute } from './operations';
+import {
+  compareWorkspaceInfo,
+  readAllWorkspacesInfo,
+  readWorkspaceInfo,
+  saveWorkspaceInfo,
+} from './read-ws-info';
 
 // Lists all the workspaces that have not been deleted workspaces
 export function listWorkspaces() {
   return workspaceSliceKey.asyncOp(
     async (_, __, store): Promise<WorkspaceInfo[]> => {
-      const wsInfosInDb = await readWorkspacesInfoReg();
-      store.dispatch({
-        name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-        value: {
-          workspacesInfo: wsInfosInDb,
-        },
-      });
-
-      const { workspacesInfo } = workspaceSliceKey.getSliceStateAsserted(
-        store.state,
-      );
+      const workspacesInfo = await readAllWorkspacesInfo();
 
       if (store.destroyed) {
         return [];
       }
 
-      assertNotUndefined(workspacesInfo, 'workspacesInfo cannot be undefined');
-
-      // only return the not deleted ones
-      return Object.values(workspacesInfo).filter((r) => !r.deleted);
+      return workspacesInfo;
     },
   );
 }
@@ -66,7 +59,7 @@ export function createWorkspace(
   ) => {
     validWsName(wsName);
 
-    if (await hasWorkspace(wsName)(store.state, store.dispatch, store)) {
+    if (await readWorkspaceInfo(wsName)) {
       throw new WorkspaceError({
         message: `Cannot create "${wsName}" as it already exists`,
         code: WORKSPACE_ALREADY_EXISTS_ERROR,
@@ -89,7 +82,7 @@ export function createWorkspace(
     const wsMetadata =
       (await storageProvider.newWorkspaceMetadata(wsName, opts)) || {};
 
-    let workspace: WorkspaceInfo = {
+    const workspaceInfo: WorkspaceInfo = {
       deleted: false,
       lastModified: Date.now(),
       name: wsName,
@@ -97,16 +90,16 @@ export function createWorkspace(
       metadata: wsMetadata,
     };
 
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsName]: workspace,
-        },
-      },
-    });
-
-    await saveWorkspacesInfo(store.state);
+    await saveWorkspaceInfo(
+      wsName,
+      (w) => ({
+        ...w,
+        // if there was a previously deleted workspace with the same name,
+        // overwrite it
+        ...workspaceInfo,
+      }),
+      workspaceInfo,
+    );
 
     goToLocation(wsNameToPathname(wsName))(
       store.state,
@@ -125,149 +118,72 @@ export function deleteWorkspace(targetWsName: string) {
     __: WorkspaceDispatchType,
     store: WorkspaceAppStore,
   ): Promise<boolean> => {
-    const targetWsInfo = await getWorkspaceInfoAsync(targetWsName)(store.state);
+    const targetWsInfo = await readWorkspaceInfo(targetWsName);
+
+    throwOnNotFoundWsInfo(targetWsName, targetWsInfo);
 
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
     if (targetWsName === wsName) {
+      // goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
       goToWorkspaceHomeRoute({ replace: true })(store.state, store.dispatch);
       await Promise.resolve();
     }
 
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [targetWsName]: {
-            ...targetWsInfo,
-            deleted: true,
-            lastModified: Date.now(),
-          },
-        },
-      },
-    });
-
-    await saveWorkspacesInfo(store.state);
+    await saveWorkspaceInfo(
+      targetWsName,
+      (existing) => ({
+        ...existing,
+        deleted: true,
+      }),
+      targetWsInfo,
+    );
 
     return true;
   };
 }
 
-export function updateWorkspaceMetadata(
-  wsName: string,
-  metadata:
-    | WorkspaceInfo['metadata']
-    | ((
-        existingMetadata: WorkspaceInfo['metadata'],
-      ) => WorkspaceInfo['metadata']),
-) {
-  return workspaceSliceKey.op(async (state, dispatch) => {
-    const currentWsInfo = getWorkspaceInfo(wsName)(state);
+export function clearCachedWorkspaceInfo() {
+  return workspaceSliceKey.op((state, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
+      value: {
+        workspaceInfo: undefined,
+      },
+    });
+  });
+}
 
-    if (currentWsInfo.deleted) {
-      throw new WorkspaceError({
-        message: `Cannot modify a deleted workspace.`,
-        code: WORKSPACE_DELETED_MODIFY_ERROR,
-      });
-    }
+export function updateCachedWorkspaceInfo(wsName: string) {
+  return workspaceSliceKey.asyncOp(async (_, __, store) => {
+    const workspaceInfo = await readWorkspaceInfo(wsName).catch(() => {});
 
-    const newMetadata =
-      typeof metadata === 'function'
-        ? metadata(currentWsInfo.metadata)
-        : metadata;
+    const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
+      store.state,
+    );
 
-    if (newMetadata === currentWsInfo.metadata) {
+    if (!workspaceInfo) {
       return false;
     }
 
-    dispatch({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsName]: {
-            ...currentWsInfo,
-            lastModified: Date.now(),
-            metadata: {
-              ...newMetadata,
-            },
-          },
+    if (
+      cachedWorkspaceInfo &&
+      (await compareWorkspaceInfo(workspaceInfo, cachedWorkspaceInfo))
+    ) {
+      return false;
+    }
+
+    if (workspaceInfo && getWsName()(store.state) === wsName) {
+      store.dispatch({
+        name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
+        value: {
+          workspaceInfo: workspaceInfo,
         },
-      },
-    });
-
-    return true;
-
-    // TODO save ws info
-    // await saveWorkspacesInfo(store.state);
-  });
-}
-
-export function getWorkspaceMetadata(wsName: string) {
-  return workspaceSliceKey.queryOp((state) => {
-    let wsMetadata = getWorkspaceInfo(wsName)(state).metadata;
-
-    return wsMetadata;
-  });
-}
-
-export function getWorkspaceType(wsName: string) {
-  return workspaceSliceKey.queryOp((state) => {
-    return getWorkspaceInfo(wsName)(state).type;
-  });
-}
-
-// Will check in store for wsInfo, if not found will then check indexed-db asyncronously
-// if still not found, will throw an error if workspace is not found
-export function getWorkspaceInfoAsync(wsName: string) {
-  return async (state: AppState): Promise<WorkspaceInfo> => {
-    let wsInfo =
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
-
-    if (!wsInfo) {
-      const wsInfosInDb = await readWorkspacesInfoReg();
-
-      wsInfo = wsInfosInDb[wsName];
-
-      if (!wsInfo) {
-        throw new WorkspaceError({
-          message: `Workspace ${wsName} not found`,
-          code: WORKSPACE_NOT_FOUND_ERROR,
-        });
-      }
-    }
-
-    return wsInfo;
-  };
-}
-
-// Syncronously checks if wsInfo exists in state and throws an error
-// if workspace is not found. If not sure, use `getWorkspaceInfo` instead.
-export function getWorkspaceInfo(wsName: string) {
-  return workspaceSliceKey.queryOp((state): WorkspaceInfo => {
-    let wsInfo =
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
-
-    if (!wsInfo) {
-      throw new WorkspaceError({
-        message: `Workspace ${wsName} not found`,
-        code: WORKSPACE_NOT_FOUND_ERROR,
       });
+
+      return true;
     }
 
-    return wsInfo;
-  });
-}
-
-// checks if a workspace that has not been deleted exists
-export function hasWorkspace(wsName: string) {
-  return workspaceSliceKey.asyncOp(async (_, __, store) => {
-    const workspaces = await listWorkspaces()(
-      store.state,
-      store.dispatch,
-      store,
-    );
-    const workspaceInfo = workspaces.find(({ name }) => name === wsName);
-
-    return Boolean(workspaceInfo);
+    return false;
   });
 }

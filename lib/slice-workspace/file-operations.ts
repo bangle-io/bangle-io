@@ -17,25 +17,22 @@ import {
 import {
   markdownFormatProvider,
   storageProviderFromExtensionRegistry,
+  throwOnNotFoundWsInfo,
 } from './helpers';
 import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
 import {
-  getWorkspaceInfo,
+  readWorkspaceInfo,
+  readWorkspaceMetadata,
   updateWorkspaceMetadata,
-} from './workspaces-operations';
-
-export function getStorageProviderName(wsName: string) {
-  return workspaceSliceKey.queryOp((state) => {
-    return getWorkspaceInfo(wsName)(state).type;
-  });
-}
+} from './read-ws-info';
 
 function getStorageProvider(wsName: string) {
-  return workspaceSliceKey.queryOp((state) => {
-    const wsInfo = getWorkspaceInfo(wsName)(state);
+  return workspaceSliceKey.queryOp(async (state) => {
+    const wsInfo = await readWorkspaceInfo(wsName);
+    throwOnNotFoundWsInfo(wsName, wsInfo);
 
     const provider = storageProviderFromExtensionRegistry(
       wsInfo.type,
@@ -80,11 +77,11 @@ export function getStorageProviderOpts() {
     // and even if wsName has changed, while they were doing `async` work, it should be fine.
     const opt: StorageOpts = {
       specRegistry: specRegistry,
-      readWorkspaceMetadata: (wsName: string) => {
-        return getWorkspaceInfo(wsName)(state).metadata;
+      readWorkspaceMetadata: async (wsName: string) => {
+        return (await readWorkspaceMetadata(wsName)) || {};
       },
-      updateWorkspaceMetadata: (wsName, metadata) => {
-        updateWorkspaceMetadata(wsName, metadata)(state, dispatch);
+      updateWorkspaceMetadata: async (wsName, metadata) => {
+        await updateWorkspaceMetadata(wsName, () => metadata);
       },
     };
 
@@ -111,7 +108,7 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
         return false;
       }
 
-      const storageProvider = getStorageProvider(wsName)(store.state);
+      const storageProvider = await getStorageProvider(wsName)(store.state);
 
       await storageProvider.renameFile(
         targetWsPath,
@@ -162,7 +159,7 @@ export const checkFileExists = (wsPath: string) => {
     async (_, dispatch, store): Promise<boolean> => {
       const { wsName } = resolvePath(wsPath);
 
-      const storageProvider = getStorageProvider(wsName)(store.state);
+      const storageProvider = await getStorageProvider(wsName)(store.state);
 
       return storageProvider.fileExists(
         wsPath,
@@ -191,8 +188,7 @@ export const createNote = (
       return false;
     }
 
-    const storageProvider = getStorageProvider(wsName)(store.state);
-
+    const storageProvider = await getStorageProvider(wsName)(store.state);
     const fileExists = await storageProvider.fileExists(
       wsPath,
       getStorageProviderOpts()(store.state, dispatch),
@@ -239,7 +235,7 @@ export const writeFile = (wsPath: string, file: File) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<boolean> => {
       const { wsName } = resolvePath(wsPath);
-      const storageProvider = getStorageProvider(wsName)(store.state);
+      const storageProvider = await getStorageProvider(wsName)(store.state);
 
       if (DEBUG_WRITE_SLOWDOWN && DEBUG_WRITE_SLOWDOWN > 0) {
         console.warn('Slowing down write by ' + DEBUG_WRITE_SLOWDOWN + 'ms');
@@ -290,7 +286,7 @@ export const getFile = (wsPath: string) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<File | undefined> => {
       const { wsName } = resolvePath(wsPath);
-      const storageProvider = getStorageProvider(wsName)(store.state);
+      const storageProvider = await getStorageProvider(wsName)(store.state);
 
       return storageProvider.readFile(
         wsPath,
@@ -308,7 +304,9 @@ export const deleteNote = (wsPathToDelete: string[] | string) => {
       return;
     }
 
-    const storageProvider = getStorageProvider(sliceState.wsName)(store.state);
+    const storageProvider = await getStorageProvider(sliceState.wsName)(
+      store.state,
+    );
 
     if (!Array.isArray(wsPathToDelete)) {
       wsPathToDelete = [wsPathToDelete];

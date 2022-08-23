@@ -12,7 +12,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { hasWorkspace } from '@bangle.io/slice-workspace';
+import { readWorkspaceInfo } from '@bangle.io/slice-workspace';
 import { OverlayProvider } from '@bangle.io/ui-components';
 
 import { WORKSPACE_AUTH_REJECTED_ERROR } from '../common';
@@ -71,7 +71,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
   return {
     ...workspaceThings,
-    hasWorkspace: jest.fn(() => () => {}),
+    readWorkspaceInfo: jest.fn(async () => undefined),
   };
 });
 
@@ -84,14 +84,12 @@ jest.mock('@bangle.io/api', () => {
   };
 });
 
-const hasWorkspaceMock = hasWorkspace as jest.MockedFunction<
-  typeof hasWorkspace
->;
+const readWorkspaceInfoMock = jest.mocked(readWorkspaceInfo);
 
 beforeEach(() => {
   let dispatchSerialOperation = jest.fn();
 
-  hasWorkspaceMock.mockImplementation(() => async () => false);
+  readWorkspaceInfoMock.mockImplementation(async () => undefined);
 
   (useUIManagerContext as any).mockImplementation(() => {
     const dispatch = jest.fn();

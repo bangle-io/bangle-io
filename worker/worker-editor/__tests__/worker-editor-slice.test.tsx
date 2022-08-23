@@ -132,10 +132,10 @@ describe('worker-editor-slice', () => {
     // Close editors and check if things are ok
     workspace.closeOpenedEditor()(store.state, store.dispatch);
 
-    await sleep(0);
-
-    // the collab manager should have removed the doc
-    expect([...collabManager.getAllDocNames()]).toEqual([]);
+    await waitForExpect(() => {
+      // the collab manager should have removed the doc
+      expect([...collabManager.getAllDocNames()]).toEqual([]);
+    });
 
     // should persist the updated doc to disk
     expect(
@@ -201,9 +201,9 @@ describe('worker-editor-slice', () => {
       }),
     );
 
-    await sleep(0);
-
-    expect(resetDocSpy).toBeCalledTimes(1);
+    await waitForExpect(() => {
+      expect(resetDocSpy).toBeCalledTimes(1);
+    });
     expect(resetDocSpy).nthCalledWith(1, wsPath1);
   });
 });

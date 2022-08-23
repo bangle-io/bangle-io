@@ -8,9 +8,10 @@ import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
   TestStoreProvider,
+  waitForExpect,
 } from '@bangle.io/test-utils';
 import type { RecencyRecords } from '@bangle.io/utils';
-import { sleep, useRecencyMonitor } from '@bangle.io/utils';
+import { useRecencyMonitor } from '@bangle.io/utils';
 
 import { workspaceSliceKey } from '../common';
 import { getOpenedWsPaths, updateOpenedWsPaths } from '../operations';
@@ -173,16 +174,14 @@ test('updates the newly opened ws path only', async () => {
     opened.updateByIndex(1, 'test-ws:note2.md'),
   )(store.state, store.dispatch);
 
-  await sleep(0);
-
-  expect(getOpenedWsPaths()(store.state).toArray()).toMatchInlineSnapshot(`
-    Array [
-      "test-ws:note1.md",
-      "test-ws:note2.md",
+  await waitForExpect(() => {
+    expect(getOpenedWsPaths()(store.state).toArray()).toEqual([
+      'test-ws:note1.md',
+      'test-ws:note2.md',
       null,
       null,
-    ]
-  `);
+    ]);
+  });
 
   bangleStoreChanged++;
   rerender();

@@ -29,7 +29,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     const { wsName } = resolvePath(wsPath);
 
-    await this._getFs(wsName, opts).unlink(wsPathHelpers.toFSPath(wsPath));
+    await (
+      await this._getFs(wsName, opts)
+    ).unlink(wsPathHelpers.toFSPath(wsPath));
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -37,7 +39,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     const { wsName } = resolvePath(wsPath);
 
     try {
-      await this._getFs(wsName, opts).stat(path);
+      await (await this._getFs(wsName, opts)).stat(path);
 
       return true;
     } catch (error) {
@@ -54,7 +56,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     const path = wsPathHelpers.toFSPath(wsPath);
     const { wsName } = resolvePath(wsPath);
 
-    const stat = await this._getFs(wsName, opts).stat(path);
+    const stat = await (await this._getFs(wsName, opts)).stat(path);
 
     return {
       ctime: stat.mtimeMs,
@@ -69,9 +71,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   ): Promise<string[]> {
     let files: string[] = [];
 
-    const rawPaths: string[] = await this._getFs(wsName, opts).opendirRecursive(
-      wsName,
-    );
+    const rawPaths: string[] = await (
+      await this._getFs(wsName, opts)
+    ).opendirRecursive(wsName);
 
     assertSignal(abortSignal);
 
@@ -109,7 +111,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
     const { wsName } = resolvePath(wsPath);
 
-    return this._getFs(wsName, opts).readFile(wsPathHelpers.toFSPath(wsPath));
+    return (await this._getFs(wsName, opts)).readFile(
+      wsPathHelpers.toFSPath(wsPath),
+    );
   }
 
   async renameFile(
@@ -119,10 +123,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     const { wsName } = resolvePath(wsPath);
 
-    await this._getFs(wsName, opts).rename(
-      wsPathHelpers.toFSPath(wsPath),
-      wsPathHelpers.toFSPath(newWsPath),
-    );
+    await (
+      await this._getFs(wsName, opts)
+    ).rename(wsPathHelpers.toFSPath(wsPath), wsPathHelpers.toFSPath(newWsPath));
   }
 
   async writeFile(
@@ -133,12 +136,13 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     const path = wsPathHelpers.toFSPath(wsPath);
     const { wsName } = resolvePath(wsPath);
 
-    await this._getFs(wsName, opts).writeFile(path, file);
+    await (await this._getFs(wsName, opts)).writeFile(path, file);
   }
 
-  private _getFs(wsName: string, opts: StorageOpts) {
-    const rootDirHandle: FileSystemDirectoryHandle =
-      opts.readWorkspaceMetadata(wsName).rootDirHandle;
+  private async _getFs(wsName: string, opts: StorageOpts) {
+    const rootDirHandle: FileSystemDirectoryHandle = (
+      await opts.readWorkspaceMetadata(wsName)
+    ).rootDirHandle;
 
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,

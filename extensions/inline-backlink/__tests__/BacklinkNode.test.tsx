@@ -406,15 +406,26 @@ describe('clicking node', () => {
       ['test-ws:note1.md', 'content b'],
     ]);
     pushWsPath(wsPath)(store.state, store.dispatch);
+
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey.getSliceState(store.state)?.openedWsPaths
+          .primaryWsPath,
+      ).toEqual(wsPath),
+    );
+
     await act(() => sleep(0));
     await clickSetup(screen.getByText(/note1/i), { shiftKey: true });
     await act(() => sleep(0));
 
-    expect(
-      workspaceSliceKey
-        .getSliceState(store.state)
-        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
-    ).toEqual(wsPath);
+    await waitForExpect(() =>
+      expect(
+        workspaceSliceKey
+          .getSliceState(store.state)
+          ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
+      ).toEqual(wsPath),
+    );
+
     expect(
       workspaceSliceKey
         .getSliceState(store.state)
@@ -459,11 +470,13 @@ describe('clicking node', () => {
     await clickSetup(screen.getByText(/note2/i));
     await act(() => sleep(0));
 
-    expect(
-      workspaceSliceKey
-        .getSliceState(store.state)
-        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
-    ).toEqual('test-ws:magic/note2.md');
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey
+          .getSliceState(store.state)
+          ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
+      ).toEqual('test-ws:magic/note2.md');
+    });
   });
 
   test('matches if relative path 3', async () => {

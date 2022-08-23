@@ -27,8 +27,8 @@ const WorkspaceHooksContext = React.createContext<WorkspaceContextType>({
   wsPaths: workspaceSliceInitialState.wsPaths,
   bangleStore: initialBangleStore,
   refreshCounter: workspaceSliceInitialState.refreshCounter,
-  workspacesInfo: workspaceSliceInitialState.workspacesInfo,
   error: workspaceSliceInitialState.error,
+  cachedWorkspaceInfo: workspaceSliceInitialState.cachedWorkspaceInfo,
 });
 
 export function useWorkspaceContext() {
@@ -59,7 +59,7 @@ export function WorkspaceContextProvider({
       refreshCounter: sliceState.refreshCounter,
       bangleStore: store,
       error: sliceState.error,
-      workspacesInfo: sliceState.workspacesInfo,
+      cachedWorkspaceInfo: sliceState.cachedWorkspaceInfo,
     };
   }, [sliceState, store]);
 

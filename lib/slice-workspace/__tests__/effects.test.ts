@@ -1,10 +1,4 @@
-import {
-  MAX_OPEN_EDITORS,
-  WorkspaceTypeBrowser,
-  WorkspaceTypeNative,
-} from '@bangle.io/constants';
-import type { ApplicationStore } from '@bangle.io/create-store';
-import { getWorkspaceInfoTable } from '@bangle.io/db-app';
+import { MAX_OPEN_EDITORS, WorkspaceTypeBrowser } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import {
   getPageLocation,
@@ -30,24 +24,28 @@ import {
 } from '..';
 import { workspaceSliceKey } from '../common';
 import { createNote, refreshWsPaths } from '../file-operations';
-import { goToWsNameRoute, updateOpenedWsPaths } from '../operations';
-import { WORKSPACE_KEY } from '../read-ws-info';
-import { createWorkspace } from '../workspaces-operations';
 import {
-  createStore,
-  createWsInfo,
-  getActionNamesDispatched,
-} from './test-utils';
-
-const getDispatch = (store: ApplicationStore) =>
-  workspaceSliceKey.getDispatch(store.dispatch);
-
-// let idbSetSpy: jest.SpyInstance;
+  getOpenedWsPaths,
+  goToWsNameRoute,
+  updateOpenedWsPaths,
+} from '../operations';
+import { readWorkspaceInfo, saveWorkspaceInfo } from '../read-ws-info';
+import { createWorkspace } from '../workspaces-operations';
+import { createStore } from './test-utils';
 
 let abortController = new AbortController();
 let signal = abortController.signal;
+jest.mock('../config', () => {
+  const config = jest.requireActual('../config');
+
+  return {
+    ...config,
+    WORKSPACE_INFO_CACHE_REFRESH_INTERVAL: 20,
+  };
+});
 
 beforeEach(() => {
+  abortController.abort();
   abortController = new AbortController();
   signal = abortController.signal;
 });
@@ -60,7 +58,7 @@ describe('refreshWsPathsEffect', () => {
   test('refreshes on create note', async () => {
     const storageProvider = new IndexedDbStorageProvider();
 
-    const { store, dispatchSpy, getAction } = createBasicTestStore({
+    const { store, getAction } = createBasicTestStore({
       signal,
       storageProvider: storageProvider,
     });
@@ -124,9 +122,7 @@ describe('refreshWsPathsEffect', () => {
 
     refreshWsPaths()(store.state, store.dispatch);
 
-    await sleep(0);
-
-    expect(listAllFilesSpy).toBeCalledTimes(1);
+    await waitForExpect(() => expect(listAllFilesSpy).toBeCalledTimes(1));
   });
 
   test('no workspace no refresh', async () => {
@@ -156,7 +152,7 @@ describe('refreshWsPathsEffect', () => {
   });
 
   // eslint-disable-next-line jest/no-disabled-tests
-  test.skip('refresh when workspace changes', async () => {
+  test('refresh when workspace changes', async () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
@@ -170,142 +166,7 @@ describe('refreshWsPathsEffect', () => {
     expect(listAllFilesSpy).toBeCalledTimes(1);
 
     goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
-    await sleep(0);
-    expect(listAllFilesSpy).toBeCalledTimes(2);
-  });
-});
-
-describe('refreshWorkspacesEffect', () => {
-  test('works', async () => {
-    const { store, dispatchSpy } = createStore({
-      signal: abortController.signal,
-    });
-
-    await waitForExpect(() =>
-      expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-        'action::@bangle.io/slice-workspace:set-workspace-infos',
-      ]),
-    );
-
-    await waitForExpect(async () =>
-      expect(await getWorkspaceInfoTable().getAll()).toEqual([[]]),
-    );
-
-    const testWsInfo = createWsInfo({
-      name: 'testWs',
-      type: WorkspaceTypeNative,
-      metadata: { rootDirHandle: { root: 'handler' } },
-    });
-
-    getDispatch(store)({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          testWs: testWsInfo,
-        },
-      },
-    });
-
-    await waitForExpect(async () =>
-      expect((await getWorkspaceInfoTable().get(WORKSPACE_KEY))?.length).toBe(
-        1,
-      ),
-    );
-
-    expect(await getWorkspaceInfoTable().get(WORKSPACE_KEY)).toEqual([
-      {
-        lastModified: 0,
-        metadata: {
-          rootDirHandle: {
-            root: 'handler',
-          },
-        },
-        name: 'testWs',
-        type: 'nativefs',
-      },
-    ]);
-
-    let wsInfo2 = createWsInfo({
-      name: 'testWs',
-      type: WorkspaceTypeNative,
-      metadata: { rootDirHandle: { root: 'handler' } },
-    });
-    getDispatch(store)({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          testWs: wsInfo2,
-        },
-      },
-    });
-    getDispatch(store)({
-      name: 'action::@bangle.io/some-package',
-      value: {},
-    } as any);
-
-    expect(await getWorkspaceInfoTable().getAll()).toEqual([[wsInfo2]]);
-
-    const modifiedWsInfo = createWsInfo({
-      name: 'testWs',
-      type: WorkspaceTypeNative,
-      lastModified: 100,
-      metadata: { rootDirHandle: { root: 'handler' } },
-    });
-    // actions which have newer lastModified trigger update
-    getDispatch(store)({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          testWs: modifiedWsInfo,
-        },
-      },
-    });
-
-    await waitForExpect(async () => {
-      expect(await getWorkspaceInfoTable().getAll()).toEqual([
-        [modifiedWsInfo],
-      ]);
-    });
-  });
-
-  test('does not overwrite existing values', async () => {
-    const { store } = createStore({
-      signal: abortController.signal,
-    });
-
-    const testWsInfo = createWsInfo({
-      name: 'testWs',
-      type: WorkspaceTypeNative,
-      metadata: { rootDirHandle: { root: 'handler' } },
-      deleted: false,
-    });
-
-    const testWsInfoExisting = createWsInfo({
-      name: 'testWsExisting',
-      type: WorkspaceTypeNative,
-      metadata: { rootDirHandle: { root: 'handler' } },
-      deleted: false,
-    });
-
-    // some other tab writes data to idb
-    // await idb.set('workspaces/2', [testWsInfoExisting]);
-
-    await getWorkspaceInfoTable().put(WORKSPACE_KEY, [testWsInfoExisting]);
-
-    getDispatch(store)({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          testWs: testWsInfo,
-        },
-      },
-    });
-
-    await waitForExpect(async () => {
-      expect(
-        (await getWorkspaceInfoTable().getAll()).flatMap((a) => a).sort(),
-      ).toEqual([testWsInfoExisting, testWsInfo]);
-    });
+    await waitForExpect(() => expect(listAllFilesSpy).toBeCalledTimes(2));
   });
 });
 
@@ -329,7 +190,9 @@ describe('updateLocationEffect', () => {
       store,
     );
 
-    await sleep(0);
+    await waitForExpect(() => {
+      expect(getPageLocation()(store.state)?.pathname).toBe('/ws/test-ws');
+    });
 
     expect(getActionNames()).toContain(
       'action::@bangle.io/slice-workspace:set-opened-workspace',
@@ -377,19 +240,26 @@ describe('updateLocationEffect', () => {
     await setupMockWorkspaceWithNotes(store, 'test-ws');
 
     goToWsNameRoute('test-ws')(store.state, store.dispatch);
-    await sleep(0);
 
-    const actions = getActionNames();
+    // wait for it to reach `/ws/test-ws` i.e. to opened wsPaths
+    await waitForExpect(() => {
+      expect(getOpenedWsPaths()(store.state).hasSomeOpenedWsPaths()).toBe(
+        false,
+      );
+    });
 
-    await sleep(0);
+    const actions = [...getActionNames()];
 
     goToWsNameRoute('test-ws')(store.state, store.dispatch);
     goToWsNameRoute('test-ws')(store.state, store.dispatch);
+
+    await sleep(20);
 
     expect(getActionNames()).toEqual([
       ...actions,
-      // only slice-page actions are added, which means out effect
-      // did not trigger a dispatch
+      // should not have 'action::@bangle.io/slice-workspace:set-opened-workspace',
+      // only slice-page actions are added, which means our effects
+      // did not trigger the dispatch the above mentioned action
       'action::@bangle.io/slice-page:history-update-pending-navigation',
       'action::@bangle.io/slice-page:history-update-pending-navigation',
     ]);
@@ -409,12 +279,12 @@ describe('updateLocationEffect', () => {
       search: wsPathToSearch('test-ws:one.png', ''),
     })(store.state, pageSliceKey.getDispatch(store.dispatch));
 
-    await sleep(0);
-
-    expect(getPageLocation()(store.state)).toEqual({
-      pathname: '/ws-invalid-path/test-ws',
-      search: '',
-    });
+    await waitForExpect(() =>
+      expect(getPageLocation()(store.state)).toEqual({
+        pathname: '/ws-invalid-path/test-ws',
+        search: '',
+      }),
+    );
   });
 
   test('handles workspace not found error', async () => {
@@ -464,15 +334,15 @@ describe('updateLocationEffect', () => {
       search: wsPathToSearch('test-ws:three.md', ''),
     })(store.state, pageSliceKey.getDispatch(store.dispatch));
 
-    await sleep(0);
+    await waitForExpect(() => {
+      const newOpenedWsPaths = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      ).openedWsPaths;
 
-    const newOpenedWsPaths = workspaceSliceKey.getSliceStateAsserted(
-      store.state,
-    ).openedWsPaths;
-
-    expect(newOpenedWsPaths.miniEditorWsPath).toBe('test-ws:two.md');
-    expect(newOpenedWsPaths.primaryWsPath).toEqual('test-ws:two.md');
-    expect(newOpenedWsPaths.secondaryWsPath).toEqual('test-ws:three.md');
+      expect(newOpenedWsPaths.miniEditorWsPath).toBe('test-ws:two.md');
+      expect(newOpenedWsPaths.primaryWsPath).toEqual('test-ws:two.md');
+      expect(newOpenedWsPaths.secondaryWsPath).toEqual('test-ws:three.md');
+    });
   });
 
   test('resets mini-editor in case of location update with wsName change', async () => {
@@ -497,13 +367,12 @@ describe('updateLocationEffect', () => {
       pathname: '/ws/test-ws2',
     })(store.state, pageSliceKey.getDispatch(store.dispatch));
 
-    await sleep(0);
-
-    const newOpenedWsPaths = workspaceSliceKey.getSliceStateAsserted(
-      store.state,
-    ).openedWsPaths;
-
-    expect(newOpenedWsPaths.miniEditorWsPath).toBeUndefined();
+    await waitForExpect(() => {
+      const newOpenedWsPaths = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      ).openedWsPaths;
+      expect(newOpenedWsPaths.miniEditorWsPath).toBeUndefined();
+    });
   });
 });
 
@@ -548,22 +417,21 @@ describe('workspaceErrorHandler', () => {
     });
 
     await goToWsNameRoute(wsName)(store.state, store.dispatch);
-    await sleep(0);
 
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
-      wsName,
-    );
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        wsName,
+      );
+    });
 
     expect(
-      workspaceSliceKey.getSliceStateAsserted(store.state).workspacesInfo,
-    ).toMatchObject({
-      [wsName]: {
-        deleted: false,
-        lastModified: 1,
-        metadata: {},
-        name: wsName,
-        type: 'testType',
-      },
+      workspaceSliceKey.getSliceStateAsserted(store.state).cachedWorkspaceInfo,
+    ).toEqual({
+      deleted: false,
+      lastModified: 1,
+      metadata: {},
+      name: wsName,
+      type: 'testType',
     });
 
     await createNote('my-ws:test-note.md', {
@@ -657,7 +525,9 @@ describe('workspaceErrorHandler', () => {
       store,
     );
 
-    await sleep(0);
+    await waitForExpect(() => {
+      expect(getPageLocation()(store.state)?.pathname).toBe('/ws/test-ws');
+    });
 
     const consoleLog = console.log;
     console.log = jest.fn();
@@ -669,8 +539,6 @@ describe('workspaceErrorHandler', () => {
       }),
     );
 
-    await sleep(0);
-
     await waitForExpect(() => {
       expect(getPageLocation()(store.state)).toEqual({
         pathname: '/ws-not-found/test-ws',
@@ -680,5 +548,137 @@ describe('workspaceErrorHandler', () => {
 
     expect(onStorageError).toBeCalledTimes(0);
     console.log = consoleLog;
+  });
+});
+
+describe('cachedWorkspaceInfoEffect', () => {
+  test('gets correct wsInfo when workspace changes', async () => {
+    const { store } = createBasicTestStore({
+      signal,
+    });
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
+      ['test-ws-1:one.md', 'hello one'],
+    ]);
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws-2', [
+      ['test-ws-2:one.md', 'hello one'],
+    ]);
+
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toMatchObject({
+        deleted: false,
+        lastModified: expect.any(Number),
+        metadata: {},
+        name: 'test-ws-2',
+        type: 'browser',
+      });
+    });
+
+    goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
+
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toMatchObject({
+        deleted: false,
+        lastModified: expect.any(Number),
+        metadata: {},
+        name: 'test-ws-1',
+        type: 'browser',
+      });
+    });
+  });
+
+  test('clears when no active workspace', async () => {
+    const { store } = createBasicTestStore({
+      signal,
+    });
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
+      ['test-ws-1:one.md', 'hello one'],
+    ]);
+
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toBeDefined();
+    });
+
+    goToWsNameRouteNotFoundRoute('test-ws-1')(store.state, store.dispatch);
+
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toBeUndefined();
+    });
+  });
+
+  test('periodically refreshes', async () => {
+    const { store } = createBasicTestStore({
+      signal,
+    });
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
+      ['test-ws-1:one.md', 'hello one'],
+    ]);
+
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toBeDefined();
+    });
+
+    const wsInfo = await readWorkspaceInfo('test-ws-1');
+    expect(wsInfo).toEqual({
+      deleted: false,
+      lastModified: expect.any(Number),
+      metadata: {},
+      name: 'test-ws-1',
+      type: 'browser',
+    });
+
+    await saveWorkspaceInfo(
+      'test-ws-1',
+      (wsInfo) => ({
+        ...wsInfo!,
+        metadata: {
+          test: '1234',
+        },
+      }),
+      wsInfo!,
+    );
+
+    expect(await readWorkspaceInfo('test-ws-1')).toEqual({
+      deleted: false,
+      lastModified: expect.any(Number),
+      metadata: {
+        test: '1234',
+      },
+      name: 'test-ws-1',
+      type: 'browser',
+    });
+
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toEqual({
+        deleted: false,
+        lastModified: expect.any(Number),
+        metadata: {
+          test: '1234',
+        },
+        name: 'test-ws-1',
+        type: 'browser',
+      });
+    });
   });
 });

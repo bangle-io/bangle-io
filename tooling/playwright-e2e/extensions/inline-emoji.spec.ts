@@ -8,7 +8,6 @@ import {
   createWorkspace,
   getEditorDebugString,
   getEditorHTML,
-  longSleep,
   sleep,
 } from '../helpers';
 
@@ -21,7 +20,6 @@ test.describe('emoji', () => {
     const wsName = await createWorkspace(page);
 
     await createNewNote(page, wsName, 'test123');
-    await longSleep();
 
     const editorHandle = page.locator('.bangle-editor');
     await clearEditor(page, PRIMARY_EDITOR_INDEX);

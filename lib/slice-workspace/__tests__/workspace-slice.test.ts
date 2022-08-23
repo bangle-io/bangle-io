@@ -24,6 +24,7 @@ describe('serialization works', () => {
       Object {
         "workspace": Object {
           "data": Object {
+            "cachedWorkspaceInfo": null,
             "error": null,
             "openedWsPaths": Array [
               null,
@@ -33,7 +34,6 @@ describe('serialization works', () => {
             ],
             "recentlyUsedWsPaths": null,
             "refreshCounter": 0,
-            "workspacesInfo": null,
             "wsName": null,
             "wsPaths": null,
           },
@@ -58,6 +58,7 @@ describe('serialization works', () => {
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
       WorkspaceSliceState {
         "mainFields": Object {
+          "cachedWorkspaceInfo": undefined,
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": Array [
@@ -69,7 +70,6 @@ describe('serialization works', () => {
           },
           "recentlyUsedWsPaths": undefined,
           "refreshCounter": 0,
-          "workspacesInfo": undefined,
           "wsName": undefined,
           "wsPaths": undefined,
         },
@@ -98,6 +98,7 @@ describe('serialization works', () => {
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
       WorkspaceSliceState {
         "mainFields": Object {
+          "cachedWorkspaceInfo": undefined,
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": Array [
@@ -109,7 +110,6 @@ describe('serialization works', () => {
           },
           "recentlyUsedWsPaths": undefined,
           "refreshCounter": 0,
-          "workspacesInfo": undefined,
           "wsName": undefined,
           "wsPaths": Array [
             "test:one.md",
@@ -128,6 +128,7 @@ describe('serialization works', () => {
       Object {
         "workspace": Object {
           "data": Object {
+            "cachedWorkspaceInfo": null,
             "error": null,
             "openedWsPaths": Array [
               null,
@@ -137,7 +138,6 @@ describe('serialization works', () => {
             ],
             "recentlyUsedWsPaths": null,
             "refreshCounter": 0,
-            "workspacesInfo": null,
             "wsName": null,
             "wsPaths": Array [
               "test:one.md",
@@ -188,6 +188,7 @@ describe('serialization works', () => {
     ).toEqual({
       workspace: {
         data: {
+          cachedWorkspaceInfo: null,
           openedWsPaths: makeArrayOfSize(MAX_OPEN_EDITORS, null, [
             'bangle-help:test-path/k.md',
             'bangle-help:getting started.md',
@@ -195,7 +196,6 @@ describe('serialization works', () => {
           recentlyUsedWsPaths: null,
           wsName: 'bangle-help',
           wsPaths: null,
-          workspacesInfo: null,
           refreshCounter: 0,
           error: null,
         },
@@ -560,15 +560,13 @@ describe('workspaceInfo', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {},
-      },
+      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
+      value: {},
     });
 
     expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({});
+      workspaceSliceKey.getSliceStateAsserted(state).cachedWorkspaceInfo,
+    ).toEqual(undefined);
   });
 
   test('with some data', () => {
@@ -577,195 +575,14 @@ describe('workspaceInfo', () => {
     const wsInfo = createWsInfo({ name: 'testWs' });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
       value: {
-        workspacesInfo: {
-          testWs: createWsInfo({ name: 'testWs' }),
-        },
+        workspaceInfo: wsInfo,
       },
     });
 
     expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({ testWs: wsInfo });
-  });
-
-  test('with lot of data', () => {
-    let state = createState();
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          testWs: createWsInfo({ name: 'testWs' }),
-          testWs2: createWsInfo({ name: 'testWs2' }),
-          testWs3: createWsInfo({ name: 'testWs3' }),
-        },
-      },
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({
-      testWs: createWsInfo({ name: 'testWs' }),
-      testWs2: createWsInfo({ name: 'testWs2' }),
-      testWs3: createWsInfo({ name: 'testWs3' }),
-    });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          testWs: createWsInfo({ name: 'testWs' }),
-          testWs3: createWsInfo({ name: 'testWs3', lastModified: 7 }),
-        },
-      },
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({
-      testWs: createWsInfo({ name: 'testWs' }),
-      testWs2: createWsInfo({ name: 'testWs2' }),
-      testWs3: createWsInfo({ name: 'testWs3', lastModified: 7 }),
-    });
-  });
-
-  test('merges with data when no clash', () => {
-    let state = createState();
-
-    const wsInfo = createWsInfo({ name: 'testWs' });
-    const wsInfo2 = createWsInfo({ name: 'testWs2' });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo.name]: wsInfo,
-        },
-      },
-    });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo2.name]: wsInfo2,
-        },
-      },
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({
-      [wsInfo.name]: wsInfo,
-      [wsInfo2.name]: wsInfo2,
-    });
-  });
-
-  test('retains the existing data if incoming is older', () => {
-    let state = createState();
-
-    const wsInfo = createWsInfo({ name: 'testWs', lastModified: 5 });
-    const wsInfo2 = createWsInfo({ name: 'testWs', lastModified: 3 });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo.name]: wsInfo,
-        },
-      },
-    });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo2.name]: wsInfo2,
-        },
-      },
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({
-      [wsInfo.name]: wsInfo,
-    });
-  });
-
-  test('overwrites the existing data if incoming is new', () => {
-    let state = createState();
-
-    const wsInfo = createWsInfo({ name: 'testWs', lastModified: 5 });
-    const wsInfo2 = createWsInfo({ name: 'testWs', lastModified: 7 });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo.name]: wsInfo,
-        },
-      },
-    });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo2.name]: wsInfo2,
-        },
-      },
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({
-      [wsInfo.name]: wsInfo2,
-    });
-  });
-
-  test('other fields donot affect overwritting check if lastModified is same', () => {
-    let state = createState();
-
-    const wsInfo = createWsInfo({
-      name: 'testWs',
-      lastModified: 5,
-      metadata: { bubbles: '' },
-    });
-    const wsInfo2 = createWsInfo({
-      name: 'testWs',
-      lastModified: 5,
-      deleted: true,
-      metadata: { bubbles: '' },
-    });
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo.name]: wsInfo,
-        },
-      },
-    });
-
-    let newState = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
-      value: {
-        workspacesInfo: {
-          [wsInfo2.name]: wsInfo2,
-        },
-      },
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
-    ).toEqual({
-      [wsInfo.name]: wsInfo,
-    });
-
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(newState).workspacesInfo,
-    ).toBe(workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo);
+      workspaceSliceKey.getSliceStateAsserted(state).cachedWorkspaceInfo,
+    ).toEqual(wsInfo);
   });
 });
