@@ -143,43 +143,6 @@ export function deleteWorkspace(targetWsName: string) {
   };
 }
 
-export function updateWorkspaceMetadata(
-  wsName: string,
-  metadata:
-    | WorkspaceInfo['metadata']
-    | ((
-        existingMetadata: WorkspaceInfo['metadata'],
-      ) => WorkspaceInfo['metadata']),
-) {
-  return workspaceSliceKey.op(async (state, dispatch) => {
-    const currentWsInfo = await readWorkspaceInfo(wsName);
-
-    throwOnNotFoundWsInfo(wsName, currentWsInfo);
-
-    if (currentWsInfo.deleted) {
-      throw new WorkspaceError({
-        message: `Cannot modify a deleted workspace.`,
-        code: WORKSPACE_DELETED_MODIFY_ERROR,
-      });
-    }
-
-    await saveWorkspaceInfo(
-      wsName,
-      (existing) => ({
-        ...existing,
-        metadata: {
-          ...(typeof metadata === 'function'
-            ? metadata(existing.metadata)
-            : metadata),
-        },
-      }),
-      currentWsInfo,
-    );
-
-    return true;
-  });
-}
-
 export function clearCachedWorkspaceInfo() {
   return workspaceSliceKey.op((state, dispatch) => {
     dispatch({

@@ -23,8 +23,11 @@ import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
-import { readWorkspaceInfo, readWorkspaceMetadata } from './read-ws-info';
-import { updateWorkspaceMetadata } from './workspaces-operations';
+import {
+  readWorkspaceInfo,
+  readWorkspaceMetadata,
+  updateWorkspaceMetadata,
+} from './read-ws-info';
 
 function getStorageProvider(wsName: string) {
   return workspaceSliceKey.queryOp(async (state) => {
@@ -78,7 +81,7 @@ export function getStorageProviderOpts() {
         return (await readWorkspaceMetadata(wsName)) || {};
       },
       updateWorkspaceMetadata: async (wsName, metadata) => {
-        await updateWorkspaceMetadata(wsName, metadata)(state, dispatch);
+        await updateWorkspaceMetadata(wsName, () => metadata);
       },
     };
 

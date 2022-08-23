@@ -45,6 +45,32 @@ export async function readWorkspaceMetadata(
   return (await readWorkspaceInfo(wsName, opts))?.metadata;
 }
 
+export async function updateWorkspaceMetadata(
+  wsName: string,
+  metadata: (
+    existingMetadata: WorkspaceInfo['metadata'],
+  ) => WorkspaceInfo['metadata'],
+) {
+  const currentWsInfo = await readWorkspaceInfo(wsName);
+
+  if (!currentWsInfo) {
+    return false;
+  }
+
+  return await saveWorkspaceInfo(
+    wsName,
+    (existing) => ({
+      ...existing,
+      metadata: {
+        ...(typeof metadata === 'function'
+          ? metadata(existing.metadata)
+          : metadata),
+      },
+    }),
+    currentWsInfo,
+  );
+}
+
 export async function readAllWorkspacesInfo(
   opts?: Parameters<typeof readWorkspaceInfo>[1],
 ): Promise<WorkspaceInfo[]> {
@@ -76,7 +102,7 @@ export async function saveWorkspaceInfo(
   defaultValue: WorkspaceInfo,
 ) {
   if (wsName === HELP_FS_WORKSPACE_NAME) {
-    return;
+    return false;
   }
 
   const db = await getAppDb();
@@ -93,6 +119,8 @@ export async function saveWorkspaceInfo(
   };
 
   await Promise.all([store.put(makeDbRecord(wsName, newInfo)), tx.done]);
+
+  return true;
 }
 
 export async function compareWorkspaceInfo(

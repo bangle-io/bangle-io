@@ -59,7 +59,7 @@ export const updateGithubToken =
         }
 
         return existing;
-      })(state, dispatch);
+      });
 
       if (showNotification) {
         notification.showNotification({
