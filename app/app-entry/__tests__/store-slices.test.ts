@@ -36,7 +36,6 @@ test('exhaustive main slices list', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    '@bangle.io/slice-db/slice-key$',
     expect.stringMatching(/e2eHelpers1\$/),
     expect.stringMatching(/e2eHelpers2\$/),
     expect.stringMatching(/slice\$/),
@@ -55,7 +54,6 @@ test('exhaustive naukar slices list', () => {
     'write-note-to-disk-key$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    '@bangle.io/slice-db/slice-key$',
     expect.stringMatching(/slice\$/),
   ]);
 });
@@ -69,7 +67,6 @@ test('slices common worker and main', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    '@bangle.io/slice-db/slice-key$',
   ]);
 });
 
@@ -81,7 +78,6 @@ describe('worker and window constraints', () => {
     'slice-workspace$',
     'extension-registry-slice$',
     'notificationSliceKey$',
-    '@bangle.io/slice-db/slice-key$',
   ];
 
   const sideEffectInWindowOnly = [
@@ -125,7 +121,6 @@ describe('worker and window constraints', () => {
     'store-sync$',
     // db slice works sets up indexeddb and it is okay to not sync it across worker and main
     // since indexeddb by default is synced between all threads.
-    '@bangle.io/slice-db/slice-key$',
   ];
 
   test.each(keys.filter((r) => !slicesExemptFromActionWhitelist.includes(r)))(
