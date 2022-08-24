@@ -3,11 +3,13 @@ import { getTable, idb } from '@bangle.io/db-key-val';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 
 export const DB_NAME = 'bangle-io-db';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 export const WORKSPACE_INFO_TABLE = 'WorkspaceInfo';
 export const DUMMY_TABLE = 'DummyTable';
+// a table for filling data which is small enough not to require its own table
+export const MISC_TABLE = 'MiscTable';
 
-export const tables = [WORKSPACE_INFO_TABLE, DUMMY_TABLE] as const;
+export const tables = [WORKSPACE_INFO_TABLE, DUMMY_TABLE, MISC_TABLE] as const;
 
 export interface AppDatabase extends BangleDbSchema {
   [WORKSPACE_INFO_TABLE]: {
@@ -19,6 +21,10 @@ export interface AppDatabase extends BangleDbSchema {
     value: DbRecord<{
       foo: string;
     }>;
+  };
+  [MISC_TABLE]: {
+    key: string;
+    value: DbRecord<string>;
   };
 }
 
@@ -32,6 +38,13 @@ export function setupAppDb() {
               keyPath: 'key',
             });
           }
+          break;
+        }
+        case 1: {
+          db.createObjectStore(MISC_TABLE, {
+            keyPath: 'key',
+          });
+          break;
         }
       }
     },
@@ -46,4 +59,8 @@ export function getAppDb() {
 
 export function getWorkspaceInfoTable() {
   return getTable(DB_NAME, WORKSPACE_INFO_TABLE, setupAppDb);
+}
+
+export function getMiscTable() {
+  return getTable(MISC_TABLE);
 }
