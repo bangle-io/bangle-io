@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { Activitybar } from '@bangle.io/activitybar';
+import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
@@ -13,6 +14,8 @@ import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { useSetDocumentTitle } from './misc/use-set-document-title';
 import { Routes } from './Routes';
+
+let requestedStorage = false;
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
@@ -52,6 +55,23 @@ export function AppContainer() {
       value: { visible: true },
     });
   }, [dispatch]);
+
+  useEffect(() => {
+    // do not ask for persistence if user never interacted with app
+    // if a custom wsName is open, that means they interacted
+    if (wsName && wsName !== HELP_FS_WORKSPACE_NAME && !requestedStorage) {
+      let storagePersist = async () => {
+        if (typeof navigator === 'undefined') {
+          return;
+        }
+        requestedStorage = true;
+        let result = await navigator.storage?.persist?.();
+        console.debug(`storage.persist: ${result}`);
+      };
+
+      storagePersist();
+    }
+  }, [wsName]);
 
   return (
     <>
