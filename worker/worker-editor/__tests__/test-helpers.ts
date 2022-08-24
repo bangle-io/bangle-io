@@ -9,7 +9,7 @@ import {
   getCollabMessageBus,
 } from '@bangle.io/slice-editor-sync';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
-import { createBasicTestStore } from '@bangle.io/test-utils';
+import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 
 import { workerEditorSlice } from '../worker-editor-slice';
 import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
@@ -64,15 +64,22 @@ export const setup = async ({
     ],
   });
 
-  const typeText = (editorId: number, text: string, pos?: number) => {
+  const typeText = async (editorId: number, text: string, pos?: number) => {
     const editor = getEditor(editorId)(store.state)!;
 
+    // wait for collab to initialize
+    await waitForExpect(() =>
+      expect(editor.view.dom.classList.contains('bangle-collab-active')).toBe(
+        true,
+      ),
+    );
     const editorState = editor.view.state;
 
     const tr = editorState.tr.insertText(
       text,
       pos == null ? editorState.selection.head : pos,
     );
+
     editor.view.dispatch(tr);
   };
 

@@ -1,6 +1,4 @@
-import * as idb from 'idb';
-
-import { DBKeyVal } from '@bangle.io/db-key-val';
+import { DBKeyVal, idb } from '@bangle.io/db-key-val';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
 import type { ExtensionDB } from './common';

@@ -149,8 +149,7 @@ describe('effects', () => {
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
       ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
 
-      await sleep(30);
-      typeText(PRIMARY_EDITOR_INDEX, 'bye ');
+      await typeText(PRIMARY_EDITOR_INDEX, 'bye ');
 
       await waitFor(() => {
         expect(getContainer().innerHTML).toContain('bye hello mars');
@@ -173,7 +172,7 @@ describe('effects', () => {
         wsPath: wsPath1,
       });
 
-      typeText(PRIMARY_EDITOR_INDEX, 'more ', 0);
+      await typeText(PRIMARY_EDITOR_INDEX, 'more ', 0);
 
       await waitForExpect(() =>
         expect(
@@ -221,10 +220,7 @@ describe('effects', () => {
         expect(item1?.collabState === item2?.collabState).toBe(true);
       };
 
-      // wait for collab to initialize
-      await sleep(10);
-
-      typeText(PRIMARY_EDITOR_INDEX, 'bye ');
+      await typeText(PRIMARY_EDITOR_INDEX, 'bye ');
       await sleep(0);
 
       const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
@@ -360,7 +356,7 @@ describe('effects', () => {
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
       ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
 
-      typeText(PRIMARY_EDITOR_INDEX, 'bye ');
+      await typeText(PRIMARY_EDITOR_INDEX, 'bye ');
 
       await sleep(10);
 
@@ -400,7 +396,7 @@ describe('effects', () => {
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
       ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
 
-      typeText(PRIMARY_EDITOR_INDEX, 'bye ');
+      await typeText(PRIMARY_EDITOR_INDEX, 'bye ');
 
       await sleep(10);
 
@@ -452,7 +448,7 @@ describe('effects', () => {
       ),
     );
 
-    typeText(PRIMARY_EDITOR_INDEX, 'hello');
+    await typeText(PRIMARY_EDITOR_INDEX, 'hello');
 
     await waitForExpect(() => {
       // first block and then unblock

@@ -1,7 +1,7 @@
-import type { DBSchema } from 'idb';
-import * as idb from 'idb';
+import type { BangleDbSchema } from '@bangle.io/db-key-val';
+import { idb } from '@bangle.io/db-key-val';
 
-interface LegacyKeyVal extends DBSchema {
+interface LegacyKeyVal extends BangleDbSchema {
   keyval: {
     key: string;
     value: any;

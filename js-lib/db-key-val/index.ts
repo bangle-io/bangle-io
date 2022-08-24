@@ -1,4 +1,6 @@
-import type { IDBPDatabase } from 'idb';
+import type { DBSchema, IDBPDatabase } from 'idb';
+
+export * as idb from 'idb';
 
 export function makeDbRecord<V>(key: string, value: V): DbRecord<V> {
   return {
@@ -54,4 +56,16 @@ export class DBKeyVal<V> {
 
     await db.put(this._storeName, result);
   }
+}
+
+export interface BangleDbSchema extends DBSchema {
+  [s: string]: {
+    key: IDBValidKey;
+    value: DbRecord<any>;
+    indexes?: IndexKeys;
+  };
+}
+
+interface IndexKeys {
+  [s: string]: IDBValidKey;
 }

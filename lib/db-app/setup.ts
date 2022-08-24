@@ -1,8 +1,5 @@
-import type { DBSchema } from 'idb';
-import * as idb from 'idb';
-
-import type { DbRecord } from '@bangle.io/db-key-val';
-import { DBKeyVal } from '@bangle.io/db-key-val';
+import type { BangleDbSchema, DbRecord } from '@bangle.io/db-key-val';
+import { DBKeyVal, idb } from '@bangle.io/db-key-val';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 
 export const DB_NAME = 'bangle-io-db';
@@ -12,7 +9,7 @@ export const DUMMY_TABLE = 'DummyTable';
 
 export const tables = [WORKSPACE_INFO_TABLE, DUMMY_TABLE] as const;
 
-export interface AppDatabase extends DBSchema {
+export interface AppDatabase extends BangleDbSchema {
   [WORKSPACE_INFO_TABLE]: {
     key: string;
     value: DbRecord<WorkspaceInfo>;
