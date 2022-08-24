@@ -113,7 +113,7 @@ describe('worker-editor-slice', () => {
     ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
 
     // typing in primary editor should sync to secondary editor since they are the same doc
-    typeText(PRIMARY_EDITOR_INDEX, 'I can type! ');
+    await typeText(PRIMARY_EDITOR_INDEX, 'I can type! ');
 
     expect(
       getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),

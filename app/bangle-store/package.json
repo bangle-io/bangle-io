@@ -33,7 +33,6 @@
     "@bangle.io/pm-manual-paste": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/slice-db": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-editor-sync": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",

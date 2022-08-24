@@ -2,7 +2,6 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
-import { dbSlice } from '@bangle.io/slice-db';
 import type { EditorManagerAction } from '@bangle.io/slice-editor-manager';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { editorSyncSlice } from '@bangle.io/slice-editor-sync';
@@ -67,7 +66,6 @@ export function bangleStateSlices({
     notificationSlice(),
     editorSyncSlice(),
     workspaceOpenedDocInfoSlice(),
-    disableSideEffect(dbSlice()),
 
     // <-- PLOP INSERT SLICE -->
 

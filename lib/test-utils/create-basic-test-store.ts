@@ -13,7 +13,6 @@ import {
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
-import { dbSlice } from '@bangle.io/slice-db';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
@@ -67,7 +66,7 @@ export function createBasicTestStore<
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S, C>;
   slices?: Slice[];
-  extensions?: Array<Extension<any>>;
+  extensions?: Extension[];
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
   useEditorManagerSlice?: boolean;
@@ -115,7 +114,6 @@ export function createBasicTestStore<
         useEditorManagerSlice ? editorManagerSlice() : undefined,
         notificationSlice(),
         useUISlice ? uiSlice() : undefined,
-        dbSlice(),
         ...extensionRegistry.getSlices(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),

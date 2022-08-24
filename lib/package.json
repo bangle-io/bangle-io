@@ -13,7 +13,6 @@
     "markdown",
     "shared-operations",
     "shared-types",
-    "slice-db",
     "slice-editor-manager",
     "slice-editor-sync",
     "slice-notification",
