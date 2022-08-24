@@ -1,5 +1,5 @@
 import type { BangleDbSchema, DbRecord } from '@bangle.io/db-key-val';
-import { DBKeyVal, idb } from '@bangle.io/db-key-val';
+import { getTable, idb } from '@bangle.io/db-key-val';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 
 import { EXTENSION_NAME } from './common';
@@ -32,12 +32,6 @@ export function setupDatabase() {
   });
 }
 
-function getTable<R extends typeof tables[number]>(name: R) {
-  return new DBKeyVal<AppDatabase[R]['value']['value']>(DB_NAME, name, () =>
-    setupDatabase(),
-  );
-}
-
 export function getLocalEntriesTable() {
-  return getTable(LOCAL_ENTRIES_TABLE);
+  return getTable(DB_NAME, LOCAL_ENTRIES_TABLE, setupDatabase);
 }

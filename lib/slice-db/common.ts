@@ -10,9 +10,6 @@ export type DbAction = {
   value: {};
 };
 
-export const dbSliceKey = new SliceKey<
-  {
-    extensionDbs: { [k: string]: ExtensionDB };
-  },
-  DbAction
->('@bangle.io/slice-db/slice-key');
+export const dbSliceKey = new SliceKey<{}, DbAction>(
+  '@bangle.io/slice-db/slice-key',
+);

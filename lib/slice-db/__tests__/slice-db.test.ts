@@ -28,7 +28,5 @@ const setup = async ({} = {}) => {
 test('works', async () => {
   const { store } = await setup({});
 
-  expect(dbSliceKey.getSliceState(store.state)).toEqual({
-    extensionDbs: {},
-  });
+  expect(dbSliceKey.getSliceState(store.state)).toEqual({});
 });

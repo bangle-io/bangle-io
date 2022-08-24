@@ -1,5 +1,5 @@
 import type { BangleDbSchema, DbRecord } from '@bangle.io/db-key-val';
-import { DBKeyVal, idb } from '@bangle.io/db-key-val';
+import { getTable, idb } from '@bangle.io/db-key-val';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 
 export const DB_NAME = 'bangle-io-db';
@@ -44,12 +44,6 @@ export function getAppDb() {
   return res;
 }
 
-function getTable<R extends typeof tables[number]>(name: R) {
-  return new DBKeyVal<AppDatabase[R]['value']['value']>(DB_NAME, name, () =>
-    getAppDb(),
-  );
-}
-
 export function getWorkspaceInfoTable() {
-  return getTable(WORKSPACE_INFO_TABLE);
+  return getTable(DB_NAME, WORKSPACE_INFO_TABLE, setupAppDb);
 }

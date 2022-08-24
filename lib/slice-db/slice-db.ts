@@ -3,7 +3,6 @@ import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import { assertActionName } from '@bangle.io/utils';
 
 import { dbSliceKey } from './common';
-import { setupExtensionDbs } from './setup-extension-dbs';
 
 export function dbSlice() {
   assertActionName('@bangle.io/slice-db', dbSliceKey);
@@ -15,16 +14,7 @@ export function dbSlice() {
         const { extensionRegistry } =
           extensionRegistrySliceKey.getSliceStateAsserted(state);
 
-        const extensionDbs = setupExtensionDbs(extensionRegistry);
-
-        // TODO remove this
-        (globalThis as any).myDb = (name: string) => {
-          return extensionDbs[name];
-        };
-
-        return {
-          extensionDbs,
-        };
+        return {};
       },
     },
     sideEffect: [

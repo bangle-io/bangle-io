@@ -69,3 +69,19 @@ export interface BangleDbSchema extends DBSchema {
 interface IndexKeys {
   [s: string]: IDBValidKey;
 }
+
+// provides helper abstract to deal with database
+export function getTable<
+  DB extends BangleDbSchema,
+  StoreName extends Extract<keyof DB, string>,
+>(
+  dbName: string,
+  storeName: StoreName,
+  getDb: () => Promise<IDBPDatabase<DB>>,
+) {
+  return new DBKeyVal<DB[StoreName]['value']['value']>(
+    dbName,
+    storeName,
+    getDb,
+  );
+}
