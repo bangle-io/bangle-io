@@ -19,6 +19,14 @@ let original = structuredClone;
 // saving in `fake-indexeddb`.
 globalThis.structuredClone = newStructuredClone;
 
+globalThis.FileSystemHandle = class FileSystemHandle {
+  kind = null;
+  name = null;
+  isSameEntry(other) {
+    return this.name === other.name && this.kind === other.kind;
+  }
+};
+
 function newStructuredClone(obj, transferables) {
   if (obj instanceof File) {
     return new File([obj.parts[0]], obj.filename, obj.properties);

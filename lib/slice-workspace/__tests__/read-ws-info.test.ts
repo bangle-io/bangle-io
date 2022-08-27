@@ -1,9 +1,11 @@
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
 } from '@bangle.io/test-utils';
 
 import {
+  compareWorkspaceInfo,
   readWorkspaceInfo,
   readWorkspaceMetadata,
   saveWorkspaceInfo,
@@ -148,5 +150,291 @@ describe('readWorkspaceMetadata', () => {
     expect(
       await readWorkspaceMetadata('test-ws-1', { type: 'something else' }),
     ).toEqual(undefined);
+  });
+});
+
+describe('compareWorkspaceInfo', () => {
+  test('same workspace 1', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(true);
+  });
+
+  test('different name', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-2',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('different type', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser-not',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('different time', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 6,
+      metadata: {},
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('different deleted', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: true,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('same metadata', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: 1,
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: 1,
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(true);
+  });
+
+  test('different metadata 1', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: 1,
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {},
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('different metadata 2', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: 1,
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        z: 1,
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('different metadata 3', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: [],
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: [],
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('metadata different file handle keys', async () => {
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        r: new FileSystemHandle(),
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        f: new FileSystemHandle(),
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('metadata equal file handle', async () => {
+    let fileHandleA = new FileSystemHandle();
+    let fileHandleB = new FileSystemHandle();
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        r: fileHandleA,
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        r: fileHandleB,
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(true);
+  });
+
+  test('metadata equal file handle but lastModified is different', async () => {
+    let fileHandleA = new FileSystemHandle();
+    let fileHandleB = new FileSystemHandle();
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 15,
+      metadata: {
+        r: fileHandleA,
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        r: fileHandleB,
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
+  });
+
+  test('metadata different file handle', async () => {
+    let fileHandleA = new FileSystemHandle();
+    (fileHandleA as any).name = 'food';
+    let fileHandleB = new FileSystemHandle();
+    let a: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        r: fileHandleA,
+      },
+      deleted: false,
+    };
+    let b: WorkspaceInfo = {
+      name: 'test-ws-1',
+      type: 'browser',
+      lastModified: 5,
+      metadata: {
+        r: fileHandleB,
+      },
+      deleted: false,
+    };
+
+    expect(await compareWorkspaceInfo(a, b)).toEqual(false);
   });
 });

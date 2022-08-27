@@ -123,6 +123,11 @@ export async function saveWorkspaceInfo(
   return true;
 }
 
+/**
+ * Compares if two workspace info objects are equal.
+ * - takes into account FileSystemHandle in metadata
+ * - expects metadata to be a flat object
+ */
 export async function compareWorkspaceInfo(
   a: WorkspaceInfo,
   b: WorkspaceInfo,
