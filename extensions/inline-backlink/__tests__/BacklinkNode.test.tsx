@@ -42,12 +42,16 @@ afterEach(() => {
 const setup = async ([firstNote, ...otherNotes]: Array<
   [string, string]
 > = []) => {
-  let { store, extensionRegistry, editorReadyActionsCount } =
-    createBasicTestStore({
-      extensions: [inlineBackLinkExtension],
-      useEditorManagerSlice: true,
-      signal,
-    });
+  let {
+    store,
+    isEditorCollabReady,
+    extensionRegistry,
+    editorReadyActionsCount,
+  } = createBasicTestStore({
+    extensions: [inlineBackLinkExtension],
+    useEditorManagerSlice: true,
+    signal,
+  });
   const [wsPath, md] = firstNote || [];
 
   if (!wsPath || !md) {
@@ -82,6 +86,7 @@ const setup = async ([firstNote, ...otherNotes]: Array<
   });
 
   return {
+    isEditorCollabReady,
     container,
     store,
     extensionRegistry,
@@ -466,7 +471,7 @@ describe('clicking node', () => {
 
     pushWsPath(wsPath)(store.state, store.dispatch);
 
-    await act(() => sleep(0));
+    await act(() => sleep(5));
     await clickSetup(screen.getByText(/note2/i));
     await act(() => sleep(0));
 

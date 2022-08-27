@@ -9,16 +9,23 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
 import { WorkspaceError } from '../errors';
-import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
-import { createState, createStateWithWsName, createWsInfo } from './test-utils';
+import { JSON_SCHEMA_VERSION } from '../workspace-slice';
+import {
+  createState,
+  createStateWithWsName,
+  createWsInfo,
+  workspaceSliceWithStateSerialization,
+} from './test-utils';
 
 describe('serialization works', () => {
   test('serialization works', () => {
-    let state = AppState.create({ slices: [workspaceSlice()] });
+    let state = AppState.create({
+      slices: [workspaceSliceWithStateSerialization()],
+    });
 
     expect(
       state.stateToJSON({
-        sliceFields: { workspace: workspaceSlice() },
+        sliceFields: { workspace: workspaceSliceWithStateSerialization() },
       }),
     ).toMatchInlineSnapshot(`
       Object {
@@ -45,14 +52,14 @@ describe('serialization works', () => {
 
   test("doesn't parse incorrect schema", () => {
     let state = AppState.stateFromJSON({
-      slices: [workspaceSlice()],
+      slices: [workspaceSliceWithStateSerialization()],
       json: {
         workspace: {
           version: 'wrong-version',
           data: { locationPathname: '/test-123' },
         },
       },
-      sliceFields: { workspace: workspaceSlice() },
+      sliceFields: { workspace: workspaceSliceWithStateSerialization() },
     });
 
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
@@ -80,14 +87,14 @@ describe('serialization works', () => {
 
   test('parsing wsPaths', () => {
     let state = AppState.stateFromJSON({
-      slices: [workspaceSlice()],
+      slices: [workspaceSliceWithStateSerialization()],
       json: {
         workspace: {
           version: JSON_SCHEMA_VERSION,
           data: { wsPaths: ['test:one.md', 'test:from.md'] },
         },
       },
-      sliceFields: { workspace: workspaceSlice() },
+      sliceFields: { workspace: workspaceSliceWithStateSerialization() },
     });
 
     expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual([
@@ -122,7 +129,7 @@ describe('serialization works', () => {
 
     expect(
       state.stateToJSON({
-        sliceFields: { workspace: workspaceSlice() },
+        sliceFields: { workspace: workspaceSliceWithStateSerialization() },
       }),
     ).toMatchInlineSnapshot(`
       Object {
@@ -152,7 +159,7 @@ describe('serialization works', () => {
 
   test('parsing recentlyUsedWsPaths', () => {
     let state = AppState.stateFromJSON({
-      slices: [workspaceSlice()],
+      slices: [workspaceSliceWithStateSerialization()],
       json: {
         workspace: {
           version: JSON_SCHEMA_VERSION,
@@ -165,7 +172,7 @@ describe('serialization works', () => {
           },
         },
       },
-      sliceFields: { workspace: workspaceSlice() },
+      sliceFields: { workspace: workspaceSliceWithStateSerialization() },
     });
 
     expect(workspaceSliceKey.getSliceState(state)?.wsName).toBe('bangle-help');
@@ -183,7 +190,7 @@ describe('serialization works', () => {
 
     expect(
       state.stateToJSON({
-        sliceFields: { workspace: workspaceSlice() },
+        sliceFields: { workspace: workspaceSliceWithStateSerialization() },
       }),
     ).toEqual({
       workspace: {

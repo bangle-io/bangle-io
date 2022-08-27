@@ -13,8 +13,6 @@ import {
 } from './error-codes';
 import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
 
-export const BASE_IDB_NAME_PREFIX = 'baby-idb' as const;
-
 function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   return idbPromise.catch((error) => {
     return Promise.reject(
@@ -26,8 +24,9 @@ function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   });
 }
 
-const metadataDbName = `${BASE_IDB_NAME_PREFIX}-meta-3` as const;
-const metadataTableName = `${BASE_IDB_NAME_PREFIX}-meta-store3` as const;
+// We are stuck with this name because of legacy reasons.
+const metadataDbName = 'baby-idb-meta-3';
+const metadataTableName = 'baby-idb-meta-store3';
 
 export interface FileMetadataSchema extends DBSchema {
   [metadataTableName]: {
@@ -93,10 +92,9 @@ class FileMetadata {
     await this.set(filePath, metadata);
   }
 }
-
-const indexedDBFileSystemDbName = `${BASE_IDB_NAME_PREFIX}-db-3` as const;
-const indexedDBFileSystemTableName =
-  `${BASE_IDB_NAME_PREFIX}-db-store-3` as const;
+// We are stuck with this name because of legacy reasons.
+const indexedDBFileSystemDbName = 'baby-idb-db-3';
+const indexedDBFileSystemTableName = 'baby-idb-db-store-3';
 
 export interface IndexedDBFileSystemSchema extends DBSchema {
   [indexedDBFileSystemTableName]: {

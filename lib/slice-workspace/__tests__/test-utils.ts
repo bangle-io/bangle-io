@@ -1,4 +1,4 @@
-import type { JsonArray } from 'type-fest';
+import type { JsonArray, JsonValue } from 'type-fest';
 
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import type { Slice } from '@bangle.io/create-store';
@@ -14,14 +14,76 @@ import {
   createExtensionRegistry,
   createTestStore,
 } from '@bangle.io/test-utils';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type { WorkspaceSliceAction } from '../common';
-import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
-import type {
-  WorkspaceSliceState,
-  WorkspaceStateKeys,
-} from '../workspace-slice-state';
+import {
+  JSON_SCHEMA_VERSION,
+  workspaceSlice,
+  workspaceSliceInitialState,
+} from '../workspace-slice';
+import type { WorkspaceStateKeys } from '../workspace-slice-state';
+import { WorkspaceSliceState } from '../workspace-slice-state';
 
+// Since original workspace-slice does not have serialization, this injects serialization behaviour for easier testing
+// TODO: if we decide to add serialization in workspace-slice, we can remove this
+export const workspaceSliceWithStateSerialization = () => {
+  const wsSlice = workspaceSlice();
+
+  if (wsSlice.spec.state) {
+    wsSlice.spec.state.stateFromJSON = (_, value: any) => {
+      if (!value || value.version !== JSON_SCHEMA_VERSION) {
+        return workspaceSliceInitialState;
+      }
+
+      const data = value.data;
+
+      return WorkspaceSliceState.update(workspaceSliceInitialState, {
+        openedWsPaths: OpenedWsPaths.createFromArray(
+          Array.isArray(data.openedWsPaths) ? data.openedWsPaths : [],
+        ),
+        wsName: data.wsName || undefined,
+        recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
+        wsPaths: data.wsPaths || undefined,
+        refreshCounter: data.refreshCounter || 0,
+        cachedWorkspaceInfo: data.cachedWorkspaceInfo || undefined,
+        error: undefined,
+      });
+    };
+    wsSlice.spec.state.stateToJSON = (val) => {
+      const obj: { [K in WorkspaceStateKeys]: any } = {
+        wsName: val.wsName,
+        openedWsPaths: val.openedWsPaths.toArray(),
+        recentlyUsedWsPaths: val.recentlyUsedWsPaths,
+        wsPaths: val.wsPaths,
+        refreshCounter: val.refreshCounter,
+        cachedWorkspaceInfo: val.cachedWorkspaceInfo,
+        error: undefined,
+      };
+
+      const result = Object.fromEntries(
+        Object.entries(obj).map(([key, val]): [string, JsonValue] => {
+          if (val === undefined) {
+            // convert to null since JSON likes it
+            return [key, null];
+          }
+          if (Array.isArray(val)) {
+            return [key, val.map((r) => (r == null ? null : r))];
+          }
+
+          return [key, val];
+        }),
+      );
+
+      return {
+        version: JSON_SCHEMA_VERSION,
+        data: result,
+      };
+    };
+  }
+
+  return wsSlice;
+};
 export const createState = (
   // we are adding JsonPrimitive since we this data to restore state
   data: Partial<{
@@ -30,14 +92,16 @@ export const createState = (
   additionalSlices: Slice[] = [],
   opts?: { [key: string]: any },
 ) => {
+  const wsSlice = workspaceSliceWithStateSerialization();
+
   return AppState.stateFromJSON<WorkspaceSliceState, WorkspaceSliceAction>({
     opts,
-    slices: [workspaceSlice(), pageSlice(), ...additionalSlices] as Slice[],
+    slices: [wsSlice, pageSlice(), ...additionalSlices] as Slice[],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
     },
     sliceFields: {
-      workspace: workspaceSlice(),
+      workspace: wsSlice,
     },
   });
 };

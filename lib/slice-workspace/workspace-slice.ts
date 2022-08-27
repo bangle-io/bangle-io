@@ -16,7 +16,6 @@ import {
 import { WorkspaceError } from './errors';
 import { sliceHasError } from './operations';
 import { storageProviderHelpers } from './storage-provider-helpers';
-import type { WorkspaceStateKeys } from './workspace-slice-state';
 import { WorkspaceSliceState } from './workspace-slice-state';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
@@ -154,57 +153,6 @@ export function workspaceSlice() {
         }
 
         return newState;
-      },
-
-      stateToJSON(val) {
-        const obj: { [K in WorkspaceStateKeys]: any } = {
-          wsName: val.wsName,
-          openedWsPaths: val.openedWsPaths.toArray(),
-          recentlyUsedWsPaths: val.recentlyUsedWsPaths,
-          wsPaths: val.wsPaths,
-          refreshCounter: val.refreshCounter,
-          cachedWorkspaceInfo: val.cachedWorkspaceInfo,
-          error: undefined,
-        };
-
-        const result = Object.fromEntries(
-          Object.entries(obj).map(([key, val]): [string, JsonValue] => {
-            if (val === undefined) {
-              // convert to null since JSON likes it
-              return [key, null];
-            }
-            if (Array.isArray(val)) {
-              return [key, val.map((r) => (r == null ? null : r))];
-            }
-
-            return [key, val];
-          }),
-        );
-
-        return {
-          version: JSON_SCHEMA_VERSION,
-          data: result,
-        };
-      },
-
-      stateFromJSON(_, value: any) {
-        if (!value || value.version !== JSON_SCHEMA_VERSION) {
-          return workspaceSliceInitialState;
-        }
-
-        const data = value.data;
-
-        return WorkspaceSliceState.update(workspaceSliceInitialState, {
-          openedWsPaths: OpenedWsPaths.createFromArray(
-            Array.isArray(data.openedWsPaths) ? data.openedWsPaths : [],
-          ),
-          wsName: data.wsName || undefined,
-          recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
-          wsPaths: data.wsPaths || undefined,
-          refreshCounter: data.refreshCounter || 0,
-          cachedWorkspaceInfo: data.cachedWorkspaceInfo || undefined,
-          error: undefined,
-        });
       },
     },
     actions: ActionSerializers,

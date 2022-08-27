@@ -13,7 +13,11 @@ import {
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
-import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
+import {
+  editorManagerSlice,
+  editorManagerSliceKey,
+  getEditor,
+} from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import { uiSlice } from '@bangle.io/slice-ui';
@@ -126,6 +130,21 @@ export function createBasicTestStore<
     dispatchSpy,
     getActionNames,
     getAction,
+
+    // if user editor, checks if editor is ready to be edited
+    isEditorCollabReady: async (editorIndex: number) => {
+      const editor = editorManagerSliceKey.callQueryOp(
+        store.state,
+        getEditor(editorIndex),
+      );
+
+      await waitForExpect(() =>
+        expect(
+          editor?.view.dom.classList.contains('bangle-collab-active'),
+        ).toBe(true),
+      );
+    },
+
     editorReadyActionsCount: () => {
       return getAction('action::@bangle.io/slice-editor-manager:set-editor')
         .length;
