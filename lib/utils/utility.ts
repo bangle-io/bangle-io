@@ -239,7 +239,7 @@ export function calcIsTouchDevice(): boolean {
 export const isTouchDevice = calcIsTouchDevice();
 
 let dayJs: typeof import('dayjs') | undefined;
-export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {
+export async function getDayJs(): Promise<typeof import('dayjs')> {
   if (dayJs) {
     return dayJs;
   }
@@ -391,7 +391,7 @@ export function makeArrayOfSize<T>(
  * when any key has values which are not strictly equal between the arguments.
  * Returns true when the values of all keys are strictly equal.
  */
-export function shallowEqual<T extends {}>(objA: any, objB: any): boolean {
+export function shallowEqual(objA: any, objB: any): boolean {
   if (Object.is(objA, objB)) {
     return true;
   }

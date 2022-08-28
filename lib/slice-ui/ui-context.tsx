@@ -9,9 +9,6 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import type { UiContextAction, UISliceState } from './ui-slice';
 import { initialState, uiSliceKey } from './ui-slice';
 
-const LOG = false;
-let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
-
 export type UIStateObj = UISliceState & {
   dispatch: ApplicationStore<UISliceState, UiContextAction>['dispatch'];
   bangleStore: ApplicationStore;

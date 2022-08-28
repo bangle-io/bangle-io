@@ -9,7 +9,7 @@ import {
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils';
-import { getScrollParentElement, makeArrayOfSize } from '@bangle.io/utils';
+import { getScrollParentElement } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from '../constants';
 import { editorManagerSlice } from '../editor-manager-slice';

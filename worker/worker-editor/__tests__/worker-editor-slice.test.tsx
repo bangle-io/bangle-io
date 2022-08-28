@@ -59,30 +59,27 @@ describe('worker-editor-slice', () => {
     await setupMockWorkspaceWithNotes(store, wsName, [
       [wsPath1, `# ${DOC_CONTENT}`],
     ]);
-    let result: ReturnType<typeof render>;
 
-    act(() => {
-      result = render(
-        <TestStoreProvider
-          editorManagerContextProvider
-          bangleStore={store}
-          bangleStoreChanged={0}
-        >
-          <Editor
-            editorId={PRIMARY_EDITOR_INDEX}
-            wsPath={wsPath1}
-            className="test-class"
-            extensionRegistry={extensionRegistry}
-          />
-          <Editor
-            editorId={SECONDARY_EDITOR_INDEX}
-            wsPath={wsPath1}
-            className="test-class"
-            extensionRegistry={extensionRegistry}
-          />
-        </TestStoreProvider>,
-      );
-    });
+    render(
+      <TestStoreProvider
+        editorManagerContextProvider
+        bangleStore={store}
+        bangleStoreChanged={0}
+      >
+        <Editor
+          editorId={PRIMARY_EDITOR_INDEX}
+          wsPath={wsPath1}
+          className="test-class"
+          extensionRegistry={extensionRegistry}
+        />
+        <Editor
+          editorId={SECONDARY_EDITOR_INDEX}
+          wsPath={wsPath1}
+          className="test-class"
+          extensionRegistry={extensionRegistry}
+        />
+      </TestStoreProvider>,
+    );
 
     await act(async () => {
       await waitForExpect(() => {
@@ -155,29 +152,26 @@ describe('worker-editor-slice', () => {
       [wsPath1, `# hello mars`],
     ]);
 
-    let result;
-    act(() => {
-      result = render(
-        <TestStoreProvider
-          editorManagerContextProvider
-          bangleStore={store}
-          bangleStoreChanged={0}
-        >
-          <Editor
-            editorId={PRIMARY_EDITOR_INDEX}
-            wsPath={wsPath1}
-            className="test-class"
-            extensionRegistry={extensionRegistry}
-          />
-          <Editor
-            editorId={SECONDARY_EDITOR_INDEX}
-            wsPath={wsPath1}
-            className="test-class"
-            extensionRegistry={extensionRegistry}
-          />
-        </TestStoreProvider>,
-      );
-    });
+    render(
+      <TestStoreProvider
+        editorManagerContextProvider
+        bangleStore={store}
+        bangleStoreChanged={0}
+      >
+        <Editor
+          editorId={PRIMARY_EDITOR_INDEX}
+          wsPath={wsPath1}
+          className="test-class"
+          extensionRegistry={extensionRegistry}
+        />
+        <Editor
+          editorId={SECONDARY_EDITOR_INDEX}
+          wsPath={wsPath1}
+          className="test-class"
+          extensionRegistry={extensionRegistry}
+        />
+      </TestStoreProvider>,
+    );
 
     await act(async () => {
       await waitForExpect(() => {

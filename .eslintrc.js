@@ -145,7 +145,7 @@ module.exports = {
     'testing-library/no-unnecessary-act': ['warn'],
     'testing-library/no-wait-for-side-effects': ['warn'],
     'testing-library/prefer-screen-queries': ['warn'],
-    'testing-library/render-result-naming-convention': ['warn'],
+    'testing-library/render-result-naming-convention': ['off'],
 
     'consistent-return': ['warn'],
 

@@ -14,7 +14,6 @@ import type { WorkspaceAppStore, WorkspaceDispatchType } from './common';
 import { workspaceSliceKey } from './common';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
-  WORKSPACE_DELETED_MODIFY_ERROR,
   WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
   WorkspaceError,
 } from './errors';

@@ -10,9 +10,6 @@ import { editorManagerSliceKey } from './constants';
 import { initialEditorSliceState } from './editor-manager-slice';
 import type { EditorSliceState } from './types';
 
-const LOG = false;
-let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
-
 export type EditorManagerContextValue = EditorSliceState & {
   bangleStore: ApplicationStore;
 };

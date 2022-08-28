@@ -28,7 +28,6 @@ function setupStickyNavigation(element: HTMLElement) {
     element.classList.add('B-ui-dhancha_up');
     element.classList.remove('B-ui-dhancha_down');
   };
-  let previousY = 9999;
 
   const updateNav = () => {
     // iOS scrolls to make sure the viewport fits, don't hide the input then

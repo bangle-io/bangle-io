@@ -102,7 +102,7 @@ describe('transfer-port', () => {
   });
 
   test('unregistering works', () => {
-    const { unregister, port } = editorSyncKey.getSliceStateAsserted(state);
+    const { port } = editorSyncKey.getSliceStateAsserted(state);
 
     let mockFn = jest.fn();
     editorSyncKey.getSliceStateAsserted(state).unregister = mockFn;

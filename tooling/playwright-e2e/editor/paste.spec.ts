@@ -52,7 +52,7 @@ test.describe('Pasting rich test', () => {
       openEnd: 1,
     });
     expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
-      `doc(heading(\"Hello\"), paragraph)`,
+      `doc(heading("Hello"), paragraph)`,
     );
   });
 
@@ -76,7 +76,7 @@ test.describe('Pasting rich test', () => {
       openEnd: 1,
     });
     expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
-      `doc(paragraph(\"Hello\"))`,
+      `doc(paragraph("Hello"))`,
     );
   });
 

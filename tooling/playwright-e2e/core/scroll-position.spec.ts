@@ -109,7 +109,7 @@ test.describe('scroll', () => {
       );
 
       expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
-        `doc(heading(\"other-note-1\"), paragraph(\"Hello world!\"))`,
+        `doc(heading("other-note-1"), paragraph("Hello world!"))`,
       );
 
       await page.goBack({ waitUntil: 'networkidle' });
@@ -165,7 +165,7 @@ test.describe('scroll', () => {
     expect(await isIntersectingViewport(topLocator)).toBe(false);
     expect(await isIntersectingViewport(lastLocator)).toBe(true);
     expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
-      `doc(heading(\"top element\"), heading(\"0\"), heading(\"1\"), heading(\"2\"), heading(\"3\"), heading(\"4\"), heading(\"5\"), heading(\"6\"), heading(\"7\"), heading(\"8\"), heading(\"9\"), heading(\"10\"), heading(\"11\"), heading(\"12\"), heading(\"13\"), heading(\"14\"), heading(\"last element\"), heading(\"My existence at the bottom proves that I was spared from a reload.\"), paragraph)`,
+      `doc(heading("top element"), heading("0"), heading("1"), heading("2"), heading("3"), heading("4"), heading("5"), heading("6"), heading("7"), heading("8"), heading("9"), heading("10"), heading("11"), heading("12"), heading("13"), heading("14"), heading("last element"), heading("My existence at the bottom proves that I was spared from a reload."), paragraph)`,
     );
   });
 

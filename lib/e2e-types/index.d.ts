@@ -1,5 +1,4 @@
 import type { Node, Schema } from '@bangle.dev/pm';
-import { Slice as EditorSlice } from '@bangle.dev/pm';
 
 import type { FinalConfig } from '@bangle.io/config';
 import type * as constants from '@bangle.io/constants';
@@ -9,7 +8,6 @@ import type { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import type { pageSliceKey } from '@bangle.io/slice-page';
 import type { workspaceSliceKey, writeNote } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
-import type { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
 export interface E2ETypes {

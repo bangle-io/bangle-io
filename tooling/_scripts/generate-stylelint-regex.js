@@ -24,6 +24,8 @@ async function run() {
             if ((await pkg.getCSSFiles()).length > 0) {
               return pkg;
             }
+
+            return undefined;
           }),
         )
       ).filter(Boolean);

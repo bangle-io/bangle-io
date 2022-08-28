@@ -70,22 +70,18 @@ export function editorSyncSlice() {
         return editorSyncKey.actionSerializer(
           actionName,
           (action) => {
-            switch (action.name) {
-              case 'action::@bangle.io/slice-editor-sync:transfer-port': {
-                const messageChannel = action.value.messageChannel;
+            const messageChannel = action.value.messageChannel;
 
-                if (!messageChannel) {
-                  throw new Error(
-                    'messageChannel is required to transfer the port to worker',
-                  );
-                }
-
-                return {
-                  [APPLY_TRANSFER]: 'port',
-                  port: messageChannel.port2 as any,
-                };
-              }
+            if (!messageChannel) {
+              throw new Error(
+                'messageChannel is required to transfer the port to worker',
+              );
             }
+
+            return {
+              [APPLY_TRANSFER]: 'port',
+              port: messageChannel.port2 as any,
+            };
           },
           (serialVal) => {
             return {

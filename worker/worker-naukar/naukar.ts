@@ -7,10 +7,6 @@ import { BaseError, getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
 import { abortableServices } from './abortable-services';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
 
-const LOG = false;
-
-const log = LOG ? console.log.bind(console, 'naukar') : () => {};
-
 // if naukar is running in window, no need to initialize as the app already has one initialized
 if (isWorkerGlobalScope() && APP_ENV !== 'local') {
   Sentry.init(sentryConfig);

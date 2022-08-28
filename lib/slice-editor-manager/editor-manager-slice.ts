@@ -22,9 +22,6 @@ import {
   isValidEditorId,
 } from './utils';
 
-const LOG = false;
-let log = LOG ? console.log.bind(console, 'editorManagerSlice') : () => {};
-
 export const JSON_SCHEMA_VERSION = 'editor-slice/2';
 
 export const initialEditorSliceState: EditorSliceState = {

@@ -1,4 +1,3 @@
-import type { Page } from '@playwright/test';
 import { test as base } from '@playwright/test';
 
 import type { RawDebugConfig } from '@bangle.io/config-template';

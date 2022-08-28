@@ -1,5 +1,3 @@
-import type { Node } from '@bangle.dev/pm';
-
 import { BaseError } from '@bangle.io/base-error';
 import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { HELP_FS_INDEX_WS_PATH, WorkspaceTypeHelp } from '@bangle.io/constants';

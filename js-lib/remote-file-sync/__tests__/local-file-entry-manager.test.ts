@@ -107,7 +107,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('works if source file is deleted', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
       const file = await readFileBlob('file-a.json');
 
       const remoteFile = await readFileBlob('file-e.md');
@@ -156,7 +156,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('calling multiple time', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
       const file = await readFileBlob('file-a.json');
       await manager.createFile('foo', file, async () => undefined);
       await manager.deleteFile('foo');
@@ -223,7 +223,7 @@ describe('LocalFileEntryManager', () => {
 
   describe('readFile', () => {
     test('reads a file first time with remote undefined', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
 
       const result = await manager.readFile('foo', async (uid) => {
         return undefined;
@@ -256,7 +256,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('does not update an unmodified file if remote file has changed', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
       const remoteFile2 = await readFileBlob('file-e.md');
@@ -284,7 +284,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('ignore remote file is local is modified', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
       const remoteFile2 = await readFileBlob('file-e.md');
@@ -333,7 +333,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('throws error if file does not exist', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
       const writtenFile = await readFileBlob('file-a.json');
 
       await expect(
@@ -344,7 +344,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('throws error if file was just deleted', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
       const writtenFile = await readFileBlob('file-a.json');
       await manager.createFile('foo', writtenFile, async () => undefined);
       await manager.deleteFile('foo');
@@ -361,7 +361,7 @@ describe('LocalFileEntryManager', () => {
     // any unmodified file should be ignored and defaulted to
     // remote as source of truth
     test('ignores unmodified local files', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
       const remoteFile2 = await readFileBlob('file-e.md');
@@ -388,7 +388,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('accounts for deleted local files', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
 
@@ -408,7 +408,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('accounts for newly created local files', async () => {
-      const { manager, store } = createManager();
+      const { manager } = createManager();
 
       await manager.createFile(
         'foo',

@@ -53,7 +53,7 @@ export function useEditorItems() {
         disabled: (state: any) => {
           return isList()(state);
         },
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -80,7 +80,7 @@ export function useEditorItems() {
         disabled: (state: any) => {
           return isList()(state);
         },
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -104,7 +104,7 @@ export function useEditorItems() {
         title: 'Paragraph',
         group: 'editor',
         description: 'Convert the current block to paragraph',
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -148,7 +148,7 @@ export function useEditorItems() {
         group: 'editor',
         keywords: ['unordered', 'lists'],
         description: 'Convert the current block to bullet list',
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -173,7 +173,7 @@ export function useEditorItems() {
         group: 'editor',
         keywords: ['todo', 'lists', 'checkbox', 'checked'],
         description: 'Convert the current block to todo list',
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -198,7 +198,7 @@ export function useEditorItems() {
         title: 'Ordered List',
         keywords: ['numbered', 'lists'],
         description: 'Convert the current block to ordered list',
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -226,7 +226,7 @@ export function useEditorItems() {
         disabled: (state: any) => {
           return !isList()(state);
         },
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,
@@ -254,7 +254,7 @@ export function useEditorItems() {
         disabled: (state: any) => {
           return !isList()(state);
         },
-        editorExecuteCommand: ({}) => {
+        editorExecuteCommand: () => {
           return (
             state: EditorState,
             dispatch: EditorView['dispatch'] | undefined,

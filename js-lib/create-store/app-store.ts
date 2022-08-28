@@ -26,7 +26,7 @@ type DispatchActionType<S, A extends BaseAction> = (
   action: A,
 ) => void;
 
-export type SerializedAction<A> = {};
+export type SerializedAction = {};
 
 // time in ms, to check how many errors have been thrown since last time.
 // Keep them multiple of 10 please

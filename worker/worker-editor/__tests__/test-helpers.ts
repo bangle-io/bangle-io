@@ -9,7 +9,7 @@ import {
   getCollabMessageBus,
 } from '@bangle.io/slice-editor-sync';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
-import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
+import { createBasicTestStore } from '@bangle.io/test-utils';
 
 import { workerEditorSlice } from '../worker-editor-slice';
 import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';

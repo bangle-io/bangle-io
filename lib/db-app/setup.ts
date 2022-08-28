@@ -62,5 +62,5 @@ export function getWorkspaceInfoTable() {
 }
 
 export function getMiscTable() {
-  return getTable(MISC_TABLE);
+  return getTable(DB_NAME, MISC_TABLE, setupAppDb);
 }

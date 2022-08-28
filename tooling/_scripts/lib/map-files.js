@@ -38,34 +38,6 @@ async function walk(dir, { ignore }) {
   return results;
 }
 
-const globalIgnore = ({ path, stat }) => {
-  return (
-    path.includes('.DS_Store') ||
-    path.includes('.yarn') ||
-    path.includes('.git') ||
-    path.includes('_scripts') ||
-    path.includes('build') ||
-    path.includes('node_modules')
-  );
-};
-async function mapFiles(dir = '.', mapper, { ignore = () => false } = {}) {
-  const results = await walk(dir, {
-    ignore: (...args) => {
-      return globalIgnore(...args) || ignore(...args);
-    },
-  });
-  const fileData = await Promise.all(
-    results.map(async (r) => [r, await fs.readFile(r, 'utf-8')]),
-  );
-  for (const [filePath, content] of fileData) {
-    const newContent = await mapper(filePath, content);
-
-    if (newContent !== content) {
-      await fs.writeFile(filePath, newContent, 'utf-8');
-    }
-  }
-}
-
 async function getWorktreeWorkspaces(worktreeName) {
   const workspaces = await walkWorkspace();
   const worktree = (await getWorktrees()).find((w) => w.name === worktreeName);

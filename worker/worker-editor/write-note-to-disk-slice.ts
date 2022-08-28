@@ -11,11 +11,6 @@ import {
   writeToDiskEffect,
 } from './write-note-to-disk-slice-effects';
 
-const LOG = true;
-const log = LOG
-  ? console.debug.bind(console, '[worker-editor] write-note-to-disk-slice')
-  : () => {};
-
 export function queueWrite(value: CollabStateInfo) {
   return writeNoteToDiskSliceKey.op((state, dispatch) => {
     return dispatch({

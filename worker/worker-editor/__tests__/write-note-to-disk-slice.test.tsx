@@ -107,36 +107,33 @@ const setup = async ({
     [wsPath1, `# hello mars`],
   ]);
 
-  let result: ReturnType<typeof render>;
-  act(() => {
-    result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={obj.store}
-        bangleStoreChanged={0}
-      >
-        <Editor
-          editorId={PRIMARY_EDITOR_INDEX}
-          wsPath={wsPath1}
-          className="test-class"
-          extensionRegistry={obj.extensionRegistry}
-        />
-      </TestStoreProvider>,
-    );
-  });
+  let { container } = render(
+    <TestStoreProvider
+      editorManagerContextProvider
+      bangleStore={obj.store}
+      bangleStoreChanged={0}
+    >
+      <Editor
+        editorId={PRIMARY_EDITOR_INDEX}
+        wsPath={wsPath1}
+        className="test-class"
+        extensionRegistry={obj.extensionRegistry}
+      />
+    </TestStoreProvider>,
+  );
 
   await act(() => {
     return sleep(0);
   });
 
   await waitFor(() => {
-    expect(result!.container.innerHTML).toContain('hello mars');
+    expect(container.innerHTML).toContain('hello mars');
   });
 
   // wait for collab to be ready
   await sleep(10);
 
-  return { ...obj, wsPath1, wsName, getContainer: () => result!.container };
+  return { ...obj, wsPath1, wsName, getContainer: () => container };
 };
 
 describe('effects', () => {

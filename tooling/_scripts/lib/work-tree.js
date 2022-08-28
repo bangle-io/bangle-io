@@ -21,7 +21,7 @@ class WorkTree {
    * @param {*} param0
    * @returns {Promise<Package[]>}
    */
-  async packages({} = {}) {
+  async packages() {
     const currentPackages = (await getWorktreeWorkspaces(this.name)).map(
       (r) => r.name,
     );

@@ -33,7 +33,7 @@ const baseItem = PaletteItem.create({
   keywords: ['date', 'time'],
   group: 'date',
   disabled: true,
-  editorExecuteCommand: ({}) => {
+  editorExecuteCommand: () => {
     // return replaceSuggestionMarkWith(palettePluginKey, getDate(type));
   },
 });

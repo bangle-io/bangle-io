@@ -92,7 +92,7 @@ function localStorageSetItem<T>(key: string, value: T) {
   );
 }
 
-function localStorageDeleteItem<T>(key: string) {
+function localStorageDeleteItem(key: string) {
   window.localStorage.removeItem(key);
 }
 

@@ -1,5 +1,4 @@
 import { Slice } from '@bangle.io/create-store';
-import type { JsonValue } from '@bangle.io/shared-types';
 import { assertActionName } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 

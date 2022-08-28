@@ -2,7 +2,6 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
-import type { E2ETypes } from '@bangle.io/e2e-types';
 
 import {
   clearEditor,

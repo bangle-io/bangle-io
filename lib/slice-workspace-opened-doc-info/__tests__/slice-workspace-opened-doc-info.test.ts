@@ -32,7 +32,7 @@ afterEach(() => {
   abortController.abort();
 });
 
-const setup = async ({} = {}) => {
+const setup = async () => {
   const { store, ...helpers } = createBasicTestStore({
     signal,
     slices: [workspaceOpenedDocInfoSlice()],
@@ -45,7 +45,7 @@ const setup = async ({} = {}) => {
 };
 
 test('works', async () => {
-  const { store } = await setup({});
+  const { store } = await setup();
 
   expect(workspaceOpenedDocInfoKey.getSliceState(store.state)).toEqual({
     openedFiles: {},
@@ -274,7 +274,7 @@ describe('action BULK_UPDATE_SHAS', () => {
 
 describe('effects', () => {
   test('sync with opened wsPaths', async () => {
-    const { store, getAction } = await setup({});
+    const { store, getAction } = await setup();
 
     await setupMockWorkspaceWithNotes(store, 'test-ws', [
       [`test-ws:one.md`, `# Hello World 0`],
@@ -347,7 +347,7 @@ describe('effects', () => {
   });
 
   test('does not clear wsPaths which are no longer open but have pending writes', async () => {
-    const { store } = await setup({});
+    const { store } = await setup();
 
     await setupMockWorkspaceWithNotes(store, 'test-ws', [
       [`test-ws:one.md`, `# Hello World 0`],

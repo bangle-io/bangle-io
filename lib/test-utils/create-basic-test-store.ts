@@ -220,9 +220,3 @@ export async function setupMockWorkspaceWithNotes(
     },
   };
 }
-
-function disableSideEffect(slice: Slice) {
-  slice.spec.sideEffect = undefined;
-
-  return slice;
-}

@@ -148,13 +148,13 @@ describe('useRecencyMonitor', () => {
   });
 
   test('works', () => {
-    let render = renderHook(() =>
+    let { result } = renderHook(() =>
       useRecencyMonitor({
         uid: 'test1',
       }),
     );
 
-    expect(render.result.current).toEqual({
+    expect(result.current).toEqual({
       records: [],
       updateRecord: expect.any(Function),
     });
@@ -163,7 +163,7 @@ describe('useRecencyMonitor', () => {
   test('records records', () => {
     (Date.now as any).mockImplementation(() => 5);
 
-    let render = renderHook(() =>
+    let { result } = renderHook(() =>
       useRecencyMonitor({
         uid: 'test1',
         maxEntries: 2,
@@ -173,10 +173,10 @@ describe('useRecencyMonitor', () => {
     expect(4).toBe(4);
 
     act(() => {
-      render.result.current.updateRecord('abcd');
+      result.current.updateRecord('abcd');
     });
 
-    expect(render.result.current.records).toEqual([
+    expect(result.current.records).toEqual([
       {
         key: 'abcd',
         timestamps: [5],
@@ -186,10 +186,10 @@ describe('useRecencyMonitor', () => {
     (Date.now as any).mockImplementation(() => 6);
 
     act(() => {
-      render.result.current.updateRecord('abcd');
+      result.current.updateRecord('abcd');
     });
 
-    expect(render.result.current.records).toEqual([
+    expect(result.current.records).toEqual([
       {
         key: 'abcd',
         timestamps: [6, 5],
@@ -199,10 +199,10 @@ describe('useRecencyMonitor', () => {
     (Date.now as any).mockImplementation(() => 7);
 
     act(() => {
-      render.result.current.updateRecord('abcd');
+      result.current.updateRecord('abcd');
     });
 
-    expect(render.result.current.records).toEqual([
+    expect(result.current.records).toEqual([
       {
         key: 'abcd',
         timestamps: [7, 6],
@@ -213,7 +213,7 @@ describe('useRecencyMonitor', () => {
   test('removes record when needed', () => {
     (Date.now as any).mockImplementation(() => 5);
 
-    let render = renderHook(() =>
+    let { result } = renderHook(() =>
       useRecencyMonitor({
         uid: 'test1',
         maxEntries: 2,
@@ -223,10 +223,10 @@ describe('useRecencyMonitor', () => {
     expect(4).toBe(4);
 
     act(() => {
-      render.result.current.updateRecord('abcd');
+      result.current.updateRecord('abcd');
     });
 
-    expect(render.result.current.records).toEqual([
+    expect(result.current.records).toEqual([
       {
         key: 'abcd',
         timestamps: [5],
@@ -236,17 +236,17 @@ describe('useRecencyMonitor', () => {
     (Date.now as any).mockImplementation(() => 6);
 
     act(() => {
-      render.result.current.updateRecord('xyz');
+      result.current.updateRecord('xyz');
     });
     (Date.now as any).mockImplementation(() => 7);
     act(() => {
-      render.result.current.updateRecord('pqrs');
+      result.current.updateRecord('pqrs');
     });
     (Date.now as any).mockImplementation(() => 8);
     act(() => {
-      render.result.current.updateRecord('xyz');
+      result.current.updateRecord('xyz');
     });
-    expect(render.result.current.records).toEqual([
+    expect(result.current.records).toEqual([
       {
         key: 'xyz',
         timestamps: [8, 6],
