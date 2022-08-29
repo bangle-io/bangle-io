@@ -6,7 +6,6 @@ import type {
 import { fileSync, RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { assertSignal } from '@bangle.io/utils';
 
-import type { GithubWsMetadata } from './common';
 import type { GHTree, GithubConfig } from './github-api-helpers';
 import { commitToGithub, getFileBlobFromTree } from './github-api-helpers';
 
@@ -23,7 +22,7 @@ export async function pushLocalChanges({
 }: {
   abortSignal: AbortSignal;
   fileEntryManager: LocalFileEntryManager;
-  ghConfig: GithubWsMetadata;
+  ghConfig: GithubConfig;
   retainedWsPaths: Set<string>;
   tree: GHTree;
   wsName: string;

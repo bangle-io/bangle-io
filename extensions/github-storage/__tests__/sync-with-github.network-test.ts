@@ -10,6 +10,7 @@ import { randomStr, sleep } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from '../common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
+import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import GithubStorageExt from '../index';
@@ -47,10 +48,11 @@ let wsName: string, store: BangleApplicationStore;
 let abortController = new AbortController();
 
 beforeEach(async () => {
+  await updateGhToken(githubToken);
+
   githubWsMetadata = {
     owner: githubOwner,
     branch: 'main',
-    githubToken: githubToken,
   };
 
   abortController = new AbortController();
@@ -58,6 +60,7 @@ beforeEach(async () => {
   await github.createRepo({
     description: 'Created by Bangle.io tests',
     config: {
+      githubToken,
       ...githubWsMetadata,
       repoName: wsName,
     },
@@ -116,6 +119,7 @@ const getRemoteFileEntries = async () => {
     config: {
       repoName: wsName,
       ...githubWsMetadata,
+      githubToken,
     },
     wsName,
   });
@@ -133,6 +137,7 @@ const getRemoteFileEntries = async () => {
             config: {
               repoName: wsName,
               ...githubWsMetadata,
+              githubToken,
             },
             fileBlobUrl: item.url,
             fileName,
@@ -153,17 +158,20 @@ const getRemoteFileEntries = async () => {
 };
 
 const push = async (retainedWsPaths = new Set<string>()) => {
+  const config = {
+    repoName: wsName,
+    ...githubWsMetadata,
+    githubToken,
+  };
+
   return pushLocalChanges({
     abortSignal: abortController.signal,
     fileEntryManager: localFileEntryManager(),
-    ghConfig: githubWsMetadata,
+    ghConfig: config,
     retainedWsPaths,
     tree: await getTree({
       abortSignal: abortController.signal,
-      config: {
-        repoName: wsName,
-        ...githubWsMetadata,
-      },
+      config: config,
       wsName,
     }),
     wsName,
@@ -263,10 +271,10 @@ describe('pushLocalChanges', () => {
         abortSignal: abortController.signal,
         headSha: await github.getLatestCommitSha({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 1' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: wsPathHelpers.resolvePath(test1WsPath).filePath,
@@ -396,10 +404,10 @@ describe('pushLocalChanges', () => {
       abortSignal: abortController.signal,
       headSha: await github.getLatestCommitSha({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
-      config: { ...githubWsMetadata, repoName: wsName },
+      config: { ...githubWsMetadata, githubToken, repoName: wsName },
       additions: [
         {
           path: 'bunny/:test-1.md',
@@ -434,10 +442,10 @@ describe('house keeping', () => {
       abortSignal: abortController.signal,
       headSha: await github.getLatestCommitSha({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
-      config: { ...githubWsMetadata, repoName: wsName },
+      config: { ...githubWsMetadata, githubToken, repoName: wsName },
       additions: [
         {
           path: wsPathHelpers.resolvePath(test1WsPath).filePath,

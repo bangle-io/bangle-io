@@ -47,7 +47,6 @@ export const ghSliceKey = new SliceKey<
 export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';
 
 export interface GithubWsMetadata {
-  githubToken: string;
   owner: string;
   branch: string;
 }

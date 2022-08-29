@@ -15,7 +15,9 @@ import {
 
 import type { GithubWsMetadata } from './common';
 import { ghSliceKey, LOCK_NAME } from './common';
+import { getGhToken, updateGhToken } from './database';
 import { handleError } from './error-handling';
+import { INVALID_GITHUB_TOKEN } from './errors';
 import { getRepoTree } from './github-api-helpers';
 import { readGhWorkspaceMetadata } from './helpers';
 import { pushLocalChanges } from './sync-with-github';
@@ -25,38 +27,11 @@ const log = LOG
   ? console.debug.bind(console, 'github-storage operations')
   : () => {};
 
-export const readGithubTokenFromStore = () => {
-  return workspace.workspaceSliceKey.queryOp(
-    async (state): Promise<string | undefined> => {
-      const { githubWsName } = ghSliceKey.getSliceStateAsserted(state);
-
-      if (githubWsName) {
-        const metadata = await readGhWorkspaceMetadata(githubWsName);
-
-        return typeof metadata?.githubToken === 'string'
-          ? metadata.githubToken
-          : undefined;
-      }
-
-      return undefined;
-    },
-  );
-};
-
 export const updateGithubToken =
   (wsName: string, token: string | undefined, showNotification = false) =>
   async (state: BangleAppState, dispatch: BangleAppDispatch) => {
     if (isGhWorkspace(wsName)(state)) {
-      await workspace.updateWorkspaceMetadata(wsName, (existing) => {
-        if (existing.githubToken !== token) {
-          return {
-            ...existing,
-            githubToken: token,
-          };
-        }
-
-        return existing;
-      });
+      await updateGhToken(token);
 
       if (showNotification) {
         notification.showNotification({
@@ -363,14 +338,25 @@ function startSync(
     try {
       const getTree = getRepoTree();
 
+      const githubToken = await getGhToken();
+
+      if (!githubToken) {
+        throw new BaseError({
+          message: 'Github token is required',
+          code: INVALID_GITHUB_TOKEN,
+        });
+      }
+
+      const config = { ...wsMetadata, repoName: wsName, githubToken };
+
       const tree = await getTree({
         wsName,
-        config: { ...wsMetadata, repoName: wsName },
+        config,
       });
 
       return await pushLocalChanges({
         wsName,
-        ghConfig: wsMetadata,
+        ghConfig: config,
         retainedWsPaths,
         tree,
         fileEntryManager,

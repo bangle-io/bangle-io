@@ -5,6 +5,7 @@ import { BaseError } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
+import { getGhToken } from './database';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import { getFileBlobFromTree, getRepoTree } from './github-api-helpers';
@@ -33,7 +34,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this._fileEntryManager().createFile(
       wsPath,
       file,
-      this._makeGetRemoteFileEntryCb(
+      await this._makeGetRemoteFileEntryCb(
         (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
       ),
     );
@@ -43,7 +44,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
     await this._fileEntryManager().deleteFile(
       wsPath,
-      this._makeGetRemoteFileEntryCb(
+      await this._makeGetRemoteFileEntryCb(
         (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
       ),
     );
@@ -70,11 +71,20 @@ export class GithubStorageProvider implements BaseStorageProvider {
     const wsMetadata = (await opts.readWorkspaceMetadata(
       wsName,
     )) as GithubWsMetadata;
+
+    const githubToken = await getGhToken();
+
+    if (!githubToken) {
+      throw new BaseError({
+        message: 'Github token is required',
+        code: INVALID_GITHUB_TOKEN,
+      });
+    }
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
     const { tree } = await this._getTree({
       wsName,
-      config: { repoName: wsName, ...wsMetadata },
+      config: { githubToken, repoName: wsName, ...wsMetadata },
       abortSignal,
     });
 
@@ -87,12 +97,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
   }
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {
-    if (!createOpts.githubToken) {
-      throw new BaseError({
-        message: 'Github token is required',
-        code: INVALID_GITHUB_TOKEN,
-      });
-    }
     if (!createOpts.owner) {
       throw new BaseError({
         message: 'Github owner is required',
@@ -101,7 +105,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
     }
 
     return {
-      githubToken: createOpts.githubToken,
       owner: createOpts.owner,
       branch: createOpts.branch,
     };
@@ -112,7 +115,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
     const file = await this._fileEntryManager().readFile(
       wsPath,
-      this._makeGetRemoteFileEntryCb(
+      await this._makeGetRemoteFileEntryCb(
         (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
       ),
     );
@@ -151,14 +154,23 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this._fileEntryManager().writeFile(wsPath, file);
   }
 
-  private _makeGetRemoteFileEntryCb(
+  private async _makeGetRemoteFileEntryCb(
     wsMetadata: GithubWsMetadata,
     abortSignal: AbortSignal = new AbortController().signal,
   ) {
+    const githubToken = await getGhToken();
+
+    if (!githubToken) {
+      throw new BaseError({
+        message: 'Github token is required',
+        code: INVALID_GITHUB_TOKEN,
+      });
+    }
+
     return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
       const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
 
-      const config = { repoName: wsName, ...wsMetadata };
+      const config = { githubToken, repoName: wsName, ...wsMetadata };
 
       const tree = await this._getTree({
         wsName,

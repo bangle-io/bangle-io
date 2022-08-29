@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { notification, ui, useSliceState, workspace } from '@bangle.io/api';
+import { notification, ui, useSliceState } from '@bangle.io/api';
 import { Dialog, ErrorBanner, TextField } from '@bangle.io/ui-components';
 import { BaseError } from '@bangle.io/utils';
 
 import { ghSliceKey, UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
+import { getGhToken } from '../database';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
-import { readGithubTokenFromStore, updateGithubToken } from '../operations';
+import { updateGithubToken } from '../operations';
 
 export function UpdateTokenDialog() {
   const { bangleStore } = ui.useUIManagerContext();
@@ -19,7 +20,7 @@ export function UpdateTokenDialog() {
   } = useSliceState(ghSliceKey);
 
   useEffect(() => {
-    readGithubTokenFromStore()(bangleStore.state).then((token) => {
+    getGhToken().then((token) => {
       if (token) {
         updateInputToken(token);
       }

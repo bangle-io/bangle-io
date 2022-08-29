@@ -5,14 +5,19 @@ import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import { EXTENSION_NAME } from './common';
 
 const DB_NAME = EXTENSION_NAME;
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const LOCAL_ENTRIES_TABLE = 'LOCAL_ENTRIES_TABLE';
-const tables = [LOCAL_ENTRIES_TABLE] as const;
+const MISC_TABLE = 'MISC_TABLE';
+const tables = [LOCAL_ENTRIES_TABLE, MISC_TABLE] as const;
 
 export interface AppDatabase extends BangleDbSchema {
   [LOCAL_ENTRIES_TABLE]: {
     key: string;
     value: DbRecord<PlainObjEntry>;
+  };
+  [MISC_TABLE]: {
+    key: string;
+    value: DbRecord<any>;
   };
 }
 
@@ -26,12 +31,35 @@ export function setupDatabase() {
               keyPath: 'key',
             });
           }
+          break;
+        }
+        case 1: {
+          db.createObjectStore(MISC_TABLE, {
+            keyPath: 'key',
+          });
+          break;
         }
       }
     },
   });
 }
 
+const miscTable = getTable(DB_NAME, MISC_TABLE, setupDatabase);
+
 export function getLocalEntriesTable() {
   return getTable(DB_NAME, LOCAL_ENTRIES_TABLE, setupDatabase);
+}
+
+export async function getGhToken() {
+  const token: string | undefined = await miscTable.get('ghToken');
+
+  return token;
+}
+
+export async function updateGhToken(token: string | undefined) {
+  if (token) {
+    await miscTable.put('ghToken', token);
+  } else {
+    await miscTable.delete('ghToken');
+  }
 }

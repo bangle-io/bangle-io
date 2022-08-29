@@ -9,6 +9,7 @@ import { randomStr, sleep } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from '../common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
+import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import GithubStorageExt from '../index';
@@ -51,7 +52,7 @@ const getLocalEntry = async (wsPath: string) => {
 };
 const existsInRemote = async (wsPath: string) => {
   const tree = await getTree({
-    config: { ...githubWsMetadata, repoName: wsName },
+    config: { ...githubWsMetadata, githubToken, repoName: wsName },
     wsName,
     abortSignal: abortController.signal,
   });
@@ -60,10 +61,10 @@ const existsInRemote = async (wsPath: string) => {
 };
 
 beforeEach(async () => {
+  await updateGhToken(githubToken);
   githubWsMetadata = {
     owner: githubOwner,
     branch: 'main',
-    githubToken: githubToken,
   };
 
   abortController = new AbortController();
@@ -71,6 +72,7 @@ beforeEach(async () => {
   await github.createRepo({
     description: 'Created by Bangle.io tests',
     config: {
+      githubToken,
       ...githubWsMetadata,
       repoName: wsName,
     },
@@ -163,10 +165,10 @@ describe('pull changes', () => {
       // SHAs via these two APIs should always match as per Github API
       const sha = await github.getLatestCommitSha({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       });
       const tree = await getTree({
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         wsName,
         abortSignal: abortController.signal,
       });
@@ -178,7 +180,7 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: sha,
         commitMessage: { headline: 'Test: external update' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'welcome-to-bangle.md',
@@ -228,10 +230,10 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: await github.getBranchHead({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 1' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'test-1.md',
@@ -258,10 +260,10 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: await github.getBranchHead({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 2' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'test-2.md',
@@ -301,7 +303,7 @@ describe('pull changes', () => {
     test('last remaining remote note is deleted, repo becomes empty', async () => {
       const sha = await github.getLatestCommitSha({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       });
 
       // Make a direct remote change outside the realm of our app
@@ -309,7 +311,7 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: sha,
         commitMessage: { headline: 'Test: external update' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [],
         deletions: [
           {
@@ -381,10 +383,10 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: await github.getBranchHead({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 1' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'test-1.md',
@@ -420,10 +422,10 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: await github.getBranchHead({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 1' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'test-1.md',
@@ -462,10 +464,10 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: await github.getBranchHead({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 1' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'test-1.md',
@@ -506,10 +508,10 @@ describe('pull changes', () => {
         abortSignal: abortController.signal,
         headSha: await github.getBranchHead({
           abortSignal: abortController.signal,
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update 2' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [],
         deletions: [
           {
@@ -573,10 +575,10 @@ describe('pull changes', () => {
       await github.pushChanges({
         abortSignal: abortController.signal,
         headSha: await github.getLatestCommitSha({
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [
           {
             path: 'welcome-to-bangle.md',
@@ -618,10 +620,10 @@ describe('pull changes', () => {
       await github.pushChanges({
         abortSignal: abortController.signal,
         headSha: await github.getLatestCommitSha({
-          config: { ...githubWsMetadata, repoName: wsName },
+          config: { ...githubWsMetadata, githubToken, repoName: wsName },
         }),
         commitMessage: { headline: 'Test: external update' },
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
         additions: [],
         deletions: [{ path: 'welcome-to-bangle.md' }],
       });
@@ -673,10 +675,10 @@ describe('new note creation', () => {
       abortSignal: abortController.signal,
       headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
-      config: { ...githubWsMetadata, repoName: wsName },
+      config: { ...githubWsMetadata, githubToken, repoName: wsName },
       additions: [
         {
           path: 'test-1.md',
@@ -736,10 +738,10 @@ describe('discard local changes', () => {
       abortSignal: abortController.signal,
       headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
-      config: { ...githubWsMetadata, repoName: wsName },
+      config: { ...githubWsMetadata, githubToken, repoName: wsName },
       additions: [
         {
           path: 'test-1.md',
@@ -783,10 +785,10 @@ describe('discard local changes', () => {
       abortSignal: abortController.signal,
       headSha: await github.getBranchHead({
         abortSignal: abortController.signal,
-        config: { ...githubWsMetadata, repoName: wsName },
+        config: { ...githubWsMetadata, githubToken, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
-      config: { ...githubWsMetadata, repoName: wsName },
+      config: { ...githubWsMetadata, githubToken, repoName: wsName },
       additions: [
         {
           path: 'test-1.md',
