@@ -1,5 +1,6 @@
 import { workspace } from '@bangle.io/api';
 
+import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 
 export async function getVanilaFileSha(file: File) {
@@ -9,20 +10,6 @@ export async function getVanilaFileSha(file: File) {
     .join('');
 
   return sha;
-}
-
-export interface GithubWsMetadata {
-  githubToken: string;
-  owner: string;
-  branch: string;
-}
-
-export async function isCurrentWorkspaceGithubStored(wsName: string) {
-  const wsInfo = await workspace.readWorkspaceInfo(wsName, {
-    type: GITHUB_STORAGE_PROVIDER_NAME,
-  });
-
-  return Boolean(wsInfo);
 }
 
 export async function readGhWorkspaceMetadata(

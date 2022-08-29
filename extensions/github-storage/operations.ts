@@ -13,14 +13,11 @@ import {
   isAbortError,
 } from '@bangle.io/utils';
 
+import type { GithubWsMetadata } from './common';
 import { ghSliceKey, LOCK_NAME } from './common';
 import { handleError } from './error-handling';
 import { getRepoTree } from './github-api-helpers';
-import type { GithubWsMetadata } from './helpers';
-import {
-  isCurrentWorkspaceGithubStored,
-  readGhWorkspaceMetadata,
-} from './helpers';
+import { readGhWorkspaceMetadata } from './helpers';
 import { pushLocalChanges } from './sync-with-github';
 
 const LOG = true;
@@ -31,10 +28,10 @@ const log = LOG
 export const readGithubTokenFromStore = () => {
   return workspace.workspaceSliceKey.queryOp(
     async (state): Promise<string | undefined> => {
-      const wsName = workspace.getWsName()(state);
+      const { githubWsName } = ghSliceKey.getSliceStateAsserted(state);
 
-      if (wsName && (await isCurrentWorkspaceGithubStored(wsName))) {
-        const metadata = await readGhWorkspaceMetadata(wsName);
+      if (githubWsName) {
+        const metadata = await readGhWorkspaceMetadata(githubWsName);
 
         return typeof metadata?.githubToken === 'string'
           ? metadata.githubToken
@@ -49,7 +46,7 @@ export const readGithubTokenFromStore = () => {
 export const updateGithubToken =
   (wsName: string, token: string | undefined, showNotification = false) =>
   async (state: BangleAppState, dispatch: BangleAppDispatch) => {
-    if (await isCurrentWorkspaceGithubStored(wsName)) {
+    if (isGhWorkspace(wsName)(state)) {
       await workspace.updateWorkspaceMetadata(wsName, (existing) => {
         if (existing.githubToken !== token) {
           return {
@@ -96,7 +93,7 @@ export function syncWithGithub(
     store: BangleApplicationStore,
   ) => {
     async function sync() {
-      if (!(await isCurrentWorkspaceGithubStored(wsName))) {
+      if (!isGhWorkspace(wsName)(store.state)) {
         return undefined;
       }
 
@@ -260,11 +257,11 @@ export function discardLocalChanges(
     store: BangleApplicationStore,
   ) => {
     try {
-      if (!(await isCurrentWorkspaceGithubStored(wsName))) {
+      if (!isGhWorkspace(wsName)(store.state)) {
         return;
       }
 
-      if (isSyncPending()(state)) {
+      if (isSyncPending()(store.state)) {
         return;
       }
 
@@ -325,6 +322,12 @@ export function discardLocalChanges(
       }
     }
   };
+}
+
+export function isGhWorkspace(wsName: string) {
+  return ghSliceKey.queryOp((state) => {
+    return ghSliceKey.getSliceStateAsserted(state).githubWsName === wsName;
+  });
 }
 
 function isSyncPending() {

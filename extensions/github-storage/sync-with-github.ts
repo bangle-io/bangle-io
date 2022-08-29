@@ -6,9 +6,9 @@ import type {
 import { fileSync, RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { assertSignal } from '@bangle.io/utils';
 
+import type { GithubWsMetadata } from './common';
 import type { GHTree, GithubConfig } from './github-api-helpers';
 import { commitToGithub, getFileBlobFromTree } from './github-api-helpers';
-import type { GithubWsMetadata } from './helpers';
 
 const LOG = true;
 const log = LOG ? console.log.bind(console, 'GithubSync') : () => {};

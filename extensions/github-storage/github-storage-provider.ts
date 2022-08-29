@@ -3,11 +3,11 @@ import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
 
+import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import { getFileBlobFromTree, getRepoTree } from './github-api-helpers';
-import type { GithubWsMetadata } from './helpers';
 
 const LOG = false;
 const log = LOG
