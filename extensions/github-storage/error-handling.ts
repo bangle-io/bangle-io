@@ -75,9 +75,19 @@ export function handleError(
       notification.showNotification({
         severity: 'error',
         title: 'Github token is invalid',
-        content: error.message,
-        uid: 'Invalid github token',
+        content:
+          'Please check your Github token has correct permissions and try again.',
+        uid: `github-storage-error-${errorCode}`,
+        buttons: [
+          {
+            title: 'Update token',
+            hint: `Update your Github token`,
+            operation: OPERATION_UPDATE_GITHUB_TOKEN,
+            dismissOnClick: true,
+          },
+        ],
       })(store.state, store.dispatch);
+
       break;
     }
 

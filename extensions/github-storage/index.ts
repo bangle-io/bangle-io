@@ -5,6 +5,7 @@ import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
   DISCARD_LOCAL_CHANGES_DIALOG,
+  ghSliceKey,
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
@@ -56,6 +57,9 @@ const extension = Extension.create({
         ReactComponent: GithubSidebar,
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
+        activitybarIconShow(wsName, state) {
+          return Boolean(ghSliceKey.getSliceState(state)?.githubWsName);
+        },
       },
     ],
     onStorageError: (error, store) => {

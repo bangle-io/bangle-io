@@ -1,32 +1,26 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { notification, ui, workspace } from '@bangle.io/api';
+import { notification, ui, useSliceState } from '@bangle.io/api';
 import { Dialog, ErrorBanner, TextField } from '@bangle.io/ui-components';
 import { BaseError } from '@bangle.io/utils';
 
-import { UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
+import { ghSliceKey, UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
+import { getGhToken } from '../database';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
-import { isCurrentWorkspaceGithubStored } from '../helpers';
-import { readGithubTokenFromStore, updateGithubToken } from '../operations';
+import { updateGithubToken } from '../operations';
 
 export function UpdateTokenDialog() {
   const { bangleStore } = ui.useUIManagerContext();
-  const wsName = workspace.getWsName()(bangleStore.state);
   const [inputToken, updateInputToken] = useState<string | undefined>();
-  const [isGithubWorkspace, updateIsGithubWorkspace] = useState(false);
   const [error, updateError] = useState<Error | undefined>(undefined);
   const [isProcessing, updateIsProcessing] = useState(false);
 
-  useEffect(() => {
-    if (wsName) {
-      isCurrentWorkspaceGithubStored(wsName).then((val) =>
-        updateIsGithubWorkspace(val),
-      );
-    }
-  }, [wsName]);
+  const {
+    sliceState: { githubWsName },
+  } = useSliceState(ghSliceKey);
 
   useEffect(() => {
-    readGithubTokenFromStore()(bangleStore.state).then((token) => {
+    getGhToken().then((token) => {
       if (token) {
         updateInputToken(token);
       }
@@ -43,7 +37,7 @@ export function UpdateTokenDialog() {
   }, [bangleStore, isProcessing]);
 
   const verifyAndUpdateToken = useCallback(async () => {
-    if (isProcessing || !inputToken || !wsName) {
+    if (isProcessing || !inputToken || !githubWsName) {
       return;
     }
     updateIsProcessing(true);
@@ -62,7 +56,7 @@ export function UpdateTokenDialog() {
         );
       }
 
-      updateGithubToken(wsName, inputToken)(
+      updateGithubToken(githubWsName, inputToken)(
         bangleStore.state,
         bangleStore.dispatch,
       );
@@ -82,7 +76,7 @@ export function UpdateTokenDialog() {
         throw e;
       }
     }
-  }, [isProcessing, dismiss, bangleStore, inputToken, wsName]);
+  }, [isProcessing, dismiss, bangleStore, inputToken, githubWsName]);
 
   const onKeyDown = useCallback(
     (e) => {
@@ -96,7 +90,7 @@ export function UpdateTokenDialog() {
     [verifyAndUpdateToken, dismiss],
   );
 
-  if (!isGithubWorkspace || !wsName) {
+  if (!githubWsName) {
     return (
       <Dialog
         isDismissable

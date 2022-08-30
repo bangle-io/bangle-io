@@ -14,8 +14,8 @@ import {
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
 } from '../common';
+import { getGhToken } from '../database';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
-import { readGithubTokenFromStore } from '../operations';
 
 const MIN_HEIGHT = 200;
 
@@ -31,7 +31,7 @@ export function NewGithubWorkspaceTokenDialog() {
   const deferredIsLoading = useDebouncedValue(isLoading, { wait: 100 });
 
   useEffect(() => {
-    readGithubTokenFromStore()(bangleStore.state).then((token) => {
+    getGhToken().then((token) => {
       if (token) {
         updateInputToken(token);
       }

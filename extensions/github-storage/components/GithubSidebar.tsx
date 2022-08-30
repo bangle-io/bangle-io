@@ -4,6 +4,7 @@ import {
   notification,
   useBangleStoreContext,
   useSerialOperationContext,
+  useSliceState,
   workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
@@ -16,9 +17,8 @@ import {
 import { Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
-import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
+import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
-import { isCurrentWorkspaceGithubStored } from '../helpers';
 
 const LOG = false;
 
@@ -28,26 +28,16 @@ const REFRESH_INTERVAL = 3000;
 
 export function GithubSidebar() {
   const store = useBangleStoreContext();
-  const { wsName, openedWsPaths } =
-    workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+  const { openedWsPaths } = workspace.workspaceSliceKey.getSliceStateAsserted(
+    store.state,
+  );
 
-  const [correctStorageProvider, updateCorrectStorageProvider] =
-    useState(false);
+  const {
+    sliceState: { githubWsName },
+  } = useSliceState(ghSliceKey);
 
-  useEffect(() => {
-    if (wsName) {
-      isCurrentWorkspaceGithubStored(wsName).then((val) =>
-        updateCorrectStorageProvider(val),
-      );
-    }
-  }, [wsName]);
-
-  return wsName ? (
-    !correctStorageProvider ? (
-      <div className="pl-3">"{wsName}" is not a Github workspace</div>
-    ) : (
-      <ModifiedEntries wsName={wsName} openedWsPaths={openedWsPaths} />
-    )
+  return githubWsName ? (
+    <ModifiedEntries wsName={githubWsName} openedWsPaths={openedWsPaths} />
   ) : (
     <div className="pl-3">Please open a Github workspace</div>
   );

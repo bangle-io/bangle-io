@@ -29,34 +29,30 @@ export function Activitybar({
     useUIManagerContext();
   const { bangleStore } = useWorkspaceContext();
 
-  const sidebarItems = useMemo(() => {
-    return sidebars.filter((r) => {
-      return r.activitybarIconShow
-        ? r.activitybarIconShow(wsName, bangleStore.state)
-        : true;
-    });
-  }, [sidebars, bangleStore, wsName]);
+  const sidebarItems = sidebars.filter((r) => {
+    return r.activitybarIconShow
+      ? r.activitybarIconShow(wsName, bangleStore.state)
+      : true;
+  });
 
-  const sideBarComponents = useMemo(() => {
-    return sidebarItems.map((r) => {
-      const active = sidebar === r.name;
+  const sideBarComponents = sidebarItems.map((r) => {
+    const active = sidebar === r.name;
 
-      return (
-        <ActivitybarButton
-          isActive={active}
-          hint={r.hint}
-          icon={React.cloneElement(r.activitybarIcon, {
-            className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
-          })}
-          key={r.name}
-          widescreen={widescreen}
-          onPress={() => {
-            changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
-          }}
-        />
-      );
-    });
-  }, [sidebarItems, bangleStore, sidebar, widescreen]);
+    return (
+      <ActivitybarButton
+        isActive={active}
+        hint={r.hint}
+        icon={React.cloneElement(r.activitybarIcon, {
+          className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
+        })}
+        key={r.name}
+        widescreen={widescreen}
+        onPress={() => {
+          changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
+        }}
+      />
+    );
+  });
 
   if (!widescreen) {
     return (

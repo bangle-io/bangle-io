@@ -8,7 +8,6 @@ import { assertSignal } from '@bangle.io/utils';
 
 import type { GHTree, GithubConfig } from './github-api-helpers';
 import { commitToGithub, getFileBlobFromTree } from './github-api-helpers';
-import type { GithubWsMetadata } from './helpers';
 
 const LOG = true;
 const log = LOG ? console.log.bind(console, 'GithubSync') : () => {};
@@ -23,7 +22,7 @@ export async function pushLocalChanges({
 }: {
   abortSignal: AbortSignal;
   fileEntryManager: LocalFileEntryManager;
-  ghConfig: GithubWsMetadata;
+  ghConfig: GithubConfig;
   retainedWsPaths: Set<string>;
   tree: GHTree;
   wsName: string;

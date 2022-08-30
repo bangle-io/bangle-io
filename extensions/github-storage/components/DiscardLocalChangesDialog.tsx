@@ -1,29 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { ui, workspace } from '@bangle.io/api';
+import { ui, useSliceState, workspace } from '@bangle.io/api';
 import { Dialog } from '@bangle.io/ui-components';
 
-import { DISCARD_LOCAL_CHANGES_DIALOG } from '../common';
+import { DISCARD_LOCAL_CHANGES_DIALOG, ghSliceKey } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
-import { isCurrentWorkspaceGithubStored } from '../helpers';
 import { discardLocalChanges } from '../operations';
 
 export function DiscardLocalChangesDialog() {
   const { bangleStore } = ui.useUIManagerContext();
-  const wsName = workspace.getWsName()(bangleStore.state);
 
   const [isProcessing, updateIsProcessing] = useState(false);
   const [manuallyReload, updateManuallyReload] = useState(false);
 
-  const [isGithubWorkspace, updateIsGithubWorkspace] = useState(false);
-
-  useEffect(() => {
-    if (wsName) {
-      isCurrentWorkspaceGithubStored(wsName).then((val) =>
-        updateIsGithubWorkspace(val),
-      );
-    }
-  }, [wsName]);
+  const {
+    sliceState: { githubWsName },
+  } = useSliceState(ghSliceKey);
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {
@@ -37,23 +29,23 @@ export function DiscardLocalChangesDialog() {
   if (manuallyReload) {
     return (
       <Dialog
-        isDismissable
-        headingTitle="Not a Github workspace"
-        onDismiss={() => {
-          dismiss();
-        }}
+        isDismissable={false}
+        headingTitle="Confirm discarding of local changes"
+        onDismiss={() => {}}
       >
         Please reload the application manually.
       </Dialog>
     );
   }
 
-  if (!isGithubWorkspace || !wsName) {
+  if (!githubWsName) {
     return (
       <Dialog
-        isDismissable={false}
-        onDismiss={() => {}}
-        headingTitle="Confirm discarding of local changes"
+        isDismissable
+        onDismiss={() => {
+          dismiss();
+        }}
+        headingTitle="Not a Github workspace"
       >
         This action can only occur in a workspace that is stored in Github.
         Please open one and try again.
@@ -73,9 +65,9 @@ export function DiscardLocalChangesDialog() {
           if (isProcessing) {
             return;
           }
-          if (wsName) {
+          if (githubWsName) {
             updateIsProcessing(true);
-            await discardLocalChanges(wsName, localFileEntryManager())(
+            await discardLocalChanges(githubWsName, localFileEntryManager())(
               bangleStore.state,
               bangleStore.dispatch,
               bangleStore,
@@ -86,6 +78,7 @@ export function DiscardLocalChangesDialog() {
             setTimeout(() => {
               updateManuallyReload(true);
             }, 2000);
+            dismiss();
           }
         },
       }}

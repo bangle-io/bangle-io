@@ -28,13 +28,25 @@ export const UPDATE_GITHUB_TOKEN_DIALOG =
 export const ghSliceKey = new SliceKey<
   {
     syncState: boolean;
+    githubWsName: string | undefined;
   },
-  {
-    name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
-    value: {
-      syncState: boolean;
-    };
-  }
+  | {
+      name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
+      value: {
+        syncState: boolean;
+      };
+    }
+  | {
+      name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME';
+      value: {
+        githubWsName: string | undefined;
+      };
+    }
 >('slice::@bangle.io/github-storage:slice-key');
 
 export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';
+
+export interface GithubWsMetadata {
+  owner: string;
+  branch: string;
+}

@@ -13,14 +13,13 @@ import {
   isAbortError,
 } from '@bangle.io/utils';
 
+import type { GithubWsMetadata } from './common';
 import { ghSliceKey, LOCK_NAME } from './common';
+import { getGhToken, updateGhToken } from './database';
 import { handleError } from './error-handling';
+import { INVALID_GITHUB_TOKEN } from './errors';
 import { getRepoTree } from './github-api-helpers';
-import type { GithubWsMetadata } from './helpers';
-import {
-  isCurrentWorkspaceGithubStored,
-  readGhWorkspaceMetadata,
-} from './helpers';
+import { readGhWorkspaceMetadata } from './helpers';
 import { pushLocalChanges } from './sync-with-github';
 
 const LOG = true;
@@ -28,38 +27,11 @@ const log = LOG
   ? console.debug.bind(console, 'github-storage operations')
   : () => {};
 
-export const readGithubTokenFromStore = () => {
-  return workspace.workspaceSliceKey.queryOp(
-    async (state): Promise<string | undefined> => {
-      const wsName = workspace.getWsName()(state);
-
-      if (wsName && (await isCurrentWorkspaceGithubStored(wsName))) {
-        const metadata = await readGhWorkspaceMetadata(wsName);
-
-        return typeof metadata?.githubToken === 'string'
-          ? metadata.githubToken
-          : undefined;
-      }
-
-      return undefined;
-    },
-  );
-};
-
 export const updateGithubToken =
   (wsName: string, token: string | undefined, showNotification = false) =>
   async (state: BangleAppState, dispatch: BangleAppDispatch) => {
-    if (await isCurrentWorkspaceGithubStored(wsName)) {
-      await workspace.updateWorkspaceMetadata(wsName, (existing) => {
-        if (existing.githubToken !== token) {
-          return {
-            ...existing,
-            githubToken: token,
-          };
-        }
-
-        return existing;
-      });
+    if (isGhWorkspace(wsName)(state)) {
+      await updateGhToken(token);
 
       if (showNotification) {
         notification.showNotification({
@@ -96,7 +68,7 @@ export function syncWithGithub(
     store: BangleApplicationStore,
   ) => {
     async function sync() {
-      if (!(await isCurrentWorkspaceGithubStored(wsName))) {
+      if (!isGhWorkspace(wsName)(store.state)) {
         return undefined;
       }
 
@@ -260,11 +232,11 @@ export function discardLocalChanges(
     store: BangleApplicationStore,
   ) => {
     try {
-      if (!(await isCurrentWorkspaceGithubStored(wsName))) {
+      if (!isGhWorkspace(wsName)(store.state)) {
         return;
       }
 
-      if (isSyncPending()(state)) {
+      if (isSyncPending()(store.state)) {
         return;
       }
 
@@ -327,6 +299,12 @@ export function discardLocalChanges(
   };
 }
 
+export function isGhWorkspace(wsName: string) {
+  return ghSliceKey.queryOp((state) => {
+    return ghSliceKey.getSliceStateAsserted(state).githubWsName === wsName;
+  });
+}
+
 function isSyncPending() {
   return ghSliceKey.queryOp((state) => {
     const res = ghSliceKey.getSliceState(state);
@@ -360,14 +338,25 @@ function startSync(
     try {
       const getTree = getRepoTree();
 
+      const githubToken = await getGhToken();
+
+      if (!githubToken) {
+        throw new BaseError({
+          message: 'Github token is required',
+          code: INVALID_GITHUB_TOKEN,
+        });
+      }
+
+      const config = { ...wsMetadata, repoName: wsName, githubToken };
+
       const tree = await getTree({
         wsName,
-        config: { ...wsMetadata, repoName: wsName },
+        config,
       });
 
       return await pushLocalChanges({
         wsName,
-        ghConfig: wsMetadata,
+        ghConfig: config,
         retainedWsPaths,
         tree,
         fileEntryManager,
