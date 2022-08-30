@@ -22,12 +22,10 @@ const specRegistry = new SpecRegistry([...defaultSpecs()]);
 let render: (plugin: any) => ReturnType<typeof renderTestEditor>;
 
 let abortController = new AbortController();
-let signal = abortController.signal;
-let { store: initialBangleStore } = createBasicTestStore({ signal });
+let { store: initialBangleStore } = createBasicTestStore({});
 beforeEach(() => {
   abortController = new AbortController();
-  signal = abortController.signal;
-  ({ store: initialBangleStore } = createBasicTestStore({ signal }));
+  ({ store: initialBangleStore } = createBasicTestStore({}));
   jest.useFakeTimers();
   render = (plugin) =>
     renderTestEditor({

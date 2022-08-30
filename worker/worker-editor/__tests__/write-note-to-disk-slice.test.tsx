@@ -50,12 +50,8 @@ let originalConsoleWarn = console.warn;
 let cleanup = () => {};
 
 const cachedCalculateGitFileShaSpy = jest.mocked(cachedCalculateGitFileSha);
-let abortController = new AbortController();
-let signal = abortController.signal;
 
 beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
   console.warn = jest.fn();
   cachedCalculateGitFileShaSpy.mockReset();
   cachedCalculateGitFileShaSpy.mockImplementation((...args) => {
@@ -69,7 +65,6 @@ afterEach(async () => {
   cleanup();
   // allow for promises to resolve before we stop the store
   await sleep(20);
-  abortController.abort();
   await sleep(10);
   console.warn = originalConsoleWarn;
 });
@@ -98,7 +93,6 @@ const setup = async ({
 } = {}) => {
   const wsName = 'my-ws-' + Math.random();
   const obj = await commonSetup({
-    signal,
     writeNoteToDiskEffects: providedEffects,
   });
   const wsPath1 = `${wsName}:test-dir/magic.md`;

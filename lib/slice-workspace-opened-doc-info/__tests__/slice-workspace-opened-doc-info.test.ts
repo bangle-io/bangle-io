@@ -20,21 +20,8 @@ import {
 import { getOpenedDocInfo, updateDocInfo } from '../operations';
 import { workspaceOpenedDocInfoSlice } from '../slice-workspace-opened-doc-info';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 const setup = async () => {
   const { store, ...helpers } = createBasicTestStore({
-    signal,
     slices: [workspaceOpenedDocInfoSlice()],
   });
 

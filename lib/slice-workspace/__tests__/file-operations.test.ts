@@ -22,19 +22,14 @@ import {
 import { updateOpenedWsPaths } from '../operations';
 import { createWorkspace } from '../workspaces-operations';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-let { store } = createBasicTestStore({ signal });
+let { store } = createBasicTestStore({});
 
 beforeEach(() => {
   store.destroy();
-  abortController = new AbortController();
-  signal = abortController.signal;
-  ({ store } = createBasicTestStore({ signal }));
+  ({ store } = createBasicTestStore({}));
 });
 
 afterEach(async () => {
-  abortController.abort();
   await sleep(0);
 });
 
@@ -234,7 +229,7 @@ describe('getNote', () => {
   });
 
   test('does not return result when no wsName', async () => {
-    let { store, getActionNames } = createBasicTestStore({ signal });
+    let { store, getActionNames } = createBasicTestStore({});
 
     await sleep(0);
 
@@ -251,7 +246,7 @@ describe('createNote', () => {
   const doc = createPMNode([], `hello`);
 
   beforeEach(async () => {
-    ({ store } = createBasicTestStore({ signal }));
+    ({ store } = createBasicTestStore({}));
 
     await createWorkspace('my-ws', WorkspaceTypeBrowser)(
       store.state,
@@ -308,7 +303,7 @@ describe('createNote', () => {
   });
 
   test('does not create when no workspace', async () => {
-    let { store } = createBasicTestStore({ signal });
+    let { store } = createBasicTestStore({});
 
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
@@ -446,7 +441,7 @@ describe('checkFileExists', () => {
   const wsPath = 'my-ws:test-note.md';
 
   beforeEach(async () => {
-    ({ store } = createBasicTestStore({ signal }));
+    ({ store } = createBasicTestStore({}));
 
     await createWorkspace('my-ws', WorkspaceTypeBrowser)(
       store.state,

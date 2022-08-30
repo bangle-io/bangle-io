@@ -11,6 +11,17 @@ if (typeof jest === 'undefined') {
   throw new Error('Can only be with jest');
 }
 
+let controller = new AbortController();
+
+beforeEach(() => {
+  controller.abort();
+  controller = new AbortController();
+});
+
+afterEach(() => {
+  controller.abort();
+});
+
 // creates a store with provided slices
 // if you need a store with batteries included, use
 // createBasicTestStore
@@ -24,7 +35,6 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
   sliceKey,
   onError,
   disableSideEffects,
-  signal,
   scheduler = (cb) => {
     let destroyed = false;
     Promise.resolve().then(() => {
@@ -38,7 +48,6 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
     };
   },
 }: {
-  signal: AbortSignal;
   storeName?: string;
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S>;
@@ -77,7 +86,7 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
 
   const dispatchSpy = jest.spyOn(store, 'dispatch');
 
-  signal.addEventListener(
+  controller.signal.addEventListener(
     'abort',
     () => {
       store.destroy();

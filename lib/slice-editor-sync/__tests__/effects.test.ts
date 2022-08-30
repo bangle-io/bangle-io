@@ -17,25 +17,18 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
 let cleanup = () => {};
 beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
   cleanup = setupMockMessageChannel();
 });
 
 afterEach(() => {
   cleanup();
-  abortController.abort();
 });
 
 describe('transferPortEffect', () => {
   test('blank state', async () => {
     const testStore = createTestStore({
-      signal,
       slices: [editorSyncSlice()],
     });
 
@@ -63,7 +56,6 @@ describe('transferPortEffect', () => {
   test('does nothing in worker', () => {
     isWorkerGlobalScopeMock.mockImplementation(() => true);
     const testStore = createTestStore({
-      signal,
       slices: [editorSyncSlice()],
     });
 

@@ -28,17 +28,6 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 import inlineBackLinkExtension from '../index';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
 const setup = async ([firstNote, ...otherNotes]: Array<
   [string, string]
 > = []) => {
@@ -50,7 +39,6 @@ const setup = async ([firstNote, ...otherNotes]: Array<
   } = createBasicTestStore({
     extensions: [inlineBackLinkExtension],
     useEditorManagerSlice: true,
-    signal,
   });
   const [wsPath, md] = firstNote || [];
 

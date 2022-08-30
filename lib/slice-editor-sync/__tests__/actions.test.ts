@@ -9,25 +9,18 @@ import {
 import type { EditorSyncActions } from '../common';
 import { editorSyncSlice } from '../slice-editor-sync';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
 let cleanup = () => {};
 
 beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
   cleanup = setupMockMessageChannel();
 });
 
 afterEach(() => {
   cleanup();
-  abortController.abort();
 });
 
 test('serialization', () => {
   const testStore = createTestStore({
-    signal,
     slices: [editorSyncSlice()],
   });
   const messageChannel = new MessageChannel();

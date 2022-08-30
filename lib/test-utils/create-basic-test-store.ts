@@ -61,10 +61,8 @@ export function createBasicTestStore<
   scheduler,
   opts,
   onError,
-  signal,
   storageProvider = new IndexedDbStorageProvider(),
 }: {
-  signal: AbortSignal;
   storageProvider?: BaseStorageProvider;
   scheduler?: any;
   // for getting the types right
@@ -108,7 +106,6 @@ export function createBasicTestStore<
         ...opts,
       },
       scheduler,
-      signal,
       sliceKey,
       slices: [
         extensionRegistrySlice(),

@@ -117,19 +117,16 @@ export const createStateWithWsName = (
 };
 
 export const noSideEffectsStore = (
-  signal: AbortSignal,
   data?: Parameters<typeof createState>[0],
 ) => {
-  return createStore({ data, disableSideEffects: true, signal });
+  return createStore({ data, disableSideEffects: true });
 };
 
 export const createStore = ({
-  signal,
   data,
   disableSideEffects,
   additionalSlices = [],
 }: {
-  signal: AbortSignal;
   data?: Parameters<typeof createState>[0];
   disableSideEffects?: boolean;
   additionalSlices?: Slice[];
@@ -154,7 +151,6 @@ export const createStore = ({
   };
 
   let result = createTestStore({
-    signal,
     storeName: 'workspace-store',
     disableSideEffects,
     state: data

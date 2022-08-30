@@ -33,8 +33,6 @@ import { readWorkspaceInfo, saveWorkspaceInfo } from '../read-ws-info';
 import { createWorkspace } from '../workspaces-operations';
 import { createStore } from './test-utils';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
 jest.mock('../config', () => {
   const config = jest.requireActual('../config');
 
@@ -44,22 +42,11 @@ jest.mock('../config', () => {
   };
 });
 
-beforeEach(() => {
-  abortController.abort();
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 describe('refreshWsPathsEffect', () => {
   test('refreshes on create note', async () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store, getAction } = createBasicTestStore({
-      signal,
       storageProvider: storageProvider,
     });
 
@@ -110,7 +97,6 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
-      signal,
       storageProvider: storageProvider,
     });
 
@@ -129,7 +115,6 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
-      signal,
       storageProvider: storageProvider,
     });
 
@@ -156,7 +141,6 @@ describe('refreshWsPathsEffect', () => {
     const storageProvider = new IndexedDbStorageProvider();
 
     const { store } = createBasicTestStore({
-      signal,
       storageProvider: storageProvider,
     });
 
@@ -172,13 +156,11 @@ describe('refreshWsPathsEffect', () => {
 
 describe('updateLocationEffect', () => {
   let { store, getActionNames, getAction } = createStore({
-    signal: abortController.signal,
     additionalSlices: [testMemoryHistorySlice()],
   });
 
   beforeEach(() => {
     ({ store, getActionNames, getAction } = createStore({
-      signal: abortController.signal,
       additionalSlices: [testMemoryHistorySlice()],
     }));
   });
@@ -233,7 +215,6 @@ describe('updateLocationEffect', () => {
 
   test('dispatching same location does not trigger update', async () => {
     const { store, getActionNames } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -267,7 +248,6 @@ describe('updateLocationEffect', () => {
 
   test('invalid wsPaths check', async () => {
     const { store } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -289,7 +269,6 @@ describe('updateLocationEffect', () => {
 
   test('handles workspace not found error', async () => {
     const { store } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -313,7 +292,6 @@ describe('updateLocationEffect', () => {
 
   test('retains mini-editor in case of location change but wsName stays', async () => {
     const { store } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -347,7 +325,6 @@ describe('updateLocationEffect', () => {
 
   test('resets mini-editor in case of location update with wsName change', async () => {
     const { store } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
     });
 
@@ -402,7 +379,6 @@ describe('workspaceErrorHandler', () => {
     });
 
     const { store, actionsDispatched } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
       onError: onRootError,
       extensions: [
@@ -506,7 +482,6 @@ describe('workspaceErrorHandler', () => {
       return true;
     });
     const { store } = createBasicTestStore({
-      signal,
       sliceKey: workspaceSliceKey,
       extensions: [
         Extension.create({
@@ -553,9 +528,7 @@ describe('workspaceErrorHandler', () => {
 
 describe('cachedWorkspaceInfoEffect', () => {
   test('gets correct wsInfo when workspace changes', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],
@@ -595,9 +568,7 @@ describe('cachedWorkspaceInfoEffect', () => {
   });
 
   test('clears when no active workspace', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],
@@ -621,9 +592,7 @@ describe('cachedWorkspaceInfoEffect', () => {
   });
 
   test('periodically refreshes', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],

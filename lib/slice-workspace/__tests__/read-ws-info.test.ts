@@ -11,24 +11,9 @@ import {
   saveWorkspaceInfo,
 } from '../read-ws-info';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController.abort();
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 describe('readWorkspaceInfo', () => {
   test('reads workspace info', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],
@@ -45,9 +30,7 @@ describe('readWorkspaceInfo', () => {
   });
 
   test('reads workspace info with type filter', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],
@@ -72,9 +55,7 @@ describe('readWorkspaceInfo', () => {
   });
 
   test('if delete filter is on', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],
@@ -120,9 +101,7 @@ describe('readWorkspaceInfo', () => {
 
 describe('readWorkspaceMetadata', () => {
   test('works', async () => {
-    const { store } = createBasicTestStore({
-      signal,
-    });
+    const { store } = createBasicTestStore({});
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
       ['test-ws-1:one.md', 'hello one'],

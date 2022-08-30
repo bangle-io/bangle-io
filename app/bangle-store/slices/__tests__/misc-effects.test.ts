@@ -17,19 +17,6 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { historySlice } from '../history-slice';
 import { lastWorkspaceUsed, miscEffectsSlice } from '../misc-effects-slice';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController.abort();
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 describe('last seen workspace', () => {
   let originalLocalStorage: typeof localStorage;
 
@@ -90,9 +77,7 @@ describe('last seen workspace', () => {
       // fill db with existing data
       (
         await setupMockWorkspaceWithNotes(
-          createBasicTestStore({
-            signal,
-          }).store,
+          createBasicTestStore({}).store,
           'test-ws',
           [['test-ws:hello.md', `hello world`]],
         )
@@ -101,7 +86,6 @@ describe('last seen workspace', () => {
       await sleep(0);
 
       let { store } = createBasicTestStore({
-        signal,
         slices: [historySlice(), miscEffectsSlice()],
         useMemoryHistorySlice: false,
       });
@@ -133,14 +117,14 @@ describe('last seen workspace', () => {
     test('going through multiple workspaces', async () => {
       (
         await setupMockWorkspaceWithNotes(
-          createBasicTestStore({ signal }).store,
+          createBasicTestStore({}).store,
           'test-ws-1',
           [['test-ws-1:hello.md', `hello world`]],
         )
       ).store.destroy();
       (
         await setupMockWorkspaceWithNotes(
-          createBasicTestStore({ signal }).store,
+          createBasicTestStore({}).store,
           'test-ws-2',
           [['test-ws-2:hello.md', `hello world`]],
         )
@@ -149,7 +133,6 @@ describe('last seen workspace', () => {
       await sleep(0);
 
       let { store } = createBasicTestStore({
-        signal,
         slices: [historySlice(), miscEffectsSlice()],
         useMemoryHistorySlice: false,
       });
@@ -174,7 +157,6 @@ describe('last seen workspace', () => {
     test('opening a note', async () => {
       let setup = () => {
         let { store } = createBasicTestStore({
-          signal,
           slices: [historySlice(), miscEffectsSlice()],
           useMemoryHistorySlice: false,
         });
@@ -196,7 +178,6 @@ describe('last seen workspace', () => {
       await sleep(0);
 
       let { store } = createBasicTestStore({
-        signal,
         slices: [historySlice(), miscEffectsSlice()],
         useMemoryHistorySlice: false,
       });

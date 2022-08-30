@@ -13,24 +13,11 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 import { MiniEditor } from '../MiniEditor';
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 const DOC_CONTENT = `hello mars`;
 
 describe('MiniEditor', () => {
   const setup = async () => {
     let { store, getActionNames } = createBasicTestStore({
-      signal,
       extensions: [],
       useEditorCoreExtension: true,
       useEditorManagerSlice: true,

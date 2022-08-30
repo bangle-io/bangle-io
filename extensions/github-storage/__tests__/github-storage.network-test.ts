@@ -79,7 +79,6 @@ beforeEach(async () => {
   });
 
   ({ store } = createBasicTestStore({
-    signal: abortController.signal,
     extensions: [GithubStorageExt],
     onError: (err) => {
       throw err;

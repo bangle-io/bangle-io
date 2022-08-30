@@ -15,10 +15,8 @@ import { workerEditorSlice } from '../worker-editor-slice';
 import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
 
 export const setup = async ({
-  signal,
   writeNoteToDiskEffects,
 }: {
-  signal: AbortSignal;
   writeNoteToDiskEffects?: Array<SliceSideEffect<any, any>>;
 }) => {
   const _workerEditorSlice = workerEditorSlice();
@@ -31,7 +29,6 @@ export const setup = async ({
 
   const { store, isEditorCollabReady, extensionRegistry, ...testHelpers } =
     createBasicTestStore({
-      signal,
       useEditorManagerSlice: true,
       useEditorCoreExtension: true,
       slices: [

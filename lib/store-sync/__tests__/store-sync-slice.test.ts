@@ -34,18 +34,6 @@ class MessageChannel {
   };
 }
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 type DummyAction = {
   name: 'action::dummy-action:one';
   value: {
@@ -127,7 +115,6 @@ function setup(
   }
 
   const { store: store1 } = createTestStore({
-    signal,
     slices: slices1,
   });
 
@@ -138,7 +125,6 @@ function setup(
   }
 
   const { store: store2 } = createTestStore({
-    signal,
     slices: slices2,
   });
 
@@ -168,7 +154,6 @@ test('works', async () => {
   });
   const slice = storeSyncSlice(configKey1);
   const { store } = createTestStore({
-    signal,
     slices: [configSlice1, slice, dummySlice],
   });
   await sleep(0);
@@ -394,7 +379,6 @@ test('when there is a delay in second store', async () => {
   });
 
   const { store: store1 } = createTestStore({
-    signal,
     slices: [configSlice1, storeSyncSlice(configKey1), dummySlice],
   });
 
@@ -418,7 +402,6 @@ test('when there is a delay in second store', async () => {
   expect(dummySlice.getSliceState(store1.state)).toEqual({ counter: 4 });
 
   const { store: store2 } = createTestStore({
-    signal,
     slices: [configSlice2, storeSyncSlice(configKey2), dummySlice],
   });
   startStoreSync()(store1.state, store1.dispatch);

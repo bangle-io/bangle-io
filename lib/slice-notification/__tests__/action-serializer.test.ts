@@ -64,21 +64,8 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
   ],
 });
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
-beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
-});
-
-afterEach(() => {
-  abortController.abort();
-});
-
 test.each(testFixtures)(`%s actions serialization`, (action) => {
   const { store } = createTestStore({
-    signal,
     sliceKey: notificationSliceKey,
     slices: [notificationSlice()],
   });

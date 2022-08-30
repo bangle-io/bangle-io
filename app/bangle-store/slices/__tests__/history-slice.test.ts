@@ -28,16 +28,11 @@ const workspaceStateMock = workspaceSliceKey[
 
 let historyPushSpy: jest.SpyInstance, historyReplaceSpy: jest.SpyInstance;
 
-let abortController = new AbortController();
-let signal = abortController.signal;
-
 beforeAll(() => {
   jest.useFakeTimers();
 });
 
 beforeEach(() => {
-  abortController = new AbortController();
-  signal = abortController.signal;
   workspaceStateMock.mockImplementation(() => workspaceSliceInitialState);
   window.history.replaceState(null, '', '/');
 
@@ -47,14 +42,9 @@ beforeEach(() => {
   historyReplaceSpy = jest.spyOn(window.history, 'replaceState');
 });
 
-afterEach(() => {
-  abortController.abort();
-});
-
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
     const { actionsDispatched } = createTestStore({
-      signal,
       sliceKey: pageSliceKey,
       slices: [pageSlice(), historySlice()],
     });
@@ -88,7 +78,6 @@ describe('applyPendingNavigation', () => {
   test('works', async () => {
     jest.useFakeTimers();
     const { store } = createTestStore({
-      signal,
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -108,7 +97,6 @@ describe('applyPendingNavigation', () => {
 
   test('respects replace', async () => {
     const { store } = createTestStore({
-      signal,
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -128,7 +116,6 @@ describe('applyPendingNavigation', () => {
 
   test('works with object location and replace=true', async () => {
     const { store } = createTestStore({
-      signal,
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -154,7 +141,6 @@ describe('applyPendingNavigation', () => {
 
   test('works when location is string', async () => {
     const { store } = createTestStore({
-      signal,
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -176,7 +162,6 @@ describe('applyPendingNavigation', () => {
 
   test('works with object location', async () => {
     const { store } = createTestStore({
-      signal,
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
