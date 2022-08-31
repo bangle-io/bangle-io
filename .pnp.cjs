@@ -6063,6 +6063,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\

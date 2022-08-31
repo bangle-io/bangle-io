@@ -1,5 +1,4 @@
 import { SliceKey } from '@bangle.io/create-store';
-
 // The idea of this slice is to store information related to a opened files sha.
 // And then use that information to determine if the file was changed externally (outside of the application).
 // Note: the slice serves as a common place to store this information and provides api
@@ -16,6 +15,17 @@ export interface OpenedFile {
   // Comparing this to currentDiskSha will determine if the file was modified externally.
   readonly lastKnownDiskSha?: string | null;
   readonly currentDiskShaTimestamp?: number | null;
+}
+
+export function createDefaultOpenedFile(wsPath: string): OpenedFile {
+  return {
+    wsPath,
+    pendingWrite: false,
+    sha: null,
+    currentDiskSha: null,
+    lastKnownDiskSha: null,
+    currentDiskShaTimestamp: null,
+  };
 }
 
 export const UPDATE_ENTRY =

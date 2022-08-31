@@ -159,10 +159,25 @@ export function workspaceOpenedDocInfoSlice() {
 
 const syncWithOpenedWsPathsEffect = workspaceOpenedDocInfoKey.effect(() => {
   return {
-    async update(store) {
+    async update(store, prevState) {
       const openedWsPaths = getOpenedWsPaths()(
         workspaceSliceKey.getState(store.state),
       );
+
+      const prevOpenedWsPaths = getOpenedWsPaths()(
+        workspaceSliceKey.getState(prevState),
+      );
+
+      if (
+        openedWsPaths === prevOpenedWsPaths &&
+        !workspaceOpenedDocInfoKey.valueChanged(
+          'openedFiles',
+          store.state,
+          prevState,
+        )
+      ) {
+        return;
+      }
 
       const { openedFiles } = workspaceOpenedDocInfoKey.getSliceStateAsserted(
         store.state,

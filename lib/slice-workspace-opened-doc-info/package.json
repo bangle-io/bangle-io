@@ -29,6 +29,7 @@
     "typescript": "^4.7.3"
   },
   "devDependencies": {
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*"
   },
   "license": "AGPL-3.0-or-later"

@@ -3282,6 +3282,7 @@ __metadata:
   resolution: "@bangle.io/slice-workspace-opened-doc-info@workspace:lib/slice-workspace-opened-doc-info"
   dependencies:
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
