@@ -354,8 +354,7 @@ describe('updateLocationEffect', () => {
 });
 
 describe('workspaceErrorHandler', () => {
-  // eslint-disable-next-line jest/no-disabled-tests
-  test.skip('storage provider throwing an error', async () => {
+  test('storage provider throwing an error', async () => {
     const storageType = 'testType';
     const wsName = 'my-ws';
     class TestProvider extends IndexedDbStorageProvider {
@@ -363,14 +362,7 @@ describe('workspaceErrorHandler', () => {
     }
 
     const provider = new TestProvider();
-
     const listAllFilesSpy = jest.spyOn(provider, 'listAllFiles');
-
-    // await setupMockWorkspace({
-    //   name: wsName,
-    //   type: storageType,
-    // });
-
     const onRootError = jest.fn(() => {
       return false;
     });
@@ -392,6 +384,12 @@ describe('workspaceErrorHandler', () => {
       ],
     });
 
+    await createWorkspace(wsName, provider.name)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
     await goToWsNameRoute(wsName)(store.state, store.dispatch);
 
     await waitForExpect(() => {
@@ -404,7 +402,7 @@ describe('workspaceErrorHandler', () => {
       workspaceSliceKey.getSliceStateAsserted(store.state).cachedWorkspaceInfo,
     ).toEqual({
       deleted: false,
-      lastModified: 1,
+      lastModified: expect.any(Number),
       metadata: {},
       name: wsName,
       type: 'testType',
@@ -421,7 +419,7 @@ describe('workspaceErrorHandler', () => {
     ).toContain('hello');
 
     // real testing starts here
-    expect(listAllFilesSpy).toBeCalledTimes(1);
+    expect(listAllFilesSpy).toBeCalledTimes(2);
     expect(onStorageError).toBeCalledTimes(0);
 
     await sleep(0);
@@ -434,9 +432,9 @@ describe('workspaceErrorHandler', () => {
 
     refreshWsPaths()(store.state, store.dispatch);
 
-    await sleep(0);
-
-    expect(onRootError).toBeCalledTimes(1);
+    await waitForExpect(() => {
+      expect(onRootError).toBeCalledTimes(1);
+    });
     expect(onStorageError).toBeCalledTimes(1);
     expect(onStorageError).nthCalledWith(1, error, store);
 
