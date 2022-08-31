@@ -1,6 +1,7 @@
 import type { Merge } from 'type-fest';
 
 import { BaseError } from '@bangle.io/base-error';
+import type { DBKeyVal } from '@bangle.io/db-key-val';
 
 import { calculateGitFileSha } from './calculate-git-file-sha';
 import { REMOTE_SYNC_NOT_ALLOWED_ERROR } from './errors';
@@ -10,14 +11,7 @@ import { REMOTE_SYNC_NOT_ALLOWED_ERROR } from './errors';
 const DELETE_TOLERANCE = 2000;
 
 export class LocalFileEntryManager {
-  constructor(
-    private _persistenceProvider: {
-      get: (key: string) => Promise<PlainObjEntry | undefined>;
-      set: (key: string, obj: PlainObjEntry) => Promise<void>;
-      getValues: (keyPrefix: string) => Promise<PlainObjEntry[]>;
-      delete: (key: string) => Promise<void>;
-    },
-  ) {}
+  constructor(private _persistenceProvider: DBKeyVal<PlainObjEntry>) {}
 
   async createFile(
     uid: string,
@@ -70,10 +64,13 @@ export class LocalFileEntryManager {
   }
 
   async getAllEntries(uidPrefix: string): Promise<LocalFileEntry[]> {
-    return this._persistenceProvider.getValues(uidPrefix).then((entries) => {
-      return entries.map((r) => {
-        return LocalFileEntry.fromPlainObj(r);
-      });
+    let results = (await this._persistenceProvider.getAll()) || [];
+    results = results.filter((entry) => {
+      return entry?.uid.startsWith(uidPrefix);
+    });
+
+    return results.map((r) => {
+      return LocalFileEntry.fromPlainObj(r);
     });
   }
 
@@ -106,7 +103,7 @@ export class LocalFileEntryManager {
 
   // if no prior file entry exists, it will be created
   async overwriteFileEntry(fileEntry: LocalFileEntry): Promise<void> {
-    return this._persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
+    return this._persistenceProvider.put(fileEntry.uid, fileEntry.toPlainObj());
   }
 
   // use with caution!! overwrites the file entry completely with the provided one

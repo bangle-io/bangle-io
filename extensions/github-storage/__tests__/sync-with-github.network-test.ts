@@ -104,7 +104,7 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (await localFileEntryManager().getAllEntries('')).map((entry) => [
+    (await localFileEntryManager.getAllEntries('')).map((entry) => [
       entry.uid,
       entry,
     ]),
@@ -165,7 +165,7 @@ const push = async (retainedWsPaths = new Set<string>()) => {
 
   return pushLocalChanges({
     abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager(),
+    fileEntryManager: localFileEntryManager,
     ghConfig: config,
     retainedWsPaths,
     tree: await getTree({
@@ -555,7 +555,7 @@ describe('house keeping', () => {
     expect(sha).toBe(sourceSha);
 
     // // corrupt the source
-    await localFileEntryManager().updateFileSource(
+    await localFileEntryManager.updateFileSource(
       test1WsPath,
       new File(
         [new Blob(['hi'], { type: 'text/plain' })],

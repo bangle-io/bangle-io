@@ -31,7 +31,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
-    await this._fileEntryManager().createFile(
+    await this._fileEntryManager.createFile(
       wsPath,
       file,
       await this._makeGetRemoteFileEntryCb(
@@ -42,7 +42,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
-    await this._fileEntryManager().deleteFile(
+    await this._fileEntryManager.deleteFile(
       wsPath,
       await this._makeGetRemoteFileEntryCb(
         (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
@@ -88,7 +88,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       abortSignal,
     });
 
-    const files = await this._fileEntryManager().listFiles(
+    const files = await this._fileEntryManager.listFiles(
       [...tree.keys()],
       wsName + ':',
     );
@@ -113,7 +113,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
-    const file = await this._fileEntryManager().readFile(
+    const file = await this._fileEntryManager.readFile(
       wsPath,
       await this._makeGetRemoteFileEntryCb(
         (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
@@ -151,7 +151,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     log('writeFile', wsPath, file);
-    await this._fileEntryManager().writeFile(wsPath, file);
+    await this._fileEntryManager.writeFile(wsPath, file);
   }
 
   private async _makeGetRemoteFileEntryCb(

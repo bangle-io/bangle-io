@@ -108,7 +108,7 @@ const syncEffect = ghSliceKey.effect(() => {
             syncWithGithub(
               githubWsName,
               new AbortController().signal,
-              localFileEntryManager(),
+              localFileEntryManager,
               false,
             )(store.state, store.dispatch, store);
           }
@@ -138,7 +138,7 @@ const syncEffect = ghSliceKey.effect(() => {
           syncWithGithub(
             githubWsName,
             new AbortController().signal,
-            localFileEntryManager(),
+            localFileEntryManager,
             false,
           )(store.state, store.dispatch, store);
         }

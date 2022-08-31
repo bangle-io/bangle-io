@@ -1,4 +1,4 @@
-import type { BangleDbSchema, DbRecord } from '@bangle.io/db-key-val';
+import type { BangleDbSchema, DBKeyVal, DbRecord } from '@bangle.io/db-key-val';
 import { getTable, idb } from '@bangle.io/db-key-val';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 
@@ -46,7 +46,7 @@ export function setupDatabase() {
 
 const miscTable = getTable(DB_NAME, MISC_TABLE, setupDatabase);
 
-export function getLocalEntriesTable() {
+export function getLocalEntriesTable(): DBKeyVal<PlainObjEntry> {
   return getTable(DB_NAME, LOCAL_ENTRIES_TABLE, setupDatabase);
 }
 

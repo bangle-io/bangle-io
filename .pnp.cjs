@@ -5761,6 +5761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
+            ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["base64-js", "npm:1.5.1"],\
             ["ts-pattern", "npm:4.0.3"],\
             ["type-fest", "npm:2.12.0"]\

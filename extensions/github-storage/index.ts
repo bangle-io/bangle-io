@@ -101,7 +101,7 @@ const extension = Extension.create({
               syncWithGithub(
                 wsName,
                 abortController.signal,
-                localFileEntryManager(),
+                localFileEntryManager,
               )(store.state, store.dispatch, store);
 
               return true;

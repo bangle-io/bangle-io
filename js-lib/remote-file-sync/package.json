@@ -27,6 +27,7 @@
     "ts-pattern": "^4.0.3"
   },
   "devDependencies": {
+    "@bangle.io/db-key-val": "workspace:*",
     "type-fest": "^2.12.0"
   },
   "license": "AGPL-3.0-or-later"

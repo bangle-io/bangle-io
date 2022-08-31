@@ -3041,6 +3041,7 @@ __metadata:
   resolution: "@bangle.io/remote-file-sync@workspace:js-lib/remote-file-sync"
   dependencies:
     "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/db-key-val": "workspace:*"
     base64-js: ^1.5.1
     ts-pattern: ^4.0.3
     type-fest: ^2.12.0

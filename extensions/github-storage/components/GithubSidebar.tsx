@@ -61,23 +61,21 @@ function ModifiedEntries({
 
   useEffect(() => {
     let destroyed = false;
-    localFileEntryManager()
-      .getAllEntries(wsName + ':')
-      .then((r) => {
-        if (!destroyed) {
-          const result = r.filter((e) => !e.isUntouched);
-          updateModifiedEntries((prevEntries) => {
-            const newWsPaths = result.map((e) => e.uid);
-            const oldWsPaths = prevEntries?.map((e) => e.uid) || [];
+    localFileEntryManager.getAllEntries(wsName + ':').then((r) => {
+      if (!destroyed) {
+        const result = r.filter((e) => !e.isUntouched);
+        updateModifiedEntries((prevEntries) => {
+          const newWsPaths = result.map((e) => e.uid);
+          const oldWsPaths = prevEntries?.map((e) => e.uid) || [];
 
-            if (!shallowCompareArray(newWsPaths, oldWsPaths)) {
-              return result;
-            }
+          if (!shallowCompareArray(newWsPaths, oldWsPaths)) {
+            return result;
+          }
 
-            return prevEntries;
-          });
-        }
-      });
+          return prevEntries;
+        });
+      }
+    });
 
     return () => {
       destroyed = true;

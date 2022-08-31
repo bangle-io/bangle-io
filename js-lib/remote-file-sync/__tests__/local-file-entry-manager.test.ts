@@ -2,6 +2,8 @@
  * @jest-environment @bangle.io/jsdom-env
  */
 
+import { getTable, idb } from '@bangle.io/db-key-val';
+
 import { RemoteFileEntry } from '..';
 import {
   BaseFileEntry,
@@ -11,34 +13,40 @@ import {
 import { readFileBlob } from './test-helpers';
 
 const createManager = () => {
-  const store = new Map<string, any>();
-  const manager = new LocalFileEntryManager({
-    get: (key: string) => Promise.resolve(store.get(key)),
-    set: (key: string, obj: any) => {
-      store.set(key, obj);
+  const setupDatabase = () =>
+    idb.openDB<any>('local-file-entry-manager-db', 1, {
+      upgrade(db, oldVersion) {
+        switch (oldVersion) {
+          case 0: {
+            for (const table of ['misc-table']) {
+              db.createObjectStore(table, {
+                keyPath: 'key',
+              });
+            }
+            break;
+          }
+        }
+      },
+    });
 
-      return Promise.resolve();
-    },
-    getValues: (keyPrefix: string) =>
-      Promise.resolve(Array.from(store.values())),
-    delete: (key: string) => {
-      store.delete(key);
+  const table = getTable(
+    'local-file-entry-manager-db',
+    'misc-table',
+    setupDatabase,
+  );
+  const manager = new LocalFileEntryManager(table);
 
-      return Promise.resolve();
-    },
-  });
-
-  return { manager, store };
+  return { manager, table };
 };
 
 describe('LocalFileEntryManager', () => {
   describe('createFile', () => {
     test('with no source', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
       const file = await readFileBlob('file-a.json');
       await manager.createFile('foo', file, async () => undefined);
 
-      expect(store.get('foo')).toEqual({
+      expect(await table.get('foo')).toEqual({
         deleted: undefined,
         file: expect.any(Blob),
         sha: '7ad72a87fbfb1d2abd96330d4815c29b8a09ece7',
@@ -46,11 +54,13 @@ describe('LocalFileEntryManager', () => {
         uid: 'foo',
       });
 
-      expect(await manager.readFile('foo', async () => undefined)).toBe(file);
+      expect(await manager.readFile('foo', async () => undefined)).toEqual(
+        file,
+      );
     });
 
     test('throws if file exists locally', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
       const file = await readFileBlob('file-a.json');
       await manager.createFile('foo', file, async () => undefined);
 
@@ -60,7 +70,7 @@ describe('LocalFileEntryManager', () => {
         `"Cannot create as file already exists"`,
       );
 
-      expect(store.get('foo')).toEqual({
+      expect(await table.get('foo')).toEqual({
         deleted: undefined,
         file: expect.any(Blob),
         sha: '7ad72a87fbfb1d2abd96330d4815c29b8a09ece7',
@@ -68,11 +78,13 @@ describe('LocalFileEntryManager', () => {
         uid: 'foo',
       });
 
-      expect(await manager.readFile('foo', async () => undefined)).toBe(file);
+      expect(await manager.readFile('foo', async () => undefined)).toEqual(
+        file,
+      );
     });
 
     test('throws error if remote has the file', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
       const file = await readFileBlob('file-a.json');
 
       const remoteFile = await readFileBlob('file-e.md');
@@ -87,10 +99,10 @@ describe('LocalFileEntryManager', () => {
       await expect(prom).rejects.toThrowErrorMatchingInlineSnapshot(
         `"Cannot create as file already exists"`,
       );
-      expect(store.size).toBe(1);
+      expect((await table.getAll()).length).toBe(1);
 
       // still updates the local entry for file
-      expect(store.get('foo')).toEqual({
+      expect(await table.get('foo')).toEqual({
         deleted: undefined,
         file: remoteFile,
         sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
@@ -101,7 +113,7 @@ describe('LocalFileEntryManager', () => {
         uid: 'foo',
       });
 
-      expect(await manager.readFile('foo', async () => undefined)).toBe(
+      expect(await manager.readFile('foo', async () => undefined)).toEqual(
         remoteFile,
       );
     });
@@ -119,19 +131,21 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      expect(await manager.readFile('foo', async () => undefined)).toBe(file);
+      expect(await manager.readFile('foo', async () => undefined)).toEqual(
+        file,
+      );
     });
   });
 
   describe('deleteFile', () => {
     test('on non existent file', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
       await manager.deleteFile('foo');
-      expect(store.size).toBe(0);
+      expect((await table.getAll()).length).toBe(0);
     });
 
     test('on local file with no remote entry', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
       const file = await readFileBlob('file-a.json');
       await manager.createFile('foo', file, async () => undefined);
 
@@ -141,8 +155,9 @@ describe('LocalFileEntryManager', () => {
 
       expect(await manager.listFiles([])).toEqual([]);
 
-      expect(store.size).toBe(1);
-      expect(store.get('foo')).toEqual({
+      expect((await table.getAll()).length).toBe(1);
+
+      expect(await table.get('foo')).toEqual({
         deleted: expect.any(Number),
         file: expect.any(Blob),
         sha: '7ad72a87fbfb1d2abd96330d4815c29b8a09ece7',
@@ -169,7 +184,7 @@ describe('LocalFileEntryManager', () => {
     });
 
     test('deleting an unmodified file', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
       const remoteFile = await readFileBlob('file-e.md');
 
       await manager.readFile('foo', async (uid) => {
@@ -181,7 +196,7 @@ describe('LocalFileEntryManager', () => {
       });
       await manager.deleteFile('foo');
 
-      expect(store.get('foo')).toEqual({
+      expect(await table.get('foo')).toEqual({
         deleted: expect.any(Number),
         file: expect.any(Blob),
         sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
@@ -193,7 +208,7 @@ describe('LocalFileEntryManager', () => {
       });
     });
     test('with remote entry', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
 
       const remoteFile = await readFileBlob('file-e.md');
       await manager.deleteFile('foo', async (uid) => {
@@ -208,7 +223,7 @@ describe('LocalFileEntryManager', () => {
         undefined,
       );
 
-      expect(store.get('foo')).toEqual({
+      expect(await table.get('foo')).toEqual({
         deleted: expect.any(Number),
         file: expect.any(Blob),
         sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
@@ -232,7 +247,7 @@ describe('LocalFileEntryManager', () => {
       expect(result).toBeUndefined();
     });
     test('reads a file first time with remote defined', async () => {
-      const { manager, store } = createManager();
+      const { manager, table } = createManager();
 
       const remoteFile = await readFileBlob('file-e.md');
       const file = await manager.readFile('foo', async (uid) => {
@@ -242,8 +257,8 @@ describe('LocalFileEntryManager', () => {
           deleted: undefined,
         });
       });
-      expect(file).toBe(remoteFile);
-      expect(store.get('foo')).toEqual({
+      expect(file).toEqual(remoteFile);
+      expect(await table.get('foo')).toEqual({
         deleted: undefined,
         file: remoteFile,
         sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
@@ -269,7 +284,7 @@ describe('LocalFileEntryManager', () => {
         });
       });
       // first set the file in store
-      expect(file1).toBe(remoteFile1);
+      expect(file1).toEqual(remoteFile1);
 
       const file2 = await manager.readFile('foo', async (uid) => {
         return RemoteFileEntry.newFile({
@@ -279,11 +294,11 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      expect(file2).toBe(remoteFile1);
-      expect(file2).not.toBe(remoteFile2);
+      expect(file2).toEqual(remoteFile1);
+      expect(file2).not.toEqual(remoteFile2);
     });
 
-    test('ignore remote file is local is modified', async () => {
+    test('ignore remote file if local is modified', async () => {
       const { manager } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
@@ -309,7 +324,7 @@ describe('LocalFileEntryManager', () => {
             deleted: undefined,
           });
         }),
-      ).toBe(writtenFile);
+      ).toEqual(writtenFile);
 
       expect(
         await manager.readFile('foo', async (uid) => {
@@ -319,7 +334,7 @@ describe('LocalFileEntryManager', () => {
             deleted: undefined,
           });
         }),
-      ).toBe(writtenFile);
+      ).toEqual(writtenFile);
 
       expect(
         await manager.readFile('foo', async (uid) => {
@@ -329,7 +344,7 @@ describe('LocalFileEntryManager', () => {
             deleted: 23231,
           });
         }),
-      ).toBe(writtenFile);
+      ).toEqual(writtenFile);
     });
 
     test('throws error if file does not exist', async () => {
@@ -524,7 +539,7 @@ describe('LocalFileEntry', () => {
 
     const deletedRes = res.markDeleted();
 
-    expect(deletedRes).not.toBe(res);
+    expect(deletedRes).not.toEqual(res);
 
     expect(deletedRes).toEqual({
       uid: 'foo',
@@ -545,7 +560,7 @@ describe('LocalFileEntry', () => {
 
     const updatedRes = await res.updateFile(file);
 
-    expect(updatedRes).toBe(res);
+    expect(updatedRes).toEqual(res);
   });
 
   test('updateFile with same file sha', async () => {
@@ -559,7 +574,7 @@ describe('LocalFileEntry', () => {
 
     const updatedRes = await res.updateFile(file2);
 
-    expect(updatedRes).toBe(res);
+    expect(updatedRes).toEqual(res);
   });
 
   test('updateFile with same file sha but deleted', async () => {
@@ -574,7 +589,6 @@ describe('LocalFileEntry', () => {
     const updatedRes = await res.markDeleted().updateFile(file2);
 
     // unset the delete
-    expect(updatedRes).not.toBe(res);
 
     expect(updatedRes.toPlainObj()).toEqual(res.toPlainObj());
   });
@@ -590,7 +604,7 @@ describe('LocalFileEntry', () => {
 
     const updatedRes = await res.updateFile(file2);
 
-    expect(updatedRes).not.toBe(res);
+    expect(updatedRes).not.toEqual(res);
 
     expect(updatedRes.isNew).toBe(true);
     expect(updatedRes.isModified).toBe(true);
