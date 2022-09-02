@@ -45,7 +45,7 @@ test('resets if a newly created doc which is not modified and then its content a
 
   await expect
     .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX), {
-      timeout: 2 * SELECTOR_TIMEOUT,
+      timeout: 3 * SELECTOR_TIMEOUT,
     })
     .toBe(`doc(paragraph("I am ", italic("overwrite")))`);
 });
@@ -64,7 +64,9 @@ test('resets an existing doc which is not modified and its content changes exter
   await executeOverwrite(page, wsPath1);
 
   await expect
-    .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX))
+    .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX), {
+      timeout: 3 * SELECTOR_TIMEOUT,
+    })
     .toBe(`doc(paragraph("I am ", italic("overwrite")))`);
 });
 
@@ -81,7 +83,9 @@ test('resets doc when it is created then modified and then content changes exter
   await editorHandle.type('wow 123!', { delay: 10 });
 
   await expect
-    .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX))
+    .poll(() => getEditorDebugString(page, PRIMARY_EDITOR_INDEX), {
+      timeout: 3 * SELECTOR_TIMEOUT,
+    })
     .toBe(`doc(heading("wow 123!file-1"), paragraph("Hello world!"))`);
 
   await sleep(100);
