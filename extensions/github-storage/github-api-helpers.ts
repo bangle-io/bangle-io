@@ -682,6 +682,23 @@ export async function initializeRepo({
   }
 }
 
+export async function hasRepo({
+  config,
+  abortSignal,
+}: {
+  config: GithubConfig;
+  abortSignal?: AbortSignal;
+}) {
+  return makeV3GetApi({
+    path: `/repos/${config.owner}/${config.repoName}`,
+    token: config.githubToken,
+    abortSignal,
+  }).then(
+    () => true,
+    () => false,
+  );
+}
+
 export async function createRepo({
   config,
   description = 'Created automatically by Bangle.io',

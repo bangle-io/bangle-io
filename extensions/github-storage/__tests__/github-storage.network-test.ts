@@ -78,6 +78,24 @@ beforeEach(async () => {
     },
   });
 
+  // make sure the repo is ready
+  await waitForExpect(
+    async () => {
+      await sleep(500);
+      expect(
+        await github.hasRepo({
+          config: {
+            githubToken,
+            ...githubWsMetadata,
+            repoName: wsName,
+          },
+        }),
+      ).toBe(true);
+    },
+    10000,
+    500,
+  );
+
   ({ store } = createBasicTestStore({
     extensions: [GithubStorageExt],
     onError: (err) => {
@@ -340,7 +358,11 @@ describe('pull changes', () => {
     test('basic', async () => {
       workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
 
-      await sleep(0);
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
+          'doc(heading("Welcome to Bangle.io"), paragraph("This is a sample note to get things started."))',
+        );
+      });
 
       const modifiedText = `hello I am modified`;
       await workspace.writeNote(
@@ -348,7 +370,11 @@ describe('pull changes', () => {
         createPMNode([], modifiedText),
       )(store.state, store.dispatch, store);
 
-      expect(await getNoteAsString(defaultNoteWsPath)).toContain(modifiedText);
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(defaultNoteWsPath)).toContain(
+          modifiedText,
+        );
+      });
 
       expect((await getLocalEntry(defaultNoteWsPath))?.isModified).toBe(true);
       expect((await getLocalEntry(defaultNoteWsPath))?.isUntouched).toBe(false);
@@ -401,6 +427,12 @@ describe('pull changes', () => {
 
       // open the test2 note
       workspace.pushWsPath(`${wsName}:test-2.md`)(store.state, store.dispatch);
+
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(wsName + ':test-2.md')).toEqual(
+          'doc(paragraph("I am test-2"))',
+        );
+      });
 
       await sleep(0);
       await pullChanges();
@@ -488,7 +520,9 @@ describe('pull changes', () => {
       // open test 2 in our app
       workspace.pushWsPath(test2WsPath)(store.state, store.dispatch);
 
-      await sleep(0);
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(test2WsPath)).toContain('I am test-2');
+      });
 
       // locally modify test-2 note
       const modifiedText = `test-2 hello I am modified`;
@@ -536,7 +570,11 @@ describe('pull changes', () => {
     test('basic', async () => {
       workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
 
-      await sleep(0);
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
+          'doc(heading("Welcome to Bangle.io"), paragraph("This is a sample note to get things started."))',
+        );
+      });
 
       await workspace.deleteNote(defaultNoteWsPath)(
         store.state,
@@ -560,7 +598,11 @@ describe('pull changes', () => {
     test('basic', async () => {
       workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
 
-      await sleep(0);
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
+          'doc(heading("Welcome to Bangle.io"), paragraph("This is a sample note to get things started."))',
+        );
+      });
 
       await workspace.deleteNote(defaultNoteWsPath)(
         store.state,
@@ -605,7 +647,11 @@ describe('pull changes', () => {
     test('basic', async () => {
       workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
 
-      await sleep(0);
+      await waitForExpect(async () => {
+        expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
+          'doc(heading("Welcome to Bangle.io"), paragraph("This is a sample note to get things started."))',
+        );
+      });
 
       await workspace.deleteNote(defaultNoteWsPath)(
         store.state,
