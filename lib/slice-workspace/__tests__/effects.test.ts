@@ -398,14 +398,17 @@ describe('workspaceErrorHandler', () => {
       );
     });
 
-    expect(
-      workspaceSliceKey.getSliceStateAsserted(store.state).cachedWorkspaceInfo,
-    ).toEqual({
-      deleted: false,
-      lastModified: expect.any(Number),
-      metadata: {},
-      name: wsName,
-      type: 'testType',
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey.getSliceStateAsserted(store.state)
+          .cachedWorkspaceInfo,
+      ).toEqual({
+        deleted: false,
+        lastModified: expect.any(Number),
+        metadata: {},
+        name: wsName,
+        type: 'testType',
+      });
     });
 
     await createNote('my-ws:test-note.md', {
