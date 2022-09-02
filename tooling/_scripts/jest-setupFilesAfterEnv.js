@@ -2,7 +2,16 @@ require('cross-fetch/polyfill');
 require('fake-indexeddb/auto');
 
 globalThis.Blob = require('buffer').Blob;
-globalThis.crypto = require('crypto').webcrypto;
+
+if (typeof global.self !== 'undefined') {
+  // for some reason JSDOM fucks up the SubtleCrypto, so
+  // we need to override it here with nodejs's webcrypto
+  Object.defineProperty(global.self, 'crypto', {
+    value: require('crypto').webcrypto,
+  });
+} else {
+  globalThis.crypto = require('crypto').webcrypto;
+}
 
 const { IDBFactory } = require('fake-indexeddb');
 
