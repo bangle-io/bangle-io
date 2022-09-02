@@ -167,7 +167,7 @@ describe('renameNote', () => {
         store,
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Cannot rename; File \\"my-ws/test-note.md\\" already exists"`,
+      `"Cannot rename; File "my-ws/test-note.md" already exists"`,
     );
 
     const newDoc = await getNote('my-ws:test-note.md')(

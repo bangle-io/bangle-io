@@ -28,12 +28,12 @@ describe('serialization works', () => {
         sliceFields: { workspace: workspaceSliceWithStateSerialization() },
       }),
     ).toMatchInlineSnapshot(`
-      Object {
-        "workspace": Object {
-          "data": Object {
+      {
+        "workspace": {
+          "data": {
             "cachedWorkspaceInfo": null,
             "error": null,
-            "openedWsPaths": Array [
+            "openedWsPaths": [
               null,
               null,
               null,
@@ -64,11 +64,11 @@ describe('serialization works', () => {
 
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
       WorkspaceSliceState {
-        "mainFields": Object {
+        "mainFields": {
           "cachedWorkspaceInfo": undefined,
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
-            "_wsPaths": Array [
+            "_wsPaths": [
               undefined,
               undefined,
               undefined,
@@ -80,7 +80,7 @@ describe('serialization works', () => {
           "wsName": undefined,
           "wsPaths": undefined,
         },
-        "opts": Object {},
+        "opts": {},
       }
     `);
   });
@@ -104,11 +104,11 @@ describe('serialization works', () => {
 
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
       WorkspaceSliceState {
-        "mainFields": Object {
+        "mainFields": {
           "cachedWorkspaceInfo": undefined,
           "error": undefined,
           "openedWsPaths": OpenedWsPaths {
-            "_wsPaths": Array [
+            "_wsPaths": [
               undefined,
               undefined,
               undefined,
@@ -118,12 +118,12 @@ describe('serialization works', () => {
           "recentlyUsedWsPaths": undefined,
           "refreshCounter": 0,
           "wsName": undefined,
-          "wsPaths": Array [
+          "wsPaths": [
             "test:one.md",
             "test:from.md",
           ],
         },
-        "opts": Object {},
+        "opts": {},
       }
     `);
 
@@ -132,12 +132,12 @@ describe('serialization works', () => {
         sliceFields: { workspace: workspaceSliceWithStateSerialization() },
       }),
     ).toMatchInlineSnapshot(`
-      Object {
-        "workspace": Object {
-          "data": Object {
+      {
+        "workspace": {
+          "data": {
             "cachedWorkspaceInfo": null,
             "error": null,
-            "openedWsPaths": Array [
+            "openedWsPaths": [
               null,
               null,
               null,
@@ -146,7 +146,7 @@ describe('serialization works', () => {
             "recentlyUsedWsPaths": null,
             "refreshCounter": 0,
             "wsName": null,
-            "wsPaths": Array [
+            "wsPaths": [
               "test:one.md",
               "test:from.md",
             ],

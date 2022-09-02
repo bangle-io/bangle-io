@@ -51,7 +51,7 @@ exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
       "color": "var(--BV-ui-bangle-button-color)",
     }
@@ -85,7 +85,7 @@ exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
       "color": "var(--BV-ui-bangle-button-color)",
     }
@@ -104,7 +104,7 @@ exports[`Storyshots ui-components/BaseButton Primary 1`] = `
 <button
   className="transition-all duration-100 cursor-default  BU_is-hovered BU_is-pressed "
   style={
-    Object {
+    {
       "transform": "scale(var(--BV-ui-bangle-button-depression))",
     }
   }
@@ -142,7 +142,7 @@ exports[`Storyshots ui-components/Button Basic Test 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
       "color": "var(--BV-ui-bangle-button-color)",
     }
@@ -172,7 +172,7 @@ exports[`Storyshots ui-components/Button Destructive Button 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-ui-bangle-button-destructive-bg-color)",
       "color": "var(--BV-ui-bangle-button-destructive-color)",
     }
@@ -203,7 +203,7 @@ exports[`Storyshots ui-components/Button Disabled Button 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-ui-bangle-button-disabled-bg-color)",
       "color": "var(--BV-ui-bangle-button-disabled-color)",
     }
@@ -233,7 +233,7 @@ exports[`Storyshots ui-components/Button Primary Button 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-ui-bangle-button-primary-bg-color)",
       "color": "var(--BV-ui-bangle-button-primary-color)",
     }
@@ -263,7 +263,7 @@ exports[`Storyshots ui-components/Button Quiet Button 1`] = `
   onTouchMove={[Function]}
   onTouchStart={[Function]}
   style={
-    Object {
+    {
       "color": "var(--BV-ui-bangle-button-color)",
     }
   }
@@ -282,7 +282,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
     style={
-      Object {
+      {
         "color": "var(--BV-text-color-1)",
       }
     }
@@ -341,7 +341,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
         className="w-5 h-5"
         fill="currentColor"
         style={
-          Object {
+          {
             "color": "var(--BV-ui-bangle-button-color)",
           }
         }
@@ -368,7 +368,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
     style={
-      Object {
+      {
         "color": "var(--BV-text-color-1)",
       }
     }
@@ -427,7 +427,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
         className="w-5 h-5"
         fill="currentColor"
         style={
-          Object {
+          {
             "color": "var(--BV-ui-bangle-button-color)",
           }
         }
@@ -465,7 +465,7 @@ exports[`Storyshots ui-components/Dialog Destructive 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "color": "var(--BV-ui-bangle-button-color)",
       }
@@ -505,7 +505,7 @@ exports[`Storyshots ui-components/Dialog Loading Dialog 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "color": "var(--BV-ui-bangle-button-color)",
       }
@@ -528,7 +528,7 @@ exports[`Storyshots ui-components/Dialog Loading Dialog 1`] = `
 exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
 <div
   style={
-    Object {
+    {
       "maxWidth": 300,
     }
   }
@@ -563,7 +563,7 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "color": "var(--BV-ui-bangle-button-color)",
       }
@@ -589,7 +589,7 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
     aria-hidden={null}
     data-overlay-container={true}
     style={
-      Object {
+      {
         "zIndex": "var(--BV-window-modal-z-index)",
       }
     }
@@ -617,7 +617,7 @@ exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "color": "var(--BV-ui-bangle-button-color)",
       }
@@ -642,7 +642,7 @@ exports[`Storyshots ui-components/ErrorBanner Primary 1`] = `
   className="m-3 p-4 rounded"
   data-testid=""
   style={
-    Object {
+    {
       "backgroundColor": "var(--BV-error-bg-color)",
       "color": "var(--BV-error-color)",
     }
@@ -675,7 +675,7 @@ exports[`Storyshots ui-components/Input Primary 1`] = `
   />
   <div
     style={
-      Object {
+      {
         "display": "flex",
         "position": "relative",
       }
@@ -717,7 +717,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     aria-hidden={true}
     onBlur={null}
     style={
-      Object {
+      {
         "border": 0,
         "clip": "rect(0 0 0 0)",
         "clipPath": "inset(50%)",
@@ -734,7 +734,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     <input
       onFocus={[Function]}
       style={
-        Object {
+        {
           "fontSize": 16,
         }
       }
@@ -805,7 +805,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "borderRadius": "var(--BV-ui-bangle-button-radius)",
       }
@@ -816,7 +816,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
       className="text-md text-left px-1 w-64 truncate overflow-ellipsis "
       id="react-aria-test-generated-id"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -828,7 +828,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
       className="w-5 h-5"
       fill="currentColor"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -860,7 +860,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
     aria-hidden={true}
     onBlur={null}
     style={
-      Object {
+      {
         "border": 0,
         "clip": "rect(0 0 0 0)",
         "clipPath": "inset(50%)",
@@ -877,7 +877,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
     <input
       onFocus={[Function]}
       style={
-        Object {
+        {
           "fontSize": 16,
         }
       }
@@ -948,7 +948,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "borderRadius": "var(--BV-ui-bangle-button-radius)",
       }
@@ -959,7 +959,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
       className="text-md text-left px-1 w-64 truncate overflow-ellipsis "
       id="react-aria-test-generated-id"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -971,7 +971,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
       className="w-5 h-5"
       fill="currentColor"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -1003,7 +1003,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     aria-hidden={true}
     onBlur={null}
     style={
-      Object {
+      {
         "border": 0,
         "clip": "rect(0 0 0 0)",
         "clipPath": "inset(50%)",
@@ -1020,7 +1020,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     <input
       onFocus={[Function]}
       style={
-        Object {
+        {
           "fontSize": 16,
         }
       }
@@ -1091,7 +1091,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "borderRadius": "var(--BV-ui-bangle-button-radius)",
       }
@@ -1102,7 +1102,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
       className="text-md text-left px-1 w-64 truncate overflow-ellipsis "
       id="react-aria-test-generated-id"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -1114,7 +1114,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
       className="w-5 h-5"
       fill="currentColor"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -1146,7 +1146,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     aria-hidden={true}
     onBlur={null}
     style={
-      Object {
+      {
         "border": 0,
         "clip": "rect(0 0 0 0)",
         "clipPath": "inset(50%)",
@@ -1163,7 +1163,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     <input
       onFocus={[Function]}
       style={
-        Object {
+        {
           "fontSize": 16,
         }
       }
@@ -1254,7 +1254,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     onTouchMove={[Function]}
     onTouchStart={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
         "borderRadius": "var(--BV-ui-bangle-button-radius)",
       }
@@ -1265,7 +1265,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
       className="text-md text-left px-1 w-64 truncate overflow-ellipsis "
       id="react-aria-test-generated-id"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -1277,7 +1277,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
       className="w-5 h-5"
       fill="currentColor"
       style={
-        Object {
+        {
           "color": "var(--BV-ui-bangle-button-color)",
         }
       }
@@ -1298,7 +1298,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
 <div
   className=""
   style={
-    Object {
+    {
       "display": "flex",
       "flexDirection": "column",
     }
@@ -1309,7 +1309,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
     style={
-      Object {
+      {
         "color": "var(--BV-text-color-1)",
       }
     }
@@ -1328,7 +1328,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     readOnly={false}
     spellCheck={true}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-window-bg-color-0)",
         "border": "1px solid var(--BV-window-border-color-0)",
         "borderRadius": "0.125rem",
@@ -1343,7 +1343,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     className="text-sm"
     id={null}
     style={
-      Object {
+      {
         "color": "var(--BV-text-color-1)",
       }
     }
@@ -1357,7 +1357,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
 <div
   className=""
   style={
-    Object {
+    {
       "display": "flex",
       "flexDirection": "column",
     }
@@ -1368,7 +1368,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
     style={
-      Object {
+      {
         "color": "var(--BV-text-color-1)",
       }
     }
@@ -1386,7 +1386,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     readOnly={false}
     spellCheck={true}
     style={
-      Object {
+      {
         "backgroundColor": "var(--BV-window-bg-color-0)",
         "border": "1px solid var(--BV-window-border-color-0)",
         "borderRadius": "0.125rem",
@@ -1401,7 +1401,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     className="text-sm"
     id={null}
     style={
-      Object {
+      {
         "color": "var(--BV-severity-error-color)",
       }
     }
@@ -1430,7 +1430,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
   <div
     onClick={[Function]}
     style={
-      Object {
+      {
         "backgroundColor": "lightgreen",
       }
     }
@@ -1439,7 +1439,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
       <div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1448,7 +1448,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1457,7 +1457,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1466,7 +1466,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1475,7 +1475,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1484,7 +1484,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1493,7 +1493,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1502,7 +1502,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1511,7 +1511,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1520,7 +1520,7 @@ exports[`Storyshots ui-dhancha/Dhancha Mobile 1`] = `
         </div>
         <div
           style={
-            Object {
+            {
               "marginTop": "1rem",
             }
           }
@@ -1554,7 +1554,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
   >
     <div
       style={
-        Object {
+        {
           "backgroundColor": "lightgreen",
           "height": "100vh",
           "overflowY": "scroll",
@@ -1567,7 +1567,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
   >
     <div
       style={
-        Object {
+        {
           "backgroundColor": "pink",
           "height": "100%",
           "overflowY": "scroll",
@@ -1590,7 +1590,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           <div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1599,7 +1599,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1608,7 +1608,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1617,7 +1617,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1626,7 +1626,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1635,7 +1635,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1644,7 +1644,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1653,7 +1653,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1662,7 +1662,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1671,7 +1671,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1680,7 +1680,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1689,7 +1689,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1698,7 +1698,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1707,7 +1707,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1716,7 +1716,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1725,7 +1725,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1734,7 +1734,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1743,7 +1743,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1752,7 +1752,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1761,7 +1761,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1770,7 +1770,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1779,7 +1779,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1788,7 +1788,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1797,7 +1797,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1806,7 +1806,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1815,7 +1815,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1824,7 +1824,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1833,7 +1833,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1842,7 +1842,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1851,7 +1851,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1860,7 +1860,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1869,7 +1869,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1878,7 +1878,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1887,7 +1887,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1896,7 +1896,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1905,7 +1905,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1914,7 +1914,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1923,7 +1923,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1932,7 +1932,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1941,7 +1941,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1950,7 +1950,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1959,7 +1959,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1968,7 +1968,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1977,7 +1977,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1986,7 +1986,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -1995,7 +1995,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2004,7 +2004,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2013,7 +2013,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2022,7 +2022,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2031,7 +2031,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2040,7 +2040,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2049,7 +2049,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2058,7 +2058,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2067,7 +2067,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2076,7 +2076,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2085,7 +2085,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2094,7 +2094,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2103,7 +2103,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2112,7 +2112,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2121,7 +2121,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2130,7 +2130,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2139,7 +2139,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2148,7 +2148,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2157,7 +2157,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2166,7 +2166,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2175,7 +2175,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2184,7 +2184,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2193,7 +2193,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2202,7 +2202,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2211,7 +2211,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2220,7 +2220,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2229,7 +2229,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2238,7 +2238,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2247,7 +2247,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2256,7 +2256,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2265,7 +2265,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2274,7 +2274,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2283,7 +2283,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2292,7 +2292,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2301,7 +2301,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2310,7 +2310,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2319,7 +2319,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2328,7 +2328,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2337,7 +2337,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2346,7 +2346,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2355,7 +2355,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2364,7 +2364,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2373,7 +2373,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2382,7 +2382,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2391,7 +2391,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2400,7 +2400,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2409,7 +2409,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2418,7 +2418,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2427,7 +2427,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2436,7 +2436,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2445,7 +2445,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2454,7 +2454,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2463,7 +2463,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2472,7 +2472,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2481,7 +2481,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2490,7 +2490,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2499,7 +2499,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2508,7 +2508,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2517,7 +2517,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2526,7 +2526,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2535,7 +2535,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2544,7 +2544,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2553,7 +2553,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2562,7 +2562,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2571,7 +2571,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2580,7 +2580,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
             </div>
             <div
               style={
-                Object {
+                {
                   "marginTop": "1rem",
                 }
               }
@@ -2593,7 +2593,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     </div>
     <div
       style={
-        Object {
+        {
           "backgroundColor": "pink",
           "height": "100%",
           "overflowY": "scroll",
@@ -2617,7 +2617,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
         <div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2633,7 +2633,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
   >
     <div
       style={
-        Object {
+        {
           "backgroundColor": "lightblue",
           "height": "100vh",
           "overflowY": "scroll",
@@ -2647,7 +2647,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
         <div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2656,7 +2656,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2665,7 +2665,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2674,7 +2674,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2683,7 +2683,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2692,7 +2692,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2701,7 +2701,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2710,7 +2710,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2719,7 +2719,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }
@@ -2728,7 +2728,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
           </div>
           <div
             style={
-              Object {
+              {
                 "marginTop": "1rem",
               }
             }

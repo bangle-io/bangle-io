@@ -50,7 +50,7 @@ test('stat throws error if file not found', async () => {
   await expect(
     fs.stat('hola/unknown'),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"File \\"hola/unknown\\" not found"`,
+    `"File "hola/unknown" not found"`,
   );
 });
 
@@ -61,9 +61,7 @@ test('rename', async () => {
 
   await expect(
     fs.readFile('hola/hi'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"File \\"hola/hi\\" not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File "hola/hi" not found"`);
 
   await expect(
     (await fs.readFile('ebola/two'))?.text(),
@@ -75,9 +73,7 @@ test('rename throws error if old file not found', async () => {
 
   await expect(
     fs.rename('hola/hi', 'ebola/two'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"File \\"hola/hi\\" not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File "hola/hi" not found"`);
 });
 
 test('rename throws error if new file already exists', async () => {
@@ -88,7 +84,7 @@ test('rename throws error if new file already exists', async () => {
   await expect(
     fs.rename('hola/hi', 'ebola/two'),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"Cannot rename; File \\"hola/hi\\" already exists"`,
+    `"Cannot rename; File "hola/hi" already exists"`,
   );
 });
 
@@ -98,9 +94,7 @@ test('unlink', async () => {
   await fs.unlink('hola/hi');
   await expect(
     fs.readFile('hola/hi'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"File \\"hola/hi\\" not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File "hola/hi" not found"`);
 });
 
 test('opendirRecursive root', async () => {
@@ -121,7 +115,7 @@ test('opendirRecursive subdir', async () => {
   await fs.writeFile('jango/bye', toFile('my-data'));
   let result = await fs.opendirRecursive('jango/');
   expect(result).toMatchInlineSnapshot(`
-    Array [
+    [
       "jango/bye",
     ]
   `);
@@ -131,7 +125,7 @@ test('opendirRecursive subdir', async () => {
 
   result = await fs.opendirRecursive('holamagic');
   expect(result).toMatchInlineSnapshot(`
-    Array [
+    [
       "holamagic/bye",
     ]
   `);

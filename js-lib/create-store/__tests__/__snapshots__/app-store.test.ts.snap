@@ -1,24 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`store basic tests destroys 1`] = `
-Object {
-  "_actionSerializers": Object {},
+{
+  "_actionSerializers": {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
   "_destroyed": true,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
-  "_infiniteErrors": Object {
+  "_infiniteErrors": {
     "count": 0,
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
   "_onError": undefined,
   "_scheduler": undefined,
-  "_sideEffects": Array [],
+  "_sideEffects": [],
   "_state": AppState {
     "config": AppStateConfig {
-      "fields": Array [
+      "fields": [
         FieldDesc {
           "apply": [Function],
           "init": [Function],
@@ -31,15 +31,15 @@ Object {
         },
       ],
       "opts": undefined,
-      "slices": Array [
+      "slices": [
         Slice {
           "key": "one$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "one$",
               "name": "one",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
@@ -47,27 +47,27 @@ Object {
         },
         Slice {
           "key": "two$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "two$",
               "name": "two",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
           },
         },
       ],
-      "slicesByKey": Object {
+      "slicesByKey": {
         "one$": Slice {
           "key": "one$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "one$",
               "name": "one",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
@@ -75,12 +75,12 @@ Object {
         },
         "two$": Slice {
           "key": "two$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "two$",
               "name": "two",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
@@ -88,7 +88,7 @@ Object {
         },
       },
     },
-    "slicesCurrentState": Object {
+    "slicesCurrentState": {
       "one$": 1,
       "two$": 2,
     },
@@ -100,24 +100,24 @@ Object {
 `;
 
 exports[`store basic tests sets up properly 1`] = `
-Object {
-  "_actionSerializers": Object {},
+{
+  "_actionSerializers": {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
   "_destroyed": false,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
-  "_infiniteErrors": Object {
+  "_infiniteErrors": {
     "count": 0,
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
   "_onError": undefined,
   "_scheduler": undefined,
-  "_sideEffects": Array [],
+  "_sideEffects": [],
   "_state": AppState {
     "config": AppStateConfig {
-      "fields": Array [
+      "fields": [
         FieldDesc {
           "apply": [Function],
           "init": [Function],
@@ -130,15 +130,15 @@ Object {
         },
       ],
       "opts": undefined,
-      "slices": Array [
+      "slices": [
         Slice {
           "key": "one$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "one$",
               "name": "one",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
@@ -146,27 +146,27 @@ Object {
         },
         Slice {
           "key": "two$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "two$",
               "name": "two",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
           },
         },
       ],
-      "slicesByKey": Object {
+      "slicesByKey": {
         "one$": Slice {
           "key": "one$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "one$",
               "name": "one",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
@@ -174,12 +174,12 @@ Object {
         },
         "two$": Slice {
           "key": "two$",
-          "spec": Object {
+          "spec": {
             "key": SliceKey {
               "key": "two$",
               "name": "two",
             },
-            "state": Object {
+            "state": {
               "apply": [Function],
               "init": [Function],
             },
@@ -187,7 +187,7 @@ Object {
         },
       },
     },
-    "slicesCurrentState": Object {
+    "slicesCurrentState": {
       "one$": 1,
       "two$": 2,
     },
@@ -199,44 +199,44 @@ Object {
 `;
 
 exports[`store deferred side effects does not call deferred update when scheduler is not provided 1`] = `
-Object {
-  "_actionSerializers": Object {},
+{
+  "_actionSerializers": {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
   "_destroyed": false,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
-  "_infiniteErrors": Object {
+  "_infiniteErrors": {
     "count": 0,
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
   "_onError": undefined,
   "_scheduler": [Function],
-  "_sideEffects": Array [
-    Object {
-      "effect": Object {
+  "_sideEffects": [
+    {
+      "effect": {
         "deferredUpdate": [MockFunction],
       },
       "initialState": AppState {
         "config": AppStateConfig {
-          "fields": Array [],
+          "fields": [],
           "opts": undefined,
-          "slices": Array [
+          "slices": [
             Slice {
               "key": "slice$2",
-              "spec": Object {
+              "spec": {
                 "sideEffect": [MockFunction] {
-                  "calls": Array [
-                    Array [
+                  "calls": [
+                    [
                       [Circular],
                       undefined,
                     ],
                   ],
-                  "results": Array [
-                    Object {
+                  "results": [
+                    {
                       "type": "return",
-                      "value": Object {
+                      "value": {
                         "deferredUpdate": [MockFunction],
                       },
                     },
@@ -245,21 +245,21 @@ Object {
               },
             },
           ],
-          "slicesByKey": Object {
+          "slicesByKey": {
             "slice$2": Slice {
               "key": "slice$2",
-              "spec": Object {
+              "spec": {
                 "sideEffect": [MockFunction] {
-                  "calls": Array [
-                    Array [
+                  "calls": [
+                    [
                       [Circular],
                       undefined,
                     ],
                   ],
-                  "results": Array [
-                    Object {
+                  "results": [
+                    {
                       "type": "return",
-                      "value": Object {
+                      "value": {
                         "deferredUpdate": [MockFunction],
                       },
                     },
@@ -269,30 +269,30 @@ Object {
             },
           },
         },
-        "slicesCurrentState": Object {},
+        "slicesCurrentState": {},
       },
       "key": "slice$2",
     },
   ],
   "_state": AppState {
     "config": AppStateConfig {
-      "fields": Array [],
+      "fields": [],
       "opts": undefined,
-      "slices": Array [
+      "slices": [
         Slice {
           "key": "slice$2",
-          "spec": Object {
+          "spec": {
             "sideEffect": [MockFunction] {
-              "calls": Array [
-                Array [
+              "calls": [
+                [
                   [Circular],
                   undefined,
                 ],
               ],
-              "results": Array [
-                Object {
+              "results": [
+                {
                   "type": "return",
-                  "value": Object {
+                  "value": {
                     "deferredUpdate": [MockFunction],
                   },
                 },
@@ -301,21 +301,21 @@ Object {
           },
         },
       ],
-      "slicesByKey": Object {
+      "slicesByKey": {
         "slice$2": Slice {
           "key": "slice$2",
-          "spec": Object {
+          "spec": {
             "sideEffect": [MockFunction] {
-              "calls": Array [
-                Array [
+              "calls": [
+                [
                   [Circular],
                   undefined,
                 ],
               ],
-              "results": Array [
-                Object {
+              "results": [
+                {
                   "type": "return",
-                  "value": Object {
+                  "value": {
                     "deferredUpdate": [MockFunction],
                   },
                 },
@@ -325,7 +325,7 @@ Object {
         },
       },
     },
-    "slicesCurrentState": Object {},
+    "slicesCurrentState": {},
   },
   "dispatch": [Function],
   "errorHandler": [Function],
@@ -334,29 +334,29 @@ Object {
 `;
 
 exports[`store empty store 1`] = `
-Object {
-  "_actionSerializers": Object {},
+{
+  "_actionSerializers": {},
   "_currentRunId": 0,
   "_destroyController": Any<AbortController>,
   "_destroyed": false,
   "_disableSideEffects": false,
   "_dispatchAction": [Function],
-  "_infiniteErrors": Object {
+  "_infiniteErrors": {
     "count": 0,
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
   "_onError": undefined,
   "_scheduler": undefined,
-  "_sideEffects": Array [],
+  "_sideEffects": [],
   "_state": AppState {
     "config": AppStateConfig {
-      "fields": Array [],
+      "fields": [],
       "opts": undefined,
-      "slices": Array [],
-      "slicesByKey": Object {},
+      "slices": [],
+      "slicesByKey": {},
     },
-    "slicesCurrentState": Object {},
+    "slicesCurrentState": {},
   },
   "dispatch": [Function],
   "errorHandler": [Function],

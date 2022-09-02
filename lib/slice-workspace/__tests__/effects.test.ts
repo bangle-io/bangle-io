@@ -448,22 +448,22 @@ describe('workspaceErrorHandler', () => {
         { id: expect.any(String) },
       ],
       `
-      Array [
-        Object {
+      [
+        {
           "id": Any<String>,
           "name": "action::@bangle.io/slice-workspace:refresh-ws-paths",
         },
-        Object {
+        {
           "id": Any<String>,
           "name": "action::@bangle.io/slice-workspace:set-error",
-          "value": Object {
+          "value": {
             "error": [BaseError: oops everything went wrong],
           },
         },
-        Object {
+        {
           "id": Any<String>,
           "name": "action::@bangle.io/slice-workspace:set-error",
-          "value": Object {
+          "value": {
             "error": undefined,
           },
         },

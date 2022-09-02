@@ -3,35 +3,35 @@
 exports[`AppState with a slice 1`] = `
 AppState {
   "config": AppStateConfig {
-    "fields": Array [
+    "fields": [
       FieldDesc {
         "init": [Function],
         "name": "slice$",
       },
     ],
     "opts": undefined,
-    "slices": Array [
+    "slices": [
       Slice {
         "key": "slice$",
-        "spec": Object {
-          "state": Object {
+        "spec": {
+          "state": {
             "init": [Function],
           },
         },
       },
     ],
-    "slicesByKey": Object {
+    "slicesByKey": {
       "slice$": Slice {
         "key": "slice$",
-        "spec": Object {
-          "state": Object {
+        "spec": {
+          "state": {
             "init": [Function],
           },
         },
       },
     },
   },
-  "slicesCurrentState": Object {
+  "slicesCurrentState": {
     "slice$": null,
   },
 }
@@ -40,7 +40,7 @@ AppState {
 exports[`AppState with multiple slices 1`] = `
 AppState {
   "config": AppStateConfig {
-    "fields": Array [
+    "fields": [
       FieldDesc {
         "init": [Function],
         "name": "one$5",
@@ -51,60 +51,60 @@ AppState {
       },
     ],
     "opts": undefined,
-    "slices": Array [
+    "slices": [
       Slice {
         "key": "one$5",
-        "spec": Object {
+        "spec": {
           "key": SliceKey {
             "key": "one$5",
             "name": "one",
           },
-          "state": Object {
+          "state": {
             "init": [Function],
           },
         },
       },
       Slice {
         "key": "two$",
-        "spec": Object {
+        "spec": {
           "key": SliceKey {
             "key": "two$",
             "name": "two",
           },
-          "state": Object {
+          "state": {
             "init": [Function],
           },
         },
       },
     ],
-    "slicesByKey": Object {
+    "slicesByKey": {
       "one$5": Slice {
         "key": "one$5",
-        "spec": Object {
+        "spec": {
           "key": SliceKey {
             "key": "one$5",
             "name": "one",
           },
-          "state": Object {
+          "state": {
             "init": [Function],
           },
         },
       },
       "two$": Slice {
         "key": "two$",
-        "spec": Object {
+        "spec": {
           "key": SliceKey {
             "key": "two$",
             "name": "two",
           },
-          "state": Object {
+          "state": {
             "init": [Function],
           },
         },
       },
     },
   },
-  "slicesCurrentState": Object {
+  "slicesCurrentState": {
     "one$5": 1,
     "two$": 2,
   },

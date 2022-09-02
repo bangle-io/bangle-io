@@ -209,12 +209,12 @@ describe('operation handlers', () => {
     expect(operationMatch).toBeCalledTimes(1);
 
     expect(operationsReceived).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "name": "operation::bangle-io-core:show-search-sidebar",
           "value": undefined,
         },
-        Object {
+        {
           "name": "operation::bangle-io-core:show-search-sidebar2",
           "value": undefined,
         },

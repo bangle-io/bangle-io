@@ -295,13 +295,13 @@ describe('effects', () => {
         (
           await getNote(item1.wsPath)(store.state, store.dispatch, store)
         )?.toString(),
-      ).toMatchInlineSnapshot(`"doc(paragraph(\\"hi I am dummy modified\\"))"`);
+      ).toMatchInlineSnapshot(`"doc(paragraph("hi I am dummy modified"))"`);
 
       expect(
         (
           await getNote(item2.wsPath)(store.state, store.dispatch, store)
         )?.toString(),
-      ).toMatchInlineSnapshot(`"doc(paragraph(\\"test-1 hey modified\\"))"`);
+      ).toMatchInlineSnapshot(`"doc(paragraph("test-1 hey modified"))"`);
     });
   });
 

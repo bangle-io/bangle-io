@@ -295,12 +295,12 @@ describe('store', () => {
       expect(sideEffect1Update).nthCalledWith(1, store, prevState, 100, 1);
 
       expect(sideEffect2Value).toMatchInlineSnapshot(`
-        Object {
-          "curValue": Object {
+        {
+          "curValue": {
             "key1": 100,
             "key2": 2,
           },
-          "prevValue": Object {
+          "prevValue": {
             "key1": 1,
             "key2": 2,
           },

@@ -10,13 +10,13 @@ test('sets up', () => {
   const { store } = createStore();
 
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
-    Object {
+    {
       "blockReload": false,
-      "lifeCycleState": Object {
+      "lifeCycleState": {
         "current": undefined,
         "previous": undefined,
       },
-      "location": Object {
+      "location": {
         "pathname": undefined,
         "search": undefined,
       },

@@ -100,7 +100,7 @@ describe('BacklinkNode', () => {
 
     expect(await screen.findAllByTestId('inline-backlink-button'))
       .toMatchInlineSnapshot(`
-      Array [
+      [
         <button
           aria-label="hi"
           class="B-inline-backlink_backlink "
@@ -138,7 +138,7 @@ describe('BacklinkNode', () => {
 
     expect(await screen.findAllByTestId('inline-backlink-button'))
       .toMatchInlineSnapshot(`
-      Array [
+      [
         <button
           aria-label="monako"
           class="B-inline-backlink_backlink "

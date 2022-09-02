@@ -31,7 +31,7 @@ test('sets up', async () => {
   });
 
   expect(store.state.config.fields.map((r) => r.name)).toMatchInlineSnapshot(`
-    Array [
+    [
       "sync-with-window-stateSyncKey$",
       "store-sync$",
       "page-slice$",
