@@ -45,7 +45,7 @@ describe('Plain text search', () => {
       },
     );
 
-    expect(result).toMatchInlineSnapshot(`Array []`);
+    expect(result).toMatchInlineSnapshot(`[]`);
   });
   test('works with empty data', async () => {
     const doc = makeDoc(
@@ -65,7 +65,7 @@ describe('Plain text search', () => {
       cb,
     );
 
-    expect(result).toMatchInlineSnapshot(`Array []`);
+    expect(result).toMatchInlineSnapshot(`[]`);
     expect(cb).toBeCalledTimes(1);
   });
 
@@ -216,23 +216,23 @@ describe('Plain text search', () => {
           },
         ]),
       ).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "matches": Array [
-            Object {
-              "match": Array [
-                "i am a ",
-                "para",
-                "graph",
-              ],
-              "parent": "paragraph",
-              "parentPos": 0,
-            },
-          ],
-          "uid": "1.md",
-        },
-      ]
-    `);
+        [
+          {
+            "matches": [
+              {
+                "match": [
+                  "i am a ",
+                  "para",
+                  "graph",
+                ],
+                "parent": "paragraph",
+                "parentPos": 0,
+              },
+            ],
+            "uid": "1.md",
+          },
+        ]
+      `);
     });
 
     test('no match', async () => {
@@ -247,11 +247,11 @@ describe('Plain text search', () => {
             ),
           },
         ]),
-      ).toMatchInlineSnapshot(`Array []`);
+      ).toMatchInlineSnapshot(`[]`);
     });
 
     test('works if no files', async () => {
-      expect(await getResult('what', [])).toMatchInlineSnapshot(`Array []`);
+      expect(await getResult('what', [])).toMatchInlineSnapshot(`[]`);
     });
 
     test('works if file has no data', async () => {
@@ -266,7 +266,7 @@ describe('Plain text search', () => {
             ),
           },
         ]),
-      ).toMatchInlineSnapshot(`Array []`);
+      ).toMatchInlineSnapshot(`[]`);
     });
 
     test('multiple matches in a single file', async () => {
@@ -289,41 +289,41 @@ describe('Plain text search', () => {
           },
         ]),
       ).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "matches": Array [
-            Object {
-              "match": Array [
-                "",
-                "what",
-                " is what in real life?",
-              ],
-              "parent": "listItem",
-              "parentPos": 2,
-            },
-            Object {
-              "match": Array [
-                "what is ",
-                "what",
-                " in real life?",
-              ],
-              "parent": "listItem",
-              "parentPos": 2,
-            },
-            Object {
-              "match": Array [
-                "",
-                "what",
-                " do you think about that question",
-              ],
-              "parent": "blockquote",
-              "parentPos": 33,
-            },
-          ],
-          "uid": "1.md",
-        },
-      ]
-    `);
+        [
+          {
+            "matches": [
+              {
+                "match": [
+                  "",
+                  "what",
+                  " is what in real life?",
+                ],
+                "parent": "listItem",
+                "parentPos": 2,
+              },
+              {
+                "match": [
+                  "what is ",
+                  "what",
+                  " in real life?",
+                ],
+                "parent": "listItem",
+                "parentPos": 2,
+              },
+              {
+                "match": [
+                  "",
+                  "what",
+                  " do you think about that question",
+                ],
+                "parent": "blockquote",
+                "parentPos": 33,
+              },
+            ],
+            "uid": "1.md",
+          },
+        ]
+      `);
     });
 
     test('multiple files where some files have no match', async () => {
@@ -337,6 +337,7 @@ describe('Plain text search', () => {
               </doc>,
             ),
           },
+
           {
             name: '2.md',
             node: makeDoc(
@@ -345,6 +346,7 @@ describe('Plain text search', () => {
               </doc>,
             ),
           },
+
           {
             name: '3.md',
             node: makeDoc(
@@ -355,37 +357,37 @@ describe('Plain text search', () => {
           },
         ]),
       ).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "matches": Array [
-            Object {
-              "match": Array [
-                "bounty ",
-                "hunter",
-                "",
-              ],
-              "parent": "paragraph",
-              "parentPos": 0,
-            },
-          ],
-          "uid": "1.md",
-        },
-        Object {
-          "matches": Array [
-            Object {
-              "match": Array [
-                "booty ",
-                "hunter",
-                "",
-              ],
-              "parent": "paragraph",
-              "parentPos": 0,
-            },
-          ],
-          "uid": "3.md",
-        },
-      ]
-    `);
+        [
+          {
+            "matches": [
+              {
+                "match": [
+                  "bounty ",
+                  "hunter",
+                  "",
+                ],
+                "parent": "paragraph",
+                "parentPos": 0,
+              },
+            ],
+            "uid": "1.md",
+          },
+          {
+            "matches": [
+              {
+                "match": [
+                  "booty ",
+                  "hunter",
+                  "",
+                ],
+                "parent": "paragraph",
+                "parentPos": 0,
+              },
+            ],
+            "uid": "3.md",
+          },
+        ]
+      `);
     });
   });
 });
@@ -394,13 +396,13 @@ describe('matchText', () => {
   test('1 works', () => {
     expect(matchText('test', 'hello test world test match', 20))
       .toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "hello ",
           "test",
           " world test match",
         ],
-        Array [
+        [
           "hello test world ",
           "test",
           " match",
@@ -412,13 +414,13 @@ describe('matchText', () => {
   test('2 works', () => {
     expect(matchText('test', 'hello test world test match', 8))
       .toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "hello ",
           "test",
           " world…",
         ],
-        Array [
+        [
           "…world ",
           "test",
           " match",
@@ -429,8 +431,8 @@ describe('matchText', () => {
 
   test('3 works', () => {
     expect(matchText('test', 'test', 8)).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "",
           "test",
           "",
@@ -443,8 +445,8 @@ describe('matchText', () => {
     expect(
       matchText('te/st', 'what is test but tes/st and te/st in this life', 8),
     ).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "…and ",
           "te/st",
           " in…",
@@ -461,13 +463,13 @@ describe('matchText', () => {
         8,
       ),
     ).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "…areally",
           "long",
           "wordbefo…",
         ],
-        Array [
+        [
           "…",
           "long",
           "…",
@@ -527,7 +529,7 @@ describe('getMatchFragment', () => {
   test('1: end ellipsis', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 3, 6, 9)).toMatchInlineSnapshot(`
-      Array [
+      [
         "my ",
         "big",
         " banana…",
@@ -538,7 +540,7 @@ describe('getMatchFragment', () => {
   test('2: end ellipsis', () => {
     const str = 'something holy what nonsense will this succeed?';
     expect(getMatchFragment(str, 9, 14, 9)).toMatchInlineSnapshot(`
-      Array [
+      [
         "something",
         " holy",
         " what…",
@@ -549,7 +551,7 @@ describe('getMatchFragment', () => {
   test('no end ellipsis if maxChars is bigger than text', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 3, 6, 40)).toMatchInlineSnapshot(`
-      Array [
+      [
         "my ",
         "big",
         " banana is good",
@@ -560,7 +562,7 @@ describe('getMatchFragment', () => {
   test('1: start ellipsis', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 14, 17, 9)).toMatchInlineSnapshot(`
-      Array [
+      [
         "…banana ",
         "is ",
         "good",
@@ -571,7 +573,7 @@ describe('getMatchFragment', () => {
   test('1: no start ellipsis if big', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 14, 17, 39)).toMatchInlineSnapshot(`
-      Array [
+      [
         "my big banana ",
         "is ",
         "good",
@@ -582,7 +584,7 @@ describe('getMatchFragment', () => {
   test('works if match is at start', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 0, 2, 39)).toMatchInlineSnapshot(`
-      Array [
+      [
         "",
         "my",
         " big banana is good",
@@ -593,7 +595,7 @@ describe('getMatchFragment', () => {
   test('2: works if match is at start', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 0, 2, 8)).toMatchInlineSnapshot(`
-      Array [
+      [
         "",
         "my",
         " big…",

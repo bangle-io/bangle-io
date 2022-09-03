@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`sample data 1`] = `
-Object {
+{
   "dirSet": Set {
     "archive/idly/src/utils",
     "archive/idly/src",
@@ -15,7 +15,7 @@ Object {
     "packages/idly-worker/src",
     "packages/idly-worker",
   },
-  "filesAndDirList": Array [
+  "filesAndDirList": [
     "archive",
     "archive/idly",
     "archive/idly/src",
@@ -40,7 +40,7 @@ Object {
 `;
 
 exports[`sample data 2 1`] = `
-Object {
+{
   "dirSet": Set {
     "jojo",
     "micheal/daddy/loves",
@@ -53,7 +53,7 @@ Object {
     "Users/kushanjoshi",
     "Users",
   },
-  "filesAndDirList": Array [
+  "filesAndDirList": [
     "jojo",
     "jojo/kajrare.md",
     "jojo/mankey.md",
@@ -104,11 +104,11 @@ Object {
 `;
 
 exports[`sample data 3 1`] = `
-Object {
+{
   "dirSet": Set {
     "10000 markdown files",
   },
-  "filesAndDirList": Array [
+  "filesAndDirList": [
     "10000 markdown files",
     "10000 markdown files/a cappella magnetic recorder.md",
     "10000 markdown files/a cappella surgical gown.md",
@@ -10115,12 +10115,12 @@ Object {
 `;
 
 exports[`sample data 4 1`] = `
-Object {
+{
   "dirSet": Set {
     "journal",
     "pages",
   },
-  "filesAndDirList": Array [
+  "filesAndDirList": [
     "journal",
     "journal/2020-04-03.md",
     "journal/2020-04-05.md",
@@ -13450,7 +13450,7 @@ Object {
 `;
 
 exports[`sample data 5 1`] = `
-Object {
+{
   "dirSet": Set {
     "bangle/tinacms/packages/react-tinacms-github",
     "bangle/tinacms/packages",
@@ -13713,7 +13713,7 @@ Object {
     "test/yxxsg/Users/boo",
     "test/yxxsg/Users",
   },
-  "filesAndDirList": Array [
+  "filesAndDirList": [
     "bangle",
     "bangle/tinacms",
     "bangle/tinacms/packages",
@@ -16792,12 +16792,12 @@ Object {
 `;
 
 exports[`sample data 6 1`] = `
-Object {
+{
   "dirSet": Set {
     "journal",
     "pages",
   },
-  "filesAndDirList": Array [
+  "filesAndDirList": [
     "journal",
     "journal/2020-04-03.md",
     "journal/2020-04-05.md",

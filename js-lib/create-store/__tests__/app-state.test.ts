@@ -9,12 +9,12 @@ describe('AppState', () => {
     expect(appState).toMatchInlineSnapshot(`
       AppState {
         "config": AppStateConfig {
-          "fields": Array [],
+          "fields": [],
           "opts": undefined,
-          "slices": Array [],
-          "slicesByKey": Object {},
+          "slices": [],
+          "slicesByKey": {},
         },
-        "slicesCurrentState": Object {},
+        "slicesCurrentState": {},
       }
     `);
   });
@@ -348,7 +348,7 @@ describe('AppState', () => {
       const sliceFields = { myslice1: slice1, myslice2: slice2 };
       const json = state.stateToJSON({ sliceFields: sliceFields });
       expect(json).toMatchInlineSnapshot(`
-        Object {
+        {
           "myslice1": 3,
         }
       `);
@@ -380,7 +380,7 @@ describe('AppState', () => {
 
       const sliceFields = {};
       const json = state.stateToJSON({ sliceFields: sliceFields });
-      expect(json).toMatchInlineSnapshot(`Object {}`);
+      expect(json).toMatchInlineSnapshot(`{}`);
 
       const parsedState = AppState.stateFromJSON({
         slices: [slice1],

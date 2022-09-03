@@ -267,10 +267,10 @@ describe('pull changes', () => {
       // app should make a network request and get this new note
       expect(
         await getNoteAsString(wsName + ':test-1.md'),
-      ).toMatchInlineSnapshot(`"doc(paragraph(\\"I am test-1\\"))"`);
+      ).toMatchInlineSnapshot(`"doc(paragraph("I am test-1"))"`);
       expect(
         await getNoteAsString(wsName + ':test-2.md'),
-      ).toMatchInlineSnapshot(`"doc(paragraph(\\"I am test-2\\"))"`);
+      ).toMatchInlineSnapshot(`"doc(paragraph("I am test-2"))"`);
 
       // // Make a direct remote change: delete test-1 and modify the other
       await github.pushChanges({
@@ -300,9 +300,7 @@ describe('pull changes', () => {
       expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
       expect(
         await getNoteAsString(wsName + ':test-2.md'),
-      ).toMatchInlineSnapshot(
-        `"doc(paragraph(\\"I am test-2 but modified\\"))"`,
-      );
+      ).toMatchInlineSnapshot(`"doc(paragraph("I am test-2 but modified"))"`);
 
       workspace.refreshWsPaths()(store.state, store.dispatch);
 

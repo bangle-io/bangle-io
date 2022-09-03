@@ -187,8 +187,8 @@ test('works', async () => {
     },
   });
   expect(slice.getSliceState(store.state)).toMatchInlineSnapshot(`
-    Object {
-      "pendingActions": Array [],
+    {
+      "pendingActions": [],
       "portReady": true,
       "startSync": true,
     }
@@ -530,7 +530,7 @@ describe('transferring values', () => {
         },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"transfer value with key \\"kitty\\" must not be undefined"`,
+      `"transfer value with key "kitty" must not be undefined"`,
     );
   });
 

@@ -54,7 +54,7 @@ test('returns wsPaths correctly', async () => {
       .getSliceStateAsserted(store.state)
       .openedWsPaths.toArray(),
   ).toMatchInlineSnapshot(`
-    Array [
+    [
       "test-ws:note1.md",
       null,
       null,

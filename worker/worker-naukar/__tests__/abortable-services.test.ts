@@ -52,11 +52,11 @@ describe('searchWsForPmNode', () => {
     );
 
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "matches": Array [
-            Object {
-              "match": Array [
+      [
+        {
+          "matches": [
+            {
+              "match": [
                 "hello world
       wow ",
                 "magic",
@@ -100,8 +100,8 @@ describe('abortableFzfSearchNoteWsPaths', () => {
       'my-file',
     );
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "end": 7,
           "item": "test-ws:my-file.md",
           "positions": Set {

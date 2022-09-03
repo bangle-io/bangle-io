@@ -308,12 +308,12 @@ describe('setting selectionJson', () => {
         pmNode,
       )(store.state),
     ).toMatchInlineSnapshot(`
-        Object {
-          "anchor": 1,
-          "head": 1,
-          "type": "text",
-        }
-      `);
+      {
+        "anchor": 1,
+        "head": 1,
+        "type": "text",
+      }
+    `);
 
     expect(
       getInitialSelection(
@@ -546,9 +546,9 @@ describe('serializing state', () => {
 
     expect(json.editorManagerSlice.data.editorConfig.selections)
       .toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "test:first.md": Object {
+      [
+        {
+          "test:first.md": {
             "anchor": 7,
             "head": 7,
             "type": "text",

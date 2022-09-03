@@ -100,7 +100,7 @@ describe('watchPageLifeCycleEffect', () => {
       },
     });
 
-    store.destroy();
+    store?.destroy();
 
     expect(lifeCycleMock.removeEventListener).toBeCalledTimes(1);
 

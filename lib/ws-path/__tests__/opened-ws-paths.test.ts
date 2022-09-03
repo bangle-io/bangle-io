@@ -123,7 +123,7 @@ describe('OpenedWsPaths', () => {
   test('createFromArray', () => {
     expect(OpenedWsPaths.createFromArray([])).toMatchInlineSnapshot(`
       OpenedWsPaths {
-        "_wsPaths": Array [
+        "_wsPaths": [
           undefined,
           undefined,
           undefined,
@@ -135,7 +135,7 @@ describe('OpenedWsPaths', () => {
     expect(OpenedWsPaths.createFromArray(['hello:one.md']))
       .toMatchInlineSnapshot(`
       OpenedWsPaths {
-        "_wsPaths": Array [
+        "_wsPaths": [
           "hello:one.md",
           undefined,
           undefined,

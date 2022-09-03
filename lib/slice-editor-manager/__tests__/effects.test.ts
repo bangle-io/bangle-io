@@ -481,7 +481,7 @@ describe('watchEditorScrollEffect', () => {
     updateScroll();
 
     expect(getActionsDispatched(dispatchSpy)).toMatchInlineSnapshot(`
-      Array [
+      [
         "action::@bangle.io/slice-editor-manager:set-editor",
         "action::@bangle.io/slice-editor-manager:update-scroll-position",
       ]
@@ -504,7 +504,7 @@ describe('watchEditorScrollEffect', () => {
       },
     ]);
 
-    store.destroy();
+    store?.destroy();
 
     expect(global.addEventListener).toBeCalledTimes(1);
     expect(global.removeEventListener).toBeCalledTimes(1);

@@ -146,7 +146,7 @@ describe('NewWorkspaceModalFileSystem', () => {
 
     expect(result.getAllByRole('option').map((r) => r.getAttribute('data-key')))
       .toMatchInlineSnapshot(`
-      Array [
+      [
         "file-system",
         "browser",
       ]

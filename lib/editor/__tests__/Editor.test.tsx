@@ -344,16 +344,16 @@ describe('useGetEditorState', () => {
     );
 
     expect(result.current.pmState.toJSON()).toMatchInlineSnapshot(`
-      Object {
-        "doc": Object {
-          "content": Array [
-            Object {
+      {
+        "doc": {
+          "content": [
+            {
               "type": "paragraph",
             },
           ],
           "type": "doc",
         },
-        "selection": Object {
+        "selection": {
           "anchor": 1,
           "head": 1,
           "type": "text",
@@ -391,16 +391,16 @@ describe('useGetEditorState', () => {
     });
 
     expect(result.current.pmState.toJSON()).toMatchInlineSnapshot(`
-      Object {
-        "doc": Object {
-          "content": Array [
-            Object {
-              "attrs": Object {
+      {
+        "doc": {
+          "content": [
+            {
+              "attrs": {
                 "collapseContent": null,
                 "level": 1,
               },
-              "content": Array [
-                Object {
+              "content": [
+                {
                   "text": "Hello World",
                   "type": "text",
                 },
@@ -410,7 +410,7 @@ describe('useGetEditorState', () => {
           ],
           "type": "doc",
         },
-        "selection": Object {
+        "selection": {
           "anchor": 5,
           "head": 5,
           "type": "text",

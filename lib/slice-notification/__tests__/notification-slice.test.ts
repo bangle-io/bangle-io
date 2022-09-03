@@ -6,8 +6,8 @@ test('blank state', () => {
   let state = AppState.create({ slices: [notificationSlice()] });
 
   expect(notificationSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
-    Object {
-      "notifications": Array [],
+    {
+      "notifications": [],
     }
   `);
 });
@@ -29,10 +29,10 @@ test('updating and removing notifications', () => {
   state = state.applyAction(action);
 
   expect(notificationSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
-    Object {
-      "notifications": Array [
-        Object {
-          "buttons": Array [],
+    {
+      "notifications": [
+        {
+          "buttons": [],
           "content": "hello world",
           "severity": "error",
           "title": "hello",
