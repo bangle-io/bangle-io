@@ -44,7 +44,7 @@
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "babel-loader": "^8.2.5",
-    "postcss": "^8.4.12",
+    "postcss": "^8.4.16",
     "storybook-dark-mode": "^1.0.9",
     "webpack": "^5.70.0"
   },

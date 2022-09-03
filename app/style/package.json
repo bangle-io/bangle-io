@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.4",
-    "postcss": "^8.4.12",
-    "tailwindcss": "^3.1.2"
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
   },
   "dependencies": {
     "@bangle.io/constants": "workspace:*",

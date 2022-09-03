@@ -41,7 +41,7 @@
     "fake-indexeddb": "^4.0.0",
     "globby": "^11.0.4",
     "idb-keyval": "^5.1.5",
-    "prettier": "^2.6.0",
+    "prettier": "^2.7.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },
