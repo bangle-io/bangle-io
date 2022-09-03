@@ -2134,7 +2134,6 @@ __metadata:
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     comlink: ^4.3.1
-    prop-types: ^15.8.1
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2303,7 +2302,6 @@ __metadata:
     "@testing-library/user-event": ^13.5.0
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    prop-types: ^15.8.1
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3537,7 +3535,6 @@ __metadata:
     "@testing-library/user-event": ^13.5.0
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    prop-types: ^15.8.1
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5

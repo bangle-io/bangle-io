@@ -4569,7 +4569,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.17"],\
             ["@types/vite", null],\
             ["comlink", "npm:4.3.1"],\
-            ["prop-types", "npm:15.8.1"],\
             ["prosemirror-dev-tools", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
@@ -4642,7 +4641,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.49"],\
             ["@types/react-dom", "npm:17.0.17"],\
             ["comlink", "npm:4.3.1"],\
-            ["prop-types", "npm:15.8.1"],\
             ["prosemirror-dev-tools", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
@@ -4829,7 +4827,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/user-event", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:13.5.0"],\
             ["@types/react", "npm:17.0.49"],\
             ["@types/react-dom", "npm:17.0.17"],\
-            ["prop-types", "npm:15.8.1"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
             ["tslib", "npm:2.4.0"],\
@@ -6308,7 +6305,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/user-event", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:13.5.0"],\
             ["@types/react", "npm:17.0.49"],\
             ["@types/react-dom", "npm:17.0.17"],\
-            ["prop-types", "npm:15.8.1"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
             ["react-popper", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:2.2.5"],\
