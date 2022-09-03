@@ -474,7 +474,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.7"],\
             ["date-fns", "npm:2.28.0"],\
             ["ejs", "npm:3.1.6"],\
-            ["esbuild-linux-64", "npm:0.14.43"],\
+            ["esbuild-linux-64", "npm:0.14.54"],\
             ["eslint", "npm:8.17.0"],\
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.1"],\
             ["eslint-import-resolver-node", "npm:0.3.6"],\
@@ -15579,7 +15579,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.7"],\
             ["date-fns", "npm:2.28.0"],\
             ["ejs", "npm:3.1.6"],\
-            ["esbuild-linux-64", "npm:0.14.43"],\
+            ["esbuild-linux-64", "npm:0.14.54"],\
             ["eslint", "npm:8.17.0"],\
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.1"],\
             ["eslint-import-resolver-node", "npm:0.3.6"],\
@@ -19178,13 +19178,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["esbuild-linux-64", [\
-        ["npm:0.14.43", {\
-          "packageLocation": "./.yarn/unplugged/esbuild-linux-64-npm-0.14.43-63f3fe1bd0/node_modules/esbuild-linux-64/",\
-          "packageDependencies": [\
-            ["esbuild-linux-64", "npm:0.14.43"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:0.14.54", {\
           "packageLocation": "./.yarn/unplugged/esbuild-linux-64-npm-0.14.54-2cb8070ade/node_modules/esbuild-linux-64/",\
           "packageDependencies": [\
