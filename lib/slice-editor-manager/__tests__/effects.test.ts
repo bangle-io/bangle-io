@@ -504,7 +504,7 @@ describe('watchEditorScrollEffect', () => {
       },
     ]);
 
-    store.destroy();
+    store?.destroy();
 
     expect(global.addEventListener).toBeCalledTimes(1);
     expect(global.removeEventListener).toBeCalledTimes(1);

@@ -135,7 +135,7 @@ describe('store', () => {
     });
 
     test('destroys', () => {
-      store.destroy();
+      store?.destroy();
       expect(store.destroyed).toBe(true);
       expect(store as any).toMatchSnapshot({
         _destroyController: expect.any(AbortController),
@@ -149,7 +149,7 @@ describe('store', () => {
     test('after destroying prevent updates', () => {
       store.dispatch({ name: 'for-a', value: { n: 99 } });
       expect(key1.getSliceState(store.state)).toBe(99);
-      store.destroy();
+      store?.destroy();
       store.dispatch({ name: 'for-a', value: { n: 100 } });
       expect(key1.getSliceState(store.state)).toBe(99);
 
@@ -226,7 +226,7 @@ describe('store', () => {
       expect(key1.getSliceState(originalState)).toBe(1);
       expect(key1.getSliceState(store.state)).toBe(100);
 
-      store.destroy();
+      store?.destroy();
       expect(destroy).toBeCalledTimes(1);
     });
 
@@ -484,7 +484,7 @@ describe('store', () => {
       expect(update1).nthCalledWith(1, store, originalState, 77, 2);
       expect(update2).nthCalledWith(1, store, originalState, 77, 2);
 
-      store.destroy();
+      store?.destroy();
       expect(destroy2).toBeCalledTimes(1);
       expect(destroy1).toBeCalledTimes(1);
     });
@@ -930,7 +930,7 @@ describe('store', () => {
       });
 
       store.dispatch({ name: 'something' });
-      store.destroy();
+      store?.destroy();
 
       expect(destroy1).toBeCalledTimes(1);
       expect(destroy2).toBeCalledTimes(1);
@@ -1787,7 +1787,7 @@ describe('store', () => {
 
       expect(key1.getSliceStateAsserted(store.state)).toEqual({ n: 99 });
 
-      store.destroy();
+      store?.destroy();
 
       store.dispatch({ name: 'for-a', value: { n: 19 } });
 

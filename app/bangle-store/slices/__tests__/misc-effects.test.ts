@@ -81,7 +81,7 @@ describe('last seen workspace', () => {
           'test-ws',
           [['test-ws:hello.md', `hello world`]],
         )
-      ).store.destroy();
+      ).store?.destroy();
 
       await sleep(0);
 
@@ -121,14 +121,14 @@ describe('last seen workspace', () => {
           'test-ws-1',
           [['test-ws-1:hello.md', `hello world`]],
         )
-      ).store.destroy();
+      ).store?.destroy();
       (
         await setupMockWorkspaceWithNotes(
           createBasicTestStore({}).store,
           'test-ws-2',
           [['test-ws-2:hello.md', `hello world`]],
         )
-      ).store.destroy();
+      ).store?.destroy();
 
       await sleep(0);
 

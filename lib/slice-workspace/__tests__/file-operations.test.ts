@@ -25,7 +25,7 @@ import { createWorkspace } from '../workspaces-operations';
 let { store } = createBasicTestStore({});
 
 beforeEach(() => {
-  store.destroy();
+  store?.destroy();
   ({ store } = createBasicTestStore({}));
 });
 
@@ -260,7 +260,7 @@ describe('createNote', () => {
     });
   });
   afterEach(() => {
-    store.destroy();
+    store?.destroy();
   });
 
   test('creates note', async () => {
@@ -316,7 +316,7 @@ describe('createNote', () => {
       ),
     ).toBe(false);
 
-    store.destroy();
+    store?.destroy();
   });
 
   test('when open is false', async () => {
@@ -354,7 +354,7 @@ describe('deleteNote', () => {
   });
 
   afterEach(() => {
-    store.destroy();
+    store?.destroy();
   });
 
   test('deletes when the file is opened', async () => {
@@ -456,7 +456,7 @@ describe('checkFileExists', () => {
   });
 
   afterEach(() => {
-    store.destroy();
+    store?.destroy();
   });
 
   test('works', async () => {

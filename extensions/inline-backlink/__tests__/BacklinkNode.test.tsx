@@ -553,10 +553,12 @@ describe('clicking node', () => {
     await clickSetup(screen.getByText(/note2/i));
     await act(() => sleep(0));
 
-    expect(
-      workspaceSliceKey
-        .getSliceState(store.state)
-        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
-    ).toEqual('test-ws:magic/some/note2.md');
+    await waitForExpect(() => {
+      expect(
+        workspaceSliceKey
+          .getSliceState(store.state)
+          ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
+      ).toEqual('test-ws:magic/some/note2.md');
+    });
   });
 });
