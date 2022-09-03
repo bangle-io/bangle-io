@@ -23,7 +23,7 @@
   },
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "@babel/core": "^7.18.2",
+    "@babel/core": "^7.18.13",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/scripts": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
