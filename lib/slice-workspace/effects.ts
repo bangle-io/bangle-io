@@ -335,7 +335,6 @@ export const workspaceNotFoundCheckEffect = workspaceSliceKey.effect(() => {
   };
 });
 
-// periodically fetches workspace info and also updates it if wsName changes
 export const cachedWorkspaceInfoEffect = workspaceSliceKey.effect(() => {
   return {
     async deferredOnce(store, signal) {
@@ -345,6 +344,7 @@ export const cachedWorkspaceInfoEffect = workspaceSliceKey.effect(() => {
         updateCachedWorkspaceInfo(wsName)(store.state, store.dispatch, store);
       }
 
+      // periodically fetches workspace info, in case it was changed externally
       abortableSetInterval(
         () => {
           const wsName = getWsName()(store.state);
@@ -355,12 +355,16 @@ export const cachedWorkspaceInfoEffect = workspaceSliceKey.effect(() => {
               store.dispatch,
               store,
             );
+          } else {
+            clearCachedWorkspaceInfo()(store.state, store.dispatch);
           }
         },
         signal,
         WORKSPACE_INFO_CACHE_REFRESH_INTERVAL,
       );
     },
+
+    // and also updates it if wsName changes
     async update(store, prevState) {
       const currentWsName = getWsName()(store.state);
       const prevWsName = getWsName()(prevState);

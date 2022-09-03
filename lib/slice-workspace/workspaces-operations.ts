@@ -144,12 +144,17 @@ export function deleteWorkspace(targetWsName: string) {
 
 export function clearCachedWorkspaceInfo() {
   return workspaceSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
-      value: {
-        workspaceInfo: undefined,
-      },
-    });
+    const { cachedWorkspaceInfo } =
+      workspaceSliceKey.getSliceStateAsserted(state);
+
+    if (cachedWorkspaceInfo) {
+      dispatch({
+        name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
+        value: {
+          workspaceInfo: undefined,
+        },
+      });
+    }
   });
 }
 
@@ -157,13 +162,13 @@ export function updateCachedWorkspaceInfo(wsName: string) {
   return workspaceSliceKey.asyncOp(async (_, __, store) => {
     const workspaceInfo = await readWorkspaceInfo(wsName).catch(() => {});
 
-    const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
-      store.state,
-    );
-
     if (!workspaceInfo) {
       return false;
     }
+
+    const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
+      store.state,
+    );
 
     if (
       cachedWorkspaceInfo &&
