@@ -71,103 +71,98 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
     },
     actions: {
       'action::@bangle.io/slice-page:BLOCK_RELOAD': (actionName) => {
-        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
-          return action.value;
-        };
-        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-          return obj;
-        };
-
-        return {
-          toJSON,
-          fromJSON,
-        };
+        return pageSliceKey.actionSerializer(
+          actionName,
+          (action) => {
+            return action.value;
+          },
+          (obj) => {
+            return obj;
+          },
+        );
       },
 
       'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE': (
         actionName,
       ) => {
-        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
-          return action.value;
-        };
-        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-          return obj;
-        };
-
-        return {
-          toJSON,
-          fromJSON,
-        };
+        return pageSliceKey.actionSerializer(
+          actionName,
+          (action) => {
+            return action.value;
+          },
+          (obj) => {
+            return obj;
+          },
+        );
       },
 
       'action::@bangle.io/slice-page:history-update-location': (actionName) => {
-        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
-          return {
-            location: {
-              pathname: action.value.location.pathname ?? null,
-              search: action.value.location.search ?? null,
-            },
-          };
-        };
-        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-          return {
-            location: {
-              pathname: obj.location.pathname ?? undefined,
-              search: obj.location.search ?? undefined,
-            },
-          };
-        };
-
-        return {
-          toJSON,
-          fromJSON,
-        };
+        return pageSliceKey.actionSerializer(
+          actionName,
+          (action) => {
+            return {
+              location: {
+                pathname: action.value.location.pathname ?? null,
+                search: action.value.location.search ?? null,
+              },
+            };
+          },
+          (obj) => {
+            return {
+              location: {
+                pathname: obj.location.pathname ?? undefined,
+                search: obj.location.search ?? undefined,
+              },
+            };
+          },
+        );
       },
 
       'action::@bangle.io/slice-page:history-update-pending-navigation': (
         actionName,
       ) => {
-        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
-          const { pendingNavigation } = action.value;
+        return pageSliceKey.actionSerializer(
+          actionName,
+          (action) => {
+            const { pendingNavigation } = action.value;
 
-          if (!pendingNavigation) {
-            return { pendingNavigation: null };
-          }
+            if (!pendingNavigation) {
+              return { pendingNavigation: null };
+            }
 
-          return {
-            pendingNavigation: {
-              location: {
-                pathname: pendingNavigation.location.pathname ?? null,
-                search: pendingNavigation.location.search ?? null,
+            return {
+              pendingNavigation: {
+                location: {
+                  pathname: pendingNavigation.location.pathname ?? null,
+                  search: pendingNavigation.location.search ?? null,
+                },
+                replaceHistory: pendingNavigation.replaceHistory ?? null,
+                preserve: pendingNavigation.preserve ?? null,
               },
-              replaceHistory: pendingNavigation.replaceHistory ?? null,
-              preserve: pendingNavigation.preserve ?? null,
-            },
-          };
-        };
-        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-          let { pendingNavigation } = obj;
+            };
+          },
+          (obj) => {
+            let { pendingNavigation } = obj;
 
-          if (pendingNavigation == null || pendingNavigation.location == null) {
-            return { pendingNavigation: undefined };
-          }
+            if (
+              pendingNavigation == null ||
+              pendingNavigation.location == null
+            ) {
+              return { pendingNavigation: undefined };
+            }
 
-          return {
-            pendingNavigation: {
-              location: {
-                pathname: pendingNavigation.location.pathname ?? undefined,
-                search: pendingNavigation.location.search ?? undefined,
+            return {
+              pendingNavigation: {
+                location: {
+                  pathname: pendingNavigation.location.pathname ?? undefined,
+                  search: pendingNavigation.location.search ?? undefined,
+                },
+                replaceHistory: pendingNavigation.replaceHistory ?? undefined,
+                preserve: pendingNavigation.preserve ?? undefined,
               },
-              replaceHistory: pendingNavigation.replaceHistory ?? undefined,
-              preserve: pendingNavigation.preserve ?? undefined,
-            },
-          };
-        };
-
-        return {
-          toJSON,
-          fromJSON,
-        };
+            };
+          },
+        );
       },
     },
 
