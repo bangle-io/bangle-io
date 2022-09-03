@@ -31,8 +31,8 @@
     "typescript": "^4.7.3"
   },
   "devDependencies": {
-    "@types/react": "^17.0.43",
-    "@types/react-dom": "^17.0.14"
+    "@types/react": "^17.0.49",
+    "@types/react-dom": "^17.0.17"
   },
   "license": "AGPL-3.0-or-later"
 }

@@ -3181,8 +3181,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3214,8 +3214,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3276,8 +3276,8 @@ __metadata:
     "@sentry/tracing": ^6.18.1
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     comlink: ^4.3.1
     prop-types: ^15.8.1
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
@@ -3313,8 +3313,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3446,8 +3446,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     prop-types: ^15.8.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3487,8 +3487,8 @@ __metadata:
     "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     comlink: ^4.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3528,8 +3528,8 @@ __metadata:
     "@react-aria/ssr": ^3.1.2
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3562,8 +3562,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3580,8 +3580,8 @@ __metadata:
     "@bangle.io/is-abort-error": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3660,8 +3660,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3690,8 +3690,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
@@ -3748,8 +3748,8 @@ __metadata:
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3774,7 +3774,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/fzf-search@workspace:js-lib/fzf-search"
   dependencies:
-    "@types/react": ^17.0.43
+    "@types/react": ^17.0.49
     fzf: ^0.5.1
     react: ^17.0.2
     tslib: ^2.4.0
@@ -3804,8 +3804,8 @@ __metadata:
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3843,8 +3843,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3887,8 +3887,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -3912,8 +3912,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     chrono-node: ^2.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3943,8 +3943,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     emoji-lookup-data: ^1.3.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -3963,8 +3963,8 @@ __metadata:
     "@bangle.dev/tooltip": 0.31.2
     "@bangle.dev/utils": 0.31.2
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4020,8 +4020,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
@@ -4052,8 +4052,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4077,8 +4077,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4115,8 +4115,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4152,8 +4152,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@playwright/test": ^1.24.0
-    "@types/node": 18.0.6
-    "@types/prettier": ^2.4.4
+    "@types/node": 18.7.14
+    "@types/prettier": ^2.7.0
     http-server: ^0.12.3
     prettier: ^2.7.1
     tslib: ^2.4.0
@@ -4182,8 +4182,8 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.2
     "@bangle.dev/tooltip": 0.31.2
     "@bangle.dev/utils": 0.31.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4252,8 +4252,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4351,8 +4351,8 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.11.3
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     reselect: ^4.1.5
@@ -4406,8 +4406,8 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.0
     react: ^17.0.2
     tslib: ^2.4.0
@@ -4425,8 +4425,8 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
@@ -4473,8 +4473,8 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/history": ^4.7.11
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
@@ -4544,8 +4544,8 @@ __metadata:
     "@storybook/react": ^6.4.19
     "@storybook/testing-library": ^0.0.9
     "@storybook/theming": ^6.4.20
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     babel-loader: ^8.2.5
     postcss: ^8.4.16
     react: ^17.0.2
@@ -4595,8 +4595,8 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -4630,8 +4630,8 @@ __metadata:
     "@storybook/react": ^6.4.19
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
@@ -4680,8 +4680,8 @@ __metadata:
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     prop-types: ^15.8.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -4702,8 +4702,8 @@ __metadata:
     "@storybook/react": ^6.4.19
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     autoprefixer: ^10.4.4
     postcss: ^8.4.16
     postcss-import: ^14.1.0
@@ -4734,8 +4734,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     dayjs: ^1.10.7
     debounce-fn: ^5.0.0
     react: ^17.0.2
@@ -4773,8 +4773,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4866,8 +4866,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -4885,8 +4885,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -8610,7 +8610,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^28.1.1":
+"@types/jest@npm:*":
   version: 28.1.1
   resolution: "@types/jest@npm:28.1.1"
   dependencies:
@@ -8637,6 +8637,16 @@ __metadata:
     jest-matcher-utils: ^27.0.0
     pretty-format: ^27.0.0
   checksum: 7e11c6826aa429ad990dc262e4e4b54aa36573287fddf15773e4137f07d11d3105f0dd9f1baff73252160a057df23f5529bb83b1bf83cd3f45f9460a5ca5c22e
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^29.0.0":
+  version: 29.0.0
+  resolution: "@types/jest@npm:29.0.0"
+  dependencies:
+    expect: ^29.0.0
+    pretty-format: ^29.0.0
+  checksum: b20c4b38c7c963862d82c21c0a1ae2b96015afb1511c835da43e8fd53659ca884f8103a2159be2ce74d2888472a1ac93d20d08ec1ac0970385cbb74c46d47585
   languageName: node
   linkType: hard
 
@@ -8748,10 +8758,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:18.0.6":
+"@types/node@npm:*":
   version: 18.0.6
   resolution: "@types/node@npm:18.0.6"
   checksum: 780f8885a6b6eb12f4c0246617747fdc37a451931b3c01ce8148d356c0903b705dcb16cc6a914de63d48b0dc1b002c7a3dfae681f580e1761aa551d3cd996813
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:18.7.14":
+  version: 18.7.14
+  resolution: "@types/node@npm:18.7.14"
+  checksum: 99cf28ff854100158de875cca23c7acc3cc01dfee526a52b90b7f36767c821bcbaf2be0a98a70f06f3b78f3c60639168ff949d725b61e2e124f9f71f1fb8043d
   languageName: node
   linkType: hard
 
@@ -8797,10 +8814,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prettier@npm:^2.0.0, @types/prettier@npm:^2.1.5, @types/prettier@npm:^2.4.4, @types/prettier@npm:^2.6.3":
+"@types/prettier@npm:^2.0.0, @types/prettier@npm:^2.1.5, @types/prettier@npm:^2.6.3":
   version: 2.6.3
   resolution: "@types/prettier@npm:2.6.3"
   checksum: e1836699ca189fff6d2a73dc22e028b6a6f693ed1180d5998ac29fa197caf8f85aa92cb38db642e4a370e616b451cb5722ad2395dab11c78e025a1455f37d1f0
+  languageName: node
+  linkType: hard
+
+"@types/prettier@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@types/prettier@npm:2.7.0"
+  checksum: bf5d0c7c1270909b39399539ac106d20ddaa85fe92eb1d59922dc99159604b4f8d5e41b0045fb29c8011585cf5bca2350b7441ef3d9816c08bd0e10ebd4b31d4
   languageName: node
   linkType: hard
 
@@ -8825,12 +8849,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:*, @types/react-dom@npm:>=16.9.0, @types/react-dom@npm:^17.0.14":
+"@types/react-dom@npm:*, @types/react-dom@npm:>=16.9.0":
   version: 17.0.14
   resolution: "@types/react-dom@npm:17.0.14"
   dependencies:
     "@types/react": "*"
   checksum: b54cd0ef573236b3d87fe7493e6d1c36d8b4ca37a3b46364272a5c91ac178e3296b68ea1aeb299ce68f12ad663c5720ee890d0539b14881c6754bdcbdb0befa0
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^17.0.17":
+  version: 17.0.17
+  resolution: "@types/react-dom@npm:17.0.17"
+  dependencies:
+    "@types/react": ^17
+  checksum: 23caf98aa03e968811560f92a2c8f451694253ebe16b670929b24eaf0e7fa62ba549abe9db0ac028a9d8a9086acd6ab9c6c773f163fa21224845edbc00ba6232
   languageName: node
   linkType: hard
 
@@ -8852,7 +8885,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16.9.0, @types/react@npm:^17.0.43":
+"@types/react@npm:*, @types/react@npm:>=16.9.0":
   version: 17.0.43
   resolution: "@types/react@npm:17.0.43"
   dependencies:
@@ -8860,6 +8893,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 981b0993f5b3ea9d3488b8cc883201e8ae47ba7732929f788f450a79fd72829e658080d5084e67caa008e58d989b0abc1d5f36ff0a1cda09315ea3a3c0c9dc11
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^17, @types/react@npm:^17.0.49":
+  version: 17.0.49
+  resolution: "@types/react@npm:17.0.49"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: e2e8001bb16fdf52dc92dbc2f64c8e49b1c6ab5d5da4725c0f27e3d925939e42b835554fecc306ca6b0951801eb784288b63c924bd703834662bbaccf89cb68a
   languageName: node
   linkType: hard
 
@@ -10912,11 +10956,11 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
-    "@types/jest": ^28.1.1
-    "@types/node": 18.0.6
-    "@types/prettier": ^2.4.4
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/jest": ^29.0.0
+    "@types/node": 18.7.14
+    "@types/prettier": ^2.7.0
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
     "@types/wicg-file-system-access": ^2020.9.5
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
@@ -14776,7 +14820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect@npm:^29.0.2":
+"expect@npm:^29.0.0, expect@npm:^29.0.2":
   version: 29.0.2
   resolution: "expect@npm:29.0.2"
   dependencies:
@@ -21677,7 +21721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^29.0.2":
+"pretty-format@npm:^29.0.0, pretty-format@npm:^29.0.2":
   version: 29.0.2
   resolution: "pretty-format@npm:29.0.2"
   dependencies:
