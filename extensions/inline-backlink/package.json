@@ -27,8 +27,8 @@
     "@testing-library/dom": "^8.11.3",
     "@testing-library/react": "^12.1.3",
     "@testing-library/user-event": "^13.5.0",
-    "@types/react": "^17.0.43",
-    "@types/react-dom": "^17.0.14"
+    "@types/react": "^17.0.49",
+    "@types/react-dom": "^17.0.17"
   },
   "dependencies": {
     "@bangle.dev/all-base-components": "0.31.2",

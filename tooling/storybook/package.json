@@ -23,7 +23,7 @@
   },
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "@babel/core": "^7.18.2",
+    "@babel/core": "^7.18.13",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/scripts": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
@@ -41,10 +41,10 @@
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
     "@storybook/theming": "^6.4.20",
-    "@types/react": "^17.0.43",
-    "@types/react-dom": "^17.0.14",
+    "@types/react": "^17.0.49",
+    "@types/react-dom": "^17.0.17",
     "babel-loader": "^8.2.5",
-    "postcss": "^8.4.12",
+    "postcss": "^8.4.16",
     "storybook-dark-mode": "^1.0.9",
     "webpack": "^5.70.0"
   },
