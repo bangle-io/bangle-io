@@ -7,7 +7,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
-import { assertSignal } from '@bangle.io/utils';
+import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
 
 const allowedFile = (name: string) => {
   return name.endsWith('.md') || name.endsWith('.png');
@@ -104,6 +104,14 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     };
   }
 
+  parseError(errorString: string) {
+    try {
+      return errorParse(JSON.parse(errorString));
+    } catch (error) {
+      return undefined;
+    }
+  }
+
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     if (!(await this.fileExists(wsPath, opts))) {
       return undefined;
@@ -126,6 +134,10 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     await (
       await this._getFs(wsName, opts)
     ).rename(wsPathHelpers.toFSPath(wsPath), wsPathHelpers.toFSPath(newWsPath));
+  }
+
+  serializeError(error: Error) {
+    return JSON.stringify(errorSerialize(error));
   }
 
   async writeFile(

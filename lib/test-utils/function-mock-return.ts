@@ -48,6 +48,7 @@ export const getUseWorkspaceContextReturn: Mutable<
   refreshCounter: 0,
   wsName: 'test-ws',
   wsPaths: [],
+  storageProviderErrors: [],
 };
 
 export const getUseEditorManagerContextReturn: ReturnType<

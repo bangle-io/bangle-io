@@ -2,10 +2,7 @@ import type { ActionsSerializersType } from '@bangle.io/create-store';
 import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import type {
-  ExtractWorkspaceSliceAction,
-  WorkspaceSliceAction,
-} from './common';
+import type { WorkspaceSliceAction } from './common';
 import { workspaceSliceKey } from './common';
 import { storageProviderHelpers } from './storage-provider-helpers';
 

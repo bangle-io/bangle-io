@@ -12,6 +12,7 @@ describe('workspace slice state', () => {
       refreshCounter: 0,
       error: undefined,
       cachedWorkspaceInfo: undefined,
+      storageProviderErrors: [],
     });
     const newState = WorkspaceSliceState.update(state, {
       wsName: 'test-ws',
@@ -29,6 +30,7 @@ describe('workspace slice state', () => {
       refreshCounter: 0,
       error: undefined,
       cachedWorkspaceInfo: undefined,
+      storageProviderErrors: [],
     });
     const newState = WorkspaceSliceState.update(state, {
       openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -46,6 +48,7 @@ describe('workspace slice state', () => {
       refreshCounter: 0,
       error: undefined,
       cachedWorkspaceInfo: undefined,
+      storageProviderErrors: [],
     });
     const newState = WorkspaceSliceState.update(state, {
       openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:one.md']),
@@ -63,6 +66,7 @@ describe('workspace slice state', () => {
       refreshCounter: 0,
       error: undefined,
       cachedWorkspaceInfo: undefined,
+      storageProviderErrors: [],
     });
     const newState = WorkspaceSliceState.update(state, {
       openedWsPaths: OpenedWsPaths.createFromArray([

@@ -33,9 +33,9 @@ export class SliceKey<
   // serialization type helpers
   actionSerializer<ANAME extends A['name'], T>(
     actionName: ANAME,
-    // return the serialzed value of the action
+    // return the serialzed 'value' of the action
     toJSON: (action: ExtractAction<A, ANAME>) => T,
-    // return the parsed value of the action
+    // return the parsed 'value' of the action
     fromJSON: (serialActionValue: T) => ExtractAction<A, ANAME>['value'],
   ) {
     return {

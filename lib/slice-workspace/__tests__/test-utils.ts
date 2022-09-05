@@ -48,6 +48,7 @@ export const workspaceSliceWithStateSerialization = () => {
         refreshCounter: data.refreshCounter || 0,
         cachedWorkspaceInfo: data.cachedWorkspaceInfo || undefined,
         error: undefined,
+        storageProviderErrors: data.storageProviderErrors,
       });
     };
     wsSlice.spec.state.stateToJSON = (val) => {
@@ -59,6 +60,7 @@ export const workspaceSliceWithStateSerialization = () => {
         refreshCounter: val.refreshCounter,
         cachedWorkspaceInfo: val.cachedWorkspaceInfo,
         error: undefined,
+        storageProviderErrors: val.storageProviderErrors,
       };
 
       const result = Object.fromEntries(
