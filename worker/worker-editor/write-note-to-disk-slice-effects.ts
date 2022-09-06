@@ -4,7 +4,11 @@ import {
   pageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
-import { docToFile, writeFile } from '@bangle.io/slice-workspace';
+import {
+  docToFile,
+  handleWorkspaceError,
+  writeFile,
+} from '@bangle.io/slice-workspace';
 import type { OpenedFile } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
   getOpenedDocInfo,
@@ -49,27 +53,44 @@ export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
         const file = docToFile(item.wsPath, item.collabState.doc)(store.state);
         log('[writeToDiskEffect] writing file', item.wsPath);
         // TODO check if file was externally modified before writing
-        const [lastWrittenSha] = await Promise.all([
+        const [lastWrittenSha, writeFileStatus] = await Promise.all([
           cachedCalculateGitFileSha(file),
-          writeFile(item.wsPath, file)(store.state, store.dispatch, store),
+          writeFile(item.wsPath, file)(
+            store.state,
+            store.dispatch,
+            store,
+          ).catch((error) => {
+            console.warn('received error while writing item', error.message);
+
+            const canHandle = handleWorkspaceError(error)(
+              store.state,
+              store.dispatch,
+            );
+
+            if (canHandle) {
+              updateDocInfo(item.wsPath, {
+                pendingWrite: false,
+              })(store.state, store.dispatch);
+            } else {
+              throw error;
+            }
+          }),
         ]);
+
+        if (writeFileStatus) {
+          updateDocInfo(item.wsPath, {
+            pendingWrite: false,
+            // since both the shas at this time will be the same
+            lastKnownDiskSha: lastWrittenSha,
+            currentDiskSha: lastWrittenSha,
+          })(store.state, store.dispatch);
+        }
+      } catch (error) {
+        console.error(error);
 
         updateDocInfo(item.wsPath, {
           pendingWrite: false,
-          // since both the shas at this time will be the same
-          lastKnownDiskSha: lastWrittenSha,
-          currentDiskSha: lastWrittenSha,
         })(store.state, store.dispatch);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.warn('received error while writing item', error.message);
-          queueMicrotask(() => {
-            updateDocInfo(item.wsPath, {
-              pendingWrite: false,
-            })(store.state, store.dispatch);
-          });
-          store.errorHandler(error);
-        }
       }
     }
   }
