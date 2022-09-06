@@ -80,11 +80,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
         code: INVALID_GITHUB_TOKEN,
       });
     }
+
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
     const { tree } = await this._getTree({
       wsName,
-      config: { githubToken, repoName: wsName, ...wsMetadata },
+      config: { repoName: wsName, ...wsMetadata, githubToken },
       abortSignal,
     });
 
@@ -182,7 +183,11 @@ export class GithubStorageProvider implements BaseStorageProvider {
     return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
       const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
 
-      const config = { githubToken, repoName: wsName, ...wsMetadata };
+      const config = {
+        repoName: wsName,
+        ...wsMetadata,
+        githubToken,
+      };
 
       const tree = await this._getTree({
         wsName,
