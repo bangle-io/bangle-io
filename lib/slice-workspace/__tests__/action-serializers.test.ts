@@ -3,7 +3,6 @@ import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type { WorkspaceSliceAction } from '../common';
-import { storageProviderHelpers } from '../storage-provider-helpers';
 import { createStore, createWsInfo } from './test-utils';
 
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
@@ -146,6 +145,18 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
       value: {},
     },
   ],
+
+  'action::@bangle.io/slice-workspace:set-storage-provider-error': [
+    {
+      name: 'action::@bangle.io/slice-workspace:set-storage-provider-error' as const,
+      value: {
+        serializedError: JSON.stringify({ t: '123' }),
+        uid: '123',
+        wsName: 'test-1',
+        workspaceType: 'test',
+      },
+    },
+  ],
 };
 
 const fixtures = Object.values(testFixtures).flatMap(
@@ -230,25 +241,4 @@ test('Error actions serialization of base error', () => {
   const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(res.value.error.code).toEqual(error.code);
   expect(res.value.error.thrower).toEqual(error.thrower);
-});
-
-test('Error actions serialization with storage provider error', () => {
-  const error = new Error('test-error');
-
-  storageProviderHelpers.markAsStorageProviderError(error, 'test-provider');
-
-  const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error' as const,
-    value: {
-      error,
-    },
-  };
-
-  const res: any = store.parseAction(store.serializeAction(action) as any);
-  expect(
-    storageProviderHelpers.getStorageProviderNameFromError(res.value.error),
-  ).toEqual('test-provider');
-  expect(storageProviderHelpers.isStorageProviderError(res.value.error)).toBe(
-    true,
-  );
 });

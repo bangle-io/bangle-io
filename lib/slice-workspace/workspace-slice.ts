@@ -12,10 +12,8 @@ import {
   updateLocationEffect,
   workspaceNotFoundCheckEffect,
 } from './effects';
-import { WorkspaceError } from './errors';
-import { sliceHasError } from './operations';
-import { storageProviderHelpers } from './storage-provider-helpers';
 import { WorkspaceSliceState } from './workspace-slice-state';
+import { handleWorkspaceError } from './workspaces-operations';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
 
@@ -30,6 +28,7 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   wsPaths: undefined,
   refreshCounter: 0,
   error: undefined,
+  storageProviderErrors: [],
 });
 
 const applyState = (
@@ -57,10 +56,14 @@ const applyState = (
       });
 
       if (newState.wsName !== state.wsName) {
+        // reset state dependent on wsName
         return WorkspaceSliceState.update(newState, {
           refreshCounter: newState.refreshCounter + 1,
           wsPaths: undefined,
           recentlyUsedWsPaths: undefined,
+          cachedWorkspaceInfo: undefined,
+          storageProviderErrors: [],
+          error: undefined,
         });
       }
 
@@ -121,6 +124,21 @@ const applyState = (
       });
     }
 
+    case 'action::@bangle.io/slice-workspace:set-storage-provider-error': {
+      if (action.value.wsName !== state.wsName) {
+        return state;
+      }
+
+      return WorkspaceSliceState.update(state, {
+        storageProviderErrors: [
+          { ...action.value },
+          ...state.storageProviderErrors,
+        ]
+          // only keep few entries
+          .slice(0, 5),
+      });
+    }
+
     default: {
       // hack to catch switch slipping
       let val: never = action;
@@ -155,32 +173,8 @@ export function workspaceSlice() {
       },
     },
     actions: ActionSerializers,
-
     onError: (error, store) => {
-      if (
-        error instanceof WorkspaceError ||
-        storageProviderHelpers.isStorageProviderError(error)
-      ) {
-        // Donot handle new errors if there is already an error
-        if (sliceHasError()(store.state)) {
-          console.log(
-            `ignoring error ${error.message} as an error already exists.`,
-          );
-
-          return false;
-        }
-
-        store.dispatch({
-          name: 'action::@bangle.io/slice-workspace:set-error',
-          value: {
-            error,
-          },
-        });
-
-        return true;
-      }
-
-      return false;
+      return handleWorkspaceError(error)(store.state, store.dispatch);
     },
     sideEffect: [
       errorHandlerEffect,

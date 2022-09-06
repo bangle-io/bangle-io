@@ -4,6 +4,8 @@ import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { isValidNoteWsPath } from '@bangle.io/ws-path';
 
+import type { StorageProviderErrorInfo } from './common';
+
 export type WorkspaceStateKeys = keyof ConstructorParameters<
   typeof WorkspaceSliceState
 >[0];
@@ -23,11 +25,12 @@ export class WorkspaceSliceState {
 
   constructor(
     protected mainFields: {
+      cachedWorkspaceInfo: WorkspaceInfo | undefined;
       error: WorkspaceSliceState['error'];
       openedWsPaths: WorkspaceSliceState['openedWsPaths'];
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       refreshCounter: WorkspaceSliceState['refreshCounter'];
-      cachedWorkspaceInfo: WorkspaceInfo | undefined;
+      storageProviderErrors: WorkspaceSliceState['storageProviderErrors'];
       wsName: WorkspaceSliceState['wsName'];
       wsPaths: WorkspaceSliceState['wsPaths'];
     },
@@ -57,6 +60,10 @@ export class WorkspaceSliceState {
   // returns the current wsName refreshing for
   get refreshCounter(): number {
     return this.mainFields.refreshCounter;
+  }
+
+  get storageProviderErrors(): StorageProviderErrorInfo[] {
+    return this.mainFields.storageProviderErrors;
   }
 
   get wsName(): string | undefined {

@@ -1,5 +1,4 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
-import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import {
   pageSliceKey,
   pathnameToWsName,
@@ -13,22 +12,15 @@ import { workspaceSliceKey } from './common';
 import { WORKSPACE_INFO_CACHE_REFRESH_INTERVAL } from './config';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { getStorageProviderOpts } from './file-operations';
-import {
-  storageProviderErrorHandlerFromExtensionRegistry,
-  storageProviderFromExtensionRegistry,
-  validateOpenedWsPaths,
-} from './helpers';
+import { validateOpenedWsPaths } from './helpers';
 import {
   getWsName,
   goToInvalidPathRoute,
   goToWsNameRouteNotFoundRoute,
 } from './operations';
 import { readWorkspaceInfo } from './read-ws-info';
-import { storageProviderHelpers } from './storage-provider-helpers';
-import {
-  clearCachedWorkspaceInfo,
-  updateCachedWorkspaceInfo,
-} from './workspaces-operations';
+import { getStorageProvider } from './storage-provider-operations';
+import { updateCachedWorkspaceInfo } from './workspaces-operations';
 
 const LOG = false;
 
@@ -80,52 +72,6 @@ export const errorHandlerEffect = workspaceSliceKey.effect(() => {
 
         return;
       }
-
-      // let the storage provider handle error
-      const wsName = workspaceSliceKey.getSliceStateAsserted(
-        store.state,
-      ).wsName;
-      const erroredStorageType =
-        storageProviderHelpers.getStorageProviderNameFromError(error);
-
-      // Only handle errors of the current wsName
-      // this avoids showing errors of previously opened workspace due to delay
-      // in processing.
-      if (erroredStorageType) {
-        if (!wsName) {
-          reset(wsName);
-
-          return;
-        }
-
-        const errorHandler = storageProviderErrorHandlerFromExtensionRegistry(
-          erroredStorageType,
-          extensionRegistrySliceKey.getSliceStateAsserted(store.state)
-            .extensionRegistry,
-        );
-
-        if (errorHandler && errorHandler(error as any, store)) {
-          store.dispatch({
-            name: 'action::@bangle.io/slice-workspace:set-error',
-            value: {
-              error: undefined,
-            },
-          });
-
-          return;
-        }
-        // if we reach here, we can't throw it back since its a storage error
-        // and no other part of the application can take care of it.
-        console.error(
-          `Storage provider (${erroredStorageType}) didn't  handle error`,
-          error,
-        );
-
-        return;
-      }
-
-      // TODO make this error with a code so root can handle this
-      throw new Error('Unable to handler error ' + error.message);
     },
   };
 });
@@ -161,8 +107,6 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const { state } = store;
-
       const wsInfo = await readWorkspaceInfo(wsName);
 
       if (!wsInfo) {
@@ -171,13 +115,10 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const { extensionRegistry } =
-        extensionRegistrySliceKey.getSliceStateAsserted(state);
-
-      const storageProvider = storageProviderFromExtensionRegistry(
+      const storageProvider = getStorageProvider(
+        wsName,
         wsInfo.type,
-        extensionRegistry,
-      );
+      )(store.state);
 
       if (!storageProvider) {
         log('returning early storageProvider');
@@ -355,8 +296,6 @@ export const cachedWorkspaceInfoEffect = workspaceSliceKey.effect(() => {
               store.dispatch,
               store,
             );
-          } else {
-            clearCachedWorkspaceInfo()(store.state, store.dispatch);
           }
         },
         signal,
@@ -375,8 +314,6 @@ export const cachedWorkspaceInfoEffect = workspaceSliceKey.effect(() => {
           store.dispatch,
           store,
         );
-      } else if (!currentWsName && prevWsName) {
-        clearCachedWorkspaceInfo()(store.state, store.dispatch);
       }
     },
   };

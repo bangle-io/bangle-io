@@ -33,12 +33,6 @@ export const getWsName = () =>
     return workspaceSliceKey.getSliceStateAsserted(state).wsName;
   });
 
-export const sliceHasError = () => {
-  return workspaceSliceKey.queryOp((state) =>
-    Boolean(workspaceSliceKey.getSliceStateAsserted(state).error),
-  );
-};
-
 export function closeMiniEditor() {
   return workspaceSliceKey.op((state, dispatch) => {
     return closeOpenedEditor(MINI_EDITOR_INDEX)(state, dispatch);

@@ -4,6 +4,7 @@ import type { ErrorCodeType as RemoteFileSyncErrorCodeType } from '@bangle.io/re
 import { ErrorCode as RemoteSyncErrorCode } from '@bangle.io/remote-file-sync';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { isIndexedDbException } from '@bangle.io/storage';
+import { BaseError } from '@bangle.io/utils';
 
 import { OPERATION_UPDATE_GITHUB_TOKEN } from './common';
 import type { ErrorCodesType } from './errors';
@@ -15,10 +16,11 @@ import {
   INVALID_GITHUB_TOKEN,
 } from './errors';
 
-export function handleError(
-  error: Error & { code: string },
-  store: BangleApplicationStore,
-) {
+export function handleError(error: Error, store: BangleApplicationStore) {
+  if (!(error instanceof BaseError)) {
+    return false;
+  }
+
   const errorCode = error.code as ErrorCodesType | RemoteFileSyncErrorCodeType;
 
   if (isIndexedDbException(error)) {
@@ -27,7 +29,7 @@ export function handleError(
       severity: 'error',
       title: 'Error writing to browser storage',
       content: error.message,
-      uid: error.code + Math.random(),
+      uid: errorCode + Math.random(),
     })(store.state, store.dispatch);
 
     return true;
