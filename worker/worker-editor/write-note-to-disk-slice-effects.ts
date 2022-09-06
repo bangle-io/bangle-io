@@ -61,19 +61,12 @@ export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
             store,
           ).catch((error) => {
             console.warn('received error while writing item', error.message);
+            // TODO add testing for this
+            store.errorHandler(error);
 
-            const canHandle = handleWorkspaceError(error)(
-              store.state,
-              store.dispatch,
-            );
-
-            if (canHandle) {
-              updateDocInfo(item.wsPath, {
-                pendingWrite: false,
-              })(store.state, store.dispatch);
-            } else {
-              throw error;
-            }
+            updateDocInfo(item.wsPath, {
+              pendingWrite: false,
+            })(store.state, store.dispatch);
           }),
         ]);
 
