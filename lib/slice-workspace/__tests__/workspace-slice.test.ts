@@ -8,7 +8,7 @@ import { makeArrayOfSize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
-import { WorkspaceError } from '../errors';
+import { WorkspaceError, WorkspaceErrorCode } from '../errors';
 import { JSON_SCHEMA_VERSION } from '../workspace-slice';
 import {
   createState,
@@ -32,7 +32,6 @@ describe('serialization works', () => {
         "workspace": {
           "data": {
             "cachedWorkspaceInfo": null,
-            "error": null,
             "openedWsPaths": [
               null,
               null,
@@ -67,7 +66,6 @@ describe('serialization works', () => {
       WorkspaceSliceState {
         "mainFields": {
           "cachedWorkspaceInfo": undefined,
-          "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": [
               undefined,
@@ -108,7 +106,6 @@ describe('serialization works', () => {
       WorkspaceSliceState {
         "mainFields": {
           "cachedWorkspaceInfo": undefined,
-          "error": undefined,
           "openedWsPaths": OpenedWsPaths {
             "_wsPaths": [
               undefined,
@@ -139,7 +136,6 @@ describe('serialization works', () => {
         "workspace": {
           "data": {
             "cachedWorkspaceInfo": null,
-            "error": null,
             "openedWsPaths": [
               null,
               null,
@@ -208,7 +204,6 @@ describe('serialization works', () => {
           wsName: 'bangle-help',
           wsPaths: null,
           refreshCounter: 0,
-          error: null,
           storageProviderErrors: null,
         },
         version: 'workspace-slice/2',
@@ -387,97 +382,6 @@ describe('state', () => {
     );
     expect(workspaceSliceKey.getSliceState(state2)).toBe(
       workspaceSliceKey.getSliceState(state2),
-    );
-  });
-});
-
-describe('error cases', () => {
-  let consoleLog = console.log;
-  beforeEach(() => {
-    console.log = jest.fn();
-  });
-  afterEach(() => {
-    console.log = consoleLog;
-  });
-
-  test('ignores actions when error exists', () => {
-    let state = createState({
-      openedWsPaths: ['test-ws:k.md'],
-      wsName: 'test-ws',
-    });
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-error',
-      value: {
-        error: new WorkspaceError({ message: 'failed' }),
-      },
-    });
-
-    const wsPaths = ['test-ws:a.md'];
-    let newState1 = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
-      value: { wsName: 'test-ws', wsPaths },
-    });
-
-    // slice state remains same when there is an error
-    expect(workspaceSliceKey.getSliceStateAsserted(newState1)).toBe(
-      workspaceSliceKey.getSliceStateAsserted(state),
-    );
-
-    expect(workspaceSliceKey.getSliceStateAsserted(newState1).wsPaths).toBe(
-      undefined,
-    );
-
-    let newState2 = newState1.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-error',
-      value: { error: undefined },
-    });
-
-    let newState3 = newState2.applyAction({
-      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
-      value: { wsName: 'test-ws', wsPaths },
-    });
-
-    // slice state should be updated since we removed error
-    expect(workspaceSliceKey.getSliceStateAsserted(newState3)).not.toBe(
-      workspaceSliceKey.getSliceStateAsserted(newState2),
-    );
-
-    expect(workspaceSliceKey.getSliceStateAsserted(newState3).wsPaths).toBe(
-      wsPaths,
-    );
-  });
-
-  test('ignores actions when error exists 2', () => {
-    let state = createState({});
-
-    state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspace:set-error',
-      value: {
-        error: new WorkspaceError({ message: 'failed' }),
-      },
-    });
-
-    const newState1 = state
-      .applyAction({
-        name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
-      })
-      .applyAction({
-        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
-        value: {
-          openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:one.md']),
-          wsName: 'test-ws',
-        },
-      })
-      .applyAction({
-        name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
-        value: {
-          recentlyUsedWsPaths: [],
-          wsName: 'test-ws',
-        },
-      });
-
-    expect(workspaceSliceKey.getSliceStateAsserted(newState1)).toBe(
-      workspaceSliceKey.getSliceStateAsserted(state),
     );
   });
 });

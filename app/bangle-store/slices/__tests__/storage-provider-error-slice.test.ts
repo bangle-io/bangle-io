@@ -66,36 +66,35 @@ test('calls the correct storage provider error handler', async () => {
 
   expect(listAllFilesSpy).toBeCalledTimes(0);
 
-  listAllFilesSpy.mockImplementation(async () => {
-    throw new BaseError({ message: 'oops everything went wrong' });
+  listAllFilesSpy.mockImplementation(() => {
+    return Promise.reject(
+      new BaseError({ message: 'oops everything went wrong' }),
+    );
   });
 
   refreshWsPaths()(store.state, store.dispatch);
 
   await waitForExpect(() => {
-    expect(
-      getAction(
-        'action::@bangle.io/slice-workspace:set-storage-provider-error',
-      ),
-    ).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/slice-workspace:set-storage-provider-error',
-        value: {
-          serializedError: expect.any(String),
-          uid: expect.any(String),
-          workspaceType: 'fake-provider',
-          wsName: 'testWs',
-        },
-      },
-    ]);
+    expect(storageErrorCallback).toBeCalledTimes(1);
   });
 
-  await waitForExpect(() => {
-    expect(storageErrorCallback).toBeCalledTimes(1);
-    expect(storageErrorCallback.mock.calls[0]?.at(0)).toMatchInlineSnapshot(
-      `[BaseError: oops everything went wrong]`,
-    );
-    expect(storageErrorCallback.mock.calls[0]?.at(1)).toBe(store);
-  });
+  expect(
+    getAction('action::@bangle.io/slice-workspace:set-storage-provider-error'),
+  ).toEqual([
+    {
+      id: expect.any(String),
+      name: 'action::@bangle.io/slice-workspace:set-storage-provider-error',
+      value: {
+        serializedError: expect.any(String),
+        uid: expect.any(String),
+        workspaceType: 'fake-provider',
+        wsName: 'testWs',
+      },
+    },
+  ]);
+
+  expect(storageErrorCallback.mock.calls[0]?.at(0)).toMatchInlineSnapshot(
+    `[BaseError: oops everything went wrong]`,
+  );
+  expect(storageErrorCallback.mock.calls[0]?.at(1)).toBe(store);
 });

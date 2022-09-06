@@ -9,8 +9,8 @@ import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
-import { NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR, WorkspaceError } from './errors';
-import { markdownFormatProvider, throwOnNotFoundWsInfo } from './helpers';
+import { WorkspaceError, WorkspaceErrorCode } from './errors';
+import { markdownFormatProvider } from './helpers';
 import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
@@ -30,7 +30,7 @@ function getNoteFormatProvider(wsName: string) {
     if (!provider) {
       throw new WorkspaceError({
         message: `Note storage provider not found.`,
-        code: NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR,
+        code: WorkspaceErrorCode.NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR,
       });
     }
 
@@ -82,7 +82,7 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
 
       const wsInfo = await readWorkspaceInfo(wsName);
 
-      throwOnNotFoundWsInfo(wsName, wsInfo);
+      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
       const storageProvider = getStorageProvider(
         wsName,
@@ -139,7 +139,7 @@ export const checkFileExists = (wsPath: string) => {
 
       const wsInfo = await readWorkspaceInfo(wsName);
 
-      throwOnNotFoundWsInfo(wsName, wsInfo);
+      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
       const storageProvider = getStorageProvider(
         wsName,
@@ -175,7 +175,7 @@ export const createNote = (
 
     const wsInfo = await readWorkspaceInfo(wsName);
 
-    throwOnNotFoundWsInfo(wsName, wsInfo);
+    WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
     const storageProvider = getStorageProvider(
       wsName,
@@ -230,7 +230,7 @@ export const writeFile = (wsPath: string, file: File) => {
       const { wsName } = resolvePath(wsPath);
       const wsInfo = await readWorkspaceInfo(wsName);
 
-      throwOnNotFoundWsInfo(wsName, wsInfo);
+      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
       const storageProvider = getStorageProvider(
         wsName,
@@ -288,7 +288,7 @@ export const getFile = (wsPath: string) => {
       const { wsName } = resolvePath(wsPath);
       const wsInfo = await readWorkspaceInfo(wsName);
 
-      throwOnNotFoundWsInfo(wsName, wsInfo);
+      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
       const storageProvider = getStorageProvider(
         wsName,
@@ -315,7 +315,7 @@ export const deleteNote = (wsPathToDelete: string[] | string) => {
 
     const wsInfo = await readWorkspaceInfo(wsName);
 
-    throwOnNotFoundWsInfo(wsName, wsInfo);
+    WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
     const storageProvider = getStorageProvider(
       wsName,

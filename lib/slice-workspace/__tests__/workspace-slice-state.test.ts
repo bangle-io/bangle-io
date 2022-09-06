@@ -10,7 +10,6 @@ describe('workspace slice state', () => {
       recentlyUsedWsPaths: undefined,
       wsPaths: undefined,
       refreshCounter: 0,
-      error: undefined,
       cachedWorkspaceInfo: undefined,
       storageProviderErrors: [],
     });
@@ -28,7 +27,6 @@ describe('workspace slice state', () => {
       recentlyUsedWsPaths: undefined,
       wsPaths: undefined,
       refreshCounter: 0,
-      error: undefined,
       cachedWorkspaceInfo: undefined,
       storageProviderErrors: [],
     });
@@ -46,7 +44,6 @@ describe('workspace slice state', () => {
       recentlyUsedWsPaths: undefined,
       wsPaths: undefined,
       refreshCounter: 0,
-      error: undefined,
       cachedWorkspaceInfo: undefined,
       storageProviderErrors: [],
     });
@@ -64,7 +61,6 @@ describe('workspace slice state', () => {
       recentlyUsedWsPaths: undefined,
       wsPaths: undefined,
       refreshCounter: 0,
-      error: undefined,
       cachedWorkspaceInfo: undefined,
       storageProviderErrors: [],
     });

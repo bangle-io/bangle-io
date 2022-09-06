@@ -1,11 +1,34 @@
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { BaseError } from '@bangle.io/utils';
 
-export class WorkspaceError extends BaseError {}
+export enum WorkspaceErrorCode {
+  WORKSPACE_NOT_FOUND_ERROR = 'WORKSPACE_NOT_FOUND_ERROR',
+  NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR = 'NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR',
+  WORKSPACE_ALREADY_EXISTS_ERROR = 'WORKSPACE_ALREADY_EXISTS_ERROR',
+  WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR = 'WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR',
+}
 
-export const WORKSPACE_NOT_FOUND_ERROR = 'WORKSPACE_NOT_FOUND_ERROR';
-export const WORKSPACE_DELETED_MODIFY_ERROR = 'WORKSPACE_DELETED_MODIFY_ERROR';
-export const NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR =
-  'NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR';
-export const WORKSPACE_ALREADY_EXISTS_ERROR = 'WORKSPACE_ALREADY_EXISTS_ERROR';
-export const WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR =
-  'WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR';
+export class WorkspaceError extends BaseError {
+  static assertWsInfoDefined(
+    wsName: string,
+    workspaceInfo: WorkspaceInfo | undefined,
+  ): asserts workspaceInfo is WorkspaceInfo {
+    if (!workspaceInfo) {
+      throw new WorkspaceError({
+        message: `Workspace ${wsName} not found`,
+        code: WorkspaceErrorCode.WORKSPACE_NOT_FOUND_ERROR,
+      });
+    }
+  }
+
+  code: WorkspaceErrorCode;
+
+  constructor(
+    obj: ConstructorParameters<typeof BaseError>[0] & {
+      code: WorkspaceErrorCode;
+    },
+  ) {
+    super(obj);
+    this.code = obj.code;
+  }
+}

@@ -7,10 +7,7 @@ import type { BaseStorageProvider } from '@bangle.io/storage';
 import { HelpFsStorageProvider } from '@bangle.io/storage';
 
 import { workspaceSliceKey } from './common';
-import {
-  WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
-  WorkspaceError,
-} from './errors';
+import { WorkspaceError, WorkspaceErrorCode } from './errors';
 
 let storageProviderErrorIdCounter = 0;
 let storageProviderErrorPrefix = uuid(4); // so that different instances of this module do not conflict
@@ -45,7 +42,7 @@ export function getStorageProvider(
     if (!provider) {
       throw new WorkspaceError({
         message: `Storage provider "${workspaceType}" does not exist.`,
-        code: WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
+        code: WorkspaceErrorCode.WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
       });
     }
 

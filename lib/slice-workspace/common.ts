@@ -75,12 +75,6 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::@bangle.io/slice-workspace:set-error';
-      value: {
-        error: Error | undefined;
-      };
-    }
-  | {
       name: 'action::@bangle.io/slice-workspace:set-storage-provider-error';
       value: StorageProviderErrorInfo;
     };

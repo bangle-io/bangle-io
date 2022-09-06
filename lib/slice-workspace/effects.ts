@@ -10,7 +10,6 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
 import { WORKSPACE_INFO_CACHE_REFRESH_INTERVAL } from './config';
-import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { getStorageProviderOpts } from './file-operations';
 import { validateOpenedWsPaths } from './helpers';
 import {
@@ -28,54 +27,6 @@ const log = LOG
   ? console.debug.bind(console, 'slice-workspace effects')
   : () => {};
 
-export const errorHandlerEffect = workspaceSliceKey.effect(() => {
-  let lastErrorSeen: Error | undefined;
-
-  return {
-    async deferredUpdate(store) {
-      // TODO take to a better place
-      const reset = (wsName = 'bangle-workspace-errored') => {
-        goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
-        store.dispatch({
-          name: 'action::@bangle.io/slice-workspace:set-error',
-          value: {
-            error: undefined,
-          },
-        });
-      };
-      const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
-
-      if (!error) {
-        if (lastErrorSeen) {
-          lastErrorSeen = undefined;
-        }
-
-        return;
-      }
-
-      if (error === lastErrorSeen) {
-        return;
-      }
-
-      lastErrorSeen = error;
-
-      // give priority to workspace error handler
-      if (
-        error instanceof WorkspaceError &&
-        error.code === WORKSPACE_NOT_FOUND_ERROR
-      ) {
-        const wsName = workspaceSliceKey.getSliceStateAsserted(
-          store.state,
-        ).wsName;
-
-        reset(wsName);
-
-        return;
-      }
-    },
-  };
-});
-
 export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
   let abort = new AbortController();
 
@@ -83,7 +34,6 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
     async deferredUpdate(store, prevState) {
       const [changed] = workspaceSliceKey.didChange(store.state, prevState)(
         'refreshCounter',
-        'error',
         'wsName',
       );
 
@@ -91,15 +41,7 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const { error, wsName } = workspaceSliceKey.getSliceStateAsserted(
-        store.state,
-      );
-
-      if (error) {
-        log('returning early error');
-
-        return;
-      }
+      const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
       if (!wsName) {
         log('returning early wsName');
@@ -150,23 +92,12 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
 export const updateLocationEffect = workspaceSliceKey.effect(() => {
   return {
     async deferredUpdate(store, prevState) {
-      const [errorChanged] = workspaceSliceKey.didChange(
-        store.state,
-        prevState,
-      )('error');
-
       const [locationChanged] = pageSliceKey.didChange(
         store.state,
         prevState,
       )('location');
 
-      if (!locationChanged && !errorChanged) {
-        return;
-      }
-
-      const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
-
-      if (error) {
+      if (!locationChanged) {
         return;
       }
 

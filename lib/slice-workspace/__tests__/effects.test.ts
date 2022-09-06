@@ -1,5 +1,4 @@
 import { MAX_OPEN_EDITORS, WorkspaceTypeBrowser } from '@bangle.io/constants';
-import { Extension } from '@bangle.io/extension-registry';
 import {
   getPageLocation,
   pageSliceKey,
@@ -9,19 +8,13 @@ import {
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
   createBasicTestStore,
-  createPMNode,
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
   waitForExpect,
 } from '@bangle.io/test-utils';
-import { BaseError, createEmptyArray, sleep } from '@bangle.io/utils';
+import { createEmptyArray, sleep } from '@bangle.io/utils';
 
-import {
-  getNote,
-  goToWsNameRouteNotFoundRoute,
-  WORKSPACE_NOT_FOUND_ERROR,
-  WorkspaceError,
-} from '..';
+import { goToWsNameRouteNotFoundRoute } from '..';
 import { workspaceSliceKey } from '../common';
 import { createNote, refreshWsPaths } from '../file-operations';
 import {
@@ -274,20 +267,12 @@ describe('updateLocationEffect', () => {
 
     goToWsNameRoute('test-ws')(store.state, store.dispatch);
 
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).error).toBe(
-      undefined,
-    );
-
     await waitForExpect(() => {
       expect(getPageLocation()(store.state)).toEqual({
         pathname: '/ws-not-found/test-ws',
         search: '',
       });
     });
-
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).error).toBe(
-      undefined,
-    );
   });
 
   test('retains mini-editor in case of location change but wsName stays', async () => {

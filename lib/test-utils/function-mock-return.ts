@@ -41,7 +41,6 @@ export const getUseWorkspaceContextReturn: Mutable<
 > = {
   bangleStore: initialBangleStore,
   cachedWorkspaceInfo: undefined,
-  error: undefined,
   noteWsPaths: [],
   openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: [],

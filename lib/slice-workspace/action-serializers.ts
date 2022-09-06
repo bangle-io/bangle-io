@@ -1,5 +1,4 @@
 import type { ActionsSerializersType } from '@bangle.io/create-store';
-import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type { WorkspaceSliceAction } from './common';
@@ -16,32 +15,6 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       },
       (obj) => {
         return obj;
-      },
-    );
-  },
-
-  'action::@bangle.io/slice-workspace:set-error': (actionName) => {
-    return workspaceSliceKey.actionSerializer(
-      actionName,
-      (action) => {
-        if (!action.value.error) {
-          return {
-            error: null,
-          };
-        }
-
-        const { error } = action.value;
-
-        return {
-          error: errorSerialize(error),
-        };
-      },
-      (obj) => {
-        const error = obj.error ? errorParse(obj.error) : undefined;
-
-        return {
-          error,
-        };
       },
     );
   },

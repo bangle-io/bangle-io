@@ -26,7 +26,6 @@ export class WorkspaceSliceState {
   constructor(
     protected mainFields: {
       cachedWorkspaceInfo: WorkspaceInfo | undefined;
-      error: WorkspaceSliceState['error'];
       openedWsPaths: WorkspaceSliceState['openedWsPaths'];
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       refreshCounter: WorkspaceSliceState['refreshCounter'];
@@ -39,10 +38,6 @@ export class WorkspaceSliceState {
 
   get cachedWorkspaceInfo() {
     return this.mainFields.cachedWorkspaceInfo;
-  }
-
-  get error(): Error | undefined {
-    return this.mainFields.error;
   }
 
   get noteWsPaths(): string[] | undefined {

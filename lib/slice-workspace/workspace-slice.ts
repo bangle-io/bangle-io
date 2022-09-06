@@ -7,7 +7,6 @@ import type { WorkspaceSliceAction } from './common';
 import { workspaceSliceKey } from './common';
 import {
   cachedWorkspaceInfoEffect,
-  errorHandlerEffect,
   refreshWsPathsEffect,
   updateLocationEffect,
   workspaceNotFoundCheckEffect,
@@ -27,7 +26,6 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   cachedWorkspaceInfo: undefined,
   wsPaths: undefined,
   refreshCounter: 0,
-  error: undefined,
   storageProviderErrors: [],
 });
 
@@ -35,19 +33,6 @@ const applyState = (
   action: WorkspaceSliceAction,
   state: WorkspaceSliceState,
 ): WorkspaceSliceState => {
-  // ignore any action if an error exists unless it sets the error
-  if (
-    state.error &&
-    action.name.startsWith('action::@bangle.io/slice-workspace:') &&
-    action.name !== 'action::@bangle.io/slice-workspace:set-error'
-  ) {
-    console.log(
-      `slice-workspace: cannot apply action "${action.name}", error "${state.error.message}" exists.`,
-    );
-
-    return state;
-  }
-
   switch (action.name) {
     case 'action::@bangle.io/slice-workspace:set-opened-workspace': {
       const newState = WorkspaceSliceState.update(state, {
@@ -63,7 +48,6 @@ const applyState = (
           recentlyUsedWsPaths: undefined,
           cachedWorkspaceInfo: undefined,
           storageProviderErrors: [],
-          error: undefined,
         });
       }
 
@@ -100,14 +84,6 @@ const applyState = (
       }
 
       return state;
-    }
-
-    case 'action::@bangle.io/slice-workspace:set-error': {
-      const { error } = action.value;
-
-      return WorkspaceSliceState.update(state, {
-        error,
-      });
     }
 
     case 'action::@bangle.io/slice-workspace:refresh-ws-paths': {
@@ -158,11 +134,11 @@ export function workspaceSlice() {
         return workspaceSliceInitialState;
       },
 
-      apply(action, state) {
-        const newState = applyState(action, state);
+      apply(action, sliceState, appState) {
+        const newState = applyState(action, sliceState);
 
-        if (newState === state) {
-          return state;
+        if (newState === sliceState) {
+          return sliceState;
         }
 
         if (action.name.startsWith('action::@bangle.io/slice-workspace:')) {
@@ -177,7 +153,6 @@ export function workspaceSlice() {
       return handleWorkspaceError(error)(store.state, store.dispatch);
     },
     sideEffect: [
-      errorHandlerEffect,
       updateLocationEffect,
       refreshWsPathsEffect,
       workspaceNotFoundCheckEffect,

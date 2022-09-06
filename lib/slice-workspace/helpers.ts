@@ -5,7 +5,7 @@ import type {
 } from '@bangle.io/shared-types';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
+import { WorkspaceError, WorkspaceErrorCode } from './errors';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {
@@ -77,15 +77,3 @@ export const markdownFormatProvider: NoteFormatProvider = {
     return markdownParser(value, specRegistry, plugins);
   },
 };
-
-export function throwOnNotFoundWsInfo(
-  wsName: string,
-  workspaceInfo: WorkspaceInfo | undefined,
-): asserts workspaceInfo is WorkspaceInfo {
-  if (!workspaceInfo) {
-    throw new WorkspaceError({
-      message: `Workspace ${wsName} not found`,
-      code: WORKSPACE_NOT_FOUND_ERROR,
-    });
-  }
-}
