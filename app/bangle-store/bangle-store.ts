@@ -78,6 +78,7 @@ export function initializeBangleStore({
     return ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({
       storeName: MAIN_STORE_NAME,
       state: state,
+
       dispatchAction: (store, action) => {
         log(
           action.fromStore ? `from=[${action.fromStore}]` : '',
