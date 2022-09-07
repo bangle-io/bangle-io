@@ -54,13 +54,11 @@ test('works', async () => {
 describe('actions', () => {
   test('updates error', async () => {
     const { store, storageProvider } = await setup();
-
+    const error = new BaseError({ message: 'something went wrong' });
     store.dispatch({
       name: 'action::@bangle.io/slice-storage-provider:set-storage-provider-error',
       value: {
-        serializedError: storageProvider.serializeError(
-          new BaseError({ message: 'something went wrong' }),
-        ),
+        serializedError: storageProvider.serializeError(error),
         uid: '123',
         wsName: 'test-1',
         workspaceType: FakeStorageProviderName,
@@ -70,9 +68,7 @@ describe('actions', () => {
     expect(storageProviderSliceKey.getSliceState(store.state)).toEqual({
       errors: [
         {
-          serializedError: storageProvider.serializeError(
-            new BaseError({ message: 'something went wrong' }),
-          ),
+          serializedError: storageProvider.serializeError(error),
           uid: '123',
           wsName: 'test-1',
           workspaceType: FakeStorageProviderName,
@@ -81,16 +77,15 @@ describe('actions', () => {
     });
   });
 
-  test.only('discards older error', async () => {
+  test('discards older error', async () => {
     const { store, storageProvider } = await setup();
+    const error = new BaseError({ message: 'something went wrong' });
 
     Array.from({ length: 6 }, (_, k) => {
       store.dispatch({
         name: 'action::@bangle.io/slice-storage-provider:set-storage-provider-error',
         value: {
-          serializedError: storageProvider.serializeError(
-            new BaseError({ message: 'something went wrong' }),
-          ),
+          serializedError: storageProvider.serializeError(error),
           uid: 'new-' + k,
           wsName: 'test-1',
           workspaceType: FakeStorageProviderName,
@@ -107,9 +102,7 @@ describe('actions', () => {
     store.dispatch({
       name: 'action::@bangle.io/slice-storage-provider:set-storage-provider-error',
       value: {
-        serializedError: storageProvider.serializeError(
-          new BaseError({ message: 'something went wrong' }),
-        ),
+        serializedError: storageProvider.serializeError(error),
         uid: 'last',
         wsName: 'test-1',
         workspaceType: FakeStorageProviderName,
