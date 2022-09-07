@@ -62,6 +62,7 @@
     "@bangle.io/worker-naukar": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
     "@bangle.io/worker-setup": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/workspace-sidebar": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@react-aria/overlays": "^3.8.2",

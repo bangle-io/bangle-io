@@ -9,7 +9,7 @@ import {
   readWorkspaceInfo,
   readWorkspaceMetadata,
   saveWorkspaceInfo,
-} from '../read-ws-info';
+} from '../workspace-info';
 
 describe('readWorkspaceInfo', () => {
   test('reads workspace info', async () => {

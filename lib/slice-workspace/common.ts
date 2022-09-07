@@ -1,38 +1,9 @@
-import {
-  HELP_FS_WORKSPACE_NAME,
-  WorkspaceTypeHelp,
-} from '@bangle.io/constants';
 import type { ApplicationStore, ExtractAction } from '@bangle.io/create-store';
 import { SliceKey } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type { WorkspaceSliceState } from './workspace-slice-state';
-
-let cachedHelpFs: WorkspaceInfo | undefined = undefined;
-
-export interface StorageProviderErrorInfo {
-  serializedError: string;
-  wsName: string;
-  workspaceType: WorkspaceInfo['type'];
-  uid: string;
-}
-
-export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
-  if (!cachedHelpFs) {
-    cachedHelpFs = {
-      deleted: false,
-      metadata: {
-        allowLocalChanges: true,
-      },
-      name: HELP_FS_WORKSPACE_NAME,
-      type: WorkspaceTypeHelp,
-      lastModified: Date.now(),
-    };
-  }
-
-  return cachedHelpFs;
-};
 
 export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceState,
@@ -73,10 +44,6 @@ export type WorkspaceSliceAction =
       value: {
         workspaceInfo?: WorkspaceInfo;
       };
-    }
-  | {
-      name: 'action::@bangle.io/slice-workspace:set-storage-provider-error';
-      value: StorageProviderErrorInfo;
     };
 
 export type WorkspaceAppStore = ApplicationStore<

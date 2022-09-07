@@ -1,11 +1,39 @@
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
-import type {
-  NoteFormatProvider,
-  WorkspaceInfo,
-} from '@bangle.io/shared-types';
+import type { NoteFormatProvider } from '@bangle.io/shared-types';
+import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { WorkspaceError, WorkspaceErrorCode } from './errors';
+import { workspaceSliceKey } from './common';
+import { WorkspaceError } from './errors';
+
+// A faster variant of readWorkspaceInfo
+// it checks if the workspace info type is in the slice state, if not it reads from db
+export async function getWsInfoType(
+  wsName: string,
+  state: ReturnType<typeof workspaceSliceKey.getState>,
+): Promise<string | undefined> {
+  const { cachedWorkspaceInfo } =
+    workspaceSliceKey.getSliceStateAsserted(state);
+
+  // Use the cached workspace info if it exists and is of the same wsName
+  if (cachedWorkspaceInfo?.type === wsName) {
+    return cachedWorkspaceInfo.type;
+  }
+
+  return (await readWorkspaceInfo(wsName))?.type;
+}
+
+// same as getWsInfoType but throws if wsInfo is not found
+export async function getAssertedWsInfoType(
+  wsName: string,
+  state: ReturnType<typeof workspaceSliceKey.getState>,
+): Promise<string> {
+  const wsInfoType = await getWsInfoType(wsName, state);
+
+  WorkspaceError.assertWsInfoTypeDefined(wsName, wsInfoType);
+
+  return wsInfoType;
+}
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {

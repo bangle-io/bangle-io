@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
@@ -8,7 +8,6 @@ import {
   NEW_WORKSPACE_DIALOG_NAME,
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { readWorkspaceInfo } from '@bangle.io/slice-workspace';
 import { Dialog } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
@@ -168,7 +167,7 @@ export function NewWorkspaceModal() {
         if (destroyed) {
           return;
         }
-        const existingWorkspace = await readWorkspaceInfo(
+        const existingWorkspace = await workspace.readWorkspaceInfo(
           debouncedNewWorkspaceName,
         );
 

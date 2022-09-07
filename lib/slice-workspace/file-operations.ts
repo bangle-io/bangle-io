@@ -3,24 +3,26 @@ import type { Node } from '@bangle.dev/pm';
 import { readFileAsText } from '@bangle.io/baby-fs';
 import { DEBUG_WRITE_SLOWDOWN } from '@bangle.io/config';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
+import {
+  getStorageProvider,
+  storageProviderSliceKey,
+} from '@bangle.io/slice-storage-provider';
 import type { StorageOpts } from '@bangle.io/storage';
 import { sleep } from '@bangle.io/utils';
+import {
+  readWorkspaceMetadata,
+  updateWorkspaceMetadata,
+} from '@bangle.io/workspace-info';
 import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
 import { WorkspaceError, WorkspaceErrorCode } from './errors';
-import { markdownFormatProvider } from './helpers';
+import { getAssertedWsInfoType, markdownFormatProvider } from './helpers';
 import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
-import {
-  readWorkspaceInfo,
-  readWorkspaceMetadata,
-  updateWorkspaceMetadata,
-} from './read-ws-info';
-import { getStorageProvider } from './storage-provider-operations';
 
 function getNoteFormatProvider(wsName: string) {
   return workspaceSliceKey.queryOp((state) => {
@@ -80,14 +82,15 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
         return false;
       }
 
-      const wsInfo = await readWorkspaceInfo(wsName);
+      const wsInfoType = await getAssertedWsInfoType(wsName, store.state);
 
-      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfoType),
+      );
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfoType);
+
       await storageProvider.renameFile(
         targetWsPath,
         newWsPath,
@@ -137,14 +140,14 @@ export const checkFileExists = (wsPath: string) => {
     async (_, __, store): Promise<boolean | undefined> => {
       const { wsName } = resolvePath(wsPath);
 
-      const wsInfo = await readWorkspaceInfo(wsName);
+      const wsInfoType = await getAssertedWsInfoType(wsName, store.state);
 
-      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfoType),
+      );
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfoType);
 
       return storageProvider.fileExists(
         wsPath,
@@ -173,14 +176,14 @@ export const createNote = (
       return false;
     }
 
-    const wsInfo = await readWorkspaceInfo(wsName);
+    const wsInfoType = await getAssertedWsInfoType(wsName, store.state);
 
-    WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
+    const storageProvider = storageProviderSliceKey.callQueryOp(
+      store.state,
+      getStorageProvider(wsName, wsInfoType),
+    );
 
-    const storageProvider = getStorageProvider(
-      wsName,
-      wsInfo.type,
-    )(store.state);
+    WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfoType);
 
     const fileExists = await storageProvider.fileExists(
       wsPath,
@@ -228,14 +231,14 @@ export const writeFile = (wsPath: string, file: File) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<boolean> => {
       const { wsName } = resolvePath(wsPath);
-      const wsInfo = await readWorkspaceInfo(wsName);
+      const wsInfoType = await getAssertedWsInfoType(wsName, store.state);
 
-      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfoType),
+      );
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfoType);
 
       if (DEBUG_WRITE_SLOWDOWN && DEBUG_WRITE_SLOWDOWN > 0) {
         console.warn('Slowing down write by ' + DEBUG_WRITE_SLOWDOWN + 'ms');
@@ -286,14 +289,14 @@ export const getFile = (wsPath: string) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<File | undefined> => {
       const { wsName } = resolvePath(wsPath);
-      const wsInfo = await readWorkspaceInfo(wsName);
+      const wsInfoType = await getAssertedWsInfoType(wsName, store.state);
 
-      WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfoType),
+      );
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfoType);
 
       return storageProvider.readFile(
         wsPath,
@@ -313,14 +316,14 @@ export const deleteNote = (wsPathToDelete: string[] | string) => {
       return;
     }
 
-    const wsInfo = await readWorkspaceInfo(wsName);
+    const wsInfoType = await getAssertedWsInfoType(wsName, store.state);
 
-    WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
+    const storageProvider = storageProviderSliceKey.callQueryOp(
+      store.state,
+      getStorageProvider(wsName, wsInfoType),
+    );
 
-    const storageProvider = getStorageProvider(
-      wsName,
-      wsInfo.type,
-    )(store.state);
+    WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfoType);
 
     if (!Array.isArray(wsPathToDelete)) {
       wsPathToDelete = [wsPathToDelete];

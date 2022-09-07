@@ -269,6 +269,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-page"\
       },\
       {\
+        "name": "@bangle.io/slice-storage-provider",\
+        "reference": "workspace:lib/slice-storage-provider"\
+      },\
+      {\
         "name": "@bangle.io/slice-ui",\
         "reference": "workspace:lib/slice-ui"\
       },\
@@ -307,6 +311,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@bangle.io/utils",\
         "reference": "workspace:lib/utils"\
+      },\
+      {\
+        "name": "@bangle.io/workspace-info",\
+        "reference": "workspace:lib/workspace-info"\
       },\
       {\
         "name": "@bangle.io/ws-path",\
@@ -400,6 +408,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-editor-sync", ["workspace:lib/slice-editor-sync"]],\
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],\
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],\
+      ["@bangle.io/slice-storage-provider", ["workspace:lib/slice-storage-provider"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],\
       ["@bangle.io/slice-workspace-opened-doc-info", ["workspace:lib/slice-workspace-opened-doc-info"]],\
@@ -416,6 +425,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/worker-naukar", ["workspace:worker/worker-naukar"]],\
       ["@bangle.io/worker-naukar-proxy", ["workspace:app/worker-naukar-proxy"]],\
       ["@bangle.io/worker-setup", ["workspace:app/worker-setup"]],\
+      ["@bangle.io/workspace-info", ["workspace:lib/workspace-info"]],\
       ["@bangle.io/workspace-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar", "workspace:app/workspace-sidebar"]],\
       ["@bangle.io/ws-path", ["workspace:lib/ws-path"]],\
       ["app", ["workspace:app"]],\
@@ -4499,6 +4509,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],\
             ["@types/react", "npm:17.0.49"],\
@@ -4559,6 +4570,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/workspace-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@react-aria/overlays", "virtual:e0e8fef0cb4240fef708924f54aeb8c8f6464cb590c18d4bcd59dd0638d1ba7a33abdbbb33f1b32c554350acaacc2580844ec9eb4a40e324975f1d2cbcc0e71e#npm:3.8.2"],\
@@ -4632,6 +4644,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/workspace-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@react-aria/overlays", "virtual:e0e8fef0cb4240fef708924f54aeb8c8f6464cb590c18d4bcd59dd0638d1ba7a33abdbbb33f1b32c554350acaacc2580844ec9eb4a40e324975f1d2cbcc0e71e#npm:3.8.2"],\
@@ -4688,6 +4701,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
@@ -4696,6 +4710,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["fast-deep-equal", "npm:3.1.3"],\
             ["page-lifecycle", "npm:0.1.2"],\
@@ -6020,6 +6035,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/slice-storage-provider", [\
+        ["workspace:lib/slice-storage-provider", {\
+          "packageLocation": "./lib/slice-storage-provider/",\
+          "packageDependencies": [\
+            ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/storage", "workspace:lib/storage"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["tslib", "npm:2.4.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/slice-ui", [\
         ["workspace:lib/slice-ui", {\
           "packageLocation": "./lib/slice-ui/",\
@@ -6058,9 +6091,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],\
             ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],\
@@ -6209,6 +6244,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
@@ -6430,6 +6466,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
             ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
@@ -6484,6 +6521,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/workspace-info", [\
+        ["workspace:lib/workspace-info", {\
+          "packageLocation": "./lib/workspace-info/",\
+          "packageDependencies": [\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/db-app", "workspace:lib/db-app"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/utils", "workspace:lib/utils"]\
           ],\
           "linkType": "SOFT"\
         }]\

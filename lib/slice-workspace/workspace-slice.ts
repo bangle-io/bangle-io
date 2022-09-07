@@ -26,7 +26,6 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   cachedWorkspaceInfo: undefined,
   wsPaths: undefined,
   refreshCounter: 0,
-  storageProviderErrors: [],
 });
 
 const applyState = (
@@ -47,7 +46,6 @@ const applyState = (
           wsPaths: undefined,
           recentlyUsedWsPaths: undefined,
           cachedWorkspaceInfo: undefined,
-          storageProviderErrors: [],
         });
       }
 
@@ -97,21 +95,6 @@ const applyState = (
 
       return WorkspaceSliceState.update(state, {
         cachedWorkspaceInfo: workspaceInfo,
-      });
-    }
-
-    case 'action::@bangle.io/slice-workspace:set-storage-provider-error': {
-      if (action.value.wsName !== state.wsName) {
-        return state;
-      }
-
-      return WorkspaceSliceState.update(state, {
-        storageProviderErrors: [
-          { ...action.value },
-          ...state.storageProviderErrors,
-        ]
-          // only keep few entries
-          .slice(0, 5),
       });
     }
 

@@ -17,6 +17,7 @@
     "slice-editor-sync",
     "slice-notification",
     "slice-page",
+    "slice-storage-provider",
     "slice-ui",
     "slice-workspace",
     "slice-workspace-opened-doc-info",
@@ -27,6 +28,7 @@
     "ui-components",
     "ui-dhancha",
     "utils",
+    "workspace-info",
     "ws-path"
   ],
   "repository": {

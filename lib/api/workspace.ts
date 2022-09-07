@@ -13,14 +13,14 @@ export {
   getWsName,
   goToWorkspaceAuthRoute,
   pushWsPath,
-  readWorkspaceInfo,
-  readWorkspaceMetadata,
   refreshWsPaths,
-  updateWorkspaceMetadata,
   workspaceSliceKey,
   writeNote,
 } from '@bangle.io/slice-workspace';
-
+export {
+  readWorkspaceInfo,
+  readWorkspaceMetadata,
+} from '@bangle.io/workspace-info';
 export function getWorkspaceState() {
   return (state: AppState) => workspaceSliceKey.getSliceStateAsserted(state);
 }

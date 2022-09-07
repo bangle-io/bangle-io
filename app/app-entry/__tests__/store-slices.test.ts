@@ -21,14 +21,15 @@ const commonInBoth = mainSlices.filter((slice) => {
 
 test('exhaustive main slices list', () => {
   expect(mainSlices.map((r) => r.key)).toEqual([
+    'worker-setup-slice-storeSyncKey$',
+    'store-sync$',
+    naukarProxySliceKey.key,
     pageSliceKey.key,
     'history-slice$',
     'pageLifeCycleSlice$',
-    naukarProxySliceKey.key,
-    'worker-setup-slice-storeSyncKey$',
-    'store-sync$',
-    workspaceSliceKey.key,
     'extension-registry-slice$',
+    '@bangle.io/slice-storage-provider/slice-key$',
+    workspaceSliceKey.key,
     uiSliceKey.key,
     editorManagerSliceKey.key,
     expect.stringMatching(/slice\$/),
@@ -36,7 +37,6 @@ test('exhaustive main slices list', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    'storage-provider-error-slice$',
     expect.stringMatching(/e2eHelpers1\$/),
     expect.stringMatching(/e2eHelpers2\$/),
     expect.stringMatching(/slice\$/),
@@ -48,6 +48,7 @@ test('exhaustive naukar slices list', () => {
     'sync-with-window-stateSyncKey$',
     'store-sync$',
     'extension-registry-slice$',
+    '@bangle.io/slice-storage-provider/slice-key$',
     pageSliceKey.key,
     workspaceSliceKey.key,
     'workerEditorSlice$',
@@ -61,10 +62,11 @@ test('exhaustive naukar slices list', () => {
 
 test('slices common worker and main', () => {
   expect(commonInBoth.map((r) => r.key)).toEqual([
-    'page-slice$',
     'store-sync$',
-    'slice-workspace$',
+    'page-slice$',
     'extension-registry-slice$',
+    '@bangle.io/slice-storage-provider/slice-key$',
+    'slice-workspace$',
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
@@ -83,6 +85,7 @@ describe('worker and window constraints', () => {
 
   const sideEffectInWindowOnly = [
     '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-storage-provider/slice-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
   ];
 

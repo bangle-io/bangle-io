@@ -12,7 +12,10 @@ import {
   Extension,
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
-import type { BangleStateConfig } from '@bangle.io/shared-types';
+import type {
+  BangleApplicationStore,
+  BangleStateConfig,
+} from '@bangle.io/shared-types';
 import {
   editorManagerSlice,
   editorManagerSliceKey,
@@ -20,6 +23,7 @@ import {
 } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
+import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
   createNote,
@@ -110,6 +114,7 @@ export function createBasicTestStore<
       slices: [
         extensionRegistrySlice(),
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
+        storageProviderSlice(),
         pageSlice(),
         workspaceSlice(),
         useEditorManagerSlice ? editorManagerSlice() : undefined,
@@ -127,6 +132,10 @@ export function createBasicTestStore<
     dispatchSpy,
     getActionNames,
     getAction,
+
+    getWsName: () => {
+      return getWsName()(store.state as BangleApplicationStore['state']);
+    },
 
     // if user editor, checks if editor is ready to be edited
     isEditorCollabReady: async (editorIndex: number) => {
@@ -158,6 +167,7 @@ export async function setupMockWorkspaceWithNotes(
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
   destroyAfterInit = false,
+  storageProvider = WorkspaceTypeBrowser,
 ) {
   if (
     (await listWorkspaces()(store.state, store.dispatch, store)).find(
@@ -167,7 +177,7 @@ export async function setupMockWorkspaceWithNotes(
     throw new Error(`Workspace ${wsName} already exists`);
   }
 
-  await createWorkspace(wsName, WorkspaceTypeBrowser)(
+  await createWorkspace(wsName, storageProvider)(
     store.state,
     store.dispatch,
     store,

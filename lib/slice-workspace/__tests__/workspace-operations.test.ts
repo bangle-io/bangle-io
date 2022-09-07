@@ -8,10 +8,14 @@ import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
+import {
+  helpFSWorkspaceInfo,
+  readAllWorkspacesInfo,
+  readWorkspaceInfo,
+} from '@bangle.io/workspace-info';
 
-import { helpFSWorkspaceInfo, workspaceSliceKey } from '../common';
+import { workspaceSliceKey } from '../common';
 import { getWsName } from '../operations';
-import { readAllWorkspacesInfo, readWorkspaceInfo } from '../read-ws-info';
 import {
   createWorkspace,
   deleteWorkspace,

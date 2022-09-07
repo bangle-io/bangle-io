@@ -13,6 +13,10 @@ import {
   waitForExpect,
 } from '@bangle.io/test-utils';
 import { createEmptyArray, sleep } from '@bangle.io/utils';
+import {
+  readWorkspaceInfo,
+  saveWorkspaceInfo,
+} from '@bangle.io/workspace-info';
 
 import { goToWsNameRouteNotFoundRoute } from '..';
 import { workspaceSliceKey } from '../common';
@@ -22,7 +26,6 @@ import {
   goToWsNameRoute,
   updateOpenedWsPaths,
 } from '../operations';
-import { readWorkspaceInfo, saveWorkspaceInfo } from '../read-ws-info';
 import { createWorkspace } from '../workspaces-operations';
 import { createStore } from './test-utils';
 
