@@ -5,6 +5,11 @@ import { DEBUG_WRITE_SLOWDOWN } from '@bangle.io/config';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { StorageOpts } from '@bangle.io/storage';
 import { sleep } from '@bangle.io/utils';
+import {
+  readWorkspaceInfo,
+  readWorkspaceMetadata,
+  updateWorkspaceMetadata,
+} from '@bangle.io/workspace-info';
 import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
@@ -15,11 +20,6 @@ import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
-import {
-  readWorkspaceInfo,
-  readWorkspaceMetadata,
-  updateWorkspaceMetadata,
-} from './read-ws-info';
 import { getStorageProvider } from './storage-provider-operations';
 
 function getNoteFormatProvider(wsName: string) {

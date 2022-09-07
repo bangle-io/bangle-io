@@ -9,11 +9,11 @@ import {
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
   goToWsNameRouteNotFoundRoute,
-  readWorkspaceInfo,
 } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { keybindingsHelper } from '@bangle.io/utils';
+import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
 export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   wsName = decodeURIComponent(wsName || '');

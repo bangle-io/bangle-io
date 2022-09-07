@@ -6,6 +6,7 @@ import {
   searchToWsPath,
 } from '@bangle.io/slice-page';
 import { abortableSetInterval } from '@bangle.io/utils';
+import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
@@ -17,7 +18,6 @@ import {
   goToInvalidPathRoute,
   goToWsNameRouteNotFoundRoute,
 } from './operations';
-import { readWorkspaceInfo } from './read-ws-info';
 import { getStorageProvider } from './storage-provider-operations';
 import { updateCachedWorkspaceInfo } from './workspaces-operations';
 

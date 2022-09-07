@@ -26,11 +26,6 @@ export {
   pushWsPath,
   updateOpenedWsPaths,
 } from './operations';
-export {
-  readWorkspaceInfo,
-  readWorkspaceMetadata,
-  updateWorkspaceMetadata,
-} from './read-ws-info';
 export { workspaceSlice, workspaceSliceInitialState } from './workspace-slice';
 export type { WorkspaceSliceState } from './workspace-slice-state';
 export type { WorkspaceContextType } from './WorkspaceContext';

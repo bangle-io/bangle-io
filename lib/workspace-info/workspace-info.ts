@@ -1,4 +1,7 @@
-import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
+import {
+  HELP_FS_WORKSPACE_NAME,
+  WorkspaceTypeHelp,
+} from '@bangle.io/constants';
 import {
   getAppDb,
   getWorkspaceInfoTable,
@@ -8,7 +11,23 @@ import {
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
-import { helpFSWorkspaceInfo } from './common';
+let cachedHelpFs: WorkspaceInfo | undefined = undefined;
+
+export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
+  if (!cachedHelpFs) {
+    cachedHelpFs = {
+      deleted: false,
+      metadata: {
+        allowLocalChanges: true,
+      },
+      name: HELP_FS_WORKSPACE_NAME,
+      type: WorkspaceTypeHelp,
+      lastModified: Date.now(),
+    };
+  }
+
+  return cachedHelpFs;
+};
 
 export async function readWorkspaceInfo(
   wsName: string,
@@ -109,16 +128,16 @@ export async function saveWorkspaceInfo(
 
   const tx = db.transaction(WORKSPACE_INFO_TABLE, 'readwrite');
 
-  const store = tx.objectStore(WORKSPACE_INFO_TABLE);
+  const objStore = tx.objectStore(WORKSPACE_INFO_TABLE);
 
-  const existing = await store.get(wsName);
+  const existing = await objStore.get(wsName);
 
   const newInfo: WorkspaceInfo = {
     ...workspaceInfo(existing?.value || defaultValue),
     lastModified: Date.now(),
   };
 
-  await Promise.all([store.put(makeDbRecord(wsName, newInfo)), tx.done]);
+  await Promise.all([objStore.put(makeDbRecord(wsName, newInfo)), tx.done]);
 
   return true;
 }

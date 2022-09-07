@@ -1,11 +1,6 @@
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
-import type {
-  NoteFormatProvider,
-  WorkspaceInfo,
-} from '@bangle.io/shared-types';
+import type { NoteFormatProvider } from '@bangle.io/shared-types';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
-
-import { WorkspaceError, WorkspaceErrorCode } from './errors';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {

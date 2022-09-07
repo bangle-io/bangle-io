@@ -32,10 +32,7 @@ import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { resolvePath } from '@bangle.io/ws-path';
 
 export function downloadWorkspace() {
-  return (
-    state: AppState,
-    dispatch: ApplicationStore<any, WorkspaceSliceAction>['dispatch'],
-  ) => {
+  return (state: AppState, dispatch: ApplicationStore['dispatch']) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
 
     if (!wsName) {

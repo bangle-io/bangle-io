@@ -12,11 +12,11 @@ import {
   createWorkspace,
   deleteWorkspace,
   listWorkspaces,
-  readWorkspaceInfo,
 } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
+import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
 import { historySlice, historySliceKey } from '../history-slice';
 

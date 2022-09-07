@@ -4,7 +4,7 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
@@ -12,7 +12,6 @@ import {
 } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { readWorkspaceInfo } from '@bangle.io/slice-workspace';
 import { OverlayProvider } from '@bangle.io/ui-components';
 
 import { WORKSPACE_AUTH_REJECTED_ERROR } from '../common';
@@ -84,7 +83,7 @@ jest.mock('@bangle.io/api', () => {
   };
 });
 
-const readWorkspaceInfoMock = jest.mocked(readWorkspaceInfo);
+const readWorkspaceInfoMock = jest.mocked(workspace.readWorkspaceInfo);
 
 beforeEach(() => {
   let dispatchSerialOperation = jest.fn();

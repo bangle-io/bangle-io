@@ -4,11 +4,10 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import { pickADirectory } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { readWorkspaceInfo } from '@bangle.io/slice-workspace';
 import { OverlayProvider } from '@bangle.io/ui-components';
 
 import { WORKSPACE_NAME_ALREADY_EXISTS_ERROR } from '../common';
@@ -80,9 +79,10 @@ jest.mock('react-dom', () => {
   };
 });
 
-const readWorkspaceInfoMock = readWorkspaceInfo as jest.MockedFunction<
-  typeof readWorkspaceInfo
->;
+const readWorkspaceInfoMock =
+  workspace.readWorkspaceInfo as jest.MockedFunction<
+    typeof workspace.readWorkspaceInfo
+  >;
 
 beforeEach(() => {
   let dispatchSerialOperation = jest.fn();

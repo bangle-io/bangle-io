@@ -1,1 +1,9 @@
-export default 5;
+export {
+  compareWorkspaceInfo,
+  helpFSWorkspaceInfo,
+  readAllWorkspacesInfo,
+  readWorkspaceInfo,
+  readWorkspaceMetadata,
+  saveWorkspaceInfo,
+  updateWorkspaceMetadata,
+} from './workspace-info';

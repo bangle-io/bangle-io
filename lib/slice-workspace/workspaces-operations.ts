@@ -7,6 +7,12 @@ import {
   pageSliceKey,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
+import {
+  compareWorkspaceInfo,
+  readAllWorkspacesInfo,
+  readWorkspaceInfo,
+  saveWorkspaceInfo,
+} from '@bangle.io/workspace-info';
 import { validWsName } from '@bangle.io/ws-path';
 
 import type { WorkspaceAppStore, WorkspaceDispatchType } from './common';
@@ -17,12 +23,6 @@ import {
   goToWorkspaceHomeRoute,
   goToWsNameRouteNotFoundRoute,
 } from './operations';
-import {
-  compareWorkspaceInfo,
-  readAllWorkspacesInfo,
-  readWorkspaceInfo,
-  saveWorkspaceInfo,
-} from './read-ws-info';
 import {
   getStorageProvider,
   getStorageProviderErrorDetails,
