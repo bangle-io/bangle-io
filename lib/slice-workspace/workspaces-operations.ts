@@ -179,7 +179,7 @@ export function deleteWorkspace(targetWsName: string) {
 
 export function updateCachedWorkspaceInfo(wsName: string) {
   return workspaceSliceKey.asyncOp(async (_, __, store) => {
-    const workspaceInfo = await readWorkspaceInfo(wsName).catch(() => {});
+    const workspaceInfo = await readWorkspaceInfo(wsName);
 
     if (!workspaceInfo) {
       return false;

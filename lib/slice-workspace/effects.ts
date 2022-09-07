@@ -16,7 +16,7 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { workspaceSliceKey } from './common';
 import { WORKSPACE_INFO_CACHE_REFRESH_INTERVAL } from './config';
 import { getStorageProviderOpts } from './file-operations';
-import { validateOpenedWsPaths } from './helpers';
+import { getWsInfoType, validateOpenedWsPaths } from './helpers';
 import {
   getWsName,
   goToInvalidPathRoute,
@@ -52,9 +52,9 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const wsInfo = await readWorkspaceInfo(wsName);
+      const wsInfoType = await getWsInfoType(wsName, store.state);
 
-      if (!wsInfo) {
+      if (!wsInfoType) {
         log('returning early wsInfo');
 
         return;
@@ -62,7 +62,7 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
 
       const storageProvider = storageProviderSliceKey.callQueryOp(
         store.state,
-        getStorageProvider(wsName, wsInfo.type),
+        getStorageProvider(wsName, wsInfoType),
       );
 
       if (!storageProvider) {
@@ -136,9 +136,9 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
         .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
         .updateSecondaryWsPath(searchToWsPath(location.search));
 
-      const workspaceInfo = await readWorkspaceInfo(incomingWsName);
+      const wsInfoType = await getWsInfoType(incomingWsName, store.state);
 
-      if (!workspaceInfo) {
+      if (!wsInfoType) {
         goToWsNameRouteNotFoundRoute(incomingWsName)(
           store.state,
           store.dispatch,

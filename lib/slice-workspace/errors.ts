@@ -34,6 +34,18 @@ export class WorkspaceError extends BaseError {
     }
   }
 
+  static assertWsInfoTypeDefined(
+    wsName: string,
+    workspaceInfoType: WorkspaceInfo['type'] | undefined,
+  ): asserts workspaceInfoType is WorkspaceInfo['type'] {
+    if (!workspaceInfoType) {
+      throw new WorkspaceError({
+        message: `Workspace ${wsName} not found`,
+        code: WorkspaceErrorCode.WORKSPACE_NOT_FOUND_ERROR,
+      });
+    }
+  }
+
   code: WorkspaceErrorCode;
 
   constructor(

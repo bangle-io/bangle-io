@@ -591,7 +591,6 @@ export async function getLatestCommitSha({
   config: GithubConfig;
   abortSignal?: AbortSignal;
 }): Promise<string> {
-  debugger;
   let path = `/repos/${config.owner}/${config.repoName}/commits/${
     config.branch
   }?cacheBust=${Math.floor(Date.now() / 1000)}`;

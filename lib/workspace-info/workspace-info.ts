@@ -40,7 +40,15 @@ export async function readWorkspaceInfo(
     allowDeleted?: boolean;
   } = {},
 ): Promise<WorkspaceInfo | undefined> {
-  let match = await getWorkspaceInfoTable().get(wsName);
+  let match = await getWorkspaceInfoTable()
+    .get(wsName)
+    .catch((error) => {
+      console.warn('Error reading workspace info from db', error);
+
+      // swallow error as there is not much we can do, and treat it as if
+      // workspace was not found
+      return undefined;
+    });
 
   if (wsName === HELP_FS_WORKSPACE_NAME) {
     match = helpFSWorkspaceInfo();
