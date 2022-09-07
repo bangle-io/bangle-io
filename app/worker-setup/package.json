@@ -37,7 +37,8 @@
   },
   "devDependencies": {
     "@bangle.io/slice-page": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

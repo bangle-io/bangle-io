@@ -6249,6 +6249,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@types/react", "npm:17.0.49"],\
             ["@types/react-dom", "npm:17.0.17"],\
@@ -6517,6 +6518,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["comlink", "npm:4.3.1"],\
             ["react", "npm:17.0.2"],\
             ["tslib", "npm:2.4.0"],\

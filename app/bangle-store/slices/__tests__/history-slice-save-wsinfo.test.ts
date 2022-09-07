@@ -5,18 +5,16 @@ import {
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
-import type { ApplicationStore } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { BrowserHistory } from '@bangle.io/history';
-import {
-  createWorkspace,
-  deleteWorkspace,
-  listWorkspaces,
-} from '@bangle.io/slice-workspace';
+import { createWorkspace, deleteWorkspace } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore, waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
-import { readWorkspaceInfo } from '@bangle.io/workspace-info';
+import {
+  readAllWorkspacesInfo,
+  readWorkspaceInfo,
+} from '@bangle.io/workspace-info';
 
 import { historySlice, historySliceKey } from '../history-slice';
 
@@ -141,11 +139,9 @@ describe('saveWorkspaceInfoEffect', () => {
     await deleteWorkspace(deletedWsName)(store.state, store.dispatch, store);
 
     await waitForExpect(async () =>
-      expect(
-        (
-          await listWorkspaces()(store.state, store.dispatch, store)
-        ).map((r) => r.name),
-      ).not.toContain(deletedWsName),
+      expect((await readAllWorkspacesInfo()).map((r) => r.name)).not.toContain(
+        deletedWsName,
+      ),
     );
 
     await sleep(0);
@@ -159,11 +155,10 @@ describe('saveWorkspaceInfoEffect', () => {
       rootDirHandle: { root: 'handler2' },
     })(store.state, store.dispatch, store);
 
-    expect(
-      (await listWorkspaces()(store.state, store.dispatch, store)).map(
-        (r) => r.name,
-      ),
-    ).toEqual(['bangle-help', 'testWs2']);
+    expect((await readAllWorkspacesInfo()).map((r) => r.name)).toEqual([
+      'bangle-help',
+      'testWs2',
+    ]);
 
     store.dispatch({ name: 'action::some-action' } as any);
 
@@ -197,17 +192,12 @@ describe('saveWorkspaceInfoEffect', () => {
       { workspaceRootDir: wsInfo?.metadata.rootDirHandle },
     );
 
-    let morphedStore = store as ApplicationStore;
-
-    await listWorkspaces()(
-      morphedStore.state,
-      morphedStore.dispatch,
-      morphedStore,
-    );
+    await readAllWorkspacesInfo();
 
     store.dispatch({ name: 'action::some-action' } as any);
-    await sleep(50);
 
-    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
+    await waitForExpect(() => {
+      expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
+    });
   });
 });

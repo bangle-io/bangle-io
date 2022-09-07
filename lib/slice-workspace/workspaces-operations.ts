@@ -69,21 +69,6 @@ export function handleWorkspaceError(error: Error) {
   });
 }
 
-// Lists all the workspaces that have not been deleted workspaces
-export function listWorkspaces() {
-  return workspaceSliceKey.asyncOp(
-    async (_, __, store): Promise<WorkspaceInfo[]> => {
-      const workspacesInfo = await readAllWorkspacesInfo();
-
-      if (store.destroyed) {
-        return [];
-      }
-
-      return workspacesInfo;
-    },
-  );
-}
-
 export function createWorkspace(
   wsName: string,
   type: string,

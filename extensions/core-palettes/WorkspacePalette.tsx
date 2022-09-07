@@ -6,14 +6,14 @@ import React, {
   useState,
 } from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CorePalette,
 } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { goToWsNameRoute, listWorkspaces } from '@bangle.io/slice-workspace';
+import { goToWsNameRoute } from '@bangle.io/slice-workspace';
 import {
   AlbumIcon,
   CloseIcon,
@@ -43,12 +43,8 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
 
       const { dispatchSerialOperation } = useSerialOperationContext();
       useEffect(() => {
-        listWorkspaces()(
-          bangleStore.state,
-          bangleStore.dispatch,
-          bangleStore,
-        ).then((wsInfo) => {
-          updateWorkspaces(wsInfo);
+        workspace.readAllWorkspacesInfo().then((wsInfos) => {
+          updateWorkspaces(wsInfos);
         });
       }, [bangleStore]);
 

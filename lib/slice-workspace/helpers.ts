@@ -16,7 +16,7 @@ export async function getWsInfoType(
     workspaceSliceKey.getSliceStateAsserted(state);
 
   // Use the cached workspace info if it exists and is of the same wsName
-  if (cachedWorkspaceInfo?.type === wsName) {
+  if (cachedWorkspaceInfo?.name === wsName) {
     return cachedWorkspaceInfo.type;
   }
 

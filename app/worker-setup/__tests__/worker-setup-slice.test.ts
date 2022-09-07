@@ -2,15 +2,12 @@
  * @jest-environment @bangle.io/jsdom-env
  */
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
-import {
-  listWorkspaces,
-  workspaceSlice,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { workspaceSlice, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { createTestStore } from '@bangle.io/test-utils';
 import type { exponentialBackoff } from '@bangle.io/utils';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
+import { readAllWorkspacesInfo } from '@bangle.io/workspace-info';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
 
@@ -273,7 +270,7 @@ test('sends workspaces slice action correctly', async () => {
 
   await naukarProxy.testGetStore();
 
-  const result = await listWorkspaces()(store.state, store.dispatch, store);
+  const result = await readAllWorkspacesInfo();
 
   expect(result).toEqual([
     {

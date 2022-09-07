@@ -29,13 +29,13 @@ import {
   createNote,
   createWorkspace,
   getWsName,
-  listWorkspaces,
   workspaceSlice,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { assertNotUndefined, sleep } from '@bangle.io/utils';
+import { readAllWorkspacesInfo } from '@bangle.io/workspace-info';
 
 import { createPMNode } from './create-pm-node';
 import { createTestStore } from './create-test-store';
@@ -169,11 +169,7 @@ export async function setupMockWorkspaceWithNotes(
   destroyAfterInit = false,
   storageProvider = WorkspaceTypeBrowser,
 ) {
-  if (
-    (await listWorkspaces()(store.state, store.dispatch, store)).find(
-      (r) => r.name === wsName,
-    )
-  ) {
+  if ((await readAllWorkspacesInfo()).find((r) => r.name === wsName)) {
     throw new Error(`Workspace ${wsName} already exists`);
   }
 

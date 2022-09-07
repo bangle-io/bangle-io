@@ -16,11 +16,7 @@ import {
 
 import { workspaceSliceKey } from '../common';
 import { getWsName } from '../operations';
-import {
-  createWorkspace,
-  deleteWorkspace,
-  listWorkspaces,
-} from '../workspaces-operations';
+import { createWorkspace, deleteWorkspace } from '../workspaces-operations';
 
 jest.mock('@bangle.io/slice-page', () => {
   const remaining = Object.assign(
@@ -49,9 +45,7 @@ describe('listAllFiles', () => {
   test('when blank has help-fs', async () => {
     const { store } = createBasicTestStore({});
 
-    expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
-      helpFSWorkspaceInfo(),
-    ]);
+    expect(await readAllWorkspacesInfo()).toEqual([helpFSWorkspaceInfo()]);
   });
 
   test('cerating a workspace', async () => {
@@ -73,7 +67,7 @@ describe('listAllFiles', () => {
       type: WorkspaceTypeBrowser,
     });
 
-    expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual(
+    expect(await readAllWorkspacesInfo()).toEqual(
       [
         helpFSWorkspaceInfo(),
         {
@@ -100,9 +94,7 @@ describe('listAllFiles', () => {
       store,
     );
 
-    expect(
-      await listWorkspaces()(store.state, store.dispatch, store),
-    ).toHaveLength(3);
+    expect(await readAllWorkspacesInfo()).toHaveLength(3);
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
@@ -117,9 +109,7 @@ describe('listAllFiles', () => {
       type: WorkspaceTypeBrowser,
     });
 
-    expect(
-      await listWorkspaces()(store.state, store.dispatch, store),
-    ).toHaveLength(2);
+    expect(await readAllWorkspacesInfo()).toHaveLength(2);
   });
 });
 

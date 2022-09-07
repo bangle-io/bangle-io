@@ -42,6 +42,7 @@
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/storage": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "idb-keyval": "^5.1.5",
     "react": "^17.0.2",

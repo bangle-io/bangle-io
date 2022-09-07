@@ -37,5 +37,4 @@ export {
   createWorkspace,
   deleteWorkspace,
   handleWorkspaceError,
-  listWorkspaces,
 } from './workspaces-operations';

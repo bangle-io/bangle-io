@@ -18,6 +18,7 @@ export {
   writeNote,
 } from '@bangle.io/slice-workspace';
 export {
+  readAllWorkspacesInfo,
   readWorkspaceInfo,
   readWorkspaceMetadata,
 } from '@bangle.io/workspace-info';
