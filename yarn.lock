@@ -3705,6 +3705,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/workspace-info@workspace:lib/workspace-info":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/workspace-info@workspace:lib/workspace-info"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/workspace-sidebar@workspace:*, @bangle.io/workspace-sidebar@workspace:app/workspace-sidebar":
   version: 0.0.0-use.local
   resolution: "@bangle.io/workspace-sidebar@workspace:app/workspace-sidebar"

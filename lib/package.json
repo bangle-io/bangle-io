@@ -27,6 +27,7 @@
     "ui-components",
     "ui-dhancha",
     "utils",
+    "workspace-info",
     "ws-path"
   ],
   "repository": {

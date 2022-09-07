@@ -309,6 +309,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/utils"\
       },\
       {\
+        "name": "@bangle.io/workspace-info",\
+        "reference": "workspace:lib/workspace-info"\
+      },\
+      {\
         "name": "@bangle.io/ws-path",\
         "reference": "workspace:lib/ws-path"\
       },\
@@ -416,6 +420,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/worker-naukar", ["workspace:worker/worker-naukar"]],\
       ["@bangle.io/worker-naukar-proxy", ["workspace:app/worker-naukar-proxy"]],\
       ["@bangle.io/worker-setup", ["workspace:app/worker-setup"]],\
+      ["@bangle.io/workspace-info", ["workspace:lib/workspace-info"]],\
       ["@bangle.io/workspace-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar", "workspace:app/workspace-sidebar"]],\
       ["@bangle.io/ws-path", ["workspace:lib/ws-path"]],\
       ["app", ["workspace:app"]],\
@@ -6484,6 +6489,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/workspace-info", [\
+        ["workspace:lib/workspace-info", {\
+          "packageLocation": "./lib/workspace-info/",\
+          "packageDependencies": [\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"]\
           ],\
           "linkType": "SOFT"\
         }]\
