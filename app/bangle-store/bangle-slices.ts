@@ -25,7 +25,6 @@ import { historySlice } from './slices/history-slice';
 import { miscEffectsSlice } from './slices/misc-effects-slice';
 import { pageLifeCycleSlice } from './slices/page-lifecycle-slice';
 import { saveStateSlice } from './slices/save-state-slice';
-import { storageProviderErrorSlice } from './slices/storage-provider-error-slice';
 
 export type BangleActionTypes =
   | UiContextAction
@@ -70,7 +69,6 @@ export function bangleStateSlices({
     notificationSlice(),
     editorSyncSlice(),
     workspaceOpenedDocInfoSlice(),
-    storageProviderErrorSlice(),
 
     // <-- PLOP INSERT SLICE -->
 

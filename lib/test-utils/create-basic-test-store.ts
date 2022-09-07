@@ -12,7 +12,10 @@ import {
   Extension,
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
-import type { BangleStateConfig } from '@bangle.io/shared-types';
+import type {
+  BangleApplicationStore,
+  BangleStateConfig,
+} from '@bangle.io/shared-types';
 import {
   editorManagerSlice,
   editorManagerSliceKey,
@@ -128,6 +131,10 @@ export function createBasicTestStore<
     getActionNames,
     getAction,
 
+    getWsName: () => {
+      return getWsName()(store.state as BangleApplicationStore['state']);
+    },
+
     // if user editor, checks if editor is ready to be edited
     isEditorCollabReady: async (editorIndex: number) => {
       const editor = editorManagerSliceKey.callQueryOp(
@@ -158,6 +165,7 @@ export async function setupMockWorkspaceWithNotes(
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
   destroyAfterInit = false,
+  storageProvider = WorkspaceTypeBrowser,
 ) {
   if (
     (await listWorkspaces()(store.state, store.dispatch, store)).find(
@@ -167,7 +175,7 @@ export async function setupMockWorkspaceWithNotes(
     throw new Error(`Workspace ${wsName} already exists`);
   }
 
-  await createWorkspace(wsName, WorkspaceTypeBrowser)(
+  await createWorkspace(wsName, storageProvider)(
     store.state,
     store.dispatch,
     store,

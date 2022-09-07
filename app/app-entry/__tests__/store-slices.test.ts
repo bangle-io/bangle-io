@@ -37,7 +37,6 @@ test('exhaustive main slices list', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-sync-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    'storage-provider-error-slice$',
     expect.stringMatching(/e2eHelpers1\$/),
     expect.stringMatching(/e2eHelpers2\$/),
     expect.stringMatching(/slice\$/),
