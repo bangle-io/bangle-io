@@ -86,28 +86,4 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       },
     );
   },
-
-  'action::@bangle.io/slice-workspace:set-storage-provider-error': (
-    actionName,
-  ) => {
-    return workspaceSliceKey.actionSerializer(
-      actionName,
-      (action) => {
-        return {
-          serializedError: action.value.serializedError,
-          wsName: action.value.wsName,
-          uid: action.value.uid,
-          workspaceType: action.value.workspaceType,
-        };
-      },
-      (obj) => {
-        return {
-          serializedError: obj.serializedError,
-          wsName: obj.wsName,
-          uid: obj.uid,
-          workspaceType: obj.workspaceType,
-        };
-      },
-    );
-  },
 };

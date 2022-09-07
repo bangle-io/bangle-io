@@ -47,7 +47,6 @@ export const workspaceSliceWithStateSerialization = () => {
         wsPaths: data.wsPaths || undefined,
         refreshCounter: data.refreshCounter || 0,
         cachedWorkspaceInfo: data.cachedWorkspaceInfo || undefined,
-        storageProviderErrors: data.storageProviderErrors,
       });
     };
     wsSlice.spec.state.stateToJSON = (val) => {
@@ -58,7 +57,6 @@ export const workspaceSliceWithStateSerialization = () => {
         wsPaths: val.wsPaths,
         refreshCounter: val.refreshCounter,
         cachedWorkspaceInfo: val.cachedWorkspaceInfo,
-        storageProviderErrors: val.storageProviderErrors,
       };
 
       const result = Object.fromEntries(

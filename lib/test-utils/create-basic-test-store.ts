@@ -23,6 +23,7 @@ import {
 } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
+import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
   createNote,
@@ -113,6 +114,7 @@ export function createBasicTestStore<
       slices: [
         extensionRegistrySlice(),
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
+        storageProviderSlice(),
         pageSlice(),
         workspaceSlice(),
         useEditorManagerSlice ? editorManagerSlice() : undefined,

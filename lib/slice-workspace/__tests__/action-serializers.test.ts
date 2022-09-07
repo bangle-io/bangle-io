@@ -91,18 +91,6 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
       value: {},
     },
   ],
-
-  'action::@bangle.io/slice-workspace:set-storage-provider-error': [
-    {
-      name: 'action::@bangle.io/slice-workspace:set-storage-provider-error' as const,
-      value: {
-        serializedError: JSON.stringify({ t: '123' }),
-        uid: '123',
-        wsName: 'test-1',
-        workspaceType: 'test',
-      },
-    },
-  ],
 };
 
 const fixtures = Object.values(testFixtures).flatMap(

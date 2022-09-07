@@ -3,6 +3,10 @@ import type { Node } from '@bangle.dev/pm';
 import { readFileAsText } from '@bangle.io/baby-fs';
 import { DEBUG_WRITE_SLOWDOWN } from '@bangle.io/config';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
+import {
+  getStorageProvider,
+  storageProviderSliceKey,
+} from '@bangle.io/slice-storage-provider';
 import type { StorageOpts } from '@bangle.io/storage';
 import { sleep } from '@bangle.io/utils';
 import {
@@ -20,7 +24,6 @@ import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
-import { getStorageProvider } from './storage-provider-operations';
 
 function getNoteFormatProvider(wsName: string) {
   return workspaceSliceKey.queryOp((state) => {
@@ -84,10 +87,13 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
 
       WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfo.type),
+      );
+
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfo.type);
+
       await storageProvider.renameFile(
         targetWsPath,
         newWsPath,
@@ -141,10 +147,12 @@ export const checkFileExists = (wsPath: string) => {
 
       WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfo.type),
+      );
+
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfo.type);
 
       return storageProvider.fileExists(
         wsPath,
@@ -177,10 +185,12 @@ export const createNote = (
 
     WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
-    const storageProvider = getStorageProvider(
-      wsName,
-      wsInfo.type,
-    )(store.state);
+    const storageProvider = storageProviderSliceKey.callQueryOp(
+      store.state,
+      getStorageProvider(wsName, wsInfo.type),
+    );
+
+    WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfo.type);
 
     const fileExists = await storageProvider.fileExists(
       wsPath,
@@ -232,10 +242,12 @@ export const writeFile = (wsPath: string, file: File) => {
 
       WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfo.type),
+      );
+
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfo.type);
 
       if (DEBUG_WRITE_SLOWDOWN && DEBUG_WRITE_SLOWDOWN > 0) {
         console.warn('Slowing down write by ' + DEBUG_WRITE_SLOWDOWN + 'ms');
@@ -290,10 +302,12 @@ export const getFile = (wsPath: string) => {
 
       WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfo.type),
+      );
+
+      WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfo.type);
 
       return storageProvider.readFile(
         wsPath,
@@ -317,10 +331,12 @@ export const deleteNote = (wsPathToDelete: string[] | string) => {
 
     WorkspaceError.assertWsInfoDefined(wsName, wsInfo);
 
-    const storageProvider = getStorageProvider(
-      wsName,
-      wsInfo.type,
-    )(store.state);
+    const storageProvider = storageProviderSliceKey.callQueryOp(
+      store.state,
+      getStorageProvider(wsName, wsInfo.type),
+    );
+
+    WorkspaceError.assertStorageProviderDefined(storageProvider, wsInfo.type);
 
     if (!Array.isArray(wsPathToDelete)) {
       wsPathToDelete = [wsPathToDelete];

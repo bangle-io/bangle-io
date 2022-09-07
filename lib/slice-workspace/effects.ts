@@ -5,6 +5,10 @@ import {
   pathnameToWsPath,
   searchToWsPath,
 } from '@bangle.io/slice-page';
+import {
+  getStorageProvider,
+  storageProviderSliceKey,
+} from '@bangle.io/slice-storage-provider';
 import { abortableSetInterval } from '@bangle.io/utils';
 import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -18,7 +22,6 @@ import {
   goToInvalidPathRoute,
   goToWsNameRouteNotFoundRoute,
 } from './operations';
-import { getStorageProvider } from './storage-provider-operations';
 import { updateCachedWorkspaceInfo } from './workspaces-operations';
 
 const LOG = false;
@@ -57,10 +60,10 @@ export const refreshWsPathsEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const storageProvider = getStorageProvider(
-        wsName,
-        wsInfo.type,
-      )(store.state);
+      const storageProvider = storageProviderSliceKey.callQueryOp(
+        store.state,
+        getStorageProvider(wsName, wsInfo.type),
+      );
 
       if (!storageProvider) {
         log('returning early storageProvider');

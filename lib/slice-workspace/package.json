@@ -45,6 +45,7 @@
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/slice-storage-provider": "workspace:*",
     "@bangle.io/storage": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",

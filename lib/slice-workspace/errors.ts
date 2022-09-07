@@ -1,4 +1,5 @@
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
+import type { BaseStorageProvider } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
 
 export enum WorkspaceErrorCode {
@@ -9,6 +10,18 @@ export enum WorkspaceErrorCode {
 }
 
 export class WorkspaceError extends BaseError {
+  static assertStorageProviderDefined(
+    storageProvider: BaseStorageProvider | undefined,
+    wsInfoType: string,
+  ): asserts storageProvider is BaseStorageProvider {
+    if (!storageProvider) {
+      throw new WorkspaceError({
+        message: `Storage provider "${wsInfoType}" does not exist.`,
+        code: WorkspaceErrorCode.WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
+      });
+    }
+  }
+
   static assertWsInfoDefined(
     wsName: string,
     workspaceInfo: WorkspaceInfo | undefined,

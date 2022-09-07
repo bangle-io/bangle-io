@@ -5,13 +5,6 @@ import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type { WorkspaceSliceState } from './workspace-slice-state';
 
-export interface StorageProviderErrorInfo {
-  serializedError: string;
-  wsName: string;
-  workspaceType: WorkspaceInfo['type'];
-  uid: string;
-}
-
 export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceState,
   WorkspaceSliceAction
@@ -51,10 +44,6 @@ export type WorkspaceSliceAction =
       value: {
         workspaceInfo?: WorkspaceInfo;
       };
-    }
-  | {
-      name: 'action::@bangle.io/slice-workspace:set-storage-provider-error';
-      value: StorageProviderErrorInfo;
     };
 
 export type WorkspaceAppStore = ApplicationStore<

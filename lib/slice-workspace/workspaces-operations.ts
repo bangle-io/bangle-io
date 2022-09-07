@@ -8,6 +8,10 @@ import {
   wsNameToPathname,
 } from '@bangle.io/slice-page';
 import {
+  getStorageProvider,
+  storageProviderSliceKey,
+} from '@bangle.io/slice-storage-provider';
+import {
   compareWorkspaceInfo,
   readAllWorkspacesInfo,
   readWorkspaceInfo,
@@ -23,36 +27,9 @@ import {
   goToWorkspaceHomeRoute,
   goToWsNameRouteNotFoundRoute,
 } from './operations';
-import {
-  getStorageProvider,
-  getStorageProviderErrorDetails,
-} from './storage-provider-operations';
 
 export function handleWorkspaceError(error: Error) {
   return workspaceSliceKey.op((state, dispatch): boolean => {
-    const storageProviderErrorDetails = getStorageProviderErrorDetails(error);
-
-    if (storageProviderErrorDetails) {
-      const serializedError =
-        storageProviderErrorDetails.provider.serializeError(error);
-
-      if (serializedError) {
-        dispatch({
-          name: 'action::@bangle.io/slice-workspace:set-storage-provider-error',
-          value: {
-            serializedError: serializedError,
-            wsName: storageProviderErrorDetails.wsName,
-            uid: storageProviderErrorDetails.uid,
-            workspaceType: storageProviderErrorDetails.workspaceType,
-          },
-        });
-
-        return true;
-      } else {
-        return false;
-      }
-    }
-
     if (error instanceof WorkspaceError) {
       const wsName = getWsName()(state);
 
@@ -130,7 +107,12 @@ export function createWorkspace(
       });
     }
 
-    const storageProvider = getStorageProvider(wsName, type)(store.state);
+    const storageProvider = storageProviderSliceKey.callQueryOp(
+      store.state,
+      getStorageProvider(wsName, type),
+    );
+
+    WorkspaceError.assertStorageProviderDefined(storageProvider, type);
 
     const wsMetadata =
       (await storageProvider.newWorkspaceMetadata(wsName, opts)) || {};
