@@ -1,7 +1,6 @@
 import { sleep } from '@bangle.dev/utils';
 
 import type { AppState } from '@bangle.io/create-store';
-import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
   goToLocation,
@@ -12,22 +11,86 @@ import { validWsName } from '@bangle.io/ws-path';
 
 import type { WorkspaceAppStore, WorkspaceDispatchType } from './common';
 import { workspaceSliceKey } from './common';
+import { WorkspaceError, WorkspaceErrorCode } from './errors';
 import {
-  WORKSPACE_ALREADY_EXISTS_ERROR,
-  WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
-  WorkspaceError,
-} from './errors';
-import {
-  storageProviderFromExtensionRegistry,
-  throwOnNotFoundWsInfo,
-} from './helpers';
-import { getWsName, goToWorkspaceHomeRoute } from './operations';
+  getWsName,
+  goToWorkspaceHomeRoute,
+  goToWsNameRouteNotFoundRoute,
+} from './operations';
 import {
   compareWorkspaceInfo,
   readAllWorkspacesInfo,
   readWorkspaceInfo,
   saveWorkspaceInfo,
 } from './read-ws-info';
+import {
+  getStorageProvider,
+  getStorageProviderErrorDetails,
+} from './storage-provider-operations';
+
+export function handleWorkspaceError(error: Error) {
+  return workspaceSliceKey.op((state, dispatch): boolean => {
+    const storageProviderErrorDetails = getStorageProviderErrorDetails(error);
+
+    if (storageProviderErrorDetails) {
+      const serializedError =
+        storageProviderErrorDetails.provider.serializeError(error);
+
+      if (serializedError) {
+        dispatch({
+          name: 'action::@bangle.io/slice-workspace:set-storage-provider-error',
+          value: {
+            serializedError: serializedError,
+            wsName: storageProviderErrorDetails.wsName,
+            uid: storageProviderErrorDetails.uid,
+            workspaceType: storageProviderErrorDetails.workspaceType,
+          },
+        });
+
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (error instanceof WorkspaceError) {
+      const wsName = getWsName()(state);
+
+      switch (error.code) {
+        case WorkspaceErrorCode.WORKSPACE_NOT_FOUND_ERROR: {
+          if (wsName) {
+            goToWsNameRouteNotFoundRoute(wsName)(state, dispatch);
+          } else {
+            // TODO have a unknown workspace error route
+            goToWorkspaceHomeRoute()(state, dispatch);
+          }
+
+          return true;
+        }
+
+        case WorkspaceErrorCode.NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR: {
+          return false;
+        }
+
+        case WorkspaceErrorCode.WORKSPACE_ALREADY_EXISTS_ERROR: {
+          return false;
+        }
+
+        case WorkspaceErrorCode.WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR: {
+          return false;
+        }
+
+        default: {
+          let val: never = error.code;
+
+          return false;
+        }
+      }
+    }
+
+    return false;
+  });
+}
 
 // Lists all the workspaces that have not been deleted workspaces
 export function listWorkspaces() {
@@ -58,25 +121,16 @@ export function createWorkspace(
   ) => {
     validWsName(wsName);
 
-    if (await readWorkspaceInfo(wsName)) {
+    const wsInfo = await readWorkspaceInfo(wsName);
+
+    if (wsInfo) {
       throw new WorkspaceError({
         message: `Cannot create "${wsName}" as it already exists`,
-        code: WORKSPACE_ALREADY_EXISTS_ERROR,
+        code: WorkspaceErrorCode.WORKSPACE_ALREADY_EXISTS_ERROR,
       });
     }
 
-    const storageProvider = storageProviderFromExtensionRegistry(
-      type,
-      extensionRegistrySliceKey.getSliceStateAsserted(store.state)
-        .extensionRegistry,
-    );
-
-    if (!storageProvider) {
-      throw new WorkspaceError({
-        message: `Cannot create "${wsName}" as the storage provider "${type}" is not registered`,
-        code: WORKSPACE_STORAGE_PROVIDER_DOES_NOT_EXIST_ERROR,
-      });
-    }
+    const storageProvider = getStorageProvider(wsName, type)(store.state);
 
     const wsMetadata =
       (await storageProvider.newWorkspaceMetadata(wsName, opts)) || {};
@@ -119,12 +173,11 @@ export function deleteWorkspace(targetWsName: string) {
   ): Promise<boolean> => {
     const targetWsInfo = await readWorkspaceInfo(targetWsName);
 
-    throwOnNotFoundWsInfo(targetWsName, targetWsInfo);
+    WorkspaceError.assertWsInfoDefined(targetWsName, targetWsInfo);
 
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
     if (targetWsName === wsName) {
-      // goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
       goToWorkspaceHomeRoute({ replace: true })(store.state, store.dispatch);
       await Promise.resolve();
     }
@@ -142,28 +195,17 @@ export function deleteWorkspace(targetWsName: string) {
   };
 }
 
-export function clearCachedWorkspaceInfo() {
-  return workspaceSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/slice-workspace:set-cached-workspace-info',
-      value: {
-        workspaceInfo: undefined,
-      },
-    });
-  });
-}
-
 export function updateCachedWorkspaceInfo(wsName: string) {
   return workspaceSliceKey.asyncOp(async (_, __, store) => {
     const workspaceInfo = await readWorkspaceInfo(wsName).catch(() => {});
 
-    const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
-      store.state,
-    );
-
     if (!workspaceInfo) {
       return false;
     }
+
+    const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
+      store.state,
+    );
 
     if (
       cachedWorkspaceInfo &&

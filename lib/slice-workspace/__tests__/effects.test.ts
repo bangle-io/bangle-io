@@ -1,5 +1,4 @@
 import { MAX_OPEN_EDITORS, WorkspaceTypeBrowser } from '@bangle.io/constants';
-import { Extension } from '@bangle.io/extension-registry';
 import {
   getPageLocation,
   pageSliceKey,
@@ -9,19 +8,13 @@ import {
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
   createBasicTestStore,
-  createPMNode,
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
   waitForExpect,
 } from '@bangle.io/test-utils';
-import { BaseError, createEmptyArray, sleep } from '@bangle.io/utils';
+import { createEmptyArray, sleep } from '@bangle.io/utils';
 
-import {
-  getNote,
-  goToWsNameRouteNotFoundRoute,
-  WORKSPACE_NOT_FOUND_ERROR,
-  WorkspaceError,
-} from '..';
+import { goToWsNameRouteNotFoundRoute } from '..';
 import { workspaceSliceKey } from '../common';
 import { createNote, refreshWsPaths } from '../file-operations';
 import {
@@ -274,20 +267,12 @@ describe('updateLocationEffect', () => {
 
     goToWsNameRoute('test-ws')(store.state, store.dispatch);
 
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).error).toBe(
-      undefined,
-    );
-
     await waitForExpect(() => {
       expect(getPageLocation()(store.state)).toEqual({
         pathname: '/ws-not-found/test-ws',
         search: '',
       });
     });
-
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).error).toBe(
-      undefined,
-    );
   });
 
   test('retains mini-editor in case of location change but wsName stays', async () => {
@@ -350,180 +335,6 @@ describe('updateLocationEffect', () => {
       ).openedWsPaths;
       expect(newOpenedWsPaths.miniEditorWsPath).toBeUndefined();
     });
-  });
-});
-
-describe('workspaceErrorHandler', () => {
-  test('storage provider throwing an error', async () => {
-    const storageType = 'testType';
-    const wsName = 'my-ws';
-    class TestProvider extends IndexedDbStorageProvider {
-      name = storageType;
-    }
-
-    const provider = new TestProvider();
-    const listAllFilesSpy = jest.spyOn(provider, 'listAllFiles');
-    const onRootError = jest.fn(() => {
-      return false;
-    });
-    const onStorageError = jest.fn((error, store) => {
-      return true;
-    });
-
-    const { store, actionsDispatched } = createBasicTestStore({
-      sliceKey: workspaceSliceKey,
-      onError: onRootError,
-      extensions: [
-        Extension.create({
-          name: 'test-storage-extension',
-          application: {
-            storageProvider: provider,
-            onStorageError: onStorageError,
-          },
-        }),
-      ],
-    });
-
-    await createWorkspace(wsName, provider.name)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    await goToWsNameRoute(wsName)(store.state, store.dispatch);
-
-    await waitForExpect(() => {
-      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
-        wsName,
-      );
-    });
-
-    await waitForExpect(() => {
-      expect(
-        workspaceSliceKey.getSliceStateAsserted(store.state)
-          .cachedWorkspaceInfo,
-      ).toEqual({
-        deleted: false,
-        lastModified: expect.any(Number),
-        metadata: {},
-        name: wsName,
-        type: 'testType',
-      });
-    });
-
-    await createNote('my-ws:test-note.md', {
-      doc: createPMNode([], `hello`),
-      open: true,
-    })(store.state, store.dispatch, store);
-    expect(
-      (
-        await getNote('my-ws:test-note.md')(store.state, store.dispatch, store)
-      )?.toString(),
-    ).toContain('hello');
-
-    // real testing starts here
-    expect(listAllFilesSpy).toBeCalledTimes(2);
-    expect(onStorageError).toBeCalledTimes(0);
-
-    await sleep(0);
-    let actionsBefore = actionsDispatched.slice(0);
-
-    const error = new BaseError({ message: 'oops everything went wrong' });
-    listAllFilesSpy.mockImplementation(async () => {
-      throw error;
-    });
-
-    refreshWsPaths()(store.state, store.dispatch);
-
-    await waitForExpect(() => {
-      expect(onRootError).toBeCalledTimes(1);
-    });
-    expect(onStorageError).toBeCalledTimes(1);
-    expect(onStorageError).nthCalledWith(1, error, store);
-
-    expect(actionsDispatched.slice(actionsBefore.length)).toMatchInlineSnapshot(
-      [
-        { id: expect.any(String) },
-        { id: expect.any(String) },
-        { id: expect.any(String) },
-      ],
-      `
-      [
-        {
-          "id": Any<String>,
-          "name": "action::@bangle.io/slice-workspace:refresh-ws-paths",
-        },
-        {
-          "id": Any<String>,
-          "name": "action::@bangle.io/slice-workspace:set-error",
-          "value": {
-            "error": [BaseError: oops everything went wrong],
-          },
-        },
-        {
-          "id": Any<String>,
-          "name": "action::@bangle.io/slice-workspace:set-error",
-          "value": {
-            "error": undefined,
-          },
-        },
-      ]
-    `,
-    );
-  });
-
-  test('handles error', async () => {
-    const storageType = 'testType';
-    class TestProvider extends IndexedDbStorageProvider {
-      name = storageType;
-    }
-
-    const provider = new TestProvider();
-    const onStorageError = jest.fn((error, store) => {
-      return true;
-    });
-    const { store } = createBasicTestStore({
-      sliceKey: workspaceSliceKey,
-      extensions: [
-        Extension.create({
-          name: 'test-storage-extension',
-          application: {
-            storageProvider: provider,
-            onStorageError: onStorageError,
-          },
-        }),
-      ],
-    });
-
-    await createWorkspace('test-ws', WorkspaceTypeBrowser)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-
-    await waitForExpect(() => {
-      expect(getPageLocation()(store.state)?.pathname).toBe('/ws/test-ws');
-    });
-
-    const consoleLog = console.log;
-    console.log = jest.fn();
-
-    store.errorHandler(
-      new WorkspaceError({
-        message: 'not found',
-        code: WORKSPACE_NOT_FOUND_ERROR,
-      }),
-    );
-
-    await waitForExpect(() => {
-      expect(getPageLocation()(store.state)).toEqual({
-        pathname: '/ws-not-found/test-ws',
-        search: '',
-      });
-    });
-
-    expect(onStorageError).toBeCalledTimes(0);
-    console.log = consoleLog;
   });
 });
 

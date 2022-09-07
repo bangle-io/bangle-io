@@ -21,7 +21,7 @@ const extension = Extension.create({
           severity: 'error',
           title: 'Error writing to browser storage',
           content: error.message,
-          uid: error.code + Math.random(),
+          uid: error.code + '' + Math.random(),
         })(store.state, store.dispatch);
 
         return true;

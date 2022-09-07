@@ -1,13 +1,8 @@
 import type { ActionsSerializersType } from '@bangle.io/create-store';
-import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import type {
-  ExtractWorkspaceSliceAction,
-  WorkspaceSliceAction,
-} from './common';
+import type { WorkspaceSliceAction } from './common';
 import { workspaceSliceKey } from './common';
-import { storageProviderHelpers } from './storage-provider-helpers';
 
 export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
   'action::@bangle.io/slice-workspace:set-cached-workspace-info': (
@@ -20,44 +15,6 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       },
       (obj) => {
         return obj;
-      },
-    );
-  },
-
-  'action::@bangle.io/slice-workspace:set-error': (actionName) => {
-    return workspaceSliceKey.actionSerializer(
-      actionName,
-      (action) => {
-        if (!action.value.error) {
-          return {
-            storageProviderError: null,
-            error: null,
-          };
-        }
-
-        const { error } = action.value;
-
-        const storageProviderError =
-          storageProviderHelpers.getStorageProviderNameFromError(error) ?? null;
-
-        return {
-          storageProviderError,
-          error: errorSerialize(error),
-        };
-      },
-      (obj) => {
-        const error = obj.error ? errorParse(obj.error) : undefined;
-
-        if (error && obj.storageProviderError) {
-          storageProviderHelpers.markAsStorageProviderError(
-            error,
-            obj.storageProviderError,
-          );
-        }
-
-        return {
-          error,
-        };
       },
     );
   },
@@ -126,6 +83,30 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       },
       (obj) => {
         return undefined;
+      },
+    );
+  },
+
+  'action::@bangle.io/slice-workspace:set-storage-provider-error': (
+    actionName,
+  ) => {
+    return workspaceSliceKey.actionSerializer(
+      actionName,
+      (action) => {
+        return {
+          serializedError: action.value.serializedError,
+          wsName: action.value.wsName,
+          uid: action.value.uid,
+          workspaceType: action.value.workspaceType,
+        };
+      },
+      (obj) => {
+        return {
+          serializedError: obj.serializedError,
+          wsName: obj.wsName,
+          uid: obj.uid,
+          workspaceType: obj.workspaceType,
+        };
       },
     );
   },

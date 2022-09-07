@@ -1,16 +1,11 @@
-import { WorkspaceTypeHelp } from '@bangle.io/constants';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
 import type {
   NoteFormatProvider,
   WorkspaceInfo,
 } from '@bangle.io/shared-types';
-import type { BaseStorageProvider } from '@bangle.io/storage';
-import { HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
-import { storageProviderHelpers } from './storage-provider-helpers';
+import { WorkspaceError, WorkspaceErrorCode } from './errors';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {
@@ -69,80 +64,6 @@ export function savePrevOpenedWsPathsToSearch(
   }
 }
 
-const storageProviderProxy = new WeakMap<
-  BaseStorageProvider,
-  BaseStorageProvider
->();
-
-export function storageProviderErrorHandlerFromExtensionRegistry(
-  workspaceType: string,
-  extensionRegistry: ExtensionRegistry,
-) {
-  const errorHandler =
-    extensionRegistry.getOnStorageErrorHandlers(workspaceType);
-
-  return errorHandler;
-}
-
-export function storageProviderFromExtensionRegistry(
-  workspaceType: string,
-  extensionRegistry: ExtensionRegistry,
-) {
-  let provider: BaseStorageProvider | undefined;
-
-  if (workspaceType === WorkspaceTypeHelp) {
-    provider = new HelpFsStorageProvider();
-  } else {
-    provider = extensionRegistry.getStorageProvider(workspaceType);
-  }
-
-  if (!provider) {
-    return undefined;
-  }
-
-  let existingProxy = storageProviderProxy.get(provider);
-
-  if (existingProxy) {
-    return existingProxy;
-  }
-
-  let proxy = new Proxy(provider, {
-    get(target, method) {
-      let fun = Reflect.get(target, method);
-
-      if (typeof fun === 'function') {
-        return <T>(...args: T[]) => {
-          try {
-            const result = Reflect.apply(fun, target, args);
-
-            if (result.then) {
-              return result.catch((err: unknown) => {
-                storageProviderHelpers.markAsStorageProviderError(
-                  err,
-                  target.name,
-                );
-
-                throw err;
-              });
-            }
-
-            return result;
-          } catch (err) {
-            storageProviderHelpers.markAsStorageProviderError(err, target.name);
-            throw err;
-          }
-        };
-      } else {
-        return fun;
-      }
-    },
-  });
-
-  storageProviderProxy.set(provider, proxy);
-
-  return proxy;
-}
-
 export const markdownFormatProvider: NoteFormatProvider = {
   name: 'markdown-format-provider',
   description: 'Saves notes in Markdown format',
@@ -156,15 +77,3 @@ export const markdownFormatProvider: NoteFormatProvider = {
     return markdownParser(value, specRegistry, plugins);
   },
 };
-
-export function throwOnNotFoundWsInfo(
-  wsName: string,
-  workspaceInfo: WorkspaceInfo | undefined,
-): asserts workspaceInfo is WorkspaceInfo {
-  if (!workspaceInfo) {
-    throw new WorkspaceError({
-      message: `Workspace ${wsName} not found`,
-      code: WORKSPACE_NOT_FOUND_ERROR,
-    });
-  }
-}

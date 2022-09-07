@@ -1,7 +1,7 @@
 import { wsPathHelpers } from '@bangle.io/api';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
-import { BaseError } from '@bangle.io/utils';
+import { BaseError, errorParse, errorSerialize } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
@@ -80,11 +80,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
         code: INVALID_GITHUB_TOKEN,
       });
     }
+
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
     const { tree } = await this._getTree({
       wsName,
-      config: { githubToken, repoName: wsName, ...wsMetadata },
+      config: { repoName: wsName, ...wsMetadata, githubToken },
       abortSignal,
     });
 
@@ -108,6 +109,14 @@ export class GithubStorageProvider implements BaseStorageProvider {
       owner: createOpts.owner,
       branch: createOpts.branch,
     };
+  }
+
+  parseError(errorString: string) {
+    try {
+      return errorParse(JSON.parse(errorString));
+    } catch (error) {
+      return undefined;
+    }
   }
 
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
@@ -145,6 +154,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this.deleteFile(wsPath, opts);
   }
 
+  serializeError(error: Error) {
+    return JSON.stringify(errorSerialize(error));
+  }
+
   async writeFile(
     wsPath: string,
     file: File,
@@ -170,7 +183,11 @@ export class GithubStorageProvider implements BaseStorageProvider {
     return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
       const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
 
-      const config = { githubToken, repoName: wsName, ...wsMetadata };
+      const config = {
+        repoName: wsName,
+        ...wsMetadata,
+        githubToken,
+      };
 
       const tree = await this._getTree({
         wsName,

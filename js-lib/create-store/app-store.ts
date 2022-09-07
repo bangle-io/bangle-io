@@ -8,6 +8,8 @@ import type {
   SliceSideEffect,
 } from './app-state-slice';
 
+const seenErrors = new WeakSet<Error>();
+
 export type SchedulerType = (cb: () => void) => () => void;
 
 export type DispatchType<S, A extends BaseAction> = ApplicationStore<
@@ -73,6 +75,12 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   };
 
   errorHandler = (error: Error, key?: string): void => {
+    if (seenErrors.has(error)) {
+      return;
+    }
+
+    seenErrors.add(error);
+
     if (this._destroyController.signal.aborted) {
       return;
     }
@@ -113,7 +121,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     }
     // Note: We are giving every slice an opportunity to handle the error
     // rather than just the originating slice, because if an effect dispatches an
-    // operation of a different slice, just running the orginating slice's error handlers
+    // operation of a different slice, just running the originating slice's error handlers
     // will miss the error handling of the slice owning the operation.
 
     // check if any slice handles it

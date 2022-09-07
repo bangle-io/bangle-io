@@ -30,6 +30,11 @@ export interface BaseStorageProvider {
   readonly hidden?: boolean;
   readonly name: string;
 
+  // StorageProvider is run in various contexts like worker, main thread, etc.
+  // This method will be called when an error needs to be serialized and forwarded to the main thread.
+  serializeError: (error: Error) => string | undefined;
+  parseError: (errorString: string) => Error | undefined;
+
   createFile: (wsPath: WsPath, file: File, opts: StorageOpts) => Promise<void>;
 
   deleteFile: (wsPath: WsPath, opts: StorageOpts) => Promise<void>;
@@ -50,7 +55,7 @@ export interface BaseStorageProvider {
   newWorkspaceMetadata: (
     wsName: string,
     createOpts: any,
-  ) => Promise<{ [key: string]: any }> | Promise<void> | void;
+  ) => Promise<{ [key: string]: any }> | Promise<void>;
 
   renameFile: (
     wsPath: WsPath,
@@ -66,5 +71,5 @@ export interface BaseStorageProvider {
     opts: StorageOpts,
   ) => Promise<WsPath[]>;
 
-  searchText?: () => void;
+  searchText?: () => Promise<void>;
 }

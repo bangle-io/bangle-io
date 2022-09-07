@@ -4,7 +4,7 @@ import {
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
-import { assertSignal } from '@bangle.io/utils';
+import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
 import type { BaseStorageProvider, StorageOpts } from './base-storage';
@@ -16,7 +16,6 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
   description = 'Saves data in your browsers local storage';
 
   private _idb = new IndexedDBFileSystem();
-
   async createFile(
     wsPath: string,
     file: File,
@@ -81,6 +80,14 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {}
 
+  parseError(errorString: string) {
+    try {
+      return errorParse(JSON.parse(errorString));
+    } catch (error) {
+      return undefined;
+    }
+  }
+
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     if (!(await this.fileExists(wsPath, opts))) {
       return undefined;
@@ -95,6 +102,10 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this._idb.rename(toFSPath(wsPath), toFSPath(newWsPath));
+  }
+
+  serializeError(error: Error) {
+    return JSON.stringify(errorSerialize(error));
   }
 
   async writeFile(

@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
-
 import { useSerialOperationContext } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -11,14 +9,9 @@ import {
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { EditorIdType } from '@bangle.io/shared-types';
-import {
-  setEditorReady,
-  setEditorUnmounted,
-  useEditorManagerContext,
-} from '@bangle.io/slice-editor-manager';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import {
   checkFileExists,
-  getNote,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { Page } from '@bangle.io/ui-components';

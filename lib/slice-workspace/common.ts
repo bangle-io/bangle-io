@@ -11,6 +11,13 @@ import type { WorkspaceSliceState } from './workspace-slice-state';
 
 let cachedHelpFs: WorkspaceInfo | undefined = undefined;
 
+export interface StorageProviderErrorInfo {
+  serializedError: string;
+  wsName: string;
+  workspaceType: WorkspaceInfo['type'];
+  uid: string;
+}
+
 export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
   if (!cachedHelpFs) {
     cachedHelpFs = {
@@ -68,10 +75,8 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::@bangle.io/slice-workspace:set-error';
-      value: {
-        error: Error | undefined;
-      };
+      name: 'action::@bangle.io/slice-workspace:set-storage-provider-error';
+      value: StorageProviderErrorInfo;
     };
 
 export type WorkspaceAppStore = ApplicationStore<

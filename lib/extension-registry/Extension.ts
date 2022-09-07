@@ -68,12 +68,10 @@ export interface ApplicationConfig<
   slices?: Slice[];
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;
-  // return true if the error was handled by your callback
+  // Return true if the error was handled by your callback
   // and false if it cannot be handled
-  onStorageError?: (
-    error: Error & { code: string },
-    store: ApplicationStore,
-  ) => boolean;
+  // Only applicable if your extension is a storage provider
+  onStorageError?: (error: Error, store: ApplicationStore) => boolean;
 }
 
 export interface SidebarType {

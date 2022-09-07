@@ -1,6 +1,7 @@
 import { BaseError } from '@bangle.io/base-error';
 import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { HELP_FS_INDEX_WS_PATH, WorkspaceTypeHelp } from '@bangle.io/constants';
+import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { toFSPath } from '@bangle.io/ws-path';
 
 import type { BaseStorageProvider, StorageOpts } from './base-storage';
@@ -59,7 +60,6 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
   hidden = true;
 
   private _idbProvider = new IndexedDbStorageProvider();
-
   async createFile(
     wsPath: string,
     file: File,
@@ -103,6 +103,14 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {}
 
+  parseError(errorString: string) {
+    try {
+      return errorParse(JSON.parse(errorString));
+    } catch (error) {
+      return undefined;
+    }
+  }
+
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     const res = await readFileFromUnpkg(wsPath);
 
@@ -122,6 +130,10 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return;
     }
     await this._idbProvider.renameFile(wsPath, newWsPath, opts);
+  }
+
+  serializeError(error: Error) {
+    return JSON.stringify(errorSerialize(error));
   }
 
   async writeFile(

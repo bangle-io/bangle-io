@@ -41,13 +41,13 @@ export const getUseWorkspaceContextReturn: Mutable<
 > = {
   bangleStore: initialBangleStore,
   cachedWorkspaceInfo: undefined,
-  error: undefined,
   noteWsPaths: [],
   openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: [],
   refreshCounter: 0,
   wsName: 'test-ws',
   wsPaths: [],
+  storageProviderErrors: [],
 };
 
 export const getUseEditorManagerContextReturn: ReturnType<
