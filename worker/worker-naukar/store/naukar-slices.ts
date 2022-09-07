@@ -10,6 +10,7 @@ import {
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
+import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
@@ -29,9 +30,15 @@ export function naukarSlices({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
+  // Order matters: any subsequent slice may depend on the previous slices
   return [
     ...syncWithWindowSlices(),
     extensionRegistrySlice(),
+    // disabling side effects in worker because storage provider error handling
+    // callback happens only in main. This is because we currently run extension
+    // slices in main thread only. So the error is serialized in state, synced
+    // with main and then storage provider callback is called in main's side effect.
+    disableSideEffect(storageProviderSlice()),
     pageSlice(),
     workspaceSlice(),
     workerEditorSlice(),

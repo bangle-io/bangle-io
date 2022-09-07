@@ -37,6 +37,7 @@
     "@bangle.io/slice-editor-sync": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/slice-storage-provider": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/slice-workspace-opened-doc-info": "workspace:*",

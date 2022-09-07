@@ -11,6 +11,7 @@ import {
 } from '@bangle.io/slice-notification';
 import type { PageSliceAction } from '@bangle.io/slice-page';
 import { pageSlice } from '@bangle.io/slice-page';
+import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import type { UiContextAction } from '@bangle.io/slice-ui';
 import { uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
@@ -54,12 +55,14 @@ export function bangleStateSlices({
     pageLifeCycleSlice(),
   ];
 
+  // Order matters: any subsequent slice may depend on the previous slices
   return [
-    ...pageBlock,
-    naukarProxySlice(),
     ...workerSetupSlices(),
-    disableSideEffect(workspaceSlice()),
+    naukarProxySlice(),
+    ...pageBlock,
     extensionRegistrySlice(),
+    storageProviderSlice(),
+    disableSideEffect(workspaceSlice()),
     uiSlice(),
     editorManagerSlice(),
     saveStateSlice(),
