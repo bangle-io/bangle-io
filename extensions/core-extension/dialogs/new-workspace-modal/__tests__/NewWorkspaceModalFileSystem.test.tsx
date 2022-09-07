@@ -65,21 +65,17 @@ jest.mock('react-dom', () => {
     }),
   };
 });
-jest.mock('@bangle.io/slice-workspace', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
-
-  return {
-    ...workspaceThings,
-    readWorkspaceInfo: jest.fn(async () => undefined),
-  };
-});
 
 jest.mock('@bangle.io/api', () => {
-  const otherThings = jest.requireActual('@bangle.io/api');
+  const { workspace, ...otherThing } = jest.requireActual('@bangle.io/api');
 
   return {
-    ...otherThings,
+    ...otherThing,
     useSerialOperationContext: jest.fn(() => ({})),
+    workspace: {
+      ...workspace,
+      readWorkspaceInfo: jest.fn(async () => undefined),
+    },
   };
 });
 

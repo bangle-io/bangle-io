@@ -10,8 +10,22 @@ import { CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { OverlayProvider } from '@bangle.io/ui-components';
 
+import { restoreWorkspaceFromBackup } from '../../../operations';
 import { WORKSPACE_NAME_ALREADY_EXISTS_ERROR } from '../common';
 import { NewWorkspaceModal } from '../NewWorkspaceModal';
+
+jest.mock('@bangle.io/api', () => {
+  const { workspace, ...otherThing } = jest.requireActual('@bangle.io/api');
+
+  return {
+    ...otherThing,
+    useSerialOperationContext: jest.fn(() => ({})),
+    workspace: {
+      ...workspace,
+      readWorkspaceInfo: jest.fn(async () => undefined),
+    },
+  };
+});
 
 jest.mock('@react-aria/ssr/dist/main', () => {
   return {
@@ -50,24 +64,6 @@ jest.mock('@bangle.io/baby-fs', () => {
   };
 });
 
-jest.mock('@bangle.io/slice-workspace', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
-
-  return {
-    ...workspaceThings,
-    readWorkspaceInfo: jest.fn(async () => undefined),
-  };
-});
-
-jest.mock('@bangle.io/api', () => {
-  const otherThings = jest.requireActual('@bangle.io/api');
-
-  return {
-    ...otherThings,
-    useSerialOperationContext: jest.fn(() => ({})),
-  };
-});
-
 jest.mock('react-dom', () => {
   const otherThings = jest.requireActual('react-dom');
 
@@ -83,7 +79,6 @@ const readWorkspaceInfoMock =
   workspace.readWorkspaceInfo as jest.MockedFunction<
     typeof workspace.readWorkspaceInfo
   >;
-
 beforeEach(() => {
   let dispatchSerialOperation = jest.fn();
 
