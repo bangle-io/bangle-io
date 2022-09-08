@@ -26,7 +26,7 @@ import type { WorkspaceStateKeys } from '../workspace-slice-state';
 import { WorkspaceSliceState } from '../workspace-slice-state';
 
 // Since original workspace-slice does not have serialization, this injects serialization behaviour for easier testing
-// TODO: if we decide to add serialization in workspace-slice, we can remove this
+// NOTE: if we decide to add serialization in workspace-slice, we can remove this
 export const workspaceSliceWithStateSerialization = () => {
   const wsSlice = workspaceSlice();
 

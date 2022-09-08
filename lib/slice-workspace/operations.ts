@@ -117,7 +117,8 @@ export const updateOpenedWsPaths = (
     // If primary or secondary are changing let the update happen via the  history
     // so that we can record the changes in browser history. Any other wsPaths in
     // openedWsPaths donot need to be recorded in history, so update them directly.
-    // TODO: This is a bit confusing
+    // TODO: This is a bit confusing, we can probably move this logic directly into the
+    // the slice reducer.
     if (
       sliceState.openedWsPaths.primaryWsPath !== newOpened.primaryWsPath ||
       sliceState.openedWsPaths.secondaryWsPath !== newOpened.secondaryWsPath
