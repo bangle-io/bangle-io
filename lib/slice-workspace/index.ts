@@ -19,6 +19,7 @@ export {
   closeOpenedEditor,
   getOpenedWsPaths,
   getWsName,
+  goToLandingPage,
   goToWorkspaceAuthRoute,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,

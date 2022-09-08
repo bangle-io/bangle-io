@@ -14,6 +14,7 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { goToWorkspaceAuthRoute } from '..';
 import { savePrevOpenedWsPathsToSearch } from '../helpers';
 import {
+  goToLandingPage,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
   pushWsPath,
@@ -347,6 +348,20 @@ describe('goToWorkspaceHomeRoute', () => {
 
     expect(goToLocationMock).toBeCalledTimes(1);
     expect(goToLocationMock).nthCalledWith(1, '/', { replace: false });
+  });
+});
+
+describe('goToLandingPage', () => {
+  test('works', () => {
+    let { store } = noSideEffectsStore({
+      wsName: undefined,
+      openedWsPaths: [],
+    });
+
+    goToLandingPage()(store.state, store.dispatch);
+
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/landing', { replace: false });
   });
 });
 

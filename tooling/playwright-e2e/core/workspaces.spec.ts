@@ -115,9 +115,7 @@ test.describe('workspaces', () => {
 
     await waitForNotification(page, `Successfully removed ${wsName2}`);
 
-    await expect
-      .poll(() => page.url())
-      .toMatch(new RegExp(`/ws-not-found/${wsName2}`));
+    await expect.poll(() => page.url()).toMatch(new RegExp(`/landing`));
 
     await sleep();
     await openWorkspacePalette(page);

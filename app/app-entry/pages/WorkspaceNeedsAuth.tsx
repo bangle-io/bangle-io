@@ -6,7 +6,7 @@ import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
-  goToWorkspaceHomeRoute,
+  goToLandingPage,
   goToWsNameRoute,
   goToWsNameRouteNotFoundRoute,
 } from '@bangle.io/slice-workspace';
@@ -85,7 +85,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
   useEffect(() => {
     if (!wsName) {
-      goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
+      goToLandingPage()(bangleStore.state, bangleStore.dispatch);
     }
   }, [bangleStore, wsName]);
 

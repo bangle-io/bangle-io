@@ -102,7 +102,7 @@ export const updateOpenedWsPaths = (
         return true;
       }
 
-      goToWorkspaceHomeRoute(opts)(state, dispatch);
+      goToLandingPage(opts)(state, dispatch);
 
       return true;
     }
@@ -192,6 +192,19 @@ export const pushWsPath = (
 
       return openedWsPath.updatePrimaryWsPath(wsPath);
     })(state, dispatch);
+  };
+};
+
+export const goToLandingPage = ({
+  replace = false,
+}: { replace?: boolean } = {}) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    goToLocation('/landing', { replace })(
+      state,
+      pageSliceKey.getDispatch(dispatch),
+    );
+
+    return;
   };
 };
 

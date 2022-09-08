@@ -21,24 +21,17 @@ export function miscEffectsSlice() {
 }
 
 export const saveLastUsedWorkspaceEffect = miscEffectsKey.effect(() => {
-  let lastSeenWsName: string | undefined;
-
   return {
     destroy() {},
     deferredUpdate(store, prevState) {
-      const { wsName } = workspaceSliceKey.getSliceState(store.state) || {};
+      const wsName = workspaceSliceKey.getValueIfChanged(
+        'wsName',
+        store.state,
+        prevState,
+      );
 
-      const prevWsName = getWsName()(prevState);
-
-      if (wsName === HELP_FS_WORKSPACE_NAME) {
-        return;
-      }
-      if (wsName && wsName !== lastSeenWsName) {
-        lastSeenWsName = wsName;
+      if (wsName) {
         lastWorkspaceUsed.save(wsName);
-      } else if (!wsName && prevWsName) {
-        lastSeenWsName = undefined;
-        lastWorkspaceUsed.clear();
       }
     },
   };

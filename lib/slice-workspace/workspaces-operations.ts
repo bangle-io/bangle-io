@@ -13,7 +13,6 @@ import {
 } from '@bangle.io/slice-storage-provider';
 import {
   compareWorkspaceInfo,
-  readAllWorkspacesInfo,
   readWorkspaceInfo,
   saveWorkspaceInfo,
 } from '@bangle.io/workspace-info';
@@ -24,7 +23,7 @@ import { workspaceSliceKey } from './common';
 import { WorkspaceError, WorkspaceErrorCode } from './errors';
 import {
   getWsName,
-  goToWorkspaceHomeRoute,
+  goToLandingPage,
   goToWsNameRouteNotFoundRoute,
 } from './operations';
 
@@ -38,8 +37,7 @@ export function handleWorkspaceError(error: Error) {
           if (wsName) {
             goToWsNameRouteNotFoundRoute(wsName)(state, dispatch);
           } else {
-            // TODO have a unknown workspace error route
-            goToWorkspaceHomeRoute()(state, dispatch);
+            goToLandingPage()(state, dispatch);
           }
 
           return true;
@@ -145,7 +143,7 @@ export function deleteWorkspace(targetWsName: string) {
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
     if (targetWsName === wsName) {
-      goToWorkspaceHomeRoute({ replace: true })(store.state, store.dispatch);
+      goToLandingPage({ replace: true })(store.state, store.dispatch);
       await Promise.resolve();
     }
 

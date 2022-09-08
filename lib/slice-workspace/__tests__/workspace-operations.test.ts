@@ -278,12 +278,13 @@ describe('deleteWorkspace', () => {
     expect(goToLocation).nthCalledWith(1, '/ws/test-1');
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
-    await sleep(0);
 
-    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
-      undefined,
-    );
+    await waitForExpect(() => {
+      expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+        undefined,
+      );
+    });
 
-    expect(getPageLocation()(store.state)?.pathname).toEqual('/');
+    expect(getPageLocation()(store.state)?.pathname).toEqual('/landing');
   });
 });

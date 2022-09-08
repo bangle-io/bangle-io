@@ -10,6 +10,7 @@ import {
 import { wsNameToPathname } from '@bangle.io/slice-page';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 
+import { LandingPage } from './pages/LandingPage';
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
@@ -41,6 +42,10 @@ export function Routes() {
       <Route path="/ws-invalid-path/:wsName">
         <WorkspaceInvalidPath />
       </Route>
+
+      <Route path="/landing">
+        <LandingPage />
+      </Route>
       <Route path="/">
         {() => {
           const lastWsName = lastWorkspaceUsed.get();
@@ -49,7 +54,7 @@ export function Routes() {
             return <Redirect to={BANGLE_HOME_PATH} />;
           }
 
-          return <Redirect to={'/ws/' + lastWsName} />;
+          return <Redirect to={'/landing'} />;
         }}
       </Route>
     </Switch>

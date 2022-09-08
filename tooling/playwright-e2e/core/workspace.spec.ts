@@ -156,7 +156,9 @@ test.describe('workspace', () => {
 
     await page2.goto(baseURL!, { waitUntil: 'networkidle' });
 
-    await expect(page2).toHaveURL(new RegExp(wsName1));
+    expect(await page2.url()).toBe(`${baseURL}/landing`);
+
+    await expect(page2.locator(`text=${wsName1} (last opened)`)).toBeVisible();
   });
 
   test('deleting a note', async ({ page, baseURL }) => {
