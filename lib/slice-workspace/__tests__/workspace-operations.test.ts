@@ -15,8 +15,13 @@ import {
 } from '@bangle.io/workspace-info';
 
 import { workspaceSliceKey } from '../common';
+import { WorkspaceError, WorkspaceErrorCode } from '../errors';
 import { getWsName } from '../operations';
-import { createWorkspace, deleteWorkspace } from '../workspaces-operations';
+import {
+  createWorkspace,
+  deleteWorkspace,
+  handleWorkspaceError,
+} from '../workspaces-operations';
 
 jest.mock('@bangle.io/slice-page', () => {
   const remaining = Object.assign(
@@ -286,5 +291,46 @@ describe('deleteWorkspace', () => {
     });
 
     expect(getPageLocation()(store.state)?.pathname).toEqual('/landing');
+    expect(getPageLocation()(store.state)?.pathname).toEqual('/landing');
+  });
+});
+
+describe('error handling', () => {
+  test('does not handle WORKSPACE_ALREADY_EXISTS_ERROR', async () => {
+    const { store } = createBasicTestStore({});
+
+    expect(
+      handleWorkspaceError(
+        new WorkspaceError({
+          message: `Cannot create "my-ws" as it already exists`,
+          code: WorkspaceErrorCode.WORKSPACE_ALREADY_EXISTS_ERROR,
+        }),
+      )(store.state, store.dispatch),
+    ).toBe(false);
+  });
+
+  test('handles WORKSPACE_NOT_FOUND_ERROR', async () => {
+    const { store } = createBasicTestStore({});
+
+    expect(
+      handleWorkspaceError(
+        new WorkspaceError({
+          message: `Not found`,
+          code: WorkspaceErrorCode.WORKSPACE_NOT_FOUND_ERROR,
+        }),
+      )(store.state, store.dispatch),
+    ).toBe(true);
+
+    waitForExpect(() => {
+      expect(getPageLocation()(store.state)?.pathname).toEqual('/landing');
+    });
+  });
+
+  test('does not handle unknown errors', async () => {
+    const { store } = createBasicTestStore({});
+
+    expect(
+      handleWorkspaceError(new Error('wow'))(store.state, store.dispatch),
+    ).toBe(false);
   });
 });
