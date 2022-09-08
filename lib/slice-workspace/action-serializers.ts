@@ -79,10 +79,10 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
     return workspaceSliceKey.actionSerializer(
       actionName,
       (action) => {
-        return undefined;
+        return {};
       },
       (obj) => {
-        return undefined;
+        return {};
       },
     );
   },

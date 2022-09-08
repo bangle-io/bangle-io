@@ -67,6 +67,7 @@ export const refreshWsPaths = () => {
   return workspaceSliceKey.op((_, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
+      value: {},
     });
 
     return true;

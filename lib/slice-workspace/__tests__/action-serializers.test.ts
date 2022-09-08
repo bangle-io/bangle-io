@@ -11,9 +11,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
   'action::@bangle.io/slice-workspace:refresh-ws-paths': [
     {
       name: 'action::@bangle.io/slice-workspace:refresh-ws-paths' as const,
-    },
-    {
-      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths' as const,
+      value: {},
     },
   ],
 
