@@ -35,11 +35,9 @@ export function setupCollabManager(
 
         return new CollabServerState(doc);
       } catch (error) {
-        queueMicrotask(() => {
-          if (error instanceof Error) {
-            store.errorHandler(error);
-          }
-        });
+        if (error instanceof Error) {
+          store.errorHandler(error);
+        }
 
         return undefined;
       }

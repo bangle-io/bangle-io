@@ -9,7 +9,6 @@ export {
   deleteNote,
   deleteWorkspace,
   getNote,
-  getStorageProviderOpts,
   getWsName,
   goToWorkspaceAuthRoute,
   pushWsPath,

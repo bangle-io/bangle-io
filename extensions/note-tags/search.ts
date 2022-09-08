@@ -69,8 +69,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
         bangleStore.dispatch,
         bangleStore,
       ).catch((error) => {
-        bangleStore.errorHandler(error);
-
+        // Ignore errors as this is not a great place to handle errors
         return undefined;
       });
     },

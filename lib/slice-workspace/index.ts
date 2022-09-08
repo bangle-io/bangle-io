@@ -8,7 +8,6 @@ export {
   docToFile,
   getFile,
   getNote,
-  getStorageProviderOpts,
   refreshWsPaths,
   renameNote,
   writeFile,
