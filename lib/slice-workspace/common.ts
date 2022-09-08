@@ -36,7 +36,6 @@ export type WorkspaceSliceAction =
     }
   | {
       name: 'action::@bangle.io/slice-workspace:refresh-ws-paths';
-      // TODO : quick fix to keep typescript and serialization happy
       value: {};
     }
   | {

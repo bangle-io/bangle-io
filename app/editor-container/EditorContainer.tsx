@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import {
+  useBangleStoreContext,
+  useSerialOperationContext,
+} from '@bangle.io/api';
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
@@ -116,7 +119,8 @@ export function useHandleWsPath(incomingWsPath?: string) {
     'LOADING' | 'FOUND' | 'NOT_FOUND' | 'NO_WS_PATH'
   >(incomingWsPath ? 'LOADING' : 'NO_WS_PATH');
 
-  const { bangleStore } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
+
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {

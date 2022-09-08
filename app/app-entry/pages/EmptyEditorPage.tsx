@@ -22,7 +22,8 @@ import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 const MAX_ENTRIES = 8;
 
 function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
-  const { bangleStore } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
+
   const formattedPaths = useMemo(() => {
     return wsPaths.map((wsPath) => {
       return resolvePath(wsPath);

@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'wouter';
 
 import { lastWorkspaceUsed } from '@bangle.io/bangle-store';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   BANGLE_HOME_PATH,
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
 } from '@bangle.io/constants';
 import { wsNameToPathname } from '@bangle.io/slice-page';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
+import { pushWsPath } from '@bangle.io/slice-workspace';
 
 import { LandingPage } from './pages/LandingPage';
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
@@ -18,7 +19,8 @@ import { WorkspacePage } from './pages/WorkspacePage';
 
 export function Routes() {
   const [location] = useLocation();
-  const { bangleStore } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
+
   useEffect(() => {
     if (location === wsNameToPathname(HELP_FS_WORKSPACE_NAME)) {
       pushWsPath(HELP_FS_INDEX_WS_PATH)(

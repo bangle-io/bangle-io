@@ -2296,9 +2296,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/contextual-ui-components@workspace:lib/contextual-ui-components"
   dependencies:
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/dom": ^8.11.3

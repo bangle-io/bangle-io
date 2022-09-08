@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/api';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -31,7 +32,7 @@ interface BacklinkSearchResult {
 
 export function BacklinkWidget() {
   const backlinkSearchResult = useBacklinkSearch();
-  const { bangleStore } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
 
   const makeOnClick = useCallback(
     (wsPath?: string) => {

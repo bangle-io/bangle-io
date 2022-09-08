@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  goToWorkspaceHomeRoute,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { goToWorkspaceHomeRoute } from '@bangle.io/slice-workspace';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 
 import { ActivitybarButton } from './ActivitybarButton';
@@ -27,7 +25,7 @@ export function Activitybar({
 }) {
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
-  const { bangleStore } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
 
   const sidebarItems = sidebars.filter((r) => {
     return r.activitybarIconShow

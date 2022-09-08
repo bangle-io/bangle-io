@@ -385,11 +385,13 @@ describe('clicking node', () => {
     await clickSetup(screen.getByText(/note1/i));
     await act(() => sleep(0));
 
-    expect(
-      workspaceSliceKey
-        .getSliceState(store.state)
-        ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
-    ).toEqual('test-ws:tel/note1.md');
+    waitForExpect(() => {
+      expect(
+        workspaceSliceKey
+          .getSliceState(store.state)
+          ?.openedWsPaths.getByIndex(PRIMARY_EDITOR_INDEX),
+      ).toEqual('test-ws:tel/note1.md');
+    });
   });
 
   test('opens sidebar on shift click', async () => {

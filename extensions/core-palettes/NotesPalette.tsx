@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -62,7 +63,7 @@ const createPaletteObject = ({
 };
 const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
-    const { bangleStore } = useWorkspaceContext();
+    const bangleStore = useBangleStoreContext();
 
     const { recent: recentWsPaths, other: otherWsPaths } =
       useSearchWsPaths(query);
