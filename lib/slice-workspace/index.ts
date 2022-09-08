@@ -34,8 +34,4 @@ export {
   useWorkspaceContext,
   WorkspaceContextProvider,
 } from './WorkspaceContext';
-export {
-  createWorkspace,
-  deleteWorkspace,
-  handleWorkspaceError,
-} from './workspaces-operations';
+export { createWorkspace, deleteWorkspace } from './workspaces-operations';

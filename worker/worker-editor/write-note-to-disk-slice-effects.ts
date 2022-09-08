@@ -4,11 +4,7 @@ import {
   pageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
-import {
-  docToFile,
-  handleWorkspaceError,
-  writeFile,
-} from '@bangle.io/slice-workspace';
+import { docToFile, writeFile } from '@bangle.io/slice-workspace';
 import type { OpenedFile } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
   getOpenedDocInfo,
