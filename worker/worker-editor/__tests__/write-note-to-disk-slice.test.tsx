@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
@@ -115,17 +115,16 @@ const setup = async ({
       />
     </TestStoreProvider>,
   );
-
-  await act(() => {
-    return sleep(0);
-  });
-
   await waitFor(() => {
     expect(container.innerHTML).toContain('hello mars');
   });
 
-  // wait for collab to be ready
-  await sleep(10);
+  await waitFor(() => {
+    // wait for collab to be ready
+    expect(container.querySelector('.bangle-collab-active')).toBeInstanceOf(
+      HTMLElement,
+    );
+  });
 
   return { ...obj, wsPath1, wsName, getContainer: () => container };
 };
