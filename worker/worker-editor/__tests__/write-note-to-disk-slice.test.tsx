@@ -1,12 +1,13 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { act, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import type { SliceSideEffect } from '@bangle.io/create-store';
 import { Editor } from '@bangle.io/editor';
+import { calculateGitFileSha } from '@bangle.io/remote-file-sync';
 import { getEditor } from '@bangle.io/slice-editor-manager';
 import { getNote, writeNote } from '@bangle.io/slice-workspace';
 import { getOpenedDocInfo } from '@bangle.io/slice-workspace-opened-doc-info';
@@ -115,19 +116,24 @@ const setup = async ({
       />
     </TestStoreProvider>,
   );
-
-  await act(() => {
-    return sleep(0);
-  });
-
   await waitFor(() => {
     expect(container.innerHTML).toContain('hello mars');
   });
 
-  // wait for collab to be ready
-  await sleep(10);
+  await waitFor(() => {
+    // wait for collab to be ready
+    expect(container.querySelector('.bangle-collab-active')).toBeInstanceOf(
+      HTMLElement,
+    );
+  });
 
   return { ...obj, wsPath1, wsName, getContainer: () => container };
+};
+
+const mdToSha = (md: string) => {
+  return calculateGitFileSha(
+    new File([new Blob([md], { type: 'text/plain' })], 'test.md'),
+  );
 };
 
 describe('effects', () => {
@@ -157,8 +163,8 @@ describe('effects', () => {
       const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
 
       expect(docInfo).toEqual({
-        currentDiskSha: 'cc1f078bfb2a1127991cd52a77708dfd860ba586',
-        lastKnownDiskSha: 'cc1f078bfb2a1127991cd52a77708dfd860ba586',
+        currentDiskSha: await mdToSha(`# bye hello mars`),
+        lastKnownDiskSha: await mdToSha(`# bye hello mars`),
         pendingWrite: false,
         wsPath: wsPath1,
       });
@@ -171,10 +177,10 @@ describe('effects', () => {
         ).toEqual(`<p>more </p><h1>bye hello mars</h1>`),
       );
 
-      await waitForExpect(() =>
+      await waitForExpect(async () =>
         expect(getOpenedDocInfo()(store.state)[wsPath1]).toEqual({
-          currentDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
-          lastKnownDiskSha: '0c980342a685a642d17d2d70dcd112a444dd2c14',
+          currentDiskSha: await mdToSha('more \n\n# bye hello mars'),
+          lastKnownDiskSha: await mdToSha('more \n\n# bye hello mars'),
           pendingWrite: false,
           wsPath: wsPath1,
         }),
@@ -316,7 +322,7 @@ describe('effects', () => {
       expect(docInfo).toEqual({
         pendingWrite: expect.any(Boolean),
         wsPath: wsPath1,
-        lastKnownDiskSha: '7be9985c422e362ccf92a083494a0b72c7c99fd2',
+        lastKnownDiskSha: await mdToSha('# hello mars'),
       });
     });
   });
@@ -332,7 +338,7 @@ describe('effects', () => {
       expect(docInfo).toEqual({
         pendingWrite: expect.any(Boolean),
         wsPath: wsPath1,
-        currentDiskSha: '7be9985c422e362ccf92a083494a0b72c7c99fd2',
+        currentDiskSha: await mdToSha('# hello mars'),
       });
     });
 
@@ -351,7 +357,7 @@ describe('effects', () => {
 
       await sleep(10);
 
-      const originalSha = 'cc1f078bfb2a1127991cd52a77708dfd860ba586';
+      const originalSha = await mdToSha('# bye hello mars');
 
       await waitForExpect(() => {
         const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
@@ -367,12 +373,10 @@ describe('effects', () => {
         store,
       );
 
-      await waitForExpect(() => {
+      await waitForExpect(async () => {
         // shas should go out of sync
         const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
-        expect(newDocInfo?.currentDiskSha).toEqual(
-          'e3c742401a3b742c7849106b83f72f0063581c4f',
-        );
+        expect(newDocInfo?.currentDiskSha).toEqual(await mdToSha('my thing'));
       });
 
       const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
@@ -391,7 +395,7 @@ describe('effects', () => {
 
       await sleep(10);
 
-      const originalSha = 'cc1f078bfb2a1127991cd52a77708dfd860ba586';
+      const originalSha = await mdToSha('# bye hello mars');
 
       await waitForExpect(() => {
         const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
@@ -421,12 +425,8 @@ describe('effects', () => {
       const newDocInfo = getOpenedDocInfo()(store.state)[wsPath1];
       // shas should be the same as we have loaded the file
       // that we just wrote on disk.
-      expect(newDocInfo?.currentDiskSha).toEqual(
-        '50755dab75e4b9ac0f74fc5707827ec14ebfe6c0',
-      );
-      expect(newDocInfo?.lastKnownDiskSha).toEqual(
-        '50755dab75e4b9ac0f74fc5707827ec14ebfe6c0',
-      );
+      expect(newDocInfo?.currentDiskSha).toEqual(await mdToSha('overwrite'));
+      expect(newDocInfo?.lastKnownDiskSha).toEqual(await mdToSha('overwrite'));
     });
   });
 

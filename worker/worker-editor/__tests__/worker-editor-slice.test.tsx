@@ -54,7 +54,7 @@ describe('worker-editor-slice', () => {
       [wsPath1, `# ${DOC_CONTENT}`],
     ]);
 
-    render(
+    const { container } = render(
       <TestStoreProvider
         editorManagerContextProvider
         bangleStore={store}
@@ -77,6 +77,9 @@ describe('worker-editor-slice', () => {
 
     await act(async () => {
       await waitForExpect(() => {
+        expect(container.querySelector('.bangle-collab-active')).toBeInstanceOf(
+          HTMLElement,
+        );
         expect(editorReadyActionsCount()).toBe(2);
       });
     });
@@ -85,11 +88,10 @@ describe('worker-editor-slice', () => {
 
     expect(collabManager).toBeInstanceOf(CollabManager);
 
-    await sleep(0);
-
     await waitForExpect(() =>
       expect([...collabManager.getAllDocNames()]).toEqual([wsPath1]),
     );
+
     expect(collabManager.getCollabState(wsPath1)?.version).toEqual(0);
     expect(collabManager.getCollabState(wsPath1)?.steps).toEqual([]);
     expect(collabManager.getCollabState(wsPath1)?.doc.toString()).toEqual(

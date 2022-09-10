@@ -15,5 +15,8 @@ export async function calculateGitFileSha<T extends Blob>(file: T) {
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 
+  // Uncomment to debug what file content corresponds to what sha
+  // console.log(sha, JSON.stringify(atob(str)));
+
   return sha;
 }
