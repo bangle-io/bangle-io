@@ -29,7 +29,7 @@
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/slice-editor-sync": "workspace:*",
+    "@bangle.io/slice-editor-collab-comms": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/slice-workspace-opened-doc-info": "workspace:*",

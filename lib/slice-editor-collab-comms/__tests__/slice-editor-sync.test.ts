@@ -4,7 +4,7 @@ import { AppState } from '@bangle.io/create-store';
 import { setupMockMessageChannel } from '@bangle.io/test-utils';
 
 import { editorSyncKey } from '../common';
-import { editorSyncSlice } from '../slice-editor-sync';
+import { editorSyncSlice } from '../slice-editor-collab-comms';
 
 let cleanup = () => {};
 beforeEach(() => {
@@ -46,7 +46,7 @@ describe('transfer-port', () => {
     expect(messageChannel.port1.onmessage).toBeUndefined();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+      name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
       value: {
         port: messageChannel.port1,
         messageChannel: messageChannel,
@@ -124,7 +124,7 @@ describe('transfer-port', () => {
     let newMessageChannel = new MessageChannel();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+      name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
       value: {
         port: newMessageChannel.port1,
         messageChannel: newMessageChannel,

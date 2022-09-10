@@ -2,7 +2,7 @@ import { collabClient } from '@bangle.dev/collab-client';
 import { uuid } from '@bangle.dev/utils';
 
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
-import { getCollabMessageBus } from '@bangle.io/slice-editor-sync';
+import { getCollabMessageBus } from '@bangle.io/slice-editor-collab-comms';
 
 export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
   return collabClient.plugins({

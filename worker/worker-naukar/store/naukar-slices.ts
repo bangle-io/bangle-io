@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/browser';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
-import { editorSyncSlice } from '@bangle.io/slice-editor-sync';
+import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
 import {
   notificationSlice,
   uncaughtExceptionNotification,

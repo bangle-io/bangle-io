@@ -253,12 +253,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/shared-types"\
       },\
       {\
-        "name": "@bangle.io/slice-editor-manager",\
-        "reference": "workspace:lib/slice-editor-manager"\
+        "name": "@bangle.io/slice-editor-collab-comms",\
+        "reference": "workspace:lib/slice-editor-collab-comms"\
       },\
       {\
-        "name": "@bangle.io/slice-editor-sync",\
-        "reference": "workspace:lib/slice-editor-sync"\
+        "name": "@bangle.io/slice-editor-manager",\
+        "reference": "workspace:lib/slice-editor-manager"\
       },\
       {\
         "name": "@bangle.io/slice-notification",\
@@ -404,8 +404,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/search-pm-node", ["workspace:js-lib/search-pm-node"]],\
       ["@bangle.io/shared", ["workspace:app/shared"]],\
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],\
+      ["@bangle.io/slice-editor-collab-comms", ["workspace:lib/slice-editor-collab-comms"]],\
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],\
-      ["@bangle.io/slice-editor-sync", ["workspace:lib/slice-editor-sync"]],\
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],\
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],\
       ["@bangle.io/slice-storage-provider", ["workspace:lib/slice-storage-provider"]],\
@@ -4697,8 +4697,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
@@ -4878,8 +4878,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/pm-plugins", "workspace:js-lib/pm-plugins"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@types/react", "npm:17.0.49"],\
@@ -5943,6 +5943,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/slice-editor-collab-comms", [\
+        ["workspace:lib/slice-editor-collab-comms", {\
+          "packageLocation": "./lib/slice-editor-collab-comms/",\
+          "packageDependencies": [\
+            ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
+            ["@bangle.dev/collab-comms", "npm:0.31.2"],\
+            ["@bangle.dev/test-helpers", "npm:0.31.2"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@testing-library/dom", "npm:8.12.0"],\
+            ["tslib", "npm:2.4.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/slice-editor-manager", [\
         ["workspace:lib/slice-editor-manager", {\
           "packageLocation": "./lib/slice-editor-manager/",\
@@ -5970,26 +5988,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["reselect", "npm:4.1.5"],\
             ["tslib", "npm:2.4.0"],\
             ["type-fest", "npm:2.12.0"],\
-            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["@bangle.io/slice-editor-sync", [\
-        ["workspace:lib/slice-editor-sync", {\
-          "packageLocation": "./lib/slice-editor-sync/",\
-          "packageDependencies": [\
-            ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
-            ["@bangle.dev/collab-comms", "npm:0.31.2"],\
-            ["@bangle.dev/test-helpers", "npm:0.31.2"],\
-            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
-            ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
-            ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
-            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.io/utils", "workspace:lib/utils"],\
-            ["@testing-library/dom", "npm:8.12.0"],\
-            ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
           ],\
           "linkType": "SOFT"\
@@ -6428,8 +6426,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
@@ -6464,7 +6462,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/slice-editor-sync", "workspace:lib/slice-editor-sync"],\
+            ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\

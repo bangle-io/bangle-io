@@ -20,7 +20,7 @@ export function getCollabMessageBus() {
  * boundary as it needs to _transfer_ `port2` to the other side.
  */
 export function editorSyncSlice() {
-  assertActionName('@bangle.io/slice-editor-sync', editorSyncKey);
+  assertActionName('@bangle.io/slice-editor-collab-comms', editorSyncKey);
   const seen = new WeakSet();
 
   return new Slice({
@@ -37,7 +37,7 @@ export function editorSyncSlice() {
       },
       apply(action, state) {
         switch (action.name) {
-          case 'action::@bangle.io/slice-editor-sync:transfer-port': {
+          case 'action::@bangle.io/slice-editor-collab-comms:transfer-port': {
             const { comms } = state;
             comms.unregister?.();
             comms.port?.close();
@@ -72,7 +72,9 @@ export function editorSyncSlice() {
       },
     },
     actions: {
-      'action::@bangle.io/slice-editor-sync:transfer-port': (actionName) => {
+      'action::@bangle.io/slice-editor-collab-comms:transfer-port': (
+        actionName,
+      ) => {
         return editorSyncKey.actionSerializer(
           actionName,
           (action) => {

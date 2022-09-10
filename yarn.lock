@@ -2193,8 +2193,8 @@ __metadata:
     "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-storage-provider": "workspace:*"
@@ -2340,8 +2340,8 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@types/react": ^17.0.49
@@ -3189,6 +3189,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/slice-editor-collab-comms@workspace:*, @bangle.io/slice-editor-collab-comms@workspace:lib/slice-editor-collab-comms":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/slice-editor-collab-comms@workspace:lib/slice-editor-collab-comms"
+  dependencies:
+    "@bangle.dev/collab-comms": 0.31.2
+    "@bangle.dev/test-helpers": 0.31.2
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/store-sync": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@testing-library/dom": ^8.11.3
+    tslib: ^2.4.0
+    typescript: ^4.7.3
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/slice-editor-manager@workspace:*, @bangle.io/slice-editor-manager@workspace:lib/slice-editor-manager":
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-editor-manager@workspace:lib/slice-editor-manager"
@@ -3215,24 +3231,6 @@ __metadata:
     reselect: ^4.1.5
     tslib: ^2.4.0
     type-fest: ^2.12.0
-    typescript: ^4.7.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/slice-editor-sync@workspace:*, @bangle.io/slice-editor-sync@workspace:lib/slice-editor-sync":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-editor-sync@workspace:lib/slice-editor-sync"
-  dependencies:
-    "@bangle.dev/collab-comms": 0.31.2
-    "@bangle.dev/test-helpers": 0.31.2
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/store-sync": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@testing-library/dom": ^8.11.3
-    tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
   linkType: soft
@@ -3639,8 +3637,8 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-editor-sync": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
@@ -3688,7 +3686,7 @@ __metadata:
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-sync": "workspace:*"
+    "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-storage-provider": "workspace:*"

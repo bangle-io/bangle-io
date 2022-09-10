@@ -3,7 +3,7 @@ import type { NaukarStateConfig } from '@bangle.io/shared-types';
 import {
   editorSyncKey,
   getCollabMessageBus,
-} from '@bangle.io/slice-editor-sync';
+} from '@bangle.io/slice-editor-collab-comms';
 import {
   getOpenedWsPaths,
   workspaceSliceKey,

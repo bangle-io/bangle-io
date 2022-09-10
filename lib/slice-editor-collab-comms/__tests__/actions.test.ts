@@ -7,7 +7,7 @@ import {
 } from '@bangle.io/test-utils';
 
 import type { EditorSyncActions } from '../common';
-import { editorSyncSlice } from '../slice-editor-sync';
+import { editorSyncSlice } from '../slice-editor-collab-comms';
 
 let cleanup = () => {};
 
@@ -25,7 +25,7 @@ test('serialization', () => {
   });
   const messageChannel = new MessageChannel();
   const action: EditorSyncActions = {
-    name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+    name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
     value: {
       port: messageChannel.port1,
       messageChannel: messageChannel,
@@ -34,7 +34,7 @@ test('serialization', () => {
 
   const serializedAction = testStore.store.serializeAction(action);
   expect(serializedAction).toEqual({
-    name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+    name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
     serializedValue: {
       port: expect.anything(),
       [APPLY_TRANSFER]: 'port',
@@ -53,7 +53,7 @@ test('serialization', () => {
   });
 
   expect(parsedAction).toEqual({
-    name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+    name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
     value: {
       port: expect.anything(),
     },

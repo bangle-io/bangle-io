@@ -3,11 +3,11 @@ import { collabClient } from '@bangle.dev/collab-client';
 import type { SliceSideEffect } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
-import { getEditor } from '@bangle.io/slice-editor-manager';
 import {
   editorSyncSlice,
   getCollabMessageBus,
-} from '@bangle.io/slice-editor-sync';
+} from '@bangle.io/slice-editor-collab-comms';
+import { getEditor } from '@bangle.io/slice-editor-manager';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import { createBasicTestStore } from '@bangle.io/test-utils';
 

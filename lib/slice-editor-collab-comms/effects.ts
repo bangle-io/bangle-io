@@ -17,7 +17,7 @@ export const transferPortEffect = editorSyncKey.effect(() => {
 
       const port = messageChannel.port1;
       store.dispatch({
-        name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+        name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
         value: {
           port,
           messageChannel,
