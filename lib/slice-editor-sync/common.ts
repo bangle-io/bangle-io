@@ -16,9 +16,11 @@ export type EditorSyncActions = {
 
 export const editorSyncKey = new SliceKey<
   {
-    collabMessageBus: CollabMessageBus;
-    port: MessagePort | undefined;
-    unregister: () => void;
+    comms: {
+      collabMessageBus: CollabMessageBus;
+      port: MessagePort | undefined;
+      unregister: undefined | (() => void);
+    };
   },
   EditorSyncActions
 >('@bangle.io/slice-editor-sync-key');

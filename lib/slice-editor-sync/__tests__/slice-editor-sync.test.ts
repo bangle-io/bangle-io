@@ -19,9 +19,11 @@ test('blank state', () => {
   let state = AppState.create({ slices: [editorSyncSlice()] });
 
   expect(editorSyncKey.getSliceState(state)).toStrictEqual({
-    collabMessageBus: expect.any(CollabMessageBus),
-    port: undefined,
-    unregister: expect.any(Function),
+    comms: {
+      collabMessageBus: expect.any(CollabMessageBus),
+      port: undefined,
+      unregister: undefined,
+    },
   });
 });
 
@@ -32,7 +34,9 @@ describe('transfer-port', () => {
   beforeEach(() => {
     state = AppState.create({ slices: [editorSyncSlice()] });
 
-    const { collabMessageBus } = editorSyncKey.getSliceStateAsserted(state);
+    const {
+      comms: { collabMessageBus },
+    } = editorSyncKey.getSliceStateAsserted(state);
 
     jest.spyOn(collabMessageBus, 'receiveMessages');
     jest.spyOn(collabMessageBus, 'transmit');
@@ -51,12 +55,16 @@ describe('transfer-port', () => {
   });
 
   test('dispatching transfer-port', () => {
-    const { collabMessageBus } = editorSyncKey.getSliceStateAsserted(state);
+    const {
+      comms: { collabMessageBus },
+    } = editorSyncKey.getSliceStateAsserted(state);
 
     expect(editorSyncKey.getSliceState(state)).toStrictEqual({
-      collabMessageBus: expect.any(CollabMessageBus),
-      port: messageChannel.port1,
-      unregister: expect.any(Function),
+      comms: {
+        collabMessageBus: expect.any(CollabMessageBus),
+        port: messageChannel.port1,
+        unregister: expect.any(Function),
+      },
     });
 
     // sets up correctly
@@ -65,7 +73,9 @@ describe('transfer-port', () => {
   });
 
   test('messages from port are correctly forwarded to collabMessageBus', () => {
-    const { collabMessageBus } = editorSyncKey.getSliceStateAsserted(state);
+    const {
+      comms: { collabMessageBus },
+    } = editorSyncKey.getSliceStateAsserted(state);
 
     const message = {
       type: 'test',
@@ -81,7 +91,9 @@ describe('transfer-port', () => {
   });
 
   test('messages from collabMessageBus are correctly to port', () => {
-    const { collabMessageBus } = editorSyncKey.getSliceStateAsserted(state);
+    const {
+      comms: { collabMessageBus },
+    } = editorSyncKey.getSliceStateAsserted(state);
 
     collabMessageBus.transmit({
       to: 'some-one',
@@ -102,10 +114,12 @@ describe('transfer-port', () => {
   });
 
   test('unregistering works', () => {
-    const { port } = editorSyncKey.getSliceStateAsserted(state);
+    const {
+      comms: { port },
+    } = editorSyncKey.getSliceStateAsserted(state);
 
     let mockFn = jest.fn();
-    editorSyncKey.getSliceStateAsserted(state).unregister = mockFn;
+    editorSyncKey.getSliceStateAsserted(state).comms.unregister = mockFn;
 
     let newMessageChannel = new MessageChannel();
 

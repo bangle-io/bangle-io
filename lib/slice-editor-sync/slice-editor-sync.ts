@@ -9,7 +9,7 @@ import { transferPortEffect } from './effects';
 
 export function getCollabMessageBus() {
   return editorSyncKey.queryOp((state): CollabMessageBus => {
-    return editorSyncKey.getSliceStateAsserted(state).collabMessageBus;
+    return editorSyncKey.getSliceStateAsserted(state).comms.collabMessageBus;
   });
 }
 
@@ -21,25 +21,28 @@ export function getCollabMessageBus() {
  */
 export function editorSyncSlice() {
   assertActionName('@bangle.io/slice-editor-sync', editorSyncKey);
-  let seen = new WeakSet();
+  const seen = new WeakSet();
 
   return new Slice({
     key: editorSyncKey,
     state: {
       init() {
         return {
-          collabMessageBus: new CollabMessageBus({}),
-          unregister: () => {},
-          port: undefined,
+          comms: {
+            collabMessageBus: new CollabMessageBus({}),
+            unregister: undefined,
+            port: undefined,
+          },
         };
       },
       apply(action, state) {
         switch (action.name) {
           case 'action::@bangle.io/slice-editor-sync:transfer-port': {
-            state.unregister();
-            state.port?.close();
+            const { comms } = state;
+            comms.unregister?.();
+            comms.port?.close();
             const { port } = action.value;
-            const unregister = state.collabMessageBus.receiveMessages(
+            const unregister = comms.collabMessageBus.receiveMessages(
               CollabMessageBus.WILD_CARD,
               (message) => {
                 // prevent posting the same message that it received
@@ -51,13 +54,16 @@ export function editorSyncSlice() {
             );
             port.onmessage = ({ data }) => {
               seen.add(data);
-              state.collabMessageBus.transmit(data);
+              comms.collabMessageBus.transmit(data);
             };
 
             return {
               ...state,
-              port: action.value.port,
-              unregister,
+              comms: {
+                ...comms,
+                port: action.value.port,
+                unregister,
+              },
             };
           }
         }
