@@ -2,7 +2,8 @@
  * @jest-environment @bangle.io/jsdom-env
  */
 
-import { calculateGitFileSha } from '../calculate-git-file-sha';
+import { calculateGitFileSha } from '@bangle.io/git-file-sha';
+
 import { readFileBlob } from './test-helpers';
 
 test('hashed file-a', async () => {

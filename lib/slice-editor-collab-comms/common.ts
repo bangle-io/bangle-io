@@ -3,7 +3,7 @@ import type { CollabMessageBus } from '@bangle.dev/collab-comms';
 import { SliceKey } from '@bangle.io/create-store';
 
 export type EditorSyncActions = {
-  name: 'action::@bangle.io/slice-editor-sync:transfer-port';
+  name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port';
   value: {
     port: MessagePort;
     // message channel will be defined in window context
@@ -16,9 +16,11 @@ export type EditorSyncActions = {
 
 export const editorSyncKey = new SliceKey<
   {
-    collabMessageBus: CollabMessageBus;
-    port: MessagePort | undefined;
-    unregister: () => void;
+    comms: {
+      collabMessageBus: CollabMessageBus;
+      port: MessagePort | undefined;
+      unregister: undefined | (() => void);
+    };
   },
   EditorSyncActions
->('@bangle.io/slice-editor-sync-key');
+>('@bangle.io/slice-editor-collab-comms-key');

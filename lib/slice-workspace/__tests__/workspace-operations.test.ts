@@ -321,7 +321,7 @@ describe('error handling', () => {
       )(store.state, store.dispatch),
     ).toBe(true);
 
-    waitForExpect(() => {
+    await waitForExpect(() => {
       expect(getPageLocation()(store.state)?.pathname).toEqual('/landing');
     });
   });

@@ -2,9 +2,9 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
+import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
 import type { EditorManagerAction } from '@bangle.io/slice-editor-manager';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
-import { editorSyncSlice } from '@bangle.io/slice-editor-sync';
 import {
   notificationSlice,
   uncaughtExceptionNotification,
@@ -68,7 +68,8 @@ export function bangleStateSlices({
     miscEffectsSlice(),
     notificationSlice(),
     editorSyncSlice(),
-    workspaceOpenedDocInfoSlice(),
+    // Disabled side effects in main because it carries heavy sha calculations
+    disableSideEffect(workspaceOpenedDocInfoSlice()),
 
     // <-- PLOP INSERT SLICE -->
 

@@ -1,6 +1,12 @@
 import base64 from 'base64-js';
 
-import { fileToBase64 } from './read-file-as-text';
+import { weakCache } from '@bangle.io/weak-cache';
+
+export const fileToBase64 = async <T extends Blob>(file: T) => {
+  const buffer = await file.arrayBuffer();
+
+  return base64.fromByteArray(new Uint8Array(buffer));
+};
 
 export async function calculateGitFileSha<T extends Blob>(file: T) {
   const str = await fileToBase64(file);
@@ -20,3 +26,5 @@ export async function calculateGitFileSha<T extends Blob>(file: T) {
 
   return sha;
 }
+
+export const cachedCalculateGitFileSha = weakCache(calculateGitFileSha);

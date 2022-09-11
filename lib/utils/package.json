@@ -29,6 +29,7 @@
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/is-abort-error": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/weak-cache": "workspace:*",
     "dayjs": "^1.10.7",
     "debounce-fn": "^5.0.0",
     "react": "^17.0.2",

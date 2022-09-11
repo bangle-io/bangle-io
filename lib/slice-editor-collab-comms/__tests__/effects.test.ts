@@ -4,7 +4,7 @@ import {
 } from '@bangle.io/test-utils';
 import { isWorkerGlobalScope, sleep } from '@bangle.io/utils';
 
-import { editorSyncSlice } from '../slice-editor-sync';
+import { editorSyncSlice } from '../slice-editor-collab-comms';
 
 const isWorkerGlobalScopeMock = jest.mocked(isWorkerGlobalScope);
 
@@ -37,7 +37,7 @@ describe('transferPortEffect', () => {
     expect(testStore.actionsDispatched).toEqual([
       {
         id: expect.any(String),
-        name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+        name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
         value: {
           port: expect.anything(),
           messageChannel: expect.any(MessageChannel),

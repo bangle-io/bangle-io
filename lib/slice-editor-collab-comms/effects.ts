@@ -8,6 +8,8 @@ export const transferPortEffect = editorSyncKey.effect(() => {
       // do not run it in worker context, to avoid duplicate firing in worker
       // TODO we should remove this, since slice should not be aware of worker thread
       if (isWorkerGlobalScope()) {
+        console.warn('transferPortEffect should not be run in worker context');
+
         return;
       }
 
@@ -15,7 +17,7 @@ export const transferPortEffect = editorSyncKey.effect(() => {
 
       const port = messageChannel.port1;
       store.dispatch({
-        name: 'action::@bangle.io/slice-editor-sync:transfer-port',
+        name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
         value: {
           port,
           messageChannel,

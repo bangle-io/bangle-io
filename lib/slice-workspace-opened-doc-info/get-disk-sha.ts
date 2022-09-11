@@ -1,9 +1,6 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
-import { calculateGitFileSha } from '@bangle.io/remote-file-sync';
+import { cachedCalculateGitFileSha } from '@bangle.io/git-file-sha';
 import { getFile } from '@bangle.io/slice-workspace';
-import { weakCache } from '@bangle.io/utils';
-
-export const cachedCalculateGitFileSha = weakCache(calculateGitFileSha);
 
 // reads the file from the disk and returns its sha
 export const getDiskSha = async (

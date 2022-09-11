@@ -24,6 +24,7 @@
     "@bangle.io/api": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/db-key-val": "workspace:*",
+    "@bangle.io/git-file-sha": "workspace:*",
     "@bangle.io/p-map": "workspace:*",
     "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/storage": "workspace:*",

@@ -1,15 +1,5 @@
 import { AppState } from '@bangle.io/create-store';
-import {
-  getOpenedWsPaths,
-  updateOpenedWsPaths,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
-import {
-  createBasicTestStore,
-  setupMockWorkspaceWithNotes,
-  waitForExpect,
-} from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
+import { createBasicTestStore } from '@bangle.io/test-utils';
 
 import {
   BULK_UPDATE_SHAS,
@@ -17,7 +7,6 @@ import {
   UPDATE_ENTRY,
   workspaceOpenedDocInfoKey,
 } from '../common';
-import { getOpenedDocInfo, updateDocInfo } from '../operations';
 import { workspaceOpenedDocInfoSlice } from '../slice-workspace-opened-doc-info';
 
 const setup = async () => {
@@ -256,162 +245,5 @@ describe('action BULK_UPDATE_SHAS', () => {
         },
       },
     );
-  });
-});
-
-describe('effects', () => {
-  test('sync with opened wsPaths', async () => {
-    const { store, getAction } = await setup();
-
-    await setupMockWorkspaceWithNotes(store, 'test-ws', [
-      [`test-ws:one.md`, `# Hello World 0`],
-      [`test-ws:two.md`, `# Hello World 1`],
-    ]);
-
-    workspaceSliceKey.callOp(
-      store.state,
-      store.dispatch,
-      updateOpenedWsPaths((openedWsPath) => {
-        return openedWsPath
-          .updatePrimaryWsPath('test-ws:one.md')
-          .updateSecondaryWsPath('test-ws:two.md');
-      }),
-    );
-
-    await waitForExpect(() => {
-      expect(
-        workspaceOpenedDocInfoKey.getSliceState(store.state)?.openedFiles,
-      ).toEqual({
-        'test-ws:one.md': {
-          pendingWrite: false,
-          wsPath: 'test-ws:one.md',
-        },
-        'test-ws:two.md': {
-          pendingWrite: false,
-          wsPath: 'test-ws:two.md',
-        },
-      });
-    });
-
-    expect(getAction(SYNC_ENTRIES)).toEqual([
-      // the first two are due to setup mock workspace creating one.md, then pushing it
-      // to primary and then creating two.md, then pushing it to primary.
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/slice-workspace-opened-doc-info:sync-entries',
-        value: {
-          additions: ['test-ws:one.md'],
-          removals: [],
-        },
-      },
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/slice-workspace-opened-doc-info:sync-entries',
-        value: {
-          additions: ['test-ws:two.md'],
-          removals: ['test-ws:one.md'],
-        },
-      },
-
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/slice-workspace-opened-doc-info:sync-entries',
-        value: {
-          additions: ['test-ws:one.md'],
-          removals: [],
-        },
-      },
-    ]);
-
-    // should not dispatch any other action if no changes
-
-    store.dispatch({
-      name: 'some-other-action',
-      value: {},
-    } as any);
-
-    expect(getAction(SYNC_ENTRIES)).toHaveLength(3);
-  });
-
-  test('does not clear wsPaths which are no longer open but have pending writes', async () => {
-    const { store } = await setup();
-
-    await setupMockWorkspaceWithNotes(store, 'test-ws', [
-      [`test-ws:one.md`, `# Hello World 0`],
-      [`test-ws:two.md`, `# Hello World 1`],
-    ]);
-
-    workspaceSliceKey.callOp(
-      store.state,
-      store.dispatch,
-      updateOpenedWsPaths((openedWsPath) => {
-        return openedWsPath
-          .updatePrimaryWsPath('test-ws:one.md')
-          .updateSecondaryWsPath('test-ws:two.md');
-      }),
-    );
-
-    await waitForExpect(() =>
-      expect(
-        workspaceSliceKey
-          .callQueryOp(store.state, getOpenedWsPaths())
-          .toArray()
-          .filter(Boolean),
-      ).toEqual(['test-ws:one.md', 'test-ws:two.md']),
-    );
-
-    await sleep(0);
-
-    updateDocInfo('test-ws:two.md', {
-      pendingWrite: true,
-    })(store.state, store.dispatch);
-
-    // close two
-    workspaceSliceKey.callOp(
-      store.state,
-      store.dispatch,
-      updateOpenedWsPaths((openedWsPath) => {
-        return openedWsPath.closeIfFound('test-ws:two.md');
-      }),
-    );
-
-    // should have removed two.md
-
-    await waitForExpect(() =>
-      expect(
-        workspaceSliceKey
-          .callQueryOp(store.state, getOpenedWsPaths())
-          .toArray()
-          .filter(Boolean),
-      ).toEqual(['test-ws:one.md']),
-    );
-
-    await sleep(0);
-
-    // should keep two around as it has pending write
-    expect(getOpenedDocInfo()(store.state)).toEqual({
-      'test-ws:one.md': {
-        pendingWrite: false,
-        wsPath: 'test-ws:one.md',
-      },
-      'test-ws:two.md': {
-        pendingWrite: true,
-        wsPath: 'test-ws:two.md',
-      },
-    });
-
-    updateDocInfo('test-ws:two.md', {
-      pendingWrite: false,
-    })(store.state, store.dispatch);
-
-    await sleep(0);
-
-    // should remove it now since no more pending write
-    expect(getOpenedDocInfo()(store.state)).toEqual({
-      'test-ws:one.md': {
-        pendingWrite: false,
-        wsPath: 'test-ws:one.md',
-      },
-    });
   });
 });

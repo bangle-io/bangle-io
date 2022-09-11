@@ -1,0 +1,1 @@
+export const DISK_SHA_CHECK_INTERVAL = 2000;

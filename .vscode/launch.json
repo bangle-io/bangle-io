@@ -28,7 +28,7 @@
             "runtimeArgs": [
                 "--inspect-brk",
                 "jest",
-                "${fileBasenameNoExtension}",
+                "${fileDirname}/${fileBasenameNoExtension}",
                 "--runInBand",
                 "--debug",
                 "--testTimeout=60000"

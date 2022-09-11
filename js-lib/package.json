@@ -8,6 +8,7 @@
     "create-store",
     "db-key-val",
     "fzf-search",
+    "git-file-sha",
     "history",
     "inline-palette",
     "is-abort-error",
@@ -17,7 +18,8 @@
     "pm-manual-paste",
     "pm-plugins",
     "remote-file-sync",
-    "search-pm-node"
+    "search-pm-node",
+    "weak-cache"
   ],
   "repository": {
     "directory": "js-lib",

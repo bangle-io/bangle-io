@@ -380,7 +380,7 @@ describe('clicking node', () => {
     ]);
 
     pushWsPath(wsPath)(store.state, store.dispatch);
-    waitForExpect(() => {
+    await waitForExpect(() => {
       expect(
         workspaceSliceKey.getSliceState(store.state)?.openedWsPaths
           .primaryWsPath,
@@ -391,7 +391,7 @@ describe('clicking node', () => {
     await clickSetup(screen.getByText(/note1/i));
     await act(() => sleep(0));
 
-    waitForExpect(() => {
+    await waitForExpect(() => {
       expect(
         workspaceSliceKey
           .getSliceState(store.state)

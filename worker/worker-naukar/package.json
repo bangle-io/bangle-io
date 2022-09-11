@@ -31,7 +31,7 @@
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/slice-editor-sync": "workspace:*",
+    "@bangle.io/slice-editor-collab-comms": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-storage-provider": "workspace:*",

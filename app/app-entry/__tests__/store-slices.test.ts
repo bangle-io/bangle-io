@@ -35,7 +35,7 @@ test('exhaustive main slices list', () => {
     expect.stringMatching(/slice\$/),
     'miscEffectsSlice$',
     'notificationSliceKey$',
-    '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-editor-collab-comms-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
     expect.stringMatching(/e2eHelpers1\$/),
     expect.stringMatching(/e2eHelpers2\$/),
@@ -53,8 +53,7 @@ test('exhaustive naukar slices list', () => {
     workspaceSliceKey.key,
     'workerEditorSlice$',
     'notificationSliceKey$',
-    'write-note-to-disk-key$',
-    '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-editor-collab-comms-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
     expect.stringMatching(/slice\$/),
   ]);
@@ -68,7 +67,7 @@ test('slices common worker and main', () => {
     '@bangle.io/slice-storage-provider/slice-key$',
     'slice-workspace$',
     'notificationSliceKey$',
-    '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-editor-collab-comms-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
   ]);
 });
@@ -81,12 +80,12 @@ describe('worker and window constraints', () => {
     'slice-workspace$',
     'extension-registry-slice$',
     'notificationSliceKey$',
+    '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
   ];
 
   const sideEffectInWindowOnly = [
-    '@bangle.io/slice-editor-sync-key$',
+    '@bangle.io/slice-editor-collab-comms-key$',
     '@bangle.io/slice-storage-provider/slice-key$',
-    '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
   ];
 
   const keys = commonInBoth.map((r) => r.key);
