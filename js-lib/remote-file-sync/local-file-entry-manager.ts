@@ -2,8 +2,8 @@ import type { Merge } from 'type-fest';
 
 import { BaseError } from '@bangle.io/base-error';
 import type { DBKeyVal } from '@bangle.io/db-key-val';
+import { calculateGitFileSha } from '@bangle.io/git-file-sha';
 
-import { calculateGitFileSha } from './calculate-git-file-sha';
 import { REMOTE_SYNC_NOT_ALLOWED_ERROR } from './errors';
 
 // allow writing to a file if delete happened after this time

@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/remote-file-sync",
+  "name": "@bangle.io/weak-cache",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/remote-file-sync"
+    "directory": "js-lib/weak-cache"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -20,15 +20,6 @@
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/git-file-sha": "workspace:*",
-    "ts-pattern": "^4.0.3"
-  },
-  "devDependencies": {
-    "@bangle.io/db-key-val": "workspace:*",
-    "type-fest": "^2.12.0"
   },
   "license": "AGPL-3.0-or-later"
 }
