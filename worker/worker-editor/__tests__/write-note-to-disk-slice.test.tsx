@@ -23,7 +23,6 @@ import { sleep } from '@bangle.io/utils';
 import type { CollabStateInfo } from '../common';
 import { writeNoteToDiskSliceKey } from '../common';
 import { cachedCalculateGitFileSha } from '../helpers';
-import { queueWrite } from '../write-note-to-disk-slice';
 import * as effects from '../write-note-to-disk-slice-effects';
 import { setup as commonSetup } from './test-helpers';
 
@@ -80,7 +79,6 @@ const makeEffectsArray = ({
     effects.calculateCurrentDiskShaEffect,
     effects.calculateLastKnownDiskShaEffect,
     !disabledStaleDocEffect && effects.staleDocEffect,
-    effects.writeToDiskEffect,
   ];
 
   return allEffects.filter((r): r is SlideEffect => Boolean(r));
@@ -140,7 +138,7 @@ describe('effects', () => {
   describe('writeToDiskEffect', () => {
     test('writes to disk', async () => {
       const { store, typeText, wsPath1, getContainer } = await setup({
-        providedEffects: [effects.writeToDiskEffect],
+        providedEffects: [],
       });
       expect(
         getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
@@ -185,129 +183,6 @@ describe('effects', () => {
           wsPath: wsPath1,
         }),
       );
-    });
-
-    test('updates the queue while another item is being processed', async () => {
-      let resolveGitSha: Array<(v: string) => void> = [];
-
-      cachedCalculateGitFileShaSpy.mockImplementation(() => {
-        return new Promise((res, rej) => {
-          resolveGitSha.push(res);
-        });
-      });
-
-      const { store, typeText, wsPath1, wsName } = await setup();
-      expect(
-        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-      ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
-
-      const getWriteQueue = () => {
-        return writeNoteToDiskSliceKey.getSliceStateAsserted(store.state)
-          .writeQueue;
-      };
-
-      // there is difficult testing asserting on `doc` due to circular refs
-      const compareQueueItem = (
-        item1?: CollabStateInfo,
-        item2?: CollabStateInfo,
-      ) => {
-        expect(item1 !== undefined).toBe(true);
-        expect(item2 !== undefined).toBe(true);
-        expect(item1?.wsPath).toEqual(item2?.wsPath);
-        expect(item1?.collabState === item2?.collabState).toBe(true);
-      };
-
-      await typeText(PRIMARY_EDITOR_INDEX, 'bye ');
-      await sleep(0);
-
-      const docInfo = getOpenedDocInfo()(store.state)[wsPath1];
-
-      expect(docInfo?.pendingWrite).toBe(true);
-
-      const item1 = {
-        wsPath: `${wsName}:some-doc.md`,
-        collabState: {
-          doc: createPMNode([], `hi I am dummy`),
-          steps: [],
-          version: 0,
-        },
-      };
-
-      const item2 = {
-        wsPath: `${wsName}:some-other-1.md`,
-        collabState: {
-          doc: createPMNode([], `test-1`),
-          steps: [],
-          version: 0,
-        },
-      };
-      queueWrite(item1)(store.state, store.dispatch);
-      queueWrite(item2)(store.state, store.dispatch);
-
-      await sleep(0);
-
-      // item waits in the queue
-      expect(getWriteQueue().length).toBe(2);
-
-      expect(getWriteQueue()[0]?.wsPath).toBe(item1.wsPath);
-      compareQueueItem(getWriteQueue()[0], item1);
-      compareQueueItem(getWriteQueue()[1], item2);
-
-      // modifying the document should update the item in queue
-      const item1Modified = {
-        wsPath: `${wsName}:some-doc.md`,
-        collabState: {
-          doc: createPMNode([], `hi I am dummy modified`),
-          steps: [],
-          version: 1,
-        },
-      };
-
-      queueWrite(item1Modified)(store.state, store.dispatch);
-
-      // there is difficult testing asserting on `doc` due to circular refs
-      compareQueueItem(getWriteQueue()[0], item1Modified);
-      compareQueueItem(getWriteQueue()[1], item2);
-
-      const item2Modified = {
-        wsPath: `${wsName}:some-other-1.md`,
-        collabState: {
-          doc: createPMNode([], `test-1 hey modified`),
-          steps: [],
-          version: 3,
-        },
-      };
-
-      queueWrite(item2Modified)(store.state, store.dispatch);
-
-      expect(getWriteQueue().length).toBe(2);
-      compareQueueItem(getWriteQueue()[0], item1Modified);
-      compareQueueItem(getWriteQueue()[1], item2Modified);
-
-      // start resolving promises
-      resolveGitSha.forEach((resolve) => resolve('some-sha'));
-
-      await waitForExpect(() => expect(getWriteQueue().length).toBe(1));
-
-      expect(getWriteQueue().length).toBe(1);
-      compareQueueItem(getWriteQueue()[0], item2Modified);
-
-      resolveGitSha.forEach((resolve) => resolve('some-sha'));
-
-      await waitForExpect(() => expect(getWriteQueue().length).toBe(0));
-
-      // writes correctly
-      expect(
-        (
-          await getNote(item1.wsPath)(store.state, store.dispatch, store)
-        )?.toString(),
-      ).toMatchInlineSnapshot(`"doc(paragraph("hi I am dummy modified"))"`);
-
-      expect(
-        (
-          await getNote(item2.wsPath)(store.state, store.dispatch, store)
-        )?.toString(),
-      ).toMatchInlineSnapshot(`"doc(paragraph("test-1 hey modified"))"`);
     });
   });
 

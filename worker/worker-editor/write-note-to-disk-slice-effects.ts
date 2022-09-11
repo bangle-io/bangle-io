@@ -4,106 +4,26 @@ import {
   pageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
-import { docToFile, writeFile } from '@bangle.io/slice-workspace';
 import type { OpenedFile } from '@bangle.io/slice-workspace-opened-doc-info';
 import {
   getOpenedDocInfo,
   updateCurrentDiskSha,
-  updateDocInfo,
   updateLastKnownDiskSha,
   updateShas,
   workspaceOpenedDocInfoKey,
 } from '@bangle.io/slice-workspace-opened-doc-info';
 import { abortableSetInterval } from '@bangle.io/utils';
 
-import type { CollabStateInfo } from './common';
 import {
   DISK_SHA_CHECK_INTERVAL,
   workerEditorSliceKey,
   writeNoteToDiskSliceKey,
 } from './common';
-import { cachedCalculateGitFileSha, getDiskSha } from './helpers';
-import { resetCollabDoc } from './operations';
+import { getDiskSha } from './helpers';
+import { getCollabManager } from './worker-editor-slice';
 
 const LOG = true;
 const log = LOG ? console.debug.bind(console, '[worker-editor] ') : () => {};
-
-export const writeToDiskEffect = writeNoteToDiskSliceKey.effect(() => {
-  async function write(writeQueue: CollabStateInfo[], store: ApplicationStore) {
-    if (writeQueue.length === 0) {
-      return;
-    }
-
-    while (writeQueue.length > 0) {
-      const item = writeQueue.shift();
-
-      if (!item) {
-        continue;
-      }
-
-      try {
-        updateDocInfo(item.wsPath, {
-          pendingWrite: true,
-        })(store.state, store.dispatch);
-
-        const file = docToFile(item.wsPath, item.collabState.doc)(store.state);
-        log('[writeToDiskEffect] writing file', item.wsPath);
-        // TODO check if file was externally modified before writing
-        const [lastWrittenSha, writeFileStatus] = await Promise.all([
-          cachedCalculateGitFileSha(file),
-          writeFile(item.wsPath, file)(
-            store.state,
-            store.dispatch,
-            store,
-          ).catch((error) => {
-            console.warn('received error while writing item', error.message);
-            // TODO add testing for this
-            store.errorHandler(error);
-
-            updateDocInfo(item.wsPath, {
-              pendingWrite: false,
-            })(store.state, store.dispatch);
-          }),
-        ]);
-
-        if (writeFileStatus) {
-          updateDocInfo(item.wsPath, {
-            pendingWrite: false,
-            // since both the shas at this time will be the same
-            lastKnownDiskSha: lastWrittenSha,
-            currentDiskSha: lastWrittenSha,
-          })(store.state, store.dispatch);
-        }
-      } catch (error) {
-        console.error(error);
-
-        updateDocInfo(item.wsPath, {
-          pendingWrite: false,
-        })(store.state, store.dispatch);
-      }
-    }
-  }
-
-  let writeInProgress = false;
-
-  return {
-    async deferredUpdate(store) {
-      const { writeQueue } = writeNoteToDiskSliceKey.getSliceStateAsserted(
-        store.state,
-      );
-
-      if (writeInProgress) {
-        return;
-      }
-
-      writeInProgress = true;
-
-      await write(writeQueue, store);
-
-      writeInProgress = false;
-    },
-  };
-});
 
 // Calculate lastKnownDiskSha of files that are just opened
 export const calculateLastKnownDiskShaEffect = writeNoteToDiskSliceKey.effect(
@@ -252,10 +172,9 @@ export const staleDocEffect = writeNoteToDiskSliceKey.effect(() => {
               }),
             );
 
-            workerEditorSliceKey.callQueryOp(
-              store.state,
-              resetCollabDoc(info.wsPath),
-            );
+            workerEditorSliceKey
+              .callQueryOp(store.state, getCollabManager())
+              ?.resetDoc(info.wsPath);
           });
         }
       }

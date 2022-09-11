@@ -8,12 +8,20 @@ import type { NaukarStateConfig } from '@bangle.io/shared-types';
 
 export const workerEditorSliceKey = new SliceKey<
   {
-    collabManager: CollabManager | undefined;
+    collab:
+      | undefined
+      | {
+          manager: CollabManager;
+          // Controller exists so that we can run additional cleanup code
+          // whenever we want to terminate the collab manager.
+          controller: AbortController;
+        };
   },
   {
-    name: 'action::@bangle.io/worker-naukar:set-editor-manager';
+    name: 'action::@bangle.io/worker-editor:set-editor-manager';
     value: {
-      editorManager: CollabManager;
+      manager: CollabManager;
+      controller: AbortController;
     };
   },
   any,
@@ -25,16 +33,8 @@ export type CollabStateInfo = {
   collabState: CollabServerState;
 };
 
-export type WriteNoteToDiskActions = {
-  name: 'action::@bangle.io/worker-naukar:write-note-to-disk-update';
-  value: CollabStateInfo;
-};
-
 export const DISK_SHA_CHECK_INTERVAL = 2000;
 
-export const writeNoteToDiskSliceKey = new SliceKey<
-  {
-    writeQueue: CollabStateInfo[];
-  },
-  WriteNoteToDiskActions
->('write-note-to-disk-key');
+export const writeNoteToDiskSliceKey = new SliceKey<{}>(
+  'write-note-to-disk-key',
+);

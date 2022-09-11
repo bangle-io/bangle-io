@@ -24,10 +24,9 @@ import {
   TestStoreProvider,
   waitForExpect,
 } from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { getCollabManager } from '../operations';
+import { getCollabManager } from '../worker-editor-slice';
 import { setup } from './test-helpers';
 
 let originalConsoleWarn = console.warn;
@@ -98,9 +97,12 @@ describe('worker-editor-slice', () => {
       'doc(heading("hello mars"))',
     );
 
-    expect(
-      getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
-    ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
+    await waitForExpect(() => {
+      expect(
+        getEditor(PRIMARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
+      ).toEqual('<h1>hello mars</h1>');
+    });
+
     expect(
       getEditor(SECONDARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
     ).toMatchInlineSnapshot(`"<h1>hello mars</h1>"`);
@@ -115,7 +117,6 @@ describe('worker-editor-slice', () => {
     await waitForExpect(() =>
       expect(collabManager.getCollabState(wsPath1)?.version).toEqual(1),
     );
-
     await waitForExpect(() =>
       expect(
         getEditor(SECONDARY_EDITOR_INDEX)(store.state)?.toHTMLString(),
