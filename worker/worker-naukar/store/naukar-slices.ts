@@ -13,10 +13,7 @@ import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
-import {
-  workerEditorSlice,
-  writeNoteToDiskSlice,
-} from '@bangle.io/worker-editor';
+import { workerEditorSlice } from '@bangle.io/worker-editor';
 
 import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
 
@@ -43,9 +40,9 @@ export function naukarSlices({
     workspaceSlice(),
     workerEditorSlice(),
     notificationSlice(),
-    writeNoteToDiskSlice(),
+    // TODO: write why this is disabled
     disableSideEffect(editorSyncSlice()),
-    disableSideEffect(workspaceOpenedDocInfoSlice()),
+    workspaceOpenedDocInfoSlice(),
 
     // <-- PLOP INSERT SLICE -->
     // keep this at the end

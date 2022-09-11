@@ -68,7 +68,8 @@ export function bangleStateSlices({
     miscEffectsSlice(),
     notificationSlice(),
     editorSyncSlice(),
-    workspaceOpenedDocInfoSlice(),
+    // Disabled side effects in main because it carries heavy sha calculations
+    disableSideEffect(workspaceOpenedDocInfoSlice()),
 
     // <-- PLOP INSERT SLICE -->
 

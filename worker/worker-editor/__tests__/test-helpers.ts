@@ -11,20 +11,23 @@ import { getEditor } from '@bangle.io/slice-editor-manager';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import { createBasicTestStore } from '@bangle.io/test-utils';
 
-import { workerEditorSlice } from '../worker-editor-slice';
-import { writeNoteToDiskSlice } from '../write-note-to-disk-slice';
+import { staleDocEffect, workerEditorSlice } from '../worker-editor-slice';
 
 export const setup = async ({
-  writeNoteToDiskEffects,
+  disableStaleDocEffect,
 }: {
-  writeNoteToDiskEffects?: Array<SliceSideEffect<any, any>>;
+  disableStaleDocEffect?: boolean;
 }) => {
   const _workerEditorSlice = workerEditorSlice();
 
-  const _writeNoteToDiskSlice = writeNoteToDiskSlice();
+  if (disableStaleDocEffect) {
+    const spec = _workerEditorSlice.spec;
 
-  if (writeNoteToDiskEffects) {
-    _writeNoteToDiskSlice.spec.sideEffect = writeNoteToDiskEffects;
+    spec.sideEffect = Array.isArray(spec.sideEffect)
+      ? spec.sideEffect.filter((sideEffect) => {
+          return sideEffect !== staleDocEffect;
+        })
+      : [];
   }
 
   const { store, isEditorCollabReady, extensionRegistry, ...testHelpers } =
@@ -34,7 +37,6 @@ export const setup = async ({
       slices: [
         editorSyncSlice(),
         workspaceOpenedDocInfoSlice(),
-        _writeNoteToDiskSlice,
         _workerEditorSlice,
       ],
       extensions: [

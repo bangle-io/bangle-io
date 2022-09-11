@@ -1,5 +1,5 @@
 import { browserInfo, wsPathHelpers } from '@bangle.io/api';
-import { fileToBase64 } from '@bangle.io/remote-file-sync';
+import { fileToBase64 } from '@bangle.io/git-file-sha';
 import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';

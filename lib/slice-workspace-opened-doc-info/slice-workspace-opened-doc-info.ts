@@ -8,7 +8,12 @@ import {
   UPDATE_ENTRY,
   workspaceOpenedDocInfoKey,
 } from './common';
-import { syncWithOpenedWsPathsEffect } from './effects';
+import {
+  blockOnPendingWriteEffect,
+  calculateCurrentDiskShaEffect,
+  calculateLastKnownDiskShaEffect,
+  syncWithOpenedWsPathsEffect,
+} from './effects';
 
 export function workspaceOpenedDocInfoSlice() {
   assertActionName(
@@ -150,6 +155,11 @@ export function workspaceOpenedDocInfoSlice() {
         );
       },
     },
-    sideEffect: [syncWithOpenedWsPathsEffect],
+    sideEffect: [
+      syncWithOpenedWsPathsEffect,
+      blockOnPendingWriteEffect,
+      calculateCurrentDiskShaEffect,
+      calculateLastKnownDiskShaEffect,
+    ],
   });
 }

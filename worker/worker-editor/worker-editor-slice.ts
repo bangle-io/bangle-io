@@ -1,4 +1,5 @@
 import { Slice } from '@bangle.io/create-store';
+import { cachedCalculateGitFileSha } from '@bangle.io/git-file-sha';
 import type { NaukarStateConfig } from '@bangle.io/shared-types';
 import {
   editorSyncKey,
@@ -11,14 +12,17 @@ import {
 } from '@bangle.io/slice-workspace';
 import {
   updateDocInfo,
+  updateShas,
   workspaceOpenedDocInfoKey,
 } from '@bangle.io/slice-workspace-opened-doc-info';
 import { assertActionName, assertNotUndefined } from '@bangle.io/utils';
 
 import type { CollabStateInfo } from './common';
 import { workerEditorSliceKey } from './common';
-import { cachedCalculateGitFileSha } from './helpers';
 import { setupCollabManager } from './setup-collab-manager';
+
+const LOG = true;
+const log = LOG ? console.debug.bind(console, '[worker-editor] ') : () => {};
 
 export function workerEditorSlice() {
   assertActionName('@bangle.io/worker-editor', workerEditorSliceKey);
@@ -48,7 +52,7 @@ export function workerEditorSlice() {
         }
       },
     },
-    sideEffect: [collabManagerSetupEffect, purgeUnopenedDocs],
+    sideEffect: [collabManagerSetupEffect, purgeUnopenedDocs, staleDocEffect],
   });
 }
 
@@ -183,6 +187,51 @@ const purgeUnopenedDocs = workerEditorSliceKey.effect(() => {
             collabManager?.resetDoc(docName);
           }
         });
+      }
+    },
+  };
+});
+
+// An effect that compares the content of file in the disk and
+// in the memory. If they are different it will trigger a reset
+export const staleDocEffect = workerEditorSliceKey.effect(() => {
+  return {
+    update(store, prevState) {
+      const openedFiles = workspaceOpenedDocInfoKey.getValueIfChanged(
+        'openedFiles',
+        store.state,
+        prevState,
+      );
+
+      if (!openedFiles) {
+        return;
+      }
+
+      for (const info of Object.values(openedFiles)) {
+        const { pendingWrite, wsPath, currentDiskSha, lastKnownDiskSha } = info;
+
+        if (
+          !pendingWrite &&
+          currentDiskSha &&
+          lastKnownDiskSha &&
+          currentDiskSha !== lastKnownDiskSha
+        ) {
+          log('[staleDocEffect] triggering for ', wsPath);
+          queueMicrotask(() => {
+            workspaceOpenedDocInfoKey.callOp(
+              store.state,
+              store.dispatch,
+              updateShas(wsPath, {
+                currentDiskSha: currentDiskSha,
+                lastKnownDiskSha: currentDiskSha,
+              }),
+            );
+
+            workerEditorSliceKey
+              .callQueryOp(store.state, getCollabManager())
+              ?.resetDoc(info.wsPath);
+          });
+        }
       }
     },
   };

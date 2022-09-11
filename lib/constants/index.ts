@@ -8,3 +8,4 @@ export * from './store';
 export * from './theme';
 export * from './worker';
 export * from './workspace';
+export * from './write-disk';

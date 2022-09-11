@@ -62,7 +62,7 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
 
   dispatchSpy: jest.SpyInstance;
   actionsDispatched: BaseAction[];
-  getAction: (name: string) => BaseAction[];
+  getAction: (name: string | RegExp) => BaseAction[];
   getActionNames: () => string[];
 } {
   let actionsDispatched: BaseAction[] = [];
@@ -103,7 +103,7 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
     getActionNames: () => {
       return getActionNamesDispatched(dispatchSpy);
     },
-    getAction: (name: string) => {
+    getAction: (name: string | RegExp) => {
       return getActionsDispatched(dispatchSpy, name);
     },
   };
@@ -114,12 +114,14 @@ export const getActionNamesDispatched = (mockDispatch: jest.SpyInstance) =>
 
 export const getActionsDispatched = (
   mockDispatch: jest.SpyInstance,
-  name: string,
+  name: string | RegExp,
 ) => {
   const actions = mockDispatch.mock.calls.map((r) => r[0]);
 
   if (name) {
-    return actions.filter((r) => r.name === name);
+    return actions.filter((r) =>
+      name instanceof RegExp ? name.test(r.name) : r.name === name,
+    );
   }
 
   return actions;

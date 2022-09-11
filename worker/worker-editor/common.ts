@@ -32,9 +32,3 @@ export type CollabStateInfo = {
   wsPath: string;
   collabState: CollabServerState;
 };
-
-export const DISK_SHA_CHECK_INTERVAL = 2000;
-
-export const writeNoteToDiskSliceKey = new SliceKey<{}>(
-  'write-note-to-disk-key',
-);
