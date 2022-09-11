@@ -169,6 +169,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/fzf-search"\
       },\
       {\
+        "name": "@bangle.io/git-file-sha",\
+        "reference": "workspace:js-lib/git-file-sha"\
+      },\
+      {\
         "name": "@bangle.io/history",\
         "reference": "workspace:js-lib/history"\
       },\
@@ -207,6 +211,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@bangle.io/search-pm-node",\
         "reference": "workspace:js-lib/search-pm-node"\
+      },\
+      {\
+        "name": "@bangle.io/weak-cache",\
+        "reference": "workspace:js-lib/weak-cache"\
       },\
       {\
         "name": "@bangle.io/api",\
@@ -379,6 +387,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/extension-registry", ["workspace:lib/extension-registry"]],\
       ["@bangle.io/extract-css-vars", ["workspace:tooling/extract-css-vars"]],\
       ["@bangle.io/fzf-search", ["virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search", "workspace:js-lib/fzf-search"]],\
+      ["@bangle.io/git-file-sha", ["workspace:js-lib/git-file-sha"]],\
       ["@bangle.io/github-storage", ["workspace:extensions/github-storage"]],\
       ["@bangle.io/history", ["workspace:js-lib/history"]],\
       ["@bangle.io/image-extension", ["workspace:extensions/image-extension"]],\
@@ -421,6 +430,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/ui-components", ["workspace:lib/ui-components"]],\
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
       ["@bangle.io/utils", ["workspace:lib/utils"]],\
+      ["@bangle.io/weak-cache", ["workspace:js-lib/weak-cache"]],\
       ["@bangle.io/worker-editor", ["workspace:worker/worker-editor"]],\
       ["@bangle.io/worker-naukar", ["workspace:worker/worker-naukar"]],\
       ["@bangle.io/worker-naukar-proxy", ["workspace:app/worker-naukar-proxy"]],\
@@ -5316,6 +5326,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/git-file-sha", [\
+        ["workspace:js-lib/git-file-sha", {\
+          "packageLocation": "./js-lib/git-file-sha/",\
+          "packageDependencies": [\
+            ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"],\
+            ["base64-js", "npm:1.5.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/github-storage", [\
         ["workspace:extensions/github-storage", {\
           "packageLocation": "./extensions/github-storage/",\
@@ -5326,6 +5347,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
+            ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],\
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5797,7 +5819,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
-            ["base64-js", "npm:1.5.1"],\
+            ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
             ["ts-pattern", "npm:4.0.3"],\
             ["type-fest", "npm:2.12.0"]\
           ],\
@@ -6116,7 +6138,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/slice-workspace-opened-doc-info/",\
           "packageDependencies": [\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -6394,6 +6418,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"],\
             ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],\
             ["@types/react", "npm:17.0.49"],\
             ["@types/react-dom", "npm:17.0.17"],\
@@ -6405,6 +6430,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"],\
             ["w3c-keyname", "npm:2.2.4"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/weak-cache", [\
+        ["workspace:js-lib/weak-cache", {\
+          "packageLocation": "./js-lib/weak-cache/",\
+          "packageDependencies": [\
+            ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -6424,7 +6458,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
-            ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
+            ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\

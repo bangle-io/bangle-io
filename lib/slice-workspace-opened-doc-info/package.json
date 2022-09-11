@@ -21,7 +21,9 @@
   "module": "index.ts",
   "publishConfig": {},
   "dependencies": {
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/git-file-sha": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",

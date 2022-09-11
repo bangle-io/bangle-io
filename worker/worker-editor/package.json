@@ -27,7 +27,7 @@
     "@bangle.dev/pm": "0.31.2",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
-    "@bangle.io/remote-file-sync": "workspace:*",
+    "@bangle.io/git-file-sha": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-collab-comms": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
