@@ -25,6 +25,10 @@ export function setupCollabManager(
   return new CollabManager({
     schema: schema,
     collabMessageBus,
+    instanceDeleteGuardOpts: {
+      deleteWaitTime: 1000,
+      maxDurationToKeepRecord: 1000 * 60 * 5,
+    },
     getInitialState: async (docName) => {
       try {
         const doc = await getNote(docName)(store.state, store.dispatch, store);

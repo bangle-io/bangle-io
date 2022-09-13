@@ -170,21 +170,10 @@ const purgeUnopenedDocs = workerEditorSliceKey.effect(() => {
 
       if (openedWsPaths) {
         const collabManager = getCollabManager()(store.state);
-        // console.log(collabManager?.getAllDocNames());
-        // cleanup editor manager docs if they are not opened anymore
+        // cleanup editor manager docs to save memory if they are not opened anymore
         collabManager?.getAllDocNames().forEach((docName) => {
           if (!openedWsPaths.has(docName)) {
-            // TODO move this to a better api which is clear about what it does
-            // currently resetDoc gives a wrong idea of what it does and requires
-            // a bunch of knowledge about the internals of collab manager to understand
-            // how it removes the doc from the collab manager.
-            // TODO the doc comment is also incorrect
-
-            // removes a collab doc from the memory of collab manager
-            // if any client is connected, it will trigger a hard reload
-            // ~ discarding any unsaved data and reloading with fresh data
-            console.log(`editorManagerSlice resetting ${docName} collab-state`);
-            collabManager?.resetDoc(docName);
+            collabManager?.requestDeleteInstance(docName);
           }
         });
       }

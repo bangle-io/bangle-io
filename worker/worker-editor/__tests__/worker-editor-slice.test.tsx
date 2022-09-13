@@ -24,6 +24,7 @@ import {
   TestStoreProvider,
   waitForExpect,
 } from '@bangle.io/test-utils';
+import { sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getCollabManager } from '../worker-editor-slice';
@@ -126,10 +127,15 @@ describe('worker-editor-slice', () => {
     // Close editors and check if things are ok
     workspace.closeOpenedEditor()(store.state, store.dispatch);
 
-    await waitForExpect(() => {
-      // the collab manager should have removed the doc
-      expect([...collabManager.getAllDocNames()]).toEqual([]);
-    });
+    await waitForExpect(
+      () => {
+        // the collab manager should have removed the doc
+        expect([...collabManager.getAllDocNames()]).toEqual([]);
+      },
+      // there is a 1000 ms wait before instance is deleted
+      1500,
+      250,
+    );
 
     // should persist the updated doc to disk
     expect(
@@ -178,11 +184,14 @@ describe('worker-editor-slice', () => {
 
     const collabManager = getCollabManager()(store.state)!;
 
-    const resetDocSpy = jest.spyOn(collabManager, 'resetDoc');
+    const requestDeleteInstanceSpy = jest.spyOn(
+      collabManager,
+      'requestDeleteInstance',
+    );
 
     expect(getOpenedWsPaths()(store.state).getWsPaths()).toEqual([wsPath1]);
 
-    expect(resetDocSpy).not.toHaveBeenCalled();
+    expect(requestDeleteInstanceSpy).not.toHaveBeenCalled();
 
     workspaceSliceKey.callOp(
       store.state,
@@ -193,8 +202,8 @@ describe('worker-editor-slice', () => {
     );
 
     await waitForExpect(() => {
-      expect(resetDocSpy).toBeCalledTimes(1);
+      expect(requestDeleteInstanceSpy).toBeCalledTimes(1);
     });
-    expect(resetDocSpy).nthCalledWith(1, wsPath1);
+    expect(requestDeleteInstanceSpy).nthCalledWith(1, wsPath1);
   });
 });
