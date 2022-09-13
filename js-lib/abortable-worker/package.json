@@ -26,8 +26,8 @@
     "typescript": "^4.7.3"
   },
   "devDependencies": {
-    "@bangle.dev/pm": "0.31.2",
-    "@bangle.dev/utils": "0.31.2"
+    "@bangle.dev/pm": "0.31.3",
+    "@bangle.dev/utils": "0.31.3"
   },
   "publishConfig": {
     "access": "public"

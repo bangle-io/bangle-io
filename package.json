@@ -70,7 +70,7 @@
     "@babel/preset-env": "^7.18.10",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
-    "@bangle.dev/jest-utils": "0.31.2",
+    "@bangle.dev/jest-utils": "0.31.3",
     "@bangle.io/e2e-types": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/jsdom-env": "workspace:*",

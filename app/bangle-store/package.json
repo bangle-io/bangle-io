@@ -22,7 +22,7 @@
     "@bangle.io/test-utils": "workspace:*"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.31.2",
+    "@bangle.dev/pm": "0.31.3",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
