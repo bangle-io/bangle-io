@@ -103,6 +103,39 @@ export class YarnWorkspaceHelpers {
   }
 }
 
+export function findMatchByLine({
+  filePath,
+  content,
+  match,
+}: {
+  filePath: string;
+  content: string;
+  match: RegExp | string | string[];
+}): string[] | undefined {
+  const result = content
+    .split('\n')
+    .map((line, index) => {
+      if (
+        match instanceof RegExp
+          ? match.test(line)
+          : Array.isArray(match)
+          ? match.some((m) => line.includes(m))
+          : line.includes(match)
+      ) {
+        return filePath + ':' + (index + 1);
+      }
+
+      return undefined;
+    })
+    .filter((r): r is string => Boolean(r));
+
+  if (result.length === 0) {
+    return undefined;
+  }
+
+  return result;
+}
+
 class Package {
   packageJSON: PackageJSON;
   name: string;
