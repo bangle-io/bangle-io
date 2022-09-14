@@ -41,6 +41,24 @@ const logWarn = console.warn.bind(
   `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync`,
 );
 
+// Use this to add a key in the action serializer to signal which field must be transferred.
+// Example usage:
+// someKey.actionSerializer(
+//   actionName,
+//   (action) => {
+//     const messageChannel = action.value.messageChannel;
+//     return {
+//       [APPLY_TRANSFER]: 'port',  // <--- this key helps us find the value that needs to be transferred
+//       port: messageChannel.port2 as any, // <--- this is the value that will be transferred
+//       ... // Any other values will be copied and sent provided they can be serialized
+//     };
+//   },
+//   (serialVal) => {
+//     return {
+//       port: serialVal.port,
+//     };
+//   },
+// );
 export const APPLY_TRANSFER: unique symbol = Symbol('apply-transfer');
 
 const MAX_PING_PONG_TRY = 15;

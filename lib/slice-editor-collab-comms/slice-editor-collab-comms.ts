@@ -2,10 +2,9 @@ import { CollabMessageBus } from '@bangle.dev/collab-comms';
 
 import { Slice } from '@bangle.io/create-store';
 import { APPLY_TRANSFER } from '@bangle.io/store-sync';
-import { assertActionName } from '@bangle.io/utils';
+import { assertActionName, isWorkerGlobalScope } from '@bangle.io/utils';
 
 import { editorSyncKey } from './common';
-import { transferPortEffect } from './effects';
 
 export function getCollabMessageBus() {
   return editorSyncKey.queryOp((state): CollabMessageBus => {
@@ -71,6 +70,7 @@ export function editorSyncSlice() {
         return state;
       },
     },
+    // Action serializers help us serialize/parse actions to send across the worker-main boundary.
     actions: {
       'action::@bangle.io/slice-editor-collab-comms:transfer-port': (
         actionName,
@@ -102,3 +102,36 @@ export function editorSyncSlice() {
     sideEffect: [transferPortEffect],
   });
 }
+
+export const transferPortEffect = editorSyncKey.effect(() => {
+  return {
+    deferredOnce(store) {
+      // do not run it in worker context, to avoid duplicate firing in worker
+      // TODO we should remove this, since we are anyway disabling this effect in worker thread
+      if (isWorkerGlobalScope()) {
+        console.warn('transferPortEffect should not be run in worker context');
+
+        return;
+      }
+
+      const messageChannel = new MessageChannel();
+
+      const port = messageChannel.port1;
+
+      // dispatching this action will do things dependent on whether we are in worker or main thread
+      // in main thread:
+      // - this effect will run and execute serialization of the action and transfer the port2 to worker (see above).
+      // - run the state reducer and setup the port1 to receive messages to/from worker.
+      // in worker thread:
+      // - this effect will not run.
+      // - the action from main thread will be parsed and then the state reducer and setup the port2 to receive messages to/from main thread.
+      store.dispatch({
+        name: 'action::@bangle.io/slice-editor-collab-comms:transfer-port',
+        value: {
+          port,
+          messageChannel,
+        },
+      });
+    },
+  };
+});
