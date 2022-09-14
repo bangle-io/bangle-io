@@ -2097,17 +2097,12 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-app": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
-    "@bangle.io/image-extension": "workspace:*"
-    "@bangle.io/inline-backlink": "workspace:*"
-    "@bangle.io/inline-command-palette": "workspace:*"
-    "@bangle.io/inline-emoji": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2124,7 +2119,6 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
-    "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/workspace-sidebar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2936,11 +2930,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -3172,14 +3163,12 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/table": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/api": "workspace:*"
     "@bangle.io/browser-nativefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/core-extension": "workspace:*"
     "@bangle.io/core-palettes": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/github-storage": "workspace:*"
     "@bangle.io/image-extension": "workspace:*"
@@ -3765,10 +3754,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
