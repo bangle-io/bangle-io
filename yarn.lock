@@ -3801,9 +3801,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/yarn-workspace-helpers@workspace:*, @bangle.io/yarn-workspace-helpers@workspace:js-lib/yarn-workspace-helpers":
+"@bangle.io/yarn-workspace-helpers@workspace:*, @bangle.io/yarn-workspace-helpers@workspace:tooling/yarn-workspace-helpers":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/yarn-workspace-helpers@workspace:js-lib/yarn-workspace-helpers"
+  resolution: "@bangle.io/yarn-workspace-helpers@workspace:tooling/yarn-workspace-helpers"
+  dependencies:
+    execa: ^5.1.1
   languageName: unknown
   linkType: soft
 

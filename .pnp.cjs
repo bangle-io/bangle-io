@@ -217,10 +217,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/weak-cache"\
       },\
       {\
-        "name": "@bangle.io/yarn-workspace-helpers",\
-        "reference": "workspace:js-lib/yarn-workspace-helpers"\
-      },\
-      {\
         "name": "@bangle.io/api",\
         "reference": "workspace:lib/api"\
       },\
@@ -353,6 +349,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/storybook"\
       },\
       {\
+        "name": "@bangle.io/yarn-workspace-helpers",\
+        "reference": "workspace:tooling/yarn-workspace-helpers"\
+      },\
+      {\
         "name": "@bangle.io/worker-editor",\
         "reference": "workspace:worker/worker-editor"\
       },\
@@ -442,7 +442,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/workspace-info", ["workspace:lib/workspace-info"]],\
       ["@bangle.io/workspace-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar", "workspace:app/workspace-sidebar"]],\
       ["@bangle.io/ws-path", ["workspace:lib/ws-path"]],\
-      ["@bangle.io/yarn-workspace-helpers", ["workspace:js-lib/yarn-workspace-helpers"]],\
+      ["@bangle.io/yarn-workspace-helpers", ["workspace:tooling/yarn-workspace-helpers"]],\
       ["app", ["workspace:app"]],\
       ["bangle-io", ["workspace:."]],\
       ["extensions", ["workspace:extensions"]],\
@@ -5841,7 +5841,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.io/yarn-workspace-helpers", "workspace:js-lib/yarn-workspace-helpers"],\
+            ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["concurrently", "npm:7.0.0"],\
             ["cross-fetch", "npm:3.1.5"],\
             ["date-fns", "npm:2.28.0"],\
@@ -6649,10 +6649,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.io/yarn-workspace-helpers", [\
-        ["workspace:js-lib/yarn-workspace-helpers", {\
-          "packageLocation": "./js-lib/yarn-workspace-helpers/",\
+        ["workspace:tooling/yarn-workspace-helpers", {\
+          "packageLocation": "./tooling/yarn-workspace-helpers/",\
           "packageDependencies": [\
-            ["@bangle.io/yarn-workspace-helpers", "workspace:js-lib/yarn-workspace-helpers"]\
+            ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
+            ["execa", "npm:5.1.1"]\
           ],\
           "linkType": "SOFT"\
         }]\

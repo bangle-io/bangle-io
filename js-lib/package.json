@@ -19,8 +19,7 @@
     "pm-plugins",
     "remote-file-sync",
     "search-pm-node",
-    "weak-cache",
-    "yarn-workspace-helpers"
+    "weak-cache"
   ],
   "repository": {
     "directory": "js-lib",
