@@ -16680,7 +16680,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/chrono-node-npm-2.3.2-2e3c14682d-223b3de2bd.zip/node_modules/chrono-node/",\
           "packageDependencies": [\
             ["chrono-node", "npm:2.3.2"],\
-            ["dayjs", "npm:1.10.7"]\
+            ["dayjs", "npm:1.11.5"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17972,13 +17972,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["dayjs", [\
-        ["npm:1.10.7", {\
-          "packageLocation": "./.yarn/cache/dayjs-npm-1.10.7-34318a8e39-a0a4ca95ab.zip/node_modules/dayjs/",\
-          "packageDependencies": [\
-            ["dayjs", "npm:1.10.7"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.11.5", {\
           "packageLocation": "./.yarn/cache/dayjs-npm-1.11.5-a825142dc5-e3bbaa7b48.zip/node_modules/dayjs/",\
           "packageDependencies": [\
