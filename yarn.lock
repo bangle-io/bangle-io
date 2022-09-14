@@ -2240,14 +2240,12 @@ __metadata:
     "@bangle.dev/markdown": 0.31.3
     "@bangle.dev/markdown-front-matter": 0.31.3
     "@bangle.dev/pm": 0.31.3
-    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/storage": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -2327,19 +2325,15 @@ __metadata:
     "@bangle.dev/tooltip": 0.31.3
     "@bangle.dev/trailing-node": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    comlink: ^4.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -2396,7 +2390,6 @@ __metadata:
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2575,7 +2568,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -2661,7 +2653,6 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2725,9 +2716,7 @@ __metadata:
     "@bangle.dev/utils": 0.31.3
     "@bangle.dev/wiki-link": 0.31.3
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
@@ -2765,7 +2754,6 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/react": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
@@ -2869,7 +2857,6 @@ __metadata:
   resolution: "@bangle.io/note-browser@workspace:extensions/note-browser"
   dependencies:
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2899,7 +2886,6 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2907,7 +2893,6 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
-    "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
@@ -2958,12 +2943,10 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
-    "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3092,7 +3075,6 @@ __metadata:
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
