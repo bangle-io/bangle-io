@@ -1,5 +1,4 @@
 import { wsPathHelpers } from '@bangle.io/api';
-import { resolvePath } from '@bangle.io/api/ws-path-helpers';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -27,7 +26,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     await (
       await this._getFs(wsName, opts)
@@ -36,7 +35,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     const path = wsPathHelpers.toFSPath(wsPath);
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     try {
       await (await this._getFs(wsName, opts)).stat(path);
@@ -54,7 +53,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
   async fileStat(wsPath: string, opts: StorageOpts) {
     const path = wsPathHelpers.toFSPath(wsPath);
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     const stat = await (await this._getFs(wsName, opts)).stat(path);
 
@@ -117,7 +116,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
       return undefined;
     }
 
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     return (await this._getFs(wsName, opts)).readFile(
       wsPathHelpers.toFSPath(wsPath),
@@ -129,7 +128,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     newWsPath: string,
     opts: StorageOpts,
   ): Promise<void> {
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     await (
       await this._getFs(wsName, opts)
@@ -146,7 +145,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     const path = wsPathHelpers.toFSPath(wsPath);
-    const { wsName } = resolvePath(wsPath);
+    const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     await (await this._getFs(wsName, opts)).writeFile(path, file);
   }

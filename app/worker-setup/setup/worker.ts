@@ -2,7 +2,7 @@ import '../comlink-transfer-handlers';
 
 import * as Comlink from 'comlink';
 
-import { polyfills } from '@bangle.io/shared/polyfill';
+import { polyfills } from '@bangle.io/shared';
 import { assertWorkerGlobalScope } from '@bangle.io/utils';
 
 import naukar from './naukar-init';
