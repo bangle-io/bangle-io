@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@bangle.io/bangle-store-context": "workspace:*",
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",

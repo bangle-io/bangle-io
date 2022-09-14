@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/constants",
+  "name": "@bangle.io/yarn-workspace-helpers",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,24 +11,17 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/constants"
+    "directory": "tooling/yarn-workspace-helpers"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "main": "index.ts",
-  "module": "index.ts",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.31.3",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.3"
-  },
-  "devDependencies": {
-    "@bangle.io/pm-plugins": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*"
+    "execa": "^5.1.1"
   },
   "license": "AGPL-3.0-or-later"
 }

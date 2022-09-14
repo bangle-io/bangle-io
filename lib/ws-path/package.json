@@ -19,7 +19,6 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",

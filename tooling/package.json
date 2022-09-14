@@ -5,7 +5,8 @@
     "env-vars",
     "extract-css-vars",
     "playwright-e2e",
-    "storybook"
+    "storybook",
+    "yarn-workspace-helpers"
   ],
   "repository": {
     "directory": "tooling",

@@ -2055,7 +2055,6 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2097,17 +2096,12 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-app": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
-    "@bangle.io/image-extension": "workspace:*"
-    "@bangle.io/inline-backlink": "workspace:*"
-    "@bangle.io/inline-command-palette": "workspace:*"
-    "@bangle.io/inline-emoji": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2124,7 +2118,6 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
-    "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/workspace-sidebar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2246,14 +2239,12 @@ __metadata:
     "@bangle.dev/markdown": 0.31.3
     "@bangle.dev/markdown-front-matter": 0.31.3
     "@bangle.dev/pm": 0.31.3
-    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/storage": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -2283,7 +2274,6 @@ __metadata:
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
     "@bangle.dev/pm": 0.31.3
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.0
@@ -2298,8 +2288,6 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
@@ -2309,7 +2297,6 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
 
@@ -2333,19 +2320,15 @@ __metadata:
     "@bangle.dev/tooltip": 0.31.3
     "@bangle.dev/trailing-node": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    comlink: ^4.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -2402,7 +2385,6 @@ __metadata:
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2453,7 +2435,6 @@ __metadata:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -2581,7 +2562,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -2667,7 +2647,6 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2731,9 +2710,7 @@ __metadata:
     "@bangle.dev/utils": 0.31.3
     "@bangle.dev/wiki-link": 0.31.3
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
@@ -2771,7 +2748,6 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/react": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
@@ -2875,7 +2851,6 @@ __metadata:
   resolution: "@bangle.io/note-browser@workspace:extensions/note-browser"
   dependencies:
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2905,7 +2880,6 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2913,7 +2887,6 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
-    "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
@@ -2936,11 +2909,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2967,12 +2937,10 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
-    "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3078,6 +3046,7 @@ __metadata:
     "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/yarn-workspace-helpers": "workspace:*"
     concurrently: ^7.0.0
     cross-fetch: ^3.1.5
     date-fns: ^2.25.0
@@ -3100,7 +3069,6 @@ __metadata:
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -3171,14 +3139,12 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/table": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/api": "workspace:*"
     "@bangle.io/browser-nativefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/core-extension": "workspace:*"
     "@bangle.io/core-palettes": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/github-storage": "workspace:*"
     "@bangle.io/image-extension": "workspace:*"
@@ -3223,12 +3189,10 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.11.3
@@ -3236,9 +3200,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    reselect: ^4.1.5
     tslib: ^2.4.0
-    type-fest: ^2.12.0
     typescript: ^4.7.3
   languageName: unknown
   linkType: soft
@@ -3247,7 +3209,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-notification@workspace:lib/slice-notification"
   dependencies:
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3342,7 +3303,6 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/db-app": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3381,10 +3341,8 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: ^2.4.0
@@ -3461,9 +3419,7 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -3504,7 +3460,6 @@ __metadata:
     "@react-aria/interactions": ^3.8.4
     "@react-aria/menu": ^3.4.4
     "@react-aria/separator": ^3.1.7
-    "@react-aria/tooltip": ^3.1.8
     "@react-aria/utils": ^3.12.0
     "@react-stately/collections": ^3.3.8
     "@react-stately/toggle": ^3.2.7
@@ -3533,7 +3488,6 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@heroicons/react": ^1.0.6
-    "@popperjs/core": ^2.11.5
     "@react-aria/button": ^3.4.4
     "@react-aria/combobox": ^3.2.6
     "@react-aria/dialog": ^3.1.9
@@ -3541,25 +3495,18 @@ __metadata:
     "@react-aria/i18n": ^3.3.9
     "@react-aria/interactions": ^3.8.4
     "@react-aria/listbox": ^3.4.5
-    "@react-aria/menu": ^3.4.4
     "@react-aria/overlays": ^3.8.2
     "@react-aria/select": ^3.6.5
     "@react-aria/separator": ^3.1.7
     "@react-aria/textfield": ^3.5.5
     "@react-aria/utils": ^3.12.0
-    "@react-spectrum/utils": ^3.6.8
     "@react-stately/collections": ^3.3.8
     "@react-stately/combobox": ^3.0.5
     "@react-stately/list": ^3.4.5
-    "@react-stately/menu": ^3.2.7
     "@react-stately/select": ^3.1.7
-    "@react-stately/tree": ^3.2.4
     "@react-types/combobox": ^3.4.0
-    "@react-types/dialog": ^3.3.5
-    "@react-types/menu": ^3.5.3
     "@react-types/select": ^3.5.5
     "@react-types/shared": ^3.12.0
-    "@stitches/react": ^1.2.7
     "@storybook/react": ^6.4.19
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
@@ -3568,10 +3515,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-popper: ^2.2.5
     tslib: ^2.4.0
     typescript: ^4.7.3
-    w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
 
@@ -3655,7 +3600,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3764,10 +3708,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -3785,7 +3727,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ws-path@workspace:lib/ws-path"
   dependencies:
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3797,6 +3738,14 @@ __metadata:
     tslib: ^2.4.0
     typescript: ^4.7.3
     wouter: ^2.8.0-alpha.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/yarn-workspace-helpers@workspace:*, @bangle.io/yarn-workspace-helpers@workspace:tooling/yarn-workspace-helpers":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/yarn-workspace-helpers@workspace:tooling/yarn-workspace-helpers"
+  dependencies:
+    execa: ^5.1.1
   languageName: unknown
   linkType: soft
 
@@ -3823,6 +3772,15 @@ __metadata:
   bin:
     watch: cli.js
   checksum: 88f395ca0af2f3c0665b8ce7bb29e83647ec5d141e8735712aeeee4117081555436712966b6957aa1c461f6f826a4d23b0034e379c443a10e919f81c8748bf29
+  languageName: node
+  linkType: hard
+
+"@cspotcode/source-map-support@npm:^0.8.0":
+  version: 0.8.1
+  resolution: "@cspotcode/source-map-support@npm:0.8.1"
+  dependencies:
+    "@jridgewell/trace-mapping": 0.3.9
+  checksum: 5718f267085ed8edb3e7ef210137241775e607ee18b77d95aa5bd7514f47f5019aa2d82d96b3bf342ef7aa890a346fa1044532ff7cc3009e7d24fce3ce6200fa
   languageName: node
   linkType: hard
 
@@ -4462,6 +4420,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jridgewell/trace-mapping@npm:0.3.9":
+  version: 0.3.9
+  resolution: "@jridgewell/trace-mapping@npm:0.3.9"
+  dependencies:
+    "@jridgewell/resolve-uri": ^3.0.3
+    "@jridgewell/sourcemap-codec": ^1.4.10
+  checksum: d89597752fd88d3f3480845691a05a44bd21faac18e2185b6f436c3b0fd0c5a859fbbd9aaa92050c4052caf325ad3e10e2e1d1b64327517471b7d51babc0ddef
+  languageName: node
+  linkType: hard
+
 "@jridgewell/trace-mapping@npm:^0.3.0, @jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.15, @jridgewell/trace-mapping@npm:^0.3.9":
   version: 0.3.15
   resolution: "@jridgewell/trace-mapping@npm:0.3.15"
@@ -4939,23 +4907,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/tooltip@npm:^3.1.8":
-  version: 3.1.8
-  resolution: "@react-aria/tooltip@npm:3.1.8"
-  dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/focus": ^3.5.5
-    "@react-aria/interactions": ^3.8.4
-    "@react-aria/utils": ^3.12.0
-    "@react-stately/tooltip": ^3.0.9
-    "@react-types/shared": ^3.12.0
-    "@react-types/tooltip": ^3.1.6
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1
-  checksum: 86f9af0c83d0e52e593a9b54267a94f2b10e4e9d248cc484933c85b280a4184bf312b64ec72635385e8e8a597c2c951c911f353ecc4580099a123dd6d41591bb
-  languageName: node
-  linkType: hard
-
 "@react-aria/utils@npm:^3.11.3, @react-aria/utils@npm:^3.12.0":
   version: 3.12.0
   resolution: "@react-aria/utils@npm:3.12.0"
@@ -4982,22 +4933,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1
   checksum: 8fa14e06ccc8d51ecefd24f5604e02cd004c8899b4a0dede77f7abdb73bfde656bf53ddfd81203635064ef3d971fa191144a764fa13565118aa417677824c8e4
-  languageName: node
-  linkType: hard
-
-"@react-spectrum/utils@npm:^3.6.8":
-  version: 3.6.8
-  resolution: "@react-spectrum/utils@npm:3.6.8"
-  dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/i18n": ^3.3.9
-    "@react-aria/ssr": ^3.1.2
-    "@react-aria/utils": ^3.12.0
-    "@react-types/shared": ^3.12.0
-    clsx: ^1.1.1
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1
-  checksum: d9a6c670b3f58086c8d26fe2cf30fe28a21011af0f3e85b678b0bc287d3d478f7320de1ad263571aa8ae90e4a914ffb73436433df94cc353ff208bb3901e89e4
   languageName: node
   linkType: hard
 
@@ -5566,15 +5501,6 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^1.7.0
   checksum: 7d3aef54e17c1073101cb64d953157c19d62a40e261a30923fa1ee337b049c5f29cc47b1f0c477880f42b5659848ba9ab897607ac8ea4acd5c30ddcfac57fca6
-  languageName: node
-  linkType: hard
-
-"@stitches/react@npm:^1.2.7":
-  version: 1.2.7
-  resolution: "@stitches/react@npm:1.2.7"
-  peerDependencies:
-    react: ">= 16.3.0"
-  checksum: f4a66d208607a5f72d902d06388c0e3c5cec6cccc207e3b01228d3dc8e5b09742f4191fe932fac84c19ece825df174009025ba5939511501914785ed26a2c767
   languageName: node
   linkType: hard
 
@@ -7269,6 +7195,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tsconfig/node10@npm:^1.0.7":
+  version: 1.0.9
+  resolution: "@tsconfig/node10@npm:1.0.9"
+  checksum: a33ae4dc2a621c0678ac8ac4bceb8e512ae75dac65417a2ad9b022d9b5411e863c4c198b6ba9ef659e14b9fb609bbec680841a2e84c1172df7a5ffcf076539df
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node12@npm:^1.0.7":
+  version: 1.0.11
+  resolution: "@tsconfig/node12@npm:1.0.11"
+  checksum: 5ce29a41b13e7897a58b8e2df11269c5395999e588b9a467386f99d1d26f6c77d1af2719e407621412520ea30517d718d5192a32403b8dfcc163bf33e40a338a
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node14@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "@tsconfig/node14@npm:1.0.3"
+  checksum: 19275fe80c4c8d0ad0abed6a96dbf00642e88b220b090418609c4376e1cef81bf16237bf170ad1b341452feddb8115d8dd2e5acdfdea1b27422071163dc9ba9d
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node16@npm:^1.0.2":
+  version: 1.0.3
+  resolution: "@tsconfig/node16@npm:1.0.3"
+  checksum: 3a8b657dd047495b7ad23437d6afd20297ce90380ff0bdee93fc7d39a900dbd8d9e26e53ff6b465e7967ce2adf0b218782590ce9013285121e6a5928fbd6819f
+  languageName: node
+  linkType: hard
+
 "@tsd/typescript@npm:~4.7.4":
   version: 4.7.4
   resolution: "@tsd/typescript@npm:4.7.4"
@@ -8715,7 +8669,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-walk@npm:^8.0.0":
+"acorn-walk@npm:^8.0.0, acorn-walk@npm:^8.1.1":
   version: 8.2.0
   resolution: "acorn-walk@npm:8.2.0"
   checksum: 1715e76c01dd7b2d4ca472f9c58968516a4899378a63ad5b6c2d668bba8da21a71976c14ec5f5b75f887b6317c4ae0b897ab141c831d741dc76024d8745f1ad1
@@ -9064,6 +9018,13 @@ __metadata:
   version: 2.0.0
   resolution: "arg@npm:2.0.0"
   checksum: eeadcfa6160847452ac1973d1c6990e2133e50972d56f80f3601f83a465daa88431cb430cc12101d90b01719361a55a166b03f489143b6ba2acd2304714ebe74
+  languageName: node
+  linkType: hard
+
+"arg@npm:^4.1.0":
+  version: 4.1.3
+  resolution: "arg@npm:4.1.3"
+  checksum: 544af8dd3f60546d3e4aff084d451b96961d2267d668670199692f8d054f0415d86fc5497d0e641e91546f0aa920e7c29e5250e99fc89f5552a34b5d93b77f43
   languageName: node
   linkType: hard
 
@@ -9851,6 +9812,7 @@ __metadata:
     stylelint-config-standard: ^25.0.0
     surge: ^0.23.0
     tailwindcss: ^3.1.8
+    ts-node: ^10.9.1
     tslib: ^2.4.0
     typescript: ^4.7.3
     vite: ^3.0.9
@@ -11550,6 +11512,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"create-require@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "create-require@npm:1.1.1"
+  checksum: a9a1503d4390d8b59ad86f4607de7870b39cad43d929813599a23714831e81c520bddf61bcdd1f8e30f05fd3a2b71ae8538e946eb2786dc65c2bbc520f692eff
+  languageName: node
+  linkType: hard
+
 "cross-fetch@npm:^3.1.5":
   version: 3.1.5
   resolution: "cross-fetch@npm:3.1.5"
@@ -11796,9 +11765,9 @@ __metadata:
   linkType: hard
 
 "dayjs@npm:^1.10.0, dayjs@npm:^1.10.7":
-  version: 1.10.7
-  resolution: "dayjs@npm:1.10.7"
-  checksum: a0a4ca95abaa03d0702161dc2c35d16121188e342f5052b9c61cdf784dab68af766f477c04f87f71c6af666fd4d13db9b9853b87265850d6093b7b04e1bb1cd7
+  version: 1.11.5
+  resolution: "dayjs@npm:1.11.5"
+  checksum: e3bbaa7b4883b31be4bf75a181f1447fbb19800c29b332852125aab96baeff3ac232dcba8b88c4ea17d3b636c99dac5fb9d1af4bb6ae26615698bbc4a852dffb
   languageName: node
   linkType: hard
 
@@ -12151,6 +12120,13 @@ __metadata:
   version: 29.0.0
   resolution: "diff-sequences@npm:29.0.0"
   checksum: 2c084a3db03ecde26f649f6f2559974e01e174451debeb301a7e17199e73423a8e8ddeb9a35ae38638c084b4fa51296a4a20fa7f44f3db0c0ba566bdc704ed3d
+  languageName: node
+  linkType: hard
+
+"diff@npm:^4.0.1":
+  version: 4.0.2
+  resolution: "diff@npm:4.0.2"
+  checksum: f2c09b0ce4e6b301c221addd83bf3f454c0bc00caa3dd837cf6c127d6edf7223aa2bbe3b688feea110b7f262adbfc845b757c44c8a9f8c0c5b15d8fa9ce9d20d
   languageName: node
   linkType: hard
 
@@ -18032,6 +18008,13 @@ __metadata:
   dependencies:
     semver: ^6.0.0
   checksum: 484200020ab5a1fdf12f393fe5f385fc8e4378824c940fba1729dcd198ae4ff24867bc7a5646331e50cead8abff5d9270c456314386e629acec6dff4b8016b78
+  languageName: node
+  linkType: hard
+
+"make-error@npm:^1.1.1":
+  version: 1.3.6
+  resolution: "make-error@npm:1.3.6"
+  checksum: b86e5e0e25f7f777b77fabd8e2cbf15737972869d852a22b7e73c17623928fccb826d8e46b9951501d3f20e51ad74ba8c59ed584f610526a48f8ccf88aaec402
   languageName: node
   linkType: hard
 
@@ -24095,6 +24078,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-node@npm:^10.9.1":
+  version: 10.9.1
+  resolution: "ts-node@npm:10.9.1"
+  dependencies:
+    "@cspotcode/source-map-support": ^0.8.0
+    "@tsconfig/node10": ^1.0.7
+    "@tsconfig/node12": ^1.0.7
+    "@tsconfig/node14": ^1.0.0
+    "@tsconfig/node16": ^1.0.2
+    acorn: ^8.4.1
+    acorn-walk: ^8.1.1
+    arg: ^4.1.0
+    create-require: ^1.1.0
+    diff: ^4.0.1
+    make-error: ^1.1.1
+    v8-compile-cache-lib: ^3.0.1
+    yn: 3.1.1
+  peerDependencies:
+    "@swc/core": ">=1.2.50"
+    "@swc/wasm": ">=1.2.50"
+    "@types/node": "*"
+    typescript: ">=2.7"
+  peerDependenciesMeta:
+    "@swc/core":
+      optional: true
+    "@swc/wasm":
+      optional: true
+  bin:
+    ts-node: dist/bin.js
+    ts-node-cwd: dist/bin-cwd.js
+    ts-node-esm: dist/bin-esm.js
+    ts-node-script: dist/bin-script.js
+    ts-node-transpile-only: dist/bin-transpile.js
+    ts-script: dist/bin-script-deprecated.js
+  checksum: 090adff1302ab20bd3486e6b4799e90f97726ed39e02b39e566f8ab674fd5bd5f727f43615debbfc580d33c6d9d1c6b1b3ce7d8e3cca3e20530a145ffa232c35
+  languageName: node
+  linkType: hard
+
 "ts-pattern@npm:^4.0.3":
   version: 4.0.3
   resolution: "ts-pattern@npm:4.0.3"
@@ -24812,6 +24833,13 @@ __metadata:
   bin:
     uuid: ./bin/uuid
   checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
+  languageName: node
+  linkType: hard
+
+"v8-compile-cache-lib@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "v8-compile-cache-lib@npm:3.0.1"
+  checksum: 78089ad549e21bcdbfca10c08850022b22024cdcc2da9b168bcf5a73a6ed7bf01a9cebb9eac28e03cd23a684d81e0502797e88f3ccd27a32aeab1cfc44c39da0
   languageName: node
   linkType: hard
 
@@ -26045,6 +26073,13 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 00d58a2c052937fa044834313f07910fd0a115dec5ee35919e857eeee3736b21a4eafa8264535800ba8bac312991ce785ecb8a51f4d2cc8c4676d865af1cfbde
+  languageName: node
+  linkType: hard
+
+"yn@npm:3.1.1":
+  version: 3.1.1
+  resolution: "yn@npm:3.1.1"
+  checksum: 2c487b0e149e746ef48cda9f8bad10fc83693cd69d7f9dcd8be4214e985de33a29c9e24f3c0d6bcf2288427040a8947406ab27f7af67ee9456e6b84854f02dd6
   languageName: node
   linkType: hard
 

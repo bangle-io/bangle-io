@@ -34,6 +34,7 @@
     "@bangle.io/extract-css-vars": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/yarn-workspace-helpers": "workspace:*",
     "concurrently": "^7.0.0",
     "cross-fetch": "^3.1.5",
     "date-fns": "^2.25.0",
