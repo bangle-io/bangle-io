@@ -3084,7 +3084,6 @@ __metadata:
     domexception: ^4.0.0
     fake-indexeddb: ^4.0.0
     globby: ^11.0.4
-    idb-keyval: ^5.1.5
     prettier: ^2.7.1
     tslib: ^2.4.0
     typescript: ^4.7.3
@@ -3483,7 +3482,6 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.0
@@ -15543,15 +15541,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"idb-keyval@npm:^5.1.5":
-  version: 5.1.5
-  resolution: "idb-keyval@npm:5.1.5"
-  dependencies:
-    safari-14-idb-fix: ^1.0.6
-  checksum: 6d71d975c5392ddce934a3617b169c25d3b3204f5203d2ffa182c253515922c787292d61eb738aa25ab80fa390e541a416376a6d62a0a2fe7cf112a758f2d8d9
-  languageName: node
-  linkType: hard
-
 "idb@npm:^7.0.1, idb@npm:^7.0.2":
   version: 7.0.2
   resolution: "idb@npm:7.0.2"
@@ -22099,13 +22088,6 @@ __metadata:
   dependencies:
     tslib: ^2.1.0
   checksum: fc05f01364a74dac57490fb3e07ea63b422af04017fae1db641a009073f902ef69f285c5daac31359620dc8d9aee7d81e42b370ca2a8573d1feae0b04329383b
-  languageName: node
-  linkType: hard
-
-"safari-14-idb-fix@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "safari-14-idb-fix@npm:1.0.6"
-  checksum: 588cd632606ff0e47d64d0b71d88f9626f6187177a3187cb063a272ecb0412f7453f4e9321a9e731a1439b7830aa24f907e2338b402e1ef24e8d6a42f7ce8532
   languageName: node
   linkType: hard
 

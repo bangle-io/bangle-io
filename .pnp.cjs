@@ -5841,7 +5841,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["domexception", "npm:4.0.0"],\
             ["fake-indexeddb", "npm:4.0.0"],\
             ["globby", "npm:11.1.0"],\
-            ["idb-keyval", "npm:5.1.5"],\
             ["prettier", "npm:2.7.1"],\
             ["tslib", "npm:2.4.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
@@ -6274,7 +6273,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@types/react", "npm:17.0.49"],\
             ["@types/react-dom", "npm:17.0.17"],\
-            ["idb-keyval", "npm:5.1.5"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
             ["tslib", "npm:2.4.0"],\
@@ -22617,16 +22615,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["idb-keyval", [\
-        ["npm:5.1.5", {\
-          "packageLocation": "./.yarn/cache/idb-keyval-npm-5.1.5-313a28cc86-6d71d975c5.zip/node_modules/idb-keyval/",\
-          "packageDependencies": [\
-            ["idb-keyval", "npm:5.1.5"],\
-            ["safari-14-idb-fix", "npm:1.0.6"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["ieee754", [\
         ["npm:1.2.1", {\
           "packageLocation": "./.yarn/cache/ieee754-npm-1.2.1-fb63b3caeb-5144c0c981.zip/node_modules/ieee754/",\
@@ -30381,13 +30369,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["safari-14-idb-fix", [\
-        ["npm:1.0.6", {\
-          "packageLocation": "./.yarn/cache/safari-14-idb-fix-npm-1.0.6-d73cda0683-588cd63260.zip/node_modules/safari-14-idb-fix/",\
-          "packageDependencies": [\
-            ["safari-14-idb-fix", "npm:1.0.6"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:3.0.0", {\
           "packageLocation": "./.yarn/cache/safari-14-idb-fix-npm-3.0.0-bc2975407c-30d5baf3d9.zip/node_modules/safari-14-idb-fix/",\
           "packageDependencies": [\
