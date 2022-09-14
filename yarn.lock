@@ -2055,7 +2055,6 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2275,7 +2274,6 @@ __metadata:
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
     "@bangle.dev/pm": 0.31.3
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.0
@@ -2290,8 +2288,6 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
@@ -2301,7 +2297,6 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.0
     typescript: ^4.7.3
-    w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
 
@@ -2440,7 +2435,6 @@ __metadata:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -3195,12 +3189,10 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.dev/utils": 0.31.3
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.11.3
@@ -3208,9 +3200,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    reselect: ^4.1.5
     tslib: ^2.4.0
-    type-fest: ^2.12.0
     typescript: ^4.7.3
   languageName: unknown
   linkType: soft
@@ -3219,7 +3209,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-notification@workspace:lib/slice-notification"
   dependencies:
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3314,7 +3303,6 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/db-app": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3353,10 +3341,8 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: ^2.4.0
@@ -3433,9 +3419,7 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.dev/test-helpers": 0.31.3
     "@bangle.dev/utils": 0.31.3
-    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -3476,7 +3460,6 @@ __metadata:
     "@react-aria/interactions": ^3.8.4
     "@react-aria/menu": ^3.4.4
     "@react-aria/separator": ^3.1.7
-    "@react-aria/tooltip": ^3.1.8
     "@react-aria/utils": ^3.12.0
     "@react-stately/collections": ^3.3.8
     "@react-stately/toggle": ^3.2.7
@@ -3505,7 +3488,6 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@heroicons/react": ^1.0.6
-    "@popperjs/core": ^2.11.5
     "@react-aria/button": ^3.4.4
     "@react-aria/combobox": ^3.2.6
     "@react-aria/dialog": ^3.1.9
@@ -3513,25 +3495,18 @@ __metadata:
     "@react-aria/i18n": ^3.3.9
     "@react-aria/interactions": ^3.8.4
     "@react-aria/listbox": ^3.4.5
-    "@react-aria/menu": ^3.4.4
     "@react-aria/overlays": ^3.8.2
     "@react-aria/select": ^3.6.5
     "@react-aria/separator": ^3.1.7
     "@react-aria/textfield": ^3.5.5
     "@react-aria/utils": ^3.12.0
-    "@react-spectrum/utils": ^3.6.8
     "@react-stately/collections": ^3.3.8
     "@react-stately/combobox": ^3.0.5
     "@react-stately/list": ^3.4.5
-    "@react-stately/menu": ^3.2.7
     "@react-stately/select": ^3.1.7
-    "@react-stately/tree": ^3.2.4
     "@react-types/combobox": ^3.4.0
-    "@react-types/dialog": ^3.3.5
-    "@react-types/menu": ^3.5.3
     "@react-types/select": ^3.5.5
     "@react-types/shared": ^3.12.0
-    "@stitches/react": ^1.2.7
     "@storybook/react": ^6.4.19
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
@@ -3540,10 +3515,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-popper: ^2.2.5
     tslib: ^2.4.0
     typescript: ^4.7.3
-    w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
 
@@ -3754,7 +3727,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ws-path@workspace:lib/ws-path"
   dependencies:
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -4935,23 +4907,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/tooltip@npm:^3.1.8":
-  version: 3.1.8
-  resolution: "@react-aria/tooltip@npm:3.1.8"
-  dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/focus": ^3.5.5
-    "@react-aria/interactions": ^3.8.4
-    "@react-aria/utils": ^3.12.0
-    "@react-stately/tooltip": ^3.0.9
-    "@react-types/shared": ^3.12.0
-    "@react-types/tooltip": ^3.1.6
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1
-  checksum: 86f9af0c83d0e52e593a9b54267a94f2b10e4e9d248cc484933c85b280a4184bf312b64ec72635385e8e8a597c2c951c911f353ecc4580099a123dd6d41591bb
-  languageName: node
-  linkType: hard
-
 "@react-aria/utils@npm:^3.11.3, @react-aria/utils@npm:^3.12.0":
   version: 3.12.0
   resolution: "@react-aria/utils@npm:3.12.0"
@@ -4978,22 +4933,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1
   checksum: 8fa14e06ccc8d51ecefd24f5604e02cd004c8899b4a0dede77f7abdb73bfde656bf53ddfd81203635064ef3d971fa191144a764fa13565118aa417677824c8e4
-  languageName: node
-  linkType: hard
-
-"@react-spectrum/utils@npm:^3.6.8":
-  version: 3.6.8
-  resolution: "@react-spectrum/utils@npm:3.6.8"
-  dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/i18n": ^3.3.9
-    "@react-aria/ssr": ^3.1.2
-    "@react-aria/utils": ^3.12.0
-    "@react-types/shared": ^3.12.0
-    clsx: ^1.1.1
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1
-  checksum: d9a6c670b3f58086c8d26fe2cf30fe28a21011af0f3e85b678b0bc287d3d478f7320de1ad263571aa8ae90e4a914ffb73436433df94cc353ff208bb3901e89e4
   languageName: node
   linkType: hard
 
@@ -5562,15 +5501,6 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^1.7.0
   checksum: 7d3aef54e17c1073101cb64d953157c19d62a40e261a30923fa1ee337b049c5f29cc47b1f0c477880f42b5659848ba9ab897607ac8ea4acd5c30ddcfac57fca6
-  languageName: node
-  linkType: hard
-
-"@stitches/react@npm:^1.2.7":
-  version: 1.2.7
-  resolution: "@stitches/react@npm:1.2.7"
-  peerDependencies:
-    react: ">= 16.3.0"
-  checksum: f4a66d208607a5f72d902d06388c0e3c5cec6cccc207e3b01228d3dc8e5b09742f4191fe932fac84c19ece825df174009025ba5939511501914785ed26a2c767
   languageName: node
   linkType: hard
 
@@ -11834,10 +11764,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.0, dayjs@npm:^1.10.7":
+"dayjs@npm:^1.10.0":
   version: 1.10.7
   resolution: "dayjs@npm:1.10.7"
   checksum: a0a4ca95abaa03d0702161dc2c35d16121188e342f5052b9c61cdf784dab68af766f477c04f87f71c6af666fd4d13db9b9853b87265850d6093b7b04e1bb1cd7
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.10.7":
+  version: 1.11.5
+  resolution: "dayjs@npm:1.11.5"
+  checksum: e3bbaa7b4883b31be4bf75a181f1447fbb19800c29b332852125aab96baeff3ac232dcba8b88c4ea17d3b636c99dac5fb9d1af4bb6ae26615698bbc4a852dffb
   languageName: node
   linkType: hard
 

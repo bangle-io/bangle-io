@@ -28,7 +28,6 @@
     "@react-aria/interactions": "^3.8.4",
     "@react-aria/menu": "^3.4.4",
     "@react-aria/separator": "^3.1.7",
-    "@react-aria/tooltip": "^3.1.8",
     "@react-stately/collections": "^3.3.8",
     "@react-stately/toggle": "^3.2.7",
     "@react-stately/tooltip": "^3.0.9",
