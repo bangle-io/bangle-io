@@ -1,7 +1,10 @@
+import * as Sentry from '@sentry/browser';
+
 import { config } from '@bangle.io/config';
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
+import { uncaughtExceptionNotification } from '@bangle.io/slice-notification';
 
 import type { NaukarStateConfig } from '../common';
 import { naukarSlices } from './naukar-slices';
@@ -38,6 +41,17 @@ export function initializeNaukarStore({
       return () => {
         clearTimeout(id);
       };
+    },
+    onError(error, store) {
+      if (!store.runSliceErrorHandlers(error)) {
+        Sentry.captureException(error);
+        console.error(error);
+        Promise.resolve().then(() => {
+          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+        });
+      }
+
+      return true;
     },
   });
 

@@ -79,15 +79,6 @@ export function bangleStateSlices({
     e2eHelpers2(),
     // keep this at the end
     new Slice({
-      onError(error, store) {
-        (window as any).Sentry?.captureException(error);
-        console.error(error);
-        Promise.resolve().then(() => {
-          uncaughtExceptionNotification(error)(store.state, store.dispatch);
-        });
-
-        return true;
-      },
       sideEffect() {
         return {
           deferredUpdate(store) {

@@ -1,14 +1,10 @@
 // <-- PLOP INSERT SLICE IMPORT -->
-import * as Sentry from '@sentry/browser';
 
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
-import {
-  notificationSlice,
-  uncaughtExceptionNotification,
-} from '@bangle.io/slice-notification';
+import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
@@ -47,15 +43,6 @@ export function naukarSlices({
     // <-- PLOP INSERT SLICE -->
     // keep this at the end
     new Slice({
-      onError(error, store) {
-        Sentry.captureException(error);
-        console.error(error);
-        Promise.resolve().then(() => {
-          uncaughtExceptionNotification(error)(store.state, store.dispatch);
-        });
-
-        return true;
-      },
       sideEffect() {
         return {
           deferredUpdate(store) {

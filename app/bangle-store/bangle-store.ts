@@ -3,6 +3,7 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { initExtensionRegistry } from '@bangle.io/shared';
 import type { BangleStateConfig, JsonValue } from '@bangle.io/shared-types';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
+import { uncaughtExceptionNotification } from '@bangle.io/slice-notification';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
   assertNonWorkerGlobalScope,
@@ -12,7 +13,6 @@ import {
 } from '@bangle.io/utils';
 import { checkModuleWorkerSupport } from '@bangle.io/worker-setup';
 
-import type { BangleActionTypes, BangleSliceTypes } from './bangle-slices';
 import { bangleStateSlices } from './bangle-slices';
 
 assertNonWorkerGlobalScope();
@@ -75,11 +75,23 @@ export function initializeBangleStore({
       opts: stateOpts,
     });
 
-    return ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({
+    return ApplicationStore.create({
       storeName: MAIN_STORE_NAME,
       state: state,
 
-      onError: (error) => {},
+      onError: (error, store) => {
+        if (store.runSliceErrorHandlers(error)) {
+          return true;
+        }
+
+        (window as any).Sentry?.captureException(error);
+
+        Promise.resolve().then(() => {
+          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+        });
+
+        return false;
+      },
 
       dispatchAction: (store, action) => {
         log(
