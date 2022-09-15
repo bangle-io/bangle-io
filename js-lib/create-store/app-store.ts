@@ -10,6 +10,8 @@ import type {
 
 const seenErrors = new WeakSet<Error>();
 
+const errorOwnerSlice = new WeakMap<Error, string>();
+
 export type SchedulerType = (cb: () => void) => () => void;
 
 export type DispatchType<S, A extends BaseAction> = ApplicationStore<
@@ -45,7 +47,9 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       store.updateState(newState);
     },
     disableSideEffects = false,
-    onError,
+    onError = (error, store) => {
+      return store.runSliceErrorHandlers(error);
+    },
   }: {
     state: AppState<S, A>;
     dispatchAction?: DispatchActionType<S, BaseAction>;
@@ -76,13 +80,21 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
   errorHandler = (error: Error, key?: string): void => {
     if (seenErrors.has(error)) {
+      console.warn('Error already seen', error);
+
       return;
+    }
+
+    if (typeof key === 'string') {
+      errorOwnerSlice.set(error, key);
     }
 
     seenErrors.add(error);
 
     if (this._destroyController.signal.aborted) {
-      return;
+      console.error(error);
+
+      throw new Error('Error after store was destroyed');
     }
 
     this._infiniteErrors.count++;
@@ -109,30 +121,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     // check the store handler first
     if (this._onError?.(error, this) === true) {
       return;
-    }
-
-    // after that give priority to the slice it originated from
-    if (typeof key === 'string') {
-      const matchSlice = this._state.getSliceByKey<any, any, any>(key);
-
-      if (matchSlice?.spec.onError?.(error, this) === true) {
-        return;
-      }
-    }
-    // Note: We are giving every slice an opportunity to handle the error
-    // rather than just the originating slice, because if an effect dispatches an
-    // operation of a different slice, just running the originating slice's error handlers
-    // will miss the error handling of the slice owning the operation.
-
-    // check if any slice handles it
-    for (const slice of this._state.getSlices()) {
-      if (
-        // avoid calling the originating slice again, since we already called it earlier
-        slice.key !== key &&
-        slice.spec.onError?.(error, this) === true
-      ) {
-        return;
-      }
     }
 
     throw error;
@@ -214,6 +202,42 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     };
 
     return action as A;
+  }
+
+  /**
+   * gives each slice a chance to handle the error
+   * ideally this is run in your stores `.onError` handler callback.
+   * @param error
+   * @returns true if error was handled and false if no slice could handle it
+   */
+  runSliceErrorHandlers(error: Error): boolean {
+    const key = errorOwnerSlice.get(error);
+
+    //  give priority to the slice it originated from
+    if (typeof key === 'string') {
+      const matchSlice = this._state.getSliceByKey<any, any, any>(key);
+
+      if (matchSlice?.spec.onError?.(error, this) === true) {
+        return true;
+      }
+    }
+    // Note: We are giving every slice an opportunity to handle the error
+    // rather than just the originating slice, because if an effect dispatches an
+    // operation of a different slice, just running the originating slice's error handlers
+    // will miss the error handling of the slice owning the operation.
+
+    // check if any slice handles it
+    for (const slice of this._state.getSlices()) {
+      if (
+        // avoid calling the originating slice again, since we already called it earlier
+        slice.key !== key &&
+        slice.spec.onError?.(error, this) === true
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   serializeAction(action: A) {

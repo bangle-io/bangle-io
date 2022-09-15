@@ -79,6 +79,8 @@ export function initializeBangleStore({
       storeName: MAIN_STORE_NAME,
       state: state,
 
+      onError: (error) => {},
+
       dispatchAction: (store, action) => {
         log(
           action.fromStore ? `from=[${action.fromStore}]` : '',

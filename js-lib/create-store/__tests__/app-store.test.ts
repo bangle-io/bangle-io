@@ -1283,7 +1283,7 @@ describe('store', () => {
       });
     });
 
-    test('error propogates in correct order', () => {
+    test('error propagates in correct order', () => {
       let callOrder = '';
       const errorHandler1 = jest.fn(() => {
         callOrder += '1';
@@ -1300,10 +1300,10 @@ describe('store', () => {
 
         return false;
       });
-      const rootErrorHandler = jest.fn((error, store) => {
+      const rootErrorHandler = jest.fn((error, store: ApplicationStore) => {
         callOrder += 'root';
 
-        return false;
+        return store.runSliceErrorHandlers(error);
       });
 
       const { store } = setup({
@@ -1343,7 +1343,7 @@ describe('store', () => {
 
         return false;
       });
-      const rootErrorHandler = jest.fn((error, store) => {
+      const rootErrorHandler = jest.fn((error, store: ApplicationStore) => {
         callOrder += 'root';
 
         return true;
@@ -1389,10 +1389,10 @@ describe('store', () => {
 
         return false;
       });
-      const rootErrorHandler = jest.fn((error, store) => {
+      const rootErrorHandler = jest.fn((error, store: ApplicationStore) => {
         callOrder += 'root';
 
-        return false;
+        return store.runSliceErrorHandlers(error);
       });
 
       const { store } = setup({
@@ -1534,10 +1534,10 @@ describe('store', () => {
 
         return false;
       });
-      const rootErrorHandler = jest.fn((error, store) => {
+      const rootErrorHandler = jest.fn((error, store: ApplicationStore) => {
         handlerCallOrder += 'root';
 
-        return false;
+        return store.runSliceErrorHandlers(error);
       });
 
       const { store, deferredCalls } = setup({
@@ -1694,10 +1694,10 @@ describe('store', () => {
 
         return false;
       });
-      const rootErrorHandler = jest.fn((error, store) => {
+      const rootErrorHandler = jest.fn((error, store: ApplicationStore) => {
         handlerCallOrder += 'root';
 
-        return false;
+        return store.runSliceErrorHandlers(error);
       });
 
       const { store, deferredCalls } = setup({

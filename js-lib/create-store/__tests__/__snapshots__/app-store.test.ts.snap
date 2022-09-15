@@ -13,7 +13,7 @@ exports[`store basic tests destroys 1`] = `
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
-  "_onError": undefined,
+  "_onError": [Function],
   "_scheduler": undefined,
   "_sideEffects": [],
   "_state": AppState {
@@ -112,7 +112,7 @@ exports[`store basic tests sets up properly 1`] = `
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
-  "_onError": undefined,
+  "_onError": [Function],
   "_scheduler": undefined,
   "_sideEffects": [],
   "_state": AppState {
@@ -211,7 +211,7 @@ exports[`store deferred side effects does not call deferred update when schedule
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
-  "_onError": undefined,
+  "_onError": [Function],
   "_scheduler": [Function],
   "_sideEffects": [
     {
@@ -346,7 +346,7 @@ exports[`store empty store 1`] = `
     "lastSeen": 0,
   },
   "_lastSeenStateCache": WeakMap {},
-  "_onError": undefined,
+  "_onError": [Function],
   "_scheduler": undefined,
   "_sideEffects": [],
   "_state": AppState {
