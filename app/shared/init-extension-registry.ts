@@ -1,3 +1,4 @@
+// <-- PLOP INSERT EXTENSION IMPORT -->
 import browserNativefsStorage from '@bangle.io/browser-nativefs-storage';
 import browserStorage from '@bangle.io/browser-storage';
 import editorCore from '@bangle.io/core-editor';
@@ -30,6 +31,7 @@ export const initExtensionRegistry = () => {
     noteBrowser,
     searchNotes,
     githubStorage,
+    // <-- PLOP INSERT EXTENSION -->
 
     // NOTE: keep the core palette last
     // as it has note palette in it

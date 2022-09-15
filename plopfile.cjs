@@ -10,6 +10,15 @@ module.exports = function main(
   /** @type {import('plop').NodePlopAPI} */
   plop,
 ) {
+  const camelCase = (name) => {
+    const [first, ...rest] = name.split('-');
+
+    return [
+      first,
+      ...rest.map((word) => word.charAt(0).toUpperCase() + word.slice(1)),
+    ].join('');
+  };
+
   const sliceCamelName = (name) => {
     const [first, second, ...remaining] = name.split('-');
 
@@ -266,6 +275,76 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
             null,
             2,
           );
+        },
+      },
+    ],
+  });
+
+  plop.setGenerator('extension', {
+    description: 'Create extension',
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'package name please',
+      },
+    ],
+    actions: [
+      {
+        type: 'add',
+        path: 'extensions/{{name}}/package.json',
+        templateFile: 'tooling/plop-templates/new-extension/package-json.hbs',
+      },
+      {
+        type: 'add',
+        path: 'extensions/{{name}}/index.ts',
+        templateFile: 'tooling/plop-templates/new-extension/index-ts.hbs',
+      },
+      {
+        type: 'add',
+        path: 'extensions/{{name}}/common.ts',
+        templateFile: 'tooling/plop-templates/new-extension/common-ts.hbs',
+      },
+      {
+        type: 'modify',
+        path: 'extensions/package.json',
+        transform: (fileContents, data) => {
+          return JSON.stringify(
+            addToWorkspaces(JSON.parse(fileContents), data.name),
+            null,
+            2,
+          );
+        },
+      },
+
+      {
+        type: 'modify',
+        path: 'app/shared/package.json',
+        transform: (fileContents, data) => {
+          let newData = JSON.parse(fileContents);
+          newData.dependencies[`@bangle.io/${data.name}`] = 'workspace:*';
+
+          return JSON.stringify(newData, null, 2);
+        },
+      },
+
+      {
+        type: 'modify',
+        path: 'app/shared/init-extension-registry.ts',
+        transform: (fileContents, data) => {
+          fileContents = fileContents.replace(
+            '// <-- PLOP INSERT EXTENSION IMPORT -->',
+            `// <-- PLOP INSERT EXTENSION IMPORT -->
+import ${camelCase(data.name)} from '@bangle.io/${data.name}';`,
+          );
+          fileContents = fileContents.replace(
+            '// <-- PLOP INSERT EXTENSION -->',
+            `${camelCase(data.name)},` +
+              '\n' +
+              `// <-- PLOP INSERT EXTENSION -->`,
+          );
+
+          return fileContents;
         },
       },
     ],
