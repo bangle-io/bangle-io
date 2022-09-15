@@ -14,4 +14,4 @@ jobs:
         uses: githubocto/repo-visualizer@main
         with:
           excluded_paths: 'ignore,.github,.yarn,.husky,.vscode,build,node_modules'
-          should_push: true
+          should_push: false
