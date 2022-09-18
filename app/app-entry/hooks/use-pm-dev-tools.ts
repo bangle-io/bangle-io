@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import type { initializeBangleStore } from '@bangle.io/bangle-store';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
 
@@ -8,11 +8,9 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'AppStateContext') : () => {};
 
-export function usePMDevTools({
-  bangleStore,
-}: {
-  bangleStore: ReturnType<typeof initializeBangleStore>;
-}) {
+export function usePMDevTools() {
+  const bangleStore = useBangleStoreContext();
+
   useEffect(() => {
     // TODO: this setup should be done in app
     safeRequestIdleCallback(() => {
@@ -34,5 +32,5 @@ export function usePMDevTools({
         }
       }
     });
-  }, [bangleStore.state]);
+  }, [bangleStore]);
 }
