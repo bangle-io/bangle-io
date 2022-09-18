@@ -1,15 +1,17 @@
 const webpack = require('webpack');
 
 const { ALL_TOP_LEVEL_DIRS } = require('@bangle.io/scripts/constants');
-
 module.exports = {
   stories: [
     ...ALL_TOP_LEVEL_DIRS.map(
       (dir) => `../../../${dir}/**/*.stories.@(js|jsx|ts|tsx)`,
     ),
   ],
+  features: {
+    babelModeV7: true,
+  },
+
   addons: [
-    'storybook-dark-mode',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
@@ -22,12 +24,28 @@ module.exports = {
       },
     },
   ],
+
   framework: '@storybook/react',
   reactOptions: {
-    fastRefresh: false,
+    fastRefresh: true,
   },
   core: {
     builder: 'webpack5',
+  },
+  babel: (options) => {
+    return {
+      ...options,
+      presets: [
+        ...options.presets,
+        [
+          require.resolve('@babel/preset-env'),
+          {
+            targets: 'last 2 chrome version',
+          },
+        ],
+        require.resolve('@babel/preset-typescript'),
+      ],
+    };
   },
   typescript: {
     check: false,
