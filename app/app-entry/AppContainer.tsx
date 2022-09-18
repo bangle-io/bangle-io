@@ -15,6 +15,7 @@ import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 import { DialogArea } from './components/DialogArea';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
+import { usePMDevTools } from './hooks/use-pm-dev-tools';
 import { useSetDocumentTitle } from './misc/use-set-document-title';
 import { Routes } from './Routes';
 
@@ -77,6 +78,8 @@ export function AppContainer() {
   }, [wsName]);
 
   useRecentlyUsedWsPaths();
+
+  usePMDevTools();
 
   return (
     <>
