@@ -5,7 +5,10 @@ import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import {
+  useRecentlyUsedWsPaths,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
@@ -72,6 +75,8 @@ export function AppContainer() {
       storagePersist();
     }
   }, [wsName]);
+
+  useRecentlyUsedWsPaths();
 
   return (
     <>
