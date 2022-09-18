@@ -6,10 +6,6 @@
   width: 100%;
 }
 
-.B-editor-container_editor-bar {
-  color: var(--BV-ui-bangle-button-color);
-}
-
 .B-editor-container_ws-path {
   color: var(--BV-ui-bangle-button-color);
   justify-content: center;

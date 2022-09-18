@@ -24,7 +24,7 @@ module.exports = {
   ],
   framework: '@storybook/react',
   reactOptions: {
-    fastRefresh: true,
+    fastRefresh: false,
   },
   core: {
     builder: 'webpack5',

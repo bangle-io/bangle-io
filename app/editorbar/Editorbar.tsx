@@ -13,13 +13,15 @@ import { cx } from '@bangle.io/utils';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
-export function EditorBar({
+
+export function Editorbar({
   showSplitEditor = false,
   wsPath,
   onClose,
   onPressSecondaryEditor,
   isSplitEditorOpen,
   isActive,
+  openNotesPalette,
 }: {
   isActive: boolean;
   showSplitEditor?: boolean;
@@ -27,9 +29,10 @@ export function EditorBar({
   onClose: () => void;
   onPressSecondaryEditor: () => void;
   isSplitEditorOpen: boolean;
+  openNotesPalette: () => void;
 }) {
   let path = removeExtension(resolvePath(wsPath).filePath);
-  const bangleStore = useBangleStoreContext();
+
   let p = path.split('/');
 
   if (p.length > MAX_ENTRIES) {
@@ -37,15 +40,8 @@ export function EditorBar({
     p.unshift('…');
   }
 
-  const openNotesPalette = useCallback(() => {
-    togglePaletteType(CorePalette.Notes)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
-  }, [bangleStore]);
-
   return (
-    <div className="flex flex-row justify-between w-full B-editor-container_editor-bar ">
+    <div className="flex flex-row justify-between w-full B-editorbar_wrapper ">
       <div
         aria-label="note path"
         className={cx(

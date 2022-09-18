@@ -4,31 +4,14 @@
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { togglePaletteType } from '@bangle.io/slice-ui';
-
-import { EditorBar } from '../EditorBar';
-
-jest.mock('@bangle.io/slice-ui', () => {
-  const operations = jest.requireActual('@bangle.io/slice-ui');
-
-  return {
-    ...operations,
-    togglePaletteType: jest.fn(() => () => {}),
-  };
-});
-
-const togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
-  typeof togglePaletteType
->;
-
-beforeEach(() => {
-  togglePaletteTypeMock.mockImplementation(() => () => {});
-});
+import { Editorbar } from '../Editorbar';
 
 test('renders correctly', () => {
+  const openNotesPalette = jest.fn();
   let result = render(
     <div>
-      <EditorBar
+      <Editorbar
+        openNotesPalette={openNotesPalette}
         isActive={false}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic.md'}
@@ -49,7 +32,8 @@ test('renders correctly', () => {
 test('renders correctly when active', () => {
   let result = render(
     <div>
-      <EditorBar
+      <Editorbar
+        openNotesPalette={jest.fn()}
         isActive={true}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic.md'}
@@ -68,7 +52,8 @@ test('renders correctly when active', () => {
 test('truncates large wsPath', () => {
   let result = render(
     <div>
-      <EditorBar
+      <Editorbar
+        openNotesPalette={jest.fn()}
         isActive={false}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic/wow/last/two.md'}
@@ -83,9 +68,11 @@ test('truncates large wsPath', () => {
 });
 
 test('dispatches togglePaletteType on clicking wsPath', () => {
+  const openNotesPalette = jest.fn();
   let result = render(
     <div>
-      <EditorBar
+      <Editorbar
+        openNotesPalette={openNotesPalette}
         isActive={false}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
@@ -98,13 +85,14 @@ test('dispatches togglePaletteType on clicking wsPath', () => {
 
   fireEvent.click(result.getByLabelText('note path'));
 
-  expect(togglePaletteTypeMock).toBeCalledTimes(1);
+  expect(openNotesPalette).toBeCalledTimes(1);
 });
 
 test('renders splitscreen', () => {
   let result = render(
     <div>
-      <EditorBar
+      <Editorbar
+        openNotesPalette={jest.fn()}
         isActive={false}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
@@ -121,7 +109,8 @@ test('renders splitscreen', () => {
 
   result.rerender(
     <div>
-      <EditorBar
+      <Editorbar
+        openNotesPalette={jest.fn()}
         isActive={false}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}

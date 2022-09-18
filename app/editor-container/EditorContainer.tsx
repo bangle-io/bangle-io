@@ -7,12 +7,15 @@ import {
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+  CorePalette,
   PRIMARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
+import { Editorbar } from '@bangle.io/editorbar';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   checkFileExists,
   useWorkspaceContext,
@@ -20,8 +23,6 @@ import {
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
-
-import { EditorBar } from './EditorBar';
 
 export function EditorContainer({
   widescreen,
@@ -32,6 +33,7 @@ export function EditorContainer({
   editorId: EditorIdType;
   wsPath: string | undefined;
 }) {
+  const bangleStore = useBangleStoreContext();
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
   const { focusedEditorId } = useEditorManagerContext();
@@ -52,6 +54,13 @@ export function EditorContainer({
       value: editorId,
     });
   }, [dispatchSerialOperation, editorId]);
+
+  const openNotesPalette = useCallback(() => {
+    togglePaletteType(CorePalette.Notes)(
+      bangleStore.state,
+      bangleStore.dispatch,
+    );
+  }, [bangleStore]);
 
   let children;
 
@@ -84,13 +93,14 @@ export function EditorContainer({
       header={
         widescreen &&
         wsPath && (
-          <EditorBar
+          <Editorbar
             isActive={focusedEditorId === editorId}
             wsPath={wsPath}
             onClose={onClose}
             showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
             onPressSecondaryEditor={onPressSecondaryEditor}
             isSplitEditorOpen={isSplitEditorOpen}
+            openNotesPalette={openNotesPalette}
           />
         )
       }

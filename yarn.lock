@@ -2487,6 +2487,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
+    "@bangle.io/editorbar": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -2542,7 +2543,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/editorbar@workspace:app/editorbar":
+"@bangle.io/editorbar@workspace:*, @bangle.io/editorbar@workspace:app/editorbar":
   version: 0.0.0-use.local
   resolution: "@bangle.io/editorbar@workspace:app/editorbar"
   dependencies:
@@ -2553,8 +2554,11 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/ui-bangle-button": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    "@storybook/react": ^6.4.19
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
