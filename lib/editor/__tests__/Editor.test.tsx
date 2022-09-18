@@ -57,11 +57,7 @@ test('basic renders', async () => {
 
   await act(async () => {
     result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:one.md"
@@ -100,11 +96,7 @@ test('persists editor selection', async () => {
 
   await act(async () => {
     result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:one.md"
@@ -139,11 +131,7 @@ test('persists editor selection', async () => {
   // load another document
   act(() => {
     result.rerender(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:two.md"
@@ -168,11 +156,7 @@ test('persists editor selection', async () => {
   // should be hydrated with `expectedSelection`
   act(() => {
     result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:one.md"
@@ -195,11 +179,7 @@ test('mounting and unmounting set state correctly in editor slice', async () => 
 
   await act(async () => {
     result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:one.md"
@@ -236,11 +216,7 @@ test('revokes editor proxy', async () => {
 
   await act(async () => {
     result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:one.md"
@@ -277,11 +253,7 @@ test('changing of wsPath works', async () => {
 
   await act(async () => {
     result = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           className="test-class"
@@ -304,11 +276,7 @@ test('changing of wsPath works', async () => {
 
   await act(async () => {
     result.rerender(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={bangleStore}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={bangleStore} bangleStoreChanged={0}>
         <Editor
           editorId={SECONDARY_EDITOR_INDEX}
           wsPath="test-ws:two.md"

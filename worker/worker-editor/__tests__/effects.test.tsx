@@ -64,11 +64,7 @@ const setup = async ({
   ]);
 
   let { container } = render(
-    <TestStoreProvider
-      editorManagerContextProvider
-      bangleStore={obj.store}
-      bangleStoreChanged={0}
-    >
+    <TestStoreProvider bangleStore={obj.store} bangleStoreChanged={0}>
       <Editor
         editorId={PRIMARY_EDITOR_INDEX}
         wsPath={wsPath1}

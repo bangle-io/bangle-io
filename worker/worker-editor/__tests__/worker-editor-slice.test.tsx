@@ -55,11 +55,7 @@ describe('worker-editor-slice', () => {
     ]);
 
     const { container } = render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={store}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
         <Editor
           editorId={PRIMARY_EDITOR_INDEX}
           wsPath={wsPath1}
@@ -156,11 +152,7 @@ describe('worker-editor-slice', () => {
     ]);
 
     render(
-      <TestStoreProvider
-        editorManagerContextProvider
-        bangleStore={store}
-        bangleStoreChanged={0}
-      >
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
         <Editor
           editorId={PRIMARY_EDITOR_INDEX}
           wsPath={wsPath1}

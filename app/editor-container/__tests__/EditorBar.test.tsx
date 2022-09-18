@@ -4,19 +4,9 @@
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { useBangleStoreDispatch } from '@bangle.io/bangle-store-context';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 
 import { EditorBar } from '../EditorBar';
-
-jest.mock('@bangle.io/bangle-store-context', () => {
-  const obj = jest.requireActual('@bangle.io/bangle-store-context');
-
-  return {
-    ...obj,
-    useBangleStoreDispatch: jest.fn(() => () => {}),
-  };
-});
 
 jest.mock('@bangle.io/slice-ui', () => {
   const operations = jest.requireActual('@bangle.io/slice-ui');
@@ -32,7 +22,6 @@ const togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
 >;
 
 beforeEach(() => {
-  (useBangleStoreDispatch as any).mockImplementation(() => () => {});
   togglePaletteTypeMock.mockImplementation(() => () => {});
 });
 

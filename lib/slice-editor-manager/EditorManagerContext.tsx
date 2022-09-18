@@ -14,34 +14,13 @@ export type EditorManagerContextValue = EditorSliceState & {
   bangleStore: ApplicationStore;
 };
 
-// type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
-const EditorManagerContext = React.createContext<EditorManagerContextValue>({
-  ...initialEditorSliceState,
-  bangleStore: initialBangleStore,
-});
-
 export function useEditorManagerContext() {
-  return useContext(EditorManagerContext);
-}
+  const { sliceState, store } = useSliceState(editorManagerSliceKey);
 
-/**
- * Should be parent of all editors.
- */
-export function EditorManager({ children }: { children: React.ReactNode }) {
-  const { sliceState: editorManager, store } = useSliceState(
-    editorManagerSliceKey,
-  );
-
-  const value = useMemo(() => {
+  return useMemo(() => {
     return {
-      ...(editorManager || initialEditorSliceState),
+      ...sliceState,
       bangleStore: store,
     };
-  }, [store, editorManager]);
-
-  return (
-    <EditorManagerContext.Provider value={value}>
-      {children}
-    </EditorManagerContext.Provider>
-  );
+  }, [store, sliceState]);
 }

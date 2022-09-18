@@ -1,10 +1,6 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import type { initializeBangleStore } from '@bangle.io/bangle-store';
-import {
-  BangleStoreChanged,
-  BangleStoreContext,
-} from '@bangle.io/bangle-store-context';
 import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
 
@@ -12,14 +8,10 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'AppStateContext') : () => {};
 
-export function AppStateProvider({
+export function usePMDevTools({
   bangleStore,
-  bangleStoreChanged,
-  children,
 }: {
-  bangleStoreChanged: number;
   bangleStore: ReturnType<typeof initializeBangleStore>;
-  children: React.ReactNode;
 }) {
   useEffect(() => {
     // TODO: this setup should be done in app
@@ -43,12 +35,4 @@ export function AppStateProvider({
       }
     });
   }, [bangleStore.state]);
-
-  return (
-    <BangleStoreContext.Provider value={bangleStore}>
-      <BangleStoreChanged.Provider value={bangleStoreChanged}>
-        {children}
-      </BangleStoreChanged.Provider>
-    </BangleStoreContext.Provider>
-  );
 }

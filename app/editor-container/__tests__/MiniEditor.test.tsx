@@ -31,11 +31,7 @@ describe('MiniEditor', () => {
 
     const { container, getByLabelText } = render(
       <div>
-        <TestStoreProvider
-          editorManagerContextProvider={true}
-          bangleStore={store}
-          bangleStoreChanged={0}
-        >
+        <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
           <MiniEditor wsPath={wsPath} />
         </TestStoreProvider>
       </div>,

@@ -5,13 +5,17 @@ import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import {
+  useRecentlyUsedWsPaths,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
 import { DialogArea } from './components/DialogArea';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
+import { usePMDevTools } from './hooks/use-pm-dev-tools';
 import { useSetDocumentTitle } from './misc/use-set-document-title';
 import { Routes } from './Routes';
 
@@ -72,6 +76,10 @@ export function AppContainer() {
       storagePersist();
     }
   }, [wsName]);
+
+  useRecentlyUsedWsPaths();
+
+  usePMDevTools();
 
   return (
     <>

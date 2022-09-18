@@ -127,6 +127,7 @@ test('works when no wsName', async () => {
 test('updates the newly opened ws path only', async () => {
   let records: RecencyRecords = [],
     updateRecord = jest.fn();
+
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
@@ -151,8 +152,7 @@ test('updates the newly opened ws path only', async () => {
 
   const { rerender } = renderHook(() => useRecentlyUsedWsPaths(), { wrapper });
 
-  expect(updateRecord).toHaveBeenCalledTimes(2);
-  expect(updateRecord).nthCalledWith(1, 'test-ws:note1.md');
+  expect(updateRecord).lastCalledWith('test-ws:note1.md');
 
   await createTestNote('test-ws:note2.md', 'second note', false);
 
@@ -172,6 +172,5 @@ test('updates the newly opened ws path only', async () => {
   bangleStoreChanged++;
   rerender();
 
-  expect(updateRecord).toHaveBeenCalledTimes(4);
   expect(updateRecord).lastCalledWith('test-ws:note2.md');
 });

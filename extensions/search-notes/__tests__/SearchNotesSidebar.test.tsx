@@ -57,11 +57,7 @@ const setup = async (
     render: async () => {
       let counter = 0;
       let { container, rerender } = render(
-        <TestStoreProvider
-          editorManagerContextProvider
-          bangleStore={store}
-          bangleStoreChanged={counter}
-        >
+        <TestStoreProvider bangleStore={store} bangleStoreChanged={counter}>
           <SearchNotesSidebar />
         </TestStoreProvider>,
       );
@@ -72,11 +68,7 @@ const setup = async (
           counter++;
 
           return rerender(
-            <TestStoreProvider
-              editorManagerContextProvider
-              bangleStore={store}
-              bangleStoreChanged={counter}
-            >
+            <TestStoreProvider bangleStore={store} bangleStoreChanged={counter}>
               <SearchNotesSidebar />
             </TestStoreProvider>,
           );

@@ -6,26 +6,15 @@ import React, { useState } from 'react';
 
 import { defaultSpecs } from '@bangle.dev/all-base-components';
 
-import { useSliceState } from '@bangle.io/bangle-store-context';
 import {
   Extension,
-  ExtensionRegistry,
-  ExtensionRegistryContextProvider,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
+import { createBasicTestStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { useSerialOperationContext } from '../SerialOperationContext';
 import { SerialOperationContextProvider } from '../SerialOperationContextProvider';
 import { useSerialOperationHandler } from '../use-register-operation-handler';
-
-jest.mock('@bangle.io/bangle-store-context', () => {
-  const obj = jest.requireActual('@bangle.io/bangle-store-context');
-
-  return {
-    ...obj,
-    useSliceState: jest.fn(),
-  };
-});
 
 function ApplicationComponents() {
   const extensionRegistry = useExtensionRegistryContext();
@@ -52,18 +41,11 @@ function TestHandler() {
   return <span>{`result-${sidebarCounter}`}</span>;
 }
 
-const useSliceStateMock = useSliceState as jest.MockedFunction<
-  typeof useSliceState
->;
-
-beforeEach(() => {
-  useSliceStateMock.mockImplementation(() => ({} as any));
-});
-
 describe('operation handlers', () => {
   test('works', async () => {
-    const initExtensionRegistry = () =>
-      new ExtensionRegistry([
+    const { store } = createBasicTestStore({
+      useEditorCoreExtension: false,
+      extensions: [
         Extension.create({
           name: 'bangle-io-core',
           application: {
@@ -79,22 +61,14 @@ describe('operation handlers', () => {
               },
             ],
           },
-          editor: {
-            specs: [...defaultSpecs()],
-          },
         }),
-      ]);
+      ],
+    });
 
     let result: ReturnType<typeof render> | undefined,
       dispatchSOp: ReturnType<
         typeof useSerialOperationContext
       >['dispatchSerialOperation'];
-
-    useSliceStateMock.mockImplementation(() => ({
-      sliceState: { extensionRegistry: initExtensionRegistry() },
-      store: {} as any,
-      dispatch: () => {},
-    }));
 
     function DispatchSOp() {
       let obj = useSerialOperationContext();
@@ -104,12 +78,12 @@ describe('operation handlers', () => {
     }
     act(() => {
       result = render(
-        <ExtensionRegistryContextProvider>
+        <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
           <SerialOperationContextProvider>
             <DispatchSOp />
             <ApplicationComponents />
           </SerialOperationContextProvider>
-        </ExtensionRegistryContextProvider>,
+        </TestStoreProvider>,
       );
     });
 
@@ -131,8 +105,9 @@ describe('operation handlers', () => {
   test('operation handler works', async () => {
     let operationMatch = jest.fn();
     let operationsReceived: any[] = [];
-    const initExtensionRegistry = () =>
-      new ExtensionRegistry([
+    const { store } = createBasicTestStore({
+      useEditorCoreExtension: false,
+      extensions: [
         Extension.create({
           name: 'bangle-io-core',
           application: {
@@ -165,17 +140,12 @@ describe('operation handlers', () => {
             },
           },
         }),
-      ]);
+      ],
+    });
 
     let dispatchSOp: ReturnType<
       typeof useSerialOperationContext
     >['dispatchSerialOperation'];
-
-    useSliceStateMock.mockImplementation(() => ({
-      sliceState: { extensionRegistry: initExtensionRegistry() },
-      store: {} as any,
-      dispatch: () => {},
-    }));
 
     function DispatchSOp() {
       let obj = useSerialOperationContext();
@@ -185,12 +155,12 @@ describe('operation handlers', () => {
     }
     act(() => {
       render(
-        <ExtensionRegistryContextProvider>
+        <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
           <SerialOperationContextProvider>
             <DispatchSOp />
             <ApplicationComponents />
           </SerialOperationContextProvider>
-        </ExtensionRegistryContextProvider>,
+        </TestStoreProvider>,
       );
     });
 

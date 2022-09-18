@@ -1,19 +1,13 @@
 import { useCallback, useEffect } from 'react';
 
-import { useSliceState } from '@bangle.io/bangle-store-context';
 import { usePrevious, useRecencyMonitor } from '@bangle.io/utils';
 
-import { workspaceSliceKey } from './common';
 import { MAX_ENTRIES, MAX_TIMESTAMPS_PER_ENTRY } from './config';
+import { useWorkspaceContext } from './WorkspaceContext';
 
 export function useRecentlyUsedWsPaths() {
-  const { sliceState, store: bangleStore } = useSliceState(workspaceSliceKey);
-
-  if (!sliceState) {
-    throw new Error('Slice state cannot be undefined');
-  }
-
-  const { openedWsPaths, wsName, noteWsPaths } = sliceState;
+  const { openedWsPaths, wsName, noteWsPaths, bangleStore } =
+    useWorkspaceContext();
 
   const prevOpenedPaths = usePrevious(openedWsPaths);
   const { records, updateRecord: _updateRecord } = useRecencyMonitor({

@@ -1,27 +1,23 @@
 import './style';
 
 import { OverlayProvider } from '@react-aria/overlays';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import type { BaseLocationHook } from 'wouter';
 import { Router } from 'wouter';
 
 import { SerialOperationContextProvider } from '@bangle.io/api/internal';
+import { historySliceKey } from '@bangle.io/bangle-store';
 import {
-  historySliceKey,
-  initializeBangleStore,
-} from '@bangle.io/bangle-store';
-import { useSliceState } from '@bangle.io/bangle-store-context';
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { ExtensionRegistryContextProvider } from '@bangle.io/extension-registry';
+  BangleStoreChanged,
+  BangleStoreContext,
+  useSliceState,
+} from '@bangle.io/bangle-store-context';
+import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
-import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { pathMatcher, usePageContext } from '@bangle.io/slice-page';
-import { UIManager } from '@bangle.io/slice-ui';
-import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 
 import { AppContainer } from './AppContainer';
-import { AppStateProvider } from './AppStateProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
@@ -56,32 +52,13 @@ const useRouterHook: BaseLocationHook = () => {
   return [to, navigate];
 };
 
-let storeInitialized = false;
-export function Entry() {
-  const [bangleStoreChanged, _setBangleStoreCounter] = useState(0);
-  const [bangleStore] = useState(() => {
-    // there are cases when React will remount components
-    // and we want to avoid reinstantiating our store.
-    if (storeInitialized) {
-      // If we reach here it is definitely a broader error
-      // and we donot want to load the application.
-      // Surprisingly throwing an error here prevents any other errors
-      // so we just create a dummy store.
-      return ApplicationStore.create({
-        storeName: 'bangle-store',
-        state: AppState.create({
-          slices: [],
-          opts: {},
-        }) as any,
-      });
-    }
-
-    storeInitialized = true;
-
-    return initializeBangleStore({
-      onUpdate: () => _setBangleStoreCounter((c) => c + 1),
-    });
-  });
+export function Entry({
+  storeChanged: bangleStoreChanged,
+  store: bangleStore,
+}: {
+  storeChanged: number;
+  store: ApplicationStore;
+}) {
   useEffect(() => {
     return () => {
       bangleStore.destroy();
@@ -114,31 +91,24 @@ export function Entry() {
 
   useUsageAnalytics();
 
+  const bangleStoreRef = useRef(bangleStore);
+
   return (
     <React.StrictMode>
       <ErrorBoundary store={bangleStore}>
         <Router hook={useRouterHook} matcher={pathMatcher as any}>
           {/* Used by OverlayContainer -- any modal or popover */}
           <OverlayProvider>
-            <AppStateProvider
-              bangleStore={bangleStore}
-              bangleStoreChanged={bangleStoreChanged}
-            >
-              <UIManager>
-                <ExtensionRegistryContextProvider>
-                  <WorkspaceContextProvider>
-                    <SWReloadPrompt />
-                    <WatchWorkspace />
-                    <WatchUI />
-                    <EditorManager>
-                      <SerialOperationContextProvider>
-                        <AppContainer />
-                      </SerialOperationContextProvider>
-                    </EditorManager>
-                  </WorkspaceContextProvider>
-                </ExtensionRegistryContextProvider>
-              </UIManager>
-            </AppStateProvider>
+            <BangleStoreContext.Provider value={bangleStoreRef}>
+              <BangleStoreChanged.Provider value={bangleStoreChanged}>
+                <SWReloadPrompt />
+                <WatchWorkspace />
+                <WatchUI />
+                <SerialOperationContextProvider>
+                  <AppContainer />
+                </SerialOperationContextProvider>
+              </BangleStoreChanged.Provider>
+            </BangleStoreContext.Provider>
           </OverlayProvider>
         </Router>
       </ErrorBoundary>

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { workspace } from '@bangle.io/api';
+import { useBangleStoreContext, workspace } from '@bangle.io/api';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
@@ -20,8 +20,8 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 export function MiniEditor({ wsPath }: { wsPath: string }) {
   const { fileNameWithoutExt } = resolvePath(wsPath, true);
-  const { bangleStore } = useEditorManagerContext();
   const extensionRegistry = useExtensionRegistryContext();
+  const bangleStore = useBangleStoreContext();
 
   const [isMinimized, updateIsMinimized] = useState(false);
 
