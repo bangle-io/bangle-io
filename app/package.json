@@ -2,6 +2,7 @@
   "name": "app",
   "workspaces": [
     "activitybar",
+    "editorbar",
     "app-entry",
     "bangle-store",
     "editor-container",

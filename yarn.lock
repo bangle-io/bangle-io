@@ -2542,6 +2542,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/editorbar@workspace:app/editorbar":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/editorbar@workspace:app/editorbar"
+  dependencies:
+    "@bangle.io/api": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-ui": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@testing-library/react": ^12.1.3
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    tslib: ^2.4.0
+    typescript: ^4.7.3
+  peerDependencies:
+    react: "*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/env-vars@workspace:*, @bangle.io/env-vars@workspace:tooling/env-vars":
   version: 0.0.0-use.local
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
