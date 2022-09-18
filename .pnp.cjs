@@ -5223,9 +5223,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/example-extension/",\
           "packageDependencies": [\
             ["@bangle.io/example-extension", "workspace:extensions/example-extension"],\
-            ["@bangle.dev/core", "virtual:e4a8929b709ae3dca9c86aa6f23f3b036e819e0241dfd11de5d52f65f2585669755df11f2396d3a6037d73bafece8ba45a3f6d060d519d24212e5bf22e6a0e05#npm:0.31.3"],\
-            ["@bangle.dev/pm", "npm:0.31.3"],\
-            ["@bangle.dev/utils", "virtual:e4a8929b709ae3dca9c86aa6f23f3b036e819e0241dfd11de5d52f65f2585669755df11f2396d3a6037d73bafece8ba45a3f6d060d519d24212e5bf22e6a0e05#npm:0.31.3"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
