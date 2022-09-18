@@ -31,7 +31,21 @@ const WorkspaceHooksContext = React.createContext<WorkspaceContextType>({
 });
 
 export function useWorkspaceContext() {
-  return useContext(WorkspaceHooksContext);
+  const { sliceState, store } = useSliceState(workspaceSliceKey);
+
+  return useMemo(
+    () => ({
+      noteWsPaths: sliceState.noteWsPaths,
+      openedWsPaths: sliceState.openedWsPaths,
+      recentlyUsedWsPaths: sliceState.recentlyUsedWsPaths,
+      wsName: sliceState.wsName,
+      wsPaths: sliceState.wsPaths,
+      refreshCounter: sliceState.refreshCounter,
+      bangleStore: store,
+      cachedWorkspaceInfo: sliceState.cachedWorkspaceInfo,
+    }),
+    [sliceState, store],
+  );
 }
 
 // TODO: remove these slice providers as they are just pulling state from the outer context.

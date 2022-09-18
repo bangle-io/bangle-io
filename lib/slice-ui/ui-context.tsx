@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import { createContext, useMemo } from 'react';
 
 import {
   initialBangleStore,
@@ -21,26 +21,16 @@ export const UIManagerContext = createContext<UIStateObj>({
 });
 
 export function useUIManagerContext() {
-  return useContext(UIManagerContext);
-}
-
-export function UIManager({ children }: { children: React.ReactNode }) {
   const { sliceState: uiState, store } = useSliceState<
     UISliceState,
     UiContextAction
   >(uiSliceKey);
 
-  const value = useMemo(() => {
+  return useMemo(() => {
     return {
       ...(uiState || initialState),
       dispatch: store.dispatch,
       bangleStore: store,
     };
   }, [store, uiState]);
-
-  return (
-    <UIManagerContext.Provider value={value}>
-      {children}
-    </UIManagerContext.Provider>
-  );
 }

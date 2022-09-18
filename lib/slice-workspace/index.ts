@@ -27,7 +27,7 @@ export {
   updateOpenedWsPaths,
 } from './operations';
 export { workspaceSlice, workspaceSliceInitialState } from './workspace-slice';
-export type { WorkspaceSliceState } from './workspace-slice-state';
+export { WorkspaceSliceState } from './workspace-slice-state';
 export type { WorkspaceContextType } from './WorkspaceContext';
 export {
   useWorkspaceContext,

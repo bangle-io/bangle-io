@@ -13,3 +13,4 @@ export * from './setup-mock-message-channel';
 export * from './test-memory-history-slice';
 export { TestStoreProvider } from './TestStoreProvider';
 export { waitForExpect };
+export { WorkspaceSliceState } from '@bangle.io/slice-workspace';

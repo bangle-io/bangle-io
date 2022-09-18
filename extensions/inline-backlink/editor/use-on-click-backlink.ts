@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import type { EditorState } from '@bangle.dev/pm';
 import { EditorView } from '@bangle.dev/pm';
 
-import { notification } from '@bangle.io/api';
+import { notification, useBangleStoreContext } from '@bangle.io/api';
 import {
   createNote,
   pushWsPath,
@@ -31,7 +31,8 @@ export function useOnClickBacklink({
   currentWsPath: string;
   editorState: EditorState;
 }) {
-  const { wsName, noteWsPaths, bangleStore } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
+  const { wsName, noteWsPaths } = useWorkspaceContext();
 
   return useCallback(
     (event: React.MouseEvent<any>) => {

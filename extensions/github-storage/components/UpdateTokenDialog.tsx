@@ -1,6 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { notification, ui, useSliceState } from '@bangle.io/api';
+import {
+  notification,
+  ui,
+  useBangleStoreContext,
+  useSliceState,
+} from '@bangle.io/api';
 import { Dialog, ErrorBanner, TextField } from '@bangle.io/ui-components';
 import { BaseError } from '@bangle.io/utils';
 
@@ -10,7 +15,7 @@ import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
 import { updateGithubToken } from '../operations';
 
 export function UpdateTokenDialog() {
-  const { bangleStore } = ui.useUIManagerContext();
+  const bangleStore = useBangleStoreContext();
   const [inputToken, updateInputToken] = useState<string | undefined>();
   const [error, updateError] = useState<Error | undefined>(undefined);
   const [isProcessing, updateIsProcessing] = useState(false);

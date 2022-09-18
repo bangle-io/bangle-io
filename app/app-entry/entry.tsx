@@ -7,18 +7,20 @@ import { Router } from 'wouter';
 
 import { SerialOperationContextProvider } from '@bangle.io/api/internal';
 import { historySliceKey } from '@bangle.io/bangle-store';
-import { useSliceState } from '@bangle.io/bangle-store-context';
+import {
+  BangleStore2Context,
+  BangleStoreChanged,
+  useSliceState,
+} from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { ExtensionRegistryContextProvider } from '@bangle.io/extension-registry';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { pathMatcher, usePageContext } from '@bangle.io/slice-page';
-import { UIManager } from '@bangle.io/slice-ui';
 import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 
 import { AppContainer } from './AppContainer';
-import { AppStateProvider } from './AppStateProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
@@ -92,17 +94,16 @@ export function Entry({
 
   useUsageAnalytics();
 
+  const bangleStoreRef = useRef(bangleStore);
+
   return (
     <React.StrictMode>
       <ErrorBoundary store={bangleStore}>
         <Router hook={useRouterHook} matcher={pathMatcher as any}>
           {/* Used by OverlayContainer -- any modal or popover */}
           <OverlayProvider>
-            <AppStateProvider
-              bangleStore={bangleStore}
-              bangleStoreChanged={bangleStoreChanged}
-            >
-              <UIManager>
+            <BangleStore2Context.Provider value={bangleStoreRef}>
+              <BangleStoreChanged.Provider value={bangleStoreChanged}>
                 <ExtensionRegistryContextProvider>
                   <WorkspaceContextProvider>
                     <SWReloadPrompt />
@@ -115,8 +116,8 @@ export function Entry({
                     </EditorManager>
                   </WorkspaceContextProvider>
                 </ExtensionRegistryContextProvider>
-              </UIManager>
-            </AppStateProvider>
+              </BangleStoreChanged.Provider>
+            </BangleStore2Context.Provider>
           </OverlayProvider>
         </Router>
       </ErrorBoundary>

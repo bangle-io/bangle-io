@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
-import { useSerialOperationContext, workspace } from '@bangle.io/api';
+import {
+  useBangleStoreContext,
+  useSerialOperationContext,
+  workspace,
+} from '@bangle.io/api';
 import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
@@ -42,14 +46,11 @@ const rowHeight = 1.5 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function NotesTree() {
-  const { dispatch, widescreen } = useUIManagerContext();
-  const {
-    wsName,
-    openedWsPaths,
-    bangleStore,
-    noteWsPaths = [],
-  } = useWorkspaceContext();
+  const bangleStore = useBangleStoreContext();
+  const { widescreen } = useUIManagerContext();
+  const { wsName, openedWsPaths, noteWsPaths = [] } = useWorkspaceContext();
 
+  const { dispatch } = bangleStore;
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   const { primaryWsPath } = openedWsPaths;

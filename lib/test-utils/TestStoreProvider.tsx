@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import {
+  BangleStore2Context,
   BangleStoreChanged,
-  BangleStoreContext,
 } from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { ExtensionRegistryContextProvider } from '@bangle.io/extension-registry';
@@ -33,12 +33,12 @@ export function TestStoreProvider({
   }
 
   return (
-    <BangleStoreContext.Provider value={bangleStore}>
+    <BangleStore2Context.Provider value={useRef(bangleStore)}>
       <BangleStoreChanged.Provider value={bangleStoreChanged}>
         <ExtensionRegistryContextProvider>
           {res}
         </ExtensionRegistryContextProvider>
       </BangleStoreChanged.Provider>
-    </BangleStoreContext.Provider>
+    </BangleStore2Context.Provider>
   );
 }

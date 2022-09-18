@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ui, workspace } from '@bangle.io/api';
+import { ui, useBangleStoreContext, workspace } from '@bangle.io/api';
 import {
   ComboBox,
   Dialog,
@@ -22,7 +22,8 @@ import { getRepos } from '../github-api-helpers';
 const MIN_HEIGHT = 200;
 
 export function NewGithubWorkspaceRepoPickerDialog() {
-  const { bangleStore, dialogMetadata } = ui.useUIManagerContext();
+  const bangleStore = useBangleStoreContext();
+  const { dialogMetadata } = ui.useUIManagerContext();
   const [isLoading, updateIsLoading] = useState(false);
   const deferredIsLoading = useDebouncedValue(isLoading, { wait: 100 });
   const [error, updateError] = useState<Error | undefined>(undefined);

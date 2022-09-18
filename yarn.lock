@@ -2064,6 +2064,7 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2556,9 +2557,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/example-extension@workspace:extensions/example-extension"
   dependencies:
-    "@bangle.dev/core": 0.31.3
-    "@bangle.dev/pm": 0.31.3
-    "@bangle.dev/utils": 0.31.3
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

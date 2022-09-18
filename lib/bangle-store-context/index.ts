@@ -9,22 +9,34 @@ import {
 
 export const initialBangleStore = ApplicationStore.create({
   storeName: MAIN_STORE_NAME,
-  state: ApplicationState.create({ slices: [] }),
+  state: ApplicationState.create<any, any>({ slices: [] }),
 });
 
-export const BangleStoreContext =
-  React.createContext<ApplicationStore>(initialBangleStore);
+export const BangleStore2Context = React.createContext<{
+  current: ApplicationStore;
+}>({
+  // Note: this is just a dummy value to satisfy typescript and some tests,
+  // it is guaranteed to be replaced by the real value in the provider.
+  current: ApplicationStore.create({
+    storeName: MAIN_STORE_NAME,
+    state: ApplicationState.create({ slices: [] }),
+  }),
+});
+
+export function useBangleStore2Context() {
+  return useContext(BangleStore2Context)?.current!;
+}
 
 export const BangleStoreChanged = React.createContext<number>(-1);
 
 export function useBangleStoreContext() {
-  return useContext(BangleStoreContext);
+  return useContext(BangleStore2Context).current;
 }
 
 export function useBangleStoreDispatch<
   T extends BaseAction,
 >(): ApplicationStore<any, T>['dispatch'] {
-  return useContext(BangleStoreContext).dispatch;
+  return useContext(BangleStore2Context).current.dispatch;
 }
 
 export function useSliceState<SL, A extends BaseAction, S = SL>(
