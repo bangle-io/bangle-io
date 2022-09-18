@@ -3,11 +3,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 
-import { LoadingBlock } from './LoadingBlock';
-
-const root = document.getElementById('root');
+import { Entry } from './entry';
+import { runAfterPolyfills } from './run-after-polyfills';
 
 if (typeof window !== undefined && APP_ENV !== 'local') {
   (window as any).Sentry?.onLoad(function () {
@@ -29,4 +29,27 @@ if (typeof window !== undefined && APP_ENV !== 'local') {
   };
 }
 
-ReactDOM.render(React.createElement(LoadingBlock, {}), root);
+runAfterPolyfills(() => {
+  let storeChanged = 0;
+  const root = document.getElementById('root');
+
+  const store = initializeBangleStore({
+    onUpdate: () => {
+      ReactDOM.render(
+        React.createElement(Entry, {
+          storeChanged: storeChanged++,
+          store,
+        }),
+        root,
+      );
+    },
+  });
+
+  ReactDOM.render(
+    React.createElement(Entry, {
+      storeChanged: storeChanged++,
+      store,
+    }),
+    root,
+  );
+});
