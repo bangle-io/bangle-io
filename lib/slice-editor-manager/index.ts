@@ -3,7 +3,7 @@ export {
   editorManagerSlice,
   initialEditorSliceState,
 } from './editor-manager-slice';
-export { EditorManager, useEditorManagerContext } from './EditorManagerContext';
+export { useEditorManagerContext } from './EditorManagerContext';
 export {
   didSomeEditorChange,
   dispatchEditorCommand,

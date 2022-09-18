@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { notification, workspace } from '@bangle.io/api';
-import { useBangleStore2Context } from '@bangle.io/bangle-store-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
@@ -14,7 +14,7 @@ import { MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { EmptyEditorPage } from './EmptyEditorPage';
 
 export function WorkspacePage() {
-  const bangleStore = useBangleStore2Context();
+  const bangleStore = useBangleStoreContext();
   const { openedWsPaths } = useWorkspaceContext();
   const { widescreen } = useUIManagerContext();
 

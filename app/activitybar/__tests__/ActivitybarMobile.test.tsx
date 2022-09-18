@@ -4,7 +4,13 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
+import type { BangleApplicationStore } from '@bangle.io/api';
+import {
+  initialState,
+  togglePaletteType,
+  useUIManagerContext,
+} from '@bangle.io/slice-ui';
+import { createBasicTestStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { Activitybar } from '../Activitybar';
 
@@ -22,13 +28,24 @@ let togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
   typeof togglePaletteType
 >;
 
+let useUIManagerContextMock = jest.mocked(useUIManagerContext);
+let store: BangleApplicationStore;
+
 beforeEach(() => {
-  (useUIManagerContext as any).mockImplementation(() => {
+  ({ store } = createBasicTestStore({
+    extensions: [],
+    useEditorCoreExtension: true,
+    useEditorManagerSlice: true,
+  }));
+
+  useUIManagerContextMock.mockImplementation(() => {
     return {
+      ...initialState,
       changelogHasUpdates: false,
       sidebar: undefined,
       dispatch: () => {},
       widescreen: false,
+      bangleStore: store,
     };
   });
   togglePaletteTypeMock.mockImplementation(() => () => {});
@@ -37,7 +54,9 @@ beforeEach(() => {
 test('renders mobile view', () => {
   let result = render(
     <div>
-      <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 
@@ -47,11 +66,13 @@ test('renders mobile view', () => {
 test('renders primaryWsPath', () => {
   let result = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[]}
-        primaryWsPath={'my-thing:wow.md'}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[]}
+          primaryWsPath={'my-thing:wow.md'}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 
@@ -64,11 +85,13 @@ test('dispatches operation', () => {
 
   let result = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[]}
-        primaryWsPath={'my-thing:wow.md'}
-      />
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[]}
+          primaryWsPath={'my-thing:wow.md'}
+        />
+      </TestStoreProvider>
     </div>,
   );
   act(() => {

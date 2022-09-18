@@ -15,7 +15,10 @@ import {
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';
 
-import { useSerialOperationContext } from '@bangle.io/api';
+import {
+  useBangleStoreContext,
+  useSerialOperationContext,
+} from '@bangle.io/api';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -62,7 +65,7 @@ function EditorInner({
   extensionRegistry,
   wsPath,
 }: EditorProps) {
-  const { bangleStore } = useEditorManagerContext();
+  const bangleStore = useBangleStoreContext();
 
   const { dispatchSerialOperation } = useSerialOperationContext();
 

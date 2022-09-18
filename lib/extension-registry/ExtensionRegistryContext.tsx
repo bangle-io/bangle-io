@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { useSliceState } from '@bangle.io/bangle-store-context';
 
@@ -10,19 +10,7 @@ export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
 );
 
 export function useExtensionRegistryContext() {
-  return useContext(ExtensionRegistryContext);
-}
-
-export function ExtensionRegistryContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
   const { sliceState } = useSliceState(extensionRegistrySliceKey);
 
-  return (
-    <ExtensionRegistryContext.Provider value={sliceState.extensionRegistry!}>
-      {children}
-    </ExtensionRegistryContext.Provider>
-  );
+  return sliceState.extensionRegistry;
 }

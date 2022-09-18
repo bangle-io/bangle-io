@@ -18,6 +18,15 @@ import {
 
 import { EditorContainer } from '../EditorContainer';
 
+jest.mock('@bangle.io/extension-registry', () => {
+  const actual = jest.requireActual('@bangle.io/extension-registry');
+
+  return {
+    ...actual,
+    useExtensionRegistryContext: jest.fn(),
+  };
+});
+
 jest.mock('@bangle.io/slice-workspace', () => {
   const actual = jest.requireActual('@bangle.io/slice-workspace');
 

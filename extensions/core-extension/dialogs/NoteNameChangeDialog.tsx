@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { editor } from '@bangle.io/api';
-import { useBangleStore2Context } from '@bangle.io/bangle-store-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   NEW_NOTE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
@@ -43,7 +43,7 @@ export function NewNoteInputModal() {
   );
 
   const destroyedRef = useDestroyRef();
-  const bangleStore = useBangleStore2Context();
+  const bangleStore = useBangleStoreContext();
   const { wsName } = useWorkspaceContext();
   const [error, updateError] = useState<Error | undefined>();
   const { widescreen } = useUIManagerContext();

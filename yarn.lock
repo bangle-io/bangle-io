@@ -2029,6 +2029,7 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"

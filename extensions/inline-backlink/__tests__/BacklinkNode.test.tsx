@@ -53,11 +53,7 @@ const setup = async ([firstNote, ...otherNotes]: Array<
   ]);
 
   let { container } = render(
-    <TestStoreProvider
-      editorManagerContextProvider
-      bangleStore={store}
-      bangleStoreChanged={0}
-    >
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       <Editor
         editorId={SECONDARY_EDITOR_INDEX}
         wsPath={wsPath}

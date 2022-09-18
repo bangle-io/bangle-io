@@ -12,7 +12,7 @@ export const initialBangleStore = ApplicationStore.create({
   state: ApplicationState.create<any, any>({ slices: [] }),
 });
 
-export const BangleStore2Context = React.createContext<{
+export const BangleStoreContext = React.createContext<{
   current: ApplicationStore;
 }>({
   // Note: this is just a dummy value to satisfy typescript and some tests,
@@ -23,20 +23,10 @@ export const BangleStore2Context = React.createContext<{
   }),
 });
 
-export function useBangleStore2Context() {
-  return useContext(BangleStore2Context)?.current!;
-}
-
 export const BangleStoreChanged = React.createContext<number>(-1);
 
 export function useBangleStoreContext() {
-  return useContext(BangleStore2Context).current;
-}
-
-export function useBangleStoreDispatch<
-  T extends BaseAction,
->(): ApplicationStore<any, T>['dispatch'] {
-  return useContext(BangleStore2Context).current.dispatch;
+  return useContext(BangleStoreContext).current;
 }
 
 export function useSliceState<SL, A extends BaseAction, S = SL>(

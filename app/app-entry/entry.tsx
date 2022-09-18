@@ -8,17 +8,14 @@ import { Router } from 'wouter';
 import { SerialOperationContextProvider } from '@bangle.io/api/internal';
 import { historySliceKey } from '@bangle.io/bangle-store';
 import {
-  BangleStore2Context,
   BangleStoreChanged,
+  BangleStoreContext,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
-import { ExtensionRegistryContextProvider } from '@bangle.io/extension-registry';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
-import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { pathMatcher, usePageContext } from '@bangle.io/slice-page';
-import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 
 import { AppContainer } from './AppContainer';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -102,22 +99,16 @@ export function Entry({
         <Router hook={useRouterHook} matcher={pathMatcher as any}>
           {/* Used by OverlayContainer -- any modal or popover */}
           <OverlayProvider>
-            <BangleStore2Context.Provider value={bangleStoreRef}>
+            <BangleStoreContext.Provider value={bangleStoreRef}>
               <BangleStoreChanged.Provider value={bangleStoreChanged}>
-                <ExtensionRegistryContextProvider>
-                  <WorkspaceContextProvider>
-                    <SWReloadPrompt />
-                    <WatchWorkspace />
-                    <WatchUI />
-                    <EditorManager>
-                      <SerialOperationContextProvider>
-                        <AppContainer />
-                      </SerialOperationContextProvider>
-                    </EditorManager>
-                  </WorkspaceContextProvider>
-                </ExtensionRegistryContextProvider>
+                <SWReloadPrompt />
+                <WatchWorkspace />
+                <WatchUI />
+                <SerialOperationContextProvider>
+                  <AppContainer />
+                </SerialOperationContextProvider>
               </BangleStoreChanged.Provider>
-            </BangleStore2Context.Provider>
+            </BangleStoreContext.Provider>
           </OverlayProvider>
         </Router>
       </ErrorBoundary>
