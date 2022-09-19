@@ -6,7 +6,7 @@ import React from 'react';
 import { Editorbar } from './Editorbar';
 
 export default {
-  title: 'editorbar/Editorbar',
+  title: 'activitybar/Editorbar',
   component: Editorbar,
   argTypes: {},
 };

@@ -163,7 +163,7 @@ test.describe('backlink workflow', () => {
     await expect.poll(() => getPopupEditorWsPath()).toBe(`${wsName}:note-0.md`);
 
     // hover on something else
-    await page.hover('.B-editorbar_wrapper span');
+    await page.hover('.B-activitybar_editorbar-wrapper span');
 
     // the path should now be undefined
     // we do a poll because it takes a little while for the popup to disappear

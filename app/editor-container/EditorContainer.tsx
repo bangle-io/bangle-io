@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Editorbar } from '@bangle.io/activitybar';
 import {
   useBangleStoreContext,
   useSerialOperationContext,
@@ -11,7 +12,6 @@ import {
   PRIMARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
-import { Editorbar } from '@bangle.io/editorbar';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';

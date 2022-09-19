@@ -9,11 +9,11 @@ exports[`Storyshots activitybar/Editorbar Branching 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-editorbar_wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
   >
     <div
       aria-label="note path"
-      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       onClick={[Function]}
     >
       <span
@@ -90,11 +90,11 @@ exports[`Storyshots activitybar/Editorbar Showing Split Editor 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-editorbar_wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
   >
     <div
       aria-label="note path"
-      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       onClick={[Function]}
     >
       <span
@@ -208,11 +208,11 @@ exports[`Storyshots activitybar/Editorbar Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-editorbar_wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
   >
     <div
       aria-label="note path"
-      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       onClick={[Function]}
     >
       <span

@@ -38,11 +38,11 @@ export function Editorbar({
   }
 
   return (
-    <div className="flex flex-row justify-between w-full B-editorbar_wrapper ">
+    <div className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper ">
       <div
         aria-label="note path"
         className={cx(
-          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline',
+          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline',
           isActive && 'BU_active',
         )}
         onClick={openNotesPalette}
