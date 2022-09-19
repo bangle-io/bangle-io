@@ -11,8 +11,8 @@ import type { JsonPrimitive, WorkspaceInfo } from '@bangle.io/shared-types';
 import { pageSlice } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
+  createBareStore,
   createExtensionRegistry,
-  createTestStore,
 } from '@bangle.io/test-utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -148,7 +148,7 @@ export const createStore = ({
     extensionRegistry,
   };
 
-  let result = createTestStore({
+  let { store } = createBareStore({
     storeName: 'workspace-store',
     disableSideEffects,
     state: data
@@ -164,7 +164,18 @@ export const createStore = ({
         }),
   });
 
-  return result;
+  const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+  return {
+    store,
+    dispatchSpy,
+    getAction: (name: string) => {
+      return getActionsDispatched(dispatchSpy, name);
+    },
+    getActionNames: () => {
+      return getActionNamesDispatched(dispatchSpy);
+    },
+  };
 };
 
 export const getActionNamesDispatched = (mockDispatch: jest.SpyInstance) =>

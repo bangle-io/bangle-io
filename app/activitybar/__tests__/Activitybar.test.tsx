@@ -4,7 +4,9 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
+import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
+import { createBasicTestStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { Activitybar } from '../Activitybar';
 
@@ -21,6 +23,7 @@ jest.mock('@bangle.io/slice-ui', () => {
 let changeSidebarMock = changeSidebar as jest.MockedFunction<
   typeof changeSidebar
 >;
+let store: BangleApplicationStore;
 
 (useUIManagerContext as any).mockImplementation(() => {
   return {
@@ -34,14 +37,20 @@ let changeSidebarMock = changeSidebar as jest.MockedFunction<
 const changeSidebarRet = jest.fn();
 changeSidebarMock.mockImplementation(() => changeSidebarRet);
 
-// beforeEach(() => {
-
-// });
+beforeEach(() => {
+  ({ store } = createBasicTestStore({
+    extensions: [],
+    useEditorCoreExtension: true,
+    useEditorManagerSlice: true,
+  }));
+});
 
 test('renders when no sidebars', () => {
   let result = render(
     <div>
-      <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 
@@ -51,18 +60,20 @@ test('renders when no sidebars', () => {
 test('renders when there is sidebar', () => {
   let result = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[
-          {
-            name: 'sidebar::test-123',
-            title: 'search notes',
-            activitybarIcon: <span>test-icon</span>,
-            ReactComponent: () => null,
-            hint: 'test-hint',
-          },
-        ]}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[
+            {
+              name: 'sidebar::test-123',
+              title: 'search notes',
+              activitybarIcon: <span>test-icon</span>,
+              ReactComponent: () => null,
+              hint: 'test-hint',
+            },
+          ]}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 
@@ -82,18 +93,20 @@ test('renders when sidebar is active', () => {
 
   let result = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[
-          {
-            name: 'sidebar::test-123',
-            title: 'search notes',
-            activitybarIcon: <span>test-icon</span>,
-            ReactComponent: () => null,
-            hint: 'test-hint',
-          },
-        ]}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[
+            {
+              name: 'sidebar::test-123',
+              title: 'search notes',
+              activitybarIcon: <span>test-icon</span>,
+              ReactComponent: () => null,
+              hint: 'test-hint',
+            },
+          ]}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 
@@ -114,18 +127,20 @@ test('inactive sidebar is dispatched correctly', () => {
 
   let result = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[
-          {
-            name: 'sidebar::test-123',
-            title: 'search notes',
-            activitybarIcon: <span>test-icon</span>,
-            ReactComponent: () => null,
-            hint: 'test-hint',
-          },
-        ]}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[
+            {
+              name: 'sidebar::test-123',
+              title: 'search notes',
+              activitybarIcon: <span>test-icon</span>,
+              ReactComponent: () => null,
+              hint: 'test-hint',
+            },
+          ]}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
   act(() => {
@@ -149,18 +164,20 @@ test('active sidebar is toggled off correctly', () => {
 
   let result = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[
-          {
-            name: 'sidebar::test-123',
-            title: 'search notes',
-            activitybarIcon: <span>test-icon</span>,
-            ReactComponent: () => null,
-            hint: 'search the notes',
-          },
-        ]}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[
+            {
+              name: 'sidebar::test-123',
+              title: 'search notes',
+              activitybarIcon: <span>test-icon</span>,
+              ReactComponent: () => null,
+              hint: 'search the notes',
+            },
+          ]}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
   act(() => {
@@ -186,19 +203,21 @@ test('activitybarIconShow is respected', async () => {
 
   let { rerender } = render(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[
-          {
-            name: 'sidebar::test-123',
-            title: 'search notes',
-            activitybarIcon: <span>test-icon</span>,
-            ReactComponent: () => null,
-            hint: 'search the notes',
-            activitybarIconShow,
-          },
-        ]}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[
+            {
+              name: 'sidebar::test-123',
+              title: 'search notes',
+              activitybarIcon: <span>test-icon</span>,
+              ReactComponent: () => null,
+              hint: 'search the notes',
+              activitybarIconShow,
+            },
+          ]}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 
@@ -208,19 +227,21 @@ test('activitybarIconShow is respected', async () => {
 
   rerender(
     <div>
-      <Activitybar
-        operationKeybindings={{}}
-        sidebars={[
-          {
-            name: 'sidebar::test-123',
-            title: 'search notes',
-            activitybarIcon: <span>test-icon</span>,
-            ReactComponent: () => null,
-            hint: 'search the notes',
-            activitybarIconShow,
-          },
-        ]}
-      ></Activitybar>
+      <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+        <Activitybar
+          operationKeybindings={{}}
+          sidebars={[
+            {
+              name: 'sidebar::test-123',
+              title: 'search notes',
+              activitybarIcon: <span>test-icon</span>,
+              ReactComponent: () => null,
+              hint: 'search the notes',
+              activitybarIconShow,
+            },
+          ]}
+        ></Activitybar>
+      </TestStoreProvider>
     </div>,
   );
 

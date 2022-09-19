@@ -13,3 +13,18 @@
 .B-activitybar_activitybar {
   background-color: var(--BV-activitybar-bg-color);
 }
+
+.B-activitybar_editorbar-wrapper {
+  color: var(--BV-ui-bangle-button-color);
+}
+
+.B-activitybar_editorbar-ws-path {
+  color: var(--BV-ui-bangle-button-color);
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.B-activitybar_editorbar-ws-path.BU_active {
+  background-color: var(--BV-base-300);
+}

@@ -22,7 +22,7 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 export const getEditorPluginMetadataReturn: ReturnType<
   typeof getEditorPluginMetadata
 > = {
-  dispatchSerialOperation: jest.fn(),
+  dispatchSerialOperation: typeof jest === 'undefined' ? () => {} : jest.fn(),
   editorDisplayType: EditorDisplayType.Page,
   bangleStore: initialBangleStore,
   wsPath: 'test-workspace:my-test-note.md',
@@ -32,7 +32,7 @@ export const getUseUIManagerContextReturn: Mutable<
   ReturnType<typeof useUIManagerContext>
 > = {
   ...initialState,
-  dispatch: jest.fn(() => {}),
+  dispatch: typeof jest === 'undefined' ? () => {} : jest.fn(() => {}),
   bangleStore: initialBangleStore,
 };
 

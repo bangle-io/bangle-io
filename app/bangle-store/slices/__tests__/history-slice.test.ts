@@ -7,7 +7,7 @@ import {
   workspaceSliceInitialState,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 
 import { historySlice } from '../history-slice';
 
@@ -44,7 +44,7 @@ beforeEach(() => {
 
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    const { actionsDispatched } = createTestStore({
+    const { actionsDispatched } = createBareStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), historySlice()],
     });
@@ -77,7 +77,7 @@ describe('watchHistoryEffect', () => {
 describe('applyPendingNavigation', () => {
   test('works', async () => {
     jest.useFakeTimers();
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -96,7 +96,7 @@ describe('applyPendingNavigation', () => {
   });
 
   test('respects replace', async () => {
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -115,7 +115,7 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works with object location and replace=true', async () => {
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -140,7 +140,7 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works when location is string', async () => {
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });
@@ -161,7 +161,7 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works with object location', async () => {
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       slices: [pageSlice(), historySlice()],
       sliceKey: pageSliceKey,
     });

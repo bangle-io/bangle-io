@@ -18,7 +18,7 @@ import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import { createExtensionRegistry } from './extension-registry';
 
 if (typeof jest === 'undefined') {
-  throw new Error('Can only be with jest');
+  console.warn('test-utils not using with jest');
 }
 /**
  * Creates an editor from markdown string

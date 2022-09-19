@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 import { goToWorkspaceHomeRoute } from '@bangle.io/slice-workspace';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
@@ -52,9 +53,13 @@ export function Activitybar({
     );
   });
 
+  const { editingAllowed } = useEditorManagerContext();
+
   if (!widescreen) {
     return (
       <ActivitybarMobile
+        bangleStore={bangleStore}
+        editingAllowed={editingAllowed}
         operationKeybindings={operationKeybindings}
         wsName={wsName}
         primaryWsPath={primaryWsPath}

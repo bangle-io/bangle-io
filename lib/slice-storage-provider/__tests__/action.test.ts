@@ -1,5 +1,5 @@
 import type { ActionTestFixtureType } from '@bangle.io/test-utils';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 
 import type { StorageProviderAction } from '../common';
 import { storageProviderSlice } from '../slice-storage-provider';
@@ -24,7 +24,7 @@ const fixtures = Object.values(testFixtures).flatMap(
   (r: StorageProviderAction[]) => r,
 );
 
-const { store } = createTestStore({
+const { store } = createBareStore({
   slices: [storageProviderSlice()],
 });
 

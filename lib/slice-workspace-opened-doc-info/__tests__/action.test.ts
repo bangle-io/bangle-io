@@ -1,5 +1,5 @@
 import type { ActionTestFixtureType } from '@bangle.io/test-utils';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 
 import type { WorkspaceOpenedDocInfoAction } from '../common';
 import { BULK_UPDATE_SHAS, SYNC_ENTRIES, UPDATE_ENTRY } from '../common';
@@ -62,7 +62,7 @@ const fixtures = Object.values(testFixtures).flatMap(
 );
 
 test.each(fixtures)(`%# workspace actions serialization`, (action) => {
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [workspaceOpenedDocInfoSlice()],
   });
   const res = store.parseAction(store.serializeAction(action) as any);
