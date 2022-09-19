@@ -19,14 +19,38 @@ const Template: Story<Parameters<typeof Editorbar>[0]> = (args) => {
   );
 };
 
-export const Primary = Template.bind({});
+export const Vanilla = Template.bind({});
 
-Primary.args = {
+Vanilla.args = {
   wsPath: 'test-ws:one.md',
   isActive: true,
   showSplitEditor: false,
   onClose: () => {},
   onPressSecondaryEditor: () => {},
   isSplitEditorOpen: false,
+  openNotesPalette: () => {},
+};
+
+export const Branching = Template.bind({});
+
+Branching.args = {
+  wsPath: 'test-ws:one/own.md',
+  isActive: true,
+  showSplitEditor: false,
+  onClose: () => {},
+  onPressSecondaryEditor: () => {},
+  isSplitEditorOpen: false,
+  openNotesPalette: () => {},
+};
+
+export const ShowingSplitEditor = Template.bind({});
+
+ShowingSplitEditor.args = {
+  wsPath: 'test-ws:one/own.md',
+  isActive: true,
+  showSplitEditor: true,
+  onClose: () => {},
+  onPressSecondaryEditor: () => {},
+  isSplitEditorOpen: true,
   openNotesPalette: () => {},
 };

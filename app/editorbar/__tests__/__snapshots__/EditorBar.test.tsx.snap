@@ -11,7 +11,7 @@ exports[`renders correctly 1`] = `
         class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline "
       >
         <span
-          class="break-all"
+          class="break-all select-none"
         >
           test-dir
         </span>
@@ -22,7 +22,7 @@ exports[`renders correctly 1`] = `
           /
         </span>
         <span
-          class="break-all"
+          class="break-all select-none"
         >
           magic
         </span>
@@ -63,7 +63,7 @@ exports[`renders correctly when active 1`] = `
         class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       >
         <span
-          class="break-all"
+          class="break-all select-none"
         >
           test-dir
         </span>
@@ -74,7 +74,7 @@ exports[`renders correctly when active 1`] = `
           /
         </span>
         <span
-          class="break-all"
+          class="break-all select-none"
         >
           magic
         </span>
@@ -110,7 +110,7 @@ exports[`truncates large wsPath 1`] = `
   class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline "
 >
   <span
-    class="break-all"
+    class="break-all select-none"
   >
     …
   </span>
@@ -121,7 +121,7 @@ exports[`truncates large wsPath 1`] = `
     /
   </span>
   <span
-    class="break-all"
+    class="break-all select-none"
   >
     wow
   </span>
@@ -132,7 +132,7 @@ exports[`truncates large wsPath 1`] = `
     /
   </span>
   <span
-    class="break-all"
+    class="break-all select-none"
   >
     last
   </span>
@@ -143,7 +143,7 @@ exports[`truncates large wsPath 1`] = `
     /
   </span>
   <span
-    class="break-all"
+    class="break-all select-none"
   >
     two
   </span>

@@ -49,7 +49,7 @@ export function Editorbar({
       >
         {p.map((r, i) => (
           <React.Fragment key={i}>
-            <span className="break-all">{r}</span>
+            <span className="break-all select-none">{r}</span>
             {i !== p.length - 1 && (
               <span className="select-none" style={{ padding: '0 1px' }}>
                 /
