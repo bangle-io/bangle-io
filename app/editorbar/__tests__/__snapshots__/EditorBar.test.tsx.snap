@@ -8,7 +8,7 @@ exports[`renders correctly 1`] = `
     >
       <div
         aria-label="note path"
-        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm text-ellipsis hover:underline "
+        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline "
       >
         <span
           class="break-all"
@@ -60,7 +60,7 @@ exports[`renders correctly when active 1`] = `
     >
       <div
         aria-label="note path"
-        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       >
         <span
           class="break-all"
@@ -107,7 +107,7 @@ exports[`renders correctly when active 1`] = `
 exports[`truncates large wsPath 1`] = `
 <div
   aria-label="note path"
-  class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm text-ellipsis hover:underline "
+  class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline "
 >
   <span
     class="break-all"

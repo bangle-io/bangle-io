@@ -5,14 +5,3 @@
   position: relative;
   width: 100%;
 }
-
-.B-editor-container_ws-path {
-  color: var(--BV-ui-bangle-button-color);
-  justify-content: center;
-  display: flex;
-  align-items: center;
-}
-
-.B-editor-container_ws-path.BU_active {
-  background-color: var(--BV-base-300);
-}

@@ -1,8 +1,5 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { CorePalette } from '@bangle.io/constants';
-import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   ActionButton,
   ButtonContent,
@@ -45,7 +42,7 @@ export function Editorbar({
       <div
         aria-label="note path"
         className={cx(
-          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm text-ellipsis hover:underline',
+          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editorbar_ws-path lg:text-sm text-ellipsis hover:underline',
           isActive && 'BU_active',
         )}
         onClick={openNotesPalette}
