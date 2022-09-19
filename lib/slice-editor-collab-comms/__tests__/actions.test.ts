@@ -2,7 +2,7 @@
 
 import { APPLY_TRANSFER } from '@bangle.io/store-sync';
 import {
-  createTestStore,
+  createBareStore,
   setupMockMessageChannel,
 } from '@bangle.io/test-utils';
 
@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 test('serialization', () => {
-  const testStore = createTestStore({
+  const testStore = createBareStore({
     slices: [editorSyncSlice()],
   });
   const messageChannel = new MessageChannel();

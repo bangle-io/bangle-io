@@ -1,5 +1,5 @@
 import {
-  createTestStore,
+  createBareStore,
   setupMockMessageChannel,
 } from '@bangle.io/test-utils';
 import { isWorkerGlobalScope, sleep } from '@bangle.io/utils';
@@ -28,7 +28,7 @@ afterEach(() => {
 
 describe('transferPortEffect', () => {
   test('blank state', async () => {
-    const testStore = createTestStore({
+    const testStore = createBareStore({
       slices: [editorSyncSlice()],
     });
 
@@ -55,7 +55,7 @@ describe('transferPortEffect', () => {
 
   test('does nothing in worker', () => {
     isWorkerGlobalScopeMock.mockImplementation(() => true);
-    const testStore = createTestStore({
+    const testStore = createBareStore({
       slices: [editorSyncSlice()],
     });
 

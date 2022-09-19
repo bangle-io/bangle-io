@@ -3,7 +3,7 @@ import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
 
 if (typeof jest === 'undefined') {
-  throw new Error('Can only be with jest');
+  console.warn('test-utils not using with jest');
 }
 
 export function createExtensionRegistry(

@@ -1,5 +1,5 @@
 import { blockReload, pageSlice, pageSliceKey } from '@bangle.io/slice-page';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { syncWithWindowSlices } from '../sync-with-window-slices';
@@ -20,7 +20,7 @@ const Port = (): MessagePort => ({
 test('sets up', async () => {
   const port = Port();
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -50,7 +50,7 @@ test('sets up', async () => {
 test('destroys', async () => {
   const port = Port();
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -75,7 +75,7 @@ test('sends actions to the port', async () => {
     port.onmessage!({ data: { type: 'pong' } } as any);
   });
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -119,7 +119,7 @@ test('handles actions coming from port', async () => {
     port.onmessage?.({ data: { type: 'pong' } } as any);
   });
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,
@@ -160,7 +160,7 @@ test('blocks actions which are not recognized', async () => {
     port.onmessage?.({ data: { type: 'pong' } } as any);
   });
 
-  const { store, actionsDispatched } = createTestStore({
+  const { store, actionsDispatched } = createBareStore({
     slices: [...syncWithWindowSlices(), pageSlice()],
     opts: {
       port,

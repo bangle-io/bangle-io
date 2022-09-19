@@ -16,7 +16,7 @@ const historySliceKey = new SliceKey<
 >('test-memory-history-slice');
 
 if (typeof jest === 'undefined') {
-  throw new Error('Can only be with jest');
+  console.warn('test-utils not using with jest');
 }
 
 export function testMemoryHistorySlice() {

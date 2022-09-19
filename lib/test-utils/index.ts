@@ -3,10 +3,14 @@ import waitForExpect from 'wait-for-expect';
 waitForExpect.defaults.timeout = 600;
 waitForExpect.defaults.interval = 30;
 export * from './action-serializers';
-export * from './create-basic-test-store';
+export { createBareStore } from './create-bare-store';
+export { createBasicStore } from './create-basic-store';
+export {
+  createBasicTestStore,
+  setupMockWorkspaceWithNotes,
+} from './create-basic-test-store';
 export * from './create-editor-view';
 export * from './create-pm-node';
-export * from './create-test-store';
 export * from './extension-registry';
 export * from './function-mock-return';
 export * from './setup-mock-message-channel';

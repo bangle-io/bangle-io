@@ -1,6 +1,5 @@
-import type { ActionsSerializersType } from '@bangle.io/create-store';
 import { Slice, staticSlice } from '@bangle.io/create-store';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import type { StoreSyncConfigType } from '../store-sync';
@@ -114,7 +113,7 @@ function setup(
     slices1.push(extraSlice);
   }
 
-  const { store: store1 } = createTestStore({
+  const { store: store1 } = createBareStore({
     slices: slices1,
   });
 
@@ -124,7 +123,7 @@ function setup(
     slices2.push(extraSlice);
   }
 
-  const { store: store2 } = createTestStore({
+  const { store: store2 } = createBareStore({
     slices: slices2,
   });
 
@@ -153,7 +152,7 @@ test('works', async () => {
     port: port1 as any,
   });
   const slice = storeSyncSlice(configKey1);
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [configSlice1, slice, dummySlice],
   });
   await sleep(0);
@@ -378,7 +377,7 @@ test('when there is a delay in second store', async () => {
     port: port2 as any,
   });
 
-  const { store: store1 } = createTestStore({
+  const { store: store1 } = createBareStore({
     slices: [configSlice1, storeSyncSlice(configKey1), dummySlice],
   });
 
@@ -401,7 +400,7 @@ test('when there is a delay in second store', async () => {
 
   expect(dummySlice.getSliceState(store1.state)).toEqual({ counter: 4 });
 
-  const { store: store2 } = createTestStore({
+  const { store: store2 } = createBareStore({
     slices: [configSlice2, storeSyncSlice(configKey2), dummySlice],
   });
   startStoreSync()(store1.state, store1.dispatch);

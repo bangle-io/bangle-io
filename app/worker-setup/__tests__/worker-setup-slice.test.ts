@@ -3,7 +3,7 @@
  */
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice, workspaceSliceKey } from '@bangle.io/slice-workspace';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 import type { exponentialBackoff } from '@bangle.io/utils';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
@@ -88,7 +88,7 @@ afterEach(async () => {
 });
 
 test('works', async () => {
-  const { store, actionsDispatched } = createTestStore({
+  const { store, actionsDispatched } = createBareStore({
     slices: [...workerSetupSlices(), pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -146,7 +146,7 @@ test('works', async () => {
 test('sends actions correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store, actionsDispatched } = createTestStore({
+  const { store, actionsDispatched } = createBareStore({
     slices: [...slices, pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -232,7 +232,7 @@ test('sends actions correctly', async () => {
 test('sends slice-page action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...slices, pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -258,7 +258,7 @@ test('sends slice-page action correctly', async () => {
 test('sends workspaces slice action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     opts: {
       useWebWorker: false,
@@ -288,7 +288,7 @@ test('sends workspaces slice action correctly', async () => {
 test('sends workspace slice action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     opts: {
       useWebWorker: false,

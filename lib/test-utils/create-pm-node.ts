@@ -6,7 +6,7 @@ import { markdownParser } from '@bangle.io/markdown';
 import { assertNotUndefined } from '@bangle.io/utils';
 
 if (typeof jest === 'undefined') {
-  throw new Error('Can only be with jest');
+  console.warn('test-utils not using with jest');
 }
 
 export function createPMNode(

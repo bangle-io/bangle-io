@@ -99,6 +99,7 @@ let { store } = createStore({});
 beforeEach(() => {
   ({ store } = createStore({}));
 });
+
 afterEach(() => {});
 
 test.each(fixtures)(`%s actions serialization`, (action) => {

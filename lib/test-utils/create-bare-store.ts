@@ -7,25 +7,25 @@ import type {
 } from '@bangle.io/create-store';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
-if (typeof jest === 'undefined') {
-  throw new Error('Can only be with jest');
-}
-
 let controller = new AbortController();
 
-beforeEach(() => {
+// so that we are not keeping the store alive when running tests
+let _beforeEach = typeof jest === 'undefined' ? () => {} : beforeEach;
+let _afterEach = typeof jest === 'undefined' ? () => {} : afterEach;
+
+_beforeEach(() => {
   controller.abort();
   controller = new AbortController();
 });
 
-afterEach(() => {
+_afterEach(() => {
   controller.abort();
 });
 
 // creates a store with provided slices
 // if you need a store with batteries included, use
-// createBasicTestStore
-export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
+// createBasicStore or createBasicTestStore
+export function createBareStore<SL = any, A extends BaseAction = any, S = SL>({
   storeName = 'test-store',
   // if state is provided, slices will not be used
   slices = [],
@@ -59,11 +59,7 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
   onError?: OnErrorType<SL, A>;
 }): {
   store: ApplicationStore<SL, A>;
-
-  dispatchSpy: jest.SpyInstance;
   actionsDispatched: BaseAction[];
-  getAction: (name: string | RegExp) => BaseAction[];
-  getActionNames: () => string[];
 } {
   let actionsDispatched: BaseAction[] = [];
   const store = ApplicationStore.create({
@@ -84,8 +80,6 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
       }),
   });
 
-  const dispatchSpy = jest.spyOn(store, 'dispatch');
-
   controller.signal.addEventListener(
     'abort',
     () => {
@@ -98,31 +92,6 @@ export function createTestStore<SL = any, A extends BaseAction = any, S = SL>({
 
   return {
     store,
-    dispatchSpy,
     actionsDispatched,
-    getActionNames: () => {
-      return getActionNamesDispatched(dispatchSpy);
-    },
-    getAction: (name: string | RegExp) => {
-      return getActionsDispatched(dispatchSpy, name);
-    },
   };
 }
-
-export const getActionNamesDispatched = (mockDispatch: jest.SpyInstance) =>
-  mockDispatch.mock.calls.map((r) => r[0].name);
-
-export const getActionsDispatched = (
-  mockDispatch: jest.SpyInstance,
-  name: string | RegExp,
-) => {
-  const actions = mockDispatch.mock.calls.map((r) => r[0]);
-
-  if (name) {
-    return actions.filter((r) =>
-      name instanceof RegExp ? name.test(r.name) : r.name === name,
-    );
-  }
-
-  return actions;
-};

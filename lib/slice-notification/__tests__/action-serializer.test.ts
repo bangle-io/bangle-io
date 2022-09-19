@@ -1,6 +1,6 @@
 import {
   actionSerializerTestFixture,
-  createTestStore,
+  createBareStore,
 } from '@bangle.io/test-utils';
 
 import { notificationSlice, notificationSliceKey } from '../notification-slice';
@@ -65,7 +65,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
 });
 
 test.each(testFixtures)(`%s actions serialization`, (action) => {
-  const { store } = createTestStore({
+  const { store } = createBareStore({
     sliceKey: notificationSliceKey,
     slices: [notificationSlice()],
   });

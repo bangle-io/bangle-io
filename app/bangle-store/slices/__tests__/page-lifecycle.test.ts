@@ -1,7 +1,7 @@
 import lifeCycle from 'page-lifecycle';
 
 import { blockReload, pageSlice, pageSliceKey } from '@bangle.io/slice-page';
-import { createTestStore } from '@bangle.io/test-utils';
+import { createBareStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { pageLifeCycleSlice } from '../page-lifecycle-slice';
@@ -27,7 +27,7 @@ beforeEach(() => {
 
 describe('blockReloadEffect', () => {
   test('blocks', async () => {
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
@@ -48,7 +48,7 @@ describe('blockReloadEffect', () => {
   });
 
   test('repeat calling does not affect', async () => {
-    const { store } = createTestStore({
+    const { store } = createBareStore({
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
 
@@ -79,7 +79,7 @@ describe('blockReloadEffect', () => {
 
 describe('watchPageLifeCycleEffect', () => {
   test('initializes & destroys correctly', () => {
-    const { store, actionsDispatched } = createTestStore({
+    const { store, actionsDispatched } = createBareStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
@@ -112,10 +112,12 @@ describe('watchPageLifeCycleEffect', () => {
   });
 
   test('dispatches correctly', () => {
-    const { dispatchSpy } = createTestStore({
+    const { store } = createBareStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });
+
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
 
     expect(lifeCycleMock.addEventListener).toBeCalledTimes(1);
     let cb = (lifeCycleMock.addEventListener as any).mock.calls[0][1];
