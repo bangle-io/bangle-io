@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots editorbar/Editorbar Branching 1`] = `
+exports[`Storyshots activitybar/Editorbar Branching 1`] = `
 <div
   style={
     {
@@ -81,7 +81,7 @@ exports[`Storyshots editorbar/Editorbar Branching 1`] = `
 </div>
 `;
 
-exports[`Storyshots editorbar/Editorbar Showing Split Editor 1`] = `
+exports[`Storyshots activitybar/Editorbar Showing Split Editor 1`] = `
 <div
   style={
     {
@@ -199,7 +199,7 @@ exports[`Storyshots editorbar/Editorbar Showing Split Editor 1`] = `
 </div>
 `;
 
-exports[`Storyshots editorbar/Editorbar Vanilla 1`] = `
+exports[`Storyshots activitybar/Editorbar Vanilla 1`] = `
 <div
   style={
     {
