@@ -1,5 +1,176 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
+<div
+  style={
+    {
+      "display": "flex",
+      "flexDirection": "column",
+      "height": 500,
+      "width": 50,
+    }
+  }
+>
+  <div
+    className="flex flex-row px-3 align-center B-activitybar_activitybar w-full"
+  >
+    <div
+      className="flex flex-row items-center flex-none"
+    >
+      <button
+        aria-label="See files palette"
+        autoFocus={false}
+        className="w-full py-3 rounded-sm flex justify-center B-activitybar_button  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragStart={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchCancel={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        style={
+          {
+            "color": "var(--BV-activitybar-button-color)",
+          }
+        }
+        type="button"
+      >
+        <svg
+          className="fill-current  w-5 h-5 "
+          style={{}}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7 18H17V16H7V18Z"
+            fill="currentColor"
+          />
+          <path
+            d="M17 14H7V12H17V14Z"
+            fill="currentColor"
+          />
+          <path
+            d="M7 10H11V8H7V10Z"
+            fill="currentColor"
+          />
+          <path
+            clipRule="evenodd"
+            d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 5.13401 17.866 2 14 2H6ZM6 4H13V9H19V19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V5C5 4.44772 5.44772 4 6 4ZM15 4.10002C16.6113 4.4271 17.9413 5.52906 18.584 7H15V4.10002Z"
+            fill="currentColor"
+            fillRule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      className="flex flex-row items-center flex-none"
+      onClick={[Function]}
+    >
+      <span
+        className="font-semibold text-s"
+      >
+        bangle-io
+      </span>
+    </div>
+    <div
+      className="flex-1"
+    />
+    <div
+      className="flex flex-row items-center flex-none"
+    >
+      <div
+        className="mr-2"
+      >
+        <button
+          aria-label="Disable edit"
+          autoFocus={false}
+          className="w-full py-3 rounded-sm flex justify-center B-activitybar_button  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "color": "var(--BV-activitybar-button-color)",
+            }
+          }
+          type="button"
+        >
+          <svg
+            className="w-5 h-5 "
+            fill="var(--BV-accent-primary-0)"
+            height="18"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16.7835,4.1,13.9,1.216a.60751.60751,0,0,0-.433-.1765H13.45a.6855.6855,0,0,0-.4635.203L2.542,11.686a.49494.49494,0,0,0-.1255.211L1.0275,16.55c-.057.1885.2295.4255.3915.4255a.12544.12544,0,0,0,.031-.0035c.138-.0315,3.933-1.172,4.6555-1.389a.486.486,0,0,0,.207-.1245L16.7565,5.014a.686.686,0,0,0,.2-.4415A.61049.61049,0,0,0,16.7835,4.1ZM5.7,14.658c-1.0805.3245-2.431.7325-3.3645,1.011L3.34,12.304Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        className="mr-2"
+      >
+        <button
+          aria-label="options menu"
+          aria-pressed={false}
+          className="w-full py-3 rounded-sm flex justify-center B-activitybar_button  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "color": "var(--BV-activitybar-button-color)",
+            }
+          }
+          type="button"
+        >
+          <svg
+            className="h-5 w-5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
 <div
   style={
