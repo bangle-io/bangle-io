@@ -3,11 +3,11 @@ import React from 'react';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
-import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import {
-  toggleEditing,
-  useEditorManagerContext,
-} from '@bangle.io/slice-editor-manager';
+import type {
+  BangleApplicationStore,
+  SerialOperationKeybindingMapping,
+} from '@bangle.io/shared-types';
+import { toggleEditing } from '@bangle.io/slice-editor-manager';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   EditIcon,
@@ -20,21 +20,22 @@ import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
 export function ActivitybarMobile({
-  primaryWsPath,
-  wsName,
-  operationKeybindings,
-  sidebarItems,
   activeSidebar,
+  bangleStore,
+  editingAllowed,
+  operationKeybindings,
+  primaryWsPath,
+  sidebarItems,
+  wsName,
 }: {
-  primaryWsPath?: string;
-  wsName?: string;
-  operationKeybindings: SerialOperationKeybindingMapping;
-  sidebarItems?: SidebarType[];
   activeSidebar?: string;
+  bangleStore: BangleApplicationStore;
+  editingAllowed: boolean;
+  operationKeybindings: SerialOperationKeybindingMapping;
+  primaryWsPath?: string;
+  sidebarItems?: SidebarType[];
+  wsName?: string;
 }) {
-  const bangleStore = useBangleStoreContext();
-  const { editingAllowed } = useEditorManagerContext();
-
   return (
     <div className="flex flex-row px-3 align-center B-activitybar_activitybar w-full">
       <div className="flex flex-row items-center flex-none">
