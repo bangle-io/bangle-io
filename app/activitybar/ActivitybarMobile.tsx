@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type {
