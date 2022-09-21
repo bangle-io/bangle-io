@@ -58,6 +58,8 @@
     "@bangle.io/app-entry": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@swc/core": "^1.3.2",
+    "@swc/jest": "^0.2.22",
     "@yarnpkg/pnpify": "^4.0.0-rc.15",
     "punycode": "^2.1.1",
     "tslib": "^2.4.0",

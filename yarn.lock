@@ -4123,6 +4123,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/create-cache-key-function@npm:^27.4.2":
+  version: 27.5.1
+  resolution: "@jest/create-cache-key-function@npm:27.5.1"
+  dependencies:
+    "@jest/types": ^27.5.1
+  checksum: a6c3a8c769aca6f66f5dc80f1c77e66980b4f213a6b2a15a92ba3595f032848a1261c06c9c798dcf2b672b1ffbefad5085af89d130548741c85ddbe0cf4284e7
+  languageName: node
+  linkType: hard
+
 "@jest/environment@npm:^29.0.2":
   version: 29.0.2
   resolution: "@jest/environment@npm:29.0.2"
@@ -6841,6 +6850,184 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-android-arm-eabi@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-android-arm-eabi@npm:1.3.2"
+  dependencies:
+    "@swc/wasm": 1.2.122
+  conditions: os=android & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@swc/core-android-arm64@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-android-arm64@npm:1.3.2"
+  dependencies:
+    "@swc/wasm": 1.2.130
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-arm64@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-darwin-arm64@npm:1.3.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-x64@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-darwin-x64@npm:1.3.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-freebsd-x64@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-freebsd-x64@npm:1.3.2"
+  dependencies:
+    "@swc/wasm": 1.2.130
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm-gnueabihf@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.2"
+  dependencies:
+    "@swc/wasm": 1.2.130
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-gnu@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.3.2"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-musl@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-linux-arm64-musl@npm:1.3.2"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-gnu@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-linux-x64-gnu@npm:1.3.2"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-musl@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-linux-x64-musl@npm:1.3.2"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-arm64-msvc@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.3.2"
+  dependencies:
+    "@swc/wasm": 1.2.130
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-ia32-msvc@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.3.2"
+  dependencies:
+    "@swc/wasm": 1.2.130
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-x64-msvc@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core-win32-x64-msvc@npm:1.3.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@swc/core@npm:1.3.2"
+  dependencies:
+    "@swc/core-android-arm-eabi": 1.3.2
+    "@swc/core-android-arm64": 1.3.2
+    "@swc/core-darwin-arm64": 1.3.2
+    "@swc/core-darwin-x64": 1.3.2
+    "@swc/core-freebsd-x64": 1.3.2
+    "@swc/core-linux-arm-gnueabihf": 1.3.2
+    "@swc/core-linux-arm64-gnu": 1.3.2
+    "@swc/core-linux-arm64-musl": 1.3.2
+    "@swc/core-linux-x64-gnu": 1.3.2
+    "@swc/core-linux-x64-musl": 1.3.2
+    "@swc/core-win32-arm64-msvc": 1.3.2
+    "@swc/core-win32-ia32-msvc": 1.3.2
+    "@swc/core-win32-x64-msvc": 1.3.2
+  dependenciesMeta:
+    "@swc/core-android-arm-eabi":
+      optional: true
+    "@swc/core-android-arm64":
+      optional: true
+    "@swc/core-darwin-arm64":
+      optional: true
+    "@swc/core-darwin-x64":
+      optional: true
+    "@swc/core-freebsd-x64":
+      optional: true
+    "@swc/core-linux-arm-gnueabihf":
+      optional: true
+    "@swc/core-linux-arm64-gnu":
+      optional: true
+    "@swc/core-linux-arm64-musl":
+      optional: true
+    "@swc/core-linux-x64-gnu":
+      optional: true
+    "@swc/core-linux-x64-musl":
+      optional: true
+    "@swc/core-win32-arm64-msvc":
+      optional: true
+    "@swc/core-win32-ia32-msvc":
+      optional: true
+    "@swc/core-win32-x64-msvc":
+      optional: true
+  bin:
+    swcx: run_swcx.js
+  checksum: c2c83d0e6b4c56d65fb3723aa0be5e777823a6efe5b12702d4d44827a6c6dd8fac3c5dec7ff45222c7b22b4084bffc846f8497d697e61a1706817977256a65dc
+  languageName: node
+  linkType: hard
+
+"@swc/jest@npm:^0.2.22":
+  version: 0.2.22
+  resolution: "@swc/jest@npm:0.2.22"
+  dependencies:
+    "@jest/create-cache-key-function": ^27.4.2
+  peerDependencies:
+    "@swc/core": "*"
+  checksum: c624cfcc9325a719fc7d811536011c4bde0c63c808827b47d7bbcc57621323146cb3891d8702fd01c1bebfc54a9148692f772af4db8e839eb2c6ccd7850fa5f5
+  languageName: node
+  linkType: hard
+
+"@swc/wasm@npm:1.2.122":
+  version: 1.2.122
+  resolution: "@swc/wasm@npm:1.2.122"
+  checksum: 563345370c5ad18373d3b403590ab880fe52dcd8fc8c8601be263fcd9886520b28a7f4e46236cf49ca2b136c79d4ef50c960bc34b7cdc2068118b0d84dfca1f4
+  languageName: node
+  linkType: hard
+
+"@swc/wasm@npm:1.2.130":
+  version: 1.2.130
+  resolution: "@swc/wasm@npm:1.2.130"
+  checksum: 02203bfef3e382c64cbbd63c138c8fdf61865e74d923b317e9d9e9f33f5a3f0a9533b5fdbc9505e76d78e864be04a82fc847eb987a1e47ccac5850146c858292
+  languageName: node
+  linkType: hard
+
 "@szmarczak/http-timer@npm:^4.0.5":
   version: 4.0.6
   resolution: "@szmarczak/http-timer@npm:4.0.6"
@@ -9466,6 +9653,8 @@ __metadata:
     "@sentry/react": ^6.18.1
     "@sentry/tracing": ^6.18.1
     "@sentry/webpack-plugin": ^1.18.8
+    "@swc/core": ^1.3.2
+    "@swc/jest": ^0.2.22
     "@testing-library/dom": ^8.11.3
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
