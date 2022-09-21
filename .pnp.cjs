@@ -470,6 +470,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.18.1"],\
             ["@sentry/webpack-plugin", "npm:1.18.8"],\
             ["@swc/core", "npm:1.3.2"],\
+            ["@swc/core-linux-x64-gnu", "npm:1.3.2"],\
             ["@swc/jest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.2.22"],\
             ["@testing-library/dom", "npm:8.12.0"],\
             ["@testing-library/jest-dom", "npm:5.16.2"],\
@@ -16664,6 +16665,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.18.1"],\
             ["@sentry/webpack-plugin", "npm:1.18.8"],\
             ["@swc/core", "npm:1.3.2"],\
+            ["@swc/core-linux-x64-gnu", "npm:1.3.2"],\
             ["@swc/jest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.2.22"],\
             ["@testing-library/dom", "npm:8.12.0"],\
             ["@testing-library/jest-dom", "npm:5.16.2"],\
