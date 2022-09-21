@@ -458,12 +458,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["@babel/core", "npm:7.19.1"],\
-            ["@babel/plugin-proposal-class-properties", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
-            ["@babel/plugin-proposal-private-property-in-object", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
-            ["@babel/preset-env", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.19.1"],\
-            ["@babel/preset-react", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
-            ["@babel/preset-typescript", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
             ["@bangle.dev/jest-utils", "npm:0.31.3"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -493,8 +487,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vitejs/plugin-react-refresh", "npm:1.3.6"],\
             ["@yarnpkg/pnpify", "npm:4.0.0-rc.15"],\
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.4.4"],\
-            ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],\
-            ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.5"],\
             ["bangle-io-help", "npm:1.11.0"],\
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],\
             ["concurrently", "npm:7.0.0"],\
@@ -16097,34 +16089,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["babel-eslint", [\
-        ["npm:10.1.0", {\
-          "packageLocation": "./.yarn/cache/babel-eslint-npm-10.1.0-6a6d2b1533-bdc1f62b6b.zip/node_modules/babel-eslint/",\
-          "packageDependencies": [\
-            ["babel-eslint", "npm:10.1.0"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0", {\
-          "packageLocation": "./.yarn/__virtual__/babel-eslint-virtual-45e986812a/0/cache/babel-eslint-npm-10.1.0-6a6d2b1533-bdc1f62b6b.zip/node_modules/babel-eslint/",\
-          "packageDependencies": [\
-            ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],\
-            ["@babel/code-frame", "npm:7.18.6"],\
-            ["@babel/parser", "npm:7.19.1"],\
-            ["@babel/traverse", "npm:7.19.1"],\
-            ["@babel/types", "npm:7.19.0"],\
-            ["@types/eslint", null],\
-            ["eslint", "npm:8.23.0"],\
-            ["eslint-visitor-keys", "npm:1.3.0"],\
-            ["resolve", "patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"]\
-          ],\
-          "packagePeers": [\
-            "@types/eslint",\
-            "eslint"\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["babel-jest", [\
         ["npm:29.0.2", {\
           "packageLocation": "./.yarn/cache/babel-jest-npm-29.0.2-355d068a5c-33bd0b0022.zip/node_modules/babel-jest/",\
@@ -16214,27 +16178,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["make-dir", "npm:3.1.0"],\
             ["schema-utils", "npm:2.7.1"],\
             ["webpack", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:4.46.0"]\
-          ],\
-          "packagePeers": [\
-            "@babel/core",\
-            "@types/babel__core",\
-            "@types/webpack",\
-            "webpack"\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.5", {\
-          "packageLocation": "./.yarn/__virtual__/babel-loader-virtual-88f7eae47c/0/cache/babel-loader-npm-8.2.5-e749e26bb5-a660555788.zip/node_modules/babel-loader/",\
-          "packageDependencies": [\
-            ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.5"],\
-            ["@babel/core", "npm:7.19.1"],\
-            ["@types/babel__core", null],\
-            ["@types/webpack", null],\
-            ["find-cache-dir", "npm:3.3.2"],\
-            ["loader-utils", "npm:2.0.2"],\
-            ["make-dir", "npm:3.1.0"],\
-            ["schema-utils", "npm:2.7.1"],\
-            ["webpack", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.70.0"]\
           ],\
           "packagePeers": [\
             "@babel/core",\
@@ -16709,12 +16652,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["bangle-io", "workspace:."],\
-            ["@babel/core", "npm:7.19.1"],\
-            ["@babel/plugin-proposal-class-properties", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
-            ["@babel/plugin-proposal-private-property-in-object", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
-            ["@babel/preset-env", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.19.1"],\
-            ["@babel/preset-react", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
-            ["@babel/preset-typescript", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
             ["@bangle.dev/jest-utils", "npm:0.31.3"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
@@ -16744,8 +16681,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vitejs/plugin-react-refresh", "npm:1.3.6"],\
             ["@yarnpkg/pnpify", "npm:4.0.0-rc.15"],\
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.4.4"],\
-            ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],\
-            ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.5"],\
             ["bangle-io-help", "npm:1.11.0"],\
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],\
             ["concurrently", "npm:7.0.0"],\
@@ -21033,13 +20968,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["eslint-visitor-keys", [\
-        ["npm:1.3.0", {\
-          "packageLocation": "./.yarn/cache/eslint-visitor-keys-npm-1.3.0-c07780a0fb-37a19b712f.zip/node_modules/eslint-visitor-keys/",\
-          "packageDependencies": [\
-            ["eslint-visitor-keys", "npm:1.3.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:2.1.0", {\
           "packageLocation": "./.yarn/cache/eslint-visitor-keys-npm-2.1.0-c31806b6b9-e3081d7dd2.zip/node_modules/eslint-visitor-keys/",\
           "packageDependencies": [\
