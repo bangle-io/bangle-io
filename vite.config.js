@@ -1,5 +1,5 @@
 /* eslint-disable no-process-env */
-import reactRefresh from '@vitejs/plugin-react-refresh';
+import react from '@vitejs/plugin-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -58,7 +58,17 @@ const config = async ({ command, mode }) => {
           data: { ...envVars.htmlInjections },
         },
       }),
-      hot && reactRefresh(),
+      react({
+        fastRefresh: hot,
+        exclude: [
+          '**/node_modules/**/*',
+          '**/dist/**/*',
+          '**/build/**/*',
+          '.yarn/**/*',
+          /\.stories\.(t|j)sx?$/,
+        ],
+        include: '**/*.tsx',
+      }),
       VitePWA({
         minify: false,
         includeAssets: [
