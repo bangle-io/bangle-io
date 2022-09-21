@@ -45,6 +45,7 @@ export function PaletteManager() {
       updateQuery('');
       dispatch({
         name: 'action::@bangle.io/slice-ui:RESET_PALETTE',
+        value: {},
       });
 
       if (focus) {

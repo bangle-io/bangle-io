@@ -5,14 +5,10 @@ import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
 import type { EditorManagerAction } from '@bangle.io/slice-editor-manager';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
-import {
-  notificationSlice,
-  uncaughtExceptionNotification,
-} from '@bangle.io/slice-notification';
+import { notificationSlice } from '@bangle.io/slice-notification';
 import type { PageSliceAction } from '@bangle.io/slice-page';
 import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
-import type { UiContextAction } from '@bangle.io/slice-ui';
 import { uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
@@ -25,12 +21,6 @@ import { historySlice } from './slices/history-slice';
 import { miscEffectsSlice } from './slices/misc-effects-slice';
 import { pageLifeCycleSlice } from './slices/page-lifecycle-slice';
 import { saveStateSlice } from './slices/save-state-slice';
-
-export type BangleActionTypes =
-  | UiContextAction
-  | PageSliceAction
-  | EditorManagerAction
-  | WorkspaceSliceAction;
 
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 

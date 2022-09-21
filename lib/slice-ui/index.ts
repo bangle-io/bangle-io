@@ -1,3 +1,15 @@
-export * from './operations';
-export * from './ui-context';
-export * from './ui-slice';
+export {
+  changeSidebar,
+  dismissDialog,
+  setSidebar,
+  showDialog,
+  togglePaletteType,
+  toggleTheme,
+} from './operations';
+export { useUIManagerContext } from './ui-context';
+export {
+  type UISliceState,
+  initialState,
+  uiSlice,
+  uiSliceKey,
+} from './ui-slice';

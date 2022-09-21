@@ -57,8 +57,8 @@ export type UiContextAction =
         type: CorePalette | null;
       };
     }
-  | { name: 'action::@bangle.io/slice-ui:RESET_PALETTE' }
-  | { name: typeof UI_CONTEXT_TOGGLE_THEME }
+  | { name: 'action::@bangle.io/slice-ui:RESET_PALETTE'; value: {} }
+  | { name: typeof UI_CONTEXT_TOGGLE_THEME; value: {} }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_THEME';
       value: { theme: ThemeType };
@@ -87,7 +87,7 @@ export type UiContextAction =
       name: 'action::@bangle.io/slice-ui:UPDATE_NOTE_SIDEBAR';
       value: { visible: boolean };
     }
-  | { name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR' };
+  | { name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR'; value: {} };
 
 export const initialState: UISliceState = {
   // UI

@@ -140,3 +140,8 @@ export type ActionsSerializersType<A extends BaseAction> = {
 };
 
 export type ExtractAction<A, R> = Extract<A, { name: R }>;
+
+export type ExtractActionValue<
+  A extends { name: any; value: any },
+  R,
+> = ExtractAction<A, R>['value'];

@@ -33,7 +33,6 @@ import {
   notificationSliceKey,
   showNotification,
 } from '@bangle.io/slice-notification';
-import type { UiContextAction } from '@bangle.io/slice-ui';
 import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
@@ -400,10 +399,7 @@ export default extension;
 function createNativeFsWorkspace(rootDirHandle: any) {
   return async (
     state: AppState,
-    dispatch: ApplicationStore<
-      any,
-      WorkspaceSliceAction | UiContextAction
-    >['dispatch'],
+    dispatch: ApplicationStore['dispatch'],
     store: ApplicationStore,
   ) => {
     if (typeof rootDirHandle?.name === 'string') {
@@ -444,10 +440,7 @@ function createNativeFsWorkspace(rootDirHandle: any) {
 function createBrowserWorkspace(wsName: string) {
   return async (
     state: AppState,
-    dispatch: ApplicationStore<
-      any,
-      WorkspaceSliceAction | UiContextAction
-    >['dispatch'],
+    dispatch: ApplicationStore['dispatch'],
     store: ApplicationStore,
   ) => {
     if (typeof wsName !== 'string') {

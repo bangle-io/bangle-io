@@ -1,13 +1,28 @@
 import type { CorePalette } from '@bangle.io/constants';
-import type { AppState } from '@bangle.io/create-store';
+import type { AppState, ExtractActionValue } from '@bangle.io/create-store';
 
-import type { UiContextDispatchType } from './ui-slice';
+import type { UiContextAction, UiContextDispatchType } from './ui-slice';
 import { UI_CONTEXT_TOGGLE_THEME, uiSliceKey } from './ui-slice';
+
+export function updatePalette(
+  value: ExtractActionValue<
+    UiContextAction,
+    'action::@bangle.io/slice-ui:UPDATE_PALETTE'
+  >,
+) {
+  return uiSliceKey.op((state, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
+      value,
+    });
+  });
+}
 
 export function toggleTheme() {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     dispatch({
       name: UI_CONTEXT_TOGGLE_THEME,
+      value: {},
     });
   };
 }

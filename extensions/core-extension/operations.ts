@@ -1,4 +1,5 @@
-import { editor, workspace } from '@bangle.io/api';
+import type { BangleAppDispatch } from '@bangle.io/api';
+import { editor } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
   NEW_NOTE_DIALOG_NAME,
@@ -11,15 +12,8 @@ import {
   notificationSliceKey,
   showNotification,
 } from '@bangle.io/slice-notification';
-import type {
-  UiContextAction,
-  UiContextDispatchType,
-} from '@bangle.io/slice-ui';
 import { uiSliceKey } from '@bangle.io/slice-ui';
-import type {
-  WorkspaceDispatchType,
-  WorkspaceSliceAction,
-} from '@bangle.io/slice-workspace';
+import type { WorkspaceDispatchType } from '@bangle.io/slice-workspace';
 import {
   deleteNote,
   deleteWorkspace,
@@ -166,7 +160,7 @@ export function openNewNoteDialog(initialValue?: string) {
 }
 
 export function renameActiveNote() {
-  return (state: AppState, dispatch: UiContextDispatchType): boolean => {
+  return (state: AppState, dispatch: BangleAppDispatch): boolean => {
     const focusedWsPath = editor.getFocusedWsPath()(state);
 
     if (!focusedWsPath) {
@@ -202,10 +196,7 @@ export function renameActiveNote() {
 export function deleteActiveNote() {
   return (
     state: AppState,
-    dispatch: ApplicationStore<
-      any,
-      WorkspaceSliceAction | UiContextAction
-    >['dispatch'],
+    dispatch: ApplicationStore['dispatch'],
     store: ApplicationStore,
   ): boolean => {
     const focusedWsPath = editor.getFocusedWsPath()(state);
@@ -264,14 +255,14 @@ export function deleteActiveNote() {
 }
 
 export function openNewWorkspaceDialog() {
-  return (state: AppState, dispatch: UiContextDispatchType) => {
+  return uiSliceKey.op((state, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
         dialogName: NEW_WORKSPACE_DIALOG_NAME,
       },
     });
-  };
+  });
 }
 
 export function splitEditor() {
