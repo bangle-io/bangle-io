@@ -4,6 +4,9 @@ const config = {
     `<rootDir>/.yarn`,
     `<rootDir>/tooling/playwright-e2e`,
   ],
+  transform: {
+    '^.+\\.(t|j)sx?$': ['@swc/jest'],
+  },
   transformIgnorePatterns: [],
   coverageReporters: ['json', 'lcov', 'text', 'clover'],
   coveragePathIgnorePatterns: [`<rootDir>/.yarn`],
