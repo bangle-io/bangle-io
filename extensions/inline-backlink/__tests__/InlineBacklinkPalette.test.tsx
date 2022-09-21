@@ -4,6 +4,7 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
+import type { EditorView } from '@bangle.dev/pm';
 import { Node, PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
@@ -13,7 +14,10 @@ import {
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { createExtensionRegistry } from '@bangle.io/test-utils';
+import {
+  createExtensionRegistry,
+  getUseWorkspaceContextReturn,
+} from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';
@@ -43,35 +47,44 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
+const useInlinePaletteItemsMocked = jest.mocked(useInlinePaletteItems);
+const useInlinePaletteQueryMocked = jest.mocked(useInlinePaletteQuery);
+const replaceSuggestionMarkWithMocked = jest.mocked(replaceSuggestionMarkWith);
+const useWorkspaceContextMocked = jest.mocked(useWorkspaceContext);
+const useEditorViewContextMocked = jest.mocked(useEditorViewContext);
+
 const extensionRegistry = createExtensionRegistry([inlineBacklinkExtension], {
   editorCore: true,
 });
 
 const schema = extensionRegistry.specRegistry.schema;
-const mockView = {
+const mockView: EditorView = {
   state: {
     schema,
   },
-};
-let tooltipContentDOM, query;
+} as any;
+
+let tooltipContentDOM: HTMLDivElement, query: string;
+
 beforeEach(async () => {
   tooltipContentDOM = document.createElement('div');
   query = '';
-  replaceSuggestionMarkWith.mockImplementation(() => jest.fn());
-  useEditorViewContext.mockImplementation(() => {
+  replaceSuggestionMarkWithMocked.mockImplementation(() => jest.fn());
+  useEditorViewContextMocked.mockImplementation(() => {
     return mockView;
   });
-  useWorkspaceContext.mockImplementation(() => ({
-    wsName: 'test-ws',
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths: [],
   }));
-  useInlinePaletteItems.mockImplementation(() => {
+  useInlinePaletteItemsMocked.mockImplementation(() => {
     return {
+      dismissPalette: jest.fn(),
       getItemProps: jest.fn(),
     };
   });
-  useInlinePaletteQuery.mockImplementation(() => ({
+  useInlinePaletteQueryMocked.mockImplementation(() => ({
     tooltipContentDOM,
     query,
     counter: 0,
@@ -82,7 +95,8 @@ beforeEach(async () => {
 test('Initial render', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -93,7 +107,7 @@ test('Initial render', async () => {
 });
 
 test('Hides when isVisible is false', async () => {
-  useInlinePaletteQuery.mockImplementation(() => ({
+  useInlinePaletteQueryMocked.mockImplementation(() => ({
     tooltipContentDOM,
     query,
     counter: 0,
@@ -102,7 +116,8 @@ test('Hides when isVisible is false', async () => {
 
   const noteWsPaths = ['test-ws:my-file.md'];
 
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -115,7 +130,8 @@ test('Hides when isVisible is false', async () => {
 test('Renders palette rows correctly', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -126,14 +142,14 @@ test('Renders palette rows correctly', async () => {
   let rows = Array.from(tooltipContentDOM.querySelectorAll('.palette-row'));
 
   expect(
-    rows.find((node) => node.textContent.includes('my-file')),
+    rows.find((node) => node?.textContent?.includes('my-file')),
   ).toBeTruthy();
 
   // doesnt show a row when query doesn't match
   query = 'no';
   result.rerender(<InlineBacklinkPalette />);
   rows = Array.from(tooltipContentDOM.querySelectorAll('.palette-row'));
-  expect(rows.find((node) => node.textContent.includes('my-file'))).toBe(
+  expect(rows.find((node) => node?.textContent?.includes('my-file'))).toBe(
     undefined,
   );
 });
@@ -141,7 +157,8 @@ test('Renders palette rows correctly', async () => {
 test('Renders filtering correct', async () => {
   const noteWsPaths = ['test-ws:my-file.md', 'test-ws:my-other-file.md'];
 
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -167,7 +184,8 @@ test('Renders filtering correct', async () => {
 test('If exact match does not show create', async () => {
   const noteWsPaths = ['test-ws:my-file.md', 'test-ws:my-other-file.md'];
 
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -185,7 +203,8 @@ test('If exact match does not show create', async () => {
 test('Handles malformed query', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -194,13 +213,18 @@ test('Handles malformed query', async () => {
   const result = render(<InlineBacklinkPalette />);
   const prom = sleep();
   await act(() => prom);
-  expect(replaceSuggestionMarkWith).toBeCalledTimes(1);
-  expect(replaceSuggestionMarkWith).nthCalledWith(1, expect.any(PluginKey), '');
+  expect(replaceSuggestionMarkWithMocked).toBeCalledTimes(1);
+  expect(replaceSuggestionMarkWithMocked).nthCalledWith(
+    1,
+    expect.any(PluginKey),
+    '',
+  );
 });
 
 test('Creates a backlink node when closed by typing ]]', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
-  useWorkspaceContext.mockImplementation(() => ({
+  useWorkspaceContextMocked.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
     wsName: 'test-ws',
     noteWsPaths,
   }));
@@ -209,14 +233,16 @@ test('Creates a backlink node when closed by typing ]]', async () => {
   render(<InlineBacklinkPalette />);
   const prom = sleep();
   await act(() => prom);
-  expect(replaceSuggestionMarkWith).toBeCalledTimes(1);
-  expect(replaceSuggestionMarkWith).nthCalledWith(
+  expect(replaceSuggestionMarkWithMocked).toBeCalledTimes(1);
+  expect(replaceSuggestionMarkWithMocked).nthCalledWith(
     1,
     expect.any(PluginKey),
     expect.any(Node),
   );
 
-  expect(replaceSuggestionMarkWith.mock.calls[0][1].attrs).toEqual({
+  expect(
+    (replaceSuggestionMarkWithMocked?.mock?.calls?.[0]?.[1] as any).attrs,
+  ).toEqual({
     path: 'better',
     title: null,
   });
