@@ -289,7 +289,7 @@ export function getInitialSelection(
         Math.max(initialSelection?.anchor, initialSelection?.head) >=
         doc.content.size
           ? Selection.atEnd(doc)
-          : Selection.fromJSON(doc, initialSelection);
+          : safeSelectionFromJSON(doc, initialSelection);
       let { from } = selection;
 
       if (from >= doc.content.size) {
@@ -303,6 +303,19 @@ export function getInitialSelection(
 
     return undefined;
   };
+}
+
+function safeSelectionFromJSON(doc: Node, json: any) {
+  try {
+    // this can throw error if invalid json is passed
+    // since we donot control the json we need swallow the error
+    return Selection.fromJSON(doc, json);
+  } catch (error) {
+    if (error instanceof RangeError) {
+      return Selection.atStart(doc);
+    }
+    throw error;
+  }
 }
 
 // Returns true or false if a new editor was added
