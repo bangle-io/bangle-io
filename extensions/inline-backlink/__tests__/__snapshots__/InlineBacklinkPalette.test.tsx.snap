@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Hides when isVisible is false 1`] = `
+<div>
+  <div
+    class="shadow-2xl B-ui-components_inline-palette-wrapper"
+  >
+    <div
+      class="B-ui-components_inline-palette-items-wrapper"
+    >
+      <div
+        class="flex flex-row justify-center my-1 space "
+      >
+        <span
+          class="text-xs ml-2 mr-2 font-light "
+        >
+          <kbd
+            class="font-normal"
+          >
+            ↑↓
+          </kbd>
+           Navigate
+        </span>
+        <span
+          class="text-xs ml-2 mr-2 font-light "
+        >
+          <kbd
+            class="font-normal"
+          >
+            Enter
+          </kbd>
+           Create link
+        </span>
+        <span
+          class="text-xs ml-2 mr-2 font-light "
+        >
+          <kbd
+            class="font-normal"
+          >
+            Esc
+          </kbd>
+           Dismiss
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Initial render 1`] = `
+<div>
+  <div
+    class="shadow-2xl B-ui-components_inline-palette-wrapper"
+  >
+    <div
+      class="B-ui-components_inline-palette-items-wrapper"
+    >
+      <div
+        class="flex flex-row items-center B-ui-components_inline-palette-row cursor-pointer palette-row BU_hover-allowed "
+        data-id="searchNote"
+        style="padding-left: 16px; padding-right: 16px;"
+      >
+        <span
+          class="flex flex-col"
+        >
+          <span
+            class="text-base font-bold truncate select-none "
+          >
+            💡 Search for a note to link it
+          </span>
+          <span
+            class="text-sm font-normal select-none "
+          />
+        </span>
+        <span
+          class=" flex flex-1"
+        />
+      </div>
+      <div
+        class="flex flex-row items-center B-ui-components_inline-palette-row cursor-pointer palette-row BU_hover-allowed "
+        data-id="test-ws:my-file.md"
+        style="padding-left: 16px; padding-right: 16px;"
+      >
+        <span
+          class="flex flex-col"
+        >
+          <span
+            class="text-base font-bold truncate select-none "
+          />
+          <span
+            class="text-sm font-normal select-none "
+          >
+            my-file
+          </span>
+        </span>
+        <span
+          class=" flex flex-1"
+        />
+      </div>
+      <div
+        class="flex flex-row justify-center my-1 space "
+      >
+        <span
+          class="text-xs ml-2 mr-2 font-light "
+        >
+          <kbd
+            class="font-normal"
+          >
+            ↑↓
+          </kbd>
+           Navigate
+        </span>
+        <span
+          class="text-xs ml-2 mr-2 font-light "
+        >
+          <kbd
+            class="font-normal"
+          >
+            Enter
+          </kbd>
+           Create link
+        </span>
+        <span
+          class="text-xs ml-2 mr-2 font-light "
+        >
+          <kbd
+            class="font-normal"
+          >
+            Esc
+          </kbd>
+           Dismiss
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

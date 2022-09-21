@@ -7,7 +7,7 @@ exports[`MiniEditor works 1`] = `
       class="B-editor-container_mini-editor-wrapper"
     >
       <div
-        class="flex flex-row px-2 py-1 text-sm  justify-between"
+        class="flex flex-row px-2 py-1 text-sm justify-between"
         style="width: 100%;"
       >
         <div
