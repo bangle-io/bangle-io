@@ -74,13 +74,13 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       onClick={[Function]}
     >
       <span
-        className="font-semibold text-s"
+        className="font-semibold"
       >
         bangle-io
       </span>
     </div>
     <div
-      className="flex-1"
+      className="flex flex-1 items-center justify-center"
     />
     <div
       className="flex flex-row items-center flex-none"
@@ -242,13 +242,13 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
       onClick={[Function]}
     >
       <span
-        className="font-semibold text-s"
+        className="font-semibold"
       >
         bangle-io
       </span>
     </div>
     <div
-      className="flex-1"
+      className="flex flex-1 items-center justify-center"
     />
     <div
       className="flex flex-row items-center flex-none"
@@ -352,30 +352,14 @@ exports[`Storyshots activitybar/Editorbar Branching 1`] = `
   >
     <div
       aria-label="note path"
-      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       onClick={[Function]}
     >
-      <span
-        className="break-all select-none"
-      >
-        one
-      </span>
-      <span
-        className="select-none"
-        style={
-          {
-            "padding": "0 1px",
-          }
-        }
-      >
-        /
-      </span>
-      <span
-        className="break-all select-none"
-      >
-        own
-      </span>
+      one/own
     </div>
+    <div
+      className="flex flex-row flex-1"
+    />
     <div
       className="flex flex-row"
     >
@@ -433,30 +417,14 @@ exports[`Storyshots activitybar/Editorbar Showing Split Editor 1`] = `
   >
     <div
       aria-label="note path"
-      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       onClick={[Function]}
     >
-      <span
-        className="break-all select-none"
-      >
-        one
-      </span>
-      <span
-        className="select-none"
-        style={
-          {
-            "padding": "0 1px",
-          }
-        }
-      >
-        /
-      </span>
-      <span
-        className="break-all select-none"
-      >
-        own
-      </span>
+      one/own
     </div>
+    <div
+      className="flex flex-row flex-1"
+    />
     <div
       className="flex flex-row"
     >
@@ -551,15 +519,14 @@ exports[`Storyshots activitybar/Editorbar Vanilla 1`] = `
   >
     <div
       aria-label="note path"
-      className="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       onClick={[Function]}
     >
-      <span
-        className="break-all select-none"
-      >
-        one
-      </span>
+      one
     </div>
+    <div
+      className="flex flex-row flex-1"
+    />
     <div
       className="flex flex-row"
     >

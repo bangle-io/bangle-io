@@ -9,6 +9,8 @@ import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
+import { ShowNotification } from './ShowNotification';
+
 const MAX_ENTRIES = 3;
 
 export function Editorbar({
@@ -30,11 +32,14 @@ export function Editorbar({
 }) {
   let path = removeExtension(resolvePath(wsPath).filePath);
 
-  let p = path.split('/');
-
-  if (p.length > MAX_ENTRIES) {
-    p = p.slice(-1 * MAX_ENTRIES);
+  if (path.split('/').length > MAX_ENTRIES) {
+    let p = path.split('/').slice(-1 * MAX_ENTRIES);
     p.unshift('…');
+    path = p.join('/');
+  }
+
+  if (path.length > 50) {
+    path = '…' + path.slice(-1 * 50);
   }
 
   return (
@@ -42,22 +47,14 @@ export function Editorbar({
       <div
         aria-label="note path"
         className={cx(
-          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline',
+          'select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline',
           isActive && 'BU_active',
         )}
         onClick={openNotesPalette}
       >
-        {p.map((r, i) => (
-          <React.Fragment key={i}>
-            <span className="break-all select-none">{r}</span>
-            {i !== p.length - 1 && (
-              <span className="select-none" style={{ padding: '0 1px' }}>
-                /
-              </span>
-            )}
-          </React.Fragment>
-        ))}
+        {path}
       </div>
+      <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">
         {showSplitEditor && (
           <ActionButton

@@ -246,13 +246,14 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           }
 
           default: {
+            let val: never = action;
+
             return state;
           }
         }
       },
 
       stateToJSON(value) {
-        //
         return {
           ...initialState,
           notifications: [],

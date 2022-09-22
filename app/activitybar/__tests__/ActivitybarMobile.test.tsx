@@ -76,7 +76,7 @@ test('renders primaryWsPath', () => {
     </div>,
   );
 
-  expect(result.container.innerHTML).toContain('wow.md');
+  expect(result.container.innerHTML).toContain('wow');
 });
 
 test('dispatches operation', () => {

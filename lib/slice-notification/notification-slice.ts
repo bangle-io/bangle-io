@@ -1,11 +1,35 @@
+import type { ExtractActionValue } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import type { NotificationPayloadType } from '@bangle.io/shared-types';
+import type {
+  EditorIdType,
+  NotificationPayloadType,
+  SerialOperationNameType,
+  Severity,
+} from '@bangle.io/shared-types';
 import { assertActionName } from '@bangle.io/utils';
 
-export const notificationSliceKey = new SliceKey<
-  {
-    notifications: NotificationPayloadType[];
-  },
+export interface EditorIssue {
+  title: string; // keep it short
+  description: string | undefined;
+  uid: string;
+  editorId: EditorIdType;
+  severity: Severity;
+  serialOperation: SerialOperationNameType | undefined;
+}
+
+export type GetActionValue<R> = ExtractActionValue<NotificationAction, R>;
+
+export type NotificationAction =
+  | {
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE';
+      value: EditorIssue;
+    }
+  | {
+      name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE';
+      value: {
+        uid: string;
+      };
+    }
   | {
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION';
       value: NotificationPayloadType;
@@ -15,9 +39,16 @@ export const notificationSliceKey = new SliceKey<
       value: { uids: string[] };
     }
   | {
-      name: 'action::@bangle.io/slice-notification:CLEAR_ALL';
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS';
       value: {};
-    }
+    };
+
+export const notificationSliceKey = new SliceKey<
+  {
+    notifications: NotificationPayloadType[];
+    editorIssues: EditorIssue[];
+  },
+  NotificationAction
 >('notificationSliceKey');
 
 export function notificationSlice() {
@@ -27,10 +58,40 @@ export function notificationSlice() {
     key: notificationSliceKey,
     state: {
       init() {
-        return { notifications: [] };
+        return { notifications: [], editorIssues: [] };
       },
       apply(action, state) {
         switch (action.name) {
+          case 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE': {
+            const { uid } = action.value;
+            const { editorIssues } = state;
+
+            if (!editorIssues.find((issue) => issue.uid === uid)) {
+              return state;
+            }
+
+            return {
+              ...state,
+              editorIssues: editorIssues.filter((issue) => issue.uid !== uid),
+            };
+          }
+
+          case 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE': {
+            const { editorIssues } = state;
+            const { value: editorIssue } = action;
+
+            const newIssues = editorIssues.filter(
+              (issue) => issue.uid !== editorIssue.uid,
+            );
+
+            newIssues.push(editorIssue);
+
+            return {
+              ...state,
+              editorIssues: newIssues,
+            };
+          }
+
           case 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION': {
             const { uid } = action.value;
 
@@ -45,7 +106,7 @@ export function notificationSlice() {
             };
           }
 
-          case 'action::@bangle.io/slice-notification:CLEAR_ALL': {
+          case 'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS': {
             return {
               ...state,
               notifications: [],
@@ -98,7 +159,47 @@ export function notificationSlice() {
         );
       },
 
-      'action::@bangle.io/slice-notification:CLEAR_ALL': (actionName) => {
+      'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE': (
+        actionName,
+      ) => {
+        return notificationSliceKey.actionSerializer(
+          actionName,
+          (action) => ({
+            uid: action.value.uid,
+          }),
+          (serialVal) => ({
+            uid: serialVal.uid,
+          }),
+        );
+      },
+
+      'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE': (
+        actionName,
+      ) => {
+        return notificationSliceKey.actionSerializer(
+          actionName,
+          (action) => ({
+            title: action.value.title,
+            description: action.value.description ?? null,
+            editorId: action.value.editorId,
+            uid: action.value.uid,
+            severity: action.value.severity,
+            serialOperation: action.value.serialOperation ?? null,
+          }),
+          (serialVal) => ({
+            title: serialVal.title,
+            description: serialVal.description ?? undefined,
+            editorId: serialVal.editorId,
+            uid: serialVal.uid,
+            severity: serialVal.severity,
+            serialOperation: serialVal.serialOperation ?? undefined,
+          }),
+        );
+      },
+
+      'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS': (
+        actionName,
+      ) => {
         return notificationSliceKey.actionSerializer(
           actionName,
           (action) => ({}),

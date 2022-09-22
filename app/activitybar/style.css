@@ -28,3 +28,13 @@
 .B-activitybar_editorbar-ws-path.BU_active {
   background-color: var(--BV-base-300);
 }
+
+.B-activitybar_notification {
+  container-type: inline-size;
+}
+
+@container (max-width: 14ch) {
+  .B-activitybar_notification-button span {
+    display: none;
+  }
+}

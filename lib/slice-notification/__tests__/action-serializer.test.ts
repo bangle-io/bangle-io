@@ -1,3 +1,4 @@
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import {
   actionSerializerTestFixture,
   createBareStore,
@@ -6,6 +7,40 @@ import {
 import { notificationSlice, notificationSliceKey } from '../notification-slice';
 
 const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
+  'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE': [
+    {
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: '123',
+        editorId: PRIMARY_EDITOR_INDEX,
+        severity: 'error',
+        title: 'something went wrong',
+        serialOperation: 'operation::@bangle.io/slice-notification:whoops',
+        description: 'we are sorry',
+      },
+    },
+
+    {
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: '123',
+        editorId: PRIMARY_EDITOR_INDEX,
+        severity: 'error',
+        title: 'something went wrong',
+        serialOperation: undefined,
+        description: undefined,
+      },
+    },
+  ],
+  'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE': [
+    {
+      name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
+      value: {
+        uid: '123',
+      },
+    },
+  ],
+
   'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION': [
     {
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
@@ -14,9 +49,9 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       },
     },
   ],
-  'action::@bangle.io/slice-notification:CLEAR_ALL': [
+  'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS': [
     {
-      name: 'action::@bangle.io/slice-notification:CLEAR_ALL',
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS',
       value: {},
     },
   ],

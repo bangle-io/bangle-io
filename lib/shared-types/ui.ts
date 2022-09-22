@@ -1,10 +1,12 @@
 import type { SerialOperationNameType } from './extension-registry';
 
+export type Severity = 'error' | 'warning' | 'info' | 'success';
+
 export interface NotificationPayloadType {
   uid: string;
   title: string;
   content?: string;
-  severity?: 'error' | 'warning' | 'info' | 'success';
+  severity?: Severity;
   // if notification needs to clear automatically
   transient?: boolean;
   // DO NOT use this field as it is internal

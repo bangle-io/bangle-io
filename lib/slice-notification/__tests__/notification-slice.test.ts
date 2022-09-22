@@ -7,6 +7,7 @@ test('blank state', () => {
 
   expect(notificationSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
     {
+      "editorIssues": [],
       "notifications": [],
     }
   `);
@@ -30,6 +31,7 @@ test('updating and removing notifications', () => {
 
   expect(notificationSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
     {
+      "editorIssues": [],
       "notifications": [
         {
           "buttons": [],
@@ -74,6 +76,7 @@ test('updating and removing notifications', () => {
   let newstate2 = state.applyAction(action);
 
   expect(notificationSliceKey.getSliceState(newstate2)).toEqual({
+    editorIssues: [],
     notifications: [
       {
         buttons: [],
@@ -102,6 +105,7 @@ test('updating and removing notifications', () => {
   let newstate3 = newstate2.applyAction(action2);
 
   expect(notificationSliceKey.getSliceState(newstate3)).toEqual({
+    editorIssues: [],
     notifications: [
       {
         buttons: [],

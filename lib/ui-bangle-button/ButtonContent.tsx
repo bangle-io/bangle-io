@@ -10,7 +10,7 @@ export function ButtonContent({
   size = 'medium',
   textClassName,
 }: {
-  icon?: React.ReactElement<{ className?: string }>;
+  icon?: React.ReactNode;
   text?: string | ReactNode;
   iconPos?: 'left' | 'right';
   size?: 'small' | 'medium' | 'custom';
