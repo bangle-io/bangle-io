@@ -12,7 +12,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
       value: {
         uid: '123',
-        editorId: PRIMARY_EDITOR_INDEX,
+        wsPath: 'test:one.md',
         severity: 'error',
         title: 'something went wrong',
         serialOperation: 'operation::@bangle.io/slice-notification:whoops',
@@ -24,7 +24,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
       value: {
         uid: '123',
-        editorId: PRIMARY_EDITOR_INDEX,
+        wsPath: 'test:one.md',
         severity: 'error',
         title: 'something went wrong',
         serialOperation: undefined,
@@ -36,7 +36,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
     {
       name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
       value: {
-        uid: '123',
+        wsPath: 'test:one.md',
       },
     },
   ],

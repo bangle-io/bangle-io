@@ -44,7 +44,7 @@ exports[`renders mobile view 1`] = `
         class="flex flex-row items-center flex-none"
       >
         <span
-          class="font-semibold"
+          class="font-semibold mr-2"
         >
           bangle-io
         </span>

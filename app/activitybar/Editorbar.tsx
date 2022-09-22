@@ -1,5 +1,7 @@
 import React from 'react';
 
+import type { EditorIssue } from '@bangle.io/slice-notification';
+import { getEditorIssue } from '@bangle.io/slice-notification';
 import {
   ActionButton,
   ButtonContent,
@@ -9,7 +11,7 @@ import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
-import { ShowNotification } from './ShowNotification';
+import { EditorIssueButton } from './EditorIssueButton';
 
 const MAX_ENTRIES = 3;
 
@@ -21,7 +23,9 @@ export function Editorbar({
   isSplitEditorOpen,
   isActive,
   openNotesPalette,
+  editorIssue,
 }: {
+  editorIssue?: EditorIssue;
   isActive: boolean;
   showSplitEditor?: boolean;
   wsPath: string;
@@ -54,7 +58,11 @@ export function Editorbar({
       >
         {path}
       </div>
-      <div className="flex flex-row flex-1"></div>
+      <div className="flex flex-row flex-1">
+        {editorIssue && (
+          <EditorIssueButton editorIssue={editorIssue} widescreen={true} />
+        )}
+      </div>
       <div className="flex flex-row">
         {showSplitEditor && (
           <ActionButton

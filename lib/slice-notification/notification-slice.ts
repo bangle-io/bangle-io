@@ -1,7 +1,6 @@
 import type { ExtractActionValue } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type {
-  EditorIdType,
   NotificationPayloadType,
   SerialOperationNameType,
   Severity,
@@ -12,7 +11,7 @@ export interface EditorIssue {
   title: string; // keep it short
   description: string | undefined;
   uid: string;
-  editorId: EditorIdType;
+  wsPath: string;
   severity: Severity;
   serialOperation: SerialOperationNameType | undefined;
 }
@@ -27,7 +26,7 @@ export type NotificationAction =
   | {
       name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE';
       value: {
-        uid: string;
+        wsPath: string;
       };
     }
   | {
@@ -58,21 +57,26 @@ export function notificationSlice() {
     key: notificationSliceKey,
     state: {
       init() {
-        return { notifications: [], editorIssues: [] };
+        return {
+          notifications: [],
+          editorIssues: [],
+        };
       },
       apply(action, state) {
         switch (action.name) {
           case 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE': {
-            const { uid } = action.value;
+            const { wsPath } = action.value;
             const { editorIssues } = state;
 
-            if (!editorIssues.find((issue) => issue.uid === uid)) {
+            if (!editorIssues.find((issue) => issue.wsPath === wsPath)) {
               return state;
             }
 
             return {
               ...state,
-              editorIssues: editorIssues.filter((issue) => issue.uid !== uid),
+              editorIssues: editorIssues.filter(
+                (issue) => issue.wsPath !== wsPath,
+              ),
             };
           }
 
@@ -80,8 +84,20 @@ export function notificationSlice() {
             const { editorIssues } = state;
             const { value: editorIssue } = action;
 
+            const existing = editorIssues.find(
+              (issue) => issue.wsPath === editorIssue.wsPath,
+            );
+
+            if (existing) {
+              console.warn(
+                `Overriding existing editor issue ${existing.severity}:${existing.title}`,
+              );
+            }
+
             const newIssues = editorIssues.filter(
-              (issue) => issue.uid !== editorIssue.uid,
+              (issue) =>
+                issue.uid !== editorIssue.uid &&
+                issue.wsPath !== editorIssue.wsPath,
             );
 
             newIssues.push(editorIssue);
@@ -165,10 +181,10 @@ export function notificationSlice() {
         return notificationSliceKey.actionSerializer(
           actionName,
           (action) => ({
-            uid: action.value.uid,
+            wsPath: action.value.wsPath,
           }),
           (serialVal) => ({
-            uid: serialVal.uid,
+            wsPath: serialVal.wsPath,
           }),
         );
       },
@@ -181,7 +197,7 @@ export function notificationSlice() {
           (action) => ({
             title: action.value.title,
             description: action.value.description ?? null,
-            editorId: action.value.editorId,
+            wsPath: action.value.wsPath,
             uid: action.value.uid,
             severity: action.value.severity,
             serialOperation: action.value.serialOperation ?? null,
@@ -189,7 +205,7 @@ export function notificationSlice() {
           (serialVal) => ({
             title: serialVal.title,
             description: serialVal.description ?? undefined,
-            editorId: serialVal.editorId,
+            wsPath: serialVal.wsPath,
             uid: serialVal.uid,
             severity: serialVal.severity,
             serialOperation: serialVal.serialOperation ?? undefined,

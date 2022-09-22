@@ -3,6 +3,8 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import { Editorbar } from './Editorbar';
 
 export default {
@@ -53,4 +55,23 @@ ShowingSplitEditor.args = {
   onPressSecondaryEditor: () => {},
   isSplitEditorOpen: true,
   openNotesPalette: () => {},
+};
+export const WithEditorIssue = Template.bind({});
+
+WithEditorIssue.args = {
+  wsPath: 'test-ws:one/own.md',
+  isActive: true,
+  showSplitEditor: true,
+  onClose: () => {},
+  onPressSecondaryEditor: () => {},
+  isSplitEditorOpen: true,
+  openNotesPalette: () => {},
+  editorIssue: {
+    title: 'This is a test',
+    severity: 'error',
+    serialOperation: 'operation::something',
+    uid: '123',
+    description: undefined,
+    wsPath: 'test:one.md',
+  },
 };

@@ -5,6 +5,14 @@ import { generateUid } from '@bangle.io/utils';
 import type { EditorIssue } from './notification-slice';
 import { notificationSliceKey } from './notification-slice';
 
+export function getEditorIssue(wsPath: string) {
+  return notificationSliceKey.queryOp((state) => {
+    const { editorIssues } = notificationSliceKey.getSliceStateAsserted(state);
+
+    return editorIssues.find((issue) => issue.wsPath === wsPath);
+  });
+}
+
 export function setEditorIssue(value: Omit<EditorIssue, 'uid'>) {
   return notificationSliceKey.op((state, dispatch) => {
     const uid = generateUid();
@@ -20,12 +28,12 @@ export function setEditorIssue(value: Omit<EditorIssue, 'uid'>) {
   });
 }
 
-export function clearEditorIssue(issueUid: string) {
+export function clearEditorIssue(wsPath: string) {
   return notificationSliceKey.op((state, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
       value: {
-        uid: issueUid,
+        wsPath: wsPath,
       },
     });
   });

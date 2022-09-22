@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
-import type { SerialOperationType, Severity } from '@bangle.io/shared-types';
+import type { EditorIssue } from '@bangle.io/slice-notification';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
   CheckCircleIcon,
@@ -50,21 +50,18 @@ const SeverityLookup = {
   }),
 };
 
-export function ShowNotification({
-  severity,
-  title,
+export function EditorIssueButton({
+  editorIssue,
   widescreen,
-  operation,
 }: {
-  title: string;
-  severity: Severity;
+  editorIssue: EditorIssue;
   widescreen: boolean;
-  operation?: SerialOperationType['name'];
 }) {
+  const { serialOperation, severity } = editorIssue;
   let text: string = severity;
   const { dispatchSerialOperation } = useSerialOperationContext();
 
-  text = title;
+  text = editorIssue.title;
 
   if (text.length > 24) {
     text = text.slice(0, 24) + '...';
@@ -74,13 +71,13 @@ export function ShowNotification({
     <div className="B-activitybar_notification flex-row flex-1 flex justify-start ml-1 sm:ml-3">
       <ActionButton
         className="B-activitybar_notification-button B-activitybar_notification-button-small"
-        isQuiet={!Boolean(operation)}
+        isQuiet={!Boolean(serialOperation)}
         style={{
           border: `1px solid ${SeverityLookup[severity]().color}`,
         }}
         onPress={() => {
-          if (operation) {
-            dispatchSerialOperation({ name: operation });
+          if (serialOperation) {
+            dispatchSerialOperation({ name: serialOperation });
           }
         }}
         ariaLabel="Notification"

@@ -15,6 +15,7 @@ import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { getEditorIssue } from '@bangle.io/slice-notification';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   checkFileExists,
@@ -94,6 +95,7 @@ export function EditorContainer({
         widescreen &&
         wsPath && (
           <Editorbar
+            editorIssue={getEditorIssue(wsPath)(bangleStore.state)}
             isActive={focusedEditorId === editorId}
             wsPath={wsPath}
             onClose={onClose}

@@ -144,3 +144,109 @@ test('removing not found notification preserves state instance', () => {
     notificationSliceKey.getSliceState(state),
   );
 });
+
+describe('editor issues', () => {
+  test('adding and removing editor issues', () => {
+    let state = AppState.create({ slices: [notificationSlice()] });
+
+    state = state.applyAction({
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: 'test-1',
+        title: 'hello',
+        severity: 'error' as const,
+        description: 'hello world',
+        serialOperation: 'operation::test',
+        wsPath: 'test:one.md',
+      },
+    });
+
+    expect(notificationSliceKey.getSliceState(state)?.editorIssues).toEqual([
+      {
+        description: 'hello world',
+        serialOperation: 'operation::test',
+        severity: 'error',
+        title: 'hello',
+        uid: 'test-1',
+        wsPath: 'test:one.md',
+      },
+    ]);
+
+    state = state.applyAction({
+      name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
+      value: {
+        wsPath: 'test:one.md',
+      },
+    });
+
+    expect(notificationSliceKey.getSliceState(state)?.editorIssues).toEqual([]);
+  });
+
+  test('overwrites based on wsPath', () => {
+    let originalConsoleWarn = console.warn;
+    console.warn = jest.fn();
+
+    let state = AppState.create({ slices: [notificationSlice()] });
+
+    state = state.applyAction({
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: 'test-1',
+        title: 'hello',
+        severity: 'error' as const,
+        description: 'hello world',
+        serialOperation: 'operation::test',
+        wsPath: 'test:one.md',
+      },
+    });
+
+    state = state.applyAction({
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: 'test-2',
+        title: 'hello',
+        severity: 'error' as const,
+        description: 'hello world',
+        serialOperation: 'operation::test',
+        wsPath: 'test:two.md',
+      },
+    });
+
+    expect(
+      notificationSliceKey.getSliceState(state)?.editorIssues,
+    ).toHaveLength(2);
+
+    state = state.applyAction({
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: 'test-3',
+        title: 'hello',
+        severity: 'error' as const,
+        description: 'bye world',
+        serialOperation: 'operation::test',
+        wsPath: 'test:two.md',
+      },
+    });
+
+    expect(notificationSliceKey.getSliceState(state)?.editorIssues).toEqual([
+      {
+        description: 'hello world',
+        serialOperation: 'operation::test',
+        severity: 'error',
+        title: 'hello',
+        uid: 'test-1',
+        wsPath: 'test:one.md',
+      },
+      {
+        uid: 'test-3',
+        title: 'hello',
+        severity: 'error' as const,
+        description: 'bye world',
+        serialOperation: 'operation::test',
+        wsPath: 'test:two.md',
+      },
+    ]);
+
+    console.warn = originalConsoleWarn;
+  });
+});
