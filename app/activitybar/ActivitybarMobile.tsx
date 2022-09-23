@@ -1,18 +1,10 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
-import {
-  ui,
-  useBangleStoreContext,
-  useSerialOperationContext,
-} from '@bangle.io/api';
-import { CorePalette, PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+import { useBangleStoreContext } from '@bangle.io/api';
+import { CorePalette } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
-import type {
-  BangleApplicationStore,
-  SerialOperationKeybindingMapping,
-} from '@bangle.io/shared-types';
+import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import { toggleEditing } from '@bangle.io/slice-editor-manager';
-import { getEditorIssue } from '@bangle.io/slice-notification';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   EditIcon,
@@ -23,7 +15,6 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
-import { EditorIssueButton } from './EditorIssueButton';
 
 export function ActivitybarMobile({
   activeSidebar,
@@ -41,27 +32,6 @@ export function ActivitybarMobile({
   wsName?: string;
 }) {
   const bangleStore = useBangleStoreContext();
-  const editorIssue =
-    primaryWsPath && getEditorIssue(primaryWsPath)(bangleStore.state);
-
-  const { dispatchSerialOperation } = useSerialOperationContext();
-
-  const onPressEditorIssue = useCallback(() => {
-    if (!editorIssue) {
-      return;
-    }
-
-    const { serialOperation } = editorIssue;
-
-    if (serialOperation) {
-      dispatchSerialOperation({ name: serialOperation });
-    } else {
-      ui.showGenericErrorModal({
-        title: editorIssue.title,
-        description: editorIssue.description,
-      })(bangleStore.state, bangleStore.dispatch);
-    }
-  }, [bangleStore, dispatchSerialOperation, editorIssue]);
 
   return (
     <>
@@ -94,15 +64,7 @@ export function ActivitybarMobile({
               : wsName || 'bangle-io'}
           </span>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          {editorIssue && (
-            <EditorIssueButton
-              editorIssue={editorIssue}
-              widescreen={false}
-              onPress={onPressEditorIssue}
-            />
-          )}
-        </div>
+        <div className="flex flex-1"></div>
         <div className="flex flex-row items-center flex-none">
           <div className="mr-2">
             <ActivitybarButton

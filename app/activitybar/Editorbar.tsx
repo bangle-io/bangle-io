@@ -1,6 +1,5 @@
 import React from 'react';
 
-import type { EditorIssue } from '@bangle.io/slice-notification';
 import {
   ActionButton,
   ButtonContent,
@@ -10,30 +9,24 @@ import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
-import { EditorIssueButton } from './EditorIssueButton';
-
 const MAX_ENTRIES = 3;
 
 export function Editorbar({
-  showSplitEditor = false,
-  wsPath,
+  isActive,
+  isSplitEditorOpen,
   onClose,
   onPressSecondaryEditor,
-  isSplitEditorOpen,
-  isActive,
   openNotesPalette,
-  editorIssue,
-  onPressEditorIssue,
+  showSplitEditor = false,
+  wsPath,
 }: {
-  editorIssue: EditorIssue | undefined;
   isActive: boolean;
-  showSplitEditor?: boolean;
-  wsPath: string;
+  isSplitEditorOpen: boolean;
   onClose: () => void;
   onPressSecondaryEditor: () => void;
-  isSplitEditorOpen: boolean;
   openNotesPalette: () => void;
-  onPressEditorIssue: () => void;
+  showSplitEditor?: boolean;
+  wsPath: string;
 }) {
   let path = removeExtension(resolvePath(wsPath).filePath);
 
@@ -59,21 +52,12 @@ export function Editorbar({
       >
         {path}
       </div>
-      <div className="flex flex-row flex-1">
-        {editorIssue && (
-          <EditorIssueButton
-            editorIssue={editorIssue}
-            widescreen={true}
-            onPress={onPressEditorIssue}
-          />
-        )}
-      </div>
+      <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">
         {showSplitEditor && (
           <ActionButton
             isQuiet="hoverBg"
             onPress={onPressSecondaryEditor}
-            styling={{}}
             className="lg:mr-1"
             ariaLabel="Split screen"
             isActive={isSplitEditorOpen}
