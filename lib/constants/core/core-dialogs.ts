@@ -12,3 +12,6 @@ export const NEW_WORKSPACE_DIALOG_NAME =
 
 export const RELOAD_APPLICATION_DIALOG_NAME =
   'dialog::@bangle.io/core-extension:reload-application-dialog';
+
+export const GENERIC_ERROR_MODAL_NAME =
+  'dialog::@bangle.io/core-extension:generic_error_modal_name';

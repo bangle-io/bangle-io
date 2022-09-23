@@ -28,7 +28,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
         severity: 'error',
         title: 'something went wrong',
         serialOperation: undefined,
-        description: undefined,
+        description: 'something went wrong',
       },
     },
   ],

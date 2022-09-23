@@ -5,6 +5,7 @@ import {
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   NativeBrowserFileSystemError,
 } from '@bangle.io/baby-fs';
+import { CORE_OPERATIONS_OPEN_GITHUB_ISSUE } from '@bangle.io/constants';
 
 import { NativsFsStorageProvider } from './nativefs-storage-provider';
 
@@ -42,6 +43,13 @@ const extension = Extension.create({
           title: 'File system error',
           content: error.message,
           uid: 'NativefsStorageProviderError' + Math.random(),
+          buttons: [
+            {
+              title: 'Report issue',
+              hint: `Report an issue on Github`,
+              operation: CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+            },
+          ],
         })(store.state, store.dispatch);
 
         return true;

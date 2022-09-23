@@ -9,11 +9,11 @@ import { assertActionName } from '@bangle.io/utils';
 
 export interface EditorIssue {
   title: string; // keep it short
-  description: string | undefined;
+  description: string;
   uid: string;
   wsPath: string;
   severity: Severity;
-  serialOperation: SerialOperationNameType | undefined;
+  serialOperation?: SerialOperationNameType;
 }
 
 export type GetActionValue<R> = ExtractActionValue<NotificationAction, R>;

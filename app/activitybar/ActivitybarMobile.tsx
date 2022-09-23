@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
+import {
+  ui,
+  useBangleStoreContext,
+  useSerialOperationContext,
+} from '@bangle.io/api';
 import { CorePalette, PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type {
@@ -22,7 +27,6 @@ import { EditorIssueButton } from './EditorIssueButton';
 
 export function ActivitybarMobile({
   activeSidebar,
-  bangleStore,
   editingAllowed,
   operationKeybindings,
   primaryWsPath,
@@ -30,15 +34,34 @@ export function ActivitybarMobile({
   wsName,
 }: {
   activeSidebar?: string;
-  bangleStore: BangleApplicationStore;
   editingAllowed: boolean;
   operationKeybindings: SerialOperationKeybindingMapping;
   primaryWsPath?: string;
   sidebarItems?: SidebarType[];
   wsName?: string;
 }) {
+  const bangleStore = useBangleStoreContext();
   const editorIssue =
     primaryWsPath && getEditorIssue(primaryWsPath)(bangleStore.state);
+
+  const { dispatchSerialOperation } = useSerialOperationContext();
+
+  const onPressEditorIssue = useCallback(() => {
+    if (!editorIssue) {
+      return;
+    }
+
+    const { serialOperation } = editorIssue;
+
+    if (serialOperation) {
+      dispatchSerialOperation({ name: serialOperation });
+    } else {
+      ui.showGenericErrorModal({
+        title: editorIssue.title,
+        description: editorIssue.description,
+      })(bangleStore.state, bangleStore.dispatch);
+    }
+  }, [bangleStore, dispatchSerialOperation, editorIssue]);
 
   return (
     <>
@@ -73,7 +96,11 @@ export function ActivitybarMobile({
         </div>
         <div className="flex flex-1 items-center justify-center">
           {editorIssue && (
-            <EditorIssueButton editorIssue={editorIssue} widescreen={false} />
+            <EditorIssueButton
+              editorIssue={editorIssue}
+              widescreen={false}
+              onPress={onPressEditorIssue}
+            />
           )}
         </div>
         <div className="flex flex-row items-center flex-none">

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/api';
 import type { EditorIssue } from '@bangle.io/slice-notification';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
@@ -53,13 +52,14 @@ const SeverityLookup = {
 export function EditorIssueButton({
   editorIssue,
   widescreen,
+  onPress,
 }: {
   editorIssue: EditorIssue;
   widescreen: boolean;
+  onPress: () => void;
 }) {
   const { serialOperation, severity } = editorIssue;
   let text: string = severity;
-  const { dispatchSerialOperation } = useSerialOperationContext();
 
   text = editorIssue.title;
 
@@ -76,9 +76,7 @@ export function EditorIssueButton({
           border: `1px solid ${SeverityLookup[severity]().color}`,
         }}
         onPress={() => {
-          if (serialOperation) {
-            dispatchSerialOperation({ name: serialOperation });
-          }
+          onPress();
         }}
         ariaLabel="Notification"
       >

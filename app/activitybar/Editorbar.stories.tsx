@@ -66,12 +66,13 @@ WithEditorIssue.args = {
   onPressSecondaryEditor: () => {},
   isSplitEditorOpen: true,
   openNotesPalette: () => {},
+  onPressEditorIssue: () => {},
   editorIssue: {
     title: 'This is a test',
     severity: 'error',
     serialOperation: 'operation::something',
     uid: '123',
-    description: undefined,
+    description: 'something went wrong',
     wsPath: 'test:one.md',
   },
 };

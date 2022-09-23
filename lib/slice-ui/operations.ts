@@ -1,5 +1,10 @@
 import type { CorePalette } from '@bangle.io/constants';
+import { GENERIC_ERROR_MODAL_NAME } from '@bangle.io/constants';
 import type { AppState, ExtractActionValue } from '@bangle.io/create-store';
+import type {
+  DialogType,
+  GenericErrorModalMetadata,
+} from '@bangle.io/shared-types';
 
 import type { UiContextAction, UiContextDispatchType } from './ui-slice';
 import { UI_CONTEXT_TOGGLE_THEME, uiSliceKey } from './ui-slice';
@@ -67,7 +72,7 @@ export function togglePaletteType(type: CorePalette | undefined) {
 }
 
 export function showDialog(
-  dialogName: string,
+  dialogName: DialogType['name'],
   metadata?: undefined | { [key: string]: any },
 ) {
   return uiSliceKey.op((_, dispatch) => {
@@ -78,6 +83,16 @@ export function showDialog(
         metadata,
       },
     });
+  });
+}
+
+export function showGenericErrorModal({
+  title,
+  description,
+}: GenericErrorModalMetadata) {
+  return showDialog(GENERIC_ERROR_MODAL_NAME, {
+    title,
+    description,
   });
 }
 

@@ -7,6 +7,7 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import type {
   BangleApplicationStore,
+  DialogType,
   EditorWatchPluginState,
   NoteFormatProvider,
   NoteSidebarWidget,
@@ -86,11 +87,6 @@ export interface SidebarType {
   name: `sidebar::${string}`;
   ReactComponent: React.ComponentType;
   title: string;
-}
-
-export interface DialogType {
-  name: `dialog::${string}`;
-  ReactComponent: React.ComponentType;
 }
 
 interface Config<OpType extends SerialOperationDefinitionType> {

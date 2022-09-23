@@ -58,7 +58,6 @@ export function Activitybar({
   if (!widescreen) {
     return (
       <ActivitybarMobile
-        bangleStore={bangleStore}
         editingAllowed={editingAllowed}
         operationKeybindings={operationKeybindings}
         wsName={wsName}

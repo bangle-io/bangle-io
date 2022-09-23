@@ -3,6 +3,7 @@ export {
   dismissDialog,
   setSidebar,
   showDialog,
+  showGenericErrorModal,
   togglePaletteType,
   toggleTheme,
 } from './operations';

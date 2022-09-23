@@ -1,7 +1,6 @@
 import React from 'react';
 
 import type { EditorIssue } from '@bangle.io/slice-notification';
-import { getEditorIssue } from '@bangle.io/slice-notification';
 import {
   ActionButton,
   ButtonContent,
@@ -24,8 +23,9 @@ export function Editorbar({
   isActive,
   openNotesPalette,
   editorIssue,
+  onPressEditorIssue,
 }: {
-  editorIssue?: EditorIssue;
+  editorIssue: EditorIssue | undefined;
   isActive: boolean;
   showSplitEditor?: boolean;
   wsPath: string;
@@ -33,6 +33,7 @@ export function Editorbar({
   onPressSecondaryEditor: () => void;
   isSplitEditorOpen: boolean;
   openNotesPalette: () => void;
+  onPressEditorIssue: () => void;
 }) {
   let path = removeExtension(resolvePath(wsPath).filePath);
 
@@ -60,7 +61,11 @@ export function Editorbar({
       </div>
       <div className="flex flex-row flex-1">
         {editorIssue && (
-          <EditorIssueButton editorIssue={editorIssue} widescreen={true} />
+          <EditorIssueButton
+            editorIssue={editorIssue}
+            widescreen={true}
+            onPress={onPressEditorIssue}
+          />
         )}
       </div>
       <div className="flex flex-row">

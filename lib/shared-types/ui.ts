@@ -19,3 +19,8 @@ export interface NotificationPayloadType {
     dismissOnClick?: boolean;
   }>;
 }
+
+export interface GenericErrorModalMetadata {
+  title: string;
+  description: string;
+}

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Editorbar } from '@bangle.io/activitybar';
 import {
+  ui,
   useBangleStoreContext,
   useSerialOperationContext,
 } from '@bangle.io/api';
@@ -63,6 +64,27 @@ export function EditorContainer({
     );
   }, [bangleStore]);
 
+  const editorIssue = wsPath
+    ? getEditorIssue(wsPath)(bangleStore.state)
+    : undefined;
+
+  const onPressEditorIssue = useCallback(() => {
+    if (!editorIssue) {
+      return;
+    }
+
+    const { serialOperation } = editorIssue;
+
+    if (serialOperation) {
+      dispatchSerialOperation({ name: serialOperation });
+    } else {
+      ui.showGenericErrorModal({
+        title: editorIssue.title,
+        description: editorIssue.description,
+      })(bangleStore.state, bangleStore.dispatch);
+    }
+  }, [bangleStore, dispatchSerialOperation, editorIssue]);
+
   let children;
 
   if (noteExists === 'NOT_FOUND') {
@@ -95,7 +117,7 @@ export function EditorContainer({
         widescreen &&
         wsPath && (
           <Editorbar
-            editorIssue={getEditorIssue(wsPath)(bangleStore.state)}
+            editorIssue={editorIssue}
             isActive={focusedEditorId === editorId}
             wsPath={wsPath}
             onClose={onClose}
@@ -103,6 +125,7 @@ export function EditorContainer({
             onPressSecondaryEditor={onPressSecondaryEditor}
             isSplitEditorOpen={isSplitEditorOpen}
             openNotesPalette={openNotesPalette}
+            onPressEditorIssue={onPressEditorIssue}
           />
         )
       }
