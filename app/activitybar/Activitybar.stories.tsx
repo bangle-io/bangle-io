@@ -3,7 +3,10 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
+import { Extension } from '@bangle.io/extension-registry';
+import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
+import { FolderIcon } from '@bangle.io/ui-components';
 
 import { Activitybar } from './Activitybar';
 
@@ -13,8 +16,8 @@ export default {
   argTypes: {},
 };
 
-const Template: Story<Parameters<typeof Activitybar>[0]> = (args) => {
-  const { store } = createBasicStore({
+export const Vanilla: Story<{ store: BangleApplicationStore }> = () => {
+  let { store } = createBasicStore({
     storageProvider: 'in-memory',
     useUISlice: true,
     useEditorManagerSlice: true,
@@ -30,17 +33,46 @@ const Template: Story<Parameters<typeof Activitybar>[0]> = (args) => {
           display: 'flex',
         }}
       >
-        <Activitybar {...args} />
+        <Activitybar />
       </div>
     </TestStoreProvider>
   );
 };
+export const WithSidebarItem: Story<{ store: BangleApplicationStore }> = () => {
+  let { store } = createBasicStore({
+    storageProvider: 'in-memory',
+    useUISlice: true,
+    useEditorManagerSlice: true,
+    extensions: [
+      Extension.create({
+        name: 'test-ext-123',
+        application: {
+          sidebars: [
+            {
+              name: 'sidebar::test-ext-123:sidebar-123',
+              title: 'folder sidebar',
+              activitybarIcon: React.createElement(FolderIcon, {}),
+              ReactComponent: () => <p>hello notes</p>,
+              hint: 'I am a folder sidebar',
+            },
+          ],
+        },
+      }),
+    ],
+  });
 
-export const Vanilla = Template.bind({});
-
-Vanilla.args = {
-  operationKeybindings: {},
-  primaryWsPath: undefined,
-  sidebars: [],
-  wsName: undefined,
+  return (
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+      <div
+        style={{
+          width: 50,
+          height: 500,
+          flexDirection: 'column',
+          display: 'flex',
+        }}
+      >
+        <Activitybar />
+      </div>
+    </TestStoreProvider>
+  );
 };

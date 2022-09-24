@@ -4,6 +4,7 @@ import type {
   Slice,
   SliceKey,
 } from '@bangle.io/create-store';
+import { overrideSliceInit } from '@bangle.io/create-store';
 import {
   Extension,
   extensionRegistrySlice,
@@ -13,7 +14,7 @@ import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
-import { uiSlice } from '@bangle.io/slice-ui';
+import { uiSlice, uiSliceKey } from '@bangle.io/slice-ui';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import {
@@ -45,6 +46,7 @@ export function createBasicStore<
   opts,
   onError,
   storageProvider = new IndexedDbStorageProvider(),
+  overrideInitialSliceState,
 }: {
   storageProvider?: BaseStorageProvider | 'indexedb' | 'in-memory';
   scheduler?: any;
@@ -58,6 +60,7 @@ export function createBasicStore<
   useUISlice?: boolean;
   onError?: OnErrorType<S, A>;
   opts?: Partial<BangleStateConfig>;
+  overrideInitialSliceState?: Parameters<typeof overrideSliceStates>[1];
 }) {
   let _storageProvider: BaseStorageProvider;
 
@@ -92,6 +95,19 @@ export function createBasicStore<
     useWebWorker: false,
   };
 
+  const finalSlices = [
+    extensionRegistrySlice(),
+    useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
+    storageProviderSlice(),
+    pageSlice(),
+    workspaceSlice(),
+    useEditorManagerSlice ? editorManagerSlice() : undefined,
+    notificationSlice(),
+    useUISlice ? uiSlice() : undefined,
+    ...extensionRegistry.getSlices(),
+    ...slices,
+  ].filter((r): r is Slice => Boolean(r));
+
   const { store, actionsDispatched } = createBareStore({
     onError,
     opts: {
@@ -100,18 +116,7 @@ export function createBasicStore<
     },
     scheduler,
     sliceKey,
-    slices: [
-      extensionRegistrySlice(),
-      useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
-      storageProviderSlice(),
-      pageSlice(),
-      workspaceSlice(),
-      useEditorManagerSlice ? editorManagerSlice() : undefined,
-      notificationSlice(),
-      useUISlice ? uiSlice() : undefined,
-      ...extensionRegistry.getSlices(),
-      ...slices,
-    ].filter((r): r is Slice => Boolean(r)),
+    slices: overrideSliceStates(finalSlices, overrideInitialSliceState),
   });
 
   return {
@@ -119,4 +124,24 @@ export function createBasicStore<
     store,
     actionsDispatched,
   };
+}
+
+export interface TestInitialSliceStateOverride {
+  uiSlice?: Partial<ReturnType<typeof uiSliceKey['getSliceState']>>;
+}
+
+function overrideSliceStates(
+  slices: Slice[],
+  override?: TestInitialSliceStateOverride,
+) {
+  return slices.map((slice) => {
+    if (override?.uiSlice && slice.key === uiSliceKey.key) {
+      return overrideSliceInit(slice, (s) => ({
+        ...s,
+        ...override.uiSlice,
+      }));
+    }
+
+    return slice;
+  });
 }

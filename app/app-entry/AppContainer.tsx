@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { Activitybar } from '@bangle.io/activitybar';
+import { Activitybar, ActivitybarMobile } from '@bangle.io/activitybar';
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
@@ -23,18 +23,16 @@ let requestedStorage = false;
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
-  const { wsName, openedWsPaths } = useWorkspaceContext();
+  const { wsName } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
+
   useSetDocumentTitle();
 
-  const sidebars = extensionRegistry.getSidebars();
   const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
-  const operationKeybindings =
-    extensionRegistry.getSerialOperationKeybindingMapping();
 
   const { sidebar, dispatch, noteSidebar } = useUIManagerContext();
   const currentSidebar = sidebar
-    ? sidebars.find((s) => s.name === sidebar)
+    ? extensionRegistry.getSidebars().find((s) => s.name === sidebar)
     : null;
 
   const onDismissSidebar = useCallback(() => {
@@ -92,14 +90,7 @@ export function AppContainer() {
       />
       <Dhancha
         widescreen={widescreen}
-        activitybar={
-          <Activitybar
-            operationKeybindings={operationKeybindings}
-            wsName={wsName}
-            primaryWsPath={openedWsPaths.primaryWsPath}
-            sidebars={sidebars}
-          />
-        }
+        activitybar={widescreen ? <Activitybar /> : <ActivitybarMobile />}
         noteSidebar={
           noteSidebar && (
             <NoteSidebar
