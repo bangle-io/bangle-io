@@ -6,15 +6,15 @@ import React from 'react';
 import { Severity } from '@bangle.io/constants';
 import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
 
-import { EditorIssueButton } from './EditorIssueButton';
+import { EditorIssueComp } from './EditorIssueComp';
 
 export default {
-  title: 'activitybar/EditorIssueButton',
-  component: EditorIssueButton,
+  title: 'editor-container/EditorIssueComp',
+  component: EditorIssueComp,
   argTypes: {},
 };
 
-const Template: Story<Parameters<typeof EditorIssueButton>[0]> = (args) => {
+const Template: Story<Parameters<typeof EditorIssueComp>[0]> = (args) => {
   const { store } = createBasicStore({
     storageProvider: 'in-memory',
     useUISlice: true,
@@ -24,7 +24,7 @@ const Template: Story<Parameters<typeof EditorIssueButton>[0]> = (args) => {
   return (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       <div style={{ width: 400 }}>
-        <EditorIssueButton {...args}></EditorIssueButton>
+        <EditorIssueComp {...args}></EditorIssueComp>
       </div>
     </TestStoreProvider>
   );
@@ -41,6 +41,5 @@ Vanilla.args = {
     description: 'something went wrong',
     wsPath: 'test:one.md',
   },
-  widescreen: false,
   onPress: () => {},
 };

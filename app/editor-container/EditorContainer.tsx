@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Editorbar, EditorIssue } from '@bangle.io/activitybar';
+import {} from '@bangle.io/activitybar';
 import {
   ui,
   useBangleStoreContext,
@@ -14,8 +14,12 @@ import {
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import type { EditorIdType } from '@bangle.io/shared-types';
+import type {
+  BangleApplicationStore,
+  EditorIdType,
+} from '@bangle.io/shared-types';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { getEditorIssue } from '@bangle.io/slice-notification';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   checkFileExists,
@@ -23,6 +27,9 @@ import {
 } from '@bangle.io/slice-workspace';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
+
+import { Editorbar } from './Editorbar';
+import { EditorIssueComp } from './EditorIssueComp';
 
 export function EditorContainer({
   widescreen,
@@ -48,7 +55,7 @@ export function EditorContainer({
     });
   }, [dispatchSerialOperation]);
 
-  const onClose = useCallback(() => {
+  const onCloseEditor = useCallback(() => {
     dispatchSerialOperation({
       name: CORE_OPERATIONS_CLOSE_EDITOR,
       value: editorId,
@@ -61,6 +68,11 @@ export function EditorContainer({
       bangleStore.dispatch,
     );
   }, [bangleStore]);
+
+  const { editorIssue, onPressEditorIssue } = useEditorIssue(
+    wsPath,
+    bangleStore,
+  );
 
   let children;
 
@@ -100,18 +112,20 @@ export function EditorContainer({
             <Editorbar
               isActive={focusedEditorId === editorId}
               wsPath={wsPath}
-              onClose={onClose}
+              onClose={onCloseEditor}
               showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
               onPressSecondaryEditor={onPressSecondaryEditor}
               isSplitEditorOpen={isSplitEditorOpen}
               openNotesPalette={openNotesPalette}
             />
           )}
-          <EditorIssue
-            wsPath={wsPath}
-            editorId={editorId}
-            className={widescreen ? '' : 'pt-3'}
-          />
+          {editorIssue && (
+            <EditorIssueComp
+              className={widescreen ? '' : 'pt-3'}
+              editorIssue={editorIssue}
+              onPress={onPressEditorIssue}
+            />
+          )}
         </div>
       )}
 
@@ -130,6 +144,33 @@ export function EditorContainer({
   );
 }
 
+function useEditorIssue(
+  wsPath: string | undefined,
+  bangleStore: BangleApplicationStore,
+) {
+  const editorIssue = wsPath && getEditorIssue(wsPath)(bangleStore.state);
+  const { dispatchSerialOperation } = useSerialOperationContext();
+
+  const onPressEditorIssue = useCallback(() => {
+    if (!editorIssue) {
+      return;
+    }
+
+    const { serialOperation } = editorIssue;
+
+    if (serialOperation) {
+      dispatchSerialOperation({ name: serialOperation });
+    } else {
+      ui.showGenericErrorModal({
+        title: editorIssue.title,
+        description: editorIssue.description,
+      })(bangleStore.state, bangleStore.dispatch);
+    }
+  }, [bangleStore, dispatchSerialOperation, editorIssue]);
+
+  return { editorIssue, onPressEditorIssue };
+}
+
 /**
  * This exists to save a render cycle
  * when incomingWsPath changes to something else
@@ -138,7 +179,7 @@ export function EditorContainer({
  * @param {*} incomingWsPath
  * @returns
  */
-export function useHandleWsPath(incomingWsPath?: string) {
+function useHandleWsPath(incomingWsPath?: string) {
   const [wsPath, updateWsPath] = useState<string | undefined>(undefined);
   const [noteExists, updateFileExists] = useState<
     'LOADING' | 'FOUND' | 'NOT_FOUND' | 'NO_WS_PATH'
