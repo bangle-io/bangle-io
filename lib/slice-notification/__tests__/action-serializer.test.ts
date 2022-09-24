@@ -1,4 +1,4 @@
-import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+import { PRIMARY_EDITOR_INDEX, Severity } from '@bangle.io/constants';
 import {
   actionSerializerTestFixture,
   createBareStore,
@@ -13,7 +13,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       value: {
         uid: '123',
         wsPath: 'test:one.md',
-        severity: 'error',
+        severity: Severity.ERROR,
         title: 'something went wrong',
         serialOperation: 'operation::@bangle.io/slice-notification:whoops',
         description: 'we are sorry',
@@ -25,7 +25,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       value: {
         uid: '123',
         wsPath: 'test:one.md',
-        severity: 'error',
+        severity: Severity.ERROR,
         title: 'something went wrong',
         serialOperation: undefined,
         description: 'something went wrong',
@@ -61,7 +61,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       value: {
         title: 'hello',
         uid: 'test-1',
-        severity: 'error',
+        severity: Severity.ERROR,
         buttons: [],
       },
     },
@@ -71,7 +71,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
         title: 'hello 3',
         content: 'i am content',
         uid: 'test-1',
-        severity: 'error',
+        severity: Severity.ERROR,
         buttons: [],
       },
     },
@@ -81,7 +81,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       value: {
         title: 'hello',
         uid: 'test-1',
-        severity: 'info',
+        severity: Severity.INFO,
         buttons: [
           {
             title: 'I am the title',

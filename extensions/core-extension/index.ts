@@ -18,6 +18,7 @@ import {
   NEW_WORKSPACE_DIALOG_NAME,
   RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
+  Severity,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
@@ -363,7 +364,7 @@ const extension = Extension.create({
               toggleEditing()(bangleStore.state, bangleStore.dispatch);
               let isEditing = isEditingAllowed()(bangleStore.state);
               showNotification({
-                severity: isEditing ? 'info' : 'warning',
+                severity: isEditing ? Severity.INFO : Severity.WARNING,
                 uid: 'editing-mode' + isEditing + Date.now(),
                 title: 'Editing mode is now ' + (isEditing ? 'on' : 'off'),
               })(bangleStore.state, bangleStore.dispatch);
@@ -420,7 +421,7 @@ function createNativeFsWorkspace(rootDirHandle: any) {
         (window as any).fathom?.trackGoal('K3NFTGWX', 0);
       } catch (error: any) {
         showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           uid: 'error-create-workspace-' + rootDirHandle?.name,
           title: 'Unable to create workspace ' + rootDirHandle?.name,
           content: error.displayMessage || error.message,
@@ -463,7 +464,7 @@ function createBrowserWorkspace(wsName: string) {
       (window as any).fathom?.trackGoal('AISLCLRF', 0);
     } catch (error: any) {
       showNotification({
-        severity: 'error',
+        severity: Severity.ERROR,
         uid: 'error-create-workspace-' + wsName,
         title: 'Unable to create workspace ' + wsName,
         content: error.displayMessage || error.message,

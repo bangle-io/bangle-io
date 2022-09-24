@@ -1,9 +1,9 @@
+import type { Severity } from '@bangle.io/constants';
 import type { ExtractActionValue } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type {
   NotificationPayloadType,
   SerialOperationNameType,
-  Severity,
 } from '@bangle.io/shared-types';
 import { assertActionName } from '@bangle.io/utils';
 

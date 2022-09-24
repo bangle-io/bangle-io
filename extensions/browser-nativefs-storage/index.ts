@@ -5,7 +5,10 @@ import {
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   NativeBrowserFileSystemError,
 } from '@bangle.io/baby-fs';
-import { CORE_OPERATIONS_OPEN_GITHUB_ISSUE } from '@bangle.io/constants';
+import {
+  CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+  Severity,
+} from '@bangle.io/constants';
 
 import { NativsFsStorageProvider } from './nativefs-storage-provider';
 
@@ -39,7 +42,7 @@ const extension = Extension.create({
       ) {
         console.debug(error.code, error.name, error.stack);
         notification.showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           title: 'File system error',
           content: error.message,
           uid: 'NativefsStorageProviderError' + Math.random(),

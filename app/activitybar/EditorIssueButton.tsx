@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Severity } from '@bangle.io/constants';
 import type { EditorIssue } from '@bangle.io/slice-notification';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
@@ -11,7 +12,7 @@ import {
 import { cx } from '@bangle.io/utils';
 
 const SeverityLookup = {
-  error: () => ({
+  [Severity.ERROR]: () => ({
     component: (
       <ExclamationCircleIcon
         className="w-5 h-5"
@@ -20,7 +21,7 @@ const SeverityLookup = {
     ),
     color: 'var(--BV-severity-error-color)',
   }),
-  warning: () => ({
+  [Severity.WARNING]: () => ({
     component: (
       <ExclamationIcon
         className="w-5 h-5"
@@ -29,7 +30,7 @@ const SeverityLookup = {
     ),
     color: 'var(--BV-severity-warning-color)',
   }),
-  info: () => ({
+  [Severity.INFO]: () => ({
     component: (
       <InformationCircleIcon
         className="w-5 h-5"
@@ -38,7 +39,7 @@ const SeverityLookup = {
     ),
     color: 'var(--BV-severity-info-color)',
   }),
-  success: () => ({
+  [Severity.SUCCESS]: () => ({
     component: (
       <CheckCircleIcon
         className="w-5 h-5"
@@ -75,7 +76,7 @@ export function EditorIssueButton({
         style={{
           border: `1px solid ${SeverityLookup[severity]().color}`,
           backgroundColor:
-            severity === 'error'
+            severity === Severity.ERROR
               ? 'var(--BV-error-bg-color)'
               : 'var(--BV-window-tooltip-bg-color)',
         }}

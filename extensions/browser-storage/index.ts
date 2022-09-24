@@ -1,3 +1,4 @@
+import { Severity } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { showNotification } from '@bangle.io/slice-notification';
 import {
@@ -18,7 +19,7 @@ const extension = Extension.create({
       if (isIndexedDbException(error)) {
         console.debug(error.code, error.name);
         showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           title: 'Error writing to browser storage',
           content: error.message,
           uid: error.code + '' + Math.random(),
@@ -28,7 +29,7 @@ const extension = Extension.create({
       }
 
       showNotification({
-        severity: 'error',
+        severity: Severity.ERROR,
         title: `Browser storage provider encountered an unknown error: ${error.name}`,
         uid: 'unknown-error' + error.code || error.name + Math.random(),
       })(store.state, store.dispatch);

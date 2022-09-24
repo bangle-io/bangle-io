@@ -2,6 +2,7 @@ import React from 'react';
 
 import { notification, useSerialOperationContext } from '@bangle.io/api';
 import { useSliceState } from '@bangle.io/bangle-store-context';
+import { Severity } from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   dismissNotification,
@@ -72,7 +73,7 @@ export function NotificationArea() {
   );
 }
 
-const Severity: Record<
+const SeverityMap: Record<
   Exclude<NotificationPayloadType['severity'], undefined>,
   () => React.ReactNode
 > = {
@@ -96,7 +97,7 @@ export function Notification({
   content = '',
   title,
   buttons,
-  severity = 'info',
+  severity = Severity.INFO,
   onDismiss,
 }: {
   title?: string;
@@ -117,7 +118,7 @@ export function Notification({
     >
       <div className="flex flex-col w-full">
         <div className="flex flex-row">
-          <div className="mr-2">{Severity[severity]()}</div>
+          <div className="mr-2">{SeverityMap[severity]()}</div>
           <div className="flex-grow">{title}</div>
           <div>
             <ButtonIcon

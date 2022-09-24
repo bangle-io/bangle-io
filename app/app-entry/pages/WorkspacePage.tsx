@@ -5,6 +5,7 @@ import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
+  Severity,
 } from '@bangle.io/constants';
 import { EditorContainer, MiniEditor } from '@bangle.io/editor-container';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
@@ -33,7 +34,7 @@ export function WorkspacePage() {
       notification.showNotification({
         title: 'Mini Editor is not available in small screens',
         uid: 'mini-editor-not-available',
-        severity: 'warning',
+        severity: Severity.WARNING,
         transient: true,
       })(bangleStore.state, bangleStore.dispatch);
 

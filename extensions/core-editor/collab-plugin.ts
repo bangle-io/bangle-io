@@ -3,6 +3,7 @@ import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { uuid } from '@bangle.dev/utils';
 
 import { notification } from '@bangle.io/api';
+import { Severity } from '@bangle.io/constants';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import { getCollabMessageBus } from '@bangle.io/slice-editor-collab-comms';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
@@ -37,7 +38,7 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
                   wsPath,
                   title: 'Editor crashed!',
                   description: `Please manually save your work and then try reloading the application. Error - ${error.message}`,
-                  severity: 'error' as const,
+                  severity: Severity.ERROR,
                 })(bangleStore.state, bangleStore.dispatch);
               }
             }
