@@ -1,3 +1,4 @@
+import { PRIMARY_EDITOR_INDEX, Severity } from '@bangle.io/constants';
 import {
   actionSerializerTestFixture,
   createBareStore,
@@ -6,6 +7,40 @@ import {
 import { notificationSlice, notificationSliceKey } from '../notification-slice';
 
 const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
+  'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE': [
+    {
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: '123',
+        wsPath: 'test:one.md',
+        severity: Severity.ERROR,
+        title: 'something went wrong',
+        serialOperation: 'operation::@bangle.io/slice-notification:whoops',
+        description: 'we are sorry',
+      },
+    },
+
+    {
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        uid: '123',
+        wsPath: 'test:one.md',
+        severity: Severity.ERROR,
+        title: 'something went wrong',
+        serialOperation: undefined,
+        description: 'something went wrong',
+      },
+    },
+  ],
+  'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE': [
+    {
+      name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
+      value: {
+        wsPath: 'test:one.md',
+      },
+    },
+  ],
+
   'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION': [
     {
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
@@ -14,9 +49,9 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       },
     },
   ],
-  'action::@bangle.io/slice-notification:CLEAR_ALL': [
+  'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS': [
     {
-      name: 'action::@bangle.io/slice-notification:CLEAR_ALL',
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS',
       value: {},
     },
   ],
@@ -26,7 +61,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       value: {
         title: 'hello',
         uid: 'test-1',
-        severity: 'error',
+        severity: Severity.ERROR,
         buttons: [],
       },
     },
@@ -36,7 +71,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
         title: 'hello 3',
         content: 'i am content',
         uid: 'test-1',
-        severity: 'error',
+        severity: Severity.ERROR,
         buttons: [],
       },
     },
@@ -46,7 +81,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       value: {
         title: 'hello',
         uid: 'test-1',
-        severity: 'info',
+        severity: Severity.INFO,
         buttons: [
           {
             title: 'I am the title',

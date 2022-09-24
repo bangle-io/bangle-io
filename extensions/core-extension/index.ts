@@ -13,16 +13,17 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+  GENERIC_ERROR_MODAL_NAME,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
+  Severity,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
-import type { WorkspaceSliceAction } from '@bangle.io/shared-types';
 import {
   focusPrimaryEditor,
   focusSecondaryEditor,
@@ -45,6 +46,7 @@ import {
   extensionName,
 } from './config';
 import { ChangelogModal } from './dialogs/ChangelogModal';
+import { GenericErrorModal } from './dialogs/GenericErrorModal';
 import { NewWorkspaceModal } from './dialogs/new-workspace-modal';
 import {
   NewNoteInputModal,
@@ -86,6 +88,10 @@ const extension = Extension.create({
       {
         name: RELOAD_APPLICATION_DIALOG_NAME,
         ReactComponent: ReloadApplicationDialog,
+      },
+      {
+        name: GENERIC_ERROR_MODAL_NAME,
+        ReactComponent: GenericErrorModal,
       },
     ],
     operations: [
@@ -358,7 +364,7 @@ const extension = Extension.create({
               toggleEditing()(bangleStore.state, bangleStore.dispatch);
               let isEditing = isEditingAllowed()(bangleStore.state);
               showNotification({
-                severity: isEditing ? 'info' : 'warning',
+                severity: isEditing ? Severity.INFO : Severity.WARNING,
                 uid: 'editing-mode' + isEditing + Date.now(),
                 title: 'Editing mode is now ' + (isEditing ? 'on' : 'off'),
               })(bangleStore.state, bangleStore.dispatch);
@@ -415,7 +421,7 @@ function createNativeFsWorkspace(rootDirHandle: any) {
         (window as any).fathom?.trackGoal('K3NFTGWX', 0);
       } catch (error: any) {
         showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           uid: 'error-create-workspace-' + rootDirHandle?.name,
           title: 'Unable to create workspace ' + rootDirHandle?.name,
           content: error.displayMessage || error.message,
@@ -458,7 +464,7 @@ function createBrowserWorkspace(wsName: string) {
       (window as any).fathom?.trackGoal('AISLCLRF', 0);
     } catch (error: any) {
       showNotification({
-        severity: 'error',
+        severity: Severity.ERROR,
         uid: 'error-create-workspace-' + wsName,
         title: 'Unable to create workspace ' + wsName,
         content: error.displayMessage || error.message,

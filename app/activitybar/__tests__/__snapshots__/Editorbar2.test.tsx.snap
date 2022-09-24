@@ -4,29 +4,17 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
     >
       <div
         aria-label="note path"
-        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
+        class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
       >
-        <span
-          class="break-all select-none"
-        >
-          test-dir
-        </span>
-        <span
-          class="select-none"
-          style="padding: 0px 1px;"
-        >
-          /
-        </span>
-        <span
-          class="break-all select-none"
-        >
-          magic
-        </span>
+        test-dir/magic
       </div>
+      <div
+        class="flex flex-row flex-1"
+      />
       <div
         class="flex flex-row"
       >
@@ -56,29 +44,17 @@ exports[`renders correctly when active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
     >
       <div
         aria-label="note path"
-        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+        class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
       >
-        <span
-          class="break-all select-none"
-        >
-          test-dir
-        </span>
-        <span
-          class="select-none"
-          style="padding: 0px 1px;"
-        >
-          /
-        </span>
-        <span
-          class="break-all select-none"
-        >
-          magic
-        </span>
+        test-dir/magic
       </div>
+      <div
+        class="flex flex-row flex-1"
+      />
       <div
         class="flex flex-row"
       >
@@ -107,45 +83,8 @@ exports[`renders correctly when active 1`] = `
 exports[`truncates large wsPath 1`] = `
 <div
   aria-label="note path"
-  class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
+  class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
 >
-  <span
-    class="break-all select-none"
-  >
-    …
-  </span>
-  <span
-    class="select-none"
-    style="padding: 0px 1px;"
-  >
-    /
-  </span>
-  <span
-    class="break-all select-none"
-  >
-    wow
-  </span>
-  <span
-    class="select-none"
-    style="padding: 0px 1px;"
-  >
-    /
-  </span>
-  <span
-    class="break-all select-none"
-  >
-    last
-  </span>
-  <span
-    class="select-none"
-    style="padding: 0px 1px;"
-  >
-    /
-  </span>
-  <span
-    class="break-all select-none"
-  >
-    two
-  </span>
+  …/wow/last/two
 </div>
 `;

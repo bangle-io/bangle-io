@@ -88,6 +88,7 @@ const config = async ({ command, mode }) => {
     define: {
       ...envVars.appEnvs,
     },
+
     server: {
       strictPort: true,
       hmr: hot,

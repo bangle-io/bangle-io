@@ -4,6 +4,7 @@ import type {
   BangleAppState,
 } from '@bangle.io/api';
 import { notification, workspace } from '@bangle.io/api';
+import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
 import type { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
@@ -37,7 +38,7 @@ export const updateGithubToken =
         notification.showNotification({
           uid: 'success-update-github-token',
           title: 'Github successfully token updated',
-          severity: 'success',
+          severity: Severity.SUCCESS,
         })(state, dispatch);
       }
 
@@ -49,7 +50,7 @@ export const updateGithubToken =
         uid: 'failure-update-github-token-no-wsname',
         title: 'Github token not updated',
         content: 'Please open a Github workspace before updating the token.',
-        severity: 'error',
+        severity: Severity.ERROR,
       })(state, dispatch);
     }
 
@@ -75,7 +76,7 @@ export function syncWithGithub(
       if (isSyncPending()(state)) {
         if (verboseNotifications) {
           notification.showNotification({
-            severity: 'warning',
+            severity: Severity.WARNING,
             title: 'Sync already in progress',
             uid: 'gh-sync-in-progress' + Date.now(),
             transient: true,
@@ -116,7 +117,7 @@ export function syncWithGithub(
 
       if (result.status === 'merge-conflict') {
         notification.showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           title: 'Error syncing',
           content: `Encountered ${result.count} merge conflict`,
           uid: 'sync error ' + Math.random(),
@@ -159,7 +160,7 @@ export function syncWithGithub(
         if (changeCount === 0) {
           if (verboseNotifications) {
             notification.showNotification({
-              severity: 'info',
+              severity: Severity.INFO,
               title: 'Everything upto date',
               uid: 'no-changes',
               transient: true,
@@ -168,7 +169,7 @@ export function syncWithGithub(
         }
         if (changeCount > 0) {
           notification.showNotification({
-            severity: 'info',
+            severity: Severity.INFO,
             title: `Synced ${changeCount} file${changeCount === 1 ? '' : 's'}`,
             uid: 'sync done ' + Math.random(),
             transient: true,
@@ -185,7 +186,7 @@ export function syncWithGithub(
       if (verboseNotifications) {
         console.debug('Sync already in progress for this workspace');
         notification.showNotification({
-          severity: 'warning',
+          severity: Severity.WARNING,
           title: 'Sync already in progress for this workspace',
           uid: 'gh-sync-in-progress' + Date.now(),
           transient: true,
@@ -206,7 +207,7 @@ export function syncWithGithub(
         handleError(error as any, store);
 
         notification.showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           title: 'Error syncing',
           content: error.message,
           uid: 'sync error ' + Math.random(),
@@ -285,7 +286,7 @@ export function discardLocalChanges(
     } catch (error) {
       if (error instanceof Error) {
         notification.showNotification({
-          severity: 'error',
+          severity: Severity.ERROR,
           title: 'Error discarding local changes',
           content: error.message,
           uid: 'discard error ' + Math.random(),

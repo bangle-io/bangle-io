@@ -2,7 +2,13 @@ import * as Sentry from '@sentry/browser';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import { BaseError, getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
+import {
+  assertNotUndefined,
+  BaseError,
+  getSelfType,
+  isWorkerGlobalScope,
+} from '@bangle.io/utils';
+import { getCollabManager } from '@bangle.io/worker-editor';
 
 import { abortableServices } from './abortable-services';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
@@ -60,6 +66,13 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
     async testThrowError() {
       throw new Error('[worker] I am a testThrowError');
+    },
+
+    async testRequestDeleteCollabInstance(wsPath: string) {
+      assertNotUndefined(storeRef.current, 'storeRef.current must be defined');
+      const collabManager = getCollabManager()(storeRef.current.state);
+      assertNotUndefined(collabManager, 'collabManager must be defined');
+      collabManager.requestDeleteInstance(wsPath);
     },
 
     async testHandlesBaseError(e: BaseError) {

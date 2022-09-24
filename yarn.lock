@@ -2046,6 +2046,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2342,6 +2343,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.31.3
     "@bangle.dev/trailing-node": 0.31.3
     "@bangle.dev/utils": 0.31.3
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
@@ -2511,6 +2513,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2619,8 +2622,8 @@ __metadata:
   resolution: "@bangle.io/extract-css-vars@workspace:tooling/extract-css-vars"
   dependencies:
     postcss: ^8.4.16
-    postcss-custom-properties: ^12.1.5
-    postcss-discard-comments: ^5.1.1
+    postcss-custom-properties: ^12.1.9
+    postcss-discard-comments: ^5.1.2
     prettier: ^2.7.1
     tslib: ^2.4.0
     typescript: ^4.7.3
@@ -3557,7 +3560,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     autoprefixer: ^10.4.4
     postcss: ^8.4.16
-    postcss-import: ^14.1.0
+    postcss-import: ^15.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
     tailwindcss: ^3.1.8
@@ -9619,9 +9622,9 @@ __metadata:
     plop: ^3.1.1
     pnp-webpack-plugin: ^1.7.0
     postcss: ^8.4.16
-    postcss-custom-properties: ^12.1.5
-    postcss-import: ^14.1.0
-    postcss-loader: ^6.2.1
+    postcss-custom-properties: ^12.1.9
+    postcss-import: ^15.0.0
+    postcss-loader: ^7.0.1
     postcss-nested: ^5.0.6
     prettier: ^2.7.1
     punycode: ^2.1.1
@@ -19619,23 +19622,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-properties@npm:^12.1.5":
-  version: 12.1.5
-  resolution: "postcss-custom-properties@npm:12.1.5"
+"postcss-custom-properties@npm:^12.1.9":
+  version: 12.1.9
+  resolution: "postcss-custom-properties@npm:12.1.9"
   dependencies:
     postcss-value-parser: ^4.2.0
   peerDependencies:
-    postcss: ^8.4
-  checksum: de43ef9fe8f61fc3d2eccb45e1d7359ce69908732bfd8e0155c5ad29b1caff2586f1e77a246c46748233b39020b41b4ea756da977ab5625449689bd953fa25b5
+    postcss: ^8.2
+  checksum: db4194665bc104fd05608dd282caa6298870ffe5ca9a6733a9b48f4191fcc1225c8ce08e4c883a0e5eaa7a68daa18f3d7d71690ab74854b37bf0305976256cdf
   languageName: node
   linkType: hard
 
-"postcss-discard-comments@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "postcss-discard-comments@npm:5.1.1"
+"postcss-discard-comments@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "postcss-discard-comments@npm:5.1.2"
   peerDependencies:
     postcss: ^8.2.15
-  checksum: 578c3cb3e8c6194cf8b5f2170abd6636bf2fe1ec9ba6e03431f5a7e4aae22c6c6605a5e8e2731e824df07c1188f3defa2f4ba28da4adafe45c068af1189f1f2c
+  checksum: abfd064ebc27aeaf5037643dd51ffaff74d1fa4db56b0523d073ace4248cbb64ffd9787bd6924b0983a9d0bd0e9bf9f10d73b120e50391dc236e0d26c812fa2a
   languageName: node
   linkType: hard
 
@@ -19658,6 +19661,19 @@ __metadata:
   peerDependencies:
     postcss: ^8.0.0
   checksum: cd45d406e90f67cdab9524352e573cc6b4462b790934a05954e929a6653ebd31288ceebc8ce3c3ed7117ae672d9ebbec57df0bceec0a56e9b259c2e71d47ca86
+  languageName: node
+  linkType: hard
+
+"postcss-import@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "postcss-import@npm:15.0.0"
+  dependencies:
+    postcss-value-parser: ^4.0.0
+    read-cache: ^1.0.0
+    resolve: ^1.1.7
+  peerDependencies:
+    postcss: ^8.0.0
+  checksum: e5048072514f33520348c0c5aaedb5db92da72188e72a7367c26a8d851b9cf92e56aeda30d9c7b4ed1a34f84a58959da1b4b27b4aa23d41fc0ce36efe00bf1d1
   languageName: node
   linkType: hard
 
@@ -19706,17 +19722,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-loader@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "postcss-loader@npm:6.2.1"
+"postcss-loader@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "postcss-loader@npm:7.0.1"
   dependencies:
     cosmiconfig: ^7.0.0
     klona: ^2.0.5
-    semver: ^7.3.5
+    semver: ^7.3.7
   peerDependencies:
     postcss: ^7.0.0 || ^8.0.1
     webpack: ^5.0.0
-  checksum: e40ae79c3e39df37014677a817b001bd115d8b10dedf53a07b97513d93b1533cd702d7a48831bdd77b9a9484b1ec84a5d4a723f80e83fb28682c75b5e65e8a90
+  checksum: 2a3cbcaaade598d4919824d384ae34ffbfc14a9c8db6cc3b154582356f4f44a1c9af9e731b81cf1947b089accf7d0ab7a0c51c717946985f89aa1708d2b4304d
   languageName: node
   linkType: hard
 

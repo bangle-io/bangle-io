@@ -3,6 +3,11 @@ import type { Node, PluginKey } from '@bangle.dev/pm';
 
 export type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
+export interface DialogType {
+  name: `dialog::${string}`;
+  ReactComponent: React.ComponentType;
+}
+
 export type SerialOperationNameType = `operation::${string}`;
 export interface SerialOperationType {
   name: SerialOperationNameType;

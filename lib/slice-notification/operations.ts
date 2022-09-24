@@ -1,7 +1,46 @@
-import { CORE_OPERATIONS_OPEN_GITHUB_ISSUE } from '@bangle.io/constants';
+import {
+  CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+  Severity,
+} from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
+import { generateUid } from '@bangle.io/utils';
 
+import type { EditorIssue } from './notification-slice';
 import { notificationSliceKey } from './notification-slice';
+
+export function getEditorIssue(wsPath: string) {
+  return notificationSliceKey.queryOp((state) => {
+    const { editorIssues } = notificationSliceKey.getSliceStateAsserted(state);
+
+    return editorIssues.find((issue) => issue.wsPath === wsPath);
+  });
+}
+
+export function setEditorIssue(value: Omit<EditorIssue, 'uid'>) {
+  return notificationSliceKey.op((state, dispatch) => {
+    const uid = generateUid();
+    dispatch({
+      name: 'action::@bangle.io/slice-notification:SET_EDITOR_ISSUE',
+      value: {
+        ...value,
+        uid,
+      },
+    });
+
+    return uid;
+  });
+}
+
+export function clearEditorIssue(wsPath: string) {
+  return notificationSliceKey.op((state, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
+      value: {
+        wsPath: wsPath,
+      },
+    });
+  });
+}
 
 export function showNotification(notification: NotificationPayloadType) {
   return notificationSliceKey.op((_, dispatch) => {
@@ -33,7 +72,7 @@ export function dismissNotification({
 export function clearAllNotifications() {
   return notificationSliceKey.op((_, dispatch) => {
     dispatch({
-      name: 'action::@bangle.io/slice-notification:CLEAR_ALL',
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL_NOTIFICATIONS',
       value: {},
     });
   });
@@ -46,7 +85,7 @@ export function uncaughtExceptionNotification(error: Error) {
     content += error.name + ':' + error.message;
 
     showNotification({
-      severity: 'error',
+      severity: Severity.ERROR,
       title: 'Bangle.io encountered a problem.',
       uid: `uncaughtExceptionNotification-` + error.name,
       buttons: [

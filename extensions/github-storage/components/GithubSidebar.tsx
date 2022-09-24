@@ -8,6 +8,7 @@ import {
   workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
+import { Severity } from '@bangle.io/constants';
 import type { LocalFileEntry } from '@bangle.io/remote-file-sync';
 import {
   ActionButton,
@@ -104,7 +105,7 @@ function ModifiedEntries({
           onPress={() => {
             notification.showNotification({
               title: 'Starting sync',
-              severity: 'info',
+              severity: Severity.INFO,
               uid: 'starting-sync' + Date.now(),
               transient: true,
             })(store.state, store.dispatch);

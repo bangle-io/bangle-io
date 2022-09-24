@@ -37,6 +37,15 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
+jest.mock('@bangle.io/slice-notification', () => {
+  const actual = jest.requireActual('@bangle.io/slice-notification');
+
+  return {
+    ...actual,
+    getEditorIssue: jest.fn(() => () => undefined),
+  };
+});
+
 jest.mock('@bangle.io/slice-editor-manager', () => {
   const actual = jest.requireActual('@bangle.io/slice-editor-manager');
 

@@ -3,7 +3,7 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { createBasicStore } from '@bangle.io/test-utils';
+import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { ActivitybarMobile } from './ActivitybarMobile';
 
@@ -19,9 +19,11 @@ const Template: Story<Parameters<typeof ActivitybarMobile>[0]> = (args) => {
   });
 
   return (
-    <div style={{ width: 400 }}>
-      <ActivitybarMobile {...args} bangleStore={store} />
-    </div>
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+      <div style={{ width: 400 }}>
+        <ActivitybarMobile {...args} />
+      </div>
+    </TestStoreProvider>
   );
 };
 

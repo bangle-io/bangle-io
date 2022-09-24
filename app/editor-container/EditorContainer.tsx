@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Editorbar } from '@bangle.io/activitybar';
+import { Editorbar, EditorIssue } from '@bangle.io/activitybar';
 import {
+  ui,
   useBangleStoreContext,
   useSerialOperationContext,
 } from '@bangle.io/api';
@@ -20,7 +21,6 @@ import {
   checkFileExists,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -86,32 +86,47 @@ export function EditorContainer({
   }
 
   return (
-    <Page
-      widescreen={widescreen}
-      headerBgColor="var(--BV-window-bg-color-0) "
-      stickyHeader={Boolean(widescreen)}
-      header={
-        widescreen &&
-        wsPath && (
-          <Editorbar
-            isActive={focusedEditorId === editorId}
-            wsPath={wsPath}
-            onClose={onClose}
-            showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
-            onPressSecondaryEditor={onPressSecondaryEditor}
-            isSplitEditorOpen={isSplitEditorOpen}
-            openNotesPalette={openNotesPalette}
-          />
-        )
-      }
+    <div
       className={cx(
         'B-editor-container_editor-container',
         'B-editor-container_editor-container-' + editorId,
         widescreen && 'overflow-y-scroll',
+        'w-full h-full flex flex-col items-center',
       )}
     >
-      {children}
-    </Page>
+      {wsPath && (
+        <div className={cx('w-full sticky top-0 z-10')}>
+          {widescreen && (
+            <Editorbar
+              isActive={focusedEditorId === editorId}
+              wsPath={wsPath}
+              onClose={onClose}
+              showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
+              onPressSecondaryEditor={onPressSecondaryEditor}
+              isSplitEditorOpen={isSplitEditorOpen}
+              openNotesPalette={openNotesPalette}
+            />
+          )}
+          <EditorIssue
+            wsPath={wsPath}
+            editorId={editorId}
+            className={widescreen ? '' : 'pt-3'}
+          />
+        </div>
+      )}
+
+      <div
+        className={cx('w-full')}
+        style={{
+          maxWidth: 'min(var(--BV-page-max-width), 100vw)',
+          padding: widescreen
+            ? 'var(--BV-window-page-padding)'
+            : 'var(--BV-window-page-mobile-padding)',
+        }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 

@@ -13,7 +13,6 @@ export * from './Input/TextField';
 export * from './InputPalette';
 export * from './ListPalette';
 export * from './LocationBreadCrumb';
-export * from './Page';
 export * from './PrettyKeybinding';
 export * from './Select/Select';
 export * from './Sidebar';

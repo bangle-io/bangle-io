@@ -6,6 +6,7 @@ import { RELEASE_ID } from '@bangle.io/config';
 import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+  Severity,
 } from '@bangle.io/constants';
 import {
   dismissNotification,
@@ -32,7 +33,7 @@ export function SWReloadPrompt() {
       updateShownOfflineReady(true);
       showNotification({
         uid: 'offline-' + RELEASE_ID,
-        severity: 'info',
+        severity: Severity.INFO,
         title: 'Bangle.io is now offline ready.',
       })(bangleStore.state, bangleStore.dispatch);
     }
@@ -65,7 +66,7 @@ export function SWReloadPrompt() {
   useEffect(() => {
     if (needRefresh) {
       showNotification({
-        severity: 'info',
+        severity: Severity.INFO,
         uid,
         title: '📦 Update available',
         content: `There is a new version of Bangle.io available, would you like to update?`,

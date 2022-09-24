@@ -22,6 +22,7 @@ export function ActivitybarButton({
   icon,
   hint,
   onPress,
+  text,
 }: {
   menu?: boolean;
   widescreen: boolean;
@@ -29,6 +30,7 @@ export function ActivitybarButton({
   isActive?: boolean;
   onPress: () => void;
   icon: any;
+  text?: string;
 }) {
   return (
     <ActionButton
@@ -46,7 +48,12 @@ export function ActivitybarButton({
       tooltipPlacement="right"
       autoFocus={false}
     >
-      <ButtonContent size="custom" icon={icon}></ButtonContent>
+      <ButtonContent
+        size="custom"
+        icon={icon}
+        text={text}
+        textClassName="truncate capitalize"
+      ></ButtonContent>
     </ActionButton>
   );
 }

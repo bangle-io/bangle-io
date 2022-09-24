@@ -6,6 +6,7 @@ export * from './help-fs';
 export * from './search';
 export * from './store';
 export * from './theme';
+export * from './ui';
 export * from './worker';
 export * from './workspace';
 export * from './write-disk';

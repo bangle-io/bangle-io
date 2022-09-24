@@ -35,7 +35,7 @@ const waitForEditorBarFocused = async (page: Page, editorId: EditorIdType) => {
     .waitFor();
 };
 
-test('shows currerntly focused editor', async ({ page }) => {
+test('shows currently focused editor', async ({ page }) => {
   const wsName = await createWorkspace(page);
   await createNewNote(page, wsName, 'test123');
 

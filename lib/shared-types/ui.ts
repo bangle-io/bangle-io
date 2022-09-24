@@ -1,10 +1,12 @@
+import type { Severity } from '@bangle.io/constants';
+
 import type { SerialOperationNameType } from './extension-registry';
 
 export interface NotificationPayloadType {
   uid: string;
   title: string;
   content?: string;
-  severity?: 'error' | 'warning' | 'info' | 'success';
+  severity?: Severity;
   // if notification needs to clear automatically
   transient?: boolean;
   // DO NOT use this field as it is internal
@@ -16,4 +18,9 @@ export interface NotificationPayloadType {
     // whether to dismiss the notification on clicking of the button
     dismissOnClick?: boolean;
   }>;
+}
+
+export interface GenericErrorModalMetadata {
+  title: string;
+  description: string;
 }
