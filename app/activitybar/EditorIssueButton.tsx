@@ -82,7 +82,7 @@ export function EditorIssueButton({
         onPress={() => {
           onPress();
         }}
-        ariaLabel="Notification"
+        ariaLabel="Editor encountered an issue"
       >
         <ButtonContent
           size="small"

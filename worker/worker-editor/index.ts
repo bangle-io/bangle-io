@@ -1,2 +1,2 @@
 export { workerEditorSliceKey } from './common';
-export { workerEditorSlice } from './worker-editor-slice';
+export { getCollabManager, workerEditorSlice } from './worker-editor-slice';

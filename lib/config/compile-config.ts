@@ -12,16 +12,20 @@ export const compileConfig = (): FinalConfig => {
 
     const isTest = transientConfig.build.nodeEnv === 'test';
 
-    // the e2e test runner will replace the following with the injected configuration.
-    let rawInjectedConfig = globalThis.__BANGLE_INJECTED_CONFIG__ || null;
+    try {
+      // the e2e test runner will replace the following with the injected configuration.
+      let rawInjectedConfig = globalThis.__BANGLE_INJECTED_CONFIG__ || null;
 
-    if (rawInjectedConfig) {
-      console.warn('injecting config!');
-      const injectedConfig = BangleConfig.fromJSONString(rawInjectedConfig);
-      !isTest && injectedConfig.print('injected-config');
-      transientConfig = transientConfig.merge(
-        BangleConfig.fromJSONString(rawInjectedConfig),
-      );
+      if (rawInjectedConfig) {
+        console.warn('injecting config!');
+        const injectedConfig = BangleConfig.fromJSONString(rawInjectedConfig);
+        !isTest && injectedConfig.print('injected-config');
+        transientConfig = transientConfig.merge(
+          BangleConfig.fromJSONString(rawInjectedConfig),
+        );
+      }
+    } catch (error) {
+      console.error(error);
     }
 
     !isTest && transientConfig.print();
