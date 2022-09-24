@@ -1,6 +1,6 @@
-import type { SerialOperationNameType } from './extension-registry';
+import type { Severity } from '@bangle.io/constants';
 
-export type Severity = 'error' | 'warning' | 'info' | 'success';
+import type { SerialOperationNameType } from './extension-registry';
 
 export interface NotificationPayloadType {
   uid: string;
