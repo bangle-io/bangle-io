@@ -80,7 +80,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       </span>
     </div>
     <div
-      className="flex flex-1 items-center justify-center"
+      className="flex flex-1"
     />
     <div
       className="flex flex-row items-center flex-none"
@@ -248,7 +248,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
       </span>
     </div>
     <div
-      className="flex flex-1 items-center justify-center"
+      className="flex flex-1"
     />
     <div
       className="flex flex-row items-center flex-none"
@@ -348,11 +348,11 @@ exports[`Storyshots activitybar/EditorIssueButton Vanilla 1`] = `
   }
 >
   <div
-    className="B-activitybar_notification flex-row flex-1 flex justify-start ml-1 sm:ml-3"
+    className="B-activitybar_notification"
   >
     <button
       aria-label="Notification"
-      className="B-activitybar_notification-button B-activitybar_notification-button-small B-ui-bangle-button_button p-1  transition-all duration-100 "
+      className="B-activitybar_notification-button  B-ui-bangle-button_button p-1  transition-all duration-100 "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -414,7 +414,12 @@ exports[`Storyshots activitybar/Editorbar Branching 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+    style={
+      {
+        "backgroundColor": "var(--BV-window-bg-color-0)",
+      }
+    }
   >
     <div
       aria-label="note path"
@@ -479,7 +484,12 @@ exports[`Storyshots activitybar/Editorbar Showing Split Editor 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+    style={
+      {
+        "backgroundColor": "var(--BV-window-bg-color-0)",
+      }
+    }
   >
     <div
       aria-label="note path"
@@ -581,7 +591,12 @@ exports[`Storyshots activitybar/Editorbar Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+    style={
+      {
+        "backgroundColor": "var(--BV-window-bg-color-0)",
+      }
+    }
   >
     <div
       aria-label="note path"
@@ -646,7 +661,12 @@ exports[`Storyshots activitybar/Editorbar With Editor Issue 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+    style={
+      {
+        "backgroundColor": "var(--BV-window-bg-color-0)",
+      }
+    }
   >
     <div
       aria-label="note path"
@@ -657,63 +677,7 @@ exports[`Storyshots activitybar/Editorbar With Editor Issue 1`] = `
     </div>
     <div
       className="flex flex-row flex-1"
-    >
-      <div
-        className="B-activitybar_notification flex-row flex-1 flex justify-start ml-1 sm:ml-3"
-      >
-        <button
-          aria-label="Notification"
-          className="B-activitybar_notification-button B-activitybar_notification-button-small B-ui-bangle-button_button p-1  transition-all duration-100 "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-              "border": "1px solid var(--BV-severity-error-color)",
-              "color": "var(--BV-ui-bangle-button-color)",
-            }
-          }
-          type="button"
-        >
-          <svg
-            className="w-5 h-5 BU_has-text ml-1 w-4 h-4 "
-            fill="none"
-            stroke="currentColor"
-            style={
-              {
-                "color": "var(--BV-severity-error-color)",
-              }
-            }
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-          <span
-            className="capitalize truncate text-sm  BU_has-icon "
-          >
-            This is a test
-          </span>
-        </button>
-      </div>
-    </div>
+    />
     <div
       className="flex flex-row"
     >

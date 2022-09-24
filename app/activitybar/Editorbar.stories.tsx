@@ -56,23 +56,3 @@ ShowingSplitEditor.args = {
   isSplitEditorOpen: true,
   openNotesPalette: () => {},
 };
-export const WithEditorIssue = Template.bind({});
-
-WithEditorIssue.args = {
-  wsPath: 'test-ws:one/own.md',
-  isActive: true,
-  showSplitEditor: true,
-  onClose: () => {},
-  onPressSecondaryEditor: () => {},
-  isSplitEditorOpen: true,
-  openNotesPalette: () => {},
-  onPressEditorIssue: () => {},
-  editorIssue: {
-    title: 'This is a test',
-    severity: 'error',
-    serialOperation: 'operation::something',
-    uid: '123',
-    description: 'something went wrong',
-    wsPath: 'test:one.md',
-  },
-};

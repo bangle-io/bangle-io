@@ -63,17 +63,21 @@ export function EditorIssueButton({
 
   text = editorIssue.title;
 
-  if (text.length > 24) {
-    text = text.slice(0, 24) + '...';
+  if (text.length > 50) {
+    text = text.slice(0, 50) + '...';
   }
 
   return (
-    <div className="B-activitybar_notification flex-row flex-1 flex justify-start ml-1 sm:ml-3">
+    <div className="B-activitybar_notification">
       <ActionButton
-        className="B-activitybar_notification-button B-activitybar_notification-button-small"
+        className="B-activitybar_notification-button "
         isQuiet={!Boolean(serialOperation)}
         style={{
           border: `1px solid ${SeverityLookup[severity]().color}`,
+          backgroundColor:
+            severity === 'error'
+              ? 'var(--BV-error-bg-color)'
+              : 'var(--BV-window-tooltip-bg-color)',
         }}
         onPress={() => {
           onPress();

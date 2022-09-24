@@ -14,6 +14,7 @@ export interface EditorIssue {
   wsPath: string;
   severity: Severity;
   serialOperation?: SerialOperationNameType;
+  dismissOnPress?: boolean;
 }
 
 export type GetActionValue<R> = ExtractActionValue<NotificationAction, R>;
@@ -201,6 +202,7 @@ export function notificationSlice() {
             uid: action.value.uid,
             severity: action.value.severity,
             serialOperation: action.value.serialOperation ?? null,
+            dismissOnPress: action.value.dismissOnPress,
           }),
           (serialVal) => ({
             title: serialVal.title,
@@ -209,6 +211,7 @@ export function notificationSlice() {
             uid: serialVal.uid,
             severity: serialVal.severity,
             serialOperation: serialVal.serialOperation ?? undefined,
+            dismissOnPress: serialVal.dismissOnPress,
           }),
         );
       },

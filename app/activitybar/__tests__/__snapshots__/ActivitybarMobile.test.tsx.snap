@@ -50,7 +50,7 @@ exports[`renders mobile view 1`] = `
         </span>
       </div>
       <div
-        class="flex flex-1 items-center justify-center"
+        class="flex flex-1"
       />
       <div
         class="flex flex-row items-center flex-none"

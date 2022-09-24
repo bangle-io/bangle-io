@@ -18,8 +18,6 @@ test('renders correctly', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-        onPressEditorIssue={jest.fn()}
-        editorIssue={undefined}
       />
     </div>,
   );
@@ -42,8 +40,6 @@ test('renders correctly when active', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-        onPressEditorIssue={jest.fn()}
-        editorIssue={undefined}
       />
     </div>,
   );
@@ -64,8 +60,6 @@ test('truncates large wsPath', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-        onPressEditorIssue={jest.fn()}
-        editorIssue={undefined}
       />
     </div>,
   );
@@ -85,8 +79,6 @@ test('dispatches togglePaletteType on clicking wsPath', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={true}
-        onPressEditorIssue={jest.fn()}
-        editorIssue={undefined}
       />
     </div>,
   );
@@ -107,8 +99,6 @@ test('renders splitscreen', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={true}
-        onPressEditorIssue={jest.fn()}
-        editorIssue={undefined}
       />
     </div>,
   );
@@ -127,8 +117,6 @@ test('renders splitscreen', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-        onPressEditorIssue={jest.fn()}
-        editorIssue={undefined}
       />
     </div>,
   );

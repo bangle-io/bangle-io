@@ -4,7 +4,7 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
     >
       <div
         aria-label="note path"
@@ -44,7 +44,7 @@ exports[`renders correctly when active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper "
+      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
     >
       <div
         aria-label="note path"

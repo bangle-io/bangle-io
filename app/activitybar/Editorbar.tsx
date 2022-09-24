@@ -41,7 +41,12 @@ export function Editorbar({
   }
 
   return (
-    <div className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper ">
+    <div
+      className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+      style={{
+        backgroundColor: 'var(--BV-window-bg-color-0)',
+      }}
+    >
       <div
         aria-label="note path"
         className={cx(

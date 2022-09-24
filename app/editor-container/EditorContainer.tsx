@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Editorbar } from '@bangle.io/activitybar';
+import { Editorbar, EditorIssue } from '@bangle.io/activitybar';
 import {
   ui,
   useBangleStoreContext,
@@ -16,13 +16,11 @@ import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
-import { getEditorIssue } from '@bangle.io/slice-notification';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   checkFileExists,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -64,27 +62,6 @@ export function EditorContainer({
     );
   }, [bangleStore]);
 
-  const editorIssue = wsPath
-    ? getEditorIssue(wsPath)(bangleStore.state)
-    : undefined;
-
-  const onPressEditorIssue = useCallback(() => {
-    if (!editorIssue) {
-      return;
-    }
-
-    const { serialOperation } = editorIssue;
-
-    if (serialOperation) {
-      dispatchSerialOperation({ name: serialOperation });
-    } else {
-      ui.showGenericErrorModal({
-        title: editorIssue.title,
-        description: editorIssue.description,
-      })(bangleStore.state, bangleStore.dispatch);
-    }
-  }, [bangleStore, dispatchSerialOperation, editorIssue]);
-
   let children;
 
   if (noteExists === 'NOT_FOUND') {
@@ -109,34 +86,47 @@ export function EditorContainer({
   }
 
   return (
-    <Page
-      widescreen={widescreen}
-      headerBgColor="var(--BV-window-bg-color-0) "
-      stickyHeader={Boolean(widescreen)}
-      header={
-        widescreen &&
-        wsPath && (
-          <Editorbar
-            editorIssue={editorIssue}
-            isActive={focusedEditorId === editorId}
-            wsPath={wsPath}
-            onClose={onClose}
-            showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
-            onPressSecondaryEditor={onPressSecondaryEditor}
-            isSplitEditorOpen={isSplitEditorOpen}
-            openNotesPalette={openNotesPalette}
-            onPressEditorIssue={onPressEditorIssue}
-          />
-        )
-      }
+    <div
       className={cx(
         'B-editor-container_editor-container',
         'B-editor-container_editor-container-' + editorId,
         widescreen && 'overflow-y-scroll',
+        'w-full h-full flex flex-col items-center',
       )}
     >
-      {children}
-    </Page>
+      {wsPath && (
+        <div className={cx('w-full sticky top-0 z-10')}>
+          {widescreen && (
+            <Editorbar
+              isActive={focusedEditorId === editorId}
+              wsPath={wsPath}
+              onClose={onClose}
+              showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
+              onPressSecondaryEditor={onPressSecondaryEditor}
+              isSplitEditorOpen={isSplitEditorOpen}
+              openNotesPalette={openNotesPalette}
+            />
+          )}
+          <EditorIssue
+            wsPath={wsPath}
+            editorId={editorId}
+            className={widescreen ? '' : 'pt-3'}
+          />
+        </div>
+      )}
+
+      <div
+        className={cx('w-full')}
+        style={{
+          maxWidth: 'min(var(--BV-page-max-width), 100vw)',
+          padding: widescreen
+            ? 'var(--BV-window-page-padding)'
+            : 'var(--BV-window-page-mobile-padding)',
+        }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
