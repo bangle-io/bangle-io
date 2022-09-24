@@ -89,7 +89,7 @@ export type UiContextAction =
     }
   | { name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR'; value: {} };
 
-export const initialState: UISliceState = {
+export const initialUISliceState: UISliceState = {
   // UI
   changelogHasUpdates: false,
   dialogName: undefined,
@@ -114,7 +114,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
     key: uiSliceKey,
     state: {
       init: () => {
-        return Object.assign({}, initialState);
+        return Object.assign({}, initialUISliceState);
       },
       apply: (action, state) => {
         log({ action, state });
@@ -255,7 +255,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
 
       stateToJSON(value) {
         return {
-          ...initialState,
+          ...initialUISliceState,
           notifications: [],
           sidebar: value.sidebar,
           theme: value.theme,
@@ -264,7 +264,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
       },
 
       stateFromJSON(_, value: any) {
-        const state: UISliceState = Object.assign({}, initialState, {
+        const state: UISliceState = Object.assign({}, initialUISliceState, {
           sidebar: value.sidebar,
           theme: value.theme || getThemePreference(),
           noteSidebar: value.noteSidebar,

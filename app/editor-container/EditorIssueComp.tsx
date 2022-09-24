@@ -11,6 +11,28 @@ import {
 } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
+export function EditorIssueComp({
+  className,
+  onPress,
+  editorIssue,
+}: {
+  className?: string;
+  onPress: () => void;
+  editorIssue: EditorIssue;
+}) {
+  return (
+    <div className={cx('relative w-full', className)}>
+      <div className="absolute inset-x-0 mx-auto rounded-md w-full flex flex-col gap-1 items-center">
+        <EditorIssueInner
+          editorIssue={editorIssue}
+          widescreen={false}
+          onPress={onPress}
+        />
+      </div>
+    </div>
+  );
+}
+
 const SeverityLookup = {
   [Severity.ERROR]: () => ({
     component: (
@@ -50,7 +72,7 @@ const SeverityLookup = {
   }),
 };
 
-export function EditorIssueButton({
+function EditorIssueInner({
   editorIssue,
   widescreen,
   onPress,

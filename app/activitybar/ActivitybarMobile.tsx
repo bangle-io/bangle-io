@@ -2,10 +2,13 @@ import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
-import type { SidebarType } from '@bangle.io/extension-registry';
-import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import { toggleEditing } from '@bangle.io/slice-editor-manager';
-import { togglePaletteType } from '@bangle.io/slice-ui';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import {
+  toggleEditing,
+  useEditorManagerContext,
+} from '@bangle.io/slice-editor-manager';
+import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   EditIcon,
   FileDocumentIcon,
@@ -16,22 +19,21 @@ import { resolvePath } from '@bangle.io/ws-path';
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
-export function ActivitybarMobile({
-  activeSidebar,
-  editingAllowed,
-  operationKeybindings,
-  primaryWsPath,
-  sidebarItems,
-  wsName,
-}: {
-  activeSidebar?: string;
-  editingAllowed: boolean;
-  operationKeybindings: SerialOperationKeybindingMapping;
-  primaryWsPath?: string;
-  sidebarItems?: SidebarType[];
-  wsName?: string;
-}) {
+export function ActivitybarMobile() {
+  const extensionRegistry = useExtensionRegistryContext();
   const bangleStore = useBangleStoreContext();
+  const operationKeybindings =
+    extensionRegistry.getSerialOperationKeybindingMapping();
+  const { wsName, openedWsPaths } = useWorkspaceContext();
+  const { primaryWsPath } = openedWsPaths;
+  const { editingAllowed } = useEditorManagerContext();
+
+  const sidebarItems = extensionRegistry.getSidebars().filter((r) => {
+    return r.activitybarIconShow
+      ? r.activitybarIconShow(wsName, bangleStore.state)
+      : true;
+  });
+  const { sidebar: activeSidebar } = useUIManagerContext();
 
   return (
     <>
@@ -90,7 +92,7 @@ export function ActivitybarMobile({
             <ActivitybarOptionsDropdown
               operationKeybindings={operationKeybindings}
               sidebarItems={sidebarItems}
-              activeSidebar={activeSidebar}
+              activeSidebar={activeSidebar || undefined}
               widescreen={false}
             />
           </div>

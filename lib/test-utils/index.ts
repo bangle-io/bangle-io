@@ -17,4 +17,5 @@ export * from './setup-mock-message-channel';
 export * from './test-memory-history-slice';
 export { TestStoreProvider } from './TestStoreProvider';
 export { waitForExpect };
+export type { TestInitialSliceStateOverride } from './create-basic-store';
 export { WorkspaceSliceState } from '@bangle.io/slice-workspace';

@@ -1,3 +1,2 @@
 export { Activitybar } from './Activitybar';
-export { Editorbar } from './Editorbar';
-export { EditorIssue } from './EditorIssue';
+export { ActivitybarMobile } from './ActivitybarMobile';

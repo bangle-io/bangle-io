@@ -3,12 +3,10 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
-
 import { Editorbar } from './Editorbar';
 
 export default {
-  title: 'activitybar/Editorbar',
+  title: 'editor-container/Editorbar',
   component: Editorbar,
   argTypes: {},
 };

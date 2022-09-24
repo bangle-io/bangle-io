@@ -1,6 +1,6 @@
 export {
   clearAllNotifications,
-  clearEditorIssue,
+  clearEditorIssueByWsPath,
   dismissNotification,
   getEditorIssue,
   notificationSliceKey,

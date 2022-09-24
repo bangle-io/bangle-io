@@ -27,7 +27,7 @@ export type NotificationAction =
   | {
       name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE';
       value: {
-        wsPath: string;
+        uid: string;
       };
     }
   | {
@@ -66,18 +66,16 @@ export function notificationSlice() {
       apply(action, state) {
         switch (action.name) {
           case 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE': {
-            const { wsPath } = action.value;
+            const { uid } = action.value;
             const { editorIssues } = state;
 
-            if (!editorIssues.find((issue) => issue.wsPath === wsPath)) {
+            if (!editorIssues.find((issue) => issue.uid === uid)) {
               return state;
             }
 
             return {
               ...state,
-              editorIssues: editorIssues.filter(
-                (issue) => issue.wsPath !== wsPath,
-              ),
+              editorIssues: editorIssues.filter((issue) => issue.uid !== uid),
             };
           }
 
@@ -182,10 +180,10 @@ export function notificationSlice() {
         return notificationSliceKey.actionSerializer(
           actionName,
           (action) => ({
-            wsPath: action.value.wsPath,
+            uid: action.value.uid,
           }),
           (serialVal) => ({
-            wsPath: serialVal.wsPath,
+            uid: serialVal.uid,
           }),
         );
       },

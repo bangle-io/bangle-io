@@ -31,12 +31,26 @@ export function setEditorIssue(value: Omit<EditorIssue, 'uid'>) {
   });
 }
 
-export function clearEditorIssue(wsPath: string) {
+export function clearEditorIssueByWsPath(wsPath: string) {
+  return notificationSliceKey.op((state, dispatch) => {
+    const { editorIssues } = notificationSliceKey.getSliceStateAsserted(state);
+
+    const match = editorIssues.find((issue) => issue.wsPath === wsPath);
+
+    if (!match) {
+      return false;
+    }
+
+    return clearEditorIssue(match.uid)(state, dispatch);
+  });
+}
+
+export function clearEditorIssue(uid: string) {
   return notificationSliceKey.op((state, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
       value: {
-        wsPath: wsPath,
+        uid,
       },
     });
   });

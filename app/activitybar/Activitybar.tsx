@@ -2,71 +2,51 @@ import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
-import type { SidebarType } from '@bangle.io/extension-registry';
-import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
-import { goToWorkspaceHomeRoute } from '@bangle.io/slice-workspace';
+import {
+  goToWorkspaceHomeRoute,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 
 import { ActivitybarButton } from './ActivitybarButton';
-import { ActivitybarMobile } from './ActivitybarMobile';
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
-export function Activitybar({
-  wsName,
-  sidebars,
-  primaryWsPath,
-  operationKeybindings,
-}: {
-  wsName?: string;
-  primaryWsPath?: string;
-  sidebars: SidebarType[];
-  operationKeybindings: SerialOperationKeybindingMapping;
-}) {
+export function Activitybar() {
+  const extensionRegistry = useExtensionRegistryContext();
+  const operationKeybindings =
+    extensionRegistry.getSerialOperationKeybindingMapping();
+  const { wsName } = useWorkspaceContext();
+  const sidebars = extensionRegistry.getSidebars();
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
   const bangleStore = useBangleStoreContext();
 
-  const sidebarItems = sidebars.filter((r) => {
-    return r.activitybarIconShow
-      ? r.activitybarIconShow(wsName, bangleStore.state)
-      : true;
-  });
+  const sideBarComponents = sidebars
+    .filter((r) => {
+      return r.activitybarIconShow
+        ? r.activitybarIconShow(wsName, bangleStore.state)
+        : true;
+    })
+    .map((r) => {
+      const active = sidebar === r.name;
 
-  const sideBarComponents = sidebarItems.map((r) => {
-    const active = sidebar === r.name;
-
-    return (
-      <ActivitybarButton
-        isActive={active}
-        hint={r.hint}
-        icon={React.cloneElement(r.activitybarIcon, {
-          className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
-        })}
-        key={r.name}
-        widescreen={widescreen}
-        onPress={() => {
-          changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
-        }}
-      />
-    );
-  });
-
-  const { editingAllowed } = useEditorManagerContext();
-
-  if (!widescreen) {
-    return (
-      <ActivitybarMobile
-        editingAllowed={editingAllowed}
-        operationKeybindings={operationKeybindings}
-        wsName={wsName}
-        primaryWsPath={primaryWsPath}
-        sidebarItems={sidebarItems}
-        activeSidebar={sidebar || undefined}
-      />
-    );
-  }
+      return (
+        <ActivitybarButton
+          isActive={active}
+          hint={r.hint}
+          icon={React.cloneElement(r.activitybarIcon, {
+            className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
+          })}
+          key={r.name}
+          widescreen={widescreen}
+          onPress={() => {
+            changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
+          }}
+        />
+      );
+    });
 
   return (
     <div className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen">

@@ -4,23 +4,21 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import type { BangleApplicationStore } from '@bangle.io/api';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
-  initialState,
-  togglePaletteType,
-  useUIManagerContext,
-} from '@bangle.io/slice-ui';
-import { createBasicTestStore, TestStoreProvider } from '@bangle.io/test-utils';
+  createBasicTestStore,
+  setupMockWorkspaceWithNotes,
+  TestStoreProvider,
+} from '@bangle.io/test-utils';
 
-import { Activitybar } from '../Activitybar';
+import { ActivitybarMobile } from '../ActivitybarMobile';
 
 jest.mock('@bangle.io/slice-ui', () => {
   const otherThings = jest.requireActual('@bangle.io/slice-ui');
 
   return {
     ...otherThings,
-    useUIManagerContext: jest.fn(() => ({})),
-    togglePaletteType: jest.fn(() => () => {}),
+    togglePaletteType: jest.fn(() => jest.fn(() => {})),
   };
 });
 
@@ -28,34 +26,17 @@ let togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
   typeof togglePaletteType
 >;
 
-let useUIManagerContextMock = jest.mocked(useUIManagerContext);
-let store: BangleApplicationStore;
-
-beforeEach(() => {
-  ({ store } = createBasicTestStore({
-    extensions: [],
-    useEditorCoreExtension: true,
-    useEditorManagerSlice: true,
-  }));
-
-  useUIManagerContextMock.mockImplementation(() => {
-    return {
-      ...initialState,
-      changelogHasUpdates: false,
-      sidebar: undefined,
-      dispatch: () => {},
-      widescreen: false,
-      bangleStore: store,
-    };
-  });
-  togglePaletteTypeMock.mockImplementation(() => () => {});
-});
-
 test('renders mobile view', () => {
+  const { store } = createBasicTestStore({
+    extensions: [],
+    useEditorManagerSlice: true,
+    useUISlice: true,
+  });
+
   let result = render(
     <div>
       <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
-        <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
+        <ActivitybarMobile></ActivitybarMobile>
       </TestStoreProvider>
     </div>,
   );
@@ -63,39 +44,57 @@ test('renders mobile view', () => {
   expect(result.container).toMatchSnapshot();
 });
 
-test('renders primaryWsPath', () => {
+test('renders primaryWsPath', async () => {
+  const { store } = createBasicTestStore({
+    extensions: [],
+    useEditorManagerSlice: true,
+    useUISlice: true,
+  });
+
+  await setupMockWorkspaceWithNotes(store, 'my-thing', [
+    ['my-thing:wow1.md', 'wow1'],
+    // last created file will be the primaryWsPath
+    ['my-thing:wow2.md', 'wow2'],
+  ]);
+
   let result = render(
     <div>
       <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
-        <Activitybar
-          operationKeybindings={{}}
-          sidebars={[]}
-          primaryWsPath={'my-thing:wow.md'}
-        ></Activitybar>
+        <ActivitybarMobile />
       </TestStoreProvider>
     </div>,
   );
 
-  expect(result.container.innerHTML).toContain('wow');
+  expect(result.container.innerHTML).toContain('wow2');
 });
 
-test('dispatches operation', () => {
-  const dispatch = jest.fn();
-  togglePaletteTypeMock.mockImplementation(() => dispatch);
+test('dispatches operation', async () => {
+  const { store } = createBasicTestStore({
+    extensions: [],
+    useEditorManagerSlice: true,
+    useUISlice: true,
+  });
+
+  await setupMockWorkspaceWithNotes(store, 'my-thing', [
+    ['my-thing:wow1.md', 'wow1'],
+    // last created file will be the primaryWsPath
+    ['my-thing:wow2.md', 'wow2'],
+  ]);
 
   let result = render(
     <div>
       <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
-        <Activitybar
-          operationKeybindings={{}}
-          sidebars={[]}
-          primaryWsPath={'my-thing:wow.md'}
-        />
+        <ActivitybarMobile />
       </TestStoreProvider>
     </div>,
   );
   act(() => {
     fireEvent.click(result.getByLabelText('See files palette'));
   });
-  expect(dispatch).toBeCalledTimes(1);
+
+  expect(togglePaletteTypeMock).toBeCalledTimes(1);
+  expect(togglePaletteTypeMock).nthCalledWith(
+    1,
+    'bangle-io-core-palettes/notes',
+  );
 });

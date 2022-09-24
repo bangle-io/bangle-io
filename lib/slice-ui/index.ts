@@ -10,7 +10,7 @@ export {
 export { useUIManagerContext } from './ui-context';
 export {
   type UISliceState,
-  initialState,
+  initialUISliceState as initialState,
   uiSlice,
   uiSliceKey,
 } from './ui-slice';
