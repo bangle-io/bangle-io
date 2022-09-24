@@ -176,7 +176,7 @@ describe('editor issues', () => {
     state = state.applyAction({
       name: 'action::@bangle.io/slice-notification:CLEAR_EDITOR_ISSUE',
       value: {
-        wsPath: 'test:one.md',
+        uid: 'test-1',
       },
     });
 
