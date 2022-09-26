@@ -1,4 +1,5 @@
 import { SliceKey } from '@bangle.io/api';
+import { acquireLockIfAvailable } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
 
@@ -27,13 +28,13 @@ export const UPDATE_GITHUB_TOKEN_DIALOG =
   'dialog::@bangle.io/github-storage:UPDATE_GITHUB_TOKEN_DIALOG';
 export const ghSliceKey = new SliceKey<
   {
-    syncState: boolean;
+    isSyncing: boolean;
     githubWsName: string | undefined;
   },
   | {
       name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
       value: {
-        syncState: boolean;
+        isSyncing: boolean;
       };
     }
   | {
@@ -49,4 +50,37 @@ export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';
 export interface GithubWsMetadata {
   owner: string;
   branch: string;
+}
+
+export async function getGithubSyncLockWrapper<
+  R extends (...args: any[]) => Promise<any>,
+>(
+  wsName: string,
+  cb: R,
+): Promise<
+  | {
+      lockAcquired: true;
+      result: Awaited<ReturnType<R>>;
+    }
+  | {
+      lockAcquired: false;
+      result: undefined;
+    }
+> {
+  let releaseLock = await acquireLockIfAvailable(LOCK_NAME + ':' + wsName);
+
+  if (!releaseLock) {
+    return { lockAcquired: false, result: undefined };
+  }
+
+  try {
+    let result = await cb();
+
+    return {
+      lockAcquired: true,
+      result,
+    };
+  } finally {
+    await releaseLock();
+  }
 }

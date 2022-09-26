@@ -13,7 +13,7 @@ import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import GithubStorageExt from '../index';
-import { discardLocalChanges, syncWithGithub } from '../operations';
+import { discardLocalChanges, syncRunner } from '../operations';
 
 jest.setTimeout(30000);
 jest.retryTimes(2);
@@ -42,7 +42,9 @@ if (!githubOwner) {
 
 let githubWsMetadata: GithubWsMetadata;
 let defaultNoteWsPath: string;
-let wsName: string, store: BangleApplicationStore;
+let wsName: string,
+  store: BangleApplicationStore,
+  getAction: (name: string | RegExp) => any[];
 let abortController = new AbortController();
 let getTree = github.getRepoTree();
 const getLocalEntry = async (wsPath: string) => {
@@ -96,7 +98,7 @@ beforeEach(async () => {
     500,
   );
 
-  ({ store } = createBasicTestStore({
+  ({ store, getAction } = createBasicTestStore({
     extensions: [GithubStorageExt],
     onError: (err) => {
       throw err;
@@ -132,19 +134,11 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const pullChanges = async () => {
   notification.clearAllNotifications()(store.state, store.dispatch);
-  let result = await syncWithGithub(
-    wsName,
-    abortController.signal,
-    localFileEntryManager,
-  )(store.state, store.dispatch, store);
-
-  if (result === 'merge-conflict') {
-    throw new Error('Encountered conflicts');
-  }
-
-  if (!result) {
-    throw new Error('Unexpected state of sync');
-  }
+  const result = await syncRunner(wsName, abortController.signal)(
+    store.state,
+    store.dispatch,
+    store,
+  );
 
   return result;
 };
@@ -468,9 +462,23 @@ describe('pull changes', () => {
         deletions: [],
       });
 
-      await expect(pullChanges()).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Encountered conflicts"`,
-      );
+      await pullChanges();
+
+      await waitForExpect(() => {
+        expect(
+          getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION'),
+        ).toHaveLength(1);
+      });
+
+      expect(
+        getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION')[0]
+          .value,
+      ).toMatchObject({
+        content: 'Encountered 1 merge conflict',
+        severity: 'error',
+        title: 'Github sync failed',
+        transient: false,
+      });
 
       // file should still be able to read the new changes
 
@@ -738,7 +746,24 @@ describe('new note creation', () => {
     );
 
     await sleep(0);
-    await expect(pullChanges()).rejects.toThrowError('Encountered conflicts');
+
+    await pullChanges();
+
+    await waitForExpect(() => {
+      expect(
+        getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION'),
+      ).toHaveLength(1);
+    });
+
+    expect(
+      getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION')[0]
+        .value,
+    ).toMatchObject({
+      content: 'Encountered 1 merge conflict',
+      severity: 'error',
+      title: 'Github sync failed',
+      transient: false,
+    });
 
     // the local note stays as is
     expect(await getNoteAsString(wsPath)).toEqual(
@@ -766,11 +791,7 @@ describe('discard local changes', () => {
       `doc(paragraph("test-2 hello I am modified"))`,
     );
 
-    await discardLocalChanges(wsName, localFileEntryManager)(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await discardLocalChanges(wsName)(store.state, store.dispatch, store);
 
     expect(await getNoteAsString(wsPath)).toEqual(undefined);
   });
@@ -811,11 +832,7 @@ describe('discard local changes', () => {
       'I am modified',
     );
 
-    await discardLocalChanges(wsName, localFileEntryManager)(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await discardLocalChanges(wsName)(store.state, store.dispatch, store);
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1',
@@ -855,11 +872,7 @@ describe('discard local changes', () => {
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toBe(undefined);
 
-    await discardLocalChanges(wsName, localFileEntryManager)(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await discardLocalChanges(wsName)(store.state, store.dispatch, store);
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1',

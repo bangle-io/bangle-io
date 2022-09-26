@@ -215,7 +215,7 @@ export async function acquireLockIfAvailable(
   }
 
   const timer = setTimeout(() => {
-    console.error(`Lock "${name}" for too long! This is likely a bug.`);
+    throw new Error(`Lock "${name}" held for too long! This is likely a bug.`);
   }, 60 * 1000);
 
   // This function should be called when the release of lock is needed

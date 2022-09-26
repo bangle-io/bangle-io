@@ -20,10 +20,9 @@ import { NewGithubWorkspaceTokenDialog } from './components/NewGithubWorkspaceDi
 import { NewGithubWorkspaceRepoPickerDialog } from './components/NewGithubWorkspaceRepoPickerDialog';
 import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
-import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
-import { syncWithGithub } from './operations';
+import { syncRunner } from './operations';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -84,25 +83,21 @@ const extension = Extension.create({
       },
     ],
     operationHandler() {
-      let abortController = new AbortController();
-
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
             case OPERATION_SYNC_GITHUB_CHANGES: {
-              abortController.abort();
-              abortController = new AbortController();
               const wsName = workspace.getWsName()(store.state);
 
               if (!wsName) {
                 return false;
               }
 
-              syncWithGithub(
-                wsName,
-                abortController.signal,
-                localFileEntryManager,
-              )(store.state, store.dispatch, store);
+              syncRunner(wsName, new AbortController().signal, true)(
+                store.state,
+                store.dispatch,
+                store,
+              );
 
               return true;
             }

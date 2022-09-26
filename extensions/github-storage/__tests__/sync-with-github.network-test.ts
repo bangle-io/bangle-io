@@ -13,8 +13,8 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
+import { ghSyncFinal } from '../github-sync';
 import GithubStorageExt from '../index';
-import { pushLocalChanges } from '../sync-with-github';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -163,17 +163,11 @@ const push = async (retainedWsPaths = new Set<string>()) => {
     githubToken,
   };
 
-  return pushLocalChanges({
-    abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager,
-    ghConfig: config,
-    retainedWsPaths,
-    tree: await getTree({
-      abortSignal: abortController.signal,
-      config: config,
-      wsName,
-    }),
+  return ghSyncFinal({
     wsName,
+    config: config,
+    retainedWsPaths,
+    abortSignal: abortController.signal,
   });
 };
 

@@ -3,8 +3,7 @@ import { abortableSetInterval } from '@bangle.io/utils';
 
 import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { handleError } from './error-handling';
-import { localFileEntryManager } from './file-entry-manager';
-import { syncWithGithub } from './operations';
+import { syncRunner } from './operations';
 
 const LOG = true;
 const debug = LOG
@@ -19,22 +18,22 @@ export function githubStorageSlice() {
     state: {
       init() {
         return {
-          syncState: false,
+          isSyncing: false,
           githubWsName: undefined,
         };
       },
       apply(action, state) {
         switch (action.name) {
           case 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE': {
-            const existingSyncState = state.syncState;
+            const existingSyncState = state.isSyncing;
 
-            if (existingSyncState === action.value.syncState) {
+            if (existingSyncState === action.value.isSyncing) {
               return state;
             }
 
             return {
               ...state,
-              syncState: action.value.syncState,
+              isSyncing: action.value.isSyncing,
             };
           }
           case 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME': {
@@ -72,13 +71,20 @@ const isGhWorkspaceEffect = ghSliceKey.effect(() => {
       );
 
       if (wsName) {
-        const isGhWorkspace = await isGithubWorkspace(wsName);
+        const isGhWorkspace = Boolean(
+          await workspace.readWorkspaceInfo(wsName, {
+            type: GITHUB_STORAGE_PROVIDER_NAME,
+          }),
+        );
+
         const currentWsName = workspace.workspaceSliceKey.callQueryOp(
           store.state,
           workspace.getWsName(),
         );
 
-        if (currentWsName === wsName) {
+        const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
+
+        if (currentWsName === wsName && githubWsName !== wsName) {
           store.dispatch({
             name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME',
             value: {
@@ -103,14 +109,12 @@ const syncEffect = ghSliceKey.effect(() => {
           const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
 
           if (githubWsName && pageLifecycle === 'active') {
-            debug('Period Github sync in background');
-            // TODO if there were merge conflicts, this will become very noisy
-            syncWithGithub(
-              githubWsName,
-              new AbortController().signal,
-              localFileEntryManager,
-              false,
-            )(store.state, store.dispatch, store);
+            debug('Periodic Github sync in background');
+            syncRunner(githubWsName, signal)(
+              store.state,
+              store.dispatch,
+              store,
+            );
           }
         },
         signal,
@@ -131,26 +135,15 @@ const syncEffect = ghSliceKey.effect(() => {
       );
 
       if (pageDidChange || githubWsNameChanged) {
-        const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-
-        if (githubWsName) {
+        if (githubWsNameChanged) {
           debug('Running Github sync in background');
-          syncWithGithub(
-            githubWsName,
-            new AbortController().signal,
-            localFileEntryManager,
-            false,
-          )(store.state, store.dispatch, store);
+          syncRunner(githubWsNameChanged, new AbortController().signal)(
+            store.state,
+            store.dispatch,
+            store,
+          );
         }
       }
     },
   };
 });
-
-async function isGithubWorkspace(wsName: string) {
-  const wsInfo = await workspace.readWorkspaceInfo(wsName, {
-    type: GITHUB_STORAGE_PROVIDER_NAME,
-  });
-
-  return Boolean(wsInfo);
-}

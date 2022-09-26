@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
 
-import { ui, useSliceState, workspace } from '@bangle.io/api';
+import { ui, useSliceState } from '@bangle.io/api';
 import { Dialog } from '@bangle.io/ui-components';
 
 import { DISCARD_LOCAL_CHANGES_DIALOG, ghSliceKey } from '../common';
-import { localFileEntryManager } from '../file-entry-manager';
 import { discardLocalChanges } from '../operations';
 
 export function DiscardLocalChangesDialog() {
@@ -67,17 +66,20 @@ export function DiscardLocalChangesDialog() {
           }
           if (githubWsName) {
             updateIsProcessing(true);
-            await discardLocalChanges(githubWsName, localFileEntryManager)(
-              bangleStore.state,
-              bangleStore.dispatch,
-              bangleStore,
-            );
-            window.location.reload();
 
-            // if we reach here ask user to reload manually
-            setTimeout(() => {
-              updateManuallyReload(true);
-            }, 2000);
+            const success = await ghSliceKey.callAsyncOp(
+              bangleStore,
+              discardLocalChanges(githubWsName),
+            );
+
+            if (success) {
+              window.location.reload();
+              // if we reach here ask user to reload manually
+              setTimeout(() => {
+                updateManuallyReload(true);
+              }, 2000);
+            }
+
             dismiss();
           }
         },

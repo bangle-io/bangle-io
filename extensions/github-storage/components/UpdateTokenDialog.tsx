@@ -61,9 +61,9 @@ export function UpdateTokenDialog() {
         );
       }
 
-      updateGithubToken(githubWsName, inputToken)(
-        bangleStore.state,
-        bangleStore.dispatch,
+      await ghSliceKey.callAsyncOp(
+        bangleStore,
+        updateGithubToken(githubWsName, inputToken),
       );
 
       notification.showNotification({
