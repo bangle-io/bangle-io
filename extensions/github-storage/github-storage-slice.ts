@@ -20,10 +20,18 @@ export function githubStorageSlice() {
         return {
           isSyncing: false,
           githubWsName: undefined,
+          conflictedWsPaths: [],
         };
       },
       apply(action, state) {
         switch (action.name) {
+          case 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS': {
+            return {
+              ...state,
+              conflictedWsPaths: action.value.conflictedWsPaths,
+            };
+          }
+
           case 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE': {
             const existingSyncState = state.isSyncing;
 
@@ -145,5 +153,11 @@ const syncEffect = ghSliceKey.effect(() => {
         }
       }
     },
+  };
+});
+
+const conflictEffect = ghSliceKey.effect(() => {
+  return {
+    deferredUpdate(store, prevState) {},
   };
 });

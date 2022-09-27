@@ -13,7 +13,7 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
-import { ghSyncFinal } from '../github-sync';
+import { githubSync } from '../github-sync';
 import GithubStorageExt from '../index';
 
 let githubWsMetadata: GithubWsMetadata;
@@ -163,7 +163,7 @@ const push = async (retainedWsPaths = new Set<string>()) => {
     githubToken,
   };
 
-  return ghSyncFinal({
+  return githubSync({
     wsName,
     config: config,
     retainedWsPaths,

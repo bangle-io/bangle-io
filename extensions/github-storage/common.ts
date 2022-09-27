@@ -30,11 +30,18 @@ export const ghSliceKey = new SliceKey<
   {
     isSyncing: boolean;
     githubWsName: string | undefined;
+    conflictedWsPaths: string[];
   },
   | {
       name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
       value: {
         isSyncing: boolean;
+      };
+    }
+  | {
+      name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS';
+      value: {
+        conflictedWsPaths: string[];
       };
     }
   | {

@@ -11,7 +11,7 @@ import {
   getRepoTree,
 } from './github-api-helpers';
 
-export async function ghSyncFinal({
+export async function githubSync({
   wsName,
   config,
   retainedWsPaths,

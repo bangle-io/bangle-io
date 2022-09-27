@@ -10,7 +10,7 @@ import { getGhToken, updateGhToken } from './database';
 import { INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
-import { ghSyncFinal } from './github-sync';
+import { githubSync } from './github-sync';
 import { readGhWorkspaceMetadata } from './helpers';
 
 export function syncRunner(
@@ -52,6 +52,17 @@ export function syncRunner(
         }
       }
     }
+  });
+}
+
+export function setConflictedWsPaths(conflictedWsPaths: string[]) {
+  return ghSliceKey.op((state, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
+      value: {
+        conflictedWsPaths,
+      },
+    });
   });
 }
 
@@ -273,7 +284,7 @@ async function runSync(
     ),
   );
 
-  return ghSyncFinal({
+  return githubSync({
     wsName,
     config,
     retainedWsPaths,
