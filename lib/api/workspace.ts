@@ -9,10 +9,12 @@ export {
   deleteNote,
   deleteWorkspace,
   getNote,
+  getOpenedWsPaths,
   getWsName,
   goToWorkspaceAuthRoute,
   pushWsPath,
   refreshWsPaths,
+  updateOpenedWsPaths,
   workspaceSliceKey,
   writeNote,
 } from '@bangle.io/slice-workspace';

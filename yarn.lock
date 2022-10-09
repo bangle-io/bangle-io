@@ -2662,6 +2662,8 @@ __metadata:
     "@bangle.dev/pm": 0.31.3
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/contextual-ui-components": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
     "@bangle.io/p-map": "workspace:*"
@@ -2672,6 +2674,7 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49

@@ -737,14 +737,12 @@ export async function createRepo({
  * Commits the changes to github
  */
 export async function commitToGithub({
-  repoName,
   additions,
   deletions,
   abortSignal,
   sha,
   config,
 }: {
-  repoName: string;
   additions: Array<{ wsPath: string; file: File }>;
   deletions: string[];
   abortSignal: AbortSignal;

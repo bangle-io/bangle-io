@@ -13,8 +13,13 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
+import {
+  discardLocalEntryChanges,
+  duplicateAndResetToRemote,
+  getConflicts,
+  githubSync,
+} from '../github-sync';
 import GithubStorageExt from '../index';
-import { pushLocalChanges } from '../sync-with-github';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -88,12 +93,14 @@ beforeEach(async () => {
 
 afterAll(async () => {
   // wait for network requests to finish
-  await sleep(200);
+  await sleep(100);
 });
 
 afterEach(async () => {
   abortController.abort();
   store?.destroy();
+
+  await sleep(50);
 });
 
 const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
@@ -163,17 +170,11 @@ const push = async (retainedWsPaths = new Set<string>()) => {
     githubToken,
   };
 
-  return pushLocalChanges({
-    abortSignal: abortController.signal,
-    fileEntryManager: localFileEntryManager,
-    ghConfig: config,
-    retainedWsPaths,
-    tree: await getTree({
-      abortSignal: abortController.signal,
-      config: config,
-      wsName,
-    }),
+  return githubSync({
     wsName,
+    config: config,
+    retainedWsPaths,
+    abortSignal: abortController.signal,
   });
 };
 
@@ -575,5 +576,141 @@ describe('house keeping', () => {
 
     // // source should get back to original
     expect(localEntries[test1WsPath]?.source?.sha).toBe(sourceSha);
+  });
+});
+
+describe('discardLocalEntryChanges', () => {
+  test('discards local changes', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+
+    // Setup the workspace so that we have a file that is in sync with github
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    await push();
+
+    await sleep(50);
+
+    let remoteEntries = await getRemoteFileEntries();
+
+    expect(remoteEntries[test1WsPath]).toBeDefined();
+
+    expect((await getLocalFileEntries())[test1WsPath]?.isUntouched).toBe(true);
+
+    // Now make a local change
+    await workspace.writeNote(
+      test1WsPath,
+      createPMNode([], `I am updated test-1`),
+    )(store.state, store.dispatch, store);
+
+    expect((await getLocalFileEntries())[test1WsPath]?.isModified).toBe(true);
+
+    // Now discard the local changes
+    expect(await discardLocalEntryChanges(test1WsPath)).toBe(true);
+
+    expect((await getLocalFileEntries())[test1WsPath]?.isModified).toBe(false);
+    expect((await getLocalFileEntries())[test1WsPath]?.isUntouched).toBe(true);
+    expect((await getLocalFileEntries())[test1WsPath]?.sha).toBe(
+      remoteEntries[test1WsPath]?.sha,
+    );
+  });
+
+  test('if file does not exist in remote it gets deleted', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+
+    // Setup the workspace so that we have a file that is in sync with github
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    expect((await getLocalFileEntries())[test1WsPath]?.isNew).toBe(true);
+
+    // Now discard the local changes
+    expect(await discardLocalEntryChanges(test1WsPath)).toBe(true);
+
+    expect((await getLocalFileEntries())[test1WsPath]).toBeUndefined();
+  });
+});
+
+describe('duplicateAndResetToRemote', () => {
+  test('duplicates and resets file content', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const config = { ...githubWsMetadata, githubToken, repoName: wsName };
+
+    // Setup the workspace so that we have a file that is in sync with github
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    await push();
+
+    await sleep(50);
+    // ensure file is now untouched i.e. in sync with github
+    expect((await getLocalFileEntries())[test1WsPath]?.isUntouched).toBe(true);
+
+    // Now create a conflict
+    await workspace.writeNote(
+      test1WsPath,
+      createPMNode([], `I am now a different local note`),
+    )(store.state, store.dispatch, store);
+
+    // Make a direct remote change outside the realm of our app
+    await github.pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await github.getLatestCommitSha({
+        abortSignal: abortController.signal,
+        config,
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config,
+      additions: [
+        {
+          path: wsPathHelpers.resolvePath(test1WsPath).filePath,
+          base64Content: btoa('I am now a different note remote'),
+        },
+      ],
+      deletions: [],
+    });
+
+    await sleep(50);
+
+    let remoteEntries = await getRemoteFileEntries();
+    let localEntries = await getLocalFileEntries();
+
+    // things should be in conflict
+    expect(remoteEntries[test1WsPath]?.sha).not.toBe(
+      localEntries[test1WsPath]?.sha,
+    );
+
+    const conflicts = await getConflicts({ wsName, config });
+
+    expect(conflicts).toEqual([test1WsPath]);
+
+    const result = await duplicateAndResetToRemote({
+      config,
+      wsPath: test1WsPath,
+    });
+
+    expect(result?.remoteContentWsPath).toEqual(test1WsPath);
+    expect(result?.localContentWsPath.includes('test-1')).toBe(true);
+    expect(result?.localContentWsPath).toMatch(/-conflict-\d+\.md$/);
+
+    let newLocalEntries = await getLocalFileEntries();
+
+    // the local entry with remoteContent should match the remote sha
+    expect(newLocalEntries[result?.remoteContentWsPath!]?.sha).toBe(
+      remoteEntries[test1WsPath]?.sha,
+    );
+
+    // the local entry with localContent (one ending with -conflict) should match
+    // the locally modified sha
+
+    expect(newLocalEntries[result?.localContentWsPath!]?.sha).toBe(
+      localEntries[test1WsPath]?.sha,
+    );
+
+    // there should no longer be a conflict
+    expect(await getConflicts({ wsName, config })).toEqual([]);
   });
 });
