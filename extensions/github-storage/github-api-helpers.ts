@@ -92,6 +92,7 @@ async function makeV3GetApi({
     ? path
     : `https://api.github.com${path}`;
 
+  console.log('calling fetch');
   const res = await fetch(url, {
     method: 'GET',
     signal: abortSignal,

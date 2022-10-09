@@ -159,7 +159,7 @@ export const syncEffect = ghSliceKey.effect(() => {
 
     update(store, prevState) {
       const pageDidChange = page.pageLifeCycleTransitionedTo(
-        ['passive', 'terminated', 'hidden'],
+        ['passive', 'terminated', 'hidden', 'active'],
         prevState,
       )(store.state);
 
@@ -173,7 +173,6 @@ export const syncEffect = ghSliceKey.effect(() => {
         const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
 
         if (githubWsName) {
-          console.info('Running Github sync in background');
           syncRunner(githubWsName, new AbortController().signal)(
             store.state,
             store.dispatch,

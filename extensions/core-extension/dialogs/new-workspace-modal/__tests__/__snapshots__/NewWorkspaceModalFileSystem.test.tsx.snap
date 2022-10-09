@@ -36,7 +36,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
               class="B-ui-components_dialog-divider"
             />
             <div
-              class="B-ui-components_dialog-content"
+              class="B-ui-components_dialog-content "
             >
               <div
                 class="flex flex-col mb-5"
