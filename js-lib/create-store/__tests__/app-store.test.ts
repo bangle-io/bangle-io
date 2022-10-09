@@ -1981,3 +1981,186 @@ describe('DeferredSideEffectsRunner', () => {
     );
   });
 });
+
+describe('reactors', () => {
+  const slice1Key = new SliceKey<
+    { count: number; magicString: string },
+    {
+      name: 'change-count';
+      value: {};
+    }
+  >('slice-1');
+
+  const makeSlice1 = (reactors: Array<ReturnType<typeof slice1Key.reactor>>) =>
+    new Slice({
+      key: slice1Key,
+      state: {
+        init() {
+          return { count: 1, magicString: 'hello' };
+        },
+        apply: (action, value) => {
+          if (action.name === 'change-count') {
+            return {
+              ...value,
+              count: value.count + 1,
+            };
+          }
+
+          return value;
+        },
+      },
+      sideEffect: [...reactors],
+    });
+
+  const slice2Key = new SliceKey<
+    { toggle: boolean; someString: string; someNumber: number },
+    | {
+        name: 'toggle-action';
+        value: {};
+      }
+    | {
+        name: 'change-some-string';
+        value: {
+          someString: string;
+        };
+      }
+  >('slice-1');
+
+  const makeSlice2 = (reactors: Array<ReturnType<typeof slice2Key.reactor>>) =>
+    new Slice({
+      key: slice2Key,
+      state: {
+        init() {
+          return { toggle: false, someString: 'hello', someNumber: 1 };
+        },
+        apply: (action, value) => {
+          if (action.name === 'toggle-action') {
+            return {
+              ...value,
+              toggle: !value.toggle,
+            };
+          } else if (action.name === 'change-some-string') {
+            return {
+              ...value,
+              someString: action.value.someString,
+            };
+          }
+
+          return value;
+        },
+      },
+      sideEffect: [...reactors],
+    });
+
+  test('one slice test', () => {
+    let reactor1Call = jest.fn();
+
+    const slice1 = makeSlice1([
+      slice1Key.reactor(
+        {
+          count: slice1Key.select('count'),
+        },
+        reactor1Call,
+      ),
+    ]);
+
+    const state = AppState.create({ slices: [slice1] });
+    const store = ApplicationStore.create({
+      storeName: 'test-store',
+      state,
+    });
+
+    store.dispatch({
+      name: 'change-count',
+      value: {},
+    });
+
+    expect(reactor1Call).toBeCalledTimes(1);
+    expect(reactor1Call).nthCalledWith(1, store.state, store.dispatch, {
+      count: 2,
+    });
+  });
+
+  test('with two slices', () => {
+    let reactor2Call = jest.fn();
+    let reactor21Call = jest.fn();
+
+    const slice1 = makeSlice1([]);
+
+    const slice2 = makeSlice2([
+      slice2Key.reactor(
+        {
+          count: slice1Key.select('count'),
+          toggle: slice2Key.select('toggle'),
+        },
+        reactor2Call,
+      ),
+
+      slice2Key.reactor(
+        {
+          count: slice1Key.select('count'),
+          someString: slice2Key.select('someString'),
+        },
+        reactor21Call,
+      ),
+    ]);
+
+    const state = AppState.create({ slices: [slice1, slice2] as Slice[] });
+    const store = ApplicationStore.create({
+      storeName: 'test-store',
+      state,
+    });
+
+    store.dispatch({
+      name: 'toggle-action',
+      value: {},
+    });
+
+    expect(reactor2Call).toBeCalledTimes(1);
+    expect(reactor2Call).nthCalledWith(1, store.state, store.dispatch, {
+      count: 1,
+      toggle: true,
+    });
+
+    // this reactor should not be called as its dependencies are not changed
+    expect(reactor21Call).toBeCalledTimes(0);
+
+    store.dispatch({
+      name: 'toggle-action',
+      value: {},
+    });
+
+    expect(reactor2Call).toBeCalledTimes(2);
+    expect(reactor2Call).nthCalledWith(2, store.state, store.dispatch, {
+      count: 1,
+      toggle: false,
+    });
+    // now actually changing the dependency
+    expect(reactor21Call).toBeCalledTimes(0);
+    store.dispatch({
+      name: 'change-some-string',
+      value: {
+        someString: 'world',
+      },
+    });
+
+    expect(reactor2Call).toBeCalledTimes(2);
+    expect(reactor21Call).toBeCalledTimes(1);
+
+    expect(reactor21Call).nthCalledWith(1, store.state, store.dispatch, {
+      someString: 'world',
+      count: 1,
+    });
+
+    // if we change the dependency again, the reactor should not be called again
+    store.dispatch({
+      name: 'change-some-string',
+      value: {
+        someString: 'world',
+      },
+    });
+
+    expect(reactor21Call).toBeCalledTimes(1);
+    expect(reactor2Call).toBeCalledTimes(2);
+  });
+});

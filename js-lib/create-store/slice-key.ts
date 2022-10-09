@@ -78,6 +78,26 @@ export class SliceKey<
     return queryOp(state);
   }
 
+  /**
+   * A deferred (runs at a slower cadence, just like deferredUpdate) version of `.reactor`
+   * Prefer this over `.reactor` unless you know what you are doing.
+   */
+  deferredReactor<T extends Record<string, (arg: AppState) => any>>(
+    dependencyMap: T,
+    cb: (
+      store: ApplicationStore<SL, A>,
+      selected: ExtractReturnTypes<T>,
+    ) => void,
+  ): SliceSideEffect<SL, A, C> {
+    return this.effect(() => {
+      return {
+        deferredUpdate(store, prevState) {
+          handleReactor(dependencyMap, store, prevState, cb);
+        },
+      };
+    });
+  }
+
   // return[1] - the first dependency name that change
   didChange<K extends keyof SL>(
     state: AppState | Readonly<AppState>,
@@ -181,6 +201,45 @@ export class SliceKey<
     return cb;
   }
 
+  /**
+   * A shorthand for creating a particular type of effect - which runs whenever provided dependencies change.
+   * Note: prefer `.deferredReactor` unless you know what you are doing.
+   *
+   * Warning: Be careful not to trigger infinite loop by changing the data which dependency map
+   * is watching. Generally avoid putting the same data that you are modifying in the dependency map.
+   *
+   * @param dependencyMap triggers the callback whenever any of the fields value
+   *                    in the dependencyMap changes.
+   * @param cb - called with dispatch, the selected fields and the slice state.
+   */
+  reactor<T extends Record<string, (arg: AppState) => any>>(
+    dependencyMap: T,
+    cb: (
+      state: ApplicationStore<SL, A>['state'],
+      dispatch: ApplicationStore<SL, A>['dispatch'],
+      selected: ExtractReturnTypes<T>,
+    ) => void,
+  ): SliceSideEffect<SL, A, C> {
+    return this.effect(() => {
+      return {
+        update(store, prevState) {
+          handleReactor(
+            dependencyMap,
+            store,
+            prevState,
+            (store, newSelectedData) =>
+              cb(store.state, store.dispatch, newSelectedData),
+          );
+        },
+      };
+    });
+  }
+
+  select<K extends keyof SL>(field: K): (state: AppState) => SL[K] {
+    return (state: AppState) => this.getSliceStateAsserted(state)[field];
+  }
+
+  // Helper function for creating an operation with the correct
   valueChanged(
     field: keyof SL,
     state: AppState | Readonly<AppState>,
@@ -199,6 +258,37 @@ export class SliceKey<
   // Similar to getValueIfChanged but instead takes a list of dependencies
   // and returns a two tuple of whether there was any change and the first field that changed.
   // return[0] - true if any of them changed
-
-  // Helper function for creating an operation with the correct
 }
+
+type ExtractReturnTypes<T extends Record<string, (...args: any[]) => any>> = {
+  [K in keyof T]: T[K] extends (i: any) => infer R ? R : never;
+};
+
+const handleReactor = <
+  T extends Record<string, (arg: AppState) => any>,
+  SL = any,
+  A extends BaseAction = any,
+>(
+  dependencyMap: T,
+  store: ApplicationStore<SL, A>,
+  prevState: AppState,
+  cb: (store: ApplicationStore<SL, A>, selected: ExtractReturnTypes<T>) => void,
+) => {
+  const state = store.state;
+  for (const calcState of Object.values(dependencyMap)) {
+    const newVal = calcState(state);
+    const oldVal = calcState(prevState);
+
+    if (newVal !== oldVal) {
+      const newSelectedData = Object.fromEntries(
+        Array.from(Object.entries(dependencyMap)).map(([k, v]) => [
+          k,
+          v(state),
+        ]),
+      ) as ExtractReturnTypes<T>;
+
+      cb(store, newSelectedData);
+      break;
+    }
+  }
+};
