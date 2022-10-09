@@ -80,7 +80,7 @@ beforeEach(() => {
     return async () => {};
   });
   jest.mocked(checkForConflicts).mockImplementation(() => {
-    return async () => {};
+    return async () => false;
   });
 });
 

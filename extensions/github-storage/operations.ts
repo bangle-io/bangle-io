@@ -1,11 +1,9 @@
 import { workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
-import { BaseError } from '@bangle.io/utils';
 
 import { getGithubSyncLockWrapper, ghSliceKey, notify } from './common';
 import { getGhToken, updateGhToken } from './database';
-import { INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
 import {
@@ -15,6 +13,21 @@ import {
   githubSync,
 } from './github-sync';
 import { readGhWorkspaceMetadata } from './helpers';
+
+const getGhConfig = async (
+  wsName: string,
+): Promise<GithubConfig | undefined> => {
+  const ghMetadata = await readGhWorkspaceMetadata(wsName);
+  const githubToken = await getGhToken();
+
+  if (!ghMetadata || !githubToken) {
+    return undefined;
+  }
+
+  const ghConfig = { ...ghMetadata, repoName: wsName, githubToken };
+
+  return ghConfig;
+};
 
 export function syncRunner(
   wsName: string,
@@ -33,22 +46,11 @@ export function syncRunner(
       return false;
     }
 
-    const githubToken = await getGhToken();
+    const ghConfig = await getGhConfig(wsName);
 
-    if (!githubToken) {
-      throw new BaseError({
-        message: 'Github token is required',
-        code: INVALID_GITHUB_TOKEN,
-      });
-    }
-
-    const ghMetadata = await readGhWorkspaceMetadata(wsName);
-
-    if (!ghMetadata) {
+    if (!ghConfig) {
       return false;
     }
-
-    const ghConfig = { ...ghMetadata, repoName: wsName, githubToken };
 
     if (ghSliceKey.getSliceStateAsserted(store.state).isSyncing) {
       notifyVerbose &&
@@ -275,14 +277,11 @@ export const updateGithubToken = (
 
 export function manuallyResolveConflict(wsName: string) {
   return ghSliceKey.asyncOp(async (_, __, store) => {
-    const ghMetadata = await readGhWorkspaceMetadata(wsName);
-    const githubToken = await getGhToken();
+    const config = await getGhConfig(wsName);
 
-    if (!githubToken || !ghMetadata) {
+    if (!config) {
       return false;
     }
-
-    const config = { ...ghMetadata, repoName: wsName, githubToken };
 
     const { conflictedWsPaths } = ghSliceKey.getSliceStateAsserted(store.state);
 
@@ -379,14 +378,11 @@ export function manuallyResolveConflict(wsName: string) {
 
 export function checkForConflicts(wsName: string) {
   return ghSliceKey.asyncOp(async (_, __, store) => {
-    const ghMetadata = await readGhWorkspaceMetadata(wsName);
-    const githubToken = await getGhToken();
+    const config = await getGhConfig(wsName);
 
-    if (!githubToken || !ghMetadata) {
-      return;
+    if (!config) {
+      return false;
     }
-
-    const config = { ...ghMetadata, repoName: wsName, githubToken };
 
     const conflicts = await getConflicts({ wsName, config });
 
@@ -410,5 +406,7 @@ export function checkForConflicts(wsName: string) {
         });
       }
     }
+
+    return true;
   });
 }

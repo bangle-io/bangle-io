@@ -164,6 +164,7 @@ export function safeIdleRefCallback(cb: () => void, timeout?: number) {
  * If the lock is not available returns without providing a lock.
  * If lock is available returns a callback which _must_ be called
  * once the lock is no longer needed.
+ * If the callback takes a long time, it will throw an error.
  * @param name
  * @returns
  */
