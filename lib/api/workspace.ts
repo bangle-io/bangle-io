@@ -14,6 +14,7 @@ export {
   goToWorkspaceAuthRoute,
   pushWsPath,
   refreshWsPaths,
+  updateOpenedWsPaths,
   workspaceSliceKey,
   writeNote,
 } from '@bangle.io/slice-workspace';

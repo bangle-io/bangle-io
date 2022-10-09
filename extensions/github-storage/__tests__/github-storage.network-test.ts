@@ -8,7 +8,7 @@ import {
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from '../common';
-import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
+import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
 import { localFileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
@@ -64,6 +64,7 @@ const existsInRemote = async (wsPath: string) => {
 
 beforeEach(async () => {
   await updateGhToken(githubToken);
+
   githubWsMetadata = {
     owner: githubOwner,
     branch: 'main',
@@ -124,6 +125,8 @@ afterAll(async () => {
 afterEach(async () => {
   abortController.abort();
   store?.destroy();
+
+  await sleep(100);
 });
 
 const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
@@ -466,18 +469,8 @@ describe('pull changes', () => {
 
       await waitForExpect(() => {
         expect(
-          getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION'),
+          ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
         ).toHaveLength(1);
-      });
-
-      expect(
-        getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION')[0]
-          .value,
-      ).toMatchObject({
-        content: 'Encountered 1 merge conflict',
-        severity: 'error',
-        title: 'Github sync failed',
-        transient: false,
       });
 
       // file should still be able to read the new changes
@@ -739,6 +732,10 @@ describe('new note creation', () => {
       deletions: [],
     });
 
+    expect(
+      ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
+    ).toHaveLength(0);
+
     await sleep(0);
 
     expect(await getNoteAsString(wsPath)).toEqual(
@@ -751,18 +748,8 @@ describe('new note creation', () => {
 
     await waitForExpect(() => {
       expect(
-        getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION'),
+        ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
       ).toHaveLength(1);
-    });
-
-    expect(
-      getAction('action::@bangle.io/slice-notification:SHOW_NOTIFICATION')[0]
-        .value,
-    ).toMatchObject({
-      content: 'Encountered 1 merge conflict',
-      severity: 'error',
-      title: 'Github sync failed',
-      transient: false,
     });
 
     // the local note stays as is

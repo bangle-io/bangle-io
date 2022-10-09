@@ -6490,6 +6490,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.31.3"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/contextual-ui-components", "workspace:lib/contextual-ui-components"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],\
@@ -6500,6 +6502,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],\
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],\
             ["@types/react", "npm:17.0.49"],\

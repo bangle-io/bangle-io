@@ -2,7 +2,6 @@ import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
-import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { BaseError } from '@bangle.io/utils';
 
 import { getGithubSyncLockWrapper, ghSliceKey } from './common';
@@ -10,7 +9,12 @@ import { getGhToken, updateGhToken } from './database';
 import { INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
-import { githubSync } from './github-sync';
+import {
+  discardLocalEntryChanges,
+  duplicateAndResetToRemote,
+  getConflicts,
+  githubSync,
+} from './github-sync';
 import { readGhWorkspaceMetadata } from './helpers';
 
 export function syncRunner(
@@ -19,20 +23,21 @@ export function syncRunner(
   notifyVerbose = false,
 ) {
   return ghSliceKey.asyncOp(async (_, __, store) => {
-    const result = await runGuard(wsName, abort, store, notifyVerbose);
+    const result = await syncRunGuard(wsName, abort, store, notifyVerbose);
 
     if (result === false) {
       console.log('gh-sync returned false');
     } else {
+      workspace.workspaceSliceKey.callOp(
+        store.state,
+        store.dispatch,
+        workspace.refreshWsPaths(),
+      );
+
       const { count: changeCount } = result;
 
       if (result.status === 'merge-conflict') {
-        notify(
-          store,
-          'Github sync failed',
-          Severity.ERROR,
-          `Encountered ${result.count} merge conflict`,
-        );
+        setConflictedWsPaths(result.conflict)(store.state, store.dispatch);
 
         return;
       }
@@ -88,31 +93,20 @@ export function discardLocalChanges(wsName: string) {
           wsName + ':',
         );
 
-        await pMap(
+        const result = await pMap(
           allEntries.filter((r) => {
             return r.isModified || r.isNew || r.isDeleted;
           }),
           async (entry) => {
-            if (entry.source?.file) {
-              const remoteFileEntry = await RemoteFileEntry.newFile({
-                uid: entry.uid,
-                file: entry.source.file,
-                deleted: undefined,
-              });
-              console.debug('resetting file entry', entry.uid);
-              await localFileEntryManager.overwriteFileEntry(
-                remoteFileEntry.forkLocalFileEntry(),
-              );
-            } else {
-              console.debug('removing file entry', entry.uid);
-              await localFileEntryManager.removeFileEntry(entry.uid);
-            }
+            return discardLocalEntryChanges(entry.uid);
           },
           {
             concurrency: 10,
             abortSignal: new AbortController().signal,
           },
         );
+
+        return result.every((r) => r);
       },
     );
 
@@ -122,6 +116,17 @@ export function discardLocalChanges(wsName: string) {
         'Cannot discard local changes',
         Severity.INFO,
         'A sync is already in progress, please wait for it to finish.',
+      );
+
+      return false;
+    }
+
+    if (!result) {
+      notify(
+        store,
+        'Failed to discard local changes',
+        Severity.INFO,
+        'Failed to discard local changes. Please try again.',
       );
 
       return false;
@@ -160,6 +165,110 @@ export const updateGithubToken = (
   });
 };
 
+export function manuallyResolveConflict(wsName: string) {
+  return ghSliceKey.asyncOp(async (_, __, store) => {
+    const ghMetadata = await readGhWorkspaceMetadata(wsName);
+    const githubToken = await getGhToken();
+
+    if (!githubToken || !ghMetadata) {
+      return false;
+    }
+
+    const config = { ...ghMetadata, repoName: wsName, githubToken };
+
+    const { conflictedWsPaths } = ghSliceKey.getSliceStateAsserted(store.state);
+
+    try {
+      const { lockAcquired, result } = await getGithubSyncLockWrapper(
+        wsName,
+        async () => {
+          let result: Array<
+            Awaited<ReturnType<typeof duplicateAndResetToRemote>>
+          > = [];
+
+          for (const cWsPath of conflictedWsPaths) {
+            result.push(
+              await duplicateAndResetToRemote({
+                config,
+                wsPath: cWsPath,
+                abortSignal: new AbortController().signal,
+              }),
+            );
+          }
+
+          return result;
+        },
+      );
+
+      if (!lockAcquired || result.some((r) => r == null)) {
+        if (!lockAcquired) {
+          console.warn('cannot manually resolve conflict, lock not acquired');
+        }
+
+        notify(
+          store,
+          'Unable to resolve conflict',
+          Severity.ERROR,
+          'Please close any other Bangle tab and try again.',
+        );
+
+        return false;
+      } else if (result) {
+        store.dispatch({
+          name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
+          value: {
+            conflictedWsPaths: [],
+          },
+        });
+
+        workspace.workspaceSliceKey.callOp(
+          store.state,
+          store.dispatch,
+          workspace.refreshWsPaths(),
+        );
+
+        notify(
+          store,
+          'Manual Conflict Resolution',
+          Severity.SUCCESS,
+          'Successfully created copies of the the conflicted files. Please resolve the conflicts manually and then sync again.',
+        );
+
+        const firstConflictedWsPath = result.find((r) => Boolean(r));
+
+        if (firstConflictedWsPath) {
+          // open the first conflicted file for easier manual conflict resolution
+          workspace.workspaceSliceKey.callOp(
+            store.state,
+            store.dispatch,
+            workspace.updateOpenedWsPaths((openedWsPaths) =>
+              openedWsPaths
+                .updatePrimaryWsPath(firstConflictedWsPath.remoteContentWsPath)
+                .updateSecondaryWsPath(
+                  firstConflictedWsPath.localContentWsPath,
+                ),
+            ),
+          );
+        }
+
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      console.error(e);
+      notify(
+        store,
+        'Unable to resolve conflict',
+        Severity.ERROR,
+        'Something went wrong, please reload and try again.',
+      );
+
+      return false;
+    }
+  });
+}
+
 function notify(
   store: BangleApplicationStore,
   title: string,
@@ -179,7 +288,7 @@ function notify(
   );
 }
 
-async function runGuard(
+async function syncRunGuard(
   wsName: string,
   abort: AbortSignal,
   store: ReturnType<typeof ghSliceKey.getStore>,
@@ -289,5 +398,41 @@ async function runSync(
     config,
     retainedWsPaths,
     abortSignal: abort,
+  });
+}
+
+export function checkForConflicts(wsName: string) {
+  return ghSliceKey.asyncOp(async (_, __, store) => {
+    const ghMetadata = await readGhWorkspaceMetadata(wsName);
+    const githubToken = await getGhToken();
+
+    if (!githubToken || !ghMetadata) {
+      return;
+    }
+
+    const config = { ...ghMetadata, repoName: wsName, githubToken };
+
+    const conflicts = await getConflicts({ wsName, config });
+
+    const { wsName: currentWsName } =
+      workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+
+    if (currentWsName === wsName) {
+      const { conflictedWsPaths } = ghSliceKey.getSliceStateAsserted(
+        store.state,
+      );
+
+      if (
+        conflicts.length > 0 ||
+        (conflictedWsPaths.length > 0 && conflicts.length === 0)
+      ) {
+        store.dispatch({
+          name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
+          value: {
+            conflictedWsPaths: conflicts,
+          },
+        });
+      }
+    }
   });
 }

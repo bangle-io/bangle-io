@@ -83,16 +83,6 @@ export function notificationSlice() {
             const { editorIssues } = state;
             const { value: editorIssue } = action;
 
-            const existing = editorIssues.find(
-              (issue) => issue.wsPath === editorIssue.wsPath,
-            );
-
-            if (existing) {
-              console.warn(
-                `Overriding existing editor issue ${existing.severity}:${existing.title}`,
-              );
-            }
-
             const newIssues = editorIssues.filter(
               (issue) =>
                 issue.uid !== editorIssue.uid &&

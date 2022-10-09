@@ -37,6 +37,7 @@ export function Dialog({
   onDismiss,
   primaryButtonConfig,
   size = 'medium',
+  allowScroll = false,
 }: {
   children: React.ReactNode;
   headingIcon?: React.ReactNode;
@@ -50,6 +51,7 @@ export function Dialog({
   onDismiss: () => void;
   primaryButtonConfig?: CTAConfig;
   size?: SizeType;
+  allowScroll?: boolean;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -154,7 +156,12 @@ export function Dialog({
               {headingTitle}
             </h2>
             <hr className="B-ui-components_dialog-divider" />
-            <div className="B-ui-components_dialog-content">
+            <div
+              className={cx(
+                'B-ui-components_dialog-content',
+                allowScroll && 'overflow-y-auto',
+              )}
+            >
               {typeof children === 'string' ? <p>{children}</p> : children}
             </div>
 

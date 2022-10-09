@@ -11,7 +11,7 @@ export function NoteLink({
   onClick,
 }: {
   wsPath: string;
-  children: JSX.Element;
+  children: React.ReactNode;
   className?: string;
   onClick?: () => void;
 }) {

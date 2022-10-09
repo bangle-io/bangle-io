@@ -14,7 +14,7 @@ import {
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
 } from '../common';
-import { getGhToken } from '../database';
+import { getGhToken, updateGhToken } from '../database';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
 
 const MIN_HEIGHT = 200;
@@ -53,7 +53,7 @@ export function NewGithubWorkspaceTokenDialog() {
           )}`,
         );
       }
-
+      await updateGhToken(inputToken);
       ui.showDialog(NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG, {
         githubToken: inputToken,
       })(bangleStore.state, bangleStore.dispatch);

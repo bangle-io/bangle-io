@@ -2,6 +2,7 @@ import { pMap } from '@bangle.io/p-map';
 import type { LocalFileEntry } from '@bangle.io/remote-file-sync';
 import { fileSync, RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { assertSignal } from '@bangle.io/utils';
+import { resolvePath } from '@bangle.io/ws-path';
 
 import { localFileEntryManager } from './file-entry-manager';
 import type { GHTree, GithubConfig } from './github-api-helpers';
@@ -10,7 +11,11 @@ import {
   getFileBlobFromTree,
   getRepoTree,
 } from './github-api-helpers';
+import { getNonConflictName } from './helpers';
 
+/**
+ * Sync local and remote file entries
+ */
 export async function githubSync({
   wsName,
   config,
@@ -41,7 +46,7 @@ export async function githubSync({
     retainedWsPaths,
     async (wsPath) => {
       if (!localEntriesMap.has(wsPath)) {
-        await overwriteLocalEntryFromRemote({
+        await overwriteLocalEntryWithRemoteContent({
           config,
           tree,
           wsPath,
@@ -56,12 +61,11 @@ export async function githubSync({
 
   const job = processSyncJob(localEntriesMap, tree);
 
-  // TODO do we need this?
+  // TODO make this non blocking
   if (job.conflicts.length > 0) {
-    console.log(job.conflicts);
-
     return {
       status: 'merge-conflict' as const,
+      conflict: job.conflicts,
       count: job.conflicts.length,
     };
   }
@@ -115,6 +119,8 @@ export async function githubSync({
     },
   );
 
+  console.debug('Successfully synced with github');
+
   return {
     status: 'success' as const,
     count:
@@ -167,7 +173,7 @@ async function executeLocalChanges({
   await pMap(
     [...job.localUpdate, ...job.localSourceUpdate],
     async (wsPath) => {
-      await overwriteLocalEntryFromRemote({
+      await overwriteLocalEntryWithRemoteContent({
         config,
         tree,
         wsPath,
@@ -193,7 +199,11 @@ async function executeLocalChanges({
   );
 }
 
-function processSyncJob(
+/**
+ * A safe (doesn't modify anything) function that compares remote and local entries
+ * and returns information about what is needed to be done to sync them
+ */
+export function processSyncJob(
   localEntries: Map<string, LocalFileEntry>,
   tree: GHTree,
 ) {
@@ -313,10 +323,100 @@ function processSyncJob(
 }
 
 /**
+ * Discards local changes and resets the file to its original (source) state
+ * If the source does not exist, it will be deleted.
+ * Note that unlike other methods, the file is reset to the source state and not the remote state.
+ */
+export async function discardLocalEntryChanges(wsPath: string) {
+  const [entry] = await localFileEntryManager.getAllEntries(wsPath);
+
+  // if source does not exist, remove the file completely
+  if (!entry?.source?.file) {
+    console.debug('discardLocalChanges:removing file entry', wsPath);
+    await localFileEntryManager.removeFileEntry(wsPath);
+
+    return true;
+  }
+
+  const remoteFileEntry = await RemoteFileEntry.newFile({
+    uid: entry.uid,
+    file: entry.source.file,
+    deleted: undefined,
+  });
+
+  console.debug('resetting file entry to source', entry.uid);
+  await localFileEntryManager.overwriteFileEntry(
+    remoteFileEntry.forkLocalFileEntry(),
+  );
+
+  return true;
+}
+
+/**
+ * Duplicates the file with a non-conflicting wsPath and then resets
+ * file to match remote content.
+ * Note: the file is reset to the remote state.
+ */
+export async function duplicateAndResetToRemote({
+  config,
+  wsPath,
+  abortSignal,
+}: {
+  config: GithubConfig;
+  wsPath: string;
+  abortSignal?: AbortSignal;
+}): Promise<
+  | undefined
+  | {
+      localContentWsPath: string;
+      remoteContentWsPath: string;
+    }
+> {
+  const tree = await getRepoTree()({
+    wsName: resolvePath(wsPath).wsName,
+    config,
+    abortSignal,
+  });
+  const existing = await localFileEntryManager.getAllEntries(wsPath);
+  const existingEntry = existing.find((r) => r.uid === wsPath);
+
+  if (!existingEntry) {
+    console.debug('No existing entry found for', wsPath);
+
+    return undefined;
+  }
+
+  const newFilePath = getNonConflictName(wsPath);
+
+  // create a duplicate file with a non-conflicting name
+  await localFileEntryManager.createFile(
+    newFilePath,
+    existingEntry.file,
+    // we know this file will not exist in remote
+    async () => undefined,
+  );
+
+  const overwritten = await overwriteLocalEntryWithRemoteContent({
+    config,
+    tree,
+    wsPath,
+  });
+
+  if (overwritten) {
+    return {
+      localContentWsPath: newFilePath,
+      remoteContentWsPath: wsPath,
+    };
+  }
+
+  return undefined;
+}
+
+/**
  * Caution this will overwrite the local file with the remote file
  * regardless of whether local file is modified or not
  */
-async function overwriteLocalEntryFromRemote({
+async function overwriteLocalEntryWithRemoteContent({
   config,
   tree,
   wsPath,
@@ -324,7 +424,7 @@ async function overwriteLocalEntryFromRemote({
   config: GithubConfig;
   tree: GHTree;
   wsPath: string;
-}) {
+}): Promise<boolean> {
   const remoteFile = await getFileBlobFromTree({
     wsPath: wsPath,
     config,
@@ -341,10 +441,38 @@ async function overwriteLocalEntryFromRemote({
     await localFileEntryManager.overwriteFileEntry(
       remoteEntry.forkLocalFileEntry(),
     );
-  } else {
-    // this should ideally not happen since we are are grabbing the file
-    // by the sha from the tree, but since it is an external thing can't
-    // be guaranteed.
-    console.error('Expected remote file to exist: ', wsPath);
+
+    return true;
   }
+
+  // this should ideally not happen since we are are grabbing the file
+  // by the sha from the tree, but since it is an external thing can't
+  // be guaranteed.
+  console.error('Expected remote file to exist: ', wsPath);
+
+  return false;
+}
+
+export async function getConflicts({
+  wsName,
+  config,
+}: {
+  config: GithubConfig;
+  wsName: string;
+}): Promise<string[]> {
+  const [tree, localEntries] = await Promise.all([
+    getRepoTree()({
+      wsName,
+      config,
+    }),
+    localFileEntryManager.getAllEntries(wsName + ':'),
+  ]);
+
+  const localEntriesMap = new Map(
+    localEntries.map((entry) => [entry.uid, entry]),
+  );
+
+  const job = processSyncJob(localEntriesMap, tree);
+
+  return job.conflicts;
 }

@@ -4,16 +4,19 @@ import { Extension, ui, workspace } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
+  CONFLICT_DIALOG,
   DISCARD_LOCAL_CHANGES_DIALOG,
   ghSliceKey,
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
   OPERATION_NEW_GITHUB_WORKSPACE,
+  OPERATION_SHOW_CONFLICT_DIALOG,
   OPERATION_SYNC_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
   UPDATE_GITHUB_TOKEN_DIALOG,
 } from './common';
+import { ConflictDialog } from './components/ConfllictDialog';
 import { DiscardLocalChangesDialog } from './components/DiscardLocalChangesDialog';
 import { GithubSidebar } from './components/GithubSidebar';
 import { NewGithubWorkspaceTokenDialog } from './components/NewGithubWorkspaceDialog';
@@ -48,6 +51,10 @@ const extension = Extension.create({
         name: UPDATE_GITHUB_TOKEN_DIALOG,
         ReactComponent: UpdateTokenDialog,
       },
+      {
+        name: CONFLICT_DIALOG,
+        ReactComponent: ConflictDialog,
+      },
     ],
     sidebars: [
       {
@@ -80,6 +87,10 @@ const extension = Extension.create({
       {
         name: OPERATION_DISCARD_LOCAL_CHANGES,
         title: 'Github: Discard local changes',
+      },
+      {
+        name: OPERATION_SHOW_CONFLICT_DIALOG,
+        title: 'Github: Show conflicted files',
       },
     ],
     operationHandler() {
@@ -124,6 +135,12 @@ const extension = Extension.create({
                 store.state,
                 store.dispatch,
               );
+
+              return true;
+            }
+
+            case OPERATION_SHOW_CONFLICT_DIALOG: {
+              ui.showDialog(CONFLICT_DIALOG)(store.state, store.dispatch);
 
               return true;
             }
