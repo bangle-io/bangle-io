@@ -1,10 +1,9 @@
-import type { BangleApplicationStore } from '@bangle.io/api';
-import { notification, workspace } from '@bangle.io/api';
+import { workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
 import { BaseError } from '@bangle.io/utils';
 
-import { getGithubSyncLockWrapper, ghSliceKey } from './common';
+import { getGithubSyncLockWrapper, ghSliceKey, notify } from './common';
 import { getGhToken, updateGhToken } from './database';
 import { INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
@@ -22,8 +21,117 @@ export function syncRunner(
   abort: AbortSignal,
   notifyVerbose = false,
 ) {
+  async function syncRunGuard(
+    store: ReturnType<typeof ghSliceKey.getStore>,
+    notifyVerbose: boolean,
+  ) {
+    const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
+
+    if (githubWsName !== wsName) {
+      notify(store, 'Not a Github workspace', Severity.WARNING);
+
+      return false;
+    }
+
+    const githubToken = await getGhToken();
+
+    if (!githubToken) {
+      throw new BaseError({
+        message: 'Github token is required',
+        code: INVALID_GITHUB_TOKEN,
+      });
+    }
+
+    const ghMetadata = await readGhWorkspaceMetadata(wsName);
+
+    if (!ghMetadata) {
+      return false;
+    }
+
+    const ghConfig = { ...ghMetadata, repoName: wsName, githubToken };
+
+    if (ghSliceKey.getSliceStateAsserted(store.state).isSyncing) {
+      notifyVerbose &&
+        notify(store, 'Github sync already in progress', Severity.INFO);
+
+      return false;
+    }
+
+    try {
+      const { lockAcquired, result } = await getGithubSyncLockWrapper(
+        wsName,
+        async () => {
+          store.dispatch({
+            name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
+            value: {
+              isSyncing: true,
+            },
+          });
+
+          const result = await runSync(store, ghConfig);
+
+          return result;
+        },
+      );
+
+      if (!lockAcquired) {
+        notifyVerbose &&
+          notify(store, 'Github sync already in progress', Severity.INFO);
+
+        return false;
+      }
+
+      return result;
+    } catch (error) {
+      console.error(error);
+      notify(
+        store,
+        'Github sync failed',
+        Severity.ERROR,
+        error instanceof Error ? error.message : 'Unknown error',
+      );
+
+      return false;
+    } finally {
+      store.dispatch({
+        name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
+        value: {
+          isSyncing: false,
+        },
+      });
+    }
+  }
+
+  async function runSync(
+    store: ReturnType<typeof ghSliceKey.getStore>,
+    config: GithubConfig,
+  ) {
+    const {
+      openedWsPaths,
+      wsName: currentWsName,
+      recentlyUsedWsPaths,
+    } = workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+
+    if (currentWsName !== wsName) {
+      return false;
+    }
+
+    const retainedWsPaths = new Set(
+      [...openedWsPaths.toArray(), ...(recentlyUsedWsPaths || [])].filter(
+        (r): r is string => typeof r === 'string',
+      ),
+    );
+
+    return githubSync({
+      wsName,
+      config,
+      retainedWsPaths,
+      abortSignal: abort,
+    });
+  }
+
   return ghSliceKey.asyncOp(async (_, __, store) => {
-    const result = await syncRunGuard(wsName, abort, store, notifyVerbose);
+    const result = await syncRunGuard(store, notifyVerbose);
 
     if (result === false) {
       console.log('gh-sync returned false');
@@ -266,138 +374,6 @@ export function manuallyResolveConflict(wsName: string) {
 
       return false;
     }
-  });
-}
-
-function notify(
-  store: BangleApplicationStore,
-  title: string,
-  severity: Severity,
-  content?: string,
-) {
-  return notification.notificationSliceKey.callOp(
-    store.state,
-    store.dispatch,
-    notification.showNotification({
-      severity,
-      title,
-      uid: 'sync notification-' + Math.random(),
-      transient: severity !== Severity.ERROR,
-      content,
-    }),
-  );
-}
-
-async function syncRunGuard(
-  wsName: string,
-  abort: AbortSignal,
-  store: ReturnType<typeof ghSliceKey.getStore>,
-  notifyVerbose: boolean,
-) {
-  const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-
-  if (githubWsName !== wsName) {
-    notify(store, 'Not a Github workspace', Severity.WARNING);
-
-    return false;
-  }
-
-  const githubToken = await getGhToken();
-
-  if (!githubToken) {
-    throw new BaseError({
-      message: 'Github token is required',
-      code: INVALID_GITHUB_TOKEN,
-    });
-  }
-
-  const ghMetadata = await readGhWorkspaceMetadata(wsName);
-
-  if (!ghMetadata) {
-    return false;
-  }
-
-  const ghConfig = { ...ghMetadata, repoName: wsName, githubToken };
-
-  if (ghSliceKey.getSliceStateAsserted(store.state).isSyncing) {
-    notifyVerbose &&
-      notify(store, 'Github sync already in progress', Severity.INFO);
-
-    return false;
-  }
-
-  try {
-    const { lockAcquired, result } = await getGithubSyncLockWrapper(
-      wsName,
-      async () => {
-        store.dispatch({
-          name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
-          value: {
-            isSyncing: true,
-          },
-        });
-
-        const result = await runSync(wsName, abort, store, ghConfig);
-
-        return result;
-      },
-    );
-
-    if (!lockAcquired) {
-      notifyVerbose &&
-        notify(store, 'Github sync already in progress', Severity.INFO);
-
-      return false;
-    }
-
-    return result;
-  } catch (error) {
-    console.error(error);
-    notify(
-      store,
-      'Github sync failed',
-      Severity.ERROR,
-      error instanceof Error ? error.message : 'Unknown error',
-    );
-
-    return false;
-  } finally {
-    store.dispatch({
-      name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
-      value: {
-        isSyncing: false,
-      },
-    });
-  }
-}
-
-async function runSync(
-  wsName: string,
-  abort: AbortSignal,
-  store: ReturnType<typeof ghSliceKey.getStore>,
-  config: GithubConfig,
-) {
-  const {
-    openedWsPaths,
-    wsName: currentWsName,
-    recentlyUsedWsPaths,
-  } = workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
-
-  if (currentWsName !== wsName) {
-    return false;
-  }
-
-  const retainedWsPaths = new Set(
-    [...openedWsPaths.toArray(), ...(recentlyUsedWsPaths || [])].filter(
-      (r): r is string => typeof r === 'string',
-    ),
-  );
-
-  return githubSync({
-    wsName,
-    config,
-    retainedWsPaths,
-    abortSignal: abort,
   });
 }
 

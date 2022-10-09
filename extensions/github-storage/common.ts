@@ -1,4 +1,6 @@
-import { SliceKey } from '@bangle.io/api';
+import type { BangleApplicationStore } from '@bangle.io/api';
+import { notification, SliceKey } from '@bangle.io/api';
+import { Severity } from '@bangle.io/constants';
 import { acquireLockIfAvailable } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
@@ -105,3 +107,22 @@ export async function getGithubSyncLockWrapper<
 }
 
 export const getSyncInterval = () => 5 * 1000 * 60;
+
+export function notify(
+  store: BangleApplicationStore,
+  title: string,
+  severity: Severity,
+  content?: string,
+) {
+  return notification.notificationSliceKey.callOp(
+    store.state,
+    store.dispatch,
+    notification.showNotification({
+      severity,
+      title,
+      uid: 'sync notification-' + Math.random(),
+      transient: severity !== Severity.ERROR,
+      content,
+    }),
+  );
+}
