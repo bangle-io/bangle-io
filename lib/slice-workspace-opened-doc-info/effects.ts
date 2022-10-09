@@ -4,10 +4,7 @@ import {
   pageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
-import {
-  getOpenedWsPaths,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { abortableSetInterval } from '@bangle.io/utils';
 
 import type { OpenedFile } from './common';
@@ -24,61 +21,38 @@ const log = LOG
   ? console.debug.bind(console, '[slice-workspace-opened-doc-info] ')
   : () => {};
 
-export const syncWithOpenedWsPathsEffect = workspaceOpenedDocInfoKey.effect(
-  () => {
-    return {
-      async update(store, prevState) {
-        const openedWsPaths = getOpenedWsPaths()(
-          workspaceSliceKey.getState(store.state),
-        );
+export const syncWithOpenedWsPathsEffect = workspaceOpenedDocInfoKey.reactor(
+  {
+    openedWsPaths: workspaceSliceKey.select('openedWsPaths'),
+    openedFiles: workspaceOpenedDocInfoKey.select('openedFiles'),
+  },
+  (_, dispatch, { openedWsPaths, openedFiles }) => {
+    let additions: string[] = [];
+    let removals: string[] = [];
 
-        const prevOpenedWsPaths = getOpenedWsPaths()(
-          workspaceSliceKey.getState(prevState),
-        );
+    // cleanup data that is not opened anymore and does not have a pending write
+    Object.entries(openedFiles).forEach(([wsPath, val]) => {
+      if (!openedWsPaths.has(wsPath) && !val.pendingWrite) {
+        removals.push(wsPath);
+      }
+    });
 
-        if (
-          openedWsPaths === prevOpenedWsPaths &&
-          !workspaceOpenedDocInfoKey.valueChanged(
-            'openedFiles',
-            store.state,
-            prevState,
-          )
-        ) {
-          return;
-        }
+    // add new data
+    openedWsPaths.getWsPaths().forEach((wsPath) => {
+      if (!openedFiles[wsPath]) {
+        additions.push(wsPath);
+      }
+    });
 
-        const { openedFiles } = workspaceOpenedDocInfoKey.getSliceStateAsserted(
-          store.state,
-        );
-
-        let additions: string[] = [];
-        let removals: string[] = [];
-
-        // cleanup data that is not opened anymore and does not have a pending write
-        Object.entries(openedFiles).forEach(([wsPath, val]) => {
-          if (!openedWsPaths.has(wsPath) && !val.pendingWrite) {
-            removals.push(wsPath);
-          }
-        });
-
-        // add new data
-        openedWsPaths.getWsPaths().forEach((wsPath) => {
-          if (!openedFiles[wsPath]) {
-            additions.push(wsPath);
-          }
-        });
-
-        if (additions.length > 0 || removals.length > 0) {
-          store.dispatch({
-            name: SYNC_ENTRIES,
-            value: {
-              additions,
-              removals,
-            },
-          });
-        }
-      },
-    };
+    if (additions.length > 0 || removals.length > 0) {
+      dispatch({
+        name: SYNC_ENTRIES,
+        value: {
+          additions,
+          removals,
+        },
+      });
+    }
   },
 );
 
@@ -199,44 +173,34 @@ export const calculateCurrentDiskShaEffect = workspaceOpenedDocInfoKey.effect(
 );
 
 // Calculate lastKnownDiskSha of files that are just opened
-export const calculateLastKnownDiskShaEffect = workspaceOpenedDocInfoKey.effect(
-  () => {
-    return {
-      async deferredUpdate(store, prevState) {
-        const openedFiles = workspaceOpenedDocInfoKey.getValueIfChanged(
-          'openedFiles',
-          store.state,
-          prevState,
-        );
+export const calculateLastKnownDiskShaEffect =
+  workspaceOpenedDocInfoKey.deferredReactor(
+    {
+      openedFiles: workspaceOpenedDocInfoKey.select('openedFiles'),
+    },
+    async (store, { openedFiles }) => {
+      const openedFilesArray = Object.values(openedFiles);
 
-        if (!openedFiles) {
-          return;
-        }
+      for (const openedFile of openedFilesArray) {
+        // lastKnownDiskSha will be undefined for newly opened files
+        if (!openedFile.lastKnownDiskSha) {
+          const sha = await getDiskSha(openedFile.wsPath, store);
 
-        const openedFilesArray = Object.values(openedFiles);
+          if (sha) {
+            // queue it so that we can finish the current loop
+            queueMicrotask(() => {
+              log(
+                '[calculateLastKnownDiskShaEffect] updateLastKnownDiskSha',
+                openedFile.wsPath,
+              );
 
-        for (const openedFile of openedFilesArray) {
-          // lastKnownDiskSha will be undefined for newly opened files
-          if (!openedFile.lastKnownDiskSha) {
-            const sha = await getDiskSha(openedFile.wsPath, store);
-
-            if (sha) {
-              // queue it so that we can finish the current loop
-              queueMicrotask(() => {
-                log(
-                  '[calculateLastKnownDiskShaEffect] updateLastKnownDiskSha',
-                  openedFile.wsPath,
-                );
-
-                updateLastKnownDiskSha(openedFile.wsPath, sha)(
-                  store.state,
-                  store.dispatch,
-                );
-              });
-            }
+              updateLastKnownDiskSha(openedFile.wsPath, sha)(
+                store.state,
+                store.dispatch,
+              );
+            });
           }
         }
-      },
-    };
-  },
-);
+      }
+    },
+  );

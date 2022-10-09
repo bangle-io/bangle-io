@@ -46,27 +46,18 @@ export function pageLifeCycleSlice() {
         };
       }),
 
-      key.effect(function blockReload() {
-        return {
-          update(store, prevState) {
-            const blockReload = pageSliceKey.getValueIfChanged(
-              'blockReload',
-              store.state,
-              prevState,
-            );
-
-            if (blockReload == null) {
-              return;
-            }
-
-            if (blockReload) {
-              lifecycle.addUnsavedChanges(pendingSymbol);
-            } else {
-              lifecycle.removeUnsavedChanges(pendingSymbol);
-            }
-          },
-        };
-      }),
+      key.reactor(
+        {
+          blockReload: pageSliceKey.select('blockReload'),
+        },
+        (_, __, { blockReload }) => {
+          if (blockReload) {
+            lifecycle.addUnsavedChanges(pendingSymbol);
+          } else {
+            lifecycle.removeUnsavedChanges(pendingSymbol);
+          }
+        },
+      ),
     ],
   });
 }
