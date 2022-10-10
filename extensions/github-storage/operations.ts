@@ -1,6 +1,7 @@
 import { notification, workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
+import { LocalFileEntry } from '@bangle.io/remote-file-sync';
 
 import {
   getGithubSyncLockWrapper,
@@ -9,7 +10,7 @@ import {
   OPERATION_SHOW_CONFLICT_DIALOG,
 } from './common';
 import { getGhToken, updateGhToken } from './database';
-import { localFileEntryManager } from './file-entry-manager';
+import { fileManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
 import {
   discardLocalEntryChanges,
@@ -230,12 +231,12 @@ export function discardLocalChanges(wsName: string) {
     const { lockAcquired, result } = await getGithubSyncLockWrapper(
       wsName,
       async () => {
-        const allEntries = await localFileEntryManager.getAllEntries(
-          wsName + ':',
-        );
+        const allEntries = await fileManager.listAllEntries(wsName);
 
         const result = await pMap(
-          allEntries.filter((r) => {
+          allEntries.filter((entry) => {
+            const r = LocalFileEntry.fromPlainObj(entry);
+
             return r.isModified || r.isNew || r.isDeleted;
           }),
           async (entry) => {

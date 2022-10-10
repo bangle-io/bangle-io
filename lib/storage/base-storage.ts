@@ -63,7 +63,15 @@ export interface BaseStorageProvider {
     opts: StorageOpts,
   ) => Promise<void>;
 
-  writeFile: (wsPath: WsPath, file: File, opts: StorageOpts) => Promise<void>;
+  /**
+   * sha - gitsha of the file
+   */
+  writeFile: (
+    wsPath: WsPath,
+    file: File,
+    opts: StorageOpts,
+    sha?: string,
+  ) => Promise<void>;
 
   searchFile?: (
     abortSignal: AbortSignal,

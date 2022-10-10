@@ -1,5 +1,6 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, workspace } from '@bangle.io/api';
+import { LocalFileEntry } from '@bangle.io/remote-file-sync';
 import {
   createBasicTestStore,
   createPMNode,
@@ -10,7 +11,7 @@ import { randomStr, sleep } from '@bangle.io/utils';
 import type { GithubWsMetadata } from '../common';
 import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
-import { localFileEntryManager } from '../file-entry-manager';
+import { fileManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import GithubStorageExt from '../index';
 import { discardLocalChanges, syncRunner } from '../operations';
@@ -48,10 +49,15 @@ let wsName: string,
 let abortController = new AbortController();
 let getTree = github.getRepoTree();
 const getLocalEntry = async (wsPath: string) => {
-  let entries = await localFileEntryManager.getAllEntries('');
+  const entry = await fileManager.readEntry(wsPath);
 
-  return entries.find((e) => e.uid === wsPath);
+  if (!entry) {
+    return undefined;
+  }
+
+  return LocalFileEntry.fromPlainObj(entry);
 };
+
 const existsInRemote = async (wsPath: string) => {
   const tree = await getTree({
     config: { ...githubWsMetadata, githubToken, repoName: wsName },
@@ -163,7 +169,7 @@ describe('pull changes', () => {
       let note = await getNoteAsString(defaultNoteWsPath);
       expect(note?.toString()).toContain('Welcome to Bangle.io');
 
-      expect(await localFileEntryManager.getAllEntries('')).toEqual([
+      expect(await fileManager.listAllEntries(wsName)).toEqual([
         {
           deleted: undefined,
           sha: '97168e50a1841a6a409d9c1a3439913798b9f0f9',
@@ -220,7 +226,7 @@ describe('pull changes', () => {
         'doc(paragraph("I am changed content"))',
       );
 
-      expect(await localFileEntryManager.getAllEntries('')).toEqual([
+      expect(await fileManager.listAllEntries(wsName)).toEqual([
         {
           deleted: undefined,
           sha: 'abfe362253258d3aa6deaadbada5c02e52d0b7ad',
@@ -233,9 +239,11 @@ describe('pull changes', () => {
         },
       ]);
 
-      expect(
-        (await localFileEntryManager.getAllEntries(''))[0]?.isModified,
-      ).toBe(false);
+      const entry = LocalFileEntry.fromPlainObj(
+        (await fileManager.listAllEntries(wsName))[0]!,
+      );
+
+      expect(entry.isModified).toBe(false);
     });
 
     test('variety of remote changes: deleted and another is modified', async () => {
@@ -374,7 +382,7 @@ describe('pull changes', () => {
       expect((await getLocalEntry(defaultNoteWsPath))?.isModified).toBe(true);
       expect((await getLocalEntry(defaultNoteWsPath))?.isUntouched).toBe(false);
 
-      expect(await localFileEntryManager.getAllEntries('')).toEqual([
+      expect(await fileManager.listAllEntries(wsName)).toEqual([
         {
           deleted: undefined,
           sha: 'b78abfa02cdcc8f4a4cbc92205a7856064e7f6b0',

@@ -1,6 +1,6 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { workspace, wsPathHelpers } from '@bangle.io/api';
-import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
+import { LocalFileEntry, RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import {
   createBasicTestStore,
   createPMNode,
@@ -11,7 +11,7 @@ import { randomStr, sleep } from '@bangle.io/utils';
 import type { GithubWsMetadata } from '../common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
-import { localFileEntryManager } from '../file-entry-manager';
+import { fileManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import {
   discardLocalEntryChanges,
@@ -111,9 +111,9 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (await localFileEntryManager.getAllEntries('')).map((entry) => [
+    (await fileManager.listAllEntries(wsName)).map((entry) => [
       entry.uid,
-      entry,
+      LocalFileEntry.fromPlainObj(entry),
     ]),
   );
 };
@@ -425,9 +425,11 @@ describe('pushLocalChanges', () => {
 
     await waitForExpect(async () => {
       expect(
-        await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
-          .wsPaths,
-      ).toEqual([`${wsName}:bunny`, test2WsPath, defaultNoteWsPath]);
+        (
+          await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
+            .wsPaths
+        )?.sort(),
+      ).toEqual([`${wsName}:bunny`, test2WsPath, defaultNoteWsPath].sort());
     });
   });
 });
@@ -556,7 +558,7 @@ describe('house keeping', () => {
     expect(sha).toBe(sourceSha);
 
     // // corrupt the source
-    await localFileEntryManager.updateFileSource(
+    await fileManager.updateSource(
       test1WsPath,
       new File(
         [new Blob(['hi'], { type: 'text/plain' })],
@@ -614,6 +616,36 @@ describe('discardLocalEntryChanges', () => {
     expect((await getLocalFileEntries())[test1WsPath]?.sha).toBe(
       remoteEntries[test1WsPath]?.sha,
     );
+  });
+
+  test('if a file is deleted, it is brought back', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+
+    // Setup the workspace so that we have a file that is in sync with github
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    await push();
+
+    await sleep(50);
+
+    let remoteEntries = await getRemoteFileEntries();
+
+    expect(remoteEntries[test1WsPath]).toBeDefined();
+
+    await workspace.deleteNote(test1WsPath)(store.state, store.dispatch, store);
+
+    await waitForExpect(async () => {
+      expect(
+        typeof (await fileManager.readEntry(test1WsPath))?.deleted === 'number',
+      ).toBe(true);
+    });
+
+    // Now discard the local changes
+    expect(await discardLocalEntryChanges(test1WsPath)).toBe(true);
+
+    expect((await fileManager.readEntry(test1WsPath))?.deleted).toBeUndefined();
   });
 
   test('if file does not exist in remote it gets deleted', async () => {

@@ -228,7 +228,7 @@ export const createNote = (
   });
 };
 
-export const writeFile = (wsPath: string, file: File) => {
+export const writeFile = (wsPath: string, file: File, sha?: string) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<boolean> => {
       const { wsName } = resolvePath(wsPath);
@@ -250,6 +250,7 @@ export const writeFile = (wsPath: string, file: File) => {
         wsPath,
         file,
         getStorageProviderOpts()(store.state, dispatch),
+        sha,
       );
 
       return true;

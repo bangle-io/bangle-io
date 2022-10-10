@@ -2,6 +2,10 @@ import type { DBSchema, IDBPDatabase } from 'idb';
 
 export * as idb from 'idb';
 
+type Durability = 'default' | 'strict' | 'relaxed';
+
+type IdbOpts = { durability?: Durability };
+
 export function makeDbRecord<V>(key: string, value: V): DbRecord<V> {
   return {
     key,
@@ -49,12 +53,68 @@ export class DBKeyVal<V> {
     });
   }
 
+  openDb() {
+    return this._openDb();
+  }
+
   async put(key: string, val: V): Promise<void> {
     const db = await this._openDb();
 
     const result: DbRecord<V> = makeDbRecord(key, val);
 
     await db.put(this._storeName, result);
+  }
+
+  /**
+   *
+   * @returns False if the key already exists
+   */
+  async putIfNotExists(
+    key: string,
+    val: V,
+    opts: IdbOpts = {},
+  ): Promise<boolean> {
+    const db = await this._openDb();
+    const tx = db.transaction(this._storeName, 'readwrite', opts);
+    const store = tx.objectStore(this._storeName);
+
+    const existing: DbRecord<V> | undefined = await store.get(key);
+
+    if (!existing) {
+      let newRecord = makeDbRecord(key, val);
+
+      await Promise.all([store.put(newRecord), tx.done]);
+
+      return true;
+    } else {
+      await tx.done;
+
+      return false;
+    }
+  }
+
+  async updateIfExists(
+    key: string,
+    updater: (oldValue: V) => V,
+    opts: IdbOpts = {},
+  ): Promise<boolean> {
+    const db = await this._openDb();
+    const tx = db.transaction(this._storeName, 'readwrite', opts);
+    const store = tx.objectStore(this._storeName);
+
+    const existing: DbRecord<V> | undefined = await store.get(key);
+
+    if (existing) {
+      let newRecord = makeDbRecord(key, updater(existing.value));
+
+      await Promise.all([store.put(newRecord), tx.done]);
+
+      return true;
+    } else {
+      await tx.done;
+
+      return false;
+    }
   }
 }
 
@@ -78,7 +138,7 @@ export function getTable<
   dbName: string,
   storeName: StoreName,
   getDb: () => Promise<IDBPDatabase<DB>>,
-) {
+): DBKeyVal<DB[StoreName]['value']['value']> {
   return new DBKeyVal<DB[StoreName]['value']['value']>(
     dbName,
     storeName,
