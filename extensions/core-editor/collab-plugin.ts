@@ -23,7 +23,14 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
       key: new PluginKey('collab state'),
 
       view() {
+        let clearTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
         return {
+          destroy() {
+            if (clearTimeoutId != null) {
+              clearTimeout(clearTimeoutId);
+            }
+          },
           update: (view) => {
             const error = collabClient.commands.queryFatalError()(view.state);
 
@@ -34,12 +41,19 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
               console.warn(error);
 
               if (!notification.getEditorIssue(wsPath)(bangleStore.state)) {
-                notification.setEditorIssue({
-                  wsPath,
-                  title: 'Editor crashed!',
-                  description: `Please manually save your work and then try reloading the application. Error - ${error.message}`,
-                  severity: Severity.ERROR,
-                })(bangleStore.state, bangleStore.dispatch);
+                // TODO: this exists because at times when editor is unmounted
+                //       there is an error thrown. So this waits until to avoid
+                ///      setting error if the editor is unmounted.
+                clearTimeoutId = setTimeout(() => {
+                  if (!view.isDestroyed && !bangleStore.destroyed) {
+                    notification.setEditorIssue({
+                      wsPath,
+                      title: 'Editor crashed!',
+                      description: `Please manually save your work and then try reloading the application. Error - ${error.message}`,
+                      severity: Severity.ERROR,
+                    })(bangleStore.state, bangleStore.dispatch);
+                  }
+                }, 300);
               }
             }
           },
