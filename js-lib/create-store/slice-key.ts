@@ -204,7 +204,7 @@ export class SliceKey<
   /**
    * A shorthand for creating a particular type of effect - which runs whenever provided dependencies change.
    * Note: prefer `.deferredReactor` unless you know what you are doing.
-   *
+   * Note: it only runs if and only if dependencies change.
    * Warning: Be careful not to trigger infinite loop by changing the data which dependency map
    * is watching. Generally avoid putting the same data that you are modifying in the dependency map.
    *
