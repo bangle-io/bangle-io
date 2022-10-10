@@ -6,7 +6,7 @@ import { EXTENSION_NAME } from './common';
 
 const DB_NAME = EXTENSION_NAME;
 const DB_VERSION = 2;
-const LOCAL_ENTRIES_TABLE = 'LOCAL_ENTRIES_TABLE';
+export const LOCAL_ENTRIES_TABLE = 'LOCAL_ENTRIES_TABLE';
 const MISC_TABLE = 'MISC_TABLE';
 const tables = [LOCAL_ENTRIES_TABLE, MISC_TABLE] as const;
 
@@ -21,7 +21,7 @@ export interface AppDatabase extends BangleDbSchema {
   };
 }
 
-export function setupDatabase() {
+export function openDatabase() {
   return idb.openDB<AppDatabase>(DB_NAME, DB_VERSION, {
     upgrade(db, oldVersion) {
       switch (oldVersion) {
@@ -44,10 +44,10 @@ export function setupDatabase() {
   });
 }
 
-const miscTable = getTable(DB_NAME, MISC_TABLE, setupDatabase);
+const miscTable = getTable(DB_NAME, MISC_TABLE, openDatabase);
 
 export function getLocalEntriesTable(): DBKeyVal<PlainObjEntry> {
-  return getTable(DB_NAME, LOCAL_ENTRIES_TABLE, setupDatabase);
+  return getTable(DB_NAME, LOCAL_ENTRIES_TABLE, openDatabase);
 }
 
 export async function getGhToken() {

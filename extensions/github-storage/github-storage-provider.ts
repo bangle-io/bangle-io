@@ -1,5 +1,5 @@
 import { wsPathHelpers } from '@bangle.io/api';
-import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
+import { LocalFileEntry, RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError, errorParse, errorSerialize } from '@bangle.io/utils';
 
@@ -7,7 +7,7 @@ import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { getGhToken } from './database';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
-import { localFileEntryManager } from './file-entry-manager';
+import { fileManager } from './file-entry-manager';
 import { getFileBlobFromTree, getRepoTree } from './github-api-helpers';
 
 const LOG = false;
@@ -21,7 +21,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
   description = '';
   hidden = true;
 
-  private _fileEntryManager = localFileEntryManager;
   private _getTree = getRepoTree();
 
   async createFile(
@@ -29,29 +28,24 @@ export class GithubStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
-
-    await this._fileEntryManager.createFile(
-      wsPath,
-      file,
-      await this._makeGetRemoteFileEntryCb(
-        (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
-      ),
-    );
+    const entry = (
+      await LocalFileEntry.newFile({
+        uid: wsPath,
+        file,
+      })
+    ).toPlainObj();
+    // TODO we should throw error if file already exists?
+    const success = await fileManager.createEntry(entry);
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
-    await this._fileEntryManager.deleteFile(
-      wsPath,
-      await this._makeGetRemoteFileEntryCb(
-        (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
-      ),
-    );
+    // TODO: currently if a local entry does not exist
+    // we donot mark it for deletion. We should do that.
+    await fileManager.softDeleteEntry(wsPath);
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    return Boolean(await this.readFile(wsPath, opts));
+    return fileManager.hasEntry(wsPath);
   }
 
   async fileStat(wsPath: string, opts: StorageOpts) {
@@ -89,12 +83,14 @@ export class GithubStorageProvider implements BaseStorageProvider {
       abortSignal,
     });
 
-    const files = await this._fileEntryManager.listFiles(
-      [...tree.keys()],
-      wsName + ':',
+    let allKeys = await fileManager.listAllKeys(wsName);
+    let softDeletedKeys = new Set(
+      await fileManager.listSoftDeletedKeys(wsName),
     );
 
-    return files;
+    return Array.from(new Set([...allKeys, ...tree.keys()])).filter((key) => {
+      return !softDeletedKeys.has(key);
+    });
   }
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {
@@ -122,18 +118,39 @@ export class GithubStorageProvider implements BaseStorageProvider {
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
-    const file = await this._fileEntryManager.readFile(
-      wsPath,
-      await this._makeGetRemoteFileEntryCb(
-        (await opts.readWorkspaceMetadata(wsName)) as GithubWsMetadata,
-      ),
-    );
+    // check if file exists in local db
+    const plainObj = await fileManager.readEntry(wsPath);
 
-    if (!file) {
+    if (plainObj?.deleted) {
+      return undefined;
+    }
+    if (plainObj) {
+      return plainObj.file;
+    }
+
+    // if we reach here, file doesn't exist locally
+    // so we fetch from github and create a local entry
+    const wsMetadata = (await opts.readWorkspaceMetadata(
+      wsName,
+    )) as GithubWsMetadata;
+
+    const remoteFileEntry = await (
+      await this._makeGetRemoteFileEntryCb(wsMetadata)
+    )(wsPath);
+
+    if (!remoteFileEntry) {
       return undefined;
     }
 
-    return file;
+    const createSuccess = await fileManager.createEntry(
+      remoteFileEntry.forkLocalFileEntry().toPlainObj(),
+    );
+
+    if (createSuccess) {
+      return remoteFileEntry.file;
+    }
+
+    return undefined;
   }
 
   async renameFile(
@@ -162,9 +179,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
     wsPath: string,
     file: File,
     opts: StorageOpts,
+    sha?: string,
   ): Promise<void> {
     log('writeFile', wsPath, file);
-    await this._fileEntryManager.writeFile(wsPath, file);
+
+    // TODO should we throw an error if file doesn't exist?
+    await fileManager.writeFile(wsPath, file, sha);
   }
 
   private async _makeGetRemoteFileEntryCb(

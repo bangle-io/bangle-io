@@ -87,19 +87,18 @@ const collabManagerSetupEffect = workerEditorSliceKey.effect(
             docToFile(collabStateInfo.wsPath, collabStateInfo.collabState.doc),
           );
 
-          const [lastWrittenSha, writeFileStatus] = await Promise.all([
-            cachedCalculateGitFileSha(file),
-            workspaceSliceKey
-              .callAsyncOp(store, writeFile(collabStateInfo.wsPath, file))
-              .catch((error) => {
-                console.warn(
-                  'received error while writing item',
-                  error.message,
-                );
-                // TODO add testing for this
-                store.errorHandler(error);
-              }),
-          ]);
+          const lastWrittenSha = await cachedCalculateGitFileSha(file);
+
+          const writeFileStatus = await workspaceSliceKey
+            .callAsyncOp(
+              store,
+              writeFile(collabStateInfo.wsPath, file, lastWrittenSha),
+            )
+            .catch((error) => {
+              console.warn('received error while writing item', error.message);
+              // TODO add testing for this
+              store.errorHandler(error);
+            });
 
           if (writeFileStatus) {
             workspaceOpenedDocInfoKey.callOp(

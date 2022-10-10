@@ -9,7 +9,8 @@ import {
   wsPathHelpers,
 } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
-import type { LocalFileEntry } from '@bangle.io/remote-file-sync';
+import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
+import { LocalFileEntry } from '@bangle.io/remote-file-sync';
 import {
   ActionButton,
   ButtonContent,
@@ -19,7 +20,7 @@ import { Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
-import { localFileEntryManager } from '../file-entry-manager';
+import { fileManager } from '../file-entry-manager';
 
 const LOG = false;
 
@@ -53,7 +54,7 @@ function ModifiedEntries({
 }) {
   const store = useBangleStoreContext();
   const [modifiedEntries, updateModifiedEntries] = useState<
-    undefined | LocalFileEntry[]
+    undefined | PlainObjEntry[]
   >(undefined);
 
   const [refreshEntries, updateRefreshEntries] = useState(0);
@@ -65,9 +66,11 @@ function ModifiedEntries({
 
   useEffect(() => {
     let destroyed = false;
-    localFileEntryManager.getAllEntries(wsName + ':').then((r) => {
+    fileManager.listAllEntries(wsName).then((entries) => {
       if (!destroyed) {
-        const result = r.filter((e) => !e.isUntouched);
+        const result = entries.filter((e) => {
+          return !LocalFileEntry.fromPlainObj(e).isUntouched;
+        });
         updateModifiedEntries((prevEntries) => {
           const newWsPaths = result.map((e) => e.uid);
           const oldWsPaths = prevEntries?.map((e) => e.uid) || [];
