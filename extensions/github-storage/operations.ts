@@ -1,8 +1,13 @@
-import { workspace } from '@bangle.io/api';
+import { notification, workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
 
-import { getGithubSyncLockWrapper, ghSliceKey, notify } from './common';
+import {
+  getGithubSyncLockWrapper,
+  ghSliceKey,
+  notify,
+  OPERATION_SHOW_CONFLICT_DIALOG,
+} from './common';
 import { getGhToken, updateGhToken } from './database';
 import { localFileEntryManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
@@ -81,6 +86,32 @@ export function syncRunner(
           notify(store, 'Github sync already in progress', Severity.INFO);
 
         return false;
+      }
+
+      if (
+        result !== false &&
+        result.status === 'merge-conflict' &&
+        notifyVerbose
+      ) {
+        notification.notificationSliceKey.callOp(
+          store.state,
+          store.dispatch,
+          notification.showNotification({
+            severity: Severity.ERROR,
+            title: 'Github sync failed',
+            uid: 'sync notification-' + Math.random(),
+            content:
+              'Syncing failed due to merge conflicts. Please resolve the issues and try again.',
+            transient: false,
+            buttons: [
+              {
+                operation: OPERATION_SHOW_CONFLICT_DIALOG,
+                title: 'Resolve Conflicts',
+                dismissOnClick: true,
+              },
+            ],
+          }),
+        );
       }
 
       return result;

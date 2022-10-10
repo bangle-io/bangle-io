@@ -58,6 +58,9 @@ function ModifiedEntries({
 
   const [refreshEntries, updateRefreshEntries] = useState(0);
 
+  const {
+    sliceState: { conflictedWsPaths },
+  } = useSliceState(ghSliceKey);
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   useEffect(() => {
@@ -151,9 +154,9 @@ function ModifiedEntries({
                   ? true
                   : false,
               showDividerAbove: false,
-              title: `${r.deleted ? '(deleted)' : ''}  ${
-                wsPathHelpers.resolvePath(r.uid).filePath
-              }`,
+              title: `${r.deleted ? '(deleted) ' : ''}${
+                conflictedWsPaths.includes(r.uid) ? '(conflict) ' : ''
+              }${wsPathHelpers.resolvePath(r.uid).filePath}`,
             }}
           />
         ))}
