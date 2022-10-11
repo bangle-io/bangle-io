@@ -18,6 +18,7 @@ import {
   duplicateAndResetToRemote,
   getConflicts,
   githubSync,
+  optimizeDatabase,
 } from '../github-sync';
 import GithubStorageExt from '../index';
 
@@ -163,7 +164,7 @@ const getRemoteFileEntries = async () => {
   );
 };
 
-const push = async (retainedWsPaths = new Set<string>()) => {
+const runGithubSync = async () => {
   const config = {
     repoName: wsName,
     ...githubWsMetadata,
@@ -173,11 +174,30 @@ const push = async (retainedWsPaths = new Set<string>()) => {
   return githubSync({
     wsName,
     config: config,
-    retainedWsPaths,
     abortSignal: abortController.signal,
   });
 };
 
+const runOptimizeDatabase = async (retainedWsPaths: string[]) => {
+  const config = {
+    repoName: wsName,
+    ...githubWsMetadata,
+    githubToken,
+  };
+
+  return optimizeDatabase({
+    abortSignal: abortController.signal,
+    wsName,
+    retainedWsPaths: new Set(retainedWsPaths),
+    pruneUnused: true,
+    config,
+    tree: await getTree({
+      abortSignal: abortController.signal,
+      config,
+      wsName,
+    }),
+  });
+};
 describe('pushLocalChanges', () => {
   test('when a new note is created locally and then modified, remote should be updated correctly', async () => {
     const test1WsPath = `${wsName}:bunny/test-1.md`;
@@ -199,7 +219,7 @@ describe('pushLocalChanges', () => {
     expect(localEntries[test1WsPath]?.isUntouched).toEqual(false);
     expect(localEntries[test1WsPath]?.source).toBe(undefined);
 
-    await push();
+    await runGithubSync();
 
     remoteEntries = await getRemoteFileEntries();
 
@@ -227,7 +247,7 @@ describe('pushLocalChanges', () => {
     expect(localEntries[test1WsPath]?.isUntouched).toEqual(false);
     expect(localEntries[test1WsPath]?.source).toBeDefined();
 
-    await push();
+    await runGithubSync();
 
     remoteEntries = await getRemoteFileEntries();
     localEntries = await getLocalFileEntries();
@@ -325,7 +345,7 @@ describe('pushLocalChanges', () => {
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
 
       // push the deletion to github
-      await push(new Set([test1WsPath, test2WsPath]));
+      await runGithubSync();
 
       // remote entry for test1 & test2 should become undefined
       remoteEntries = await getRemoteFileEntries();
@@ -379,7 +399,7 @@ describe('pushLocalChanges', () => {
       let remoteEntries = await getRemoteFileEntries();
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
 
-      await push(new Set([test1WsPath, test2WsPath]));
+      await runGithubSync();
 
       remoteEntries = await getRemoteFileEntries();
       localEntries = await getLocalFileEntries();
@@ -432,9 +452,52 @@ describe('pushLocalChanges', () => {
       ).toEqual([`${wsName}:bunny`, test2WsPath, defaultNoteWsPath].sort());
     });
   });
+
+  test('if source gets out of sync it gets fixed in next sync', async () => {
+    const test1WsPath = `${wsName}:bunny/test-1.md`;
+
+    await workspace.createNote(test1WsPath, {
+      doc: createPMNode([], `hello I am test-1 note`),
+    })(store.state, store.dispatch, store);
+
+    await runGithubSync();
+
+    let localEntries = await getLocalFileEntries();
+
+    let remoteEntries = await getRemoteFileEntries();
+
+    expect(remoteEntries[test1WsPath]).toBeDefined();
+
+    const sha = localEntries[test1WsPath]?.sha;
+    const sourceSha = localEntries[test1WsPath]?.source?.sha;
+
+    expect(sha).toBe(sourceSha);
+
+    // // corrupt the source
+    await fileManager.updateSource(
+      test1WsPath,
+      new File(
+        [new Blob(['hi'], { type: 'text/plain' })],
+        'test-1-corrupted.md',
+      ),
+    );
+
+    localEntries = await getLocalFileEntries();
+
+    const corruptedSourceSha = localEntries[test1WsPath]?.source?.sha;
+
+    expect(corruptedSourceSha).not.toEqual(sourceSha);
+
+    await runGithubSync();
+
+    localEntries = await getLocalFileEntries();
+
+    // // source should get back to original
+    expect(localEntries[test1WsPath]?.source?.sha).toBe(sourceSha);
+  });
 });
 
-describe('house keeping', () => {
+describe('optimizeDatabase', () => {
   test('creates local for files that are in retained list but do not exist locally', async () => {
     let test1WsPath = `${wsName}:bunny/test-1.md`;
     let test2WsPath = `${wsName}:bunny/test-2.md`;
@@ -464,7 +527,8 @@ describe('house keeping', () => {
     let localEntries = await getLocalFileEntries();
     expect(Object.keys(localEntries).sort()).toEqual([defaultNoteWsPath]);
 
-    await push(new Set([test1WsPath, test2WsPath]));
+    await runGithubSync();
+    await runOptimizeDatabase([test1WsPath, test2WsPath]);
 
     // should pull in the notes in retained list and remove defaultNoteWsPath
     localEntries = await getLocalFileEntries();
@@ -481,7 +545,8 @@ describe('house keeping', () => {
       `${wsName}:welcome-to-bangle.md`,
     ]);
 
-    await push(new Set());
+    await runGithubSync();
+    await runOptimizeDatabase([]);
 
     localEntries = await getLocalFileEntries();
 
@@ -494,7 +559,8 @@ describe('house keeping', () => {
 
     expect(Object.keys(localEntries)).toEqual([defaultNoteWsPath]);
 
-    await push(new Set([defaultNoteWsPath]));
+    await runGithubSync();
+    await runOptimizeDatabase([defaultNoteWsPath]);
 
     localEntries = await getLocalFileEntries();
 
@@ -512,72 +578,24 @@ describe('house keeping', () => {
     let localEntries = await getLocalFileEntries();
 
     expect(Object.keys(localEntries).sort()).toEqual([
-      `${wsName}:bunny/test-1.md`,
+      test1WsPath,
       defaultNoteWsPath,
     ]);
 
-    await push(new Set());
+    await runGithubSync();
 
-    localEntries = await getLocalFileEntries();
-    let remoteEntries = await getRemoteFileEntries();
-
-    // removes default but not test-1 since it was not synced to github
-    expect(Object.keys(localEntries).sort()).toEqual([
-      `${wsName}:bunny/test-1.md`,
-    ]);
-
-    // sync test-1 with github
-    await push();
-
-    await push(new Set());
+    await runOptimizeDatabase([]);
 
     localEntries = await getLocalFileEntries();
 
     // should remove all
     expect(Object.keys(localEntries).sort()).toEqual([]);
-  });
 
-  test('if source gets out of sync it gets fixed in next sync', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
-
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
-
-    await push(new Set([test1WsPath]));
-
-    let localEntries = await getLocalFileEntries();
-
-    let remoteEntries = await getRemoteFileEntries();
-
-    expect(remoteEntries[test1WsPath]).toBeDefined();
-
-    const sha = localEntries[test1WsPath]?.sha;
-    const sourceSha = localEntries[test1WsPath]?.source?.sha;
-
-    expect(sha).toBe(sourceSha);
-
-    // // corrupt the source
-    await fileManager.updateSource(
-      test1WsPath,
-      new File(
-        [new Blob(['hi'], { type: 'text/plain' })],
-        'test-1-corrupted.md',
-      ),
-    );
-
+    // however, reading the note should still work
+    expect(await getNoteAsString(test1WsPath)).toBeDefined();
+    // and should bring back the note into local db
     localEntries = await getLocalFileEntries();
-
-    const corruptedSourceSha = localEntries[test1WsPath]?.source?.sha;
-
-    expect(corruptedSourceSha).not.toEqual(sourceSha);
-
-    await push(new Set([test1WsPath]));
-
-    localEntries = await getLocalFileEntries();
-
-    // // source should get back to original
-    expect(localEntries[test1WsPath]?.source?.sha).toBe(sourceSha);
+    expect(Object.keys(localEntries).sort()).toEqual([test1WsPath]);
   });
 });
 
@@ -590,7 +608,7 @@ describe('discardLocalEntryChanges', () => {
       doc: createPMNode([], `hello I am test-1 note`),
     })(store.state, store.dispatch, store);
 
-    await push();
+    await runGithubSync();
 
     await sleep(50);
 
@@ -626,7 +644,7 @@ describe('discardLocalEntryChanges', () => {
       doc: createPMNode([], `hello I am test-1 note`),
     })(store.state, store.dispatch, store);
 
-    await push();
+    await runGithubSync();
 
     await sleep(50);
 
@@ -675,7 +693,7 @@ describe('duplicateAndResetToRemote', () => {
       doc: createPMNode([], `hello I am test-1 note`),
     })(store.state, store.dispatch, store);
 
-    await push();
+    await runGithubSync();
 
     await sleep(50);
     // ensure file is now untouched i.e. in sync with github

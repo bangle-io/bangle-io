@@ -1,3 +1,4 @@
+import { makeDbRecord } from '@bangle.io/db-key-val';
 import { pMap } from '@bangle.io/p-map';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import {
@@ -8,12 +9,13 @@ import {
 import { assertSignal } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
+import { LOCAL_ENTRIES_TABLE, openDatabase } from './database';
 import { fileManager } from './file-entry-manager';
 import type { GHTree, GithubConfig } from './github-api-helpers';
 import {
   commitToGithub,
   getFileBlobFromTree,
-  getRepoTree,
+  serialGetRepoTree,
 } from './github-api-helpers';
 import { getNonConflictName } from './helpers';
 
@@ -23,43 +25,20 @@ import { getNonConflictName } from './helpers';
 export async function githubSync({
   wsName,
   config,
-  retainedWsPaths,
   abortSignal,
 }: {
   wsName: string;
   config: GithubConfig;
-  // TODO move retainedWsPaths out of this function
-  retainedWsPaths: Set<string>;
   abortSignal: AbortSignal;
 }) {
-  const [tree, localEntriesKey] = await Promise.all([
-    getRepoTree()({
-      wsName,
-      config,
-    }),
-
-    // TODO should we omit soft deleted files?
-    fileManager.listAllKeys(wsName),
-  ]);
-
-  const localEntriesKeySet = new Set(localEntriesKey);
+  const tree = await serialGetRepoTree({
+    wsName,
+    config,
+  });
 
   assertSignal(abortSignal);
 
-  // make sure retained wsPaths are in the local storage
-  await fileManager.bulkCreateEntry(
-    await createPlainEntriesFromRemote(
-      Array.from(retainedWsPaths).filter(
-        (wsPath) => !localEntriesKeySet.has(wsPath),
-      ),
-      tree,
-      config,
-      abortSignal,
-    ),
-  );
-
   const localEntriesArray = await fileManager.listAllEntries(wsName);
-
   const job = processSyncJob(localEntriesArray, tree);
 
   // TODO make this non blocking
@@ -87,26 +66,9 @@ export async function githubSync({
     tree,
   });
 
-  // Note: this makes up for the lack of `syncEntries` to provide
-  // a way tell us to remove an already deleted local file entry which has also been
-  // removed from github.
-  // TODO: add a test for this
   await fileManager.bulkRemoveEntries(
     localEntriesArray
       .filter((entry) => entry.deleted && !tree.tree.has(entry.uid))
-      .map((entry) => entry.uid),
-  );
-
-  // TODO: this cleanup chore can be done somewhere else
-  // Remove certain entries to keep the local storage lean and clean
-  // this is okay since a user can always fetch the file from github
-  await fileManager.bulkRemoveEntries(
-    localEntriesArray
-      .filter((entry) => {
-        let r = LocalFileEntry.fromPlainObj(entry);
-
-        return r.isUntouched && !retainedWsPaths.has(r.uid);
-      })
       .map((entry) => entry.uid),
   );
 
@@ -143,10 +105,6 @@ async function executeLocalChanges({
     })),
   );
 
-  // now that we have synced the deleted file, lets remove them from the local storage
-  // completely!
-  await fileManager.bulkRemoveEntries(job.remoteDelete);
-
   // update localSourceUpdate
   // TODO we should update the source to the sha of the current file at
   // the time of sync. the current approach might trick us to think the file
@@ -170,9 +128,14 @@ async function executeLocalChanges({
     })),
   );
 
-  // wsPaths that are in localDelete are the ones that have been deleted in
-  // github, so we should remove the entry completely and not soft delete them by calling .deleteFile()
-  await fileManager.bulkRemoveEntries(job.localDelete);
+  await fileManager.bulkRemoveEntries([
+    // now that we have synced the deleted file, lets remove them from the local storage
+    // completely!
+    ...job.remoteDelete,
+    // wsPaths that are in localDelete are the ones that have been deleted in
+    // github, so we should remove the entry completely and not soft delete them by calling .deleteFile()
+    ...job.localDelete,
+  ]);
 }
 
 /**
@@ -183,7 +146,7 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
   const conflicts: string[] = [];
   const remoteDelete: string[] = [];
   const remoteUpdate: Array<{ wsPath: string; file: File }> = [];
-  const localDelete: string[] = [];
+  let localDelete: string[] = [];
   const localUpdate: string[] = [];
   const localSourceUpdate: string[] = [];
   const REMOTE_FILE = 'fileB';
@@ -287,6 +250,16 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
     throw new Error(`Unknown sync action: ${syncAction}`);
   }
 
+  // Note: this makes up for the lack of `syncEntries` to provide
+  // a way tell us to remove an already deleted local file entry which has also been
+  // removed from github.
+  // TODO: add a test for this
+  localEntries
+    .filter((entry) => entry.deleted && !tree.tree.has(entry.uid))
+    .forEach((entry) => {
+      localDelete.push(entry.uid);
+    });
+
   return {
     conflicts,
     remoteDelete,
@@ -346,7 +319,7 @@ export async function duplicateAndResetToRemote({
     return undefined;
   }
 
-  const tree = await getRepoTree()({
+  const tree = await serialGetRepoTree({
     wsName: resolvePath(wsPath).wsName,
     config,
     abortSignal,
@@ -392,7 +365,7 @@ export async function getConflicts({
   wsName: string;
 }): Promise<string[]> {
   const [tree, localEntries] = await Promise.all([
-    getRepoTree()({
+    serialGetRepoTree({
       wsName,
       config,
     }),
@@ -441,4 +414,74 @@ async function createPlainEntriesFromRemote(
   );
 
   return result;
+}
+
+// TODO write a test for this
+export async function optimizeDatabase({
+  wsName,
+  config,
+  retainedWsPaths,
+  abortSignal,
+  tree,
+  pruneUnused,
+}: {
+  wsName: string;
+  config: GithubConfig;
+  retainedWsPaths: Set<string>;
+  abortSignal: AbortSignal;
+  tree: GHTree;
+  pruneUnused: boolean;
+}) {
+  const localEntriesArray = await fileManager.listAllEntries(wsName);
+  const localEntriesKeySet = new Set(localEntriesArray.map((r) => r.uid));
+  const plainRemoteEntries = await createPlainEntriesFromRemote(
+    Array.from(retainedWsPaths).filter(
+      (wsPath) => !localEntriesKeySet.has(wsPath),
+    ),
+    tree,
+    config,
+    abortSignal,
+  );
+
+  assertSignal(abortSignal);
+
+  // once all the async operations are done, we now focus on
+  // database.
+  const db = await openDatabase();
+  const tx = db.transaction(LOCAL_ENTRIES_TABLE, 'readwrite');
+  const store = tx.objectStore(LOCAL_ENTRIES_TABLE);
+
+  let promises: Array<Promise<unknown>> = [];
+
+  // make sure retained wsPaths are in the local storage
+
+  for (const entry of plainRemoteEntries) {
+    const existing = await store.get(entry.uid);
+
+    if (!existing) {
+      console.debug('github-storage:optimizeDatabase:adding entry', entry.uid);
+      promises.push(store.put(makeDbRecord(entry.uid, entry)));
+    }
+  }
+
+  if (pruneUnused) {
+    // Remove certain entries to keep the local storage lean and clean
+    // this is okay since a user can always fetch the file from github
+    for (const entry of localEntriesArray) {
+      let r = LocalFileEntry.fromPlainObj(entry);
+
+      if (r.isUntouched && !retainedWsPaths.has(r.uid)) {
+        console.debug(
+          'github-storage:optimizeDatabase:purging entry',
+          entry.uid,
+        );
+        promises.push(store.delete(r.uid));
+      }
+    }
+  }
+
+  await Promise.all(promises);
+  await tx.done;
+
+  return true;
 }

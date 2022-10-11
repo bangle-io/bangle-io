@@ -22,6 +22,9 @@ export const OPERATION_DISCARD_LOCAL_CHANGES =
 export const OPERATION_SHOW_CONFLICT_DIALOG =
   'operation::@bangle.io/github-storage:show-conflict-dialog';
 
+export const OPERATION_OPTIMIZE_GITHUB_STORAGE =
+  'operation::@bangle.io/github-storage:OPERATION_OPTIMIZE_GITHUB_STORAGE';
+
 export const DISCARD_LOCAL_CHANGES_DIALOG =
   'dialog::@bangle.io/github-storage:discard-local-changes';
 

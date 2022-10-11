@@ -45,7 +45,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    return fileManager.hasEntry(wsPath);
+    return Boolean(await this.readFile(wsPath, opts));
   }
 
   async fileStat(wsPath: string, opts: StorageOpts) {
@@ -183,8 +183,15 @@ export class GithubStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     log('writeFile', wsPath, file);
 
-    // TODO should we throw an error if file doesn't exist?
-    await fileManager.writeFile(wsPath, file, sha);
+    let result = await fileManager.writeFile(wsPath, file, sha);
+
+    // TODO write a test to make sure error is thrown if file is not found
+    if (!result) {
+      throw new BaseError({
+        message: `File ${wsPath} not found`,
+        code: GITHUB_STORAGE_NOT_ALLOWED,
+      });
+    }
   }
 
   private async _makeGetRemoteFileEntryCb(

@@ -11,6 +11,7 @@ import {
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
   OPERATION_NEW_GITHUB_WORKSPACE,
+  OPERATION_OPTIMIZE_GITHUB_STORAGE,
   OPERATION_SHOW_CONFLICT_DIALOG,
   OPERATION_SYNC_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
@@ -25,7 +26,7 @@ import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
-import { syncRunner } from './operations';
+import { optimizeDatabaseOperation, syncRunner } from './operations';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -92,6 +93,10 @@ const extension = Extension.create({
         name: OPERATION_SHOW_CONFLICT_DIALOG,
         title: 'Github: Show conflicted files',
       },
+      {
+        name: OPERATION_OPTIMIZE_GITHUB_STORAGE,
+        title: 'Github: Optimize storage',
+      },
     ],
     operationHandler() {
       return {
@@ -141,6 +146,16 @@ const extension = Extension.create({
 
             case OPERATION_SHOW_CONFLICT_DIALOG: {
               ui.showDialog(CONFLICT_DIALOG)(store.state, store.dispatch);
+
+              return true;
+            }
+
+            case OPERATION_OPTIMIZE_GITHUB_STORAGE: {
+              optimizeDatabaseOperation(true)(
+                store.state,
+                store.dispatch,
+                store,
+              );
 
               return true;
             }

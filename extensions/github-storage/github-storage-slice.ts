@@ -9,7 +9,11 @@ import {
   OPERATION_SHOW_CONFLICT_DIALOG,
 } from './common';
 import { handleError } from './error-handling';
-import { checkForConflicts, syncRunner } from './operations';
+import {
+  checkForConflicts,
+  optimizeDatabaseOperation,
+  syncRunner,
+} from './operations';
 
 const LOG = true;
 const debug = LOG
@@ -145,11 +149,17 @@ export const syncEffect = ghSliceKey.effect(() => {
 
           if (githubWsName && pageLifecycle === 'active') {
             debug('Periodic Github sync in background');
-            syncRunner(githubWsName, signal)(
+            optimizeDatabaseOperation(true)(
               store.state,
               store.dispatch,
               store,
-            );
+            ).finally(() => {
+              syncRunner(githubWsName, signal)(
+                store.state,
+                store.dispatch,
+                store,
+              );
+            });
           }
         },
         signal,
@@ -173,11 +183,17 @@ export const syncEffect = ghSliceKey.effect(() => {
         const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
 
         if (githubWsName) {
-          syncRunner(githubWsName, new AbortController().signal)(
+          optimizeDatabaseOperation(false)(
             store.state,
             store.dispatch,
             store,
-          );
+          ).finally(() => {
+            syncRunner(githubWsName, new AbortController().signal)(
+              store.state,
+              store.dispatch,
+              store,
+            );
+          });
         }
       }
     },
