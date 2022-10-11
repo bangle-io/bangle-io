@@ -27,6 +27,21 @@ export class DBKeyVal<V> {
     private _openDb: () => Promise<IDBPDatabase<any>>,
   ) {}
 
+  async bulkDelete(uids: string[]): Promise<void> {
+    const db = await this._openDb();
+    const tx = db.transaction(this._storeName, 'readwrite');
+    const store = tx.objectStore(this._storeName);
+
+    let promises: Array<Promise<unknown>> = [];
+
+    for (const uid of uids) {
+      promises.push(store.delete(uid));
+    }
+
+    await Promise.all(promises);
+    await tx.done;
+  }
+
   async bulkPutIfNotExists(
     payload: Array<{ key: string; value: V }>,
     opts: IdbOpts = {},

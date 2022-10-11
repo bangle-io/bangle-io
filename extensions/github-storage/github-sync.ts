@@ -91,36 +91,23 @@ export async function githubSync({
   // a way tell us to remove an already deleted local file entry which has also been
   // removed from github.
   // TODO: add a test for this
-  await pMap(
-    localEntriesArray,
-    async (entry) => {
-      if (entry.deleted && !tree.tree.has(entry.uid)) {
-        await fileManager.removeEntry(entry.uid);
-      }
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
+  await fileManager.bulkRemoveEntries(
+    localEntriesArray
+      .filter((entry) => entry.deleted && !tree.tree.has(entry.uid))
+      .map((entry) => entry.uid),
   );
 
   // TODO: this cleanup chore can be done somewhere else
   // Remove certain entries to keep the local storage lean and clean
   // this is okay since a user can always fetch the file from github
-  await pMap(
-    localEntriesArray.filter((entry) => {
-      let r = LocalFileEntry.fromPlainObj(entry);
+  await fileManager.bulkRemoveEntries(
+    localEntriesArray
+      .filter((entry) => {
+        let r = LocalFileEntry.fromPlainObj(entry);
 
-      return r.isUntouched && !retainedWsPaths.has(r.uid);
-    }),
-    async (entry) => {
-      console.log(`Removing ${entry.uid}`);
-      await fileManager.removeEntry(entry.uid);
-    },
-    {
-      concurrency: 10,
-      abortSignal,
-    },
+        return r.isUntouched && !retainedWsPaths.has(r.uid);
+      })
+      .map((entry) => entry.uid),
   );
 
   console.debug('Successfully synced with github');
@@ -162,16 +149,7 @@ async function executeLocalChanges({
 
   // now that we have synced the deleted file, lets remove them from the local storage
   // completely!
-  await pMap(
-    job.remoteDelete,
-    async (wsPath) => {
-      await fileManager.removeEntry(wsPath);
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
-  );
+  await fileManager.bulkRemoveEntries(job.remoteDelete);
 
   // update localSourceUpdate
   await pMap(
@@ -223,16 +201,7 @@ async function executeLocalChanges({
 
   // wsPaths that are in localDelete are the ones that have been deleted in
   // github, so we should remove the entry completely and not soft delete them by calling .deleteFile()
-  await pMap(
-    job.localDelete,
-    async (wsPath) => {
-      await fileManager.removeEntry(wsPath);
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
-  );
+  await fileManager.bulkRemoveEntries(job.localDelete);
 }
 
 /**

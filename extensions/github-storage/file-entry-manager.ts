@@ -27,6 +27,10 @@ export class DatabaseFileEntry {
     return result.failed.length === 0;
   }
 
+  async bulkRemoveEntries(wsPaths: string[]): Promise<void> {
+    return getLocalEntriesTable().bulkDelete(wsPaths);
+  }
+
   async createEntry(entry: PlainObjEntry): Promise<boolean> {
     let result = await getLocalEntriesTable().putIfNotExists(entry.uid, entry);
 
