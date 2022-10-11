@@ -136,15 +136,11 @@ async function executeLocalChanges({
   // Now that things are committed to github, we can update the source of local entries
   // so that we do not keep syncing them with github
   // TODO what happens if this part fails?
-  await pMap(
-    job.remoteUpdate,
-    async ({ wsPath, file }) => {
-      await fileManager.updateSource(wsPath, file);
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
+  await fileManager.bulkUpdateSource(
+    job.remoteUpdate.map((r) => ({
+      wsPath: r.wsPath,
+      sourceFile: r.file,
+    })),
   );
 
   // now that we have synced the deleted file, lets remove them from the local storage
@@ -152,51 +148,26 @@ async function executeLocalChanges({
   await fileManager.bulkRemoveEntries(job.remoteDelete);
 
   // update localSourceUpdate
-  await pMap(
-    job.localSourceUpdate,
-    async (wsPath) => {
-      // TODO we should update the source to the sha of the current file at
-      // the time of sync. the current approach might trick us to think the file
-      // is untouched (current sha === source sha).
-      return fileManager.updateSourceToCurrentSha(wsPath);
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
-  );
+  // TODO we should update the source to the sha of the current file at
+  // the time of sync. the current approach might trick us to think the file
+  // is untouched (current sha === source sha).
+  await fileManager.bulkUpdateSourceToCurrentSha(job.localSourceUpdate);
 
   // update the local files
-  await pMap(
-    job.localUpdate,
-    async (wsPath) => {
-      const remoteFile = await getFileBlobFromTree({
-        wsPath: wsPath,
-        config,
+  // TODO the current should only be updated if it hasn't been modified
+  // since since. Currently this will overwrite any changes after the sync
+  await fileManager.bulkUpdateSourceAndCurrent(
+    (
+      await createPlainEntriesFromRemote(
+        job.localUpdate,
         tree,
-      });
-
-      if (remoteFile) {
-        console.info(
-          'overwriteLocalEntryWithRemoteContent: Overwriting local file with remote file',
-          wsPath,
-        );
-        // TODO the current should only be updated if it hasn't been modified
-        // since since. Currently this will overwrite any changes after the sync
-        await fileManager.updateSourceAndCurrent(wsPath, remoteFile);
-
-        return;
-      }
-
-      // this should ideally not happen since we are are grabbing the file
-      // by the sha from the tree, but since it is an external thing can't
-      // be guaranteed.
-      console.error('Expected remote file to exist: ', wsPath);
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
+        config,
+        abortSignal,
+      )
+    ).map((entry) => ({
+      wsPath: entry.uid,
+      file: entry.file,
+    })),
   );
 
   // wsPaths that are in localDelete are the ones that have been deleted in

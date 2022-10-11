@@ -71,6 +71,38 @@ export class DBKeyVal<V> {
     };
   }
 
+  async bulkUpdateIfExists(
+    keys: string[],
+    updater: (key: string, oldValue: V) => V,
+    opts: IdbOpts = {},
+  ): Promise<{ failed: string[] }> {
+    const db = await this._openDb();
+    const tx = db.transaction(this._storeName, 'readwrite', opts);
+    const store = tx.objectStore(this._storeName);
+
+    let promises: Array<Promise<unknown>> = [];
+    let failed: string[] = [];
+
+    for (const key of keys) {
+      const existing: DbRecord<V> | undefined = await store.get(key);
+
+      if (existing) {
+        const newRecord = makeDbRecord(key, updater(key, existing.value));
+
+        promises.push(store.put(newRecord));
+      } else {
+        failed.push(key);
+      }
+    }
+
+    await Promise.all(promises);
+    await tx.done;
+
+    return {
+      failed,
+    };
+  }
+
   async delete(uid: string): Promise<void> {
     const db = await this._openDb();
 

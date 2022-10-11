@@ -31,6 +31,93 @@ export class DatabaseFileEntry {
     return getLocalEntriesTable().bulkDelete(wsPaths);
   }
 
+  async bulkUpdateSource(payload: Array<{ wsPath: string; sourceFile: File }>) {
+    const array: Array<[string, { sourceFile: File; sourceSha: string }]> =
+      await Promise.all(
+        payload.map(async (pay) => [
+          pay.wsPath,
+          {
+            sourceFile: pay.sourceFile,
+            sourceSha: await calculateGitFileSha(pay.sourceFile),
+          },
+        ]),
+      );
+
+    const map = new Map(array);
+
+    return getLocalEntriesTable().bulkUpdateIfExists(
+      [...map.keys()],
+      (key, value) => {
+        const pay = map.get(key);
+
+        if (!pay) {
+          return value;
+        }
+
+        return {
+          ...value,
+          source: {
+            ...value.source,
+            file: pay.sourceFile,
+            sha: pay.sourceSha,
+          },
+        };
+      },
+    );
+  }
+
+  async bulkUpdateSourceAndCurrent(
+    payload: Array<{ wsPath: string; file: File }>,
+  ) {
+    const array: Array<[string, { file: File; sha: string }]> =
+      await Promise.all(
+        payload.map(async (pay) => [
+          pay.wsPath,
+          {
+            file: pay.file,
+            sha: await calculateGitFileSha(pay.file),
+          },
+        ]),
+      );
+
+    const map = new Map(array);
+
+    return getLocalEntriesTable().bulkUpdateIfExists(
+      [...map.keys()],
+      (key, value) => {
+        const pay = map.get(key);
+
+        if (!pay) {
+          return value;
+        }
+
+        return {
+          ...value,
+          file: pay.file,
+          sha: pay.sha,
+          deleted: undefined,
+          source: {
+            ...value.source,
+            file: pay.file,
+            sha: pay.sha,
+          },
+        };
+      },
+    );
+  }
+
+  async bulkUpdateSourceToCurrentSha(payload: string[]) {
+    return getLocalEntriesTable().bulkUpdateIfExists(payload, (key, value) => {
+      return {
+        ...value,
+        source: {
+          file: value.file,
+          sha: value.sha,
+        },
+      };
+    });
+  }
+
   async createEntry(entry: PlainObjEntry): Promise<boolean> {
     let result = await getLocalEntriesTable().putIfNotExists(entry.uid, entry);
 
