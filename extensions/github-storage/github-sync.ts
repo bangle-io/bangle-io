@@ -46,37 +46,16 @@ export async function githubSync({
 
   assertSignal(abortSignal);
 
-  // make sure retained ws paths are in the local storage
-  await pMap(
-    retainedWsPaths,
-    async (wsPath) => {
-      if (!localEntriesKeySet.has(wsPath)) {
-        const remoteFile = await getFileBlobFromTree({
-          wsPath,
-          config,
-          tree,
-        });
-
-        if (remoteFile) {
-          // TODO this can be refactored
-          const entry = (
-            await RemoteFileEntry.newFile({
-              uid: wsPath,
-              file: remoteFile,
-              deleted: undefined,
-            })
-          )
-            .forkLocalFileEntry()
-            .toPlainObj();
-
-          await fileManager.createEntry(entry);
-        }
-      }
-    },
-    {
-      concurrency: 10,
+  // make sure retained wsPaths are in the local storage
+  await fileManager.bulkCreateEntry(
+    await createPlainEntriesFromRemote(
+      Array.from(retainedWsPaths).filter(
+        (wsPath) => !localEntriesKeySet.has(wsPath),
+      ),
+      tree,
+      config,
       abortSignal,
-    },
+    ),
   );
 
   const localEntriesArray = await fileManager.listAllEntries(wsName);
@@ -483,4 +462,43 @@ export async function getConflicts({
   const job = processSyncJob(localEntries, tree);
 
   return job.conflicts;
+}
+
+async function createPlainEntriesFromRemote(
+  wsPaths: string[],
+  tree: GHTree,
+  config: GithubConfig,
+  abortSignal: AbortSignal,
+) {
+  let result: PlainObjEntry[] = [];
+
+  await pMap(
+    wsPaths,
+    async (wsPath) => {
+      const remoteFile = await getFileBlobFromTree({
+        wsPath,
+        config,
+        tree,
+      });
+
+      if (remoteFile) {
+        const obj = (
+          await RemoteFileEntry.newFile({
+            uid: wsPath,
+            file: remoteFile,
+            deleted: undefined,
+          })
+        )
+          .forkLocalFileEntry()
+          .toPlainObj();
+        result.push(obj);
+      }
+    },
+    {
+      concurrency: 10,
+      abortSignal,
+    },
+  );
+
+  return result;
 }

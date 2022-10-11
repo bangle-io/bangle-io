@@ -19,6 +19,14 @@ function createPrefixRange(wsName: string) {
 export class DatabaseFileEntry {
   constructor(private _opts: {}) {}
 
+  async bulkCreateEntry(entries: PlainObjEntry[]): Promise<boolean> {
+    let result = await getLocalEntriesTable().bulkPutIfNotExists(
+      entries.map((entry) => ({ key: entry.uid, value: entry })),
+    );
+
+    return result.failed.length === 0;
+  }
+
   async createEntry(entry: PlainObjEntry): Promise<boolean> {
     let result = await getLocalEntriesTable().putIfNotExists(entry.uid, entry);
 
