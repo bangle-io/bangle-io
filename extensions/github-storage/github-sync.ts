@@ -66,12 +66,6 @@ export async function githubSync({
     tree,
   });
 
-  await fileManager.bulkRemoveEntries(
-    localEntriesArray
-      .filter((entry) => entry.deleted && !tree.tree.has(entry.uid))
-      .map((entry) => entry.uid),
-  );
-
   console.debug('Successfully synced with github');
 
   return {
@@ -90,52 +84,114 @@ async function executeLocalChanges({
   config,
   tree,
 }: {
-  job: ReturnType<typeof processSyncJob>;
+  job: Awaited<ReturnType<typeof processSyncJob>>;
   abortSignal: AbortSignal;
   config: GithubConfig;
   tree: GHTree;
 }) {
+  assertSignal(abortSignal);
+
+  const updatedEntriesFromRemote = await createPlainEntriesFromRemote(
+    job.localUpdate,
+    tree,
+    config,
+    abortSignal,
+  );
+
+  const db = await openDatabase();
+  const tx = db.transaction(LOCAL_ENTRIES_TABLE, 'readwrite');
+  const store = tx.objectStore(LOCAL_ENTRIES_TABLE);
+  let promises: Array<Promise<unknown>> = [];
+  let missing: string[] = [];
+
+  const updateIfExists = async <R>(
+    infoArray: Array<[string, R]>,
+    updater: (info: [string, R], entryInDb: PlainObjEntry) => PlainObjEntry,
+  ): Promise<void> => {
+    for (const info of infoArray) {
+      const wsPath = info[0];
+
+      const existing = await store.get(wsPath);
+
+      if (existing) {
+        const newRecord = makeDbRecord(wsPath, updater(info, existing.value));
+
+        promises.push(store.put(newRecord));
+      } else {
+        missing.push(wsPath);
+      }
+    }
+  };
+
   // Now that things are committed to github, we can update the source of local entries
   // so that we do not keep syncing them with github
   // TODO what happens if this part fails?
-  await fileManager.bulkUpdateSource(
-    job.remoteUpdate.map((r) => ({
-      wsPath: r.wsPath,
-      sourceFile: r.file,
-    })),
+  await updateIfExists(
+    job.remoteUpdate.map((info) => [info.wsPath, info]),
+    ([wsPath, info], entryInDb) => {
+      return {
+        ...entryInDb,
+        source: {
+          ...entryInDb.source,
+          file: info.file,
+          sha: info.sha,
+        },
+      };
+    },
   );
 
   // update localSourceUpdate
   // TODO we should update the source to the sha of the current file at
   // the time of sync. the current approach might trick us to think the file
   // is untouched (current sha === source sha).
-  await fileManager.bulkUpdateSourceToCurrentSha(job.localSourceUpdate);
+  await updateIfExists(
+    job.localSourceUpdate.map((wsPath) => [wsPath, null]),
+    (_, entryInDb) => {
+      return {
+        ...entryInDb,
+        source: {
+          ...entryInDb.source,
+          file: entryInDb.file,
+          sha: entryInDb.sha,
+        },
+      };
+    },
+  );
 
   // update the local files
   // TODO the current should only be updated if it hasn't been modified
   // since since. Currently this will overwrite any changes after the sync
-  await fileManager.bulkUpdateSourceAndCurrent(
-    (
-      await createPlainEntriesFromRemote(
-        job.localUpdate,
-        tree,
-        config,
-        abortSignal,
-      )
-    ).map((entry) => ({
-      wsPath: entry.uid,
-      file: entry.file,
-    })),
+  await updateIfExists(
+    updatedEntriesFromRemote.map((e) => [e.uid, e]),
+    ([wsPath, incomingEntry], entryInDb) => {
+      return {
+        ...entryInDb,
+        deleted: undefined,
+        file: incomingEntry.file,
+        sha: incomingEntry.sha,
+        source: {
+          ...entryInDb.source,
+          file: incomingEntry.file,
+          sha: incomingEntry.sha,
+        },
+      };
+    },
   );
 
-  await fileManager.bulkRemoveEntries([
+  for (const uid of [
     // now that we have synced the deleted file, lets remove them from the local storage
     // completely!
     ...job.remoteDelete,
     // wsPaths that are in localDelete are the ones that have been deleted in
     // github, so we should remove the entry completely and not soft delete them by calling .deleteFile()
     ...job.localDelete,
-  ]);
+  ]) {
+    promises.push(store.delete(uid));
+  }
+
+  await Promise.all(promises);
+
+  await tx.done;
 }
 
 /**
@@ -145,7 +201,7 @@ async function executeLocalChanges({
 export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
   const conflicts: string[] = [];
   const remoteDelete: string[] = [];
-  const remoteUpdate: Array<{ wsPath: string; file: File }> = [];
+  const remoteUpdate: Array<{ wsPath: string; file: File; sha: string }> = [];
   let localDelete: string[] = [];
   const localUpdate: string[] = [];
   const localSourceUpdate: string[] = [];
@@ -225,7 +281,11 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
       let target = sync.target;
       switch (target) {
         case REMOTE_FILE: {
-          remoteUpdate.push({ wsPath: uid, file: localEntry.file });
+          remoteUpdate.push({
+            wsPath: uid,
+            file: localEntry.file,
+            sha: localEntry.sha,
+          });
           continue;
         }
         case LOCAL_FILE: {

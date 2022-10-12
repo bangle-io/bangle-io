@@ -396,9 +396,13 @@ describe('pull changes', () => {
       ]);
 
       await pullChanges();
-      await sleep(0);
 
-      expect((await getLocalEntry(defaultNoteWsPath))?.isModified).toBe(false);
+      await waitForExpect(async () => {
+        expect((await getLocalEntry(defaultNoteWsPath))?.isModified).toBe(
+          false,
+        );
+      });
+
       expect((await getLocalEntry(defaultNoteWsPath))?.isUntouched).toBe(true);
     });
   });
@@ -560,7 +564,7 @@ describe('pull changes', () => {
         ],
       });
 
-      await sleep(0);
+      await sleep(50);
       expect(await existsInRemote(test2WsPath)).toBe(false);
 
       await pullChanges();
@@ -594,7 +598,7 @@ describe('pull changes', () => {
       expect((await getLocalEntry(defaultNoteWsPath))?.isDeleted).toBe(true);
 
       await pullChanges();
-      await sleep(0);
+      await sleep(50);
       expect(await existsInRemote(defaultNoteWsPath)).toBe(false);
       // local entry should be removed completely after syncing up the changes
       expect(await getLocalEntry(defaultNoteWsPath)).toBeUndefined();
@@ -637,7 +641,7 @@ describe('pull changes', () => {
       });
 
       await pullChanges();
-      await sleep(0);
+      await sleep(50);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(true);
       // local entry's soft delete should be reverted
@@ -681,7 +685,7 @@ describe('pull changes', () => {
       });
 
       await pullChanges();
-      await sleep(0);
+      await sleep(50);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(false);
       expect(await getLocalEntry(defaultNoteWsPath)).toBeUndefined();
