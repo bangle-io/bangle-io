@@ -10,7 +10,7 @@ import {
   OPERATION_SHOW_CONFLICT_DIALOG,
 } from './common';
 import { getGhToken, updateGhToken } from './database';
-import { fileManager } from './file-entry-manager';
+import { fileEntryManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
 import { serialGetRepoTree } from './github-api-helpers';
 import {
@@ -223,7 +223,7 @@ export function discardLocalChanges(wsName: string) {
     const { lockAcquired, result } = await getGithubSyncLockWrapper(
       wsName,
       async () => {
-        const allEntries = await fileManager.listAllEntries(wsName);
+        const allEntries = await fileEntryManager.listAllEntries(wsName);
 
         const result = await pMap(
           allEntries.filter((entry) => {

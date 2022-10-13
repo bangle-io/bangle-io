@@ -11,7 +11,7 @@ import { randomStr, sleep } from '@bangle.io/utils';
 import type { GithubWsMetadata } from '../common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
-import { fileManager } from '../file-entry-manager';
+import { fileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import {
   discardLocalEntryChanges,
@@ -112,7 +112,7 @@ const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
 
 const getLocalFileEntries = async () => {
   return Object.fromEntries(
-    (await fileManager.listAllEntries(wsName)).map((entry) => [
+    (await fileEntryManager.listAllEntries(wsName)).map((entry) => [
       entry.uid,
       LocalFileEntry.fromPlainObj(entry),
     ]),
@@ -474,7 +474,7 @@ describe('pushLocalChanges', () => {
     expect(sha).toBe(sourceSha);
 
     // // corrupt the source
-    await fileManager.updateSource(
+    await fileEntryManager.updateSource(
       test1WsPath,
       new File(
         [new Blob(['hi'], { type: 'text/plain' })],
@@ -656,14 +656,17 @@ describe('discardLocalEntryChanges', () => {
 
     await waitForExpect(async () => {
       expect(
-        typeof (await fileManager.readEntry(test1WsPath))?.deleted === 'number',
+        typeof (await fileEntryManager.readEntry(test1WsPath))?.deleted ===
+          'number',
       ).toBe(true);
     });
 
     // Now discard the local changes
     expect(await discardLocalEntryChanges(test1WsPath)).toBe(true);
 
-    expect((await fileManager.readEntry(test1WsPath))?.deleted).toBeUndefined();
+    expect(
+      (await fileEntryManager.readEntry(test1WsPath))?.deleted,
+    ).toBeUndefined();
   });
 
   test('if file does not exist in remote it gets deleted', async () => {

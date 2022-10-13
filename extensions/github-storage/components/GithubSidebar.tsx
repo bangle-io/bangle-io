@@ -20,7 +20,7 @@ import { Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
-import { fileManager } from '../file-entry-manager';
+import { fileEntryManager } from '../file-entry-manager';
 
 const LOG = false;
 
@@ -66,7 +66,7 @@ function ModifiedEntries({
 
   useEffect(() => {
     let destroyed = false;
-    fileManager.listAllEntries(wsName).then((entries) => {
+    fileEntryManager.listAllEntries(wsName).then((entries) => {
       if (!destroyed) {
         const result = entries.filter((e) => {
           return !LocalFileEntry.fromPlainObj(e).isUntouched;

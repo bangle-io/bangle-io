@@ -1,5 +1,6 @@
 import { browserInfo, wsPathHelpers } from '@bangle.io/api';
 import { fileToBase64 } from '@bangle.io/git-file-sha';
+import { pMap } from '@bangle.io/p-map';
 import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
@@ -839,4 +840,41 @@ function makeGitCommitMessage(
     commitBody,
     commitHeadline,
   };
+}
+
+export async function resolveFilesFromGithub<
+  R extends { wsPath: string; remoteUrl: string },
+>(
+  data: R[],
+  config: GithubConfig,
+  abortSignal: AbortSignal,
+): Promise<Array<R & { remoteFile: File }>> {
+  const result = await pMap(
+    data,
+    async (item) => {
+      const remoteFile = await getFileBlob({
+        fileBlobUrl: item.remoteUrl,
+        config,
+        abortSignal,
+        fileName: wsPathHelpers.resolvePath(item.wsPath, true).fileName,
+      });
+
+      if (remoteFile) {
+        return {
+          ...item,
+          remoteFile,
+        };
+      }
+
+      return undefined;
+    },
+    {
+      concurrency: 5,
+      abortSignal,
+    },
+  );
+
+  return result.filter(
+    (item): item is R & { remoteFile: File } => item !== undefined,
+  );
 }

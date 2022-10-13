@@ -16,108 +16,7 @@ function createPrefixRange(wsName: string) {
   return IDBKeyRange.bound(`${wsName}:`, `${wsName}:\uffff`);
 }
 
-export class DatabaseFileEntry {
-  constructor(private _opts: {}) {}
-
-  async bulkCreateEntry(entries: PlainObjEntry[]): Promise<boolean> {
-    let result = await getLocalEntriesTable().bulkPutIfNotExists(
-      entries.map((entry) => ({ key: entry.uid, value: entry })),
-    );
-
-    return result.failed.length === 0;
-  }
-
-  async bulkRemoveEntries(wsPaths: string[]): Promise<void> {
-    return getLocalEntriesTable().bulkDelete(wsPaths);
-  }
-
-  async bulkUpdateSource(payload: Array<{ wsPath: string; sourceFile: File }>) {
-    const array: Array<[string, { sourceFile: File; sourceSha: string }]> =
-      await Promise.all(
-        payload.map(async (pay) => [
-          pay.wsPath,
-          {
-            sourceFile: pay.sourceFile,
-            sourceSha: await calculateGitFileSha(pay.sourceFile),
-          },
-        ]),
-      );
-
-    const map = new Map(array);
-
-    return getLocalEntriesTable().bulkUpdateIfExists(
-      [...map.keys()],
-      (key, value) => {
-        const pay = map.get(key);
-
-        if (!pay) {
-          return value;
-        }
-
-        return {
-          ...value,
-          source: {
-            ...value.source,
-            file: pay.sourceFile,
-            sha: pay.sourceSha,
-          },
-        };
-      },
-    );
-  }
-
-  async bulkUpdateSourceAndCurrent(
-    payload: Array<{ wsPath: string; file: File }>,
-  ) {
-    const array: Array<[string, { file: File; sha: string }]> =
-      await Promise.all(
-        payload.map(async (pay) => [
-          pay.wsPath,
-          {
-            file: pay.file,
-            sha: await calculateGitFileSha(pay.file),
-          },
-        ]),
-      );
-
-    const map = new Map(array);
-
-    return getLocalEntriesTable().bulkUpdateIfExists(
-      [...map.keys()],
-      (key, value) => {
-        const pay = map.get(key);
-
-        if (!pay) {
-          return value;
-        }
-
-        return {
-          ...value,
-          file: pay.file,
-          sha: pay.sha,
-          deleted: undefined,
-          source: {
-            ...value.source,
-            file: pay.file,
-            sha: pay.sha,
-          },
-        };
-      },
-    );
-  }
-
-  async bulkUpdateSourceToCurrentSha(payload: string[]) {
-    return getLocalEntriesTable().bulkUpdateIfExists(payload, (key, value) => {
-      return {
-        ...value,
-        source: {
-          file: value.file,
-          sha: value.sha,
-        },
-      };
-    });
-  }
-
+class FileEntryManager {
   async createEntry(entry: PlainObjEntry): Promise<boolean> {
     let result = await getLocalEntriesTable().putIfNotExists(entry.uid, entry);
 
@@ -140,10 +39,9 @@ export class DatabaseFileEntry {
   }
 
   async listAllKeys(wsName: string): Promise<string[]> {
-    // TODO remove this
     // a catch to avoid messing up with the later assumptions
     if (wsName.endsWith(':')) {
-      throw new Error('wsName should not end with :');
+      throw new Error('file-entry-manager: wsName should not end with :');
     }
     const db = await openDatabase();
 
@@ -151,10 +49,9 @@ export class DatabaseFileEntry {
   }
 
   async listSoftDeletedKeys(wsName: string): Promise<string[]> {
-    // TODO remove this
     // a catch to avoid messing up with the later assumptions
     if (wsName.endsWith(':')) {
-      throw new Error('wsName should not end with :');
+      throw new Error('ile-entry-manager: wsName should not end with :');
     }
     const db = await openDatabase();
 
@@ -187,10 +84,21 @@ export class DatabaseFileEntry {
     return getLocalEntriesTable().get(wsPath);
   }
 
+  /**
+   * Permanently deletes the entry from the database
+   * @param wsPath
+   * @returns
+   */
   async removeEntry(wsPath: string): Promise<void> {
-    return getLocalEntriesTable().delete(wsPath);
+    await getLocalEntriesTable().delete(wsPath);
   }
 
+  /**
+   * Overwrites an entry's data so that its file and sha are the same as the source file and sha
+   * Effectively resetting any unsynced change, including soft deletion.
+   * @param wsPath
+   * @returns
+   */
   async resetCurrentToSource(wsPath: string) {
     let noSourceFound = false;
 
@@ -260,33 +168,18 @@ export class DatabaseFileEntry {
   async updateSourceAndCurrent(wsPath: string, file: File, sha?: string) {
     const newSha = sha || (await calculateGitFileSha(file));
 
-    return getLocalEntriesTable().updateIfExists(wsPath, (oldValue) => {
-      return {
-        ...oldValue,
-        file,
-        sha: newSha,
-        deleted: undefined,
-        source: {
-          ...oldValue.source,
-          file: file,
-          sha: newSha,
-        },
-      };
-    });
-  }
-
-  /**
-   * Sets the entries source to match with the one current file
-   */
-  async updateSourceToCurrentSha(wsPath: string) {
     return getLocalEntriesTable().updateIfExists(
       wsPath,
       (oldValue) => {
         return {
           ...oldValue,
+          file,
+          sha: newSha,
+          deleted: undefined,
           source: {
-            file: oldValue.file,
-            sha: oldValue.sha,
+            ...oldValue.source,
+            file: file,
+            sha: newSha,
           },
         };
       },
@@ -303,4 +196,4 @@ export class DatabaseFileEntry {
   }
 }
 
-export const fileManager = new DatabaseFileEntry({});
+export const fileEntryManager = new FileEntryManager();

@@ -7,7 +7,7 @@ import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { getGhToken } from './database';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
-import { fileManager } from './file-entry-manager';
+import { fileEntryManager } from './file-entry-manager';
 import { getFileBlobFromTree, getRepoTree } from './github-api-helpers';
 
 const LOG = false;
@@ -35,13 +35,13 @@ export class GithubStorageProvider implements BaseStorageProvider {
       })
     ).toPlainObj();
     // TODO we should throw error if file already exists?
-    const success = await fileManager.createEntry(entry);
+    const success = await fileEntryManager.createEntry(entry);
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     // TODO: currently if a local entry does not exist
     // we donot mark it for deletion. We should do that.
-    await fileManager.softDeleteEntry(wsPath);
+    await fileEntryManager.softDeleteEntry(wsPath);
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -83,9 +83,9 @@ export class GithubStorageProvider implements BaseStorageProvider {
       abortSignal,
     });
 
-    let allKeys = await fileManager.listAllKeys(wsName);
+    let allKeys = await fileEntryManager.listAllKeys(wsName);
     let softDeletedKeys = new Set(
-      await fileManager.listSoftDeletedKeys(wsName),
+      await fileEntryManager.listSoftDeletedKeys(wsName),
     );
 
     return Array.from(new Set([...allKeys, ...tree.keys()])).filter((key) => {
@@ -119,7 +119,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
     // check if file exists in local db
-    const plainObj = await fileManager.readEntry(wsPath);
+    const plainObj = await fileEntryManager.readEntry(wsPath);
 
     if (plainObj?.deleted) {
       return undefined;
@@ -142,7 +142,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       return undefined;
     }
 
-    const createSuccess = await fileManager.createEntry(
+    const createSuccess = await fileEntryManager.createEntry(
       remoteFileEntry.forkLocalFileEntry().toPlainObj(),
     );
 
@@ -183,7 +183,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     log('writeFile', wsPath, file);
 
-    let result = await fileManager.writeFile(wsPath, file, sha);
+    let result = await fileEntryManager.writeFile(wsPath, file, sha);
 
     // TODO write a test to make sure error is thrown if file is not found
     if (!result) {

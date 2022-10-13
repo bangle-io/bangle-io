@@ -1,6 +1,4 @@
-import { wsPathHelpers } from '@bangle.io/api';
 import { makeDbRecord } from '@bangle.io/db-key-val';
-import { pMap } from '@bangle.io/p-map';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import {
   fileSync,
@@ -11,12 +9,12 @@ import { assertSignal } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { LOCAL_ENTRIES_TABLE, openDatabase } from './database';
-import { fileManager } from './file-entry-manager';
+import { fileEntryManager } from './file-entry-manager';
 import type { GHTree, GithubConfig } from './github-api-helpers';
 import {
   commitToGithub,
-  getFileBlob,
   getFileBlobFromTree,
+  resolveFilesFromGithub,
   serialGetRepoTree,
 } from './github-api-helpers';
 import { getNonConflictName } from './helpers';
@@ -40,7 +38,7 @@ export async function githubSync({
 
   assertSignal(abortSignal);
 
-  const localEntriesArray = await fileManager.listAllEntries(wsName);
+  const localEntriesArray = await fileEntryManager.listAllEntries(wsName);
   const job = processSyncJob(localEntriesArray, tree);
 
   // TODO make this non blocking
@@ -65,7 +63,6 @@ export async function githubSync({
     job,
     abortSignal,
     config,
-    tree,
   });
 
   console.debug('Successfully synced with github');
@@ -84,12 +81,10 @@ async function executeLocalChanges({
   job,
   abortSignal,
   config,
-  tree,
 }: {
   job: Awaited<ReturnType<typeof processSyncJob>>;
   abortSignal: AbortSignal;
   config: GithubConfig;
-  tree: GHTree;
 }) {
   assertSignal(abortSignal);
 
@@ -97,14 +92,16 @@ async function executeLocalChanges({
   // This is important because of the way indexeddb transaction autoclose.
   // see https://github.com/jakearchibald/idb#transaction-lifetime
   // TODO make sure remoteSha  matches calculated sha
-  const downloadedFileInfoFromGithub = await resolveFileFromGithub(
+  const downloadedFileInfoFromGithub = await resolveFilesFromGithub(
     job.localOps.update,
     config,
     abortSignal,
   );
 
   const db = await openDatabase();
-  const tx = db.transaction(LOCAL_ENTRIES_TABLE, 'readwrite');
+  const tx = db.transaction(LOCAL_ENTRIES_TABLE, 'readwrite', {
+    durability: 'strict',
+  });
   const store = tx.objectStore(LOCAL_ENTRIES_TABLE);
   let promises: Array<Promise<unknown>> = [];
   let skipped: string[] = [];
@@ -378,19 +375,19 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
  * Note that unlike other methods, the file is reset to the source state and not the remote state.
  */
 export async function discardLocalEntryChanges(wsPath: string) {
-  const entry = await fileManager.readEntry(wsPath);
+  const entry = await fileEntryManager.readEntry(wsPath);
 
   // if source does not exist, remove the file completely
   if (!entry?.source?.file) {
     console.debug('discardLocalChanges:removing file entry', wsPath);
-    await fileManager.removeEntry(wsPath);
+    await fileEntryManager.removeEntry(wsPath);
 
     return true;
   }
 
   console.debug('resetting file entry to source', entry.uid);
 
-  return fileManager.resetCurrentToSource(wsPath);
+  return fileEntryManager.resetCurrentToSource(wsPath);
 }
 
 /**
@@ -413,7 +410,7 @@ export async function duplicateAndResetToRemote({
       remoteContentWsPath: string;
     }
 > {
-  const existingEntry = await fileManager.readEntry(wsPath);
+  const existingEntry = await fileEntryManager.readEntry(wsPath);
 
   if (!existingEntry) {
     console.debug('No existing entry found for', wsPath);
@@ -449,9 +446,9 @@ export async function duplicateAndResetToRemote({
   ).toPlainObj();
 
   // create a duplicate file with a non-conflicting name
-  await fileManager.createEntry(localChangesEntry);
+  await fileEntryManager.createEntry(localChangesEntry);
 
-  await fileManager.updateSourceAndCurrent(wsPath, remoteFile);
+  await fileEntryManager.updateSourceAndCurrent(wsPath, remoteFile);
 
   return {
     localContentWsPath: newFilePath,
@@ -471,49 +468,12 @@ export async function getConflicts({
       wsName,
       config,
     }),
-    fileManager.listAllEntries(wsName),
+    fileEntryManager.listAllEntries(wsName),
   ]);
 
   const job = processSyncJob(localEntries, tree);
 
   return job.conflicts;
-}
-
-async function resolveFileFromGithub<
-  R extends { wsPath: string; remoteUrl: string },
->(
-  data: R[],
-  config: GithubConfig,
-  abortSignal: AbortSignal,
-): Promise<Array<R & { remoteFile: File }>> {
-  const result = await pMap(
-    data,
-    async (item) => {
-      const remoteFile = await getFileBlob({
-        fileBlobUrl: item.remoteUrl,
-        config,
-        abortSignal,
-        fileName: wsPathHelpers.resolvePath(item.wsPath, true).fileName,
-      });
-
-      if (remoteFile) {
-        return {
-          ...item,
-          remoteFile,
-        };
-      }
-
-      return undefined;
-    },
-    {
-      concurrency: 5,
-      abortSignal,
-    },
-  );
-
-  return result.filter(
-    (item): item is R & { remoteFile: File } => item !== undefined,
-  );
 }
 
 // TODO write a test for this
@@ -532,10 +492,10 @@ export async function optimizeDatabase({
   tree: GHTree;
   pruneUnused: boolean;
 }) {
-  const localEntriesArray = await fileManager.listAllEntries(wsName);
+  const localEntriesArray = await fileEntryManager.listAllEntries(wsName);
   const localEntriesKeySet = new Set(localEntriesArray.map((r) => r.uid));
 
-  const downloadedFileInfo = await resolveFileFromGithub(
+  const downloadedFileInfo = await resolveFilesFromGithub(
     Array.from(retainedWsPaths)
       .map((wsPath) => {
         if (localEntriesKeySet.has(wsPath)) {
