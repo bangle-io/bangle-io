@@ -10,13 +10,15 @@ import {
   OPERATION_SHOW_CONFLICT_DIALOG,
 } from './common';
 import { getGhToken, updateGhToken } from './database';
-import { fileManager } from './file-entry-manager';
+import { fileEntryManager } from './file-entry-manager';
 import type { GithubConfig } from './github-api-helpers';
+import { serialGetRepoTree } from './github-api-helpers';
 import {
   discardLocalEntryChanges,
   duplicateAndResetToRemote,
   getConflicts,
   githubSync,
+  optimizeDatabase,
 } from './github-sync';
 import { readGhWorkspaceMetadata } from './helpers';
 
@@ -140,26 +142,16 @@ export function syncRunner(
     store: ReturnType<typeof ghSliceKey.getStore>,
     config: GithubConfig,
   ) {
-    const {
-      openedWsPaths,
-      wsName: currentWsName,
-      recentlyUsedWsPaths,
-    } = workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+    const { wsName: currentWsName } =
+      workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
 
     if (currentWsName !== wsName) {
       return false;
     }
 
-    const retainedWsPaths = new Set(
-      [...openedWsPaths.toArray(), ...(recentlyUsedWsPaths || [])].filter(
-        (r): r is string => typeof r === 'string',
-      ),
-    );
-
     return githubSync({
       wsName,
       config,
-      retainedWsPaths,
       abortSignal: abort,
     });
   }
@@ -231,7 +223,7 @@ export function discardLocalChanges(wsName: string) {
     const { lockAcquired, result } = await getGithubSyncLockWrapper(
       wsName,
       async () => {
-        const allEntries = await fileManager.listAllEntries(wsName);
+        const allEntries = await fileEntryManager.listAllEntries(wsName);
 
         const result = await pMap(
           allEntries.filter((entry) => {
@@ -437,6 +429,70 @@ export function checkForConflicts(wsName: string) {
           },
         });
       }
+    }
+
+    return true;
+  });
+}
+
+export function optimizeDatabaseOperation(
+  pruneUnused: boolean = true,
+  abortSignal = new AbortController().signal,
+) {
+  return ghSliceKey.asyncOp(async (_, __, store) => {
+    const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
+
+    if (!githubWsName) {
+      return false;
+    }
+
+    const config = await getGhConfig(githubWsName);
+
+    if (!config) {
+      return false;
+    }
+
+    const tree = await serialGetRepoTree({
+      wsName: githubWsName,
+      config,
+      abortSignal,
+    });
+
+    const { lockAcquired, result } = await getGithubSyncLockWrapper(
+      githubWsName,
+      async () => {
+        const {
+          openedWsPaths,
+          wsName: currentWsName,
+          recentlyUsedWsPaths,
+        } = workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+
+        if (currentWsName !== githubWsName) {
+          return false;
+        }
+
+        const retainedWsPaths = new Set(
+          [...openedWsPaths.toArray(), ...(recentlyUsedWsPaths || [])].filter(
+            (r): r is string => typeof r === 'string',
+          ),
+        );
+
+        return optimizeDatabase({
+          tree,
+          abortSignal,
+          config,
+          retainedWsPaths,
+          wsName: githubWsName,
+          pruneUnused,
+        });
+      },
+    );
+
+    if (!lockAcquired || !result) {
+      !lockAcquired &&
+        console.debug('cannot cleanup ws paths, lock not acquired');
+
+      return false;
     }
 
     return true;

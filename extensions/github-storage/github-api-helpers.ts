@@ -1,5 +1,6 @@
 import { browserInfo, wsPathHelpers } from '@bangle.io/api';
 import { fileToBase64 } from '@bangle.io/git-file-sha';
+import { pMap } from '@bangle.io/p-map';
 import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
@@ -242,7 +243,7 @@ export async function getScopes({
   abortSignal?: AbortSignal;
 }): Promise<string | null> {
   const { headers } = await makeV3GetApi({
-    path: `?cacheBust=${Math.floor(Date.now() / 1000)}`,
+    path: `?cacheBust=${Math.floor(Date.now() / 2000)}`,
     token: token,
     abortSignal,
   });
@@ -339,6 +340,11 @@ export function getRepoTree() {
       let head = await getLatestCommitSha({ config, abortSignal: abortSignal });
 
       if (head === prevResult.sha) {
+        console.debug(
+          'github-storage:getRepoTree reusing tree from previous call',
+          head,
+        );
+
         return prevResult;
       }
     }
@@ -356,6 +362,8 @@ export function getRepoTree() {
 
   return serialCb;
 }
+
+export const serialGetRepoTree = getRepoTree();
 
 async function _getTree({
   abortSignal,
@@ -386,7 +394,7 @@ async function _getTree({
         await makeV3GetApi({
           path: `/repos/${config.owner}/${config.repoName}/git/trees/${
             config.branch
-          }?recursive=1&cacheBust=${Math.floor(Date.now() / 1000)}`,
+          }?recursive=1&cacheBust=${Math.floor(Date.now() / 2000)}`,
           token: config.githubToken,
           abortSignal,
         })
@@ -832,4 +840,41 @@ function makeGitCommitMessage(
     commitBody,
     commitHeadline,
   };
+}
+
+export async function resolveFilesFromGithub<
+  R extends { wsPath: string; remoteUrl: string },
+>(
+  data: R[],
+  config: GithubConfig,
+  abortSignal: AbortSignal,
+): Promise<Array<R & { remoteFile: File }>> {
+  const result = await pMap(
+    data,
+    async (item) => {
+      const remoteFile = await getFileBlob({
+        fileBlobUrl: item.remoteUrl,
+        config,
+        abortSignal,
+        fileName: wsPathHelpers.resolvePath(item.wsPath, true).fileName,
+      });
+
+      if (remoteFile) {
+        return {
+          ...item,
+          remoteFile,
+        };
+      }
+
+      return undefined;
+    },
+    {
+      concurrency: 5,
+      abortSignal,
+    },
+  );
+
+  return result.filter(
+    (item): item is R & { remoteFile: File } => item !== undefined,
+  );
 }
