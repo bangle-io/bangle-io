@@ -19,6 +19,31 @@ import {
 } from './github-api-helpers';
 import { getNonConflictName } from './helpers';
 
+interface LocalSyncOps {
+  delete: string[];
+  update: Array<{
+    wsPath: string;
+    remoteUrl: string;
+    remoteSha: string;
+    expectedLocalSha: string;
+  }>;
+  sourceUpdate: Array<{
+    wsPath: string;
+    expectedLocalSourceSha: string | undefined;
+  }>;
+}
+
+interface RemoteSyncOps {
+  delete: string[];
+  update: Array<{ wsPath: string; file: File; sha: string }>;
+}
+
+interface LocalSyncOpsResolved {
+  delete: LocalSyncOps['delete'];
+  update: Array<LocalSyncOps['update'][0] & { remoteFile: File }>;
+  sourceUpdate: LocalSyncOps['sourceUpdate'];
+}
+
 /**
  * Sync local and remote file entries
  */
@@ -39,28 +64,45 @@ export async function githubSync({
   assertSignal(abortSignal);
 
   const localEntriesArray = await fileEntryManager.listAllEntries(wsName);
-  const job = processSyncJob(localEntriesArray, tree);
+  const { remoteOps, conflicts, localOps } = processSyncJob(
+    localEntriesArray,
+    tree,
+  );
 
   // TODO make this non blocking
-  if (job.conflicts.length > 0) {
+  if (conflicts.length > 0) {
     return {
       status: 'merge-conflict' as const,
-      conflict: job.conflicts,
-      count: job.conflicts.length,
+      conflict: conflicts,
+      count: conflicts.length,
     };
   }
 
+  // NOTE: Do network requests before writing to gh and db
+  // so that if there is a network error, we don't have to rollback
+  // TODO make sure remoteSha  matches calculated sha
+  const locOpsUpdateResolved: LocalSyncOpsResolved['update'] =
+    await resolveFilesFromGithub(localOps.update, config, abortSignal);
+
+  // !!! DONOT MAKE NETWORK REQUESTS AFTER THIS POINT
+
   // add, update and delete files in github
   await commitToGithub({
-    additions: job.remoteOps.update,
-    deletions: job.remoteOps.delete,
+    additions: remoteOps.update,
+    deletions: remoteOps.delete,
     abortSignal,
     sha: tree.sha,
     config,
   });
 
+  const localOpsResolved: LocalSyncOpsResolved = {
+    ...localOps,
+    update: locOpsUpdateResolved,
+  };
+
   await executeLocalChanges({
-    job,
+    localOps: localOpsResolved,
+    remoteOps: remoteOps,
     abortSignal,
     config,
   });
@@ -70,33 +112,26 @@ export async function githubSync({
   return {
     status: 'success' as const,
     count:
-      job.localOps.delete.length +
-      job.localOps.update.length +
-      job.remoteOps.delete.length +
-      job.remoteOps.update.length,
+      localOps.delete.length +
+      localOps.update.length +
+      remoteOps.delete.length +
+      remoteOps.update.length,
   };
 }
 
+// TODO add some rollback code if there is an error
 async function executeLocalChanges({
-  job,
+  localOps,
+  remoteOps,
   abortSignal,
   config,
 }: {
-  job: Awaited<ReturnType<typeof processSyncJob>>;
+  localOps: LocalSyncOpsResolved;
+  remoteOps: RemoteSyncOps;
   abortSignal: AbortSignal;
   config: GithubConfig;
 }) {
   assertSignal(abortSignal);
-
-  // NOTE: Do network requests before writing to db
-  // This is important because of the way indexeddb transaction autoclose.
-  // see https://github.com/jakearchibald/idb#transaction-lifetime
-  // TODO make sure remoteSha  matches calculated sha
-  const downloadedFileInfoFromGithub = await resolveFilesFromGithub(
-    job.localOps.update,
-    config,
-    abortSignal,
-  );
 
   const db = await openDatabase();
   const tx = db.transaction(LOCAL_ENTRIES_TABLE, 'readwrite', {
@@ -126,7 +161,7 @@ async function executeLocalChanges({
 
   // Now that things are committed to github, we can update the source of local entries
   // so that we do not keep syncing them with github
-  await updateIfExists(job.remoteOps.update, (remoteUpdate, entryInDb) => {
+  await updateIfExists(remoteOps.update, (remoteUpdate, entryInDb) => {
     return {
       ...entryInDb,
       source: {
@@ -138,7 +173,7 @@ async function executeLocalChanges({
   });
 
   // update localSourceUpdate
-  await updateIfExists(job.localOps.sourceUpdate, (incoming, entryInDb) => {
+  await updateIfExists(localOps.sourceUpdate, (incoming, entryInDb) => {
     // only update if the source matches with the source at the time of sync
     // this also includes when both are undefined.
     if (entryInDb.source?.sha === incoming.expectedLocalSourceSha) {
@@ -162,38 +197,35 @@ async function executeLocalChanges({
   });
 
   // update the local files
-  await updateIfExists(
-    downloadedFileInfoFromGithub,
-    (incomingEntry, entryInDb) => {
-      if (entryInDb.sha !== incomingEntry.expectedLocalSha) {
-        console.warn(
-          `Local file "${entryInDb.uid}" has been modified since sync started. Skipping update`,
-        );
+  await updateIfExists(localOps.update, (incomingEntry, entryInDb) => {
+    if (entryInDb.sha !== incomingEntry.expectedLocalSha) {
+      console.warn(
+        `Local file "${entryInDb.uid}" has been modified since sync started. Skipping update`,
+      );
 
-        return entryInDb;
-      }
+      return entryInDb;
+    }
 
-      return {
-        ...entryInDb,
-        deleted: undefined,
+    return {
+      ...entryInDb,
+      deleted: undefined,
+      file: incomingEntry.remoteFile,
+      sha: incomingEntry.remoteSha,
+      source: {
+        ...entryInDb.source,
         file: incomingEntry.remoteFile,
         sha: incomingEntry.remoteSha,
-        source: {
-          ...entryInDb.source,
-          file: incomingEntry.remoteFile,
-          sha: incomingEntry.remoteSha,
-        },
-      };
-    },
-  );
+      },
+    };
+  });
 
   for (const uid of [
     // now that we have synced the deleted file, lets remove them from the local storage
     // completely!
-    ...job.remoteOps.delete,
+    ...remoteOps.delete,
     // wsPaths that are in localDelete are the ones that have been deleted in
-    // github, so we should remove the entry completely and not soft delete them by calling .deleteFile()
-    ...job.localOps.delete,
+    // github, so we should remove the entry completely from the local storage
+    ...localOps.delete,
   ]) {
     promises.push(store.delete(uid));
   }
@@ -201,6 +233,8 @@ async function executeLocalChanges({
   await Promise.all(promises);
 
   await tx.done;
+
+  return { skipped };
 }
 
 /**
@@ -209,20 +243,16 @@ async function executeLocalChanges({
  */
 export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
   const conflicts: string[] = [];
-  const remoteToDelete: string[] = [];
-  const remoteToUpdate: Array<{ wsPath: string; file: File; sha: string }> = [];
 
-  let localToDelete: string[] = [];
-  const localToUpdate: Array<{
-    wsPath: string;
-    remoteUrl: string;
-    remoteSha: string;
-    expectedLocalSha: string;
-  }> = [];
-  const localSourceToUpdate: Array<{
-    wsPath: string;
-    expectedLocalSourceSha: string | undefined;
-  }> = [];
+  const remoteOps: RemoteSyncOps = {
+    update: [],
+    delete: [],
+  };
+  const localOps: LocalSyncOps = {
+    delete: [],
+    update: [],
+    sourceUpdate: [],
+  };
 
   const REMOTE_FILE = 'fileB';
   const LOCAL_FILE = 'fileA';
@@ -284,11 +314,11 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
       let target = sync.target;
       switch (target) {
         case REMOTE_FILE: {
-          remoteToDelete.push(uid);
+          remoteOps.delete.push(uid);
           continue;
         }
         case LOCAL_FILE: {
-          localToDelete.push(uid);
+          localOps.delete.push(uid);
           continue;
         }
         default: {
@@ -300,7 +330,7 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
       let target = sync.target;
       switch (target) {
         case REMOTE_FILE: {
-          remoteToUpdate.push({
+          remoteOps.update.push({
             wsPath: uid,
             file: localEntry.file,
             sha: localEntry.sha,
@@ -313,7 +343,7 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
             throw new Error('Remote cannot be undefined');
           }
 
-          localToUpdate.push({
+          localOps.update.push({
             wsPath: uid,
             // When updating the entry in db, use this to make sure
             // expectedLocalSha hasn't been modified
@@ -328,7 +358,7 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
         // a previous sync encountered an error
         case ANCESTOR_FILE: {
           // adding it to localSourceUpdate will update the ancestor
-          localSourceToUpdate.push({
+          localOps.sourceUpdate.push({
             wsPath: uid,
             expectedLocalSourceSha: localEntry.source?.sha,
           });
@@ -352,20 +382,13 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
   localEntries
     .filter((entry) => entry.deleted && !tree.tree.has(entry.uid))
     .forEach((entry) => {
-      localToDelete.push(entry.uid);
+      localOps.delete.push(entry.uid);
     });
 
   return {
     conflicts,
-    remoteOps: {
-      delete: remoteToDelete,
-      update: remoteToUpdate,
-    },
-    localOps: {
-      delete: localToDelete,
-      update: localToUpdate,
-      sourceUpdate: localSourceToUpdate,
-    },
+    remoteOps,
+    localOps,
   };
 }
 
@@ -476,7 +499,6 @@ export async function getConflicts({
   return job.conflicts;
 }
 
-// TODO write a test for this
 export async function optimizeDatabase({
   wsName,
   config,
