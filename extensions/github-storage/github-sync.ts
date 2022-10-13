@@ -1,3 +1,4 @@
+import { wsPathHelpers } from '@bangle.io/api';
 import { makeDbRecord } from '@bangle.io/db-key-val';
 import { pMap } from '@bangle.io/p-map';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
@@ -14,6 +15,7 @@ import { fileManager } from './file-entry-manager';
 import type { GHTree, GithubConfig } from './github-api-helpers';
 import {
   commitToGithub,
+  getFileBlob,
   getFileBlobFromTree,
   serialGetRepoTree,
 } from './github-api-helpers';
@@ -52,8 +54,8 @@ export async function githubSync({
 
   // add, update and delete files in github
   await commitToGithub({
-    additions: job.remoteUpdate,
-    deletions: job.remoteDelete,
+    additions: job.remoteOps.update,
+    deletions: job.remoteOps.delete,
     abortSignal,
     sha: tree.sha,
     config,
@@ -71,10 +73,10 @@ export async function githubSync({
   return {
     status: 'success' as const,
     count:
-      job.localDelete.length +
-      job.localUpdate.length +
-      job.remoteDelete.length +
-      job.remoteUpdate.length,
+      job.localOps.delete.length +
+      job.localOps.update.length +
+      job.remoteOps.delete.length +
+      job.remoteOps.update.length,
   };
 }
 
@@ -91,9 +93,12 @@ async function executeLocalChanges({
 }) {
   assertSignal(abortSignal);
 
-  const updatedEntriesFromRemote = await createPlainEntriesFromRemote(
-    job.localUpdate,
-    tree,
+  // NOTE: Do network requests before writing to db
+  // This is important because of the way indexeddb transaction autoclose.
+  // see https://github.com/jakearchibald/idb#transaction-lifetime
+  // TODO make sure remoteSha  matches calculated sha
+  const downloadedFileInfoFromGithub = await resolveFileFromGithub(
+    job.localOps.update,
     config,
     abortSignal,
   );
@@ -102,15 +107,14 @@ async function executeLocalChanges({
   const tx = db.transaction(LOCAL_ENTRIES_TABLE, 'readwrite');
   const store = tx.objectStore(LOCAL_ENTRIES_TABLE);
   let promises: Array<Promise<unknown>> = [];
-  let missing: string[] = [];
+  let skipped: string[] = [];
 
-  const updateIfExists = async <R>(
-    infoArray: Array<[string, R]>,
-    updater: (info: [string, R], entryInDb: PlainObjEntry) => PlainObjEntry,
+  const updateIfExists = async <R extends { wsPath: string }>(
+    infoArray: R[],
+    updater: (info: R, entryInDb: PlainObjEntry) => PlainObjEntry,
   ): Promise<void> => {
     for (const info of infoArray) {
-      const wsPath = info[0];
-
+      const { wsPath } = info;
       const existing = await store.get(wsPath);
 
       if (existing) {
@@ -118,35 +122,29 @@ async function executeLocalChanges({
 
         promises.push(store.put(newRecord));
       } else {
-        missing.push(wsPath);
+        skipped.push(wsPath);
       }
     }
   };
 
   // Now that things are committed to github, we can update the source of local entries
   // so that we do not keep syncing them with github
-  // TODO what happens if this part fails?
-  await updateIfExists(
-    job.remoteUpdate.map((info) => [info.wsPath, info]),
-    ([wsPath, info], entryInDb) => {
-      return {
-        ...entryInDb,
-        source: {
-          ...entryInDb.source,
-          file: info.file,
-          sha: info.sha,
-        },
-      };
-    },
-  );
+  await updateIfExists(job.remoteOps.update, (remoteUpdate, entryInDb) => {
+    return {
+      ...entryInDb,
+      source: {
+        ...entryInDb.source,
+        file: remoteUpdate.file,
+        sha: remoteUpdate.sha,
+      },
+    };
+  });
 
   // update localSourceUpdate
-  // TODO we should update the source to the sha of the current file at
-  // the time of sync. the current approach might trick us to think the file
-  // is untouched (current sha === source sha).
-  await updateIfExists(
-    job.localSourceUpdate.map((wsPath) => [wsPath, null]),
-    (_, entryInDb) => {
+  await updateIfExists(job.localOps.sourceUpdate, (incoming, entryInDb) => {
+    // only update if the source matches with the source at the time of sync
+    // this also includes when both are undefined.
+    if (entryInDb.source?.sha === incoming.expectedLocalSourceSha) {
       return {
         ...entryInDb,
         source: {
@@ -155,24 +153,38 @@ async function executeLocalChanges({
           sha: entryInDb.sha,
         },
       };
-    },
-  );
+    }
+
+    console.warn(
+      `Skipping source update for ${incoming.wsPath} because source sha does not match with the one provided at sync.`,
+    );
+
+    skipped.push(incoming.wsPath);
+
+    return entryInDb;
+  });
 
   // update the local files
-  // TODO the current should only be updated if it hasn't been modified
-  // since since. Currently this will overwrite any changes after the sync
   await updateIfExists(
-    updatedEntriesFromRemote.map((e) => [e.uid, e]),
-    ([wsPath, incomingEntry], entryInDb) => {
+    downloadedFileInfoFromGithub,
+    (incomingEntry, entryInDb) => {
+      if (entryInDb.sha !== incomingEntry.expectedLocalSha) {
+        console.warn(
+          `Local file "${entryInDb.uid}" has been modified since sync started. Skipping update`,
+        );
+
+        return entryInDb;
+      }
+
       return {
         ...entryInDb,
         deleted: undefined,
-        file: incomingEntry.file,
-        sha: incomingEntry.sha,
+        file: incomingEntry.remoteFile,
+        sha: incomingEntry.remoteSha,
         source: {
           ...entryInDb.source,
-          file: incomingEntry.file,
-          sha: incomingEntry.sha,
+          file: incomingEntry.remoteFile,
+          sha: incomingEntry.remoteSha,
         },
       };
     },
@@ -181,10 +193,10 @@ async function executeLocalChanges({
   for (const uid of [
     // now that we have synced the deleted file, lets remove them from the local storage
     // completely!
-    ...job.remoteDelete,
+    ...job.remoteOps.delete,
     // wsPaths that are in localDelete are the ones that have been deleted in
     // github, so we should remove the entry completely and not soft delete them by calling .deleteFile()
-    ...job.localDelete,
+    ...job.localOps.delete,
   ]) {
     promises.push(store.delete(uid));
   }
@@ -200,11 +212,21 @@ async function executeLocalChanges({
  */
 export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
   const conflicts: string[] = [];
-  const remoteDelete: string[] = [];
-  const remoteUpdate: Array<{ wsPath: string; file: File; sha: string }> = [];
-  let localDelete: string[] = [];
-  const localUpdate: string[] = [];
-  const localSourceUpdate: string[] = [];
+  const remoteToDelete: string[] = [];
+  const remoteToUpdate: Array<{ wsPath: string; file: File; sha: string }> = [];
+
+  let localToDelete: string[] = [];
+  const localToUpdate: Array<{
+    wsPath: string;
+    remoteUrl: string;
+    remoteSha: string;
+    expectedLocalSha: string;
+  }> = [];
+  const localSourceToUpdate: Array<{
+    wsPath: string;
+    expectedLocalSourceSha: string | undefined;
+  }> = [];
+
   const REMOTE_FILE = 'fileB';
   const LOCAL_FILE = 'fileA';
   const ANCESTOR_FILE = 'ancestor';
@@ -265,11 +287,11 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
       let target = sync.target;
       switch (target) {
         case REMOTE_FILE: {
-          remoteDelete.push(uid);
+          remoteToDelete.push(uid);
           continue;
         }
         case LOCAL_FILE: {
-          localDelete.push(uid);
+          localToDelete.push(uid);
           continue;
         }
         default: {
@@ -281,22 +303,38 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
       let target = sync.target;
       switch (target) {
         case REMOTE_FILE: {
-          remoteUpdate.push({
+          remoteToUpdate.push({
             wsPath: uid,
             file: localEntry.file,
             sha: localEntry.sha,
           });
           continue;
         }
+
         case LOCAL_FILE: {
-          localUpdate.push(uid);
+          if (!rawRemote) {
+            throw new Error('Remote cannot be undefined');
+          }
+
+          localToUpdate.push({
+            wsPath: uid,
+            // When updating the entry in db, use this to make sure
+            // expectedLocalSha hasn't been modified
+            // since the sync started.
+            expectedLocalSha: localEntry.sha,
+            remoteUrl: rawRemote.url,
+            remoteSha: rawRemote.sha,
+          });
           continue;
         }
         // This case ideally should not happen, unless
         // a previous sync encountered an error
         case ANCESTOR_FILE: {
           // adding it to localSourceUpdate will update the ancestor
-          localSourceUpdate.push(uid);
+          localSourceToUpdate.push({
+            wsPath: uid,
+            expectedLocalSourceSha: localEntry.source?.sha,
+          });
           continue;
         }
         default: {
@@ -317,16 +355,20 @@ export function processSyncJob(localEntries: PlainObjEntry[], tree: GHTree) {
   localEntries
     .filter((entry) => entry.deleted && !tree.tree.has(entry.uid))
     .forEach((entry) => {
-      localDelete.push(entry.uid);
+      localToDelete.push(entry.uid);
     });
 
   return {
     conflicts,
-    remoteDelete,
-    remoteUpdate,
-    localDelete,
-    localUpdate,
-    localSourceUpdate,
+    remoteOps: {
+      delete: remoteToDelete,
+      update: remoteToUpdate,
+    },
+    localOps: {
+      delete: localToDelete,
+      update: localToUpdate,
+      sourceUpdate: localSourceToUpdate,
+    },
   };
 }
 
@@ -437,43 +479,41 @@ export async function getConflicts({
   return job.conflicts;
 }
 
-async function createPlainEntriesFromRemote(
-  wsPaths: string[],
-  tree: GHTree,
+async function resolveFileFromGithub<
+  R extends { wsPath: string; remoteUrl: string },
+>(
+  data: R[],
   config: GithubConfig,
   abortSignal: AbortSignal,
-) {
-  let result: PlainObjEntry[] = [];
-
-  await pMap(
-    wsPaths,
-    async (wsPath) => {
-      const remoteFile = await getFileBlobFromTree({
-        wsPath,
+): Promise<Array<R & { remoteFile: File }>> {
+  const result = await pMap(
+    data,
+    async (item) => {
+      const remoteFile = await getFileBlob({
+        fileBlobUrl: item.remoteUrl,
         config,
-        tree,
+        abortSignal,
+        fileName: wsPathHelpers.resolvePath(item.wsPath, true).fileName,
       });
 
       if (remoteFile) {
-        const obj = (
-          await RemoteFileEntry.newFile({
-            uid: wsPath,
-            file: remoteFile,
-            deleted: undefined,
-          })
-        )
-          .forkLocalFileEntry()
-          .toPlainObj();
-        result.push(obj);
+        return {
+          ...item,
+          remoteFile,
+        };
       }
+
+      return undefined;
     },
     {
-      concurrency: 10,
+      concurrency: 5,
       abortSignal,
     },
   );
 
-  return result;
+  return result.filter(
+    (item): item is R & { remoteFile: File } => item !== undefined,
+  );
 }
 
 // TODO write a test for this
@@ -494,11 +534,25 @@ export async function optimizeDatabase({
 }) {
   const localEntriesArray = await fileManager.listAllEntries(wsName);
   const localEntriesKeySet = new Set(localEntriesArray.map((r) => r.uid));
-  const plainRemoteEntries = await createPlainEntriesFromRemote(
-    Array.from(retainedWsPaths).filter(
-      (wsPath) => !localEntriesKeySet.has(wsPath),
-    ),
-    tree,
+
+  const downloadedFileInfo = await resolveFileFromGithub(
+    Array.from(retainedWsPaths)
+      .map((wsPath) => {
+        if (localEntriesKeySet.has(wsPath)) {
+          return undefined;
+        }
+        const entry = tree.tree.get(wsPath);
+
+        if (!entry) {
+          return undefined;
+        }
+
+        return { wsPath, remoteUrl: entry.url, remoteSha: entry.sha };
+      })
+      .filter(
+        (r): r is { wsPath: string; remoteUrl: string; remoteSha: string } =>
+          r !== undefined,
+      ),
     config,
     abortSignal,
   );
@@ -513,14 +567,31 @@ export async function optimizeDatabase({
 
   let promises: Array<Promise<unknown>> = [];
 
-  // make sure retained wsPaths are in the local storage
-
-  for (const entry of plainRemoteEntries) {
-    const existing = await store.get(entry.uid);
+  // The following code ensures that the downloaded files are
+  // have a copy in database.
+  for (const info of downloadedFileInfo) {
+    const existing = await store.get(info.wsPath);
 
     if (!existing) {
-      console.debug('github-storage:optimizeDatabase:adding entry', entry.uid);
-      promises.push(store.put(makeDbRecord(entry.uid, entry)));
+      console.debug(
+        'github-storage:optimizeDatabase:adding entry',
+        info.wsPath,
+      );
+      promises.push(
+        store.put(
+          makeDbRecord(
+            info.wsPath,
+            new RemoteFileEntry({
+              deleted: undefined,
+              uid: info.wsPath,
+              file: info.remoteFile,
+              sha: info.remoteSha,
+            })
+              .forkLocalFileEntry()
+              .toPlainObj(),
+          ),
+        ),
+      );
     }
   }
 
