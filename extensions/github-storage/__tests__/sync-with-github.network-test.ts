@@ -1,6 +1,14 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { workspace, wsPathHelpers } from '@bangle.io/api';
-import { LocalFileEntry, RemoteFileEntry } from '@bangle.io/remote-file-sync';
+import { calculateGitFileSha } from '@bangle.io/git-file-sha';
+import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
+import {
+  isEntryDeleted,
+  isEntryModified,
+  isEntryNew,
+  isEntryUntouched,
+  makeLocalEntryFromRemote,
+} from '@bangle.io/remote-file-sync';
 import {
   createBasicTestStore,
   createPMNode,
@@ -114,7 +122,7 @@ const getLocalFileEntries = async () => {
   return Object.fromEntries(
     (await fileEntryManager.listAllEntries(wsName)).map((entry) => [
       entry.uid,
-      LocalFileEntry.fromPlainObj(entry),
+      entry,
     ]),
   );
 };
@@ -134,7 +142,7 @@ const getRemoteFileEntries = async () => {
   return Object.fromEntries(
     await Promise.all(
       [...tree.tree.values()].map(
-        async (item): Promise<[string, RemoteFileEntry]> => {
+        async (item): Promise<[string, PlainObjEntry]> => {
           const { wsName, fileName } = wsPathHelpers.resolvePath(
             item.wsPath,
             true,
@@ -152,10 +160,10 @@ const getRemoteFileEntries = async () => {
 
           return [
             item.wsPath,
-            await RemoteFileEntry.newFile({
+            makeLocalEntryFromRemote({
               uid: item.wsPath,
               file: file,
-              deleted: undefined,
+              sha: await calculateGitFileSha(file),
             }),
           ];
         },
@@ -213,10 +221,10 @@ describe('pushLocalChanges', () => {
     expect(remoteEntries[test1WsPath]).toBeUndefined();
 
     // local entry should have isNew flag to true since we just created it
-    expect(localEntries[test1WsPath]?.isDeleted).toEqual(false);
-    expect(localEntries[test1WsPath]?.isModified).toEqual(true);
-    expect(localEntries[test1WsPath]?.isNew).toEqual(true);
-    expect(localEntries[test1WsPath]?.isUntouched).toEqual(false);
+    expect(isEntryDeleted(localEntries[test1WsPath]!)).toEqual(false);
+    expect(isEntryModified(localEntries[test1WsPath]!)).toEqual(true);
+    expect(isEntryNew(localEntries[test1WsPath]!)).toEqual(true);
+    expect(isEntryUntouched(localEntries[test1WsPath]!)).toEqual(false);
     expect(localEntries[test1WsPath]?.source).toBe(undefined);
 
     await runGithubSync();
@@ -240,11 +248,11 @@ describe('pushLocalChanges', () => {
     // Get the latest local entries since we updated the note
     localEntries = await getLocalFileEntries();
 
-    expect(localEntries[test1WsPath]?.isDeleted).toEqual(false);
+    expect(isEntryDeleted(localEntries[test1WsPath]!)).toEqual(false);
     // local entry should have isModified flag to true since we updated it but didnt sync
-    expect(localEntries[test1WsPath]?.isModified).toEqual(true);
-    expect(localEntries[test1WsPath]?.isNew).toEqual(false);
-    expect(localEntries[test1WsPath]?.isUntouched).toEqual(false);
+    expect(isEntryModified(localEntries[test1WsPath]!)).toEqual(true);
+    expect(isEntryNew(localEntries[test1WsPath]!)).toEqual(false);
+    expect(isEntryUntouched(localEntries[test1WsPath]!)).toEqual(false);
     expect(localEntries[test1WsPath]?.source).toBeDefined();
 
     await runGithubSync();
@@ -271,11 +279,11 @@ describe('pushLocalChanges', () => {
       },
     });
 
-    expect(localEntries[test1WsPath]?.isDeleted).toEqual(false);
+    expect(isEntryDeleted(localEntries[test1WsPath]!)).toEqual(false);
     // local entry should have isModified flag to false since we synced it to remote
-    expect(localEntries[test1WsPath]?.isModified).toEqual(false);
-    expect(localEntries[test1WsPath]?.isNew).toEqual(false);
-    expect(localEntries[test1WsPath]?.isUntouched).toEqual(true);
+    expect(isEntryModified(localEntries[test1WsPath]!)).toEqual(false);
+    expect(isEntryNew(localEntries[test1WsPath]!)).toEqual(false);
+    expect(isEntryUntouched(localEntries[test1WsPath]!)).toEqual(true);
     expect(localEntries[test1WsPath]?.source).toBeDefined();
   });
 
@@ -315,8 +323,8 @@ describe('pushLocalChanges', () => {
 
     test('deleting both local notes should make corresponding remote notes undefined', async () => {
       let localEntries = await getLocalFileEntries();
-      expect(localEntries[test1WsPath]?.isDeleted).toBe(false);
-      expect(localEntries[test2WsPath]?.isDeleted).toBe(false);
+      expect(isEntryDeleted(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryDeleted(localEntries[test2WsPath]!)).toBe(false);
 
       // delete the note locally and then sync
       await workspace.deleteNote(test1WsPath)(
@@ -334,12 +342,12 @@ describe('pushLocalChanges', () => {
 
       // make sure local entry is marked as deleted
       localEntries = await getLocalFileEntries();
-      expect(localEntries[test1WsPath]?.isDeleted).toBe(true);
-      expect(localEntries[test1WsPath]?.isNew).toBe(false);
-      expect(localEntries[test1WsPath]?.isModified).toBe(false);
-      expect(localEntries[test1WsPath]?.isUntouched).toBe(false);
+      expect(isEntryDeleted(localEntries[test1WsPath]!)).toBe(true);
+      expect(isEntryNew(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryModified(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryUntouched(localEntries[test1WsPath]!)).toBe(false);
 
-      expect(localEntries[test2WsPath]?.isDeleted).toBe(true);
+      expect(isEntryDeleted(localEntries[test2WsPath]!)).toBe(true);
 
       let remoteEntries = await getRemoteFileEntries();
       expect(remoteEntries[test1WsPath]?.uid).toBe(test1WsPath);
@@ -361,8 +369,8 @@ describe('pushLocalChanges', () => {
 
     test('update one of the local notes and deleting other should reflect on the remote side correctly', async () => {
       let localEntries = await getLocalFileEntries();
-      expect(localEntries[test1WsPath]?.isDeleted).toBe(false);
-      expect(localEntries[test2WsPath]?.isDeleted).toBe(false);
+      expect(isEntryDeleted(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryDeleted(localEntries[test2WsPath]!)).toBe(false);
 
       let originalSourceSha = localEntries[test1WsPath]?.source?.sha;
 
@@ -382,13 +390,13 @@ describe('pushLocalChanges', () => {
       await sleep(0);
 
       localEntries = await getLocalFileEntries();
-      expect(localEntries[test2WsPath]?.isDeleted).toBe(true);
+      expect(isEntryDeleted(localEntries[test2WsPath]!)).toBe(true);
 
-      expect(localEntries[test1WsPath]?.isDeleted).toBe(false);
-      expect(localEntries[test1WsPath]?.isNew).toBe(false);
-      expect(localEntries[test1WsPath]?.isModified).toBe(true);
-      expect(localEntries[test1WsPath]?.isUntouched).toBe(false);
-      expect(localEntries[test2WsPath]?.isModified).toBe(false);
+      expect(isEntryDeleted(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryNew(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryModified(localEntries[test1WsPath]!)).toBe(true);
+      expect(isEntryUntouched(localEntries[test1WsPath]!)).toBe(false);
+      expect(isEntryModified(localEntries[test2WsPath]!)).toBe(false);
 
       expect(localEntries[test1WsPath]?.sha).toBe(
         '4614e94430bc2af22a76817016bbecc34e71deca',
@@ -616,7 +624,9 @@ describe('discardLocalEntryChanges', () => {
 
     expect(remoteEntries[test1WsPath]).toBeDefined();
 
-    expect((await getLocalFileEntries())[test1WsPath]?.isUntouched).toBe(true);
+    expect(isEntryUntouched((await getLocalFileEntries())[test1WsPath]!)).toBe(
+      true,
+    );
 
     // Now make a local change
     await workspace.writeNote(
@@ -624,13 +634,19 @@ describe('discardLocalEntryChanges', () => {
       createPMNode([], `I am updated test-1`),
     )(store.state, store.dispatch, store);
 
-    expect((await getLocalFileEntries())[test1WsPath]?.isModified).toBe(true);
+    expect(isEntryModified((await getLocalFileEntries())[test1WsPath]!)).toBe(
+      true,
+    );
 
     // Now discard the local changes
     expect(await discardLocalEntryChanges(test1WsPath)).toBe(true);
 
-    expect((await getLocalFileEntries())[test1WsPath]?.isModified).toBe(false);
-    expect((await getLocalFileEntries())[test1WsPath]?.isUntouched).toBe(true);
+    expect(isEntryModified((await getLocalFileEntries())[test1WsPath]!)).toBe(
+      false,
+    );
+    expect(isEntryUntouched((await getLocalFileEntries())[test1WsPath]!)).toBe(
+      true,
+    );
     expect((await getLocalFileEntries())[test1WsPath]?.sha).toBe(
       remoteEntries[test1WsPath]?.sha,
     );
@@ -677,7 +693,7 @@ describe('discardLocalEntryChanges', () => {
       doc: createPMNode([], `hello I am test-1 note`),
     })(store.state, store.dispatch, store);
 
-    expect((await getLocalFileEntries())[test1WsPath]?.isNew).toBe(true);
+    expect(isEntryNew((await getLocalFileEntries())[test1WsPath]!)).toBe(true);
 
     // Now discard the local changes
     expect(await discardLocalEntryChanges(test1WsPath)).toBe(true);
@@ -700,7 +716,9 @@ describe('duplicateAndResetToRemote', () => {
 
     await sleep(50);
     // ensure file is now untouched i.e. in sync with github
-    expect((await getLocalFileEntries())[test1WsPath]?.isUntouched).toBe(true);
+    expect(isEntryUntouched((await getLocalFileEntries())[test1WsPath]!)).toBe(
+      true,
+    );
 
     // Now create a conflict
     await workspace.writeNote(

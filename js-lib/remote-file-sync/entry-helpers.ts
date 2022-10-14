@@ -1,21 +1,83 @@
-import type { Merge } from 'type-fest';
-
-import { calculateGitFileSha } from '@bangle.io/git-file-sha';
-
-export interface SourceType {
+interface SourceType {
   file: File;
   sha: string;
 }
 
-export type PlainObjEntry = {
+/**
+ * Use when a new local file is created, without a remote counterpart.
+ */
+export function makeLocallyCreatedEntry(
+  obj: Omit<PlainObjEntry, 'deleted' | 'source'>,
+): PlainObjEntry {
+  return {
+    ...obj,
+    // a new locally created file cannot be created as deleted
+    deleted: undefined,
+    // a new file does not have source, since it was created locally
+    // and hasn't been synced with the remote yet
+    source: undefined,
+  };
+}
+
+/**
+ * Use to create an entry which is a copy of the remote counterpart.
+ */
+export function makeLocalEntryFromRemote(
+  obj: Omit<PlainObjEntry, 'deleted' | 'source'>,
+): PlainObjEntry {
+  return {
+    ...obj,
+    // a new entry from remote shouldn't be deleted
+    deleted: undefined,
+    source: {
+      file: obj.file,
+      sha: obj.sha,
+    },
+  };
+}
+
+/*
+ * a 'file.isModified == true' means that it was modified locally 
+  w.r.t its source content
+ */
+export function isEntryModified(entry: PlainObjEntry): boolean {
+  return entry.sha !== entry.source?.sha;
+}
+
+export function isEntryNew(entry: PlainObjEntry): boolean {
+  return entry.source == null;
+}
+
+export function isEntryDeleted(entry: PlainObjEntry): boolean {
+  return typeof entry.deleted === 'number';
+}
+
+export function isEntryUntouched(entry: PlainObjEntry): boolean {
+  if (isEntryNew(entry)) {
+    return false;
+  }
+  // TODO what does it mean if source is deleted
+  // we are marking isUntouched = false to a deleted file, but
+  // we want to keep it isUntouched = true if the source was also deleted.
+  if (isEntryDeleted(entry)) {
+    return false;
+  }
+  if (isEntryModified(entry)) {
+    return false;
+  }
+
+  return true;
+}
+
+export interface PlainObjEntry {
   uid: string;
   sha: string;
   file: File;
   deleted: number | undefined;
   source: SourceType | undefined;
-};
+}
 
-export class BaseFileEntry {
+class BaseFileEntry {
   static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
     return new BaseFileEntry(obj);
   }
@@ -50,144 +112,5 @@ export class BaseFileEntry {
       deleted: this.deleted,
       source: undefined,
     };
-  }
-}
-
-export class LocalFileEntry extends BaseFileEntry {
-  static fromPlainObj(obj: ConstructorParameters<typeof LocalFileEntry>[0]) {
-    return new LocalFileEntry(obj);
-  }
-
-  static async newFile(
-    obj: Omit<
-      ConstructorParameters<typeof BaseFileEntry>[0],
-      'sha' | 'deleted'
-    >,
-  ) {
-    return new LocalFileEntry({
-      ...obj,
-      sha: await calculateGitFileSha(obj.file),
-      // a new locally created file cannot be created as deleted
-      deleted: undefined,
-      // a new file does not have source
-      source: undefined,
-    });
-  }
-
-  readonly source: // source will be undefined for a file that was newly created
-  | undefined
-    | {
-        readonly sha: string;
-        readonly file: File;
-      };
-
-  constructor(
-    obj: Merge<
-      ConstructorParameters<typeof BaseFileEntry>[0],
-      { source: SourceType | undefined }
-    >,
-  ) {
-    super(obj);
-    this.source = obj.source;
-  }
-
-  get isDeleted() {
-    return typeof this.deleted === 'number';
-  }
-
-  // a 'file.isModified == true' means that it was modified locally w.r.t its source content
-  get isModified() {
-    return this.sha !== this.source?.sha;
-  }
-
-  get isNew() {
-    return this.source == null;
-  }
-
-  get isUntouched() {
-    if (this.isNew) {
-      return false;
-    }
-    // TODO what does it mean if source is deleted
-    // we are marking isUntouched = false to a deleted file, but
-    // we want to keep it isUntouched = true if the source was also deleted.
-    if (this.isDeleted) {
-      return false;
-    }
-    if (this.isModified) {
-      return false;
-    }
-
-    return true;
-  }
-
-  markDeleted() {
-    return new LocalFileEntry({
-      ...this,
-      deleted: Date.now(),
-    });
-  }
-
-  toPlainObj(): PlainObjEntry {
-    return {
-      uid: this.uid,
-      sha: this.sha,
-      file: this.file,
-      deleted: this.deleted,
-      source: this.source,
-    };
-  }
-
-  async updateFile(file: File): Promise<LocalFileEntry> {
-    const newSha = await calculateGitFileSha(file);
-
-    if (newSha === this.sha && this.deleted == null) {
-      return this;
-    }
-
-    return new LocalFileEntry({
-      ...this,
-      // unset deleted if file is updated
-      deleted: undefined,
-      file: file,
-      sha: newSha,
-    });
-  }
-
-  async updateSource(file: File) {
-    const newSha = await calculateGitFileSha(file);
-
-    if (this.source?.sha === newSha) {
-      return this;
-    }
-
-    return new LocalFileEntry({
-      ...this,
-      source: {
-        sha: newSha,
-        file: file,
-      },
-    });
-  }
-}
-
-export class RemoteFileEntry extends BaseFileEntry {
-  static async newFile(
-    obj: Omit<ConstructorParameters<typeof BaseFileEntry>[0], 'sha'>,
-  ) {
-    return new RemoteFileEntry({
-      ...obj,
-      sha: await calculateGitFileSha(obj.file),
-    });
-  }
-
-  forkLocalFileEntry(): LocalFileEntry {
-    return new LocalFileEntry({
-      ...this,
-      source: {
-        file: this.file,
-        sha: this.sha,
-      },
-    });
   }
 }

@@ -10,7 +10,7 @@ import {
 } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
-import { LocalFileEntry } from '@bangle.io/remote-file-sync';
+import { isEntryUntouched } from '@bangle.io/remote-file-sync';
 import {
   ActionButton,
   ButtonContent,
@@ -69,7 +69,7 @@ function ModifiedEntries({
     fileEntryManager.listAllEntries(wsName).then((entries) => {
       if (!destroyed) {
         const result = entries.filter((e) => {
-          return !LocalFileEntry.fromPlainObj(e).isUntouched;
+          return !isEntryUntouched(e);
         });
         updateModifiedEntries((prevEntries) => {
           const newWsPaths = result.map((e) => e.uid);

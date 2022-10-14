@@ -1,9 +1,11 @@
 import { makeDbRecord } from '@bangle.io/db-key-val';
+import { calculateGitFileSha } from '@bangle.io/git-file-sha';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import {
   fileSync,
-  LocalFileEntry,
-  RemoteFileEntry,
+  isEntryUntouched,
+  makeLocalEntryFromRemote,
+  makeLocallyCreatedEntry,
 } from '@bangle.io/remote-file-sync';
 import { assertSignal } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
@@ -459,22 +461,21 @@ export async function duplicateAndResetToRemote({
     return undefined;
   }
 
-  const newFilePath = getNonConflictName(wsPath);
-
-  const localChangesEntry = (
-    await LocalFileEntry.newFile({
-      uid: newFilePath,
-      file: existingEntry.file,
-    })
-  ).toPlainObj();
+  const newNonConflictingName = getNonConflictName(wsPath);
 
   // create a duplicate file with a non-conflicting name
-  await fileEntryManager.createEntry(localChangesEntry);
+  await fileEntryManager.createEntry(
+    makeLocallyCreatedEntry({
+      uid: newNonConflictingName,
+      file: existingEntry.file,
+      sha: await calculateGitFileSha(existingEntry.file),
+    }),
+  );
 
   await fileEntryManager.updateSourceAndCurrent(wsPath, remoteFile);
 
   return {
-    localContentWsPath: newFilePath,
+    localContentWsPath: newNonConflictingName,
     remoteContentWsPath: wsPath,
   };
 }
@@ -563,14 +564,11 @@ export async function optimizeDatabase({
         store.put(
           makeDbRecord(
             info.wsPath,
-            new RemoteFileEntry({
-              deleted: undefined,
+            makeLocalEntryFromRemote({
               uid: info.wsPath,
               file: info.remoteFile,
               sha: info.remoteSha,
-            })
-              .forkLocalFileEntry()
-              .toPlainObj(),
+            }),
           ),
         ),
       );
@@ -581,14 +579,12 @@ export async function optimizeDatabase({
     // Remove certain entries to keep the local storage lean and clean
     // this is okay since a user can always fetch the file from github
     for (const entry of localEntriesArray) {
-      let r = LocalFileEntry.fromPlainObj(entry);
-
-      if (r.isUntouched && !retainedWsPaths.has(r.uid)) {
+      if (isEntryUntouched(entry) && !retainedWsPaths.has(entry.uid)) {
         console.debug(
           'github-storage:optimizeDatabase:purging entry',
           entry.uid,
         );
-        promises.push(store.delete(r.uid));
+        promises.push(store.delete(entry.uid));
       }
     }
   }
