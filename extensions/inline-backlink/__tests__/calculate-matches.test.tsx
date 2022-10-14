@@ -341,4 +341,107 @@ describe('calcWikiLinkMapping', () => {
       ),
     ]).toEqual([['hello', 'my-ws:test/what/hello.txt']]);
   });
+
+  test('filename with dot: case 1', () => {
+    const { editorView } = testEditor(
+      <doc>
+        <para>
+          Hello <wikiLink path="Hello.io" />
+        </para>
+        <para>
+          Hello <wikiLink path="hello.xyz" />
+        </para>
+      </doc>,
+    );
+
+    expect([
+      ...calcWikiLinkMapping(
+        ['my-ws:Hello.io.md'],
+        getAllWikiLinks(editorView.state),
+      ),
+    ]).toEqual([['Hello.io', 'my-ws:Hello.io.md']]);
+  });
+
+  test('filename with dot: case 2 case mismatch', () => {
+    const { editorView } = testEditor(
+      <doc>
+        <para>
+          Hello <wikiLink path="Hello.io" />
+        </para>
+        <para>
+          Hello <wikiLink path="hello.xyz" />
+        </para>
+      </doc>,
+    );
+
+    expect([
+      ...calcWikiLinkMapping(
+        ['my-ws:hello.io.md'],
+        getAllWikiLinks(editorView.state),
+      ),
+    ]).toEqual([['Hello.io', 'my-ws:hello.io.md']]);
+  });
+
+  test('filename with dot: case 3 case mismatch', () => {
+    const { editorView } = testEditor(
+      <doc>
+        <para>
+          Hello <wikiLink path="hello.io" />
+        </para>
+        <para>
+          Hello <wikiLink path="hello.xyz" />
+        </para>
+      </doc>,
+    );
+
+    expect([
+      ...calcWikiLinkMapping(
+        ['my-ws:Hello.io.md'],
+        getAllWikiLinks(editorView.state),
+      ),
+    ]).toEqual([['hello.io', 'my-ws:Hello.io.md']]);
+  });
+
+  test('filename with dot: case 4', () => {
+    const { editorView } = testEditor(
+      <doc>
+        <para>
+          Hello <wikiLink path="hello.io" />
+        </para>
+        <para>
+          Hello <wikiLink path="hello.xyz" />
+        </para>
+      </doc>,
+    );
+
+    expect([
+      ...calcWikiLinkMapping(
+        ['my-ws:Hello.io.md', 'my-ws:Hello.xyz.md'],
+        getAllWikiLinks(editorView.state),
+      ),
+    ]).toEqual([
+      ['hello.io', 'my-ws:Hello.io.md'],
+      ['hello.xyz', 'my-ws:Hello.xyz.md'],
+    ]);
+  });
+
+  test('filename with dot: case 5', () => {
+    const { editorView } = testEditor(
+      <doc>
+        <para>
+          Hello <wikiLink path="bugs in bangle.io" />
+        </para>
+        <para>
+          Hello <wikiLink path="hello.xyz" />
+        </para>
+      </doc>,
+    );
+
+    expect([
+      ...calcWikiLinkMapping(
+        ['my-ws:task/bugs in bangle.io.md', 'my-ws:task/bugs in bangle.md'],
+        getAllWikiLinks(editorView.state),
+      ),
+    ]).toEqual([['bugs in bangle.io', 'my-ws:task/bugs in bangle.io.md']]);
+  });
 });

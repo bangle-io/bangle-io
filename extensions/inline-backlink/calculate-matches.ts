@@ -5,9 +5,9 @@ import { wikiLink } from '@bangle.dev/wiki-link';
 import { weakCache, weakCacheDuo } from '@bangle.io/utils';
 import {
   getExtension,
-  hasValidNoteExtension,
   removeExtension,
   resolvePath,
+  VALID_NOTE_EXTENSIONS,
 } from '@bangle.io/ws-path';
 
 export const getAllWikiLinks = weakCache((state: EditorState): string[] => {
@@ -73,7 +73,6 @@ const processWsPaths = weakCache((allWsPaths: string[]) => {
 export const calcWikiLinkMapping = weakCacheDuo(
   (noteWsPaths: string[], wikiLinks: string[]): Map<string, string> => {
     let result = new Map<string, string>();
-
     const matchWithFileName = (
       wsPath: string,
       wikiLink: string,
@@ -84,7 +83,19 @@ export const calcWikiLinkMapping = weakCacheDuo(
 
       // if wiki link has extension, we need to match with the extension
       if (wikiLinkExtension) {
-        return fileName === wikiLink ? wsPath : undefined;
+        if (fileName === wikiLink) {
+          return wsPath;
+        }
+
+        // try out a bunch of valid note extensions to see if we can match
+        // to handle cases when file name is bangle.io.md
+        for (const withNotExt of VALID_NOTE_EXTENSIONS) {
+          if (fileName === wikiLink + withNotExt) {
+            return wsPath;
+          }
+        }
+
+        return undefined;
       } else {
         return fileNameWithoutExt === wikiLink ? wsPath : undefined;
       }
@@ -134,29 +145,30 @@ export const calcWikiLinkMapping = weakCacheDuo(
       if (
         processedAllWsPaths.lowerCaseFileNameWithoutExt.has(
           removeExtension(lowerCaseWikiLink),
-        )
+        ) ||
+        // for cases where file name has a dot example bangle.io.md
+        processedAllWsPaths.lowerCaseFileNameWithoutExt.has(lowerCaseWikiLink)
       ) {
-        // donot deal with wikilinks with non-note extensions
-        if (wikiLinkExtension && !hasValidNoteExtension(wikiLink)) {
-          continue;
-        }
-
         let exactMatch: string | undefined;
         let caseInsensitiveMatch: string | undefined;
 
         // we prefer the least nested wsPath in case of multiple matches
-        for (const w of processedAllWsPaths.sortedByNesting) {
+        for (const wsPath of processedAllWsPaths.sortedByNesting) {
+          // if there is an exact match, we prefer that and we break
+          // out of the loop
           if (exactMatch) {
             break;
           }
 
-          exactMatch = matchWithFileName(w, wikiLink);
+          exactMatch = matchWithFileName(wsPath, wikiLink);
 
-          if (!caseInsensitiveMatch) {
-            caseInsensitiveMatch = matchWithFileName(
-              w.toLocaleLowerCase(),
-              lowerCaseWikiLink,
-            );
+          // insensitive match is of a lower priority and it doesn't break
+          // the loop, just in case there is an exact match later
+          if (
+            !caseInsensitiveMatch &&
+            matchWithFileName(wsPath.toLocaleLowerCase(), lowerCaseWikiLink)
+          ) {
+            caseInsensitiveMatch = wsPath;
           }
         }
 
