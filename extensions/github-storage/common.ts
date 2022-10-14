@@ -1,7 +1,7 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, SliceKey } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
-import { acquireLockIfAvailable } from '@bangle.io/utils';
+import { acquireLockIfAvailable, isMobile } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
 
@@ -109,7 +109,7 @@ export async function getGithubSyncLockWrapper<
   }
 }
 
-export const getSyncInterval = () => 5 * 1000 * 60;
+export const getSyncInterval = () => (isMobile ? 15 * 1000 : 1000 * 60);
 
 export function notify(
   store: BangleApplicationStore,
