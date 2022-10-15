@@ -22,7 +22,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/git-file-sha": "workspace:*",
     "ts-pattern": "^4.0.3"
   },

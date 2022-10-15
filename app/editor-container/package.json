@@ -31,7 +31,6 @@
     "@bangle.dev/react": "0.31.3",
     "@bangle.io/activitybar": "workspace:*",
     "@bangle.io/api": "workspace:*",
-    "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",

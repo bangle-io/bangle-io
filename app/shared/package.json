@@ -43,7 +43,6 @@
     "@bangle.io/search-notes": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "core-js": "^3.19.0",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },

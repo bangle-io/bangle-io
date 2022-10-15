@@ -25,7 +25,10 @@
   "scripts": {
     "g:package-patrol": "yarn node package-patrol",
     "g:run-scripts": "yarn concurrently -m 1 \"yarn g:package-patrol\" \"yarn g:css:stylelint-update-regex\"",
-    "g:css:stylelint-update-regex": "yarn node generate-stylelint-regex"
+    "prep": "cd $PROJECT_CWD && cd tooling/_scripts",
+    "g:css:stylelint-update-regex": "yarn node generate-stylelint-regex",
+    "g:script:find-unused-dependencies": "yarn prep && yarn ts-node --compilerOptions '{\"module\":\"commonjs\"}' one-off/find-unused-dependencies.ts",
+    "g:script:find-incorrect-import-style": "yarn prep && yarn ts-node --compilerOptions '{\"module\":\"commonjs\"}' one-off/find-incorrect-import-style.ts"
   },
   "publishConfig": {},
   "dependencies": {
@@ -42,6 +45,7 @@
     "fake-indexeddb": "^4.0.0",
     "globby": "^11.0.4",
     "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },

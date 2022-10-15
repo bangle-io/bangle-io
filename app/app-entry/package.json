@@ -61,11 +61,9 @@
     "@bangle.io/ws-path": "workspace:*",
     "@react-aria/overlays": "^3.8.2",
     "@sentry/tracing": "^6.18.1",
-    "comlink": "^4.3.1",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-virtual": "^2.8.2",
     "safari-14-idb-fix": "^3.0.0",
     "wouter": "^2.8.0-alpha.2"
   },

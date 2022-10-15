@@ -2046,7 +2046,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2150,12 +2149,10 @@ __metadata:
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    comlink: ^4.3.1
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
-    react-virtual: ^2.8.2
     safari-14-idb-fix: ^3.0.0
     vite-plugin-pwa: ^0.13.0
     wouter: ^2.8.0-alpha.2
@@ -2223,7 +2220,6 @@ __metadata:
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    fast-deep-equal: ^3.1.3
     page-lifecycle: ^0.1.2
     tslib: ^2.4.0
     typescript: ^4.7.3
@@ -2506,7 +2502,6 @@ __metadata:
     "@bangle.dev/react": 0.31.3
     "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
@@ -3057,7 +3052,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/remote-file-sync@workspace:js-lib/remote-file-sync"
   dependencies:
-    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
     ts-pattern: ^4.0.3
@@ -3082,6 +3076,7 @@ __metadata:
     fake-indexeddb: ^4.0.0
     globby: ^11.0.4
     prettier: ^2.7.1
+    ts-node: ^10.9.1
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -3185,7 +3180,6 @@ __metadata:
     "@bangle.io/search-notes": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    core-js: ^3.19.0
     tslib: ^2.4.0
     typescript: ^4.7.3
   languageName: unknown
@@ -11195,7 +11189,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.0.4, core-js@npm:^3.19.0, core-js@npm:^3.6.5, core-js@npm:^3.8.2":
+"core-js@npm:^3.0.4, core-js@npm:^3.6.5, core-js@npm:^3.8.2":
   version: 3.21.1
   resolution: "core-js@npm:3.21.1"
   checksum: d68eddd831340ad5b24ac29c72fda022a43b17f194c4278b6b875a843283d316502cb4abd07f28631d6ebc4387f66aa06e2b1b3c8fd7e08096a751b5c63f6889
