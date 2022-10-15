@@ -3,39 +3,10 @@ import debounceFn from 'debounce-fn';
 import type { DependencyList } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { rafSchedule } from './safe-js-callbacks';
 import { keybindingsHelper } from './utility';
 
 export * from './use-local-storage';
 export * from './use-recency-monitor';
-
-export function useWindowSize() {
-  const [windowSize, setWindowSize] = useState(() => ({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  }));
-
-  useEffect(() => {
-    // Handler to call on window resize
-    const handleResize = rafSchedule(() => {
-      // Set window width/height to state
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    });
-
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-
-    // Remove event listener on cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []); // Empty array ensures that effect is only run on mount
-
-  return windowSize;
-}
 
 /**
  * Example usage:

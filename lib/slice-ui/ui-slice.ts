@@ -2,11 +2,10 @@ import type { CorePalette } from '@bangle.io/constants';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { ThemeType } from '@bangle.io/shared-types';
-import type { useWindowSize } from '@bangle.io/utils';
 import {
   assertActionName,
   checkWidescreen,
-  rafSchedule,
+  listenToResize,
 } from '@bangle.io/utils';
 
 import { applyTheme } from './apply-theme';
@@ -65,7 +64,7 @@ export type UiContextAction =
     }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_WINDOW_SIZE';
-      value: { windowSize: ReturnType<typeof useWindowSize> };
+      value: { windowSize: { height: number; width: number } };
     }
   | {
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG';
@@ -284,32 +283,14 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             setRootWidescreenClass(state.widescreen);
           }
 
-          // Handler to call on window resize
-          const handleResize = rafSchedule(() => {
+          listenToResize((obj) => {
             store.dispatch({
               name: 'action::@bangle.io/slice-ui:UPDATE_WINDOW_SIZE',
               value: {
-                windowSize: {
-                  width: window.innerWidth,
-                  height: window.innerHeight,
-                },
+                windowSize: obj,
               },
             });
-          });
-
-          // Add event listener
-          window.addEventListener('resize', handleResize);
-
-          abortSignal.addEventListener(
-            'abort',
-            () => {
-              handleResize.cancel();
-              window.removeEventListener('resize', handleResize);
-            },
-            {
-              once: true,
-            },
-          );
+          }, abortSignal);
         },
       };
     },

@@ -4,10 +4,8 @@ import { keyName } from 'w3c-keyname';
 import type { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
-import { SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
-
 import { DuoWeakMap } from './duo-weak-map';
-import { isMac, isMobile } from './is-mac';
+import { isMac } from './is-mac';
 
 export { serialExecuteQueue } from '@bangle.dev/utils';
 export { isAbortError } from '@bangle.io/is-abort-error';
@@ -17,16 +15,6 @@ export { Emitter };
 export function getLast<T>(array: T[]): T | undefined {
   return array[array.length - 1];
 }
-
-export const checkWidescreen = (
-  width = typeof window !== 'undefined' ? window.innerWidth : undefined,
-) => {
-  if (isMobile) {
-    return false;
-  }
-
-  return width ? SPLIT_SCREEN_MIN_WIDTH <= width : false;
-};
 
 // typeof navigator != 'undefined' ? /Mac/.test(navigator.platform) : false;
 // :: (Object) → (view: EditorView, event: dom.Event) → bool
