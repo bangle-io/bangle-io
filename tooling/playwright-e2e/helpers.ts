@@ -42,9 +42,9 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
     'operation::@bangle.io/core-extension:NEW_WORKSPACE',
   );
 
-  await page.click('[aria-label="Select storage type"]');
+  await page.click('li[data-key="BROWSER"]');
 
-  await page.click('li[data-key="browser"]');
+  await page.click('[aria-label="Next"]');
 
   await page.fill('input[aria-label="workspace name input"]', wsName);
 
