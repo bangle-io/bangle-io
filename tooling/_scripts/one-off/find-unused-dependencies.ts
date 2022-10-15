@@ -9,9 +9,9 @@ const ws = new YarnWorkspaceHelpers({ rootDir: ROOT_DIR_PATH });
 
 async function find() {
   await ws.forEachPackage(async (pkg) => {
-    if (!pkg.packagePath.includes(ROOT_DIR_PATH + '/tooling/')) {
-      return;
-    }
+    // if (!pkg.packagePath.includes(ROOT_DIR_PATH + '/tooling/')) {
+    //   return;
+    // }
 
     const usedPkg = new Set<string>();
 

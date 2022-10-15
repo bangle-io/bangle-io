@@ -24,6 +24,7 @@ async function find() {
         if (!dep.startsWith('@bangle.io')) {
           continue;
         }
+
         let r = findMatchByLine({
           filePath,
           content,
