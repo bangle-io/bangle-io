@@ -28,7 +28,8 @@
     "prep": "cd $PROJECT_CWD && cd tooling/_scripts",
     "g:css:stylelint-update-regex": "yarn node generate-stylelint-regex",
     "g:script:find-unused-dependencies": "yarn prep && yarn ts-node --compilerOptions '{\"module\":\"commonjs\"}' one-off/find-unused-dependencies.ts",
-    "g:script:find-incorrect-import-style": "yarn prep && yarn ts-node --compilerOptions '{\"module\":\"commonjs\"}' one-off/find-incorrect-import-style.ts"
+    "g:script:find-incorrect-import-style": "yarn prep && yarn ts-node --compilerOptions '{\"module\":\"commonjs\"}' one-off/find-incorrect-import-style.ts",
+    "g:script:mermaid-dependency": "yarn prep && yarn ts-node --compilerOptions '{\"module\":\"commonjs\"}' one-off/mermaid-dependency.ts"
   },
   "publishConfig": {},
   "dependencies": {

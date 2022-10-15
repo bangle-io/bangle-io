@@ -160,7 +160,7 @@ export function syncRunner(
     const result = await syncRunGuard(store, notifyVerbose);
 
     if (result === false) {
-      console.log('gh-sync returned false');
+      console.debug('gh-sync returned false');
     } else {
       workspace.workspaceSliceKey.callOp(
         store.state,

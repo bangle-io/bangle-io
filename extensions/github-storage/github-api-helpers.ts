@@ -1,9 +1,16 @@
 import { browserInfo, wsPathHelpers } from '@bangle.io/api';
 import { fileToBase64 } from '@bangle.io/git-file-sha';
 import { pMap } from '@bangle.io/p-map';
-import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
+import {
+  BaseError,
+  getLast,
+  serialExecuteQueue,
+  sleep,
+} from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
+
+const GET_LATEST_COMMIT_SHA_CACHE_FACTOR = 500;
 
 export interface GithubTokenConfig {
   githubToken: string;
@@ -153,9 +160,11 @@ async function makeGraphql({
   }
 
   if (json.errors && json.errors.length > 0) {
-    console.warn('Github Graphql API error', json.errors[0]);
+    console.debug('Github Graphql API error', json.errors[0]);
+    const error = json.errors[0];
+
     throw new BaseError({
-      message: json.errors[0].message,
+      message: error.message,
       code: GITHUB_API_ERROR,
     });
   }
@@ -333,23 +342,36 @@ export function getRepoTree() {
   let prevResult: undefined | Awaited<ReturnType<typeof _getTree>>;
   let queue = serialExecuteQueue();
 
-  const cb: typeof _getTree = async (arg) => {
+  const cb = async (
+    arg: Omit<Parameters<typeof _getTree>[0], 'commitSha'>,
+  ): ReturnType<typeof _getTree> => {
     const { config, abortSignal } = arg;
 
-    if (prevResult) {
-      let head = await getLatestCommitSha({ config, abortSignal: abortSignal });
+    let latestSha: string | undefined;
 
-      if (head === prevResult.sha) {
+    if (prevResult) {
+      latestSha = await getLatestCommitSha({
+        config,
+        abortSignal: abortSignal,
+        cacheBustValue: Math.floor(Date.now()),
+      });
+
+      // if its the same sha as previous call, return the previous result
+      if (latestSha === prevResult.sha) {
         console.debug(
           'github-storage:getRepoTree reusing tree from previous call',
-          head,
+          latestSha,
         );
 
         return prevResult;
       }
     }
 
-    const result = await _getTree(arg);
+    const result = await _getTree({
+      ...arg,
+      // use the latest commit sha if we have it, otherwise we'll get it from the api
+      commitSha: latestSha,
+    });
 
     prevResult = result;
 
@@ -369,10 +391,12 @@ async function _getTree({
   abortSignal,
   wsName,
   config,
+  commitSha,
 }: {
   abortSignal?: AbortSignal;
   wsName: string;
   config: GithubConfig;
+  commitSha?: string;
 }): Promise<GHTree> {
   const makeRequest = async (
     attempt = 0,
@@ -390,11 +414,15 @@ async function _getTree({
     }
 
     try {
+      let path = `/repos/${config.owner}/${config.repoName}/git/trees/${
+        commitSha || config.branch
+      }?recursive=1&cacheBust=${Math.floor(
+        Date.now() / GET_LATEST_COMMIT_SHA_CACHE_FACTOR,
+      )}`;
+
       return (
         await makeV3GetApi({
-          path: `/repos/${config.owner}/${config.repoName}/git/trees/${
-            config.branch
-          }?recursive=1&cacheBust=${Math.floor(Date.now() / 2000)}`,
+          path,
           token: config.githubToken,
           abortSignal,
         })
@@ -420,6 +448,7 @@ async function _getTree({
       throw error;
     }
   };
+
   const { truncated, tree, sha } = await makeRequest(0);
 
   if (truncated || !tree) {
@@ -494,26 +523,47 @@ export async function pushChanges({
       }
     }
   `;
-  const result = await makeGraphql({
-    query,
-    variables: {
-      input: {
-        expectedHeadOid: headSha,
-        branch: {
-          branchName: config.branch,
-          repositoryNameWithOwner: `${config.owner}/${config.repoName}`,
-        },
-        message: commitMessage,
-        fileChanges: {
-          additions: additions.map((r) => ({
-            path: r.path,
-            contents: r.base64Content,
-          })),
-          deletions: deletions,
+
+  const makeRequest = () => {
+    return makeGraphql({
+      query,
+      variables: {
+        input: {
+          expectedHeadOid: headSha,
+          branch: {
+            branchName: config.branch,
+            repositoryNameWithOwner: `${config.owner}/${config.repoName}`,
+          },
+          message: commitMessage,
+          fileChanges: {
+            additions: additions.map((r) => ({
+              path: r.path,
+              contents: r.base64Content,
+            })),
+            deletions: deletions,
+          },
         },
       },
-    },
-    token: config.githubToken,
+      token: config.githubToken,
+    });
+  };
+
+  const result = await makeRequest().catch((error) => {
+    // try one more time for cases where the headSha has not updated yet
+    // on github's side
+    if (
+      error instanceof BaseError &&
+      (error.message.includes(`but expected ${headSha}`) ||
+        error.message.includes(`to point to "${headSha}" but it did not`))
+    ) {
+      console.debug(
+        'github-storage:pushChanges retrying after error',
+        error.message,
+      );
+
+      return sleep(2000).then(() => makeRequest());
+    }
+    throw error;
   });
 
   const commitHash = result.createCommitOnBranch?.commit?.oid;
@@ -592,16 +642,21 @@ export async function getFileBlob({
   });
 }
 
+/**
+ *
+ * @param param0.cacheBustValue - a value that changes when the cache should be busted
+ * @returns
+ */
 export async function getLatestCommitSha({
   config,
   abortSignal,
+  cacheBustValue = Math.floor(Date.now() / GET_LATEST_COMMIT_SHA_CACHE_FACTOR),
 }: {
   config: GithubConfig;
   abortSignal?: AbortSignal;
+  cacheBustValue?: number;
 }): Promise<string> {
-  let path = `/repos/${config.owner}/${config.repoName}/commits/${
-    config.branch
-  }?cacheBust=${Math.floor(Date.now() / 1000)}`;
+  let path = `/repos/${config.owner}/${config.repoName}/commits/${config.branch}?cacheBust=${cacheBustValue}`;
 
   const makeRequest = async () => {
     return (
