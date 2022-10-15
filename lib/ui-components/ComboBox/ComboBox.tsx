@@ -92,7 +92,12 @@ export function ComboBox<T extends object>(
           isOpen={state.isOpen}
           onClose={state.close}
         >
-          <ListBox {...listBoxProps} listBoxRef={listBoxRef} state={state} />
+          <ListBox
+            className="max-h-72 overflow-auto "
+            {...listBoxProps}
+            listBoxRef={listBoxRef}
+            state={state}
+          />
         </Popover>
       )}
     </div>

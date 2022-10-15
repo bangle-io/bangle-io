@@ -1,9 +1,10 @@
 import '../style';
 
+import { Item, Section } from '@react-stately/collections';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { Item, Section, Select } from './Select';
+import { Select } from './Select';
 
 export default {
   title: 'ui-components/Select',

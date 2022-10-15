@@ -268,6 +268,10 @@ export class ExtensionRegistry {
     return this._storageProviders[name];
   }
 
+  isExtensionDefined(name: string) {
+    return this._extensions.some((e) => e.name === name);
+  }
+
   renderReactNodeViews({
     nodeViewRenderArg,
   }: {
