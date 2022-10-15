@@ -1,3 +1,7 @@
+### Oct 15, 2022 
+
+- **Feature:** You can now create workspaces that are synced with Github.
+
 ### May 17, 2022
 
 - **Feature:** A mini-editor which stays fixed at the bottom right of the screen. To use it search for `Mini editor` in Operation Palette.
@@ -32,7 +36,7 @@
 
   - **Editor:** Typing a link as a file name no long breaks Backlink suggestions.
 
-  - **Workspace**: Application no longer crashes when invalid url is opened.
+  - **Workspace**\: Application no longer crashes when invalid url is opened.
 
 ### Dec 1, 2021
 
@@ -50,7 +54,7 @@
 
 ### Nov 21, 2021
 
-- **Popup backlinks**: You can now hover over any _Backlink_ to view and edit them directly.
+- **Popup backlinks**\: You can now hover over any _Backlink_ to view and edit them directly.
 
 ### Nov 17, 2021
 
@@ -62,13 +66,13 @@
 
 ### Nov 13, 2021
 
-- **UI Redesign**: Bangle.io now has a more polished and consistent UI.
+- **UI Redesign**\: Bangle.io now has a more polished and consistent UI.
 
 ### Oct 25, 2021
 
 - **Backlinks, Tags, Note palette:**  We have improved the search algorithm.
 
-- **Note palette**: We have improved our recently used notes algorithm.
+- **Note palette**\: We have improved our recently used notes algorithm.
 
 - **Editor:** The editor now give visual cues when you move cursor in and out of a block.
 
