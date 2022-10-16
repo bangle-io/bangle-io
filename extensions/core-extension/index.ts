@@ -14,6 +14,8 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   GENERIC_ERROR_MODAL_NAME,
+  NEW_BROWSER_WORKSPACE_DIALOG_NAME,
+  NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RELOAD_APPLICATION_DIALOG_NAME,
@@ -47,7 +49,9 @@ import {
 } from './config';
 import { ChangelogModal } from './dialogs/ChangelogModal';
 import { GenericErrorModal } from './dialogs/GenericErrorModal';
-import { NewWorkspaceModal } from './dialogs/new-workspace-modal';
+import { NewBrowserWorkspaceDialog } from './dialogs/NewBrowserWorkspaceDialog';
+import { NewNativeFsWorkspaceDialog } from './dialogs/NewNativeFsWorkspaceDialog';
+import { NewWorkspaceModal } from './dialogs/NewWorkspaceModal';
 import {
   NewNoteInputModal,
   RenameNoteInputModal,
@@ -84,6 +88,14 @@ const extension = Extension.create({
       {
         name: NEW_WORKSPACE_DIALOG_NAME,
         ReactComponent: NewWorkspaceModal,
+      },
+      {
+        name: NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME,
+        ReactComponent: NewNativeFsWorkspaceDialog,
+      },
+      {
+        name: NEW_BROWSER_WORKSPACE_DIALOG_NAME,
+        ReactComponent: NewBrowserWorkspaceDialog,
       },
       {
         name: RELOAD_APPLICATION_DIALOG_NAME,

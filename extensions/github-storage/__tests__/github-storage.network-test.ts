@@ -23,7 +23,7 @@ import GithubStorageExt from '../index';
 import { discardLocalChanges, syncRunner } from '../operations';
 
 jest.setTimeout(30000);
-jest.retryTimes(2);
+jest.retryTimes(4);
 
 // WARNING: This is a network test and depends on github API.
 //          It will create a bunch of repositories and commits.

@@ -2,10 +2,14 @@ import type { SpecRegistry } from '@bangle.dev/core';
 import type { Node, PluginKey } from '@bangle.dev/pm';
 
 export type { ExtensionRegistry } from '@bangle.io/extension-registry';
+export type DialogComponentType = React.ComponentType<{
+  dialogName: string;
+  onDismiss: (dialogName: string) => void;
+}>;
 
 export interface DialogType {
   name: `dialog::${string}`;
-  ReactComponent: React.ComponentType;
+  ReactComponent: DialogComponentType;
 }
 
 export type SerialOperationNameType = `operation::${string}`;

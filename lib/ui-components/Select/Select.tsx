@@ -14,8 +14,6 @@ import type { SizeType } from '../misc';
 import { ListBox } from './ListBox';
 import { Popover } from './Popover';
 
-export { Item, Section } from '@react-stately/collections';
-
 export function Select<T extends object>(
   props: AriaSelectProps<T> & { size?: SizeType },
 ) {
@@ -98,7 +96,11 @@ export function Select<T extends object>(
       </button>
       {state.isOpen && (
         <Popover isOpen={state.isOpen} onClose={state.close}>
-          <ListBox {...menuProps} state={state} />
+          <ListBox
+            className="max-h-72 overflow-auto "
+            {...menuProps}
+            state={state}
+          />
         </Popover>
       )}
     </div>

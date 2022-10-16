@@ -6070,6 +6070,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@react-aria/focus", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.5.5"],\
             ["@react-aria/ssr", "virtual:60b2931e1c2b893234deb15b966aa631cf82038c500c1c2335fb383c27884612b434bc94b038aac732182c0d1689bb9c00c2b3f410b741f9bbe55ede7c8b233e#npm:3.1.2"],\
+            ["@storybook/react", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:6.5.12"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],\
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],\
             ["@types/react", "npm:17.0.49"],\
@@ -7315,6 +7316,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@mdx-js/react", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.6.22"],\
             ["@react-aria/ssr", "virtual:60b2931e1c2b893234deb15b966aa631cf82038c500c1c2335fb383c27884612b434bc94b038aac732182c0d1689bb9c00c2b3f410b741f9bbe55ede7c8b233e#npm:3.1.2"],\
             ["@storybook/addon-actions", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.5.12"],\

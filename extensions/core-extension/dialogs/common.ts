@@ -1,8 +1,22 @@
 import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 
-export const FILE_SYSTEM = 'file-system';
-export const BROWSER = 'browser';
-export type WorkspaceStorageType = typeof FILE_SYSTEM | typeof BROWSER;
+export enum StorageType {
+  NATIVE_FS = 'NATIVE_FS',
+  BROWSER = 'BROWSER',
+  GITHUB = 'GITHUB',
+}
+
+export let disabledStorageType: StorageType[] = [];
+
+export let defaultStorage = StorageType.NATIVE_FS;
+
+if (!supportsNativeBrowserFs()) {
+  disabledStorageType.push(StorageType.NATIVE_FS);
+  defaultStorage = StorageType.BROWSER;
+}
+
+export const FILE_SYSTEM = StorageType.NATIVE_FS;
+export const BROWSER = StorageType.BROWSER;
 
 export const ERROR_PICKING_DIRECTORY_ERROR = 'ERROR_PICKING_DIRECTORY';
 export const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
@@ -22,24 +36,3 @@ export type WorkspaceCreateErrorTypes =
   | typeof UNKNOWN_ERROR;
 
 export const BROWSE_BUTTON_ID = 'new-workspace-modal_browse-button';
-export const CREATE_BUTTON_ID = 'new-workspace-modal_create-button';
-
-export function getStorageDescription(storageType: WorkspaceStorageType) {
-  switch (storageType) {
-    case FILE_SYSTEM: {
-      return 'File system';
-    }
-    case BROWSER: {
-      return 'Browser';
-    }
-    default: {
-      // hack to catch switch slipping
-      let val: never = storageType;
-      throw new Error('Unknown storage type ' + val);
-    }
-  }
-}
-
-export const defaultStorageType = supportsNativeBrowserFs()
-  ? FILE_SYSTEM
-  : BROWSER;

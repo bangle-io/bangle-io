@@ -8,14 +8,19 @@ import * as React from 'react';
 
 import { cx } from '@bangle.io/utils';
 
+export type ListBoxOptionComponentType = typeof ListBoxOptionComponent;
+
 interface ListBoxProps extends AriaListBoxOptions<unknown> {
   listBoxRef?: React.RefObject<HTMLUListElement>;
   state: ListState<unknown>;
+  optionComponent?: ListBoxOptionComponentType;
+  className?: string;
 }
 
 interface SectionProps {
   section: Node<unknown>;
   state: ListState<unknown>;
+  optionComponent: ListBoxOptionComponentType;
 }
 
 interface OptionProps {
@@ -28,24 +33,35 @@ export function ListBox(props: ListBoxProps) {
   let { listBoxRef = ref, state } = props;
   let { listBoxProps } = useListBox(props, state, listBoxRef);
 
+  let OptionComponent = props.optionComponent || ListBoxOptionComponent;
+
   return (
     <ul
       {...listBoxProps}
       ref={listBoxRef}
-      className="max-h-72 overflow-auto outline-none"
+      className={cx(`outline-none`, props.className)}
     >
       {[...state.collection].map((item) =>
         item.type === 'section' ? (
-          <ListBoxSection key={item.key} section={item} state={state} />
+          <ListBoxSection
+            optionComponent={OptionComponent}
+            key={item.key}
+            section={item}
+            state={state}
+          />
         ) : (
-          <Option key={item.key} item={item} state={state} />
+          <OptionComponent key={item.key} item={item} state={state} />
         ),
       )}
     </ul>
   );
 }
 
-function ListBoxSection({ section, state }: SectionProps) {
+function ListBoxSection({
+  section,
+  state,
+  optionComponent: OptionComponent,
+}: SectionProps) {
   let { itemProps, headingProps, groupProps } = useListBoxSection({
     'heading': section.rendered,
     'aria-label': section['aria-label'],
@@ -80,7 +96,7 @@ function ListBoxSection({ section, state }: SectionProps) {
         )}
         <ul {...groupProps}>
           {[...section.childNodes].map((node) => (
-            <Option key={node.key} item={node} state={state} />
+            <OptionComponent key={node.key} item={node} state={state} />
           ))}
         </ul>
       </li>
@@ -88,7 +104,7 @@ function ListBoxSection({ section, state }: SectionProps) {
   );
 }
 
-function Option({ item, state }: OptionProps) {
+export function ListBoxOptionComponent({ item, state }: OptionProps) {
   let ref = React.useRef<HTMLLIElement>(null);
   let { optionProps, isDisabled, isSelected, isFocused } = useOption(
     {
@@ -99,25 +115,25 @@ function Option({ item, state }: OptionProps) {
   );
 
   return (
-    <li
-      {...optionProps}
-      ref={ref}
-      className={cx(
-        `m-1 py-2 px-2 text-sm outline-none flex items-center justify-between  select-none`,
-        isDisabled && 'opacity-50 cursor-not-allowed',
-      )}
-      style={{
-        color: 'var(--BV-window-dropdown-color)',
-        borderRadius: 'var(--BV-ui-bangle-button-radius)',
-        backgroundColor: isSelected
-          ? 'var(--BV-accent-primary-0)'
-          : isFocused
-          ? 'var(--BV-accent-secondary)'
-          : 'inherit',
-      }}
-    >
-      {item.rendered}
-      {isSelected && <CheckIcon aria-hidden="true" className="w-4 h-4" />}
+    <li {...optionProps} ref={ref} className="outline-none">
+      <div
+        className={cx(
+          `my-1 py-2 px-2 text-sm outline-none flex items-center justify-between select-none`,
+          isDisabled && 'opacity-50 cursor-not-allowed',
+        )}
+        style={{
+          color: 'var(--BV-window-dropdown-color)',
+          borderRadius: 'var(--BV-ui-bangle-button-radius)',
+          backgroundColor: isSelected
+            ? 'var(--BV-accent-primary-0)'
+            : isFocused
+            ? 'var(--BV-accent-secondary)'
+            : 'inherit',
+        }}
+      >
+        {item.rendered}
+        {isSelected && <CheckIcon aria-hidden="true" className="w-4 h-4" />}
+      </div>
     </li>
   );
 }
