@@ -1,7 +1,11 @@
 import { notification, workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
-import { LocalFileEntry } from '@bangle.io/remote-file-sync';
+import {
+  isEntryDeleted,
+  isEntryModified,
+  isEntryNew,
+} from '@bangle.io/remote-file-sync';
 
 import {
   getGithubSyncLockWrapper,
@@ -227,9 +231,11 @@ export function discardLocalChanges(wsName: string) {
 
         const result = await pMap(
           allEntries.filter((entry) => {
-            const r = LocalFileEntry.fromPlainObj(entry);
-
-            return r.isModified || r.isNew || r.isDeleted;
+            return (
+              isEntryModified(entry) ||
+              isEntryNew(entry) ||
+              isEntryDeleted(entry)
+            );
           }),
           async (entry) => {
             return discardLocalEntryChanges(entry.uid);

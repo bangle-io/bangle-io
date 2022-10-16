@@ -1,6 +1,12 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, workspace } from '@bangle.io/api';
-import { LocalFileEntry } from '@bangle.io/remote-file-sync';
+import {
+  isEntryDeleted,
+  isEntryModified,
+  isEntryNew,
+  isEntryUntouched,
+  makeLocallyCreatedEntry,
+} from '@bangle.io/remote-file-sync';
 import {
   createBasicTestStore,
   createPMNode,
@@ -51,11 +57,7 @@ let getTree = github.getRepoTree();
 const getLocalEntry = async (wsPath: string) => {
   const entry = await fileEntryManager.readEntry(wsPath);
 
-  if (!entry) {
-    return undefined;
-  }
-
-  return LocalFileEntry.fromPlainObj(entry);
+  return entry;
 };
 
 const existsInRemote = async (wsPath: string) => {
@@ -239,11 +241,9 @@ describe('pull changes', () => {
         },
       ]);
 
-      const entry = LocalFileEntry.fromPlainObj(
-        (await fileEntryManager.listAllEntries(wsName))[0]!,
-      );
+      const entry = (await fileEntryManager.listAllEntries(wsName))[0]!;
 
-      expect(entry.isModified).toBe(false);
+      expect(isEntryModified(entry)).toBe(false);
     });
 
     test('variety of remote changes: deleted and another is modified', async () => {
@@ -353,7 +353,8 @@ describe('pull changes', () => {
       expect(note).toBeUndefined();
 
       // local entry should be completely removed
-      expect(await getLocalEntry(defaultNoteWsPath)).toBeUndefined();
+      const defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(defaultEntry).toBeUndefined();
     });
   });
 
@@ -379,8 +380,9 @@ describe('pull changes', () => {
         );
       });
 
-      expect((await getLocalEntry(defaultNoteWsPath))?.isModified).toBe(true);
-      expect((await getLocalEntry(defaultNoteWsPath))?.isUntouched).toBe(false);
+      let defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(isEntryModified(defaultEntry!)).toBe(true);
+      expect(isEntryUntouched(defaultEntry!)).toBe(false);
 
       expect(await fileEntryManager.listAllEntries(wsName)).toEqual([
         {
@@ -398,12 +400,12 @@ describe('pull changes', () => {
       await pullChanges();
 
       await waitForExpect(async () => {
-        expect((await getLocalEntry(defaultNoteWsPath))?.isModified).toBe(
-          false,
-        );
+        defaultEntry = await getLocalEntry(defaultNoteWsPath);
+        expect(isEntryModified(defaultEntry!)).toBe(false);
       });
 
-      expect((await getLocalEntry(defaultNoteWsPath))?.isUntouched).toBe(true);
+      defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(isEntryUntouched(defaultEntry!)).toBe(true);
     });
   });
 
@@ -545,7 +547,8 @@ describe('pull changes', () => {
       );
 
       expect(await getNoteAsString(test2WsPath)).toContain(modifiedText);
-      expect((await getLocalEntry(test2WsPath))?.isUntouched).toBe(false);
+      let test2Entry = await getLocalEntry(test2WsPath);
+      expect(isEntryUntouched(test2Entry!)).toBe(false);
 
       // external change: delete test-2
       await github.pushChanges({
@@ -572,8 +575,9 @@ describe('pull changes', () => {
 
       expect(await getNoteAsString(test2WsPath)).toContain(modifiedText);
 
-      expect((await getLocalEntry(test2WsPath))?.isUntouched).toBe(true);
-      expect((await getLocalEntry(test2WsPath))?.isDeleted).toBe(false);
+      test2Entry = await getLocalEntry(test2WsPath);
+      expect(isEntryUntouched(test2Entry!)).toBe(true);
+      expect(isEntryDeleted(test2Entry!)).toBe(false);
     });
   });
 
@@ -595,13 +599,15 @@ describe('pull changes', () => {
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(true);
       // local entry should be soft deleted until the sync
-      expect((await getLocalEntry(defaultNoteWsPath))?.isDeleted).toBe(true);
-
+      let defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(isEntryDeleted(defaultEntry!)).toBe(true);
       await pullChanges();
       await sleep(50);
+
       expect(await existsInRemote(defaultNoteWsPath)).toBe(false);
       // local entry should be removed completely after syncing up the changes
-      expect(await getLocalEntry(defaultNoteWsPath)).toBeUndefined();
+      defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(defaultEntry!).toBeUndefined();
     });
   });
 
@@ -621,7 +627,8 @@ describe('pull changes', () => {
         store,
       );
       // local entry should be soft deleted
-      expect((await getLocalEntry(defaultNoteWsPath))?.isDeleted).toBe(true);
+      let defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(isEntryDeleted(defaultEntry!)).toBe(true);
 
       // Make a direct remote change outside the realm of our app
       await github.pushChanges({
@@ -645,8 +652,9 @@ describe('pull changes', () => {
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(true);
       // local entry's soft delete should be reverted
-      expect((await getLocalEntry(defaultNoteWsPath))?.isDeleted).toBe(false);
-      expect((await getLocalEntry(defaultNoteWsPath))?.isUntouched).toBe(true);
+      defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(isEntryDeleted(defaultEntry!)).toBe(false);
+      expect(isEntryUntouched(defaultEntry!)).toBe(true);
 
       expect(await getNoteAsString(defaultNoteWsPath)).toContain(
         'I am changed content',
@@ -670,7 +678,8 @@ describe('pull changes', () => {
         store,
       );
       // local entry should be soft deleted
-      expect((await getLocalEntry(defaultNoteWsPath))?.isDeleted).toBe(true);
+      let defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(isEntryDeleted(defaultEntry!)).toBe(true);
 
       // Make a direct remote change outside the realm of our app
       await github.pushChanges({
@@ -688,7 +697,8 @@ describe('pull changes', () => {
       await sleep(50);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(false);
-      expect(await getLocalEntry(defaultNoteWsPath)).toBeUndefined();
+      defaultEntry = await getLocalEntry(defaultNoteWsPath);
+      expect(defaultEntry).toBeUndefined();
       expect(await getNoteAsString(defaultNoteWsPath)).toBeUndefined();
     });
   });
@@ -705,14 +715,15 @@ describe('new note creation', () => {
       `doc(heading("test-1"), paragraph("Hello world!"))`,
     );
 
-    expect((await getLocalEntry(wsPath))?.isNew).toBe(true);
+    let entry = await getLocalEntry(wsPath);
+    expect(isEntryNew(entry!)).toBe(true);
 
     await workspace.deleteNote(wsPath)(store.state, store.dispatch, store);
 
     await sleep(0);
-
-    expect((await getLocalEntry(wsPath))?.isNew).toBe(true);
-    expect((await getLocalEntry(wsPath))?.isDeleted).toBe(true);
+    entry = await getLocalEntry(wsPath);
+    expect(isEntryNew(entry!)).toBe(true);
+    expect(isEntryDeleted(entry!)).toBe(true);
 
     await sleep(0);
     await pullChanges();

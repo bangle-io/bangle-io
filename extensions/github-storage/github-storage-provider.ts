@@ -1,5 +1,10 @@
 import { wsPathHelpers } from '@bangle.io/api';
-import { LocalFileEntry, RemoteFileEntry } from '@bangle.io/remote-file-sync';
+import { calculateGitFileSha } from '@bangle.io/git-file-sha';
+import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
+import {
+  makeLocalEntryFromRemote,
+  makeLocallyCreatedEntry,
+} from '@bangle.io/remote-file-sync';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError, errorParse, errorSerialize } from '@bangle.io/utils';
 
@@ -28,12 +33,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    const entry = (
-      await LocalFileEntry.newFile({
-        uid: wsPath,
-        file,
-      })
-    ).toPlainObj();
+    const entry = makeLocallyCreatedEntry({
+      uid: wsPath,
+      file,
+      sha: await calculateGitFileSha(file),
+    });
+
     // TODO we should throw error if file already exists?
     const success = await fileEntryManager.createEntry(entry);
   }
@@ -134,20 +139,18 @@ export class GithubStorageProvider implements BaseStorageProvider {
       wsName,
     )) as GithubWsMetadata;
 
-    const remoteFileEntry = await (
+    const localEntry = await (
       await this._makeGetRemoteFileEntryCb(wsMetadata)
     )(wsPath);
 
-    if (!remoteFileEntry) {
+    if (!localEntry) {
       return undefined;
     }
 
-    const createSuccess = await fileEntryManager.createEntry(
-      remoteFileEntry.forkLocalFileEntry().toPlainObj(),
-    );
+    const createSuccess = await fileEntryManager.createEntry(localEntry);
 
     if (createSuccess) {
-      return remoteFileEntry.file;
+      return localEntry.file;
     }
 
     return undefined;
@@ -207,7 +210,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       });
     }
 
-    return async (wsPath: string): Promise<RemoteFileEntry | undefined> => {
+    return async (wsPath: string): Promise<PlainObjEntry | undefined> => {
       const { wsName } = wsPathHelpers.resolvePath(wsPath, true);
 
       const config = {
@@ -232,10 +235,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
         return undefined;
       }
 
-      return RemoteFileEntry.newFile({
+      return makeLocalEntryFromRemote({
         uid: wsPath,
         file: file,
-        deleted: undefined,
+        sha: await calculateGitFileSha(file),
       });
     };
   }
