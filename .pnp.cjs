@@ -6891,7 +6891,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
-            ["@playwright/test", "npm:1.24.0"],\
+            ["@playwright/test", "npm:1.27.1"],\
             ["@types/node", "npm:18.7.14"],\
             ["@types/prettier", "npm:2.7.0"],\
             ["http-server", "npm:0.12.3"],\
@@ -8662,12 +8662,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@playwright/test", [\
-        ["npm:1.24.0", {\
-          "packageLocation": "./.yarn/cache/@playwright-test-npm-1.24.0-af4f7b1476-0e63b47627.zip/node_modules/@playwright/test/",\
+        ["npm:1.27.1", {\
+          "packageLocation": "./.yarn/cache/@playwright-test-npm-1.27.1-ebcb7fdc03-92f219a78c.zip/node_modules/@playwright/test/",\
           "packageDependencies": [\
-            ["@playwright/test", "npm:1.24.0"],\
+            ["@playwright/test", "npm:1.27.1"],\
             ["@types/node", "npm:18.7.14"],\
-            ["playwright-core", "npm:1.24.0"]\
+            ["playwright-core", "npm:1.27.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -28075,10 +28075,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["playwright-core", [\
-        ["npm:1.24.0", {\
-          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.24.0-6586224105/node_modules/playwright-core/",\
+        ["npm:1.27.1", {\
+          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.27.1-5f07cc4685/node_modules/playwright-core/",\
           "packageDependencies": [\
-            ["playwright-core", "npm:1.24.0"]\
+            ["playwright-core", "npm:1.27.1"]\
           ],\
           "linkType": "HARD"\
         }]\

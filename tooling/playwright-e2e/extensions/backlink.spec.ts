@@ -75,7 +75,7 @@ test.describe('backlink workflow', () => {
 
     const { note0WsPath } = await setup(page);
     // make sure we are on note-1's page
-    expect(await page.url()).toContain('note-1');
+    await expect(page).toHaveURL(/note-1/);
 
     await page.locator('.B-inline-backlink_backlink').waitFor();
     // // Hover to see if it is correctly shown
@@ -119,7 +119,7 @@ test.describe('backlink workflow', () => {
       PRIMARY_EDITOR_INDEX,
       'AWESOME this is the zeroth note',
     );
-    expect(await page.url()).toContain('note-0');
+    await expect(page).toHaveURL(/note-0/);
   });
 
   test('note widget shows backlinks', async ({ page }) => {
@@ -127,7 +127,7 @@ test.describe('backlink workflow', () => {
 
     const { wsName } = await setup(page);
     // make sure we are on note-1's page
-    expect(await page.url()).toContain('note-1');
+    await expect(page).toHaveURL(/note-1/);
 
     await runOperation(
       page,
@@ -141,7 +141,7 @@ test.describe('backlink workflow', () => {
       ),
     ]);
 
-    expect(await page.url()).toContain('note-0');
+    await expect(page).toHaveURL(/note-0/);
   });
 
   test('correctly sets popupEditorWsPath in openedWsPath', async ({ page }) => {
