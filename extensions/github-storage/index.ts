@@ -10,7 +10,6 @@ import {
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
-  OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_OPTIMIZE_GITHUB_STORAGE,
   OPERATION_SHOW_CONFLICT_DIALOG,
   OPERATION_SYNC_GITHUB_CHANGES,
@@ -114,14 +113,6 @@ const extension = Extension.create({
               return true;
             }
 
-            case OPERATION_NEW_GITHUB_WORKSPACE: {
-              ui.showDialog(NEW_GITHUB_WORKSPACE_TOKEN_DIALOG)(
-                store.state,
-                store.dispatch,
-              );
-
-              return true;
-            }
             case OPERATION_DISCARD_LOCAL_CHANGES: {
               ui.showDialog(DISCARD_LOCAL_CHANGES_DIALOG)(
                 store.state,
