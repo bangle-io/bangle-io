@@ -35,7 +35,7 @@ test.describe('workspaces', () => {
     expect(wsPathsOfWsName2).toEqual([]);
     await page.goBack({ waitUntil: 'networkidle' });
 
-    expect(await page.url()).toMatch(baseURL + '/ws/' + wsName1);
+    await expect(page).toHaveURL(new RegExp('/ws/' + wsName1));
 
     await getPrimaryEditorHandler(page);
 
@@ -51,7 +51,7 @@ test.describe('workspaces', () => {
 
     const wsName2 = await createWorkspace(page);
 
-    expect(await page.url()).toMatch(new RegExp(wsName2));
+    await expect(page).toHaveURL(new RegExp(wsName2));
 
     await sleep();
 
@@ -72,16 +72,21 @@ test.describe('workspaces', () => {
       clickItemInPalette(page, wsName2 + '-(browser)'),
     ]);
 
-    expect(await page.url()).toMatch(new RegExp(wsName2));
+    await expect(page).toHaveURL(new RegExp(wsName2));
   });
 
   test('persists workspaces after reload', async ({ page }) => {
+    await page.pause();
+
     const wsName1 = await createWorkspace(page);
     const wsName2 = await createWorkspace(page);
     const wsName3 = await createWorkspace(page);
 
     await sleep();
-    await page.reload({ timeout: 8000, waitUntil: 'networkidle' });
+
+    await page.reload({ timeout: 8000, waitUntil: 'load' });
+
+    await page.getByText(wsName3).waitFor();
 
     await openWorkspacePalette(page);
 
@@ -115,7 +120,7 @@ test.describe('workspaces', () => {
 
     await waitForNotification(page, `Successfully removed ${wsName2}`);
 
-    await expect.poll(() => page.url()).toMatch(new RegExp(`/landing`));
+    await expect(page).toHaveURL(new RegExp(`/landing`));
 
     await sleep();
     await openWorkspacePalette(page);

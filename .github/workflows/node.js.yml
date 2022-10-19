@@ -76,7 +76,7 @@ jobs:
 
   tests-e2e:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.21.1-focal
+    container: mcr.microsoft.com/playwright:v1.27.1-focal
     strategy:
       matrix:
         test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']

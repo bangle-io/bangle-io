@@ -6,6 +6,7 @@ import { devices } from '@playwright/test';
 const isCI = (process.env as any).CI;
 
 const config: PlaywrightTestConfig = {
+  reporter: [['html', {}]],
   forbidOnly: !!isCI,
   timeout: 20000,
   expect: {

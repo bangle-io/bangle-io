@@ -89,9 +89,7 @@ test.describe('workspace', () => {
       }),
     ]);
 
-    expect(await page.url()).toBe(
-      `${baseURL}/ws-not-found/random-wrong-wsname`,
-    );
+    await expect(page).toHaveURL(`${baseURL}/ws-not-found/random-wrong-wsname`);
 
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
       `not found`,
@@ -111,7 +109,7 @@ test.describe('workspace', () => {
       }),
     ]);
 
-    expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
+    await expect(page).toHaveURL(`${baseURL}/ws-invalid-path/${wsName1}`);
 
     await expect(page.locator('body')).toContainText(`🙈 Invalid path`);
   });
@@ -133,7 +131,7 @@ test.describe('workspace', () => {
       ),
     ]);
 
-    expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
+    await expect(page).toHaveURL(`${baseURL}/ws-invalid-path/${wsName1}`);
 
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
       `🙈 Invalid path`,
@@ -156,7 +154,7 @@ test.describe('workspace', () => {
 
     await page2.goto(baseURL!, { waitUntil: 'networkidle' });
 
-    expect(await page2.url()).toBe(`${baseURL}/landing`);
+    await expect(page2).toHaveURL(`${baseURL}/landing`);
 
     await expect(page2.locator(`text=${wsName1} (last opened)`)).toBeVisible();
   });
@@ -255,14 +253,14 @@ test.describe('in invalid path', () => {
     await Promise.all([
       page.waitForNavigation({
         timeout: 5000,
-        waitUntil: 'networkidle',
+        waitUntil: 'load',
       }),
       page.goto(baseURL + `/ws/${wsName1}/wrong-ws-path`, {
-        waitUntil: 'networkidle',
+        waitUntil: 'load',
       }),
     ]);
 
-    expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
+    await expect(page).toHaveURL(new RegExp('/ws-invalid-path/' + wsName1));
 
     await runOperation(page, 'operation::@bangle.io/core-extension:NEW_NOTE');
 
