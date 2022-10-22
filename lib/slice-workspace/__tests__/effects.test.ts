@@ -172,9 +172,11 @@ describe('updateLocationEffect', () => {
       expect(getPageLocation()(store.state)?.pathname).toBe('/ws/test-ws');
     });
 
-    expect(getActionNames()).toContain(
-      'action::@bangle.io/slice-workspace:set-opened-workspace',
-    );
+    await waitForExpect(() => {
+      expect(getActionNames()).toContain(
+        'action::@bangle.io/slice-workspace:set-opened-workspace',
+      );
+    });
 
     expect(
       getAction('action::@bangle.io/slice-workspace:set-opened-workspace'),

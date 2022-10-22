@@ -337,7 +337,7 @@ describe('conflictEffect', () => {
 
     const calledTimes = jest.mocked(checkForConflicts).mock.calls.length;
 
-    expect(calledTimes).toBeGreaterThanOrEqual(10);
+    expect(calledTimes).toBeGreaterThanOrEqual(5);
 
     // if github wsName becomes undefined, it should stop checking
     store.dispatch({
