@@ -341,6 +341,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/extract-css-vars"\
       },\
       {\
+        "name": "@bangle.io/independent-e2e-tests-server",\
+        "reference": "workspace:tooling/independent-e2e-tests-server"\
+      },\
+      {\
         "name": "@bangle.io/playwright-e2e",\
         "reference": "workspace:tooling/playwright-e2e"\
       },\
@@ -395,6 +399,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/github-storage", ["workspace:extensions/github-storage"]],\
       ["@bangle.io/history", ["workspace:js-lib/history"]],\
       ["@bangle.io/image-extension", ["workspace:extensions/image-extension"]],\
+      ["@bangle.io/independent-e2e-tests-server", ["workspace:tooling/independent-e2e-tests-server"]],\
       ["@bangle.io/inline-backlink", ["workspace:extensions/inline-backlink"]],\
       ["@bangle.io/inline-command-palette", ["workspace:extensions/inline-command-palette"]],\
       ["@bangle.io/inline-emoji", ["workspace:extensions/inline-emoji"]],\
@@ -6550,6 +6555,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/independent-e2e-tests-server", [\
+        ["workspace:tooling/independent-e2e-tests-server", {\
+          "packageLocation": "./tooling/independent-e2e-tests-server/",\
+          "packageDependencies": [\
+            ["@bangle.io/independent-e2e-tests-server", "workspace:tooling/independent-e2e-tests-server"],\
+            ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
+            ["tslib", "npm:2.4.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"],\
+            ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.1.3"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/inline-backlink", [\
         ["workspace:extensions/inline-backlink", {\
           "packageLocation": "./extensions/inline-backlink/",\
@@ -6889,6 +6907,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
+            ["@bangle.io/independent-e2e-tests-server", "workspace:tooling/independent-e2e-tests-server"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@playwright/test", "npm:1.27.1"],\

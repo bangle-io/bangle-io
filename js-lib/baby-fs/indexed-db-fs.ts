@@ -104,7 +104,7 @@ export interface IndexedDBFileSystemSchema extends DBSchema {
 }
 
 export class IndexedDBFileSystem extends BaseFileSystem {
-  protected _allowedFile = (filePath: string) => true;
+  protected _allowedFile = (file: { name: string }) => true;
 
   private _db = () => {
     return idb.openDB<IndexedDBFileSystemSchema>(indexedDBFileSystemDbName, 1, {
@@ -118,8 +118,12 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
   protected _fileMetadata: FileMetadata;
 
-  constructor(opts: { allowedFile?: (f: string) => boolean } = {}) {
-    super();
+  constructor(opts: { allowedFile?: (f: { name: string }) => boolean } = {}) {
+    super({
+      allowedFile: opts.allowedFile,
+      // TODO: implement this
+      allowedDir: () => true,
+    });
 
     if (opts.allowedFile) {
       this._allowedFile = opts.allowedFile;
