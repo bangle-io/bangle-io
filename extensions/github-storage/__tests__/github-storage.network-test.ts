@@ -5,7 +5,6 @@ import {
   isEntryModified,
   isEntryNew,
   isEntryUntouched,
-  makeLocallyCreatedEntry,
 } from '@bangle.io/remote-file-sync';
 import {
   createBasicTestStore,
@@ -399,10 +398,14 @@ describe('pull changes', () => {
 
       await pullChanges();
 
-      await waitForExpect(async () => {
-        defaultEntry = await getLocalEntry(defaultNoteWsPath);
-        expect(isEntryModified(defaultEntry!)).toBe(false);
-      });
+      await waitForExpect(
+        async () => {
+          defaultEntry = await getLocalEntry(defaultNoteWsPath);
+          expect(isEntryModified(defaultEntry!)).toBe(false);
+        },
+        5000,
+        500,
+      );
 
       defaultEntry = await getLocalEntry(defaultNoteWsPath);
       expect(isEntryUntouched(defaultEntry!)).toBe(true);
