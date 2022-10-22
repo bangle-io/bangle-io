@@ -1,5 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   clickItemInPalette,
   createNewNote,
@@ -13,8 +14,8 @@ import {
   waitForNotification,
 } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 test.describe('workspaces', () => {
@@ -76,8 +77,6 @@ test.describe('workspaces', () => {
   });
 
   test('persists workspaces after reload', async ({ page }) => {
-    await page.pause();
-
     const wsName1 = await createWorkspace(page);
     const wsName2 = await createWorkspace(page);
     const wsName3 = await createWorkspace(page);

@@ -23,17 +23,24 @@ const config: PlaywrightTestConfig = {
     //   slowMo: 50,
     // },
   },
-  webServer: {
-    command: 'yarn g:build-prod-serve',
-    port: 1234,
-    // port: 4000,
-    timeout: 120 * 1000,
-    reuseExistingServer: !isCI,
-  },
+  webServer: [
+    {
+      command: 'yarn g:build-prod-serve',
+      port: 1234,
+      timeout: 120 * 1000,
+      reuseExistingServer: !isCI,
+    },
+    {
+      command: 'yarn g:build-independent-e2e-tests-server',
+      port: 1235,
+      timeout: 120 * 1000,
+      reuseExistingServer: !isCI,
+    },
+  ],
   projects: [
     {
       name: 'chromium',
-      testIgnore: [/performance/],
+      testIgnore: [/performance/, /-safari/, /-firefox/],
       retries: isCI ? 2 : 0,
       use: { ...devices['Desktop Chrome'] },
     },
@@ -42,6 +49,13 @@ const config: PlaywrightTestConfig = {
       testMatch: /performance/,
       retries: isCI ? 2 : 0,
       use: { ...devices['Desktop Chrome'] },
+    },
+
+    {
+      name: 'safari',
+      testMatch: [/-safari/],
+      retries: isCI ? 2 : 0,
+      use: { ...devices['Desktop Safari'] },
     },
 
     // {

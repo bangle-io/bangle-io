@@ -2,16 +2,16 @@ import { expect } from '@playwright/test';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 
+import { testWithConfig as test } from '../fixture-test-with-config';
 import {
   createNewNote,
   createWorkspace,
   sleep,
   waitForEditorFocus,
 } from '../helpers';
-import { test } from '../test-extension';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 test.describe('worker', () => {

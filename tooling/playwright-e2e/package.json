@@ -32,6 +32,7 @@
     "@bangle.io/config-template": "^0.0.3",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/e2e-types": "workspace:*",
+    "@bangle.io/independent-e2e-tests-server": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@playwright/test": "^1.27.1",

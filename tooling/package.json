@@ -5,6 +5,7 @@
     "env-vars",
     "extract-css-vars",
     "playwright-e2e",
+    "independent-e2e-tests-server",
     "storybook",
     "yarn-workspace-helpers"
   ],

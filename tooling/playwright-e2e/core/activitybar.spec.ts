@@ -1,13 +1,14 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   getPrimaryEditorDebugString,
   isDarwin,
   SELECTOR_TIMEOUT,
 } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 test('lists options', async ({ page }) => {

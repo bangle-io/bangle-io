@@ -1,7 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   clearEditor,
   createNewNote,
@@ -10,8 +11,8 @@ import {
   isDarwin,
 } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ page, bangleApp }) => {
+  await bangleApp.open();
   const wsName = await createWorkspace(page);
   await createNewNote(page, wsName, 'test123');
   await clearEditor(page, PRIMARY_EDITOR_INDEX);

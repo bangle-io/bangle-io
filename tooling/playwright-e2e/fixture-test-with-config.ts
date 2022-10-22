@@ -1,7 +1,7 @@
-import { test as base } from '@playwright/test';
-
 import type { RawDebugConfig } from '@bangle.io/config-template';
 import { BangleConfig } from '@bangle.io/config-template';
+
+import { withBangle } from './fixture-with-bangle';
 
 export type TestCustomOptions = {
   bangleDebugConfig: Partial<RawDebugConfig>;
@@ -14,7 +14,9 @@ export type TestFixtures = {
 const defaultBangleDebugConfig: Partial<RawDebugConfig> = {};
 
 // TODO fixtures are a great way to improve test quality.
-export const test = base.extend<TestCustomOptions & TestFixtures>({
+export const testWithConfig = withBangle.extend<
+  TestCustomOptions & TestFixtures
+>({
   bangleDebugConfig: [defaultBangleDebugConfig, { option: true }],
   // This fixture injects a custom debug configuration to alter the behaviour
   // of the application during tests.

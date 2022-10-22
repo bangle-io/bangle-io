@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import {
   PRIMARY_EDITOR_INDEX,
@@ -6,6 +6,7 @@ import {
 } from '@bangle.io/constants';
 
 import { resolvePath } from '../bangle-helpers';
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   createNewNote,
   createWorkspace,
@@ -19,8 +20,8 @@ import {
   waitForNotification,
 } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 test.describe('workspace', () => {

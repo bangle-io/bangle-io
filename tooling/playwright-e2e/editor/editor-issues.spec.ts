@@ -1,15 +1,16 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import { createNewNote, createWorkspace } from '../helpers';
 
 for (const screenType of ['desktop', 'mobile']) {
   test.describe(screenType + ' editor issue', () => {
-    test.beforeEach(async ({ page, baseURL }, testInfo) => {
+    test.beforeEach(async ({ page, bangleApp }, testInfo) => {
       if (screenType === 'mobile') {
         await page.setViewportSize({ width: 480, height: 960 });
       }
 
-      await page.goto(baseURL!, { waitUntil: 'networkidle' });
+      await bangleApp.open();
     });
 
     test('displays editor issue correctly', async ({ page }) => {

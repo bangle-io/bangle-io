@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import {
   PRIMARY_EDITOR_INDEX,
@@ -7,6 +7,7 @@ import {
 } from '@bangle.io/constants';
 import type { EditorIdType } from '@bangle.io/shared-types';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   createNewNote,
   createWorkspace,
@@ -15,8 +16,8 @@ import {
   waitForEditorFocus,
 } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 const isEditorBarFocused = async (page: Page, editorId: EditorIdType) => {

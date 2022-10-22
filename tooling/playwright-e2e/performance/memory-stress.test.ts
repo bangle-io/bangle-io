@@ -1,9 +1,10 @@
-import { chromium, expect, test } from '@playwright/test';
+import { chromium, expect } from '@playwright/test';
 import fs from 'fs/promises';
 import path from 'path';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   createWorkspaceFromBackup,
   getAllWsPaths,
