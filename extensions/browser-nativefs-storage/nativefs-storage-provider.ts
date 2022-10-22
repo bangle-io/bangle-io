@@ -157,8 +157,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle: FileSystemFileHandle) =>
-        allowedFile(fileHandle.name),
+      allowedFile: ({ name }) => allowedFile(name),
     });
   }
 }

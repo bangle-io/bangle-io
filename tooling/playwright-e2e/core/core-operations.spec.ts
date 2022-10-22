@@ -1,9 +1,10 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import { createNewNote, createWorkspace, runOperation } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }) => {
+  await bangleApp.open();
 });
 
 test('reload operation', async ({ page }) => {

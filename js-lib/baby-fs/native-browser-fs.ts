@@ -18,8 +18,8 @@ import {
   hasPermission,
   readFileAsText as readFileAsTextHelper,
   recurseDirHandle,
-  writeFile,
 } from './native-browser-fs-helpers';
+import { writeToFile } from './universal-write-to-file';
 
 const dirToChildMap = new WeakMap<
   FileSystemDirectoryHandle,
@@ -60,14 +60,18 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
   constructor(opts: {
     rootDirHandle: FileSystemDirectoryHandle;
-    allowedFile?: (f: FileSystemFileHandle) => boolean;
-    allowedDir?: (entry: FileSystemDirectoryHandle) => boolean;
+    allowedFile?: (f: { name: string }) => boolean;
+    allowedDir?: (entry: { name: string }) => boolean;
   }) {
-    super();
+    super({
+      allowedFile: opts.allowedFile,
+      allowedDir: opts.allowedDir,
+    });
 
     const {
       rootDirHandle,
       allowedFile = () => true,
+      // TODO move this out and standardize the ignore across all bangle
       allowedDir = (entry) => !DEFAULT_DIR_IGNORE_LIST.includes(entry.name),
     } = opts;
 
@@ -76,6 +80,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     if (!this._rootDirHandle) {
       throw new Error('rootDirHandle must be provided');
     }
+
     this._allowedFile = allowedFile;
     this._allowedDir = allowedDir;
     this._resolveFileHandle = resolveFileHandle({ allowedDir, allowedFile });
@@ -204,9 +209,9 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
     let fileHandle: FileSystemFileHandle | undefined;
     let shouldCreateFile = false;
-
+    let parentHandles: FileSystemDirectoryHandle[] = [];
     try {
-      ({ fileHandle } = await this._resolveFileHandle(
+      ({ fileHandle, parentHandles } = await this._resolveFileHandle(
         this._rootDirHandle,
         filePath,
       ));
@@ -223,7 +228,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
     if (shouldCreateFile) {
       await createFile(this._rootDirHandle, filePath);
-      ({ fileHandle } = await this._resolveFileHandle(
+      ({ fileHandle, parentHandles } = await this._resolveFileHandle(
         this._rootDirHandle,
         filePath,
       ));
@@ -233,7 +238,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       throw new Error('fileHandle must be defined');
     }
 
-    await writeFile(fileHandle, data);
+    await writeToFile(fileHandle, data, parentHandles);
   }
 }
 

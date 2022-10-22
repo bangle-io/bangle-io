@@ -16,6 +16,13 @@ export class BaseFileMetadata {
 // - a path with `.` extension is a file
 // - a path with no `.` is a directory
 export abstract class BaseFileSystem {
+  constructor(
+    protected opts: {
+      allowedFile?: (f: { name: string }) => boolean;
+      allowedDir?: (entry: { name: string }) => boolean;
+    },
+  ) {}
+
   // Copy a file or directory. The directory can have contents.
   async copy() {}
   // Ensures that the directory exists. If the directory structure does not exist, it is created.

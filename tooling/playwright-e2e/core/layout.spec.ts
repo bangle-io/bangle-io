@@ -1,7 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import { SECONDARY_EDITOR_INDEX } from '@bangle.io/constants';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import {
   createNewNote,
   createWorkspace,
@@ -12,8 +13,8 @@ import {
   sleep,
 } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 test('split screen shortcut works', async ({ page }) => {

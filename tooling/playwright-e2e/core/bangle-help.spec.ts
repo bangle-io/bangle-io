@@ -1,11 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 
+import { withBangle as test } from '../fixture-with-bangle';
 import { getEditorLocator, waitForEditorTextToContain } from '../helpers';
 
-test.beforeEach(async ({ page, baseURL }, testInfo) => {
-  await page.goto(baseURL!, { waitUntil: 'networkidle' });
+test.beforeEach(async ({ bangleApp }, testInfo) => {
+  await bangleApp.open();
 });
 
 test('Landing page is correct', async ({ page }) => {
