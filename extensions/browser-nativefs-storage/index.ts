@@ -10,7 +10,7 @@ import {
   Severity,
 } from '@bangle.io/constants';
 
-import { NativsFsStorageProvider } from './nativefs-storage-provider';
+import { NativeFsStorageProvider } from './nativefs-storage-provider';
 
 const extensionName = '@bangle.io/browser-nativefs-storage';
 
@@ -18,7 +18,7 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     slices: [],
-    storageProvider: new NativsFsStorageProvider(),
+    storageProvider: new NativeFsStorageProvider(),
     onStorageError: (error, store) => {
       if (
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||

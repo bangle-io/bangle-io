@@ -24,7 +24,6 @@ export class MemoryStorageProvider implements BaseStorageProvider {
   >();
 
   _store = new Map<string, File>();
-
   async createFile(
     wsPath: string,
     file: File,
@@ -59,6 +58,10 @@ export class MemoryStorageProvider implements BaseStorageProvider {
       ctime: stat.ctime,
       mtime: stat.mtime,
     };
+  }
+
+  isSupported() {
+    return true;
   }
 
   async listAllFiles(

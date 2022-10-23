@@ -88,6 +88,10 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     return this._idbProvider.fileStat(wsPath, opts);
   }
 
+  isSupported() {
+    return true;
+  }
+
   async listAllFiles(
     abortSignal: AbortSignal,
     wsName: string,

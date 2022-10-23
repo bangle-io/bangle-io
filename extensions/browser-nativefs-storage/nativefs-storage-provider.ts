@@ -8,11 +8,11 @@ import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
 
-const allowedFile = (name: string) => {
+export const allowedFile = (name: string) => {
   return name.endsWith('.md') || name.endsWith('.png');
 };
 
-export class NativsFsStorageProvider implements BaseStorageProvider {
+export class NativeFsStorageProvider implements BaseStorageProvider {
   name = WorkspaceTypeNative;
   displayName = 'File system storage';
   description = 'Saves data in your file system';
@@ -61,6 +61,13 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
     };
+  }
+
+  isSupported() {
+    // TODO: we donot have a great way to check if native fs is supported
+    // in the worker thread. We need have a universal configuration that is passed to worker
+    // and main thread on initialization.
+    return true;
   }
 
   async listAllFiles(
@@ -150,7 +157,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     await (await this._getFs(wsName, opts)).writeFile(path, file);
   }
 
-  private async _getFs(wsName: string, opts: StorageOpts) {
+  protected async _getFs(wsName: string, opts: StorageOpts) {
     const rootDirHandle: FileSystemDirectoryHandle = (
       await opts.readWorkspaceMetadata(wsName)
     ).rootDirHandle;

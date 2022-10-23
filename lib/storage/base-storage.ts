@@ -30,6 +30,8 @@ export interface BaseStorageProvider {
   readonly hidden?: boolean;
   readonly name: string;
 
+  isSupported: () => boolean;
+
   // StorageProvider is run in various contexts like worker, main thread, etc.
   // This method will be called when an error needs to be serialized and forwarded to the main thread.
   serializeError: (error: Error) => string | undefined;

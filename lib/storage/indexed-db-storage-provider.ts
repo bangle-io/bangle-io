@@ -54,6 +54,10 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     };
   }
 
+  isSupported() {
+    return globalThis.indexedDB != null;
+  }
+
   async listAllFiles(
     abortSignal: AbortSignal,
     wsName: string,

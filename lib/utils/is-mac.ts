@@ -78,10 +78,19 @@ export const isSafari = browserInfo.includes('safari');
 export const isChrome = browserInfo.includes('chrome');
 
 function testPlatform(re: RegExp) {
-  if (typeof window !== 'undefined' && window.navigator != null) {
+  let target: any =
+    typeof globalThis !== 'undefined'
+      ? globalThis
+      : typeof window !== 'undefined'
+      ? window
+      : typeof global !== 'undefined'
+      ? global
+      : {};
+
+  if (target.navigator != null) {
     const platform =
-      (window.navigator as any)['userAgentData']?.platform ||
-      window.navigator.platform;
+      (target.navigator as any)['userAgentData']?.platform ||
+      target.navigator.platform;
 
     return re.test(platform);
   }

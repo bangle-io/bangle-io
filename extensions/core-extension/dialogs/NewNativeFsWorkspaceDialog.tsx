@@ -1,5 +1,5 @@
 import { useFocusManager } from '@react-aria/focus';
-import React, { useCallback, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
 import {
@@ -65,6 +65,19 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
     workspace: undefined,
   });
 
+  useEffect(() => {
+    navigator.storage.getDirectory().then(async (root) => {
+      const parentDir = await root.getDirectoryHandle('magic-bone', {
+        create: true,
+      });
+
+      updateModalState({
+        type: 'update_workspace',
+        workspace: { name: 'magic bone', rootDir: parentDir },
+      });
+    });
+  }, []);
+
   const onDismiss = useCallback(() => {
     _onDismiss(dialogName);
   }, [_onDismiss, dialogName]);
@@ -100,7 +113,11 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
 
     dispatchSerialOperation({
       name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
-      value: { rootDirHandle: modalState.workspace.rootDir },
+      value: {
+        rootDirHandle: {
+          name: modalState.workspace.name,
+        },
+      },
     });
     onDismiss();
   }, [dispatchSerialOperation, modalState, onDismiss]);
