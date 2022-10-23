@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.31.5",
+    "@bangle.dev/pm": "0.31.6",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },
