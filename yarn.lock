@@ -2453,6 +2453,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/db-app@workspace:lib/db-app"
   dependencies:
+    "@bangle.io/constants": "workspace:*"
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"

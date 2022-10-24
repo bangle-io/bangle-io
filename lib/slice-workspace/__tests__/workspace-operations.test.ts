@@ -196,7 +196,7 @@ describe('createWorkspace', () => {
         rootDirHandle: { root: 'dummy' },
       },
       name: 'test-1',
-      type: 'nativefs',
+      type: WorkspaceTypeNative,
     });
   });
 

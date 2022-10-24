@@ -6180,6 +6180,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/db-app/",\
           "packageDependencies": [\
             ["@bangle.io/db-app", "workspace:lib/db-app"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\

@@ -364,7 +364,7 @@ describe('cachedWorkspaceInfoEffect', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-ws-2',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       });
     });
 
@@ -379,7 +379,7 @@ describe('cachedWorkspaceInfoEffect', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-ws-1',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       });
     });
   });
@@ -428,7 +428,7 @@ describe('cachedWorkspaceInfoEffect', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-ws-1',
-      type: 'browser',
+      type: WorkspaceTypeBrowser,
     });
 
     await saveWorkspaceInfo(
@@ -449,7 +449,7 @@ describe('cachedWorkspaceInfoEffect', () => {
         test: '1234',
       },
       name: 'test-ws-1',
-      type: 'browser',
+      type: WorkspaceTypeBrowser,
     });
 
     await waitForExpect(() => {
@@ -463,7 +463,7 @@ describe('cachedWorkspaceInfoEffect', () => {
           test: '1234',
         },
         name: 'test-ws-1',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       });
     });
   });
