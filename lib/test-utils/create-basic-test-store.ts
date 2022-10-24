@@ -1,6 +1,6 @@
 import waitForExpect from 'wait-for-expect';
 
-import { WorkspaceTypeBrowser } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import type { ApplicationStore, BaseAction } from '@bangle.io/create-store';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import {
@@ -80,7 +80,7 @@ export async function setupMockWorkspaceWithNotes(
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
   destroyAfterInit = false,
-  storageProvider = WorkspaceTypeBrowser,
+  storageProvider: string = WorkspaceType.Browser,
 ) {
   if ((await readAllWorkspacesInfo()).find((r) => r.name === wsName)) {
     throw new Error(`Workspace ${wsName} already exists`);

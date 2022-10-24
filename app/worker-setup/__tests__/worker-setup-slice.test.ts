@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { WorkspaceTypeHelp } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { createBareStore } from '@bangle.io/test-utils';
@@ -281,7 +281,7 @@ test('sends workspaces slice action correctly', async () => {
         allowLocalChanges: true,
       },
       name: 'bangle-help',
-      type: WorkspaceTypeHelp,
+      type: WorkspaceType.Help,
     },
   ]);
 });

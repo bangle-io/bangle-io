@@ -1,4 +1,4 @@
-import { WorkspaceTypeBrowser } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
   createBasicTestStore,
@@ -26,7 +26,7 @@ describe('readWorkspaceInfo', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
   });
 
@@ -38,7 +38,7 @@ describe('readWorkspaceInfo', () => {
     ]);
 
     let wsInfo = await readWorkspaceInfo('test-ws-1', {
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
 
     expect(wsInfo).toEqual({
@@ -46,7 +46,7 @@ describe('readWorkspaceInfo', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
 
     wsInfo = await readWorkspaceInfo('test-ws-1', {
@@ -63,7 +63,7 @@ describe('readWorkspaceInfo', () => {
     ]);
 
     let wsInfo = await readWorkspaceInfo('test-ws-1', {
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
 
     await saveWorkspaceInfo(
@@ -79,7 +79,7 @@ describe('readWorkspaceInfo', () => {
     );
 
     wsInfo = await readWorkspaceInfo('test-ws-1', {
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
     expect(wsInfo).toBeUndefined();
 
@@ -95,7 +95,7 @@ describe('readWorkspaceInfo', () => {
         test: '1234',
       },
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
   });
 });
@@ -137,14 +137,14 @@ describe('compareWorkspaceInfo', () => {
   test('same workspace 1', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
@@ -156,14 +156,14 @@ describe('compareWorkspaceInfo', () => {
   test('different name', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-2',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
@@ -175,7 +175,7 @@ describe('compareWorkspaceInfo', () => {
   test('different type', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
@@ -194,14 +194,14 @@ describe('compareWorkspaceInfo', () => {
   test('different time', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 6,
       metadata: {},
       deleted: false,
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
@@ -213,14 +213,14 @@ describe('compareWorkspaceInfo', () => {
   test('different deleted', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: true,
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
@@ -232,7 +232,7 @@ describe('compareWorkspaceInfo', () => {
   test('same metadata', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: 1,
@@ -241,7 +241,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: 1,
@@ -255,7 +255,7 @@ describe('compareWorkspaceInfo', () => {
   test('different metadata 1', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: 1,
@@ -264,7 +264,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {},
       deleted: false,
@@ -276,7 +276,7 @@ describe('compareWorkspaceInfo', () => {
   test('different metadata 2', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: 1,
@@ -285,7 +285,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         z: 1,
@@ -299,7 +299,7 @@ describe('compareWorkspaceInfo', () => {
   test('different metadata 3', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: [],
@@ -308,7 +308,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: [],
@@ -322,7 +322,7 @@ describe('compareWorkspaceInfo', () => {
   test('metadata different file handle keys', async () => {
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         r: new FileSystemHandle(),
@@ -331,7 +331,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         f: new FileSystemHandle(),
@@ -347,7 +347,7 @@ describe('compareWorkspaceInfo', () => {
     let fileHandleB = new FileSystemHandle();
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         r: fileHandleA,
@@ -356,7 +356,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         r: fileHandleB,
@@ -372,7 +372,7 @@ describe('compareWorkspaceInfo', () => {
     let fileHandleB = new FileSystemHandle();
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 15,
       metadata: {
         r: fileHandleA,
@@ -381,7 +381,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         r: fileHandleB,
@@ -398,7 +398,7 @@ describe('compareWorkspaceInfo', () => {
     let fileHandleB = new FileSystemHandle();
     let a: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         r: fileHandleA,
@@ -407,7 +407,7 @@ describe('compareWorkspaceInfo', () => {
     };
     let b: WorkspaceInfo = {
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
       lastModified: 5,
       metadata: {
         r: fileHandleB,

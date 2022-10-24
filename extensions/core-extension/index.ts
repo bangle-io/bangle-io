@@ -21,8 +21,7 @@ import {
   RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
   Severity,
-  WorkspaceTypeBrowser,
-  WorkspaceTypeNative,
+  WorkspaceType,
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
@@ -424,7 +423,7 @@ function createNativeFsWorkspace(rootDirHandle: any) {
       try {
         await workspace.createWorkspace(
           rootDirHandle.name,
-          WorkspaceTypeNative,
+          WorkspaceType.NativeFS,
           {
             rootDirHandle,
           },
@@ -468,7 +467,7 @@ function createBrowserWorkspace(wsName: string) {
     }
 
     try {
-      await workspace.createWorkspace(wsName, WorkspaceTypeBrowser, {})(
+      await workspace.createWorkspace(wsName, WorkspaceType.Browser, {})(
         state,
         dispatch,
         store,

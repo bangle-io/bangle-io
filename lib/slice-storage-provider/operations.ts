@@ -1,4 +1,4 @@
-import { WorkspaceTypeHelp } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import type { BaseStorageProvider } from '@bangle.io/storage';
@@ -20,7 +20,7 @@ export function getStorageProvider(
         extensionRegistrySliceKey.getSliceStateAsserted(state);
 
       const provider =
-        workspaceType === WorkspaceTypeHelp
+        workspaceType === WorkspaceType.Help
           ? new HelpFsStorageProvider()
           : extensionRegistry.getStorageProvider(workspaceType);
 

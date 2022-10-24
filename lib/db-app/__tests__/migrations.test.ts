@@ -1,4 +1,4 @@
-import { WorkspaceTypeBrowser } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 
 import { legacyKeyVal } from '../legacy-db';
 import { workspacesKeyValMigration } from '../migrations';
@@ -15,7 +15,7 @@ describe('workspacesKeyValMigration', () => {
         test: '1234',
       },
       name: 'test-ws-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     };
 
     await legacyDb.set('workspaces/2', [legacyItem]);

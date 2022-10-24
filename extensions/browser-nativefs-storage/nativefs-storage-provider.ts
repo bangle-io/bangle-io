@@ -4,7 +4,7 @@ import {
   FILE_NOT_FOUND_ERROR,
   NativeBrowserFileSystem,
 } from '@bangle.io/baby-fs';
-import { WorkspaceTypeNative } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
 
@@ -13,7 +13,7 @@ export const allowedFile = (name: string) => {
 };
 
 export class NativeFsStorageProvider implements BaseStorageProvider {
-  name = WorkspaceTypeNative;
+  name: string = WorkspaceType.NativeFS;
   displayName = 'File system storage';
   description = 'Saves data in your file system';
 

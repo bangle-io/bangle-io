@@ -1,6 +1,6 @@
 import { BaseError } from '@bangle.io/base-error';
 import { HELP_DOCS_VERSION } from '@bangle.io/config';
-import { HELP_FS_INDEX_WS_PATH, WorkspaceTypeHelp } from '@bangle.io/constants';
+import { HELP_FS_INDEX_WS_PATH, WorkspaceType } from '@bangle.io/constants';
 import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { toFSPath } from '@bangle.io/ws-path';
 
@@ -54,7 +54,7 @@ function readFileFromUnpkg(wsPath: string) {
 }
 
 export class HelpFsStorageProvider implements BaseStorageProvider {
-  name = WorkspaceTypeHelp;
+  name = WorkspaceType.Help;
   displayName = 'Help documentation';
   description = '';
   hidden = true;

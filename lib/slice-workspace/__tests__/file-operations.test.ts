@@ -1,4 +1,4 @@
-import { WorkspaceTypeBrowser } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import { goToLocation } from '@bangle.io/slice-page';
 import {
   createBasicTestStore,
@@ -37,7 +37,7 @@ describe('renameNote', () => {
   const doc = createPMNode([], `hello`);
 
   beforeEach(async () => {
-    await createWorkspace('my-ws', WorkspaceTypeBrowser)(
+    await createWorkspace('my-ws', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -206,7 +206,7 @@ describe('renameNote', () => {
 describe('getNote', () => {
   test('works', async () => {
     const doc = createPMNode([], `hello`);
-    await createWorkspace('my-ws', WorkspaceTypeBrowser)(
+    await createWorkspace('my-ws', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -248,7 +248,7 @@ describe('createNote', () => {
   beforeEach(async () => {
     ({ store } = createBasicTestStore({}));
 
-    await createWorkspace('my-ws', WorkspaceTypeBrowser)(
+    await createWorkspace('my-ws', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -341,7 +341,7 @@ describe('deleteNote', () => {
   const wsPath = 'my-ws:test-note.md';
 
   beforeEach(async () => {
-    await createWorkspace('my-ws', WorkspaceTypeBrowser)(
+    await createWorkspace('my-ws', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -443,7 +443,7 @@ describe('checkFileExists', () => {
   beforeEach(async () => {
     ({ store } = createBasicTestStore({}));
 
-    await createWorkspace('my-ws', WorkspaceTypeBrowser)(
+    await createWorkspace('my-ws', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
