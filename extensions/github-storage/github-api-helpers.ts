@@ -10,8 +10,6 @@ import {
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
 
-const GET_LATEST_COMMIT_SHA_CACHE_FACTOR = 500;
-
 export interface GithubTokenConfig {
   githubToken: string;
 }
@@ -252,7 +250,7 @@ export async function getScopes({
   abortSignal?: AbortSignal;
 }): Promise<string | null> {
   const { headers } = await makeV3GetApi({
-    path: `?cacheBust=${Math.floor(Date.now() / 2000)}`,
+    path: `?cacheBust=${Date.now()}`,
     token: token,
     abortSignal,
   });
@@ -353,7 +351,7 @@ export function getRepoTree() {
       latestSha = await getLatestCommitSha({
         config,
         abortSignal: abortSignal,
-        cacheBustValue: Math.floor(Date.now()),
+        cacheBustValue: Date.now(),
       });
 
       // if its the same sha as previous call, return the previous result
@@ -416,9 +414,7 @@ async function _getTree({
     try {
       let path = `/repos/${config.owner}/${config.repoName}/git/trees/${
         commitSha || config.branch
-      }?recursive=1&cacheBust=${Math.floor(
-        Date.now() / GET_LATEST_COMMIT_SHA_CACHE_FACTOR,
-      )}`;
+      }?recursive=1&cacheBust=${Date.now()}`;
 
       return (
         await makeV3GetApi({
@@ -650,7 +646,7 @@ export async function getFileBlob({
 export async function getLatestCommitSha({
   config,
   abortSignal,
-  cacheBustValue = Math.floor(Date.now() / GET_LATEST_COMMIT_SHA_CACHE_FACTOR),
+  cacheBustValue = Date.now(),
 }: {
   config: GithubConfig;
   abortSignal?: AbortSignal;

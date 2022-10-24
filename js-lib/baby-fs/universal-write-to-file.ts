@@ -17,8 +17,6 @@ export async function writeToFile(
   content: FileSystemWriteChunkType,
   parentHandles: FileSystemDirectoryHandle[],
 ) {
-  debugger;
-
   if (!(content instanceof File || content instanceof Blob)) {
     throw new Error('Not correct type of content');
   }

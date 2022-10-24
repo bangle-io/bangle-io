@@ -180,15 +180,24 @@ export function noteTagsMarkdownItPlugin(md: any) {
   inlineNodeParser(md, {
     tokenName: 'note_tag',
     regex: MARKDOWN_REGEX,
-    getTokenDetails: (match) => {
+    getTokenDetails: (match, offset, srcText) => {
+      let whiteSpaceBefore = false;
+
       if (USING_INFERIOR_REGEX) {
         // see the explanation in the source file of regex
         // due to the inferior regex for safari we get an extra whitespace
         // in the match
-        match = match.trim();
+        if (match[0] === ' ') {
+          match = match.slice(1);
+          whiteSpaceBefore = true;
+        }
       }
 
-      return { payload: match.slice(1), markup: match.slice(1) };
+      return {
+        payload: match.slice(1),
+        markup: match.slice(1),
+        whiteSpaceBefore,
+      };
     },
   });
 }
