@@ -1,5 +1,7 @@
 import { match } from 'ts-pattern';
 
+import { handleTriState, TriState } from '@bangle.io/tri-state';
+
 export interface FileSyncObj {
   readonly uid: string;
   readonly sha: string;
@@ -8,23 +10,6 @@ export interface FileSyncObj {
 
 const NOOP = { action: 'noop' as const, target: undefined };
 const CONFLICT = { action: 'conflict' as const, target: undefined };
-
-enum TriState {
-  Yes = 'Yes',
-  No = 'No',
-  Unknown = 'Unknown',
-}
-
-function handleTriState<F, G, H>(
-  val: TriState,
-  obj: { onYes: () => F; onNo: () => G; onUnknown: () => H },
-): F | G | H {
-  return match(val)
-    .with(TriState.Yes, obj.onYes)
-    .with(TriState.No, obj.onNo)
-    .with(TriState.Unknown, obj.onUnknown)
-    .exhaustive();
-}
 
 function fileEqual<R extends { sha: string }>(a?: R, b?: R): TriState {
   if (a && b) {
