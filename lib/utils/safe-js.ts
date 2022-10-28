@@ -226,3 +226,11 @@ export async function acquireLockIfAvailable(
     clearTimeout(timer);
   };
 }
+
+export async function safeNavigatorStorageGetDirectory() {
+  if (typeof navigator === 'undefined' || !navigator.storage) {
+    return undefined;
+  }
+
+  return navigator.storage.getDirectory();
+}
