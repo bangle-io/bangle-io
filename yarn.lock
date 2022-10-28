@@ -2240,6 +2240,20 @@ __metadata:
   resolution: "@bangle.io/browser-nativefs-storage@workspace:extensions/browser-nativefs-storage"
   dependencies:
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/storage": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    tslib: ^2.4.0
+    typescript: ^4.7.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/browser-privatefs-storage@workspace:*, @bangle.io/browser-privatefs-storage@workspace:extensions/browser-privatefs-storage":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/browser-privatefs-storage@workspace:extensions/browser-privatefs-storage"
+  dependencies:
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2378,6 +2392,7 @@ __metadata:
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/tri-state": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3068,6 +3083,7 @@ __metadata:
   dependencies:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
+    "@bangle.io/tri-state": "workspace:*"
     ts-pattern: ^4.0.3
     type-fest: ^2.12.0
   languageName: unknown
@@ -3177,6 +3193,7 @@ __metadata:
     "@bangle.dev/table": 0.31.6
     "@bangle.dev/utils": 0.31.6
     "@bangle.io/browser-nativefs-storage": "workspace:*"
+    "@bangle.io/browser-privatefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
@@ -3483,6 +3500,12 @@ __metadata:
     type-fest: ^2.12.0
     typescript: ^4.7.3
     wait-for-expect: ^3.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/tri-state@workspace:*, @bangle.io/tri-state@workspace:js-lib/tri-state":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/tri-state@workspace:js-lib/tri-state"
   languageName: unknown
   linkType: soft
 
