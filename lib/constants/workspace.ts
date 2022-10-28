@@ -6,5 +6,5 @@ export enum WorkspaceType {
   // is supported by Safari and Chrome. It is similar to nativefs in API (not verified, there might be differences)
   // but provides a private directory to each origin.
   PrivateFS = 'privatefs',
+  Github = 'github-storage',
 }
-export const WorkspaceTypePrivateFileSystem = 'privatefs';

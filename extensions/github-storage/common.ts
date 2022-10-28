@@ -1,11 +1,11 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, SliceKey } from '@bangle.io/api';
-import { Severity } from '@bangle.io/constants';
+import { Severity, WorkspaceType } from '@bangle.io/constants';
 import { acquireLockIfAvailable, isMobile } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
 
-export const GITHUB_STORAGE_PROVIDER_NAME = 'github-storage';
+export const GITHUB_STORAGE_PROVIDER_NAME = WorkspaceType.Github;
 
 export const OPERATION_UPDATE_GITHUB_TOKEN =
   'operation::@bangle.io/github-storage:update-github-token';

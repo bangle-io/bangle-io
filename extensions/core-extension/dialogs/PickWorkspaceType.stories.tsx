@@ -42,5 +42,5 @@ export const SimpleSubmit = Template.bind({});
 
 SimpleSubmit.args = {
   onSelect: () => {},
-  isGithubShown: true,
+  hasGithub: true,
 };

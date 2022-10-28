@@ -5,6 +5,7 @@ import {
   CORE_OPERATIONS_CLOSE_MINI_EDITOR,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+  CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
   CORE_OPERATIONS_NEW_NOTE,
   CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
@@ -17,6 +18,7 @@ import {
   NEW_BROWSER_WORKSPACE_DIALOG_NAME,
   NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME,
   NEW_NOTE_DIALOG_NAME,
+  NEW_PRIVATE_FS_WORKSPACE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
@@ -50,6 +52,7 @@ import { ChangelogModal } from './dialogs/ChangelogModal';
 import { GenericErrorModal } from './dialogs/GenericErrorModal';
 import { NewBrowserWorkspaceDialog } from './dialogs/NewBrowserWorkspaceDialog';
 import { NewNativeFsWorkspaceDialog } from './dialogs/NewNativeFsWorkspaceDialog';
+import { NewPrivateFsWorkspaceDialog } from './dialogs/NewPrivateFsWorkspaceDialog';
 import { NewWorkspaceModal } from './dialogs/NewWorkspaceModal';
 import {
   NewNoteInputModal,
@@ -95,6 +98,10 @@ const extension = Extension.create({
       {
         name: NEW_BROWSER_WORKSPACE_DIALOG_NAME,
         ReactComponent: NewBrowserWorkspaceDialog,
+      },
+      {
+        name: NEW_PRIVATE_FS_WORKSPACE_DIALOG_NAME,
+        ReactComponent: NewPrivateFsWorkspaceDialog,
       },
       {
         name: RELOAD_APPLICATION_DIALOG_NAME,
@@ -166,6 +173,11 @@ const extension = Extension.create({
       {
         name: CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
         title: 'Create browser workspace',
+        hidden: true,
+      },
+      {
+        name: CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
+        title: 'Create private fs workspace',
         hidden: true,
       },
       {
@@ -353,6 +365,21 @@ const extension = Extension.create({
               return true;
             }
 
+            case CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE: {
+              // TODO fix payload as any
+              const { wsName } = (payload as any) || {};
+
+              console.debug('Creating private fs workspace', wsName);
+
+              createPrivateFsWorkspace(wsName)(
+                bangleStore.state,
+                bangleStore.dispatch,
+                bangleStore,
+              );
+
+              return true;
+            }
+
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
               // TODO fix payload as any
               const { rootDirHandle } = (payload as any) || {};
@@ -482,6 +509,44 @@ function createBrowserWorkspace(wsName: string) {
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
+      );
+      throw error;
+    }
+
+    return true;
+  };
+}
+
+function createPrivateFsWorkspace(wsName: string) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    if (typeof wsName !== 'string') {
+      throw new Error(
+        'Incorrect parameters for ' +
+          CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
+      );
+    }
+
+    try {
+      await workspace.createWorkspace(wsName, WorkspaceType.PrivateFS, {})(
+        state,
+        dispatch,
+        store,
+      );
+      (window as any).fathom?.trackGoal('KWXITXAK', 0);
+    } catch (error: any) {
+      notificationSliceKey.callOp(
+        state,
+        dispatch,
+        showNotification({
+          severity: Severity.ERROR,
+          uid: 'error-create-workspace-' + wsName,
+          title: 'Unable to create workspace ' + wsName,
+          content: error.displayMessage || error.message,
+        }),
       );
       throw error;
     }

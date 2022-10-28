@@ -4,6 +4,9 @@ export const CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE =
 export const CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE =
   'operation::@bangle.io/core-extension:CREATE_BROWSER_WORKSPACE';
 
+export const CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE =
+  'operation::@bangle.io/core-extension:CREATE_PRIVATE_FS_WORKSPACE';
+
 export const CORE_OPERATIONS_SERVICE_WORKER_RELOAD =
   'operation::@bangle.io/core-extension:SERVICE_WORKER_RELOAD';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
+import { WorkspaceType } from '@bangle.io/constants';
 import type { ListBoxOptionComponentType } from '@bangle.io/ui-components';
 import {
   CheckIcon,
@@ -15,31 +15,33 @@ import {
 } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
-import { defaultStorage, disabledStorageType, StorageType } from './common';
+import { defaultStorage, disabledStorageType } from './common';
 
 export function PickWorkspaceType({
   onDismiss,
   onSelect,
-  isGithubShown,
+  hasGithub,
+  hasPrivateFs,
 }: {
-  onSelect: (type: StorageType) => void;
+  onSelect: (type: WorkspaceType) => void;
   onDismiss: () => void;
-  isGithubShown?: boolean;
+  hasGithub?: boolean;
+  hasPrivateFs: boolean;
 }) {
   const [selectedKey, updateSelectedKey] =
-    React.useState<StorageType>(defaultStorage);
+    React.useState<WorkspaceType>(defaultStorage);
 
-  let state = useListState({
+  const state = useListState({
     children: [
       <Item
         aria-label="local file storage"
-        key={StorageType.NATIVE_FS}
+        key={WorkspaceType.NativeFS}
         textValue="local file storage"
       >
         <div>
           <div>
             <span className="font-bold">Local File Storage</span>
-            {!supportsNativeBrowserFs() ? (
+            {disabledStorageType.includes(WorkspaceType.NativeFS) ? (
               <span> (Not available)</span>
             ) : (
               <span> (Recommended)</span>
@@ -55,8 +57,8 @@ export function PickWorkspaceType({
         </div>
       </Item>,
 
-      isGithubShown ? (
-        <Item key={StorageType.GITHUB} textValue="github storage">
+      hasGithub ? (
+        <Item key={WorkspaceType.Github} textValue="github storage">
           <div>
             <div>
               <span className="font-bold">GitHub Storage</span>
@@ -70,7 +72,11 @@ export function PickWorkspaceType({
           </div>
         </Item>
       ) : null,
-      <Item key={StorageType.BROWSER} textValue="browser storage">
+
+      <Item
+        key={hasPrivateFs ? WorkspaceType.PrivateFS : WorkspaceType.Browser}
+        textValue="browser storage"
+      >
         <div>
           <div>
             <span className="font-bold">Browser Storage</span>
@@ -88,13 +94,14 @@ export function PickWorkspaceType({
     selectionMode: 'single',
     disabledKeys: disabledStorageType,
     selectedKeys: [selectedKey],
+
     onSelectionChange(keys) {
       // keys cannot be all since single
       if (typeof keys !== 'string') {
         const key = [...keys][0];
 
         if (key) {
-          updateSelectedKey(key as StorageType);
+          updateSelectedKey(key as WorkspaceType);
         }
       }
     },

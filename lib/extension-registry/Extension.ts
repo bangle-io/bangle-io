@@ -11,6 +11,7 @@ import type {
   EditorWatchPluginState,
   NoteFormatProvider,
   NoteSidebarWidget,
+  OnStorageProviderError,
   SerialOperationDefinitionType,
   SerialOperationHandler,
 } from '@bangle.io/shared-types';
@@ -72,7 +73,7 @@ export interface ApplicationConfig<
   // Return true if the error was handled by your callback
   // and false if it cannot be handled
   // Only applicable if your extension is a storage provider
-  onStorageError?: (error: Error, store: ApplicationStore) => boolean;
+  onStorageError?: OnStorageProviderError;
 }
 
 export interface SidebarType {

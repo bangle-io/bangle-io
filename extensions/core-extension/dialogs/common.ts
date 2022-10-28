@@ -1,22 +1,15 @@
 import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
+import { WorkspaceType } from '@bangle.io/constants';
 
-export enum StorageType {
-  NATIVE_FS = 'NATIVE_FS',
-  BROWSER = 'BROWSER',
-  GITHUB = 'GITHUB',
-}
+let nativeFsSupport = supportsNativeBrowserFs();
 
-export let disabledStorageType: StorageType[] = [];
+export const disabledStorageType: WorkspaceType[] = [
+  !nativeFsSupport && WorkspaceType.NativeFS,
+].filter((r): r is WorkspaceType => Boolean(r));
 
-export let defaultStorage = StorageType.NATIVE_FS;
-
-if (!supportsNativeBrowserFs()) {
-  disabledStorageType.push(StorageType.NATIVE_FS);
-  defaultStorage = StorageType.BROWSER;
-}
-
-export const FILE_SYSTEM = StorageType.NATIVE_FS;
-export const BROWSER = StorageType.BROWSER;
+export const defaultStorage = nativeFsSupport
+  ? WorkspaceType.NativeFS
+  : WorkspaceType.Browser;
 
 export const ERROR_PICKING_DIRECTORY_ERROR = 'ERROR_PICKING_DIRECTORY';
 export const UNKNOWN_ERROR = 'UNKNOWN_ERROR';

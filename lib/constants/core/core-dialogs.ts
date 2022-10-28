@@ -13,6 +13,9 @@ export const NEW_WORKSPACE_DIALOG_NAME =
 export const NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME =
   'dialog::@bangle.io/core-extension:NEW_NATIVE_FS_DIALOG_NAME';
 
+export const NEW_PRIVATE_FS_WORKSPACE_DIALOG_NAME =
+  'dialog::@bangle.io/core-extension:NEW_PRIVATE_FS_WORKSPACE_DIALOG_NAME';
+
 export const NEW_BROWSER_WORKSPACE_DIALOG_NAME =
   'dialog::@bangle.io/core-extension:NEW_BROWSER_WORKSPACE_DIALOG_NAME';
 

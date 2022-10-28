@@ -8,15 +8,16 @@ import {
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   NativeBrowserFileSystemError,
-  NativeFsStorageProvider,
+  PrivateFsStorageProvider,
 } from '@bangle.io/storage';
 
-const extensionName = '@bangle.io/browser-nativefs-storage';
+const extensionName = '@bangle.io/browser-privatefs-storage';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    storageProvider: new NativeFsStorageProvider(),
+    slices: [],
+    storageProvider: new PrivateFsStorageProvider(),
     onStorageError: (error, store) => {
       if (
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
@@ -43,7 +44,7 @@ const extension = Extension.create({
           severity: Severity.ERROR,
           title: 'File system error',
           content: error.message,
-          uid: 'NativefsStorageProviderError' + Math.random(),
+          uid: 'PrivateFSStorage' + Math.random(),
           buttons: [
             {
               title: 'Report issue',

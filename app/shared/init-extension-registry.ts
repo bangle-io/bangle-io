@@ -1,5 +1,6 @@
 // <-- PLOP INSERT EXTENSION IMPORT -->
 import browserNativefsStorage from '@bangle.io/browser-nativefs-storage';
+import browserPrivateFs from '@bangle.io/browser-privatefs-storage';
 import browserStorage from '@bangle.io/browser-storage';
 import editorCore from '@bangle.io/core-editor';
 import coreActions from '@bangle.io/core-extension';
@@ -21,6 +22,7 @@ export const initExtensionRegistry = () => {
     inlineEmoji,
     browserStorage,
     browserNativefsStorage,
+    browserPrivateFs,
     editorCore,
     inlineCommandPalette,
     noteOutline,

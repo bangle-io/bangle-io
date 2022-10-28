@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/browser-nativefs-storage",
+  "name": "@bangle.io/browser-privatefs-storage",
   "version": "0.0.0",
   "authors": [
     {
@@ -20,6 +20,7 @@
   "module": "index.ts",
   "dependencies": {
     "@bangle.io/api": "workspace:*",
+    "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/storage": "workspace:*",

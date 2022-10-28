@@ -2,6 +2,7 @@
   "name": "extensions",
   "workspaces": [
     "browser-nativefs-storage",
+    "browser-privatefs-storage",
     "browser-storage",
     "core-editor",
     "core-extension",
