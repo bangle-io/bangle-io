@@ -6,6 +6,7 @@ import prettier from 'prettier';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
+  WorkspaceType,
 } from '@bangle.io/constants';
 import type { EditorIdType } from '@bangle.io/shared-types';
 
@@ -42,7 +43,7 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
     'operation::@bangle.io/core-extension:NEW_WORKSPACE',
   );
 
-  await page.click('li[data-key="BROWSER"]');
+  await page.click(`li[data-key="${WorkspaceType.PrivateFS}"]`);
 
   await page.click('[aria-label="Next"]');
 

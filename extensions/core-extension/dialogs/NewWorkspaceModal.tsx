@@ -33,7 +33,10 @@ export const NewWorkspaceModal: DialogComponentType = (props) => {
           if (unmounted) {
             return;
           }
-          setIsPrivateFsAvailable(TriState.Yes);
+
+          // setIsPrivateFsAvailable(TriState.Yes);
+          // TODO private fs become buggy in safari for some reason
+          setIsPrivateFsAvailable(TriState.No);
         })
         .catch(() => {
           if (unmounted) {
