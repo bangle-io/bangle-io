@@ -24,7 +24,7 @@
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/is-abort-error": "workspace:*",
-    "idb": "^7.0.2",
+    "idb": "^7.1.0",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
   },

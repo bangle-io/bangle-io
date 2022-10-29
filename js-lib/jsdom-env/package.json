@@ -19,7 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "jest-environment-jsdom": "^29.0.2"
+    "jest-environment-jsdom": "^29.2.2"
   },
   "publishConfig": {
     "access": "public"
