@@ -9,7 +9,7 @@ export * from './hooks';
 export * from './is-mac';
 export * from './keybindings';
 export * from './random-name';
-export * from './safe-js-callbacks';
+export * from './safe-js';
 export * from './utility';
 export {
   checkWidescreen,

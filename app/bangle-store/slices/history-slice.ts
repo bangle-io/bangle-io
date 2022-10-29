@@ -1,4 +1,4 @@
-import { WorkspaceTypeNative } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
@@ -152,7 +152,7 @@ export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
           return;
         }
 
-        if (cachedWorkspaceInfo.type === WorkspaceTypeNative) {
+        if (cachedWorkspaceInfo.type === WorkspaceType.NativeFS) {
           history.updateHistoryState({
             workspaceRootDir: cachedWorkspaceInfo.metadata.rootDirHandle,
           });

@@ -56,7 +56,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
             })
             .map((workspaceObj, i) => {
               return {
-                uid: `${workspaceObj.name}-(${workspaceObj.type})`,
+                uid: workspaceObj.name,
                 title: workspaceObj.name,
                 extraInfo: workspaceObj.type,
                 data: { workspace: workspaceObj },

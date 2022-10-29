@@ -60,17 +60,11 @@ test.describe('workspaces', () => {
 
     const result = (await getItemsInPalette(page, { hasItems: true })).sort();
 
-    expect(result).toEqual(
-      [
-        `bangle-help-(helpfs)`,
-        wsName2 + '-(browser)',
-        wsName1 + '-(browser)',
-      ].sort(),
-    );
+    expect(result).toEqual([`bangle-help`, wsName2, wsName1].sort());
 
     await Promise.all([
       page.waitForNavigation(),
-      clickItemInPalette(page, wsName2 + '-(browser)'),
+      clickItemInPalette(page, wsName2),
     ]);
 
     await expect(page).toHaveURL(new RegExp(wsName2));
@@ -91,14 +85,7 @@ test.describe('workspaces', () => {
 
     const result = (await getItemsInPalette(page, { hasItems: true })).sort();
 
-    expect(result).toEqual(
-      [
-        `bangle-help-(helpfs)`,
-        wsName3 + '-(browser)',
-        wsName2 + '-(browser)',
-        wsName1 + '-(browser)',
-      ].sort(),
-    );
+    expect(result).toEqual([`bangle-help`, wsName3, wsName2, wsName1].sort());
   });
 
   test('deleting workspace works', async ({ page }) => {
@@ -126,8 +113,6 @@ test.describe('workspaces', () => {
 
     const result = (await getItemsInPalette(page, { hasItems: true })).sort();
 
-    expect(result).toEqual(
-      [`bangle-help-(helpfs)`, wsName1 + '-(browser)'].sort(),
-    );
+    expect(result).toEqual([`bangle-help`, wsName1].sort());
   });
 });

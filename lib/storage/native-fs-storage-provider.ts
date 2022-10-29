@@ -1,22 +1,18 @@
-import { wsPathHelpers } from '@bangle.io/api';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
   NativeBrowserFileSystem,
 } from '@bangle.io/baby-fs';
-import { WorkspaceTypeNative } from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
+import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 
-const allowedFile = (name: string) => {
+export const allowedFile = (name: string) => {
   return name.endsWith('.md') || name.endsWith('.png');
 };
 
-export class NativsFsStorageProvider implements BaseStorageProvider {
-  name = WorkspaceTypeNative;
-  displayName = 'File system storage';
-  description = 'Saves data in your file system';
-
+export abstract class BaseFsStorageProvider implements BaseStorageProvider {
   async createFile(
     wsPath: string,
     file: File,
@@ -26,16 +22,17 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
+    const { wsName } = resolvePath(wsPath);
 
-    await (
-      await this._getFs(wsName, opts)
-    ).unlink(wsPathHelpers.toFSPath(wsPath));
+    await (await this._getFs(wsName, opts)).unlink(toFSPath(wsPath));
   }
 
+  abstract description: string;
+  abstract displayName: string;
+
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    const path = wsPathHelpers.toFSPath(wsPath);
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
+    const path = toFSPath(wsPath);
+    const { wsName } = resolvePath(wsPath);
 
     try {
       await (await this._getFs(wsName, opts)).stat(path);
@@ -52,8 +49,8 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   }
 
   async fileStat(wsPath: string, opts: StorageOpts) {
-    const path = wsPathHelpers.toFSPath(wsPath);
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
+    const path = toFSPath(wsPath);
+    const { wsName } = resolvePath(wsPath);
 
     const stat = await (await this._getFs(wsName, opts)).stat(path);
 
@@ -63,6 +60,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     };
   }
 
+  abstract isSupported(): boolean;
   async listAllFiles(
     abortSignal: AbortSignal,
     wsName: string,
@@ -78,7 +76,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
     files = rawPaths
       .map((r) => {
-        const wsPath = wsPathHelpers.fromFsPath(r);
+        const wsPath = fromFsPath(r);
 
         return wsPath;
       })
@@ -89,19 +87,11 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     return result;
   }
 
-  async newWorkspaceMetadata(wsName: string, createOpts: any) {
-    const { rootDirHandle } = createOpts;
-
-    if (!rootDirHandle) {
-      throw new Error(
-        `rootDirHandle is necessary for creating nativefs workspace`,
-      );
-    }
-
-    return {
-      rootDirHandle,
-    };
-  }
+  abstract name: string;
+  abstract newWorkspaceMetadata(
+    wsName: string,
+    createOpts: any,
+  ): Promise<{ [key: string]: any }> | Promise<void>;
 
   parseError(errorString: string) {
     try {
@@ -116,11 +106,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
       return undefined;
     }
 
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
+    const { wsName } = resolvePath(wsPath);
 
-    return (await this._getFs(wsName, opts)).readFile(
-      wsPathHelpers.toFSPath(wsPath),
-    );
+    return (await this._getFs(wsName, opts)).readFile(toFSPath(wsPath));
   }
 
   async renameFile(
@@ -128,11 +116,11 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     newWsPath: string,
     opts: StorageOpts,
   ): Promise<void> {
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
+    const { wsName } = resolvePath(wsPath);
 
     await (
       await this._getFs(wsName, opts)
-    ).rename(wsPathHelpers.toFSPath(wsPath), wsPathHelpers.toFSPath(newWsPath));
+    ).rename(toFSPath(wsPath), toFSPath(newWsPath));
   }
 
   serializeError(error: Error) {
@@ -144,13 +132,47 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    const path = wsPathHelpers.toFSPath(wsPath);
-    const { wsName } = wsPathHelpers.resolvePath(wsPath);
+    const path = toFSPath(wsPath);
+    const { wsName } = resolvePath(wsPath);
 
     await (await this._getFs(wsName, opts)).writeFile(path, file);
   }
 
-  private async _getFs(wsName: string, opts: StorageOpts) {
+  protected abstract _getFs(
+    wsName: string,
+    opts: StorageOpts,
+  ): Promise<NativeBrowserFileSystem>;
+}
+
+export class NativeFsStorageProvider extends BaseFsStorageProvider {
+  name: string = WorkspaceType.NativeFS;
+  displayName = 'File system storage';
+  description = 'Saves data in your file system';
+
+  isSupported() {
+    // TODO: we donot have a great way to check if native fs is supported
+    // in the worker thread. We need have a universal configuration that is passed to worker
+    // and main thread on initialization.
+    return true;
+  }
+
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {
+    const { rootDirHandle } = createOpts;
+
+    if (!rootDirHandle) {
+      throw new Error(
+        `rootDirHandle is necessary for creating nativefs workspace`,
+      );
+    }
+
+    const obj: { [key: string]: any } = {
+      rootDirHandle,
+    };
+
+    return obj;
+  }
+
+  protected async _getFs(wsName: string, opts: StorageOpts) {
     const rootDirHandle: FileSystemDirectoryHandle = (
       await opts.readWorkspaceMetadata(wsName)
     ).rootDirHandle;

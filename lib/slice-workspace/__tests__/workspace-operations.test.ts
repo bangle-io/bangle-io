@@ -1,8 +1,4 @@
-import {
-  WorkspaceTypeBrowser,
-  WorkspaceTypeHelp,
-  WorkspaceTypeNative,
-} from '@bangle.io/constants';
+import { WorkspaceType } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
@@ -56,7 +52,7 @@ describe('listAllFiles', () => {
   test('cerating a workspace', async () => {
     const { store } = createBasicTestStore({});
 
-    await createWorkspace('test-1', WorkspaceTypeBrowser)(
+    await createWorkspace('test-1', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -69,7 +65,7 @@ describe('listAllFiles', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
 
     expect(await readAllWorkspacesInfo()).toEqual(
@@ -80,7 +76,7 @@ describe('listAllFiles', () => {
           lastModified: expect.any(Number),
           metadata: {},
           name: 'test-1',
-          type: WorkspaceTypeBrowser,
+          type: WorkspaceType.Browser,
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     );
@@ -88,12 +84,12 @@ describe('listAllFiles', () => {
 
   test('hides deleted workspaces', async () => {
     const { store } = createBasicTestStore({});
-    await createWorkspace('test-0', WorkspaceTypeBrowser)(
+    await createWorkspace('test-0', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
     );
-    await createWorkspace('test-1', WorkspaceTypeBrowser)(
+    await createWorkspace('test-1', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -111,7 +107,7 @@ describe('listAllFiles', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
 
     expect(await readAllWorkspacesInfo()).toHaveLength(2);
@@ -122,7 +118,7 @@ describe('createWorkspace', () => {
   test('works', async () => {
     const { store } = createBasicTestStore({});
 
-    await createWorkspace('test-1', WorkspaceTypeBrowser)(
+    await createWorkspace('test-1', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -133,21 +129,21 @@ describe('createWorkspace', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-1',
-      type: WorkspaceTypeBrowser,
+      type: WorkspaceType.Browser,
     });
   });
 
   test('throws error when workspace already exists', async () => {
     const { store } = createBasicTestStore({});
 
-    await createWorkspace('test-1', WorkspaceTypeBrowser)(
+    await createWorkspace('test-1', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
     );
 
     await expect(
-      createWorkspace('test-1', WorkspaceTypeBrowser)(
+      createWorkspace('test-1', WorkspaceType.Browser)(
         store.state,
         store.dispatch,
         store,
@@ -157,7 +153,7 @@ describe('createWorkspace', () => {
 
   test('saves workspace metadata correctly', async () => {
     class TestProvider extends IndexedDbStorageProvider {
-      name = WorkspaceTypeNative;
+      name = WorkspaceType.NativeFS;
 
       async newWorkspaceMetadata(wsName: string, createOpts: any) {
         return createOpts;
@@ -183,7 +179,7 @@ describe('createWorkspace', () => {
       ],
     });
 
-    await createWorkspace('test-1', WorkspaceTypeNative, {
+    await createWorkspace('test-1', WorkspaceType.NativeFS, {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
@@ -196,14 +192,14 @@ describe('createWorkspace', () => {
         rootDirHandle: { root: 'dummy' },
       },
       name: 'test-1',
-      type: 'nativefs',
+      type: WorkspaceType.NativeFS,
     });
   });
 
   test('creates a workspace which was previously deleted', async () => {
     const { store } = createBasicTestStore({});
 
-    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+    await createWorkspace('test-1', WorkspaceType.Browser, {})(
       store.state,
       store.dispatch,
       store,
@@ -218,7 +214,7 @@ describe('createWorkspace', () => {
     await waitForExpect(() => expect(getWsName()(store.state)).toBe(undefined));
 
     // create again
-    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+    await createWorkspace('test-1', WorkspaceType.Browser, {})(
       store.state,
       store.dispatch,
       store,
@@ -240,7 +236,7 @@ describe('deleteWorkspace', () => {
 
   test('deleting a workspace adds a delete field', async () => {
     const { store } = createBasicTestStore({});
-    await createWorkspace('test-1', WorkspaceTypeBrowser, {})(
+    await createWorkspace('test-1', WorkspaceType.Browser, {})(
       store.state,
       store.dispatch,
       store,
@@ -256,14 +252,14 @@ describe('deleteWorkspace', () => {
           allowLocalChanges: true,
         },
         name: 'bangle-help',
-        type: WorkspaceTypeHelp,
+        type: WorkspaceType.Help,
       },
       {
         deleted: true,
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: WorkspaceTypeBrowser,
+        type: WorkspaceType.Browser,
       },
     ]);
   });
@@ -271,7 +267,7 @@ describe('deleteWorkspace', () => {
   test('redirects correctly for a deleted workspace', async () => {
     const { store } = createBasicTestStore({});
 
-    await createWorkspace('test-1', WorkspaceTypeBrowser, {
+    await createWorkspace('test-1', WorkspaceType.Browser, {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
     await waitForExpect(() =>

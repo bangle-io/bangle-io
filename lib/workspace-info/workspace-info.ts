@@ -1,7 +1,4 @@
-import {
-  HELP_FS_WORKSPACE_NAME,
-  WorkspaceTypeHelp,
-} from '@bangle.io/constants';
+import { HELP_FS_WORKSPACE_NAME, WorkspaceType } from '@bangle.io/constants';
 import {
   getAppDb,
   getWorkspaceInfoTable,
@@ -21,7 +18,7 @@ export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
         allowLocalChanges: true,
       },
       name: HELP_FS_WORKSPACE_NAME,
-      type: WorkspaceTypeHelp,
+      type: WorkspaceType.Help,
       lastModified: Date.now(),
     };
   }

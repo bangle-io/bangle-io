@@ -27,7 +27,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
   hidden = true;
 
   private _getTree = getRepoTree();
-
   async createFile(
     wsPath: string,
     file: File,
@@ -60,6 +59,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
     });
 
     return {} as any;
+  }
+
+  isSupported() {
+    return true;
   }
 
   async listAllFiles(

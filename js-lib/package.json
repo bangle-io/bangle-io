@@ -19,6 +19,7 @@
     "pm-plugins",
     "remote-file-sync",
     "search-pm-node",
+    "tri-state",
     "weak-cache"
   ],
   "repository": {

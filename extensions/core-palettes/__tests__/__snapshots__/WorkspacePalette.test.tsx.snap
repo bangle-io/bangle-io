@@ -8,7 +8,7 @@ exports[`Component renders correctly 1`] = `
   >
     <div
       class="B-ui-components_universal-palette-item BU_allow-hover "
-      data-id="test-ws1-(nativefs)"
+      data-id="test-ws1"
       style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
     >
       <div

@@ -1,5 +1,5 @@
 import { useFocusManager } from '@react-aria/focus';
-import React, { useCallback, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
 import {
@@ -8,11 +8,11 @@ import {
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   pickADirectory,
 } from '@bangle.io/baby-fs';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE } from '@bangle.io/constants';
 import type { DialogComponentType } from '@bangle.io/shared-types';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, Dialog } from '@bangle.io/ui-components';
+import { safeNavigatorStorageGetDirectory } from '@bangle.io/utils';
 
 import type { WorkspaceCreateErrorTypes } from './common';
 import {
@@ -59,11 +59,27 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
   onDismiss: _onDismiss,
   dialogName,
 }) => {
-  const bangleStore = useBangleStoreContext();
   const [modalState, updateModalState] = useReducer(modalReducer, {
     error: undefined,
     workspace: undefined,
   });
+
+  useEffect(() => {
+    safeNavigatorStorageGetDirectory().then(async (root) => {
+      if (!root) {
+        return;
+      }
+
+      const parentDir = await root.getDirectoryHandle('magic-bone', {
+        create: true,
+      });
+
+      updateModalState({
+        type: 'update_workspace',
+        workspace: { name: 'magic bone', rootDir: parentDir },
+      });
+    });
+  }, []);
 
   const onDismiss = useCallback(() => {
     _onDismiss(dialogName);
@@ -100,7 +116,11 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
 
     dispatchSerialOperation({
       name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
-      value: { rootDirHandle: modalState.workspace.rootDir },
+      value: {
+        rootDirHandle: {
+          name: modalState.workspace.name,
+        },
+      },
     });
     onDismiss();
   }, [dispatchSerialOperation, modalState, onDismiss]);

@@ -26,6 +26,7 @@
     "@bangle.dev/table": "0.31.6",
     "@bangle.dev/utils": "0.31.6",
     "@bangle.io/browser-nativefs-storage": "workspace:*",
+    "@bangle.io/browser-privatefs-storage": "workspace:*",
     "@bangle.io/browser-storage": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/core-editor": "workspace:*",

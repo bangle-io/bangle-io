@@ -1,4 +1,4 @@
-import { MAX_OPEN_EDITORS, WorkspaceTypeBrowser } from '@bangle.io/constants';
+import { MAX_OPEN_EDITORS, WorkspaceType } from '@bangle.io/constants';
 import {
   getPageLocation,
   pageSliceKey,
@@ -162,7 +162,7 @@ describe('updateLocationEffect', () => {
   });
 
   test('opens a newly created workspace', async () => {
-    await createWorkspace('test-ws', WorkspaceTypeBrowser)(
+    await createWorkspace('test-ws', WorkspaceType.Browser)(
       store.state,
       store.dispatch,
       store,
@@ -364,7 +364,7 @@ describe('cachedWorkspaceInfoEffect', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-ws-2',
-        type: 'browser',
+        type: WorkspaceType.Browser,
       });
     });
 
@@ -379,7 +379,7 @@ describe('cachedWorkspaceInfoEffect', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-ws-1',
-        type: 'browser',
+        type: WorkspaceType.Browser,
       });
     });
   });
@@ -428,7 +428,7 @@ describe('cachedWorkspaceInfoEffect', () => {
       lastModified: expect.any(Number),
       metadata: {},
       name: 'test-ws-1',
-      type: 'browser',
+      type: WorkspaceType.Browser,
     });
 
     await saveWorkspaceInfo(
@@ -449,7 +449,7 @@ describe('cachedWorkspaceInfoEffect', () => {
         test: '1234',
       },
       name: 'test-ws-1',
-      type: 'browser',
+      type: WorkspaceType.Browser,
     });
 
     await waitForExpect(() => {
@@ -463,7 +463,7 @@ describe('cachedWorkspaceInfoEffect', () => {
           test: '1234',
         },
         name: 'test-ws-1',
-        type: 'browser',
+        type: WorkspaceType.Browser,
       });
     });
   });

@@ -50,7 +50,6 @@ const config: PlaywrightTestConfig = {
       retries: isCI ? 2 : 0,
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'safari',
       testMatch: [/-safari/],

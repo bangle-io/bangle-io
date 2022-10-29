@@ -89,6 +89,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/browser-nativefs-storage"\
       },\
       {\
+        "name": "@bangle.io/browser-privatefs-storage",\
+        "reference": "workspace:extensions/browser-privatefs-storage"\
+      },\
+      {\
         "name": "@bangle.io/browser-storage",\
         "reference": "workspace:extensions/browser-storage"\
       },\
@@ -211,6 +215,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@bangle.io/search-pm-node",\
         "reference": "workspace:js-lib/search-pm-node"\
+      },\
+      {\
+        "name": "@bangle.io/tri-state",\
+        "reference": "workspace:js-lib/tri-state"\
       },\
       {\
         "name": "@bangle.io/weak-cache",\
@@ -377,6 +385,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/bangle-store-context", ["workspace:lib/bangle-store-context"]],\
       ["@bangle.io/base-error", ["workspace:js-lib/base-error"]],\
       ["@bangle.io/browser-nativefs-storage", ["workspace:extensions/browser-nativefs-storage"]],\
+      ["@bangle.io/browser-privatefs-storage", ["workspace:extensions/browser-privatefs-storage"]],\
       ["@bangle.io/browser-storage", ["workspace:extensions/browser-storage"]],\
       ["@bangle.io/config", ["workspace:lib/config"]],\
       ["@bangle.io/constants", ["workspace:lib/constants"]],\
@@ -435,6 +444,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/storybook", ["workspace:tooling/storybook"]],\
       ["@bangle.io/style", ["workspace:app/style"]],\
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],\
+      ["@bangle.io/tri-state", ["workspace:js-lib/tri-state"]],\
       ["@bangle.io/ui-bangle-button", ["workspace:lib/ui-bangle-button"]],\
       ["@bangle.io/ui-components", ["workspace:lib/ui-components"]],\
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
@@ -5916,6 +5926,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/storage", "workspace:lib/storage"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["tslib", "npm:2.4.0"],\
+            ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/browser-privatefs-storage", [\
+        ["workspace:extensions/browser-privatefs-storage", {\
+          "packageLocation": "./extensions/browser-privatefs-storage/",\
+          "packageDependencies": [\
+            ["@bangle.io/browser-privatefs-storage", "workspace:extensions/browser-privatefs-storage"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -6068,6 +6094,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
+            ["@bangle.io/tri-state", "workspace:js-lib/tri-state"],\
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -6180,6 +6207,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/db-app/",\
           "packageDependencies": [\
             ["@bangle.io/db-app", "workspace:lib/db-app"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -6962,6 +6990,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/tri-state", "workspace:js-lib/tri-state"],\
             ["ts-pattern", "npm:4.0.3"],\
             ["type-fest", "npm:2.12.0"]\
           ],\
@@ -7060,6 +7089,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.31.6"],\
             ["@bangle.dev/utils", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],\
+            ["@bangle.io/browser-privatefs-storage", "workspace:extensions/browser-privatefs-storage"],\
             ["@bangle.io/browser-storage", "workspace:extensions/browser-storage"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],\
@@ -7413,6 +7443,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["type-fest", "npm:2.12.0"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=f456af"],\
             ["wait-for-expect", "npm:3.0.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/tri-state", [\
+        ["workspace:js-lib/tri-state", {\
+          "packageLocation": "./js-lib/tri-state/",\
+          "packageDependencies": [\
+            ["@bangle.io/tri-state", "workspace:js-lib/tri-state"]\
           ],\
           "linkType": "SOFT"\
         }]\

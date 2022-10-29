@@ -1,7 +1,7 @@
 import { SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
 import { isMobile } from './is-mac';
-import { rafSchedule } from './safe-js-callbacks';
+import { rafSchedule } from './safe-js';
 
 export function setRootWidescreenClass(
   widescreen: boolean = checkWidescreen(),
