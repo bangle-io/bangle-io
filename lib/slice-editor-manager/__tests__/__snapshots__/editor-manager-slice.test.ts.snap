@@ -24,7 +24,7 @@ exports[`serializing state selection is serialized correctly 1`] = `
           null,
         ],
       },
-      "focusedEditorId": undefined,
+      "focusedEditorId": null,
     },
     "version": "editor-slice/2",
   },
