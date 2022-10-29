@@ -256,7 +256,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
         return {
           ...initialUISliceState,
           notifications: [],
-          sidebar: value.sidebar,
+          sidebar: value.sidebar || null,
           theme: value.theme,
           noteSidebar: value.noteSidebar,
         };

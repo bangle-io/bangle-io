@@ -161,7 +161,8 @@ export function editorManagerSlice(): Slice<
           initialEditorSliceState,
           {
             editorConfig: OpenedEditorsConfig.fromJsonObj(data.editorConfig),
-            focusedEditorId: data.focusedEditorId,
+            focusedEditorId:
+              data.focusedEditorId == null ? undefined : data.focusedEditorId,
           },
         );
 
@@ -198,7 +199,10 @@ export function editorManagerSlice(): Slice<
         return {
           version: JSON_SCHEMA_VERSION,
           data: {
-            focusedEditorId: sliceState.focusedEditorId,
+            focusedEditorId:
+              sliceState.focusedEditorId == null
+                ? null
+                : sliceState.focusedEditorId,
             editorConfig: newEditorConfig.toJsonObj(),
           },
         };

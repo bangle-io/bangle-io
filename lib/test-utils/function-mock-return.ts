@@ -7,7 +7,7 @@
 //  // override things
 //  wsPath: 'xyz:sys.md'
 // }
-import type { Mutable } from 'type-fest';
+import type { Writable } from 'type-fest';
 
 import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
@@ -28,7 +28,7 @@ export const getEditorPluginMetadataReturn: ReturnType<
   wsPath: 'test-workspace:my-test-note.md',
 };
 
-export const getUseUIManagerContextReturn: Mutable<
+export const getUseUIManagerContextReturn: Writable<
   ReturnType<typeof useUIManagerContext>
 > = {
   ...initialState,
@@ -36,7 +36,7 @@ export const getUseUIManagerContextReturn: Mutable<
   bangleStore: initialBangleStore,
 };
 
-export const getUseWorkspaceContextReturn: Mutable<
+export const getUseWorkspaceContextReturn: Writable<
   ReturnType<typeof useWorkspaceContext>
 > = {
   bangleStore: initialBangleStore,
