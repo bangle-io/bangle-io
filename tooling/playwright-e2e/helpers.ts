@@ -43,7 +43,7 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
     'operation::@bangle.io/core-extension:NEW_WORKSPACE',
   );
 
-  await page.click(`li[data-key="${WorkspaceType.PrivateFS}"]`);
+  await page.click(`li[data-key="${WorkspaceType.Browser}"]`);
 
   await page.click('[aria-label="Next"]');
 
