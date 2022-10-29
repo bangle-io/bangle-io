@@ -63,7 +63,7 @@
     "@yarnpkg/pnpify": "^4.0.0-rc.15",
     "punycode": "^2.1.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.4"
   },
   "devDependencies": {
     "@bangle.dev/jest-utils": "0.31.6",
@@ -96,7 +96,7 @@
     "css-loader": "^5.2.7",
     "date-fns": "^2.25.0",
     "ejs": "^3.1.6",
-    "esbuild-linux-64": "0.15.8",
+    "esbuild-linux-64": "0.15.12",
     "eslint": "^8.23.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-import-resolver-node": "^0.3.6",
@@ -154,7 +154,7 @@
     "arrowParens": "always",
     "printWidth": 80
   },
-  "packageManager": "yarn@3.2.2",
+  "packageManager": "yarn@3.2.4",
   "license": "AGPL-3.0-or-later",
   "lint-staged": {
     "*.md": "yarn prettier --write",
