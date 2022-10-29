@@ -38,7 +38,7 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.4"
   },
   "devDependencies": {
     "@bangle.io/extension-registry": "workspace:*",
