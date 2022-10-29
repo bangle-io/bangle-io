@@ -1,4 +1,4 @@
-import { PRIMARY_EDITOR_INDEX, Severity } from '@bangle.io/constants';
+import { Severity } from '@bangle.io/constants';
 import {
   actionSerializerTestFixture,
   createBareStore,

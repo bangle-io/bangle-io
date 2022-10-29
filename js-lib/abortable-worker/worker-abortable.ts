@@ -14,7 +14,9 @@ type Callback<T> = ({
   ) => AbortableFunc<R, X>;
 }) => T;
 
-export function workerAbortable<T>(cb: Callback<T>) {
+export function workerAbortable<T extends { [key: string]: any }>(
+  cb: Callback<T>,
+) {
   let abortControllers: AbortControllers = new Map();
 
   return workerAbortHandler(

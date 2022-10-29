@@ -114,7 +114,7 @@ export function keybindingsHelper(bindings: {
   };
 }
 
-export function cx(...args: any[]) {
+export function cx(...args: any[]): string {
   let classes: string = '';
   for (const arg of args) {
     if (!arg) {

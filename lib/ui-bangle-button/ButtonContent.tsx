@@ -40,7 +40,7 @@ export function ButtonContent({
         hasText && isRight && 'mr-1',
         iconSize,
       ),
-    });
+    } as any);
 
   return (
     <>

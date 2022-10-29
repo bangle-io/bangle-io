@@ -212,10 +212,7 @@ function bind(f?: Function, self?: object) {
 export type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
 
 class FieldDesc<S, A extends BaseAction, Op> {
-  init: (
-    config: undefined | { [key: string]: any },
-    appState: AppState<S, A, Op>,
-  ) => any;
+  init: (config: undefined | Op, appState: AppState<S, A, Op>) => any;
 
   apply?: (action: any, value: any, appState: AppState<S, A, Op>) => any;
 

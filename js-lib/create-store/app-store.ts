@@ -22,7 +22,7 @@ export type DispatchType<S, A extends BaseAction> = ApplicationStore<
 type StoreSideEffectType<SL, A extends BaseAction, S> = {
   key: string;
   initialState: AppState<S, A>;
-  effect: ReturnType<SliceSideEffect<SL, A, S>>;
+  effect: ReturnType<SliceSideEffect<SL, A>>;
 };
 
 type DispatchActionType<S, A extends BaseAction> = (

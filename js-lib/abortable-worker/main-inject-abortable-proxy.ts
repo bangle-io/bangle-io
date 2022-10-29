@@ -24,7 +24,7 @@ export function mainInjectAbortableProxy<
   }: {
     abortableMethodIdentifier?: string;
   } = {},
-) {
+): T {
   return new Proxy(workerProxiedMethods, {
     get(_target, prop) {
       if (
