@@ -1,7 +1,10 @@
 import { expect } from '@playwright/test';
 
+import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+
 import { withBangle as test } from '../fixture-with-bangle';
 import {
+  getEditorDebugString,
   getPrimaryEditorDebugString,
   isDarwin,
   SELECTOR_TIMEOUT,
@@ -90,6 +93,44 @@ test.describe('mobile', () => {
     await expect
       .poll(() => getPrimaryEditorDebugString(page))
       .toContain('Hello');
+  });
+
+  test('edit button', async ({ page }) => {
+    let activityBar = page.locator('.B-ui-dhancha_activitybar');
+
+    await activityBar.waitFor();
+    // by default on chrome editing is enabled
+    const done = activityBar.locator('role=button[name="done editing"]');
+
+    await test.step('clicking on done works', async () => {
+      await expect(done).toContainText('done');
+      await done.click();
+    });
+
+    const edit = activityBar.locator('role=button[name="edit"]');
+
+    await test.step('clicking edit should make the document typables', async () => {
+      await expect(edit).toContainText('edit');
+
+      await edit.click();
+      await done.waitFor();
+
+      // clicking edit should focus editor
+      await page.keyboard.type('manthanoy', { delay: 30 });
+
+      let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
+      expect(primaryText).toMatch(/manthanoy/);
+    });
+
+    await test.step('clicking done should prevent any editing', async () => {
+      await done.click();
+      await edit.waitFor();
+
+      await page.keyboard.type('sugar', { delay: 30 });
+
+      let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
+      expect(primaryText.includes('sugar')).toBe(false);
+    });
   });
 });
 

@@ -1,6 +1,7 @@
 import { search } from '@bangle.dev/search';
 
 import { editor, Slice, workspace } from '@bangle.io/api';
+import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { assertActionName, isAbortError } from '@bangle.io/utils';
 
 import type { SearchNotesExtensionState } from './constants';
@@ -166,20 +167,23 @@ const highlightEditorsEffect = searchNotesSliceKey.effect(() => {
         return;
       }
 
-      editor.forEachEditor((editor) => {
-        if (editor?.destroyed === false) {
-          const queryRegex = searchQuery
-            ? new RegExp(
-                searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'),
-                'i',
-              )
-            : undefined;
-          search.updateSearchQuery(searchPluginKey, queryRegex)(
-            editor.view.state,
-            editor.view.dispatch,
-          );
-        }
-      })(store.state);
+      editorManagerSliceKey.callQueryOp(
+        store.state,
+        editor.forEachEditor((editor) => {
+          if (editor?.destroyed === false) {
+            const queryRegex = searchQuery
+              ? new RegExp(
+                  searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'),
+                  'i',
+                )
+              : undefined;
+            search.updateSearchQuery(searchPluginKey, queryRegex)(
+              editor.view.state,
+              editor.view.dispatch,
+            );
+          }
+        }),
+      );
     },
   };
 });
