@@ -47,7 +47,11 @@ export function toggleEditing({
     for (const { editor } of getEachEditorIterable(
       editorManagerSliceKey.getSliceStateAsserted(state),
     )) {
-      editor?.view.dispatch(editor.view.state.tr.setMeta('__garbage__', true));
+      // send empty transaction so that editor view can update
+      // the editing state
+      editor?.view.dispatch(
+        editor.view.state.tr.setMeta('__activitybar_empty__', true),
+      );
 
       if (!editingAllowed) {
         editor?.focusView();

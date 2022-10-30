@@ -9,7 +9,7 @@ import { AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement } from '@bangle.io/utils';
 
-import { setEditorUnmounted } from '..';
+import { editorManagerSliceKey } from '../constants';
 import { editorManagerSlice } from '../editor-manager-slice';
 import {
   didSomeEditorChange,
@@ -18,6 +18,8 @@ import {
   getEditorState,
   getInitialSelection,
   setEditorReady,
+  setEditorUnmounted,
+  toggleEditing,
 } from '../operations';
 
 const getScrollParentElementMock =
@@ -262,6 +264,7 @@ describe('setEditorUnmounted', () => {
     expect(dispatch).toBeCalledTimes(0);
   });
 });
+
 describe('didSomeEditorChange', () => {
   test('works 1', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
@@ -332,5 +335,25 @@ describe('didSomeEditorChange', () => {
 
     expect(didSomeEditorChange(state)(stateA)).toBe(false);
     expect(didSomeEditorChange(stateA)(state)).toBe(false);
+  });
+});
+
+describe('toggleEditing', () => {
+  test('toggling editing works', async () => {
+    let state = AppState.create({ slices: [editorManagerSlice()] });
+
+    expect(
+      editorManagerSliceKey.getSliceStateAsserted(state).editingAllowed,
+    ).toBe(true);
+
+    let newState = await new Promise<typeof state>((resolve) => {
+      toggleEditing()(state, (action) => {
+        resolve(state.applyAction(action));
+      });
+    });
+
+    expect(
+      editorManagerSliceKey.getSliceStateAsserted(newState).editingAllowed,
+    ).toBe(false);
   });
 });
