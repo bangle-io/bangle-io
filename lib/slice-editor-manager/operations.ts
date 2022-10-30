@@ -24,11 +24,37 @@ import {
   isValidEditorId,
 } from './utils';
 
-export function toggleEditing() {
-  return editorManagerSliceKey.op((_, dispatch) => {
+/**
+ * Enables or disables editing.
+ *
+ * @param param0.focusOrBlur - if true : focuses when enabling editing, blurs when disabling editing
+ * @returns
+ */
+export function toggleEditing({
+  focusOrBlur = true,
+}: { focusOrBlur?: boolean } = {}) {
+  return editorManagerSliceKey.op((state, dispatch) => {
+    const { editingAllowed } =
+      editorManagerSliceKey.getSliceStateAsserted(state);
     dispatch({
       name: 'action::@bangle.io/slice-editor-manager:toggle-editing',
     });
+
+    if (!focusOrBlur) {
+      return;
+    }
+
+    for (const { editor } of getEachEditorIterable(
+      editorManagerSliceKey.getSliceStateAsserted(state),
+    )) {
+      editor?.view.dispatch(editor.view.state.tr.setMeta('__garbage__', true));
+
+      if (!editingAllowed) {
+        editor?.focusView();
+      } else {
+        editor?.view.dom.blur();
+      }
+    }
   });
 }
 
@@ -87,6 +113,7 @@ export function focusEditor(editorId: EditorIdType = PRIMARY_EDITOR_INDEX) {
     return false;
   };
 }
+
 export function updateFocusedEditor(
   editorId: EditorIdType = PRIMARY_EDITOR_INDEX,
 ) {
@@ -132,7 +159,7 @@ export function updateInitialSelection(editorId: EditorIdType) {
 export function forEachEditor(
   cb: (editor: BangleEditor | undefined, index: number) => void,
 ) {
-  return (state: AppState): void => {
+  return editorManagerSliceKey.queryOp((state): void => {
     const editorManagerState = editorManagerSliceKey.getSliceState(state);
 
     if (!editorManagerState) {
@@ -144,7 +171,7 @@ export function forEachEditor(
     )) {
       cb(editor, editorId);
     }
-  };
+  });
 }
 
 export function getEditorView(editorId: EditorIdType) {
@@ -359,4 +386,37 @@ export function dispatchEditorCommand<T>(
 
     return cmdCallback(view.state, view.dispatch, view);
   };
+}
+
+/**
+ *
+ * @param editorId skip to blur any editor
+ * @returns
+ */
+export function blurEditor(editorId?: EditorIdType) {
+  if (editorId !== undefined) {
+    assertValidEditorId(editorId);
+  }
+
+  return editorManagerSliceKey.queryOp((state) => {
+    forEachEditor((editor, currentEditorId) => {
+      if (editorId == null || currentEditorId === editorId) {
+        editor?.view.dom.blur();
+      }
+    })(state);
+  });
+}
+
+export function someEditorHasFocus() {
+  return editorManagerSliceKey.queryOp((state) => {
+    for (const { editor } of getEachEditorIterable(
+      editorManagerSliceKey.getSliceStateAsserted(state),
+    )) {
+      if (editor?.view.hasFocus()) {
+        return true;
+      }
+    }
+
+    return false;
+  });
 }

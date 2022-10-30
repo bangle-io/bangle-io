@@ -4,16 +4,13 @@ import { useBangleStoreContext } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
+  someEditorHasFocus,
   toggleEditing,
-  useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import {
-  EditIcon,
-  FileDocumentIcon,
-  NoEditIcon,
-} from '@bangle.io/ui-components';
+import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
+import { FileDocumentIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarButton } from './ActivitybarButton';
@@ -26,7 +23,6 @@ export function ActivitybarMobile() {
     extensionRegistry.getSerialOperationKeybindingMapping();
   const { wsName, openedWsPaths } = useWorkspaceContext();
   const { primaryWsPath } = openedWsPaths;
-  const { editingAllowed } = useEditorManagerContext();
 
   const sidebarItems = extensionRegistry.getSidebars().filter((r) => {
     return r.activitybarIconShow
@@ -34,6 +30,8 @@ export function ActivitybarMobile() {
       : true;
   });
   const { sidebar: activeSidebar } = useUIManagerContext();
+
+  const showDone = someEditorHasFocus()(bangleStore.state);
 
   return (
     <>
@@ -69,23 +67,22 @@ export function ActivitybarMobile() {
         <div className="flex flex-1"></div>
         <div className="flex flex-row items-center flex-none">
           <div className="mr-2">
-            <ActivitybarButton
-              hint={editingAllowed ? 'Disable edit' : 'Enable edit'}
-              widescreen={false}
+            <ActionButton
+              ariaLabel={showDone ? 'done editing' : 'edit'}
+              className="capitalize"
+              variant={showDone ? 'primary' : 'secondary'}
               onPress={() => {
-                toggleEditing()(bangleStore.state, bangleStore.dispatch);
+                toggleEditing({ focusOrBlur: true })(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
               }}
-              icon={
-                editingAllowed ? (
-                  <EditIcon
-                    className={'w-5 h-5'}
-                    fill={'var(--BV-accent-primary-0)'}
-                  />
-                ) : (
-                  <NoEditIcon className="w-5 h-5" />
-                )
-              }
-            />
+            >
+              <ButtonContent
+                textClassName="font-bold"
+                text={showDone ? 'done' : 'edit'}
+              />
+            </ActionButton>
           </div>
 
           <div className="mr-2">
