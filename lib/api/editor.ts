@@ -4,6 +4,7 @@ import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 
 export {
   blurEditor,
+  editorManagerSliceKey,
   focusPrimaryEditor,
   forEachEditor,
 } from '@bangle.io/slice-editor-manager';

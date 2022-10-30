@@ -10,9 +10,12 @@ import {
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
-import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
+import {
+  editorManagerSlice,
+  editorManagerSliceKey,
+} from '@bangle.io/slice-editor-manager';
 import { notificationSlice } from '@bangle.io/slice-notification';
-import { pageSlice } from '@bangle.io/slice-page';
+import { pageSlice, pageSliceKey } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { uiSlice, uiSliceKey } from '@bangle.io/slice-ui';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
@@ -126,8 +129,13 @@ export function createBasicStore<
   };
 }
 
+// this object exists to avoid test writers import the keys
 export interface TestInitialSliceStateOverride {
   uiSlice?: Partial<ReturnType<typeof uiSliceKey['getSliceState']>>;
+  pageSlice?: Partial<ReturnType<typeof pageSliceKey['getSliceState']>>;
+  editorManagerSlice?: Partial<
+    ReturnType<typeof editorManagerSliceKey['getSliceState']>
+  >;
 }
 
 function overrideSliceStates(
@@ -139,6 +147,23 @@ function overrideSliceStates(
       return overrideSliceInit(slice, (s) => ({
         ...s,
         ...override.uiSlice,
+      }));
+    }
+
+    if (override?.pageSlice && slice.key === pageSliceKey.key) {
+      return overrideSliceInit(slice, (s) => ({
+        ...s,
+        ...override.pageSlice,
+      }));
+    }
+
+    if (
+      override?.editorManagerSlice &&
+      slice.key === editorManagerSliceKey.key
+    ) {
+      return overrideSliceInit(slice, (s) => ({
+        ...s,
+        ...override.editorManagerSlice,
       }));
     }
 

@@ -92,6 +92,8 @@ export function syncRunner(
         notifyVerbose &&
           notify(store, 'Github sync already in progress', Severity.INFO);
 
+        console.warn('Github sync: lock not acquired');
+
         return false;
       }
 

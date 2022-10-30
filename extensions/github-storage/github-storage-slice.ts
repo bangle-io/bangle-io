@@ -1,4 +1,4 @@
-import { notification, page, Slice, workspace } from '@bangle.io/api';
+import { editor, notification, page, Slice, workspace } from '@bangle.io/api';
 import { Severity } from '@bangle.io/constants';
 import { abortableSetInterval } from '@bangle.io/utils';
 
@@ -81,6 +81,7 @@ export function githubStorageSlice() {
     },
     sideEffect: [
       ghWorkspaceEffect,
+      periodSyncEffect,
       syncEffect,
       conflictEffect,
       setConflictNotification,
@@ -136,7 +137,34 @@ export const ghWorkspaceEffect = ghSliceKey.effect(() => {
   };
 });
 
-export const syncEffect = ghSliceKey.effect(() => {
+export const syncEffect = ghSliceKey.deferredReactor(
+  {
+    // mostly for mobile: sync whenever a user presses done, so that we save the latest changes
+    editingAllowed: editor.editorManagerSliceKey.select('editingAllowed'),
+    // sync whenever page lifecycle changes
+    lifeCycleState: page.pageSliceKey.select('lifeCycleState'),
+    githubWsName: ghSliceKey.select('githubWsName'),
+  },
+  (store, { editingAllowed, lifeCycleState, githubWsName }) => {
+    if (!githubWsName) {
+      return;
+    }
+
+    optimizeDatabaseOperation(false)(
+      store.state,
+      store.dispatch,
+      store,
+    ).finally(() => {
+      syncRunner(githubWsName, new AbortController().signal)(
+        store.state,
+        store.dispatch,
+        store,
+      );
+    });
+  },
+);
+
+export const periodSyncEffect = ghSliceKey.effect(() => {
   return {
     deferredOnce(store, signal) {
       abortableSetInterval(
@@ -165,37 +193,6 @@ export const syncEffect = ghSliceKey.effect(() => {
         signal,
         getSyncInterval(),
       );
-    },
-
-    update(store, prevState) {
-      const pageDidChange = page.pageLifeCycleTransitionedTo(
-        ['passive', 'terminated', 'hidden', 'active'],
-        prevState,
-      )(store.state);
-
-      const githubWsNameChanged = ghSliceKey.valueChanged(
-        'githubWsName',
-        store.state,
-        prevState,
-      );
-
-      if (pageDidChange || githubWsNameChanged) {
-        const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-
-        if (githubWsName) {
-          optimizeDatabaseOperation(false)(
-            store.state,
-            store.dispatch,
-            store,
-          ).finally(() => {
-            syncRunner(githubWsName, new AbortController().signal)(
-              store.state,
-              store.dispatch,
-              store,
-            );
-          });
-        }
-      }
     },
   };
 });
