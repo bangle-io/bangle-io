@@ -67,7 +67,7 @@ export function AppContainer() {
           return;
         }
         requestedStorage = true;
-        let result = await navigator.storage?.persist?.();
+        let result = await navigator?.storage?.persist?.();
         console.debug(`storage.persist: ${result}`);
       };
 

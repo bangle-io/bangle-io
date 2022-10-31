@@ -11,6 +11,7 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DialogComponentType } from '@bangle.io/shared-types';
 import { showDialog } from '@bangle.io/slice-ui';
 import { TriState } from '@bangle.io/tri-state';
+import { safeNavigatorStorageGetDirectory } from '@bangle.io/utils';
 
 import { PickWorkspaceType } from './PickWorkspaceType';
 
@@ -23,30 +24,15 @@ export const NewWorkspaceModal: DialogComponentType = (props) => {
   useEffect(() => {
     let unmounted = false;
 
-    if (
-      typeof navigator !== 'undefined' &&
-      'getDirectory' in navigator.storage
-    ) {
-      navigator.storage
-        .getDirectory()
-        .then(() => {
-          if (unmounted) {
-            return;
-          }
+    safeNavigatorStorageGetDirectory().then((dir) => {
+      if (unmounted) {
+        return;
+      }
 
-          // setIsPrivateFsAvailable(TriState.Yes);
-          // TODO private fs become buggy in safari for some reason
-          setIsPrivateFsAvailable(TriState.No);
-        })
-        .catch(() => {
-          if (unmounted) {
-            return;
-          }
-          setIsPrivateFsAvailable(TriState.No);
-        });
-    } else {
+      // setIsPrivateFsAvailable(TriState.Yes);
+      // TODO private fs become buggy in safari for some reason
       setIsPrivateFsAvailable(TriState.No);
-    }
+    });
 
     return () => {
       unmounted = true;
