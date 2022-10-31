@@ -26,12 +26,14 @@ let togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
   typeof togglePaletteType
 >;
 
-test('renders mobile view', () => {
+test('renders mobile view', async () => {
   const { store } = createBasicTestStore({
     extensions: [],
     useEditorManagerSlice: true,
     useUISlice: true,
   });
+
+  await setupMockWorkspaceWithNotes(store);
 
   let result = render(
     <div>

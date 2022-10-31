@@ -4,12 +4,17 @@ import {
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
-import { assertActionName, createEmptyArray, isMobile } from '@bangle.io/utils';
+import {
+  assertActionName,
+  checkWidescreen,
+  createEmptyArray,
+} from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import {
   focusEditorEffect,
   initialSelectionEffect,
+  syncEditingAllowedWithBlurEffect,
   trimWhiteSpaceEffect,
   watchEditorScrollEffect,
 } from './effects';
@@ -33,9 +38,10 @@ export const initialEditorSliceState: EditorSliceState = {
   }),
   primaryEditor: undefined,
   secondaryEditor: undefined,
-  // for now disabling editing for mobile by default
-  // as it causes a lot of jumps due to keyboard
-  editingAllowed: !isMobile,
+
+  // We disable editing in mobile devices by default.
+  // TODO: move this to a config stating the widescreen status
+  editingAllowed: checkWidescreen(),
 };
 
 const applyState = (
@@ -43,10 +49,10 @@ const applyState = (
   state: EditorSliceState,
 ): EditorSliceState => {
   switch (action.name) {
-    case 'action::@bangle.io/slice-editor-manager:toggle-editing': {
+    case 'action::@bangle.io/slice-editor-manager:set-editing-allowed': {
       return {
         ...state,
-        editingAllowed: !state.editingAllowed,
+        editingAllowed: action.value.editingAllowed,
       };
     }
     case 'action::@bangle.io/slice-editor-manager:set-editor': {
@@ -213,6 +219,7 @@ export function editorManagerSlice(): Slice<
       focusEditorEffect,
       watchEditorScrollEffect,
       trimWhiteSpaceEffect,
+      syncEditingAllowedWithBlurEffect,
     ],
   });
 }

@@ -344,7 +344,7 @@ describe('toggleEditing', () => {
 
     expect(
       editorManagerSliceKey.getSliceStateAsserted(state).editingAllowed,
-    ).toBe(true);
+    ).toBe(false);
 
     let newState = await new Promise<typeof state>((resolve) => {
       toggleEditing()(state, (action) => {
@@ -354,6 +354,6 @@ describe('toggleEditing', () => {
 
     expect(
       editorManagerSliceKey.getSliceStateAsserted(newState).editingAllowed,
-    ).toBe(false);
+    ).toBe(true);
   });
 });

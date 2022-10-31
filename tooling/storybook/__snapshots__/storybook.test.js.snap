@@ -415,7 +415,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
       <span
         className="font-semibold mr-2"
       >
-        bangle-io
+        one
       </span>
     </div>
     <div

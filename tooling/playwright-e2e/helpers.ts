@@ -567,3 +567,22 @@ export async function waitForEditorIdToLoad(
 export async function waitForNotification(page: Page, text: string) {
   await page.locator(`.app-entry_notification:has-text("${text}")`).waitFor();
 }
+
+export async function mobileEnableEditing(page: Page) {
+  let activityBar = page.locator('.B-ui-dhancha_activitybar');
+  let doneEditing = activityBar.locator('role=button[name="done editing"]');
+
+  if (
+    await doneEditing.isVisible({
+      timeout: 20,
+    })
+  ) {
+    return;
+  }
+
+  await activityBar.waitFor();
+
+  const edit = activityBar.locator('role=button[name="edit"]');
+  await edit.click();
+  await activityBar.locator('role=button[name="done editing"]').waitFor();
+}

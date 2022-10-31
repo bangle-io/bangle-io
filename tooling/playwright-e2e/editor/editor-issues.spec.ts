@@ -1,7 +1,11 @@
 import { expect } from '@playwright/test';
 
 import { withBangle as test } from '../fixture-with-bangle';
-import { createNewNote, createWorkspace } from '../helpers';
+import {
+  createNewNote,
+  createWorkspace,
+  mobileEnableEditing,
+} from '../helpers';
 
 for (const screenType of ['desktop', 'mobile']) {
   test.describe(screenType + ' editor issue', () => {
@@ -16,6 +20,10 @@ for (const screenType of ['desktop', 'mobile']) {
     test('displays editor issue correctly', async ({ page }) => {
       const wsName1 = await createWorkspace(page);
       const wsPath1 = await createNewNote(page, wsName1, 'file-1');
+
+      if (screenType === 'mobile') {
+        await mobileEnableEditing(page);
+      }
 
       // manually trigger an error
       await page.evaluate(

@@ -37,7 +37,10 @@ export type EditorManagerAction =
       value: { editor: BangleEditor | undefined; editorId: EditorIdType };
     }
   | {
-      name: 'action::@bangle.io/slice-editor-manager:toggle-editing';
+      name: 'action::@bangle.io/slice-editor-manager:set-editing-allowed';
+      value: {
+        editingAllowed: boolean;
+      };
     }
   | {
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update';

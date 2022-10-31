@@ -32,12 +32,16 @@ import {
  */
 export function toggleEditing({
   focusOrBlur = true,
-}: { focusOrBlur?: boolean } = {}) {
+  editingAllowed,
+}: { focusOrBlur?: boolean; editingAllowed?: boolean } = {}) {
   return editorManagerSliceKey.op((state, dispatch) => {
-    const { editingAllowed } =
-      editorManagerSliceKey.getSliceStateAsserted(state);
+    const newEditingAllowed =
+      editingAllowed ??
+      !editorManagerSliceKey.getSliceStateAsserted(state).editingAllowed;
+
     dispatch({
-      name: 'action::@bangle.io/slice-editor-manager:toggle-editing',
+      name: 'action::@bangle.io/slice-editor-manager:set-editing-allowed',
+      value: { editingAllowed: newEditingAllowed },
     });
 
     if (!focusOrBlur) {
@@ -47,13 +51,17 @@ export function toggleEditing({
     for (const { editor } of getEachEditorIterable(
       editorManagerSliceKey.getSliceStateAsserted(state),
     )) {
+      if (editor?.view.isDestroyed) {
+        continue;
+      }
+
       // send empty transaction so that editor view can update
       // the editing state
       editor?.view.dispatch(
         editor.view.state.tr.setMeta('__activitybar_empty__', true),
       );
 
-      if (!editingAllowed) {
+      if (newEditingAllowed) {
         editor?.focusView();
       } else {
         editor?.view.dom.blur();
