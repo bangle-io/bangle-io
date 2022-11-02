@@ -164,38 +164,29 @@ export const syncEffect = ghSliceKey.deferredReactor(
   },
 );
 
-export const periodSyncEffect = ghSliceKey.effect(() => {
-  return {
-    deferredOnce(store, signal) {
-      abortableSetInterval(
-        () => {
-          const { githubWsName } = ghSliceKey.getSliceStateAsserted(
-            store.state,
-          );
+export const periodSyncEffect = ghSliceKey.intervalRunEffect(
+  getSyncInterval(),
+  (store, storeDestroyedSignal) => {
+    const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
 
-          const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
+    const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
 
-          if (githubWsName && pageLifecycle === 'active') {
-            debug('Periodic Github sync in background');
-            optimizeDatabaseOperation(true)(
-              store.state,
-              store.dispatch,
-              store,
-            ).finally(() => {
-              syncRunner(githubWsName, signal)(
-                store.state,
-                store.dispatch,
-                store,
-              );
-            });
-          }
-        },
-        signal,
-        getSyncInterval(),
-      );
-    },
-  };
-});
+    if (githubWsName && pageLifecycle === 'active') {
+      debug('Periodic Github sync in background');
+      optimizeDatabaseOperation(true)(
+        store.state,
+        store.dispatch,
+        store,
+      ).finally(() => {
+        syncRunner(githubWsName, storeDestroyedSignal)(
+          store.state,
+          store.dispatch,
+          store,
+        );
+      });
+    }
+  },
+);
 
 export const conflictEffect = ghSliceKey.effect(() => {
   return {

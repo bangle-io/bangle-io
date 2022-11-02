@@ -196,14 +196,17 @@ export class SliceKey<
    */
   intervalRunEffect(
     timer: number,
-    cb: (store: ApplicationStore<SL, A>) => void,
+    cb: (
+      store: ApplicationStore<SL, A>,
+      storeDestroyedSignal: AbortSignal,
+    ) => void,
   ) {
     return this.effect(() => {
       return {
         deferredOnce(store, abortSignal) {
           abortableSetInterval(
             () => {
-              cb(store);
+              cb(store, abortSignal);
             },
             abortSignal,
             timer,
