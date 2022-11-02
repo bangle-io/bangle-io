@@ -48,19 +48,3 @@ declare var _newE2eHelpers2:
   | import('@bangle.io/e2e-types').E2ETypes;
 
 declare var __BANGLE_INJECTED_CONFIG__: string | undefined;
-
-declare module 'js-sha1' {
-  function sha1<T>(dest: string | T[] | ArrayBuffer | Uint8Array): string;
-
-  namespace sha1 {
-    export function hex(arg: string): string;
-    export function update<T>(
-      arg: string | T[] | Uint8Array | ArrayBuffer,
-    ): string;
-    export function array(): Uint8Array;
-    export function digest(arg: any): Uint8Array;
-    export function arrayBuffer(arg: any): ArrayBuffer;
-  }
-
-  export = sha1;
-}
