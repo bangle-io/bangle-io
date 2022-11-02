@@ -6,6 +6,7 @@ import type {
   SliceSideEffect,
 } from './app-state-slice';
 import type { ApplicationStore } from './app-store';
+import { abortableSetInterval } from './helper';
 
 const keys: { [k: string]: number } = Object.create(null);
 
@@ -184,6 +185,32 @@ export class SliceKey<
     return this.valueChanged(field, state, prevState)
       ? this.getSliceStateAsserted(state)[field]
       : undefined;
+  }
+
+  /**
+   *  Runs a callback once every `timer` milliseconds. Auto cleans up when the store is destroyed.
+   *
+   * @param timer - the time in millisecond of the interval
+   * @param cb
+   * @returns
+   */
+  intervalRunEffect(
+    timer: number,
+    cb: (store: ApplicationStore<SL, A>) => void,
+  ) {
+    return this.effect(() => {
+      return {
+        deferredOnce(store, abortSignal) {
+          abortableSetInterval(
+            () => {
+              cb(store);
+            },
+            abortSignal,
+            timer,
+          );
+        },
+      };
+    });
   }
 
   // types.

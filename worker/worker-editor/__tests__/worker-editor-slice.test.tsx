@@ -24,7 +24,6 @@ import {
   TestStoreProvider,
   waitForExpect,
 } from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getCollabManager } from '../worker-editor-slice';

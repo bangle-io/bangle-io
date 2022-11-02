@@ -46,7 +46,7 @@ exports[`renders mobile view 1`] = `
         <span
           class="font-semibold mr-2"
         >
-          bangle-io
+          two
         </span>
       </div>
       <div

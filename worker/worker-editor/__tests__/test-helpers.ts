@@ -1,6 +1,5 @@
 import { collabClient } from '@bangle.dev/collab-client';
 
-import type { SliceSideEffect } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import {
@@ -34,6 +33,7 @@ export const setup = async ({
     createBasicTestStore({
       useEditorManagerSlice: true,
       useEditorCoreExtension: true,
+      useUISlice: true,
       slices: [
         editorSyncSlice(),
         workspaceOpenedDocInfoSlice(),

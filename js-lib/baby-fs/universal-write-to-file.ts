@@ -50,7 +50,12 @@ export async function writeToFile(
 
   // for Safari 15.2 and later which support private fs
   // and it does not allow writing to fileHandle outside of worker
-  if ('getDirectory' in navigator.storage && isSafari()) {
+  if (
+    navigator &&
+    navigator.storage &&
+    'getDirectory' in navigator.storage &&
+    isSafari()
+  ) {
     // Safari does not allow forwarding file handlers to worker context
     let path = parentHandles.map((h) => h.name);
     path.push(fileHandle.name);

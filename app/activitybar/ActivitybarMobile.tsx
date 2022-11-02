@@ -4,8 +4,8 @@ import { useBangleStoreContext } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
-  someEditorHasFocus,
   toggleEditing,
+  useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -19,19 +19,47 @@ import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 export function ActivitybarMobile() {
   const extensionRegistry = useExtensionRegistryContext();
   const bangleStore = useBangleStoreContext();
-  const operationKeybindings =
-    extensionRegistry.getSerialOperationKeybindingMapping();
   const { wsName, openedWsPaths } = useWorkspaceContext();
   const { primaryWsPath } = openedWsPaths;
+
+  const { editingAllowed: showDone } = useEditorManagerContext();
+  const { sidebar: activeSidebar } = useUIManagerContext();
+
+  return (
+    <ActivitybarMobileDumb
+      bangleStore={bangleStore}
+      primaryWsPath={primaryWsPath}
+      wsName={wsName}
+      showDone={showDone}
+      extensionRegistry={extensionRegistry}
+      activeSidebar={activeSidebar}
+    />
+  );
+}
+
+export function ActivitybarMobileDumb({
+  bangleStore,
+  primaryWsPath,
+  wsName,
+  showDone,
+  extensionRegistry,
+  activeSidebar,
+}: {
+  bangleStore: ReturnType<typeof useBangleStoreContext>;
+  primaryWsPath: string | undefined;
+  wsName: string | undefined;
+  showDone: boolean;
+  extensionRegistry: ReturnType<typeof useExtensionRegistryContext>;
+  activeSidebar: ReturnType<typeof useUIManagerContext>['sidebar'];
+}) {
+  const operationKeybindings =
+    extensionRegistry.getSerialOperationKeybindingMapping();
 
   const sidebarItems = extensionRegistry.getSidebars().filter((r) => {
     return r.activitybarIconShow
       ? r.activitybarIconShow(wsName, bangleStore.state)
       : true;
   });
-  const { sidebar: activeSidebar } = useUIManagerContext();
-
-  const showDone = someEditorHasFocus()(bangleStore.state);
 
   return (
     <>
@@ -66,24 +94,39 @@ export function ActivitybarMobile() {
         </div>
         <div className="flex flex-1"></div>
         <div className="flex flex-row items-center flex-none">
-          <div className="mr-2">
-            <ActionButton
-              ariaLabel={showDone ? 'done editing' : 'edit'}
-              className="capitalize"
-              variant={showDone ? 'primary' : 'secondary'}
-              onPress={() => {
-                toggleEditing({ focusOrBlur: true })(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
-              }}
-            >
-              <ButtonContent
-                textClassName="font-bold"
-                text={showDone ? 'done' : 'edit'}
-              />
-            </ActionButton>
-          </div>
+          {primaryWsPath && (
+            <div className="mr-2">
+              {showDone ? (
+                <ActionButton
+                  ariaLabel={'done editing'}
+                  className="capitalize"
+                  variant={'primary'}
+                  onPress={() => {
+                    toggleEditing({
+                      focusOrBlur: true,
+                      editingAllowed: false,
+                    })(bangleStore.state, bangleStore.dispatch);
+                  }}
+                >
+                  <ButtonContent textClassName="font-bold" text={'done'} />
+                </ActionButton>
+              ) : (
+                <ActionButton
+                  ariaLabel={'edit'}
+                  className="capitalize"
+                  variant={'secondary'}
+                  onPress={() => {
+                    toggleEditing({
+                      focusOrBlur: true,
+                      editingAllowed: true,
+                    })(bangleStore.state, bangleStore.dispatch);
+                  }}
+                >
+                  <ButtonContent textClassName="font-bold" text={'edit'} />
+                </ActionButton>
+              )}
+            </div>
+          )}
 
           <div className="mr-2">
             <ActivitybarOptionsDropdown

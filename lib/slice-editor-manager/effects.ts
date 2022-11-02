@@ -2,7 +2,12 @@ import type { BangleEditor } from '@bangle.dev/core';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
-import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
+import { uiSliceKey } from '@bangle.io/slice-ui';
+import {
+  debounceFn,
+  sleep,
+  trimEndWhiteSpaceBeforeCursor,
+} from '@bangle.io/utils';
 
 import {
   editorManagerSliceKey,
@@ -12,6 +17,8 @@ import {
   didSomeEditorChange,
   forEachEditor,
   getEditor,
+  someEditorHasFocus,
+  toggleEditing,
   updateInitialSelection,
   updateScrollPosition,
 } from './operations';
@@ -33,6 +40,40 @@ export const initialSelectionEffect = editorManagerSliceKey.effect(() => {
     },
   };
 });
+
+export const syncEditingAllowedWithBlurEffect =
+  // WARNING: do not reduce the interval below 500 as it can prevent manual toggling
+  // of editing.
+  // WARNING: when changing time, make sure to account for sleep time below
+  editorManagerSliceKey.intervalRunEffect(500, async (store) => {
+    // if widescreen is true then we don't want to disable editing
+    // this is only an optimization for mobile users who have fragile internet
+    // and subpar editing API.
+    if (uiSliceKey.getSliceStateAsserted(store.state).widescreen) {
+      return;
+    }
+    const { editingAllowed } = editorManagerSliceKey.getSliceStateAsserted(
+      store.state,
+    );
+
+    if (!editingAllowed) {
+      return;
+    }
+
+    if (!someEditorHasFocus()(store.state)) {
+      // if no editor has focus, wait for a bit and then check again
+      // sometimes blur/focus takes a while and if we donot wait
+      // we risk incorrectly disabling editing
+      await sleep(300);
+
+      if (!someEditorHasFocus()(store.state)) {
+        console.warn(
+          'syncEditingAllowedWithBlurEffect: setting editing allowed to false',
+        );
+        toggleEditing({ editingAllowed: false })(store.state, store.dispatch);
+      }
+    }
+  });
 
 // This effect does:
 // 1. Focus on the correct editor on initial mount.

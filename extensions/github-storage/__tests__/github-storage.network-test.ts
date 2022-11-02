@@ -108,6 +108,8 @@ beforeEach(async () => {
 
   ({ store, getAction } = createBasicTestStore({
     extensions: [GithubStorageExt],
+    useEditorManagerSlice: true,
+    useUISlice: true,
     onError: (err) => {
       throw err;
     },

@@ -308,6 +308,11 @@ function getThemePreference() {
 }
 
 function setRootWidescreenClass(widescreen?: boolean) {
+  if (typeof document === 'undefined') {
+    console.debug('setRootWidescreenClass called in non-browser environment');
+
+    return;
+  }
   const root = document.getElementById('root');
   const body = document.body;
 

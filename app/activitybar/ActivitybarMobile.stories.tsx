@@ -5,16 +5,16 @@ import React from 'react';
 
 import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
 
-import { ActivitybarMobile } from './ActivitybarMobile';
+import { ActivitybarMobileDumb } from './ActivitybarMobile';
 
 export default {
   title: 'activitybar/ActivitybarMobile',
-  component: ActivitybarMobile,
+  component: ActivitybarMobileDumb,
   argTypes: {},
 };
 
 const Template: Story = (args) => {
-  const { store } = createBasicStore({
+  const { store, extensionRegistry } = createBasicStore({
     storageProvider: 'in-memory',
     useEditorManagerSlice: true,
     useUISlice: true,
@@ -28,7 +28,14 @@ const Template: Story = (args) => {
   return (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       <div style={{ width: 400 }}>
-        <ActivitybarMobile />
+        <ActivitybarMobileDumb
+          bangleStore={store}
+          primaryWsPath={'test:one.md'}
+          wsName={'test'}
+          showDone={false}
+          extensionRegistry={extensionRegistry}
+          activeSidebar={'notes'}
+        />
       </div>
     </TestStoreProvider>
   );
