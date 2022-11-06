@@ -99,7 +99,13 @@ const createStore = (jsonData?: {
           sliceFields: { editorManagerSlice: editorManagerSlice() },
         })
       : AppState.create({
-          slices: [editorManagerSlice(), pageSlice(), uiSlice()],
+          slices: [
+            editorManagerSlice(),
+            // @ts-expect-error
+            pageSlice(),
+            // @ts-expect-error
+            uiSlice(),
+          ],
         }),
   });
 

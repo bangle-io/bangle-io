@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { toggleEditing } from '@bangle.io/slice-editor-manager';
 import {
   ActionButton,
   ButtonContent,
@@ -15,16 +16,20 @@ export function Editorbar({
   isActive,
   isSplitEditorOpen,
   onClose,
+  onEnableEditing,
   onPressSecondaryEditor,
   openNotesPalette,
   showSplitEditor = false,
   wsPath,
+  editingDisabled,
 }: {
   isActive: boolean;
   isSplitEditorOpen: boolean;
   onClose: () => void;
   onPressSecondaryEditor: () => void;
   openNotesPalette: () => void;
+  onEnableEditing: () => void;
+  editingDisabled?: boolean;
   showSplitEditor?: boolean;
   wsPath: string;
 }) {
@@ -57,6 +62,23 @@ export function Editorbar({
       >
         {path}
       </div>
+      {editingDisabled && (
+        <ActionButton
+          variant="primary"
+          ariaLabel="enable editing"
+          onPress={() => {
+            onEnableEditing();
+          }}
+          className="mx-2"
+          styling={{}}
+        >
+          <ButtonContent
+            size="small"
+            textClassName="text-xs"
+            text="Enable Editing"
+          />
+        </ActionButton>
+      )}
       <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">
         {showSplitEditor && (
