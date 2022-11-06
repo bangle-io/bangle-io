@@ -12,6 +12,7 @@ import {
 
 import { editorManagerSliceKey } from './constants';
 import {
+  disableEditingOnPageInactiveEffect,
   focusEditorEffect,
   initialSelectionEffect,
   syncEditingAllowedWithBlurEffect,
@@ -220,6 +221,7 @@ export function editorManagerSlice(): Slice<
       watchEditorScrollEffect,
       trimWhiteSpaceEffect,
       syncEditingAllowedWithBlurEffect,
+      disableEditingOnPageInactiveEffect,
     ],
   });
 }

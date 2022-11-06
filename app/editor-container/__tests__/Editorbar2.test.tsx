@@ -18,6 +18,7 @@ test('renders correctly', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
+        onEnableEditing={jest.fn()}
       />
     </div>,
   );
@@ -40,6 +41,7 @@ test('renders correctly when active', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
+        onEnableEditing={jest.fn()}
       />
     </div>,
   );
@@ -60,6 +62,7 @@ test('truncates large wsPath', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
+        onEnableEditing={jest.fn()}
       />
     </div>,
   );
@@ -79,6 +82,7 @@ test('dispatches togglePaletteType on clicking wsPath', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={true}
+        onEnableEditing={jest.fn()}
       />
     </div>,
   );
@@ -99,6 +103,7 @@ test('renders splitscreen', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={true}
+        onEnableEditing={jest.fn()}
       />
     </div>,
   );
@@ -117,9 +122,33 @@ test('renders splitscreen', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
+        onEnableEditing={jest.fn()}
       />
     </div>,
   );
 
   expect([...splitButton().classList.values()]).not.toContain('BU_is-active');
+});
+
+test('enables editing', () => {
+  const onEnableEditing = jest.fn();
+  let result = render(
+    <div>
+      <Editorbar
+        openNotesPalette={jest.fn()}
+        isActive={false}
+        showSplitEditor={true}
+        wsPath={'mojo:test-dir/magic.md'}
+        onClose={jest.fn()}
+        onPressSecondaryEditor={jest.fn()}
+        isSplitEditorOpen={true}
+        onEnableEditing={onEnableEditing}
+        editingDisabled
+      />
+    </div>,
+  );
+
+  fireEvent.click(result.getByLabelText('enable editing'));
+
+  expect(onEnableEditing).toBeCalledTimes(1);
 });

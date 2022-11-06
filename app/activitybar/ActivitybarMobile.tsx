@@ -8,9 +8,12 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import {
+  goToWorkspaceHomeRoute,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { FileDocumentIcon } from '@bangle.io/ui-components';
+import { ChevronLeftIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarButton } from './ActivitybarButton';
@@ -63,34 +66,49 @@ export function ActivitybarMobileDumb({
 
   return (
     <>
-      <div className="flex flex-row px-3 align-center B-activitybar_activitybar w-full">
+      <div className="flex flex-row px-2 align-center B-activitybar_activitybar w-full">
         <div className="flex flex-row items-center flex-none">
-          <ActivitybarButton
-            hint="See files palette"
-            widescreen={false}
+          {primaryWsPath ? (
+            <ActivitybarButton
+              hint="Go home"
+              widescreen={false}
+              className="mr-1"
+              onPress={() => {
+                goToWorkspaceHomeRoute({ replace: false })(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
+              }}
+              icon={<ChevronLeftIcon className="w-6 h-6" />}
+            />
+          ) : null}
+        </div>
+
+        <div
+          className="flex flex-row items-center shrink overflow-hidden"
+          role="button"
+        >
+          <ActionButton
+            ariaLabel={'files palette'}
+            isQuiet
+            variant={'secondary'}
+            className="min-w-0 truncate"
             onPress={() => {
               togglePaletteType(CorePalette.Notes)(
                 bangleStore.state,
                 bangleStore.dispatch,
               );
             }}
-            icon={<FileDocumentIcon className="w-5 h-5" />}
-          />
-        </div>
-        <div
-          className="flex flex-row items-center flex-none"
-          onClick={() => {
-            togglePaletteType(CorePalette.Notes)(
-              bangleStore.state,
-              bangleStore.dispatch,
-            );
-          }}
-        >
-          <span className="font-semibold mr-2">
-            {primaryWsPath
-              ? resolvePath(primaryWsPath).fileNameWithoutExt
-              : wsName || 'bangle-io'}
-          </span>
+          >
+            <ButtonContent
+              textClassName="font-bold min-w-0 truncate"
+              text={
+                primaryWsPath
+                  ? resolvePath(primaryWsPath).fileNameWithoutExt
+                  : wsName || 'bangle-io'
+              }
+            />
+          </ActionButton>
         </div>
         <div className="flex flex-1"></div>
         <div className="flex flex-row items-center flex-none">

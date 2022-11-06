@@ -29,6 +29,7 @@ Vanilla.args = {
   onPressSecondaryEditor: () => {},
   isSplitEditorOpen: false,
   openNotesPalette: () => {},
+  onEnableEditing: () => {},
 };
 
 export const Branching = Template.bind({});
@@ -41,6 +42,7 @@ Branching.args = {
   onPressSecondaryEditor: () => {},
   isSplitEditorOpen: false,
   openNotesPalette: () => {},
+  onEnableEditing: () => {},
 };
 
 export const ShowingSplitEditor = Template.bind({});
@@ -53,4 +55,17 @@ ShowingSplitEditor.args = {
   onPressSecondaryEditor: () => {},
   isSplitEditorOpen: true,
   openNotesPalette: () => {},
+  onEnableEditing: () => {},
+};
+
+export const EditingDisabledEditor = Template.bind({});
+
+EditingDisabledEditor.args = {
+  wsPath: 'test-ws:one/own.md',
+  isActive: true,
+  editingDisabled: true,
+  onClose: () => {},
+  onPressSecondaryEditor: () => {},
+  openNotesPalette: () => {},
+  onEnableEditing: () => {},
 };

@@ -5,9 +5,11 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import type { Slice } from '@bangle.io/create-store';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
-import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
+import { pageLifeCycleTransitionedTo, pageSlice } from '@bangle.io/slice-page';
+import { uiSlice } from '@bangle.io/slice-ui';
 import { createEditorFromMd } from '@bangle.io/test-utils';
 import {
   getScrollParentElement,
@@ -72,7 +74,7 @@ const createStore = (jsonData?: {
   editors?: JsonObject;
   editorConfig?: JsonObject;
 }) => {
-  const store = ApplicationStore.create({
+  const store: ApplicationStore = ApplicationStore.create({
     scheduler: (cb) => {
       let destroyed = false;
       Promise.resolve().then(() => {
@@ -88,7 +90,7 @@ const createStore = (jsonData?: {
     storeName: 'editor-store',
     state: jsonData
       ? AppState.stateFromJSON<any>({
-          slices: [editorManagerSlice()],
+          slices: [editorManagerSlice(), pageSlice(), uiSlice()],
           json: {
             editorManagerSlice: {
               version: JSON_SCHEMA_VERSION,
@@ -97,7 +99,11 @@ const createStore = (jsonData?: {
           },
           sliceFields: { editorManagerSlice: editorManagerSlice() },
         })
-      : AppState.create({ slices: [editorManagerSlice()] }),
+      : AppState.create({
+          slices: [editorManagerSlice(), pageSlice(), uiSlice()] as Array<
+            Slice<any, any, any>
+          >,
+        }),
   });
 
   const dispatchSpy = jest.spyOn(store, 'dispatch');
@@ -465,9 +471,7 @@ describe('watchEditorScrollEffect', () => {
       },
     });
 
-    expect(global.addEventListener).toBeCalledTimes(1);
-    expect(global.addEventListener).nthCalledWith(
-      1,
+    expect(global.addEventListener).toBeCalledWith(
       'scroll',
       expect.any(Function),
       {
@@ -506,8 +510,8 @@ describe('watchEditorScrollEffect', () => {
 
     store?.destroy();
 
-    expect(global.addEventListener).toBeCalledTimes(1);
-    expect(global.removeEventListener).toBeCalledTimes(1);
+    expect(global.addEventListener).toBeCalledTimes(2);
+    expect(global.removeEventListener).toBeCalledTimes(2);
   });
 });
 

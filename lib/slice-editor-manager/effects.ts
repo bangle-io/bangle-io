@@ -1,7 +1,10 @@
 import type { BangleEditor } from '@bangle.dev/core';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
-import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
+import {
+  pageLifeCycleTransitionedTo,
+  pageSliceKey,
+} from '@bangle.io/slice-page';
 import { uiSliceKey } from '@bangle.io/slice-ui';
 import {
   debounceFn,
@@ -66,14 +69,26 @@ export const syncEditingAllowedWithBlurEffect =
       // we risk incorrectly disabling editing
       await sleep(300);
 
+      // check to make sure we do not disable editing if some editor has focus
       if (!someEditorHasFocus()(store.state)) {
-        console.warn(
-          'syncEditingAllowedWithBlurEffect: setting editing allowed to false',
-        );
         toggleEditing({ editingAllowed: false })(store.state, store.dispatch);
       }
     }
   });
+
+// disables editing on mobile when the user is not interacting with the editor
+export const disableEditingOnPageInactiveEffect = editorManagerSliceKey.reactor(
+  {
+    editingAllowed: editorManagerSliceKey.select('editingAllowed'),
+    lifeCycleState: pageSliceKey.select('lifeCycleState'),
+    widescreen: uiSliceKey.select('widescreen'),
+  },
+  (state, dispatch, { editingAllowed, lifeCycleState, widescreen }) => {
+    if (editingAllowed && !widescreen && lifeCycleState.current !== 'active') {
+      toggleEditing({ editingAllowed: false })(state, dispatch);
+    }
+  },
+);
 
 // This effect does:
 // 1. Focus on the correct editor on initial mount.

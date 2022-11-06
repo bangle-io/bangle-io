@@ -18,6 +18,17 @@ exports[`basic renders 1`] = `
           >
             blah
           </div>
+          <button
+            aria-label="enable editing"
+            class="mx-2 B-ui-bangle-button_button p-1  transition-all duration-100 "
+            type="button"
+          >
+            <span
+              class="text-xs "
+            >
+              Enable Editing
+            </span>
+          </button>
           <div
             class="flex flex-row flex-1"
           />
@@ -76,6 +87,17 @@ exports[`renders correctly when file does not exist 1`] = `
           >
             blah
           </div>
+          <button
+            aria-label="enable editing"
+            class="mx-2 B-ui-bangle-button_button p-1  transition-all duration-100 "
+            type="button"
+          >
+            <span
+              class="text-xs "
+            >
+              Enable Editing
+            </span>
+          </button>
           <div
             class="flex flex-row flex-1"
           />

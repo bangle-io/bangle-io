@@ -13,7 +13,9 @@ export default {
   argTypes: {},
 };
 
-const Template: Story = (args) => {
+const Template: Story<Partial<Parameters<typeof ActivitybarMobileDumb>[0]>> = (
+  args,
+) => {
   const { store, extensionRegistry } = createBasicStore({
     storageProvider: 'in-memory',
     useEditorManagerSlice: true,
@@ -25,20 +27,29 @@ const Template: Story = (args) => {
     },
   });
 
+  const finalArgs = {
+    bangleStore: store,
+    primaryWsPath: 'test:one.md',
+    wsName: 'test',
+    showDone: false,
+    extensionRegistry: extensionRegistry,
+    activeSidebar: 'notes',
+    ...args,
+  };
+
   return (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       <div style={{ width: 400 }}>
-        <ActivitybarMobileDumb
-          bangleStore={store}
-          primaryWsPath={'test:one.md'}
-          wsName={'test'}
-          showDone={false}
-          extensionRegistry={extensionRegistry}
-          activeSidebar={'notes'}
-        />
+        <ActivitybarMobileDumb {...finalArgs} />
       </div>
     </TestStoreProvider>
   );
 };
 
 export const Vanilla = Template.bind({});
+
+export const WithLongWsPath = Template.bind({});
+WithLongWsPath.args = {
+  primaryWsPath:
+    'test:one/own/long/path/one-two-three-four-five-six-seven-eight.md',
+};
