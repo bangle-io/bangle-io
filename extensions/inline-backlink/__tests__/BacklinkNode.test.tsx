@@ -40,6 +40,7 @@ const setup = async ([firstNote, ...otherNotes]: Array<
   } = createBasicTestStore({
     extensions: [inlineBackLinkExtension],
     useEditorManagerSlice: true,
+    useUISlice: true,
   });
   const [wsPath, md] = firstNote || [];
 

@@ -23,6 +23,7 @@ export function ActivitybarButton({
   hint,
   onPress,
   text,
+  className,
 }: {
   menu?: boolean;
   widescreen: boolean;
@@ -31,6 +32,7 @@ export function ActivitybarButton({
   onPress: () => void;
   icon: any;
   text?: string;
+  className?: string;
 }) {
   return (
     <ActionButton
@@ -40,6 +42,7 @@ export function ActivitybarButton({
       className={cx(
         'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
         widescreen && 'BU_widescreen',
+        className,
       )}
       onPress={onPress}
       ariaLabel={hint}

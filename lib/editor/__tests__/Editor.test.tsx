@@ -46,6 +46,7 @@ const setup = async () => {
 
   const { store } = createBasicTestStore({
     useEditorManagerSlice: true,
+    useUISlice: true,
   });
   await setupMockWorkspaceWithNotes(store, wsName, noteWsPaths);
 

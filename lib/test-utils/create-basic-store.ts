@@ -65,6 +65,12 @@ export function createBasicStore<
   opts?: Partial<BangleStateConfig>;
   overrideInitialSliceState?: Parameters<typeof overrideSliceStates>[1];
 }) {
+  if (useEditorManagerSlice && !useUISlice) {
+    throw new Error(
+      'useEditorManagerSlice requires useUISlice to be true, as it uses the uiSlice',
+    );
+  }
+
   let _storageProvider: BaseStorageProvider;
 
   if (storageProvider === 'indexedb') {

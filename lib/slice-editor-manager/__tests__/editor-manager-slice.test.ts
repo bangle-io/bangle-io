@@ -8,6 +8,8 @@ import {
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { pageSlice } from '@bangle.io/slice-page';
+import { uiSlice } from '@bangle.io/slice-ui';
 import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement } from '@bangle.io/utils';
 
@@ -46,7 +48,15 @@ let createStore = () =>
       };
     },
     storeName: 'editor-store',
-    state: AppState.create({ slices: [editorManagerSlice()] }),
+    state: AppState.create({
+      slices: [
+        editorManagerSlice(),
+        // @ts-expect-error typings for this is messed up
+        pageSlice(),
+        // @ts-expect-error typings for this is messed up
+        uiSlice(),
+      ],
+    }),
   });
 
 describe('set editor action', () => {

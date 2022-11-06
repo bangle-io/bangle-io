@@ -20,6 +20,7 @@ describe('MiniEditor', () => {
     let { store, getActionNames } = createBasicTestStore({
       extensions: [],
       useEditorCoreExtension: true,
+      useUISlice: true,
       useEditorManagerSlice: true,
     });
 

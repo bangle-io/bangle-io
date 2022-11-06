@@ -91,7 +91,7 @@ test('dispatches operation', async () => {
     </div>,
   );
   act(() => {
-    fireEvent.click(result.getByLabelText('See files palette'));
+    fireEvent.click(result.getByLabelText('files palette'));
   });
 
   expect(togglePaletteTypeMock).toBeCalledTimes(1);
