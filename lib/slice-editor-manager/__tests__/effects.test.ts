@@ -5,6 +5,7 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import type { Slice } from '@bangle.io/create-store';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
 import { pageLifeCycleTransitionedTo, pageSlice } from '@bangle.io/slice-page';
@@ -73,7 +74,7 @@ const createStore = (jsonData?: {
   editors?: JsonObject;
   editorConfig?: JsonObject;
 }) => {
-  const store = ApplicationStore.create({
+  const store: ApplicationStore = ApplicationStore.create({
     scheduler: (cb) => {
       let destroyed = false;
       Promise.resolve().then(() => {
@@ -99,13 +100,9 @@ const createStore = (jsonData?: {
           sliceFields: { editorManagerSlice: editorManagerSlice() },
         })
       : AppState.create({
-          slices: [
-            editorManagerSlice(),
-            // @ts-expect-error
-            pageSlice(),
-            // @ts-expect-error
-            uiSlice(),
-          ],
+          slices: [editorManagerSlice(), pageSlice(), uiSlice()] as Array<
+            Slice<any, any, any>
+          >,
         }),
   });
 

@@ -7,6 +7,7 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import type { Slice } from '@bangle.io/create-store';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { pageSlice } from '@bangle.io/slice-page';
 import { uiSlice } from '@bangle.io/slice-ui';
@@ -33,7 +34,7 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
-let createStore = () =>
+let createStore = (): ApplicationStore =>
   ApplicationStore.create({
     scheduler: (cb) => {
       let destroyed = false;
@@ -49,13 +50,9 @@ let createStore = () =>
     },
     storeName: 'editor-store',
     state: AppState.create({
-      slices: [
-        editorManagerSlice(),
-        // @ts-expect-error typings for this is messed up
-        pageSlice(),
-        // @ts-expect-error typings for this is messed up
-        uiSlice(),
-      ],
+      slices: [editorManagerSlice(), pageSlice(), uiSlice()] as Array<
+        Slice<any, any, any>
+      >,
     }),
   });
 
