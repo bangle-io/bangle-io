@@ -402,7 +402,7 @@ export async function getSecondaryEditorDebugString(page: Page) {
   );
 }
 
-// Wait until  edittor innerText contains the arg `text
+// Wait until  editor innerText contains the arg `text
 
 export async function waitForEditorTextToContain(
   page: Page,
@@ -568,6 +568,7 @@ export async function waitForNotification(page: Page, text: string) {
   await page.locator(`.app-entry_notification:has-text("${text}")`).waitFor();
 }
 
+// Enables editing in a mobile UI
 export async function mobileEnableEditing(page: Page) {
   let activityBar = page.locator('.B-ui-dhancha_activitybar');
   let doneEditing = activityBar.locator('role=button[name="done editing"]');
@@ -577,6 +578,8 @@ export async function mobileEnableEditing(page: Page) {
       timeout: 20,
     })
   ) {
+    expect(await isEditorEditable(page, PRIMARY_EDITOR_INDEX)).toBe(true);
+
     return;
   }
 
@@ -585,4 +588,12 @@ export async function mobileEnableEditing(page: Page) {
   const edit = activityBar.locator('role=button[name="edit"]');
   await edit.click();
   await activityBar.locator('role=button[name="done editing"]').waitFor();
+
+  expect(await isEditorEditable(page, PRIMARY_EDITOR_INDEX)).toBe(true);
+}
+
+export async function isEditorEditable(page: Page, editorId: EditorIdType) {
+  let editor = await getEditorLocator(page, editorId);
+
+  return (await editor.getAttribute('contenteditable')) === 'true';
 }

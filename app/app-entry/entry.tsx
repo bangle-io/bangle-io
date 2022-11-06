@@ -15,7 +15,7 @@ import {
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
-import { pathMatcher, usePageContext } from '@bangle.io/slice-page';
+import { pageSliceKey, pathMatcher } from '@bangle.io/slice-page';
 
 import { AppContainer } from './AppContainer';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -25,7 +25,7 @@ import { WatchUI } from './watchers/WatchUI';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
 
 const useRouterHook: BaseLocationHook = () => {
-  const { pageState } = usePageContext();
+  const { sliceState: pageState } = useSliceState(pageSliceKey);
 
   const { sliceState } = useSliceState(historySliceKey);
   const history = sliceState.history;

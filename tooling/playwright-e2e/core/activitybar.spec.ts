@@ -95,7 +95,7 @@ test.describe('mobile', () => {
       .toContain('Hello');
   });
 
-  test('edit button', async ({ page }) => {
+  test('edit button works', async ({ page }) => {
     let activityBar = page.locator('.B-ui-dhancha_activitybar');
 
     await activityBar.waitFor();
