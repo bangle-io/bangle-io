@@ -18,9 +18,9 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 - `yarn start` to start bangle on `localhost:4000`
 
-- `yarn test:regular`: To run the regular tests.
+- `yarn test:regular`\: To run the regular tests.
 
-- `yarn test:network`: To run the network based tests. Please note these tests will hit Github API and may **create bunch of test repositories**. Make sure you have `GITHUB_OWNER` and `GITHUB_TOKEN` set in your environment variables.
+- `yarn test:network`\: To run the network based tests. Please note these tests will hit Github API and may **create bunch of test repositories**. Make sure you have `GITHUB_OWNER` and `GITHUB_TOKEN` set in your environment variables.
 
 - `yarn g:playwright-dep` to install playwright dependencies if you want to run e2e testing.
 
@@ -56,8 +56,6 @@ If you are running the tests on a linux machine, you will have to update the dar
 
 Search the code base (excluding `.yarn` and lock files)  for the currently installed version of the playwright and then replace it with the new version.
 
-
-
 # Architecture
 
 ![overview](diagram.svg)
@@ -86,13 +84,13 @@ Each extension must have the following top level files:
 
 - `index.ts` The entry point for the extension.
 - `style.css` A single css file containing all the styles of your extension.
-- `style.ts`: A file which `imports` the `style.css` file.
+- `style.ts`\: A file which `imports` the `style.css` file.
 
 **Please note** your `index.ts` file should not import `style.ts`. This restriction exists to keep the imports within the realms of standard Javascript.
 
 ### CSS conventions
 
-- Any CSS class name is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`. 
+- Any CSS class name is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`.
 
 - A utility class helper starts with `BU_` followed by the name of the helper, for example, `BU_my-helper`.
 
@@ -103,11 +101,11 @@ Each extension must have the following top level files:
 Bangle uses a concept of context for sharing state across the extensions.
 
 - `editor-manager-context` exposes the Editors.
-- `extension-registry-context`: the glue code for the extension. If you are developing an extension you can ignore this.
+- `extension-registry-context`\: the glue code for the extension. If you are developing an extension you can ignore this.
 - `page-context` for pending writes, page lifecycle, navigation etc.
 - `serial-operation-context` for dispatching serial Operations.
 - `ui-context` provides the UI state information, like sidebars, palettes etc.
-- `workspace-context`: place for centralized workspace ops like note creation, renaming, deletion etc.
+- `workspace-context`\: place for centralized workspace ops like note creation, renaming, deletion etc.
 
 ## Operations
 
@@ -115,17 +113,16 @@ Operations are used across bangle to dispatch complex state changes with the hel
 
 Operations exist in two different forms:
 
-- Functional operations have the signature `(...parms) => (state, dispatch, store?) => {}`. 
+- Functional operations have the signature `(...parms) => (state, dispatch, store?) => {}`.
 - Serial operations, similar to functional operation but have a serializable notation so that they can be executed in contexts where functions are not possible, for example the `Operation Palette` UI. See this [extension's code](https://github.com/bangle-io/bangle-io/blob/dev/extensions/core-actions/index.ts) to get a rough idea.
-
 
 ## WsPaths
 
 A file path in Bangle is denoted by a string with the following syntax:
 
-- `wsPath`: A unique string representing a file and its workspace. `hello:foo/bar.md`.
+- `wsPath`\: A unique string representing a file and its workspace. `hello:foo/bar.md`.
 
-- `wsName`: Workspace name, in `hello:foo/bar.md` `hello` is the workspace name.
+- `wsName`\: Workspace name, in `hello:foo/bar.md` `hello` is the workspace name.
 
 ## How editor opens a file?
 

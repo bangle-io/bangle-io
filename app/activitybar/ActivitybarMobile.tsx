@@ -9,7 +9,7 @@ import {
 } from '@bangle.io/slice-editor-manager';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 import {
-  goToWorkspaceHomeRoute,
+  goToWsNameRoute,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
@@ -74,10 +74,10 @@ export function ActivitybarMobileDumb({
               widescreen={false}
               className="mr-1"
               onPress={() => {
-                goToWorkspaceHomeRoute({ replace: false })(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
+                  reopenPreviousEditors: false,
+                  replace: false,
+                })(bangleStore.state, bangleStore.dispatch);
               }}
               icon={<ChevronLeftIcon className="w-6 h-6" />}
             />
