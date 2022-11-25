@@ -6,6 +6,7 @@ export interface Fixture {
     open: (opts?: {}) => Promise<Page>;
   };
 }
+
 export const withBangle = base.extend<Fixture>({
   baseURL: 'http://localhost:1234',
   bangleApp: [

@@ -1,10 +1,6 @@
 import React from 'react';
 
-import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
+import { BlockButton } from '@bangle.io/ui-components/BlockButton/BlockButton';
 import { cx } from '@bangle.io/utils';
 
 export const buttonStyling = {
@@ -35,28 +31,15 @@ export function ActivitybarButton({
   className?: string;
 }) {
   return (
-    <ActionButton
-      isQuiet
+    <BlockButton
       isActive={isActive}
-      styling={buttonStyling}
-      className={cx(
-        'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
-        widescreen && 'BU_widescreen',
-        className,
-      )}
+      borderAccentPosition={widescreen ? 'left' : undefined}
+      borderThickness={4}
+      icon={icon}
+      hint={hint}
       onPress={onPress}
-      ariaLabel={hint}
-      tooltip={<TooltipWrapper>{hint}</TooltipWrapper>}
-      tooltipDelay={150}
-      tooltipPlacement="right"
-      autoFocus={false}
-    >
-      <ButtonContent
-        size="custom"
-        icon={icon}
-        text={text}
-        textClassName="truncate capitalize"
-      ></ButtonContent>
-    </ActionButton>
+      text={text}
+      className={className}
+    />
   );
 }
