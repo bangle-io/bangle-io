@@ -28,7 +28,8 @@
     "g:css:stylelint-update-regex": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json generate-stylelint-regex.ts",
     "g:script:find-unused-dependencies": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json one-off/find-unused-dependencies.ts",
     "g:script:find-incorrect-import-style": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json one-off/find-incorrect-import-style.ts",
-    "g:script:mermaid-dependency": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json one-off/mermaid-dependency.ts"
+    "g:script:mermaid-dependency": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json one-off/mermaid-dependency.ts",
+    "g:remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install"
   },
   "publishConfig": {},
   "dependencies": {

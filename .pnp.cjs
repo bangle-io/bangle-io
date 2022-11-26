@@ -476,6 +476,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/jsdom-env", "workspace:js-lib/jsdom-env"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.18.1"],\
             ["@sentry/tracing", "npm:6.18.1"],\
             ["@sentry/webpack-plugin", "npm:1.18.8"],\
@@ -7357,9 +7358,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.19.1"],\
             ["@babel/preset-typescript", "virtual:5a9033110c840a02c144dc64486939612af4d61cc80da768e922da38c0c00b0a444c3da6429a4f1d02a42d0bf754d034e9948b141e9c806c42a82620ef8044f3#npm:7.18.6"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
-            ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@mdx-js/react", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.6.22"],\
             ["@react-aria/ssr", "virtual:60b2931e1c2b893234deb15b966aa631cf82038c500c1c2335fb383c27884612b434bc94b038aac732182c0d1689bb9c00c2b3f410b741f9bbe55ede7c8b233e#npm:3.1.2"],\
             ["@storybook/addon-actions", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.5.12"],\
@@ -16597,6 +16598,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/jsdom-env", "workspace:js-lib/jsdom-env"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.18.1"],\
             ["@sentry/tracing", "npm:6.18.1"],\
             ["@sentry/webpack-plugin", "npm:1.18.8"],\

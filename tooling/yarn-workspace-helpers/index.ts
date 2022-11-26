@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import fsProm from 'fs/promises';
 import path from 'path';
 
+// @ts-expect-error
+import { ALL_TOP_LEVEL_DIRS } from './constants';
+
 // The values must match the directory name
 export enum PackageType {
   // only the root package.json has this type
@@ -13,6 +16,40 @@ export enum PackageType {
   lib = 'lib',
   tooling = 'tooling',
   worker = 'worker',
+}
+
+ensureConsistentTopDirs();
+function ensureConsistentTopDirs() {
+  const topLevelDirs: Record<PackageType, null> = {
+    [PackageType.lib]: null,
+    [PackageType.jsLib]: null,
+    [PackageType.worker]: null,
+    [PackageType.extensions]: null,
+    [PackageType.app]: null,
+    [PackageType.tooling]: null,
+    [PackageType.root]: null,
+  };
+
+  const stringifiedTopLevelDirs = JSON.stringify(
+    Object.keys(topLevelDirs)
+      .filter((r) => r !== '.')
+      .sort(),
+  );
+
+  const stringifiedTopLevelDirs2 = JSON.stringify(
+    [...ALL_TOP_LEVEL_DIRS].sort(),
+  );
+
+  if (stringifiedTopLevelDirs2 !== stringifiedTopLevelDirs) {
+    console.log('===========The following must be equal===========');
+    console.log(stringifiedTopLevelDirs2);
+    console.log(stringifiedTopLevelDirs);
+    console.log('=================================================');
+
+    // This exists to make sure the directories remain in sync.
+    // Please update the list of directories in constants.ts
+    throw new Error('topLevelDirs and ALL_TOP_LEVEL_DIRS do not match');
+  }
 }
 
 interface PackageJSON {

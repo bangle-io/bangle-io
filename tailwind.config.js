@@ -1,6 +1,8 @@
 const path = require('path');
 
-const { ALL_TOP_LEVEL_DIRS } = require('@bangle.io/scripts/constants');
+const {
+  ALL_TOP_LEVEL_DIRS,
+} = require('@bangle.io/yarn-workspace-helpers/constants');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
