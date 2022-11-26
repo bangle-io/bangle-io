@@ -11,7 +11,20 @@ import type { SuggestTooltipRenderOpts } from '@bangle.dev/tooltip';
 import { createTooltipDOM, suggestTooltip } from '@bangle.dev/tooltip';
 import { bangleWarn, valuePlugin } from '@bangle.dev/utils';
 
-import { safeRequestAnimationFrame } from '@bangle.io/utils';
+let lastTime = 0;
+const safeRequestAnimationFrame =
+  typeof window !== 'undefined' && window.requestAnimationFrame
+    ? window.requestAnimationFrame
+    : function (callback: (r: number) => void) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function () {
+          callback(currTime + timeToCall);
+        }, timeToCall);
+        lastTime = currTime + timeToCall;
+
+        return id;
+      };
 
 const {
   decrementSuggestTooltipCounter,

@@ -1,6 +1,10 @@
-let cachedYarnGetVirtuals = undefined;
+interface YarnVirtuals {
+  value: string;
+  children: { Version: string; Dependencies: string; Instances: number };
+}
+let cachedYarnGetVirtuals: YarnVirtuals[] | undefined = undefined;
 
-function yarnGetVirtuals() {
+export function yarnGetVirtuals(): YarnVirtuals[] {
   if (cachedYarnGetVirtuals) {
     return JSON.parse(JSON.stringify(cachedYarnGetVirtuals));
   }
@@ -10,13 +14,20 @@ function yarnGetVirtuals() {
     .toString()
     .split('\n')
     .filter(Boolean)
-    .map((r) => JSON.parse(r));
+    .map((r: any) => JSON.parse(r));
 
   return yarnGetVirtuals();
 }
 
-let cachedYarnWorkspacesList = undefined;
-function yarnWorkspacesList() {
+interface YarnWorkspaceList {
+  location: string;
+  name: string;
+  workspaceDependencies: string[];
+}
+
+let cachedYarnWorkspacesList: YarnWorkspaceList[] | undefined = undefined;
+
+export function yarnWorkspacesList(): YarnWorkspaceList[] {
   if (cachedYarnWorkspacesList) {
     return JSON.parse(JSON.stringify(cachedYarnWorkspacesList));
   }
@@ -26,12 +37,7 @@ function yarnWorkspacesList() {
     .toString()
     .split('\n')
     .filter(Boolean)
-    .map((r) => JSON.parse(r));
+    .map((r: any) => JSON.parse(r));
 
   return yarnWorkspacesList();
 }
-
-module.exports = {
-  yarnGetVirtuals,
-  yarnWorkspacesList,
-};
