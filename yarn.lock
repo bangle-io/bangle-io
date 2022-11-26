@@ -2774,7 +2774,6 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@storybook/react": ^6.5.12
@@ -2855,7 +2854,6 @@ __metadata:
     "@bangle.dev/react": 0.31.6
     "@bangle.dev/tooltip": 0.31.6
     "@bangle.dev/utils": 0.31.6
-    "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
@@ -3038,7 +3036,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@playwright/test": ^1.27.1
-    "@types/node": 18.7.14
+    "@types/node": ^18.11.9
     "@types/prettier": ^2.7.0
     http-server: ^0.12.3
     prettier: ^2.7.1
@@ -3125,7 +3123,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/note-tags": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -3808,7 +3805,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/yarn-workspace-helpers@workspace:tooling/yarn-workspace-helpers"
   dependencies:
+    "@types/node": ^18.11.9
     execa: ^5.1.1
+    tslib: ^2.4.0
   languageName: unknown
   linkType: soft
 
@@ -7560,10 +7559,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:18.7.14":
-  version: 18.7.14
-  resolution: "@types/node@npm:18.7.14"
-  checksum: 99cf28ff854100158de875cca23c7acc3cc01dfee526a52b90b7f36767c821bcbaf2be0a98a70f06f3b78f3c60639168ff949d725b61e2e124f9f71f1fb8043d
+"@types/node@npm:*, @types/node@npm:^18.11.9":
+  version: 18.11.9
+  resolution: "@types/node@npm:18.11.9"
+  checksum: cc0aae109e9b7adefc32eecb838d6fad931663bb06484b5e9cbbbf74865c721b03d16fd8d74ad90e31dbe093d956a7c2c306ba5429ba0c00f3f7505103d7a496
   languageName: node
   linkType: hard
 
@@ -9610,7 +9609,7 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^13.5.0
     "@types/jest": ^29.0.0
-    "@types/node": 18.7.14
+    "@types/node": ^18.11.9
     "@types/prettier": ^2.7.0
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
