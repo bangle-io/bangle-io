@@ -31,7 +31,7 @@ Allowed dependencies are: \n${printConstraints(constraints)}`);
     }
   }
 
-  console.log('checkDepConstraints no issues found');
+  console.log('checkDepConstraints: no issues found');
 }
 
 enum MatchKind {

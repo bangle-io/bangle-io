@@ -23,8 +23,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "g:package-patrol": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json index.ts",
-    "g:run-scripts": "yarn concurrently -m 1 \"yarn g:package-patrol\" \"yarn g:css:stylelint-update-regex\"",
+    "g:run-scripts": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json index.ts",
     "prep": "cd $PROJECT_CWD && cd tooling/_scripts",
     "g:css:stylelint-update-regex": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json generate-stylelint-regex.ts",
     "g:script:find-unused-dependencies": "yarn prep && yarn ts-node --project $PROJECT_CWD/tsconfig.tsnode.json one-off/find-unused-dependencies.ts",
@@ -39,6 +38,7 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/yarn-workspace-helpers": "workspace:*",
+    "@types/prettier": "^2.7.0",
     "concurrently": "^7.0.0",
     "cross-fetch": "^3.1.5",
     "date-fns": "^2.25.0",

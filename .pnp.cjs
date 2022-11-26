@@ -7001,6 +7001,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
+            ["@types/prettier", "npm:2.7.0"],\
             ["concurrently", "npm:7.0.0"],\
             ["cross-fetch", "npm:3.1.5"],\
             ["date-fns", "npm:2.28.0"],\

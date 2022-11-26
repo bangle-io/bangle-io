@@ -25,6 +25,6 @@ export function checkMultipleInstances() {
       'One or more packages have multiple instances. Please read CONTRIBUTING.md for more info',
     );
   } else {
-    console.log('checkMultipleInstances found no issues');
+    console.log('checkMultipleInstances: found no issues');
   }
 }
