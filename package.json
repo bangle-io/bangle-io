@@ -61,8 +61,8 @@
     "@swc/jest": "^0.2.22",
     "@yarnpkg/pnpify": "^4.0.0-rc.15",
     "punycode": "^2.1.1",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.4"
+    "tslib": "^2.4.1",
+    "typescript": "4.9.1-beta"
   },
   "devDependencies": {
     "@bangle.dev/jest-utils": "0.31.6",

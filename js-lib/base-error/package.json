@@ -23,7 +23,7 @@
   },
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.4"
+    "tslib": "^2.4.1",
+    "typescript": "4.9.1-beta"
   }
 }
