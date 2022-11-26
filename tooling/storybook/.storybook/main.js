@@ -1,6 +1,9 @@
 const webpack = require('webpack');
 
-const { ALL_TOP_LEVEL_DIRS } = require('@bangle.io/scripts/constants');
+const {
+  ALL_TOP_LEVEL_DIRS,
+} = require('@bangle.io/yarn-workspace-helpers/constants');
+
 module.exports = {
   stories: [
     ...ALL_TOP_LEVEL_DIRS.map(

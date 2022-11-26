@@ -1,7 +1,56 @@
-const fs = require('fs');
-const path = require('path');
-const fsProm = require('fs/promises');
-const execa = require('execa');
+import execa from 'execa';
+import * as fs from 'fs';
+import fsProm from 'fs/promises';
+import path from 'path';
+
+// @ts-expect-error
+import { ALL_TOP_LEVEL_DIRS } from './constants';
+
+// The values must match the directory name
+export enum PackageType {
+  // only the root package.json has this type
+  root = '.',
+  app = 'app',
+  extensions = 'extensions',
+  jsLib = 'js-lib',
+  lib = 'lib',
+  tooling = 'tooling',
+  worker = 'worker',
+}
+
+ensureConsistentTopDirs();
+function ensureConsistentTopDirs() {
+  const topLevelDirs: Record<PackageType, null> = {
+    [PackageType.lib]: null,
+    [PackageType.jsLib]: null,
+    [PackageType.worker]: null,
+    [PackageType.extensions]: null,
+    [PackageType.app]: null,
+    [PackageType.tooling]: null,
+    [PackageType.root]: null,
+  };
+
+  const stringifiedTopLevelDirs = JSON.stringify(
+    Object.keys(topLevelDirs)
+      .filter((r) => r !== '.')
+      .sort(),
+  );
+
+  const stringifiedTopLevelDirs2 = JSON.stringify(
+    [...ALL_TOP_LEVEL_DIRS].sort(),
+  );
+
+  if (stringifiedTopLevelDirs2 !== stringifiedTopLevelDirs) {
+    console.log('===========The following must be equal===========');
+    console.log(stringifiedTopLevelDirs2);
+    console.log(stringifiedTopLevelDirs);
+    console.log('=================================================');
+
+    // This exists to make sure the directories remain in sync.
+    // Please update the list of directories in constants.ts
+    throw new Error('topLevelDirs and ALL_TOP_LEVEL_DIRS do not match');
+  }
+}
 
 interface PackageJSON {
   name: string;
@@ -59,6 +108,15 @@ export class YarnWorkspaceHelpers {
     this.packages.set(pkgName, newPkg);
   }
 
+  *packageIterator({ ignoreWorkTree = true }: { ignoreWorkTree?: boolean }) {
+    for (const pkg of this.packages.values()) {
+      if (ignoreWorkTree && pkg.isWorktree) {
+        continue;
+      }
+      yield pkg;
+    }
+  }
+
   readWorkspaces() {
     const rawData = new Map<
       string,
@@ -76,12 +134,15 @@ export class YarnWorkspaceHelpers {
     this.packages.clear();
 
     for (const r of rawData.values()) {
+      let pkgType = getPackageType(r);
+
       this.packages.set(
         r.name,
         new Package({
           location: r.location,
           name: r.name,
           rootDir: this._opts.rootDir,
+          type: pkgType,
         }),
       );
     }
@@ -136,13 +197,14 @@ export function findMatchByLine({
   return result;
 }
 
-class Package {
+export class Package {
   packageJSON: PackageJSON;
   name: string;
   workspaceDependencies = new Map<string, Package>();
   workspaceDevDependencies = new Map<string, Package>();
   packagePath: string;
   dirs: Promise<string[]>;
+  type: PackageType = this.opts.type;
 
   fileHelpersPromise: Promise<Map<string, FileHelper>>;
 
@@ -151,6 +213,7 @@ class Package {
       rootDir: string;
       name: string;
       location: string;
+      type: PackageType;
     },
   ) {
     this.name = opts.name;
@@ -180,11 +243,19 @@ class Package {
   }
 
   get dependencies() {
-    return this.packageJSON.dependencies;
+    return this.packageJSON.dependencies || {};
   }
 
   get devDependencies() {
     return this.packageJSON.devDependencies;
+  }
+
+  get isNotWorktree(): boolean {
+    return !this.isWorktree;
+  }
+
+  get isToolingWorkspace(): boolean {
+    return this.type === PackageType.tooling && !this.isWorktree;
   }
 
   get isWorktree() {
@@ -223,6 +294,34 @@ class Package {
     }, filter);
   }
 
+  async getAllFilePaths(): Promise<string[]> {
+    return Array.from((await this.fileHelpersPromise).keys());
+  }
+
+  /**
+   *
+   * @returns true if pkg has one or more css files
+   */
+  async getCssFileNames(): Promise<string[]> {
+    return (await this.getAllFilePaths())
+      .map((filePath) => (filePath.endsWith('.css') ? filePath : undefined))
+      .filter((r): r is string => Boolean(r));
+  }
+
+  async getFileHelper(fileName: string) {
+    const fileHelpers = await this.fileHelpersPromise;
+
+    return fileHelpers.get(fileName);
+  }
+
+  /**
+   *
+   * @returns true if pkg has one or more css files
+   */
+  async hasCSSFiles(): Promise<boolean> {
+    return (await this.getCssFileNames()).length > 0;
+  }
+
   async modifyFiles(
     cb: (opts: {
       filePath: string;
@@ -250,7 +349,7 @@ class Package {
     cb: (pkgJSON: PackageJSON, pkg: Package) => PackageJSON,
   ): Promise<Package> {
     const newJSON = await cb(this.packageJSON, this);
-    await fs.writeFile(
+    await fsProm.writeFile(
       path.join(this.packagePath + '/package.json'),
       JSON.stringify(newJSON, null, 2),
       'utf-8',
@@ -263,6 +362,17 @@ class Package {
     await execa('yarn', ['workspace', this.name, ...cmd], {
       stdio: 'inherit',
     });
+  }
+
+  async toJSON() {
+    return {
+      name: this.name,
+      location: this.location,
+      type: this.type,
+      isWorktree: this.isWorktree,
+      hasCSSFiles: await this.hasCSSFiles(),
+      isToolingWorkspace: this.isToolingWorkspace,
+    };
   }
 }
 
@@ -389,4 +499,50 @@ class FileHelper {
 
     return this.contentCache;
   }
+}
+
+function getPackageType<R extends { name: string; location: string }>(
+  r: R,
+): PackageType {
+  let pkgType: PackageType | undefined;
+
+  if (
+    r.location === PackageType.app ||
+    r.location.startsWith(PackageType.app + '/')
+  ) {
+    pkgType = PackageType.app;
+  } else if (
+    r.location === PackageType.extensions ||
+    r.location.startsWith(PackageType.extensions + '/')
+  ) {
+    pkgType = PackageType.extensions;
+  } else if (
+    r.location === PackageType.jsLib ||
+    r.location.startsWith(PackageType.jsLib + '/')
+  ) {
+    pkgType = PackageType.jsLib;
+  } else if (
+    r.location === PackageType.lib ||
+    r.location.startsWith(PackageType.lib + '/')
+  ) {
+    pkgType = PackageType.lib;
+  } else if (
+    r.location === PackageType.tooling ||
+    r.location.startsWith(PackageType.tooling + '/')
+  ) {
+    pkgType = PackageType.tooling;
+  } else if (
+    r.location === PackageType.worker ||
+    r.location.startsWith(PackageType.worker + '/')
+  ) {
+    pkgType = PackageType.worker;
+  } else if (r.location === PackageType.root) {
+    pkgType = PackageType.root;
+  }
+
+  if (!pkgType) {
+    throw new Error(`Could not find package type for ${r.name}`);
+  }
+
+  return pkgType;
 }

@@ -41,7 +41,6 @@
     "typescript": "^4.8.4"
   },
   "devDependencies": {
-    "@bangle.io/note-tags": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.1.3",
