@@ -51,8 +51,8 @@ export function getStorageProvider(
             try {
               const result = Reflect.apply(fun, target, args);
 
-              if (result?.then) {
-                return result.catch((err: unknown) => {
+              if ((result as any)?.then) {
+                return (result as any).catch((err: unknown) => {
                   markError(err);
 
                   throw err;
