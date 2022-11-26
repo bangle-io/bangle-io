@@ -37,8 +37,8 @@
     "@bangle.io/ws-path": "workspace:*",
     "@playwright/test": "^1.27.1",
     "prettier": "^2.7.1",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.4"
+    "tslib": "^2.4.1",
+    "typescript": "4.9.1-beta"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",

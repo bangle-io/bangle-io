@@ -34,8 +34,8 @@
     "@react-stately/tree": "^3.2.4",
     "@react-types/shared": "^3.12.0",
     "react-popper": "^2.2.5",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.4"
+    "tslib": "^2.4.1",
+    "typescript": "4.9.1-beta"
   },
   "devDependencies": {
     "@react-aria/utils": "^3.12.0",

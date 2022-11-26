@@ -27,9 +27,12 @@ export function mainInjectAbortableProxy<
 ): T {
   return new Proxy(workerProxiedMethods, {
     get(_target, prop) {
+      const method = Reflect.get(_target, prop);
+
       if (
         typeof prop === 'string' &&
-        prop.startsWith(abortableMethodIdentifier)
+        prop.startsWith(abortableMethodIdentifier) &&
+        typeof method === 'function'
       ) {
         return (abortSignal: unknown, ...args: unknown[]) => {
           if (!(abortSignal instanceof AbortSignal)) {
@@ -51,19 +54,18 @@ export function mainInjectAbortableProxy<
             { once: true },
           );
 
-          return Reflect.apply(Reflect.get(_target, prop), null, [
-            uid,
-            ...args,
-          ]).catch((error: unknown) => {
-            if (error === WORKER_ABORTABLE_SERVICE_ABORTED) {
-              throw new DOMException('Aborted', 'AbortError');
-            }
-            throw error;
-          });
+          return Reflect.apply(method, null, [uid, ...args]).catch(
+            (error: unknown) => {
+              if (error === WORKER_ABORTABLE_SERVICE_ABORTED) {
+                throw new DOMException('Aborted', 'AbortError');
+              }
+              throw error;
+            },
+          );
         };
       }
 
-      return Reflect.get(_target, prop);
+      return method;
     },
   });
 }
