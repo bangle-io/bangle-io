@@ -49,7 +49,7 @@
     "@bangle.io/ws-path": "workspace:*",
     "page-lifecycle": "^0.1.2",
     "tslib": "^2.4.1",
-    "typescript": "4.9.1-beta"
+    "typescript": "4.9.3"
   },
   "publishConfig": {
     "access": "restricted"

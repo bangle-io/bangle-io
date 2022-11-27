@@ -2039,7 +2039,7 @@ __metadata:
     "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/object-uid": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2068,7 +2068,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2102,7 +2102,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2177,7 +2177,7 @@ __metadata:
     cross-fetch: ^3.1.5
     idb: ^7.1.0
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2193,7 +2193,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2229,7 +2229,7 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     page-lifecycle: ^0.1.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2238,7 +2238,7 @@ __metadata:
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
   dependencies:
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2252,7 +2252,7 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2267,7 +2267,7 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2286,7 +2286,7 @@ __metadata:
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2305,7 +2305,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2317,7 +2317,7 @@ __metadata:
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2336,7 +2336,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2373,7 +2373,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2415,7 +2415,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2448,7 +2448,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2467,7 +2467,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.1
     type-fest: ^3.2.0
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2480,7 +2480,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2512,7 +2512,7 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     tslib: ^2.4.1
     type-fest: ^3.2.0
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2548,7 +2548,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2579,7 +2579,7 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
     react-dom: "*"
@@ -2594,7 +2594,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2607,7 +2607,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2633,7 +2633,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2644,9 +2644,9 @@ __metadata:
     postcss: ^8.4.16
     postcss-custom-properties: ^12.1.9
     postcss-discard-comments: ^5.1.2
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2658,7 +2658,7 @@ __metadata:
     fzf: ^0.5.1
     react: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2701,7 +2701,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2710,7 +2710,7 @@ __metadata:
   resolution: "@bangle.io/history@workspace:js-lib/history"
   dependencies:
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2740,7 +2740,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2750,7 +2750,7 @@ __metadata:
   dependencies:
     "@bangle.io/baby-fs": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     vite: ^3.2.1
   languageName: unknown
   linkType: soft
@@ -2792,7 +2792,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2817,7 +2817,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2848,7 +2848,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2866,7 +2866,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2898,7 +2898,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2923,7 +2923,7 @@ __metadata:
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2952,7 +2952,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2974,7 +2974,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -3010,7 +3010,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3019,7 +3019,7 @@ __metadata:
   resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"
   dependencies:
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3046,9 +3046,9 @@ __metadata:
     "@types/node": ^18.11.9
     "@types/prettier": ^2.7.0
     http-server: ^0.12.3
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3058,7 +3058,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.31.6
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3078,7 +3078,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3111,10 +3111,10 @@ __metadata:
     domexception: ^4.0.0
     fake-indexeddb: ^4.0.0
     globby: ^11.0.4
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     ts-node: ^10.9.1
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3148,7 +3148,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3164,7 +3164,7 @@ __metadata:
     "@bangle.dev/wiki-link": 0.31.6
     "@bangle.io/p-map": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3183,7 +3183,7 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     tslib: ^2.4.1
     type-fest: ^3.2.0
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3217,7 +3217,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3233,7 +3233,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.11.3
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3260,7 +3260,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3274,7 +3274,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3294,7 +3294,7 @@ __metadata:
     path-to-regexp: ^6.2.0
     react: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     wouter: ^2.8.0-alpha.2
   languageName: unknown
   linkType: soft
@@ -3311,7 +3311,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3328,7 +3328,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3345,7 +3345,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3383,7 +3383,7 @@ __metadata:
     reselect: ^4.1.5
     tslib: ^2.4.1
     type-fest: ^3.2.0
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3405,7 +3405,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3418,7 +3418,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3468,7 +3468,7 @@ __metadata:
     autoprefixer: ^10.4.4
     postcss: ^8.4.16
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3504,7 +3504,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.4.1
     type-fest: ^3.2.0
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
@@ -3543,7 +3543,7 @@ __metadata:
     react-dom: ^17.0.2
     react-popper: ^2.2.5
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3584,7 +3584,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3606,7 +3606,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     vite: ^3.2.1
   languageName: unknown
   linkType: soft
@@ -3638,7 +3638,7 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
@@ -3679,7 +3679,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3694,7 +3694,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3727,7 +3727,7 @@ __metadata:
     "@sentry/browser": ^6.18.1
     "@zip.js/zip.js": ^2.4.5
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3752,7 +3752,7 @@ __metadata:
     comlink: ^4.3.1
     react: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3784,7 +3784,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -3803,7 +3803,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     wouter: ^2.8.0-alpha.2
   languageName: unknown
   linkType: soft
@@ -8903,7 +8903,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -9675,7 +9675,7 @@ __metadata:
     postcss-import: ^15.0.0
     postcss-loader: ^7.0.1
     postcss-nested: ^5.0.6
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     punycode: ^2.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -9688,7 +9688,7 @@ __metadata:
     surge: ^0.23.0
     ts-node: ^10.9.1
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
     vite: ^3.2.1
     vite-plugin-html: ^3.2.0
     vite-plugin-pwa: ^0.13.1
@@ -13371,7 +13371,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -14024,7 +14024,7 @@ __metadata:
 
 "fsevents@patch:fsevents@^1.2.7#~builtin<compat/fsevents>":
   version: 1.2.13
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=d11327"
   dependencies:
     bindings: ^1.5.0
     nan: ^2.12.1
@@ -14034,7 +14034,7 @@ __metadata:
 
 "fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: latest
   conditions: os=darwin
@@ -16813,7 +16813,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -17208,7 +17208,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -19913,12 +19913,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.6.2, prettier@npm:^2.7.1":
+"prettier@npm:^2.6.2":
   version: 2.7.1
   resolution: "prettier@npm:2.7.1"
   bin:
     prettier: bin-prettier.js
   checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "prettier@npm:2.8.0"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 72004ce0cc9bb097daf3e3833f62495768724392c1d5b178dd47372337616e9e50ecbb0804f236596223f7b5eb1bbe69cefc8957dca21112c5777e77ef73a564
   languageName: node
   linkType: hard
 
@@ -21251,7 +21260,7 @@ __metadata:
 
 "resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.18.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#~builtin<compat/resolve>":
   version: 1.22.1
-  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=c3c19d"
   dependencies:
     is-core-module: ^2.9.0
     path-parse: ^1.0.7
@@ -21264,7 +21273,7 @@ __metadata:
 
 "resolve@patch:resolve@^2.0.0-next.3#~builtin<compat/resolve>":
   version: 2.0.0-next.3
-  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=c3c19d"
   dependencies:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
@@ -23144,7 +23153,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -23506,23 +23515,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.1-beta":
-  version: 4.9.1-beta
-  resolution: "typescript@npm:4.9.1-beta"
+"typescript@npm:4.9.3":
+  version: 4.9.3
+  resolution: "typescript@npm:4.9.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: db7be9894e8809c3ddea07eb41730c6211929f4f9f388a148354b9ce5f872aea3a86bc20a1cf6277dae7afddc813520e268f5096f6e5befaac705bb8a97d61ea
+  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.1-beta#~builtin<compat/typescript>":
-  version: 4.9.1-beta
-  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#~builtin<compat/typescript>::version=4.9.1-beta&hash=701156"
+"typescript@patch:typescript@4.9.3#~builtin<compat/typescript>":
+  version: 4.9.3
+  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2aa62468590ede8380736c1e23c35073195d30523bd0f39e527252f080057f18706bb9f2aef55d32909633db81845137ce8b634ba1887b4ed33ff2e6cdbc063f
+  checksum: 67ca21a387c0572f1c04936e638dde7782c5aa520c3754aadc7cc9b7c915da9ebc3e27c601bfff4ccb7d7264e82dce6d277ada82ec09dc75024349e0ef64926d
   languageName: node
   linkType: hard
 
@@ -24865,7 +24874,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
-    typescript: 4.9.1-beta
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
