@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const WindiCSSWebpackPlugin = require('windicss-webpack-plugin');
 
 const {
   ALL_TOP_LEVEL_DIRS,
@@ -82,7 +83,7 @@ module.exports = {
         fullySpecified: false,
       },
     });
-
+    config.plugins.push(new WindiCSSWebpackPlugin());
     config.plugins.push(
       new webpack.DefinePlugin({
         ...envVars.appEnvs,

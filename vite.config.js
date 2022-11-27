@@ -2,6 +2,7 @@
 import react from '@vitejs/plugin-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
+import WindiCSS from 'vite-plugin-windicss';
 
 import getEnvVars from '@bangle.io/env-vars';
 
@@ -83,6 +84,7 @@ const config = async ({ command, mode }) => {
         ],
         manifest: generateManifest(appEnv),
       }),
+      WindiCSS(),
     ],
     publicDir: './tooling/public',
     define: {
