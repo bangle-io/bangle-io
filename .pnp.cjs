@@ -324,6 +324,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/ui-dhancha"\
       },\
       {\
+        "name": "@bangle.io/ui-theme",\
+        "reference": "workspace:lib/ui-theme"\
+      },\
+      {\
         "name": "@bangle.io/utils",\
         "reference": "workspace:lib/utils"\
       },\
@@ -448,6 +452,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/ui-bangle-button", ["workspace:lib/ui-bangle-button"]],\
       ["@bangle.io/ui-components", ["workspace:lib/ui-components"]],\
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
+      ["@bangle.io/ui-theme", ["workspace:lib/ui-theme"]],\
       ["@bangle.io/utils", ["workspace:lib/utils"]],\
       ["@bangle.io/weak-cache", ["workspace:js-lib/weak-cache"]],\
       ["@bangle.io/worker-editor", ["workspace:worker/worker-editor"]],\
@@ -7580,6 +7585,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"],\
             ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/ui-theme", [\
+        ["workspace:lib/ui-theme", {\
+          "packageLocation": "./lib/ui-theme/",\
+          "packageDependencies": [\
+            ["@bangle.io/ui-theme", "workspace:lib/ui-theme"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["gradient-parser", "npm:1.0.2"],\
+            ["polished", "npm:4.2.2"],\
+            ["tailwindcss", "virtual:ee241e47af1c7b0dcf88d64a2f1891eedc54075e70496d305a3e7ef7bf04f85aba38634bd79b1e3765949705cb1ddb96d60c8b828c43c38ff5ddcac3fac40a7d#npm:3.2.4"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -22503,6 +22521,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/graceful-fs-npm-4.2.9-ee48e00aaa-68ea4e07ff.zip/node_modules/graceful-fs/",\
           "packageDependencies": [\
             ["graceful-fs", "npm:4.2.9"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["gradient-parser", [\
+        ["npm:1.0.2", {\
+          "packageLocation": "./.yarn/cache/gradient-parser-npm-1.0.2-4cf30f47eb-6669639363.zip/node_modules/gradient-parser/",\
+          "packageDependencies": [\
+            ["gradient-parser", "npm:1.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\

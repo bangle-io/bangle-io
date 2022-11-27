@@ -3625,6 +3625,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/ui-theme@workspace:lib/ui-theme":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/ui-theme@workspace:lib/ui-theme"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
+    gradient-parser: ^1.0.2
+    polished: ^4.2.2
+    tailwindcss: ^3.2.4
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/utils@workspace:*, @bangle.io/utils@workspace:lib/utils":
   version: 0.0.0-use.local
   resolution: "@bangle.io/utils@workspace:lib/utils"
@@ -14549,6 +14560,13 @@ __metadata:
   version: 4.2.9
   resolution: "graceful-fs@npm:4.2.9"
   checksum: 68ea4e07ff2c041ada184f9278b830375f8e0b75154e3f080af6b70f66172fabb4108d19b3863a96b53fc068a310b9b6493d86d1291acc5f3861eb4b79d26ad6
+  languageName: node
+  linkType: hard
+
+"gradient-parser@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "gradient-parser@npm:1.0.2"
+  checksum: 6669639363faeb8c65718c73b44f4af570df79cd6b9bccce067765b9e33daed39b0b8534878e3fe8cf52cf83a3b38a80de295114d0ff2993d12982652c33fe47
   languageName: node
   linkType: hard
 
