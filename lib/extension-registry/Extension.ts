@@ -121,17 +121,21 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       );
     }
 
-    const editor: EditorConfig | undefined = Object.assign({}, config.editor, {
-      name,
-    });
-    const application: ApplicationConfig<OpType> | undefined = Object.assign(
-      {},
-      config.application,
-      { name },
-    );
-    const theme: ThemeConfig | undefined = Object.assign({}, config.theme, {
-      name,
-    });
+    const editor: EditorConfig | undefined = config.editor
+      ? Object.assign({}, config.editor, {
+          name,
+        })
+      : undefined;
+
+    const application: ApplicationConfig<OpType> | undefined =
+      config.application
+        ? Object.assign({}, config.application, { name })
+        : undefined;
+    const theme: ThemeConfig | undefined = config.theme
+      ? Object.assign({}, config.theme, {
+          name,
+        })
+      : undefined;
 
     if (theme) {
       if (!theme.url) {
@@ -155,7 +159,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       highPriorityPlugins,
       markdownItPlugins,
       renderReactNodeView,
-    } = editor;
+    } = editor ?? {};
 
     if (specs && !Array.isArray(specs)) {
       throw new Error(`Extension "${name}": specs must be an array`);
@@ -192,7 +196,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       storageProvider,
       noteFormatProvider,
       onStorageError,
-    } = application;
+    } = application ?? {};
 
     if (operationHandler && !operations) {
       throw new Error(
