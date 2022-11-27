@@ -7,6 +7,7 @@
     "core-editor",
     "core-extension",
     "core-palettes",
+    "core-theme",
     "example-extension",
     "github-storage",
     "image-extension",

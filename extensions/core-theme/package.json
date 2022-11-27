@@ -1,0 +1,39 @@
+{
+  "name": "@bangle.io/core-theme",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "extensions/core-theme"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "scripts": {
+    "generate-theme": ""
+  },
+  "dependencies": {
+    "@bangle.io/api": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "tslib": "^2.4.1",
+    "typescript": "4.9.1-beta"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "license": "AGPL-3.0-or-later"
+}
