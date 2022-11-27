@@ -64,23 +64,6 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
     workspace: undefined,
   });
 
-  useEffect(() => {
-    safeNavigatorStorageGetDirectory().then(async (root) => {
-      if (!root) {
-        return;
-      }
-
-      const parentDir = await root.getDirectoryHandle('magic-bone', {
-        create: true,
-      });
-
-      updateModalState({
-        type: 'update_workspace',
-        workspace: { name: 'magic bone', rootDir: parentDir },
-      });
-    });
-  }, []);
-
   const onDismiss = useCallback(() => {
     _onDismiss(dialogName);
   }, [_onDismiss, dialogName]);
@@ -117,9 +100,7 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
     dispatchSerialOperation({
       name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
       value: {
-        rootDirHandle: {
-          name: modalState.workspace.name,
-        },
+        rootDirHandle: modalState.workspace.rootDir,
       },
     });
     onDismiss();
