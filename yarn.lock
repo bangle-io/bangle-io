@@ -2458,7 +2458,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/core-theme@workspace:extensions/core-theme"
   dependencies:
-    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
