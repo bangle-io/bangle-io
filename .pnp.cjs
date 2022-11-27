@@ -6202,6 +6202,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["polished", "npm:4.2.2"],\
             ["tailwindcss", "virtual:ee241e47af1c7b0dcf88d64a2f1891eedc54075e70496d305a3e7ef7bf04f85aba38634bd79b1e3765949705cb1ddb96d60c8b828c43c38ff5ddcac3fac40a7d#npm:3.2.4"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.1-beta#~builtin<compat/typescript>::version=4.9.1-beta&hash=701156"]\

@@ -201,6 +201,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/core-theme",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "extensions/core-theme",
+          "name": "@bangle.io/core-theme",
+          "type": "extensions",
+        },
+      ],
+      [
         "@bangle.io/create-store",
         {
           "hasCSSFiles": false,

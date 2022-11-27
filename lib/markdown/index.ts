@@ -33,7 +33,6 @@ const setupGetParser = () => {
     markdownItPlugins.forEach((plugin: any) => {
       // to allow passing of plugin options
       if (Array.isArray(plugin)) {
-        // @ts-expect-error
         tokenizer = tokenizer.use(...plugin);
       } else {
         tokenizer = tokenizer.use(plugin);

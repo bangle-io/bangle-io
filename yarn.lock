@@ -2461,6 +2461,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    polished: ^4.2.2
     tailwindcss: ^3.2.4
     tslib: ^2.4.1
     typescript: 4.9.1-beta
