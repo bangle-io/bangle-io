@@ -154,9 +154,7 @@ export class ExtensionRegistry {
       ),
     );
 
-    this._themes = _extensions
-      .map((e) => e.theme)
-      .filter((r): r is ThemeConfig => Boolean(r));
+    this._themes = filterFlatMap(_extensions, 'themes', true);
 
     const applicationConfig = _extensions
       .map((e) => e.application)

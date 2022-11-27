@@ -78,6 +78,8 @@ export interface ApplicationConfig<
 
 export interface ThemeConfig {
   name: string;
+  ownerExtension: string;
+  description?: string;
   url: string | { light: string; dark: string };
 }
 
@@ -99,7 +101,7 @@ interface Config<OpType extends SerialOperationDefinitionType> {
   application: ApplicationConfig<OpType> | undefined;
   editor: EditorConfig | undefined;
   name: string;
-  theme: ThemeConfig | undefined;
+  themes: ThemeConfig[] | undefined;
 }
 
 export class Extension<OpType extends SerialOperationDefinitionType = any> {
@@ -107,7 +109,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
     name: string;
     editor?: Omit<EditorConfig, 'name'>;
     application?: Omit<ApplicationConfig<OpType>, 'name'>;
-    theme?: Omit<ThemeConfig, 'name'>;
+    themes?: Array<Omit<ThemeConfig, 'ownerExtension'>>;
   }) {
     const { name } = config;
 
@@ -131,24 +133,33 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       config.application
         ? Object.assign({}, config.application, { name })
         : undefined;
-    const theme: ThemeConfig | undefined = config.theme
-      ? Object.assign({}, config.theme, {
-          name,
-        })
-      : undefined;
 
-    if (theme) {
-      if (!theme.url) {
-        throw new Error('Theme: url is required');
+    const themes: ThemeConfig[] | undefined = config.themes?.map((r) => ({
+      ...r,
+      ownerExtension: name,
+    }));
+
+    if (themes) {
+      if (new Set(themes.map((t) => t.name)).size !== themes.length) {
+        throw new Error('Theme: names must be unique');
       }
-      if (typeof theme.url !== 'string') {
-        if (
-          typeof theme.url.dark !== 'string' &&
-          typeof theme.url.dark !== 'string'
-        ) {
-          throw new Error(
-            'Theme: url must be of "string" or "{light: string, dark: string}" type',
-          );
+
+      for (const theme of themes) {
+        if (!theme.name) {
+          throw new Error('Theme: name is required');
+        }
+        if (!theme.url) {
+          throw new Error('Theme: url is required');
+        }
+        if (typeof theme.url !== 'string') {
+          if (
+            typeof theme.url.dark !== 'string' &&
+            typeof theme.url.dark !== 'string'
+          ) {
+            throw new Error(
+              'Theme: url must be of "string" or "{light: string, dark: string}" type',
+            );
+          }
         }
       }
     }
@@ -326,13 +337,13 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       }
     }
 
-    return new Extension<OpType>({ name, editor, application, theme }, _check);
+    return new Extension<OpType>({ name, editor, application, themes }, _check);
   }
 
   name: string;
   editor: Config<OpType>['editor'];
   application: Config<OpType>['application'];
-  theme: Config<OpType>['theme'];
+  themes: Config<OpType>['themes'];
 
   constructor(ext: Config<OpType>, check: typeof _check) {
     if (check !== _check) {
@@ -341,7 +352,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
     this.name = ext.name;
     this.editor = ext.editor;
     this.application = ext.application;
-    this.theme = ext.theme;
+    this.themes = ext.themes;
   }
 }
 
