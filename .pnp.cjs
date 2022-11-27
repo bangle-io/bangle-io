@@ -11280,7 +11280,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack", "virtual:853783d549a37a6c2238f9445418dd3d80f94ecb818c29a12a41c8f6011010d080820bee638bb4dca42339a69a5c3389d60f5094ec183798d534554a10feb201#npm:5.74.0"],\
             ["webpack-dev-middleware", "virtual:1497f5aa8379e90c714942125df3b4cfb11468ff28dcdb5d6fae5b93880390b70e76a06e1c05cfb3fe50cecfc013e6b97bf65c9208eef01e480d8d3582c25da2#npm:4.3.0"],\
             ["webpack-hot-middleware", "npm:2.25.1"],\
-            ["webpack-virtual-modules", "npm:0.4.3"]\
+            ["webpack-virtual-modules", "npm:0.4.6"]\
           ],\
           "packagePeers": [\
             "@types/react-dom",\
@@ -12491,7 +12491,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["util-deprecate", "npm:1.0.2"],\
             ["webpack", "virtual:853783d549a37a6c2238f9445418dd3d80f94ecb818c29a12a41c8f6011010d080820bee638bb4dca42339a69a5c3389d60f5094ec183798d534554a10feb201#npm:5.74.0"],\
             ["webpack-dev-middleware", "virtual:1497f5aa8379e90c714942125df3b4cfb11468ff28dcdb5d6fae5b93880390b70e76a06e1c05cfb3fe50cecfc013e6b97bf65c9208eef01e480d8d3582c25da2#npm:4.3.0"],\
-            ["webpack-virtual-modules", "npm:0.4.3"]\
+            ["webpack-virtual-modules", "npm:0.4.6"]\
           ],\
           "packagePeers": [\
             "@types/react-dom",\
@@ -34084,13 +34084,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["webpack-virtual-modules", "npm:0.2.2"],\
             ["debug", "virtual:1f43412872fd884ea1247d77cd236ac89b1b489fe66cda1675f885395b16fa7be38fca8f4ee0ddb7d79481d2482886d2d62a39f86813baeaf755095851975ab1#npm:3.2.7"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:0.4.3", {\
-          "packageLocation": "./.yarn/cache/webpack-virtual-modules-npm-0.4.3-534a8e67d8-158d30633e.zip/node_modules/webpack-virtual-modules/",\
-          "packageDependencies": [\
-            ["webpack-virtual-modules", "npm:0.4.3"]\
           ],\
           "linkType": "HARD"\
         }],\
