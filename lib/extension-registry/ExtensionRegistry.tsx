@@ -12,7 +12,12 @@ import type {
   SerialOperationNameType,
 } from '@bangle.io/shared-types';
 
-import type { ApplicationConfig, EditorConfig, Extension } from './Extension';
+import type {
+  ApplicationConfig,
+  EditorConfig,
+  Extension,
+  ThemeConfig,
+} from './Extension';
 
 type Unnest<T> = T extends Array<infer U> ? U : T;
 
@@ -53,7 +58,7 @@ export class ExtensionRegistry {
   renderApplicationComponents = () => {
     const result = this._extensions
       .map((extension) => {
-        const { ReactComponent } = extension.application;
+        const { ReactComponent } = extension.application ?? {};
 
         if (ReactComponent) {
           return <ReactComponent key={extension.name} />;
@@ -123,6 +128,8 @@ export class ExtensionRegistry {
     >;
   };
 
+  private _themes: ThemeConfig[];
+
   constructor(
     private _extensions: Extension[] = [],
     // TODO move this to an extension
@@ -130,7 +137,10 @@ export class ExtensionRegistry {
   ) {
     this._validate();
 
-    this._editorConfig = _extensions.map((e) => e.editor);
+    this._editorConfig = _extensions
+      .map((e) => e.editor)
+      .filter((r): r is EditorConfig => Boolean(r));
+
     this.specRegistry = new SpecRegistry([
       ...filterFlatMap(this._editorConfig, 'specs'),
     ]);
@@ -144,7 +154,13 @@ export class ExtensionRegistry {
       ),
     );
 
-    const applicationConfig = _extensions.map((e) => e.application);
+    this._themes = _extensions
+      .map((e) => e.theme)
+      .filter((r): r is ThemeConfig => Boolean(r));
+
+    const applicationConfig = _extensions
+      .map((e) => e.application)
+      .filter((r): r is ApplicationConfig => Boolean(r));
 
     this._serialOperationHandlers = new Set();
 
@@ -170,7 +186,7 @@ export class ExtensionRegistry {
 
     this._slices = filterFlatMap(applicationConfig, 'slices');
     this._operationHandlers = _extensions
-      .map((e) => e.application.operationHandler)
+      .map((e) => e.application?.operationHandler)
       .filter(
         (
           operationHandler,
@@ -266,6 +282,10 @@ export class ExtensionRegistry {
 
   getStorageProvider(name: string) {
     return this._storageProviders[name];
+  }
+
+  getThemes() {
+    return this._themes;
   }
 
   isExtensionDefined(name: string) {

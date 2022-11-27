@@ -76,6 +76,11 @@ export interface ApplicationConfig<
   onStorageError?: OnStorageProviderError;
 }
 
+export interface ThemeConfig {
+  name: string;
+  url: string | { light: string; dark: string };
+}
+
 export interface SidebarType {
   activitybarIcon: JSX.Element;
   // if provided will be used to decide whether to show the sidebar icon in activitybar
@@ -91,9 +96,10 @@ export interface SidebarType {
 }
 
 interface Config<OpType extends SerialOperationDefinitionType> {
-  application: ApplicationConfig<OpType>;
-  editor: EditorConfig;
+  application: ApplicationConfig<OpType> | undefined;
+  editor: EditorConfig | undefined;
   name: string;
+  theme: ThemeConfig | undefined;
 }
 
 export class Extension<OpType extends SerialOperationDefinitionType = any> {
@@ -101,6 +107,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
     name: string;
     editor?: Omit<EditorConfig, 'name'>;
     application?: Omit<ApplicationConfig<OpType>, 'name'>;
+    theme?: Omit<ThemeConfig, 'name'>;
   }) {
     const { name } = config;
 
@@ -114,8 +121,33 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       );
     }
 
-    const editor = Object.assign({}, config.editor, { name });
-    const application = Object.assign({}, config.application, { name });
+    const editor: EditorConfig | undefined = Object.assign({}, config.editor, {
+      name,
+    });
+    const application: ApplicationConfig<OpType> | undefined = Object.assign(
+      {},
+      config.application,
+      { name },
+    );
+    const theme: ThemeConfig | undefined = Object.assign({}, config.theme, {
+      name,
+    });
+
+    if (theme) {
+      if (!theme.url) {
+        throw new Error('Theme: url is required');
+      }
+      if (typeof theme.url !== 'string') {
+        if (
+          typeof theme.url.dark !== 'string' &&
+          typeof theme.url.dark !== 'string'
+        ) {
+          throw new Error(
+            'Theme: url must be of "string" or "{light: string, dark: string}" type',
+          );
+        }
+      }
+    }
 
     const {
       specs,
@@ -290,12 +322,13 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       }
     }
 
-    return new Extension<OpType>({ name, editor, application }, _check);
+    return new Extension<OpType>({ name, editor, application, theme }, _check);
   }
 
   name: string;
-  editor: EditorConfig;
-  application: ApplicationConfig<OpType>;
+  editor: Config<OpType>['editor'];
+  application: Config<OpType>['application'];
+  theme: Config<OpType>['theme'];
 
   constructor(ext: Config<OpType>, check: typeof _check) {
     if (check !== _check) {
@@ -304,6 +337,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
     this.name = ext.name;
     this.editor = ext.editor;
     this.application = ext.application;
+    this.theme = ext.theme;
   }
 }
 
