@@ -2644,7 +2644,7 @@ __metadata:
     postcss: ^8.4.16
     postcss-custom-properties: ^12.1.9
     postcss-discard-comments: ^5.1.2
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     tslib: ^2.4.1
     typescript: 4.9.3
   languageName: unknown
@@ -3046,7 +3046,7 @@ __metadata:
     "@types/node": ^18.11.9
     "@types/prettier": ^2.7.0
     http-server: ^0.12.3
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     tslib: ^2.4.1
     typescript: 4.9.3
   languageName: unknown
@@ -3111,7 +3111,7 @@ __metadata:
     domexception: ^4.0.0
     fake-indexeddb: ^4.0.0
     globby: ^11.0.4
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     ts-node: ^10.9.1
     tslib: ^2.4.1
     typescript: 4.9.3
@@ -9675,7 +9675,7 @@ __metadata:
     postcss-import: ^15.0.0
     postcss-loader: ^7.0.1
     postcss-nested: ^5.0.6
-    prettier: ^2.7.1
+    prettier: ^2.8.0
     punycode: ^2.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -19913,12 +19913,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.6.2, prettier@npm:^2.7.1":
+"prettier@npm:^2.6.2":
   version: 2.7.1
   resolution: "prettier@npm:2.7.1"
   bin:
     prettier: bin-prettier.js
   checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "prettier@npm:2.8.0"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 72004ce0cc9bb097daf3e3833f62495768724392c1d5b178dd47372337616e9e50ecbb0804f236596223f7b5eb1bbe69cefc8957dca21112c5777e77ef73a564
   languageName: node
   linkType: hard
 

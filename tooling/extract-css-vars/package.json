@@ -27,7 +27,7 @@
     "postcss": "^8.4.16",
     "postcss-custom-properties": "^12.1.9",
     "postcss-discard-comments": "^5.1.2",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.0",
     "tslib": "^2.4.1",
     "typescript": "4.9.3"
   },
