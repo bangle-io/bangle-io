@@ -18,32 +18,30 @@ export enum PackageType {
   worker = 'worker',
 }
 
+const topLevelDirsObj: Record<PackageType, null> = {
+  [PackageType.lib]: null,
+  [PackageType.jsLib]: null,
+  [PackageType.worker]: null,
+  [PackageType.extensions]: null,
+  [PackageType.app]: null,
+  [PackageType.tooling]: null,
+  [PackageType.root]: null,
+};
+
+export const topLevelDirs = Object.keys(topLevelDirsObj)
+  .filter((r) => r !== '.')
+  .sort();
+
 ensureConsistentTopDirs();
 function ensureConsistentTopDirs() {
-  const topLevelDirs: Record<PackageType, null> = {
-    [PackageType.lib]: null,
-    [PackageType.jsLib]: null,
-    [PackageType.worker]: null,
-    [PackageType.extensions]: null,
-    [PackageType.app]: null,
-    [PackageType.tooling]: null,
-    [PackageType.root]: null,
-  };
-
-  const stringifiedTopLevelDirs = JSON.stringify(
-    Object.keys(topLevelDirs)
-      .filter((r) => r !== '.')
-      .sort(),
-  );
-
   const stringifiedTopLevelDirs2 = JSON.stringify(
     [...ALL_TOP_LEVEL_DIRS].sort(),
   );
 
-  if (stringifiedTopLevelDirs2 !== stringifiedTopLevelDirs) {
+  if (stringifiedTopLevelDirs2 !== JSON.stringify(topLevelDirs)) {
     console.log('===========The following must be equal===========');
     console.log(stringifiedTopLevelDirs2);
-    console.log(stringifiedTopLevelDirs);
+    console.log(JSON.stringify(topLevelDirs));
     console.log('=================================================');
 
     // This exists to make sure the directories remain in sync.

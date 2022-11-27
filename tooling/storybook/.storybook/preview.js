@@ -1,3 +1,4 @@
+import 'windi.css';
 import './storybook.css';
 import '../../public/main.css';
 import { themes } from '@storybook/theming';
