@@ -70,6 +70,7 @@
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/jsdom-env": "workspace:*",
     "@bangle.io/scripts": "workspace:*",
+    "@bangle.io/ui-vars": "workspace:*",
     "@bangle.io/yarn-workspace-helpers": "workspace:*",
     "@sentry/react": "^6.18.1",
     "@sentry/tracing": "^6.18.1",

@@ -1,6 +1,8 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { lighten } from 'polished';
 
-import type { BangleThemeInput } from '@bangle.io/shared-types';
+import { createStyleSheet } from '@bangle.io/ui-theme';
 
 import { color } from './colors';
 
@@ -20,7 +22,7 @@ const REG = 900;
 const BG_REG = 700;
 const BG_LIGHT = 100;
 
-export const baseThemeLight: BangleThemeInput = {
+const baseThemeLight = createStyleSheet({
   name: 'base-light',
   border: {
     color: {
@@ -89,4 +91,10 @@ export const baseThemeLight: BangleThemeInput = {
     positive: positive[BG_REG],
     positiveLight: positive[BG_LIGHT],
   },
-};
+});
+
+fs.writeFileSync(
+  path.join(__dirname, './theme-light.css'),
+  baseThemeLight,
+  'utf8',
+);

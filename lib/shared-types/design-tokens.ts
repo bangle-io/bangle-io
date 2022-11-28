@@ -14,7 +14,9 @@ export interface DesignTokens {
       xs: { size: string; height: string };
       sm: { size: string; height: string };
       md: { size: string; height: string };
+      base: { size: string; height: string };
       lg: { size: string; height: string };
+      xl: { size: string; height: string };
     };
   };
   focusRingSize: string;
@@ -72,6 +74,13 @@ export interface DesignTokens {
     '6': string;
     '8': string;
     '9': string;
+    '10': string;
+    '12': string;
+    '14': string;
+    '16': string;
+    '20': string;
+    '24': string;
+    '48': string;
   };
   radius: {
     none: string;
@@ -173,7 +182,7 @@ export interface DesignTokens {
   };
   app: {
     editor: {
-      background: string;
+      backgroundColor: string;
     };
   };
 }

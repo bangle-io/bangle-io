@@ -491,6 +491,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/jsdom-env", "workspace:js-lib/jsdom-env"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
             ["@sentry/tracing", "npm:6.19.7"],\
@@ -6219,6 +6220,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ui-theme", "workspace:lib/ui-theme"],\
             ["polished", "npm:4.2.2"],\
             ["tailwindcss", "virtual:4f7bac57a9aa9f479364d21dc26ce090f638b771b2cab541b2c2f47c62d1feae825d89c7af90d58ff33185c830898b9f203c1bdb0445a3e7039941db8b007b86#npm:3.2.4"],\
+            ["ts-node", "virtual:91c205bb8fdfa2c7bfa62fe0c08319efccdd8fb96a6f9baf04e5e9d68e0fdb5ebff90b0fd6be9a481910453ac836e06e9d65f0d7754c22749a763155e751a406#npm:10.9.1"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
           ],\
@@ -7053,6 +7055,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cross-fetch", "npm:3.1.5"],\
             ["date-fns", "npm:2.29.3"],\
             ["domexception", "npm:4.0.0"],\
+            ["execa", "npm:5.1.1"],\
             ["fake-indexeddb", "npm:4.0.0"],\
             ["globby", "npm:11.1.0"],\
             ["prettier", "npm:2.8.0"],\
@@ -7440,6 +7443,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/style", "workspace:app/style"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/core-theme", "workspace:extensions/core-theme"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.4.13"],\
             ["postcss", "npm:8.4.19"],\
@@ -16711,6 +16715,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/jsdom-env", "workspace:js-lib/jsdom-env"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
             ["@sentry/tracing", "npm:6.19.7"],\

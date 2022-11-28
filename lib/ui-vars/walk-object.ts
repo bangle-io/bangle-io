@@ -1,7 +1,7 @@
 type Primitive = string;
 
-type Walkable = {
-  [Key in string | number]: Primitive | Walkable;
+export type WalkableStringRecord = {
+  [Key in string | number]: Primitive | WalkableStringRecord;
 };
 
 type MapLeafNodes<Obj, LeafType> = {
@@ -11,7 +11,7 @@ type MapLeafNodes<Obj, LeafType> = {
     ? MapLeafNodes<Obj[Prop], LeafType>
     : never;
 };
-export function walkObject<T extends Walkable, MapTo>(
+export function walkObject<T extends WalkableStringRecord, MapTo>(
   obj: T,
   fn: (value: Primitive, path: string[]) => MapTo,
   path: string[] = [],
@@ -29,7 +29,7 @@ export function walkObject<T extends Walkable, MapTo>(
     ) {
       clone[key] = fn(value as Primitive, currentPath);
     } else if (typeof value === 'object' && !Array.isArray(value)) {
-      clone[key] = walkObject(value as Walkable, fn, currentPath);
+      clone[key] = walkObject(value as WalkableStringRecord, fn, currentPath);
     } else {
       console.warn(
         `Skipping invalid key "${currentPath.join(
@@ -42,4 +42,17 @@ export function walkObject<T extends Walkable, MapTo>(
   }
 
   return clone;
+}
+
+export function getFromPath(obj: any, path: string[]) {
+  let result = obj;
+
+  for (const key of path) {
+    if (!(key in result)) {
+      throw new Error(`Path ${path.join(' -> ')} does not exist in object`);
+    }
+    result = result[key];
+  }
+
+  return result;
 }

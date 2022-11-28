@@ -2459,7 +2459,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/core-theme@workspace:extensions/core-theme":
+"@bangle.io/core-theme@workspace:*, @bangle.io/core-theme@workspace:extensions/core-theme":
   version: 0.0.0-use.local
   resolution: "@bangle.io/core-theme@workspace:extensions/core-theme"
   dependencies:
@@ -2469,6 +2469,7 @@ __metadata:
     "@bangle.io/ui-theme": "workspace:*"
     polished: ^4.2.2
     tailwindcss: ^3.2.4
+    ts-node: ^10.9.1
     tslib: ^2.4.1
     typescript: ^4.9.3
   languageName: unknown
@@ -3129,6 +3130,7 @@ __metadata:
     cross-fetch: ^3.1.5
     date-fns: ^2.25.0
     domexception: ^4.0.0
+    execa: ^5.1.1
     fake-indexeddb: ^4.0.0
     globby: ^11.0.4
     prettier: ^2.8.0
@@ -3484,6 +3486,7 @@ __metadata:
   resolution: "@bangle.io/style@workspace:app/style"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/core-theme": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     autoprefixer: ^10.4.4
     postcss: ^8.4.16
@@ -9698,6 +9701,7 @@ __metadata:
     "@bangle.io/jsdom-env": "workspace:*"
     "@bangle.io/scripts": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/ui-vars": "workspace:*"
     "@bangle.io/yarn-workspace-helpers": "workspace:*"
     "@sentry/react": ^6.18.1
     "@sentry/tracing": ^6.18.1

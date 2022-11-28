@@ -11,15 +11,8 @@ import {
   defaultSpace,
   defaultTypography,
 } from './default-tokens';
+import type { BangleAppOverrides } from './types';
 import { isLight } from './utils';
-
-// TODO remove this with partial
-interface BangleAppOverrides {
-  // mostly overrides
-  editor?: {
-    backgroundColor?: string;
-  };
-}
 
 const getActiveColor = (color: string) =>
   isLight(color) ? darken(0.1, color) : darken(0.05, color);
@@ -29,7 +22,7 @@ const getHoverColor = (color: string) =>
 
 export function createTokens(
   theme: BangleThemeInput,
-  appOverride: BangleAppOverrides,
+  appOverride?: BangleAppOverrides,
 ): DesignTokens {
   const result: Omit<DesignTokens, 'app'> = {
     theme: theme.name,
@@ -48,7 +41,7 @@ export function createTokens(
 
   return {
     ...result,
-    app: getAppOverrides(appOverride, result),
+    app: getAppOverrides(result, appOverride),
   };
 }
 
@@ -131,13 +124,13 @@ function getBackgroundColor(
 }
 
 function getAppOverrides(
-  input: BangleAppOverrides,
   designTokens: Omit<DesignTokens, 'app'>,
+  input?: BangleAppOverrides,
 ): DesignTokens['app'] {
   return {
     editor: {
-      background:
-        input.editor?.backgroundColor || designTokens.color.background.surface,
+      backgroundColor:
+        input?.editor?.backgroundColor ?? designTokens.color.background.surface,
     },
   };
 }

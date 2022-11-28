@@ -70,6 +70,13 @@ export const defaultSpace: DesignTokens['space'] = {
   '6': '1.5rem',
   '8': '2rem',
   '9': '2.25rem',
+  '10': '2.25rem',
+  '12': '3rem',
+  '14': '3.5rem',
+  '16': '4rem',
+  '20': '5rem',
+  '24': '6rem',
+  '48': '12rem',
 };
 
 export const defaultTypography: DesignTokens['typography'] = {
@@ -83,8 +90,10 @@ export const defaultTypography: DesignTokens['typography'] = {
   },
   text: {
     xs: { size: '0.75rem', height: '1rem' },
-    sm: { size: '0.75rem', height: '1rem' },
-    md: { size: '0.75rem', height: '1rem' },
-    lg: { size: '0.75rem', height: '1rem' },
+    sm: { size: '0.875rem', height: '1.25rem' },
+    base: { size: '1rem', height: '1.5rem' },
+    md: { size: '1rem', height: '1.5rem' },
+    lg: { size: '1.125rem', height: '1.75rem' },
+    xl: { size: '1.25rem', height: '1.75rem' },
   },
 };
