@@ -497,7 +497,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.19.7"],\
             ["@sentry/webpack-plugin", "npm:1.20.0"],\
             ["@swc/core", "npm:1.3.20"],\
-            ["@swc/core-linux-x64-gnu", "npm:1.3.2"],\
+            ["@swc/core-linux-x64-gnu", "npm:1.3.20"],\
             ["@swc/jest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.2.23"],\
             ["@testing-library/dom", "npm:8.19.0"],\
             ["@testing-library/jest-dom", "npm:5.16.5"],\
@@ -521,7 +521,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.7"],\
             ["date-fns", "npm:2.29.3"],\
             ["ejs", "npm:3.1.8"],\
-            ["esbuild-linux-64", "npm:0.15.12"],\
+            ["esbuild-linux-64", "npm:0.15.16"],\
             ["eslint", "npm:8.28.0"],\
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.1"],\
             ["eslint-import-resolver-node", "npm:0.3.6"],\
@@ -13357,13 +13357,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@swc/core-linux-x64-gnu", [\
-        ["npm:1.3.2", {\
-          "packageLocation": "./.yarn/unplugged/@swc-core-linux-x64-gnu-npm-1.3.2-8f84c0bb2b/node_modules/@swc/core-linux-x64-gnu/",\
-          "packageDependencies": [\
-            ["@swc/core-linux-x64-gnu", "npm:1.3.2"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.3.20", {\
           "packageLocation": "./.yarn/unplugged/@swc-core-linux-x64-gnu-npm-1.3.20-affecfb6c3/node_modules/@swc/core-linux-x64-gnu/",\
           "packageDependencies": [\
@@ -16721,7 +16714,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.19.7"],\
             ["@sentry/webpack-plugin", "npm:1.20.0"],\
             ["@swc/core", "npm:1.3.20"],\
-            ["@swc/core-linux-x64-gnu", "npm:1.3.2"],\
+            ["@swc/core-linux-x64-gnu", "npm:1.3.20"],\
             ["@swc/jest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.2.23"],\
             ["@testing-library/dom", "npm:8.19.0"],\
             ["@testing-library/jest-dom", "npm:5.16.5"],\
@@ -16745,7 +16738,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.7"],\
             ["date-fns", "npm:2.29.3"],\
             ["ejs", "npm:3.1.8"],\
-            ["esbuild-linux-64", "npm:0.15.12"],\
+            ["esbuild-linux-64", "npm:0.15.16"],\
             ["eslint", "npm:8.28.0"],\
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.1"],\
             ["eslint-import-resolver-node", "npm:0.3.6"],\
@@ -20168,13 +20161,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["esbuild-linux-64", [\
-        ["npm:0.15.12", {\
-          "packageLocation": "./.yarn/unplugged/esbuild-linux-64-npm-0.15.12-1259cf7b90/node_modules/esbuild-linux-64/",\
-          "packageDependencies": [\
-            ["esbuild-linux-64", "npm:0.15.12"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:0.15.16", {\
           "packageLocation": "./.yarn/unplugged/esbuild-linux-64-npm-0.15.16-172ca1314a/node_modules/esbuild-linux-64/",\
           "packageDependencies": [\

@@ -7038,17 +7038,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.3.2":
-  version: 1.3.2
-  resolution: "@swc/core-linux-x64-gnu@npm:1.3.2"
-  checksum: da37d9906f2c7938b8f519dca00008165a3e2311063d21bc86a8c3905208905949c9470c8077fcf395e760ae4754d1587b7208345cf697fc202706f03a78b6fb
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
 "@swc/core-linux-x64-gnu@npm:1.3.20":
   version: 1.3.20
   resolution: "@swc/core-linux-x64-gnu@npm:1.3.20"
+  checksum: 0d160373d6604f7ca4cb57cf293999805fa9267c6d18b41907352d007c62e0f813de39e8f935fd895dc1ec546db651bbdba89573d96189ad5dfcfef5b9b883ab
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -9707,7 +9700,7 @@ __metadata:
     "@sentry/tracing": ^6.18.1
     "@sentry/webpack-plugin": ^1.18.8
     "@swc/core": ^1.3.2
-    "@swc/core-linux-x64-gnu": 1.3.2
+    "@swc/core-linux-x64-gnu": 1.3.20
     "@swc/jest": ^0.2.22
     "@testing-library/dom": ^8.11.3
     "@testing-library/jest-dom": ^5.16.2
@@ -9731,7 +9724,7 @@ __metadata:
     css-loader: ^5.2.7
     date-fns: ^2.25.0
     ejs: ^3.1.6
-    esbuild-linux-64: 0.15.12
+    esbuild-linux-64: 0.15.16
     eslint: ^8.23.0
     eslint-config-react-app: ^7.0.1
     eslint-import-resolver-node: ^0.3.6
@@ -12679,17 +12672,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-linux-64@npm:0.15.12":
-  version: 0.15.12
-  resolution: "esbuild-linux-64@npm:0.15.12"
-  checksum: d44500f60759d5957415528ada82fe94dbf361bdc4d55a3b5be88469fb10964a452eccfd9b691df776fcb568819b9457f13cb8d2a5017d7835c632661e313e1f
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
 "esbuild-linux-64@npm:0.15.16":
   version: 0.15.16
   resolution: "esbuild-linux-64@npm:0.15.16"
+  checksum: ff56b0a6c63f71b2aedc2e7dc9e6af65da970b60e3d4bf5091f60273d8059aee8c14a585cd1444bd64a62d7780d2cd64bb07e70f34cfddfe0269be6bdf95f067
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
