@@ -4,7 +4,7 @@ exports[`works 1`] = `
 {
   "app": {
     "editor": {
-      "background": "var(--BV-app-editor-background)",
+      "backgroundColor": "var(--BV-app-editor-backgroundColor)",
     },
   },
   "border": {
@@ -132,11 +132,18 @@ exports[`works 1`] = `
     "0": "var(--BV-space-0)",
     "0_5": "var(--BV-space-0_5)",
     "1": "var(--BV-space-1)",
+    "10": "var(--BV-space-10)",
+    "12": "var(--BV-space-12)",
+    "14": "var(--BV-space-14)",
+    "16": "var(--BV-space-16)",
     "1_5": "var(--BV-space-1_5)",
     "2": "var(--BV-space-2)",
+    "20": "var(--BV-space-20)",
+    "24": "var(--BV-space-24)",
     "2_5": "var(--BV-space-2_5)",
     "3": "var(--BV-space-3)",
     "4": "var(--BV-space-4)",
+    "48": "var(--BV-space-48)",
     "6": "var(--BV-space-6)",
     "8": "var(--BV-space-8)",
     "9": "var(--BV-space-9)",
@@ -151,6 +158,10 @@ exports[`works 1`] = `
       "strong": "var(--BV-typography-fontWeight-strong)",
     },
     "text": {
+      "base": {
+        "height": "var(--BV-typography-text-base-height)",
+        "size": "var(--BV-typography-text-base-size)",
+      },
       "lg": {
         "height": "var(--BV-typography-text-lg-height)",
         "size": "var(--BV-typography-text-lg-size)",
@@ -162,6 +173,10 @@ exports[`works 1`] = `
       "sm": {
         "height": "var(--BV-typography-text-sm-height)",
         "size": "var(--BV-typography-text-sm-size)",
+      },
+      "xl": {
+        "height": "var(--BV-typography-text-xl-height)",
+        "size": "var(--BV-typography-text-xl-size)",
       },
       "xs": {
         "height": "var(--BV-typography-text-xs-height)",

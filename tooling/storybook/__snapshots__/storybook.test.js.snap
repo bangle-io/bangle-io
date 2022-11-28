@@ -1916,6 +1916,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
   <div
     aria-hidden={true}
     onBlur={null}
+    onFocus={null}
     style={
       {
         "border": 0,
@@ -2059,6 +2060,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
   <div
     aria-hidden={true}
     onBlur={null}
+    onFocus={null}
     style={
       {
         "border": 0,
@@ -2202,6 +2204,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
   <div
     aria-hidden={true}
     onBlur={null}
+    onFocus={null}
     style={
       {
         "border": 0,
@@ -2345,6 +2348,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
   <div
     aria-hidden={true}
     onBlur={null}
+    onFocus={null}
     style={
       {
         "border": 0,
@@ -2541,7 +2545,6 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
   />
   <div
     className="text-sm"
-    id={null}
     style={
       {
         "color": "var(--BV-text-color-1)",
@@ -2599,7 +2602,6 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
   />
   <div
     className="text-sm"
-    id={null}
     style={
       {
         "color": "var(--BV-severity-error-color)",
