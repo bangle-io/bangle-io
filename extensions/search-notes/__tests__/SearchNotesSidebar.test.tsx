@@ -236,7 +236,7 @@ describe('operations', () => {
 
     render();
 
-    searchNotesExtension.application.operationHandler?.().handle(
+    searchNotesExtension.application?.operationHandler?.().handle(
       {
         name: 'operation::@bangle.io/search-notes:show-search-sidebar',
       },
@@ -271,7 +271,7 @@ describe('operations', () => {
 
     render();
 
-    searchNotesExtension.application.operationHandler?.().handle(
+    searchNotesExtension.application?.operationHandler?.().handle(
       {
         name: EXECUTE_SEARCH_OPERATION,
         value: 'hello world',
@@ -291,7 +291,7 @@ describe('operations', () => {
       searchResults: null,
     });
 
-    searchNotesExtension.application.operationHandler?.().handle(
+    searchNotesExtension.application?.operationHandler?.().handle(
       {
         name: EXECUTE_SEARCH_OPERATION,
         value: 'hello world',

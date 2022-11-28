@@ -76,6 +76,13 @@ export interface ApplicationConfig<
   onStorageError?: OnStorageProviderError;
 }
 
+export interface ThemeConfig {
+  name: string;
+  ownerExtension: string;
+  description?: string;
+  url: string | { light: string; dark: string };
+}
+
 export interface SidebarType {
   activitybarIcon: JSX.Element;
   // if provided will be used to decide whether to show the sidebar icon in activitybar
@@ -91,9 +98,10 @@ export interface SidebarType {
 }
 
 interface Config<OpType extends SerialOperationDefinitionType> {
-  application: ApplicationConfig<OpType>;
-  editor: EditorConfig;
+  application: ApplicationConfig<OpType> | undefined;
+  editor: EditorConfig | undefined;
   name: string;
+  themes: ThemeConfig[] | undefined;
 }
 
 export class Extension<OpType extends SerialOperationDefinitionType = any> {
@@ -101,6 +109,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
     name: string;
     editor?: Omit<EditorConfig, 'name'>;
     application?: Omit<ApplicationConfig<OpType>, 'name'>;
+    themes?: Array<Omit<ThemeConfig, 'ownerExtension'>>;
   }) {
     const { name } = config;
 
@@ -114,8 +123,46 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       );
     }
 
-    const editor = Object.assign({}, config.editor, { name });
-    const application = Object.assign({}, config.application, { name });
+    const editor: EditorConfig | undefined = config.editor
+      ? Object.assign({}, config.editor, {
+          name,
+        })
+      : undefined;
+
+    const application: ApplicationConfig<OpType> | undefined =
+      config.application
+        ? Object.assign({}, config.application, { name })
+        : undefined;
+
+    const themes: ThemeConfig[] | undefined = config.themes?.map((r) => ({
+      ...r,
+      ownerExtension: name,
+    }));
+
+    if (themes) {
+      if (new Set(themes.map((t) => t.name)).size !== themes.length) {
+        throw new Error('Theme: names must be unique');
+      }
+
+      for (const theme of themes) {
+        if (!theme.name) {
+          throw new Error('Theme: name is required');
+        }
+        if (!theme.url) {
+          throw new Error('Theme: url is required');
+        }
+        if (typeof theme.url !== 'string') {
+          if (
+            typeof theme.url.dark !== 'string' &&
+            typeof theme.url.dark !== 'string'
+          ) {
+            throw new Error(
+              'Theme: url must be of "string" or "{light: string, dark: string}" type',
+            );
+          }
+        }
+      }
+    }
 
     const {
       specs,
@@ -123,7 +170,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       highPriorityPlugins,
       markdownItPlugins,
       renderReactNodeView,
-    } = editor;
+    } = editor ?? {};
 
     if (specs && !Array.isArray(specs)) {
       throw new Error(`Extension "${name}": specs must be an array`);
@@ -160,7 +207,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       storageProvider,
       noteFormatProvider,
       onStorageError,
-    } = application;
+    } = application ?? {};
 
     if (operationHandler && !operations) {
       throw new Error(
@@ -290,12 +337,13 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       }
     }
 
-    return new Extension<OpType>({ name, editor, application }, _check);
+    return new Extension<OpType>({ name, editor, application, themes }, _check);
   }
 
   name: string;
-  editor: EditorConfig;
-  application: ApplicationConfig<OpType>;
+  editor: Config<OpType>['editor'];
+  application: Config<OpType>['application'];
+  themes: Config<OpType>['themes'];
 
   constructor(ext: Config<OpType>, check: typeof _check) {
     if (check !== _check) {
@@ -304,6 +352,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
     this.name = ext.name;
     this.editor = ext.editor;
     this.application = ext.application;
+    this.themes = ext.themes;
   }
 }
 

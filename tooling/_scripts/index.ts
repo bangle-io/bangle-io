@@ -1,3 +1,5 @@
+import execa from 'execa';
+
 import { YarnWorkspaceHelpers } from '@bangle.io/yarn-workspace-helpers';
 
 import { checkDepConstraints } from './check-dep-constraints';
@@ -11,6 +13,12 @@ if (require.main === module) {
   checkMultipleInstances();
   checkDepConstraints(ws);
   generateStyleLintRegex(ws);
+
+  execa('yarn', ['g:generate-core-theme'], {
+    stdio: 'inherit',
+  }).then(() => {
+    console.log('Done generating core theme');
+  });
 
   process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);

@@ -201,6 +201,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/core-theme",
+        {
+          "hasCSSFiles": true,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "extensions/core-theme",
+          "name": "@bangle.io/core-theme",
+          "type": "extensions",
+        },
+      ],
+      [
         "@bangle.io/create-store",
         {
           "hasCSSFiles": false,
@@ -802,6 +813,28 @@ test('lists packages', async () => {
           "isWorktree": false,
           "location": "lib/ui-dhancha",
           "name": "@bangle.io/ui-dhancha",
+          "type": "lib",
+        },
+      ],
+      [
+        "@bangle.io/ui-theme",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/ui-theme",
+          "name": "@bangle.io/ui-theme",
+          "type": "lib",
+        },
+      ],
+      [
+        "@bangle.io/ui-vars",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/ui-vars",
+          "name": "@bangle.io/ui-vars",
           "type": "lib",
         },
       ],

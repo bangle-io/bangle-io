@@ -42,9 +42,9 @@
     "@bangle.io/worker-editor": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@sentry/browser": "^6.18.1",
-    "@zip.js/zip.js": "^2.4.5",
+    "@zip.js/zip.js": "~2.4.5",
     "tslib": "^2.4.1",
-    "typescript": "4.9.3"
+    "typescript": "^4.9.3"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

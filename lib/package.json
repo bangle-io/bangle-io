@@ -13,20 +13,22 @@
     "markdown",
     "shared-operations",
     "shared-types",
-    "slice-editor-manager",
     "slice-editor-collab-comms",
+    "slice-editor-manager",
     "slice-notification",
     "slice-page",
     "slice-storage-provider",
     "slice-ui",
-    "slice-workspace",
     "slice-workspace-opened-doc-info",
+    "slice-workspace",
     "storage",
     "store-sync",
     "test-utils",
     "ui-bangle-button",
     "ui-components",
     "ui-dhancha",
+    "ui-theme",
+    "ui-vars",
     "utils",
     "workspace-info",
     "ws-path"
@@ -40,7 +42,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "tslib": "^2.4.1",
-    "typescript": "4.9.3"
+    "typescript": "^4.9.3"
   },
   "license": "AGPL-3.0-or-later"
 }

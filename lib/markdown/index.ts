@@ -30,7 +30,7 @@ const setupGetParser = () => {
   ) => {
     log('setting up parser');
     let tokenizer = markdown.getDefaultMarkdownItTokenizer();
-    markdownItPlugins.forEach((plugin) => {
+    markdownItPlugins.forEach((plugin: any) => {
       // to allow passing of plugin options
       if (Array.isArray(plugin)) {
         tokenizer = tokenizer.use(...plugin);

@@ -171,7 +171,11 @@ function InternalDropdownMenu({
   }, [onClose]);
 
   // Create menu state based on the incoming props
-  let state = useTreeState({ children, selectionMode: 'none', disabledKeys });
+  let state = useTreeState({
+    children: children,
+    selectionMode: 'none',
+    disabledKeys,
+  });
 
   // Get props for the menu element
   let ref = React.useRef<HTMLUListElement>(null);
@@ -184,11 +188,7 @@ function InternalDropdownMenu({
     useCallback(() => {}, []),
   );
 
-  let { menuProps } = useMenu(
-    { children, 'aria-label': ariaLabel },
-    state,
-    ref,
-  );
+  let { menuProps } = useMenu({ 'aria-label': ariaLabel }, state, ref);
 
   return (
     <ul
