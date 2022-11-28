@@ -7736,7 +7736,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-editor", "workspace:worker/worker-editor"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@sentry/browser", "npm:6.19.7"],\
-            ["@zip.js/zip.js", "npm:2.6.58"],\
+            ["@zip.js/zip.js", "npm:2.4.26"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
           ],\
@@ -15195,10 +15195,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@zip.js/zip.js", [\
-        ["npm:2.6.58", {\
-          "packageLocation": "./.yarn/cache/@zip.js-zip.js-npm-2.6.58-90e7f9fa9f-f13a9d4d56.zip/node_modules/@zip.js/zip.js/",\
+        ["npm:2.4.26", {\
+          "packageLocation": "./.yarn/cache/@zip.js-zip.js-npm-2.4.26-a914bbe24b-17cb5fe0cf.zip/node_modules/@zip.js/zip.js/",\
           "packageDependencies": [\
-            ["@zip.js/zip.js", "npm:2.6.58"]\
+            ["@zip.js/zip.js", "npm:2.4.26"]\
           ],\
           "linkType": "HARD"\
         }]\

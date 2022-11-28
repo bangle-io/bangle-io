@@ -3770,7 +3770,7 @@ __metadata:
     "@bangle.io/worker-editor": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@sentry/browser": ^6.18.1
-    "@zip.js/zip.js": ^2.4.5
+    "@zip.js/zip.js": ~2.4.5
     tslib: ^2.4.1
     typescript: ^4.9.3
   languageName: unknown
@@ -8586,10 +8586,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zip.js/zip.js@npm:^2.4.5":
-  version: 2.6.58
-  resolution: "@zip.js/zip.js@npm:2.6.58"
-  checksum: f13a9d4d56a467a3c1f59208006c6d0f8a418cbf14273420b824a05d0e4d50a3357bda464122b976d2952579f32178064116f7e7f9f2878f4766bbd079d28140
+"@zip.js/zip.js@npm:~2.4.5":
+  version: 2.4.26
+  resolution: "@zip.js/zip.js@npm:2.4.26"
+  checksum: 17cb5fe0cf9750a8819492a8b45fea619603dafffdf5bec13c52e6be1a956a2d944f2343e74bd462badf7f1417e0bf1deb2100a26eebbc49fe02a68ec0a6c0e9
   languageName: node
   linkType: hard
 
