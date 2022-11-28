@@ -4,7 +4,6 @@ import { defineConfig } from 'windicss/helpers';
 import { vars } from '@bangle.io/ui-vars';
 import { topLevelDirs } from '@bangle.io/yarn-workspace-helpers';
 
-console.log(vars.space);
 export default defineConfig({
   plugins: [],
   theme: {
