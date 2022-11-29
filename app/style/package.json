@@ -29,6 +29,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/core-theme": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@unocss/reset": "^0.46.5",
     "tslib": "^2.4.1",
     "typescript": "^4.9.3"
   },
