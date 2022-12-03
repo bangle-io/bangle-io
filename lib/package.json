@@ -19,8 +19,8 @@
     "slice-page",
     "slice-storage-provider",
     "slice-ui",
-    "slice-workspace-opened-doc-info",
     "slice-workspace",
+    "slice-workspace-opened-doc-info",
     "storage",
     "store-sync",
     "test-utils",
@@ -29,6 +29,7 @@
     "ui-dhancha",
     "ui-theme",
     "ui-vars",
+    "uno-preset-bangle",
     "utils",
     "workspace-info",
     "ws-path"

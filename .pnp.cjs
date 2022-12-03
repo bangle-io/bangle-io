@@ -332,6 +332,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/ui-vars"\
       },\
       {\
+        "name": "@bangle.io/uno-preset-bangle",\
+        "reference": "workspace:lib/uno-preset-bangle"\
+      },\
+      {\
         "name": "@bangle.io/utils",\
         "reference": "workspace:lib/utils"\
       },\
@@ -458,6 +462,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
       ["@bangle.io/ui-theme", ["workspace:lib/ui-theme"]],\
       ["@bangle.io/ui-vars", ["workspace:lib/ui-vars"]],\
+      ["@bangle.io/uno-preset-bangle", ["workspace:lib/uno-preset-bangle"]],\
       ["@bangle.io/utils", ["workspace:lib/utils"]],\
       ["@bangle.io/weak-cache", ["workspace:js-lib/weak-cache"]],\
       ["@bangle.io/worker-editor", ["workspace:worker/worker-editor"]],\
@@ -492,6 +497,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
+            ["@bangle.io/uno-preset-bangle", "workspace:lib/uno-preset-bangle"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
             ["@sentry/tracing", "npm:6.19.7"],\
@@ -511,7 +517,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/wicg-file-system-access", "npm:2020.9.5"],\
             ["@typescript-eslint/eslint-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.44.0"],\
             ["@typescript-eslint/parser", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.44.0"],\
-            ["@unocss/vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5"],\
+            ["@unocss/vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5"],\
             ["@vitejs/plugin-react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.2.0"],\
             ["@yarnpkg/pnpify", "npm:4.0.0-rc.31"],\
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.4.13"],\
@@ -569,7 +575,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-node", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.9.1"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"],\
-            ["unocss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5"],\
+            ["unocss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5"],\
             ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.4"],\
             ["vite-plugin-html", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.0"],\
             ["vite-plugin-pwa", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.13.3"],\
@@ -7458,7 +7464,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/core-theme", "workspace:extensions/core-theme"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@unocss/reset", "npm:0.46.5"],\
+            ["@unocss/reset", "npm:0.47.5"],\
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.4.13"],\
             ["postcss", "npm:8.4.19"],\
             ["tslib", "npm:2.4.1"],\
@@ -7638,7 +7644,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/ui-vars/",\
           "packageDependencies": [\
             ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"]\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["tslib", "npm:2.4.1"],\
+            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/uno-preset-bangle", [\
+        ["workspace:lib/uno-preset-bangle", {\
+          "packageLocation": "./lib/uno-preset-bangle/",\
+          "packageDependencies": [\
+            ["@bangle.io/uno-preset-bangle", "workspace:lib/uno-preset-bangle"],\
+            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/preset-mini", "npm:0.47.5"],\
+            ["@unocss/preset-uno", "npm:0.47.5"],\
+            ["@unocss/preset-wind", "npm:0.47.5"],\
+            ["tslib", "npm:2.4.1"],\
+            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10323,10 +10347,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:22a91e9a59f1cd39961d644e1202378d6902783cd188bd193f5dbb6731927ccdd5894f81cbb7a697b0c83bfe3b1c56ca7ade5beca9e60e47906b4e1ad966b0a5#npm:5.0.2", {\
-          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-9c64660baa/0/cache/@rollup-pluginutils-npm-5.0.2-6aa9d0ddd4-edea15e543.zip/node_modules/@rollup/pluginutils/",\
+        ["virtual:2bf23f465084843c45f02e7b9e2d1279ff9fb2149de660e4b2d7814b5bd5e09a7bca5d1f53975158ddaab4e913a6f835656fe86a1393f69924837dcbcdb28a8a#npm:5.0.2", {\
+          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-5d58fc7c44/0/cache/@rollup-pluginutils-npm-5.0.2-6aa9d0ddd4-edea15e543.zip/node_modules/@rollup/pluginutils/",\
           "packageDependencies": [\
-            ["@rollup/pluginutils", "virtual:22a91e9a59f1cd39961d644e1202378d6902783cd188bd193f5dbb6731927ccdd5894f81cbb7a697b0c83bfe3b1c56ca7ade5beca9e60e47906b4e1ad966b0a5#npm:5.0.2"],\
+            ["@rollup/pluginutils", "virtual:2bf23f465084843c45f02e7b9e2d1279ff9fb2149de660e4b2d7814b5bd5e09a7bca5d1f53975158ddaab4e913a6f835656fe86a1393f69924837dcbcdb28a8a#npm:5.0.2"],\
             ["@types/estree", "npm:1.0.0"],\
             ["@types/rollup", null],\
             ["estree-walker", "npm:2.0.2"],\
@@ -14700,64 +14724,64 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@unocss/astro", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-astro-npm-0.46.5-7bc498aa10-88296d827a.zip/node_modules/@unocss/astro/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-astro-npm-0.47.5-ab487df5ba-9187325fa2.zip/node_modules/@unocss/astro/",\
           "packageDependencies": [\
-            ["@unocss/astro", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/reset", "npm:0.46.5"],\
-            ["@unocss/vite", "virtual:7bc498aa1018e94119ab5daf2238cbfac11378a59fc74e8fe04f0b7905913066a7e22e68a2c1b1d5b6c6a33ee0f64c991d5a4c83f2199c7e7171b168abe53384#npm:0.46.5"]\
+            ["@unocss/astro", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/reset", "npm:0.47.5"],\
+            ["@unocss/vite", "virtual:ab487df5baf3ede43b2488b4807b32ab171f0ea21e14769256c87b4896198e4989a1134c8d67c3ae51f8276c19b2590ba2bc62ab9f7c4e0ea12ad2cf738bf157#npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/cli", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-cli-npm-0.46.5-1f293a9534-ebdf4e5681.zip/node_modules/@unocss/cli/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-cli-npm-0.47.5-dc39e3ad08-77a2ab4b65.zip/node_modules/@unocss/cli/",\
           "packageDependencies": [\
-            ["@unocss/cli", "npm:0.46.5"],\
+            ["@unocss/cli", "npm:0.47.5"],\
             ["@ampproject/remapping", "npm:2.2.0"],\
-            ["@rollup/pluginutils", "virtual:22a91e9a59f1cd39961d644e1202378d6902783cd188bd193f5dbb6731927ccdd5894f81cbb7a697b0c83bfe3b1c56ca7ade5beca9e60e47906b4e1ad966b0a5#npm:5.0.2"],\
-            ["@unocss/config", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/preset-uno", "npm:0.46.5"],\
+            ["@rollup/pluginutils", "virtual:2bf23f465084843c45f02e7b9e2d1279ff9fb2149de660e4b2d7814b5bd5e09a7bca5d1f53975158ddaab4e913a6f835656fe86a1393f69924837dcbcdb28a8a#npm:5.0.2"],\
+            ["@unocss/config", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/preset-uno", "npm:0.47.5"],\
             ["cac", "npm:6.7.14"],\
             ["chokidar", "npm:3.5.3"],\
             ["colorette", "npm:2.0.19"],\
             ["consola", "npm:2.15.3"],\
             ["fast-glob", "npm:3.2.12"],\
             ["magic-string", "npm:0.26.7"],\
-            ["pathe", "npm:0.3.9"],\
+            ["pathe", "npm:1.0.0"],\
             ["perfect-debounce", "npm:0.1.3"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/config", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-config-npm-0.46.5-e6101000cd-6f8e613b96.zip/node_modules/@unocss/config/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-config-npm-0.47.5-7f7f7bba77-3da08056d3.zip/node_modules/@unocss/config/",\
           "packageDependencies": [\
-            ["@unocss/config", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
+            ["@unocss/config", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
             ["unconfig", "npm:0.3.7"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/core", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-core-npm-0.46.5-3a37ce897c-1461613cff.zip/node_modules/@unocss/core/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-core-npm-0.47.5-fe5ea8420a-26d4a0a029.zip/node_modules/@unocss/core/",\
           "packageDependencies": [\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/inspector", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-inspector-npm-0.46.5-60b9fcbcfa-85987611d0.zip/node_modules/@unocss/inspector/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-inspector-npm-0.47.5-78c151c63a-ca2f8e92a8.zip/node_modules/@unocss/inspector/",\
           "packageDependencies": [\
-            ["@unocss/inspector", "npm:0.46.5"],\
+            ["@unocss/inspector", "npm:0.47.5"],\
             ["gzip-size", "npm:6.0.0"],\
             ["sirv", "npm:2.0.2"]\
           ],\
@@ -14765,172 +14789,172 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@unocss/preset-attributify", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-attributify-npm-0.46.5-d4b8c77154-7247d55329.zip/node_modules/@unocss/preset-attributify/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-attributify-npm-0.47.5-6797d63caa-b6c890622a.zip/node_modules/@unocss/preset-attributify/",\
           "packageDependencies": [\
-            ["@unocss/preset-attributify", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/preset-attributify", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-icons", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-icons-npm-0.46.5-6d2ddfbff0-cf0b430023.zip/node_modules/@unocss/preset-icons/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-icons-npm-0.47.5-9a4869d06a-958f1dec9c.zip/node_modules/@unocss/preset-icons/",\
           "packageDependencies": [\
-            ["@unocss/preset-icons", "npm:0.46.5"],\
+            ["@unocss/preset-icons", "npm:0.47.5"],\
             ["@iconify/utils", "npm:2.0.2"],\
-            ["@unocss/core", "npm:0.46.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
             ["ohmyfetch", "npm:0.4.21"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-mini", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-mini-npm-0.46.5-dd212a8f6c-ab83700ed0.zip/node_modules/@unocss/preset-mini/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-mini-npm-0.47.5-d04f9dd765-3570559acb.zip/node_modules/@unocss/preset-mini/",\
           "packageDependencies": [\
-            ["@unocss/preset-mini", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/preset-mini", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-tagify", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-tagify-npm-0.46.5-168b51dc5a-ea8c36ba38.zip/node_modules/@unocss/preset-tagify/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-tagify-npm-0.47.5-79d4f11f43-075edfa3a2.zip/node_modules/@unocss/preset-tagify/",\
           "packageDependencies": [\
-            ["@unocss/preset-tagify", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/preset-tagify", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-typography", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-typography-npm-0.46.5-03f5151666-80cdd88e66.zip/node_modules/@unocss/preset-typography/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-typography-npm-0.47.5-947142dc35-693e89e957.zip/node_modules/@unocss/preset-typography/",\
           "packageDependencies": [\
-            ["@unocss/preset-typography", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/preset-typography", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-uno", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-uno-npm-0.46.5-f0ef7d7f09-a08d393e5f.zip/node_modules/@unocss/preset-uno/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-uno-npm-0.47.5-11bf9ee517-78129b4563.zip/node_modules/@unocss/preset-uno/",\
           "packageDependencies": [\
-            ["@unocss/preset-uno", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/preset-mini", "npm:0.46.5"],\
-            ["@unocss/preset-wind", "npm:0.46.5"]\
+            ["@unocss/preset-uno", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/preset-mini", "npm:0.47.5"],\
+            ["@unocss/preset-wind", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-web-fonts", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-web-fonts-npm-0.46.5-b54f0beb16-1ce5d78e9f.zip/node_modules/@unocss/preset-web-fonts/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-web-fonts-npm-0.47.5-0550b9df5c-520d91500b.zip/node_modules/@unocss/preset-web-fonts/",\
           "packageDependencies": [\
-            ["@unocss/preset-web-fonts", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
+            ["@unocss/preset-web-fonts", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
             ["ohmyfetch", "npm:0.4.21"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/preset-wind", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-preset-wind-npm-0.46.5-4dd44a5e24-c31bae52b1.zip/node_modules/@unocss/preset-wind/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-preset-wind-npm-0.47.5-716064bae8-9ab86b0373.zip/node_modules/@unocss/preset-wind/",\
           "packageDependencies": [\
-            ["@unocss/preset-wind", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/preset-mini", "npm:0.46.5"]\
+            ["@unocss/preset-wind", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/preset-mini", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/reset", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-reset-npm-0.46.5-20d0dae868-2eb85804be.zip/node_modules/@unocss/reset/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-reset-npm-0.47.5-d8902d9778-8b088d5daa.zip/node_modules/@unocss/reset/",\
           "packageDependencies": [\
-            ["@unocss/reset", "npm:0.46.5"]\
+            ["@unocss/reset", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/scope", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-scope-npm-0.46.5-a3310ba325-05395f3ca5.zip/node_modules/@unocss/scope/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-scope-npm-0.47.5-ea92c19a3b-ea6a93d2e8.zip/node_modules/@unocss/scope/",\
           "packageDependencies": [\
-            ["@unocss/scope", "npm:0.46.5"]\
+            ["@unocss/scope", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/transformer-attributify-jsx", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-transformer-attributify-jsx-npm-0.46.5-ac767c3a9c-ca7f72ee81.zip/node_modules/@unocss/transformer-attributify-jsx/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-transformer-attributify-jsx-npm-0.47.5-4a54edc705-ec1a736b36.zip/node_modules/@unocss/transformer-attributify-jsx/",\
           "packageDependencies": [\
-            ["@unocss/transformer-attributify-jsx", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/transformer-attributify-jsx", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/transformer-compile-class", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-transformer-compile-class-npm-0.46.5-143637ae9e-71aa6e70ba.zip/node_modules/@unocss/transformer-compile-class/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-transformer-compile-class-npm-0.47.5-dcde0e8496-091a506756.zip/node_modules/@unocss/transformer-compile-class/",\
           "packageDependencies": [\
-            ["@unocss/transformer-compile-class", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/transformer-compile-class", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/transformer-directives", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-transformer-directives-npm-0.46.5-97118b3be5-900ce57637.zip/node_modules/@unocss/transformer-directives/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-transformer-directives-npm-0.47.5-72ecd95cc7-19a07fbead.zip/node_modules/@unocss/transformer-directives/",\
           "packageDependencies": [\
-            ["@unocss/transformer-directives", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
+            ["@unocss/transformer-directives", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
             ["css-tree", "npm:2.2.1"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/transformer-variant-group", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-transformer-variant-group-npm-0.46.5-7434198f1c-a15f39cb6f.zip/node_modules/@unocss/transformer-variant-group/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-transformer-variant-group-npm-0.47.5-844a90cd7b-edd9e37f67.zip/node_modules/@unocss/transformer-variant-group/",\
           "packageDependencies": [\
-            ["@unocss/transformer-variant-group", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"]\
+            ["@unocss/transformer-variant-group", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@unocss/vite", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/@unocss-vite-npm-0.46.5-071d7d7782-3af1993216.zip/node_modules/@unocss/vite/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-vite-npm-0.47.5-d3a5b17170-d5567cbe02.zip/node_modules/@unocss/vite/",\
           "packageDependencies": [\
-            ["@unocss/vite", "npm:0.46.5"]\
+            ["@unocss/vite", "npm:0.47.5"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:7bc498aa1018e94119ab5daf2238cbfac11378a59fc74e8fe04f0b7905913066a7e22e68a2c1b1d5b6c6a33ee0f64c991d5a4c83f2199c7e7171b168abe53384#npm:0.46.5", {\
-          "packageLocation": "./.yarn/__virtual__/@unocss-vite-virtual-b890b971b6/0/cache/@unocss-vite-npm-0.46.5-071d7d7782-3af1993216.zip/node_modules/@unocss/vite/",\
+        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5", {\
+          "packageLocation": "./.yarn/__virtual__/@unocss-vite-virtual-2bf23f4650/0/cache/@unocss-vite-npm-0.47.5-d3a5b17170-d5567cbe02.zip/node_modules/@unocss/vite/",\
           "packageDependencies": [\
-            ["@unocss/vite", "virtual:7bc498aa1018e94119ab5daf2238cbfac11378a59fc74e8fe04f0b7905913066a7e22e68a2c1b1d5b6c6a33ee0f64c991d5a4c83f2199c7e7171b168abe53384#npm:0.46.5"],\
+            ["@unocss/vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5"],\
             ["@ampproject/remapping", "npm:2.2.0"],\
-            ["@rollup/pluginutils", "virtual:22a91e9a59f1cd39961d644e1202378d6902783cd188bd193f5dbb6731927ccdd5894f81cbb7a697b0c83bfe3b1c56ca7ade5beca9e60e47906b4e1ad966b0a5#npm:5.0.2"],\
+            ["@rollup/pluginutils", "virtual:2bf23f465084843c45f02e7b9e2d1279ff9fb2149de660e4b2d7814b5bd5e09a7bca5d1f53975158ddaab4e913a6f835656fe86a1393f69924837dcbcdb28a8a#npm:5.0.2"],\
             ["@types/vite", null],\
-            ["@unocss/config", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/inspector", "npm:0.46.5"],\
-            ["@unocss/scope", "npm:0.46.5"],\
-            ["@unocss/transformer-directives", "npm:0.46.5"],\
+            ["@unocss/config", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/inspector", "npm:0.47.5"],\
+            ["@unocss/scope", "npm:0.47.5"],\
+            ["@unocss/transformer-directives", "npm:0.47.5"],\
             ["magic-string", "npm:0.26.7"],\
-            ["vite", null]\
+            ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.4"]\
           ],\
           "packagePeers": [\
             "@types/vite",\
@@ -14938,20 +14962,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5", {\
-          "packageLocation": "./.yarn/__virtual__/@unocss-vite-virtual-22a91e9a59/0/cache/@unocss-vite-npm-0.46.5-071d7d7782-3af1993216.zip/node_modules/@unocss/vite/",\
+        ["virtual:ab487df5baf3ede43b2488b4807b32ab171f0ea21e14769256c87b4896198e4989a1134c8d67c3ae51f8276c19b2590ba2bc62ab9f7c4e0ea12ad2cf738bf157#npm:0.47.5", {\
+          "packageLocation": "./.yarn/__virtual__/@unocss-vite-virtual-4c0eb50539/0/cache/@unocss-vite-npm-0.47.5-d3a5b17170-d5567cbe02.zip/node_modules/@unocss/vite/",\
           "packageDependencies": [\
-            ["@unocss/vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5"],\
+            ["@unocss/vite", "virtual:ab487df5baf3ede43b2488b4807b32ab171f0ea21e14769256c87b4896198e4989a1134c8d67c3ae51f8276c19b2590ba2bc62ab9f7c4e0ea12ad2cf738bf157#npm:0.47.5"],\
             ["@ampproject/remapping", "npm:2.2.0"],\
-            ["@rollup/pluginutils", "virtual:22a91e9a59f1cd39961d644e1202378d6902783cd188bd193f5dbb6731927ccdd5894f81cbb7a697b0c83bfe3b1c56ca7ade5beca9e60e47906b4e1ad966b0a5#npm:5.0.2"],\
+            ["@rollup/pluginutils", "virtual:2bf23f465084843c45f02e7b9e2d1279ff9fb2149de660e4b2d7814b5bd5e09a7bca5d1f53975158ddaab4e913a6f835656fe86a1393f69924837dcbcdb28a8a#npm:5.0.2"],\
             ["@types/vite", null],\
-            ["@unocss/config", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/inspector", "npm:0.46.5"],\
-            ["@unocss/scope", "npm:0.46.5"],\
-            ["@unocss/transformer-directives", "npm:0.46.5"],\
+            ["@unocss/config", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/inspector", "npm:0.47.5"],\
+            ["@unocss/scope", "npm:0.47.5"],\
+            ["@unocss/transformer-directives", "npm:0.47.5"],\
             ["magic-string", "npm:0.26.7"],\
-            ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.4"]\
+            ["vite", null]\
           ],\
           "packagePeers": [\
             "@types/vite",\
@@ -17040,6 +17064,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
+            ["@bangle.io/uno-preset-bangle", "workspace:lib/uno-preset-bangle"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
             ["@sentry/tracing", "npm:6.19.7"],\
@@ -17059,7 +17084,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/wicg-file-system-access", "npm:2020.9.5"],\
             ["@typescript-eslint/eslint-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.44.0"],\
             ["@typescript-eslint/parser", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.44.0"],\
-            ["@unocss/vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5"],\
+            ["@unocss/vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5"],\
             ["@vitejs/plugin-react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.2.0"],\
             ["@yarnpkg/pnpify", "npm:4.0.0-rc.31"],\
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.4.13"],\
@@ -17117,7 +17142,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-node", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.9.1"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"],\
-            ["unocss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5"],\
+            ["unocss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5"],\
             ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.4"],\
             ["vite-plugin-html", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.2.0"],\
             ["vite-plugin-pwa", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.13.3"],\
@@ -28712,6 +28737,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pathe", "npm:0.3.9"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/pathe-npm-1.0.0-12bb397fc8-7b71a4930a.zip/node_modules/pathe/",\
+          "packageDependencies": [\
+            ["pathe", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["pbkdf2", [\
@@ -34202,35 +34234,35 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["unocss", [\
-        ["npm:0.46.5", {\
-          "packageLocation": "./.yarn/cache/unocss-npm-0.46.5-14018cd1e6-35d614b49d.zip/node_modules/unocss/",\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/unocss-npm-0.47.5-bf56059e83-e2bcf4088e.zip/node_modules/unocss/",\
           "packageDependencies": [\
-            ["unocss", "npm:0.46.5"]\
+            ["unocss", "npm:0.47.5"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5", {\
-          "packageLocation": "./.yarn/__virtual__/unocss-virtual-0a59a57948/0/cache/unocss-npm-0.46.5-14018cd1e6-35d614b49d.zip/node_modules/unocss/",\
+        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5", {\
+          "packageLocation": "./.yarn/__virtual__/unocss-virtual-4d91e4a23c/0/cache/unocss-npm-0.47.5-bf56059e83-e2bcf4088e.zip/node_modules/unocss/",\
           "packageDependencies": [\
-            ["unocss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.46.5"],\
+            ["unocss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.47.5"],\
             ["@types/unocss__webpack", null],\
-            ["@unocss/astro", "npm:0.46.5"],\
-            ["@unocss/cli", "npm:0.46.5"],\
-            ["@unocss/core", "npm:0.46.5"],\
-            ["@unocss/preset-attributify", "npm:0.46.5"],\
-            ["@unocss/preset-icons", "npm:0.46.5"],\
-            ["@unocss/preset-mini", "npm:0.46.5"],\
-            ["@unocss/preset-tagify", "npm:0.46.5"],\
-            ["@unocss/preset-typography", "npm:0.46.5"],\
-            ["@unocss/preset-uno", "npm:0.46.5"],\
-            ["@unocss/preset-web-fonts", "npm:0.46.5"],\
-            ["@unocss/preset-wind", "npm:0.46.5"],\
-            ["@unocss/reset", "npm:0.46.5"],\
-            ["@unocss/transformer-attributify-jsx", "npm:0.46.5"],\
-            ["@unocss/transformer-compile-class", "npm:0.46.5"],\
-            ["@unocss/transformer-directives", "npm:0.46.5"],\
-            ["@unocss/transformer-variant-group", "npm:0.46.5"],\
-            ["@unocss/vite", "virtual:7bc498aa1018e94119ab5daf2238cbfac11378a59fc74e8fe04f0b7905913066a7e22e68a2c1b1d5b6c6a33ee0f64c991d5a4c83f2199c7e7171b168abe53384#npm:0.46.5"],\
+            ["@unocss/astro", "npm:0.47.5"],\
+            ["@unocss/cli", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["@unocss/preset-attributify", "npm:0.47.5"],\
+            ["@unocss/preset-icons", "npm:0.47.5"],\
+            ["@unocss/preset-mini", "npm:0.47.5"],\
+            ["@unocss/preset-tagify", "npm:0.47.5"],\
+            ["@unocss/preset-typography", "npm:0.47.5"],\
+            ["@unocss/preset-uno", "npm:0.47.5"],\
+            ["@unocss/preset-web-fonts", "npm:0.47.5"],\
+            ["@unocss/preset-wind", "npm:0.47.5"],\
+            ["@unocss/reset", "npm:0.47.5"],\
+            ["@unocss/transformer-attributify-jsx", "npm:0.47.5"],\
+            ["@unocss/transformer-compile-class", "npm:0.47.5"],\
+            ["@unocss/transformer-directives", "npm:0.47.5"],\
+            ["@unocss/transformer-variant-group", "npm:0.47.5"],\
+            ["@unocss/vite", "virtual:ab487df5baf3ede43b2488b4807b32ab171f0ea21e14769256c87b4896198e4989a1134c8d67c3ae51f8276c19b2590ba2bc62ab9f7c4e0ea12ad2cf738bf157#npm:0.47.5"],\
             ["@unocss/webpack", null]\
           ],\
           "packagePeers": [\
