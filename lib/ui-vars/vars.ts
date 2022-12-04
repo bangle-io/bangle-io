@@ -1,12 +1,22 @@
 import { tokens, walkObject } from './tokens';
 
+// css vars in the var(--xyz) format
 export const vars = walkObject(tokens, (value, path): string => {
-  return createVar(path.join('-'));
+  const raw = createRawVar(path);
+
+  return `var(${raw})`;
 }) as typeof tokens;
 
-function createVar(id: string): string {
+// css vars in the --xyz format
+export const cssCustomProperties = walkObject(tokens, (value, path): string => {
+  return createRawVar(path);
+}) as typeof tokens;
+
+function createRawVar(path: string[]): string {
+  const id = path.join('-');
+
   if (/^[a-zA-Z0-9_-]*$/g.test(id)) {
-    return `var(--BV-${id})`;
+    return `--BV-${id}`;
   }
 
   throw new Error(`Invalid id ${id}`);

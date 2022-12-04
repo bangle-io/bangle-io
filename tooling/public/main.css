@@ -17,7 +17,7 @@ html[data-theme='dark'] #dialog-container {
 }
 
 :root {
-  --BV-window-widescreen-minWidth: 760px;
+  --BV-window-widescreen-minWidth: 759px;
   --BV-window-pill-border-radius: 5px;
   --BV-window-modal-z-index: 700;
   --BV-window-popup-editor-z-index: 300;
