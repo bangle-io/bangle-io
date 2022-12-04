@@ -2,38 +2,17 @@
 /* stylelint-disable */
 :root {
   --BV-app-editor-backgroundColor: #f9fafb;
-  --BV-border-color-brandAccent: rgb(88, 204, 240);
-  --BV-border-color-brandAccentLight: #61cff1;
-  --BV-border-color-caution: #7c2d12;
-  --BV-border-color-cautionLight: #853013;
-  --BV-border-color-critical: #7f1d1d;
-  --BV-border-color-criticalLight: #871f1f;
-  --BV-border-color-focus: rgb(88, 204, 240);
-  --BV-border-color-info: #1e3a8a;
-  --BV-border-color-infoLight: #203e92;
-  --BV-border-color-neutral: #f5f5f5;
-  --BV-border-color-neutralInverted: #f5f5f5;
-  --BV-border-color-neutralLight: #f0f0f0;
-  --BV-border-color-positive: #14532d;
-  --BV-border-color-positiveLight: #165b31;
-  --BV-border-color-promote: #581c87;
-  --BV-border-color-promoteLight: #5e1e8f;
-  --BV-border-radius-lg: 0.375rem;
-  --BV-border-radius-md: 0.25rem;
+  --BV-border-radius-DEFAULT: 0.25rem;
   --BV-border-radius-none: 0;
   --BV-border-radius-sm: 0.125rem;
+  --BV-border-radius-md: 0.25rem;
+  --BV-border-radius-lg: 0.375rem;
   --BV-border-radius-xl: 0.5rem;
-  --BV-border-shadows-lg: 0 2px 4px 0px rgba(28, 28, 28, 0.1),
-    0 12px 12px -4px rgba(28, 28, 28, 0.1),
-    0 20px 20px -12px rgba(28, 28, 28, 0.2);
-  --BV-border-shadows-md: 0 2px 4px 0px rgba(28, 28, 28, 0.1),
-    0 8px 8px -4px rgba(28, 28, 28, 0.1), 0 12px 12px -8px rgba(28, 28, 28, 0.2);
-  --BV-border-shadows-sm: 0 2px 4px 0px rgba(28, 28, 28, 0.1),
-    0 2px 2px -2px rgba(28, 28, 28, 0.1), 0 4px 4px -4px rgba(28, 28, 28, 0.2);
-  --BV-border-width-lg: 2;
-  --BV-border-width-md: 1;
-  --BV-breakpoints-mobile: 0px;
-  --BV-breakpoints-widescreen: 760px;
+  --BV-border-width-DEFAULT: 1px;
+  --BV-border-width-none: 0px;
+  --BV-border-width-lg: 2px;
+  --BV-border-width-md: 1px;
+  --BV-widescreenWidth: 760px;
   --BV-color-background-body: #fff;
   --BV-color-background-brand: rgb(88, 204, 240);
   --BV-color-background-brandAccent: rgb(88, 204, 240);
@@ -96,25 +75,28 @@
   --BV-color-foreground-promoteLight: #c084fc;
   --BV-color-foreground-secondary: #737373;
   --BV-color-foreground-secondaryInverted: #f5f5f5;
-  --BV-focusRingSize: 2;
-  --BV-radius-full: 9999px;
-  --BV-radius-lg: 0.5rem;
-  --BV-radius-md: 0.25rem;
-  --BV-radius-none: 0;
-  --BV-radius-sm: 0.125rem;
-  --BV-shadows-lg: 0 2px 4px 0px rgba(31, 41, 55, 0.1),
-    0 12px 12px -4px rgba(31, 41, 55, 0.1),
-    0 20px 20px -12px rgba(31, 41, 55, 0.2);
-  --BV-shadows-md: 0 2px 4px 0px rgba(31, 41, 55, 0.1),
-    0 8px 8px -4px rgba(31, 41, 55, 0.1), 0 12px 12px -8px rgba(31, 41, 55, 0.2);
-  --BV-shadows-sm: 0 2px 4px 0px rgba(31, 41, 55, 0.1),
-    0 2px 2px -2px rgba(31, 41, 55, 0.1), 0 4px 4px -4px rgba(31, 41, 55, 0.2);
+  --BV-ringWidth-DEFAULT: 1px;
+  --BV-ringWidth-none: 0;
+  --BV-size-xs: 20rem;
+  --BV-size-sm: 24rem;
+  --BV-size-md: 28rem;
+  --BV-size-lg: 32rem;
+  --BV-size-xl: 36rem;
+  --BV-size-2xl: 42rem;
+  --BV-size-3xl: 48rem;
+  --BV-size-4xl: 56rem;
+  --BV-size-5xl: 64rem;
+  --BV-size-6xl: 72rem;
+  --BV-size-7xl: 80rem;
+  --BV-size-prose: 65ch;
   --BV-space-0: 0;
   --BV-space-1: 0.25rem;
   --BV-space-2: 0.5rem;
   --BV-space-3: 0.75rem;
   --BV-space-4: 1rem;
+  --BV-space-5: 1.25rem;
   --BV-space-6: 1.5rem;
+  --BV-space-7: 1.75rem;
   --BV-space-8: 2rem;
   --BV-space-9: 2.25rem;
   --BV-space-10: 2.25rem;
@@ -129,25 +111,28 @@
   --BV-space-2_5: 0.625rem;
   --BV-space-px: 1px;
   --BV-theme: base-dark;
-  --BV-typography-fontFamily: -apple-system, BlinkMacSystemFont, Roboto,
-    'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol';
-  --BV-typography-fontWeight-medium: 500;
-  --BV-typography-fontWeight-regular: 400;
-  --BV-typography-fontWeight-strong: 700;
+  --BV-typography-fontFamily-sans: ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  --BV-typography-fontFamily-serif: ui-serif, Georgia, Cambria,
+    'Times New Roman', Times, serif;
+  --BV-typography-fontFamily-mono: ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
   --BV-typography-text-xl-height: 1.75rem;
   --BV-typography-text-xl-size: 1.25rem;
   --BV-typography-text-lg-height: 1.75rem;
   --BV-typography-text-lg-size: 1.125rem;
-  --BV-typography-text-md-height: 1.5rem;
-  --BV-typography-text-md-size: 1rem;
   --BV-typography-text-base-height: 1.5rem;
   --BV-typography-text-base-size: 1rem;
   --BV-typography-text-sm-height: 1.25rem;
   --BV-typography-text-sm-size: 0.875rem;
   --BV-typography-text-xs-height: 1rem;
   --BV-typography-text-xs-size: 0.75rem;
-  --BV-typography-webFont: ;
+  --BV-typography-text-2xl-height: 2rem;
+  --BV-typography-text-2xl-size: 1.5rem;
+  --BV-typography-text-3xl-height: 2.25rem;
+  --BV-typography-text-3xl-size: 1.875rem;
 }
 
 /* WARNING: This is autogenerated do not modify! */

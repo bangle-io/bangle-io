@@ -8,44 +8,20 @@ exports[`works 1`] = `
     },
   },
   "border": {
-    "color": {
-      "brandAccent": "var(--BV-border-color-brandAccent)",
-      "brandAccentLight": "var(--BV-border-color-brandAccentLight)",
-      "caution": "var(--BV-border-color-caution)",
-      "cautionLight": "var(--BV-border-color-cautionLight)",
-      "critical": "var(--BV-border-color-critical)",
-      "criticalLight": "var(--BV-border-color-criticalLight)",
-      "focus": "var(--BV-border-color-focus)",
-      "info": "var(--BV-border-color-info)",
-      "infoLight": "var(--BV-border-color-infoLight)",
-      "neutral": "var(--BV-border-color-neutral)",
-      "neutralInverted": "var(--BV-border-color-neutralInverted)",
-      "neutralLight": "var(--BV-border-color-neutralLight)",
-      "positive": "var(--BV-border-color-positive)",
-      "positiveLight": "var(--BV-border-color-positiveLight)",
-      "promote": "var(--BV-border-color-promote)",
-      "promoteLight": "var(--BV-border-color-promoteLight)",
-    },
     "radius": {
+      "DEFAULT": "var(--BV-border-radius-DEFAULT)",
       "lg": "var(--BV-border-radius-lg)",
       "md": "var(--BV-border-radius-md)",
       "none": "var(--BV-border-radius-none)",
       "sm": "var(--BV-border-radius-sm)",
       "xl": "var(--BV-border-radius-xl)",
     },
-    "shadows": {
-      "lg": "var(--BV-border-shadows-lg)",
-      "md": "var(--BV-border-shadows-md)",
-      "sm": "var(--BV-border-shadows-sm)",
-    },
     "width": {
+      "DEFAULT": "var(--BV-border-width-DEFAULT)",
       "lg": "var(--BV-border-width-lg)",
       "md": "var(--BV-border-width-md)",
+      "none": "var(--BV-border-width-none)",
     },
-  },
-  "breakpoints": {
-    "mobile": "var(--BV-breakpoints-mobile)",
-    "widescreen": "var(--BV-breakpoints-widescreen)",
   },
   "color": {
     "background": {
@@ -115,18 +91,23 @@ exports[`works 1`] = `
       "secondaryInverted": "var(--BV-color-foreground-secondaryInverted)",
     },
   },
-  "focusRingSize": "var(--BV-focusRingSize)",
-  "radius": {
-    "full": "var(--BV-radius-full)",
-    "lg": "var(--BV-radius-lg)",
-    "md": "var(--BV-radius-md)",
-    "none": "var(--BV-radius-none)",
-    "sm": "var(--BV-radius-sm)",
+  "ringWidth": {
+    "DEFAULT": "var(--BV-ringWidth-DEFAULT)",
+    "none": "var(--BV-ringWidth-none)",
   },
-  "shadows": {
-    "lg": "var(--BV-shadows-lg)",
-    "md": "var(--BV-shadows-md)",
-    "sm": "var(--BV-shadows-sm)",
+  "size": {
+    "2xl": "var(--BV-size-2xl)",
+    "3xl": "var(--BV-size-3xl)",
+    "4xl": "var(--BV-size-4xl)",
+    "5xl": "var(--BV-size-5xl)",
+    "6xl": "var(--BV-size-6xl)",
+    "7xl": "var(--BV-size-7xl)",
+    "lg": "var(--BV-size-lg)",
+    "md": "var(--BV-size-md)",
+    "prose": "var(--BV-size-prose)",
+    "sm": "var(--BV-size-sm)",
+    "xl": "var(--BV-size-xl)",
+    "xs": "var(--BV-size-xs)",
   },
   "space": {
     "0": "var(--BV-space-0)",
@@ -144,20 +125,29 @@ exports[`works 1`] = `
     "3": "var(--BV-space-3)",
     "4": "var(--BV-space-4)",
     "48": "var(--BV-space-48)",
+    "5": "var(--BV-space-5)",
     "6": "var(--BV-space-6)",
+    "7": "var(--BV-space-7)",
     "8": "var(--BV-space-8)",
     "9": "var(--BV-space-9)",
     "px": "var(--BV-space-px)",
   },
   "theme": "var(--BV-theme)",
   "typography": {
-    "fontFamily": "var(--BV-typography-fontFamily)",
-    "fontWeight": {
-      "medium": "var(--BV-typography-fontWeight-medium)",
-      "regular": "var(--BV-typography-fontWeight-regular)",
-      "strong": "var(--BV-typography-fontWeight-strong)",
+    "fontFamily": {
+      "mono": "var(--BV-typography-fontFamily-mono)",
+      "sans": "var(--BV-typography-fontFamily-sans)",
+      "serif": "var(--BV-typography-fontFamily-serif)",
     },
     "text": {
+      "2xl": {
+        "height": "var(--BV-typography-text-2xl-height)",
+        "size": "var(--BV-typography-text-2xl-size)",
+      },
+      "3xl": {
+        "height": "var(--BV-typography-text-3xl-height)",
+        "size": "var(--BV-typography-text-3xl-size)",
+      },
       "base": {
         "height": "var(--BV-typography-text-base-height)",
         "size": "var(--BV-typography-text-base-size)",
@@ -165,10 +155,6 @@ exports[`works 1`] = `
       "lg": {
         "height": "var(--BV-typography-text-lg-height)",
         "size": "var(--BV-typography-text-lg-size)",
-      },
-      "md": {
-        "height": "var(--BV-typography-text-md-height)",
-        "size": "var(--BV-typography-text-md-size)",
       },
       "sm": {
         "height": "var(--BV-typography-text-sm-height)",
@@ -183,7 +169,7 @@ exports[`works 1`] = `
         "size": "var(--BV-typography-text-xs-size)",
       },
     },
-    "webFont": "var(--BV-typography-webFont)",
   },
+  "widescreenWidth": "var(--BV-widescreenWidth)",
 }
 `;

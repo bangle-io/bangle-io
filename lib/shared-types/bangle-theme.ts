@@ -2,31 +2,14 @@ import type { DesignTokens } from './design-tokens';
 
 export interface BangleThemeInput {
   name: `${string}-dark` | `${string}-light`;
-  breakpoints?: DesignTokens['breakpoints'];
+  widescreenWidth?: DesignTokens['widescreenWidth'];
   typography?: {
     fontFamily?: DesignTokens['typography']['fontFamily'];
-    fontWeight?: DesignTokens['typography']['fontWeight'];
     text?: DesignTokens['typography']['text'];
   };
 
-  radius?: DesignTokens['radius'];
-  shadows?: DesignTokens['border']['shadows'];
-  border: {
-    width?: DesignTokens['border']['width'];
-    color: {
-      focus?: string;
-      neutral: string;
-      brandAccent: string;
-      promote: string;
-      neutralInverted: string;
-
-      // the 4
-      caution: string;
-      critical: string;
-      info: string;
-      positive: string;
-    };
-  };
+  ringWidth?: DesignTokens['ringWidth'];
+  border?: Partial<DesignTokens['border']>;
 
   foregroundColor: DesignTokens['color']['foreground'];
 

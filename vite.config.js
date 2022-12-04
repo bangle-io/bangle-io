@@ -1,8 +1,8 @@
 /* eslint-disable no-process-env */
+import Unocss from '@unocss/vite';
 import react from '@vitejs/plugin-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
-import WindiCSS from 'vite-plugin-windicss';
 
 import getEnvVars from '@bangle.io/env-vars';
 
@@ -68,8 +68,9 @@ const config = async ({ command, mode }) => {
           '.yarn/**/*',
           /\.stories\.(t|j)sx?$/,
         ],
-        include: '**/*.tsx',
+        include: '**/*.(tsx|ts)',
       }),
+      Unocss(),
       VitePWA({
         minify: false,
         includeAssets: [
@@ -84,7 +85,6 @@ const config = async ({ command, mode }) => {
         ],
         manifest: generateManifest(appEnv),
       }),
-      WindiCSS(),
     ],
     publicDir: './tooling/public',
     define: {

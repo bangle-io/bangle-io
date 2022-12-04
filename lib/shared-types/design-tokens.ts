@@ -1,32 +1,26 @@
-type FontWeight = 'regular' | 'medium' | 'strong';
-
 export interface DesignTokens {
   theme: string;
-  breakpoints: {
-    mobile: string;
-    widescreen: string;
-  };
+  widescreenWidth: string;
   typography: {
-    fontFamily: string;
-    webFont: string;
-    fontWeight: Record<FontWeight, '400' | '500' | '600' | '700' | '800'>;
+    fontFamily: {
+      sans: string;
+      mono: string;
+      serif: string;
+    };
     text: {
-      xs: { size: string; height: string };
-      sm: { size: string; height: string };
-      md: { size: string; height: string };
-      base: { size: string; height: string };
-      lg: { size: string; height: string };
-      xl: { size: string; height: string };
+      'xs': { size: string; height: string };
+      'sm': { size: string; height: string };
+      'base': { size: string; height: string };
+      'lg': { size: string; height: string };
+      'xl': { size: string; height: string };
+      '2xl': { size: string; height: string };
+      '3xl': { size: string; height: string };
     };
   };
-  focusRingSize: string;
   border: {
-    shadows: {
-      sm: string;
-      md: string;
-      lg: string;
-    };
     radius: {
+      // the default radius if not specified
+      DEFAULT: string;
       none: string;
       sm: string;
       md: string;
@@ -34,32 +28,25 @@ export interface DesignTokens {
       xl: string;
     };
     width: {
+      DEFAULT: string;
+      none: string;
       md: string;
       lg: string;
     };
-    color: {
-      focus: string;
-
-      brandAccent: string;
-      brandAccentLight: string;
-
-      promote: string;
-      promoteLight: string;
-
-      neutral: string;
-      neutralInverted: string;
-      neutralLight: string;
-
-      // the 4
-      caution: string;
-      cautionLight: string;
-      critical: string;
-      criticalLight: string;
-      info: string;
-      infoLight: string;
-      positive: string;
-      positiveLight: string;
-    };
+  };
+  size: {
+    'xs': string;
+    'sm': string;
+    'md': string;
+    'lg': string;
+    'xl': string;
+    '2xl': string;
+    '3xl': string;
+    '4xl': string;
+    '5xl': string;
+    '6xl': string;
+    '7xl': string;
+    'prose': string;
   };
   space: {
     '0': string;
@@ -71,7 +58,9 @@ export interface DesignTokens {
     '2_5': string;
     '3': string;
     '4': string;
+    '5': string;
     '6': string;
+    '7': string;
     '8': string;
     '9': string;
     '10': string;
@@ -82,18 +71,12 @@ export interface DesignTokens {
     '24': string;
     '48': string;
   };
-  radius: {
+
+  ringWidth: {
+    DEFAULT: string;
     none: string;
-    sm: string;
-    md: string;
-    lg: string;
-    full: string;
   };
-  shadows: {
-    sm: string;
-    md: string;
-    lg: string;
-  };
+
   color: {
     // mostly used with texts
     foreground: {

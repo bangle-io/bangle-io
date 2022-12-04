@@ -24,20 +24,6 @@ const BG_LIGHT = 100;
 
 const baseThemeLight = createStyleSheet({
   name: 'base-light',
-  border: {
-    color: {
-      neutral: neutral[700],
-      neutralInverted: neutral[100],
-
-      brandAccent,
-      promote: promote[REG],
-
-      caution: caution[REG],
-      critical: critical[REG],
-      info: info[REG],
-      positive: positive[REG],
-    },
-  },
 
   foregroundColor: {
     brandAccent,
