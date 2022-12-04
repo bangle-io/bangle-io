@@ -3,6 +3,7 @@ import type { DesignTokens } from '@bangle.io/shared-types';
 
 export { getFromPath, walkObject } from './walk-object';
 
+// This exists to provide a shape for creating the vars object
 const tokensShape: DesignTokens = {
   app: {
     editor: {
@@ -10,45 +11,22 @@ const tokensShape: DesignTokens = {
     },
   },
   border: {
-    color: {
-      brandAccent: '',
-      brandAccentLight: '',
-      caution: '',
-      cautionLight: '',
-      critical: '',
-      criticalLight: '',
-      focus: '',
-      info: '',
-      infoLight: '',
-      neutral: '',
-      neutralInverted: '',
-      neutralLight: '',
-      positive: '',
-      positiveLight: '',
-      promote: '',
-      promoteLight: '',
-    },
     radius: {
-      lg: '',
-      md: '',
+      DEFAULT: '',
       none: '',
       sm: '',
+      md: '',
+      lg: '',
       xl: '',
     },
-    shadows: {
-      lg: '',
-      md: '',
-      sm: '',
-    },
     width: {
+      DEFAULT: '',
+      none: '',
       lg: '',
       md: '',
     },
   },
-  breakpoints: {
-    mobile: '',
-    widescreen: '',
-  },
+  widescreenWidth: '',
   color: {
     background: {
       body: '',
@@ -117,18 +95,24 @@ const tokensShape: DesignTokens = {
       secondaryInverted: '',
     },
   },
-  focusRingSize: '',
-  radius: {
-    full: '',
-    lg: '',
-    md: '',
+
+  ringWidth: {
+    DEFAULT: '',
     none: '',
-    sm: '',
   },
-  shadows: {
-    lg: '',
-    md: '',
-    sm: '',
+  size: {
+    'xs': '',
+    'sm': '',
+    'md': '',
+    'lg': '',
+    'xl': '',
+    '2xl': '',
+    '3xl': '',
+    '4xl': '',
+    '5xl': '',
+    '6xl': '',
+    '7xl': '',
+    'prose': '',
   },
   space: {
     '0': '',
@@ -139,7 +123,9 @@ const tokensShape: DesignTokens = {
     '2_5': '',
     '3': '',
     '4': '',
+    '5': '',
     '6': '',
+    '7': '',
     '8': '',
     '9': '',
     '10': '',
@@ -153,40 +139,44 @@ const tokensShape: DesignTokens = {
   },
   theme: '',
   typography: {
-    fontFamily: '',
-    fontWeight: {
-      medium: '400',
-      regular: '400',
-      strong: '400',
+    fontFamily: {
+      sans: '',
+      serif: '',
+      mono: '',
     },
     text: {
-      xl: {
+      'xl': {
         height: '',
         size: '',
       },
-      lg: {
+      'lg': {
         height: '',
         size: '',
       },
-      md: {
+
+      'base': {
         height: '',
         size: '',
       },
-      base: {
+      'sm': {
         height: '',
         size: '',
       },
-      sm: {
+      'xs': {
         height: '',
         size: '',
       },
-      xs: {
+      '2xl': {
+        height: '',
+        size: '',
+      },
+      '3xl': {
         height: '',
         size: '',
       },
     },
-    webFont: '',
   },
 };
 
+// unnest the object to get a better type
 export const tokens = { ...tokensShape };

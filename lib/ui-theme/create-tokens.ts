@@ -4,12 +4,11 @@ import type { BangleThemeInput, DesignTokens } from '@bangle.io/shared-types';
 
 import {
   defaultBorder,
-  defaultBreakpoints,
-  defaultFocusRingSize,
-  defaultRadius,
-  defaultShadows,
+  defaultRingWidth,
+  defaultSize,
   defaultSpace,
   defaultTypography,
+  defaultWidescreenWidth,
 } from './default-tokens';
 import type { BangleAppOverrides } from './types';
 import { isLight } from './utils';
@@ -28,15 +27,14 @@ export function createTokens(
     theme: theme.name,
     typography: getTypography(theme.typography),
     border: getBorder(theme.border),
-    breakpoints: theme.breakpoints || defaultBreakpoints,
+    widescreenWidth: theme.widescreenWidth || defaultWidescreenWidth,
     color: {
       foreground: getForegroundColor(theme.foregroundColor),
       background: getBackgroundColor(theme.backgroundColor),
     },
     space: defaultSpace,
-    radius: theme.radius || defaultRadius,
-    shadows: theme.shadows || defaultShadows,
-    focusRingSize: defaultFocusRingSize,
+    size: defaultSize,
+    ringWidth: theme.ringWidth || defaultRingWidth,
   };
 
   return {
@@ -193,59 +191,18 @@ function getForegroundColor(
 }
 
 function getBorder(input: BangleThemeInput['border']): DesignTokens['border'] {
-  const { width = defaultBorder.width, color } = input;
-
-  const {
-    neutral,
-    brandAccent,
-    promote,
-    focus = brandAccent,
-    neutralInverted,
-
-    // the 4
-    caution,
-    critical,
-    info,
-    positive,
-  } = color;
-
-  const getLight = (color: string) => {
-    return isLight(color) ? darken(0.02, color) : lighten(0.02, color);
-  };
+  const { width = defaultBorder.width } = input || {};
 
   return {
     ...defaultBorder,
     width,
-    color: {
-      focus,
-
-      brandAccent,
-      brandAccentLight: getLight(brandAccent),
-
-      promote,
-      promoteLight: getLight(promote),
-
-      neutral,
-      neutralInverted,
-      neutralLight: getLight(neutral),
-
-      // the 4
-      caution,
-      cautionLight: getLight(caution),
-      critical,
-      criticalLight: getLight(critical),
-      info,
-      infoLight: getLight(info),
-      positive,
-      positiveLight: getLight(positive),
-    },
   };
 }
 
 function getTypography(
   input: BangleThemeInput['typography'],
 ): DesignTokens['typography'] {
-  const finalTypography = {
+  const finalTypography: DesignTokens['typography'] = {
     ...defaultTypography,
     ...input,
   };

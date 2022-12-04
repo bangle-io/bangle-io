@@ -839,6 +839,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/uno-preset-bangle",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/uno-preset-bangle",
+          "name": "@bangle.io/uno-preset-bangle",
+          "type": "lib",
+        },
+      ],
+      [
         "@bangle.io/utils",
         {
           "hasCSSFiles": false,

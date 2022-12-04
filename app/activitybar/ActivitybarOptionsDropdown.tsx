@@ -170,7 +170,7 @@ export function ActivitybarOptionsDropdown({
       buttonStyling={buttonStyling}
       buttonClassName={cx(
         'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
-        widescreen && 'bu-widescreen',
+        widescreen && 'BU_widescreen',
       )}
       buttonChildren={
         widescreen ? (
