@@ -332,10 +332,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/ui-vars"\
       },\
       {\
-        "name": "@bangle.io/uno-preset-bangle",\
-        "reference": "workspace:lib/uno-preset-bangle"\
-      },\
-      {\
         "name": "@bangle.io/utils",\
         "reference": "workspace:lib/utils"\
       },\
@@ -370,6 +366,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@bangle.io/storybook",\
         "reference": "workspace:tooling/storybook"\
+      },\
+      {\
+        "name": "@bangle.io/uno-preset-bangle",\
+        "reference": "workspace:tooling/uno-preset-bangle"\
       },\
       {\
         "name": "@bangle.io/yarn-workspace-helpers",\
@@ -462,7 +462,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
       ["@bangle.io/ui-theme", ["workspace:lib/ui-theme"]],\
       ["@bangle.io/ui-vars", ["workspace:lib/ui-vars"]],\
-      ["@bangle.io/uno-preset-bangle", ["workspace:lib/uno-preset-bangle"]],\
+      ["@bangle.io/uno-preset-bangle", ["workspace:tooling/uno-preset-bangle"]],\
       ["@bangle.io/utils", ["workspace:lib/utils"]],\
       ["@bangle.io/weak-cache", ["workspace:js-lib/weak-cache"]],\
       ["@bangle.io/worker-editor", ["workspace:worker/worker-editor"]],\
@@ -497,7 +497,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
-            ["@bangle.io/uno-preset-bangle", "workspace:lib/uno-preset-bangle"],\
+            ["@bangle.io/uno-preset-bangle", "workspace:tooling/uno-preset-bangle"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
             ["@sentry/tracing", "npm:6.19.7"],\
@@ -7654,10 +7654,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.io/uno-preset-bangle", [\
-        ["workspace:lib/uno-preset-bangle", {\
-          "packageLocation": "./lib/uno-preset-bangle/",\
+        ["workspace:tooling/uno-preset-bangle", {\
+          "packageLocation": "./tooling/uno-preset-bangle/",\
           "packageDependencies": [\
-            ["@bangle.io/uno-preset-bangle", "workspace:lib/uno-preset-bangle"],\
+            ["@bangle.io/uno-preset-bangle", "workspace:tooling/uno-preset-bangle"],\
             ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["@unocss/core", "npm:0.47.5"],\
             ["@unocss/preset-mini", "npm:0.47.5"],\
@@ -17095,7 +17095,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
-            ["@bangle.io/uno-preset-bangle", "workspace:lib/uno-preset-bangle"],\
+            ["@bangle.io/uno-preset-bangle", "workspace:tooling/uno-preset-bangle"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
             ["@sentry/tracing", "npm:6.19.7"],\

@@ -4,9 +4,10 @@
     "_scripts",
     "env-vars",
     "extract-css-vars",
-    "playwright-e2e",
     "independent-e2e-tests-server",
+    "playwright-e2e",
     "storybook",
+    "uno-preset-bangle",
     "yarn-workspace-helpers"
   ],
   "repository": {

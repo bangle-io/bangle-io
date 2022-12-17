@@ -3671,9 +3671,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/uno-preset-bangle@workspace:*, @bangle.io/uno-preset-bangle@workspace:lib/uno-preset-bangle":
+"@bangle.io/uno-preset-bangle@workspace:*, @bangle.io/uno-preset-bangle@workspace:tooling/uno-preset-bangle":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/uno-preset-bangle@workspace:lib/uno-preset-bangle"
+  resolution: "@bangle.io/uno-preset-bangle@workspace:tooling/uno-preset-bangle"
   dependencies:
     "@bangle.io/ui-vars": "workspace:*"
     "@unocss/core": ^0.47.5
