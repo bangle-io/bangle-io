@@ -1,5 +1,4 @@
 const config = {
-  bail: 5,
   testRunner: 'jest-circus/runner',
   testPathIgnorePatterns: [
     `<rootDir>/.yarn`,

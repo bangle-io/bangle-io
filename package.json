@@ -35,10 +35,9 @@
     "postinstall": "husky install",
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
-    "test:ci": "yarn jest --ci --coverage",
     "test:network": "yarn jest --selectProjects network",
     "test:regular": "yarn jest --selectProjects regular",
-    "test": "yarn jest",
+    "test": "yarn run test:regular",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w"
   },
