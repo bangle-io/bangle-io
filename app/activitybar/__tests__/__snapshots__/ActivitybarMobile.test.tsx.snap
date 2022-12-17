@@ -58,14 +58,14 @@ exports[`renders mobile view 1`] = `
           class="mr-2"
         >
           <button
-            aria-label="edit"
+            aria-label="done editing"
             class="capitalize B-ui-bangle-button_button p-1  transition-all duration-100 "
             type="button"
           >
             <span
               class="font-bold "
             >
-              edit
+              done
             </span>
           </button>
         </div>

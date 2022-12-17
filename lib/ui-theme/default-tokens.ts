@@ -1,8 +1,8 @@
-import { rgba } from 'polished';
-
 import type { DesignTokens } from '@bangle.io/shared-types';
 
-export const defaultWidescreenWidth: DesignTokens['widescreenWidth'] = '760px';
+// WARNING: the width is hard coded at multiple places, search for it
+// by value if you want to change it
+export const WIDESCREEN_WIDTH: DesignTokens['widescreenWidth'] = '759px';
 
 export const defaultBorder: Omit<DesignTokens['border'], 'color'> = {
   width: {

@@ -2,7 +2,6 @@ import type { DesignTokens } from './design-tokens';
 
 export interface BangleThemeInput {
   name: `${string}-dark` | `${string}-light`;
-  widescreenWidth?: DesignTokens['widescreenWidth'];
   typography?: {
     fontFamily?: DesignTokens['typography']['fontFamily'];
     text?: DesignTokens['typography']['text'];

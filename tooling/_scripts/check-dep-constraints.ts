@@ -12,7 +12,7 @@ export async function checkDepConstraints(
 ) {
   for (const pkg of ws.packageIterator({ ignoreWorkTree: true })) {
     const pkgType = pkg.type;
-    const constraints = depConstraints[pkgType];
+    const constraints = depTypeConstraints[pkgType];
 
     if (!constraints) {
       throw new Error(`No constraints defined for package type ${pkgType}`);
@@ -74,7 +74,7 @@ const EXTENSIONS: MatchType = {
 
 const APP: MatchType = { kind: MatchKind.packageType, value: PackageType.app };
 
-const depConstraints: Record<PackageType, MatchType[]> = {
+const depTypeConstraints: Record<PackageType, MatchType[]> = {
   [PackageType.app]: [APP, EXTENSIONS, JS_LIB, LIB, WORKER],
   [PackageType.extensions]: [
     JS_LIB,
@@ -117,7 +117,7 @@ export function checkValidDependency(
   if (_ignorePkgs.includes(pkg.name)) {
     return true;
   }
-  const constraints = depConstraints[pkg.type];
+  const constraints = depTypeConstraints[pkg.type];
 
   if (!constraints) {
     throw new Error(`No constraints defined for package type ${pkg.type}`);

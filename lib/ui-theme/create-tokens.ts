@@ -8,7 +8,7 @@ import {
   defaultSize,
   defaultSpace,
   defaultTypography,
-  defaultWidescreenWidth,
+  WIDESCREEN_WIDTH,
 } from './default-tokens';
 import type { BangleAppOverrides } from './types';
 import { isLight } from './utils';
@@ -27,7 +27,9 @@ export function createTokens(
     theme: theme.name,
     typography: getTypography(theme.typography),
     border: getBorder(theme.border),
-    widescreenWidth: theme.widescreenWidth || defaultWidescreenWidth,
+    // WARNING: the width cannot be provided as a dynamic
+    // value, and it should always be WIDESCREEN_WIDTH
+    widescreenWidth: WIDESCREEN_WIDTH,
     color: {
       foreground: getForegroundColor(theme.foregroundColor),
       background: getBackgroundColor(theme.backgroundColor),

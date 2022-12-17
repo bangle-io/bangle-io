@@ -1,5 +1,7 @@
 export interface DesignTokens {
   theme: string;
+  // WARNING: the width is hard coded at multiple places
+  // it is currently not possible to change this value
   widescreenWidth: string;
   typography: {
     fontFamily: {
