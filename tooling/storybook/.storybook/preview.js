@@ -1,4 +1,8 @@
-import 'windi.css';
+import '@unocss/reset/tailwind.css';
+
+import 'uno.css';
+import '@bangle.io/core-theme/theme-light.css';
+
 import './storybook.css';
 import '../../public/main.css';
 import { themes } from '@storybook/theming';

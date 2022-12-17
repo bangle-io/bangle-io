@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const WindiCSSWebpackPlugin = require('windicss-webpack-plugin');
+const UnoCSS = require('@unocss/webpack').default;
 
 const {
   ALL_TOP_LEVEL_DIRS,
@@ -77,13 +77,15 @@ module.exports = {
     config.resolve.plugins = config.resolve.plugins || [];
     const envVars = require('@bangle.io/env-vars')({ isProduction: false });
 
+    config.optimization.realContentHash = true;
+
     config.module.rules.push({
       test: /\.m?js/,
       resolve: {
         fullySpecified: false,
       },
     });
-    config.plugins.push(new WindiCSSWebpackPlugin());
+    config.plugins.push(UnoCSS());
     config.plugins.push(
       new webpack.DefinePlugin({
         ...envVars.appEnvs,

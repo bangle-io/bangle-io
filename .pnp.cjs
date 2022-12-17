@@ -6027,7 +6027,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config-template", "npm:0.0.3"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
           ],\
@@ -7426,6 +7425,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.20.2"],\
             ["@babel/preset-env", "virtual:c0b1d3b4a22a2836f6be10fcaca1f0ae38d926fa65c6597dd9d80e655aefd5623df6c6b5c1127e8945b84b31fc2f32bd07aff91d459752d4e6e8cfd1061bdff8#npm:7.20.2"],\
             ["@babel/preset-typescript", "virtual:c0b1d3b4a22a2836f6be10fcaca1f0ae38d926fa65c6597dd9d80e655aefd5623df6c6b5c1127e8945b84b31fc2f32bd07aff91d459752d4e6e8cfd1061bdff8#npm:7.18.6"],\
+            ["@bangle.io/core-theme", "workspace:extensions/core-theme"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -7447,12 +7447,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/theming", "virtual:050c9d952df5ec868160cea63c3bf12f41e7ef4dd03101ef12039c5910f6d0f2bfa6b6ddacb79fb002a34ef3cb83f8d8e86e995ba338ca0564c71aeee47c330b#npm:6.5.13"],\
             ["@types/react", "npm:17.0.52"],\
             ["@types/react-dom", "npm:17.0.18"],\
+            ["@unocss/reset", "npm:0.47.5"],\
+            ["@unocss/webpack", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:0.47.5"],\
             ["babel-loader", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:8.3.0"],\
             ["postcss", "npm:8.4.19"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:17.0.2"],\
-            ["webpack", "virtual:581903c49c9b6b71e80db8a30f6f2cf6d269fc6c470433fe73a453a119123d1d05f28da5cf7b22c4bc6a10ddcaad34f39d6d0c4cd206d766b59c2ab33f54d431#npm:5.75.0"],\
-            ["windicss-webpack-plugin", "npm:1.7.7"]\
+            ["webpack", "virtual:581903c49c9b6b71e80db8a30f6f2cf6d269fc6c470433fe73a453a119123d1d05f28da5cf7b22c4bc6a10ddcaad34f39d6d0c4cd206d766b59c2ab33f54d431#npm:5.75.0"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -14981,6 +14982,35 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [\
             "@types/vite",\
             "vite"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@unocss/webpack", [\
+        ["npm:0.47.5", {\
+          "packageLocation": "./.yarn/cache/@unocss-webpack-npm-0.47.5-cf78108bac-8650ccddbc.zip/node_modules/@unocss/webpack/",\
+          "packageDependencies": [\
+            ["@unocss/webpack", "npm:0.47.5"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:0.47.5", {\
+          "packageLocation": "./.yarn/__virtual__/@unocss-webpack-virtual-e5ece1ec28/0/cache/@unocss-webpack-npm-0.47.5-cf78108bac-8650ccddbc.zip/node_modules/@unocss/webpack/",\
+          "packageDependencies": [\
+            ["@unocss/webpack", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:0.47.5"],\
+            ["@ampproject/remapping", "npm:2.2.0"],\
+            ["@rollup/pluginutils", "virtual:2bf23f465084843c45f02e7b9e2d1279ff9fb2149de660e4b2d7814b5bd5e09a7bca5d1f53975158ddaab4e913a6f835656fe86a1393f69924837dcbcdb28a8a#npm:5.0.2"],\
+            ["@types/webpack", null],\
+            ["@unocss/config", "npm:0.47.5"],\
+            ["@unocss/core", "npm:0.47.5"],\
+            ["magic-string", "npm:0.26.7"],\
+            ["unplugin", "npm:1.0.0"],\
+            ["webpack", "virtual:581903c49c9b6b71e80db8a30f6f2cf6d269fc6c470433fe73a453a119123d1d05f28da5cf7b22c4bc6a10ddcaad34f39d6d0c4cd206d766b59c2ab33f54d431#npm:5.75.0"],\
+            ["webpack-sources", "npm:3.2.3"]\
+          ],\
+          "packagePeers": [\
+            "@types/webpack",\
+            "webpack"\
           ],\
           "linkType": "HARD"\
         }]\
@@ -22667,15 +22697,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["get-port", [\
-        ["npm:6.1.2", {\
-          "packageLocation": "./.yarn/cache/get-port-npm-6.1.2-5a92df687a-e3c3d59149.zip/node_modules/get-port/",\
-          "packageDependencies": [\
-            ["get-port", "npm:6.1.2"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["get-stdin", [\
         ["npm:4.0.1", {\
           "packageLocation": "./.yarn/cache/get-stdin-npm-4.0.1-10c6ac0b43-4f73d3fe05.zip/node_modules/get-stdin/",\
@@ -28732,13 +28753,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:0.3.9", {\
-          "packageLocation": "./.yarn/cache/pathe-npm-0.3.9-e2c03303d1-9afcbaa79c.zip/node_modules/pathe/",\
-          "packageDependencies": [\
-            ["pathe", "npm:0.3.9"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.0.0", {\
           "packageLocation": "./.yarn/cache/pathe-npm-1.0.0-12bb397fc8-7b71a4930a.zip/node_modules/pathe/",\
           "packageDependencies": [\
@@ -34282,6 +34296,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["unplugin", [\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/unplugin-npm-1.0.0-50fbaa2846-eaaaf738d8.zip/node_modules/unplugin/",\
+          "packageDependencies": [\
+            ["unplugin", "npm:1.0.0"],\
+            ["acorn", "npm:8.8.1"],\
+            ["chokidar", "npm:3.5.3"],\
+            ["webpack-sources", "npm:3.2.3"],\
+            ["webpack-virtual-modules", "npm:0.4.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["unset-value", [\
         ["npm:1.0.0", {\
           "packageLocation": "./.yarn/cache/unset-value-npm-1.0.0-2af803b920-5990ecf660.zip/node_modules/unset-value/",\
@@ -35356,23 +35383,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["npm:3.5.6", {\
           "packageLocation": "./.yarn/cache/windicss-npm-3.5.6-d4897562c7-e4b6ab0484.zip/node_modules/windicss/",\
           "packageDependencies": [\
-            ["windicss", "npm:3.5.6"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["windicss-webpack-plugin", [\
-        ["npm:1.7.7", {\
-          "packageLocation": "./.yarn/cache/windicss-webpack-plugin-npm-1.7.7-6ebbe55043-05cc407c67.zip/node_modules/windicss-webpack-plugin/",\
-          "packageDependencies": [\
-            ["windicss-webpack-plugin", "npm:1.7.7"],\
-            ["@windicss/plugin-utils", "npm:1.8.8"],\
-            ["debug", "virtual:569a25513afb6a24dfed8c5a30a481623293e0360f4b156e464840d4caead450805a6a0e63416cee33f850b619b3920e00801a8b5031df983b570ea9dd38b09f#npm:4.3.4"],\
-            ["get-port", "npm:6.1.2"],\
-            ["loader-utils", "npm:2.0.4"],\
-            ["lodash", "npm:4.17.21"],\
-            ["pathe", "npm:0.3.9"],\
-            ["webpack-virtual-modules", "npm:0.4.6"],\
             ["windicss", "npm:3.5.6"]\
           ],\
           "linkType": "HARD"\

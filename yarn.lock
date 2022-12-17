@@ -2319,7 +2319,6 @@ __metadata:
     "@bangle.io/config-template": ^0.0.3
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-vars": "workspace:*"
     tslib: ^2.4.1
     typescript: ^4.9.3
   languageName: unknown
@@ -3462,6 +3461,7 @@ __metadata:
     "@babel/core": ^7.19.1
     "@babel/preset-env": ^7.19.1
     "@babel/preset-typescript": ^7.18.6
+    "@bangle.io/core-theme": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3483,12 +3483,13 @@ __metadata:
     "@storybook/theming": ^6.5.12
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
+    "@unocss/reset": ^0.47.5
+    "@unocss/webpack": ^0.47.5
     babel-loader: ^8.2.5
     postcss: ^8.4.16
     react: ^17.0.2
     react-dom: ^17.0.2
     webpack: ^5.70.0
-    windicss-webpack-plugin: ^1.7.7
   languageName: unknown
   linkType: soft
 
@@ -8351,6 +8352,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@unocss/webpack@npm:^0.47.5":
+  version: 0.47.5
+  resolution: "@unocss/webpack@npm:0.47.5"
+  dependencies:
+    "@ampproject/remapping": ^2.2.0
+    "@rollup/pluginutils": ^5.0.2
+    "@unocss/config": 0.47.5
+    "@unocss/core": 0.47.5
+    magic-string: ^0.26.7
+    unplugin: ^1.0.0
+    webpack-sources: ^3.2.3
+  peerDependencies:
+    webpack: ^4 || ^5
+  checksum: 8650ccddbcfce154260efc6c1b98ec9a9a2ab27012029721e90d986747072b973fb0b8a895b8f0e683040c015cbe64e02edef39e2638dd61d33be3090faf51eb
+  languageName: node
+  linkType: hard
+
 "@vitejs/plugin-react@npm:^2.1.0":
   version: 2.2.0
   resolution: "@vitejs/plugin-react@npm:2.2.0"
@@ -8711,7 +8729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@windicss/plugin-utils@npm:1.8.8, @windicss/plugin-utils@npm:^1.8.8":
+"@windicss/plugin-utils@npm:1.8.8":
   version: 1.8.8
   resolution: "@windicss/plugin-utils@npm:1.8.8"
   dependencies:
@@ -14679,13 +14697,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-port@npm:^6.1.2":
-  version: 6.1.2
-  resolution: "get-port@npm:6.1.2"
-  checksum: e3c3d591492a11393455ef220f24c812a28f7da56ec3e4a2512d931a1f196d42850b50ac6138349a44622eda6dc3c0ccd8495cd91376d968e2d9e6f6f849e0a9
-  languageName: node
-  linkType: hard
-
 "get-stdin@npm:^4.0.1":
   version: 4.0.1
   resolution: "get-stdin@npm:4.0.1"
@@ -20076,13 +20087,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pathe@npm:^0.3.5":
-  version: 0.3.9
-  resolution: "pathe@npm:0.3.9"
-  checksum: 9afcbaa79c5f8ec603b6b0a20b9accfcec8de57e26738f4a844de4625cfb07cc733b7234387ef42c7ab23a49b91846b6b51cb247584793842a3179539af463df
-  languageName: node
-  linkType: hard
-
 "pathe@npm:^1.0.0":
   version: 1.0.0
   resolution: "pathe@npm:1.0.0"
@@ -24650,6 +24654,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unplugin@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "unplugin@npm:1.0.0"
+  dependencies:
+    acorn: ^8.8.1
+    chokidar: ^3.5.3
+    webpack-sources: ^3.2.3
+    webpack-virtual-modules: ^0.4.6
+  checksum: eaaaf738d8707f2965702eb4a196731516e115ea5bee8fcc75f7a4538266eb0e5e727379db3cb55e4b0fd7d4bdbc4fc957b79bc3b757f2607bf1e84f1fd3bacd
+  languageName: node
+  linkType: hard
+
 "unset-value@npm:^1.0.0":
   version: 1.0.0
   resolution: "unset-value@npm:1.0.0"
@@ -25254,7 +25270,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-virtual-modules@npm:^0.4.1, webpack-virtual-modules@npm:^0.4.4":
+"webpack-virtual-modules@npm:^0.4.1, webpack-virtual-modules@npm:^0.4.6":
   version: 0.4.6
   resolution: "webpack-virtual-modules@npm:0.4.6"
   checksum: cb056ba8c50b35436ae43149554b051b80065b0cf79f2d528ca692ddf344a422ac71c415adb9da83dc3acc6e7e58f518388cc1cd11cb4fa29dc04f2c4494afe3
@@ -25479,22 +25495,6 @@ __metadata:
   dependencies:
     string-width: ^4.0.0
   checksum: 03db6c9d0af9329c37d74378ff1d91972b12553c7d72a6f4e8525fe61563fa7adb0b9d6e8d546b7e059688712ea874edd5ded475999abdeedf708de9849310e0
-  languageName: node
-  linkType: hard
-
-"windicss-webpack-plugin@npm:^1.7.7":
-  version: 1.7.7
-  resolution: "windicss-webpack-plugin@npm:1.7.7"
-  dependencies:
-    "@windicss/plugin-utils": ^1.8.8
-    debug: ^4.3.4
-    get-port: ^6.1.2
-    loader-utils: ^2.0.0
-    lodash: ^4.17.21
-    pathe: ^0.3.5
-    webpack-virtual-modules: ^0.4.4
-    windicss: ^3.5.6
-  checksum: 05cc407c67e830b685a58fd2635612ed75c29140946f3e245aa1c4b7f01209805533d9f41c0a4e780fddeaa00c2dfef10834c6ba8ffbc8835fcee42ebe1d19b3
   languageName: node
   linkType: hard
 
