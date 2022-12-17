@@ -10,7 +10,7 @@ on:
     branches: [dev, staging, production]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -107,6 +107,9 @@ jobs:
         test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']
     steps:
       - uses: actions/checkout@v3
+      - name: Set git safe directory
+        # This is added as a fix for https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Setup node.js
         uses: actions/setup-node@v3
         with:
