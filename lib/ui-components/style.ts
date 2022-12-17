@@ -12,3 +12,4 @@ import './Select/Select.css';
 import './Sidebar/Sidebar.css';
 import './TextButton.css';
 import './UniversalPalette/UniversalPalette.css';
+import './BlockButton/BlockButton.css';
