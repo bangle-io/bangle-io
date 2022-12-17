@@ -68,6 +68,7 @@ jobs:
 
   tests-network:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
     steps:
       - uses: actions/checkout@v3
       - name: Run test "${{ matrix.test-kind }}"
