@@ -2,6 +2,7 @@
   "name": "lib",
   "workspaces": [
     "api",
+    "atomic-css",
     "bangle-store-context",
     "config",
     "constants",
@@ -19,8 +20,8 @@
     "slice-page",
     "slice-storage-provider",
     "slice-ui",
-    "slice-workspace",
     "slice-workspace-opened-doc-info",
+    "slice-workspace",
     "storage",
     "store-sync",
     "test-utils",
@@ -28,7 +29,6 @@
     "ui-components",
     "ui-dhancha",
     "ui-theme",
-    "ui-vars",
     "utils",
     "workspace-info",
     "ws-path"

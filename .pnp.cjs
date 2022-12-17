@@ -228,6 +228,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/api"\
       },\
       {\
+        "name": "@bangle.io/atomic-css",\
+        "reference": "workspace:lib/atomic-css"\
+      },\
+      {\
         "name": "@bangle.io/bangle-store-context",\
         "reference": "workspace:lib/bangle-store-context"\
       },\
@@ -328,10 +332,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/ui-theme"\
       },\
       {\
-        "name": "@bangle.io/ui-vars",\
-        "reference": "workspace:lib/ui-vars"\
-      },\
-      {\
         "name": "@bangle.io/utils",\
         "reference": "workspace:lib/utils"\
       },\
@@ -391,6 +391,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/activitybar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar", "workspace:app/activitybar"]],\
       ["@bangle.io/api", ["workspace:lib/api"]],\
       ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "workspace:app/app-entry"]],\
+      ["@bangle.io/atomic-css", ["workspace:lib/atomic-css"]],\
       ["@bangle.io/baby-fs", ["workspace:js-lib/baby-fs"]],\
       ["@bangle.io/bangle-store", ["workspace:app/bangle-store"]],\
       ["@bangle.io/bangle-store-context", ["workspace:lib/bangle-store-context"]],\
@@ -461,7 +462,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/ui-components", ["workspace:lib/ui-components"]],\
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
       ["@bangle.io/ui-theme", ["workspace:lib/ui-theme"]],\
-      ["@bangle.io/ui-vars", ["workspace:lib/ui-vars"]],\
       ["@bangle.io/uno-preset-bangle", ["workspace:tooling/uno-preset-bangle"]],\
       ["@bangle.io/utils", ["workspace:lib/utils"]],\
       ["@bangle.io/weak-cache", ["workspace:js-lib/weak-cache"]],\
@@ -490,13 +490,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.dev/jest-utils", "npm:0.31.6"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/jsdom-env", "workspace:js-lib/jsdom-env"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["@bangle.io/uno-preset-bangle", "workspace:tooling/uno-preset-bangle"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\
@@ -5883,6 +5883,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/atomic-css", [\
+        ["workspace:lib/atomic-css", {\
+          "packageLocation": "./lib/atomic-css/",\
+          "packageDependencies": [\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["tslib", "npm:2.4.1"],\
+            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/baby-fs", [\
         ["workspace:js-lib/baby-fs", {\
           "packageLocation": "./js-lib/baby-fs/",\
@@ -7630,23 +7642,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/ui-theme/",\
           "packageDependencies": [\
             ["@bangle.io/ui-theme", "workspace:lib/ui-theme"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["gradient-parser", "npm:1.0.2"],\
             ["polished", "npm:4.2.2"],\
             ["tailwindcss", "virtual:4f7bac57a9aa9f479364d21dc26ce090f638b771b2cab541b2c2f47c62d1feae825d89c7af90d58ff33185c830898b9f203c1bdb0445a3e7039941db8b007b86#npm:3.2.4"],\
-            ["tslib", "npm:2.4.1"],\
-            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["@bangle.io/ui-vars", [\
-        ["workspace:lib/ui-vars", {\
-          "packageLocation": "./lib/ui-vars/",\
-          "packageDependencies": [\
-            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
           ],\
@@ -7658,7 +7658,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/uno-preset-bangle/",\
           "packageDependencies": [\
             ["@bangle.io/uno-preset-bangle", "workspace:tooling/uno-preset-bangle"],\
-            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@unocss/core", "npm:0.47.5"],\
             ["@unocss/preset-mini", "npm:0.47.5"],\
             ["@unocss/preset-uno", "npm:0.47.5"],\
@@ -17088,13 +17088,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["bangle-io", "workspace:."],\
             ["@bangle.dev/jest-utils", "npm:0.31.6"],\
             ["@bangle.io/app-entry", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/jsdom-env", "workspace:js-lib/jsdom-env"],\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/ui-vars", "workspace:lib/ui-vars"],\
             ["@bangle.io/uno-preset-bangle", "workspace:tooling/uno-preset-bangle"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@sentry/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.19.7"],\

@@ -23,7 +23,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.io/ui-vars": "workspace:*",
+    "@bangle.io/atomic-css": "workspace:*",
     "@unocss/core": "^0.47.5",
     "@unocss/preset-mini": "^0.47.5",
     "@unocss/preset-uno": "^0.47.5",
