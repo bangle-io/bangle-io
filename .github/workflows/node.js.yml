@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [dev, staging, production]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   SENTRY_NO_PROGRESS_BAR: 1
   GITHUB_OWNER: ${{ secrets.GH_OWNER }}
