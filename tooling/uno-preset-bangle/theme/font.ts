@@ -1,6 +1,6 @@
 import type { Theme } from '@unocss/preset-mini';
 
-import { vars } from '@bangle.io/ui-vars';
+import { vars } from '@bangle.io/atomic-css';
 
 export const fontFamily = vars.typography.fontFamily;
 

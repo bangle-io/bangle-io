@@ -1,6 +1,6 @@
 import type { Theme } from '@unocss/preset-mini';
 
-import { vars } from '@bangle.io/ui-vars';
+import { vars } from '@bangle.io/atomic-css';
 
 const bgColors: Record<string, string> = Object.fromEntries(
   Object.entries(vars.color.background).map(([k, v]) => [

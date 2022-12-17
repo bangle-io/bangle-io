@@ -1,5 +1,5 @@
+import { getFromPath, vars, walkObject } from '@bangle.io/atomic-css';
 import type { BangleThemeInput } from '@bangle.io/shared-types';
-import { getFromPath, vars, walkObject } from '@bangle.io/ui-vars';
 
 import { createTokens } from './create-tokens';
 import type { BangleAppOverrides } from './types';

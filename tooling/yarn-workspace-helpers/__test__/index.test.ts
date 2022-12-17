@@ -828,13 +828,13 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/ui-vars",
+        "@bangle.io/atomic-css",
         {
           "hasCSSFiles": false,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "lib/ui-vars",
-          "name": "@bangle.io/ui-vars",
+          "name": "@bangle.io/atomic-css",
           "type": "lib",
         },
       ],

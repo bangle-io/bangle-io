@@ -1,4 +1,4 @@
-import { vars } from '@bangle.io/ui-vars';
+import { vars } from '@bangle.io/atomic-css';
 
 export const lineWidth = vars.border.width;
 

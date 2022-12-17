@@ -1,4 +1,4 @@
-import { vars } from '@bangle.io/ui-vars';
+import { vars } from '@bangle.io/atomic-css';
 
 const baseSize = vars.size;
 
