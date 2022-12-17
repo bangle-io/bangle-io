@@ -10,7 +10,7 @@ on:
     branches: [dev, staging, production]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: bangle-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
