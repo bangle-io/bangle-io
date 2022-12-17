@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-kind: ['lint', 'test:ci', 'build']
+        test-kind: ['lint', 'test:regular', 'build']
     steps:
       - uses: actions/checkout@v3
       - name: Run test "${{ matrix.test-kind }}"
@@ -56,23 +56,43 @@ jobs:
           node-version: 18.x
       - name: yarn install
         run: yarn install --immutable --immutable-cache
-
       - run: yarn ${{ matrix.test-kind }}
-      - uses: preactjs/compressed-size-action@v2
-        if: matrix.test-kind == 'build'
-        with:
-          pattern: '**/build/**/*.{js,css,html,json}'
-          exclude: '{**/*.map,**/node_modules/**}'
-          strip-hash: "\\b\\w{8}\\."
-          minimum-change-threshold: 30
       - name: Upload coverage report
-        if: matrix.test-kind == 'test:ci'
+        if: matrix.test-kind == 'test:regular'
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           flags: unittests # optional
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
+
+  tests-network:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run test "${{ matrix.test-kind }}"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
+      - run: yarn test:network
+
+  build-size:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
+      - uses: preactjs/compressed-size-action@v2
+        with:
+          pattern: '**/build/**/*.{js,css,html,json}'
+          exclude: '{**/*.map,**/node_modules/**}'
+          strip-hash: "\\b\\w{8}\\."
+          minimum-change-threshold: 30
 
   tests-e2e:
     runs-on: ubuntu-latest
