@@ -4,6 +4,11 @@ import { getFromPath, vars, walkObject } from '@bangle.io/ui-vars';
 import { createTokens } from './create-tokens';
 import type { BangleAppOverrides } from './types';
 
+if (typeof window !== 'undefined') {
+  // This package is only meant to be used for creating stylesheets in node.js
+  throw new Error('This file should not be imported in browser');
+}
+
 export function createStyleSheet(
   theme: BangleThemeInput,
   appOverride?: BangleAppOverrides,

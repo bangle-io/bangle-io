@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/uno-preset-bangle",
+  "description": "Used for creating themes, does not get bundled with the app",
   "version": "0.0.0",
   "authors": [
     {
