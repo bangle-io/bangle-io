@@ -103,10 +103,7 @@ jobs:
         test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']
     steps:
       - uses: actions/checkout@v3
-      - name: Set git safe directory
-        # This is added as a fix for https://github.com/actions/checkout/issues/766
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - name: Run e2e tests "${{ matrix.test-kind }}"
+      - name: Setup node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
@@ -115,9 +112,9 @@ jobs:
       - name: Install playwright dependencies
         run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
-      - uses: actions/upload-artifact@v2
-        if: ${{ failure() }}
+      - uses: actions/upload-artifact@v3
+        if: always()
         with:
-          name: playwright trace
-          path: tooling/playwright-e2e/
-          retention-days: 3
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
