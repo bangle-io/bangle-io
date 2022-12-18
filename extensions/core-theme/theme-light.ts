@@ -29,6 +29,10 @@ const baseThemeLight = createStyleSheet({
     brandAccent,
     brandAccentLight,
 
+    primary: color.gray[900],
+    primaryLight: lighten(0.1, color.gray[900]),
+    primaryInverted: color.gray[50],
+
     promote: promote[REG],
     promoteLight: promote[LIGHT],
 
@@ -41,8 +45,9 @@ const baseThemeLight = createStyleSheet({
     neutralLight: neutral[400],
     neutralInverted: color.white,
 
-    secondary: neutral[500],
-    secondaryInverted: neutral[100],
+    secondary: color.gray[700],
+    secondaryLight: lighten(0.1, color.gray[700]),
+    secondaryInverted: color.gray[300],
 
     caution: caution[REG],
     cautionLight: caution[LIGHT],

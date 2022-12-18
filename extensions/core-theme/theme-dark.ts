@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { lighten } from 'polished';
+import { darken, lighten } from 'polished';
 
 import { createStyleSheet } from '@bangle.io/ui-theme';
 
@@ -29,6 +29,10 @@ const baseThemeDark = createStyleSheet({
     brandAccent,
     brandAccentLight,
 
+    primary: color.gray[50],
+    primaryInverted: color.gray[900],
+    primaryLight: darken(0.1, color.gray[50]),
+
     promote: promote[REG],
     promoteLight: promote[LIGHT],
 
@@ -41,8 +45,9 @@ const baseThemeDark = createStyleSheet({
     neutralLight: neutral[400],
     neutralInverted: color.white,
 
-    secondary: neutral[500],
-    secondaryInverted: neutral[100],
+    secondary: color.gray[100],
+    secondaryLight: darken(0.1, color.gray[100]),
+    secondaryInverted: color.gray[800],
 
     caution: caution[REG],
     cautionLight: caution[LIGHT],

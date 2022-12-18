@@ -3,6 +3,7 @@ import { darken, lighten } from 'polished';
 import type { BangleThemeInput, DesignTokens } from '@bangle.io/shared-types';
 
 import {
+  defaultApp,
   defaultBorder,
   defaultRingWidth,
   defaultSize,
@@ -127,12 +128,16 @@ function getAppOverrides(
   designTokens: Omit<DesignTokens, 'app'>,
   input?: BangleAppOverrides,
 ): DesignTokens['app'] {
-  return {
-    editor: {
-      backgroundColor:
-        input?.editor?.backgroundColor ?? designTokens.color.background.surface,
-    },
+  const base: Record<string, Record<string, string>> = {
+    ...defaultApp(designTokens),
   };
+
+  // do a two level merge
+  for (const [key, valObj] of Object.entries(input || {})) {
+    base[key] = { ...base[key], ...valObj };
+  }
+
+  return base as DesignTokens['app'];
 }
 
 function getForegroundColor(
@@ -141,54 +146,57 @@ function getForegroundColor(
   const {
     brandAccent,
     brandAccentLight,
-
-    link,
-    linkLight,
-    linkHover,
-    linkVisited,
-
-    neutral,
-    neutralInverted,
-    neutralLight,
-
-    secondary,
-    secondaryInverted,
-
-    promote,
-    promoteLight,
-
     caution,
     cautionLight,
     critical,
     criticalLight,
     info,
     infoLight,
+    link,
+    linkHover,
+    linkLight,
+    linkVisited,
+    neutral,
+    neutralInverted,
+    neutralLight,
     positive,
     positiveLight,
+    primary,
+    primaryInverted,
+    primaryLight,
+    promote,
+    promoteLight,
+    secondary,
+    secondaryInverted,
+    secondaryLight,
   } = input;
 
   return {
     brandAccent,
     brandAccentLight,
-    link,
-    linkHover,
-    linkLight,
-    linkVisited,
-    promote,
-    promoteLight,
-    neutral,
-    neutralInverted,
-    neutralLight,
-    secondary,
-    secondaryInverted,
     caution,
     cautionLight,
     critical,
     criticalLight,
     info,
     infoLight,
+    link,
+    linkHover,
+    linkLight,
+    linkVisited,
+    neutral,
+    neutralInverted,
+    neutralLight,
     positive,
     positiveLight,
+    primary,
+    primaryInverted,
+    primaryLight,
+    promote,
+    promoteLight,
+    secondary,
+    secondaryInverted,
+    secondaryLight,
   };
 }
 

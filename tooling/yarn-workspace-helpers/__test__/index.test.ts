@@ -58,6 +58,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/atomic-css",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/atomic-css",
+          "name": "@bangle.io/atomic-css",
+          "type": "lib",
+        },
+      ],
+      [
         "@bangle.io/baby-fs",
         {
           "hasCSSFiles": false,
@@ -828,25 +839,14 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/atomic-css",
-        {
-          "hasCSSFiles": false,
-          "isToolingWorkspace": false,
-          "isWorktree": false,
-          "location": "lib/ui-vars",
-          "name": "@bangle.io/atomic-css",
-          "type": "lib",
-        },
-      ],
-      [
         "@bangle.io/uno-preset-bangle",
         {
           "hasCSSFiles": false,
-          "isToolingWorkspace": false,
+          "isToolingWorkspace": true,
           "isWorktree": false,
-          "location": "lib/uno-preset-bangle",
+          "location": "tooling/uno-preset-bangle",
           "name": "@bangle.io/uno-preset-bangle",
-          "type": "lib",
+          "type": "tooling",
         },
       ],
       [

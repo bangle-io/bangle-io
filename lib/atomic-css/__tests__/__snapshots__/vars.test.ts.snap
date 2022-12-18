@@ -3,8 +3,11 @@
 exports[`cssCustomProperties snapshot 1`] = `
 {
   "app": {
+    "activitybar": {
+      "bgColor": "--BV-app-activitybar-bgColor",
+    },
     "editor": {
-      "backgroundColor": "--BV-app-editor-backgroundColor",
+      "bgColor": "--BV-app-editor-bgColor",
     },
   },
   "border": {
@@ -85,10 +88,14 @@ exports[`cssCustomProperties snapshot 1`] = `
       "neutralLight": "--BV-color-foreground-neutralLight",
       "positive": "--BV-color-foreground-positive",
       "positiveLight": "--BV-color-foreground-positiveLight",
+      "primary": "--BV-color-foreground-primary",
+      "primaryInverted": "--BV-color-foreground-primaryInverted",
+      "primaryLight": "--BV-color-foreground-primaryLight",
       "promote": "--BV-color-foreground-promote",
       "promoteLight": "--BV-color-foreground-promoteLight",
       "secondary": "--BV-color-foreground-secondary",
       "secondaryInverted": "--BV-color-foreground-secondaryInverted",
+      "secondaryLight": "--BV-color-foreground-secondaryLight",
     },
   },
   "ringWidth": {
@@ -177,8 +184,11 @@ exports[`cssCustomProperties snapshot 1`] = `
 exports[`vars snapshot 1`] = `
 {
   "app": {
+    "activitybar": {
+      "bgColor": "var(--BV-app-activitybar-bgColor)",
+    },
     "editor": {
-      "backgroundColor": "var(--BV-app-editor-backgroundColor)",
+      "bgColor": "var(--BV-app-editor-bgColor)",
     },
   },
   "border": {
@@ -259,10 +269,14 @@ exports[`vars snapshot 1`] = `
       "neutralLight": "var(--BV-color-foreground-neutralLight)",
       "positive": "var(--BV-color-foreground-positive)",
       "positiveLight": "var(--BV-color-foreground-positiveLight)",
+      "primary": "var(--BV-color-foreground-primary)",
+      "primaryInverted": "var(--BV-color-foreground-primaryInverted)",
+      "primaryLight": "var(--BV-color-foreground-primaryLight)",
       "promote": "var(--BV-color-foreground-promote)",
       "promoteLight": "var(--BV-color-foreground-promoteLight)",
       "secondary": "var(--BV-color-foreground-secondary)",
       "secondaryInverted": "var(--BV-color-foreground-secondaryInverted)",
+      "secondaryLight": "var(--BV-color-foreground-secondaryLight)",
     },
   },
   "ringWidth": {

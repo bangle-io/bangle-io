@@ -2063,6 +2063,7 @@ __metadata:
   resolution: "@bangle.io/activitybar@workspace:app/activitybar"
   dependencies:
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"

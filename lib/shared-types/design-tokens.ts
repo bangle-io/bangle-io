@@ -93,12 +93,17 @@ export interface DesignTokens {
       promote: string;
       promoteLight: string;
 
+      primary: string;
+      primaryLight: string;
+      primaryInverted: string;
+
+      secondary: string;
+      secondaryLight: string;
+      secondaryInverted: string;
+
       neutral: string;
       neutralInverted: string;
       neutralLight: string;
-
-      secondary: string;
-      secondaryInverted: string;
 
       // the 4
       caution: string;
@@ -166,8 +171,14 @@ export interface DesignTokens {
     };
   };
   app: {
+    // Note:
+    //  keys `bgColor` and `fgColor` will get added to `color.background` and `color.foreground`
+    // can be used as `bg-appActivitybarBgColor`
     editor: {
-      backgroundColor: string;
+      bgColor: string;
+    };
+    activitybar: {
+      bgColor: string;
     };
   };
 }

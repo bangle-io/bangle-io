@@ -114,3 +114,17 @@ export const defaultTypography: DesignTokens['typography'] = {
     '3xl': { size: '1.875rem', height: '2.25rem' },
   },
 };
+
+export const defaultApp: (
+  designTokens: Omit<DesignTokens, 'app'>,
+) => DesignTokens['app'] = (designTokens) => ({
+  editor: {
+    bgColor: designTokens.color.background.surface,
+  },
+  activitybar: {
+    // TODO change this to a better value
+    bgColor: designTokens.theme.endsWith('-dark')
+      ? 'rgb(31, 30, 30)'
+      : 'rgb(26, 32, 44)',
+  },
+});

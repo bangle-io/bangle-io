@@ -7,7 +7,10 @@ export { getFromPath, walkObject } from './walk-object';
 const tokensShape: DesignTokens = {
   app: {
     editor: {
-      backgroundColor: '',
+      bgColor: '',
+    },
+    activitybar: {
+      bgColor: '',
     },
   },
   border: {
@@ -89,10 +92,14 @@ const tokensShape: DesignTokens = {
       neutralLight: '',
       positive: '',
       positiveLight: '',
+      primary: '',
+      primaryInverted: '',
+      primaryLight: '',
       promote: '',
       promoteLight: '',
       secondary: '',
       secondaryInverted: '',
+      secondaryLight: '',
     },
   },
 
