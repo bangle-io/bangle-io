@@ -2315,10 +2315,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/config-template@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@bangle.io/config-template@npm:0.0.3"
-  checksum: 36cc7b19a8c90b4e2db50790a1742c4c2da8fa9679da2e886c668a3625c416539f4c203a64d8d10e86c173aebc2d2c9a4a95948f99b584eab0ec76e28a60ecda
+"@bangle.io/config-template@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@bangle.io/config-template@npm:0.0.7"
+  checksum: 192d0922d7b967d6e65b6c718286107faa8db965ce9914139ba40e99981366c94000699b97c33418e8292b395493b2a50d88162155e91ae603a32d88396d7bd1
   languageName: node
   linkType: hard
 
@@ -2326,7 +2326,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/config@workspace:lib/config"
   dependencies:
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
@@ -2631,7 +2631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
   dependencies:
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
@@ -3077,7 +3077,7 @@ __metadata:
     "@babel/core": ^7.19.1
     "@babel/preset-env": ^7.19.1
     "@babel/preset-typescript": ^7.18.6
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/independent-e2e-tests-server": "workspace:*"
@@ -3139,7 +3139,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/scripts@workspace:tooling/_scripts"
   dependencies:
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3362,6 +3362,7 @@ __metadata:
   resolution: "@bangle.io/slice-ui@workspace:lib/slice-ui"
   dependencies:
     "@bangle.io/bangle-store-context": "workspace:*"
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

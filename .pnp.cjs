@@ -6036,7 +6036,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/config/",\
           "packageDependencies": [\
             ["@bangle.io/config", "workspace:lib/config"],\
-            ["@bangle.io/config-template", "npm:0.0.3"],\
+            ["@bangle.io/config-template", "npm:0.0.7"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.1"],\
@@ -6046,10 +6046,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.io/config-template", [\
-        ["npm:0.0.3", {\
-          "packageLocation": "./.yarn/cache/@bangle.io-config-template-npm-0.0.3-7d89ed4421-36cc7b19a8.zip/node_modules/@bangle.io/config-template/",\
+        ["npm:0.0.7", {\
+          "packageLocation": "./.yarn/cache/@bangle.io-config-template-npm-0.0.7-950b90700c-192d0922d7.zip/node_modules/@bangle.io/config-template/",\
           "packageDependencies": [\
-            ["@bangle.io/config-template", "npm:0.0.3"]\
+            ["@bangle.io/config-template", "npm:0.0.7"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -6477,7 +6477,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/env-vars/",\
           "packageDependencies": [\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
-            ["@bangle.io/config-template", "npm:0.0.3"],\
+            ["@bangle.io/config-template", "npm:0.0.7"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.1"],\
@@ -7005,7 +7005,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.20.2"],\
             ["@babel/preset-env", "virtual:c0b1d3b4a22a2836f6be10fcaca1f0ae38d926fa65c6597dd9d80e655aefd5623df6c6b5c1127e8945b84b31fc2f32bd07aff91d459752d4e6e8cfd1061bdff8#npm:7.20.2"],\
             ["@babel/preset-typescript", "virtual:c0b1d3b4a22a2836f6be10fcaca1f0ae38d926fa65c6597dd9d80e655aefd5623df6c6b5c1127e8945b84b31fc2f32bd07aff91d459752d4e6e8cfd1061bdff8#npm:7.18.6"],\
-            ["@bangle.io/config-template", "npm:0.0.3"],\
+            ["@bangle.io/config-template", "npm:0.0.7"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/independent-e2e-tests-server", "workspace:tooling/independent-e2e-tests-server"],\
@@ -7075,7 +7075,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/_scripts/",\
           "packageDependencies": [\
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
-            ["@bangle.io/config-template", "npm:0.0.3"],\
+            ["@bangle.io/config-template", "npm:0.0.7"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -7318,6 +7318,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
+            ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
