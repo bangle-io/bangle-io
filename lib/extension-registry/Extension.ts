@@ -80,7 +80,7 @@ export interface ThemeConfig {
   name: string;
   ownerExtension: string;
   description?: string;
-  url: string | { light: string; dark: string };
+  url: string;
 }
 
 export interface SidebarType {

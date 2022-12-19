@@ -1,6 +1,4 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { lighten } from 'polished';
+import { darken, lighten } from 'polished';
 
 import { createStyleSheet } from '@bangle.io/ui-theme';
 
@@ -17,21 +15,21 @@ const neutral = color.neutral;
 const link = color.indigo;
 const promote = color.purple;
 
-const LIGHT = 700;
+const LIGHT = 400;
 const REG = 900;
 const BG_REG = 700;
 const BG_LIGHT = 100;
 
-const baseThemeLight = createStyleSheet({
-  name: 'base-light',
+export const coreThemeDark = createStyleSheet({
+  name: 'core-theme-dark',
 
   foregroundColor: {
     brandAccent,
     brandAccentLight,
 
-    primary: color.gray[900],
-    primaryLight: lighten(0.1, color.gray[900]),
-    primaryInverted: color.gray[50],
+    primary: color.gray[50],
+    primaryInverted: color.gray[900],
+    primaryLight: darken(0.1, color.gray[50]),
 
     promote: promote[REG],
     promoteLight: promote[LIGHT],
@@ -41,13 +39,13 @@ const baseThemeLight = createStyleSheet({
     linkVisited: link[REG],
     linkLight: link[LIGHT],
 
-    neutral: neutral[800],
-    neutralLight: lighten(0.1, neutral[800]),
+    neutral: neutral[700],
+    neutralLight: neutral[400],
     neutralInverted: color.white,
 
-    secondary: color.gray[700],
-    secondaryLight: lighten(0.1, color.gray[700]),
-    secondaryInverted: color.gray[300],
+    secondary: color.gray[100],
+    secondaryLight: darken(0.1, color.gray[100]),
+    secondaryInverted: color.gray[800],
 
     caution: caution[REG],
     cautionLight: caution[LIGHT],
@@ -69,12 +67,12 @@ const baseThemeLight = createStyleSheet({
     brandAccent: lighten(0.1, brandAccent),
     brandAccentLight: lighten(0.1, brandAccentLight),
 
-    neutral: neutral[300],
-    neutralLight: lighten(0.1, neutral[300]),
-    neutralSoft: neutral[100],
+    neutral: neutral[100],
+    neutralLight: lighten(0.02, neutral[100]),
+    neutralSoft: neutral[50],
 
-    promote: lighten(0.1, brandAccent),
-    promoteLight: lighten(0.1, brandAccentLight),
+    promote: lighten(0.4, brandAccent),
+    promoteLight: lighten(0.4, brandAccentLight),
 
     caution: caution[BG_REG],
     cautionLight: caution[BG_LIGHT],
@@ -86,9 +84,3 @@ const baseThemeLight = createStyleSheet({
     positiveLight: positive[BG_LIGHT],
   },
 });
-
-fs.writeFileSync(
-  path.join(__dirname, './theme-light.css'),
-  baseThemeLight,
-  'utf8',
-);

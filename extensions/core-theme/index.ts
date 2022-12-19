@@ -5,11 +5,7 @@ const extension = Extension.create({
   themes: [
     {
       name: 'core-theme',
-      url: {
-        light:
-          'https://cdn.jsdelivr.net/gh/bangle-io/bangle-io/extensions/core-theme/theme-light.css',
-        dark: 'https://cdn.jsdelivr.net/gh/bangle-io/bangle-io/extensions/core-theme/theme-dark.css',
-      },
+      url: 'https://cdn.jsdelivr.net/gh/bangle-io/bangle-io/extensions/core-theme/core-theme.css',
     },
   ],
 });

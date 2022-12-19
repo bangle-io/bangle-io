@@ -12,7 +12,7 @@ import {
   checkWidescreen,
   applyTheme,
 } from '@bangle.io/utils';
-import { useEffect } from 'react';
+import { useEffect, createElement } from 'react';
 
 // set the class needed to switch between mobile/desktop ui
 setRootWidescreenClass();
@@ -55,6 +55,6 @@ const withThemeProvider = (Story, context) => {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', context.globals.theme);
   }, [context.globals.theme]);
-  return <Story />;
+  return createElement(Story, null);
 };
 export const decorators = [withThemeProvider];

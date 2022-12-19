@@ -21,7 +21,7 @@ export type ButtonTone = Exclude<Tone, Tone.Secondary>;
 export function ButtonV2({
   animateOnPress = true,
   ariaLabel,
-  className,
+  className = '',
   focus = defaultFocus,
   isDisabled,
   isTouch = isTouchDevice,
@@ -73,38 +73,45 @@ export function ButtonV2({
 
   switch (size) {
     case 'xs': {
-      className += cx(
-        ' text-xs font-600 min-w-6',
+      className = cx(
+        className,
+        'text-xs font-600 min-w-6',
         isTouch ? 'h-7 px-3' : 'h-6 px-1_5',
       );
 
-      leftIconClassName += cx('w-4 h-4', text && 'mr-0_5');
-      rightIconClassName += cx('w-4 h-4', text && 'ml-0_5');
+      leftIconClassName = cx(leftIconClassName, 'w-4 h-4', text && 'mr-0_5');
+      rightIconClassName = cx(rightIconClassName, 'w-4 h-4', text && 'ml-0_5');
       break;
     }
     case 'sm': {
-      className += cx(
+      className = cx(
+        className,
         'text-sm font-600 h-8 min-w-8',
         isTouch ? ' px-3' : 'px-2',
       );
-      leftIconClassName += cx('w-5 h-5', text && 'mr-1');
-      rightIconClassName += cx('w-5 h-5', text && 'ml-1');
+      leftIconClassName = cx(leftIconClassName, 'w-5 h-5', text && 'mr-1');
+      rightIconClassName = cx(rightIconClassName, 'w-5 h-5', text && 'ml-1');
       break;
     }
     case 'md': {
-      className += cx('text-md h-10  min-w-10', isTouch ? 'px-3' : 'px-2');
-      leftIconClassName += cx('w-6 h-6', text && 'mr-1');
-      rightIconClassName += cx('w-6 h-6', text && 'ml-1');
+      className = cx(
+        className,
+        'text-md h-10  min-w-10',
+        isTouch ? 'px-3' : 'px-2',
+      );
+      leftIconClassName = cx(leftIconClassName, 'w-6 h-6', text && 'mr-1');
+      rightIconClassName = cx(rightIconClassName, 'w-6 h-6', text && 'ml-1');
 
       break;
     }
     case 'lg': {
-      className += cx(
+      className = cx(
+        className,
         'text-lg font-600 h-12 min-w-12',
-        isTouch ? ' px-3' : 'px-2',
+        isTouch ? 'px-4' : 'px-3',
       );
-      leftIconClassName += cx('w-7 h-7', text && 'mr-1');
-      rightIconClassName += cx('w-7 h-7', text && 'ml-1');
+      leftIconClassName = cx(leftIconClassName, 'w-7 h-7', text && 'mr-1');
+      rightIconClassName = cx(rightIconClassName, 'w-7 h-7', text && 'ml-1');
 
       break;
     }
