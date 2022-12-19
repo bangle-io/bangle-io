@@ -56,7 +56,6 @@
   },
   "scripts": {
     "g:storybook": "start-storybook -p 6006 --no-open",
-    "g:storybook:dark": "THEME=dark start-storybook -p 6007 --no-open",
     "build-storybook": "build-storybook"
   },
   "dependencies": {

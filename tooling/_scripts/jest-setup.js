@@ -12,6 +12,7 @@ process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
     nodeEnv: 'test',
     releaseId: 'fake-release-id',
     releaseVersion: 'fake-release-version',
+    storybook: false,
   },
   app: {
     changelogText: 'dummy-change-log text',

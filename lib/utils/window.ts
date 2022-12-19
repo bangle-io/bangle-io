@@ -1,4 +1,5 @@
-import { SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import { IS_STORYBOOK, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import type { ThemeType } from '@bangle.io/shared-types';
 
 import { isMobile } from './is-mac';
 import { rafSchedule } from './safe-js';
@@ -66,4 +67,30 @@ export function listenToResize(
       once: true,
     },
   );
+}
+
+export function applyTheme(theme?: ThemeType) {
+  if (typeof document === 'undefined') {
+    console.debug('applyTheme: document is undefined');
+
+    return;
+  }
+
+  if (IS_STORYBOOK) {
+    console.warn(
+      `applyTheme: Cannot apply theme in storybook. Please use the theme switcher in the toolbar.`,
+    );
+
+    return;
+  }
+
+  if (!theme) {
+    console.debug('applyTheme: theme is undefined');
+
+    return;
+  }
+
+  console.debug('applying theme', theme);
+
+  document.documentElement.setAttribute('data-theme', theme);
 }

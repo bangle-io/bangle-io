@@ -75,7 +75,10 @@ module.exports = {
 
   webpackFinal: (config) => {
     config.resolve.plugins = config.resolve.plugins || [];
-    const envVars = require('@bangle.io/env-vars')({ isProduction: false });
+    const envVars = require('@bangle.io/env-vars')({
+      isProduction: false,
+      isStorybook: true,
+    });
 
     config.optimization.realContentHash = true;
 
