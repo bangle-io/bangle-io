@@ -19,6 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.io/atomic-css": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",

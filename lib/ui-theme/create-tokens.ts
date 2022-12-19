@@ -61,6 +61,9 @@ function getBackgroundColor(
     neutralLight,
     neutralSoft,
 
+    promote,
+    promoteLight,
+
     caution,
     cautionLight,
     critical,
@@ -75,6 +78,8 @@ function getBackgroundColor(
     body,
     surface,
     surfaceDark,
+    surfaceDarker: darken(0.1, surfaceDark),
+    surfaceLight: lighten(0.1, surface),
 
     brand,
 
@@ -93,6 +98,13 @@ function getBackgroundColor(
     neutralLightHover: getHoverColor(neutralLight),
 
     neutralSoft,
+
+    promote,
+    promoteActive: getActiveColor(promote),
+    promoteHover: getHoverColor(promote),
+    promoteLight: promoteLight,
+    promoteLightActive: getActiveColor(promoteLight),
+    promoteLightHover: getHoverColor(promoteLight),
 
     caution,
     cautionActive: getActiveColor(caution),

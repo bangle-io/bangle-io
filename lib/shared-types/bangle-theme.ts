@@ -28,7 +28,9 @@ export interface BangleThemeInput {
 
     neutralSoft: string;
 
-    // the 4
+    // the 5
+    promote: string;
+    promoteLight: string;
     caution: string;
     cautionLight: string;
     critical: string;

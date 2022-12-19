@@ -5663,7 +5663,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
-            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -5697,7 +5696,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/activitybar", "workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
-            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -7576,6 +7574,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/ui-components/",\
           "packageDependencies": [\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\

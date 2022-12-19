@@ -66,6 +66,7 @@ export interface DesignTokens {
     '8': string;
     '9': string;
     '10': string;
+    '11': string;
     '12': string;
     '14': string;
     '16': string;
@@ -79,6 +80,8 @@ export interface DesignTokens {
     none: string;
   };
 
+  // Must match with Tones defined in lib/constants/ui.ts
+  // See https://seek-oss.github.io/braid-design-system/foundations/tones
   color: {
     // mostly used with texts
     foreground: {
@@ -89,9 +92,6 @@ export interface DesignTokens {
       linkHover: string;
       linkLight: string;
       linkVisited: string;
-
-      promote: string;
-      promoteLight: string;
 
       primary: string;
       primaryLight: string;
@@ -105,7 +105,9 @@ export interface DesignTokens {
       neutralInverted: string;
       neutralLight: string;
 
-      // the 4
+      // the 5
+      promote: string;
+      promoteLight: string;
       caution: string;
       cautionLight: string;
       critical: string;
@@ -120,7 +122,9 @@ export interface DesignTokens {
 
       //   Used for surfaces that sit on top of body elements
       surface: string;
+      surfaceLight: string;
       surfaceDark: string;
+      surfaceDarker: string;
 
       brand: string;
 
@@ -140,7 +144,14 @@ export interface DesignTokens {
       // soft is a subtle shade for backgrounds
       neutralSoft: string;
 
-      // the 4
+      // the 5
+      promote: string;
+      promoteActive: string;
+      promoteHover: string;
+      promoteLight: string;
+      promoteLightActive: string;
+      promoteLightHover: string;
+
       caution: string;
       cautionActive: string;
       cautionHover: string;

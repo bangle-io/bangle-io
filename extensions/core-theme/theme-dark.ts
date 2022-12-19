@@ -66,12 +66,15 @@ const baseThemeDark = createStyleSheet({
 
     brand: brandAccent,
 
-    brandAccent,
-    brandAccentLight,
+    brandAccent: lighten(0.1, brandAccent),
+    brandAccentLight: lighten(0.1, brandAccentLight),
 
     neutral: neutral[100],
     neutralLight: lighten(0.02, neutral[100]),
     neutralSoft: neutral[50],
+
+    promote: lighten(0.4, brandAccent),
+    promoteLight: lighten(0.4, brandAccentLight),
 
     caution: caution[BG_REG],
     cautionLight: caution[BG_LIGHT],

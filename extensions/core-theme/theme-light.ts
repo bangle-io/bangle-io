@@ -17,7 +17,7 @@ const neutral = color.neutral;
 const link = color.indigo;
 const promote = color.purple;
 
-const LIGHT = 400;
+const LIGHT = 700;
 const REG = 900;
 const BG_REG = 700;
 const BG_LIGHT = 100;
@@ -41,8 +41,8 @@ const baseThemeLight = createStyleSheet({
     linkVisited: link[REG],
     linkLight: link[LIGHT],
 
-    neutral: neutral[700],
-    neutralLight: neutral[400],
+    neutral: neutral[800],
+    neutralLight: lighten(0.1, neutral[800]),
     neutralInverted: color.white,
 
     secondary: color.gray[700],
@@ -66,12 +66,15 @@ const baseThemeLight = createStyleSheet({
 
     brand: brandAccent,
 
-    brandAccent,
-    brandAccentLight,
+    brandAccent: lighten(0.1, brandAccent),
+    brandAccentLight: lighten(0.1, brandAccentLight),
 
-    neutral: neutral[100],
-    neutralLight: lighten(0.02, neutral[100]),
-    neutralSoft: neutral[50],
+    neutral: neutral[300],
+    neutralLight: lighten(0.1, neutral[300]),
+    neutralSoft: neutral[100],
+
+    promote: lighten(0.1, brandAccent),
+    promoteLight: lighten(0.1, brandAccentLight),
 
     caution: caution[BG_REG],
     cautionLight: caution[BG_LIGHT],
