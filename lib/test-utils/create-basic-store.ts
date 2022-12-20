@@ -1,10 +1,10 @@
 import type {
+  ApplicationStore,
   BaseAction,
   OnErrorType,
-  Slice,
   SliceKey,
 } from '@bangle.io/create-store';
-import { overrideSliceInit } from '@bangle.io/create-store';
+import { overrideSliceInit, Slice } from '@bangle.io/create-store';
 import {
   Extension,
   extensionRegistrySlice,
@@ -50,6 +50,7 @@ export function createBasicStore<
   onError,
   storageProvider = new IndexedDbStorageProvider(),
   overrideInitialSliceState,
+  onUpdate,
 }: {
   storageProvider?: BaseStorageProvider | 'indexedb' | 'in-memory';
   scheduler?: any;
@@ -63,6 +64,7 @@ export function createBasicStore<
   useUISlice?: boolean;
   onError?: OnErrorType<S, A>;
   opts?: Partial<BangleStateConfig>;
+  onUpdate?: (store: ApplicationStore) => void;
   overrideInitialSliceState?: Parameters<typeof overrideSliceStates>[1];
 }) {
   if (useEditorManagerSlice && !useUISlice) {
@@ -115,6 +117,16 @@ export function createBasicStore<
     useUISlice ? uiSlice() : undefined,
     ...extensionRegistry.getSlices(),
     ...slices,
+    // keep at last
+    new Slice({
+      sideEffect() {
+        return {
+          deferredUpdate(store) {
+            onUpdate?.(store);
+          },
+        };
+      },
+    }),
   ].filter((r): r is Slice => Boolean(r));
 
   const { store, actionsDispatched } = createBareStore({

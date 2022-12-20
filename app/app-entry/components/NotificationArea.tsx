@@ -9,7 +9,8 @@ import {
   notificationSliceKey,
 } from '@bangle.io/slice-notification';
 import {
-  ButtonIcon,
+  ButtonV2,
+  ButtonVariant,
   CheckCircleIcon,
   CloseIcon,
   ExclamationCircleIcon,
@@ -121,15 +122,15 @@ export function Notification({
           <div className="mr-2">{SeverityMap[severity]()}</div>
           <div className="flex-grow">{title}</div>
           <div>
-            <ButtonIcon
-              hint="dismiss"
-              hintPos="left"
-              onClick={async (e) => {
+            <ButtonV2
+              size="xs"
+              variant={ButtonVariant.Transparent}
+              ariaLabel="dismiss notification"
+              leftIcon={<CloseIcon />}
+              onPress={() => {
                 onDismiss();
               }}
-            >
-              <CloseIcon style={{ height: 16, width: 16 }} />
-            </ButtonIcon>
+            />
           </div>
         </div>
         <div className="w-full text-sm flex flex-col">

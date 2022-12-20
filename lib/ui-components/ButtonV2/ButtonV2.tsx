@@ -157,7 +157,7 @@ export function ButtonV2({
           ? 'transition-all duration-100'
           : 'transition-colors duration-100',
         animateOnPress && isPressed ? (isTouch ? 'scale-94' : 'scale-97') : '',
-        isDisabled ? 'cursor-not-allowed ' : 'cursor-default',
+        isDisabled ? 'cursor-not-allowed ' : 'cursor-pointer',
       )}
     >
       {leftIconComp && <span>{leftIconComp}</span>}
