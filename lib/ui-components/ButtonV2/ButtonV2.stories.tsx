@@ -3,7 +3,7 @@ import '../style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { Tone } from '@bangle.io/constants';
+import { TONE } from '@bangle.io/constants';
 
 import { FolderIcon } from '../Icons';
 import { ButtonV2, ButtonVariant } from './ButtonV2';
@@ -42,7 +42,7 @@ function ButtonGroup({
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
-          tone={Tone.Caution}
+          tone={TONE.CAUTION}
           variant={variant}
           leftIcon={leftIcon}
           text="Caution"
@@ -51,7 +51,7 @@ function ButtonGroup({
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
-          tone={Tone.Critical}
+          tone={TONE.CRITICAL}
           variant={variant}
           leftIcon={leftIcon}
           text="Critical"
@@ -61,7 +61,7 @@ function ButtonGroup({
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
-          tone={Tone.Neutral}
+          tone={TONE.NEUTRAL}
           variant={variant}
           leftIcon={leftIcon}
           text="Neutral"
@@ -70,7 +70,7 @@ function ButtonGroup({
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
-          tone={Tone.Positive}
+          tone={TONE.POSITIVE}
           variant={variant}
           leftIcon={leftIcon}
           text="Positive"
@@ -79,7 +79,7 @@ function ButtonGroup({
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
-          tone={Tone.Promote}
+          tone={TONE.PROMOTE}
           variant={variant}
           leftIcon={leftIcon}
           text="Promote"
@@ -132,18 +132,18 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
     <div>
       <div>
         <div className="flex flex-row gap-2">
-          <ButtonV2 tone={Tone.Neutral} text="XSmall" size="xs" />
-          <ButtonV2 tone={Tone.Neutral} text="Small" size="sm" />
-          <ButtonV2 tone={Tone.Neutral} text="Medium" size="md" />
-          <ButtonV2 tone={Tone.Neutral} text="Large" size="lg" />
+          <ButtonV2 tone={TONE.NEUTRAL} text="XSmall" size="xs" />
+          <ButtonV2 tone={TONE.NEUTRAL} text="Small" size="sm" />
+          <ButtonV2 tone={TONE.NEUTRAL} text="Medium" size="md" />
+          <ButtonV2 tone={TONE.NEUTRAL} text="Large" size="lg" />
         </div>
 
         <div className="mt-3">Touch</div>
         <div className="flex flex-row gap-2">
-          <ButtonV2 isTouch tone={Tone.Neutral} text="XSmall" size="xs" />
-          <ButtonV2 isTouch tone={Tone.Neutral} text="Small" size="sm" />
-          <ButtonV2 isTouch tone={Tone.Neutral} text="Medium" size="md" />
-          <ButtonV2 isTouch tone={Tone.Neutral} text="Large" size="lg" />
+          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="XSmall" size="xs" />
+          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="Small" size="sm" />
+          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="Medium" size="md" />
+          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="Large" size="lg" />
         </div>
       </div>
 
@@ -151,25 +151,25 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
         <div className="flex flex-row gap-2">
           <ButtonV2
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="XSmall"
             size="xs"
           />
           <ButtonV2
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
           <ButtonV2
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Medium"
             size="md"
           />
           <ButtonV2
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Large"
             size="lg"
           />
@@ -180,28 +180,28 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
           <ButtonV2
             isTouch
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="XSmall"
             size="xs"
           />
           <ButtonV2
             isTouch
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
           <ButtonV2
             isTouch
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Medium"
             size="md"
           />
           <ButtonV2
             isTouch
             variant={ButtonVariant.Ghost}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Large"
             size="lg"
           />
@@ -217,10 +217,10 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
       <div>
         <span>No text</span>
         <div className="flex flex-row gap-2">
-          <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Critical} size="xs" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Neutral} size="sm" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Promote} size="md" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Neutral} size="lg" />
+          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.CRITICAL} size="xs" />
+          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="sm" />
+          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
+          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="lg" />
         </div>
       </div>
 
@@ -229,25 +229,25 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
         <div className="flex flex-row gap-2">
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Critical}
+            tone={TONE.CRITICAL}
             size="xs"
             variant={ButtonVariant.Transparent}
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             size="sm"
             variant={ButtonVariant.Transparent}
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Promote}
+            tone={TONE.PROMOTE}
             size="md"
             variant={ButtonVariant.Transparent}
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             size="lg"
             variant={ButtonVariant.Transparent}
           />
@@ -259,25 +259,25 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
         <div className="flex flex-row gap-2">
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Critical}
+            tone={TONE.CRITICAL}
             text="XSmall"
             size="xs"
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Promote}
+            tone={TONE.PROMOTE}
             text="Medium"
             size="md"
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Large"
             size="lg"
           />
@@ -289,25 +289,25 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
         <div className="flex flex-row gap-2">
           <ButtonV2
             rightIcon={<FolderIcon />}
-            tone={Tone.Critical}
+            tone={TONE.CRITICAL}
             text="XSmall"
             size="xs"
           />
           <ButtonV2
             rightIcon={<FolderIcon />}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
           <ButtonV2
             rightIcon={<FolderIcon />}
-            tone={Tone.Promote}
+            tone={TONE.PROMOTE}
             text="Medium"
             size="md"
           />
           <ButtonV2
             rightIcon={<FolderIcon />}
-            tone={Tone.Neutral}
+            tone={TONE.NEUTRAL}
             text="Large"
             size="lg"
           />

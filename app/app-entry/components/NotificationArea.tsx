@@ -2,7 +2,7 @@ import React from 'react';
 
 import { notification, useSerialOperationContext } from '@bangle.io/api';
 import { useSliceState } from '@bangle.io/bangle-store-context';
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   dismissNotification,
@@ -79,13 +79,9 @@ const SeverityMap: Record<
   () => React.ReactNode
 > = {
   error: () => (
-    <ExclamationCircleIcon
-      style={{ color: 'var(--BV-severity-error-color)' }}
-    />
+    <ExclamationCircleIcon className="w-6 h-6 color-colorCriticalBtn" />
   ),
-  warning: () => (
-    <ExclamationIcon style={{ color: 'var(--BV-severity-warning-color)' }} />
-  ),
+  warning: () => <ExclamationIcon className="w-6 h-6 color-colorCautionBtn" />,
   info: () => (
     <InformationCircleIcon style={{ color: 'var(--BV-severity-info-color)' }} />
   ),
@@ -98,7 +94,7 @@ export function Notification({
   content = '',
   title,
   buttons,
-  severity = Severity.INFO,
+  severity = SEVERITY.INFO,
   onDismiss,
 }: {
   title?: string;

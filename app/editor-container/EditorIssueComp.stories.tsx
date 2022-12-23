@@ -3,7 +3,7 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY, Severity } from '@bangle.io/constants';
 import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { EditorIssueComp } from './EditorIssueComp';
@@ -35,7 +35,7 @@ export const Vanilla = Template.bind({});
 Vanilla.args = {
   editorIssue: {
     title: 'This is a test',
-    severity: Severity.ERROR,
+    severity: SEVERITY.ERROR,
     serialOperation: 'operation::something',
     uid: '123',
     description: 'something went wrong',

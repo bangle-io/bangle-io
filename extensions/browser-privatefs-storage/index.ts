@@ -1,7 +1,7 @@
 import { Extension, notification, workspace } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
-  Severity,
+  SEVERITY,
 } from '@bangle.io/constants';
 import {
   BaseFileSystemError,
@@ -41,7 +41,7 @@ const extension = Extension.create({
       ) {
         console.debug(error.code, error.name, error.stack);
         notification.showNotification({
-          severity: Severity.ERROR,
+          severity: SEVERITY.ERROR,
           title: 'File system error',
           content: error.message,
           uid: 'PrivateFSStorage' + Math.random(),

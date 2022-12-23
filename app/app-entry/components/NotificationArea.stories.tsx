@@ -1,7 +1,7 @@
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import { showNotification } from '@bangle.io/slice-notification';
 import { StorybookStore } from '@bangle.io/test-utils';
 import { ButtonV2 } from '@bangle.io/ui-components';
@@ -20,7 +20,7 @@ export const Main: Story = (args) => {
       <StorybookStore
         onMount={(store) => {
           showNotification({
-            severity: Severity.WARNING,
+            severity: SEVERITY.WARNING,
             title: 'Test notification',
             content: 'This is the first',
             uid: 'test-uid-first',
@@ -30,10 +30,24 @@ export const Main: Story = (args) => {
         renderChildren={(store) => (
           <>
             <ButtonV2
-              text="Show notification"
+              text="Show warning"
+              className="ml-2"
               onPress={() => {
                 showNotification({
-                  severity: Severity.WARNING,
+                  severity: SEVERITY.WARNING,
+                  title: 'Test notification',
+                  content: 'This is a notification',
+                  uid: 'test-uid' + Date.now(),
+                  createdAt: Date.now(),
+                })(store.state, store.dispatch);
+              }}
+            />
+            <ButtonV2
+              text="Show error"
+              className="ml-2"
+              onPress={() => {
+                showNotification({
+                  severity: SEVERITY.ERROR,
                   title: 'Test notification',
                   content: 'This is a notification',
                   uid: 'test-uid' + Date.now(),

@@ -8,7 +8,7 @@ import {
   workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import { isEntryUntouched } from '@bangle.io/remote-file-sync';
 import {
@@ -111,7 +111,7 @@ function ModifiedEntries({
           onPress={() => {
             notification.showNotification({
               title: 'Starting sync',
-              severity: Severity.INFO,
+              severity: SEVERITY.INFO,
               uid: 'starting-sync' + Date.now(),
               transient: true,
             })(store.state, store.dispatch);

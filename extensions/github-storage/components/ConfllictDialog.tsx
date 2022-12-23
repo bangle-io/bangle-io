@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
 import { notification, ui, useSliceState } from '@bangle.io/api';
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { Dialog } from '@bangle.io/ui-components';
 
@@ -28,7 +28,7 @@ export function ConflictDialog() {
         bangleStore.dispatch,
         notification.showNotification({
           title: 'No Github conflicts',
-          severity: Severity.INFO,
+          severity: SEVERITY.INFO,
           uid: 'gh-conflict' + Date.now(),
           transient: true,
         }),

@@ -1,7 +1,7 @@
 import { notification } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
-  Severity,
+  SEVERITY,
 } from '@bangle.io/constants';
 import type { ErrorCodeType as RemoteFileSyncErrorCodeType } from '@bangle.io/remote-file-sync';
 import { ErrorCode as RemoteSyncErrorCode } from '@bangle.io/remote-file-sync';
@@ -29,7 +29,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
   if (isIndexedDbException(error)) {
     console.debug(error.code, error.name);
     notification.showNotification({
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       title: 'Error writing to browser storage',
       content: error.message,
       uid: errorCode + Math.random(),
@@ -42,7 +42,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
     case GITHUB_API_ERROR: {
       if (error.message.includes('Bad credentials')) {
         notification.showNotification({
-          severity: Severity.ERROR,
+          severity: SEVERITY.ERROR,
           title: 'Bad Github credentials',
           content:
             'Please check your Github token has correct permissions and try again.',
@@ -60,7 +60,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
         break;
       }
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Github API error',
         content: error.message,
         uid: `github-storage-error-${errorCode}`,
@@ -69,7 +69,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
     }
     case INVALID_GITHUB_FILE_FORMAT: {
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Invalid file format',
         content: error.message,
         uid: `github-file-format`,
@@ -78,7 +78,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
     }
     case INVALID_GITHUB_TOKEN: {
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Github token is invalid',
         content:
           'Please check your Github token has correct permissions and try again.',
@@ -98,7 +98,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
 
     case INVALID_GITHUB_RESPONSE: {
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Received invalid response from Github',
         content: error.message,
         uid: INVALID_GITHUB_RESPONSE,
@@ -108,7 +108,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
 
     case GITHUB_STORAGE_NOT_ALLOWED: {
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Not allowed',
         content: error.message,
         uid: GITHUB_STORAGE_NOT_ALLOWED + error.message,
@@ -118,7 +118,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
 
     case RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR: {
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Not allowed',
         content: error.message,
         uid: RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR + error.message,
@@ -133,7 +133,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
       console.error(error);
 
       notification.showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'Bangle.io encountered a problem.',
         uid: `uncaughtExceptionNotification-` + error.name,
         buttons: [

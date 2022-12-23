@@ -5,7 +5,8 @@ import { mergeProps } from '@react-aria/utils';
 import React, { useRef } from 'react';
 
 import { vars } from '@bangle.io/atomic-css';
-import { Tone } from '@bangle.io/constants';
+import type { Tone } from '@bangle.io/constants';
+import { TONE } from '@bangle.io/constants';
 import type { FirstParameter } from '@bangle.io/shared-types';
 import { cx, isTouchDevice } from '@bangle.io/utils';
 
@@ -15,8 +16,6 @@ export enum ButtonVariant {
   Soft = 'soft',
   Transparent = 'transparent',
 }
-
-export type ButtonTone = Tone;
 
 export function ButtonV2({
   animateOnPress = true,
@@ -30,7 +29,7 @@ export function ButtonV2({
   rightIcon,
   size = 'md',
   text,
-  tone = Tone.Neutral,
+  tone = TONE.NEUTRAL,
   variant = ButtonVariant.Solid,
 }: {
   animateOnPress?: boolean;
@@ -45,7 +44,7 @@ export function ButtonV2({
   rightIcon?: React.ReactNode;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   text?: string;
-  tone?: ButtonTone;
+  tone?: Tone;
   variant?: ButtonVariant;
 }) {
   let ref = useRef<HTMLButtonElement>(null);
@@ -188,12 +187,9 @@ interface ButtonStyles {
   disabledColor: string;
 }
 
-const variantMapping: Record<
-  ButtonVariant,
-  Record<ButtonTone, ButtonStyles>
-> = {
+const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
   [ButtonVariant.Solid]: {
-    [Tone.Caution]: {
+    [TONE.CAUTION]: {
       color: vars.color.caution.btnColor,
       buttonBgColor: vars.color.caution.btn,
       hoverBgColor: vars.color.caution.btnHover,
@@ -202,7 +198,7 @@ const variantMapping: Record<
       disabledBgColor: vars.color.caution.btnDisabled,
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Critical]: {
+    [TONE.CRITICAL]: {
       color: vars.color.critical.btnColor,
       buttonBgColor: vars.color.critical.btn,
       hoverBgColor: vars.color.critical.btnHover,
@@ -212,7 +208,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Neutral]: {
+    [TONE.NEUTRAL]: {
       color: vars.color.neutral.btnColor,
       buttonBgColor: vars.color.neutral.btn,
       hoverBgColor: vars.color.neutral.btnHover,
@@ -221,7 +217,7 @@ const variantMapping: Record<
       disabledBgColor: vars.color.neutral.btnDisabled,
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Positive]: {
+    [TONE.POSITIVE]: {
       color: vars.color.positive.btnColor,
       buttonBgColor: vars.color.positive.btn,
       hoverBgColor: vars.color.positive.btnHover,
@@ -230,7 +226,7 @@ const variantMapping: Record<
       disabledBgColor: vars.color.positive.btnDisabled,
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Promote]: {
+    [TONE.PROMOTE]: {
       color: vars.color.promote.btnColor,
       buttonBgColor: vars.color.promote.btn,
       hoverBgColor: vars.color.promote.btnHover,
@@ -242,7 +238,7 @@ const variantMapping: Record<
   },
 
   [ButtonVariant.Ghost]: {
-    [Tone.Caution]: {
+    [TONE.CAUTION]: {
       color: vars.color.caution.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.borderLight,
@@ -251,7 +247,7 @@ const variantMapping: Record<
       disabledBgColor: 'transparent',
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Critical]: {
+    [TONE.CRITICAL]: {
       color: vars.color.critical.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.borderLight,
@@ -261,7 +257,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Neutral]: {
+    [TONE.NEUTRAL]: {
       color: vars.color.neutral.text,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.borderLight,
@@ -271,7 +267,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Positive]: {
+    [TONE.POSITIVE]: {
       color: vars.color.positive.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.borderLight,
@@ -281,7 +277,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Promote]: {
+    [TONE.PROMOTE]: {
       color: vars.color.promote.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.borderLight,
@@ -293,7 +289,7 @@ const variantMapping: Record<
   },
 
   [ButtonVariant.Soft]: {
-    [Tone.Caution]: {
+    [TONE.CAUTION]: {
       color: vars.color.caution.btn,
       buttonBgColor: vars.color.neutral.borderLight,
       hoverBgColor: vars.color.neutral.border,
@@ -302,7 +298,7 @@ const variantMapping: Record<
       disabledBgColor: 'transparent',
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Critical]: {
+    [TONE.CRITICAL]: {
       color: vars.color.critical.btn,
       buttonBgColor: vars.color.neutral.borderLight,
       hoverBgColor: vars.color.neutral.border,
@@ -312,7 +308,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Neutral]: {
+    [TONE.NEUTRAL]: {
       color: vars.color.neutral.text,
       buttonBgColor: vars.color.neutral.borderLight,
       hoverBgColor: vars.color.neutral.border,
@@ -321,7 +317,7 @@ const variantMapping: Record<
       disabledBgColor: 'transparent',
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Positive]: {
+    [TONE.POSITIVE]: {
       color: vars.color.positive.btn,
       buttonBgColor: vars.color.neutral.borderLight,
       hoverBgColor: vars.color.neutral.border,
@@ -330,7 +326,7 @@ const variantMapping: Record<
       disabledBgColor: 'transparent',
       disabledColor: vars.color.neutral.textDisabled,
     },
-    [Tone.Promote]: {
+    [TONE.PROMOTE]: {
       color: vars.color.promote.btn,
       buttonBgColor: vars.color.neutral.borderLight,
       hoverBgColor: vars.color.neutral.border,
@@ -342,7 +338,7 @@ const variantMapping: Record<
   },
 
   [ButtonVariant.Transparent]: {
-    [Tone.Caution]: {
+    [TONE.CAUTION]: {
       color: vars.color.caution.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.border,
@@ -352,7 +348,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Critical]: {
+    [TONE.CRITICAL]: {
       color: vars.color.critical.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.border,
@@ -362,7 +358,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Neutral]: {
+    [TONE.NEUTRAL]: {
       color: vars.color.neutral.text,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.border,
@@ -372,7 +368,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Positive]: {
+    [TONE.POSITIVE]: {
       color: vars.color.positive.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.border,
@@ -382,7 +378,7 @@ const variantMapping: Record<
       disabledColor: vars.color.neutral.textDisabled,
     },
 
-    [Tone.Promote]: {
+    [TONE.PROMOTE]: {
       color: vars.color.promote.btn,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.border,

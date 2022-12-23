@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Tone } from '@bangle.io/constants';
+import { TONE, Tone } from '@bangle.io/constants';
 import {
   ActionButton,
   ButtonContent,
@@ -68,7 +68,7 @@ export function Editorbar({
           text="Enable Editing"
           className="mx-2"
           size="xs"
-          tone={Tone.Promote}
+          tone={TONE.CAUTION}
           onPress={onEnableEditing}
         />
       )}

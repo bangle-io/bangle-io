@@ -1,5 +1,5 @@
 import { editor, notification, page, Slice, workspace } from '@bangle.io/api';
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import { abortableSetInterval } from '@bangle.io/utils';
 
 import {
@@ -254,7 +254,7 @@ export const setConflictNotification = ghSliceKey.effect(() => {
             notification.setEditorIssue({
               description: `There is a conflict with ${wsPath} on Github. Please resolve the conflict on Github and then click on the sync button to resolve the conflict.`,
               title: 'Encountered Conflict',
-              severity: Severity.WARNING,
+              severity: SEVERITY.WARNING,
               wsPath,
               serialOperation: OPERATION_SHOW_CONFLICT_DIALOG,
             }),
