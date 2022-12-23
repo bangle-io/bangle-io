@@ -565,7 +565,9 @@ export async function waitForEditorIdToLoad(
 }
 
 export async function waitForNotification(page: Page, text: string) {
-  await page.locator(`.app-entry_notification:has-text("${text}")`).waitFor();
+  await page
+    .locator(`[data-testid="app-entry_notification"]:has-text("${text}")`)
+    .waitFor();
 }
 
 // Enables editing in a mobile UI

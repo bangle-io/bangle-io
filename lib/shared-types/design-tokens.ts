@@ -86,14 +86,13 @@ export type DesignTokens = {
   // colors will be added to atomic classes
   // for example `bg-colorCriticalIcon` will add a background-color
   // .bg-colorCriticalIcon { background-color: var(--color.critical.icon) }
-  //
-  // Note: neutral tone has a shorthand which you can access as
-  // .bg-colorBg { background-color: var(--color.neutral.bg) }
-  //  which is same as
-  // .bg-colorNeutralBg { background-color: var(--color.neutral.bg) }
   color: {
     caution: ToneColors;
     critical: ToneColors;
+    // Note: neutral tone has a shorthand which you can access as
+    // .bg-colorBg { background-color: var(--color.neutral.bg) }
+    //  which is same as
+    // .bg-colorNeutralBg { background-color: var(--color.neutral.bg) }
     neutral: NeutralColors;
     positive: ToneColors;
     promote: ToneColors;
@@ -137,9 +136,10 @@ export type ToneColors = {
 };
 
 export type NeutralColors = ToneColors & {
-  bgLayer2: string; // top layer
-  bgLayer1: string; // middle layer
-  bg: string; // bottom layer
+  bgLayerTop: string; // top layer, for most important content example editor
+  bgLayerMiddle: string; // middle layer for secondary content like sidebar
+  bgLayerBottom: string; // bottom layer the background color of the  application
+  bgLayerFloat: string; // background color for things that float on top of the application, like modal, dropdown, etc
 
   textDisabled: string; // for disabled
   textLight: string; // for secondary text

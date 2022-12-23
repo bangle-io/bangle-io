@@ -111,11 +111,8 @@ export function Notification({
 
   return (
     <div
-      className="app-entry_notification w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
-      style={{
-        backgroundColor: 'var(--BV-window-bg-color-1)',
-        boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',
-      }}
+      data-testid="app-entry_notification"
+      className="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
     >
       <div className="flex flex-col w-full">
         <div className="flex flex-row">

@@ -18,12 +18,3 @@ export interface BangleThemeInput {
         dark: BangleThemeColorInput;
       };
 }
-
-// interface ColorInput {
-//   colorNeutral?: Partial<DesignTokens['colorNeutral']>;
-//   colorPromote?: Partial<DesignTokens['colorPromote']>;
-//   colorCaution?: Partial<DesignTokens['colorCaution']>;
-//   colorInfo?: Partial<DesignTokens['colorInfo']>;
-//   colorCritical?: Partial<DesignTokens['colorCritical']>;
-//   colorPositive?: Partial<DesignTokens['colorPositive']>;
-// }

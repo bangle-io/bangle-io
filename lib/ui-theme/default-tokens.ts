@@ -121,7 +121,7 @@ export const defaultApp: (
 ) => DesignTokens['app'] = (designTokens) => ({
   editor: {
     color: {
-      bg: designTokens.color.neutral.bgLayer2,
+      bg: designTokens.color.neutral.bgLayerTop,
     },
   },
   activitybar: {

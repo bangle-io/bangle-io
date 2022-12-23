@@ -1,13 +1,17 @@
 import React from 'react';
 
-import { toggleEditing } from '@bangle.io/slice-editor-manager';
+import { Tone } from '@bangle.io/constants';
 import {
   ActionButton,
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
-import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
-import { cx } from '@bangle.io/utils';
+import {
+  ButtonV2,
+  ButtonVariant,
+  CloseIcon,
+  SecondaryEditorIcon,
+} from '@bangle.io/ui-components';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
@@ -47,37 +51,26 @@ export function Editorbar({
 
   return (
     <div
-      className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
-      style={{
-        backgroundColor: 'var(--BV-window-bg-color-0)',
-      }}
+      className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+      style={{}}
     >
-      <div
-        aria-label="note path"
-        className={cx(
-          'select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline',
-          isActive && 'BU_active',
-        )}
-        onClick={openNotesPalette}
-      >
-        {path}
-      </div>
+      <ButtonV2
+        ariaLabel="note path"
+        text={path}
+        size="xs"
+        variant={!isActive ? ButtonVariant.Transparent : ButtonVariant.Soft}
+        onPress={openNotesPalette}
+      />
+
       {editingDisabled && (
-        <ActionButton
-          variant="primary"
+        <ButtonV2
           ariaLabel="enable editing"
-          onPress={() => {
-            onEnableEditing();
-          }}
+          text="Enable Editing"
           className="mx-2"
-          styling={{}}
-        >
-          <ButtonContent
-            size="small"
-            textClassName="text-xs"
-            text="Enable Editing"
-          />
-        </ActionButton>
+          size="xs"
+          tone={Tone.Promote}
+          onPress={onEnableEditing}
+        />
       )}
       <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">

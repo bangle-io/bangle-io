@@ -915,20 +915,36 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-      }
-    }
+    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+    style={{}}
   >
-    <div
+    <button
       aria-label="note path"
-      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      onBlur={[Function]}
       onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-neutral-borderLight)",
+          "color": "var(--BV-color-neutral-text)",
+        }
+      }
+      type="button"
     >
       one/own
-    </div>
+    </button>
     <div
       className="flex flex-row flex-1"
     />
@@ -985,23 +1001,12 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-      }
-    }
+    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+    style={{}}
   >
-    <div
-      aria-label="note path"
-      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
-      onClick={[Function]}
-    >
-      one/own
-    </div>
     <button
-      aria-label="enable editing"
-      className="mx-2 B-ui-bangle-button_button p-1  transition-all duration-100 "
+      aria-label="note path"
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1018,17 +1023,40 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-ui-bangle-button-primary-bg-color)",
-          "color": "var(--BV-ui-bangle-button-primary-color)",
+          "backgroundColor": "var(--BV-color-neutral-borderLight)",
+          "color": "var(--BV-color-neutral-text)",
         }
       }
       type="button"
     >
-      <span
-        className="text-xs "
-      >
-        Enable Editing
-      </span>
+      one/own
+    </button>
+    <button
+      aria-label="enable editing"
+      className="mx-2 text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-promote-btn)",
+          "color": "var(--BV-color-promote-btnColor)",
+        }
+      }
+      type="button"
+    >
+      Enable Editing
     </button>
     <div
       className="flex flex-row flex-1"
@@ -1086,20 +1114,36 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-      }
-    }
+    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+    style={{}}
   >
-    <div
+    <button
       aria-label="note path"
-      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      onBlur={[Function]}
       onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-neutral-borderLight)",
+          "color": "var(--BV-color-neutral-text)",
+        }
+      }
+      type="button"
     >
       one/own
-    </div>
+    </button>
     <div
       className="flex flex-row flex-1"
     />
@@ -1193,20 +1237,36 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-      }
-    }
+    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+    style={{}}
   >
-    <div
+    <button
       aria-label="note path"
-      className="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      onBlur={[Function]}
       onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-neutral-borderLight)",
+          "color": "var(--BV-color-neutral-text)",
+        }
+      }
+      type="button"
     >
       one
-    </div>
+    </button>
     <div
       className="flex flex-row flex-1"
     />

@@ -4,14 +4,16 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+      class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
     >
-      <div
+      <button
         aria-label="note path"
-        class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
+        class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        style="background-color: transparent;"
+        type="button"
       >
         test-dir/magic
-      </div>
+      </button>
       <div
         class="flex flex-row flex-1"
       />
@@ -44,14 +46,15 @@ exports[`renders correctly when active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+      class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
     >
-      <div
+      <button
         aria-label="note path"
-        class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline BU_active "
+        class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        type="button"
       >
         test-dir/magic
-      </div>
+      </button>
       <div
         class="flex flex-row flex-1"
       />
@@ -81,10 +84,12 @@ exports[`renders correctly when active 1`] = `
 `;
 
 exports[`truncates large wsPath 1`] = `
-<div
+<button
   aria-label="note path"
-  class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
+  class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+  style="background-color: transparent;"
+  type="button"
 >
   …/wow/last/two
-</div>
+</button>
 `;

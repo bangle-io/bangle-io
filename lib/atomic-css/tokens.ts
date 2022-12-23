@@ -38,9 +38,10 @@ const tokensShape: DesignTokens = {
   widescreenWidth: '',
   color: {
     neutral: {
-      bgLayer2: '',
-      bgLayer1: '',
-      bg: '',
+      bgLayerTop: '',
+      bgLayerMiddle: '',
+      bgLayerBottom: '',
+      bgLayerFloat: '',
 
       textDisabled: '',
       textLight: '',

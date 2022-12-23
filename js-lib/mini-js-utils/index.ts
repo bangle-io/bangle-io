@@ -1,5 +1,5 @@
-// Should not import any other library
-// should only focus on Javascript and no browser or node specific apis
+// WARNING !! Should not import any other env oriented library
+// should only focus on Javascript and NO BROWSER or NODEJS specific apis
 
 export function isPlainObject(value: any) {
   if (typeof value !== 'object' || value === null) {

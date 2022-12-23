@@ -243,7 +243,3 @@ html[data-theme='dark'] {
   --BV-backlink-backlink-not-found-bg-color: var(--BV-base-300);
   --BV-backlink-backlink-not-found-hover-bg-color: var(--BV-base-400);
 }
-
-:root {
-  background-color: var(--BV-window-bg-color-0);
-}

@@ -7,9 +7,10 @@ const LIGHT = 700;
 const REG = 900;
 
 const neutralColor: BangleThemeColorInput['neutral'] = {
-  bgLayer2: spectrumLight.gray50,
-  bgLayer1: spectrumLight.gray100,
-  bg: spectrumLight.gray200,
+  bgLayerTop: spectrumLight.gray50,
+  bgLayerMiddle: spectrumLight.gray100,
+  bgLayerBottom: spectrumLight.gray200,
+  bgLayerFloat: spectrumLight.gray75,
 
   textDisabled: spectrumLight.gray500,
   textLight: spectrumLight.gray700,
@@ -90,7 +91,7 @@ export const lightColors: BangleThemeColorInput = {
     iconLight: spectrumLight.blue500,
     icon: spectrumLight.blue600,
 
-    btn: spectrumLight.blue800,
+    btn: spectrumLight.blue900,
     btnColor: neutralColor.textInverted,
     btnHover: spectrumLight.blue900,
     btnDown: spectrumLight.blue1000,

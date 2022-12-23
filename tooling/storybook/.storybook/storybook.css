@@ -9,7 +9,3 @@ button {
 button:focus {
   outline: none;
 }
-
-body {
-  color: var(--BV-text-color-0);
-}

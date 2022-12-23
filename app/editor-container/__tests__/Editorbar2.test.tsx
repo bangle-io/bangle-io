@@ -46,8 +46,6 @@ test('renders correctly when active', () => {
     </div>,
   );
 
-  expect(result.getByLabelText('note path').className).toContain('BU_active');
-
   expect(result.container).toMatchSnapshot();
 });
 

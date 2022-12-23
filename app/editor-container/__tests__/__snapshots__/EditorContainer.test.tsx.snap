@@ -4,20 +4,22 @@ exports[`basic renders 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center "
+      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center bg-colorEditorBg "
     >
       <div
         class="w-full sticky top-0 z-10 "
       >
         <div
-          class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+          class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
         >
-          <div
+          <button
             aria-label="note path"
-            class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
+            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+            style="background-color: transparent;"
+            type="button"
           >
             blah
-          </div>
+          </button>
           <div
             class="flex flex-row flex-1"
           />
@@ -62,20 +64,22 @@ exports[`renders correctly when file does not exist 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center "
+      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center bg-colorEditorBg "
     >
       <div
         class="w-full sticky top-0 z-10 "
       >
         <div
-          class="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+          class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
         >
-          <div
+          <button
             aria-label="note path"
-            class="select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline "
+            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+            style="background-color: transparent;"
+            type="button"
           >
             blah
-          </div>
+          </button>
           <div
             class="flex flex-row flex-1"
           />
@@ -126,7 +130,7 @@ exports[`renders when no wsPath is provided 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center "
+      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center bg-colorEditorBg "
     >
       <div
         class="w-full "

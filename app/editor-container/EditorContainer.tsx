@@ -113,7 +113,7 @@ export function EditorContainer({
         'B-editor-container_editor-container',
         'B-editor-container_editor-container-' + editorId,
         widescreen && 'overflow-y-scroll',
-        'w-full h-full flex flex-col items-center',
+        'w-full h-full flex flex-col items-center bg-colorEditorBg',
       )}
     >
       {wsPath && (

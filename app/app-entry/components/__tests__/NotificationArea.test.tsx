@@ -128,7 +128,7 @@ describe('NotificationArea', () => {
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
 
     const prom = sleep();
-    fireEvent.click(result.getByLabelText('dismiss'));
+    fireEvent.click(result.getByLabelText('dismiss notification'));
     await act(() => prom);
 
     expect(uiDispatchMock).toBeCalledTimes(1);

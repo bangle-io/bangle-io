@@ -1,12 +1,12 @@
 import type { BangleThemeColorInput } from '@bangle.io/shared-types';
 
-import { color } from './colors';
 import { spectrumDarkest } from './spectrum-darkest';
 
-const neutralColor = {
-  bgLayer2: spectrumDarkest.gray100,
-  bgLayer1: spectrumDarkest.gray75,
-  bg: spectrumDarkest.gray50,
+const neutralColor: BangleThemeColorInput['neutral'] = {
+  bgLayerTop: spectrumDarkest.gray100,
+  bgLayerMiddle: spectrumDarkest.gray75,
+  bgLayerBottom: spectrumDarkest.gray50,
+  bgLayerFloat: spectrumDarkest.gray200,
 
   textDisabled: spectrumDarkest.gray500,
   textLight: spectrumDarkest.gray700,
