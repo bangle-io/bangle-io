@@ -720,7 +720,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
 >
   <div>
     <button
-      className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -737,13 +737,65 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-btn)",
-          "color": "var(--BV-color-neutral-btnColor)",
+          "backgroundColor": "var(--BV-color-neutral-solid)",
+          "color": "var(--BV-color-neutral-solidText)",
         }
       }
       type="button"
     >
-      Show notification
+      Show warning
+    </button>
+    <button
+      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-neutral-solid)",
+          "color": "var(--BV-color-neutral-solidText)",
+        }
+      }
+      type="button"
+    >
+      Show error
+    </button>
+    <button
+      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-neutral-solid)",
+          "color": "var(--BV-color-neutral-solidText)",
+        }
+      }
+      type="button"
+    >
+      Show success
     </button>
     <div
       className="fixed bottom-0 right-0 z-50"
@@ -937,8 +989,8 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderLight)",
-          "color": "var(--BV-color-neutral-text)",
+          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "color": "var(--BV-color-secondary-solidText)",
         }
       }
       type="button"
@@ -1023,8 +1075,8 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderLight)",
-          "color": "var(--BV-color-neutral-text)",
+          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "color": "var(--BV-color-secondary-solidText)",
         }
       }
       type="button"
@@ -1050,8 +1102,8 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-promote-btn)",
-          "color": "var(--BV-color-promote-btnColor)",
+          "backgroundColor": "var(--BV-color-promote-solid)",
+          "color": "var(--BV-color-promote-solidText)",
         }
       }
       type="button"
@@ -1136,8 +1188,8 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderLight)",
-          "color": "var(--BV-color-neutral-text)",
+          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "color": "var(--BV-color-secondary-solidText)",
         }
       }
       type="button"
@@ -1259,8 +1311,8 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderLight)",
-          "color": "var(--BV-color-neutral-text)",
+          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "color": "var(--BV-color-secondary-solidText)",
         }
       }
       type="button"
@@ -1614,8 +1666,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-btn)",
-            "color": "var(--BV-color-critical-btnColor)",
+            "backgroundColor": "var(--BV-color-critical-solid)",
+            "color": "var(--BV-color-critical-solidText)",
           }
         }
         type="button"
@@ -1655,8 +1707,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -1696,8 +1748,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-btn)",
-            "color": "var(--BV-color-promote-btnColor)",
+            "backgroundColor": "var(--BV-color-promote-solid)",
+            "color": "var(--BV-color-promote-solidText)",
           }
         }
         type="button"
@@ -1737,8 +1789,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -1788,7 +1840,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-critical-btn)",
+            "color": "var(--BV-color-critical-solid)",
           }
         }
         type="button"
@@ -1870,7 +1922,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-promote-btn)",
+            "color": "var(--BV-color-promote-solid)",
           }
         }
         type="button"
@@ -1960,8 +2012,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-btn)",
-            "color": "var(--BV-color-critical-btnColor)",
+            "backgroundColor": "var(--BV-color-critical-solid)",
+            "color": "var(--BV-color-critical-solidText)",
           }
         }
         type="button"
@@ -2002,8 +2054,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2044,8 +2096,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-btn)",
-            "color": "var(--BV-color-promote-btnColor)",
+            "backgroundColor": "var(--BV-color-promote-solid)",
+            "color": "var(--BV-color-promote-solidText)",
           }
         }
         type="button"
@@ -2086,8 +2138,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2137,8 +2189,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-btn)",
-            "color": "var(--BV-color-critical-btnColor)",
+            "backgroundColor": "var(--BV-color-critical-solid)",
+            "color": "var(--BV-color-critical-solidText)",
           }
         }
         type="button"
@@ -2179,8 +2231,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2221,8 +2273,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-btn)",
-            "color": "var(--BV-color-promote-btnColor)",
+            "backgroundColor": "var(--BV-color-promote-solid)",
+            "color": "var(--BV-color-promote-solidText)",
           }
         }
         type="button"
@@ -2263,8 +2315,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2316,8 +2368,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2342,8 +2394,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2368,8 +2420,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2394,8 +2446,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2429,8 +2481,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2455,8 +2507,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2481,8 +2533,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2507,8 +2559,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-btn)",
-            "color": "var(--BV-color-neutral-btnColor)",
+            "backgroundColor": "var(--BV-color-neutral-solid)",
+            "color": "var(--BV-color-neutral-solidText)",
           }
         }
         type="button"
@@ -2783,86 +2835,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -2887,8 +2861,86 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btnColor)",
+              "backgroundColor": "var(--BV-color-secondary-solid)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solidText)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solidText)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solidText)",
             }
           }
           type="button"
@@ -2913,8 +2965,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btnColor)",
+              "backgroundColor": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solidText)",
             }
           }
           type="button"
@@ -2953,88 +3005,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-btnDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
-          disabled={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-caution-btnDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
-          disabled={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-critical-btnDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
-          disabled={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-btnDisabled)",
+              "backgroundColor": "var(--BV-color-neutral-solidFaint)",
               "color": "var(--BV-color-neutral-textDisabled)",
             }
           }
@@ -3061,7 +3032,88 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-btnDisabled)",
+              "backgroundColor": "var(--BV-color-secondary-solidFaint)",
+              "color": "var(--BV-color-neutral-textDisabled)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-caution-solidFaint)",
+              "color": "var(--BV-color-neutral-textDisabled)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-critical-solidFaint)",
+              "color": "var(--BV-color-neutral-textDisabled)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-positive-solidFaint)",
               "color": "var(--BV-color-neutral-textDisabled)",
             }
           }
@@ -3088,7 +3140,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-btnDisabled)",
+              "backgroundColor": "var(--BV-color-promote-solidFaint)",
               "color": "var(--BV-color-neutral-textDisabled)",
             }
           }
@@ -3127,86 +3179,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -3231,8 +3205,86 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btnColor)",
+              "backgroundColor": "var(--BV-color-secondary-solid)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solidText)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solidText)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solidText)",
             }
           }
           type="button"
@@ -3257,8 +3309,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btnColor)",
+              "backgroundColor": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solidText)",
             }
           }
           type="button"
@@ -3296,86 +3348,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btnColor)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -3400,8 +3374,86 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btnColor)",
+              "backgroundColor": "var(--BV-color-secondary-solid)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solidText)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solidText)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solidText)",
             }
           }
           type="button"
@@ -3426,8 +3478,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btnColor)",
+              "backgroundColor": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solidText)",
             }
           }
           type="button"
@@ -3465,134 +3517,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btnColor)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btnColor)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-btn)",
-              "color": "var(--BV-color-neutral-btnColor)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -3633,8 +3559,134 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btnColor)",
+              "backgroundColor": "var(--BV-color-secondary-solid)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solidText)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solidText)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solidText)",
             }
           }
           type="button"
@@ -3675,8 +3727,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btnColor)",
+              "backgroundColor": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solidText)",
             }
           }
           type="button"
@@ -3739,7 +3791,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
@@ -3760,8 +3812,35 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btn)",
+              "border": "2px solid var(--BV-color-secondary-solidText)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "border": "2px solid var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solid)",
             }
           }
           type="button"
@@ -3787,8 +3866,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btn)",
+              "border": "2px solid var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solid)",
             }
           }
           type="button"
@@ -3814,35 +3893,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-text)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          Neutral
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btn)",
+              "border": "2px solid var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -3868,8 +3920,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btn)",
+              "border": "2px solid var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -3915,7 +3967,35 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
+          Neutral
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "border": "2px solid var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-color-neutral-textDisabled)",
+            }
+          }
+          type="button"
+        >
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
@@ -3972,34 +4052,6 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           type="button"
         >
           Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
-          disabled={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
-            }
-          }
-          type="button"
-        >
-          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
@@ -4095,7 +4147,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
@@ -4116,8 +4168,35 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btn)",
+              "border": "2px solid var(--BV-color-secondary-solidText)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "border": "2px solid var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solid)",
             }
           }
           type="button"
@@ -4143,8 +4222,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btn)",
+              "border": "2px solid var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solid)",
             }
           }
           type="button"
@@ -4170,35 +4249,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-text)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          Neutral
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btn)",
+              "border": "2px solid var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -4224,8 +4276,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btn)",
+              "border": "2px solid var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -4270,7 +4322,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
@@ -4291,8 +4343,35 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btn)",
+              "border": "2px solid var(--BV-color-secondary-solidText)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "border": "2px solid var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solid)",
             }
           }
           type="button"
@@ -4318,8 +4397,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btn)",
+              "border": "2px solid var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solid)",
             }
           }
           type="button"
@@ -4345,35 +4424,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-text)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          Neutral
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btn)",
+              "border": "2px solid var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -4399,8 +4451,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btn)",
+              "border": "2px solid var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -4461,7 +4513,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
               />
             </svg>
           </span>
-          Default
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
@@ -4482,8 +4534,51 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-btn)",
-              "color": "var(--BV-color-caution-btn)",
+              "border": "2px solid var(--BV-color-secondary-solidText)",
+              "color": "var(--BV-color-secondary-solidText)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "border": "2px solid var(--BV-color-caution-solid)",
+              "color": "var(--BV-color-caution-solid)",
             }
           }
           type="button"
@@ -4525,8 +4620,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-btn)",
-              "color": "var(--BV-color-critical-btn)",
+              "border": "2px solid var(--BV-color-critical-solid)",
+              "color": "var(--BV-color-critical-solid)",
             }
           }
           type="button"
@@ -4568,51 +4663,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-text)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Neutral
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-btn)",
-              "color": "var(--BV-color-positive-btn)",
+              "border": "2px solid var(--BV-color-positive-solid)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -4654,8 +4706,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-btn)",
-              "color": "var(--BV-color-promote-btn)",
+              "border": "2px solid var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -4711,85 +4763,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
               "color": "var(--BV-color-neutral-text)",
             }
           }
@@ -4815,8 +4789,86 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-positive-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-neutral-text)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -4841,8 +4893,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-promote-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -4887,7 +4939,34 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
+          Neutral
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-neutral-textDisabled)",
+            }
+          }
+          type="button"
+        >
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
@@ -4942,33 +5021,6 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           type="button"
         >
           Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
-          disabled={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
-            }
-          }
-          type="button"
-        >
-          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
@@ -5055,85 +5107,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
               "color": "var(--BV-color-neutral-text)",
             }
           }
@@ -5159,8 +5133,86 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-positive-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-neutral-text)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -5185,8 +5237,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-promote-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -5224,85 +5276,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
               "color": "var(--BV-color-neutral-text)",
             }
           }
@@ -5328,8 +5302,86 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-positive-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-neutral-text)",
+            }
+          }
+          type="button"
+        >
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -5354,8 +5406,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-promote-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -5393,133 +5445,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-neutral-text)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
               "color": "var(--BV-color-neutral-text)",
             }
           }
@@ -5561,8 +5487,134 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-positive-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-neutral-text)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Secondary
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -5603,8 +5655,8 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderLight)",
-              "color": "var(--BV-color-promote-btn)",
+              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -5666,59 +5718,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          Critical
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
@@ -5744,7 +5744,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Neutral
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
@@ -5765,7 +5765,59 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-btn)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -5791,7 +5843,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-btn)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -5836,7 +5888,34 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
+          Neutral
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-neutral-textDisabled)",
+            }
+          }
+          type="button"
+        >
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
@@ -5891,33 +5970,6 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           type="button"
         >
           Critical
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
-          disabled={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
-            }
-          }
-          type="button"
-        >
-          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
@@ -6010,59 +6062,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          Critical
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
@@ -6088,7 +6088,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Neutral
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
@@ -6109,7 +6109,59 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-btn)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -6135,7 +6187,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-btn)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -6179,59 +6231,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          Critical
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
@@ -6257,7 +6257,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          Neutral
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
@@ -6278,7 +6278,59 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-btn)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -6304,7 +6356,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-btn)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"
@@ -6364,91 +6416,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
               />
             </svg>
           </span>
-          Default
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-btn)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Caution
-        </button>
-        <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragStart={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchCancel={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          style={
-            {
-              "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-btn)",
-            }
-          }
-          type="button"
-        >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
-          Critical
+          Neutral
         </button>
         <button
           className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
@@ -6490,7 +6458,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
               />
             </svg>
           </span>
-          Neutral
+          Secondary
         </button>
         <button
           className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
@@ -6511,7 +6479,91 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-btn)",
+              "color": "var(--BV-color-caution-solid)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Caution
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-critical-solid)",
+            }
+          }
+          type="button"
+        >
+          <span>
+            <svg
+              className="w-6 h-6 mr-1  "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </span>
+          Critical
+        </button>
+        <button
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragStart={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchCancel={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          style={
+            {
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-positive-solid)",
             }
           }
           type="button"
@@ -6553,7 +6605,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-btn)",
+              "color": "var(--BV-color-promote-solid)",
             }
           }
           type="button"

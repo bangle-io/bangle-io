@@ -44,13 +44,14 @@ const tokensShape: DesignTokens = {
       bgLayerFloat: '',
 
       textDisabled: '',
-      textLight: '',
+      textSubdued: '',
       text: '',
-      textDark: '',
+      textStrong: '',
       textInverted: '',
 
       ...createToneColors(),
     },
+    secondary: createToneColors(),
     promote: createToneColors(),
     caution: createToneColors(),
     critical: createToneColors(),
@@ -142,19 +143,19 @@ const tokensShape: DesignTokens = {
 function createToneColors(): ToneColors {
   return {
     iconDisabled: '',
-    iconLight: '',
+    iconSubdued: '',
     icon: '',
 
-    btn: '',
-    btnColor: '',
-    btnHover: '',
-    btnDown: '',
-    btnDisabled: '',
+    solid: '',
+    solidText: '',
+    solidStrong: '',
+    solidStronger: '',
+    solidSubdued: '',
+    solidFaint: '',
 
-    borderLight: '',
+    borderSubdued: '',
     border: '',
-    borderDark: '',
-    borderDarker: '',
+    borderStrong: '',
   };
 }
 

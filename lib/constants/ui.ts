@@ -3,8 +3,9 @@ export const TONE = {
   CAUTION: 'caution',
   CRITICAL: 'critical',
   NEUTRAL: 'neutral',
+  SECONDARY: 'secondary',
   POSITIVE: 'positive',
-  PROMOTE: 'Promote',
+  PROMOTE: 'promote',
 } as const;
 export type Tone = typeof TONE[keyof typeof TONE];
 

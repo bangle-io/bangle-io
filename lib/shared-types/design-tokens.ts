@@ -94,6 +94,10 @@ export type DesignTokens = {
     //  which is same as
     // .bg-colorNeutralBg { background-color: var(--color.neutral.bg) }
     neutral: NeutralColors;
+    // a secondary tone to the neutral tone, to distinguish UI elements
+    // from the neutral color
+    secondary: ToneColors;
+
     positive: ToneColors;
     promote: ToneColors;
   };
@@ -120,19 +124,19 @@ export type DesignTokens = {
 
 export type ToneColors = {
   iconDisabled: string;
-  iconLight: string;
+  iconSubdued: string;
   icon: string;
 
-  btn: string; // default button bg color
-  btnColor: string; // default button color
-  btnHover: string; // darker than btn
-  btnDown: string; // darker than btnHover
-  btnDisabled: string; // button bg color when disabled
+  solid: string; // strong color for filling in shapes like a button
+  solidStrong: string; // darker variant, for hover/focus
+  solidStronger: string; // more darker variant, for pressed state
+  solidFaint: string; // very light variant for filling shapes, for example a disabled button
+  solidSubdued: string; // a light variant for filling shapes
+  solidText: string; // color for text inside solid shapes like button
 
-  borderLight: string; // // for application layout
+  borderSubdued: string; // // for application layout but lighter
   border: string; // for application layout
-  borderDark: string; // for textfield/action button
-  borderDarker: string; // for checkbox/radio/switches
+  borderStrong: string; // for textfield/action button
 };
 
 export type NeutralColors = ToneColors & {
@@ -142,8 +146,8 @@ export type NeutralColors = ToneColors & {
   bgLayerFloat: string; // background color for things that float on top of the application, like modal, dropdown, etc
 
   textDisabled: string; // for disabled
-  textLight: string; // for secondary text
+  textSubdued: string; // for secondary text
   text: string; // default text color
-  textDark: string; // for headings
+  textStrong: string; // for headings
   textInverted: string;
 };

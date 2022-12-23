@@ -9,3 +9,7 @@ button {
 button:focus {
   outline: none;
 }
+
+body {
+  background-color: var(--BV-color-neutral-bgLayerTop);
+}

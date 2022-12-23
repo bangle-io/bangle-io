@@ -79,14 +79,14 @@ const SeverityMap: Record<
   () => React.ReactNode
 > = {
   error: () => (
-    <ExclamationCircleIcon className="w-6 h-6 color-colorCriticalBtn" />
+    <ExclamationCircleIcon className="w-6 h-6 color-colorCriticalIcon" />
   ),
-  warning: () => <ExclamationIcon className="w-6 h-6 color-colorCautionBtn" />,
+  warning: () => <ExclamationIcon className="w-6 h-6 color-colorCautionIcon" />,
   info: () => (
-    <InformationCircleIcon style={{ color: 'var(--BV-severity-info-color)' }} />
+    <InformationCircleIcon className="w-6 h-6 color-colorNeutralIcon" />
   ),
   success: () => (
-    <CheckCircleIcon style={{ color: 'var(--BV-severity-success-color)' }} />
+    <CheckCircleIcon className="w-6 h-6 color-colorPositiveIcon" />
   ),
 };
 

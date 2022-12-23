@@ -34,9 +34,19 @@ function ButtonGroup({
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
+          tone={TONE.NEUTRAL}
           variant={variant}
           leftIcon={leftIcon}
-          text="Default"
+          text="Neutral"
+        />
+        <ButtonV2
+          animateOnPress={animateOnPress}
+          isDisabled={isDisabled}
+          isTouch={isTouch}
+          variant={variant}
+          leftIcon={leftIcon}
+          tone={TONE.SECONDARY}
+          text="Secondary"
         />
         <ButtonV2
           animateOnPress={animateOnPress}
@@ -57,15 +67,6 @@ function ButtonGroup({
           text="Critical"
         />
 
-        <ButtonV2
-          animateOnPress={animateOnPress}
-          isDisabled={isDisabled}
-          isTouch={isTouch}
-          tone={TONE.NEUTRAL}
-          variant={variant}
-          leftIcon={leftIcon}
-          text="Neutral"
-        />
         <ButtonV2
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}

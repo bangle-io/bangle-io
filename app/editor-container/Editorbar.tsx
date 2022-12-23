@@ -58,7 +58,8 @@ export function Editorbar({
         ariaLabel="note path"
         text={path}
         size="xs"
-        variant={!isActive ? ButtonVariant.Transparent : ButtonVariant.Soft}
+        tone={TONE.SECONDARY}
+        variant={!isActive ? ButtonVariant.Transparent : ButtonVariant.Solid}
         onPress={openNotesPalette}
       />
 
@@ -68,7 +69,7 @@ export function Editorbar({
           text="Enable Editing"
           className="mx-2"
           size="xs"
-          tone={TONE.CAUTION}
+          tone={TONE.PROMOTE}
           onPress={onEnableEditing}
         />
       )}
