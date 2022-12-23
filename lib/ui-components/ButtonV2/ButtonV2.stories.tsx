@@ -56,15 +56,7 @@ function ButtonGroup({
           leftIcon={leftIcon}
           text="Critical"
         />
-        <ButtonV2
-          animateOnPress={animateOnPress}
-          isDisabled={isDisabled}
-          isTouch={isTouch}
-          tone={Tone.Info}
-          variant={variant}
-          leftIcon={leftIcon}
-          text="Info"
-        />
+
         <ButtonV2
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
@@ -223,12 +215,42 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
   return (
     <div>
       <div>
-        <span>Left</span>
+        <span>No text</span>
         <div className="flex flex-row gap-2">
           <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Critical} size="xs" />
           <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Neutral} size="sm" />
           <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Promote} size="md" />
           <ButtonV2 leftIcon={<FolderIcon />} tone={Tone.Neutral} size="lg" />
+        </div>
+      </div>
+
+      <div>
+        <span>No text</span>
+        <div className="flex flex-row gap-2">
+          <ButtonV2
+            leftIcon={<FolderIcon />}
+            tone={Tone.Critical}
+            size="xs"
+            variant={ButtonVariant.Transparent}
+          />
+          <ButtonV2
+            leftIcon={<FolderIcon />}
+            tone={Tone.Neutral}
+            size="sm"
+            variant={ButtonVariant.Transparent}
+          />
+          <ButtonV2
+            leftIcon={<FolderIcon />}
+            tone={Tone.Promote}
+            size="md"
+            variant={ButtonVariant.Transparent}
+          />
+          <ButtonV2
+            leftIcon={<FolderIcon />}
+            tone={Tone.Neutral}
+            size="lg"
+            variant={ButtonVariant.Transparent}
+          />
         </div>
       </div>
 

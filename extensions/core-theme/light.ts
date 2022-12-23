@@ -3,121 +3,102 @@ import type { BangleThemeColorInput } from '@bangle.io/shared-types';
 import { color } from './colors';
 import { spectrumLight } from './spectrum-light';
 
-const brandAccent = 'rgb(88, 204, 240)';
-const brandAccentLight = 'rgb(136, 223, 250)';
-
-const caution = color.orange;
-const critical = color.red;
-const info = color.blue;
-const positive = color.green;
-const neutral = color.neutral;
-const link = color.indigo;
-const promote = color.purple;
-
 const LIGHT = 700;
 const REG = 900;
-const BG_REG = 700;
-const BG_LIGHT = 100;
+
+const neutralColor: BangleThemeColorInput['neutral'] = {
+  bgLayer2: spectrumLight.gray50,
+  bgLayer1: spectrumLight.gray100,
+  bg: spectrumLight.gray200,
+
+  textDisabled: spectrumLight.gray500,
+  textLight: spectrumLight.gray700,
+  text: spectrumLight.gray800,
+  textDark: spectrumLight.gray900,
+  textInverted: spectrumLight.gray50,
+
+  iconDisabled: color.neutral[LIGHT],
+  iconLight: color.neutral[LIGHT],
+  icon: color.neutral[REG],
+
+  btn: spectrumLight.gray400,
+  btnColor: spectrumLight.gray800,
+  btnHover: spectrumLight.gray500,
+  btnDown: spectrumLight.gray600,
+  btnDisabled: spectrumLight.gray200,
+
+  borderLight: spectrumLight.gray200,
+  border: spectrumLight.gray300,
+  borderDark: spectrumLight.gray400,
+  borderDarker: spectrumLight.gray600,
+};
 
 export const lightColors: BangleThemeColorInput = {
-  neutral: {
-    bgLayer2: spectrumLight.gray50,
-    bgLayer1: spectrumLight.gray100,
-    bg: spectrumLight.gray200,
-
-    textDisabled: spectrumLight.gray500,
-    textLight: spectrumLight.gray700,
-    text: spectrumLight.gray800,
-    textDark: spectrumLight.gray900,
-    textInverted: spectrumLight.gray50,
-
-    iconDisabled: color.neutral[LIGHT],
-    iconLight: color.neutral[LIGHT],
-    icon: color.neutral[REG],
-
-    btn: spectrumLight.gray800,
-    btnHover: spectrumLight.gray900,
-    btnDown: spectrumLight.gray900,
-    btnDisabled: spectrumLight.gray200,
-
-    borderLight: spectrumLight.gray200,
-    border: spectrumLight.gray300,
-    borderDark: spectrumLight.gray400,
-    borderDarker: spectrumLight.gray600,
-  },
+  neutral: neutralColor,
   caution: {
-    iconDisabled: color.neutral[LIGHT],
-    iconLight: color.neutral[LIGHT],
-    icon: color.neutral[REG],
+    iconDisabled: spectrumLight.orange400,
+    iconLight: spectrumLight.orange500,
+    icon: spectrumLight.orange600,
 
-    btn: 'green',
-    btnHover: 'green',
-    btnDown: 'green',
-    btnDisabled: 'grey',
+    // orange base is lighter than normal
+    btn: spectrumLight.orange600,
+    btnColor: neutralColor.textInverted,
+    btnHover: spectrumLight.orange700,
+    btnDown: spectrumLight.orange800,
+    btnDisabled: spectrumLight.orange300,
 
-    borderLight: 'green',
-    border: 'green',
-    borderDark: 'green',
-    borderDarker: 'green',
+    borderLight: spectrumLight.orange300,
+    border: spectrumLight.orange400,
+    borderDark: spectrumLight.orange500,
+    borderDarker: spectrumLight.orange600,
   },
   critical: {
-    iconDisabled: color.neutral[LIGHT],
-    iconLight: color.neutral[LIGHT],
-    icon: color.neutral[REG],
+    iconDisabled: spectrumLight.red400,
+    iconLight: spectrumLight.red500,
+    icon: spectrumLight.red600,
 
-    btn: 'green',
-    btnHover: 'green',
-    btnDown: 'green',
-    btnDisabled: 'grey',
+    btn: spectrumLight.red800,
+    btnColor: neutralColor.textInverted,
+    btnHover: spectrumLight.red900,
+    btnDown: spectrumLight.red1000,
+    btnDisabled: spectrumLight.red400,
 
-    borderLight: 'green',
-    border: 'green',
-    borderDark: 'green',
-    borderDarker: 'green',
+    borderLight: spectrumLight.red300,
+    border: spectrumLight.red400,
+    borderDark: spectrumLight.red500,
+    borderDarker: spectrumLight.red600,
   },
-  info: {
-    iconDisabled: color.neutral[LIGHT],
-    iconLight: color.neutral[LIGHT],
-    icon: color.neutral[REG],
 
-    btn: 'green',
-    btnHover: 'green',
-    btnDown: 'green',
-    btnDisabled: 'grey',
-
-    borderLight: 'green',
-    border: 'green',
-    borderDark: 'green',
-    borderDarker: 'green',
-  },
   positive: {
-    iconDisabled: color.neutral[LIGHT],
-    iconLight: color.neutral[LIGHT],
-    icon: color.neutral[REG],
+    iconDisabled: spectrumLight.green400,
+    iconLight: spectrumLight.green500,
+    icon: spectrumLight.green600,
 
-    btn: 'green',
-    btnHover: 'green',
-    btnDown: 'green',
-    btnDisabled: 'grey',
+    btn: spectrumLight.green800,
+    btnColor: neutralColor.textInverted,
+    btnHover: spectrumLight.green900,
+    btnDown: spectrumLight.green1000,
+    btnDisabled: spectrumLight.green400,
 
-    borderLight: 'green',
-    border: 'green',
-    borderDark: 'green',
-    borderDarker: 'green',
+    borderLight: spectrumLight.green300,
+    border: spectrumLight.green400,
+    borderDark: spectrumLight.green500,
+    borderDarker: spectrumLight.green600,
   },
   promote: {
-    iconDisabled: color.neutral[LIGHT],
-    iconLight: color.neutral[LIGHT],
-    icon: color.neutral[REG],
+    iconDisabled: spectrumLight.blue400,
+    iconLight: spectrumLight.blue500,
+    icon: spectrumLight.blue600,
 
-    btn: 'green',
-    btnHover: 'green',
-    btnDown: 'green',
-    btnDisabled: 'grey',
+    btn: spectrumLight.blue800,
+    btnColor: neutralColor.textInverted,
+    btnHover: spectrumLight.blue900,
+    btnDown: spectrumLight.blue1000,
+    btnDisabled: spectrumLight.blue400,
 
-    borderLight: 'green',
-    border: 'green',
-    borderDark: 'green',
-    borderDarker: 'green',
+    borderLight: spectrumLight.blue300,
+    border: spectrumLight.blue400,
+    borderDark: spectrumLight.blue500,
+    borderDarker: spectrumLight.blue600,
   },
 };

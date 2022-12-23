@@ -9,7 +9,6 @@ export enum Severity {
 export enum Tone {
   Caution = 'caution',
   Critical = 'critical',
-  Info = 'info',
   Neutral = 'neutral',
   Positive = 'positive',
   Promote = 'Promote',

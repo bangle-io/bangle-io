@@ -94,7 +94,6 @@ export type DesignTokens = {
   color: {
     caution: ToneColors;
     critical: ToneColors;
-    info: ToneColors;
     neutral: NeutralColors;
     positive: ToneColors;
     promote: ToneColors;
@@ -126,6 +125,7 @@ export type ToneColors = {
   icon: string;
 
   btn: string; // default button bg color
+  btnColor: string; // default button color
   btnHover: string; // darker than btn
   btnDown: string; // darker than btnHover
   btnDisabled: string; // button bg color when disabled

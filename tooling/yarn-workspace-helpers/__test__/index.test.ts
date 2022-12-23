@@ -476,6 +476,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/mini-js-utils",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "js-lib/mini-js-utils",
+          "name": "@bangle.io/mini-js-utils",
+          "type": "js-lib",
+        },
+      ],
+      [
         "@bangle.io/note-browser",
         {
           "hasCSSFiles": false,

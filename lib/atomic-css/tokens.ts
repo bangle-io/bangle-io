@@ -52,7 +52,6 @@ const tokensShape: DesignTokens = {
     },
     promote: createToneColors(),
     caution: createToneColors(),
-    info: createToneColors(),
     critical: createToneColors(),
     positive: createToneColors(),
   },
@@ -146,6 +145,7 @@ function createToneColors(): ToneColors {
     icon: '',
 
     btn: '',
+    btnColor: '',
     btnHover: '',
     btnDown: '',
     btnDisabled: '',
