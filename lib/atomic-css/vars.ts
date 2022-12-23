@@ -10,7 +10,7 @@ export const vars = walkObject(tokens, (value, path): string => {
 // css vars in the --xyz format
 export const cssCustomProperties = walkObject(tokens, (value, path): string => {
   return createRawVar(path);
-}) as typeof tokens;
+});
 
 function createRawVar(path: string[]): string {
   const id = path.join('-');

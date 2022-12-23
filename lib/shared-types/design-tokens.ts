@@ -1,5 +1,8 @@
-export interface DesignTokens {
+export type DesignTokens = {
+  // name of theme derived from (for debugging)
   theme: string;
+  // unique id of the theme, if it ends with `-light` or `-dark`, it is part of a light/dark theme
+  uid: string;
   // WARNING: the width is hard coded at multiple places
   // it is currently not possible to change this value
   widescreenWidth: string;
@@ -80,116 +83,67 @@ export interface DesignTokens {
     none: string;
   };
 
-  // Must match with Tones defined in lib/constants/ui.ts
-  // See https://seek-oss.github.io/braid-design-system/foundations/tones
+  // colors will be added to atomic classes
+  // for example `bg-colorCriticalIcon` will add a background-color
+  // .bg-colorCriticalIcon { background-color: var(--color.critical.icon) }
+  //
+  // Note: neutral tone has a shorthand which you can access as
+  // .bg-colorBg { background-color: var(--color.neutral.bg) }
+  //  which is same as
+  // .bg-colorNeutralBg { background-color: var(--color.neutral.bg) }
   color: {
-    // mostly used with texts
-    foreground: {
-      brandAccent: string;
-      brandAccentLight: string;
-
-      link: string;
-      linkHover: string;
-      linkLight: string;
-      linkVisited: string;
-
-      primary: string;
-      primaryLight: string;
-      primaryInverted: string;
-
-      secondary: string;
-      secondaryLight: string;
-      secondaryInverted: string;
-
-      neutral: string;
-      neutralInverted: string;
-      neutralLight: string;
-
-      // the 5
-      promote: string;
-      promoteLight: string;
-      caution: string;
-      cautionLight: string;
-      critical: string;
-      criticalLight: string;
-      info: string;
-      infoLight: string;
-      positive: string;
-      positiveLight: string;
-    };
-    background: {
-      body: string;
-
-      //   Used for surfaces that sit on top of body elements
-      surface: string;
-      surfaceLight: string;
-      surfaceDark: string;
-      surfaceDarker: string;
-
-      brand: string;
-
-      brandAccent: string;
-      brandAccentActive: string;
-      brandAccentHover: string;
-      brandAccentLight: string;
-      brandAccentLightActive: string;
-      brandAccentLightHover: string;
-
-      neutral: string;
-      neutralActive: string;
-      neutralHover: string;
-      neutralLight: string;
-      neutralLightActive: string;
-      neutralLightHover: string;
-      // soft is a subtle shade for backgrounds
-      neutralSoft: string;
-
-      // the 5
-      promote: string;
-      promoteActive: string;
-      promoteHover: string;
-      promoteLight: string;
-      promoteLightActive: string;
-      promoteLightHover: string;
-
-      caution: string;
-      cautionActive: string;
-      cautionHover: string;
-      cautionLight: string;
-      cautionLightActive: string;
-      cautionLightHover: string;
-
-      critical: string;
-      criticalActive: string;
-      criticalHover: string;
-      criticalLight: string;
-      criticalLightActive: string;
-      criticalLightHover: string;
-
-      info: string;
-      infoActive: string;
-      infoHover: string;
-      infoLight: string;
-      infoLightActive: string;
-      infoLightHover: string;
-
-      positive: string;
-      positiveActive: string;
-      positiveHover: string;
-      positiveLight: string;
-      positiveLightActive: string;
-      positiveLightHover: string;
-    };
+    caution: ToneColors;
+    critical: ToneColors;
+    info: ToneColors;
+    neutral: NeutralColors;
+    positive: ToneColors;
+    promote: ToneColors;
   };
+
   app: {
     // Note:
-    //  keys `bgColor` and `fgColor` will get added to `color.background` and `color.foreground`
-    // can be used as `bg-appActivitybarBgColor`
+    // any object that has a key 'color', all the values inside it will be added to the colors
+    // for example editor.color.myPink will be converted to a css class if using `bg-*` atomic class
+    // .bg-color-editorMyPink { background-color: var(--editor.color.myPink) }
+    // or if using `text-*` atomic class
+    // .text-color-editorMyPink { color: var(--editor.color.myPink) }
     editor: {
-      bgColor: string;
+      color: {
+        bg: string;
+      };
     };
     activitybar: {
-      bgColor: string;
+      color: {
+        bg: string;
+      };
     };
   };
-}
+};
+
+export type ToneColors = {
+  iconDisabled: string;
+  iconLight: string;
+  icon: string;
+
+  btn: string; // default button bg color
+  btnHover: string; // darker than btn
+  btnDown: string; // darker than btnHover
+  btnDisabled: string; // button bg color when disabled
+
+  borderLight: string; // // for application layout
+  border: string; // for application layout
+  borderDark: string; // for textfield/action button
+  borderDarker: string; // for checkbox/radio/switches
+};
+
+export type NeutralColors = ToneColors & {
+  bgLayer2: string; // top layer
+  bgLayer1: string; // middle layer
+  bg: string; // bottom layer
+
+  textDisabled: string; // for disabled
+  textLight: string; // for secondary text
+  text: string; // default text color
+  textDark: string; // for headings
+  textInverted: string;
+};

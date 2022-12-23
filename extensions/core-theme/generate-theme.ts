@@ -1,12 +1,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { coreThemeDark } from './core-theme-dark';
-import { coreThemeLight } from './core-theme-light';
+import { createStyleSheet } from '@bangle.io/ui-theme';
 
-const cssString = coreThemeLight + '\n\n' + coreThemeDark;
+import { darkColors } from './dark';
+import { lightColors } from './light';
 
 const fileName = 'core-theme.css';
+
+const cssString = createStyleSheet({
+  name: 'core-theme',
+  color: {
+    light: lightColors,
+    dark: darkColors,
+  },
+});
 
 fs.writeFileSync(path.join(__dirname, fileName), cssString, 'utf8');
 

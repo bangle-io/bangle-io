@@ -192,6 +192,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/jsdom-env"\
       },\
       {\
+        "name": "@bangle.io/mini-js-utils",\
+        "reference": "workspace:js-lib/mini-js-utils"\
+      },\
+      {\
         "name": "@bangle.io/object-uid",\
         "reference": "workspace:js-lib/object-uid"\
       },\
@@ -429,6 +433,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/is-abort-error", ["workspace:js-lib/is-abort-error"]],\
       ["@bangle.io/jsdom-env", ["workspace:js-lib/jsdom-env"]],\
       ["@bangle.io/markdown", ["workspace:lib/markdown"]],\
+      ["@bangle.io/mini-js-utils", ["workspace:js-lib/mini-js-utils"]],\
       ["@bangle.io/note-browser", ["workspace:extensions/note-browser"]],\
       ["@bangle.io/note-outline", ["workspace:extensions/note-outline"]],\
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],\
@@ -6835,6 +6840,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/mini-js-utils", [\
+        ["workspace:js-lib/mini-js-utils", {\
+          "packageLocation": "./js-lib/mini-js-utils/",\
+          "packageDependencies": [\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/note-browser", [\
         ["workspace:extensions/note-browser", {\
           "packageLocation": "./extensions/note-browser/",\
@@ -7647,6 +7661,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/ui-theme", "workspace:lib/ui-theme"],\
             ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["gradient-parser", "npm:1.0.2"],\
             ["polished", "npm:4.2.2"],\

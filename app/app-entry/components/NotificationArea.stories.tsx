@@ -14,7 +14,7 @@ export default {
   argTypes: {},
 };
 
-export const Main: Story<Parameters<typeof NotificationArea>[0]> = (args) => {
+export const Main: Story = (args) => {
   return (
     <div style={{ width: 400 }}>
       <StorybookStore

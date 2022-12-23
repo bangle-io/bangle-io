@@ -120,12 +120,16 @@ export const defaultApp: (
   designTokens: Omit<DesignTokens, 'app'>,
 ) => DesignTokens['app'] = (designTokens) => ({
   editor: {
-    bgColor: designTokens.color.background.surface,
+    color: {
+      bg: designTokens.color.neutral.bgLayer2,
+    },
   },
   activitybar: {
     // TODO change this to a better value
-    bgColor: designTokens.theme.endsWith('-dark')
-      ? 'rgb(31, 30, 30)'
-      : 'rgb(26, 32, 44)',
+    color: {
+      bg: designTokens.theme.endsWith('-dark')
+        ? 'rgb(31, 30, 30)'
+        : 'rgb(26, 32, 44)',
+    },
   },
 });

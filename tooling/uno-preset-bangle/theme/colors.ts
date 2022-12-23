@@ -2,53 +2,43 @@ import type { Theme } from '@unocss/preset-mini';
 
 import { vars } from '@bangle.io/atomic-css';
 
-const bgColors: Record<string, string> = Object.fromEntries([
-  ...Object.entries(vars.color.background)
-    .map(([k, v]): [string, string] => [
-      // c stands for color
-      //   bg stands for background type of color
-      `bg${firstCharUpperCase(k)}`,
-      v,
-    ])
-    .sort(([a], [b]) => a.localeCompare(b)),
-]);
-
-const fgColors: Record<string, string> = Object.fromEntries(
-  Object.entries(vars.color.foreground)
-    .map(([k, v]): [string, string] => [
-      // c stands for color
-      //   fg stands for foreground type of color
-      `fg${firstCharUpperCase(k)}`,
-      v,
-    ])
-    .sort(([a], [b]) => a.localeCompare(b)),
-);
-
-const appColor: Record<string, string> = Object.fromEntries(
-  Object.entries(vars.app)
+const toneColors: Array<[string, string]> = [
+  ...Object.entries(vars.color)
     .flatMap(([k, v]) =>
-      Object.entries(v)
-        .filter(([k, v]) => k?.endsWith('bgColor') || k?.endsWith('fgColor'))
-        .map(([kk, vv]): [string, string] => [
-          `app${firstCharUpperCase(k)}${firstCharUpperCase(kk)}`,
-          vv,
-        ]),
+      Object.entries(v).map(([kk, vv]): [string, string] => [
+        `color${firstCharUpperCase(k)}${firstCharUpperCase(kk)}`,
+        vv,
+      ]),
     )
-    .map(([k, v]): [string, string] => [
-      // c stands for color
-      //   app stands for foreground type of color
-      k,
-      v,
-    ])
-
     .sort(([a], [b]) => a.localeCompare(b)),
+];
+
+// neutral tone has a shorthand, which allows you to omit neutral
+const neutralShorthand: Array<[string, string]> = Object.entries(
+  vars.color.neutral,
+).map(([k, v]): [string, string] => [`color${firstCharUpperCase(k)}`, v]);
+
+const appColor: Array<[string, string]> = Object.entries(vars.app).flatMap(
+  ([k, v]) => {
+    if ('color' in v) {
+      return Object.entries(v.color).map(([kk, vv]): [string, string] => [
+        `color${firstCharUpperCase(k)}${firstCharUpperCase(kk)}`,
+        vv,
+      ]);
+    }
+
+    return [];
+  },
 );
 
-export const colors: Theme['colors'] = {
-  ...bgColors,
-  ...fgColors,
-  ...appColor,
-};
+let allColors = [...toneColors, ...neutralShorthand, ...appColor].sort(
+  ([a], [b]) => a.localeCompare(b),
+);
+export const colors: Theme['colors'] = Object.fromEntries(allColors);
+
+if (Object.keys(colors).length !== allColors.length) {
+  throw new Error('Duplicate colors');
+}
 
 function firstCharUpperCase(str: string): string {
   return str[0]?.toUpperCase() + str.slice(1);

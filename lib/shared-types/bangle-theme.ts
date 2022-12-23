@@ -1,7 +1,8 @@
 import type { DesignTokens } from './design-tokens';
 
+export type BangleThemeColorInput = DesignTokens['color'];
 export interface BangleThemeInput {
-  name: `${string}-dark` | `${string}-light`;
+  name: string;
   typography?: {
     fontFamily?: DesignTokens['typography']['fontFamily'];
     text?: DesignTokens['typography']['text'];
@@ -10,34 +11,19 @@ export interface BangleThemeInput {
   ringWidth?: DesignTokens['ringWidth'];
   border?: Partial<DesignTokens['border']>;
 
-  foregroundColor: DesignTokens['color']['foreground'];
-
-  backgroundColor: {
-    body: string;
-
-    surface: string;
-    surfaceDark: string;
-
-    brand: string;
-
-    brandAccent: string;
-    brandAccentLight: string;
-
-    neutral: string;
-    neutralLight: string;
-
-    neutralSoft: string;
-
-    // the 5
-    promote: string;
-    promoteLight: string;
-    caution: string;
-    cautionLight: string;
-    critical: string;
-    criticalLight: string;
-    info: string;
-    infoLight: string;
-    positive: string;
-    positiveLight: string;
-  };
+  color:
+    | BangleThemeColorInput
+    | {
+        light: BangleThemeColorInput;
+        dark: BangleThemeColorInput;
+      };
 }
+
+// interface ColorInput {
+//   colorNeutral?: Partial<DesignTokens['colorNeutral']>;
+//   colorPromote?: Partial<DesignTokens['colorPromote']>;
+//   colorCaution?: Partial<DesignTokens['colorCaution']>;
+//   colorInfo?: Partial<DesignTokens['colorInfo']>;
+//   colorCritical?: Partial<DesignTokens['colorCritical']>;
+//   colorPositive?: Partial<DesignTokens['colorPositive']>;
+// }

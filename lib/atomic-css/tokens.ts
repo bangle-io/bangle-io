@@ -1,16 +1,22 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import type { DesignTokens } from '@bangle.io/shared-types';
+import type { DesignTokens, ToneColors } from '@bangle.io/shared-types';
 
 export { getFromPath, walkObject } from './walk-object';
 
 // This exists to provide a shape for creating the vars object
 const tokensShape: DesignTokens = {
+  theme: '',
+  uid: '',
   app: {
     editor: {
-      bgColor: '',
+      color: {
+        bg: '',
+      },
     },
     activitybar: {
-      bgColor: '',
+      color: {
+        bg: '',
+      },
     },
   },
   border: {
@@ -31,84 +37,24 @@ const tokensShape: DesignTokens = {
   },
   widescreenWidth: '',
   color: {
-    background: {
-      body: '',
-      brand: '',
-      brandAccent: '',
-      brandAccentActive: '',
-      brandAccentHover: '',
-      brandAccentLight: '',
-      brandAccentLightActive: '',
-      brandAccentLightHover: '',
-      caution: '',
-      cautionActive: '',
-      cautionHover: '',
-      cautionLight: '',
-      cautionLightActive: '',
-      cautionLightHover: '',
-      critical: '',
-      criticalActive: '',
-      criticalHover: '',
-      criticalLight: '',
-      criticalLightActive: '',
-      criticalLightHover: '',
-      info: '',
-      infoActive: '',
-      infoHover: '',
-      infoLight: '',
-      infoLightActive: '',
-      infoLightHover: '',
-      neutral: '',
-      neutralActive: '',
-      neutralHover: '',
-      neutralLight: '',
-      neutralLightActive: '',
-      neutralLightHover: '',
-      neutralSoft: '',
-      positive: '',
-      positiveActive: '',
-      positiveHover: '',
-      positiveLight: '',
-      positiveLightActive: '',
-      positiveLightHover: '',
-      promote: '',
-      promoteActive: '',
-      promoteHover: '',
-      promoteLight: '',
-      promoteLightActive: '',
-      promoteLightHover: '',
-      surface: '',
-      surfaceDark: '',
-      surfaceDarker: '',
-      surfaceLight: '',
+    neutral: {
+      bgLayer2: '',
+      bgLayer1: '',
+      bg: '',
+
+      textDisabled: '',
+      textLight: '',
+      text: '',
+      textDark: '',
+      textInverted: '',
+
+      ...createToneColors(),
     },
-    foreground: {
-      brandAccent: '',
-      brandAccentLight: '',
-      caution: '',
-      cautionLight: '',
-      critical: '',
-      criticalLight: '',
-      info: '',
-      infoLight: '',
-      link: '',
-      linkHover: '',
-      linkLight: '',
-      linkVisited: '',
-      neutral: '',
-      neutralInverted: '',
-      neutralLight: '',
-      positive: '',
-      positiveLight: '',
-      primary: '',
-      primaryInverted: '',
-      primaryLight: '',
-      promote: '',
-      promoteLight: '',
-      secondary: '',
-      secondaryInverted: '',
-      secondaryLight: '',
-    },
+    promote: createToneColors(),
+    caution: createToneColors(),
+    info: createToneColors(),
+    critical: createToneColors(),
+    positive: createToneColors(),
   },
 
   ringWidth: {
@@ -153,7 +99,6 @@ const tokensShape: DesignTokens = {
     '48': '',
     'px': '',
   },
-  theme: '',
   typography: {
     fontFamily: {
       sans: '',
@@ -193,6 +138,24 @@ const tokensShape: DesignTokens = {
     },
   },
 };
+
+function createToneColors(): ToneColors {
+  return {
+    iconDisabled: '',
+    iconLight: '',
+    icon: '',
+
+    btn: '',
+    btnHover: '',
+    btnDown: '',
+    btnDisabled: '',
+
+    borderLight: '',
+    border: '',
+    borderDark: '',
+    borderDarker: '',
+  };
+}
 
 // unnest the object to get a better type
 export const tokens = { ...tokensShape };

@@ -1,5 +1,5 @@
-export type { BangleThemeInput } from './bangle-theme';
-export type { DesignTokens } from './design-tokens';
+export type { BangleThemeColorInput, BangleThemeInput } from './bangle-theme';
+export type { DesignTokens, NeutralColors, ToneColors } from './design-tokens';
 export * from './editor';
 export * from './extension-registry';
 export * from './helper';

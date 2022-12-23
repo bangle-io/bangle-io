@@ -2944,6 +2944,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/mini-js-utils@workspace:*, @bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/note-browser@workspace:*, @bangle.io/note-browser@workspace:extensions/note-browser":
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-browser@workspace:extensions/note-browser"
@@ -3665,6 +3671,7 @@ __metadata:
   resolution: "@bangle.io/ui-theme@workspace:lib/ui-theme"
   dependencies:
     "@bangle.io/atomic-css": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     gradient-parser: ^1.0.2
     polished: ^4.2.2

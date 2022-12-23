@@ -11,7 +11,6 @@ export enum Tone {
   Critical = 'critical',
   Info = 'info',
   Neutral = 'neutral',
-  Secondary = 'secondary',
   Positive = 'positive',
-  Promote = 'promote',
+  Promote = 'Promote',
 }
