@@ -64,6 +64,8 @@ export const defaultSpace: DesignTokens['space'] = {
   '20': '5rem',
   '24': '6rem',
   '48': '12rem',
+  '64': '16rem',
+  '72': '18rem',
 };
 
 const defaultFontFamily: DesignTokens['typography']['fontFamily'] = {

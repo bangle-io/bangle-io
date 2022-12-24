@@ -76,6 +76,8 @@ export type DesignTokens = {
     '20': string;
     '24': string;
     '48': string;
+    '64': string;
+    '72': string;
   };
 
   ringWidth: {

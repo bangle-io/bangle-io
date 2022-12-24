@@ -98,6 +98,8 @@ const tokensShape: DesignTokens = {
     '20': '',
     '24': '',
     '48': '',
+    '64': '',
+    '72': '',
     'px': '',
   },
   typography: {
