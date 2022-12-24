@@ -4,7 +4,9 @@ describe('theme-colors', () => {
   test('colors', () => {
     expect(colors).toMatchInlineSnapshot(`
       {
-        "colorActivitybarBg": "var(--BV-app-activitybar-color-bg)",
+        "colorAppActivitybarBg": "var(--BV-color-app-activitybarBg)",
+        "colorAppActivitybarText": "var(--BV-color-app-activitybarText)",
+        "colorAppEditorBg": "var(--BV-color-app-editorBg)",
         "colorBgLayerBottom": "var(--BV-color-neutral-bgLayerBottom)",
         "colorBgLayerFloat": "var(--BV-color-neutral-bgLayerFloat)",
         "colorBgLayerMiddle": "var(--BV-color-neutral-bgLayerMiddle)",
@@ -36,7 +38,6 @@ describe('theme-colors', () => {
         "colorCriticalSolidStronger": "var(--BV-color-critical-solidStronger)",
         "colorCriticalSolidSubdued": "var(--BV-color-critical-solidSubdued)",
         "colorCriticalSolidText": "var(--BV-color-critical-solidText)",
-        "colorEditorBg": "var(--BV-app-editor-color-bg)",
         "colorIcon": "var(--BV-color-neutral-icon)",
         "colorIconDisabled": "var(--BV-color-neutral-iconDisabled)",
         "colorIconSubdued": "var(--BV-color-neutral-iconSubdued)",

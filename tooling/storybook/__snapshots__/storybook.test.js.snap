@@ -12,7 +12,13 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg"
+    className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+    style={
+      {
+        "backgroundColor": "var(--BV-color-app-activitybarBg)",
+        "color": "var(--BV-color-app-activitybarText)",
+      }
+    }
   >
     <button
       aria-label="Workspace Home"
@@ -169,7 +175,13 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
   }
 >
   <div
-    className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg"
+    className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+    style={
+      {
+        "backgroundColor": "var(--BV-color-app-activitybarBg)",
+        "color": "var(--BV-color-app-activitybarText)",
+      }
+    }
   >
     <button
       aria-label="Workspace Home"
@@ -363,7 +375,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row px-2 align-center B-activitybar_activitybar bg-colorActivitybarBg w-full"
+    className="flex flex-row px-2 align-center B-activitybar_activitybar bg-colorAppActivitybarBg w-full"
   >
     <div
       className="flex flex-row items-center flex-none"
@@ -541,7 +553,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
   }
 >
   <div
-    className="flex flex-row px-2 align-center B-activitybar_activitybar bg-colorActivitybarBg w-full"
+    className="flex flex-row px-2 align-center B-activitybar_activitybar bg-colorAppActivitybarBg w-full"
   >
     <div
       className="flex flex-row items-center flex-none"
@@ -1017,8 +1029,12 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
-    style={{}}
+    className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
+    style={
+      {
+        "backgroundColor": "var(--BV-color-app-editorBg)",
+      }
+    }
   >
     <button
       aria-label="note path"
@@ -1103,8 +1119,12 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
-    style={{}}
+    className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
+    style={
+      {
+        "backgroundColor": "var(--BV-color-app-editorBg)",
+      }
+    }
   >
     <button
       aria-label="note path"
@@ -1216,8 +1236,12 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
-    style={{}}
+    className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
+    style={
+      {
+        "backgroundColor": "var(--BV-color-app-editorBg)",
+      }
+    }
   >
     <button
       aria-label="note path"
@@ -1339,8 +1363,12 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
-    style={{}}
+    className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
+    style={
+      {
+        "backgroundColor": "var(--BV-color-app-editorBg)",
+      }
+    }
   >
     <button
       aria-label="note path"

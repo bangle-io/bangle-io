@@ -102,26 +102,18 @@ export type DesignTokens = {
 
     positive: ToneColors;
     promote: ToneColors;
+
+    app: {
+      editorBg: string;
+      activitybarBg: string;
+      activitybarText: string;
+    };
   };
 
-  app: {
-    // Note:
-    // any object that has a key 'color', all the values inside it will be added to the colors
-    // for example editor.color.myPink will be converted to a css class if using `bg-*` atomic class
-    // .bg-color-editorMyPink { background-color: var(--editor.color.myPink) }
-    // or if using `text-*` atomic class
-    // .text-color-editorMyPink { color: var(--editor.color.myPink) }
-    editor: {
-      color: {
-        bg: string;
-      };
-    };
-    activitybar: {
-      color: {
-        bg: string;
-      };
-    };
-  };
+  // misc will not be added to atomic classes
+  // and can be accessed using typescript `vars.misc.myKey` or
+  // directly using `var(--misc.myKey)` in css.
+  misc: {};
 };
 
 export type ToneColors = {

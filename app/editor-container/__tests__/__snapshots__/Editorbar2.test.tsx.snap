@@ -4,7 +4,7 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+      class="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
     >
       <button
         aria-label="note path"
@@ -46,7 +46,7 @@ exports[`renders correctly when active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+      class="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
     >
       <button
         aria-label="note path"

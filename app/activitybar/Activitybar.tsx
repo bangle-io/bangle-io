@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
@@ -49,7 +50,13 @@ export function Activitybar() {
     });
 
   return (
-    <div className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg">
+    <div
+      style={{
+        backgroundColor: vars.color.app.activitybarBg,
+        color: vars.color.app.activitybarText,
+      }}
+      className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+    >
       <ActivitybarButton
         widescreen={widescreen}
         isActive={false}

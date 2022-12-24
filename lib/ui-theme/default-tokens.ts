@@ -118,20 +118,6 @@ export const defaultTypography: DesignTokens['typography'] = {
   },
 };
 
-export const defaultApp: (
-  designTokens: Omit<DesignTokens, 'app'>,
-) => DesignTokens['app'] = (designTokens) => ({
-  editor: {
-    color: {
-      bg: designTokens.color.neutral.bgLayerTop,
-    },
-  },
-  activitybar: {
-    // TODO change this to a better value
-    color: {
-      bg: designTokens.theme.endsWith('-dark')
-        ? 'rgb(31, 30, 30)'
-        : 'rgb(26, 32, 44)',
-    },
-  },
-});
+export const defaultMiscTokens: (
+  designTokens: Omit<DesignTokens, 'misc'>,
+) => DesignTokens['misc'] = (designTokens) => ({});

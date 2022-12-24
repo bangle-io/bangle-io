@@ -1,8 +1,8 @@
-import type { BangleThemeColorInput } from '@bangle.io/shared-types';
+import type { DesignTokens } from '@bangle.io/shared-types';
 
-import { spectrumDarkest } from './spectrum-darkest';
+import { spectrumDarkest } from './spectrum';
 
-const neutralColor: BangleThemeColorInput['neutral'] = {
+const neutralColor: DesignTokens['color']['neutral'] = {
   bgLayerTop: spectrumDarkest.gray100,
   bgLayerMiddle: spectrumDarkest.gray75,
   bgLayerBottom: spectrumDarkest.gray50,
@@ -30,8 +30,16 @@ const neutralColor: BangleThemeColorInput['neutral'] = {
   border: spectrumDarkest.gray300,
   borderStrong: spectrumDarkest.gray400,
 };
-export const darkColors: BangleThemeColorInput = {
+
+const appColor: DesignTokens['color']['app'] = {
+  editorBg: spectrumDarkest.gray50,
+  activitybarBg: 'rgb(31, 30, 30)',
+  activitybarText: spectrumDarkest.gray800,
+};
+
+export const darkColors: DesignTokens['color'] = {
   neutral: neutralColor,
+  app: appColor,
 
   secondary: {
     iconDisabled: spectrumDarkest.gray400,

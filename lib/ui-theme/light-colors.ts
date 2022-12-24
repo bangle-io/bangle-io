@@ -1,11 +1,8 @@
-import type { BangleThemeColorInput } from '@bangle.io/shared-types';
+import type { DesignTokens } from '@bangle.io/shared-types';
 
-import { spectrumLight } from './spectrum-light';
+import { spectrumLight } from './spectrum';
 
-const LIGHT = 700;
-const REG = 900;
-
-const neutralColor: BangleThemeColorInput['neutral'] = {
+const neutralColor: DesignTokens['color']['neutral'] = {
   bgLayerTop: spectrumLight.gray50,
   bgLayerMiddle: spectrumLight.gray100,
   bgLayerBottom: spectrumLight.gray200,
@@ -34,8 +31,16 @@ const neutralColor: BangleThemeColorInput['neutral'] = {
   borderStrong: spectrumLight.gray400,
 };
 
-export const lightColors: BangleThemeColorInput = {
+const appColor: DesignTokens['color']['app'] = {
+  editorBg: spectrumLight.gray50,
+  activitybarBg: 'rgb(26, 32, 44)',
+  activitybarText: neutralColor.textInverted,
+};
+
+export const lightColors: DesignTokens['color'] = {
   neutral: neutralColor,
+
+  app: appColor,
 
   secondary: {
     iconDisabled: spectrumLight.gray400,

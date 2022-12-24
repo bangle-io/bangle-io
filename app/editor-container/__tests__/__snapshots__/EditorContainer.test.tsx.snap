@@ -4,13 +4,13 @@ exports[`basic renders 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center bg-colorEditorBg "
+      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center "
     >
       <div
-        class="w-full sticky top-0 z-10 "
+        class="w-full sticky top-0 z-10"
       >
         <div
-          class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+          class="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
         >
           <button
             aria-label="note path"
@@ -64,13 +64,13 @@ exports[`renders correctly when file does not exist 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center bg-colorEditorBg "
+      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center "
     >
       <div
-        class="w-full sticky top-0 z-10 "
+        class="w-full sticky top-0 z-10"
       >
         <div
-          class="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
+          class="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
         >
           <button
             aria-label="note path"
@@ -130,7 +130,7 @@ exports[`renders when no wsPath is provided 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center bg-colorEditorBg "
+      class="B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll w-full h-full flex flex-col items-center "
     >
       <div
         class="w-full "

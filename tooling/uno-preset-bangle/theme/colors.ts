@@ -18,21 +18,8 @@ const neutralShorthand: Array<[string, string]> = Object.entries(
   vars.color.neutral,
 ).map(([k, v]): [string, string] => [`color${firstCharUpperCase(k)}`, v]);
 
-const appColor: Array<[string, string]> = Object.entries(vars.app).flatMap(
-  ([k, v]) => {
-    if ('color' in v) {
-      return Object.entries(v.color).map(([kk, vv]): [string, string] => [
-        `color${firstCharUpperCase(k)}${firstCharUpperCase(kk)}`,
-        vv,
-      ]);
-    }
-
-    return [];
-  },
-);
-
-let allColors = [...toneColors, ...neutralShorthand, ...appColor].sort(
-  ([a], [b]) => a.localeCompare(b),
+let allColors = [...toneColors, ...neutralShorthand].sort(([a], [b]) =>
+  a.localeCompare(b),
 );
 export const colors: Theme['colors'] = Object.fromEntries(allColors);
 

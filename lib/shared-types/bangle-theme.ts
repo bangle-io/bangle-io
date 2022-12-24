@@ -1,6 +1,6 @@
 import type { DesignTokens } from './design-tokens';
 
-export type BangleThemeColorInput = DesignTokens['color'];
+export type BangleThemeColorInput = NestedPartial<DesignTokens['color']>;
 export interface BangleThemeInput {
   name: string;
   typography?: {
@@ -18,3 +18,9 @@ export interface BangleThemeInput {
         dark: BangleThemeColorInput;
       };
 }
+
+type NestedPartial<ObjectType extends object> = {
+  [KeyType in keyof ObjectType]?: ObjectType[KeyType] extends object
+    ? Partial<ObjectType[KeyType]>
+    : ObjectType[KeyType];
+};

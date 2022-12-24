@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import {} from '@bangle.io/activitybar';
 import {
   ui,
   useBangleStoreContext,
   useSerialOperationContext,
 } from '@bangle.io/api';
+import { vars } from '@bangle.io/atomic-css';
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
@@ -113,11 +113,14 @@ export function EditorContainer({
         'B-editor-container_editor-container',
         'B-editor-container_editor-container-' + editorId,
         widescreen && 'overflow-y-scroll',
-        'w-full h-full flex flex-col items-center bg-colorEditorBg',
+        'w-full h-full flex flex-col items-center',
       )}
+      style={{
+        backgroundColor: vars.color.app.editorBg,
+      }}
     >
       {wsPath && (
-        <div className={cx('w-full sticky top-0 z-10')}>
+        <div className="w-full sticky top-0 z-10">
           {widescreen && (
             <Editorbar
               isActive={focusedEditorId === editorId}

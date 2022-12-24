@@ -2,7 +2,7 @@ import { getFromPath, vars, walkObject } from '@bangle.io/atomic-css';
 import type { BangleThemeInput, DesignTokens } from '@bangle.io/shared-types';
 
 import { createTokens } from './create-tokens';
-import type { BangleAppOverrides } from './types';
+import type { BangleMiscTokens } from './types';
 
 if (typeof window !== 'undefined') {
   // This package is only meant to be used for creating stylesheets in node.js
@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
 
 export function createStyleSheet(
   theme: BangleThemeInput,
-  appOverride?: BangleAppOverrides,
+  misc?: BangleMiscTokens,
 ) {
   if ('light' in theme.color && !('dark' in theme.color)) {
     throw new Error('theme color must have both light and dark or none');
@@ -21,8 +21,7 @@ export function createStyleSheet(
     throw new Error('theme color must have both light and dark or none');
   }
 
-  const tokens = createTokens(theme, appOverride);
-
+  const tokens = createTokens(theme, misc);
   let bareMinimums = setBareMinimums();
 
   if (!Array.isArray(tokens)) {

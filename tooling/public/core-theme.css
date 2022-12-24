@@ -10,7 +10,6 @@ body {
 /* stylelint-disable */
 :root {
   --BV-theme: core-theme;
-  --BV-app-activitybar-color-bg: rgb(26, 32, 44);
   --BV-border-radius-DEFAULT: 0.25rem;
   --BV-border-radius-none: 0;
   --BV-border-radius-sm: 0.125rem;
@@ -89,7 +88,9 @@ body {
 /* stylelint-disable */
 .light-theme,
 html[data-theme='light'] {
-  --BV-app-editor-color-bg: rgb(255, 255, 255);
+  --BV-color-app-activitybarBg: rgb(26, 32, 44);
+  --BV-color-app-activitybarText: rgb(255, 255, 255);
+  --BV-color-app-editorBg: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerTop: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerMiddle: rgb(248, 248, 248);
   --BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);
@@ -178,7 +179,9 @@ html[data-theme='light'] {
 /* stylelint-disable */
 .dark-theme,
 html[data-theme='dark'] {
-  --BV-app-editor-color-bg: rgb(29, 29, 29);
+  --BV-color-app-activitybarBg: rgb(31, 30, 30);
+  --BV-color-app-activitybarText: rgb(235, 235, 235);
+  --BV-color-app-editorBg: rgb(0, 0, 0);
   --BV-color-neutral-bgLayerTop: rgb(29, 29, 29);
   --BV-color-neutral-bgLayerMiddle: rgb(14, 14, 14);
   --BV-color-neutral-bgLayerBottom: rgb(0, 0, 0);

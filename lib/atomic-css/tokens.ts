@@ -7,18 +7,7 @@ export { getFromPath, walkObject } from './walk-object';
 const tokensShape: DesignTokens = {
   theme: '',
   uid: '',
-  app: {
-    editor: {
-      color: {
-        bg: '',
-      },
-    },
-    activitybar: {
-      color: {
-        bg: '',
-      },
-    },
-  },
+  misc: {},
   border: {
     radius: {
       DEFAULT: '',
@@ -37,6 +26,11 @@ const tokensShape: DesignTokens = {
   },
   widescreenWidth: '',
   color: {
+    app: {
+      activitybarBg: '',
+      activitybarText: '',
+      editorBg: '',
+    },
     neutral: {
       bgLayerTop: '',
       bgLayerMiddle: '',

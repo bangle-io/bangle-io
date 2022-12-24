@@ -1,22 +1,24 @@
 import { deepMerge } from '@bangle.io/mini-js-utils';
 import type { BangleThemeInput, DesignTokens } from '@bangle.io/shared-types';
 
+import { darkColors } from './dark-colors';
 import {
-  defaultApp,
   defaultBorder,
+  defaultMiscTokens,
   defaultRingWidth,
   defaultSize,
   defaultSpace,
   defaultTypography,
   WIDESCREEN_WIDTH,
 } from './default-tokens';
-import type { BangleAppOverrides } from './types';
+import { lightColors } from './light-colors';
+import type { BangleMiscTokens } from './types';
 
 export function createTokens(
   theme: BangleThemeInput,
-  appOverride?: BangleAppOverrides,
+  miscTokens?: BangleMiscTokens,
 ): DesignTokens | [DesignTokens, DesignTokens] {
-  const base: Omit<DesignTokens, 'app' | 'color' | 'uid'> = {
+  const base: Omit<DesignTokens, 'misc' | 'color' | 'uid'> = {
     theme: theme.name,
     typography: getTypography(theme.typography),
     border: getBorder(theme.border),
@@ -33,45 +35,60 @@ export function createTokens(
     const uidLight = 'design-token::' + theme.name + '-light';
     const uidDark = 'design-token::' + theme.name + '-dark';
 
-    const tLight = { ...base, uid: uidLight, color: theme.color.light };
-    const tDark = { ...base, uid: uidDark, color: theme.color.dark };
+    const tLight = {
+      ...base,
+      uid: uidLight,
+      color: getColors(lightColors, theme.color.light),
+    };
+    const tDark = {
+      ...base,
+      uid: uidDark,
+      color: getColors(darkColors, theme.color.dark),
+    };
 
     return [
       {
         ...tLight,
-        app: getAppOverrides(tLight, appOverride),
+        misc: getMiscTokens(tLight, miscTokens),
       },
       {
         ...tDark,
-        app: getAppOverrides(tDark, appOverride),
+        misc: getMiscTokens(tDark, miscTokens),
       },
     ];
   } else {
     const t = {
       ...base,
       uid: 'design-token::' + theme.name,
-      color: theme.color,
+      color: getColors(lightColors, theme.color),
     };
 
     return {
       ...t,
-      app: getAppOverrides(t, appOverride),
+      misc: getMiscTokens(t, miscTokens),
     };
   }
 }
 
-function getAppOverrides(
-  designTokens: Omit<DesignTokens, 'app'>,
-  input?: BangleAppOverrides,
-): DesignTokens['app'] {
+function getColors(
+  defaultColor: DesignTokens['color'],
+  input: BangleThemeInput['color'],
+): DesignTokens['color'] {
+  return deepMerge(defaultColor, input) as DesignTokens['color'];
+}
+
+function getMiscTokens(
+  designTokens: Omit<DesignTokens, 'misc'>,
+  input?: BangleMiscTokens,
+): DesignTokens['misc'] {
   const base: Record<
     string,
     Record<string, string | Record<string, string>>
   > = {
-    ...defaultApp(designTokens),
+    ...defaultMiscTokens(designTokens),
   };
 
-  return deepMerge(base, input || {}) as DesignTokens['app'];
+  return deepMerge(base, input || {}) as DesignTokens['misc'];
 }
 
 function getBorder(input: BangleThemeInput['border']): DesignTokens['border'] {

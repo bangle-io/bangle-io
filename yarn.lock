@@ -2063,6 +2063,7 @@ __metadata:
   resolution: "@bangle.io/activitybar@workspace:app/activitybar"
   dependencies:
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2568,6 +2569,7 @@ __metadata:
     "@bangle.dev/react": 0.31.6
     "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"

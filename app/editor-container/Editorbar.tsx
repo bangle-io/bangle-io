@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
 import { TONE, Tone } from '@bangle.io/constants';
 import {
   ActionButton,
@@ -51,8 +52,10 @@ export function Editorbar({
 
   return (
     <div
-      className="flex flex-row justify-between w-full bg-colorEditorBg px-2 py-1 lg:px-4"
-      style={{}}
+      className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
+      style={{
+        backgroundColor: vars.color.app.editorBg,
+      }}
     >
       <ButtonV2
         ariaLabel="note path"

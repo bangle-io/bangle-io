@@ -5668,6 +5668,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -5701,6 +5702,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/activitybar", "workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -6412,6 +6414,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.31.6"],\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
@@ -6452,6 +6455,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.31.6"],\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\

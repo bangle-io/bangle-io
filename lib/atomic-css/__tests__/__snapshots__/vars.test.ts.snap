@@ -2,18 +2,6 @@
 
 exports[`cssCustomProperties snapshot 1`] = `
 {
-  "app": {
-    "activitybar": {
-      "color": {
-        "bg": "--BV-app-activitybar-color-bg",
-      },
-    },
-    "editor": {
-      "color": {
-        "bg": "--BV-app-editor-color-bg",
-      },
-    },
-  },
   "border": {
     "radius": {
       "DEFAULT": "--BV-border-radius-DEFAULT",
@@ -31,6 +19,11 @@ exports[`cssCustomProperties snapshot 1`] = `
     },
   },
   "color": {
+    "app": {
+      "activitybarBg": "--BV-color-app-activitybarBg",
+      "activitybarText": "--BV-color-app-activitybarText",
+      "editorBg": "--BV-color-app-editorBg",
+    },
     "caution": {
       "border": "--BV-color-caution-border",
       "borderStrong": "--BV-color-caution-borderStrong",
@@ -125,6 +118,7 @@ exports[`cssCustomProperties snapshot 1`] = `
       "solidText": "--BV-color-secondary-solidText",
     },
   },
+  "misc": {},
   "ringWidth": {
     "DEFAULT": "--BV-ringWidth-DEFAULT",
     "none": "--BV-ringWidth-none",
@@ -162,7 +156,9 @@ exports[`cssCustomProperties snapshot 1`] = `
     "48": "--BV-space-48",
     "5": "--BV-space-5",
     "6": "--BV-space-6",
+    "64": "--BV-space-64",
     "7": "--BV-space-7",
+    "72": "--BV-space-72",
     "8": "--BV-space-8",
     "9": "--BV-space-9",
     "px": "--BV-space-px",
@@ -212,18 +208,6 @@ exports[`cssCustomProperties snapshot 1`] = `
 
 exports[`vars snapshot 1`] = `
 {
-  "app": {
-    "activitybar": {
-      "color": {
-        "bg": "var(--BV-app-activitybar-color-bg)",
-      },
-    },
-    "editor": {
-      "color": {
-        "bg": "var(--BV-app-editor-color-bg)",
-      },
-    },
-  },
   "border": {
     "radius": {
       "DEFAULT": "var(--BV-border-radius-DEFAULT)",
@@ -241,6 +225,11 @@ exports[`vars snapshot 1`] = `
     },
   },
   "color": {
+    "app": {
+      "activitybarBg": "var(--BV-color-app-activitybarBg)",
+      "activitybarText": "var(--BV-color-app-activitybarText)",
+      "editorBg": "var(--BV-color-app-editorBg)",
+    },
     "caution": {
       "border": "var(--BV-color-caution-border)",
       "borderStrong": "var(--BV-color-caution-borderStrong)",
@@ -335,6 +324,7 @@ exports[`vars snapshot 1`] = `
       "solidText": "var(--BV-color-secondary-solidText)",
     },
   },
+  "misc": {},
   "ringWidth": {
     "DEFAULT": "var(--BV-ringWidth-DEFAULT)",
     "none": "var(--BV-ringWidth-none)",
@@ -372,7 +362,9 @@ exports[`vars snapshot 1`] = `
     "48": "var(--BV-space-48)",
     "5": "var(--BV-space-5)",
     "6": "var(--BV-space-6)",
+    "64": "var(--BV-space-64)",
     "7": "var(--BV-space-7)",
+    "72": "var(--BV-space-72)",
     "8": "var(--BV-space-8)",
     "9": "var(--BV-space-9)",
     "px": "var(--BV-space-px)",
