@@ -195,7 +195,7 @@ function InternalDropdownMenu({
       {...menuProps}
       ref={ref}
       className={cx(
-        'flex flex-col B-ui-bangle-button_dropdown-menu B-ui-components_misc-dropdown-shadow p-1 py-2 rounded-md',
+        'flex flex-col min-w-72 B-ui-bangle-button_dropdown-menu bg-colorBgLayerFloat border-1 border-colorNeutralBorder B-ui-components_misc-dropdown-shadow p-1 py-2 rounded-md',
         className,
       )}
       style={style}

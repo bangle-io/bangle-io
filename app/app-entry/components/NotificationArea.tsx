@@ -9,8 +9,8 @@ import {
   notificationSliceKey,
 } from '@bangle.io/slice-notification';
 import {
+  BUTTON_VARIANT,
   ButtonV2,
-  ButtonVariant,
   CheckCircleIcon,
   CloseIcon,
   ExclamationCircleIcon,
@@ -117,7 +117,7 @@ export function Notification({
           <div>
             <ButtonV2
               size="xs"
-              variant={ButtonVariant.Transparent}
+              variant={BUTTON_VARIANT.TRANSPARENT}
               ariaLabel="dismiss notification"
               leftIcon={<CloseIcon />}
               onPress={() => {

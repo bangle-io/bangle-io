@@ -6,7 +6,8 @@ import React from 'react';
 import { TONE } from '@bangle.io/constants';
 
 import { FolderIcon } from '../Icons';
-import { ButtonV2, ButtonVariant } from './ButtonV2';
+import type { ButtonVariant } from './ButtonV2';
+import { BUTTON_VARIANT, ButtonV2 } from './ButtonV2';
 
 export default {
   title: 'ui-components/ButtonV2',
@@ -120,10 +121,10 @@ function ButtonVariantGroup({ variant }: { variant: ButtonVariant }) {
 export const ButtonVariants: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
   return (
     <>
-      <ButtonVariantGroup variant={ButtonVariant.Solid} />
-      <ButtonVariantGroup variant={ButtonVariant.Ghost} />
-      <ButtonVariantGroup variant={ButtonVariant.Soft} />
-      <ButtonVariantGroup variant={ButtonVariant.Transparent} />
+      <ButtonVariantGroup variant={BUTTON_VARIANT.SOLID} />
+      <ButtonVariantGroup variant={BUTTON_VARIANT.GHOST} />
+      <ButtonVariantGroup variant={BUTTON_VARIANT.SOFT} />
+      <ButtonVariantGroup variant={BUTTON_VARIANT.TRANSPARENT} />
     </>
   );
 };
@@ -151,25 +152,25 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
       <div>
         <div className="flex flex-row gap-2">
           <ButtonV2
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="XSmall"
             size="xs"
           />
           <ButtonV2
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
           <ButtonV2
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Medium"
             size="md"
           />
           <ButtonV2
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Large"
             size="lg"
@@ -180,28 +181,28 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
         <div className="flex flex-row gap-2">
           <ButtonV2
             isTouch
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="XSmall"
             size="xs"
           />
           <ButtonV2
             isTouch
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
           <ButtonV2
             isTouch
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Medium"
             size="md"
           />
           <ButtonV2
             isTouch
-            variant={ButtonVariant.Ghost}
+            variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Large"
             size="lg"
@@ -232,25 +233,25 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
             leftIcon={<FolderIcon />}
             tone={TONE.CRITICAL}
             size="xs"
-            variant={ButtonVariant.Transparent}
+            variant={BUTTON_VARIANT.TRANSPARENT}
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             size="sm"
-            variant={ButtonVariant.Transparent}
+            variant={BUTTON_VARIANT.TRANSPARENT}
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
             tone={TONE.PROMOTE}
             size="md"
-            variant={ButtonVariant.Transparent}
+            variant={BUTTON_VARIANT.TRANSPARENT}
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             size="lg"
-            variant={ButtonVariant.Transparent}
+            variant={BUTTON_VARIANT.TRANSPARENT}
           />
         </div>
       </div>

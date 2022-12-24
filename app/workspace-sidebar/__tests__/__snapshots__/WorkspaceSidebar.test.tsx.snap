@@ -4,7 +4,7 @@ exports[`renders 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow h-full overflow-y-scroll B-workspace-sidebar_workspace-sidebar"
+      class="flex flex-col flex-grow h-full overflow-y-scroll bg-colorNeutralBgLayerMiddle"
     >
       <div
         class="flex flex-row justify-between px-2 mt-2"

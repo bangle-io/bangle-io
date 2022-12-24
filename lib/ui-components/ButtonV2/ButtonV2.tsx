@@ -10,12 +10,14 @@ import { TONE } from '@bangle.io/constants';
 import type { FirstParameter } from '@bangle.io/shared-types';
 import { cx, isTouchDevice } from '@bangle.io/utils';
 
-export enum ButtonVariant {
-  Solid = 'solid',
-  Ghost = 'ghost',
-  Soft = 'soft',
-  Transparent = 'transparent',
-}
+export const BUTTON_VARIANT = {
+  SOLID: 'solid',
+  GHOST: 'ghost',
+  SOFT: 'soft',
+  TRANSPARENT: 'transparent',
+} as const;
+
+export type ButtonVariant = typeof BUTTON_VARIANT[keyof typeof BUTTON_VARIANT];
 
 export function ButtonV2({
   animateOnPress = true,
@@ -30,7 +32,7 @@ export function ButtonV2({
   size = 'md',
   text,
   tone = TONE.NEUTRAL,
-  variant = ButtonVariant.Solid,
+  variant = BUTTON_VARIANT.SOLID,
 }: {
   animateOnPress?: boolean;
   ariaLabel?: string;
@@ -188,7 +190,7 @@ interface ButtonStyles {
 }
 
 const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
-  [ButtonVariant.Solid]: {
+  [BUTTON_VARIANT.SOLID]: {
     [TONE.CAUTION]: {
       color: vars.color.caution.solidText,
       buttonBgColor: vars.color.caution.solid,
@@ -246,7 +248,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     },
   },
 
-  [ButtonVariant.Ghost]: {
+  [BUTTON_VARIANT.GHOST]: {
     [TONE.CAUTION]: {
       color: vars.color.caution.solid,
       buttonBgColor: 'transparent',
@@ -306,7 +308,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     },
   },
 
-  [ButtonVariant.Soft]: {
+  [BUTTON_VARIANT.SOFT]: {
     [TONE.CAUTION]: {
       color: vars.color.caution.solid,
       buttonBgColor: vars.color.neutral.borderSubdued,
@@ -364,7 +366,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     },
   },
 
-  [ButtonVariant.Transparent]: {
+  [BUTTON_VARIANT.TRANSPARENT]: {
     [TONE.CAUTION]: {
       color: vars.color.caution.solid,
       buttonBgColor: 'transparent',
@@ -437,7 +439,7 @@ function createStyleObj(
 ): React.CSSProperties {
   let style: React.CSSProperties = {};
 
-  const isGhost = opts.variant === ButtonVariant.Ghost;
+  const isGhost = opts.variant === BUTTON_VARIANT.GHOST;
 
   const setBorder = (color: string) => {
     style.border = `2px solid ${color}`;

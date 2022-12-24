@@ -1,13 +1,8 @@
 .B-ui-bangle-button_tooltip {
-  background-color: var(--BV-window-tooltip-bg-color);
-  color: var(--BV-window-tooltip-color);
   z-index: var(--BV-window-tooltip-z-index);
 }
 
 .B-ui-bangle-button_dropdown-menu {
-  min-width: 300px;
-  background-color: var(--BV-window-dropdown-bg-color-1);
-  color: var(--BV-window-dropdown-color);
   z-index: var(--BV-window-tooltip-z-index);
 }
 

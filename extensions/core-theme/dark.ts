@@ -6,7 +6,7 @@ const neutralColor: BangleThemeColorInput['neutral'] = {
   bgLayerTop: spectrumDarkest.gray100,
   bgLayerMiddle: spectrumDarkest.gray75,
   bgLayerBottom: spectrumDarkest.gray50,
-  bgLayerFloat: spectrumDarkest.gray200,
+  bgLayerFloat: spectrumDarkest.gray100,
 
   // https://spectrum.adobe.com/page/color-system/#Gray-text
   textDisabled: spectrumDarkest.gray500,

@@ -7,8 +7,8 @@ import {
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
 import {
+  BUTTON_VARIANT,
   ButtonV2,
-  ButtonVariant,
   CloseIcon,
   SecondaryEditorIcon,
 } from '@bangle.io/ui-components';
@@ -59,7 +59,7 @@ export function Editorbar({
         text={path}
         size="xs"
         tone={TONE.SECONDARY}
-        variant={!isActive ? ButtonVariant.Transparent : ButtonVariant.Solid}
+        variant={!isActive ? BUTTON_VARIANT.TRANSPARENT : BUTTON_VARIANT.SOLID}
         onPress={openNotesPalette}
       />
 

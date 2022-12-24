@@ -3,7 +3,7 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { SEVERITY, Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { EditorIssueComp } from './EditorIssueComp';
@@ -30,12 +30,26 @@ const Template: Story<Parameters<typeof EditorIssueComp>[0]> = (args) => {
   );
 };
 
-export const Vanilla = Template.bind({});
+export const Error = Template.bind({});
 
-Vanilla.args = {
+Error.args = {
   editorIssue: {
     title: 'This is a test',
     severity: SEVERITY.ERROR,
+    serialOperation: 'operation::something',
+    uid: '123',
+    description: 'something went wrong',
+    wsPath: 'test:one.md',
+  },
+  onPress: () => {},
+};
+
+export const Warning = Template.bind({});
+
+Warning.args = {
+  editorIssue: {
+    title: 'This is a test',
+    severity: SEVERITY.WARNING,
     serialOperation: 'operation::something',
     uid: '123',
     description: 'something went wrong',

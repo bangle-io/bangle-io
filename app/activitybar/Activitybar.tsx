@@ -49,7 +49,7 @@ export function Activitybar() {
     });
 
   return (
-    <div className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen">
+    <div className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg">
       <ActivitybarButton
         widescreen={widescreen}
         isActive={false}

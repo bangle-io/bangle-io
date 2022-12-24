@@ -4,7 +4,7 @@ exports[`renders when no sidebars 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+      class="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg"
     >
       <button
         aria-label="Workspace Home"
@@ -91,7 +91,7 @@ exports[`renders when sidebar is active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+      class="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg"
     >
       <button
         aria-label="Workspace Home"
@@ -189,7 +189,7 @@ exports[`renders when there is sidebar 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+      class="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen bg-colorActivitybarBg"
     >
       <button
         aria-label="Workspace Home"
