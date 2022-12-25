@@ -5,6 +5,7 @@ describe('theme-colors', () => {
     expect(colors).toMatchInlineSnapshot(`
       {
         "colorAppActivitybarBg": "var(--BV-color-app-activitybarBg)",
+        "colorAppActivitybarBtnPress": "var(--BV-color-app-activitybarBtnPress)",
         "colorAppActivitybarText": "var(--BV-color-app-activitybarText)",
         "colorAppEditorBg": "var(--BV-color-app-editorBg)",
         "colorBgLayerBottom": "var(--BV-color-neutral-bgLayerBottom)",

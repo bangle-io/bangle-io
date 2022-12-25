@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
 import {
   ActionButton,
   ButtonContent,
@@ -9,11 +10,11 @@ import { cx } from '@bangle.io/utils';
 
 export const buttonStyling = {
   animateOnPress: true,
-  activeColor: 'var(--BV-activitybar-button-active-color)',
-  color: 'var(--BV-activitybar-button-color)',
-  hoverBgColor: 'var(--BV-activitybar-button-hover-bg-color)',
-  hoverColor: 'var(--BV-activitybar-button-hover-color)',
-  pressedBgColor: 'var(--BV-activitybar-button-pressed-bg-color)',
+  activeColor: vars.color.app.activitybarText,
+  color: vars.color.app.activitybarText,
+  hoverBgColor: vars.color.app.activitybarBtnPress,
+  hoverColor: vars.color.app.activitybarText,
+  pressedBgColor: vars.color.app.activitybarBtnPress,
 };
 
 export function ActivitybarButton({
@@ -40,8 +41,12 @@ export function ActivitybarButton({
       isActive={isActive}
       styling={buttonStyling}
       className={cx(
-        'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
-        widescreen && 'BU_widescreen',
+        'w-full py-3 rounded-sm flex justify-center',
+        widescreen && 'border-l-2 ',
+        widescreen &&
+          (isActive
+            ? 'border-colorPromoteBorder'
+            : 'border-colorAppActivitybarBg'),
         className,
       )}
       onPress={onPress}

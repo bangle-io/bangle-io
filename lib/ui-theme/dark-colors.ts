@@ -19,12 +19,12 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   iconSubdued: spectrumDarkest.gray700,
   icon: spectrumDarkest.gray800,
 
-  solid: spectrumDarkest.gray400,
+  solid: spectrumDarkest.gray500,
   solidText: spectrumDarkest.gray800,
-  solidStrong: spectrumDarkest.gray300,
-  solidStronger: spectrumDarkest.gray200,
-  solidSubdued: spectrumDarkest.gray500,
-  solidFaint: spectrumDarkest.gray200,
+  solidStrong: spectrumDarkest.gray600,
+  solidStronger: spectrumDarkest.gray700,
+  solidSubdued: spectrumDarkest.gray400,
+  solidFaint: spectrumDarkest.gray300,
 
   borderSubdued: spectrumDarkest.gray200,
   border: spectrumDarkest.gray300,
@@ -32,9 +32,10 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 };
 
 const appColor: DesignTokens['color']['app'] = {
-  editorBg: spectrumDarkest.gray50,
+  editorBg: neutralColor.bgLayerMiddle,
   activitybarBg: 'rgb(31, 30, 30)',
   activitybarText: spectrumDarkest.gray800,
+  activitybarBtnPress: spectrumDarkest.gray300,
 };
 
 export const darkColors: DesignTokens['color'] = {
@@ -46,12 +47,13 @@ export const darkColors: DesignTokens['color'] = {
     iconSubdued: spectrumDarkest.gray700,
     icon: spectrumDarkest.gray800,
 
-    solid: spectrumDarkest.gray300,
+    solid: spectrumDarkest.gray400,
     solidText: spectrumDarkest.gray700,
-    solidStrong: spectrumDarkest.gray200,
-    solidStronger: spectrumDarkest.gray200,
-    solidSubdued: spectrumDarkest.gray400,
-    solidFaint: spectrumDarkest.gray200,
+    solidStrong: spectrumDarkest.gray500,
+    solidStronger: spectrumDarkest.gray600,
+    solidSubdued: spectrumDarkest.gray300,
+    // is same as subdued, since 200 will hit the bglayer level
+    solidFaint: spectrumDarkest.gray300,
 
     borderSubdued: spectrumDarkest.gray200,
     border: spectrumDarkest.gray300,

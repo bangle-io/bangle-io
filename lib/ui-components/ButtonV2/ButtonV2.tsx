@@ -252,7 +252,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     [TONE.CAUTION]: {
       color: vars.color.caution.solid,
       buttonBgColor: 'transparent',
-      hoverBgColor: vars.color.neutral.borderSubdued,
+      hoverBgColor: vars.color.neutral.solidFaint,
       hoverColor: vars.color.caution.solidStrong,
       pressedBgColor: vars.color.neutral.border,
       disabledBgColor: 'transparent',
@@ -261,7 +261,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     [TONE.CRITICAL]: {
       color: vars.color.critical.solid,
       buttonBgColor: 'transparent',
-      hoverBgColor: vars.color.neutral.borderSubdued,
+      hoverBgColor: vars.color.neutral.solidFaint,
       hoverColor: vars.color.critical.solidStrong,
       pressedBgColor: vars.color.neutral.border,
       disabledBgColor: 'transparent',
@@ -271,7 +271,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     [TONE.NEUTRAL]: {
       color: vars.color.neutral.text,
       buttonBgColor: 'transparent',
-      hoverBgColor: vars.color.neutral.borderSubdued,
+      hoverBgColor: vars.color.neutral.solidFaint,
       hoverColor: vars.color.neutral.solidText,
       pressedBgColor: vars.color.neutral.border,
       disabledBgColor: 'transparent',
@@ -280,7 +280,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     [TONE.SECONDARY]: {
       color: vars.color.secondary.solidText,
       buttonBgColor: 'transparent',
-      hoverBgColor: vars.color.neutral.borderSubdued,
+      hoverBgColor: vars.color.neutral.solidFaint,
       hoverColor: vars.color.secondary.solidText,
       pressedBgColor: vars.color.neutral.border,
       disabledBgColor: 'transparent',
@@ -290,7 +290,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     [TONE.POSITIVE]: {
       color: vars.color.positive.solid,
       buttonBgColor: 'transparent',
-      hoverBgColor: vars.color.neutral.borderSubdued,
+      hoverBgColor: vars.color.neutral.solidFaint,
       hoverColor: vars.color.positive.solidStrong,
       pressedBgColor: vars.color.neutral.border,
       disabledBgColor: 'transparent',
@@ -300,7 +300,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     [TONE.PROMOTE]: {
       color: vars.color.promote.solid,
       buttonBgColor: 'transparent',
-      hoverBgColor: vars.color.neutral.borderSubdued,
+      hoverBgColor: vars.color.neutral.solidFaint,
       hoverColor: vars.color.promote.solidStrong,
       pressedBgColor: vars.color.neutral.border,
       disabledBgColor: 'transparent',
@@ -338,7 +338,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
       disabledColor: vars.color.neutral.textDisabled,
     },
     [TONE.SECONDARY]: {
-      color: vars.color.neutral.text,
+      color: vars.color.secondary.solidText,
       buttonBgColor: vars.color.neutral.borderSubdued,
       hoverBgColor: vars.color.neutral.border,
       hoverColor: vars.color.neutral.text,

@@ -2,9 +2,24 @@ import type { DesignTokens } from '@bangle.io/shared-types';
 
 import { spectrumLight } from './spectrum';
 
+// https://colorbox.io/?c0=%26p%24s%24%3D11%26p%24h%24st%24%3D194%26p%24h%24e%24%3D200%26p%24h%24c%24%3Deqo%26p%24sa%24st%24%3D0.41%26p%24sa%24e%24%3D1%26p%24sa%24r%24%3D1%26p%24sa%24c%24%3Deqo%26p%24b%24st%24%3D1%26p%24b%24e%24%3D0.5%26p%24b%24c%24%3Deqti%26o%24n%24%3DBlue%26o%24ms%24%3D0%2C1%26o%24ro%24%3Dcw
+const bangleAccent100 = '#96eeff';
+const bangleAccent200 = '#88e9ff';
+const bangleAccent300 = '#7ae4fe';
+const bangleAccent400 = '#6cdffe';
+const bangleAccent500 = '#5ed9fe';
+const bangleAccent600 = '#46cefc';
+const bangleAccent700 = '#31c3fa';
+const bangleAccent800 = '#21b8f7';
+const bangleAccent900 = '#15adf1';
+const bangleAccent1000 = '#0ca1e6';
+const bangleAccent1200 = '#058bcc';
+const bangleAccent1400 = '#026da3';
+const bangleAccent1500 = '#005580';
+
 const neutralColor: DesignTokens['color']['neutral'] = {
-  bgLayerTop: spectrumLight.gray50,
-  bgLayerMiddle: spectrumLight.gray100,
+  bgLayerTop: spectrumLight.gray100,
+  bgLayerMiddle: spectrumLight.gray50,
   bgLayerBottom: spectrumLight.gray200,
   bgLayerFloat: spectrumLight.gray75,
 
@@ -19,7 +34,7 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   iconSubdued: spectrumLight.gray700,
   icon: spectrumLight.gray800,
 
-  solid: spectrumLight.gray500,
+  solid: spectrumLight.gray700,
   solidText: spectrumLight.gray50,
   solidStrong: spectrumLight.gray600,
   solidStronger: spectrumLight.gray700,
@@ -32,9 +47,10 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 };
 
 const appColor: DesignTokens['color']['app'] = {
-  editorBg: spectrumLight.gray50,
+  editorBg: neutralColor.bgLayerMiddle,
   activitybarBg: 'rgb(26, 32, 44)',
   activitybarText: neutralColor.textInverted,
+  activitybarBtnPress: spectrumLight.gray700,
 };
 
 export const lightColors: DesignTokens['color'] = {
@@ -47,12 +63,13 @@ export const lightColors: DesignTokens['color'] = {
     iconSubdued: spectrumLight.gray700,
     icon: spectrumLight.gray800,
 
-    solid: spectrumLight.gray300,
-    solidText: spectrumLight.gray800,
-    solidStrong: spectrumLight.gray200,
-    solidStronger: spectrumLight.gray200,
-    solidSubdued: spectrumLight.gray400,
-    solidFaint: spectrumLight.gray200,
+    solid: spectrumLight.gray400,
+    solidText: spectrumLight.gray700,
+    solidStrong: spectrumLight.gray500,
+    solidStronger: spectrumLight.gray600,
+    solidSubdued: spectrumLight.gray300,
+    // is same as subdued, since 200 will hit the bglayer level
+    solidFaint: spectrumLight.gray300,
 
     borderSubdued: spectrumLight.gray200,
     border: spectrumLight.gray300,
@@ -110,19 +127,19 @@ export const lightColors: DesignTokens['color'] = {
     borderStrong: spectrumLight.green500,
   },
   promote: {
-    iconDisabled: spectrumLight.blue400,
-    iconSubdued: spectrumLight.blue700,
-    icon: spectrumLight.blue800,
+    iconDisabled: bangleAccent400,
+    iconSubdued: bangleAccent600,
+    icon: bangleAccent700,
 
-    solid: spectrumLight.blue900,
-    solidStrong: spectrumLight.blue900,
-    solidStronger: spectrumLight.blue1000,
-    solidFaint: spectrumLight.blue400,
-    solidSubdued: spectrumLight.blue800,
+    solid: bangleAccent700,
+    solidStrong: bangleAccent800,
+    solidStronger: bangleAccent900,
+    solidFaint: bangleAccent300,
+    solidSubdued: bangleAccent500,
     solidText: neutralColor.textInverted,
 
-    borderSubdued: spectrumLight.blue300,
-    border: spectrumLight.blue400,
-    borderStrong: spectrumLight.blue500,
+    borderSubdued: bangleAccent400,
+    border: bangleAccent600,
+    borderStrong: bangleAccent700,
   },
 };

@@ -51,11 +51,12 @@ export function Activitybar() {
 
   return (
     <div
+      data-testid="app-activitybar_activitybar"
       style={{
         backgroundColor: vars.color.app.activitybarBg,
         color: vars.color.app.activitybarText,
       }}
-      className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen"
+      className="flex flex-col flex-grow pt-2 pb-3 border-r-1 border-colorNeutralBorder"
     >
       <ActivitybarButton
         widescreen={widescreen}

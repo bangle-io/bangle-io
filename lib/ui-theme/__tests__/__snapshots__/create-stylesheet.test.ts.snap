@@ -22,6 +22,7 @@ exports[`createTokens creates tokens correctly 1`] = `
     "color": {
       "app": {
         "activitybarBg": "rgb(26, 32, 44)",
+        "activitybarBtnPress": "rgb(70, 70, 70)",
         "activitybarText": "rgb(255, 255, 255)",
         "editorBg": "rgb(255, 255, 255)",
       },
@@ -64,7 +65,7 @@ exports[`createTokens creates tokens correctly 1`] = `
         "icon": "rgb(34, 34, 34)",
         "iconDisabled": "rgb(177, 177, 177)",
         "iconSubdued": "rgb(70, 70, 70)",
-        "solid": "rgb(144, 144, 144)",
+        "solid": "rgb(70, 70, 70)",
         "solidFaint": "rgb(213, 213, 213)",
         "solidStrong": "rgb(109, 109, 109)",
         "solidStronger": "rgb(70, 70, 70)",
@@ -91,17 +92,17 @@ exports[`createTokens creates tokens correctly 1`] = `
         "solidText": "rgb(255, 255, 255)",
       },
       "promote": {
-        "border": "rgb(150, 206, 253)",
-        "borderStrong": "rgb(120, 187, 250)",
-        "borderSubdued": "rgb(181, 222, 255)",
-        "icon": "rgb(20, 122, 243)",
-        "iconDisabled": "rgb(150, 206, 253)",
-        "iconSubdued": "rgb(56, 146, 243)",
-        "solid": "rgb(2, 101, 220)",
-        "solidFaint": "rgb(150, 206, 253)",
-        "solidStrong": "rgb(2, 101, 220)",
-        "solidStronger": "rgb(0, 84, 182)",
-        "solidSubdued": "rgb(20, 122, 243)",
+        "border": "#46cefc",
+        "borderStrong": "#31c3fa",
+        "borderSubdued": "#6cdffe",
+        "icon": "#31c3fa",
+        "iconDisabled": "#6cdffe",
+        "iconSubdued": "#46cefc",
+        "solid": "#31c3fa",
+        "solidFaint": "#7ae4fe",
+        "solidStrong": "#21b8f7",
+        "solidStronger": "#15adf1",
+        "solidSubdued": "#5ed9fe",
         "solidText": "rgb(255, 255, 255)",
       },
       "secondary": {
@@ -111,12 +112,12 @@ exports[`createTokens creates tokens correctly 1`] = `
         "icon": "rgb(34, 34, 34)",
         "iconDisabled": "rgb(177, 177, 177)",
         "iconSubdued": "rgb(70, 70, 70)",
-        "solid": "rgb(213, 213, 213)",
-        "solidFaint": "rgb(230, 230, 230)",
-        "solidStrong": "rgb(230, 230, 230)",
-        "solidStronger": "rgb(230, 230, 230)",
-        "solidSubdued": "rgb(177, 177, 177)",
-        "solidText": "rgb(34, 34, 34)",
+        "solid": "rgb(177, 177, 177)",
+        "solidFaint": "rgb(213, 213, 213)",
+        "solidStrong": "rgb(144, 144, 144)",
+        "solidStronger": "rgb(109, 109, 109)",
+        "solidSubdued": "rgb(213, 213, 213)",
+        "solidText": "rgb(70, 70, 70)",
       },
     },
     "misc": {},
@@ -225,6 +226,7 @@ exports[`createTokens creates tokens correctly 1`] = `
     "color": {
       "app": {
         "activitybarBg": "test-create-tokens",
+        "activitybarBtnPress": "rgb(75, 75, 75)",
         "activitybarText": "rgb(235, 235, 235)",
         "editorBg": "rgb(0, 0, 0)",
       },
@@ -267,11 +269,11 @@ exports[`createTokens creates tokens correctly 1`] = `
         "icon": "rgb(235, 235, 235)",
         "iconDisabled": "rgb(106, 106, 106)",
         "iconSubdued": "rgb(208, 208, 208)",
-        "solid": "rgb(106, 106, 106)",
-        "solidFaint": "rgb(48, 48, 48)",
-        "solidStrong": "rgb(75, 75, 75)",
-        "solidStronger": "rgb(48, 48, 48)",
-        "solidSubdued": "rgb(141, 141, 141)",
+        "solid": "rgb(141, 141, 141)",
+        "solidFaint": "rgb(75, 75, 75)",
+        "solidStrong": "rgb(176, 176, 176)",
+        "solidStronger": "rgb(208, 208, 208)",
+        "solidSubdued": "rgb(106, 106, 106)",
         "solidText": "rgb(235, 235, 235)",
         "text": "rgb(235, 235, 235)",
         "textDisabled": "rgb(141, 141, 141)",
@@ -314,11 +316,11 @@ exports[`createTokens creates tokens correctly 1`] = `
         "icon": "rgb(235, 235, 235)",
         "iconDisabled": "rgb(106, 106, 106)",
         "iconSubdued": "rgb(208, 208, 208)",
-        "solid": "rgb(75, 75, 75)",
-        "solidFaint": "rgb(48, 48, 48)",
-        "solidStrong": "rgb(48, 48, 48)",
-        "solidStronger": "rgb(48, 48, 48)",
-        "solidSubdued": "rgb(106, 106, 106)",
+        "solid": "rgb(106, 106, 106)",
+        "solidFaint": "rgb(75, 75, 75)",
+        "solidStrong": "rgb(141, 141, 141)",
+        "solidStronger": "rgb(176, 176, 176)",
+        "solidSubdued": "rgb(75, 75, 75)",
         "solidText": "rgb(208, 208, 208)",
       },
     },
@@ -436,6 +438,7 @@ body {
   --BV-border-width-md: 1px;
   --BV-widescreenWidth: 759px;
   --BV-color-app-activitybarBg: rgb(26, 32, 44);
+  --BV-color-app-activitybarBtnPress: rgb(70, 70, 70);
   --BV-color-app-activitybarText: rgb(255, 255, 255);
   --BV-color-app-editorBg: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerTop: rgb(255, 255, 255);
@@ -450,7 +453,7 @@ body {
   --BV-color-neutral-iconDisabled: rgb(177, 177, 177);
   --BV-color-neutral-iconSubdued: rgb(70, 70, 70);
   --BV-color-neutral-icon: rgb(34, 34, 34);
-  --BV-color-neutral-solid: rgb(144, 144, 144);
+  --BV-color-neutral-solid: rgb(70, 70, 70);
   --BV-color-neutral-solidText: rgb(255, 255, 255);
   --BV-color-neutral-solidStrong: rgb(109, 109, 109);
   --BV-color-neutral-solidStronger: rgb(70, 70, 70);
@@ -462,27 +465,27 @@ body {
   --BV-color-secondary-iconDisabled: rgb(177, 177, 177);
   --BV-color-secondary-iconSubdued: rgb(70, 70, 70);
   --BV-color-secondary-icon: rgb(34, 34, 34);
-  --BV-color-secondary-solid: rgb(213, 213, 213);
-  --BV-color-secondary-solidText: rgb(34, 34, 34);
-  --BV-color-secondary-solidStrong: rgb(230, 230, 230);
-  --BV-color-secondary-solidStronger: rgb(230, 230, 230);
-  --BV-color-secondary-solidSubdued: rgb(177, 177, 177);
-  --BV-color-secondary-solidFaint: rgb(230, 230, 230);
+  --BV-color-secondary-solid: rgb(177, 177, 177);
+  --BV-color-secondary-solidText: rgb(70, 70, 70);
+  --BV-color-secondary-solidStrong: rgb(144, 144, 144);
+  --BV-color-secondary-solidStronger: rgb(109, 109, 109);
+  --BV-color-secondary-solidSubdued: rgb(213, 213, 213);
+  --BV-color-secondary-solidFaint: rgb(213, 213, 213);
   --BV-color-secondary-borderSubdued: rgb(230, 230, 230);
   --BV-color-secondary-border: rgb(213, 213, 213);
   --BV-color-secondary-borderStrong: rgb(177, 177, 177);
-  --BV-color-promote-iconDisabled: rgb(150, 206, 253);
-  --BV-color-promote-iconSubdued: rgb(56, 146, 243);
-  --BV-color-promote-icon: rgb(20, 122, 243);
-  --BV-color-promote-solid: rgb(2, 101, 220);
+  --BV-color-promote-iconDisabled: #6cdffe;
+  --BV-color-promote-iconSubdued: #46cefc;
+  --BV-color-promote-icon: #31c3fa;
+  --BV-color-promote-solid: #31c3fa;
   --BV-color-promote-solidText: rgb(255, 255, 255);
-  --BV-color-promote-solidStrong: rgb(2, 101, 220);
-  --BV-color-promote-solidStronger: rgb(0, 84, 182);
-  --BV-color-promote-solidSubdued: rgb(20, 122, 243);
-  --BV-color-promote-solidFaint: rgb(150, 206, 253);
-  --BV-color-promote-borderSubdued: rgb(181, 222, 255);
-  --BV-color-promote-border: rgb(150, 206, 253);
-  --BV-color-promote-borderStrong: rgb(120, 187, 250);
+  --BV-color-promote-solidStrong: #21b8f7;
+  --BV-color-promote-solidStronger: #15adf1;
+  --BV-color-promote-solidSubdued: #5ed9fe;
+  --BV-color-promote-solidFaint: #7ae4fe;
+  --BV-color-promote-borderSubdued: #6cdffe;
+  --BV-color-promote-border: #46cefc;
+  --BV-color-promote-borderStrong: #31c3fa;
   --BV-color-caution-iconDisabled: rgb(255, 187, 99);
   --BV-color-caution-iconSubdued: rgb(228, 111, 0);
   --BV-color-caution-icon: rgb(203, 93, 0);

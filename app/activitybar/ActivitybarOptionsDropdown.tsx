@@ -169,7 +169,7 @@ export function ActivitybarOptionsDropdown({
       buttonAriaLabel={'options menu'}
       buttonStyling={buttonStyling}
       buttonClassName={cx(
-        'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
+        'w-full py-3 rounded-sm flex justify-center',
         widescreen && 'BU_widescreen',
       )}
       buttonChildren={

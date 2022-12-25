@@ -28,6 +28,7 @@ const tokensShape: DesignTokens = {
   color: {
     app: {
       activitybarBg: '',
+      activitybarBtnPress: '',
       activitybarText: '',
       editorBg: '',
     },

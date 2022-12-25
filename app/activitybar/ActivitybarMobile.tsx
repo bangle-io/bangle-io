@@ -66,7 +66,10 @@ export function ActivitybarMobileDumb({
 
   return (
     <>
-      <div className="flex flex-row px-2 align-center B-activitybar_activitybar bg-colorAppActivitybarBg w-full">
+      <div
+        data-testid="app-activitybar_activitybar-mobile"
+        className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full"
+      >
         <div className="flex flex-row items-center flex-none">
           {primaryWsPath ? (
             <ActivitybarButton

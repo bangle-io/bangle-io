@@ -21,6 +21,7 @@ exports[`cssCustomProperties snapshot 1`] = `
   "color": {
     "app": {
       "activitybarBg": "--BV-color-app-activitybarBg",
+      "activitybarBtnPress": "--BV-color-app-activitybarBtnPress",
       "activitybarText": "--BV-color-app-activitybarText",
       "editorBg": "--BV-color-app-editorBg",
     },
@@ -227,6 +228,7 @@ exports[`vars snapshot 1`] = `
   "color": {
     "app": {
       "activitybarBg": "var(--BV-color-app-activitybarBg)",
+      "activitybarBtnPress": "var(--BV-color-app-activitybarBtnPress)",
       "activitybarText": "var(--BV-color-app-activitybarText)",
       "editorBg": "var(--BV-color-app-editorBg)",
     },

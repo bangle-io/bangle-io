@@ -248,7 +248,7 @@ test('activitybarIconShow is respected', async () => {
     [
       <button
         aria-label="test-search-hint"
-        class="w-full py-3 rounded-sm flex justify-center B-activitybar_button BU_widescreen  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press BU_is-active is-quiet "
+        class="w-full py-3 rounded-sm flex justify-center border-l-2  border-colorPromoteBorder  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press BU_is-active is-quiet "
         type="button"
       >
         <span

@@ -107,6 +107,7 @@ export type DesignTokens = {
       editorBg: string;
       activitybarBg: string;
       activitybarText: string;
+      activitybarBtnPress: string;
     };
   };
 

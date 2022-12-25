@@ -62,7 +62,7 @@ export function Editorbar({
         text={path}
         size="xs"
         tone={TONE.SECONDARY}
-        variant={!isActive ? BUTTON_VARIANT.TRANSPARENT : BUTTON_VARIANT.SOLID}
+        variant={!isActive ? BUTTON_VARIANT.TRANSPARENT : BUTTON_VARIANT.SOFT}
         onPress={openNotesPalette}
       />
 
