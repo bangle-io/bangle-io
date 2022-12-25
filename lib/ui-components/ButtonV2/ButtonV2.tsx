@@ -149,15 +149,15 @@ export function ButtonV2({
       })}
       className={cx(
         className,
-        'select-none inline-flex justify-center items-center rounded-md ',
+        'select-none inline-flex justify-center items-center rounded-md',
         isTouch ? 'py-2' : 'py-1',
         isFocusVisible &&
           focus?.allowFocusRing &&
-          'ring-2 ring-bgBrandAccent ring-offset-3 ring-offset-bgSurface',
+          'ring-2 ring-colorPromoteBorder ring-offset-2 ring-offset-colorNeutralTextInverted',
         animateOnPress
           ? 'transition-all duration-100'
           : 'transition-colors duration-100',
-        animateOnPress && isPressed ? (isTouch ? 'scale-94' : 'scale-97') : '',
+        animateOnPress && isPressed && (isTouch ? 'scale-94' : 'scale-97'),
         isDisabled ? 'cursor-not-allowed ' : 'cursor-pointer',
       )}
     >

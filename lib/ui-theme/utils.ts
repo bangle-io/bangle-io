@@ -16,7 +16,6 @@ export function cx(...args: any[]): string {
   return classes;
 }
 
-// copied from: https://github.com/seek-oss/braid-design-system
 type LinearGradients = Array<{
   colorStops: Array<{
     type: string;

@@ -17,38 +17,57 @@ export function isPlainObject(value: any) {
   );
 }
 
+const _deepMerge = (
+  target: Record<string, any>,
+  source: Record<string, any>,
+  rootPath = '',
+) => {
+  target = { ...target };
+  Object.keys(source).forEach((key) => {
+    if (isPlainObject(target[key])) {
+      target[key] = _deepMerge(
+        target[key],
+        source[key],
+        rootPath ? `${rootPath}.${key}` : key,
+      );
+    } else if (Array.isArray(target[key]) && Array.isArray(source[key])) {
+      target[key] = [...target[key], ...source[key]];
+    } else {
+      target[key] = source[key];
+    }
+  });
+
+  return target;
+};
+
 /**
  *
  * @param target the target object to merge into
- * @param source will traverse this object and merge into target
+ * @param ...source will traverse this object and merge into target
  * @returns
  */
 export function deepMerge(
   target: Record<string, any>,
-  source: Record<string, any>,
+  ...source: Array<Record<string, any>>
 ) {
-  const _deepMerge = (
-    target: Record<string, any>,
-    source: Record<string, any>,
-    rootPath = '',
-  ) => {
-    target = { ...target };
-    Object.keys(source).forEach((key) => {
-      if (isPlainObject(target[key])) {
-        target[key] = _deepMerge(
-          target[key],
-          source[key],
-          rootPath ? `${rootPath}.${key}` : key,
-        );
-      } else if (Array.isArray(target[key]) && Array.isArray(source[key])) {
-        target[key] = [...target[key], ...source[key]];
-      } else {
-        target[key] = source[key];
-      }
-    });
+  let result = { ...target };
 
-    return target;
-  };
+  source.forEach((s) => {
+    result = _deepMerge(result, s);
+  });
 
-  return _deepMerge(target, source);
+  return result;
+}
+export function difference<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
+  const a = new Set(main);
+  const b = new Set(sub);
+
+  return [...a].filter((x) => !b.has(x));
+}
+
+export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
+  const a = new Set(main);
+  const b = new Set(sub);
+
+  return [...new Set([...a].filter((x) => b.has(x)))];
 }

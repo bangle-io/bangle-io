@@ -7,9 +7,12 @@ const fileName = 'core-theme.css';
 
 const cssString = createStyleSheet({
   name: 'core-theme',
-  color: {
-    light: {},
-    dark: {},
+  type: 'light/dark',
+  theme: {
+    color: {
+      light: {},
+      dark: {},
+    },
   },
 });
 

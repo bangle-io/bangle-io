@@ -1,111 +1,510 @@
-import { createStyleSheet } from '../create-stylesheet';
-import { createTokens } from '../create-tokens';
+import {
+  createSmallScreenOverride,
+  createStyleSheetObj,
+  CSS_BODY,
+  CSS_DARK_THEME,
+  CSS_LIGHT_THEME,
+  CSS_ROOT,
+  CSS_SM_BODY,
+  CSS_SM_DARK_THEME,
+  CSS_SM_LIGHT_THEME,
+} from '../create-stylesheet';
 
-test('creates a stylesheet', () => {
-  let result = createStyleSheet({
-    name: 'core-theme-test',
-    border: {},
+const defaultSheetSingle = createStyleSheetObj({
+  type: 'single',
+  name: 'core-theme-test',
+  theme: {
     color: {},
-  });
-  expect(result).toMatchSnapshot();
+  },
 });
 
-test('is able to override color stylesheet', () => {
-  let original = createStyleSheet({
-    name: 'core-theme-test',
-    border: {},
-    color: {
-      caution: {},
-    },
+const defaultObjLightDark = createStyleSheetObj({
+  type: 'light/dark',
+  name: 'core-theme-test',
+  theme: {},
+});
+
+describe('default', () => {
+  test('sets correct keys', () => {
+    let result = createStyleSheetObj({
+      type: 'single',
+      name: 'core-theme-test',
+      theme: {
+        color: {},
+      },
+    });
+
+    expect(Object.keys(result)).toEqual([CSS_BODY, CSS_ROOT, CSS_SM_BODY]);
   });
 
-  expect(original).toContain('--BV-color-caution-icon: rgb(203, 93, 0);');
+  test('matches with the default', () => {
+    expect(
+      createStyleSheetObj({
+        type: 'single',
+        name: 'core-theme-test',
+        theme: {
+          color: {},
+        },
+      }),
+    ).toEqual(defaultSheetSingle);
+    expect(
+      createStyleSheetObj({
+        type: 'light/dark',
+        name: 'core-theme-test',
+        theme: {},
+      }),
+    ).toEqual(defaultObjLightDark);
+  });
 
-  let override = createStyleSheet({
+  test('sets body', () => {
+    let result = createStyleSheetObj({
+      type: 'single',
+      name: 'core-theme-test',
+      theme: {
+        color: {},
+      },
+    });
+
+    expect(result[CSS_BODY]).toMatchSnapshot();
+  });
+
+  test('sets root', () => {
+    let result = createStyleSheetObj({
+      type: 'single',
+      name: 'core-theme-test',
+      theme: {
+        color: {},
+      },
+    });
+
+    expect(result[CSS_ROOT]).toMatchSnapshot();
+  });
+
+  test('sets sm override', () => {
+    let result = createStyleSheetObj({
+      type: 'single',
+      name: 'core-theme-test',
+      theme: {
+        color: {},
+      },
+    });
+
+    expect(result[CSS_SM_BODY]).toMatchSnapshot();
+  });
+});
+
+describe('default light/dark', () => {
+  let result = createStyleSheetObj({
+    type: 'light/dark',
     name: 'core-theme-test',
-    border: {},
-    color: {
-      caution: {
-        icon: 'red',
+    theme: {
+      color: {
+        light: {},
+        dark: {},
       },
     },
   });
-  expect(override).toContain('--BV-color-caution-icon: red;');
+
+  test('sets keys correctly in light/dark', () => {
+    expect(Object.keys(result)).toEqual([
+      CSS_BODY,
+      CSS_ROOT,
+      CSS_LIGHT_THEME,
+      CSS_DARK_THEME,
+      CSS_SM_LIGHT_THEME,
+      CSS_SM_DARK_THEME,
+    ]);
+  });
+
+  test('sets root content', () => {
+    expect(result[CSS_ROOT]).toMatchSnapshot();
+  });
+
+  test('sets light dark content', () => {
+    expect(result[CSS_DARK_THEME]).toMatchSnapshot();
+    expect(result[CSS_LIGHT_THEME]).toMatchSnapshot();
+  });
+
+  test('sets sm override', () => {
+    expect(result[CSS_SM_DARK_THEME]).toMatchInlineSnapshot(`
+      [
+        "--BV-color-app-activitybarBg: rgb(14, 14, 14);",
+      ]
+    `);
+    expect(result[CSS_SM_LIGHT_THEME]).toMatchInlineSnapshot(`
+      [
+        "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
+      ]
+    `);
+  });
 });
 
-describe('createTokens', () => {
-  test('creates tokens correctly', () => {
-    const result = createTokens({
+describe('overrides', () => {
+  test('is able to override color stylesheet', () => {
+    let original = createStyleSheetObj({
+      type: 'single',
       name: 'core-theme-test',
-      border: {},
-      color: {
-        dark: {
-          app: {
-            activitybarBg: 'test-create-tokens',
-          },
-        },
-        light: {
+      theme: {
+        color: {
           caution: {},
         },
       },
     });
 
-    expect(result).toMatchSnapshot();
+    expect(original[CSS_ROOT]).toContain(
+      '--BV-color-caution-icon: rgb(203, 93, 0);',
+    );
+
+    let override = createStyleSheetObj({
+      type: 'single',
+      name: 'core-theme-test',
+      theme: {
+        color: {
+          caution: {
+            icon: 'red',
+          },
+        },
+      },
+    });
+    expect(override[CSS_ROOT]).toContain('--BV-color-caution-icon: red;');
+  });
+
+  test('overrides light/dark', () => {
+    let original = createStyleSheetObj({
+      type: 'light/dark',
+      name: 'core-theme-test',
+      theme: {
+        color: {
+          dark: {
+            caution: {
+              icon: 'dark-red',
+            },
+          },
+          light: {
+            caution: {
+              icon: 'light-red',
+            },
+          },
+        },
+      },
+    });
+
+    expect(original[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
+    expect(original[CSS_DARK_THEME]).toContain(
+      '--BV-color-caution-icon: dark-red;',
+    );
+    expect(original[CSS_LIGHT_THEME]).toContain(
+      '--BV-color-caution-icon: light-red;',
+    );
   });
 
   test('is able to override only light', () => {
-    let override = createTokens({
+    let override = createStyleSheetObj({
+      type: 'light/dark',
       name: 'core-theme-test',
-      border: {},
-      color: {
-        dark: {
-          caution: {},
-        },
-        light: {
-          caution: {
-            icon: 'light-red',
+      theme: {
+        color: {
+          dark: {
+            caution: {},
+          },
+          light: {
+            caution: {
+              icon: 'light-red',
+            },
           },
         },
       },
     });
 
-    if (!Array.isArray(override)) {
-      throw new Error('Expected an array');
-    }
+    expect(override[CSS_ROOT]?.join(',')).not.toContain(
+      '--BV-color-caution-icon:',
+    );
 
-    const lightResult = override[0];
-    const darkResult = override[1];
+    expect(override[CSS_DARK_THEME]).toContain(
+      '--BV-color-caution-icon: rgb(232, 116, 0);',
+    );
 
-    expect(lightResult.color.caution.icon).toContain('light-red');
-    expect(darkResult.color.caution.icon).toContain('rgb(232, 116, 0)');
+    expect(override[CSS_LIGHT_THEME]).toContain(
+      '--BV-color-caution-icon: light-red;',
+    );
   });
 
-  test('is able to app', () => {
-    let override = createTokens({
+  test('is able to override only dark', () => {
+    let override = createStyleSheetObj({
+      type: 'light/dark',
       name: 'core-theme-test',
-      border: {},
-      color: {
-        dark: {
-          app: {
-            activitybarBg: 'activitybar-dark-red',
+      theme: {
+        color: {
+          dark: {
+            caution: {
+              icon: 'dark-red',
+            },
           },
-        },
-        light: {
-          caution: {},
+          light: {},
         },
       },
     });
 
-    if (!Array.isArray(override)) {
-      throw new Error('Expected an array');
-    }
-
-    const lightResult = override[0];
-    const darkResult = override[1];
-
-    expect(darkResult.color.app.activitybarBg).toContain(
-      'activitybar-dark-red',
+    expect(override[CSS_ROOT]?.join(',')).not.toContain(
+      '--BV-color-caution-icon:',
     );
-    expect(lightResult.color.app.activitybarBg).toContain('rgb(26, 32, 44)');
+
+    expect(override[CSS_DARK_THEME]).toContain(
+      '--BV-color-caution-icon: dark-red;',
+    );
+
+    expect(override[CSS_LIGHT_THEME]).toContain(
+      '--BV-color-caution-icon: rgb(203, 93, 0);',
+    );
+  });
+
+  test('is able to set app', () => {
+    let override = createStyleSheetObj({
+      type: 'light/dark',
+      name: 'core-theme-test',
+      theme: {
+        color: {
+          dark: {
+            app: {
+              activitybarBg: 'activitybar-dark-red',
+            },
+          },
+          light: {
+            caution: {},
+          },
+        },
+      },
+    });
+    expect(override[CSS_DARK_THEME]).toContain(
+      '--BV-color-app-activitybarBg: activitybar-dark-red;',
+    );
+    expect(override[CSS_LIGHT_THEME]).toContain(
+      '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
+    );
+  });
+});
+
+describe('smallscreen overrides', () => {
+  test('createSmallScreenOverride', () => {
+    expect(
+      createSmallScreenOverride({
+        color: {
+          app: {
+            activitybarBg: 'sm-dark-red',
+          },
+        },
+      }),
+    ).toEqual(['--BV-color-app-activitybarBg: sm-dark-red;']);
+
+    expect(
+      createSmallScreenOverride({
+        color: {
+          app: {
+            activitybarBg: 'sm-dark-red',
+          },
+        },
+
+        border: {
+          radius: {
+            md: 'sm-1',
+          },
+        },
+      }),
+    ).toEqual([
+      '--BV-border-radius-md: sm-1;',
+      '--BV-color-app-activitybarBg: sm-dark-red;',
+    ]);
+
+    expect(createSmallScreenOverride({})).toEqual([]);
+  });
+
+  test('works with no theme color', () => {
+    let override = createStyleSheetObj({
+      type: 'light/dark',
+      name: 'core-theme-test',
+      theme: {},
+      smallscreenOverride: {
+        color: {
+          dark: {
+            caution: {
+              icon: 'sm-dark-red',
+            },
+          },
+          light: {
+            caution: {
+              icon: 'sm-light-red',
+            },
+          },
+        },
+      },
+    });
+
+    expect(Object.keys(override)).toEqual([
+      CSS_BODY,
+      CSS_ROOT,
+      CSS_LIGHT_THEME,
+      CSS_DARK_THEME,
+      CSS_SM_LIGHT_THEME,
+      CSS_SM_DARK_THEME,
+    ]);
+
+    expect(override[CSS_ROOT]).toEqual(defaultObjLightDark[CSS_ROOT]);
+    expect(override[CSS_DARK_THEME]).toEqual(
+      defaultObjLightDark[CSS_DARK_THEME],
+    );
+
+    expect(override[CSS_LIGHT_THEME]).toEqual(
+      defaultObjLightDark[CSS_LIGHT_THEME],
+    );
+
+    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+      '--BV-color-caution-icon: sm-light-red;',
+    );
+
+    expect(override[CSS_SM_DARK_THEME]).toContain(
+      '--BV-color-caution-icon: sm-dark-red;',
+    );
+  });
+
+  test('works with radius', () => {
+    let override = createStyleSheetObj({
+      type: 'light/dark',
+      name: 'core-theme-test',
+      theme: {},
+      smallscreenOverride: {
+        border: {
+          radius: {
+            md: 'nanty',
+          },
+        },
+      },
+    });
+
+    expect(Object.keys(override)).toEqual([
+      CSS_BODY,
+      CSS_ROOT,
+      CSS_LIGHT_THEME,
+      CSS_DARK_THEME,
+      CSS_SM_LIGHT_THEME,
+      CSS_SM_DARK_THEME,
+    ]);
+
+    expect(override[CSS_ROOT]).toEqual(defaultObjLightDark[CSS_ROOT]);
+    expect(override[CSS_DARK_THEME]).toEqual(
+      defaultObjLightDark[CSS_DARK_THEME],
+    );
+
+    expect(override[CSS_LIGHT_THEME]).toEqual(
+      defaultObjLightDark[CSS_LIGHT_THEME],
+    );
+
+    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+      '--BV-border-radius-md: nanty;',
+    );
+
+    expect(override[CSS_SM_DARK_THEME]).toContain(
+      '--BV-border-radius-md: nanty;',
+    );
+  });
+
+  test('works with theme colors', () => {
+    let override = createStyleSheetObj({
+      type: 'light/dark',
+      name: 'core-theme-test',
+      theme: {
+        color: {
+          dark: {
+            caution: {
+              icon: 'dark-red',
+            },
+          },
+          light: {
+            caution: {
+              icon: 'light-red',
+            },
+          },
+        },
+      },
+      smallscreenOverride: {
+        color: {
+          dark: {
+            caution: {
+              icon: 'sm-dark-red',
+            },
+          },
+          light: {
+            caution: {
+              icon: 'sm-light-red',
+            },
+          },
+        },
+      },
+    });
+
+    expect(Object.keys(override)).toEqual([
+      CSS_BODY,
+      CSS_ROOT,
+      CSS_LIGHT_THEME,
+      CSS_DARK_THEME,
+      CSS_SM_LIGHT_THEME,
+      CSS_SM_DARK_THEME,
+    ]);
+
+    expect(override[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
+    expect(override[CSS_DARK_THEME]).toContain(
+      '--BV-color-caution-icon: dark-red;',
+    );
+    expect(override[CSS_LIGHT_THEME]).toContain(
+      '--BV-color-caution-icon: light-red;',
+    );
+
+    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+      '--BV-color-caution-icon: sm-light-red;',
+    );
+
+    expect(override[CSS_SM_DARK_THEME]).toContain(
+      '--BV-color-caution-icon: sm-dark-red;',
+    );
+  });
+
+  test('is able to set app', () => {
+    let override = createStyleSheetObj({
+      type: 'light/dark',
+      name: 'core-theme-test',
+      theme: {
+        color: {
+          dark: {
+            app: {
+              activitybarBg: 'activitybar-dark-red',
+            },
+          },
+          light: {
+            caution: {},
+          },
+        },
+      },
+      smallscreenOverride: {
+        color: {
+          dark: {
+            app: {
+              activitybarBg: 'sm-activitybar-dark-red',
+            },
+          },
+        },
+      },
+    });
+    expect(override[CSS_DARK_THEME]).toContain(
+      '--BV-color-app-activitybarBg: activitybar-dark-red;',
+    );
+    expect(override[CSS_LIGHT_THEME]).toContain(
+      '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
+    );
+    expect(override[CSS_SM_DARK_THEME]).toContain(
+      '--BV-color-app-activitybarBg: sm-activitybar-dark-red;',
+    );
+
+    expect(override[CSS_SM_LIGHT_THEME]).toEqual([
+      '--BV-color-app-activitybarBg: rgb(255, 255, 255);',
+    ]);
   });
 });

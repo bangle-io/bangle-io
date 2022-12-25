@@ -1,91 +1,190 @@
-import { getFromPath, vars, walkObject } from '@bangle.io/atomic-css';
-import type { BangleThemeInput, DesignTokens } from '@bangle.io/shared-types';
+import {
+  createRawVar,
+  getFromPath,
+  vars,
+  walkObject,
+} from '@bangle.io/atomic-css';
+import { deepMerge, difference, intersect } from '@bangle.io/mini-js-utils';
+import type {
+  BangleThemeInputLightDark,
+  BangleThemeInputSingle,
+  DesignTokens,
+} from '@bangle.io/shared-types';
 
-import { createTokens } from './create-tokens';
-import type { BangleMiscTokens } from './types';
+import {
+  defaultsDark,
+  defaultsLight,
+  defaultSmallScreenOverrideLightDark,
+  defaultSmallScreenOverrideSingle,
+} from './default-tokens';
 
 if (typeof window !== 'undefined') {
   // This package is only meant to be used for creating stylesheets in node.js
   throw new Error('This file should not be imported in browser');
 }
 
-export function createStyleSheet(
-  theme: BangleThemeInput,
-  misc?: BangleMiscTokens,
-) {
-  if ('light' in theme.color && !('dark' in theme.color)) {
-    throw new Error('theme color must have both light and dark or none');
-  }
+export const CSS_ROOT = ':root';
+export const CSS_BODY = 'body';
+export const CSS_SM_BODY = 'body.BU_smallscreen';
+export const CSS_LIGHT_THEME = `.light-theme`;
+export const CSS_SM_LIGHT_THEME = `.light-theme.BU_smallscreen`;
+export const CSS_DARK_THEME = `.dark-theme`;
+export const CSS_SM_DARK_THEME = `.dark-theme.BU_smallscreen`;
 
-  if ('dark' in theme.color && !('light' in theme.color)) {
-    throw new Error('theme color must have both light and dark or none');
-  }
+type CssBlocks = Record<string, string[]>;
 
-  const tokens = createTokens(theme, misc);
-  let bareMinimums = setBareMinimums();
+const base = {
+  [CSS_BODY]: [
+    `background-color: ${vars.color.neutral.bgLayerBottom};`,
+    `color: ${vars.color.neutral.text};`,
+  ],
+};
 
-  if (!Array.isArray(tokens)) {
-    return appendBlock(
-      bareMinimums,
-      wrapVarsCss(':root', cssVarsToStrArray(convertTokensToVars(tokens))),
+export function createStyleSheetObj(
+  obj:
+    | {
+        type: 'light/dark';
+        name: string;
+        theme: BangleThemeInputLightDark;
+        smallscreenOverride?: BangleThemeInputLightDark;
+      }
+    | {
+        type: 'single';
+        name: string;
+        theme: BangleThemeInputSingle;
+        smallscreenOverride?: BangleThemeInputSingle;
+      },
+): CssBlocks {
+  let result: CssBlocks = { ...base };
+
+  if (obj.type === 'single') {
+    result = {
+      ...result,
+      [CSS_ROOT]: mergeWithDefaults(obj.name, defaultsLight, obj.theme),
+    };
+
+    let smOverride = deepMerge(
+      defaultSmallScreenOverrideSingle,
+      obj.smallscreenOverride || {},
     );
+
+    result = {
+      ...result,
+      [CSS_SM_BODY]: createSmallScreenOverride(smOverride),
+    };
+
+    return result;
   }
 
-  const common = new Set<string>();
-
-  const lightVarsSet = new Set(
-    cssVarsToStrArray(
-      convertTokensToVars(tokens.find((t) => t.uid.endsWith('-light'))!),
-    ),
+  const { light: lightInput, dark: darkInput } = normalizeLightDarkInput(
+    obj.theme,
   );
 
-  const darkVarsSet = new Set(
-    cssVarsToStrArray(
-      convertTokensToVars(tokens.find((t) => t.uid.endsWith('-dark'))!),
-    ),
+  const lightThemeVars = mergeWithDefaults(obj.name, defaultsLight, lightInput);
+  const darkThemeVars = mergeWithDefaults(obj.name, defaultsDark, darkInput);
+
+  const common = intersect(lightThemeVars, darkThemeVars);
+
+  result = {
+    ...result,
+    [CSS_ROOT]: common,
+    [CSS_LIGHT_THEME]: difference(lightThemeVars, common),
+    [CSS_DARK_THEME]: difference(darkThemeVars, common),
+  };
+
+  let smOverride = deepMerge(
+    defaultSmallScreenOverrideLightDark,
+    obj.smallscreenOverride || {},
   );
+  const { light: lightOverride, dark: darkOverride } =
+    normalizeLightDarkInput(smOverride);
 
-  let lightVars: string[] = [];
+  result = {
+    ...result,
+    [CSS_SM_LIGHT_THEME]: createSmallScreenOverride(lightOverride),
+    [CSS_SM_DARK_THEME]: createSmallScreenOverride(darkOverride),
+  };
 
-  lightVarsSet.forEach((item) => {
-    if (darkVarsSet.has(item)) {
-      common.add(item);
-    } else {
-      lightVars.push(item);
+  return result;
+}
+
+function normalizeLightDarkInput(input: BangleThemeInputLightDark): {
+  light: BangleThemeInputSingle;
+  dark: BangleThemeInputSingle;
+} {
+  const { color, ...otherProps } = input;
+  const { light, dark } = color || {};
+
+  return {
+    light: { ...otherProps, color: light || {} },
+    dark: {
+      ...otherProps,
+      color: dark || {},
+    },
+  };
+}
+
+function mergeWithDefaults(
+  name: string,
+  defaultValue: DesignTokens,
+  theme: BangleThemeInputSingle,
+) {
+  const mergedTokens = deepMerge(defaultValue, {
+    theme: name,
+    ...theme,
+  });
+
+  return cssVarsToStrArray(convertTokensToVars(mergedTokens));
+}
+
+export function createStyleSheet(
+  obj:
+    | {
+        type: 'light/dark';
+        name: string;
+        theme: BangleThemeInputLightDark;
+        smallscreenOverride?: BangleThemeInputLightDark;
+      }
+    | {
+        type: 'single';
+        name: string;
+        theme: BangleThemeInputSingle;
+        smallscreenOverride?: BangleThemeInputSingle;
+      },
+): string {
+  const result = createStyleSheetObj(obj);
+
+  return Object.entries(result).reduce((prev, cur) => {
+    return (
+      prev +
+      '\n\n' +
+      wrapVarsCss(
+        cur[0],
+        cur[1].map((v) => '  ' + v.trim()),
+      )
+    );
+  }, '');
+}
+
+export function createSmallScreenOverride(override: BangleThemeInputSingle) {
+  let result: Array<[string, string]> = [];
+
+  walkObject(override as any, (value, path) => {
+    if (typeof value === 'string') {
+      result.push([createRawVar(path), value]);
     }
   });
 
-  let darkVars: string[] = [];
-
-  darkVarsSet.forEach((item) => {
-    if (lightVarsSet.has(item)) {
-      common.add(item);
-    } else {
-      darkVars.push(item);
-    }
-  });
-
-  let str = bareMinimums;
-
-  str = appendBlock(str, wrapVarsCss(':root', [...common]));
-  str = appendBlock(
-    str,
-    wrapVarsCss(".light-theme, html[data-theme='light']", [...lightVars]),
-  );
-
-  str = appendBlock(
-    str,
-    wrapVarsCss(".dark-theme, html[data-theme='dark']", [...darkVars]),
-  );
-
-  return str;
+  return cssVarsToStrArray(result).sort();
 }
 
-function cssVarsToStrArray(vars: Array<[string, string]>) {
-  return vars.map(([property, value]) => `  ${property}: ${value};`);
+export function cssVarsToStrArray(vars: Array<[string, string]>) {
+  return vars.map(([property, value]) => `${property}: ${value};`);
 }
 
-function convertTokensToVars(_tokens: DesignTokens): Array<[string, string]> {
+export function convertTokensToVars(
+  _tokens: Record<string, any>,
+): Array<[string, string]> {
   let tokens = _tokens;
   let result: Array<[string, string]> = [];
 
@@ -96,11 +195,11 @@ function convertTokensToVars(_tokens: DesignTokens): Array<[string, string]> {
 
     let property = value.slice('var('.length, -1);
 
-    value = getFromPath(tokens, path);
+    let val = getFromPath(tokens, path);
 
     // remove uid from tokens as it does  have any use in css vars
-    if (!property.endsWith('-uid')) {
-      result.push([property, value]);
+    if (!property.endsWith('-uid') && typeof val === 'string') {
+      result.push([property, val]);
     }
   });
 
@@ -114,15 +213,4 @@ ${header} {
   ${cssLines.join('\n')}
 }
 /* stylelint-enable */`.trim();
-}
-
-function setBareMinimums() {
-  return wrapVarsCss('body', [
-    `  background-color: ${vars.color.neutral.bgLayerBottom};`,
-    `  color: ${vars.color.neutral.text};`,
-  ]);
-}
-
-function appendBlock(sourceStr: string, blockStr: string): string {
-  return sourceStr + '\n\n' + blockStr;
 }

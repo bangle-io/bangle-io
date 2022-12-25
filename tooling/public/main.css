@@ -6,7 +6,7 @@
   z-index: var(--BV-window-modal-z-index);
 }
 
-html[data-theme='dark'] #dialog-container {
+.dark-theme #dialog-container {
   color-scheme: dark;
 }
 

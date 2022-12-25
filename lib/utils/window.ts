@@ -93,4 +93,12 @@ export function applyTheme(theme?: ThemeType) {
   console.debug('applying theme', theme);
 
   document.documentElement.setAttribute('data-theme', theme);
+
+  if (theme === 'dark') {
+    document.body.classList.remove('light-theme');
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+    document.body.classList.add('light-theme');
+  }
 }

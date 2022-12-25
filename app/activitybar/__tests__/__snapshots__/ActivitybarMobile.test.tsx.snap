@@ -12,25 +12,28 @@ exports[`renders mobile view 1`] = `
       >
         <button
           aria-label="Go home"
-          class="w-full py-3 rounded-sm flex justify-center mr-1  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+          class="mr-1 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+          style="background-color: transparent;"
           type="button"
         >
-          <svg
-            class="w-6 h-6 "
-            fill="currentColor"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              fill="#ff13dc"
-              height="18"
-              opacity="0"
-              width="18"
-            />
-            <path
-              d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
-            />
-          </svg>
+          <span>
+            <svg
+              class="w-6 h-6 w-6 h-6  "
+              fill="currentColor"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="#ff13dc"
+                height="18"
+                opacity="0"
+                width="18"
+              />
+              <path
+                d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+              />
+            </svg>
+          </span>
         </button>
       </div>
       <div

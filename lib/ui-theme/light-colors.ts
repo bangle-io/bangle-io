@@ -36,8 +36,8 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 
   solid: spectrumLight.gray700,
   solidText: spectrumLight.gray50,
-  solidStrong: spectrumLight.gray600,
-  solidStronger: spectrumLight.gray700,
+  solidStrong: spectrumLight.gray700,
+  solidStronger: spectrumLight.gray900,
   solidSubdued: spectrumLight.gray400,
   solidFaint: spectrumLight.gray300,
 

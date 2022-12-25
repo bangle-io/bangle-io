@@ -32,7 +32,18 @@ export const parameters = {
 };
 
 const defaultTheme = 'light';
-document.documentElement.setAttribute('data-theme', defaultTheme);
+setTheme(defaultTheme);
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    document.body.classList.remove('light-theme');
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+    document.body.classList.add('light-theme');
+  }
+}
 
 export const globalTypes = {
   theme: {
@@ -53,7 +64,7 @@ export const globalTypes = {
 
 const withThemeProvider = (Story, context) => {
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', context.globals.theme);
+    setTheme(context.globals.theme);
   }, [context.globals.theme]);
   return createElement(Story, null);
 };

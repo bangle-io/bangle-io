@@ -385,8 +385,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
     >
       <button
         aria-label="Go home"
-        autoFocus={false}
-        className="w-full py-3 rounded-sm flex justify-center mr-1  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+        className="mr-1 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -403,27 +402,30 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "color": "var(--BV-color-app-activitybarText)",
+            "backgroundColor": "transparent",
+            "color": "var(--BV-color-neutral-text)",
           }
         }
         type="button"
       >
-        <svg
-          className="w-6 h-6 "
-          fill="currentColor"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect
-            fill="#ff13dc"
-            height="18"
-            opacity="0"
-            width="18"
-          />
-          <path
-            d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
-          />
-        </svg>
+        <span>
+          <svg
+            className="w-6 h-6 w-6 h-6  "
+            fill="currentColor"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="#ff13dc"
+              height="18"
+              opacity="0"
+              width="18"
+            />
+            <path
+              d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+            />
+          </svg>
+        </span>
       </button>
     </div>
     <div
@@ -564,8 +566,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
     >
       <button
         aria-label="Go home"
-        autoFocus={false}
-        className="w-full py-3 rounded-sm flex justify-center mr-1  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+        className="mr-1 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -582,27 +583,30 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "color": "var(--BV-color-app-activitybarText)",
+            "backgroundColor": "transparent",
+            "color": "var(--BV-color-neutral-text)",
           }
         }
         type="button"
       >
-        <svg
-          className="w-6 h-6 "
-          fill="currentColor"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect
-            fill="#ff13dc"
-            height="18"
-            opacity="0"
-            width="18"
-          />
-          <path
-            d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
-          />
-        </svg>
+        <span>
+          <svg
+            className="w-6 h-6 w-6 h-6  "
+            fill="currentColor"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="#ff13dc"
+              height="18"
+              opacity="0"
+              width="18"
+            />
+            <path
+              d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+            />
+          </svg>
+        </span>
       </button>
     </div>
     <div
@@ -736,7 +740,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
 >
   <div>
     <button
-      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -762,7 +766,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
       Show warning
     </button>
     <button
-      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -788,7 +792,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
       Show error
     </button>
     <button
-      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="ml-2 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -916,7 +920,7 @@ exports[`Storyshots editor-container/EditorIssueComp Error 1`] = `
     >
       <button
         aria-label="Editor encountered an issue"
-        className="capitalize truncate text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="capitalize truncate text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -978,7 +982,7 @@ exports[`Storyshots editor-container/EditorIssueComp Warning 1`] = `
     >
       <button
         aria-label="Editor encountered an issue"
-        className="capitalize truncate text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="capitalize truncate text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1042,7 +1046,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
   >
     <button
       aria-label="note path"
-      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1059,7 +1063,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
           "color": "var(--BV-color-secondary-solidText)",
         }
       }
@@ -1132,7 +1136,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
   >
     <button
       aria-label="note path"
-      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1149,7 +1153,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
           "color": "var(--BV-color-secondary-solidText)",
         }
       }
@@ -1159,7 +1163,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
     </button>
     <button
       aria-label="enable editing"
-      className="mx-2 text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="mx-2 text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1249,7 +1253,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
   >
     <button
       aria-label="note path"
-      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1266,7 +1270,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
           "color": "var(--BV-color-secondary-solidText)",
         }
       }
@@ -1376,7 +1380,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
   >
     <button
       aria-label="note path"
-      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+      className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1393,7 +1397,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-secondary-solid)",
+          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
           "color": "var(--BV-color-secondary-solidText)",
         }
       }
@@ -1731,7 +1735,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1772,7 +1776,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1813,7 +1817,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1854,7 +1858,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1904,7 +1908,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1945,7 +1949,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1986,7 +1990,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2027,7 +2031,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2077,7 +2081,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2119,7 +2123,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         XSmall
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2161,7 +2165,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         Small
       </button>
       <button
-        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2203,7 +2207,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         Medium
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2254,7 +2258,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2296,7 +2300,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2338,7 +2342,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2380,7 +2384,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         </span>
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2433,7 +2437,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2459,7 +2463,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         XSmall
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2485,7 +2489,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Small
       </button>
       <button
-        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2511,7 +2515,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Medium
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2546,7 +2550,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-7 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-7 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2572,7 +2576,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         XSmall
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8  px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8  px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2598,7 +2602,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Small
       </button>
       <button
-        className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2624,7 +2628,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Medium
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2656,7 +2660,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2683,7 +2687,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         XSmall
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2710,7 +2714,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Small
       </button>
       <button
-        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2737,7 +2741,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Medium
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2773,7 +2777,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       className="flex flex-row gap-2"
     >
       <button
-        className="text-xs font-600 min-w-6 h-7 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-xs font-600 min-w-6 h-7 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2800,7 +2804,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         XSmall
       </button>
       <button
-        className="text-sm font-600 h-8 min-w-8  px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8  px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2827,7 +2831,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Small
       </button>
       <button
-        className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2854,7 +2858,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
         Medium
       </button>
       <button
-        className="text-lg font-600 h-12 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+        className="text-lg font-600 h-12 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2900,7 +2904,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -2926,7 +2930,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -2952,7 +2956,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -2978,7 +2982,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3004,7 +3008,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3030,7 +3034,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3069,7 +3073,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -3096,7 +3100,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -3123,7 +3127,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -3150,7 +3154,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -3177,7 +3181,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -3204,7 +3208,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -3244,7 +3248,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3270,7 +3274,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3296,7 +3300,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3322,7 +3326,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3348,7 +3352,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3374,7 +3378,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3413,7 +3417,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3439,7 +3443,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3465,7 +3469,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3491,7 +3495,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3517,7 +3521,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3543,7 +3547,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3582,7 +3586,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3624,7 +3628,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3666,7 +3670,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3708,7 +3712,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3750,7 +3754,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3792,7 +3796,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3849,7 +3853,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3876,7 +3880,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3903,7 +3907,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3930,7 +3934,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3957,7 +3961,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3984,7 +3988,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4024,7 +4028,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -4052,7 +4056,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -4080,7 +4084,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -4108,7 +4112,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -4136,7 +4140,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -4164,7 +4168,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -4205,7 +4209,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4232,7 +4236,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4259,7 +4263,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4286,7 +4290,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4313,7 +4317,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4340,7 +4344,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4380,7 +4384,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4407,7 +4411,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4434,7 +4438,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4461,7 +4465,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4488,7 +4492,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4515,7 +4519,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4555,7 +4559,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4598,7 +4602,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4641,7 +4645,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4684,7 +4688,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4727,7 +4731,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4770,7 +4774,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4828,7 +4832,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4854,7 +4858,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4880,7 +4884,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4906,7 +4910,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4932,7 +4936,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4958,7 +4962,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4997,7 +5001,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5024,7 +5028,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5051,7 +5055,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5078,7 +5082,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5105,7 +5109,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5132,7 +5136,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5172,7 +5176,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5198,7 +5202,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5224,7 +5228,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5250,7 +5254,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5276,7 +5280,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5302,7 +5306,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5341,7 +5345,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5367,7 +5371,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5393,7 +5397,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5419,7 +5423,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5445,7 +5449,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5471,7 +5475,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5510,7 +5514,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5552,7 +5556,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5594,7 +5598,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5636,7 +5640,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5678,7 +5682,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5720,7 +5724,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5777,7 +5781,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5803,7 +5807,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5829,7 +5833,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5855,7 +5859,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5881,7 +5885,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5907,7 +5911,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5946,7 +5950,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -5973,7 +5977,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -6000,7 +6004,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -6027,7 +6031,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -6054,7 +6058,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -6081,7 +6085,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-not-allowed  "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-not-allowed  "
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -6121,7 +6125,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6147,7 +6151,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6173,7 +6177,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6199,7 +6203,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6225,7 +6229,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6251,7 +6255,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md  py-1 transition-colors duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-colors duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6290,7 +6294,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6316,7 +6320,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6342,7 +6346,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6368,7 +6372,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6394,7 +6398,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6420,7 +6424,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6459,7 +6463,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         className="flex flex-row gap-2"
       >
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6501,7 +6505,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Neutral
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6543,7 +6547,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Secondary
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6585,7 +6589,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Caution
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6627,7 +6631,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Critical
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6669,7 +6673,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           Positive
         </button>
         <button
-          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md  py-2 transition-all duration-100 cursor-pointer "
+          className="text-md h-10  min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md py-2 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}

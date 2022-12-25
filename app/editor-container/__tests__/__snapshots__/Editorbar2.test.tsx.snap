@@ -8,7 +8,7 @@ exports[`renders correctly 1`] = `
     >
       <button
         aria-label="note path"
-        class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         style="background-color: transparent;"
         type="button"
       >
@@ -50,7 +50,7 @@ exports[`renders correctly when active 1`] = `
     >
       <button
         aria-label="note path"
-        class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+        class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         type="button"
       >
         test-dir/magic
@@ -86,7 +86,7 @@ exports[`renders correctly when active 1`] = `
 exports[`truncates large wsPath 1`] = `
 <button
   aria-label="note path"
-  class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+  class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
   style="background-color: transparent;"
   type="button"
 >

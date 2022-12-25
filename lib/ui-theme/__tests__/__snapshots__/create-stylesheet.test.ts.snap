@@ -1,582 +1,423 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`createTokens creates tokens correctly 1`] = `
+exports[`default light/dark sets light dark content 1`] = `
 [
-  {
-    "border": {
-      "radius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.375rem",
-        "md": "0.25rem",
-        "none": "0",
-        "sm": "0.125rem",
-        "xl": "0.5rem",
-      },
-      "width": {
-        "DEFAULT": "1px",
-        "lg": "2px",
-        "md": "1px",
-        "none": "0px",
-      },
-    },
-    "color": {
-      "app": {
-        "activitybarBg": "rgb(26, 32, 44)",
-        "activitybarBtnPress": "rgb(70, 70, 70)",
-        "activitybarText": "rgb(255, 255, 255)",
-        "editorBg": "rgb(255, 255, 255)",
-      },
-      "caution": {
-        "border": "rgb(255, 187, 99)",
-        "borderStrong": "rgb(255, 160, 55)",
-        "borderSubdued": "rgb(253, 210, 145)",
-        "icon": "rgb(203, 93, 0)",
-        "iconDisabled": "rgb(255, 187, 99)",
-        "iconSubdued": "rgb(228, 111, 0)",
-        "solid": "rgb(246, 133, 17)",
-        "solidFaint": "rgb(253, 210, 145)",
-        "solidStrong": "rgb(228, 111, 0)",
-        "solidStronger": "rgb(203, 93, 0)",
-        "solidSubdued": "rgb(255, 160, 55)",
-        "solidText": "rgb(255, 255, 255)",
-      },
-      "critical": {
-        "border": "rgb(255, 183, 169)",
-        "borderStrong": "rgb(255, 155, 136)",
-        "borderSubdued": "rgb(255, 205, 195)",
-        "icon": "rgb(234, 56, 41)",
-        "iconDisabled": "rgb(255, 183, 169)",
-        "iconSubdued": "rgb(247, 92, 70)",
-        "solid": "rgb(234, 56, 41)",
-        "solidFaint": "rgb(255, 183, 169)",
-        "solidStrong": "rgb(211, 21, 16)",
-        "solidStronger": "rgb(180, 0, 0)",
-        "solidSubdued": "rgb(247, 92, 70)",
-        "solidText": "rgb(255, 255, 255)",
-      },
-      "neutral": {
-        "bgLayerBottom": "rgb(230, 230, 230)",
-        "bgLayerFloat": "rgb(253, 253, 253)",
-        "bgLayerMiddle": "rgb(248, 248, 248)",
-        "bgLayerTop": "rgb(255, 255, 255)",
-        "border": "rgb(213, 213, 213)",
-        "borderStrong": "rgb(177, 177, 177)",
-        "borderSubdued": "rgb(230, 230, 230)",
-        "icon": "rgb(34, 34, 34)",
-        "iconDisabled": "rgb(177, 177, 177)",
-        "iconSubdued": "rgb(70, 70, 70)",
-        "solid": "rgb(70, 70, 70)",
-        "solidFaint": "rgb(213, 213, 213)",
-        "solidStrong": "rgb(109, 109, 109)",
-        "solidStronger": "rgb(70, 70, 70)",
-        "solidSubdued": "rgb(177, 177, 177)",
-        "solidText": "rgb(255, 255, 255)",
-        "text": "rgb(34, 34, 34)",
-        "textDisabled": "rgb(144, 144, 144)",
-        "textInverted": "rgb(255, 255, 255)",
-        "textStrong": "rgb(0, 0, 0)",
-        "textSubdued": "rgb(70, 70, 70)",
-      },
-      "positive": {
-        "border": "rgb(103, 222, 168)",
-        "borderStrong": "rgb(73, 204, 147)",
-        "borderSubdued": "rgb(137, 236, 188)",
-        "icon": "rgb(0, 143, 93)",
-        "iconDisabled": "rgb(103, 222, 168)",
-        "iconSubdued": "rgb(21, 164, 110)",
-        "solid": "rgb(0, 143, 93)",
-        "solidFaint": "rgb(103, 222, 168)",
-        "solidStrong": "rgb(0, 122, 77)",
-        "solidStronger": "rgb(0, 101, 62)",
-        "solidSubdued": "rgb(21, 164, 110)",
-        "solidText": "rgb(255, 255, 255)",
-      },
-      "promote": {
-        "border": "#46cefc",
-        "borderStrong": "#31c3fa",
-        "borderSubdued": "#6cdffe",
-        "icon": "#31c3fa",
-        "iconDisabled": "#6cdffe",
-        "iconSubdued": "#46cefc",
-        "solid": "#31c3fa",
-        "solidFaint": "#7ae4fe",
-        "solidStrong": "#21b8f7",
-        "solidStronger": "#15adf1",
-        "solidSubdued": "#5ed9fe",
-        "solidText": "rgb(255, 255, 255)",
-      },
-      "secondary": {
-        "border": "rgb(213, 213, 213)",
-        "borderStrong": "rgb(177, 177, 177)",
-        "borderSubdued": "rgb(230, 230, 230)",
-        "icon": "rgb(34, 34, 34)",
-        "iconDisabled": "rgb(177, 177, 177)",
-        "iconSubdued": "rgb(70, 70, 70)",
-        "solid": "rgb(177, 177, 177)",
-        "solidFaint": "rgb(213, 213, 213)",
-        "solidStrong": "rgb(144, 144, 144)",
-        "solidStronger": "rgb(109, 109, 109)",
-        "solidSubdued": "rgb(213, 213, 213)",
-        "solidText": "rgb(70, 70, 70)",
-      },
-    },
-    "misc": {},
-    "ringWidth": {
-      "DEFAULT": "1px",
-      "none": "0",
-    },
-    "size": {
-      "2xl": "42rem",
-      "3xl": "48rem",
-      "4xl": "56rem",
-      "5xl": "64rem",
-      "6xl": "72rem",
-      "7xl": "80rem",
-      "lg": "32rem",
-      "md": "28rem",
-      "prose": "65ch",
-      "sm": "24rem",
-      "xl": "36rem",
-      "xs": "20rem",
-    },
-    "space": {
-      "0": "0",
-      "0_5": "0.125rem",
-      "1": "0.25rem",
-      "10": "2.5rem",
-      "11": "2.75rem",
-      "12": "3rem",
-      "14": "3.5rem",
-      "16": "4rem",
-      "1_5": "0.375rem",
-      "2": "0.5rem",
-      "20": "5rem",
-      "24": "6rem",
-      "2_5": "0.625rem",
-      "3": "0.75rem",
-      "4": "1rem",
-      "48": "12rem",
-      "5": "1.25rem",
-      "6": "1.5rem",
-      "64": "16rem",
-      "7": "1.75rem",
-      "72": "18rem",
-      "8": "2rem",
-      "9": "2.25rem",
-      "px": "1px",
-    },
-    "theme": "core-theme-test",
-    "typography": {
-      "fontFamily": {
-        "mono": "ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace",
-        "sans": "ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"",
-        "serif": "ui-serif,Georgia,Cambria,"Times New Roman",Times,serif",
-      },
-      "text": {
-        "2xl": {
-          "height": "2rem",
-          "size": "1.5rem",
-        },
-        "3xl": {
-          "height": "2.25rem",
-          "size": "1.875rem",
-        },
-        "base": {
-          "height": "1.5rem",
-          "size": "1rem",
-        },
-        "lg": {
-          "height": "1.75rem",
-          "size": "1.125rem",
-        },
-        "sm": {
-          "height": "1.25rem",
-          "size": "0.875rem",
-        },
-        "xl": {
-          "height": "1.75rem",
-          "size": "1.25rem",
-        },
-        "xs": {
-          "height": "1rem",
-          "size": "0.75rem",
-        },
-      },
-    },
-    "uid": "design-token::core-theme-test-light",
-    "widescreenWidth": "759px",
-  },
-  {
-    "border": {
-      "radius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.375rem",
-        "md": "0.25rem",
-        "none": "0",
-        "sm": "0.125rem",
-        "xl": "0.5rem",
-      },
-      "width": {
-        "DEFAULT": "1px",
-        "lg": "2px",
-        "md": "1px",
-        "none": "0px",
-      },
-    },
-    "color": {
-      "app": {
-        "activitybarBg": "test-create-tokens",
-        "activitybarBtnPress": "rgb(75, 75, 75)",
-        "activitybarText": "rgb(235, 235, 235)",
-        "editorBg": "rgb(0, 0, 0)",
-      },
-      "caution": {
-        "border": "rgb(210, 98, 0)",
-        "borderStrong": "rgb(232, 116, 0)",
-        "borderSubdued": "rgb(186, 82, 0)",
-        "icon": "rgb(232, 116, 0)",
-        "iconDisabled": "rgb(138, 55, 0)",
-        "iconSubdued": "rgb(210, 98, 0)",
-        "solid": "rgb(249, 137, 23)",
-        "solidFaint": "rgb(115, 43, 0)",
-        "solidStrong": "rgb(255, 162, 59)",
-        "solidStronger": "rgb(255, 188, 102)",
-        "solidSubdued": "rgb(235, 235, 235)",
-        "solidText": "rgb(235, 235, 235)",
-      },
-      "critical": {
-        "border": "rgb(238, 67, 49)",
-        "borderStrong": "rgb(249, 99, 76)",
-        "borderSubdued": "rgb(221, 33, 24)",
-        "icon": "rgb(249, 99, 76)",
-        "iconDisabled": "rgb(167, 0, 0)",
-        "iconSubdued": "rgb(238, 67, 49)",
-        "solid": "rgb(249, 99, 76)",
-        "solidFaint": "rgb(110, 0, 0)",
-        "solidStrong": "rgb(255, 129, 107)",
-        "solidStronger": "rgb(255, 158, 140)",
-        "solidSubdued": "rgb(238, 67, 49)",
-        "solidText": "rgb(235, 235, 235)",
-      },
-      "neutral": {
-        "bgLayerBottom": "rgb(0, 0, 0)",
-        "bgLayerFloat": "rgb(29, 29, 29)",
-        "bgLayerMiddle": "rgb(14, 14, 14)",
-        "bgLayerTop": "rgb(29, 29, 29)",
-        "border": "rgb(75, 75, 75)",
-        "borderStrong": "rgb(106, 106, 106)",
-        "borderSubdued": "rgb(48, 48, 48)",
-        "icon": "rgb(235, 235, 235)",
-        "iconDisabled": "rgb(106, 106, 106)",
-        "iconSubdued": "rgb(208, 208, 208)",
-        "solid": "rgb(141, 141, 141)",
-        "solidFaint": "rgb(75, 75, 75)",
-        "solidStrong": "rgb(176, 176, 176)",
-        "solidStronger": "rgb(208, 208, 208)",
-        "solidSubdued": "rgb(106, 106, 106)",
-        "solidText": "rgb(235, 235, 235)",
-        "text": "rgb(235, 235, 235)",
-        "textDisabled": "rgb(141, 141, 141)",
-        "textInverted": "rgb(0, 0, 0)",
-        "textStrong": "rgb(255, 255, 255)",
-        "textSubdued": "rgb(208, 208, 208)",
-      },
-      "positive": {
-        "border": "rgb(0, 149, 98)",
-        "borderStrong": "rgb(28, 168, 114)",
-        "borderSubdued": "rgb(0, 130, 82)",
-        "icon": "rgb(28, 168, 114)",
-        "iconDisabled": "rgb(0, 93, 57)",
-        "iconSubdued": "rgb(0, 149, 98)",
-        "solid": "rgb(52, 187, 132)",
-        "solidFaint": "rgb(0, 93, 57)",
-        "solidStrong": "rgb(75, 205, 149)",
-        "solidStronger": "rgb(103, 222, 168)",
-        "solidSubdued": "rgb(28, 168, 114)",
-        "solidText": "rgb(235, 235, 235)",
-      },
-      "promote": {
-        "border": "rgb(227, 69, 137)",
-        "borderStrong": "rgb(241, 97, 156)",
-        "borderSubdued": "rgb(209, 43, 114)",
-        "icon": "rgb(241, 97, 156)",
-        "iconDisabled": "rgb(161, 0, 78)",
-        "iconSubdued": "rgb(227, 69, 137)",
-        "solid": "rgb(241, 97, 156)",
-        "solidFaint": "rgb(133, 0, 65)",
-        "solidStrong": "rgb(252, 124, 173)",
-        "solidStronger": "rgb(255, 152, 191)",
-        "solidSubdued": "rgb(227, 69, 137)",
-        "solidText": "rgb(235, 235, 235)",
-      },
-      "secondary": {
-        "border": "rgb(75, 75, 75)",
-        "borderStrong": "rgb(106, 106, 106)",
-        "borderSubdued": "rgb(48, 48, 48)",
-        "icon": "rgb(235, 235, 235)",
-        "iconDisabled": "rgb(106, 106, 106)",
-        "iconSubdued": "rgb(208, 208, 208)",
-        "solid": "rgb(106, 106, 106)",
-        "solidFaint": "rgb(75, 75, 75)",
-        "solidStrong": "rgb(141, 141, 141)",
-        "solidStronger": "rgb(176, 176, 176)",
-        "solidSubdued": "rgb(75, 75, 75)",
-        "solidText": "rgb(208, 208, 208)",
-      },
-    },
-    "misc": {},
-    "ringWidth": {
-      "DEFAULT": "1px",
-      "none": "0",
-    },
-    "size": {
-      "2xl": "42rem",
-      "3xl": "48rem",
-      "4xl": "56rem",
-      "5xl": "64rem",
-      "6xl": "72rem",
-      "7xl": "80rem",
-      "lg": "32rem",
-      "md": "28rem",
-      "prose": "65ch",
-      "sm": "24rem",
-      "xl": "36rem",
-      "xs": "20rem",
-    },
-    "space": {
-      "0": "0",
-      "0_5": "0.125rem",
-      "1": "0.25rem",
-      "10": "2.5rem",
-      "11": "2.75rem",
-      "12": "3rem",
-      "14": "3.5rem",
-      "16": "4rem",
-      "1_5": "0.375rem",
-      "2": "0.5rem",
-      "20": "5rem",
-      "24": "6rem",
-      "2_5": "0.625rem",
-      "3": "0.75rem",
-      "4": "1rem",
-      "48": "12rem",
-      "5": "1.25rem",
-      "6": "1.5rem",
-      "64": "16rem",
-      "7": "1.75rem",
-      "72": "18rem",
-      "8": "2rem",
-      "9": "2.25rem",
-      "px": "1px",
-    },
-    "theme": "core-theme-test",
-    "typography": {
-      "fontFamily": {
-        "mono": "ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace",
-        "sans": "ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"",
-        "serif": "ui-serif,Georgia,Cambria,"Times New Roman",Times,serif",
-      },
-      "text": {
-        "2xl": {
-          "height": "2rem",
-          "size": "1.5rem",
-        },
-        "3xl": {
-          "height": "2.25rem",
-          "size": "1.875rem",
-        },
-        "base": {
-          "height": "1.5rem",
-          "size": "1rem",
-        },
-        "lg": {
-          "height": "1.75rem",
-          "size": "1.125rem",
-        },
-        "sm": {
-          "height": "1.25rem",
-          "size": "0.875rem",
-        },
-        "xl": {
-          "height": "1.75rem",
-          "size": "1.25rem",
-        },
-        "xs": {
-          "height": "1rem",
-          "size": "0.75rem",
-        },
-      },
-    },
-    "uid": "design-token::core-theme-test-dark",
-    "widescreenWidth": "759px",
-  },
+  "--BV-color-app-activitybarBg: rgb(31, 30, 30);",
+  "--BV-color-app-activitybarBtnPress: rgb(75, 75, 75);",
+  "--BV-color-app-activitybarText: rgb(235, 235, 235);",
+  "--BV-color-app-editorBg: rgb(14, 14, 14);",
+  "--BV-color-neutral-bgLayerTop: rgb(29, 29, 29);",
+  "--BV-color-neutral-bgLayerMiddle: rgb(14, 14, 14);",
+  "--BV-color-neutral-bgLayerBottom: rgb(0, 0, 0);",
+  "--BV-color-neutral-bgLayerFloat: rgb(29, 29, 29);",
+  "--BV-color-neutral-textDisabled: rgb(141, 141, 141);",
+  "--BV-color-neutral-textSubdued: rgb(208, 208, 208);",
+  "--BV-color-neutral-text: rgb(235, 235, 235);",
+  "--BV-color-neutral-textStrong: rgb(255, 255, 255);",
+  "--BV-color-neutral-textInverted: rgb(0, 0, 0);",
+  "--BV-color-neutral-iconDisabled: rgb(106, 106, 106);",
+  "--BV-color-neutral-iconSubdued: rgb(208, 208, 208);",
+  "--BV-color-neutral-icon: rgb(235, 235, 235);",
+  "--BV-color-neutral-solid: rgb(141, 141, 141);",
+  "--BV-color-neutral-solidText: rgb(235, 235, 235);",
+  "--BV-color-neutral-solidStrong: rgb(176, 176, 176);",
+  "--BV-color-neutral-solidStronger: rgb(208, 208, 208);",
+  "--BV-color-neutral-solidSubdued: rgb(106, 106, 106);",
+  "--BV-color-neutral-solidFaint: rgb(75, 75, 75);",
+  "--BV-color-neutral-borderSubdued: rgb(48, 48, 48);",
+  "--BV-color-neutral-border: rgb(75, 75, 75);",
+  "--BV-color-neutral-borderStrong: rgb(106, 106, 106);",
+  "--BV-color-secondary-iconDisabled: rgb(106, 106, 106);",
+  "--BV-color-secondary-iconSubdued: rgb(208, 208, 208);",
+  "--BV-color-secondary-icon: rgb(235, 235, 235);",
+  "--BV-color-secondary-solid: rgb(106, 106, 106);",
+  "--BV-color-secondary-solidText: rgb(208, 208, 208);",
+  "--BV-color-secondary-solidStrong: rgb(141, 141, 141);",
+  "--BV-color-secondary-solidStronger: rgb(176, 176, 176);",
+  "--BV-color-secondary-solidSubdued: rgb(75, 75, 75);",
+  "--BV-color-secondary-solidFaint: rgb(75, 75, 75);",
+  "--BV-color-secondary-borderSubdued: rgb(48, 48, 48);",
+  "--BV-color-secondary-border: rgb(75, 75, 75);",
+  "--BV-color-secondary-borderStrong: rgb(106, 106, 106);",
+  "--BV-color-promote-iconDisabled: rgb(161, 0, 78);",
+  "--BV-color-promote-iconSubdued: rgb(227, 69, 137);",
+  "--BV-color-promote-icon: rgb(241, 97, 156);",
+  "--BV-color-promote-solid: rgb(241, 97, 156);",
+  "--BV-color-promote-solidText: rgb(235, 235, 235);",
+  "--BV-color-promote-solidStrong: rgb(252, 124, 173);",
+  "--BV-color-promote-solidStronger: rgb(255, 152, 191);",
+  "--BV-color-promote-solidSubdued: rgb(227, 69, 137);",
+  "--BV-color-promote-solidFaint: rgb(133, 0, 65);",
+  "--BV-color-promote-borderSubdued: rgb(209, 43, 114);",
+  "--BV-color-promote-border: rgb(227, 69, 137);",
+  "--BV-color-promote-borderStrong: rgb(241, 97, 156);",
+  "--BV-color-caution-iconDisabled: rgb(138, 55, 0);",
+  "--BV-color-caution-iconSubdued: rgb(210, 98, 0);",
+  "--BV-color-caution-icon: rgb(232, 116, 0);",
+  "--BV-color-caution-solid: rgb(249, 137, 23);",
+  "--BV-color-caution-solidText: rgb(235, 235, 235);",
+  "--BV-color-caution-solidStrong: rgb(255, 162, 59);",
+  "--BV-color-caution-solidStronger: rgb(255, 188, 102);",
+  "--BV-color-caution-solidSubdued: rgb(235, 235, 235);",
+  "--BV-color-caution-solidFaint: rgb(115, 43, 0);",
+  "--BV-color-caution-borderSubdued: rgb(186, 82, 0);",
+  "--BV-color-caution-border: rgb(210, 98, 0);",
+  "--BV-color-caution-borderStrong: rgb(232, 116, 0);",
+  "--BV-color-critical-iconDisabled: rgb(167, 0, 0);",
+  "--BV-color-critical-iconSubdued: rgb(238, 67, 49);",
+  "--BV-color-critical-icon: rgb(249, 99, 76);",
+  "--BV-color-critical-solid: rgb(249, 99, 76);",
+  "--BV-color-critical-solidText: rgb(235, 235, 235);",
+  "--BV-color-critical-solidStrong: rgb(255, 129, 107);",
+  "--BV-color-critical-solidStronger: rgb(255, 158, 140);",
+  "--BV-color-critical-solidSubdued: rgb(238, 67, 49);",
+  "--BV-color-critical-solidFaint: rgb(110, 0, 0);",
+  "--BV-color-critical-borderSubdued: rgb(221, 33, 24);",
+  "--BV-color-critical-border: rgb(238, 67, 49);",
+  "--BV-color-critical-borderStrong: rgb(249, 99, 76);",
+  "--BV-color-positive-iconDisabled: rgb(0, 93, 57);",
+  "--BV-color-positive-iconSubdued: rgb(0, 149, 98);",
+  "--BV-color-positive-icon: rgb(28, 168, 114);",
+  "--BV-color-positive-solid: rgb(52, 187, 132);",
+  "--BV-color-positive-solidText: rgb(235, 235, 235);",
+  "--BV-color-positive-solidStrong: rgb(75, 205, 149);",
+  "--BV-color-positive-solidStronger: rgb(103, 222, 168);",
+  "--BV-color-positive-solidSubdued: rgb(28, 168, 114);",
+  "--BV-color-positive-solidFaint: rgb(0, 93, 57);",
+  "--BV-color-positive-borderSubdued: rgb(0, 130, 82);",
+  "--BV-color-positive-border: rgb(0, 149, 98);",
+  "--BV-color-positive-borderStrong: rgb(28, 168, 114);",
 ]
 `;
 
-exports[`creates a stylesheet 1`] = `
-"/* WARNING: This is autogenerated do not modify! */
-/* stylelint-disable */
-body {
-    background-color: var(--BV-color-neutral-bgLayerBottom);
-  color: var(--BV-color-neutral-text);
-}
-/* stylelint-enable */
+exports[`default light/dark sets light dark content 2`] = `
+[
+  "--BV-color-app-activitybarBg: rgb(26, 32, 44);",
+  "--BV-color-app-activitybarBtnPress: rgb(70, 70, 70);",
+  "--BV-color-app-activitybarText: rgb(255, 255, 255);",
+  "--BV-color-app-editorBg: rgb(255, 255, 255);",
+  "--BV-color-neutral-bgLayerTop: rgb(248, 248, 248);",
+  "--BV-color-neutral-bgLayerMiddle: rgb(255, 255, 255);",
+  "--BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);",
+  "--BV-color-neutral-bgLayerFloat: rgb(253, 253, 253);",
+  "--BV-color-neutral-textDisabled: rgb(144, 144, 144);",
+  "--BV-color-neutral-textSubdued: rgb(70, 70, 70);",
+  "--BV-color-neutral-text: rgb(34, 34, 34);",
+  "--BV-color-neutral-textStrong: rgb(0, 0, 0);",
+  "--BV-color-neutral-textInverted: rgb(255, 255, 255);",
+  "--BV-color-neutral-iconDisabled: rgb(177, 177, 177);",
+  "--BV-color-neutral-iconSubdued: rgb(70, 70, 70);",
+  "--BV-color-neutral-icon: rgb(34, 34, 34);",
+  "--BV-color-neutral-solid: rgb(70, 70, 70);",
+  "--BV-color-neutral-solidText: rgb(255, 255, 255);",
+  "--BV-color-neutral-solidStrong: rgb(70, 70, 70);",
+  "--BV-color-neutral-solidStronger: rgb(0, 0, 0);",
+  "--BV-color-neutral-solidSubdued: rgb(177, 177, 177);",
+  "--BV-color-neutral-solidFaint: rgb(213, 213, 213);",
+  "--BV-color-neutral-borderSubdued: rgb(230, 230, 230);",
+  "--BV-color-neutral-border: rgb(213, 213, 213);",
+  "--BV-color-neutral-borderStrong: rgb(177, 177, 177);",
+  "--BV-color-secondary-iconDisabled: rgb(177, 177, 177);",
+  "--BV-color-secondary-iconSubdued: rgb(70, 70, 70);",
+  "--BV-color-secondary-icon: rgb(34, 34, 34);",
+  "--BV-color-secondary-solid: rgb(177, 177, 177);",
+  "--BV-color-secondary-solidText: rgb(70, 70, 70);",
+  "--BV-color-secondary-solidStrong: rgb(144, 144, 144);",
+  "--BV-color-secondary-solidStronger: rgb(109, 109, 109);",
+  "--BV-color-secondary-solidSubdued: rgb(213, 213, 213);",
+  "--BV-color-secondary-solidFaint: rgb(213, 213, 213);",
+  "--BV-color-secondary-borderSubdued: rgb(230, 230, 230);",
+  "--BV-color-secondary-border: rgb(213, 213, 213);",
+  "--BV-color-secondary-borderStrong: rgb(177, 177, 177);",
+  "--BV-color-promote-iconDisabled: #6cdffe;",
+  "--BV-color-promote-iconSubdued: #46cefc;",
+  "--BV-color-promote-icon: #31c3fa;",
+  "--BV-color-promote-solid: #31c3fa;",
+  "--BV-color-promote-solidText: rgb(255, 255, 255);",
+  "--BV-color-promote-solidStrong: #21b8f7;",
+  "--BV-color-promote-solidStronger: #15adf1;",
+  "--BV-color-promote-solidSubdued: #5ed9fe;",
+  "--BV-color-promote-solidFaint: #7ae4fe;",
+  "--BV-color-promote-borderSubdued: #6cdffe;",
+  "--BV-color-promote-border: #46cefc;",
+  "--BV-color-promote-borderStrong: #31c3fa;",
+  "--BV-color-caution-iconDisabled: rgb(255, 187, 99);",
+  "--BV-color-caution-iconSubdued: rgb(228, 111, 0);",
+  "--BV-color-caution-icon: rgb(203, 93, 0);",
+  "--BV-color-caution-solid: rgb(246, 133, 17);",
+  "--BV-color-caution-solidText: rgb(255, 255, 255);",
+  "--BV-color-caution-solidStrong: rgb(228, 111, 0);",
+  "--BV-color-caution-solidStronger: rgb(203, 93, 0);",
+  "--BV-color-caution-solidSubdued: rgb(255, 160, 55);",
+  "--BV-color-caution-solidFaint: rgb(253, 210, 145);",
+  "--BV-color-caution-borderSubdued: rgb(253, 210, 145);",
+  "--BV-color-caution-border: rgb(255, 187, 99);",
+  "--BV-color-caution-borderStrong: rgb(255, 160, 55);",
+  "--BV-color-critical-iconDisabled: rgb(255, 183, 169);",
+  "--BV-color-critical-iconSubdued: rgb(247, 92, 70);",
+  "--BV-color-critical-icon: rgb(234, 56, 41);",
+  "--BV-color-critical-solid: rgb(234, 56, 41);",
+  "--BV-color-critical-solidText: rgb(255, 255, 255);",
+  "--BV-color-critical-solidStrong: rgb(211, 21, 16);",
+  "--BV-color-critical-solidStronger: rgb(180, 0, 0);",
+  "--BV-color-critical-solidSubdued: rgb(247, 92, 70);",
+  "--BV-color-critical-solidFaint: rgb(255, 183, 169);",
+  "--BV-color-critical-borderSubdued: rgb(255, 205, 195);",
+  "--BV-color-critical-border: rgb(255, 183, 169);",
+  "--BV-color-critical-borderStrong: rgb(255, 155, 136);",
+  "--BV-color-positive-iconDisabled: rgb(103, 222, 168);",
+  "--BV-color-positive-iconSubdued: rgb(21, 164, 110);",
+  "--BV-color-positive-icon: rgb(0, 143, 93);",
+  "--BV-color-positive-solid: rgb(0, 143, 93);",
+  "--BV-color-positive-solidText: rgb(255, 255, 255);",
+  "--BV-color-positive-solidStrong: rgb(0, 122, 77);",
+  "--BV-color-positive-solidStronger: rgb(0, 101, 62);",
+  "--BV-color-positive-solidSubdued: rgb(21, 164, 110);",
+  "--BV-color-positive-solidFaint: rgb(103, 222, 168);",
+  "--BV-color-positive-borderSubdued: rgb(137, 236, 188);",
+  "--BV-color-positive-border: rgb(103, 222, 168);",
+  "--BV-color-positive-borderStrong: rgb(73, 204, 147);",
+]
+`;
 
-/* WARNING: This is autogenerated do not modify! */
-/* stylelint-disable */
-:root {
-    --BV-theme: core-theme-test;
-  --BV-border-radius-DEFAULT: 0.25rem;
-  --BV-border-radius-none: 0;
-  --BV-border-radius-sm: 0.125rem;
-  --BV-border-radius-md: 0.25rem;
-  --BV-border-radius-lg: 0.375rem;
-  --BV-border-radius-xl: 0.5rem;
-  --BV-border-width-DEFAULT: 1px;
-  --BV-border-width-none: 0px;
-  --BV-border-width-lg: 2px;
-  --BV-border-width-md: 1px;
-  --BV-widescreenWidth: 759px;
-  --BV-color-app-activitybarBg: rgb(26, 32, 44);
-  --BV-color-app-activitybarBtnPress: rgb(70, 70, 70);
-  --BV-color-app-activitybarText: rgb(255, 255, 255);
-  --BV-color-app-editorBg: rgb(255, 255, 255);
-  --BV-color-neutral-bgLayerTop: rgb(255, 255, 255);
-  --BV-color-neutral-bgLayerMiddle: rgb(248, 248, 248);
-  --BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);
-  --BV-color-neutral-bgLayerFloat: rgb(253, 253, 253);
-  --BV-color-neutral-textDisabled: rgb(144, 144, 144);
-  --BV-color-neutral-textSubdued: rgb(70, 70, 70);
-  --BV-color-neutral-text: rgb(34, 34, 34);
-  --BV-color-neutral-textStrong: rgb(0, 0, 0);
-  --BV-color-neutral-textInverted: rgb(255, 255, 255);
-  --BV-color-neutral-iconDisabled: rgb(177, 177, 177);
-  --BV-color-neutral-iconSubdued: rgb(70, 70, 70);
-  --BV-color-neutral-icon: rgb(34, 34, 34);
-  --BV-color-neutral-solid: rgb(70, 70, 70);
-  --BV-color-neutral-solidText: rgb(255, 255, 255);
-  --BV-color-neutral-solidStrong: rgb(109, 109, 109);
-  --BV-color-neutral-solidStronger: rgb(70, 70, 70);
-  --BV-color-neutral-solidSubdued: rgb(177, 177, 177);
-  --BV-color-neutral-solidFaint: rgb(213, 213, 213);
-  --BV-color-neutral-borderSubdued: rgb(230, 230, 230);
-  --BV-color-neutral-border: rgb(213, 213, 213);
-  --BV-color-neutral-borderStrong: rgb(177, 177, 177);
-  --BV-color-secondary-iconDisabled: rgb(177, 177, 177);
-  --BV-color-secondary-iconSubdued: rgb(70, 70, 70);
-  --BV-color-secondary-icon: rgb(34, 34, 34);
-  --BV-color-secondary-solid: rgb(177, 177, 177);
-  --BV-color-secondary-solidText: rgb(70, 70, 70);
-  --BV-color-secondary-solidStrong: rgb(144, 144, 144);
-  --BV-color-secondary-solidStronger: rgb(109, 109, 109);
-  --BV-color-secondary-solidSubdued: rgb(213, 213, 213);
-  --BV-color-secondary-solidFaint: rgb(213, 213, 213);
-  --BV-color-secondary-borderSubdued: rgb(230, 230, 230);
-  --BV-color-secondary-border: rgb(213, 213, 213);
-  --BV-color-secondary-borderStrong: rgb(177, 177, 177);
-  --BV-color-promote-iconDisabled: #6cdffe;
-  --BV-color-promote-iconSubdued: #46cefc;
-  --BV-color-promote-icon: #31c3fa;
-  --BV-color-promote-solid: #31c3fa;
-  --BV-color-promote-solidText: rgb(255, 255, 255);
-  --BV-color-promote-solidStrong: #21b8f7;
-  --BV-color-promote-solidStronger: #15adf1;
-  --BV-color-promote-solidSubdued: #5ed9fe;
-  --BV-color-promote-solidFaint: #7ae4fe;
-  --BV-color-promote-borderSubdued: #6cdffe;
-  --BV-color-promote-border: #46cefc;
-  --BV-color-promote-borderStrong: #31c3fa;
-  --BV-color-caution-iconDisabled: rgb(255, 187, 99);
-  --BV-color-caution-iconSubdued: rgb(228, 111, 0);
-  --BV-color-caution-icon: rgb(203, 93, 0);
-  --BV-color-caution-solid: rgb(246, 133, 17);
-  --BV-color-caution-solidText: rgb(255, 255, 255);
-  --BV-color-caution-solidStrong: rgb(228, 111, 0);
-  --BV-color-caution-solidStronger: rgb(203, 93, 0);
-  --BV-color-caution-solidSubdued: rgb(255, 160, 55);
-  --BV-color-caution-solidFaint: rgb(253, 210, 145);
-  --BV-color-caution-borderSubdued: rgb(253, 210, 145);
-  --BV-color-caution-border: rgb(255, 187, 99);
-  --BV-color-caution-borderStrong: rgb(255, 160, 55);
-  --BV-color-critical-iconDisabled: rgb(255, 183, 169);
-  --BV-color-critical-iconSubdued: rgb(247, 92, 70);
-  --BV-color-critical-icon: rgb(234, 56, 41);
-  --BV-color-critical-solid: rgb(234, 56, 41);
-  --BV-color-critical-solidText: rgb(255, 255, 255);
-  --BV-color-critical-solidStrong: rgb(211, 21, 16);
-  --BV-color-critical-solidStronger: rgb(180, 0, 0);
-  --BV-color-critical-solidSubdued: rgb(247, 92, 70);
-  --BV-color-critical-solidFaint: rgb(255, 183, 169);
-  --BV-color-critical-borderSubdued: rgb(255, 205, 195);
-  --BV-color-critical-border: rgb(255, 183, 169);
-  --BV-color-critical-borderStrong: rgb(255, 155, 136);
-  --BV-color-positive-iconDisabled: rgb(103, 222, 168);
-  --BV-color-positive-iconSubdued: rgb(21, 164, 110);
-  --BV-color-positive-icon: rgb(0, 143, 93);
-  --BV-color-positive-solid: rgb(0, 143, 93);
-  --BV-color-positive-solidText: rgb(255, 255, 255);
-  --BV-color-positive-solidStrong: rgb(0, 122, 77);
-  --BV-color-positive-solidStronger: rgb(0, 101, 62);
-  --BV-color-positive-solidSubdued: rgb(21, 164, 110);
-  --BV-color-positive-solidFaint: rgb(103, 222, 168);
-  --BV-color-positive-borderSubdued: rgb(137, 236, 188);
-  --BV-color-positive-border: rgb(103, 222, 168);
-  --BV-color-positive-borderStrong: rgb(73, 204, 147);
-  --BV-ringWidth-DEFAULT: 1px;
-  --BV-ringWidth-none: 0;
-  --BV-size-xs: 20rem;
-  --BV-size-sm: 24rem;
-  --BV-size-md: 28rem;
-  --BV-size-lg: 32rem;
-  --BV-size-xl: 36rem;
-  --BV-size-2xl: 42rem;
-  --BV-size-3xl: 48rem;
-  --BV-size-4xl: 56rem;
-  --BV-size-5xl: 64rem;
-  --BV-size-6xl: 72rem;
-  --BV-size-7xl: 80rem;
-  --BV-size-prose: 65ch;
-  --BV-space-0: 0;
-  --BV-space-1: 0.25rem;
-  --BV-space-2: 0.5rem;
-  --BV-space-3: 0.75rem;
-  --BV-space-4: 1rem;
-  --BV-space-5: 1.25rem;
-  --BV-space-6: 1.5rem;
-  --BV-space-7: 1.75rem;
-  --BV-space-8: 2rem;
-  --BV-space-9: 2.25rem;
-  --BV-space-10: 2.5rem;
-  --BV-space-11: 2.75rem;
-  --BV-space-12: 3rem;
-  --BV-space-14: 3.5rem;
-  --BV-space-16: 4rem;
-  --BV-space-20: 5rem;
-  --BV-space-24: 6rem;
-  --BV-space-48: 12rem;
-  --BV-space-64: 16rem;
-  --BV-space-72: 18rem;
-  --BV-space-0_5: 0.125rem;
-  --BV-space-1_5: 0.375rem;
-  --BV-space-2_5: 0.625rem;
-  --BV-space-px: 1px;
-  --BV-typography-fontFamily-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-  --BV-typography-fontFamily-serif: ui-serif,Georgia,Cambria,"Times New Roman",Times,serif;
-  --BV-typography-fontFamily-mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-  --BV-typography-text-xl-height: 1.75rem;
-  --BV-typography-text-xl-size: 1.25rem;
-  --BV-typography-text-lg-height: 1.75rem;
-  --BV-typography-text-lg-size: 1.125rem;
-  --BV-typography-text-base-height: 1.5rem;
-  --BV-typography-text-base-size: 1rem;
-  --BV-typography-text-sm-height: 1.25rem;
-  --BV-typography-text-sm-size: 0.875rem;
-  --BV-typography-text-xs-height: 1rem;
-  --BV-typography-text-xs-size: 0.75rem;
-  --BV-typography-text-2xl-height: 2rem;
-  --BV-typography-text-2xl-size: 1.5rem;
-  --BV-typography-text-3xl-height: 2.25rem;
-  --BV-typography-text-3xl-size: 1.875rem;
-}
-/* stylelint-enable */"
+exports[`default light/dark sets root content 1`] = `
+[
+  "--BV-theme: core-theme-test;",
+  "--BV-border-radius-DEFAULT: 0.25rem;",
+  "--BV-border-radius-none: 0;",
+  "--BV-border-radius-sm: 0.125rem;",
+  "--BV-border-radius-md: 0.25rem;",
+  "--BV-border-radius-lg: 0.375rem;",
+  "--BV-border-radius-xl: 0.5rem;",
+  "--BV-border-width-DEFAULT: 1px;",
+  "--BV-border-width-none: 0px;",
+  "--BV-border-width-lg: 2px;",
+  "--BV-border-width-md: 1px;",
+  "--BV-widescreenWidth: 759px;",
+  "--BV-ringWidth-DEFAULT: 1px;",
+  "--BV-ringWidth-none: 0;",
+  "--BV-size-xs: 20rem;",
+  "--BV-size-sm: 24rem;",
+  "--BV-size-md: 28rem;",
+  "--BV-size-lg: 32rem;",
+  "--BV-size-xl: 36rem;",
+  "--BV-size-2xl: 42rem;",
+  "--BV-size-3xl: 48rem;",
+  "--BV-size-4xl: 56rem;",
+  "--BV-size-5xl: 64rem;",
+  "--BV-size-6xl: 72rem;",
+  "--BV-size-7xl: 80rem;",
+  "--BV-size-prose: 65ch;",
+  "--BV-space-0: 0;",
+  "--BV-space-1: 0.25rem;",
+  "--BV-space-2: 0.5rem;",
+  "--BV-space-3: 0.75rem;",
+  "--BV-space-4: 1rem;",
+  "--BV-space-5: 1.25rem;",
+  "--BV-space-6: 1.5rem;",
+  "--BV-space-7: 1.75rem;",
+  "--BV-space-8: 2rem;",
+  "--BV-space-9: 2.25rem;",
+  "--BV-space-10: 2.5rem;",
+  "--BV-space-11: 2.75rem;",
+  "--BV-space-12: 3rem;",
+  "--BV-space-14: 3.5rem;",
+  "--BV-space-16: 4rem;",
+  "--BV-space-20: 5rem;",
+  "--BV-space-24: 6rem;",
+  "--BV-space-48: 12rem;",
+  "--BV-space-64: 16rem;",
+  "--BV-space-72: 18rem;",
+  "--BV-space-0_5: 0.125rem;",
+  "--BV-space-1_5: 0.375rem;",
+  "--BV-space-2_5: 0.625rem;",
+  "--BV-space-px: 1px;",
+  "--BV-typography-fontFamily-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";",
+  "--BV-typography-fontFamily-serif: ui-serif,Georgia,Cambria,"Times New Roman",Times,serif;",
+  "--BV-typography-fontFamily-mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;",
+  "--BV-typography-text-xl-height: 1.75rem;",
+  "--BV-typography-text-xl-size: 1.25rem;",
+  "--BV-typography-text-lg-height: 1.75rem;",
+  "--BV-typography-text-lg-size: 1.125rem;",
+  "--BV-typography-text-base-height: 1.5rem;",
+  "--BV-typography-text-base-size: 1rem;",
+  "--BV-typography-text-sm-height: 1.25rem;",
+  "--BV-typography-text-sm-size: 0.875rem;",
+  "--BV-typography-text-xs-height: 1rem;",
+  "--BV-typography-text-xs-size: 0.75rem;",
+  "--BV-typography-text-2xl-height: 2rem;",
+  "--BV-typography-text-2xl-size: 1.5rem;",
+  "--BV-typography-text-3xl-height: 2.25rem;",
+  "--BV-typography-text-3xl-size: 1.875rem;",
+]
+`;
+
+exports[`default sets body 1`] = `
+[
+  "background-color: var(--BV-color-neutral-bgLayerBottom);",
+  "color: var(--BV-color-neutral-text);",
+]
+`;
+
+exports[`default sets root 1`] = `
+[
+  "--BV-theme: core-theme-test;",
+  "--BV-border-radius-DEFAULT: 0.25rem;",
+  "--BV-border-radius-none: 0;",
+  "--BV-border-radius-sm: 0.125rem;",
+  "--BV-border-radius-md: 0.25rem;",
+  "--BV-border-radius-lg: 0.375rem;",
+  "--BV-border-radius-xl: 0.5rem;",
+  "--BV-border-width-DEFAULT: 1px;",
+  "--BV-border-width-none: 0px;",
+  "--BV-border-width-lg: 2px;",
+  "--BV-border-width-md: 1px;",
+  "--BV-widescreenWidth: 759px;",
+  "--BV-color-app-activitybarBg: rgb(26, 32, 44);",
+  "--BV-color-app-activitybarBtnPress: rgb(70, 70, 70);",
+  "--BV-color-app-activitybarText: rgb(255, 255, 255);",
+  "--BV-color-app-editorBg: rgb(255, 255, 255);",
+  "--BV-color-neutral-bgLayerTop: rgb(248, 248, 248);",
+  "--BV-color-neutral-bgLayerMiddle: rgb(255, 255, 255);",
+  "--BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);",
+  "--BV-color-neutral-bgLayerFloat: rgb(253, 253, 253);",
+  "--BV-color-neutral-textDisabled: rgb(144, 144, 144);",
+  "--BV-color-neutral-textSubdued: rgb(70, 70, 70);",
+  "--BV-color-neutral-text: rgb(34, 34, 34);",
+  "--BV-color-neutral-textStrong: rgb(0, 0, 0);",
+  "--BV-color-neutral-textInverted: rgb(255, 255, 255);",
+  "--BV-color-neutral-iconDisabled: rgb(177, 177, 177);",
+  "--BV-color-neutral-iconSubdued: rgb(70, 70, 70);",
+  "--BV-color-neutral-icon: rgb(34, 34, 34);",
+  "--BV-color-neutral-solid: rgb(70, 70, 70);",
+  "--BV-color-neutral-solidText: rgb(255, 255, 255);",
+  "--BV-color-neutral-solidStrong: rgb(70, 70, 70);",
+  "--BV-color-neutral-solidStronger: rgb(0, 0, 0);",
+  "--BV-color-neutral-solidSubdued: rgb(177, 177, 177);",
+  "--BV-color-neutral-solidFaint: rgb(213, 213, 213);",
+  "--BV-color-neutral-borderSubdued: rgb(230, 230, 230);",
+  "--BV-color-neutral-border: rgb(213, 213, 213);",
+  "--BV-color-neutral-borderStrong: rgb(177, 177, 177);",
+  "--BV-color-secondary-iconDisabled: rgb(177, 177, 177);",
+  "--BV-color-secondary-iconSubdued: rgb(70, 70, 70);",
+  "--BV-color-secondary-icon: rgb(34, 34, 34);",
+  "--BV-color-secondary-solid: rgb(177, 177, 177);",
+  "--BV-color-secondary-solidText: rgb(70, 70, 70);",
+  "--BV-color-secondary-solidStrong: rgb(144, 144, 144);",
+  "--BV-color-secondary-solidStronger: rgb(109, 109, 109);",
+  "--BV-color-secondary-solidSubdued: rgb(213, 213, 213);",
+  "--BV-color-secondary-solidFaint: rgb(213, 213, 213);",
+  "--BV-color-secondary-borderSubdued: rgb(230, 230, 230);",
+  "--BV-color-secondary-border: rgb(213, 213, 213);",
+  "--BV-color-secondary-borderStrong: rgb(177, 177, 177);",
+  "--BV-color-promote-iconDisabled: #6cdffe;",
+  "--BV-color-promote-iconSubdued: #46cefc;",
+  "--BV-color-promote-icon: #31c3fa;",
+  "--BV-color-promote-solid: #31c3fa;",
+  "--BV-color-promote-solidText: rgb(255, 255, 255);",
+  "--BV-color-promote-solidStrong: #21b8f7;",
+  "--BV-color-promote-solidStronger: #15adf1;",
+  "--BV-color-promote-solidSubdued: #5ed9fe;",
+  "--BV-color-promote-solidFaint: #7ae4fe;",
+  "--BV-color-promote-borderSubdued: #6cdffe;",
+  "--BV-color-promote-border: #46cefc;",
+  "--BV-color-promote-borderStrong: #31c3fa;",
+  "--BV-color-caution-iconDisabled: rgb(255, 187, 99);",
+  "--BV-color-caution-iconSubdued: rgb(228, 111, 0);",
+  "--BV-color-caution-icon: rgb(203, 93, 0);",
+  "--BV-color-caution-solid: rgb(246, 133, 17);",
+  "--BV-color-caution-solidText: rgb(255, 255, 255);",
+  "--BV-color-caution-solidStrong: rgb(228, 111, 0);",
+  "--BV-color-caution-solidStronger: rgb(203, 93, 0);",
+  "--BV-color-caution-solidSubdued: rgb(255, 160, 55);",
+  "--BV-color-caution-solidFaint: rgb(253, 210, 145);",
+  "--BV-color-caution-borderSubdued: rgb(253, 210, 145);",
+  "--BV-color-caution-border: rgb(255, 187, 99);",
+  "--BV-color-caution-borderStrong: rgb(255, 160, 55);",
+  "--BV-color-critical-iconDisabled: rgb(255, 183, 169);",
+  "--BV-color-critical-iconSubdued: rgb(247, 92, 70);",
+  "--BV-color-critical-icon: rgb(234, 56, 41);",
+  "--BV-color-critical-solid: rgb(234, 56, 41);",
+  "--BV-color-critical-solidText: rgb(255, 255, 255);",
+  "--BV-color-critical-solidStrong: rgb(211, 21, 16);",
+  "--BV-color-critical-solidStronger: rgb(180, 0, 0);",
+  "--BV-color-critical-solidSubdued: rgb(247, 92, 70);",
+  "--BV-color-critical-solidFaint: rgb(255, 183, 169);",
+  "--BV-color-critical-borderSubdued: rgb(255, 205, 195);",
+  "--BV-color-critical-border: rgb(255, 183, 169);",
+  "--BV-color-critical-borderStrong: rgb(255, 155, 136);",
+  "--BV-color-positive-iconDisabled: rgb(103, 222, 168);",
+  "--BV-color-positive-iconSubdued: rgb(21, 164, 110);",
+  "--BV-color-positive-icon: rgb(0, 143, 93);",
+  "--BV-color-positive-solid: rgb(0, 143, 93);",
+  "--BV-color-positive-solidText: rgb(255, 255, 255);",
+  "--BV-color-positive-solidStrong: rgb(0, 122, 77);",
+  "--BV-color-positive-solidStronger: rgb(0, 101, 62);",
+  "--BV-color-positive-solidSubdued: rgb(21, 164, 110);",
+  "--BV-color-positive-solidFaint: rgb(103, 222, 168);",
+  "--BV-color-positive-borderSubdued: rgb(137, 236, 188);",
+  "--BV-color-positive-border: rgb(103, 222, 168);",
+  "--BV-color-positive-borderStrong: rgb(73, 204, 147);",
+  "--BV-ringWidth-DEFAULT: 1px;",
+  "--BV-ringWidth-none: 0;",
+  "--BV-size-xs: 20rem;",
+  "--BV-size-sm: 24rem;",
+  "--BV-size-md: 28rem;",
+  "--BV-size-lg: 32rem;",
+  "--BV-size-xl: 36rem;",
+  "--BV-size-2xl: 42rem;",
+  "--BV-size-3xl: 48rem;",
+  "--BV-size-4xl: 56rem;",
+  "--BV-size-5xl: 64rem;",
+  "--BV-size-6xl: 72rem;",
+  "--BV-size-7xl: 80rem;",
+  "--BV-size-prose: 65ch;",
+  "--BV-space-0: 0;",
+  "--BV-space-1: 0.25rem;",
+  "--BV-space-2: 0.5rem;",
+  "--BV-space-3: 0.75rem;",
+  "--BV-space-4: 1rem;",
+  "--BV-space-5: 1.25rem;",
+  "--BV-space-6: 1.5rem;",
+  "--BV-space-7: 1.75rem;",
+  "--BV-space-8: 2rem;",
+  "--BV-space-9: 2.25rem;",
+  "--BV-space-10: 2.5rem;",
+  "--BV-space-11: 2.75rem;",
+  "--BV-space-12: 3rem;",
+  "--BV-space-14: 3.5rem;",
+  "--BV-space-16: 4rem;",
+  "--BV-space-20: 5rem;",
+  "--BV-space-24: 6rem;",
+  "--BV-space-48: 12rem;",
+  "--BV-space-64: 16rem;",
+  "--BV-space-72: 18rem;",
+  "--BV-space-0_5: 0.125rem;",
+  "--BV-space-1_5: 0.375rem;",
+  "--BV-space-2_5: 0.625rem;",
+  "--BV-space-px: 1px;",
+  "--BV-typography-fontFamily-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";",
+  "--BV-typography-fontFamily-serif: ui-serif,Georgia,Cambria,"Times New Roman",Times,serif;",
+  "--BV-typography-fontFamily-mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;",
+  "--BV-typography-text-xl-height: 1.75rem;",
+  "--BV-typography-text-xl-size: 1.25rem;",
+  "--BV-typography-text-lg-height: 1.75rem;",
+  "--BV-typography-text-lg-size: 1.125rem;",
+  "--BV-typography-text-base-height: 1.5rem;",
+  "--BV-typography-text-base-size: 1rem;",
+  "--BV-typography-text-sm-height: 1.25rem;",
+  "--BV-typography-text-sm-size: 0.875rem;",
+  "--BV-typography-text-xs-height: 1rem;",
+  "--BV-typography-text-xs-size: 0.75rem;",
+  "--BV-typography-text-2xl-height: 2rem;",
+  "--BV-typography-text-2xl-size: 1.5rem;",
+  "--BV-typography-text-3xl-height: 2.25rem;",
+  "--BV-typography-text-3xl-size: 1.875rem;",
+]
+`;
+
+exports[`default sets sm override 1`] = `
+[
+  "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
+]
 `;

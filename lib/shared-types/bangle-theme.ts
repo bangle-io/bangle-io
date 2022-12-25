@@ -1,26 +1,40 @@
 import type { DesignTokens } from './design-tokens';
 
-export type BangleThemeColorInput = NestedPartial<DesignTokens['color']>;
-export interface BangleThemeInput {
-  name: string;
-  typography?: {
-    fontFamily?: DesignTokens['typography']['fontFamily'];
-    text?: DesignTokens['typography']['text'];
+type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<RecursivePartial<U>>
+    : T[P] extends object
+    ? RecursivePartial<T[P]>
+    : T[P];
+};
+
+export type ThemeBase = Omit<
+  DesignTokens,
+  'uid' | 'theme' | 'widescreenWidth' | 'color'
+>;
+
+// {
+//   typography?: Partial<{
+//     fontFamily?: Partial<DesignTokens['typography']['fontFamily']>;
+//     text?: Partial<DesignTokens['typography']['text']>;
+//   }>;
+
+//   ringWidth?: Partial<DesignTokens['ringWidth']>;
+//   border?: TwoLevelPartial<DesignTokens['border']>;
+//   misc?: Partial<DesignTokens['misc']>;
+// };
+
+export type BangleThemeInput =
+  | BangleThemeInputLightDark
+  | BangleThemeInputSingle;
+
+export type BangleThemeInputLightDark = RecursivePartial<ThemeBase> & {
+  color?: {
+    light?: RecursivePartial<DesignTokens['color']>;
+    dark?: RecursivePartial<DesignTokens['color']>;
   };
+};
 
-  ringWidth?: DesignTokens['ringWidth'];
-  border?: Partial<DesignTokens['border']>;
-
-  color:
-    | BangleThemeColorInput
-    | {
-        light: BangleThemeColorInput;
-        dark: BangleThemeColorInput;
-      };
-}
-
-type NestedPartial<ObjectType extends object> = {
-  [KeyType in keyof ObjectType]?: ObjectType[KeyType] extends object
-    ? Partial<ObjectType[KeyType]>
-    : ObjectType[KeyType];
+export type BangleThemeInputSingle = RecursivePartial<ThemeBase> & {
+  color?: RecursivePartial<DesignTokens['color']>;
 };

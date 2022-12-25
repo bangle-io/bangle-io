@@ -13,7 +13,7 @@ import {
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { ChevronLeftIcon } from '@bangle.io/ui-components';
+import { ButtonV2, ChevronLeftIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarButton } from './ActivitybarButton';
@@ -72,19 +72,31 @@ export function ActivitybarMobileDumb({
       >
         <div className="flex flex-row items-center flex-none">
           {primaryWsPath ? (
-            <ActivitybarButton
-              hint="Go home"
-              widescreen={false}
+            <ButtonV2
+              variant="transparent"
+              ariaLabel="Go home"
               className="mr-1"
+              leftIcon={<ChevronLeftIcon className="w-6 h-6" />}
               onPress={() => {
                 goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
                   reopenPreviousEditors: false,
                   replace: false,
                 })(bangleStore.state, bangleStore.dispatch);
               }}
-              icon={<ChevronLeftIcon className="w-6 h-6" />}
             />
-          ) : null}
+          ) : // <ActivitybarButton
+          //   hint="Go home"
+          //   widescreen={false}
+          //   className="mr-1"
+          //   onPress={() => {
+          //     goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
+          //       reopenPreviousEditors: false,
+          //       replace: false,
+          //     })(bangleStore.state, bangleStore.dispatch);
+          //   }}
+          //   icon={<ChevronLeftIcon className="w-6 h-6" />}
+          // />
+          null}
         </div>
 
         <div

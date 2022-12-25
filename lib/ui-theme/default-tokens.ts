@@ -1,10 +1,17 @@
-import type { DesignTokens } from '@bangle.io/shared-types';
+import type {
+  BangleThemeInputLightDark,
+  BangleThemeInputSingle,
+  DesignTokens,
+} from '@bangle.io/shared-types';
+
+import { darkColors } from './dark-colors';
+import { lightColors } from './light-colors';
 
 // WARNING: the width is hard coded at multiple places, search for it
 // by value if you want to change it
-export const WIDESCREEN_WIDTH: DesignTokens['widescreenWidth'] = '759px';
+const WIDESCREEN_WIDTH: DesignTokens['widescreenWidth'] = '759px';
 
-export const defaultBorder: Omit<DesignTokens['border'], 'color'> = {
+const defaultBorder: Omit<DesignTokens['border'], 'color'> = {
   width: {
     DEFAULT: '1px',
     none: '0px',
@@ -21,12 +28,12 @@ export const defaultBorder: Omit<DesignTokens['border'], 'color'> = {
   },
 };
 
-export const defaultRingWidth: DesignTokens['ringWidth'] = {
+const defaultRingWidth: DesignTokens['ringWidth'] = {
   none: '0',
   DEFAULT: '1px',
 };
 
-export const defaultSize: DesignTokens['size'] = {
+const defaultSize: DesignTokens['size'] = {
   'xs': '20rem',
   'sm': '24rem',
   'md': '28rem',
@@ -41,7 +48,7 @@ export const defaultSize: DesignTokens['size'] = {
   'prose': '65ch',
 };
 
-export const defaultSpace: DesignTokens['space'] = {
+const defaultSpace: DesignTokens['space'] = {
   '0': '0',
   'px': '1px',
   '0_5': '0.125rem',
@@ -105,7 +112,7 @@ const defaultFontFamily: DesignTokens['typography']['fontFamily'] = {
   ].join(','),
 };
 
-export const defaultTypography: DesignTokens['typography'] = {
+const defaultTypography: DesignTokens['typography'] = {
   fontFamily: defaultFontFamily,
   text: {
     'xs': { size: '0.75rem', height: '1rem' },
@@ -118,6 +125,47 @@ export const defaultTypography: DesignTokens['typography'] = {
   },
 };
 
-export const defaultMiscTokens: (
-  designTokens: Omit<DesignTokens, 'misc'>,
-) => DesignTokens['misc'] = (designTokens) => ({});
+const defaultMiscTokens = {};
+
+export const defaultsLight: DesignTokens = {
+  theme: 'default-tokens',
+  uid: 'design-token::default-tokens-light',
+  typography: defaultTypography,
+  border: defaultBorder,
+  widescreenWidth: WIDESCREEN_WIDTH,
+  space: defaultSpace,
+  size: defaultSize,
+  misc: defaultMiscTokens,
+  ringWidth: defaultRingWidth,
+  color: lightColors,
+};
+
+export const defaultsDark: DesignTokens = {
+  ...defaultsLight,
+  uid: 'design-token::default-tokens-dark',
+  color: darkColors,
+};
+
+export const defaultSmallScreenOverrideSingle: BangleThemeInputSingle = {
+  color: {
+    app: {
+      activitybarBg: lightColors.app.editorBg,
+    },
+  },
+};
+
+export const defaultSmallScreenOverrideLightDark: BangleThemeInputLightDark = {
+  ...defaultSmallScreenOverrideSingle,
+  color: {
+    light: {
+      app: {
+        activitybarBg: lightColors.app.editorBg,
+      },
+    },
+    dark: {
+      app: {
+        activitybarBg: darkColors.app.editorBg,
+      },
+    },
+  },
+};

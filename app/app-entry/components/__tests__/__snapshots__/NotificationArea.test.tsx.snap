@@ -41,7 +41,7 @@ exports[`NotificationArea renders with content 2`] = `
           <div>
             <button
               aria-label="dismiss notification"
-              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
               style="background-color: transparent;"
               type="button"
             >
@@ -108,7 +108,7 @@ exports[`NotificationArea renders with content 2`] = `
           <div>
             <button
               aria-label="dismiss notification"
-              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md  py-1 transition-all duration-100 cursor-pointer "
+              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
               style="background-color: transparent;"
               type="button"
             >
