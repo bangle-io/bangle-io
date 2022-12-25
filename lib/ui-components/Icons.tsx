@@ -396,7 +396,7 @@ export function SingleCharIcon({ char, ...props }: { char: string } & any) {
       stroke="currentColor"
       {...props}
     >
-      <circle r="11" cx="12" cy="12" strokeWidth="1" style={{ fill: 'none' }} />
+      <circle r="11" cx="12" cy="12" strokeWidth="2" style={{ fill: 'none' }} />
       <text
         alignmentBaseline="central"
         x="50%"

@@ -1,3 +1,5 @@
+/* eslint-disable testing-library/no-await-sync-query */
+/* eslint-disable testing-library/prefer-screen-queries */
 import { expect } from '@playwright/test';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
@@ -85,7 +87,7 @@ test.describe('mobile', () => {
     await page.locator('[aria-label="Note browser"]').click();
 
     await expect(
-      page.locator('.B-workspace-sidebar_workspace-sidebar '),
+      page.locator('[data-testid="app-workspace-sidebar_workspace-sidebar"]'),
     ).toContainText('Note browser');
 
     await page.locator('[aria-label="hide Note browser"]').click();
@@ -100,17 +102,21 @@ test.describe('mobile', () => {
 
     await activityBar.waitFor();
     // by default on chrome editing is enabled
-    const done = activityBar.locator('role=button[name="done editing"]');
+    const done = await activityBar.getByRole('button', {
+      name: 'done editing',
+    });
 
     await test.step('clicking on done works', async () => {
-      await expect(done).toContainText('done');
+      await expect(done).toContainText(/done/i);
       await done.click();
     });
 
-    const edit = activityBar.locator('role=button[name="edit"]');
+    const edit = await activityBar.getByRole('button', {
+      name: 'edit',
+    });
 
     await test.step('clicking edit should make the document typables', async () => {
-      await expect(edit).toContainText('edit');
+      await expect(edit).toContainText(/edit/i);
 
       await edit.click();
       await done.waitFor();

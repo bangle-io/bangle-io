@@ -52,6 +52,7 @@ export function Editorbar({
 
   return (
     <div
+      data-testid="app-editor-container_editorbar"
       className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
       style={{
         backgroundColor: vars.color.app.editorBg,
@@ -61,6 +62,7 @@ export function Editorbar({
         ariaLabel="note path"
         text={path}
         size="xs"
+        className={isActive ? 'BU_active' : ''}
         tone={TONE.SECONDARY}
         variant={!isActive ? BUTTON_VARIANT.TRANSPARENT : BUTTON_VARIANT.SOFT}
         onPress={openNotesPalette}

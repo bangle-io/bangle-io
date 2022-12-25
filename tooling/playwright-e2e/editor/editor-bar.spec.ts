@@ -23,7 +23,7 @@ test.beforeEach(async ({ bangleApp }, testInfo) => {
 const isEditorBarFocused = async (page: Page, editorId: EditorIdType) => {
   return Boolean(
     await page.$(
-      `.B-editor-container_editor-container-${editorId} .B-activitybar_editorbar-wrapper  > .BU_active`,
+      `.B-editor-container_editor-container-${editorId} [data-testid="app-editor-container_editorbar"] > .BU_active`,
     ),
   );
 };
@@ -31,7 +31,7 @@ const isEditorBarFocused = async (page: Page, editorId: EditorIdType) => {
 const waitForEditorBarFocused = async (page: Page, editorId: EditorIdType) => {
   await page
     .locator(
-      `.B-editor-container_editor-container-${editorId} .B-activitybar_editorbar-wrapper  > .BU_active`,
+      `.B-editor-container_editor-container-${editorId} [data-testid="app-editor-container_editorbar"] > .BU_active`,
     )
     .waitFor();
 };

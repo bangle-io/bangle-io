@@ -4,7 +4,7 @@ exports[`renders mobile view 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full"
+      class="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
       data-testid="app-activitybar_activitybar-mobile"
     >
       <div
@@ -12,13 +12,13 @@ exports[`renders mobile view 1`] = `
       >
         <button
           aria-label="Go home"
-          class="mr-1 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+          class="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           style="background-color: transparent;"
           type="button"
         >
           <span>
             <svg
-              class="w-6 h-6 w-6 h-6  "
+              class="w-6 h-6 w-5 h-5  "
               fill="currentColor"
               viewBox="0 0 18 18"
               xmlns="http://www.w3.org/2000/svg"
@@ -42,14 +42,11 @@ exports[`renders mobile view 1`] = `
       >
         <button
           aria-label="files palette"
-          class="min-w-0 truncate B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
+          class="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+          style="background-color: transparent;"
           type="button"
         >
-          <span
-            class="font-bold min-w-0 truncate "
-          >
-            two
-          </span>
+          two
         </button>
       </div>
       <div
@@ -63,14 +60,10 @@ exports[`renders mobile view 1`] = `
         >
           <button
             aria-label="done editing"
-            class="capitalize B-ui-bangle-button_button p-1  transition-all duration-100 "
+            class="capitalize text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
             type="button"
           >
-            <span
-              class="font-bold "
-            >
-              done
-            </span>
+            Done
           </button>
         </div>
         <div

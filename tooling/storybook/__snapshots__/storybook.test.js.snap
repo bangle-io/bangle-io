@@ -12,7 +12,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-col flex-grow pt-2 pb-3 border-r-1 border-colorNeutralBorder"
+    className="flex flex-col flex-grow gap-2 pt-2 pb-3 border-r-1 border-colorNeutralBorder"
     data-testid="app-activitybar_activitybar"
     style={
       {
@@ -23,8 +23,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
   >
     <button
       aria-label="Workspace Home"
-      autoFocus={false}
-      className="w-full py-3 rounded-sm flex justify-center border-l-2  border-colorAppActivitybarBg  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -41,47 +40,50 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
         }
       }
       type="button"
     >
-      <svg
-        className="w-8 h-8 text-gray-100 "
-        fill="currentColor"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="11"
-          strokeWidth="1"
-          style={
-            {
-              "fill": "none",
-            }
-          }
-        />
-        <text
-          alignmentBaseline="central"
-          strokeWidth="0"
-          textAnchor="middle"
-          x="50%"
-          y="50%"
+      <span>
+        <svg
+          className="w-7 h-7  "
+          fill="currentColor"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-           
-        </text>
-      </svg>
+          <circle
+            cx="12"
+            cy="12"
+            r="11"
+            strokeWidth="2"
+            style={
+              {
+                "fill": "none",
+              }
+            }
+          />
+          <text
+            alignmentBaseline="central"
+            strokeWidth="0"
+            textAnchor="middle"
+            x="50%"
+            y="50%"
+          >
+            H
+          </text>
+        </svg>
+      </span>
     </button>
     <div
       className="flex-grow"
     />
     <button
       aria-label="What's new"
-      autoFocus={false}
-      className="w-full py-3 rounded-sm flex justify-center border-l-2  border-colorAppActivitybarBg  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -98,25 +100,29 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
         }
       }
       type="button"
     >
-      <svg
-        className="h-7 w-7 "
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-        />
-      </svg>
+      <span>
+        <svg
+          className="w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
+      </span>
     </button>
     <button
       aria-label="options menu"
@@ -176,7 +182,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
   }
 >
   <div
-    className="flex flex-col flex-grow pt-2 pb-3 border-r-1 border-colorNeutralBorder"
+    className="flex flex-col flex-grow gap-2 pt-2 pb-3 border-r-1 border-colorNeutralBorder"
     data-testid="app-activitybar_activitybar"
     style={
       {
@@ -187,8 +193,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
   >
     <button
       aria-label="Workspace Home"
-      autoFocus={false}
-      className="w-full py-3 rounded-sm flex justify-center border-l-2  border-colorAppActivitybarBg  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -205,44 +210,47 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
         }
       }
       type="button"
     >
-      <svg
-        className="w-8 h-8 text-gray-100 "
-        fill="currentColor"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="11"
-          strokeWidth="1"
-          style={
-            {
-              "fill": "none",
-            }
-          }
-        />
-        <text
-          alignmentBaseline="central"
-          strokeWidth="0"
-          textAnchor="middle"
-          x="50%"
-          y="50%"
+      <span>
+        <svg
+          className="w-7 h-7  "
+          fill="currentColor"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-           
-        </text>
-      </svg>
+          <circle
+            cx="12"
+            cy="12"
+            r="11"
+            strokeWidth="2"
+            style={
+              {
+                "fill": "none",
+              }
+            }
+          />
+          <text
+            alignmentBaseline="central"
+            strokeWidth="0"
+            textAnchor="middle"
+            x="50%"
+            y="50%"
+          >
+            H
+          </text>
+        </svg>
+      </span>
     </button>
     <button
       aria-label="I am a folder sidebar"
-      autoFocus={false}
-      className="w-full py-3 rounded-sm flex justify-center border-l-2  border-colorAppActivitybarBg  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="border-l-2 border-colorAppActivitybarBg  text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -259,33 +267,36 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
         }
       }
       type="button"
     >
-      <svg
-        className=" w-7 h-7 "
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-        />
-      </svg>
+      <span>
+        <svg
+          className="w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
+      </span>
     </button>
     <div
       className="flex-grow"
     />
     <button
       aria-label="What's new"
-      autoFocus={false}
-      className="w-full py-3 rounded-sm flex justify-center border-l-2  border-colorAppActivitybarBg  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="text-lg font-600 h-12 min-w-12 px-3  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -302,25 +313,29 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
         }
       }
       type="button"
     >
-      <svg
-        className="h-7 w-7 "
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-        />
-      </svg>
+      <span>
+        <svg
+          className="w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
+      </span>
     </button>
     <button
       aria-label="options menu"
@@ -377,7 +392,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full"
+    className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
     data-testid="app-activitybar_activitybar-mobile"
   >
     <div
@@ -385,7 +400,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
     >
       <button
         aria-label="Go home"
-        className="mr-1 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -410,7 +425,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
       >
         <span>
           <svg
-            className="w-6 h-6 w-6 h-6  "
+            className="w-6 h-6 w-5 h-5  "
             fill="currentColor"
             viewBox="0 0 18 18"
             xmlns="http://www.w3.org/2000/svg"
@@ -434,7 +449,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
     >
       <button
         aria-label="files palette"
-        className="min-w-0 truncate B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -451,16 +466,13 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "color": "var(--BV-ui-bangle-button-color)",
+            "backgroundColor": "transparent",
+            "color": "var(--BV-color-neutral-text)",
           }
         }
         type="button"
       >
-        <span
-          className="font-bold min-w-0 truncate "
-        >
-          one
-        </span>
+        one
       </button>
     </div>
     <div
@@ -474,7 +486,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
       >
         <button
           aria-label="edit"
-          className="capitalize B-ui-bangle-button_button p-1  transition-all duration-100 "
+          className="capitalize text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -491,17 +503,13 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-              "color": "var(--BV-ui-bangle-button-color)",
+              "backgroundColor": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solidText)",
             }
           }
           type="button"
         >
-          <span
-            className="font-bold "
-          >
-            edit
-          </span>
+          edit
         </button>
       </div>
       <div
@@ -558,7 +566,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
   }
 >
   <div
-    className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full"
+    className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
     data-testid="app-activitybar_activitybar-mobile"
   >
     <div
@@ -566,7 +574,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
     >
       <button
         aria-label="Go home"
-        className="mr-1 text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -591,7 +599,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
       >
         <span>
           <svg
-            className="w-6 h-6 w-6 h-6  "
+            className="w-6 h-6 w-5 h-5  "
             fill="currentColor"
             viewBox="0 0 18 18"
             xmlns="http://www.w3.org/2000/svg"
@@ -615,7 +623,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
     >
       <button
         aria-label="files palette"
-        className="min-w-0 truncate B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
+        className="text-md h-10  min-w-10 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -632,16 +640,13 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "color": "var(--BV-ui-bangle-button-color)",
+            "backgroundColor": "transparent",
+            "color": "var(--BV-color-neutral-text)",
           }
         }
         type="button"
       >
-        <span
-          className="font-bold min-w-0 truncate "
-        >
-          one-two-three-four-five-six-seven-eight
-        </span>
+        one-two-three-four-five-six-seven-eight
       </button>
     </div>
     <div
@@ -655,7 +660,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
       >
         <button
           aria-label="edit"
-          className="capitalize B-ui-bangle-button_button p-1  transition-all duration-100 "
+          className="capitalize text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -672,17 +677,13 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-              "color": "var(--BV-ui-bangle-button-color)",
+              "backgroundColor": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-color-promote-solidText)",
             }
           }
           type="button"
         >
-          <span
-            className="font-bold "
-          >
-            edit
-          </span>
+          edit
         </button>
       </div>
       <div

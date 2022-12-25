@@ -22,7 +22,10 @@ export function WorkspaceSidebar({
   widescreen: boolean;
 }) {
   return (
-    <div className="flex flex-col flex-grow h-full overflow-y-scroll bg-colorNeutralBgLayerTop">
+    <div
+      data-testId="app-workspace-sidebar_workspace-sidebar"
+      className="flex flex-col flex-grow h-full overflow-y-scroll bg-colorNeutralBgLayerTop"
+    >
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">{sidebar.title}</span>
         <span>

@@ -134,6 +134,7 @@ describe('default light/dark', () => {
     expect(result[CSS_SM_LIGHT_THEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
+        "--BV-color-app-activitybarText: rgb(34, 34, 34);",
       ]
     `);
   });
@@ -503,8 +504,11 @@ describe('smallscreen overrides', () => {
       '--BV-color-app-activitybarBg: sm-activitybar-dark-red;',
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toEqual([
+    expect(override[CSS_SM_LIGHT_THEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(255, 255, 255);',
-    ]);
+    );
+
+    // other overrides should be there
+    expect(override[CSS_SM_LIGHT_THEME]?.length).toBeGreaterThan(1);
   });
 });

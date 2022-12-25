@@ -12,11 +12,9 @@ import {
   goToWsNameRoute,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { ButtonV2, ChevronLeftIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
 export function ActivitybarMobile() {
@@ -68,14 +66,14 @@ export function ActivitybarMobileDumb({
     <>
       <div
         data-testid="app-activitybar_activitybar-mobile"
-        className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full"
+        className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
       >
         <div className="flex flex-row items-center flex-none">
           {primaryWsPath ? (
             <ButtonV2
               variant="transparent"
               ariaLabel="Go home"
-              className="mr-1"
+              size="sm"
               leftIcon={<ChevronLeftIcon className="w-6 h-6" />}
               onPress={() => {
                 goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
@@ -84,79 +82,64 @@ export function ActivitybarMobileDumb({
                 })(bangleStore.state, bangleStore.dispatch);
               }}
             />
-          ) : // <ActivitybarButton
-          //   hint="Go home"
-          //   widescreen={false}
-          //   className="mr-1"
-          //   onPress={() => {
-          //     goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
-          //       reopenPreviousEditors: false,
-          //       replace: false,
-          //     })(bangleStore.state, bangleStore.dispatch);
-          //   }}
-          //   icon={<ChevronLeftIcon className="w-6 h-6" />}
-          // />
-          null}
+          ) : null}
         </div>
 
         <div
           className="flex flex-row items-center shrink overflow-hidden"
           role="button"
         >
-          <ActionButton
-            ariaLabel={'files palette'}
-            isQuiet
-            variant={'secondary'}
-            className="min-w-0 truncate"
+          <ButtonV2
+            variant="transparent"
+            ariaLabel="files palette"
+            size="md"
+            text={
+              primaryWsPath
+                ? resolvePath(primaryWsPath).fileNameWithoutExt
+                : wsName || 'bangle-io'
+            }
             onPress={() => {
               togglePaletteType(CorePalette.Notes)(
                 bangleStore.state,
                 bangleStore.dispatch,
               );
             }}
-          >
-            <ButtonContent
-              textClassName="font-bold min-w-0 truncate"
-              text={
-                primaryWsPath
-                  ? resolvePath(primaryWsPath).fileNameWithoutExt
-                  : wsName || 'bangle-io'
-              }
-            />
-          </ActionButton>
+          />
         </div>
         <div className="flex flex-1"></div>
         <div className="flex flex-row items-center flex-none">
           {primaryWsPath && (
             <div className="mr-2">
               {showDone ? (
-                <ActionButton
+                <ButtonV2
+                  variant="solid"
+                  tone="promote"
                   ariaLabel={'done editing'}
                   className="capitalize"
-                  variant={'primary'}
+                  size="sm"
+                  text="Done"
                   onPress={() => {
                     toggleEditing({
                       focusOrBlur: true,
                       editingAllowed: false,
                     })(bangleStore.state, bangleStore.dispatch);
                   }}
-                >
-                  <ButtonContent textClassName="font-bold" text={'done'} />
-                </ActionButton>
+                />
               ) : (
-                <ActionButton
+                <ButtonV2
+                  variant="solid"
+                  tone="promote"
                   ariaLabel={'edit'}
                   className="capitalize"
-                  variant={'secondary'}
+                  size="sm"
+                  text="edit"
                   onPress={() => {
                     toggleEditing({
                       focusOrBlur: true,
                       editingAllowed: true,
                     })(bangleStore.state, bangleStore.dispatch);
                   }}
-                >
-                  <ButtonContent textClassName="font-bold" text={'edit'} />
-                </ActionButton>
+                />
               )}
             </div>
           )}

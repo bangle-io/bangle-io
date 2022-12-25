@@ -9,10 +9,15 @@ import {
   goToWorkspaceHomeRoute,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
+import { ButtonV2, GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
+import { cx } from '@bangle.io/utils';
 
-import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
+
+const ButtonStyleOBj: React.CSSProperties = {
+  borderRadius: 0,
+  color: vars.color.app.activitybarText,
+};
 
 export function Activitybar() {
   const extensionRegistry = useExtensionRegistryContext();
@@ -34,17 +39,22 @@ export function Activitybar() {
       const active = sidebar === r.name;
 
       return (
-        <ActivitybarButton
-          isActive={active}
-          hint={r.hint}
-          icon={React.cloneElement(r.activitybarIcon, {
-            className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
-          })}
+        <ButtonV2
+          ariaLabel={r.hint}
           key={r.name}
-          widescreen={widescreen}
           onPress={() => {
             changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
           }}
+          style={ButtonStyleOBj}
+          className={cx(
+            'border-l-2',
+            active
+              ? 'border-colorPromoteBorder BU_is-active'
+              : 'border-colorAppActivitybarBg',
+          )}
+          variant="transparent"
+          size="lg"
+          leftIcon={r.activitybarIcon}
         />
       );
     });
@@ -56,31 +66,27 @@ export function Activitybar() {
         backgroundColor: vars.color.app.activitybarBg,
         color: vars.color.app.activitybarText,
       }}
-      className="flex flex-col flex-grow pt-2 pb-3 border-r-1 border-colorNeutralBorder"
+      className="flex flex-col flex-grow gap-2 pt-2 pb-3 border-r-1 border-colorNeutralBorder"
     >
-      <ActivitybarButton
-        widescreen={widescreen}
-        isActive={false}
+      <ButtonV2
+        ariaLabel="Workspace Home"
+        style={ButtonStyleOBj}
         onPress={() => {
           changeSidebar(null)(bangleStore.state, bangleStore.dispatch);
           goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
         }}
-        hint="Workspace Home"
-        icon={
-          <SingleCharIcon
-            char={wsName?.[0]?.toLocaleUpperCase() || ' '}
-            className="w-8 h-8 text-gray-100"
-          />
+        variant="transparent"
+        size="lg"
+        leftIcon={
+          <SingleCharIcon char={wsName?.[0]?.toLocaleUpperCase() || 'H'} />
         }
       />
 
       {sideBarComponents}
       <div className="flex-grow"></div>
-      <ActivitybarButton
-        isActive={false}
-        widescreen={widescreen}
-        icon={<GiftIcon className="h-7 w-7" showDot={changelogHasUpdates} />}
-        hint={"What's new"}
+      <ButtonV2
+        ariaLabel="What's new"
+        style={ButtonStyleOBj}
         onPress={() => {
           dispatch({
             name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
@@ -89,6 +95,9 @@ export function Activitybar() {
             },
           });
         }}
+        variant="transparent"
+        size="lg"
+        leftIcon={<GiftIcon showDot={changelogHasUpdates} />}
       />
       <ActivitybarOptionsDropdown
         operationKeybindings={operationKeybindings}

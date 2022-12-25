@@ -145,7 +145,7 @@ export function EditorContainer({
       )}
 
       <div
-        className={cx('w-full')}
+        className={cx('w-full smallscreen:min-h-screen')}
         style={{
           maxWidth: 'min(var(--BV-page-max-width), 100vw)',
           padding: widescreen

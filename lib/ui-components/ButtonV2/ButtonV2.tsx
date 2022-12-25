@@ -30,6 +30,7 @@ export function ButtonV2({
   onPress,
   rightIcon,
   size = 'md',
+  style,
   text,
   tone = TONE.NEUTRAL,
   variant = BUTTON_VARIANT.SOLID,
@@ -45,6 +46,7 @@ export function ButtonV2({
   onPress?: FirstParameter<typeof useButton>['onPress'];
   rightIcon?: React.ReactNode;
   size?: 'xs' | 'sm' | 'md' | 'lg';
+  style?: React.CSSProperties;
   text?: string;
   tone?: Tone;
   variant?: ButtonVariant;
@@ -141,7 +143,7 @@ export function ButtonV2({
       {...mergeProps(hoverProps, buttonProps, focusProps)}
       type="button"
       ref={ref}
-      style={createStyleObj(variantStyle, {
+      style={createStyleObj(variantStyle, style, {
         isHovered,
         isPressed,
         isDisabled,
@@ -430,6 +432,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
 
 function createStyleObj(
   buttonStyles: ButtonStyles,
+  override: React.CSSProperties | undefined,
   opts: {
     isHovered: boolean;
     isPressed: boolean;
@@ -475,5 +478,5 @@ function createStyleObj(
     isGhost && setBorder(buttonStyles.hoverColor);
   }
 
-  return style;
+  return { ...style, ...override };
 }
