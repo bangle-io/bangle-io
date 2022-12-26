@@ -23,6 +23,7 @@ export function ButtonV2({
   animateOnPress = true,
   ariaLabel,
   className = '',
+  tooltipPlacement,
   focus = defaultFocus,
   isDisabled,
   isTouch = isTouchDevice,
@@ -36,6 +37,7 @@ export function ButtonV2({
   variant = BUTTON_VARIANT.SOLID,
 }: {
   animateOnPress?: boolean;
+  tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   ariaLabel?: string;
   autoFocus?: boolean;
   className?: string;
@@ -99,7 +101,7 @@ export function ButtonV2({
     case 'md': {
       className = cx(
         className,
-        'text-md h-10  min-w-10',
+        'text-base h-9 smallscreen:h-10 min-w-10',
         isTouch ? 'px-3' : 'px-2',
       );
       leftIconClassName = cx(leftIconClassName, 'w-6 h-6', text && 'mr-1');
@@ -110,7 +112,7 @@ export function ButtonV2({
     case 'lg': {
       className = cx(
         className,
-        'text-lg font-600 h-12 min-w-12',
+        'text-lg font-600 h-11 min-w-12',
         isTouch ? 'px-4' : 'px-3',
       );
       leftIconClassName = cx(leftIconClassName, 'w-7 h-7', text && 'mr-1');
@@ -271,11 +273,11 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     },
 
     [TONE.NEUTRAL]: {
-      color: vars.color.neutral.text,
+      color: vars.color.neutral.solid,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.solidFaint,
-      hoverColor: vars.color.neutral.solidText,
-      pressedBgColor: vars.color.neutral.border,
+      hoverColor: vars.color.neutral.solidStrong,
+      pressedBgColor: vars.color.neutral.solidSubdued,
       disabledBgColor: 'transparent',
       disabledColor: vars.color.neutral.textDisabled,
     },

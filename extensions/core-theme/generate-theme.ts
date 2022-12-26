@@ -9,6 +9,7 @@ const cssString = createStyleSheet({
   name: 'core-theme',
   type: 'light/dark',
   theme: {
+    typography: {},
     color: {
       light: {},
       dark: {},

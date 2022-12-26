@@ -36,7 +36,7 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 
   solid: spectrumLight.gray700,
   solidText: spectrumLight.gray50,
-  solidStrong: spectrumLight.gray700,
+  solidStrong: spectrumLight.gray800,
   solidStronger: spectrumLight.gray900,
   solidSubdued: spectrumLight.gray400,
   solidFaint: spectrumLight.gray300,
@@ -131,9 +131,9 @@ export const lightColors: DesignTokens['color'] = {
     iconSubdued: bangleAccent600,
     icon: bangleAccent700,
 
-    solid: bangleAccent700,
-    solidStrong: bangleAccent800,
-    solidStronger: bangleAccent900,
+    solid: bangleAccent800,
+    solidStrong: bangleAccent900,
+    solidStronger: bangleAccent1000,
     solidFaint: bangleAccent300,
     solidSubdued: bangleAccent500,
     solidText: neutralColor.textInverted,

@@ -12,6 +12,7 @@ import {
 } from '@bangle.io/ui-bangle-button';
 import {
   ArrowsExpand,
+  ButtonV2,
   ChevronDownIcon,
   ChevronUpIcon,
   CloseIcon,
@@ -54,42 +55,40 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
         </div>
         <div className="flex flex-row">
           {isMinimized ? (
-            <ActionButton
-              isQuiet="hoverBg"
+            <ButtonV2
+              size="xs"
+              variant="transparent"
               ariaLabel="Maximize"
               onPress={() => {
                 updateIsMinimized((e) => !e);
               }}
-            >
-              <ButtonContent size="small" icon={<ChevronUpIcon />} />
-            </ActionButton>
+              leftIcon={<ChevronUpIcon />}
+            />
           ) : (
-            <ActionButton
-              isQuiet="hoverBg"
+            <ButtonV2
+              size="xs"
+              variant="transparent"
               ariaLabel="Minimize"
+              leftIcon={<ChevronDownIcon />}
               onPress={() => {
                 updateIsMinimized((e) => !e);
               }}
-            >
-              <ButtonContent size="small" icon={<ChevronDownIcon />} />
-            </ActionButton>
+            />
           )}
-          <ActionButton
-            isQuiet="hoverBg"
-            ariaLabel="Expand to full screen"
+          <ButtonV2
+            variant="transparent"
+            size="xs"
             onPress={onExpand}
-            tooltip={<TooltipWrapper>Expand to full screen</TooltipWrapper>}
-          >
-            <ButtonContent size="small" icon={<ArrowsExpand />} />
-          </ActionButton>
-          <ActionButton
-            isQuiet="hoverBg"
-            ariaLabel="Close"
+            ariaLabel={'Expand to full screen'}
+            leftIcon={<ArrowsExpand />}
+          />
+          <ButtonV2
+            variant="transparent"
+            size="xs"
             onPress={onClose}
-            tooltip={<TooltipWrapper>Close</TooltipWrapper>}
-          >
-            <ButtonContent size="small" icon={<CloseIcon />} />
-          </ActionButton>
+            ariaLabel={'Close'}
+            leftIcon={<CloseIcon />}
+          />
         </div>
       </div>
       {isMinimized ? null : (

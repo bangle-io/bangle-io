@@ -115,4 +115,35 @@ test.describe('workspaces', () => {
 
     expect(result).toEqual([`bangle-help`, wsName1].sort());
   });
+
+  for (const screenType of ['desktop', 'mobile']) {
+    test.describe(screenType + ':page ', () => {
+      test.beforeEach(async ({ page, bangleApp }, testInfo) => {
+        if (screenType === 'mobile') {
+          await page.setViewportSize({ width: 480, height: 960 });
+        }
+        await bangleApp.open();
+      });
+      test('/landing no workspace', async ({ page }) => {
+        await page.goto('/landing', {
+          waitUntil: 'networkidle',
+        });
+        expect(await page.screenshot()).toMatchSnapshot({
+          maxDiffPixels: 20,
+        });
+      });
+
+      test('/ws/<home>', async ({ page }) => {
+        const [wsName] = await createWorkspace(page);
+
+        await page
+          .locator('[data-testid="app-app-entry_pages-empty-editor-page"]')
+          .waitFor();
+
+        expect(await page.screenshot()).toMatchSnapshot({
+          maxDiffPixels: 20,
+        });
+      });
+    });
+  }
 });

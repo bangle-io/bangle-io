@@ -7,8 +7,7 @@ import {
   CorePalette,
 } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CenteredBoxedPage } from '@bangle.io/ui-components';
+import { ButtonV2, CenteredBoxedPage } from '@bangle.io/ui-components';
 
 export function WorkspaceInvalidPath() {
   const bangleStore = useBangleStoreContext();
@@ -23,27 +22,26 @@ export function WorkspaceInvalidPath() {
       }
       actions={
         <>
-          <ActionButton
+          <ButtonV2
             ariaLabel="open another workspace"
+            text="Switch workspace"
             onPress={() => {
               togglePaletteType(CorePalette.Workspace)(
                 bangleStore.state,
                 bangleStore.dispatch,
               );
             }}
-          >
-            <ButtonContent text="Switch workspace" />
-          </ActionButton>
-          <ActionButton
+          />
+
+          <ButtonV2
             ariaLabel="new workspace"
             onPress={() => {
               dispatchSerialOperation({
                 name: CORE_OPERATIONS_NEW_WORKSPACE,
               });
             }}
-          >
-            <ButtonContent text="New workspace" />
-          </ActionButton>
+            text="New workspace"
+          />
         </>
       }
     >

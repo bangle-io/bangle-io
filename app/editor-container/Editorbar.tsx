@@ -13,6 +13,7 @@ import {
   CloseIcon,
   SecondaryEditorIcon,
 } from '@bangle.io/ui-components';
+import { cx } from '@bangle.io/utils';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
@@ -81,31 +82,25 @@ export function Editorbar({
       <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">
         {showSplitEditor && (
-          <ActionButton
-            isQuiet="hoverBg"
+          <ButtonV2
+            size="xs"
+            variant={isSplitEditorOpen ? 'soft' : 'transparent'}
             onPress={onPressSecondaryEditor}
-            className="lg:mr-1"
-            ariaLabel="Split screen"
-            isActive={isSplitEditorOpen}
-            tooltip={
-              <TooltipWrapper>
-                {isSplitEditorOpen ? 'Close split screen' : 'Split screen'}
-              </TooltipWrapper>
+            className={cx('lg:mr-1', isSplitEditorOpen ? 'BU_is-active' : '')}
+            ariaLabel={
+              isSplitEditorOpen ? 'Close split screen' : 'Split screen'
             }
+            leftIcon={<SecondaryEditorIcon />}
             tooltipPlacement="bottom"
-            tooltipXOffset={10}
-          >
-            <ButtonContent size="small" icon={<SecondaryEditorIcon />} />
-          </ActionButton>
+          />
         )}
-        <ActionButton
-          isQuiet="hoverBg"
+        <ButtonV2
+          size="xs"
+          variant="transparent"
           ariaLabel="Close"
           onPress={onClose}
-          styling={{}}
-        >
-          <ButtonContent size="small" icon={<CloseIcon />} />
-        </ActionButton>
+          leftIcon={<CloseIcon />}
+        />
       </div>
     </div>
   );

@@ -16,9 +16,10 @@ export const Svg = ({
 } & React.SVGProps<SVGSVGElement>) => (
   <svg
     style={style}
+    fill="currentColor"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className={`fill-current ${size ? `h-${size} w-${size}` : ''} ${className}`}
+    className={`${size ? `h-${size} w-${size}` : ''} ${className}`}
     {...props}
   >
     {children}

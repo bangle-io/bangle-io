@@ -7,6 +7,7 @@ import {
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
 import {
+  ButtonV2,
   ChevronLeftIcon,
   CloseIcon,
   ErrorBoundary,
@@ -23,24 +24,20 @@ export function WorkspaceSidebar({
 }) {
   return (
     <div
-      data-testId="app-workspace-sidebar_workspace-sidebar"
-      className="flex flex-col flex-grow h-full overflow-y-scroll bg-colorNeutralBgLayerTop"
+      data-testid="app-workspace-sidebar_workspace-sidebar"
+      className="flex flex-col flex-grow h-full smallscreen:min-h-screen overflow-y-scroll bg-colorNeutralBgLayerTop"
     >
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">{sidebar.title}</span>
         <span>
-          <ActionButton
-            isQuiet="hoverBg"
+          <ButtonV2
+            variant="transparent"
             onPress={onDismiss}
-            ariaLabel={'hide ' + sidebar.title}
-            tooltip={<TooltipWrapper>Hide</TooltipWrapper>}
-            tooltipDelay={250}
+            size="sm"
+            ariaLabel={'Hide ' + sidebar.title}
             tooltipPlacement="bottom"
-          >
-            <ButtonContent
-              icon={widescreen ? <ChevronLeftIcon /> : <CloseIcon />}
-            />
-          </ActionButton>
+            leftIcon={widescreen ? <ChevronLeftIcon /> : <CloseIcon />}
+          />
         </span>
       </div>
       <ErrorBoundary>

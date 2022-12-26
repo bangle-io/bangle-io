@@ -19,10 +19,10 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   iconSubdued: spectrumDarkest.gray700,
   icon: spectrumDarkest.gray800,
 
-  solid: spectrumDarkest.gray500,
-  solidText: spectrumDarkest.gray800,
-  solidStrong: spectrumDarkest.gray600,
-  solidStronger: spectrumDarkest.gray700,
+  solid: spectrumDarkest.gray700,
+  solidText: spectrumDarkest.gray50,
+  solidStrong: spectrumDarkest.gray800,
+  solidStronger: spectrumDarkest.gray900,
   solidSubdued: spectrumDarkest.gray400,
   solidFaint: spectrumDarkest.gray300,
 
@@ -47,13 +47,12 @@ export const darkColors: DesignTokens['color'] = {
     iconSubdued: spectrumDarkest.gray700,
     icon: spectrumDarkest.gray800,
 
-    solid: spectrumDarkest.gray400,
+    solid: spectrumDarkest.gray300,
     solidText: spectrumDarkest.gray700,
-    solidStrong: spectrumDarkest.gray500,
-    solidStronger: spectrumDarkest.gray600,
-    solidSubdued: spectrumDarkest.gray300,
-    // is same as subdued, since 200 will hit the bglayer level
-    solidFaint: spectrumDarkest.gray300,
+    solidStrong: spectrumDarkest.gray400,
+    solidStronger: spectrumDarkest.gray500,
+    solidSubdued: spectrumDarkest.gray200,
+    solidFaint: spectrumDarkest.gray100,
 
     borderSubdued: spectrumDarkest.gray200,
     border: spectrumDarkest.gray300,

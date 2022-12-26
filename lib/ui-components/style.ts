@@ -1,5 +1,4 @@
 import './Button/Button.css';
-import './CenteredPage.css';
 import './ComboBox/ComboBox.css';
 import './Dialog/style.css';
 import './ErrorBoundary.css';
@@ -10,5 +9,4 @@ import './misc.css';
 import './PrettyKeybinding.css';
 import './Select/Select.css';
 import './Sidebar/Sidebar.css';
-import './TextButton.css';
 import './UniversalPalette/UniversalPalette.css';

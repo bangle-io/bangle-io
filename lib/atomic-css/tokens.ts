@@ -112,11 +112,11 @@ const tokensShape: DesignTokens = {
         height: '',
         size: '',
       },
-
       'base': {
         height: '',
         size: '',
       },
+
       'sm': {
         height: '',
         size: '',

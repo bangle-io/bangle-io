@@ -16,7 +16,6 @@ import {
   ExclamationCircleIcon,
   ExclamationIcon,
   InformationCircleIcon,
-  TextButton,
 } from '@bangle.io/ui-components';
 import { useInterval } from '@bangle.io/utils';
 
@@ -133,20 +132,30 @@ export function Notification({
       <div className="flex flex-row-reverse w-full mt-3">
         {buttons &&
           buttons.map((b, i) => (
-            <TextButton
+            <ButtonV2
               key={i}
-              hintPos="left"
+              tooltipPlacement="left"
               className="ml-3"
-              onClick={async () => {
+              size="sm"
+              tone={
+                severity === 'error'
+                  ? 'critical'
+                  : severity === 'warning'
+                  ? 'caution'
+                  : severity === 'success'
+                  ? 'positive'
+                  : 'secondary'
+              }
+              variant={severity === 'info' ? 'soft' : 'solid'}
+              onPress={async () => {
                 if (b.dismissOnClick) {
                   onDismiss();
                 }
                 dispatchSerialOperation({ name: b.operation });
               }}
-              hint={b.hint}
-            >
-              {b.title}
-            </TextButton>
+              ariaLabel={b.hint}
+              text={b.title}
+            />
           ))}
       </div>
     </div>

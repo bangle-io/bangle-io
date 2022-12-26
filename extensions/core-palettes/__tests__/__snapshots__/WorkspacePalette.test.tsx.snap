@@ -40,7 +40,8 @@ exports[`Component renders correctly 1`] = `
           class="B-ui-components_right-hover-node"
         >
           <svg
-            class="fill-current  "
+            class=" "
+            fill="currentColor"
             style="height: 16px; width: 16px;"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"

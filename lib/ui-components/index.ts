@@ -18,6 +18,7 @@ export * from './ErrorBanner';
 export * from './ErrorBoundary';
 export * from './ExternalLink';
 export * from './Icons';
+export * from './Inline';
 export * from './InlinePaletteUI/InlinePaletteUI';
 export * from './Input';
 export * from './Input/TextField';
@@ -28,7 +29,6 @@ export * from './PrettyKeybinding';
 export { ListBox } from './Select/ListBox';
 export * from './Select/Select';
 export * from './Sidebar';
-export * from './TextButton';
 export * from './UniversalPalette';
 // aria
 export { CheckIcon } from '@heroicons/react/solid';

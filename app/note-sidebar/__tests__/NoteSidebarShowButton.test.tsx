@@ -20,7 +20,7 @@ test('renders correctly', async () => {
 
   expect(result.container.querySelector('button')).toBeTruthy();
 
-  expect(await result.findAllByLabelText('show note sidebar')).toBeTruthy();
+  expect(await result.findAllByLabelText('Show note sidebar')).toBeTruthy();
 });
 
 test('calls the button', async () => {
@@ -37,7 +37,7 @@ test('calls the button', async () => {
 
   expect(result.container.querySelector('button')).toBeTruthy();
 
-  fireEvent.click(result.getByLabelText('show note sidebar'));
+  fireEvent.click(result.getByLabelText('Show note sidebar'));
 
   expect(showNoteSidebar).toBeCalledTimes(1);
 });

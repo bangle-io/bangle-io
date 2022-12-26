@@ -76,7 +76,7 @@ export function Select<T extends object>(
       >
         <span
           {...valueProps}
-          className={`text-md text-left px-1 w-64 truncate overflow-ellipsis `}
+          className={`text-base text-left px-1 w-64 truncate overflow-ellipsis `}
           style={{
             color: state.selectedItem
               ? 'var(--BV-ui-bangle-button-hover-color)'
