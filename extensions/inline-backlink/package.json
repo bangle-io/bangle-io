@@ -46,7 +46,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",

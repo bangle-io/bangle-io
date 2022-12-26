@@ -29,7 +29,6 @@
     "@bangle.io/p-map": "workspace:*",
     "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/storage": "workspace:*",
-    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",

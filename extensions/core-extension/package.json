@@ -38,7 +38,6 @@
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/tri-state": "workspace:*",
-    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
