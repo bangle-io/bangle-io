@@ -4,7 +4,3 @@
   min-height: 30px;
   border: 1px solid var(--BV-window-border-color-1);
 }
-
-.B-note-sidebar_note-sidebar {
-  color: var(--BV-text-color-1);
-}

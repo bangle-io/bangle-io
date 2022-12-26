@@ -11,7 +11,7 @@ export function NoteSidebar({
   widgets: NoteSidebarWidget[];
 }) {
   return (
-    <div className="flex flex-col flex-grow h-full overflow-y-scroll B-note-sidebar_note-sidebar">
+    <div className="flex flex-col flex-grow h-full overflow-y-scroll text-colorNeutralTextSubdued">
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">Widgets</span>
         <span>

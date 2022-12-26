@@ -5,7 +5,7 @@
 }
 
 .B-ui-components_input {
-  color: var(--BV-text-color-0);
+  color: var(--BV-color-neutral-text);
   background-color: var(--BV-window-bg-color-0);
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--BV-window-border-color-0);
@@ -17,7 +17,7 @@
   position: absolute;
   left: -20px;
   cursor: pointer;
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
 }
 
 .B-ui-components_input-clear::before {

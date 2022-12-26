@@ -54,10 +54,7 @@ export function ComboBox<T extends object>(
     >
       <label
         {...labelProps}
-        className="block select-none text-sm font-medium text-left"
-        style={{
-          color: 'var(--BV-text-color-1)',
-        }}
+        className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"
       >
         {props.label}
       </label>

@@ -132,10 +132,7 @@ function WorkspaceNameInput({
   return (
     <>
       <div className="mb-2">
-        <div
-          className="mt-2 text-lg"
-          style={{ color: 'var(--BV-text-color-1)' }}
-        >
+        <div className="mt-2 text-lg text-colorNeutralTextSubdued">
           <FocusRing focusClass="B-ui-components_misc-input-ring">
             <input
               aria-label="workspace name input"

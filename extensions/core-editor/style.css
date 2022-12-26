@@ -76,10 +76,16 @@ h5 .B-core-editor_deco-collapse {
   margin-bottom: 0.25rem;
 }
 
+/* for the inline code */
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor p > code {
   background-color: var(--BV-base-300);
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor pre > code {
+  color: var(--BV-color-neutral-textSubdued);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
@@ -90,7 +96,7 @@ h5 .B-core-editor_deco-collapse {
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor blockquote {
   background-color: var(--BV-base-300);
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */

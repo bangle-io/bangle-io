@@ -58,7 +58,7 @@ exports[`clicking the button shows dropdown 1`] = `
             Switch workspace
           </span>
           <span
-            class="inline B-ui-components_pretty-keybinding"
+            class="inline B-ui-components_pretty-keybinding text-colorNeutralTextSubdued"
           >
             <kbd
               class="px-1 font-sans capitalize rounded-sm B-ui-components_pretty-keybinding-kbd"
@@ -135,7 +135,7 @@ exports[`clicking the button shows dropdown 1`] = `
             Notes palette
           </span>
           <span
-            class="inline B-ui-components_pretty-keybinding"
+            class="inline B-ui-components_pretty-keybinding text-colorNeutralTextSubdued"
           >
             <kbd
               class="px-1 font-sans capitalize rounded-sm B-ui-components_pretty-keybinding-kbd"
@@ -158,7 +158,7 @@ exports[`clicking the button shows dropdown 1`] = `
             Operation palette
           </span>
           <span
-            class="inline B-ui-components_pretty-keybinding"
+            class="inline B-ui-components_pretty-keybinding text-colorNeutralTextSubdued"
           >
             <kbd
               class="px-1 font-sans capitalize rounded-sm B-ui-components_pretty-keybinding-kbd"

@@ -47,10 +47,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
               >
                 <span>{removeExtension(r.fileName)} </span>
                 {r.dirPath && (
-                  <span
-                    className="font-light"
-                    style={{ color: 'var(--BV-text-color-1)' }}
-                  >
+                  <span className="font-light text-colorNeutralTextSubdued">
                     {r.dirPath}
                   </span>
                 )}

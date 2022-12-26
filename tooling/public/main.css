@@ -71,7 +71,6 @@ html {
   --BV-base-900: #2c2c2c;
 
   --BV-text-color-0: var(--BV-base-900);
-  --BV-text-color-1: var(--BV-base-800);
 
   --BV-accent-primary-0: rgb(88, 204, 240);
   --BV-accent-primary-1: rgb(136, 223, 250);
@@ -92,18 +91,18 @@ html {
   --BV-window-border-color-1: var(--BV-base-300);
   --BV-window-dropdown-bg-color-0: var(--BV-base-75);
   --BV-window-dropdown-bg-color-1: var(--BV-base-50);
-  --BV-window-dropdown-color: var(--BV-text-color-1);
+  --BV-window-dropdown-color: var(--BV-color-neutral-textSubdued);
   --BV-window-dropdown-radius: var(--BV-ui-bangle-button-radius);
   --BV-window-highlight-bg-color: yellow;
   --BV-window-kbd-bg-color: var(--BV-base-300);
-  --BV-window-kbd-color: var(--BV-text-color-1);
+  --BV-window-kbd-color: var(--BV-color-neutral-textSubdued);
   --BV-window-link-color: #4299e1;
   --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
   --BV-window-popup-editor-bg-color: var(--BV-base-75);
-  --BV-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-window-popup-editor-color: var(--BV-color-neutral-textSubdued);
   --BV-window-separator-color: var(--BV-base-300);
   --BV-window-tooltip-bg-color: var(--BV-base-50);
-  --BV-window-tooltip-color: var(--BV-text-color-1);
+  --BV-window-tooltip-color: var(--BV-color-neutral-textSubdued);
 
   --BV-workspace-sidebar-bg-color: var(--BV-base-150);
 
@@ -175,7 +174,6 @@ html[data-theme='dark'] {
   --BV-base-900: #efefef;
 
   --BV-text-color-0: var(--BV-base-900);
-  --BV-text-color-1: var(--BV-base-800);
 
   --BV-accent-primary-0: rgb(223, 50, 130);
   --BV-accent-primary-1: rgb(229, 92, 156);
@@ -196,17 +194,17 @@ html[data-theme='dark'] {
   --BV-window-border-color-1: var(--BV-base-400);
   --BV-window-dropdown-bg-color-0: var(--BV-base-75);
   --BV-window-dropdown-bg-color-1: var(--BV-base-50);
-  --BV-window-dropdown-color: var(--BV-text-color-1);
+  --BV-window-dropdown-color: var(--BV-color-neutral-textSubdued);
   --BV-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
   --BV-window-kbd-bg-color: var(--BV-base-400);
-  --BV-window-kbd-color: var(--BV-text-color-1);
+  --BV-window-kbd-color: var(--BV-color-neutral-textSubdued);
   --BV-window-link-color: #4299e1;
   --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
   --BV-window-popup-editor-bg-color: var(--BV-base-75);
-  --BV-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-window-popup-editor-color: var(--BV-color-neutral-textSubdued);
   --BV-window-separator-color: var(--BV-base-300);
   --BV-window-tooltip-bg-color: var(--BV-base-50);
-  --BV-window-tooltip-color: var(--BV-text-color-0);
+  --BV-window-tooltip-color: var(--BV-color-neutral-text);
 
   --BV-workspace-sidebar-bg-color: var(--BV-base-150);
 

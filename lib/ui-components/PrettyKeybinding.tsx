@@ -6,10 +6,7 @@ export function PrettyKeybinding({ rawKey }: { rawKey: string }) {
   let format = keyDisplayValue(rawKey).split('-');
 
   return (
-    <span
-      className="inline B-ui-components_pretty-keybinding"
-      style={{ color: 'var(--BV-text-color-1)' }}
-    >
+    <span className="inline B-ui-components_pretty-keybinding text-colorNeutralTextSubdued">
       {format.map((r, i) => (
         <kbd
           key={i}

@@ -51,18 +51,21 @@ test.describe('workspaces', () => {
         await page.goto('/landing', {
           waitUntil: 'networkidle',
         });
+        await sleep();
+
         expect(await page.screenshot()).toMatchSnapshot({
           maxDiffPixels: 20,
         });
       });
 
       test('/ws/<home>', async ({ page }) => {
-        const [wsName] = await createWorkspace(page);
+        const [wsName] = await createWorkspace(page, 'test-workspace-1');
 
         await page
           .locator('[data-testid="app-app-entry_pages-empty-editor-page"]')
           .waitFor();
 
+        await sleep();
         expect(await page.screenshot()).toMatchSnapshot({
           maxDiffPixels: 20,
         });

@@ -115,10 +115,7 @@ function RecentWorkspace({
                 >
                   <span>{r.name} </span>
                   {r.name === lastWsName && (
-                    <span
-                      className="font-light italic"
-                      style={{ color: 'var(--BV-text-color-1)' }}
-                    >
+                    <span className="font-light italic text-colorNeutralTextSubdued">
                       (last opened)
                     </span>
                   )}

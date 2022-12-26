@@ -124,7 +124,7 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
       <div className="flex flex-col mb-5">
         <div className="mb-2">
           <h2 className="text-lg font-medium">Location</h2>
-          <span className="text-sm" style={{ color: 'var(--BV-text-color-1)' }}>
+          <span className="text-sm text-colorNeutralTextSubdued">
             Select a folder where Bangle.io will put all your notes. You can use
             an existing folder or create a new one.
           </span>

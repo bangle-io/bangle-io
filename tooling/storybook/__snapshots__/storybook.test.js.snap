@@ -6787,14 +6787,9 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
   className="B-ui-components_combo-box flex flex-col relative w-56 "
 >
   <label
-    className="block select-none text-sm font-medium text-left"
+    className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
-    style={
-      {
-        "color": "var(--BV-text-color-1)",
-      }
-    }
   >
     ComboBox
   </label>
@@ -6873,14 +6868,9 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
   className="B-ui-components_combo-box flex flex-col relative w-56 "
 >
   <label
-    className="block select-none text-sm font-medium text-left"
+    className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
-    style={
-      {
-        "color": "var(--BV-text-color-1)",
-      }
-    }
   >
     ComboBox
   </label>
@@ -7802,14 +7792,9 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
   }
 >
   <label
-    className="text-sm"
+    className="text-sm text-colorNeutralTextSubdued"
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
-    style={
-      {
-        "color": "var(--BV-text-color-1)",
-      }
-    }
   >
     Email
   </label>
@@ -7829,7 +7814,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
         "backgroundColor": "var(--BV-window-bg-color-0)",
         "border": "1px solid var(--BV-window-border-color-0)",
         "borderRadius": "0.125rem",
-        "color": "var(--BV-text-color-0)",
+        "color": "var(--BV-color-neutral-text)",
         "outlineOffset": 2,
         "padding": "0.5rem 0.75rem",
       }
@@ -7837,12 +7822,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     type="text"
   />
   <div
-    className="text-sm"
-    style={
-      {
-        "color": "var(--BV-text-color-1)",
-      }
-    }
+    className="text-sm text-colorNeutralTextSubdued"
   >
     Enter an email for us to contact you about your order.
   </div>
@@ -7860,14 +7840,9 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
   }
 >
   <label
-    className="text-sm"
+    className="text-sm text-colorNeutralTextSubdued"
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
-    style={
-      {
-        "color": "var(--BV-text-color-1)",
-      }
-    }
   >
     I am label
   </label>
@@ -7886,7 +7861,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
         "backgroundColor": "var(--BV-window-bg-color-0)",
         "border": "1px solid var(--BV-window-border-color-0)",
         "borderRadius": "0.125rem",
-        "color": "var(--BV-text-color-0)",
+        "color": "var(--BV-color-neutral-text)",
         "outlineOffset": 2,
         "padding": "0.5rem 0.75rem",
       }

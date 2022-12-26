@@ -1,6 +1,6 @@
 .B-ui-components_select-label {
   display: block;
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
   text-align: left;
 }
 
