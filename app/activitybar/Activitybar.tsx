@@ -17,6 +17,7 @@ import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 const ButtonStyleOBj: React.CSSProperties = {
   borderRadius: 0,
   color: vars.color.app.activitybarText,
+  padding: 0,
 };
 
 export function Activitybar() {
@@ -76,6 +77,7 @@ export function Activitybar() {
           goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
         }}
         variant="transparent"
+        tone="secondary"
         size="lg"
         leftIcon={
           <SingleCharIcon char={wsName?.[0]?.toLocaleUpperCase() || 'H'} />
@@ -96,6 +98,7 @@ export function Activitybar() {
           });
         }}
         variant="transparent"
+        tone="secondary"
         size="lg"
         leftIcon={<GiftIcon showDot={changelogHasUpdates} />}
       />

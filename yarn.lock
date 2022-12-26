@@ -2487,6 +2487,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-theme": "workspace:*"
     polished: ^4.2.2
+    prettier: ^2.8.0
     tailwindcss: ^3.2.4
     ts-node: ^10.9.1
     tslib: ^2.4.1

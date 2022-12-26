@@ -160,7 +160,7 @@ export const defaultSmallScreenOverrideLightDark: BangleThemeInputLightDark = {
     light: {
       app: {
         activitybarBg: lightColors.app.editorBg,
-        activitybarText: lightColors.neutral.text,
+        activitybarText: lightColors.neutral.textSubdued,
       },
     },
     dark: {

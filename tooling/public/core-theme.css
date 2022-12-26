@@ -270,7 +270,7 @@ body {
 /* stylelint-disable */
 .light-theme.BU_smallscreen {
   --BV-color-app-activitybarBg: rgb(255, 255, 255);
-  --BV-color-app-activitybarText: rgb(34, 34, 34);
+  --BV-color-app-activitybarText: rgb(70, 70, 70);
 }
 /* stylelint-enable */
 

@@ -408,7 +408,7 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
       disabledColor: vars.color.neutral.textDisabled,
     },
     [TONE.SECONDARY]: {
-      color: vars.color.neutral.text,
+      color: vars.color.neutral.textSubdued,
       buttonBgColor: 'transparent',
       hoverBgColor: vars.color.neutral.border,
       hoverColor: vars.color.neutral.text,
