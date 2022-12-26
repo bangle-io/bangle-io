@@ -51,7 +51,7 @@ test('renders correctly', () => {
         <button
           aria-label=""
           aria-pressed="false"
-          class="test-button-class B-ui-bangle-button_button p-1  transition-all duration-100 "
+          class="test-button-class B-ui-components_dropdown-button p-1  transition-all duration-100 "
           type="button"
         >
           <span>
@@ -73,7 +73,7 @@ test('button clicks', async () => {
   expect(element).toMatchInlineSnapshot(`
     <ul
       aria-label="test-label"
-      class="flex flex-col min-w-72 B-ui-bangle-button_dropdown-menu bg-colorBgLayerFloat border-1 border-colorNeutralBorder B-ui-components_misc-dropdown-shadow p-1 py-2 rounded-md "
+      class="flex flex-col min-w-72 B-ui-components_dropdown-dropdown-menu bg-colorBgLayerFloat border-1 border-colorNeutralBorder B-ui-components_misc-dropdown-shadow p-1 py-2 rounded-md "
       role="menu"
       tabindex="0"
     >
@@ -88,7 +88,7 @@ test('button clicks', async () => {
           <li
             aria-disabled="false"
             aria-label="new note"
-            class="B-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
+            class="B-ui-components_dropdown-dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
             data-key="test-k-1"
             role="menuitem"
             tabindex="-1"
@@ -101,7 +101,7 @@ test('button clicks', async () => {
           </li>
           <li
             aria-disabled="false"
-            class="B-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
+            class="B-ui-components_dropdown-dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
             data-key="c"
             role="menuitem"
             tabindex="-1"
@@ -114,7 +114,7 @@ test('button clicks', async () => {
           </li>
           <li
             aria-disabled="false"
-            class="B-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
+            class="B-ui-components_dropdown-dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
             data-key="test-k-3"
             role="menuitem"
             tabindex="-1"

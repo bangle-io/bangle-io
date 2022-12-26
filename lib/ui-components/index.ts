@@ -14,6 +14,7 @@ export * from './ButtonV2/ButtonV2';
 export * from './CenteredPage';
 export * from './ComboBox/ComboBox';
 export * from './Dialog';
+export * from './Dropdown';
 export * from './ErrorBanner';
 export * from './ErrorBoundary';
 export * from './ExternalLink';

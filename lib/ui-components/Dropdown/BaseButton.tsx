@@ -146,7 +146,7 @@ export const BaseButton = ({
         disabled={isDisabled}
         className={cx(
           className,
-          'B-ui-bangle-button_button p-1 ',
+          'B-ui-components_dropdown-button p-1 ',
           'transition-all duration-100',
           animateOnPress && 'animate-on-press',
           isActive && 'BU_is-active',

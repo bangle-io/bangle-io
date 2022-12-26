@@ -806,17 +806,6 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/ui-bangle-button",
-        {
-          "hasCSSFiles": true,
-          "isToolingWorkspace": false,
-          "isWorktree": false,
-          "location": "lib/ui-bangle-button",
-          "name": "@bangle.io/ui-bangle-button",
-          "type": "lib",
-        },
-      ],
-      [
         "@bangle.io/ui-components",
         {
           "hasCSSFiles": true,

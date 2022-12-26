@@ -20,15 +20,13 @@ import {
   toggleTheme,
 } from '@bangle.io/slice-ui';
 import {
-  DropdownMenu,
-  MenuItem,
-  MenuSection,
-} from '@bangle.io/ui-bangle-button';
-import {
   BangleIcon,
   DiscordIcon,
   DotsVerticalIcon,
+  DropdownMenu,
   GiftIcon,
+  MenuItem,
+  MenuSection,
   PrettyKeybinding,
   SettingsIcon,
   TwitterIcon,

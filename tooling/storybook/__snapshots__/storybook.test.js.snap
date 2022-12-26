@@ -127,7 +127,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
     <button
       aria-label="options menu"
       aria-pressed={false}
-      className="w-full py-3 rounded-sm flex justify-center BU_widescreen  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="w-full py-3 rounded-sm flex justify-center BU_widescreen  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -340,7 +340,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
     <button
       aria-label="options menu"
       aria-pressed={false}
-      className="w-full py-3 rounded-sm flex justify-center BU_widescreen  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="w-full py-3 rounded-sm flex justify-center BU_widescreen  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -518,7 +518,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         <button
           aria-label="options menu"
           aria-pressed={false}
-          className="w-full py-3 rounded-sm flex justify-center  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+          className="w-full py-3 rounded-sm flex justify-center  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -692,7 +692,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         <button
           aria-label="options menu"
           aria-pressed={false}
-          className="w-full py-3 rounded-sm flex justify-center  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet "
+          className="w-full py-3 rounded-sm flex justify-center  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -1500,44 +1500,10 @@ exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
 </button>
 `;
 
-exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
-<button
-  aria-label="hi brother"
-  className="B-ui-bangle-button_button p-1  transition-all duration-100 "
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-      "color": "var(--BV-ui-bangle-button-color)",
-    }
-  }
-  type="button"
->
-  <span
-    className=""
-  >
-    hi brothers from another mother
-  </span>
-</button>
-`;
-
 exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
 <button
   aria-pressed={false}
-  className="B-ui-bangle-button_button p-1  transition-all duration-100 "
+  className="B-ui-components_dropdown-button p-1  transition-all duration-100 "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
