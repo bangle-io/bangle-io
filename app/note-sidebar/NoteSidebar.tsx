@@ -1,11 +1,6 @@
 import React from 'react';
 
 import type { NoteSidebarWidget } from '@bangle.io/shared-types';
-import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
 import { ButtonV2, ChevronRightIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebar({

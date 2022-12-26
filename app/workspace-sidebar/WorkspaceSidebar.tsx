@@ -2,11 +2,6 @@ import React from 'react';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
 import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
-import {
   ButtonV2,
   ChevronLeftIcon,
   CloseIcon,

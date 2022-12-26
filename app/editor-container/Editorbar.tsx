@@ -3,11 +3,6 @@ import React from 'react';
 import { vars } from '@bangle.io/atomic-css';
 import { TONE, Tone } from '@bangle.io/constants';
 import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
-import {
   BUTTON_VARIANT,
   ButtonV2,
   CloseIcon,

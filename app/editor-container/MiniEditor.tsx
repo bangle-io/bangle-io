@@ -4,12 +4,6 @@ import { useBangleStoreContext, workspace } from '@bangle.io/api';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
-import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
 import {
   ArrowsExpand,
   ButtonV2,

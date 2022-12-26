@@ -1298,7 +1298,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
     >
       <button
         aria-label="Close split screen"
-        className="lg:mr-1 text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+        className="lg:mr-1 BU_is-active  text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
