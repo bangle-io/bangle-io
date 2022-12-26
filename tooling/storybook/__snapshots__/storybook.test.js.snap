@@ -7122,11 +7122,10 @@ exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
 
 exports[`Storyshots ui-components/ErrorBanner Primary 1`] = `
 <div
-  className="m-3 p-4 rounded"
+  className="m-3 p-4 rounded bg-colorCautionSolidFaint"
   data-testid=""
   style={
     {
-      "backgroundColor": "var(--BV-error-bg-color)",
       "color": "var(--BV-error-color)",
     }
   }
