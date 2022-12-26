@@ -20,11 +20,12 @@ export const BUTTON_VARIANT = {
 export type ButtonVariant = typeof BUTTON_VARIANT[keyof typeof BUTTON_VARIANT];
 
 export function ButtonV2({
+  id,
   animateOnPress = true,
   ariaLabel,
   className = '',
   tooltipPlacement,
-  focus = defaultFocus,
+  focus,
   isDisabled,
   isTouch = isTouchDevice,
   leftIcon,
@@ -36,10 +37,10 @@ export function ButtonV2({
   tone = TONE.NEUTRAL,
   variant = BUTTON_VARIANT.SOLID,
 }: {
+  id?: string;
   animateOnPress?: boolean;
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   ariaLabel?: string;
-  autoFocus?: boolean;
   className?: string;
   focus?: FocusType;
   isDisabled?: boolean;
@@ -49,15 +50,20 @@ export function ButtonV2({
   rightIcon?: React.ReactNode;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   style?: React.CSSProperties;
-  text?: string;
+  text?: React.ReactNode;
   tone?: Tone;
   variant?: ButtonVariant;
 }) {
   let ref = useRef<HTMLButtonElement>(null);
 
+  const {
+    allowFocusRing = defaultFocus.allowFocusRing,
+    autoFocus = defaultFocus.autoFocus,
+  } = focus || defaultFocus;
+
   const { hoverProps, isHovered } = useHover({ isDisabled });
   let { isFocusVisible, focusProps } = useFocusRing({
-    autoFocus: focus?.autoFocus,
+    autoFocus: autoFocus,
   });
 
   let variantStyle = variantMapping[variant][tone];
@@ -68,7 +74,7 @@ export function ButtonV2({
       onPress,
       isDisabled,
       'type': 'button',
-      'autoFocus': focus?.autoFocus,
+      'autoFocus': autoFocus,
     },
     ref,
   );
@@ -102,7 +108,7 @@ export function ButtonV2({
       className = cx(
         className,
         'text-base h-9 smallscreen:h-10 min-w-10',
-        isTouch ? 'px-3' : 'px-2',
+        isTouch ? 'px-4' : 'px-3',
       );
       leftIconClassName = cx(leftIconClassName, 'w-6 h-6', text && 'mr-1');
       rightIconClassName = cx(rightIconClassName, 'w-6 h-6', text && 'ml-1');
@@ -113,7 +119,7 @@ export function ButtonV2({
       className = cx(
         className,
         'text-lg font-600 h-11 min-w-12',
-        isTouch ? 'px-4' : 'px-3',
+        isTouch ? 'px-4' : 'px-4',
       );
       leftIconClassName = cx(leftIconClassName, 'w-7 h-7', text && 'mr-1');
       rightIconClassName = cx(rightIconClassName, 'w-7 h-7', text && 'ml-1');
@@ -142,21 +148,22 @@ export function ButtonV2({
 
   return (
     <button
+      id={id}
       {...mergeProps(hoverProps, buttonProps, focusProps)}
       type="button"
       ref={ref}
       style={createStyleObj(variantStyle, style, {
+        isDisabled,
         isHovered,
         isPressed,
-        isDisabled,
         variant,
       })}
       className={cx(
         className,
-        'select-none inline-flex justify-center items-center rounded-md',
+        'select-none inline-flex justify-center items-center rounded-md whitespace-nowrap',
         isTouch ? 'py-2' : 'py-1',
         isFocusVisible &&
-          focus?.allowFocusRing &&
+          allowFocusRing &&
           'ring-2 ring-colorPromoteBorder ring-offset-2 ring-offset-colorNeutralTextInverted',
         animateOnPress
           ? 'transition-all duration-100'

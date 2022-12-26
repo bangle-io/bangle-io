@@ -25,7 +25,7 @@ exports[`MiniEditor works 1`] = `
         >
           <button
             aria-label="Minimize"
-            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
             style="background-color: transparent;"
             type="button"
           >
@@ -44,7 +44,7 @@ exports[`MiniEditor works 1`] = `
           </button>
           <button
             aria-label="Expand to full screen"
-            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
             style="background-color: transparent;"
             type="button"
           >
@@ -67,7 +67,7 @@ exports[`MiniEditor works 1`] = `
           </button>
           <button
             aria-label="Close"
-            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md py-1 transition-all duration-100 cursor-pointer "
+            class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
             style="background-color: transparent;"
             type="button"
           >

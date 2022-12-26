@@ -2992,6 +2992,7 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3

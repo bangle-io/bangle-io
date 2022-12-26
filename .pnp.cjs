@@ -6895,6 +6895,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],\
+            ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.5"],\

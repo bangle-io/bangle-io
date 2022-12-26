@@ -28,6 +28,7 @@
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "react": "^17.0.2",
     "tslib": "^2.4.1",

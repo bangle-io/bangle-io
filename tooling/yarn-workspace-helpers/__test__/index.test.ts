@@ -27,7 +27,7 @@ test('lists packages', async () => {
       [
         "@bangle.io/activitybar",
         {
-          "hasCSSFiles": true,
+          "hasCSSFiles": false,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "app/activitybar",

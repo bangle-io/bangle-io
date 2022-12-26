@@ -77,6 +77,11 @@ body.BU_widescreen .B-ui-components_dialog-content-container.BU_large {
   align-items: flex-end;
 }
 
+.BU_smallscreen .B-ui-components_dialog-footer {
+  grid-row: 7/8;
+  grid-column: 2/-2;
+}
+
 .B-ui-components_dialog-header-icon {
   grid-area: headerIcon;
   display: flex;
@@ -110,6 +115,11 @@ body.BU_widescreen .B-ui-components_dialog-content-container.BU_large {
 
 .B-ui-components_dialog-button-group {
   grid-area: buttonGroup;
+}
+
+.BU_smallscreen .B-ui-components_dialog-button-group {
+  grid-row: 6/7;
+  grid-column: 2/-2;
 }
 
 .B-ui-components_dialog-content {

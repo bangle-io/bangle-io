@@ -5,7 +5,7 @@ import React from 'react';
 
 import { TONE } from '@bangle.io/constants';
 
-import { FolderIcon } from '../Icons';
+import { CloseIcon, FolderIcon } from '../Icons';
 import type { ButtonVariant } from './ButtonV2';
 import { BUTTON_VARIANT, ButtonV2 } from './ButtonV2';
 
@@ -222,6 +222,7 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
           <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.CRITICAL} size="xs" />
           <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="sm" />
           <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
+          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
           <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="lg" />
         </div>
       </div>
@@ -243,6 +244,12 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
           />
           <ButtonV2
             leftIcon={<FolderIcon />}
+            tone={TONE.PROMOTE}
+            size="md"
+            variant={BUTTON_VARIANT.TRANSPARENT}
+          />
+          <ButtonV2
+            leftIcon={<CloseIcon />}
             tone={TONE.PROMOTE}
             size="md"
             variant={BUTTON_VARIANT.TRANSPARENT}

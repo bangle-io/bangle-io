@@ -11,8 +11,9 @@ import React, { useCallback, useEffect } from 'react';
 
 import { cx, usePrevious } from '@bangle.io/utils';
 
-import { Button } from '../Button/Button';
+import { ButtonV2 } from '../ButtonV2/ButtonV2';
 import { LoadingCircleIcon } from '../Icons';
+import { Inline } from '../Inline';
 import type { SizeType } from '../misc';
 
 export type CTAConfig = {
@@ -165,36 +166,37 @@ export function Dialog({
               {typeof children === 'string' ? <p>{children}</p> : children}
             </div>
 
-            <div className="B-ui-components_dialog-button-group flex flex-row-reverse justify-start pt-12 pl-6">
+            <Inline
+              justify={null}
+              reverseRow
+              className="B-ui-components_dialog-button-group pt-12 smallscreen:pt-4 flex-row-reverse"
+            >
               {primaryButtonConfig && (
-                <Button
-                  className="ml-3"
-                  variant={
-                    primaryButtonConfig.isDestructive
-                      ? 'destructive'
-                      : 'primary'
+                <ButtonV2
+                  tone={
+                    primaryButtonConfig.isDestructive ? 'critical' : 'neutral'
                   }
                   isDisabled={isLoading || primaryButtonConfig.disabled}
                   ariaLabel={primaryButtonConfig.text}
                   onPress={() => {
                     primaryButtonConfig.onPress();
                   }}
-                >
-                  {primaryButtonConfig.text}
-                </Button>
+                  text={primaryButtonConfig.text}
+                />
               )}
               {isDismissable && (
-                <Button
-                  variant="secondary"
+                <ButtonV2
+                  tone="secondary"
                   ariaLabel={'dismiss'}
                   isDisabled={isLoading}
                   onPress={_onDismiss}
-                  autoFocus={primaryButtonConfig?.isDestructive}
-                >
-                  {dismissText}
-                </Button>
+                  text={dismissText}
+                  focus={{
+                    autoFocus: primaryButtonConfig?.isDestructive,
+                  }}
+                />
               )}
-            </div>
+            </Inline>
             <footer className="B-ui-components_dialog-footer">{footer}</footer>
           </div>
         </FocusScope>

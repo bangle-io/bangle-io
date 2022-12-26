@@ -11,12 +11,7 @@ import {
 import { SEVERITY } from '@bangle.io/constants';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import { isEntryUntouched } from '@bangle.io/remote-file-sync';
-import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
-import { Sidebar } from '@bangle.io/ui-components';
+import { ButtonV2, Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
@@ -107,7 +102,8 @@ function ModifiedEntries({
   ) : (
     <div>
       <div className="px-4 my-4">
-        <ActionButton
+        <ButtonV2
+          className="w-full"
           onPress={() => {
             notification.showNotification({
               title: 'Starting sync',
@@ -119,23 +115,9 @@ function ModifiedEntries({
             dispatchSerialOperation({ name: OPERATION_SYNC_GITHUB_CHANGES });
           }}
           ariaLabel="Press sync to push any local changes and pull any new remote changes"
-          tooltip={
-            <TooltipWrapper>
-              Press this button to push any local changes <br /> and pull any
-              new remote changes
-            </TooltipWrapper>
-          }
-          tooltipDelay={150}
           tooltipPlacement="bottom"
-          className="w-full"
-          variant="primary"
-        >
-          <ButtonContent
-            size="medium"
-            textClassName="text-center w-full"
-            text="Sync"
-          />
-        </ActionButton>
+          text="Sync"
+        />
       </div>
       <div className="px-3 text-sm">Files that need to be synced</div>
       <div className="">
@@ -143,7 +125,7 @@ function ModifiedEntries({
           <Sidebar.Row2
             key={r.uid}
             isActive={openedWsPaths.primaryWsPath === r.uid}
-            className={'rounded text-sm truncate py-1 select-none pl-3'}
+            className="rounded text-sm truncate py-1 select-none pl-3"
             extraInfoClassName="ml-1 text-sm"
             onClick={() => {
               if (wsPathHelpers.isValidNoteWsPath(r.uid) && !r.deleted) {
