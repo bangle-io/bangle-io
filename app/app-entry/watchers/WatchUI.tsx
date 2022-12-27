@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { TAB_ID } from '@bangle.io/config';
-import type { ThemeType } from '@bangle.io/shared-types';
+import type { ColorScheme } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { useBroadcastChannel } from '@bangle.io/utils';
 
@@ -16,7 +16,7 @@ interface MessageType {
   type: typeof UI_THEME_CHANGED;
   tabName: string;
   payload: {
-    theme: ThemeType;
+    theme: ColorScheme;
   };
 }
 

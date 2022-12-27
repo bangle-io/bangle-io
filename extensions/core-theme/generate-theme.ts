@@ -9,7 +9,7 @@ const fileName = 'core-theme.css';
 const cssString = formatCss(
   createStyleSheet({
     name: 'core-theme',
-    type: 'light/dark',
+    colorScheme: 'light/dark',
     theme: {
       typography: {},
       color: {

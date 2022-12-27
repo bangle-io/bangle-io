@@ -1,6 +1,6 @@
 import type {
-  BangleThemeInputLightDark,
-  BangleThemeInputSingle,
+  BangleThemeInputDualColorScheme,
+  BangleThemeInputSingleScheme,
   DesignTokens,
 } from '@bangle.io/shared-types';
 
@@ -146,7 +146,7 @@ export const defaultsDark: DesignTokens = {
   color: darkColors,
 };
 
-export const defaultSmallScreenOverrideSingle: BangleThemeInputSingle = {
+export const defaultSmallScreenOverrideSingle: BangleThemeInputSingleScheme = {
   color: {
     app: {
       activitybarBg: lightColors.app.editorBg,
@@ -155,19 +155,20 @@ export const defaultSmallScreenOverrideSingle: BangleThemeInputSingle = {
   },
 };
 
-export const defaultSmallScreenOverrideLightDark: BangleThemeInputLightDark = {
-  ...defaultSmallScreenOverrideSingle,
-  color: {
-    light: {
-      app: {
-        activitybarBg: lightColors.app.editorBg,
-        activitybarText: lightColors.neutral.text,
+export const defaultSmallScreenOverrideDualColorScheme: BangleThemeInputDualColorScheme =
+  {
+    ...defaultSmallScreenOverrideSingle,
+    color: {
+      light: {
+        app: {
+          activitybarBg: lightColors.app.editorBg,
+          activitybarText: lightColors.neutral.text,
+        },
+      },
+      dark: {
+        app: {
+          activitybarBg: darkColors.app.editorBg,
+        },
       },
     },
-    dark: {
-      app: {
-        activitybarBg: darkColors.app.editorBg,
-      },
-    },
-  },
-};
+  };

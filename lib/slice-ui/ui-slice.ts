@@ -1,10 +1,10 @@
-import type { CorePalette } from '@bangle.io/constants';
+import type { ColorScheme, CorePalette } from '@bangle.io/constants';
+import { COLOR_SCHEMA } from '@bangle.io/constants';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import type { ThemeType } from '@bangle.io/shared-types';
 import {
-  applyTheme,
   assertActionName,
+  changeColorScheme,
   checkWidescreen,
   listenToResize,
 } from '@bangle.io/utils';
@@ -26,7 +26,7 @@ export interface UISliceState {
   paletteMetadata?: any | null;
   paletteType?: CorePalette | null;
   sidebar?: string | null;
-  theme: ThemeType;
+  theme: ColorScheme;
   widescreen: boolean;
 }
 
@@ -59,7 +59,7 @@ export type UiContextAction =
   | { name: typeof UI_CONTEXT_TOGGLE_THEME; value: {} }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_THEME';
-      value: { theme: ThemeType };
+      value: { theme: ColorScheme };
     }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_WINDOW_SIZE';
@@ -162,17 +162,20 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           }
 
           case UI_CONTEXT_TOGGLE_THEME: {
-            const theme: ThemeType = state.theme === 'dark' ? 'light' : 'dark';
-            applyTheme(theme);
+            const schema: ColorScheme =
+              state.theme === COLOR_SCHEMA.DARK
+                ? COLOR_SCHEMA.LIGHT
+                : COLOR_SCHEMA.DARK;
+            changeColorScheme(schema);
 
             return {
               ...state,
-              theme,
+              theme: schema,
             };
           }
 
           case 'action::@bangle.io/slice-ui:UPDATE_THEME': {
-            applyTheme(action.value.theme);
+            changeColorScheme(action.value.theme);
 
             return {
               ...state,
@@ -278,7 +281,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           const state = uiSliceKey.getSliceState(store.state);
 
           if (state) {
-            applyTheme(state.theme);
+            changeColorScheme(state.theme);
             setRootWidescreenClass(state.widescreen);
           }
 
@@ -298,12 +301,12 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
 
 function getThemePreference() {
   if (typeof window === 'undefined' || !window.matchMedia) {
-    return 'light';
+    return COLOR_SCHEMA.LIGHT;
   }
 
   return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+    ? COLOR_SCHEMA.DARK
+    : COLOR_SCHEMA.LIGHT;
 }
 
 function setRootWidescreenClass(widescreen?: boolean) {

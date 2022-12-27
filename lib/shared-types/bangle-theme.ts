@@ -25,16 +25,16 @@ export type ThemeBase = Omit<
 // };
 
 export type BangleThemeInput =
-  | BangleThemeInputLightDark
-  | BangleThemeInputSingle;
+  | BangleThemeInputDualColorScheme
+  | BangleThemeInputSingleScheme;
 
-export type BangleThemeInputLightDark = RecursivePartial<ThemeBase> & {
+export type BangleThemeInputDualColorScheme = RecursivePartial<ThemeBase> & {
   color?: {
     light?: RecursivePartial<DesignTokens['color']>;
     dark?: RecursivePartial<DesignTokens['color']>;
   };
 };
 
-export type BangleThemeInputSingle = RecursivePartial<ThemeBase> & {
+export type BangleThemeInputSingleScheme = RecursivePartial<ThemeBase> & {
   color?: RecursivePartial<DesignTokens['color']>;
 };

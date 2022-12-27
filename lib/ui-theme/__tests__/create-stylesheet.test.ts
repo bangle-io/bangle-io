@@ -11,15 +11,15 @@ import {
 } from '../create-stylesheet';
 
 const defaultSheetSingle = createStyleSheetObj({
-  type: 'single',
+  colorScheme: 'single',
   name: 'core-theme-test',
   theme: {
     color: {},
   },
 });
 
-const defaultObjLightDark = createStyleSheetObj({
-  type: 'light/dark',
+const defaultObjDualColorScheme = createStyleSheetObj({
+  colorScheme: 'light/dark',
   name: 'core-theme-test',
   theme: {},
 });
@@ -27,7 +27,7 @@ const defaultObjLightDark = createStyleSheetObj({
 describe('default', () => {
   test('sets correct keys', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -40,7 +40,7 @@ describe('default', () => {
   test('matches with the default', () => {
     expect(
       createStyleSheetObj({
-        type: 'single',
+        colorScheme: 'single',
         name: 'core-theme-test',
         theme: {
           color: {},
@@ -49,16 +49,16 @@ describe('default', () => {
     ).toEqual(defaultSheetSingle);
     expect(
       createStyleSheetObj({
-        type: 'light/dark',
+        colorScheme: 'light/dark',
         name: 'core-theme-test',
         theme: {},
       }),
-    ).toEqual(defaultObjLightDark);
+    ).toEqual(defaultObjDualColorScheme);
   });
 
   test('sets body', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -70,7 +70,7 @@ describe('default', () => {
 
   test('sets root', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -82,7 +82,7 @@ describe('default', () => {
 
   test('sets sm override', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -95,7 +95,7 @@ describe('default', () => {
 
 describe('default light/dark', () => {
   let result = createStyleSheetObj({
-    type: 'light/dark',
+    colorScheme: 'light/dark',
     name: 'core-theme-test',
     theme: {
       color: {
@@ -143,7 +143,7 @@ describe('default light/dark', () => {
 describe('overrides', () => {
   test('is able to override color stylesheet', () => {
     let original = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -157,7 +157,7 @@ describe('overrides', () => {
     );
 
     let override = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -172,7 +172,7 @@ describe('overrides', () => {
 
   test('overrides light/dark', () => {
     let original = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -201,7 +201,7 @@ describe('overrides', () => {
 
   test('is able to override only light', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -232,7 +232,7 @@ describe('overrides', () => {
 
   test('is able to override only dark', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -261,7 +261,7 @@ describe('overrides', () => {
 
   test('is able to set app', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -321,7 +321,7 @@ describe('smallscreen overrides', () => {
 
   test('works with no theme color', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {},
       smallscreenOverride: {
@@ -349,13 +349,13 @@ describe('smallscreen overrides', () => {
       CSS_SM_DARK_THEME,
     ]);
 
-    expect(override[CSS_ROOT]).toEqual(defaultObjLightDark[CSS_ROOT]);
+    expect(override[CSS_ROOT]).toEqual(defaultObjDualColorScheme[CSS_ROOT]);
     expect(override[CSS_DARK_THEME]).toEqual(
-      defaultObjLightDark[CSS_DARK_THEME],
+      defaultObjDualColorScheme[CSS_DARK_THEME],
     );
 
     expect(override[CSS_LIGHT_THEME]).toEqual(
-      defaultObjLightDark[CSS_LIGHT_THEME],
+      defaultObjDualColorScheme[CSS_LIGHT_THEME],
     );
 
     expect(override[CSS_SM_LIGHT_THEME]).toContain(
@@ -369,7 +369,7 @@ describe('smallscreen overrides', () => {
 
   test('works with radius', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {},
       smallscreenOverride: {
@@ -390,13 +390,13 @@ describe('smallscreen overrides', () => {
       CSS_SM_DARK_THEME,
     ]);
 
-    expect(override[CSS_ROOT]).toEqual(defaultObjLightDark[CSS_ROOT]);
+    expect(override[CSS_ROOT]).toEqual(defaultObjDualColorScheme[CSS_ROOT]);
     expect(override[CSS_DARK_THEME]).toEqual(
-      defaultObjLightDark[CSS_DARK_THEME],
+      defaultObjDualColorScheme[CSS_DARK_THEME],
     );
 
     expect(override[CSS_LIGHT_THEME]).toEqual(
-      defaultObjLightDark[CSS_LIGHT_THEME],
+      defaultObjDualColorScheme[CSS_LIGHT_THEME],
     );
 
     expect(override[CSS_SM_LIGHT_THEME]).toContain(
@@ -410,7 +410,7 @@ describe('smallscreen overrides', () => {
 
   test('works with theme colors', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -470,7 +470,7 @@ describe('smallscreen overrides', () => {
 
   test('is able to set app', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
