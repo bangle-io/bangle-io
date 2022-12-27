@@ -9,8 +9,11 @@ import { lastWorkspaceUsed } from '@bangle.io/bangle-store';
 import { CORE_OPERATIONS_NEW_WORKSPACE } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToWsNameRoute } from '@bangle.io/slice-workspace';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CenteredBoxedPage, NewNoteIcon } from '@bangle.io/ui-components';
+import {
+  ButtonV2,
+  CenteredBoxedPage,
+  NewNoteIcon,
+} from '@bangle.io/ui-components';
 
 export function LandingPage() {
   const bangleStore = useBangleStoreContext();
@@ -45,16 +48,15 @@ export function LandingPage() {
       title="Welcome to Bangle.io"
       actions={
         <>
-          <ActionButton
+          <ButtonV2
             ariaLabel="new workspace"
             onPress={() => {
               dispatchSerialOperation({
                 name: CORE_OPERATIONS_NEW_WORKSPACE,
               });
             }}
-          >
-            <ButtonContent text="New workspace" icon={<NewNoteIcon />} />
-          </ActionButton>
+            text="New workspace"
+          />
         </>
       }
     >
@@ -113,10 +115,7 @@ function RecentWorkspace({
                 >
                   <span>{r.name} </span>
                   {r.name === lastWsName && (
-                    <span
-                      className="font-light italic"
-                      style={{ color: 'var(--BV-text-color-1)' }}
-                    >
+                    <span className="font-light italic text-colorNeutralTextSubdued">
                       (last opened)
                     </span>
                   )}

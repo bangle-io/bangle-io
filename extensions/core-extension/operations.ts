@@ -5,7 +5,7 @@ import {
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
-  Severity,
+  SEVERITY,
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
@@ -32,7 +32,7 @@ export function downloadWorkspace() {
 
     if (!wsName) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'new-note-not-no-workspace',
         title: 'Please first select a workspace',
       })(state, notificationSliceKey.getDispatch(dispatch));
@@ -42,7 +42,7 @@ export function downloadWorkspace() {
 
     const abortController = new AbortController();
     showNotification({
-      severity: Severity.INFO,
+      severity: SEVERITY.INFO,
       uid: 'downloading-ws-copy' + wsName,
       title: 'Hang tight! your backup zip will be downloaded momentarily.',
     })(state, notificationSliceKey.getDispatch(dispatch));
@@ -61,7 +61,7 @@ export function restoreWorkspaceFromBackup() {
 
     if (!wsName) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'restoreWorkspaceFromBackup-no-workspace',
         title: 'Please create an empty workspace first',
       })(
@@ -77,7 +77,7 @@ export function restoreWorkspaceFromBackup() {
         const abortController = new AbortController();
 
         showNotification({
-          severity: Severity.INFO,
+          severity: SEVERITY.INFO,
           uid: 'restoreWorkspaceFromBackup-' + wsName,
           title:
             'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
@@ -100,7 +100,7 @@ export function restoreWorkspaceFromBackup() {
           refreshWsPaths()(store.state, store.dispatch);
 
           showNotification({
-            severity: Severity.SUCCESS,
+            severity: SEVERITY.SUCCESS,
             uid: 'recovery-finished-' + wsName,
             title: 'Your notes have successfully restored.',
           })(
@@ -114,7 +114,7 @@ export function restoreWorkspaceFromBackup() {
             error?.message?.includes(WorkerErrorCode.EMPTY_WORKSPACE_NEEDED)
           ) {
             showNotification({
-              severity: Severity.ERROR,
+              severity: SEVERITY.ERROR,
               uid: 'restoreWorkspaceFromBackup-workspace-has-things',
               title: 'This operation requires an empty workspace.',
             })(
@@ -137,7 +137,7 @@ export function openNewNoteDialog(initialValue?: string) {
 
     if (!wsName) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'new-note-not-no-workspace',
         title: 'Please first select a workspace',
       })(
@@ -166,7 +166,7 @@ export function renameActiveNote() {
 
     if (!focusedWsPath) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'delete-wsPath-not-found',
         title: 'Cannot rename because there is no active note',
       })(
@@ -204,7 +204,7 @@ export function deleteActiveNote() {
 
     if (!focusedWsPath) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'delete-wsPath-not-found',
         title: 'Cannot delete because there is no active note',
       })(
@@ -231,7 +231,7 @@ export function deleteActiveNote() {
       deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
           showNotification({
-            severity: Severity.SUCCESS,
+            severity: SEVERITY.SUCCESS,
             uid: 'success-delete-' + focusedWsPath,
             title: 'Successfully deleted ' + focusedWsPath,
           })(
@@ -241,7 +241,7 @@ export function deleteActiveNote() {
         })
         .catch((error) => {
           showNotification({
-            severity: Severity.ERROR,
+            severity: SEVERITY.ERROR,
             uid: 'delete-' + deleteActiveNote,
             title: error.displayMessage || error.message,
           })(
@@ -321,7 +321,7 @@ export function removeWorkspace(wsName?: string) {
 
     if (!wsName) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'removeWorkspace-no-workspace',
         title: 'Please open a workspace first',
       })(
@@ -334,7 +334,7 @@ export function removeWorkspace(wsName?: string) {
 
     if (wsName === HELP_FS_WORKSPACE_NAME) {
       showNotification({
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'removeWorkspace-not-allowed',
         title: 'Cannot remove help workspace',
       })(
@@ -353,7 +353,7 @@ export function removeWorkspace(wsName?: string) {
       await deleteWorkspace(wsName)(state, dispatch, store);
 
       showNotification({
-        severity: Severity.SUCCESS,
+        severity: SEVERITY.SUCCESS,
         uid: 'success-removed-' + wsName,
         title: 'Successfully removed ' + wsName,
       })(

@@ -8,7 +8,7 @@ import {
   updateOpenedWsPaths,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
+import { useHover, useTooltipPositioner } from '@bangle.io/ui-components';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 
 import { BacklinkNodeButton } from '../BacklinkNodeButton';

@@ -18,6 +18,7 @@ export const HELP_DOCS_VERSION: string = config.app.helpDocsVersion;
 export const TAB_ID: string = 'tab_' + randomStr(4);
 export const BANGLE_HOT = config.build.hot;
 export const CHANGELOG_TEXT: string = config.app.changelogText;
+export const IS_STORYBOOK = config.build.storybook;
 
 export const DEBUG_WRITE_SLOWDOWN = config.debug?.writeSlowDown;
 export const IS_TEST_ENV = config.build.nodeEnv === 'test';

@@ -13,6 +13,7 @@
     "inline-palette",
     "is-abort-error",
     "jsdom-env",
+    "mini-js-utils",
     "object-uid",
     "p-map",
     "pm-manual-paste",

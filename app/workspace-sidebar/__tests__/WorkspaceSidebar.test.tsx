@@ -81,7 +81,7 @@ test('calls the dismiss button', () => {
   );
 
   act(() => {
-    fireEvent.click(result.getByLabelText('hide search notes'));
+    fireEvent.click(result.getByLabelText('Hide search notes'));
   });
 
   expect(onDismiss).toBeCalledTimes(1);

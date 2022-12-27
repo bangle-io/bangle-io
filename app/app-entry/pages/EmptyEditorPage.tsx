@@ -6,13 +6,10 @@ import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
-import {
+  ButtonV2,
   CenteredBoxedPage,
   ChevronDownIcon,
+  Inline,
   NewNoteIcon,
 } from '@bangle.io/ui-components';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
@@ -33,7 +30,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
   return (
     <div className="mb-3">
       <div className="flex flex-row mt-6">
-        <h3 className="mr-1 leading-none text-l sm:text-xl lg:text-xl">
+        <h3 className="mr-1 leading-none text-lg smallscreen:text-xl lg:text-xl">
           Recent notes
         </h3>
       </div>
@@ -50,10 +47,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
               >
                 <span>{removeExtension(r.fileName)} </span>
                 {r.dirPath && (
-                  <span
-                    className="font-light"
-                    style={{ color: 'var(--BV-text-color-1)' }}
-                  >
+                  <span className="font-light text-colorNeutralTextSubdued">
                     {r.dirPath}
                   </span>
                 )}
@@ -86,39 +80,30 @@ export function EmptyEditorPage() {
 
   return (
     <CenteredBoxedPage
-      title={
-        wsName && (
-          <>
-            <WorkspaceSpan wsName={wsName} />
-            <ActionButton
-              isQuiet="hoverBg"
-              ariaLabel={'Switch workspace'}
-              tooltipPlacement="right"
-              tooltip={<TooltipWrapper>Switch workspace</TooltipWrapper>}
-              onPress={() => {
-                togglePaletteType(CorePalette.Workspace)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
-              }}
-            >
-              <ChevronDownIcon className="w-5 h-5" />
-            </ActionButton>
-          </>
-        )
-      }
+      dataTestId="app-app-entry_pages-empty-editor-page"
+      title={wsName && <WorkspaceSpan wsName={wsName} />}
       actions={
         <>
-          <ActionButton
+          <ButtonV2
+            ariaLabel="Switch workspace"
+            tooltipPlacement="right"
+            text="Switch workspace"
+            onPress={() => {
+              togglePaletteType(CorePalette.Workspace)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
+            }}
+          />
+          <ButtonV2
             ariaLabel="create note"
             onPress={() => {
               dispatchSerialOperation({
                 name: CORE_OPERATIONS_NEW_NOTE,
               });
             }}
-          >
-            <ButtonContent text="Create note" icon={<NewNoteIcon />} />
-          </ActionButton>
+            text="Create note"
+          />
         </>
       }
     >

@@ -1,6 +1,6 @@
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
-  Severity,
+  SEVERITY,
 } from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import { generateUid } from '@bangle.io/utils';
@@ -99,7 +99,7 @@ export function uncaughtExceptionNotification(error: Error) {
     content += error.name + ':' + error.message;
 
     showNotification({
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       title: 'Bangle.io encountered a problem.',
       uid: `uncaughtExceptionNotification-` + error.name,
       buttons: [

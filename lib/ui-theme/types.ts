@@ -8,4 +8,4 @@ type RecursivePartial<T> = {
     : T[P];
 };
 
-export type BangleAppOverrides = RecursivePartial<DesignTokens['app']>;
+export type BangleMiscTokens = RecursivePartial<DesignTokens['misc']>;

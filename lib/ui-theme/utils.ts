@@ -2,6 +2,8 @@
 import { parse as parseGradient } from 'gradient-parser';
 import { getLuminance } from 'polished';
 
+import { isPlainObject } from '@bangle.io/mini-js-utils';
+
 export function cx(...args: any[]): string {
   let classes: string = '';
   for (const arg of args) {
@@ -14,7 +16,6 @@ export function cx(...args: any[]): string {
   return classes;
 }
 
-// copied from: https://github.com/seek-oss/braid-design-system
 type LinearGradients = Array<{
   colorStops: Array<{
     type: string;
@@ -73,20 +74,4 @@ export function replaceValuesWithKeyPath<T>(obj: T, prefix: string = ''): T {
   };
 
   return recurse(obj);
-}
-
-function isPlainObject(value: any) {
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
-
-  const prototype = Object.getPrototypeOf(value);
-
-  return (
-    (prototype === null ||
-      prototype === Object.prototype ||
-      Object.getPrototypeOf(prototype) === null) &&
-    !(Symbol.toStringTag in value) &&
-    !(Symbol.iterator in value)
-  );
 }

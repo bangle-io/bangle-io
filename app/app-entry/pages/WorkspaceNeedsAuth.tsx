@@ -10,8 +10,7 @@ import {
   goToWsNameRoute,
   goToWsNameRouteNotFoundRoute,
 } from '@bangle.io/slice-workspace';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CenteredBoxedPage } from '@bangle.io/ui-components';
+import { ButtonV2, CenteredBoxedPage } from '@bangle.io/ui-components';
 import { keybindingsHelper } from '@bangle.io/utils';
 import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
@@ -145,20 +144,14 @@ function PermissionModal({
         </span>
       }
       actions={
-        <ActionButton
+        <ButtonV2
+          tone="promote"
           ariaLabel="grant disk read permission"
           onPress={() => {
             requestFSPermission();
           }}
-        >
-          <ButtonContent
-            text={
-              <>
-                <span>Grant permission {'[Enter]'}</span>
-              </>
-            }
-          />
-        </ActionButton>
+          text="Grant permission [Enter]"
+        />
       }
     >
       <span>

@@ -81,7 +81,11 @@ function getFavicon(appEnv) {
     <link rel="mask-icon" href="/favicon-dev.svg" color="#FFF0F4" />`;
 }
 
-module.exports = ({ isProduction = false, isVite = false }) => {
+module.exports = ({
+  isProduction = false,
+  isVite = false,
+  isStorybook = false,
+}) => {
   const appEnv = getAppEnv(isProduction);
 
   const hot = process.env.BANGLE_HOT ? true : false;
@@ -102,6 +106,7 @@ module.exports = ({ isProduction = false, isVite = false }) => {
       nodeEnv: isProduction ? 'production' : 'development',
       releaseId: getReleaseId(isProduction),
       releaseVersion: releaseVersion,
+      storybook: isStorybook,
     },
     app: {
       changelogText: readChangelogText(),

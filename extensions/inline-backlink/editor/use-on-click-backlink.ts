@@ -4,7 +4,7 @@ import type { EditorState } from '@bangle.dev/pm';
 import { EditorView } from '@bangle.dev/pm';
 
 import { notification, useBangleStoreContext } from '@bangle.io/api';
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import {
   createNote,
   pushWsPath,
@@ -62,7 +62,7 @@ export function useOnClickBacklink({
         (error) => {
           if (error instanceof PathValidationError) {
             notification.showNotification({
-              severity: Severity.ERROR,
+              severity: SEVERITY.ERROR,
               title: 'Invalid backlink path',
               content: error.message,
               uid: Date.now() + '-invalid-backlink-path',

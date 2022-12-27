@@ -1,5 +1,5 @@
 import { useFocusManager } from '@react-aria/focus';
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { useCallback, useReducer } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
 import {
@@ -10,9 +10,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE } from '@bangle.io/constants';
 import type { DialogComponentType } from '@bangle.io/shared-types';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CloseIcon, Dialog } from '@bangle.io/ui-components';
-import { safeNavigatorStorageGetDirectory } from '@bangle.io/utils';
+import { ButtonV2, Dialog } from '@bangle.io/ui-components';
 
 import type { WorkspaceCreateErrorTypes } from './common';
 import {
@@ -126,7 +124,7 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
       <div className="flex flex-col mb-5">
         <div className="mb-2">
           <h2 className="text-lg font-medium">Location</h2>
-          <span className="text-sm" style={{ color: 'var(--BV-text-color-1)' }}>
+          <span className="text-sm text-colorNeutralTextSubdued">
             Select a folder where Bangle.io will put all your notes. You can use
             an existing folder or create a new one.
           </span>
@@ -199,32 +197,30 @@ function PickStorageDirectory({
 
   return (
     <>
-      <div>
+      <div className="">
         {dirName ? (
-          <ActionButton
-            autoFocus={true}
-            ariaLabel="pick directory"
-            onPress={() => {
-              updateRootDirHandle(undefined);
-            }}
-            id={BROWSE_BUTTON_ID}
-          >
-            <ButtonContent
-              text={dirName}
-              icon={<CloseIcon />}
-              iconPos="right"
-              size="small"
+          <>
+            <span>
+              You picked: <span className="font-bold">{dirName}</span>
+            </span>
+            <ButtonV2
+              tone="secondary"
+              variant="soft"
+              text="Clear"
+              className="ml-2"
+              size="xs"
+              onPress={() => {
+                updateRootDirHandle(undefined);
+              }}
             />
-          </ActionButton>
+          </>
         ) : (
-          <ActionButton
-            autoFocus={true}
+          <ButtonV2
+            id={BROWSE_BUTTON_ID}
             ariaLabel="pick directory"
             onPress={handlePickDirectory}
-            id={BROWSE_BUTTON_ID}
-          >
-            <ButtonContent text="Browse" />
-          </ActionButton>
+            text="Browse"
+          />
         )}
       </div>
     </>

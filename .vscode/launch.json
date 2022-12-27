@@ -19,7 +19,7 @@
             "name": "Debug current file",
             "type": "node",
             "request": "launch",
-            "runtimeVersion": "18.7.0",
+            "runtimeVersion": "18.12.1",
             "runtimeExecutable": "yarn",
             "skipFiles": [
                 "<node_internals>/**",

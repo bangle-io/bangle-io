@@ -1,4 +1,4 @@
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 
 import { notificationSlice, notificationSliceKey } from '..';
@@ -22,7 +22,7 @@ test('updating and removing notifications', () => {
     value: {
       uid: 'test-1',
       title: 'hello',
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       content: 'hello world',
       buttons: [],
     },
@@ -50,7 +50,7 @@ test('updating and removing notifications', () => {
     value: {
       uid: 'test-1',
       title: 'hello I am a duplicate',
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       buttons: [],
       content: 'hello world again',
     },
@@ -68,7 +68,7 @@ test('updating and removing notifications', () => {
     value: {
       uid: 'test-2',
       title: 'hello2',
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       content: 'hello world 2',
       buttons: [],
     },
@@ -83,14 +83,14 @@ test('updating and removing notifications', () => {
         buttons: [],
         title: 'hello',
         content: 'hello world',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'test-1',
       },
       {
         buttons: [],
         title: 'hello2',
         content: 'hello world 2',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'test-2',
       },
     ],
@@ -112,7 +112,7 @@ test('updating and removing notifications', () => {
         buttons: [],
         title: 'hello2',
         content: 'hello world 2',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         uid: 'test-2',
       },
     ],
@@ -127,7 +127,7 @@ test('removing not found notification preserves state instance', () => {
     value: {
       uid: 'test-1',
       title: 'hello',
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       buttons: [],
     },
   };
@@ -155,7 +155,7 @@ describe('editor issues', () => {
       value: {
         uid: 'test-1',
         title: 'hello',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         description: 'hello world',
         serialOperation: 'operation::test',
         wsPath: 'test:one.md',
@@ -166,7 +166,7 @@ describe('editor issues', () => {
       {
         description: 'hello world',
         serialOperation: 'operation::test',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'hello',
         uid: 'test-1',
         wsPath: 'test:one.md',
@@ -194,7 +194,7 @@ describe('editor issues', () => {
       value: {
         uid: 'test-1',
         title: 'hello',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         description: 'hello world',
         serialOperation: 'operation::test',
         wsPath: 'test:one.md',
@@ -206,7 +206,7 @@ describe('editor issues', () => {
       value: {
         uid: 'test-2',
         title: 'hello',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         description: 'hello world',
         serialOperation: 'operation::test',
         wsPath: 'test:two.md',
@@ -222,7 +222,7 @@ describe('editor issues', () => {
       value: {
         uid: 'test-3',
         title: 'hello',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         description: 'bye world',
         serialOperation: 'operation::test',
         wsPath: 'test:two.md',
@@ -233,7 +233,7 @@ describe('editor issues', () => {
       {
         description: 'hello world',
         serialOperation: 'operation::test',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         title: 'hello',
         uid: 'test-1',
         wsPath: 'test:one.md',
@@ -241,7 +241,7 @@ describe('editor issues', () => {
       {
         uid: 'test-3',
         title: 'hello',
-        severity: Severity.ERROR,
+        severity: SEVERITY.ERROR,
         description: 'bye world',
         serialOperation: 'operation::test',
         wsPath: 'test:two.md',

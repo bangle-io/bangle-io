@@ -16,9 +16,8 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
+import { ButtonV2 } from '@bangle.io/ui-components';
 import {
-  cx,
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
@@ -137,22 +136,29 @@ export function NoteOutline() {
         </span>
       )}
       {headingNodes?.map((r, i) => {
-        let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';
         let className = '';
 
-        if (firstNodeInViewPort === r) {
-          isQuiet = false;
+        const isFirstNodeInViewPort = firstNodeInViewPort === r;
+
+        if (isFirstNodeInViewPort) {
           className = 'note-outline_first-node-in-viewport';
         }
         if (r.isActive) {
-          isQuiet = false;
         }
 
         return (
-          <ActionButton
-            isQuiet={isQuiet}
-            variant={r.isActive ? 'primary' : 'secondary'}
+          <ButtonV2
+            // isQuiet={isQuiet}
+            variant={
+              r.isActive
+                ? 'solid'
+                : isFirstNodeInViewPort
+                ? 'soft'
+                : 'transparent'
+            }
+            tone={r.isActive ? 'promote' : 'neutral'}
             ariaLabel={r.title}
+            size="sm"
             className={className}
             key={r.title + i}
             onPress={() => {
@@ -162,13 +168,15 @@ export function NoteOutline() {
               paddingLeft: 12 * (r.level - 1),
               paddingTop: 4,
               paddingBottom: 4,
+              justifyContent: 'start',
+              whiteSpace: 'nowrap',
             }}
-          >
-            <ButtonContent
-              text={r.title || `<Empty heading-${r.level}>`}
-              textClassName={cx('text-sm truncate', !r.title && 'font-light')}
-            />
-          </ActionButton>
+            text={
+              <span className="pl-1">
+                {r.title || `<Empty heading-${r.level}>`}
+              </span>
+            }
+          />
         );
       })}
     </div>

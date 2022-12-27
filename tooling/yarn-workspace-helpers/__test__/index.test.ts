@@ -27,7 +27,7 @@ test('lists packages', async () => {
       [
         "@bangle.io/activitybar",
         {
-          "hasCSSFiles": true,
+          "hasCSSFiles": false,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "app/activitybar",
@@ -55,6 +55,17 @@ test('lists packages', async () => {
           "location": "app/app-entry",
           "name": "@bangle.io/app-entry",
           "type": "app",
+        },
+      ],
+      [
+        "@bangle.io/atomic-css",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/atomic-css",
+          "name": "@bangle.io/atomic-css",
+          "type": "lib",
         },
       ],
       [
@@ -465,6 +476,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/mini-js-utils",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "js-lib/mini-js-utils",
+          "name": "@bangle.io/mini-js-utils",
+          "type": "js-lib",
+        },
+      ],
+      [
         "@bangle.io/note-browser",
         {
           "hasCSSFiles": false,
@@ -784,17 +806,6 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/ui-bangle-button",
-        {
-          "hasCSSFiles": true,
-          "isToolingWorkspace": false,
-          "isWorktree": false,
-          "location": "lib/ui-bangle-button",
-          "name": "@bangle.io/ui-bangle-button",
-          "type": "lib",
-        },
-      ],
-      [
         "@bangle.io/ui-components",
         {
           "hasCSSFiles": true,
@@ -828,25 +839,14 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/ui-vars",
-        {
-          "hasCSSFiles": false,
-          "isToolingWorkspace": false,
-          "isWorktree": false,
-          "location": "lib/ui-vars",
-          "name": "@bangle.io/ui-vars",
-          "type": "lib",
-        },
-      ],
-      [
         "@bangle.io/uno-preset-bangle",
         {
           "hasCSSFiles": false,
-          "isToolingWorkspace": false,
+          "isToolingWorkspace": true,
           "isWorktree": false,
-          "location": "lib/uno-preset-bangle",
+          "location": "tooling/uno-preset-bangle",
           "name": "@bangle.io/uno-preset-bangle",
-          "type": "lib",
+          "type": "tooling",
         },
       ],
       [

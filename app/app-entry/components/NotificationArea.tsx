@@ -2,20 +2,20 @@ import React from 'react';
 
 import { notification, useSerialOperationContext } from '@bangle.io/api';
 import { useSliceState } from '@bangle.io/bangle-store-context';
-import { Severity } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   dismissNotification,
   notificationSliceKey,
 } from '@bangle.io/slice-notification';
 import {
-  ButtonIcon,
+  BUTTON_VARIANT,
+  ButtonV2,
   CheckCircleIcon,
   CloseIcon,
   ExclamationCircleIcon,
   ExclamationIcon,
   InformationCircleIcon,
-  TextButton,
 } from '@bangle.io/ui-components';
 import { useInterval } from '@bangle.io/utils';
 
@@ -78,18 +78,14 @@ const SeverityMap: Record<
   () => React.ReactNode
 > = {
   error: () => (
-    <ExclamationCircleIcon
-      style={{ color: 'var(--BV-severity-error-color)' }}
-    />
+    <ExclamationCircleIcon className="w-6 h-6 color-colorCriticalIcon" />
   ),
-  warning: () => (
-    <ExclamationIcon style={{ color: 'var(--BV-severity-warning-color)' }} />
-  ),
+  warning: () => <ExclamationIcon className="w-6 h-6 color-colorCautionIcon" />,
   info: () => (
-    <InformationCircleIcon style={{ color: 'var(--BV-severity-info-color)' }} />
+    <InformationCircleIcon className="w-6 h-6 color-colorNeutralIcon" />
   ),
   success: () => (
-    <CheckCircleIcon style={{ color: 'var(--BV-severity-success-color)' }} />
+    <CheckCircleIcon className="w-6 h-6 color-colorPositiveIcon" />
   ),
 };
 
@@ -97,7 +93,7 @@ export function Notification({
   content = '',
   title,
   buttons,
-  severity = Severity.INFO,
+  severity = SEVERITY.INFO,
   onDismiss,
 }: {
   title?: string;
@@ -110,26 +106,23 @@ export function Notification({
 
   return (
     <div
-      className="app-entry_notification w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
-      style={{
-        backgroundColor: 'var(--BV-window-bg-color-1)',
-        boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',
-      }}
+      data-testid="app-entry_notification"
+      className="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
     >
       <div className="flex flex-col w-full">
         <div className="flex flex-row">
           <div className="mr-2">{SeverityMap[severity]()}</div>
           <div className="flex-grow">{title}</div>
           <div>
-            <ButtonIcon
-              hint="dismiss"
-              hintPos="left"
-              onClick={async (e) => {
+            <ButtonV2
+              size="xs"
+              variant={BUTTON_VARIANT.TRANSPARENT}
+              ariaLabel="dismiss notification"
+              leftIcon={<CloseIcon />}
+              onPress={() => {
                 onDismiss();
               }}
-            >
-              <CloseIcon style={{ height: 16, width: 16 }} />
-            </ButtonIcon>
+            />
           </div>
         </div>
         <div className="w-full text-sm flex flex-col">
@@ -139,20 +132,30 @@ export function Notification({
       <div className="flex flex-row-reverse w-full mt-3">
         {buttons &&
           buttons.map((b, i) => (
-            <TextButton
+            <ButtonV2
               key={i}
-              hintPos="left"
+              tooltipPlacement="left"
               className="ml-3"
-              onClick={async () => {
+              size="sm"
+              tone={
+                severity === 'error'
+                  ? 'critical'
+                  : severity === 'warning'
+                  ? 'caution'
+                  : severity === 'success'
+                  ? 'positive'
+                  : 'secondary'
+              }
+              variant={severity === 'info' ? 'soft' : 'solid'}
+              onPress={async () => {
                 if (b.dismissOnClick) {
                   onDismiss();
                 }
                 dispatchSerialOperation({ name: b.operation });
               }}
-              hint={b.hint}
-            >
-              {b.title}
-            </TextButton>
+              ariaLabel={b.hint}
+              text={b.title}
+            />
           ))}
       </div>
     </div>

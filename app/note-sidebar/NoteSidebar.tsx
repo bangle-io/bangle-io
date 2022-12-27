@@ -1,12 +1,7 @@
 import React from 'react';
 
 import type { NoteSidebarWidget } from '@bangle.io/shared-types';
-import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
-import { ChevronRightIcon } from '@bangle.io/ui-components';
+import { ButtonV2, ChevronRightIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebar({
   onDismiss,
@@ -16,20 +11,18 @@ export function NoteSidebar({
   widgets: NoteSidebarWidget[];
 }) {
   return (
-    <div className="flex flex-col flex-grow h-full overflow-y-scroll B-note-sidebar_note-sidebar">
+    <div className="flex flex-col flex-grow h-full overflow-y-scroll text-colorNeutralTextSubdued">
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">Widgets</span>
         <span>
-          <ActionButton
-            isQuiet="hoverBg"
+          <ButtonV2
+            size="sm"
+            variant="transparent"
             onPress={onDismiss}
             ariaLabel={'hide'}
-            tooltip={<TooltipWrapper>Hide</TooltipWrapper>}
-            tooltipDelay={250}
             tooltipPlacement="bottom"
-          >
-            <ButtonContent icon={<ChevronRightIcon />}></ButtonContent>
-          </ActionButton>
+            leftIcon={<ChevronRightIcon />}
+          />
         </span>
       </div>
 
@@ -38,15 +31,7 @@ export function NoteSidebar({
           <div key={r.name} className="">
             <div className="flex flex-row justify-between px-2 mt-2">
               <span className="ml-1 font-semibold">{r.title}</span>
-              <div>
-                {/* <ActionButton
-                  isQuiet="hoverBg"
-                  onPress={() => {}}
-                  ariaLabel={'options'}
-                >
-                  <ButtonContent icon={<MoreSmallListIcon />}></ButtonContent>
-                </ActionButton> */}
-              </div>
+              <div></div>
             </div>
             <div className="B-note-sidebar_widget-content flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto">
               <r.ReactComponent />

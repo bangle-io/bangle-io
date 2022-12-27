@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { toggleEditing } from '@bangle.io/slice-editor-manager';
+import { vars } from '@bangle.io/atomic-css';
+import { TONE, Tone } from '@bangle.io/constants';
 import {
-  ActionButton,
-  ButtonContent,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
-import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
+  BUTTON_VARIANT,
+  ButtonV2,
+  CloseIcon,
+  SecondaryEditorIcon,
+} from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
@@ -47,66 +48,54 @@ export function Editorbar({
 
   return (
     <div
-      className="flex flex-row justify-between w-full B-activitybar_editorbar-wrapper px-2 py-1 lg:px-4 "
+      data-testid="app-editor-container_editorbar"
+      className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
       style={{
-        backgroundColor: 'var(--BV-window-bg-color-0)',
+        backgroundColor: vars.color.app.editorBg,
       }}
     >
-      <div
-        aria-label="note path"
-        className={cx(
-          'select-none flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-activitybar_editorbar-ws-path lg:text-sm text-ellipsis hover:underline',
-          isActive && 'BU_active',
-        )}
-        onClick={openNotesPalette}
-      >
-        {path}
-      </div>
+      <ButtonV2
+        ariaLabel="note path"
+        text={path}
+        size="xs"
+        className={isActive ? 'BU_active' : ''}
+        tone={TONE.SECONDARY}
+        variant={!isActive ? BUTTON_VARIANT.TRANSPARENT : BUTTON_VARIANT.SOFT}
+        onPress={openNotesPalette}
+      />
+
       {editingDisabled && (
-        <ActionButton
-          variant="primary"
+        <ButtonV2
           ariaLabel="enable editing"
-          onPress={() => {
-            onEnableEditing();
-          }}
+          text="Enable Editing"
           className="mx-2"
-          styling={{}}
-        >
-          <ButtonContent
-            size="small"
-            textClassName="text-xs"
-            text="Enable Editing"
-          />
-        </ActionButton>
+          size="xs"
+          tone={TONE.PROMOTE}
+          onPress={onEnableEditing}
+        />
       )}
       <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">
         {showSplitEditor && (
-          <ActionButton
-            isQuiet="hoverBg"
+          <ButtonV2
+            size="xs"
+            variant={isSplitEditorOpen ? 'soft' : 'transparent'}
             onPress={onPressSecondaryEditor}
-            className="lg:mr-1"
-            ariaLabel="Split screen"
-            isActive={isSplitEditorOpen}
-            tooltip={
-              <TooltipWrapper>
-                {isSplitEditorOpen ? 'Close split screen' : 'Split screen'}
-              </TooltipWrapper>
+            className={cx('lg:mr-1', isSplitEditorOpen ? 'BU_is-active' : '')}
+            ariaLabel={
+              isSplitEditorOpen ? 'Close split screen' : 'Split screen'
             }
+            leftIcon={<SecondaryEditorIcon />}
             tooltipPlacement="bottom"
-            tooltipXOffset={10}
-          >
-            <ButtonContent size="small" icon={<SecondaryEditorIcon />} />
-          </ActionButton>
+          />
         )}
-        <ActionButton
-          isQuiet="hoverBg"
+        <ButtonV2
+          size="xs"
+          variant="transparent"
           ariaLabel="Close"
           onPress={onClose}
-          styling={{}}
-        >
-          <ButtonContent size="small" icon={<CloseIcon />} />
-        </ActionButton>
+          leftIcon={<CloseIcon />}
+        />
       </div>
     </div>
   );

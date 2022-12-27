@@ -4,7 +4,7 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow h-full overflow-y-scroll B-note-sidebar_note-sidebar"
+      class="flex flex-col flex-grow h-full overflow-y-scroll text-colorNeutralTextSubdued"
     >
       <div
         class="flex flex-row justify-between px-2 mt-2"
@@ -17,25 +17,28 @@ exports[`renders correctly 1`] = `
         <span>
           <button
             aria-label="hide"
-            class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
+            class="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+            style="background-color: transparent;"
             type="button"
           >
-            <svg
-              class="w-5 h-5 "
-              fill="currentColor"
-              viewBox="0 0 18 18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                fill="#ff13dc"
-                height="18"
-                opacity="0"
-                width="18"
-              />
-              <path
-                d="M12,9a.994.994,0,0,1-.2925.7045l-3.9915,3.99a1,1,0,1,1-1.4355-1.386l.0245-.0245L9.5905,9,6.3045,5.715A1,1,0,0,1,7.691,4.28l.0245.0245,3.9915,3.99A.994.994,0,0,1,12,9Z"
-              />
-            </svg>
+            <span>
+              <svg
+                class="w-5 h-5  "
+                fill="currentColor"
+                viewBox="0 0 18 18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="#ff13dc"
+                  height="18"
+                  opacity="0"
+                  width="18"
+                />
+                <path
+                  d="M12,9a.994.994,0,0,1-.2925.7045l-3.9915,3.99a1,1,0,1,1-1.4355-1.386l.0245-.0245L9.5905,9,6.3045,5.715A1,1,0,0,1,7.691,4.28l.0245.0245,3.9915,3.99A.994.994,0,0,1,12,9Z"
+                />
+              </svg>
+            </span>
           </button>
         </span>
       </div>

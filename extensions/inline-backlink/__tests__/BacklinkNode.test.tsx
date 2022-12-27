@@ -14,7 +14,7 @@ import { notification } from '@bangle.io/api';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
-  Severity,
+  SEVERITY,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { pushWsPath, workspaceSliceKey } from '@bangle.io/slice-workspace';
@@ -293,7 +293,7 @@ describe('clicking node', () => {
         ?.notifications[0],
     ).toMatchObject({
       content: 'Bangle.io support the following file extensions for notes: .md',
-      severity: Severity.ERROR,
+      severity: SEVERITY.ERROR,
       title: 'Invalid backlink path',
       uid: expect.any(String),
     });

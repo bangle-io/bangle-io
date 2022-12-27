@@ -95,6 +95,10 @@ test.describe('workspace', () => {
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
       `not found`,
     );
+
+    expect(await page.screenshot()).toMatchSnapshot({
+      maxDiffPixels: 20,
+    });
   });
 
   test('Opening an invalid file name', async ({ page, baseURL }) => {
@@ -113,6 +117,10 @@ test.describe('workspace', () => {
     await expect(page).toHaveURL(`${baseURL}/ws-invalid-path/${wsName1}`);
 
     await expect(page.locator('body')).toContainText(`🙈 Invalid path`);
+
+    expect(await page.screenshot()).toMatchSnapshot({
+      maxDiffPixels: 20,
+    });
   });
 
   test('Opening an invalid file name in secondary', async ({

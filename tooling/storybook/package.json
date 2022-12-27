@@ -28,7 +28,6 @@
     "@babel/preset-typescript": "^7.18.6",
     "@bangle.io/core-theme": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
-    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/yarn-workspace-helpers": "workspace:*",
     "@mdx-js/react": "^1.6.22",

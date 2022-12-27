@@ -80,7 +80,7 @@ export interface ThemeConfig {
   name: string;
   ownerExtension: string;
   description?: string;
-  url: string | { light: string; dark: string };
+  url: string;
 }
 
 export interface SidebarType {
@@ -152,14 +152,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
           throw new Error('Theme: url is required');
         }
         if (typeof theme.url !== 'string') {
-          if (
-            typeof theme.url.dark !== 'string' &&
-            typeof theme.url.dark !== 'string'
-          ) {
-            throw new Error(
-              'Theme: url must be of "string" or "{light: string, dark: string}" type',
-            );
-          }
+          throw new Error('Theme: url must be of "string" type');
         }
       }
     }

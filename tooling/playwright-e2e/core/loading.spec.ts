@@ -27,7 +27,7 @@ test.describe('loading', () => {
   });
 
   test('Activity bar', async ({ page }) => {
-    const handle = await page.$('.B-activitybar_activitybar');
+    const handle = await page.$('[data-testid="app-activitybar_activitybar"]');
     expect(handle).not.toBe(null);
   });
 

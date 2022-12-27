@@ -6,8 +6,8 @@ exports[`NotificationArea renders with content 2`] = `
     class="fixed bottom-0 right-0 z-50"
   >
     <div
-      class="app-entry_notification w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
-      style="box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.15);"
+      class="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
+      data-testid="app-entry_notification"
     >
       <div
         class="flex flex-col w-full"
@@ -19,7 +19,7 @@ exports[`NotificationArea renders with content 2`] = `
             class="mr-2"
           >
             <svg
-              class="w-6 h-6"
+              class="w-6 h-6 color-colorNeutralIcon"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -40,23 +40,24 @@ exports[`NotificationArea renders with content 2`] = `
           </div>
           <div>
             <button
-              aria-label="dismiss"
-              class="focus:outline-none "
-              data-bangle-editor-break="true"
-              data-bangle-editor-pos="left"
+              aria-label="dismiss notification"
+              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+              style="background-color: transparent;"
               type="button"
             >
-              <svg
-                class="fill-current  "
-                style="height: 16px; width: 16px;"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+              <span>
+                <svg
+                  class=" w-4 h-4  "
                   fill="currentColor"
-                />
-              </svg>
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
             </button>
           </div>
         </div>
@@ -73,8 +74,8 @@ exports[`NotificationArea renders with content 2`] = `
       />
     </div>
     <div
-      class="app-entry_notification w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
-      style="box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.15);"
+      class="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
+      data-testid="app-entry_notification"
     >
       <div
         class="flex flex-col w-full"
@@ -86,7 +87,7 @@ exports[`NotificationArea renders with content 2`] = `
             class="mr-2"
           >
             <svg
-              class="w-6 h-6"
+              class="w-6 h-6 color-colorNeutralIcon"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -107,23 +108,24 @@ exports[`NotificationArea renders with content 2`] = `
           </div>
           <div>
             <button
-              aria-label="dismiss"
-              class="focus:outline-none "
-              data-bangle-editor-break="true"
-              data-bangle-editor-pos="left"
+              aria-label="dismiss notification"
+              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+              style="background-color: transparent;"
               type="button"
             >
-              <svg
-                class="fill-current  "
-                style="height: 16px; width: 16px;"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+              <span>
+                <svg
+                  class=" w-4 h-4  "
                   fill="currentColor"
-                />
-              </svg>
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
             </button>
           </div>
         </div>
@@ -140,9 +142,7 @@ exports[`NotificationArea renders with content 2`] = `
       >
         <button
           aria-label="test-btn"
-          class="ml-3 B-ui-components_text-button py-1 px-2 border border-transparent rounded-sm focus:ring-1 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200 "
-          data-bangle-editor-break="true"
-          data-bangle-editor-pos="left"
+          class="ml-3 text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
           type="button"
         >
           Test Op

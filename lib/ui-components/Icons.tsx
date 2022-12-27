@@ -16,9 +16,10 @@ export const Svg = ({
 } & React.SVGProps<SVGSVGElement>) => (
   <svg
     style={style}
+    fill="currentColor"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className={`fill-current ${size ? `h-${size} w-${size}` : ''} ${className}`}
+    className={`${size ? `h-${size} w-${size}` : ''} ${className}`}
     {...props}
   >
     {children}
@@ -396,7 +397,7 @@ export function SingleCharIcon({ char, ...props }: { char: string } & any) {
       stroke="currentColor"
       {...props}
     >
-      <circle r="11" cx="12" cy="12" strokeWidth="1" style={{ fill: 'none' }} />
+      <circle r="11" cx="12" cy="12" strokeWidth="2" style={{ fill: 'none' }} />
       <text
         alignmentBaseline="central"
         x="50%"

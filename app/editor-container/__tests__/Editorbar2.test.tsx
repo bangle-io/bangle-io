@@ -46,8 +46,6 @@ test('renders correctly when active', () => {
     </div>,
   );
 
-  expect(result.getByLabelText('note path').className).toContain('BU_active');
-
   expect(result.container).toMatchSnapshot();
 });
 
@@ -108,10 +106,7 @@ test('renders splitscreen', () => {
     </div>,
   );
 
-  const splitButton = () => result.getByLabelText('Split screen');
-
-  expect([...splitButton().classList.values()]).toContain('BU_is-active');
-
+  expect(result.getByLabelText('Close split screen')).toBeDefined();
   result.rerender(
     <div>
       <Editorbar
@@ -126,8 +121,7 @@ test('renders splitscreen', () => {
       />
     </div>,
   );
-
-  expect([...splitButton().classList.values()]).not.toContain('BU_is-active');
+  expect(result.getByLabelText('Split screen')).toBeDefined();
 });
 
 test('enables editing', () => {

@@ -19,9 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {
-    "generate-theme-dark": "yarn ts-node -T --compilerOptions '{\"module\":\"commonjs\"}' ./theme-dark.ts",
-    "generate-theme-light": "yarn ts-node -T --compilerOptions '{\"module\":\"commonjs\"}' ./theme-light.ts",
-    "generate-theme": "yarn generate-theme-dark && yarn generate-theme-light",
+    "generate-theme": "yarn ts-node -T --compilerOptions '{\"module\":\"commonjs\"}' ./generate-theme.ts",
     "g:generate-core-theme": "yarn generate-theme"
   },
   "dependencies": {
@@ -33,7 +31,9 @@
   },
   "devDependencies": {
     "@bangle.io/ui-theme": "workspace:*",
+    "@types/prettier": "^2.7.0",
     "polished": "^4.2.2",
+    "prettier": "^2.8.0",
     "tailwindcss": "^3.2.4",
     "ts-node": "^10.9.1"
   },

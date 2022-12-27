@@ -1,0 +1,32 @@
+.B-ui-components_dropdown-tooltip {
+  z-index: var(--BV-window-tooltip-z-index);
+}
+
+.B-ui-components_dropdown-dropdown-menu {
+  z-index: var(--BV-window-tooltip-z-index);
+}
+
+.B-ui-components_dropdown-dropdown-menu-item.BU_is-focused {
+  background-color: var(--BV-accent-secondary);
+}
+
+.B-ui-components_dropdown-button {
+  border-radius: var(--BV-ui-bangle-button-radius);
+  flex-shrink: 0;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.B-ui-components_dropdown-button span {
+  padding: 0 0.25rem;
+  display: block;
+}
+
+.B-ui-components_dropdown-button svg {
+  display: block;
+}
+
+.B-ui-components_dropdown-button svg.BU_has-text {
+  margin-left: 0.125rem;
+}

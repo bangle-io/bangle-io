@@ -1,0 +1,30 @@
+{
+  "name": "@bangle.io/atomic-css",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/atomic-css"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@bangle.io/shared-types": "workspace:*",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.3"
+  },
+  "license": "AGPL-3.0-or-later"
+}

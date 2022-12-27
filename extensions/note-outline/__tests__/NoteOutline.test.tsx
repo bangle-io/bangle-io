@@ -167,24 +167,24 @@ para 2
           >
             <button
               aria-label="hello 1"
-              class="note-outline_first-node-in-viewport B-ui-bangle-button_button p-1  transition-all duration-100 "
-              style="padding-left: 0px; padding-top: 4px; padding-bottom: 4px;"
+              class="note-outline_first-node-in-viewport text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+              style="padding-left: 0px; padding-top: 4px; padding-bottom: 4px; justify-content: start; white-space: nowrap;"
               type="button"
             >
               <span
-                class="text-sm truncate  "
+                class="pl-1"
               >
                 hello 1
               </span>
             </button>
             <button
               aria-label="hello 2"
-              class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
-              style="padding-left: 12px; padding-top: 4px; padding-bottom: 4px;"
+              class="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+              style="background-color: transparent; padding-left: 12px; padding-top: 4px; padding-bottom: 4px; justify-content: start; white-space: nowrap;"
               type="button"
             >
               <span
-                class="text-sm truncate  "
+                class="pl-1"
               >
                 hello 2
               </span>

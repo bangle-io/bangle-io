@@ -13,7 +13,7 @@
 }
 
 .B-ui-components_sidebar-row2.BU_disable {
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
   cursor: not-allowed;
   background-color: var(--BV-universal-palette-item-disabled-bg-color);
 }
@@ -50,9 +50,9 @@
 }
 
 .B-ui-components_sidebar-row2 .B-ui-components_extra-info {
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
 }
 
 .B-ui-components_sidebar-row2 .B-ui-components_description {
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
 }

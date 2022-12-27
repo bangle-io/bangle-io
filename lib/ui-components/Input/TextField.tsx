@@ -31,13 +31,7 @@ export function TextField(
         flexDirection: 'column',
       }}
     >
-      <label
-        {...labelProps}
-        className="text-sm"
-        style={{
-          color: 'var(--BV-text-color-1)',
-        }}
-      >
+      <label {...labelProps} className="text-sm text-colorNeutralTextSubdued">
         {label}
       </label>
       <FocusRing focusClass="B-ui-components_misc-input-ring">
@@ -47,7 +41,7 @@ export function TextField(
           spellCheck={props.spellCheck === undefined ? true : props.spellCheck}
           className="outline-none"
           style={{
-            color: 'var(--BV-text-color-0)',
+            color: 'var(--BV-color-neutral-text)',
             backgroundColor: 'var(--BV-window-bg-color-0)',
             border: '1px solid var(--BV-window-border-color-0)',
             borderRadius: '0.125rem',
@@ -59,10 +53,7 @@ export function TextField(
       {props.description && (
         <div
           {...descriptionProps}
-          className="text-sm"
-          style={{
-            color: 'var(--BV-text-color-1)',
-          }}
+          className="text-sm text-colorNeutralTextSubdued"
         >
           {props.description}
         </div>

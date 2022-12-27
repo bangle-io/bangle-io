@@ -97,7 +97,7 @@
 }
 
 .B-ui-components_universal-palette-item.BU_disabled {
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
   cursor: not-allowed;
 }
 
@@ -111,7 +111,7 @@
 
 .B-ui-components_universal-palette-item .B-ui-components_extra-info {
   margin-left: var(--BV-universal-palette-alignment-spacing);
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
 }
 
 .B-ui-components_universal-palette-item
@@ -120,5 +120,5 @@
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_description {
-  color: var(--BV-text-color-1);
+  color: var(--BV-color-neutral-textSubdued);
 }

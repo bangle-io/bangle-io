@@ -2063,6 +2063,7 @@ __metadata:
   resolution: "@bangle.io/activitybar@workspace:app/activitybar"
   dependencies:
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2071,7 +2072,6 @@ __metadata:
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2156,7 +2156,6 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/style": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-dhancha": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2167,6 +2166,7 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@react-aria/overlays": ^3.8.2
     "@sentry/tracing": ^6.18.1
+    "@storybook/react": ^6.5.12
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2180,6 +2180,16 @@ __metadata:
     wouter: ^2.8.0-alpha.2
   peerDependencies:
     vite: "*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/atomic-css@workspace:*, @bangle.io/atomic-css@workspace:lib/atomic-css":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/atomic-css@workspace:lib/atomic-css"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
+    tslib: ^2.4.1
+    typescript: ^4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2305,10 +2315,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/config-template@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@bangle.io/config-template@npm:0.0.3"
-  checksum: 36cc7b19a8c90b4e2db50790a1742c4c2da8fa9679da2e886c668a3625c416539f4c203a64d8d10e86c173aebc2d2c9a4a95948f99b584eab0ec76e28a60ecda
+"@bangle.io/config-template@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@bangle.io/config-template@npm:0.0.7"
+  checksum: 192d0922d7b967d6e65b6c718286107faa8db965ce9914139ba40e99981366c94000699b97c33418e8292b395493b2a50d88162155e91ae603a32d88396d7bd1
   languageName: node
   linkType: hard
 
@@ -2316,7 +2326,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/config@workspace:lib/config"
   dependencies:
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
@@ -2415,7 +2425,6 @@ __metadata:
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/tri-state": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
@@ -2477,7 +2486,9 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-theme": "workspace:*"
+    "@types/prettier": ^2.7.0
     polished: ^4.2.2
+    prettier: ^2.8.0
     tailwindcss: ^3.2.4
     ts-node: ^10.9.1
     tslib: ^2.4.1
@@ -2557,6 +2568,7 @@ __metadata:
     "@bangle.dev/react": 0.31.6
     "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
@@ -2567,7 +2579,6 @@ __metadata:
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2621,7 +2632,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
   dependencies:
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
@@ -2721,7 +2732,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2809,7 +2819,6 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
@@ -2933,6 +2942,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/mini-js-utils@workspace:*, @bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/note-browser@workspace:*, @bangle.io/note-browser@workspace:extensions/note-browser":
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-browser@workspace:extensions/note-browser"
@@ -2973,7 +2988,7 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
@@ -2996,7 +3011,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
@@ -3067,7 +3081,7 @@ __metadata:
     "@babel/core": ^7.19.1
     "@babel/preset-env": ^7.19.1
     "@babel/preset-typescript": ^7.18.6
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/independent-e2e-tests-server": "workspace:*"
@@ -3129,7 +3143,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/scripts@workspace:tooling/_scripts"
   dependencies:
-    "@bangle.io/config-template": ^0.0.3
+    "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3352,6 +3366,7 @@ __metadata:
   resolution: "@bangle.io/slice-ui@workspace:lib/slice-ui"
   dependencies:
     "@bangle.io/bangle-store-context": "workspace:*"
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3463,7 +3478,6 @@ __metadata:
     "@babel/preset-typescript": ^7.18.6
     "@bangle.io/core-theme": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/yarn-workspace-helpers": "workspace:*"
     "@mdx-js/react": ^1.6.22
@@ -3551,47 +3565,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/ui-bangle-button@workspace:*, @bangle.io/ui-bangle-button@workspace:lib/ui-bangle-button":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/ui-bangle-button@workspace:lib/ui-bangle-button"
-  dependencies:
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@popperjs/core": ^2.11.5
-    "@react-aria/button": ^3.4.4
-    "@react-aria/focus": ^3.5.5
-    "@react-aria/interactions": ^3.8.4
-    "@react-aria/menu": ^3.4.4
-    "@react-aria/separator": ^3.1.7
-    "@react-aria/utils": ^3.12.0
-    "@react-stately/collections": ^3.3.8
-    "@react-stately/toggle": ^3.2.7
-    "@react-stately/tooltip": ^3.0.9
-    "@react-stately/tree": ^3.2.4
-    "@react-types/shared": ^3.12.0
-    "@storybook/react": ^6.5.12
-    "@testing-library/react": ^12.1.3
-    "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.49
-    "@types/react-dom": ^17.0.17
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-popper: ^2.2.5
-    tslib: ^2.4.1
-    typescript: ^4.9.3
-  languageName: unknown
-  linkType: soft
-
 "@bangle.io/ui-components@workspace:*, @bangle.io/ui-components@workspace:lib/ui-components":
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-components@workspace:lib/ui-components"
   dependencies:
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@heroicons/react": ^1.0.6
+    "@popperjs/core": ^2.11.5
     "@react-aria/button": ^3.4.4
     "@react-aria/combobox": ^3.2.6
     "@react-aria/dialog": ^3.1.9
@@ -3599,6 +3582,7 @@ __metadata:
     "@react-aria/i18n": ^3.3.9
     "@react-aria/interactions": ^3.8.4
     "@react-aria/listbox": ^3.4.5
+    "@react-aria/menu": ^3.7.1
     "@react-aria/overlays": ^3.8.2
     "@react-aria/select": ^3.6.5
     "@react-aria/separator": ^3.1.7
@@ -3608,6 +3592,9 @@ __metadata:
     "@react-stately/combobox": ^3.0.5
     "@react-stately/list": ^3.4.5
     "@react-stately/select": ^3.1.7
+    "@react-stately/toggle": ^3.4.4
+    "@react-stately/tooltip": ^3.2.4
+    "@react-stately/tree": ^3.4.1
     "@react-types/combobox": ^3.4.0
     "@react-types/select": ^3.5.5
     "@react-types/shared": ^3.12.0
@@ -3619,6 +3606,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-popper: ^2.3.0
     tslib: ^2.4.1
     typescript: ^4.9.3
   languageName: unknown
@@ -3651,8 +3639,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-theme@workspace:lib/ui-theme"
   dependencies:
+    "@bangle.io/atomic-css": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-vars": "workspace:*"
     gradient-parser: ^1.0.2
     polished: ^4.2.2
     tailwindcss: ^3.2.4
@@ -3661,21 +3650,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/ui-vars@workspace:*, @bangle.io/ui-vars@workspace:lib/ui-vars":
+"@bangle.io/uno-preset-bangle@workspace:*, @bangle.io/uno-preset-bangle@workspace:tooling/uno-preset-bangle":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/ui-vars@workspace:lib/ui-vars"
+  resolution: "@bangle.io/uno-preset-bangle@workspace:tooling/uno-preset-bangle"
   dependencies:
-    "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
-    typescript: ^4.9.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/uno-preset-bangle@workspace:*, @bangle.io/uno-preset-bangle@workspace:lib/uno-preset-bangle":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/uno-preset-bangle@workspace:lib/uno-preset-bangle"
-  dependencies:
-    "@bangle.io/ui-vars": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@unocss/core": ^0.47.5
     "@unocss/preset-mini": ^0.47.5
     "@unocss/preset-uno": ^0.47.5
@@ -3849,7 +3828,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
@@ -4159,40 +4137,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@internationalized/date@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@internationalized/date@npm:3.0.1"
+"@internationalized/date@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@internationalized/date@npm:3.0.2"
   dependencies:
-    "@babel/runtime": ^7.6.2
-  checksum: ff51a00550322a5df3d3051e8ffdf3d7741851149e8ba300883e01402249602e87cc50b27b972753d9af88c5374df83c24adf58cae5e269100cb946a3b12cd56
+    "@swc/helpers": ^0.4.14
+  checksum: 89c68e9feb2d9aa6d4005c574a5048fb1591e99fea5fd406cb680c40fdffc75650da0a795b3dffef861e951bcad7a0f800b65aa7b19f43b0ce0b99b39ef82d67
   languageName: node
   linkType: hard
 
-"@internationalized/message@npm:^3.0.9":
-  version: 3.0.9
-  resolution: "@internationalized/message@npm:3.0.9"
+"@internationalized/message@npm:^3.0.10":
+  version: 3.0.10
+  resolution: "@internationalized/message@npm:3.0.10"
   dependencies:
-    "@babel/runtime": ^7.6.2
+    "@swc/helpers": ^0.4.14
     intl-messageformat: ^10.1.0
-  checksum: b3f7f5a8e1d8df99efb3463ca07edb976ecf95d28de19a47d92fb19c093052b1a092aeaa226dc69d07143854bdbeb8519a0ac8ba8c900c4b0f565151d735ca7f
+  checksum: 41c7ffb51dd5ab5ca93130434590acd052d6d52c183ed1b5cd904a3a21c8c11421eeb3b788fe9d64dfad146a381b811b84a339dc5c2e690b9a9c9c4e7fbf845c
   languageName: node
   linkType: hard
 
-"@internationalized/number@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "@internationalized/number@npm:3.1.1"
+"@internationalized/number@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@internationalized/number@npm:3.1.2"
   dependencies:
-    "@babel/runtime": ^7.6.2
-  checksum: 9979ea1ca7388de75193c9d36f19d928fbcb715d456d153c30cafadd2ce1ceae011f55c966d424f4561ec04de14d3b48b8fe16a9e2737273829a813c4f7203a3
+    "@swc/helpers": ^0.4.14
+  checksum: 425539cbdc5184ba4f75d121f27e83a141815ce3558a6ccd9425a073dd32c390bd132e519d109a13fe794159a3001a69e892df842d85922a6a228be5fc9ad148
   languageName: node
   linkType: hard
 
-"@internationalized/string@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@internationalized/string@npm:3.0.0"
+"@internationalized/string@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@internationalized/string@npm:3.0.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-  checksum: fc347cf80cd4ee009d1c467dca2c6908a919ad152086bf5e8c1a0aede0383fb317695fc5d82abe033ec90ad62108297130b653b63b9529f2e032999798ae4a81
+    "@swc/helpers": ^0.4.14
+  checksum: 1edb7156b9716e03623439a253e63d1e5280a8e93d3f4a8b9e40bff2cb8f93f7beb24fe5c15edf7ac4266685f2f95bb608c2b4c0850fda522ee8ec0b9d23c6cd
   languageName: node
   linkType: hard
 
@@ -4845,49 +4823,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/focus@npm:^3.10.0, @react-aria/focus@npm:^3.5.5":
-  version: 3.10.0
-  resolution: "@react-aria/focus@npm:3.10.0"
+"@react-aria/focus@npm:^3.10.0, @react-aria/focus@npm:^3.10.1, @react-aria/focus@npm:^3.5.5":
+  version: 3.10.1
+  resolution: "@react-aria/focus@npm:3.10.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/interactions": ^3.13.0
-    "@react-aria/utils": ^3.14.1
+    "@react-aria/interactions": ^3.13.1
+    "@react-aria/utils": ^3.14.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
     clsx: ^1.1.1
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 6dea192f4f73103f753baec9199ae45fffe6d8d42926afb24687fc2e44002e897ec887180f9cefeada51ef344feffc953a126711a56b6e9777862a1db4fe9414
+  checksum: 2b8a3171ad97d101f330c4970d51752cff236b68b3028e8af6efa2747db2ee1774fc4f654c101c06ada9591391107a82220b370d9aecb4846cd1a1786369a1b8
   languageName: node
   linkType: hard
 
-"@react-aria/i18n@npm:^3.3.9, @react-aria/i18n@npm:^3.6.2":
-  version: 3.6.2
-  resolution: "@react-aria/i18n@npm:3.6.2"
+"@react-aria/i18n@npm:^3.3.9, @react-aria/i18n@npm:^3.6.2, @react-aria/i18n@npm:^3.6.3":
+  version: 3.6.3
+  resolution: "@react-aria/i18n@npm:3.6.3"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@internationalized/date": ^3.0.1
-    "@internationalized/message": ^3.0.9
-    "@internationalized/number": ^3.1.1
-    "@internationalized/string": ^3.0.0
-    "@react-aria/ssr": ^3.4.0
-    "@react-aria/utils": ^3.14.1
+    "@internationalized/date": ^3.0.2
+    "@internationalized/message": ^3.0.10
+    "@internationalized/number": ^3.1.2
+    "@internationalized/string": ^3.0.1
+    "@react-aria/ssr": ^3.4.1
+    "@react-aria/utils": ^3.14.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: cd0d8fd6483cccd6a2ac7fac8d63ca74b18a559d3f7ef04b2dd9af968ad2c71ec1d2f6bc68cf7b30b13c1c0829c5aab8be49b4b784f4cffba9f169f89de27ce5
+  checksum: aa7122d6f7d352e9edd0ecbbd944b01f1c00943ea06ece5e36c8b8780964507e415bffe712bd0b8375a28e3f2cb5e881083cd1a4f086a88076f16072a0dbdcff
   languageName: node
   linkType: hard
 
-"@react-aria/interactions@npm:^3.13.0, @react-aria/interactions@npm:^3.8.4":
-  version: 3.13.0
-  resolution: "@react-aria/interactions@npm:3.13.0"
+"@react-aria/interactions@npm:^3.13.0, @react-aria/interactions@npm:^3.13.1, @react-aria/interactions@npm:^3.8.4":
+  version: 3.13.1
+  resolution: "@react-aria/interactions@npm:3.13.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/utils": ^3.14.1
+    "@react-aria/utils": ^3.14.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: caa72fe0fc59c370268c3341b7efc64852a32904837cac5c185e8afb3138dfb90d74e17de1049eddf1b667149c7051ad56356a1aca33cb27fc3421dc6be6c37c
+  checksum: 9712bc41b7e6f76a81594b0e175a8f6839830d305d43bfe677c2ea7156f54a75a74a4e6687f3e8f1f52482122dad2eac902870291cad3b65a9088c56004f0b2c
   languageName: node
   linkType: hard
 
@@ -4934,48 +4912,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/menu@npm:^3.4.4, @react-aria/menu@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@react-aria/menu@npm:3.7.0"
+"@react-aria/menu@npm:^3.7.0, @react-aria/menu@npm:^3.7.1":
+  version: 3.7.1
+  resolution: "@react-aria/menu@npm:3.7.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/i18n": ^3.6.2
-    "@react-aria/interactions": ^3.13.0
-    "@react-aria/overlays": ^3.12.0
-    "@react-aria/selection": ^3.12.0
-    "@react-aria/utils": ^3.14.1
-    "@react-stately/collections": ^3.5.0
-    "@react-stately/menu": ^3.4.3
-    "@react-stately/tree": ^3.4.0
+    "@react-aria/i18n": ^3.6.3
+    "@react-aria/interactions": ^3.13.1
+    "@react-aria/overlays": ^3.12.1
+    "@react-aria/selection": ^3.12.1
+    "@react-aria/utils": ^3.14.2
+    "@react-stately/collections": ^3.5.1
+    "@react-stately/menu": ^3.4.4
+    "@react-stately/tree": ^3.4.1
     "@react-types/button": ^3.7.0
     "@react-types/menu": ^3.7.3
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: ae20b78a2d0d61f22539ddc33a92f1ed6396d6de5424492316cf2812bc0c1e31bb96a6627000e589231afe7faba297deaa61cf14303cda73b71a8e64a50d570e
+  checksum: d66155eaa365a15de8ff35d57259912af6271cfacc59d96cf6703101d2e600624a3c94079d5d96e2a7044c0ada039750f59729a34c2ee274b52b6463e1eb6fd3
   languageName: node
   linkType: hard
 
-"@react-aria/overlays@npm:^3.12.0, @react-aria/overlays@npm:^3.8.2":
-  version: 3.12.0
-  resolution: "@react-aria/overlays@npm:3.12.0"
+"@react-aria/overlays@npm:^3.12.0, @react-aria/overlays@npm:^3.12.1, @react-aria/overlays@npm:^3.8.2":
+  version: 3.12.1
+  resolution: "@react-aria/overlays@npm:3.12.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/focus": ^3.10.0
-    "@react-aria/i18n": ^3.6.2
-    "@react-aria/interactions": ^3.13.0
-    "@react-aria/ssr": ^3.4.0
-    "@react-aria/utils": ^3.14.1
-    "@react-aria/visually-hidden": ^3.6.0
-    "@react-stately/overlays": ^3.4.3
+    "@react-aria/focus": ^3.10.1
+    "@react-aria/i18n": ^3.6.3
+    "@react-aria/interactions": ^3.13.1
+    "@react-aria/ssr": ^3.4.1
+    "@react-aria/utils": ^3.14.2
+    "@react-aria/visually-hidden": ^3.6.1
+    "@react-stately/overlays": ^3.4.4
     "@react-types/button": ^3.7.0
     "@react-types/overlays": ^3.6.5
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: e76d41b272b245d2cfbea99fe96dcfca34ffd245c5635a04ea82fa186ca35f6f2e49bf105aeba2ac5fecfe2d840098d63587d46cbed566494e7375ae0f74013c
+  checksum: 3d53ae318480990b4ff1d863dace0718dd13800e11f04470fabea0e3ed910217e58b9f37d77740812f162a3353fe6115379b0765ab4d5c81b76a1dff9b41ed0b
   languageName: node
   linkType: hard
 
@@ -5003,21 +4981,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/selection@npm:^3.12.0":
-  version: 3.12.0
-  resolution: "@react-aria/selection@npm:3.12.0"
+"@react-aria/selection@npm:^3.12.0, @react-aria/selection@npm:^3.12.1":
+  version: 3.12.1
+  resolution: "@react-aria/selection@npm:3.12.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/focus": ^3.10.0
-    "@react-aria/i18n": ^3.6.2
-    "@react-aria/interactions": ^3.13.0
-    "@react-aria/utils": ^3.14.1
-    "@react-stately/collections": ^3.5.0
-    "@react-stately/selection": ^3.11.1
+    "@react-aria/focus": ^3.10.1
+    "@react-aria/i18n": ^3.6.3
+    "@react-aria/interactions": ^3.13.1
+    "@react-aria/utils": ^3.14.2
+    "@react-stately/collections": ^3.5.1
+    "@react-stately/selection": ^3.11.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 1736c7663e44906a6650e34d5120b4beb75445d25d336662bc55ef8c182309dc58fae08274977a0598b7f78a67ddaaf95757cccf92c710daa3cba9d6fc32d7ba
+  checksum: 7d5383569b9491474b7dc7e15b7bf4f3a1409c2ea85158af0667ea3e5f8be60c4d3a8af88b9ca36f87755c536e92b8186990e07d16ec9f8ed6a9cddf0468bdc5
   languageName: node
   linkType: hard
 
@@ -5034,14 +5012,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/ssr@npm:^3.1.2, @react-aria/ssr@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "@react-aria/ssr@npm:3.4.0"
+"@react-aria/ssr@npm:^3.1.2, @react-aria/ssr@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "@react-aria/ssr@npm:3.4.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: e35d4db9fd4a62abbff8790ca4abc322df3a7127ac1c5ff6c13c74d0ff5f64e41e6461de1dceb859f1a0fe2461b5071061723ddc260de747bd9d029429f96eac
+  checksum: 3421951446d1b8d3d5c9903cb098ee7a8058185d1bcfd1f04d8a3341958f5d2241f3d2f1232d8ddb46cd0fef9cfc6d39dd4a19bf3a64131e81ba21c57e80eda8
   languageName: node
   linkType: hard
 
@@ -5061,45 +5039,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/utils@npm:^3.12.0, @react-aria/utils@npm:^3.14.1":
-  version: 3.14.1
-  resolution: "@react-aria/utils@npm:3.14.1"
+"@react-aria/utils@npm:^3.12.0, @react-aria/utils@npm:^3.14.1, @react-aria/utils@npm:^3.14.2":
+  version: 3.14.2
+  resolution: "@react-aria/utils@npm:3.14.2"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/ssr": ^3.4.0
-    "@react-stately/utils": ^3.5.1
+    "@react-aria/ssr": ^3.4.1
+    "@react-stately/utils": ^3.5.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
     clsx: ^1.1.1
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: a25d9a94840ee65d4bca0855df777a42993ae301ca004a9cab8ed3b97c404397d6f7ed1a0856d361bddf6d919f834fabe693172fbd38eda40759247c90b8929d
+  checksum: db3f59ace7463268d9214d51368fdd86fa7587d62eaabef23f806d85aa50d98fc9b785a858e9b8208cea10e9a9e92b11f95166fcd2795d0d98c74649a1327768
   languageName: node
   linkType: hard
 
-"@react-aria/visually-hidden@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "@react-aria/visually-hidden@npm:3.6.0"
+"@react-aria/visually-hidden@npm:^3.6.0, @react-aria/visually-hidden@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "@react-aria/visually-hidden@npm:3.6.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-aria/interactions": ^3.13.0
-    "@react-aria/utils": ^3.14.1
+    "@react-aria/interactions": ^3.13.1
+    "@react-aria/utils": ^3.14.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
     clsx: ^1.1.1
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: b8a577fc15fd5d3853bd095f6750f277f80eef6cdc1d6423f979412be51f4fa86000b1ba746846416c3ee89b26e54a18f0994f49a9a070082ac20179c4b4e407
+  checksum: 9cbbac8993ad5e5a72a7aab649337386ab6bc491ed85049c35e38bd9f0162db28391c3bae0f3dabb07d54d621700c201034dfa6ec2d5471135eda11fc0407852
   languageName: node
   linkType: hard
 
-"@react-stately/collections@npm:^3.3.8, @react-stately/collections@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "@react-stately/collections@npm:3.5.0"
+"@react-stately/collections@npm:^3.3.8, @react-stately/collections@npm:^3.5.0, @react-stately/collections@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "@react-stately/collections@npm:3.5.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 5375d40e73c3a4cb86a4106947fd916931d23b82d86cba5597a116d48594fbaef5bb33dea15e7233597049aeefa836c2bb8296c5f26f7a70334475ffa45174e8
+  checksum: 2074dba4c5161238ad4e46fbbfcc15289e41b33441ede5796c12b97aa7a7283050bdca38ad2823db931224b8e911922f98786e34f74212eb3ba25b094d19f431
   languageName: node
   linkType: hard
 
@@ -5150,31 +5128,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-stately/menu@npm:^3.4.3":
-  version: 3.4.3
-  resolution: "@react-stately/menu@npm:3.4.3"
+"@react-stately/menu@npm:^3.4.3, @react-stately/menu@npm:^3.4.4":
+  version: 3.4.4
+  resolution: "@react-stately/menu@npm:3.4.4"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-stately/overlays": ^3.4.3
-    "@react-stately/utils": ^3.5.1
+    "@react-stately/overlays": ^3.4.4
+    "@react-stately/utils": ^3.5.2
     "@react-types/menu": ^3.7.3
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 5933d0724a67f719f919ba06002537a8edff2e869666e92e21e65a53c0ae456fbebcabc5f13b48bf9da595726d8df3d747da748a74e801f559b234229f904c2d
+  checksum: 5782d0f5920ad655d33847640d5fcd733ac5a7330b62c6c3b696382d411d0b59e87361484e13353ce19a6db4c8e6f14cea3576bd0ad1ab607d7334b54e5ca509
   languageName: node
   linkType: hard
 
-"@react-stately/overlays@npm:^3.4.3":
-  version: 3.4.3
-  resolution: "@react-stately/overlays@npm:3.4.3"
+"@react-stately/overlays@npm:^3.4.3, @react-stately/overlays@npm:^3.4.4":
+  version: 3.4.4
+  resolution: "@react-stately/overlays@npm:3.4.4"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-stately/utils": ^3.5.1
+    "@react-stately/utils": ^3.5.2
     "@react-types/overlays": ^3.6.5
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: b301c6bfccac0ce57f17ec821c98ccf10836bc0f76aed4ceb2595240c39d50c2a579d7de6d10b5ef521c3595b1c68d92ff5025ba2ddae6b068c03f0bf5e6c436
+  checksum: f0c2cb6563e6766de11b4443947830cdfaeef4e56d3cc7a525cc33da1a06e2a045489776289257c876a9f67c10ac51a84de1e21b0f885dbf56167882e31d1f9b
   languageName: node
   linkType: hard
 
@@ -5196,71 +5174,71 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-stately/selection@npm:^3.11.1":
-  version: 3.11.1
-  resolution: "@react-stately/selection@npm:3.11.1"
+"@react-stately/selection@npm:^3.11.1, @react-stately/selection@npm:^3.11.2":
+  version: 3.11.2
+  resolution: "@react-stately/selection@npm:3.11.2"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-stately/collections": ^3.5.0
-    "@react-stately/utils": ^3.5.1
+    "@react-stately/collections": ^3.5.1
+    "@react-stately/utils": ^3.5.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 4defa8c55bb028008d5ac8f57b625e357cd687bd9173e93880df76f4e93a0b2770a6de2ef006bdbcaabe1bcc5bf6f7e0817e77df7e0e38f3fd9f016123d6ad82
+  checksum: 732e87c5aea79b8920f2ffc7d5c8d09bbb8f91f277dca8e473a5fa6cc887c0f75a509f6b9add4a3734ebb7280f815f5f95e996d8eed49ab1580174f3690e5457
   languageName: node
   linkType: hard
 
-"@react-stately/toggle@npm:^3.2.7, @react-stately/toggle@npm:^3.4.3":
-  version: 3.4.3
-  resolution: "@react-stately/toggle@npm:3.4.3"
+"@react-stately/toggle@npm:^3.4.3, @react-stately/toggle@npm:^3.4.4":
+  version: 3.4.4
+  resolution: "@react-stately/toggle@npm:3.4.4"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-stately/utils": ^3.5.1
+    "@react-stately/utils": ^3.5.2
     "@react-types/checkbox": ^3.4.1
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 302fb76c38f7316efd9de840fb4d80ba30d842a23c2adb95b7c4937b0bbfbf43b9f282e314480d831169bc05f7b11637485e733e3cacc0e834b06e662918a696
+  checksum: 85eb3c41219826a758a6950735acd567aa607a4e1dcf2c7b477d0390e791e66a20041eec1694c761644fff7338740394b88e6c529828449cc9a3ab3abcd8d2aa
   languageName: node
   linkType: hard
 
-"@react-stately/tooltip@npm:^3.0.9":
-  version: 3.2.3
-  resolution: "@react-stately/tooltip@npm:3.2.3"
+"@react-stately/tooltip@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "@react-stately/tooltip@npm:3.2.4"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-stately/overlays": ^3.4.3
-    "@react-stately/utils": ^3.5.1
+    "@react-stately/overlays": ^3.4.4
+    "@react-stately/utils": ^3.5.2
     "@react-types/tooltip": ^3.2.5
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 4d80e6ca72b6b6342090d0ed4004a6f2e99b2782ebcc18a6c4fdc973e313d1f11cf2f1c2a5c5ce54d5568fff1539c16048bf93bb71f3f98bdae83fcb7faf1c4c
+  checksum: 98c39f3be9c7d15087895ed6c4632ab55661d04b1ee1bd004efb34793a902c950e11b868ce2620ec203fd0d52fbca4cd500a890700ff628317a3e9aa48091d67
   languageName: node
   linkType: hard
 
-"@react-stately/tree@npm:^3.2.4, @react-stately/tree@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "@react-stately/tree@npm:3.4.0"
+"@react-stately/tree@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "@react-stately/tree@npm:3.4.1"
   dependencies:
-    "@babel/runtime": ^7.6.2
-    "@react-stately/collections": ^3.5.0
-    "@react-stately/selection": ^3.11.1
-    "@react-stately/utils": ^3.5.1
+    "@react-stately/collections": ^3.5.1
+    "@react-stately/selection": ^3.11.2
+    "@react-stately/utils": ^3.5.2
     "@react-types/shared": ^3.16.0
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 4bc1d6a4bc921f1bb91f524298495d698811541e47721ce57e11f25b5e630724f5bbafdee34ce83b816935e5d9477a523be39c18ddff2e22c5fd1f1073a5b9b8
+  checksum: 015ff47c1d4d96392f70a11ebd5bedb8d3841050d6f57163cc2803ae004d82582bba1ae534bfb7158a85b0911bc48b39a5aa462d7de5d994542f51fbea6be0b5
   languageName: node
   linkType: hard
 
-"@react-stately/utils@npm:^3.5.1":
-  version: 3.5.1
-  resolution: "@react-stately/utils@npm:3.5.1"
+"@react-stately/utils@npm:^3.5.1, @react-stately/utils@npm:^3.5.2":
+  version: 3.5.2
+  resolution: "@react-stately/utils@npm:3.5.2"
   dependencies:
-    "@babel/runtime": ^7.6.2
+    "@swc/helpers": ^0.4.14
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: f748331ae393f97b3e6fcccd37b767358f49229520b9500f82ed4c620bff36ef3c01d4ba9679ac7b9d6d78c5f6e711186c98bd0e6482ec27a6fbf26c5d0aa3cc
+  checksum: 156fdc5389337921a34e9a9ac3c8876c82953479dd696771f1ecd852def0d269bcee879f51ad036024b06f9d6e68b2e25eae12f1996599cb9bfdaa243351b2b1
   languageName: node
   linkType: hard
 
@@ -7185,6 +7163,15 @@ __metadata:
   bin:
     swcx: run_swcx.js
   checksum: 646c37e3521f04cd08061ab67a4388959e4b234c38eba2eb9fe0fd615dedb6ff9412264789e58af7c2d24b3e5a7ea456efd060e3760d7a91509234b5b5983ad7
+  languageName: node
+  linkType: hard
+
+"@swc/helpers@npm:^0.4.14":
+  version: 0.4.14
+  resolution: "@swc/helpers@npm:0.4.14"
+  dependencies:
+    tslib: ^2.4.0
+  checksum: 273fd3f3fc461a92f3790cc551ea054745c6d6959afbe1232e6d7aa1c722bbc114d308aab96bef5c78fc0303c85c7b472ef00e2253251cc89737f3b1af56e5a5
   languageName: node
   linkType: hard
 
@@ -9986,13 +9973,13 @@ __metadata:
   dependencies:
     "@bangle.dev/jest-utils": 0.31.6
     "@bangle.io/app-entry": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
     "@bangle.io/jsdom-env": "workspace:*"
     "@bangle.io/scripts": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-vars": "workspace:*"
     "@bangle.io/uno-preset-bangle": "workspace:*"
     "@bangle.io/yarn-workspace-helpers": "workspace:*"
     "@sentry/react": ^6.18.1
@@ -21333,7 +21320,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-popper@npm:^2.2.5":
+"react-popper@npm:^2.3.0":
   version: 2.3.0
   resolution: "react-popper@npm:2.3.0"
   dependencies:

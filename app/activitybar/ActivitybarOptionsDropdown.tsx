@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
+import { vars } from '@bangle.io/atomic-css';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CHANGELOG_MODAL_NAME,
@@ -19,22 +20,18 @@ import {
   toggleTheme,
 } from '@bangle.io/slice-ui';
 import {
-  DropdownMenu,
-  MenuItem,
-  MenuSection,
-} from '@bangle.io/ui-bangle-button';
-import {
   BangleIcon,
   DiscordIcon,
   DotsVerticalIcon,
+  DropdownMenu,
   GiftIcon,
+  MenuItem,
+  MenuSection,
   PrettyKeybinding,
   SettingsIcon,
   TwitterIcon,
 } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
-
-import { buttonStyling } from './ActivitybarButton';
 
 export const ActionPaletteKey = 'ActionPalette';
 export const DiscordKey = 'Discord';
@@ -58,6 +55,15 @@ type AllKeysType =
   | typeof ToggleThemeKey
   | typeof TwitterKey
   | typeof WhatsNewKey;
+
+const buttonStyling = {
+  animateOnPress: true,
+  activeColor: vars.color.app.activitybarText,
+  color: vars.color.app.activitybarText,
+  hoverBgColor: vars.color.app.activitybarBtnPress,
+  hoverColor: vars.color.app.activitybarText,
+  pressedBgColor: vars.color.app.activitybarBtnPress,
+};
 
 export function ActivitybarOptionsDropdown({
   widescreen,
@@ -169,7 +175,7 @@ export function ActivitybarOptionsDropdown({
       buttonAriaLabel={'options menu'}
       buttonStyling={buttonStyling}
       buttonClassName={cx(
-        'w-full py-3 rounded-sm flex justify-center B-activitybar_button',
+        'w-full py-3 rounded-sm flex justify-center',
         widescreen && 'BU_widescreen',
       )}
       buttonChildren={

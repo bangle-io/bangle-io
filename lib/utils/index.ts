@@ -12,6 +12,7 @@ export * from './random-name';
 export * from './safe-js';
 export * from './utility';
 export {
+  applyTheme,
   checkWidescreen,
   listenToResize,
   setRootWidescreenClass,

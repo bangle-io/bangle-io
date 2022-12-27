@@ -86,10 +86,7 @@ function ListBoxSection({
         {section.rendered && (
           <span
             {...headingProps}
-            className="text-xs font-bold uppercase mx-3 select-none"
-            style={{
-              color: 'var(--BV-text-color-1)',
-            }}
+            className="text-xs font-bold uppercase mx-3 select-none text-colorNeutralTextSubdued"
           >
             {section.rendered}
           </span>

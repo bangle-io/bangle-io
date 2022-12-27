@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { useHover } from '@bangle.io/ui-bangle-button';
-import { NoteIcon } from '@bangle.io/ui-components';
+import { NoteIcon, useHover } from '@bangle.io/ui-components';
 import { cx, useDebouncedValue } from '@bangle.io/utils';
 
 export const BacklinkNodeButton = React.forwardRef<

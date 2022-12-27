@@ -11,10 +11,9 @@ export function ErrorBanner({
 }) {
   return (
     <div
-      className="m-3 p-4 rounded"
+      className="m-3 p-4 rounded bg-colorCautionSolidFaint"
       data-testid={dataTestId}
       style={{
-        backgroundColor: 'var(--BV-error-bg-color)',
         color: 'var(--BV-error-color)',
       }}
     >

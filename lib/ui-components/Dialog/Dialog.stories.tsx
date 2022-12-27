@@ -4,8 +4,7 @@ import { OverlayProvider } from '@react-aria/overlays';
 import type { Story } from '@storybook/react';
 import React, { useCallback } from 'react';
 
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-
+import { ButtonV2 } from '../ButtonV2/ButtonV2';
 import { Dialog } from './Dialog';
 
 export default {
@@ -24,14 +23,13 @@ const Template: Story<Parameters<typeof Dialog>[0]> = (args) => {
 
   return (
     <div>
-      <ActionButton
+      <ButtonV2
         ariaLabel="open"
         onPress={() => {
           setShow(true);
         }}
-      >
-        <ButtonContent text="Open modal" />
-      </ActionButton>
+        text="Open modal"
+      />
       <OverlayProvider>{show && <Dialog {...args}></Dialog>}</OverlayProvider>
     </div>
   );
@@ -109,14 +107,13 @@ export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
         repellat officiis cum recusandae, quas facilis eos ad rerum quibusdam
         eligendi.
       </div>
-      <ActionButton
+      <ButtonV2
         ariaLabel="open"
         onPress={() => {
           setShow(true);
         }}
-      >
-        <ButtonContent text="Open modal" />
-      </ActionButton>
+        text="Open modal"
+      />
       <div>
         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint, corporis
         libero? Consequuntur veniam perferendis soluta odit rem esse earum

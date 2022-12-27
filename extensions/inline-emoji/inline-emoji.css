@@ -8,7 +8,7 @@
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest {
-  color: var(--BV-text-color-0);
+  color: var(--BV-color-neutral-text);
   background-color: var(--BV-window-bg-color-1);
   border: 0;
 }

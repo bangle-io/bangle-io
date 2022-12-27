@@ -1,6 +1,7 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
 import { notification, SliceKey } from '@bangle.io/api';
-import { Severity, WorkspaceType } from '@bangle.io/constants';
+import type { Severity } from '@bangle.io/constants';
+import { SEVERITY, WorkspaceType } from '@bangle.io/constants';
 import { acquireLockIfAvailable, isMobile } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
@@ -121,7 +122,7 @@ export function notify(
       severity,
       title,
       uid: 'sync notification-' + Math.random(),
-      transient: severity !== Severity.ERROR,
+      transient: severity !== SEVERITY.ERROR,
       content,
     }),
   );

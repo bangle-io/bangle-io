@@ -3,12 +3,11 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { ThemeType } from '@bangle.io/shared-types';
 import {
+  applyTheme,
   assertActionName,
   checkWidescreen,
   listenToResize,
 } from '@bangle.io/utils';
-
-import { applyTheme } from './apply-theme';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};

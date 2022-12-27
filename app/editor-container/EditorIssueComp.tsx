@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Severity } from '@bangle.io/constants';
+import type { Tone } from '@bangle.io/constants';
+import { SEVERITY } from '@bangle.io/constants';
 import type { EditorIssue } from '@bangle.io/slice-notification';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
+  ButtonV2,
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationIcon,
@@ -34,41 +35,17 @@ export function EditorIssueComp({
 }
 
 const SeverityLookup = {
-  [Severity.ERROR]: () => ({
-    component: (
-      <ExclamationCircleIcon
-        className="w-5 h-5"
-        style={{ color: 'var(--BV-severity-error-color)' }}
-      />
-    ),
-    color: 'var(--BV-severity-error-color)',
+  [SEVERITY.ERROR]: () => ({
+    component: <ExclamationCircleIcon className="w-5 h-5" />,
   }),
-  [Severity.WARNING]: () => ({
-    component: (
-      <ExclamationIcon
-        className="w-5 h-5"
-        style={{ color: 'var(--BV-severity-warning-color)' }}
-      />
-    ),
-    color: 'var(--BV-severity-warning-color)',
+  [SEVERITY.WARNING]: () => ({
+    component: <ExclamationIcon className="w-5 h-5" />,
   }),
-  [Severity.INFO]: () => ({
-    component: (
-      <InformationCircleIcon
-        className="w-5 h-5"
-        style={{ color: 'var(--BV-severity-info-color)' }}
-      />
-    ),
-    color: 'var(--BV-severity-info-color)',
+  [SEVERITY.INFO]: () => ({
+    component: <InformationCircleIcon className="w-5 h-5" />,
   }),
-  [Severity.SUCCESS]: () => ({
-    component: (
-      <CheckCircleIcon
-        className="w-5 h-5"
-        style={{ color: 'var(--BV-severity-success-color)' }}
-      />
-    ),
-    color: 'var(--BV-severity-success-color)',
+  [SEVERITY.SUCCESS]: () => ({
+    component: <CheckCircleIcon className="w-5 h-5" />,
   }),
 };
 
@@ -81,7 +58,7 @@ function EditorIssueInner({
   widescreen: boolean;
   onPress: () => void;
 }) {
-  const { serialOperation, severity } = editorIssue;
+  const { severity } = editorIssue;
   let text: string = severity;
 
   text = editorIssue.title;
@@ -90,33 +67,37 @@ function EditorIssueInner({
     text = text.slice(0, 50) + '...';
   }
 
+  let tone: Tone = 'neutral';
+
+  switch (severity) {
+    case SEVERITY.ERROR: {
+      tone = 'critical';
+      break;
+    }
+    case SEVERITY.WARNING: {
+      tone = 'caution';
+      break;
+    }
+    case SEVERITY.INFO: {
+      tone = 'neutral';
+      break;
+    }
+    case SEVERITY.SUCCESS: {
+      tone = 'positive';
+      break;
+    }
+  }
+
   return (
-    <div className="B-activitybar_notification">
-      <ActionButton
-        className="B-activitybar_notification-button "
-        isQuiet={!Boolean(serialOperation)}
-        style={{
-          border: `1px solid ${SeverityLookup[severity]().color}`,
-          backgroundColor:
-            severity === Severity.ERROR
-              ? 'var(--BV-error-bg-color)'
-              : 'var(--BV-window-tooltip-bg-color)',
-        }}
-        onPress={() => {
-          onPress();
-        }}
-        ariaLabel="Editor encountered an issue"
-      >
-        <ButtonContent
-          size="small"
-          icon={SeverityLookup[severity]().component}
-          text={text}
-          textClassName={cx(
-            `capitalize truncate`,
-            widescreen ? 'text-sm' : 'text-xs',
-          )}
-        />
-      </ActionButton>
-    </div>
+    <ButtonV2
+      variant="solid"
+      tone={tone}
+      onPress={onPress}
+      className="capitalize truncate"
+      size="sm"
+      leftIcon={SeverityLookup[severity]().component}
+      text={text}
+      ariaLabel="Editor encountered an issue"
+    />
   );
 }

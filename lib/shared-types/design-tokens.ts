@@ -1,5 +1,8 @@
-export interface DesignTokens {
+export type DesignTokens = {
+  // name of theme derived from (for debugging)
   theme: string;
+  // unique id of the theme, if it ends with `-light` or `-dark`, it is part of a light/dark theme
+  uid: string;
   // WARNING: the width is hard coded at multiple places
   // it is currently not possible to change this value
   widescreenWidth: string;
@@ -66,12 +69,15 @@ export interface DesignTokens {
     '8': string;
     '9': string;
     '10': string;
+    '11': string;
     '12': string;
     '14': string;
     '16': string;
     '20': string;
     '24': string;
     '48': string;
+    '64': string;
+    '72': string;
   };
 
   ringWidth: {
@@ -79,95 +85,64 @@ export interface DesignTokens {
     none: string;
   };
 
+  // colors will be added to atomic classes
+  // for example `bg-colorCriticalIcon` will add a background-color
+  // .bg-colorCriticalIcon { background-color: var(--color.critical.icon) }
   color: {
-    // mostly used with texts
-    foreground: {
-      brandAccent: string;
-      brandAccentLight: string;
+    caution: ToneColors;
+    critical: ToneColors;
+    // Note: neutral tone has a shorthand which you can access as
+    // .bg-colorBg { background-color: var(--color.neutral.bg) }
+    //  which is same as
+    // .bg-colorNeutralBg { background-color: var(--color.neutral.bg) }
+    neutral: NeutralColors;
+    // a secondary tone to the neutral tone, to distinguish UI elements
+    // from the neutral color
+    secondary: ToneColors;
 
-      link: string;
-      linkHover: string;
-      linkLight: string;
-      linkVisited: string;
+    positive: ToneColors;
+    promote: ToneColors;
 
-      promote: string;
-      promoteLight: string;
-
-      neutral: string;
-      neutralInverted: string;
-      neutralLight: string;
-
-      secondary: string;
-      secondaryInverted: string;
-
-      // the 4
-      caution: string;
-      cautionLight: string;
-      critical: string;
-      criticalLight: string;
-      info: string;
-      infoLight: string;
-      positive: string;
-      positiveLight: string;
-    };
-    background: {
-      body: string;
-
-      //   Used for surfaces that sit on top of body elements
-      surface: string;
-      surfaceDark: string;
-
-      brand: string;
-
-      brandAccent: string;
-      brandAccentActive: string;
-      brandAccentHover: string;
-      brandAccentLight: string;
-      brandAccentLightActive: string;
-      brandAccentLightHover: string;
-
-      neutral: string;
-      neutralActive: string;
-      neutralHover: string;
-      neutralLight: string;
-      neutralLightActive: string;
-      neutralLightHover: string;
-      // soft is a subtle shade for backgrounds
-      neutralSoft: string;
-
-      // the 4
-      caution: string;
-      cautionActive: string;
-      cautionHover: string;
-      cautionLight: string;
-      cautionLightActive: string;
-      cautionLightHover: string;
-
-      critical: string;
-      criticalActive: string;
-      criticalHover: string;
-      criticalLight: string;
-      criticalLightActive: string;
-      criticalLightHover: string;
-
-      info: string;
-      infoActive: string;
-      infoHover: string;
-      infoLight: string;
-      infoLightActive: string;
-      infoLightHover: string;
-
-      positive: string;
-      positiveActive: string;
-      positiveHover: string;
-      positiveLight: string;
-      positiveLightActive: string;
-      positiveLightHover: string;
+    app: {
+      editorBg: string;
+      activitybarBg: string;
+      activitybarText: string;
+      activitybarBtnPress: string;
     };
   };
-  app: {
-    editor: {
-      backgroundColor: string;
-    };
-  };
-}
+
+  // misc will not be added to atomic classes
+  // and can be accessed using typescript `vars.misc.myKey` or
+  // directly using `var(--misc.myKey)` in css.
+  misc: {};
+};
+
+export type ToneColors = {
+  iconDisabled: string;
+  iconSubdued: string;
+  icon: string;
+
+  solid: string; // strong color for filling in shapes like a button
+  solidStrong: string; // darker variant, for hover/focus
+  solidStronger: string; // more darker variant, for pressed state
+  solidFaint: string; // very light variant for filling shapes, for example a disabled button
+  solidSubdued: string; // a light variant for filling shapes
+  solidText: string; // color for text inside solid shapes like button
+
+  borderSubdued: string; // // for application layout but lighter
+  border: string; // for application layout
+  borderStrong: string; // for textfield/action button
+};
+
+export type NeutralColors = ToneColors & {
+  bgLayerTop: string; // top layer, for most important content example editor
+  bgLayerMiddle: string; // middle layer for secondary content like sidebar
+  bgLayerBottom: string; // bottom layer the background color of the  application
+  bgLayerFloat: string; // background color for things that float on top of the application, like modal, dropdown, etc
+
+  textDisabled: string; // for disabled
+  textSubdued: string; // for secondary text
+  text: string; // default text color
+  textStrong: string; // for headings
+  textInverted: string;
+};

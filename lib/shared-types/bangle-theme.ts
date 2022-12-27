@@ -1,41 +1,40 @@
 import type { DesignTokens } from './design-tokens';
 
-export interface BangleThemeInput {
-  name: `${string}-dark` | `${string}-light`;
-  typography?: {
-    fontFamily?: DesignTokens['typography']['fontFamily'];
-    text?: DesignTokens['typography']['text'];
+type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<RecursivePartial<U>>
+    : T[P] extends object
+    ? RecursivePartial<T[P]>
+    : T[P];
+};
+
+export type ThemeBase = Omit<
+  DesignTokens,
+  'uid' | 'theme' | 'widescreenWidth' | 'color'
+>;
+
+// {
+//   typography?: Partial<{
+//     fontFamily?: Partial<DesignTokens['typography']['fontFamily']>;
+//     text?: Partial<DesignTokens['typography']['text']>;
+//   }>;
+
+//   ringWidth?: Partial<DesignTokens['ringWidth']>;
+//   border?: TwoLevelPartial<DesignTokens['border']>;
+//   misc?: Partial<DesignTokens['misc']>;
+// };
+
+export type BangleThemeInput =
+  | BangleThemeInputLightDark
+  | BangleThemeInputSingle;
+
+export type BangleThemeInputLightDark = RecursivePartial<ThemeBase> & {
+  color?: {
+    light?: RecursivePartial<DesignTokens['color']>;
+    dark?: RecursivePartial<DesignTokens['color']>;
   };
+};
 
-  ringWidth?: DesignTokens['ringWidth'];
-  border?: Partial<DesignTokens['border']>;
-
-  foregroundColor: DesignTokens['color']['foreground'];
-
-  backgroundColor: {
-    body: string;
-
-    surface: string;
-    surfaceDark: string;
-
-    brand: string;
-
-    brandAccent: string;
-    brandAccentLight: string;
-
-    neutral: string;
-    neutralLight: string;
-
-    neutralSoft: string;
-
-    // the 4
-    caution: string;
-    cautionLight: string;
-    critical: string;
-    criticalLight: string;
-    info: string;
-    infoLight: string;
-    positive: string;
-    positiveLight: string;
-  };
-}
+export type BangleThemeInputSingle = RecursivePartial<ThemeBase> & {
+  color?: RecursivePartial<DesignTokens['color']>;
+};
