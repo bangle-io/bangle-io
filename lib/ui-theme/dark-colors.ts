@@ -34,7 +34,7 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 const appColor: DesignTokens['color']['app'] = {
   editorBg: neutralColor.bgLayerMiddle,
   activitybarBg: 'rgb(31, 30, 30)',
-  activitybarText: spectrumDarkest.gray800,
+  activitybarText: neutralColor.textSubdued,
   activitybarBtnPress: spectrumDarkest.gray300,
 };
 

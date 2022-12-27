@@ -49,8 +49,8 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 const appColor: DesignTokens['color']['app'] = {
   editorBg: neutralColor.bgLayerMiddle,
   activitybarBg: 'rgb(26, 32, 44)',
-  activitybarText: neutralColor.textInverted,
-  activitybarBtnPress: spectrumLight.gray700,
+  activitybarText: spectrumLight.gray100,
+  activitybarBtnPress: neutralColor.textInverted,
 };
 
 export const lightColors: DesignTokens['color'] = {

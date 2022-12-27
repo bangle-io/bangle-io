@@ -88,8 +88,8 @@ body {
 /* stylelint-disable */
 .light-theme {
   --BV-color-app-activitybarBg: rgb(26, 32, 44);
-  --BV-color-app-activitybarBtnPress: rgb(70, 70, 70);
-  --BV-color-app-activitybarText: rgb(255, 255, 255);
+  --BV-color-app-activitybarBtnPress: rgb(255, 255, 255);
+  --BV-color-app-activitybarText: rgb(248, 248, 248);
   --BV-color-app-editorBg: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerTop: rgb(248, 248, 248);
   --BV-color-neutral-bgLayerMiddle: rgb(255, 255, 255);
@@ -180,7 +180,7 @@ body {
 .dark-theme {
   --BV-color-app-activitybarBg: rgb(31, 30, 30);
   --BV-color-app-activitybarBtnPress: rgb(75, 75, 75);
-  --BV-color-app-activitybarText: rgb(235, 235, 235);
+  --BV-color-app-activitybarText: rgb(208, 208, 208);
   --BV-color-app-editorBg: rgb(14, 14, 14);
   --BV-color-neutral-bgLayerTop: rgb(29, 29, 29);
   --BV-color-neutral-bgLayerMiddle: rgb(14, 14, 14);
@@ -270,7 +270,7 @@ body {
 /* stylelint-disable */
 .light-theme.BU_smallscreen {
   --BV-color-app-activitybarBg: rgb(255, 255, 255);
-  --BV-color-app-activitybarText: rgb(70, 70, 70);
+  --BV-color-app-activitybarText: rgb(34, 34, 34);
 }
 /* stylelint-enable */
 
