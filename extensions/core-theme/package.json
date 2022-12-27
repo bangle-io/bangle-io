@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@bangle.io/ui-theme": "workspace:*",
+    "@types/prettier": "^2.7.0",
     "polished": "^4.2.2",
     "prettier": "^2.8.0",
     "tailwindcss": "^3.2.4",
