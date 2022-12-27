@@ -43,6 +43,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
           "backgroundColor": "transparent",
           "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
@@ -103,6 +104,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
           "backgroundColor": "transparent",
           "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
@@ -213,6 +215,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
           "backgroundColor": "transparent",
           "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
@@ -270,6 +273,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
           "backgroundColor": "transparent",
           "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
@@ -316,6 +320,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
           "backgroundColor": "transparent",
           "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
@@ -5887,7 +5892,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-color-neutral-textSubdued)",
             }
           }
           type="button"
@@ -6231,7 +6236,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-color-neutral-textSubdued)",
             }
           }
           type="button"
@@ -6400,7 +6405,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-color-neutral-textSubdued)",
             }
           }
           type="button"
@@ -6585,7 +6590,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-color-neutral-textSubdued)",
             }
           }
           type="button"

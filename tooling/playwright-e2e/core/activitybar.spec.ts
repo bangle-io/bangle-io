@@ -90,7 +90,7 @@ test.describe('mobile', () => {
       page.locator('[data-testid="app-workspace-sidebar_workspace-sidebar"]'),
     ).toContainText('Note browser');
 
-    await page.locator('[aria-label="hide Note browser"]').click();
+    await page.locator('[aria-label="Hide Note browser"]').click();
 
     await expect
       .poll(() => getPrimaryEditorDebugString(page))
