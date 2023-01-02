@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@bangle.io/is-abort-error": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "tslib": "^2.4.1",

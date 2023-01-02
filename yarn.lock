@@ -2501,6 +2501,7 @@ __metadata:
   resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
   dependencies:
     "@bangle.io/is-abort-error": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
