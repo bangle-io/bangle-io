@@ -1,7 +1,7 @@
 export type DesignTokens = {
   // name of theme derived from (for debugging)
   theme: string;
-  // unique id of the theme, if it ends with `-light` or `-dark`, it is part of a light/dark theme
+  // unique id of the theme, if it ends with `-light` or `-dark`, it is part of a light/dark color scheme
   uid: string;
   // WARNING: the width is hard coded at multiple places
   // it is currently not possible to change this value

@@ -93,14 +93,12 @@ export function changeColorScheme(colorScheme?: ColorScheme) {
 
   console.debug('changeColorScheme:', colorScheme);
 
-  document.documentElement.setAttribute('data-theme', colorScheme);
-
   if (colorScheme === COLOR_SCHEMA.DARK) {
-    document.body.classList.remove('light-theme');
-    document.body.classList.add('dark-theme');
+    document.body.classList.remove('light-scheme');
+    document.body.classList.add('dark-scheme');
   } else if (colorScheme === COLOR_SCHEMA.LIGHT) {
-    document.body.classList.remove('dark-theme');
-    document.body.classList.add('light-theme');
+    document.body.classList.remove('dark-scheme');
+    document.body.classList.add('light-scheme');
   } else {
     console.warn('changeColorSchemes: unknown theme', colorScheme);
   }

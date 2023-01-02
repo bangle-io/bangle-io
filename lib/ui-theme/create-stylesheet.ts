@@ -26,10 +26,10 @@ if (typeof window !== 'undefined') {
 export const CSS_ROOT = ':root';
 export const CSS_BODY = 'body';
 export const CSS_SM_BODY = 'body.BU_smallscreen';
-export const CSS_LIGHT_THEME = `.light-theme`;
-export const CSS_SM_LIGHT_THEME = `.light-theme.BU_smallscreen`;
-export const CSS_DARK_THEME = `.dark-theme`;
-export const CSS_SM_DARK_THEME = `.dark-theme.BU_smallscreen`;
+export const CSS_LIGHT_SCHEME = `.light-scheme`;
+export const CSS_SM_LIGHT_SCHEME = `.light-scheme.BU_smallscreen`;
+export const CSS_DARK_SCHEME = `.dark-scheme`;
+export const CSS_SM_DARK_SCHEME = `.dark-scheme.BU_smallscreen`;
 
 type CssBlocks = Record<string, string[]>;
 
@@ -88,8 +88,8 @@ export function createStyleSheetObj(
   result = {
     ...result,
     [CSS_ROOT]: common,
-    [CSS_LIGHT_THEME]: difference(lightThemeVars, common),
-    [CSS_DARK_THEME]: difference(darkThemeVars, common),
+    [CSS_LIGHT_SCHEME]: difference(lightThemeVars, common),
+    [CSS_DARK_SCHEME]: difference(darkThemeVars, common),
   };
 
   let smOverride = deepMerge(
@@ -101,8 +101,8 @@ export function createStyleSheetObj(
 
   result = {
     ...result,
-    [CSS_SM_LIGHT_THEME]: createSmallScreenOverride(lightOverride),
-    [CSS_SM_DARK_THEME]: createSmallScreenOverride(darkOverride),
+    [CSS_SM_LIGHT_SCHEME]: createSmallScreenOverride(lightOverride),
+    [CSS_SM_DARK_SCHEME]: createSmallScreenOverride(darkOverride),
   };
 
   return result;

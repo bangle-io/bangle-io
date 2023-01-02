@@ -15,7 +15,7 @@ html {
   box-sizing: inherit;
 }
 
-.dark-theme #dialog-container {
+.dark-scheme #dialog-container {
   color-scheme: dark;
 }
 
@@ -158,8 +158,7 @@ body.BU_smallscreen {
   --BV-activitybar-button-pressed-bg-color: var(--BV-base-200);
 }
 
-.dark-theme,
-html[data-theme='dark'] {
+.dark-scheme {
   --BV-base-50: #080808;
   --BV-base-75: #1a1a1a;
   --BV-base-100: #1e1e1e;

@@ -35,13 +35,12 @@ const defaultTheme = 'light';
 setTheme(defaultTheme);
 
 function setTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
   if (theme === 'dark') {
-    document.body.classList.remove('light-theme');
-    document.body.classList.add('dark-theme');
+    document.body.classList.remove('light-scheme');
+    document.body.classList.add('dark-scheme');
   } else {
-    document.body.classList.remove('dark-theme');
-    document.body.classList.add('light-theme');
+    document.body.classList.remove('dark-scheme');
+    document.body.classList.add('light-scheme');
   }
 }
 

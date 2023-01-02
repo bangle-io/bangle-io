@@ -45,7 +45,7 @@ import {
   CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP,
   CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
   CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
-  CORE_OPERATIONS_TOGGLE_UI_THEME,
+  CORE_OPERATIONS_TOGGLE_UI_COLOR_SCHEME,
   extensionName,
 } from './config';
 import { ChangelogModal } from './dialogs/ChangelogModal';
@@ -161,7 +161,7 @@ const extension = Extension.create({
         keywords: ['hide'],
       },
       {
-        name: CORE_OPERATIONS_TOGGLE_UI_THEME,
+        name: CORE_OPERATIONS_TOGGLE_UI_COLOR_SCHEME,
         title: 'Switch Light/Dark theme',
         keywords: ['darkmode', 'lightmode', 'color'],
       },
@@ -346,7 +346,7 @@ const extension = Extension.create({
               return true;
             }
 
-            case CORE_OPERATIONS_TOGGLE_UI_THEME: {
+            case CORE_OPERATIONS_TOGGLE_UI_COLOR_SCHEME: {
               toggleTheme()(bangleStore.state, bangleStore.dispatch);
 
               return true;

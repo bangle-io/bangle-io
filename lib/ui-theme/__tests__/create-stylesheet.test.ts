@@ -2,12 +2,12 @@ import {
   createSmallScreenOverride,
   createStyleSheetObj,
   CSS_BODY,
-  CSS_DARK_THEME,
-  CSS_LIGHT_THEME,
+  CSS_DARK_SCHEME,
+  CSS_LIGHT_SCHEME,
   CSS_ROOT,
   CSS_SM_BODY,
-  CSS_SM_DARK_THEME,
-  CSS_SM_LIGHT_THEME,
+  CSS_SM_DARK_SCHEME,
+  CSS_SM_LIGHT_SCHEME,
 } from '../create-stylesheet';
 
 const defaultSheetSingle = createStyleSheetObj({
@@ -109,10 +109,10 @@ describe('default light/dark', () => {
     expect(Object.keys(result)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
   });
 
@@ -121,17 +121,17 @@ describe('default light/dark', () => {
   });
 
   test('sets light dark content', () => {
-    expect(result[CSS_DARK_THEME]).toMatchSnapshot();
-    expect(result[CSS_LIGHT_THEME]).toMatchSnapshot();
+    expect(result[CSS_DARK_SCHEME]).toMatchSnapshot();
+    expect(result[CSS_LIGHT_SCHEME]).toMatchSnapshot();
   });
 
   test('sets sm override', () => {
-    expect(result[CSS_SM_DARK_THEME]).toMatchInlineSnapshot(`
+    expect(result[CSS_SM_DARK_SCHEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(14, 14, 14);",
       ]
     `);
-    expect(result[CSS_SM_LIGHT_THEME]).toMatchInlineSnapshot(`
+    expect(result[CSS_SM_LIGHT_SCHEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
         "--BV-color-app-activitybarText: rgb(34, 34, 34);",
@@ -191,10 +191,10 @@ describe('overrides', () => {
     });
 
     expect(original[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
-    expect(original[CSS_DARK_THEME]).toContain(
+    expect(original[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: dark-red;',
     );
-    expect(original[CSS_LIGHT_THEME]).toContain(
+    expect(original[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: light-red;',
     );
   });
@@ -221,11 +221,11 @@ describe('overrides', () => {
       '--BV-color-caution-icon:',
     );
 
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: rgb(232, 116, 0);',
     );
 
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: light-red;',
     );
   });
@@ -250,11 +250,11 @@ describe('overrides', () => {
       '--BV-color-caution-icon:',
     );
 
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: dark-red;',
     );
 
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: rgb(203, 93, 0);',
     );
   });
@@ -276,10 +276,10 @@ describe('overrides', () => {
         },
       },
     });
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: activitybar-dark-red;',
     );
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
     );
   });
@@ -343,26 +343,26 @@ describe('smallscreen overrides', () => {
     expect(Object.keys(override)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
 
     expect(override[CSS_ROOT]).toEqual(defaultObjDualColorScheme[CSS_ROOT]);
-    expect(override[CSS_DARK_THEME]).toEqual(
-      defaultObjDualColorScheme[CSS_DARK_THEME],
+    expect(override[CSS_DARK_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_DARK_SCHEME],
     );
 
-    expect(override[CSS_LIGHT_THEME]).toEqual(
-      defaultObjDualColorScheme[CSS_LIGHT_THEME],
+    expect(override[CSS_LIGHT_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_LIGHT_SCHEME],
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-light-red;',
     );
 
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-dark-red;',
     );
   });
@@ -384,26 +384,26 @@ describe('smallscreen overrides', () => {
     expect(Object.keys(override)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
 
     expect(override[CSS_ROOT]).toEqual(defaultObjDualColorScheme[CSS_ROOT]);
-    expect(override[CSS_DARK_THEME]).toEqual(
-      defaultObjDualColorScheme[CSS_DARK_THEME],
+    expect(override[CSS_DARK_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_DARK_SCHEME],
     );
 
-    expect(override[CSS_LIGHT_THEME]).toEqual(
-      defaultObjDualColorScheme[CSS_LIGHT_THEME],
+    expect(override[CSS_LIGHT_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_LIGHT_SCHEME],
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-border-radius-md: nanty;',
     );
 
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-border-radius-md: nanty;',
     );
   });
@@ -445,25 +445,25 @@ describe('smallscreen overrides', () => {
     expect(Object.keys(override)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
 
     expect(override[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: dark-red;',
     );
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: light-red;',
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-light-red;',
     );
 
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-dark-red;',
     );
   });
@@ -494,21 +494,21 @@ describe('smallscreen overrides', () => {
         },
       },
     });
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: activitybar-dark-red;',
     );
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
     );
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: sm-activitybar-dark-red;',
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(255, 255, 255);',
     );
 
     // other overrides should be there
-    expect(override[CSS_SM_LIGHT_THEME]?.length).toBeGreaterThan(1);
+    expect(override[CSS_SM_LIGHT_SCHEME]?.length).toBeGreaterThan(1);
   });
 });

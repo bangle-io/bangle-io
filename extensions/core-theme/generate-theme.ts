@@ -23,6 +23,7 @@ const cssString = formatCss(
 function formatCss(css: string) {
   return prettier.format(css, {
     parser: 'css',
+    singleQuote: true,
   });
 }
 
