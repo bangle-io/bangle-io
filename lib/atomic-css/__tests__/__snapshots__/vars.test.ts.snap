@@ -119,7 +119,12 @@ exports[`cssCustomProperties snapshot 1`] = `
       "solidText": "--BV-color-secondary-solidText",
     },
   },
-  "misc": {},
+  "misc": {
+    "app": {
+      "noteSidebarWidth": "--BV-misc-app-noteSidebarWidth",
+      "workspaceSidebarWidth": "--BV-misc-app-workspaceSidebarWidth",
+    },
+  },
   "ringWidth": {
     "DEFAULT": "--BV-ringWidth-DEFAULT",
     "none": "--BV-ringWidth-none",
@@ -326,7 +331,12 @@ exports[`vars snapshot 1`] = `
       "solidText": "var(--BV-color-secondary-solidText)",
     },
   },
-  "misc": {},
+  "misc": {
+    "app": {
+      "noteSidebarWidth": "var(--BV-misc-app-noteSidebarWidth)",
+      "workspaceSidebarWidth": "var(--BV-misc-app-workspaceSidebarWidth)",
+    },
+  },
   "ringWidth": {
     "DEFAULT": "var(--BV-ringWidth-DEFAULT)",
     "none": "var(--BV-ringWidth-none)",

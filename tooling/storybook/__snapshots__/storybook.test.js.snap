@@ -8024,7 +8024,12 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     </span>
   </div>
   <header
-    className="B-ui-dhancha_ws-sidebar"
+    className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
+    style={
+      {
+        "width": "var(--BV-misc-app-workspaceSidebarWidth)",
+      }
+    }
   >
     <div
       style={
@@ -9103,7 +9108,12 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     </div>
   </main>
   <aside
-    className="B-ui-dhancha_note-sidebar"
+    className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
+    style={
+      {
+        "width": "var(--BV-misc-app-noteSidebarWidth)",
+      }
+    }
   >
     <div
       style={

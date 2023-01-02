@@ -28,7 +28,7 @@ exports[`renders 1`] = `
         </div>
       </div>
       <header
-        class="B-ui-dhancha_ws-sidebar"
+        class="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
       >
         <div>
           Workspace sidebar
@@ -42,7 +42,7 @@ exports[`renders 1`] = `
         </div>
       </main>
       <aside
-        class="B-ui-dhancha_note-sidebar"
+        class="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
       >
         <div>
           Note sidebar

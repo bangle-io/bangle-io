@@ -7596,6 +7596,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/ui-dhancha/",\
           "packageDependencies": [\
             ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],\
+            ["@bangle.io/atomic-css", "workspace:lib/atomic-css"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\

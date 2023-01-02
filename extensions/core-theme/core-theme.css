@@ -10,6 +10,9 @@ body {
 /* stylelint-disable */
 :root {
   --BV-theme: core-theme;
+  --BV-misc-app-activitybarWidth: 50px;
+  --BV-misc-app-noteSidebarWidth: 300px;
+  --BV-misc-app-workspaceSidebarWidth: 300px;
   --BV-border-radius-DEFAULT: 0.25rem;
   --BV-border-radius-none: 0;
   --BV-border-radius-sm: 0.125rem;

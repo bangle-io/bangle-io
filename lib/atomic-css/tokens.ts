@@ -7,7 +7,13 @@ export { getFromPath, walkObject } from './walk-object';
 const tokensShape: DesignTokens = {
   theme: '',
   uid: '',
-  misc: {},
+  misc: {
+    app: {
+      activitybarWidth: '',
+      noteSidebarWidth: '',
+      workspaceSidebarWidth: '',
+    },
+  },
   border: {
     radius: {
       DEFAULT: '',

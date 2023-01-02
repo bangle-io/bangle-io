@@ -39,17 +39,10 @@ html {
 
   --BV-page-max-width: 700px;
 
-  --BV-workspace-sidebar-width: 300px;
-
-  --BV-note-sidebar-width: 300px;
-
   --BV-universal-palette-max-width: 620px;
 
   --BV-inline-universal-palette-max-width: 350px;
   --BV-inline-universal-palette-max-height: 33vh;
-
-  --BV-activitybar-width: 50px;
-  --BV-activitybar-mobile-height: 50px;
 
   --BV-ui-bangle-button-depression: 0.96;
   --BV-ui-bangle-button-radius: 0.25rem;
@@ -113,7 +106,6 @@ html {
   --BV-note-tags-color: rgb(226, 226, 226);
   --BV-note-tags-bg-color: rgb(105, 105, 105);
 
-  --BV-activitybar-bg-color: rgb(26, 32, 44);
   --BV-activitybar-button-active-color: var(--BV-base-200);
   --BV-activitybar-button-hover-bg-color: var(--BV-base-100);
   --BV-activitybar-button-hover-color: var(--BV-base-200);
@@ -150,7 +142,6 @@ html {
 }
 
 body.BU_smallscreen {
-  --BV-activitybar-bg-color: var(--BV-base-100);
   --BV-activitybar-button-active-color: var(--BV-base-900);
   --BV-activitybar-button-hover-bg-color: var(--BV-base-300);
   --BV-activitybar-button-hover-color: var(--BV-base-900);
@@ -214,7 +205,6 @@ body.BU_smallscreen {
   --BV-note-tags-color: rgb(66, 66, 66);
   --BV-note-tags-bg-color: rgb(205, 205, 205);
 
-  --BV-activitybar-bg-color: rgb(31, 30, 30);
   --BV-activitybar-button-active-color: var(--BV-base-800);
   --BV-activitybar-button-hover-bg-color: var(--BV-base-400);
   --BV-activitybar-button-hover-color: var(--BV-base-900);

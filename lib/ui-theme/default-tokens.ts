@@ -125,7 +125,13 @@ const defaultTypography: DesignTokens['typography'] = {
   },
 };
 
-const defaultMiscTokens = {};
+const defaultMiscTokens: DesignTokens['misc'] = {
+  app: {
+    activitybarWidth: '50px',
+    noteSidebarWidth: '300px',
+    workspaceSidebarWidth: '300px',
+  },
+};
 
 export const defaultsLight: DesignTokens = {
   theme: 'default-tokens',
@@ -171,4 +177,5 @@ export const defaultSmallScreenOverrideDualColorScheme: BangleThemeInputDualColo
         },
       },
     },
+    misc: {},
   };

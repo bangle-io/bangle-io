@@ -114,7 +114,13 @@ export type DesignTokens = {
   // misc will not be added to atomic classes
   // and can be accessed using typescript `vars.misc.myKey` or
   // directly using `var(--misc.myKey)` in css.
-  misc: {};
+  misc: {
+    app: {
+      workspaceSidebarWidth: string;
+      noteSidebarWidth: string;
+      activitybarWidth: string;
+    };
+  };
 };
 
 export type ToneColors = {

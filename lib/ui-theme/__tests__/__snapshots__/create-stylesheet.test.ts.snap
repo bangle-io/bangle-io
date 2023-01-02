@@ -183,6 +183,8 @@ exports[`default light/dark sets light dark content 2`] = `
 exports[`default light/dark sets root content 1`] = `
 [
   "--BV-theme: core-theme-test;",
+  "--BV-misc-app-workspaceSidebarWidth: 300px;",
+  "--BV-misc-app-noteSidebarWidth: 300px;",
   "--BV-border-radius-DEFAULT: 0.25rem;",
   "--BV-border-radius-none: 0;",
   "--BV-border-radius-sm: 0.125rem;",
@@ -262,6 +264,8 @@ exports[`default sets body 1`] = `
 exports[`default sets root 1`] = `
 [
   "--BV-theme: core-theme-test;",
+  "--BV-misc-app-workspaceSidebarWidth: 300px;",
+  "--BV-misc-app-noteSidebarWidth: 300px;",
   "--BV-border-radius-DEFAULT: 0.25rem;",
   "--BV-border-radius-none: 0;",
   "--BV-border-radius-sm: 0.125rem;",
