@@ -79,19 +79,19 @@ export function changeColorScheme(colorScheme?: ColorScheme) {
 
   if (IS_STORYBOOK) {
     console.warn(
-      `applyTheme: Cannot apply theme in storybook. Please use the theme switcher in the toolbar.`,
+      `changeColorScheme: Cannot apply change color scheme in storybook. Please use the switcher in the toolbar.`,
     );
 
     return;
   }
 
   if (!colorScheme) {
-    console.debug('applyTheme: theme is undefined');
+    console.debug('changeColorScheme: colorScheme is undefined');
 
     return;
   }
 
-  console.debug('applying theme', colorScheme);
+  console.debug('changeColorScheme:', colorScheme);
 
   document.documentElement.setAttribute('data-theme', colorScheme);
 
@@ -102,6 +102,6 @@ export function changeColorScheme(colorScheme?: ColorScheme) {
     document.body.classList.remove('dark-theme');
     document.body.classList.add('light-theme');
   } else {
-    console.warn('applyTheme: unknown theme', colorScheme);
+    console.warn('changeColorSchemes: unknown theme', colorScheme);
   }
 }

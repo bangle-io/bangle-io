@@ -7,7 +7,7 @@ import type {
 } from '@bangle.io/shared-types';
 
 import type { UiContextAction, UiContextDispatchType } from './ui-slice';
-import { UI_CONTEXT_TOGGLE_THEME, uiSliceKey } from './ui-slice';
+import { UI_CONTEXT_TOGGLE_COLOR_SCHEME, uiSliceKey } from './ui-slice';
 
 export function updatePalette(
   value: ExtractActionValue<
@@ -26,7 +26,7 @@ export function updatePalette(
 export function toggleTheme() {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     dispatch({
-      name: UI_CONTEXT_TOGGLE_THEME,
+      name: UI_CONTEXT_TOGGLE_COLOR_SCHEME,
       value: {},
     });
   };

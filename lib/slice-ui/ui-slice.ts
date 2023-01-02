@@ -26,12 +26,12 @@ export interface UISliceState {
   paletteMetadata?: any | null;
   paletteType?: CorePalette | null;
   sidebar?: string | null;
-  theme: ColorScheme;
+  colorScheme: ColorScheme;
   widescreen: boolean;
 }
 
-export const UI_CONTEXT_TOGGLE_THEME =
-  'action::@bangle.io/slice-ui:TOGGLE_THEME';
+export const UI_CONTEXT_TOGGLE_COLOR_SCHEME =
+  'action::@bangle.io/slice-ui:TOGGLE_COLOR_SCHEME';
 
 export type UiContextAction =
   | {
@@ -56,10 +56,10 @@ export type UiContextAction =
       };
     }
   | { name: 'action::@bangle.io/slice-ui:RESET_PALETTE'; value: {} }
-  | { name: typeof UI_CONTEXT_TOGGLE_THEME; value: {} }
+  | { name: typeof UI_CONTEXT_TOGGLE_COLOR_SCHEME; value: {} }
   | {
-      name: 'action::@bangle.io/slice-ui:UPDATE_THEME';
-      value: { theme: ColorScheme };
+      name: 'action::@bangle.io/slice-ui:UPDATE_COLOR_SCHEME';
+      value: { colorScheme: ColorScheme };
     }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_WINDOW_SIZE';
@@ -97,7 +97,7 @@ export const initialUISliceState: UISliceState = {
   paletteMetadata: undefined,
   paletteType: undefined,
   sidebar: undefined,
-  theme: getThemePreference(),
+  colorScheme: getThemePreference(),
   widescreen: checkWidescreen(),
 };
 
@@ -161,25 +161,25 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case UI_CONTEXT_TOGGLE_THEME: {
+          case UI_CONTEXT_TOGGLE_COLOR_SCHEME: {
             const schema: ColorScheme =
-              state.theme === COLOR_SCHEMA.DARK
+              state.colorScheme === COLOR_SCHEMA.DARK
                 ? COLOR_SCHEMA.LIGHT
                 : COLOR_SCHEMA.DARK;
             changeColorScheme(schema);
 
             return {
               ...state,
-              theme: schema,
+              colorScheme: schema,
             };
           }
 
-          case 'action::@bangle.io/slice-ui:UPDATE_THEME': {
-            changeColorScheme(action.value.theme);
+          case 'action::@bangle.io/slice-ui:UPDATE_COLOR_SCHEME': {
+            changeColorScheme(action.value.colorScheme);
 
             return {
               ...state,
-              theme: action.value.theme,
+              colorScheme: action.value.colorScheme,
             };
           }
 
@@ -256,21 +256,29 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
 
       stateToJSON(value) {
         return {
+          dialogName: null,
+          dialogMetadata: null,
+          paletteInitialQuery: null,
+          paletteMetadata: null,
+          paletteType: null,
+
           ...initialUISliceState,
-          notifications: [],
           sidebar: value.sidebar || null,
-          theme: value.theme,
+          colorScheme: value.colorScheme,
           noteSidebar: value.noteSidebar,
-        };
+        } satisfies Record<keyof Required<UISliceState>, any>;
       },
 
-      stateFromJSON(_, value: any) {
-        const state: UISliceState = Object.assign({}, initialUISliceState, {
+      stateFromJSON(_, _value: any) {
+        let value = _value as Record<keyof Required<UISliceState>, any>;
+
+        const state: UISliceState = {
+          ...initialUISliceState,
           sidebar: value.sidebar,
-          theme: value.theme || getThemePreference(),
+          colorScheme: value.colorScheme || getThemePreference(),
           noteSidebar: value.noteSidebar,
           widescreen: checkWidescreen(),
-        });
+        };
 
         return state;
       },
@@ -281,7 +289,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           const state = uiSliceKey.getSliceState(store.state);
 
           if (state) {
-            changeColorScheme(state.theme);
+            changeColorScheme(state.colorScheme);
             setRootWidescreenClass(state.widescreen);
           }
 
