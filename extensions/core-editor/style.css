@@ -106,6 +106,6 @@ h5 .B-core-editor_deco-collapse {
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor .ProseMirror-selectednode {
-  outline: 2px solid var(--BV-window-link-color);
-  border-radius: var(--BV-window-pill-border-radius);
+  outline: 2px solid var(--BV-color-promote-border);
+  border-radius: var(--BV-border-radius-md);
 }

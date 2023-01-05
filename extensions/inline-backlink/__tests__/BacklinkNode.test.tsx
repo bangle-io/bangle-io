@@ -101,25 +101,27 @@ describe('BacklinkNode', () => {
       [
         <button
           aria-label="hi"
-          class="B-inline-backlink_backlink "
+          class="hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start bg-colorAppEditorBacklinkBg hover:bg-colorAppEditorBacklinkBgHover "
           data-testid="inline-backlink-button"
           draggable="false"
         >
-          <svg
-            class="inline-block"
-            stroke="currentColor"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
-            />
-            <path
-              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
-            />
-          </svg>
+          <span>
+            <svg
+              class="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg"
+              stroke="currentColor"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+              />
+              <path
+                d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+              />
+            </svg>
+          </span>
           <span
-            class="inline"
+            class="inline whitespace-break-spaces"
           >
             hi
           </span>
@@ -139,25 +141,27 @@ describe('BacklinkNode', () => {
       [
         <button
           aria-label="monako"
-          class="B-inline-backlink_backlink "
+          class="hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start bg-colorAppEditorBacklinkBg hover:bg-colorAppEditorBacklinkBgHover "
           data-testid="inline-backlink-button"
           draggable="false"
         >
-          <svg
-            class="inline-block"
-            stroke="currentColor"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
-            />
-            <path
-              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
-            />
-          </svg>
+          <span>
+            <svg
+              class="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg"
+              stroke="currentColor"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+              />
+              <path
+                d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+              />
+            </svg>
+          </span>
           <span
-            class="inline"
+            class="inline whitespace-break-spaces"
           >
             monako
           </span>
@@ -172,7 +176,7 @@ describe('BacklinkNode', () => {
 
     await act(() => sleep(0));
 
-    expect(container.innerHTML).toContain('B-inline-backlink_backlinkNotFound');
+    expect(container.innerHTML).toContain('bg-colorNeutralSolidFaint');
   });
 });
 

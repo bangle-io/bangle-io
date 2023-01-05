@@ -11,6 +11,7 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import {
+  cx,
   getMouseClickType,
   isAbortError,
   MouseClick,
@@ -60,7 +61,10 @@ export function BacklinkWidget() {
   );
 
   return (
-    <div className="B-inline-backlink_widget-container flex flex-col">
+    <div
+      data-testid="inline-backlink_widget-container"
+      className="flex flex-col"
+    >
       {!backlinkSearchResult || backlinkSearchResult.length === 0 ? (
         <span>
           🐒 No backlinks found!
@@ -111,12 +115,12 @@ export function BacklinkWidget() {
                     </ButtonIcon>
                   ),
                   rightNode: (
-                    <ButtonIcon className="text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count">
+                    <ButtonIcon className="text-xs font-semibold rounded bg-colorNeutralSolidFaint px-1">
                       {r.matches.length}
                     </ButtonIcon>
                   ),
                   rightHoverNode: (
-                    <ButtonIcon className="text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count">
+                    <ButtonIcon className="text-xs font-semibold rounded bg-colorNeutralSolidFaint px-1">
                       {r.matches.length}
                     </ButtonIcon>
                   ),
@@ -131,7 +135,7 @@ export function BacklinkWidget() {
                       (j === 0 ? 'mt-0' : 'mt-1')
                     }
                     onClick={makeOnClick(r.wsPath)}
-                    titleClassName="text-sm "
+                    titleClassName="text-sm"
                     item={{
                       uid: 'search-result-text-match-' + j,
                       title: <HighlightText highlightText={matchObj.match} />,
@@ -245,9 +249,12 @@ function HighlightText({
   highlightText: HighlightTextType;
 }) {
   return (
-    <div className="B-search-notes_highlight-text-container">
+    <div className="B-inline-backlink_highlight-text-container">
       {highlightText.map((t, i) => (
-        <span key={i} className="B-search-notes_highlight-text text-sm">
+        <span
+          key={i}
+          className={cx(i % 2 === 1 && 'bg-colorPromoteSolidFaint', 'text-sm')}
+        >
           {t}
         </span>
       ))}

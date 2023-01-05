@@ -36,6 +36,9 @@ const appColor: DesignTokens['color']['app'] = {
   activitybarBg: 'rgb(31, 30, 30)',
   activitybarText: neutralColor.textSubdued,
   activitybarBtnPress: spectrumDarkest.gray300,
+  editorBacklinkBg: spectrumDarkest.blue200,
+  editorBacklinkBgHover: spectrumDarkest.blue300,
+  editorBacklinkText: neutralColor.text,
 };
 
 export const darkColors: DesignTokens['color'] = {

@@ -23,6 +23,9 @@ exports[`cssCustomProperties snapshot 1`] = `
       "activitybarBg": "--BV-color-app-activitybarBg",
       "activitybarBtnPress": "--BV-color-app-activitybarBtnPress",
       "activitybarText": "--BV-color-app-activitybarText",
+      "editorBacklinkBg": "--BV-color-app-editorBacklinkBg",
+      "editorBacklinkBgHover": "--BV-color-app-editorBacklinkBgHover",
+      "editorBacklinkText": "--BV-color-app-editorBacklinkText",
       "editorBg": "--BV-color-app-editorBg",
     },
     "caution": {
@@ -121,6 +124,7 @@ exports[`cssCustomProperties snapshot 1`] = `
   },
   "misc": {
     "app": {
+      "activitybarWidth": "--BV-misc-app-activitybarWidth",
       "noteSidebarWidth": "--BV-misc-app-noteSidebarWidth",
       "workspaceSidebarWidth": "--BV-misc-app-workspaceSidebarWidth",
     },
@@ -235,6 +239,9 @@ exports[`vars snapshot 1`] = `
       "activitybarBg": "var(--BV-color-app-activitybarBg)",
       "activitybarBtnPress": "var(--BV-color-app-activitybarBtnPress)",
       "activitybarText": "var(--BV-color-app-activitybarText)",
+      "editorBacklinkBg": "var(--BV-color-app-editorBacklinkBg)",
+      "editorBacklinkBgHover": "var(--BV-color-app-editorBacklinkBgHover)",
+      "editorBacklinkText": "var(--BV-color-app-editorBacklinkText)",
       "editorBg": "var(--BV-color-app-editorBg)",
     },
     "caution": {
@@ -333,6 +340,7 @@ exports[`vars snapshot 1`] = `
   },
   "misc": {
     "app": {
+      "activitybarWidth": "var(--BV-misc-app-activitybarWidth)",
       "noteSidebarWidth": "var(--BV-misc-app-noteSidebarWidth)",
       "workspaceSidebarWidth": "var(--BV-misc-app-workspaceSidebarWidth)",
     },

@@ -94,6 +94,9 @@ body {
   --BV-color-app-activitybarBtnPress: rgb(255, 255, 255);
   --BV-color-app-activitybarText: rgb(248, 248, 248);
   --BV-color-app-editorBg: rgb(255, 255, 255);
+  --BV-color-app-editorBacklinkBg: rgb(224, 242, 255);
+  --BV-color-app-editorBacklinkText: rgb(248, 248, 248);
+  --BV-color-app-editorBacklinkBgHover: rgb(202, 232, 255);
   --BV-color-neutral-bgLayerTop: rgb(248, 248, 248);
   --BV-color-neutral-bgLayerMiddle: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);
@@ -135,7 +138,7 @@ body {
   --BV-color-promote-solidStrong: #15adf1;
   --BV-color-promote-solidStronger: #0ca1e6;
   --BV-color-promote-solidSubdued: #5ed9fe;
-  --BV-color-promote-solidFaint: #7ae4fe;
+  --BV-color-promote-solidFaint: #88e9ff;
   --BV-color-promote-borderSubdued: #6cdffe;
   --BV-color-promote-border: #46cefc;
   --BV-color-promote-borderStrong: #31c3fa;
@@ -185,6 +188,9 @@ body {
   --BV-color-app-activitybarBtnPress: rgb(75, 75, 75);
   --BV-color-app-activitybarText: rgb(208, 208, 208);
   --BV-color-app-editorBg: rgb(14, 14, 14);
+  --BV-color-app-editorBacklinkBg: rgb(0, 50, 106);
+  --BV-color-app-editorBacklinkText: rgb(235, 235, 235);
+  --BV-color-app-editorBacklinkBgHover: rgb(0, 64, 135);
   --BV-color-neutral-bgLayerTop: rgb(29, 29, 29);
   --BV-color-neutral-bgLayerMiddle: rgb(14, 14, 14);
   --BV-color-neutral-bgLayerBottom: rgb(0, 0, 0);

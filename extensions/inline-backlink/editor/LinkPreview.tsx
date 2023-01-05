@@ -24,8 +24,15 @@ export const LinkPreview = React.forwardRef<
         wsPath: wsPath,
       }}
       popupContainerProps={{
-        style: style,
-        className: 'B-inline-backlink_popup-editor',
+        style: {
+          // setting width and height are important otherwise
+          // tippy confuses and causes issue with scroll
+          ...style,
+          width: 400,
+          height: 400,
+        },
+        className:
+          'B-inline-backlink_popup-editor z-popup border-1 border-solid border-colorNeutralBorder shadow-2xl',
         positionProps: positionProps,
       }}
     />

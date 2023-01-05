@@ -26,7 +26,6 @@ html {
 }
 
 :root {
-  --BV-window-widescreen-minWidth: 759px;
   --BV-window-pill-border-radius: 5px;
   --BV-window-modal-z-index: 700;
   --BV-window-popup-editor-z-index: 300;
@@ -134,11 +133,6 @@ html {
   );
   --BV-ui-bangle-button-destructive-hover-color: var(--BV-base-200);
   --BV-ui-bangle-button-destructive-pressed-bg-color: var(--BV-base-400);
-
-  --BV-backlink-backlink-bg-color: rgb(208, 238, 252);
-  --BV-backlink-backlink-hover-bg-color: rgb(225, 242, 250);
-  --BV-backlink-backlink-not-found-bg-color: var(--BV-base-300);
-  --BV-backlink-backlink-not-found-hover-bg-color: var(--BV-base-400);
 }
 
 body.BU_smallscreen {
@@ -233,9 +227,4 @@ body.BU_smallscreen {
   );
   --BV-ui-bangle-button-destructive-hover-color: var(--BV-base-200);
   --BV-ui-bangle-button-destructive-pressed-bg-color: var(--BV-base-400);
-
-  --BV-backlink-backlink-bg-color: rgba(56, 139, 253, 0.15);
-  --BV-backlink-backlink-hover-bg-color: rgba(56, 139, 253, 0.4);
-  --BV-backlink-backlink-not-found-bg-color: var(--BV-base-300);
-  --BV-backlink-backlink-not-found-hover-bg-color: var(--BV-base-400);
 }

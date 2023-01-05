@@ -104,10 +104,13 @@ export type DesignTokens = {
     promote: ToneColors;
 
     app: {
-      editorBg: string;
       activitybarBg: string;
-      activitybarText: string;
       activitybarBtnPress: string;
+      activitybarText: string;
+      editorBacklinkBg: string;
+      editorBacklinkText: string;
+      editorBacklinkBgHover: string;
+      editorBg: string;
     };
   };
 

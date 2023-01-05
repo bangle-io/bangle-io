@@ -51,6 +51,9 @@ const appColor: DesignTokens['color']['app'] = {
   activitybarBg: 'rgb(26, 32, 44)',
   activitybarText: spectrumLight.gray100,
   activitybarBtnPress: neutralColor.textInverted,
+  editorBacklinkBg: spectrumLight.blue100,
+  editorBacklinkBgHover: spectrumLight.blue200,
+  editorBacklinkText: spectrumLight.gray100,
 };
 
 export const lightColors: DesignTokens['color'] = {
@@ -134,7 +137,7 @@ export const lightColors: DesignTokens['color'] = {
     solid: bangleAccent800,
     solidStrong: bangleAccent900,
     solidStronger: bangleAccent1000,
-    solidFaint: bangleAccent300,
+    solidFaint: bangleAccent200,
     solidSubdued: bangleAccent500,
     solidText: neutralColor.textInverted,
 

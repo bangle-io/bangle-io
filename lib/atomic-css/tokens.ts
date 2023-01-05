@@ -37,6 +37,9 @@ const tokensShape: DesignTokens = {
       activitybarBtnPress: '',
       activitybarText: '',
       editorBg: '',
+      editorBacklinkBg: '',
+      editorBacklinkText: '',
+      editorBacklinkBgHover: '',
     },
     neutral: {
       bgLayerTop: '',

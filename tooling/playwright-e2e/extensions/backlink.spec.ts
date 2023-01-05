@@ -9,9 +9,11 @@ import {
   createNewNote,
   createWorkspace,
   getEditorLocator,
+  getTestIdLocator,
   runOperation,
   SELECTOR_TIMEOUT,
   sleep,
+  testIdSelector,
   waitForEditorTextToContain,
   waitForWsPathToLoad,
 } from '../helpers';
@@ -54,7 +56,7 @@ test.describe('backlink workflow', () => {
 
     await page.keyboard.press('Enter', { delay: 30 });
 
-    await page.waitForSelector('.B-inline-backlink_backlink', {
+    await getTestIdLocator('inline-backlink-button', page).waitFor({
       timeout: 4 * SELECTOR_TIMEOUT,
     });
 
@@ -65,7 +67,7 @@ test.describe('backlink workflow', () => {
     await setup(page);
     // make sure the backlink created is for note-0
 
-    await expect(page.locator('.B-inline-backlink_backlink')).toHaveText(
+    await expect(getTestIdLocator('inline-backlink-button', page)).toHaveText(
       'note-0',
       { useInnerText: true },
     );
@@ -78,14 +80,14 @@ test.describe('backlink workflow', () => {
     // make sure we are on note-1's page
     await expect(page).toHaveURL(/note-1/);
 
-    await page.locator('.B-inline-backlink_backlink').waitFor();
+    await getTestIdLocator('inline-backlink-button', page).waitFor();
     // // Hover to see if it is correctly shown
-    await page.hover('.B-inline-backlink_backlink');
+    await getTestIdLocator('inline-backlink-button', page).hover();
 
     await page.locator('.B-editor_display-popup').waitFor();
 
     await expect(page.locator('.B-editor_display-popup')).toHaveText(
-      /this is the zeroth note note-1/,
+      /this is the zeroth note[\n\s]+note-1/,
       { useInnerText: true },
     );
 
@@ -138,7 +140,9 @@ test.describe('backlink workflow', () => {
     await Promise.all([
       page.waitForNavigation(),
       page.click(
-        `.B-inline-backlink_widget-container [data-id="${wsName}:note-0.md"]`,
+        `${testIdSelector(
+          'inline-backlink_widget-container',
+        )} [data-id="${wsName}:note-0.md"]`,
       ),
     ]);
 
@@ -159,12 +163,15 @@ test.describe('backlink workflow', () => {
 
     expect(await getPopupEditorWsPath()).toBeUndefined();
 
-    await page.hover('.B-inline-backlink_backlink');
+    await getTestIdLocator('inline-backlink-button', page).hover();
 
     await expect.poll(() => getPopupEditorWsPath()).toBe(`${wsName}:note-0.md`);
 
     // hover on something else
-    await page.hover('[data-testid="app-editor-container_editorbar"] button');
+    await getTestIdLocator('app-editor-container_editorbar', page)
+      .locator('button')
+      .first()
+      .hover();
 
     // the path should now be undefined
     // we do a poll because it takes a little while for the popup to disappear
