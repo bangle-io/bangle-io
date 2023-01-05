@@ -97,6 +97,7 @@ body {
   --BV-color-app-editorBacklinkBg: rgb(224, 242, 255);
   --BV-color-app-editorBacklinkText: rgb(248, 248, 248);
   --BV-color-app-editorBacklinkBgHover: rgb(202, 232, 255);
+  --BV-color-app-linkText: rgb(56, 146, 243);
   --BV-color-neutral-bgLayerTop: rgb(248, 248, 248);
   --BV-color-neutral-bgLayerMiddle: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);
@@ -191,6 +192,7 @@ body {
   --BV-color-app-editorBacklinkBg: rgb(0, 50, 106);
   --BV-color-app-editorBacklinkText: rgb(235, 235, 235);
   --BV-color-app-editorBacklinkBgHover: rgb(0, 64, 135);
+  --BV-color-app-linkText: rgb(64, 150, 243);
   --BV-color-neutral-bgLayerTop: rgb(29, 29, 29);
   --BV-color-neutral-bgLayerMiddle: rgb(14, 14, 14);
   --BV-color-neutral-bgLayerBottom: rgb(0, 0, 0);

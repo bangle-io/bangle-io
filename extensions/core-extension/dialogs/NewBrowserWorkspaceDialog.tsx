@@ -136,7 +136,7 @@ function WorkspaceNameInput({
           <FocusRing focusClass="B-ui-components_misc-input-ring">
             <input
               aria-label="workspace name input"
-              className="p-1 pl-2 w-full"
+              className="p-1 pl-2 w-full rounded border-1 border-colorNeutralBorder"
               disabled={isDisabled}
               value={value}
               onChange={(e) => {
@@ -147,11 +147,7 @@ function WorkspaceNameInput({
                   onPressEnter?.();
                 }
               }}
-              style={{
-                borderRadius: 'var(--BV-ui-bangle-button-radius)',
-                border: '1px solid var(--BV-window-border-color-0)',
-                backgroundColor: 'var(--BV-window-bg-color-0)',
-              }}
+              style={{}}
             />
           </FocusRing>
         </div>

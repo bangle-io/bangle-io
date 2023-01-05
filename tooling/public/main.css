@@ -1,11 +1,3 @@
-#dialog-container {
-  isolation: isolate;
-  background: transparent;
-  color-scheme: light;
-  position: fixed;
-  z-index: var(--BV-window-modal-z-index);
-}
-
 html {
   box-sizing: border-box;
 }
@@ -15,26 +7,12 @@ html {
   box-sizing: inherit;
 }
 
-.dark-scheme #dialog-container {
-  color-scheme: dark;
-}
-
-#tooltip-container {
-  isolation: isolate;
-  position: fixed;
-  z-index: var(--BV-window-tooltip-z-index);
-}
-
 :root {
-  --BV-window-pill-border-radius: 5px;
-  --BV-window-modal-z-index: 700;
   --BV-window-popup-editor-z-index: 300;
   --BV-window-tooltip-z-index: 800;
   --BV-window-page-padding: 3rem 30px 3rem 30px;
   --BV-window-page-mobile-padding: 1.5rem 10px 2rem 25px;
   --BV-window-page-box-padding: 2rem;
-  --BV-window-dialog-padding-x: 40px;
-  --BV-window-dialog-padding-y: 40px;
 
   --BV-page-max-width: 700px;
 
@@ -81,18 +59,14 @@ html {
   --BV-window-bg-color-2: var(--BV-base-50);
   --BV-window-border-color-0: var(--BV-base-300);
   --BV-window-border-color-1: var(--BV-base-300);
-  --BV-window-dropdown-bg-color-0: var(--BV-base-75);
-  --BV-window-dropdown-bg-color-1: var(--BV-base-50);
   --BV-window-dropdown-color: var(--BV-color-neutral-textSubdued);
   --BV-window-dropdown-radius: var(--BV-ui-bangle-button-radius);
   --BV-window-highlight-bg-color: yellow;
   --BV-window-kbd-bg-color: var(--BV-base-300);
   --BV-window-kbd-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-link-color: #4299e1;
   --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
   --BV-window-popup-editor-bg-color: var(--BV-base-75);
   --BV-window-popup-editor-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-separator-color: var(--BV-base-300);
   --BV-window-tooltip-bg-color: var(--BV-base-50);
   --BV-window-tooltip-color: var(--BV-color-neutral-textSubdued);
 
@@ -176,17 +150,13 @@ body.BU_smallscreen {
   --BV-window-bg-color-2: var(--BV-base-50);
   --BV-window-border-color-0: var(--BV-base-400);
   --BV-window-border-color-1: var(--BV-base-400);
-  --BV-window-dropdown-bg-color-0: var(--BV-base-75);
-  --BV-window-dropdown-bg-color-1: var(--BV-base-50);
   --BV-window-dropdown-color: var(--BV-color-neutral-textSubdued);
   --BV-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
   --BV-window-kbd-bg-color: var(--BV-base-400);
   --BV-window-kbd-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-link-color: #4299e1;
   --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
   --BV-window-popup-editor-bg-color: var(--BV-base-75);
   --BV-window-popup-editor-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-separator-color: var(--BV-base-300);
   --BV-window-tooltip-bg-color: var(--BV-base-50);
   --BV-window-tooltip-color: var(--BV-color-neutral-text);
 

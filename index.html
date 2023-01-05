@@ -30,8 +30,12 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!-- Keep these in sync with preview-body.html in storybook -->
-    <div id="tooltip-container"></div>
-    <div id="dialog-container"></div>
+    <div id="tooltip-container" class="z-tooltip isolate fixed z-tooltip"></div>
+    <div
+      id="dialog-container"
+      class="fixed z-modal isolate"
+      style="background: transparent"
+    ></div>
     <%- viteJsEntry %>
     <!--  -->
     <%- fathom %>

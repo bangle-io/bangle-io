@@ -22,6 +22,10 @@ export const shortcuts: Array<Shortcut<Theme>> = [
   ['z-tooltip', 'z-600'],
   ['z-fixed', 'z-800'],
   ['z-sticky', 'z-900'],
+  [
+    'ring-promote',
+    'ring-2 ring-colorPromoteBorder ring-offset-2 ring-offset-colorNeutralTextInverted',
+  ],
 ];
 
 export const presetUno = (options: PresetUnoOptions = {}): Preset<Theme> => {

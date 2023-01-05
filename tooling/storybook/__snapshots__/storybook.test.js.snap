@@ -7081,12 +7081,8 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
   </div>
   <div
     aria-hidden={null}
+    className="z-modal"
     data-overlay-container={true}
-    style={
-      {
-        "zIndex": "var(--BV-window-modal-z-index)",
-      }
-    }
   />
 </div>
 `;

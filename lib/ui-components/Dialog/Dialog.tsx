@@ -77,35 +77,6 @@ export function Dialog({
 
   usePreventScroll();
 
-  let viewport = useViewportSize();
-
-  let prevHeight = usePrevious(viewport.height);
-
-  // This hook exists to deal with iOS issues where the dialog
-  // input can get hidden by the keyboard.
-
-  useEffect(() => {
-    const diff = prevHeight && viewport.height - prevHeight;
-
-    // Once the keyboard is dismissed, the dialog will be scrolled to
-    // be at top.
-    if (diff && diff > 100) {
-      if (ref.current) {
-        ref.current.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    // there keyboard was shown, scroll into the element that is in focus.
-    if (diff && diff < -100) {
-      let active = document.activeElement;
-      let container = ref.current;
-
-      if (container && active && container.contains(active)) {
-        active.scrollIntoView();
-      }
-    }
-  }, [viewport.height, prevHeight]);
-
   return (
     <OverlayContainer
       portalContainer={
@@ -115,13 +86,16 @@ export function Dialog({
       }
     >
       <div
-        className="B-ui-components_dialog-underlay transition-opacity"
+        className="fixed flex justify-center z-modal backdrop-blur-sm items-start widescreen:items-center inset-0 transition-opacity"
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        }}
         {...underlayProps}
       >
         <FocusScope contain restoreFocus autoFocus>
           <div
             className={cx(
-              'B-ui-components_dialog-content-container',
+              'B-ui-components_dialog-content-container bg-colorNeutralBgLayerTop rounded-lg shadow-xl',
               size === 'small' && 'BU_small',
               size === 'medium' && 'BU_medium',
               size === 'large' && 'BU_large',

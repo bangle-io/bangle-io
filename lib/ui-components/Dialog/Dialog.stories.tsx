@@ -132,11 +132,7 @@ export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
         repellat officiis cum recusandae, quas facilis eos ad rerum quibusdam
         eligendi.
       </div>
-      <OverlayProvider
-        style={{
-          zIndex: 'var(--BV-window-modal-z-index)',
-        }}
-      >
+      <OverlayProvider className="z-modal">
         {show && (
           <Dialog onDismiss={onDismiss} isDismissable={true} headingTitle="Wow">
             I am the modal content

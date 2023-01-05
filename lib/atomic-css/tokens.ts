@@ -40,6 +40,7 @@ const tokensShape: DesignTokens = {
       editorBacklinkBg: '',
       editorBacklinkText: '',
       editorBacklinkBgHover: '',
+      linkText: '',
     },
     neutral: {
       bgLayerTop: '',

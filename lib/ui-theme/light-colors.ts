@@ -54,6 +54,7 @@ const appColor: DesignTokens['color']['app'] = {
   editorBacklinkBg: spectrumLight.blue100,
   editorBacklinkBgHover: spectrumLight.blue200,
   editorBacklinkText: spectrumLight.gray100,
+  linkText: spectrumLight.blue700,
 };
 
 export const lightColors: DesignTokens['color'] = {

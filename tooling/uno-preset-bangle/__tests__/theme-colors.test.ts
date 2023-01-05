@@ -11,6 +11,7 @@ describe('theme-colors', () => {
         "colorAppEditorBacklinkBgHover": "var(--BV-color-app-editorBacklinkBgHover)",
         "colorAppEditorBacklinkText": "var(--BV-color-app-editorBacklinkText)",
         "colorAppEditorBg": "var(--BV-color-app-editorBg)",
+        "colorAppLinkText": "var(--BV-color-app-linkText)",
         "colorBgLayerBottom": "var(--BV-color-neutral-bgLayerBottom)",
         "colorBgLayerFloat": "var(--BV-color-neutral-bgLayerFloat)",
         "colorBgLayerMiddle": "var(--BV-color-neutral-bgLayerMiddle)",

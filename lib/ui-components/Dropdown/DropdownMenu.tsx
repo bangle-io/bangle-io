@@ -195,7 +195,7 @@ function InternalDropdownMenu({
       {...menuProps}
       ref={ref}
       className={cx(
-        'flex flex-col min-w-72 B-ui-components_dropdown-dropdown-menu bg-colorBgLayerFloat border-1 border-colorNeutralBorder B-ui-components_misc-dropdown-shadow p-1 py-2 rounded-md',
+        'flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-1 border-colorNeutralBorder p-1 py-2 rounded',
         className,
       )}
       style={style}
@@ -306,8 +306,8 @@ function MenuItemWrapper({
       {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       className={cx(
-        'B-ui-components_dropdown-dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',
-        isFocused && 'BU_is-focused',
+        'outline-none cursor-pointer text-sm rounded-md px-2 py-1',
+        isFocused && 'bg-colorNeutralSolidFaint',
       )}
     >
       <span className="inline-flex justify-between w-full">

@@ -1,15 +1,3 @@
-.B-ui-components_dropdown-tooltip {
-  z-index: var(--BV-window-tooltip-z-index);
-}
-
-.B-ui-components_dropdown-dropdown-menu {
-  z-index: var(--BV-window-tooltip-z-index);
-}
-
-.B-ui-components_dropdown-dropdown-menu-item.BU_is-focused {
-  background-color: var(--BV-accent-secondary);
-}
-
 .B-ui-components_dropdown-button {
   border-radius: var(--BV-ui-bangle-button-radius);
   flex-shrink: 0;
