@@ -6801,7 +6801,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
     ComboBox
   </label>
   <div
-    className="B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden "
+    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral px-1 py-1 border-neutral rounded "
   >
     <input
       aria-autocomplete="list"
@@ -6809,7 +6809,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
       aria-labelledby="react-aria-test-generated-id"
       autoComplete="off"
       autoCorrect="off"
-      className="w-full outline-none px-3 py-1 bg-inherit "
+      className="w-full outline-none px-2 py-1 text-field-neutral "
       disabled={false}
       id="react-aria-test-generated-id"
       onBlur={[Function]}
@@ -6882,7 +6882,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
     ComboBox
   </label>
   <div
-    className="B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden "
+    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral px-1 py-1 border-neutral rounded "
   >
     <input
       aria-autocomplete="list"
@@ -6890,7 +6890,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
       aria-labelledby="react-aria-test-generated-id"
       autoComplete="off"
       autoCorrect="off"
-      className="w-full outline-none px-3 py-1 bg-inherit "
+      className="w-full outline-none px-2 py-1 text-field-neutral "
       disabled={false}
       id="react-aria-test-generated-id"
       onBlur={[Function]}
@@ -7153,7 +7153,7 @@ exports[`Storyshots ui-components/Input Primary 1`] = `
   <input
     autoCapitalize="off"
     autoCorrect="off"
-    className="B-ui-components_input "
+    className="outline-offset-2 text-field-neutral border-neutral rounded px-2 py-1 "
     onBlur={[Function]}
     onFocus={[Function]}
     type="text"
@@ -7802,7 +7802,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
   </label>
   <input
     aria-labelledby="react-aria-test-generated-id"
-    className="outline-none"
+    className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
     disabled={false}
     id="react-aria-test-generated-id"
     onBlur={[Function]}
@@ -7811,16 +7811,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     placeholder="abc@example.com"
     readOnly={false}
     spellCheck={true}
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-        "border": "1px solid var(--BV-window-border-color-0)",
-        "borderRadius": "0.125rem",
-        "color": "var(--BV-color-neutral-text)",
-        "outlineOffset": 2,
-        "padding": "0.5rem 0.75rem",
-      }
-    }
+    style={{}}
     type="text"
   />
   <div
@@ -7850,7 +7841,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
   </label>
   <input
     aria-labelledby="react-aria-test-generated-id"
-    className="outline-none"
+    className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
     disabled={false}
     id="react-aria-test-generated-id"
     onBlur={[Function]}
@@ -7858,23 +7849,14 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     onFocus={[Function]}
     readOnly={false}
     spellCheck={true}
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-        "border": "1px solid var(--BV-window-border-color-0)",
-        "borderRadius": "0.125rem",
-        "color": "var(--BV-color-neutral-text)",
-        "outlineOffset": 2,
-        "padding": "0.5rem 0.75rem",
-      }
-    }
+    style={{}}
     type="text"
   />
   <div
     className="text-sm"
     style={
       {
-        "color": "var(--BV-severity-error-color)",
+        "color": "var(--BV-color-critical-solidStrong)",
       }
     }
   >
@@ -8025,7 +8007,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
     style={
       {
-        "width": "var(--BV-misc-app-workspaceSidebarWidth)",
+        "width": "var(--BV-misc-workspaceSidebarWidth)",
       }
     }
   >
@@ -9109,7 +9091,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
     style={
       {
-        "width": "var(--BV-misc-app-noteSidebarWidth)",
+        "width": "var(--BV-misc-noteSidebarWidth)",
       }
     }
   >

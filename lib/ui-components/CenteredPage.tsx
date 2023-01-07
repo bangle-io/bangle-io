@@ -37,12 +37,11 @@ export function CenteredBoxedPage({
       )}
     >
       <div
-        className="w-full rounded-lg"
+        className="w-full rounded-lg border-neutral"
         style={{
           padding: 'var(--BV-window-page-box-padding)',
           backgroundColor: vars.color.neutral.bgLayerTop,
           maxWidth: 'min(var(--BV-page-max-width), 100vw)',
-          border: '1px solid var(--BV-window-border-color-1)',
         }}
       >
         <div

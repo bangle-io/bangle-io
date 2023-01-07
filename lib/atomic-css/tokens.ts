@@ -8,11 +8,12 @@ const tokensShape: DesignTokens = {
   theme: '',
   uid: '',
   misc: {
-    app: {
-      activitybarWidth: '',
-      noteSidebarWidth: '',
-      workspaceSidebarWidth: '',
-    },
+    activitybarWidth: '',
+    miniEditorWidth: '',
+    noteSidebarWidth: '',
+    workspaceSidebarWidth: '',
+    noteTagsText: '',
+    noteTagsBg: '',
   },
   border: {
     radius: {
@@ -36,10 +37,12 @@ const tokensShape: DesignTokens = {
       activitybarBg: '',
       activitybarBtnPress: '',
       activitybarText: '',
-      editorBg: '',
+      editorAttentionBg: '',
       editorBacklinkBg: '',
-      editorBacklinkText: '',
       editorBacklinkBgHover: '',
+      editorBacklinkText: '',
+      editorBg: '',
+      editorCodeBg: '',
       linkText: '',
     },
     neutral: {
@@ -53,6 +56,8 @@ const tokensShape: DesignTokens = {
       text: '',
       textStrong: '',
       textInverted: '',
+      textFieldBg: '',
+      textFieldText: '',
 
       ...createToneColors(),
     },
@@ -105,6 +110,8 @@ const tokensShape: DesignTokens = {
     '48': '',
     '64': '',
     '72': '',
+    '80': '',
+    '96': '',
     'px': '',
   },
   typography: {

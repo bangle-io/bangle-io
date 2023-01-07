@@ -3,7 +3,7 @@
 exports[`Hides when isVisible is false 1`] = `
 <div>
   <div
-    class="shadow-2xl B-ui-components_inline-palette-wrapper"
+    class="shadow-2xl B-ui-components_inline-palette-wrapper flex flex-col bg-colorNeutralBgLayerFloat"
   >
     <div
       class="B-ui-components_inline-palette-items-wrapper"
@@ -50,7 +50,7 @@ exports[`Hides when isVisible is false 1`] = `
 exports[`Initial render 1`] = `
 <div>
   <div
-    class="shadow-2xl B-ui-components_inline-palette-wrapper"
+    class="shadow-2xl B-ui-components_inline-palette-wrapper flex flex-col bg-colorNeutralBgLayerFloat"
   >
     <div
       class="B-ui-components_inline-palette-items-wrapper"

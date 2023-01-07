@@ -58,7 +58,10 @@ export const Input = React.forwardRef<
             type="text"
             onChange={onChange}
             ref={ref}
-            className={cx('B-ui-components_input', className)}
+            className={cx(
+              'outline-offset-2 text-field-neutral border-neutral rounded px-2 py-1',
+              className,
+            )}
             style={style}
             value={value}
             placeholder={placeholder}

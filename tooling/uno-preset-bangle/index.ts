@@ -26,6 +26,11 @@ export const shortcuts: Array<Shortcut<Theme>> = [
     'ring-promote',
     'ring-2 ring-colorPromoteBorder ring-offset-2 ring-offset-colorNeutralTextInverted',
   ],
+  ['border-neutral', 'border-1 border-colorNeutralBorder'],
+  [
+    'text-field-neutral',
+    'bg-colorNeutralTextFieldBg text-colorNeutralTextFieldText',
+  ],
 ];
 
 export const presetUno = (options: PresetUnoOptions = {}): Preset<Theme> => {

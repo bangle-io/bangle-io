@@ -1,15 +1,15 @@
 /* sidebar row2 */
 .B-ui-components_sidebar-row2.BU_hover:hover {
-  background-color: var(--BV-accent-secondary);
+  background-color: var(--BV-color-neutral-solidFaint);
 }
 
 .B-ui-components_sidebar-row2.BU_active {
-  background-color: var(--BV-accent-primary-1);
+  background-color: var(--BV-color-promote-solidSubdued);
 }
 
 /* prevent hover overwriting allowed */
 .B-ui-components_sidebar-row2.BU_hover.BU_active {
-  background-color: var(--BV-accent-primary-1);
+  background-color: var(--BV-color-promote-solidSubdued);
 }
 
 .B-ui-components_sidebar-row2.BU_disable {

@@ -6,7 +6,7 @@ exports[`NotificationArea renders with content 2`] = `
     class="fixed bottom-0 right-0 z-50"
   >
     <div
-      class="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
+      class="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border-neutral"
       data-testid="app-entry_notification"
     >
       <div
@@ -74,7 +74,7 @@ exports[`NotificationArea renders with content 2`] = `
       />
     </div>
     <div
-      class="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
+      class="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border-neutral"
       data-testid="app-entry_notification"
     >
       <div

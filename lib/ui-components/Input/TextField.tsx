@@ -3,6 +3,7 @@ import type { AriaTextFieldOptions } from '@react-aria/textfield';
 import { useTextField } from '@react-aria/textfield';
 import React from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
 import { cx } from '@bangle.io/utils';
 
 import type { SizeType } from '../misc';
@@ -39,15 +40,8 @@ export function TextField(
           {...inputProps}
           ref={ref}
           spellCheck={props.spellCheck === undefined ? true : props.spellCheck}
-          className="outline-none"
-          style={{
-            color: 'var(--BV-color-neutral-text)',
-            backgroundColor: 'var(--BV-window-bg-color-0)',
-            border: '1px solid var(--BV-window-border-color-0)',
-            borderRadius: '0.125rem',
-            outlineOffset: 2,
-            padding: '0.5rem 0.75rem',
-          }}
+          className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
+          style={{}}
         />
       </FocusRing>
       {props.description && (
@@ -62,7 +56,7 @@ export function TextField(
         <div
           {...errorMessageProps}
           className="text-sm"
-          style={{ color: 'var(--BV-severity-error-color)' }}
+          style={{ color: vars.color.critical.solidStrong }}
         >
           {props.errorMessage}
         </div>

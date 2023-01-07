@@ -60,14 +60,15 @@ export function ComboBox<T extends object>(
       </label>
       <div
         className={cx(
-          `B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden`,
+          `relative inline-flex flex-row rounded-md overflow-hidden`,
+          `text-field-neutral px-1 py-1 border-neutral rounded`,
           state.isFocused && 'B-ui-components_misc-input-ring',
         )}
       >
         <input
           {...inputProps}
           ref={inputRef}
-          className={cx('w-full outline-none px-3 py-1 bg-inherit')}
+          className={cx('w-full outline-none px-2 py-1 text-field-neutral')}
         />
         <button
           {...buttonProps}
@@ -90,7 +91,7 @@ export function ComboBox<T extends object>(
           onClose={state.close}
         >
           <ListBox
-            className="max-h-72 overflow-auto "
+            className="max-h-72 overflow-auto border-neutral bg-colorNeutralTextFieldBg text-colorNeutralTextFieldText rounded"
             {...listBoxProps}
             listBoxRef={listBoxRef}
             state={state}

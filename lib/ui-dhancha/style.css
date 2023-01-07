@@ -61,7 +61,7 @@ body {
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  height: var(--BV-misc-app-activitybarWidth);
+  height: var(--BV-misc-activitybarWidth);
   position: sticky;
   border-bottom: 1px solid transparent;
   top: 0;
@@ -70,7 +70,7 @@ body {
 }
 
 .B-ui-dhancha_activitybar.BU_widescreen {
-  flex-basis: var(--BV-misc-app-activitybarWidth);
+  flex-basis: var(--BV-misc-activitybarWidth);
   flex-direction: column;
   height: 100vh;
   position: relative;
@@ -85,5 +85,5 @@ body {
 }
 
 .B-ui-dhancha_activitybar.B-ui-dhancha_down {
-  border-bottom-color: var(--BV-window-border-color-0);
+  border-bottom-color: var(--BV-color-neutral-border);
 }

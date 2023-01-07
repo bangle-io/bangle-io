@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/api';
 import { PopupEditor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 
@@ -28,7 +29,7 @@ export const LinkPreview = React.forwardRef<
           // setting width and height are important otherwise
           // tippy confuses and causes issue with scroll
           ...style,
-          width: 400,
+          width: vars.misc.miniEditorWidth,
           height: 400,
         },
         className:

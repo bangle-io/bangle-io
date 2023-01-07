@@ -150,9 +150,7 @@ export function InputPalette({
             item={errorItem}
             isActive={false}
             onClick={() => {}}
-            style={{
-              backgroundColor: 'var(--BV-error-bg-color)',
-            }}
+            className="bg-colorCriticalSolidFaint"
           />
         )}
       </UniversalPalette.PaletteItemsContainer>

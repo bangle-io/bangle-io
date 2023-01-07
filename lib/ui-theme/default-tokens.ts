@@ -73,6 +73,8 @@ const defaultSpace: DesignTokens['space'] = {
   '48': '12rem',
   '64': '16rem',
   '72': '18rem',
+  '80': '20rem',
+  '96': '24rem',
 };
 
 const defaultFontFamily: DesignTokens['typography']['fontFamily'] = {
@@ -126,11 +128,12 @@ const defaultTypography: DesignTokens['typography'] = {
 };
 
 const defaultMiscTokens: DesignTokens['misc'] = {
-  app: {
-    activitybarWidth: '50px',
-    noteSidebarWidth: '300px',
-    workspaceSidebarWidth: '300px',
-  },
+  activitybarWidth: '50px',
+  noteSidebarWidth: '300px',
+  workspaceSidebarWidth: '300px',
+  miniEditorWidth: '400px',
+  noteTagsBg: 'rgb(66, 66, 66)',
+  noteTagsText: 'rgb(255, 255, 255)',
 };
 
 export const defaultsLight: DesignTokens = {

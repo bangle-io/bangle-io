@@ -73,7 +73,7 @@ test('button clicks', async () => {
   expect(element).toMatchInlineSnapshot(`
     <ul
       aria-label="test-label"
-      class="flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-1 border-colorNeutralBorder p-1 py-2 rounded "
+      class="flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-neutral p-1 py-2 rounded "
       role="menu"
       tabindex="0"
     >

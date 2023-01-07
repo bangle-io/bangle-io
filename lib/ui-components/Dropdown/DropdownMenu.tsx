@@ -195,7 +195,7 @@ function InternalDropdownMenu({
       {...menuProps}
       ref={ref}
       className={cx(
-        'flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-1 border-colorNeutralBorder p-1 py-2 rounded',
+        'flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-neutral p-1 py-2 rounded',
         className,
       )}
       style={style}
@@ -241,10 +241,7 @@ function MenuItemSection({
       {section.key !== state.collection.getFirstKey() && (
         <li
           {...separatorProps}
-          className="mx-1 my-2"
-          style={{
-            borderTop: '1px solid var(--BV-window-border-color-0)',
-          }}
+          className="mx-1 my-2 border-t-1 border-colorNeutralBorder"
         />
       )}
       <li {...itemProps}>

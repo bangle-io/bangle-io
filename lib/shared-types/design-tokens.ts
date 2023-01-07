@@ -78,6 +78,8 @@ export type DesignTokens = {
     '48': string;
     '64': string;
     '72': string;
+    '80': string;
+    '96': string;
   };
 
   ringWidth: {
@@ -107,10 +109,14 @@ export type DesignTokens = {
       activitybarBg: string;
       activitybarBtnPress: string;
       activitybarText: string;
+      editorCodeBg: string;
       editorBacklinkBg: string;
       editorBacklinkBgHover: string;
       editorBacklinkText: string;
       editorBg: string;
+      // the color with which to flash the node which currently became active.
+      // this is used to grab attention
+      editorAttentionBg: string;
       linkText: string;
     };
   };
@@ -119,11 +125,12 @@ export type DesignTokens = {
   // and can be accessed using typescript `vars.misc.myKey` or
   // directly using `var(--misc.myKey)` in css.
   misc: {
-    app: {
-      workspaceSidebarWidth: string;
-      noteSidebarWidth: string;
-      activitybarWidth: string;
-    };
+    activitybarWidth: string;
+    miniEditorWidth: string;
+    noteSidebarWidth: string;
+    workspaceSidebarWidth: string;
+    noteTagsText: string;
+    noteTagsBg: string;
   };
 };
 
@@ -155,4 +162,6 @@ export type NeutralColors = ToneColors & {
   text: string; // default text color
   textStrong: string; // for headings
   textInverted: string;
+  textFieldBg: string; // color to fill the input fields with
+  textFieldText: string; // color for text inside input fields
 };

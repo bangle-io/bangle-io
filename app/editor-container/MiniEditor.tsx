@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { useBangleStoreContext, workspace } from '@bangle.io/api';
+import { vars } from '@bangle.io/atomic-css';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
@@ -30,17 +31,18 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   }, [wsPath, onClose, bangleStore]);
 
   return (
-    <div className="B-editor-container_mini-editor-wrapper">
-      <div
-        className="flex flex-row px-2 py-1 text-sm  justify-between"
-        style={{
-          width: '100%',
-          borderBottom: '1px solid var(--BV-window-border-color-0)',
-        }}
-      >
+    <div
+      data-testid="editor-container_mini-editor-wrapper"
+      // setting width and height are important otherwise
+      // tippy confuses and causes issue with scroll
+      className="fixed flex flex-col bottom-0 right-8 rounded drop-shadow-xl bg-colorAppEditorBg z-popup border-neutral"
+      style={{
+        width: vars.misc.miniEditorWidth,
+      }}
+    >
+      <div className="flex flex-row w-full px-2 py-1 text-sm justify-between border-b-1 border-colorNeutralBorder">
         <div
-          className="font-semibold flex-grow cursor-pointer truncate select-none"
-          style={{ display: 'flex', alignItems: 'center' }}
+          className="font-semibold flex items-center flex-grow cursor-pointer truncate select-none"
           onClick={() => {
             updateIsMinimized((e) => !e);
           }}
@@ -86,7 +88,12 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
         </div>
       </div>
       {isMinimized ? null : (
-        <div className="px-2 overflow-y-auto pl-6 B-editor-container_mini-editor">
+        <div
+          className="px-2 overflow-y-auto pl-6 B-editor-container_mini-editor"
+          style={{
+            height: 'min(50vh, 600px)',
+          }}
+        >
           <Editor
             editorDisplayType={EditorDisplayType.Floating}
             editorId={MINI_EDITOR_INDEX}

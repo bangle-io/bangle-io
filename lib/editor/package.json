@@ -28,6 +28,7 @@
     "@bangle.dev/react": "0.31.6",
     "@bangle.dev/utils": "0.31.6",
     "@bangle.io/api": "workspace:*",
+    "@bangle.io/atomic-css": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",

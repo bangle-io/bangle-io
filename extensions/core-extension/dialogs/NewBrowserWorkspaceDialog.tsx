@@ -136,7 +136,7 @@ function WorkspaceNameInput({
           <FocusRing focusClass="B-ui-components_misc-input-ring">
             <input
               aria-label="workspace name input"
-              className="p-1 pl-2 w-full rounded border-1 border-colorNeutralBorder"
+              className="p-1 pl-2 w-full rounded border-neutral text-field-neutral"
               disabled={isDisabled}
               value={value}
               onChange={(e) => {

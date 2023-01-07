@@ -107,7 +107,7 @@ export function Notification({
   return (
     <div
       data-testid="app-entry_notification"
-      className="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border border-1 border-colorNeutralBorder"
+      className="bg-colorBgLayerFloat w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow-xl rounded shadow-lg border-neutral"
     >
       <div className="flex flex-col w-full">
         <div className="flex flex-row">

@@ -16,9 +16,7 @@ const cssString = formatCss(
         light: {},
         dark: {},
       },
-      misc: {
-        app: {},
-      },
+      misc: {},
     },
   }),
 );

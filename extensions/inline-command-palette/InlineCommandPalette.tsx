@@ -146,7 +146,7 @@ export function InlineCommandPalette() {
   );
 
   return reactDOM.createPortal(
-    <div className="B-ui-components_inline-palette-wrapper shadow-2xl">
+    <div className="B-ui-components_inline-palette-wrapper flex flex-col bg-colorNeutralBgLayerFloat shadow-2xl">
       <div className="B-ui-components_inline-palette-items-wrapper">
         {items.map((item, i) => {
           return (

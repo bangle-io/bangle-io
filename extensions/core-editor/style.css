@@ -1,8 +1,3 @@
-.B-core-editor_bangle-heading-collapsed {
-  background-color: var(--BV-window-bg-color-2);
-  border-radius: 8px;
-}
-
 /* collapse styles */
 .B-core-editor_deco-collapse-positioner {
   position: relative;
@@ -45,15 +40,15 @@ h5 .B-core-editor_deco-collapse {
 /* collapse styles end */
 
 .B-core-editor_selected-node {
-  animation-duration: 0.75s;
+  animation-duration: 0.8s;
   animation-name: B-core-editor_editor-selected-node;
-  animation-timing-function: ease-out;
+  animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
 @keyframes B-core-editor_editor-selected-node {
   from {
-    border-radius: 4px;
-    background-color: var(--BV-editor-core-selection-change-bg-color);
+    border-radius: 2px;
+    background-color: var(--BV-color-app-editorAttentionBg);
   }
 
   to {
@@ -75,7 +70,7 @@ h5 .B-core-editor_deco-collapse {
 /* for the inline code */
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor p > code {
-  background-color: var(--BV-base-300);
+  background-color: var(--BV-color-app-editorCodeBg);
   color: var(--BV-color-neutral-textSubdued);
 }
 
@@ -86,12 +81,12 @@ h5 .B-core-editor_deco-collapse {
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor pre {
-  background-color: var(--BV-base-300);
+  background-color: var(--BV-color-app-editorCodeBg);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-editor blockquote {
-  background-color: var(--BV-base-300);
+  background-color: var(--BV-color-app-editorCodeBg);
   color: var(--BV-color-neutral-textSubdued);
 }
 

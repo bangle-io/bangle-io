@@ -4,15 +4,14 @@ exports[`MiniEditor works 1`] = `
 <div>
   <div>
     <div
-      class="B-editor-container_mini-editor-wrapper"
+      class="fixed flex flex-col bottom-0 right-8 rounded drop-shadow-xl bg-colorAppEditorBg z-popup border-neutral"
+      data-testid="editor-container_mini-editor-wrapper"
     >
       <div
-        class="flex flex-row px-2 py-1 text-sm justify-between"
-        style="width: 100%;"
+        class="flex flex-row w-full px-2 py-1 text-sm justify-between border-b-1 border-colorNeutralBorder"
       >
         <div
-          class="font-semibold flex-grow cursor-pointer truncate select-none"
-          style="display: flex; align-items: center;"
+          class="font-semibold flex items-center flex-grow cursor-pointer truncate select-none"
         >
           <span
             class="truncate"

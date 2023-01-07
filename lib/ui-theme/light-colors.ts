@@ -24,11 +24,13 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   bgLayerFloat: spectrumLight.gray75,
 
   // https://spectrum.adobe.com/page/color-system/#Gray-text
-  textDisabled: spectrumLight.gray500,
-  textSubdued: spectrumLight.gray700,
   text: spectrumLight.gray800,
-  textStrong: spectrumLight.gray900,
+  textDisabled: spectrumLight.gray500,
+  textFieldBg: spectrumLight.gray50,
+  textFieldText: spectrumLight.gray800,
   textInverted: spectrumLight.gray50,
+  textStrong: spectrumLight.gray900,
+  textSubdued: spectrumLight.gray700,
 
   iconDisabled: spectrumLight.gray400,
   iconSubdued: spectrumLight.gray700,
@@ -47,13 +49,15 @@ const neutralColor: DesignTokens['color']['neutral'] = {
 };
 
 const appColor: DesignTokens['color']['app'] = {
-  editorBg: neutralColor.bgLayerMiddle,
   activitybarBg: 'rgb(26, 32, 44)',
-  activitybarText: spectrumLight.gray100,
   activitybarBtnPress: neutralColor.textInverted,
+  activitybarText: spectrumLight.gray100,
+  editorAttentionBg: spectrumLight.gray200,
   editorBacklinkBg: spectrumLight.blue100,
   editorBacklinkBgHover: spectrumLight.blue200,
   editorBacklinkText: spectrumLight.gray100,
+  editorBg: neutralColor.bgLayerMiddle,
+  editorCodeBg: spectrumLight.gray300,
   linkText: spectrumLight.blue700,
 };
 

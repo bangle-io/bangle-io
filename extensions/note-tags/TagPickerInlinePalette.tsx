@@ -84,7 +84,7 @@ export function TagPickerInlinePalette() {
   );
 
   return ReactDOM.createPortal(
-    <div className="shadow-2xl B-ui-components_inline-palette-wrapper">
+    <div className="shadow-2xl B-ui-components_inline-palette-wrapper flex flex-col bg-colorNeutralBgLayerFloat">
       <div className="B-ui-components_inline-palette-items-wrapper tag-picker-inline-palette">
         {query ? (
           items.map((r, i) => {

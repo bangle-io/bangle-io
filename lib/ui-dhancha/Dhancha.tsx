@@ -47,7 +47,7 @@ export function Dhancha({
         {workspaceSidebar && (
           <header
             style={{
-              width: vars.misc.app.workspaceSidebarWidth,
+              width: vars.misc.workspaceSidebarWidth,
             }}
             className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
           >
@@ -86,7 +86,7 @@ export function Dhancha({
         <aside
           className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
           style={{
-            width: vars.misc.app.noteSidebarWidth,
+            width: vars.misc.noteSidebarWidth,
           }}
         >
           {noteSidebar}

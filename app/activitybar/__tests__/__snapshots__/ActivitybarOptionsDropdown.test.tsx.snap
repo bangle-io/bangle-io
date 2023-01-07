@@ -3,7 +3,7 @@
 exports[`clicking the button shows dropdown 1`] = `
 <ul
   aria-label="options dropdown"
-  class="flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-1 border-colorNeutralBorder p-1 py-2 rounded "
+  class="flex flex-col min-w-72 z-dropdown shadow-md  bg-colorBgLayerFloat border-neutral p-1 py-2 rounded "
   role="menu"
   tabindex="0"
 >
@@ -81,7 +81,7 @@ exports[`clicking the button shows dropdown 1`] = `
     </ul>
   </li>
   <li
-    class="mx-1 my-2"
+    class="mx-1 my-2 border-t-1 border-colorNeutralBorder"
     role="separator"
   />
   <li
@@ -109,7 +109,7 @@ exports[`clicking the button shows dropdown 1`] = `
     </ul>
   </li>
   <li
-    class="mx-1 my-2"
+    class="mx-1 my-2 border-t-1 border-colorNeutralBorder"
     role="separator"
   />
   <li
@@ -169,7 +169,7 @@ exports[`clicking the button shows dropdown 1`] = `
     </ul>
   </li>
   <li
-    class="mx-1 my-2"
+    class="mx-1 my-2 border-t-1 border-colorNeutralBorder"
     role="separator"
   />
   <li
