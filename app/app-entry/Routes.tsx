@@ -10,6 +10,7 @@ import {
 } from '@bangle.io/constants';
 import { wsNameToPathname } from '@bangle.io/slice-page';
 import { pushWsPath } from '@bangle.io/slice-workspace';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 import { LandingPage } from './pages/LandingPage';
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
@@ -36,7 +37,11 @@ export function Routes() {
         <WorkspacePage />
       </Route>
       <Route path="/ws-auth/:wsName">
-        {(params) => <WorkspaceNativefsAuthBlockade wsName={params.wsName} />}
+        {(params) => {
+          assertNotUndefined(params.wsName, 'wsName cannot be undefined');
+
+          return <WorkspaceNativefsAuthBlockade wsName={params.wsName} />;
+        }}
       </Route>
       <Route path="/ws-not-found/:wsName">
         {(params) => <WorkspaceNotFound wsName={params.wsName} />}

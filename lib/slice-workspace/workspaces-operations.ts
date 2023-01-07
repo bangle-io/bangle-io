@@ -159,6 +159,7 @@ export function deleteWorkspace(targetWsName: string) {
     return true;
   };
 }
+let count = 0;
 
 export function updateCachedWorkspaceInfo(wsName: string) {
   return workspaceSliceKey.asyncOp(async (_, __, store) => {
@@ -171,6 +172,8 @@ export function updateCachedWorkspaceInfo(wsName: string) {
     const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
       store.state,
     );
+
+    count++;
 
     if (
       cachedWorkspaceInfo &&

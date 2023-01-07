@@ -32,7 +32,8 @@ export function CenteredBoxedPage({
     <div
       data-testid={dataTestId}
       className={cx(
-        'w-full h-full smallscreen:h-screen flex flex-col px-8 mt-6 lg:p-0 lg:m-0 justify-center smallscreen:justify-start items-center',
+        'w-full h-full smallscreen:h-screen flex flex-col px-8 mt-6',
+        'lg:p-0 lg:m-0 justify-center smallscreen:justify-start items-center',
         className,
       )}
     >
@@ -50,9 +51,7 @@ export function CenteredBoxedPage({
           }}
         >
           {title && (
-            <h1 className="mb-6 text-base font-bold leading-none smallscreen:text-lg text-xl">
-              {title}
-            </h1>
+            <h1 className="mb-6 font-bold text-xl leading-none">{title}</h1>
           )}
           <div className="text-base sm:mb-1">{children}</div>
           {actions && (
