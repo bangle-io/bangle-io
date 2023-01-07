@@ -1,7 +1,7 @@
 // See for bg layering conventions: https://spectrum.adobe.com/page/using-color/#Background-layers
 // order front most to back most
 
-// layer      light-theme  dark-theme   order
+// layer      light-scheme  dark-scheme   order
 // bgBase     gray[200]     gray[50]     bottom
 // bgLayer1   gray[100]     gray[75]    middle
 // bgLayer2   gray[50]      gray[100]   top

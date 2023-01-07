@@ -92,9 +92,7 @@ export function ListPalette({
             item={errorItem}
             isActive={false}
             onClick={() => {}}
-            style={{
-              backgroundColor: 'var(--BV-error-bg-color)',
-            }}
+            className="bg-colorCriticalSolidFaint"
           />
         )}
         {items.map((item, i) => (

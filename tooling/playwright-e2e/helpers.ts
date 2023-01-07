@@ -599,3 +599,11 @@ export async function isEditorEditable(page: Page, editorId: EditorIdType) {
 
   return (await editor.getAttribute('contenteditable')) === 'true';
 }
+
+export function testIdSelector(testId: string) {
+  return `[data-testid="${testId}"]`;
+}
+
+export function getTestIdLocator(testId: string, page: Page): Locator {
+  return page.locator(testIdSelector(testId));
+}

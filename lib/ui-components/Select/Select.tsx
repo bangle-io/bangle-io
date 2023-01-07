@@ -63,7 +63,7 @@ export function Select<T extends object>(
         className={cx(
           'B-ui-components_select-button',
           'p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none',
-          isFocusVisible ? 'B-ui-components_misc-button-ring' : '',
+          isFocusVisible ? 'ring-promote' : '',
         )}
         style={{
           borderRadius: 'var(--BV-ui-bangle-button-radius)',

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
 import { cx } from '@bangle.io/utils';
 
 export const Svg = ({
@@ -500,7 +501,7 @@ export function GiftIcon({ showDot = false, ...props }) {
       {showDot && (
         <circle
           cx="21"
-          style={{ fill: 'var(--BV-accent-primary-0)' }}
+          style={{ fill: vars.color.promote.solidStrong }}
           cy="3"
           r="3"
           strokeWidth={0}

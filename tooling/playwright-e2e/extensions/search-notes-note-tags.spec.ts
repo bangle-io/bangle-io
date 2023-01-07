@@ -55,6 +55,10 @@ test('Is able to search note tags', async ({ page }) => {
 
   expect(noteMatches.length).toBe(1);
   expect(noteMatches).toEqual(['test-one\n1']);
+
+  expect(await page.screenshot()).toMatchSnapshot({
+    maxDiffPixels: 20,
+  });
 });
 
 test('clicking on a note tag in editor searches for it', async ({ page }) => {
@@ -63,6 +67,10 @@ test('clicking on a note tag in editor searches for it', async ({ page }) => {
 
   const tag = await page.waitForSelector('.B-note-tags_inline-note-tag', {
     timeout: 2 * SELECTOR_TIMEOUT,
+  });
+
+  expect(await page.screenshot()).toMatchSnapshot({
+    maxDiffPixels: 20,
   });
 
   await tag.click();

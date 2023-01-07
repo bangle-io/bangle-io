@@ -114,7 +114,7 @@ export function ActivitybarMobileDumb({
                 <ButtonV2
                   variant="solid"
                   tone="promote"
-                  ariaLabel={'done editing'}
+                  ariaLabel="done editing"
                   className="capitalize"
                   size="sm"
                   text="Done"
@@ -128,7 +128,6 @@ export function ActivitybarMobileDumb({
               ) : (
                 <ButtonV2
                   variant="solid"
-                  tone="promote"
                   ariaLabel={'edit'}
                   className="capitalize"
                   size="sm"

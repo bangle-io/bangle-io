@@ -7,7 +7,16 @@ export { getFromPath, walkObject } from './walk-object';
 const tokensShape: DesignTokens = {
   theme: '',
   uid: '',
-  misc: {},
+  misc: {
+    activitybarWidth: '',
+    miniEditorWidth: '',
+    noteSidebarWidth: '',
+    noteTagsBg: '',
+    noteTagsText: '',
+    pageMaxWidth: '',
+    pagePadding: '',
+    workspaceSidebarWidth: '',
+  },
   border: {
     radius: {
       DEFAULT: '',
@@ -30,7 +39,16 @@ const tokensShape: DesignTokens = {
       activitybarBg: '',
       activitybarBtnPress: '',
       activitybarText: '',
+      editorAttentionBg: '',
+      editorBacklinkBg: '',
+      editorBacklinkBgHover: '',
+      editorBacklinkText: '',
       editorBg: '',
+      editorCodeBg: '',
+      kbdBg: '',
+      kbdText: '',
+      linkText: '',
+      searchHighlightBg: '',
     },
     neutral: {
       bgLayerTop: '',
@@ -43,6 +61,8 @@ const tokensShape: DesignTokens = {
       text: '',
       textStrong: '',
       textInverted: '',
+      textFieldBg: '',
+      textFieldText: '',
 
       ...createToneColors(),
     },
@@ -95,6 +115,8 @@ const tokensShape: DesignTokens = {
     '48': '',
     '64': '',
     '72': '',
+    '80': '',
+    '96': '',
     'px': '',
   },
   typography: {

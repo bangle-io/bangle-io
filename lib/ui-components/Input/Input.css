@@ -4,15 +4,6 @@
   width: 100%;
 }
 
-.B-ui-components_input {
-  color: var(--BV-color-neutral-text);
-  background-color: var(--BV-window-bg-color-0);
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--BV-window-border-color-0);
-  border-radius: 0.125rem;
-  outline-offset: 2px;
-}
-
 .B-ui-components_input-clear {
   position: absolute;
   left: -20px;

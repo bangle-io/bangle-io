@@ -401,7 +401,7 @@ test('lists packages', async () => {
       [
         "@bangle.io/inline-backlink",
         {
-          "hasCSSFiles": true,
+          "hasCSSFiles": false,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "extensions/inline-backlink",
@@ -511,7 +511,7 @@ test('lists packages', async () => {
       [
         "@bangle.io/note-sidebar",
         {
-          "hasCSSFiles": true,
+          "hasCSSFiles": false,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "app/note-sidebar",
@@ -929,7 +929,7 @@ test('lists packages', async () => {
       [
         "@bangle.io/workspace-sidebar",
         {
-          "hasCSSFiles": true,
+          "hasCSSFiles": false,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "app/workspace-sidebar",

@@ -19,6 +19,7 @@ import {
   useBangleStoreContext,
   useSerialOperationContext,
 } from '@bangle.io/api';
+import { vars } from '@bangle.io/atomic-css';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -34,7 +35,6 @@ import {
   getInitialSelection,
   setEditorReady,
   setEditorUnmounted,
-  useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { getNote } from '@bangle.io/slice-workspace';
 import { cx } from '@bangle.io/utils';
@@ -292,7 +292,7 @@ export function useGetEditorState({
     },
     editorProps: {},
     dropCursorOpts: {
-      color: 'var(--BV-accent-primary-0)',
+      color: vars.color.promote.solidStrong,
       width: 2,
     },
   });

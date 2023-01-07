@@ -6,15 +6,15 @@ import {
 } from '@bangle.io/atomic-css';
 import { deepMerge, difference, intersect } from '@bangle.io/mini-js-utils';
 import type {
-  BangleThemeInputLightDark,
-  BangleThemeInputSingle,
+  BangleThemeInputDualColorScheme,
+  BangleThemeInputSingleScheme,
   DesignTokens,
 } from '@bangle.io/shared-types';
 
 import {
   defaultsDark,
   defaultsLight,
-  defaultSmallScreenOverrideLightDark,
+  defaultSmallScreenOverrideDualColorScheme,
   defaultSmallScreenOverrideSingle,
 } from './default-tokens';
 
@@ -26,10 +26,10 @@ if (typeof window !== 'undefined') {
 export const CSS_ROOT = ':root';
 export const CSS_BODY = 'body';
 export const CSS_SM_BODY = 'body.BU_smallscreen';
-export const CSS_LIGHT_THEME = `.light-theme`;
-export const CSS_SM_LIGHT_THEME = `.light-theme.BU_smallscreen`;
-export const CSS_DARK_THEME = `.dark-theme`;
-export const CSS_SM_DARK_THEME = `.dark-theme.BU_smallscreen`;
+export const CSS_LIGHT_SCHEME = `.light-scheme`;
+export const CSS_SM_LIGHT_SCHEME = `.light-scheme.BU_smallscreen`;
+export const CSS_DARK_SCHEME = `.dark-scheme`;
+export const CSS_SM_DARK_SCHEME = `.dark-scheme.BU_smallscreen`;
 
 type CssBlocks = Record<string, string[]>;
 
@@ -43,21 +43,21 @@ const base = {
 export function createStyleSheetObj(
   obj:
     | {
-        type: 'light/dark';
+        colorScheme: 'light/dark';
         name: string;
-        theme: BangleThemeInputLightDark;
-        smallscreenOverride?: BangleThemeInputLightDark;
+        theme: BangleThemeInputDualColorScheme;
+        smallscreenOverride?: BangleThemeInputDualColorScheme;
       }
     | {
-        type: 'single';
+        colorScheme: 'single';
         name: string;
-        theme: BangleThemeInputSingle;
-        smallscreenOverride?: BangleThemeInputSingle;
+        theme: BangleThemeInputSingleScheme;
+        smallscreenOverride?: BangleThemeInputSingleScheme;
       },
 ): CssBlocks {
   let result: CssBlocks = { ...base };
 
-  if (obj.type === 'single') {
+  if (obj.colorScheme === 'single') {
     result = {
       ...result,
       [CSS_ROOT]: mergeWithDefaults(obj.name, defaultsLight, obj.theme),
@@ -76,7 +76,7 @@ export function createStyleSheetObj(
     return result;
   }
 
-  const { light: lightInput, dark: darkInput } = normalizeLightDarkInput(
+  const { light: lightInput, dark: darkInput } = normalizeDualColorSchemeInput(
     obj.theme,
   );
 
@@ -88,29 +88,31 @@ export function createStyleSheetObj(
   result = {
     ...result,
     [CSS_ROOT]: common,
-    [CSS_LIGHT_THEME]: difference(lightThemeVars, common),
-    [CSS_DARK_THEME]: difference(darkThemeVars, common),
+    [CSS_LIGHT_SCHEME]: difference(lightThemeVars, common),
+    [CSS_DARK_SCHEME]: difference(darkThemeVars, common),
   };
 
   let smOverride = deepMerge(
-    defaultSmallScreenOverrideLightDark,
+    defaultSmallScreenOverrideDualColorScheme,
     obj.smallscreenOverride || {},
   );
   const { light: lightOverride, dark: darkOverride } =
-    normalizeLightDarkInput(smOverride);
+    normalizeDualColorSchemeInput(smOverride);
 
   result = {
     ...result,
-    [CSS_SM_LIGHT_THEME]: createSmallScreenOverride(lightOverride),
-    [CSS_SM_DARK_THEME]: createSmallScreenOverride(darkOverride),
+    [CSS_SM_LIGHT_SCHEME]: createSmallScreenOverride(lightOverride),
+    [CSS_SM_DARK_SCHEME]: createSmallScreenOverride(darkOverride),
   };
 
   return result;
 }
 
-function normalizeLightDarkInput(input: BangleThemeInputLightDark): {
-  light: BangleThemeInputSingle;
-  dark: BangleThemeInputSingle;
+function normalizeDualColorSchemeInput(
+  input: BangleThemeInputDualColorScheme,
+): {
+  light: BangleThemeInputSingleScheme;
+  dark: BangleThemeInputSingleScheme;
 } {
   const { color, ...otherProps } = input;
   const { light, dark } = color || {};
@@ -127,7 +129,7 @@ function normalizeLightDarkInput(input: BangleThemeInputLightDark): {
 function mergeWithDefaults(
   name: string,
   defaultValue: DesignTokens,
-  theme: BangleThemeInputSingle,
+  theme: BangleThemeInputSingleScheme,
 ) {
   const mergedTokens = deepMerge(defaultValue, {
     theme: name,
@@ -140,16 +142,16 @@ function mergeWithDefaults(
 export function createStyleSheet(
   obj:
     | {
-        type: 'light/dark';
+        colorScheme: 'light/dark';
         name: string;
-        theme: BangleThemeInputLightDark;
-        smallscreenOverride?: BangleThemeInputLightDark;
+        theme: BangleThemeInputDualColorScheme;
+        smallscreenOverride?: BangleThemeInputDualColorScheme;
       }
     | {
-        type: 'single';
+        colorScheme: 'single';
         name: string;
-        theme: BangleThemeInputSingle;
-        smallscreenOverride?: BangleThemeInputSingle;
+        theme: BangleThemeInputSingleScheme;
+        smallscreenOverride?: BangleThemeInputSingleScheme;
       },
 ): string {
   const result = createStyleSheetObj(obj);
@@ -166,7 +168,9 @@ export function createStyleSheet(
   }, '');
 }
 
-export function createSmallScreenOverride(override: BangleThemeInputSingle) {
+export function createSmallScreenOverride(
+  override: BangleThemeInputSingleScheme,
+) {
   let result: Array<[string, string]> = [];
 
   walkObject(override as any, (value, path) => {

@@ -26,7 +26,7 @@ export function PaletteContainer({
       data-palette-type={paletteType}
       ref={containerRef}
       className={
-        'B-ui-components_universal-palette-container ' +
+        'B-ui-components_universal-palette-container z-popup ' +
         cx(widescreen && ' BU_widescreen', className)
       }
     >

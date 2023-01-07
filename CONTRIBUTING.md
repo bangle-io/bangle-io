@@ -88,7 +88,7 @@ Each extension must have the following top level files:
 
 **Please note** your `index.ts` file should not import `style.ts`. This restriction exists to keep the imports within the realms of standard Javascript.
 
-### CSS conventions
+### Styling conventions
 
 - Any CSS class name is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`.
 

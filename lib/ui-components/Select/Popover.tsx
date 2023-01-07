@@ -32,12 +32,7 @@ export function Popover(props: PopoverProps) {
       <div
         {...overlayProps}
         ref={popoverRef}
-        className="B-ui-components_misc-dropdown-shadow absolute z-10 top-full w-full mt-2"
-        style={{
-          backgroundColor: 'var(--BV-window-dropdown-bg-color-1)',
-          color: 'var(--BV-window-dropdown-color)',
-          borderRadius: 'var(--BV-window-dropdown-radius)',
-        }}
+        className="shadow-md bg-colorBgLayerFloat absolute z-10 top-full w-full mt-2 rounded"
       >
         {children}
         <DismissButton onDismiss={onClose} />

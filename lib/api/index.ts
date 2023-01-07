@@ -21,3 +21,4 @@ export { browserInfo } from '@bangle.io/utils';
 export type { BangleApplicationStore };
 export type BangleAppState = BangleApplicationStore['state'];
 export type BangleAppDispatch = BangleApplicationStore['dispatch'];
+export { vars } from '@bangle.io/atomic-css';

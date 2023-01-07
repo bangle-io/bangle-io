@@ -13,17 +13,14 @@ export function ExternalLink({ text, href }: { text: string; href: string }) {
   );
 
   return (
-    <FocusRing focusRingClass="B-ui-components_misc-button-ring">
+    <FocusRing focusRingClass="ring-promote">
       <a
         {...buttonProps}
         ref={ref}
         target="_blank"
         href={href}
-        className="underline outline-none rounded-sm"
+        className="underline outline-none rounded-sm text-colorAppLinkText"
         rel="noreferrer noopener"
-        style={{
-          color: 'var(--BV-window-link-color)',
-        }}
       >
         {text}
       </a>

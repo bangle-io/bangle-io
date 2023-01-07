@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/api';
 import { PopupEditor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 
@@ -24,8 +25,15 @@ export const LinkPreview = React.forwardRef<
         wsPath: wsPath,
       }}
       popupContainerProps={{
-        style: style,
-        className: 'B-inline-backlink_popup-editor',
+        style: {
+          // setting width and height are important otherwise
+          // tippy confuses and causes issue with scroll
+          ...style,
+          width: vars.misc.miniEditorWidth,
+          height: 400,
+        },
+        className:
+          'B-inline-backlink_popup-editor z-popup border-1 border-solid border-colorNeutralBorder shadow-2xl',
         positionProps: positionProps,
       }}
     />

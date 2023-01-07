@@ -162,9 +162,7 @@ export function ButtonV2({
         className,
         'select-none inline-flex justify-center items-center rounded-md whitespace-nowrap',
         isTouch ? 'py-2' : 'py-1',
-        isFocusVisible &&
-          allowFocusRing &&
-          'ring-2 ring-colorPromoteBorder ring-offset-2 ring-offset-colorNeutralTextInverted',
+        isFocusVisible && allowFocusRing && 'ring-promote',
         animateOnPress
           ? 'transition-all duration-100'
           : 'transition-colors duration-100',

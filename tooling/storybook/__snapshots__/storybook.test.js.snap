@@ -508,8 +508,8 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -682,8 +682,8 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -1476,7 +1476,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
 exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
 <button
   aria-label="Hello"
-  className="B-inline-backlink_backlink B-inline-backlink_backlinkNotFound "
+  className="hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start bg-colorNeutralSolidFaint "
   data-testid="inline-backlink-button"
   draggable={false}
   onClick={[Function]}
@@ -1484,21 +1484,23 @@ exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
   onMouseLeave={[Function]}
   onTouchStart={[Function]}
 >
-  <svg
-    className="inline-block"
-    stroke="currentColor"
-    viewBox="0 0 18 18"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
-    />
-    <path
-      d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
-    />
-  </svg>
+  <span>
+    <svg
+      className="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg"
+      stroke="currentColor"
+      viewBox="0 0 18 18"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+      />
+      <path
+        d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+      />
+    </svg>
+  </span>
   <span
-    className="inline"
+    className="inline whitespace-break-spaces"
   >
     Hello
   </span>
@@ -6799,7 +6801,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
     ComboBox
   </label>
   <div
-    className="B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden "
+    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral px-1 py-1 border-neutral rounded "
   >
     <input
       aria-autocomplete="list"
@@ -6807,7 +6809,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
       aria-labelledby="react-aria-test-generated-id"
       autoComplete="off"
       autoCorrect="off"
-      className="w-full outline-none px-3 py-1 bg-inherit "
+      className="w-full outline-none px-2 py-1 text-field-neutral "
       disabled={false}
       id="react-aria-test-generated-id"
       onBlur={[Function]}
@@ -6880,7 +6882,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
     ComboBox
   </label>
   <div
-    className="B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden "
+    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral px-1 py-1 border-neutral rounded "
   >
     <input
       aria-autocomplete="list"
@@ -6888,7 +6890,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
       aria-labelledby="react-aria-test-generated-id"
       autoComplete="off"
       autoCorrect="off"
-      className="w-full outline-none px-3 py-1 bg-inherit "
+      className="w-full outline-none px-2 py-1 text-field-neutral "
       disabled={false}
       id="react-aria-test-generated-id"
       onBlur={[Function]}
@@ -7079,12 +7081,8 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
   </div>
   <div
     aria-hidden={null}
+    className="z-modal"
     data-overlay-container={true}
-    style={
-      {
-        "zIndex": "var(--BV-window-modal-z-index)",
-      }
-    }
   />
 </div>
 `;
@@ -7155,7 +7153,7 @@ exports[`Storyshots ui-components/Input Primary 1`] = `
   <input
     autoCapitalize="off"
     autoCorrect="off"
-    className="B-ui-components_input "
+    className="outline-offset-2 text-field-neutral border-neutral rounded px-2 py-1 "
     onBlur={[Function]}
     onFocus={[Function]}
     type="text"
@@ -7804,7 +7802,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
   </label>
   <input
     aria-labelledby="react-aria-test-generated-id"
-    className="outline-none"
+    className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
     disabled={false}
     id="react-aria-test-generated-id"
     onBlur={[Function]}
@@ -7813,16 +7811,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     placeholder="abc@example.com"
     readOnly={false}
     spellCheck={true}
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-        "border": "1px solid var(--BV-window-border-color-0)",
-        "borderRadius": "0.125rem",
-        "color": "var(--BV-color-neutral-text)",
-        "outlineOffset": 2,
-        "padding": "0.5rem 0.75rem",
-      }
-    }
+    style={{}}
     type="text"
   />
   <div
@@ -7852,7 +7841,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
   </label>
   <input
     aria-labelledby="react-aria-test-generated-id"
-    className="outline-none"
+    className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
     disabled={false}
     id="react-aria-test-generated-id"
     onBlur={[Function]}
@@ -7860,23 +7849,14 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     onFocus={[Function]}
     readOnly={false}
     spellCheck={true}
-    style={
-      {
-        "backgroundColor": "var(--BV-window-bg-color-0)",
-        "border": "1px solid var(--BV-window-border-color-0)",
-        "borderRadius": "0.125rem",
-        "color": "var(--BV-color-neutral-text)",
-        "outlineOffset": 2,
-        "padding": "0.5rem 0.75rem",
-      }
-    }
+    style={{}}
     type="text"
   />
   <div
     className="text-sm"
     style={
       {
-        "color": "var(--BV-severity-error-color)",
+        "color": "var(--BV-color-critical-solidStrong)",
       }
     }
   >
@@ -8024,7 +8004,12 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     </span>
   </div>
   <header
-    className="B-ui-dhancha_ws-sidebar"
+    className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
+    style={
+      {
+        "width": "var(--BV-misc-workspaceSidebarWidth)",
+      }
+    }
   >
     <div
       style={
@@ -9103,7 +9088,12 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     </div>
   </main>
   <aside
-    className="B-ui-dhancha_note-sidebar"
+    className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
+    style={
+      {
+        "width": "var(--BV-misc-noteSidebarWidth)",
+      }
+    }
   >
     <div
       style={

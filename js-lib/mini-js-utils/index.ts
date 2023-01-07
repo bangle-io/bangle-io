@@ -71,3 +71,23 @@ export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
 
   return [...new Set([...a].filter((x) => b.has(x)))];
 }
+
+export function safeJSONParse(
+  str: string,
+): { success: true; value: any } | { success: false } {
+  try {
+    return { success: true, value: JSON.parse(str) };
+  } catch (error) {
+    return { success: false };
+  }
+}
+
+export function safeJSONStringify(
+  value: any,
+): { success: true; value: string } | { success: false } {
+  try {
+    return { success: true, value: JSON.stringify(value) };
+  } catch (error) {
+    return { success: false };
+  }
+}

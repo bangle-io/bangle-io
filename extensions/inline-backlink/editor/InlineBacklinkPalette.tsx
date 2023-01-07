@@ -49,7 +49,7 @@ export function InlineBacklinkPalette() {
     useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
-    <div className="shadow-2xl B-ui-components_inline-palette-wrapper">
+    <div className="shadow-2xl B-ui-components_inline-palette-wrapper flex flex-col bg-colorNeutralBgLayerFloat">
       <div className="B-ui-components_inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
         {isVisible && (

@@ -1,7 +1,7 @@
 export type DesignTokens = {
   // name of theme derived from (for debugging)
   theme: string;
-  // unique id of the theme, if it ends with `-light` or `-dark`, it is part of a light/dark theme
+  // unique id of the theme, if it ends with `-light` or `-dark`, it is part of a light/dark color scheme
   uid: string;
   // WARNING: the width is hard coded at multiple places
   // it is currently not possible to change this value
@@ -78,6 +78,8 @@ export type DesignTokens = {
     '48': string;
     '64': string;
     '72': string;
+    '80': string;
+    '96': string;
   };
 
   ringWidth: {
@@ -104,17 +106,39 @@ export type DesignTokens = {
     promote: ToneColors;
 
     app: {
-      editorBg: string;
       activitybarBg: string;
-      activitybarText: string;
       activitybarBtnPress: string;
+      activitybarText: string;
+      // this is used to grab attention
+      // the color with which to flash the node which currently became active.
+      editorAttentionBg: string;
+      editorBacklinkBg: string;
+      editorBacklinkBgHover: string;
+      editorBacklinkText: string;
+      editorBg: string;
+      editorCodeBg: string;
+      kbdBg: string;
+      kbdText: string;
+      linkText: string;
+      searchHighlightBg: string;
     };
   };
 
   // misc will not be added to atomic classes
   // and can be accessed using typescript `vars.misc.myKey` or
   // directly using `var(--misc.myKey)` in css.
-  misc: {};
+  misc: {
+    activitybarWidth: string;
+    miniEditorWidth: string;
+    noteSidebarWidth: string;
+    workspaceSidebarWidth: string;
+    noteTagsText: string;
+    noteTagsBg: string;
+
+    pagePadding: string;
+    // not applicable to small screens
+    pageMaxWidth: string;
+  };
 };
 
 export type ToneColors = {
@@ -145,4 +169,6 @@ export type NeutralColors = ToneColors & {
   text: string; // default text color
   textStrong: string; // for headings
   textInverted: string;
+  textFieldBg: string; // color to fill the input fields with
+  textFieldText: string; // color for text inside input fields
 };

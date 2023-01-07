@@ -76,10 +76,7 @@ function ListBoxSection({
       {section.key !== state.collection.getFirstKey() && (
         <li
           {...separatorProps}
-          className="mx-1 my-2"
-          style={{
-            borderTop: '1px solid var(--BV-window-border-color-0)',
-          }}
+          className="mx-1 my-2 border-t-1 border-colorNeutralBorder border-solid"
         />
       )}
       <li {...itemProps} className="pt-2">
@@ -115,18 +112,14 @@ export function ListBoxOptionComponent({ item, state }: OptionProps) {
     <li {...optionProps} ref={ref} className="outline-none">
       <div
         className={cx(
-          `my-1 py-2 px-2 text-sm outline-none flex items-center justify-between select-none`,
-          isDisabled && 'opacity-50 cursor-not-allowed',
-        )}
-        style={{
-          color: 'var(--BV-window-dropdown-color)',
-          borderRadius: 'var(--BV-ui-bangle-button-radius)',
-          backgroundColor: isSelected
-            ? 'var(--BV-accent-primary-0)'
+          `my-1 py-2 px-2 text-sm outline-none flex items-center justify-between select-none rounded`,
+          isDisabled && 'text-colorNeutralTextDisabled cursor-not-allowed',
+          isSelected
+            ? 'bg-colorPromoteSolid'
             : isFocused
-            ? 'var(--BV-accent-secondary)'
-            : 'inherit',
-        }}
+            ? 'bg-colorNeutralSolidFaint'
+            : '',
+        )}
       >
         {item.rendered}
         {isSelected && <CheckIcon aria-hidden="true" className="w-4 h-4" />}

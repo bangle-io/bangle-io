@@ -23,7 +23,7 @@ export const PopupEditor = React.forwardRef<HTMLDivElement, PopupEditorProps>(
       <div
         ref={ref}
         className={cx(
-          'py-4 pl-6 overflow-y-auto rounded-md',
+          'py-4 pl-6 overflow-y-auto rounded-md bg-colorAppEditorBg',
           popupContainerProps.className,
         )}
         {...popupContainerProps.positionProps}

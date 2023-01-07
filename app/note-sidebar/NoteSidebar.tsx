@@ -33,7 +33,7 @@ export function NoteSidebar({
               <span className="ml-1 font-semibold">{r.title}</span>
               <div></div>
             </div>
-            <div className="B-note-sidebar_widget-content flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto">
+            <div className="min-h-6 max-h-96 flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto bg-colorNeutralBgLayerTop border-neutral">
               <r.ReactComponent />
             </div>
           </div>

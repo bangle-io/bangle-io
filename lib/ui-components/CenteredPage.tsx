@@ -37,18 +37,16 @@ export function CenteredBoxedPage({
       )}
     >
       <div
-        className="w-full rounded-lg"
+        className="w-full rounded-lg border-neutral bg-colorNeutralBgLayerTop"
         style={{
-          padding: 'var(--BV-window-page-box-padding)',
-          backgroundColor: vars.color.neutral.bgLayerTop,
-          maxWidth: 'min(var(--BV-page-max-width), 100vw)',
-          border: '1px solid var(--BV-window-border-color-1)',
+          padding: vars.misc.pagePadding,
+          maxWidth: `min(${vars.misc.pageMaxWidth}, 100vw)`,
         }}
       >
         <div
           className={cx('w-full', childClassName)}
           style={{
-            maxWidth: 'min(var(--BV-page-max-width), 100vw)',
+            maxWidth: `min(${vars.misc.pageMaxWidth}, 100vw)`,
           }}
         >
           {title && (

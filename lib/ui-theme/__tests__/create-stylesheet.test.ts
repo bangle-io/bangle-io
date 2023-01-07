@@ -2,24 +2,24 @@ import {
   createSmallScreenOverride,
   createStyleSheetObj,
   CSS_BODY,
-  CSS_DARK_THEME,
-  CSS_LIGHT_THEME,
+  CSS_DARK_SCHEME,
+  CSS_LIGHT_SCHEME,
   CSS_ROOT,
   CSS_SM_BODY,
-  CSS_SM_DARK_THEME,
-  CSS_SM_LIGHT_THEME,
+  CSS_SM_DARK_SCHEME,
+  CSS_SM_LIGHT_SCHEME,
 } from '../create-stylesheet';
 
 const defaultSheetSingle = createStyleSheetObj({
-  type: 'single',
+  colorScheme: 'single',
   name: 'core-theme-test',
   theme: {
     color: {},
   },
 });
 
-const defaultObjLightDark = createStyleSheetObj({
-  type: 'light/dark',
+const defaultObjDualColorScheme = createStyleSheetObj({
+  colorScheme: 'light/dark',
   name: 'core-theme-test',
   theme: {},
 });
@@ -27,7 +27,7 @@ const defaultObjLightDark = createStyleSheetObj({
 describe('default', () => {
   test('sets correct keys', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -40,7 +40,7 @@ describe('default', () => {
   test('matches with the default', () => {
     expect(
       createStyleSheetObj({
-        type: 'single',
+        colorScheme: 'single',
         name: 'core-theme-test',
         theme: {
           color: {},
@@ -49,16 +49,16 @@ describe('default', () => {
     ).toEqual(defaultSheetSingle);
     expect(
       createStyleSheetObj({
-        type: 'light/dark',
+        colorScheme: 'light/dark',
         name: 'core-theme-test',
         theme: {},
       }),
-    ).toEqual(defaultObjLightDark);
+    ).toEqual(defaultObjDualColorScheme);
   });
 
   test('sets body', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -70,7 +70,7 @@ describe('default', () => {
 
   test('sets root', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -82,7 +82,7 @@ describe('default', () => {
 
   test('sets sm override', () => {
     let result = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -95,7 +95,7 @@ describe('default', () => {
 
 describe('default light/dark', () => {
   let result = createStyleSheetObj({
-    type: 'light/dark',
+    colorScheme: 'light/dark',
     name: 'core-theme-test',
     theme: {
       color: {
@@ -109,10 +109,10 @@ describe('default light/dark', () => {
     expect(Object.keys(result)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
   });
 
@@ -121,20 +121,22 @@ describe('default light/dark', () => {
   });
 
   test('sets light dark content', () => {
-    expect(result[CSS_DARK_THEME]).toMatchSnapshot();
-    expect(result[CSS_LIGHT_THEME]).toMatchSnapshot();
+    expect(result[CSS_DARK_SCHEME]).toMatchSnapshot();
+    expect(result[CSS_LIGHT_SCHEME]).toMatchSnapshot();
   });
 
   test('sets sm override', () => {
-    expect(result[CSS_SM_DARK_THEME]).toMatchInlineSnapshot(`
+    expect(result[CSS_SM_DARK_SCHEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(14, 14, 14);",
+        "--BV-misc-pagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
-    expect(result[CSS_SM_LIGHT_THEME]).toMatchInlineSnapshot(`
+    expect(result[CSS_SM_LIGHT_SCHEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
         "--BV-color-app-activitybarText: rgb(34, 34, 34);",
+        "--BV-misc-pagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
   });
@@ -143,7 +145,7 @@ describe('default light/dark', () => {
 describe('overrides', () => {
   test('is able to override color stylesheet', () => {
     let original = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -157,7 +159,7 @@ describe('overrides', () => {
     );
 
     let override = createStyleSheetObj({
-      type: 'single',
+      colorScheme: 'single',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -172,7 +174,7 @@ describe('overrides', () => {
 
   test('overrides light/dark', () => {
     let original = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -191,17 +193,17 @@ describe('overrides', () => {
     });
 
     expect(original[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
-    expect(original[CSS_DARK_THEME]).toContain(
+    expect(original[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: dark-red;',
     );
-    expect(original[CSS_LIGHT_THEME]).toContain(
+    expect(original[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: light-red;',
     );
   });
 
   test('is able to override only light', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -221,18 +223,18 @@ describe('overrides', () => {
       '--BV-color-caution-icon:',
     );
 
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: rgb(232, 116, 0);',
     );
 
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: light-red;',
     );
   });
 
   test('is able to override only dark', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -250,18 +252,18 @@ describe('overrides', () => {
       '--BV-color-caution-icon:',
     );
 
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: dark-red;',
     );
 
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: rgb(203, 93, 0);',
     );
   });
 
   test('is able to set app', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -276,10 +278,10 @@ describe('overrides', () => {
         },
       },
     });
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: activitybar-dark-red;',
     );
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
     );
   });
@@ -321,7 +323,7 @@ describe('smallscreen overrides', () => {
 
   test('works with no theme color', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {},
       smallscreenOverride: {
@@ -343,33 +345,33 @@ describe('smallscreen overrides', () => {
     expect(Object.keys(override)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
 
-    expect(override[CSS_ROOT]).toEqual(defaultObjLightDark[CSS_ROOT]);
-    expect(override[CSS_DARK_THEME]).toEqual(
-      defaultObjLightDark[CSS_DARK_THEME],
+    expect(override[CSS_ROOT]).toEqual(defaultObjDualColorScheme[CSS_ROOT]);
+    expect(override[CSS_DARK_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_DARK_SCHEME],
     );
 
-    expect(override[CSS_LIGHT_THEME]).toEqual(
-      defaultObjLightDark[CSS_LIGHT_THEME],
+    expect(override[CSS_LIGHT_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_LIGHT_SCHEME],
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-light-red;',
     );
 
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-dark-red;',
     );
   });
 
   test('works with radius', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {},
       smallscreenOverride: {
@@ -384,33 +386,33 @@ describe('smallscreen overrides', () => {
     expect(Object.keys(override)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
 
-    expect(override[CSS_ROOT]).toEqual(defaultObjLightDark[CSS_ROOT]);
-    expect(override[CSS_DARK_THEME]).toEqual(
-      defaultObjLightDark[CSS_DARK_THEME],
+    expect(override[CSS_ROOT]).toEqual(defaultObjDualColorScheme[CSS_ROOT]);
+    expect(override[CSS_DARK_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_DARK_SCHEME],
     );
 
-    expect(override[CSS_LIGHT_THEME]).toEqual(
-      defaultObjLightDark[CSS_LIGHT_THEME],
+    expect(override[CSS_LIGHT_SCHEME]).toEqual(
+      defaultObjDualColorScheme[CSS_LIGHT_SCHEME],
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-border-radius-md: nanty;',
     );
 
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-border-radius-md: nanty;',
     );
   });
 
   test('works with theme colors', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -445,32 +447,32 @@ describe('smallscreen overrides', () => {
     expect(Object.keys(override)).toEqual([
       CSS_BODY,
       CSS_ROOT,
-      CSS_LIGHT_THEME,
-      CSS_DARK_THEME,
-      CSS_SM_LIGHT_THEME,
-      CSS_SM_DARK_THEME,
+      CSS_LIGHT_SCHEME,
+      CSS_DARK_SCHEME,
+      CSS_SM_LIGHT_SCHEME,
+      CSS_SM_DARK_SCHEME,
     ]);
 
     expect(override[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: dark-red;',
     );
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: light-red;',
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-light-red;',
     );
 
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-color-caution-icon: sm-dark-red;',
     );
   });
 
   test('is able to set app', () => {
     let override = createStyleSheetObj({
-      type: 'light/dark',
+      colorScheme: 'light/dark',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -494,21 +496,21 @@ describe('smallscreen overrides', () => {
         },
       },
     });
-    expect(override[CSS_DARK_THEME]).toContain(
+    expect(override[CSS_DARK_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: activitybar-dark-red;',
     );
-    expect(override[CSS_LIGHT_THEME]).toContain(
+    expect(override[CSS_LIGHT_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
     );
-    expect(override[CSS_SM_DARK_THEME]).toContain(
+    expect(override[CSS_SM_DARK_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: sm-activitybar-dark-red;',
     );
 
-    expect(override[CSS_SM_LIGHT_THEME]).toContain(
+    expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
       '--BV-color-app-activitybarBg: rgb(255, 255, 255);',
     );
 
     // other overrides should be there
-    expect(override[CSS_SM_LIGHT_THEME]?.length).toBeGreaterThan(1);
+    expect(override[CSS_SM_LIGHT_SCHEME]?.length).toBeGreaterThan(1);
   });
 });

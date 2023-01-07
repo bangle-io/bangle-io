@@ -11,16 +11,19 @@
 }
 
 .B-ui-components_dialog-content-container {
+  --BV-ui-components-dialog-padding-x: 20px;
+  --BV-ui-components-dialog-padding-y: 40px;
+
   /* for mobile screens */
   margin-top: 7vh;
   overscroll-behavior-y: contain;
   max-height: calc(100vh * 0.9);
   display: grid;
   grid-template-columns:
-    var(--BV-window-dialog-padding-x) auto 1fr auto minmax(0, auto)
-    var(--BV-window-dialog-padding-x);
-  grid-template-rows: auto var(--BV-window-dialog-padding-y) auto auto 1fr auto var(
-      --BV-window-dialog-padding-y
+    var(--BV-ui-components-dialog-padding-x) auto 1fr auto minmax(0, auto)
+    var(--BV-ui-components-dialog-padding-x);
+  grid-template-rows: auto var(--BV-ui-components-dialog-padding-y) auto auto 1fr auto var(
+      --BV-ui-components-dialog-padding-y
     );
   grid-template-areas:
     'hero hero hero hero hero hero'
@@ -30,10 +33,6 @@
     '. content content content content .'
     '. footer footer buttonGroup buttonGroup .'
     '. . . . . .';
-  background-color: var(--BV-window-bg-color-1);
-  border-radius: 6px;
-  box-shadow: rgb(11 19 22 / 38%) 0 10px 39px -11px,
-    rgb(11 19 22 / 21%) 0 10px 20px -14px;
 }
 
 body .B-ui-components_dialog-content-container {
@@ -46,6 +45,8 @@ body .B-ui-components_dialog-content-container {
 }
 
 body.BU_widescreen .B-ui-components_dialog-content-container {
+  --BV-ui-components-dialog-padding-x: 40px;
+
   padding-bottom: unset;
   overflow-y: unset;
 }
@@ -108,7 +109,7 @@ body.BU_widescreen .B-ui-components_dialog-content-container.BU_large {
   border-radius: 0.25rem;
   border: 0;
   align-self: stretch;
-  background-color: var(--BV-window-separator-color);
+  background-color: var(--BV-color-neutral-borderStrong);
   width: 100%;
   height: 2px;
 }
@@ -124,23 +125,4 @@ body.BU_widescreen .B-ui-components_dialog-content-container.BU_large {
 
 .B-ui-components_dialog-content {
   grid-area: content;
-}
-
-.B-ui-components_dialog-underlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  inset: 0;
-  background-color: var(--BV-window-modal-overlay-bg-color);
-  display: flex;
-  justify-content: center;
-  z-index: var(--BV-window-modal-z-index);
-  backdrop-filter: blur(2px);
-  align-items: flex-start;
-}
-
-body.BU_widescreen .B-ui-components_dialog-underlay {
-  align-items: center;
 }

@@ -9,13 +9,17 @@ import {
   getEditorDebugString,
   runOperation,
   sleep,
+  testIdSelector,
 } from '../helpers';
 
 test.beforeEach(async ({ bangleApp }, testInfo) => {
   await bangleApp.open();
 });
 
-const MINI_EDITOR_SELECTOR = '.B-editor-container_mini-editor-wrapper';
+const MINI_EDITOR_SELECTOR = testIdSelector(
+  'editor-container_mini-editor-wrapper',
+);
+
 test.describe('miniEditor', () => {
   test('shows and closes mini editor', async ({ page }) => {
     const wsName = await createWorkspace(page);

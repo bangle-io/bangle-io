@@ -9,13 +9,14 @@ const fileName = 'core-theme.css';
 const cssString = formatCss(
   createStyleSheet({
     name: 'core-theme',
-    type: 'light/dark',
+    colorScheme: 'light/dark',
     theme: {
       typography: {},
       color: {
         light: {},
         dark: {},
       },
+      misc: {},
     },
   }),
 );
@@ -23,6 +24,7 @@ const cssString = formatCss(
 function formatCss(css: string) {
   return prettier.format(css, {
     parser: 'css',
+    singleQuote: true,
   });
 }
 

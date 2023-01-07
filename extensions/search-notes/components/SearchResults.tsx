@@ -210,7 +210,7 @@ export function SearchResults({
                         'B-search-notes_previously-clicked',
                       j === 0 ? 'mt-3' : 'mt-4',
                       j === r.matches.length - 1
-                        ? 'B-search-notes_last-item'
+                        ? 'pb-4 border-b-1 border-colorNeutralBorder'
                         : '',
                     )}
                     onClick={() => {

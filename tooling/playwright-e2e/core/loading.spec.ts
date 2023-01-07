@@ -70,7 +70,7 @@ test.describe('loading', () => {
         await page.$$eval('.B-ui-components_universal-palette-item', (nodes) =>
           nodes.map((n) => n.getAttribute('data-id')),
         )
-      ).includes('operation::@bangle.io/core-extension:TOGGLE_UI_THEME'),
+      ).includes('operation::@bangle.io/core-extension:TOGGLE_UI_COLOR_SCHEME'),
     ).toBe(true);
   });
 

@@ -156,7 +156,7 @@ const Option: ListBoxOptionComponentType = ({ item, state }) => {
       ref={ref}
       className={cx(
         'flex flex-row items-center',
-        isFocusVisible && 'B-ui-components_misc-button-ring',
+        isFocusVisible && 'ring-promote',
         'outline-none rounded-sm cursor-pointer my-2',
         isDisabled && 'opacity-50 cursor-not-allowed',
         isSelected && 'BU_is-active',

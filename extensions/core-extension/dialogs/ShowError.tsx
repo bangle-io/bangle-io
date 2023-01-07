@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
@@ -119,8 +120,8 @@ export function ShowError({
       className="w-full m-1 px-5 py-3 text-center rounded"
       data-testid={errorType}
       style={{
-        backgroundColor: 'var(--BV-severity-error-color)',
-        color: 'white',
+        backgroundColor: vars.color.critical.solidFaint,
+        color: vars.color.critical.solidText,
       }}
     >
       <div className="font-semibold text-left">{title}</div>

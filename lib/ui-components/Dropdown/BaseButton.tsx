@@ -138,7 +138,7 @@ export const BaseButton = ({
   );
 
   return (
-    <FocusRing focusRingClass="B-ui-components_misc-button-ring">
+    <FocusRing focusRingClass="ring-promote">
       <button
         type="button"
         id={id}

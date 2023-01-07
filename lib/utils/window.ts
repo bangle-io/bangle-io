@@ -1,5 +1,6 @@
 import { IS_STORYBOOK, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
-import type { ThemeType } from '@bangle.io/shared-types';
+import type { ColorScheme } from '@bangle.io/constants';
+import { COLOR_SCHEMA } from '@bangle.io/constants';
 
 import { isMobile } from './is-mac';
 import { rafSchedule } from './safe-js';
@@ -69,7 +70,7 @@ export function listenToResize(
   );
 }
 
-export function applyTheme(theme?: ThemeType) {
+export function changeColorScheme(colorScheme?: ColorScheme) {
   if (typeof document === 'undefined') {
     console.debug('applyTheme: document is undefined');
 
@@ -78,27 +79,27 @@ export function applyTheme(theme?: ThemeType) {
 
   if (IS_STORYBOOK) {
     console.warn(
-      `applyTheme: Cannot apply theme in storybook. Please use the theme switcher in the toolbar.`,
+      `changeColorScheme: Cannot apply change color scheme in storybook. Please use the switcher in the toolbar.`,
     );
 
     return;
   }
 
-  if (!theme) {
-    console.debug('applyTheme: theme is undefined');
+  if (!colorScheme) {
+    console.debug('changeColorScheme: colorScheme is undefined');
 
     return;
   }
 
-  console.debug('applying theme', theme);
+  console.debug('changeColorScheme:', colorScheme);
 
-  document.documentElement.setAttribute('data-theme', theme);
-
-  if (theme === 'dark') {
-    document.body.classList.remove('light-theme');
-    document.body.classList.add('dark-theme');
+  if (colorScheme === COLOR_SCHEMA.DARK) {
+    document.body.classList.remove('light-scheme');
+    document.body.classList.add('dark-scheme');
+  } else if (colorScheme === COLOR_SCHEMA.LIGHT) {
+    document.body.classList.remove('dark-scheme');
+    document.body.classList.add('light-scheme');
   } else {
-    document.body.classList.remove('dark-theme');
-    document.body.classList.add('light-theme');
+    console.warn('changeColorSchemes: unknown theme', colorScheme);
   }
 }

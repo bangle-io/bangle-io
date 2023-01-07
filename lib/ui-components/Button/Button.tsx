@@ -179,7 +179,7 @@ export const Button = ({
       className={cx(
         'B-ui-components_button select-none',
         isTouchDevice ? 'py-2 px-4' : 'py-1 px-3',
-        isFocusVisible && 'B-ui-components_misc-button-ring',
+        isFocusVisible && 'ring-promote',
         variantClassName,
         className,
       )}

@@ -2097,6 +2097,7 @@ __metadata:
     "@bangle.dev/core": 0.31.6
     "@bangle.dev/pm": 0.31.6
     "@bangle.dev/utils": 0.31.6
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2413,6 +2414,7 @@ __metadata:
     "@bangle.dev/react": 0.31.6
     "@bangle.dev/utils": 0.31.6
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
@@ -2501,6 +2503,7 @@ __metadata:
   resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
   dependencies:
     "@bangle.io/is-abort-error": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2607,6 +2610,7 @@ __metadata:
     "@bangle.dev/test-helpers": 0.31.6
     "@bangle.dev/utils": 0.31.6
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -3616,6 +3620,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-dhancha@workspace:lib/ui-dhancha"
   dependencies:
+    "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

@@ -39,27 +39,26 @@
 }
 
 .B-ui-components_universal-palette-container {
-  background-color: var(--BV-universal-palette-bg-color);
+  background-color: var(--BV-color-neutral-bgLayerFloat);
   margin-left: auto;
   margin-right: auto;
-  max-width: var(--BV-universal-palette-max-width);
+  max-width: 620px;
   width: 100%;
   max-height: min(75vh, 400px);
   display: flex;
   flex-direction: column;
   padding-bottom: 0.25rem;
-  z-index: var(--BV-window-popup-editor-z-index);
   position: fixed;
   left: 0;
   right: 0;
-  top: var(--BV-activitybar-width);
+  top: var(--BV-misc-activitybarWidth);
   box-shadow: 0 0 rgb(26 24 24 / 0%), 0 0 #0000, 0 0 #0000, 0 0 #0000,
     0 25px 50px -12px rgb(0 0 0 / 25%);
 }
 
 .B-ui-components_universal-palette-input-wrapper {
   padding: var(--BV-universal-palette-alignment-spacing);
-  border-bottom: 1px solid var(--BV-window-border-color-0);
+  border-bottom: 1px solid var(--BV-color-neutral-border);
   min-height: 3.2rem;
 }
 
@@ -85,15 +84,15 @@
 
 .B-ui-components_universal-palette-item.BU_divider {
   border-top: var(--BV-universal-palette-item-divider-width) solid
-    var(--BV-window-border-color-0);
+    var(--BV-color-neutral-border);
 }
 
 .B-ui-components_universal-palette-item.BU_allow-hover:hover {
-  background-color: var(--BV-accent-secondary);
+  background-color: var(--BV-color-neutral-solidFaint);
 }
 
 .B-ui-components_universal-palette-item.BU_active {
-  background-color: var(--BV-accent-primary-1);
+  background-color: var(--BV-color-promote-solidSubdued);
 }
 
 .B-ui-components_universal-palette-item.BU_disabled {

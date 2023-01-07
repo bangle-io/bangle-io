@@ -3,6 +3,8 @@ import './style.css';
 import type { ReactNode } from 'react';
 import React, { useRef } from 'react';
 
+import { vars } from '@bangle.io/atomic-css';
+
 import { useStickyNavigation } from './use-sticky-navigation';
 
 /**
@@ -43,7 +45,12 @@ export function Dhancha({
     childContent = (
       <>
         {workspaceSidebar && (
-          <header className="B-ui-dhancha_ws-sidebar">
+          <header
+            style={{
+              width: vars.misc.workspaceSidebarWidth,
+            }}
+            className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
+          >
             {workspaceSidebar}
           </header>
         )}
@@ -76,7 +83,14 @@ export function Dhancha({
       {childContent}
 
       {widescreen && noteSidebar && (
-        <aside className="B-ui-dhancha_note-sidebar">{noteSidebar}</aside>
+        <aside
+          className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
+          style={{
+            width: vars.misc.noteSidebarWidth,
+          }}
+        >
+          {noteSidebar}
+        </aside>
       )}
     </div>
   );

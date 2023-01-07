@@ -17,3 +17,10 @@ export const SEVERITY = {
 } as const;
 
 export type Severity = typeof SEVERITY[keyof typeof SEVERITY];
+
+export const COLOR_SCHEMA = {
+  LIGHT: 'light',
+  DARK: 'dark',
+};
+
+export type ColorScheme = typeof COLOR_SCHEMA[keyof typeof COLOR_SCHEMA];

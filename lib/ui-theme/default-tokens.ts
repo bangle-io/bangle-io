@@ -1,6 +1,6 @@
 import type {
-  BangleThemeInputLightDark,
-  BangleThemeInputSingle,
+  BangleThemeInputDualColorScheme,
+  BangleThemeInputSingleScheme,
   DesignTokens,
 } from '@bangle.io/shared-types';
 
@@ -73,6 +73,8 @@ const defaultSpace: DesignTokens['space'] = {
   '48': '12rem',
   '64': '16rem',
   '72': '18rem',
+  '80': '20rem',
+  '96': '24rem',
 };
 
 const defaultFontFamily: DesignTokens['typography']['fontFamily'] = {
@@ -125,7 +127,20 @@ const defaultTypography: DesignTokens['typography'] = {
   },
 };
 
-const defaultMiscTokens = {};
+const defaultMiscTokens: DesignTokens['misc'] = {
+  activitybarWidth: '50px',
+  noteSidebarWidth: '300px',
+  workspaceSidebarWidth: '300px',
+  miniEditorWidth: '400px',
+  noteTagsBg: 'rgb(66, 66, 66)',
+  noteTagsText: 'rgb(255, 255, 255)',
+  pagePadding: '3rem 30px 3rem 30px',
+  pageMaxWidth: '700px',
+};
+
+const defaultMiscTokensSmallscreenOverride: Partial<DesignTokens['misc']> = {
+  pagePadding: '1.5rem 10px 2rem 25px',
+};
 
 export const defaultsLight: DesignTokens = {
   theme: 'default-tokens',
@@ -146,28 +161,30 @@ export const defaultsDark: DesignTokens = {
   color: darkColors,
 };
 
-export const defaultSmallScreenOverrideSingle: BangleThemeInputSingle = {
+export const defaultSmallScreenOverrideSingle: BangleThemeInputSingleScheme = {
   color: {
     app: {
       activitybarBg: lightColors.app.editorBg,
       activitybarText: lightColors.neutral.textSubdued,
     },
   },
+  misc: defaultMiscTokensSmallscreenOverride,
 };
 
-export const defaultSmallScreenOverrideLightDark: BangleThemeInputLightDark = {
-  ...defaultSmallScreenOverrideSingle,
-  color: {
-    light: {
-      app: {
-        activitybarBg: lightColors.app.editorBg,
-        activitybarText: lightColors.neutral.text,
+export const defaultSmallScreenOverrideDualColorScheme: BangleThemeInputDualColorScheme =
+  {
+    ...defaultSmallScreenOverrideSingle,
+    color: {
+      light: {
+        app: {
+          activitybarBg: lightColors.app.editorBg,
+          activitybarText: lightColors.neutral.text,
+        },
+      },
+      dark: {
+        app: {
+          activitybarBg: darkColors.app.editorBg,
+        },
       },
     },
-    dark: {
-      app: {
-        activitybarBg: darkColors.app.editorBg,
-      },
-    },
-  },
-};
+  };

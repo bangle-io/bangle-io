@@ -30,16 +30,20 @@ export const BacklinkNodeButton = React.forwardRef<
       aria-label={title}
       data-testid="inline-backlink-button"
       className={cx(
-        'B-inline-backlink_backlink',
-        linkNotFound && 'B-inline-backlink_backlinkNotFound',
+        'hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start',
+        linkNotFound
+          ? 'bg-colorNeutralSolidFaint'
+          : 'bg-colorAppEditorBacklinkBg hover:bg-colorAppEditorBacklinkBgHover',
       )}
       // prevent the button from being dragged, which messes up our system
       // we want the node view to be dragged so the dom serializers can kick in
       draggable={false}
       onClick={onClick}
     >
-      <NoteIcon className="inline-block" />
-      <span className="inline">{title}</span>
+      <span>
+        <NoteIcon className="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg" />
+      </span>
+      <span className="inline whitespace-break-spaces">{title}</span>
     </button>
   );
 });
