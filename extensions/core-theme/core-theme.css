@@ -13,9 +13,11 @@ body {
   --BV-misc-activitybarWidth: 50px;
   --BV-misc-miniEditorWidth: 400px;
   --BV-misc-noteSidebarWidth: 300px;
-  --BV-misc-workspaceSidebarWidth: 300px;
-  --BV-misc-noteTagsText: rgb(255, 255, 255);
   --BV-misc-noteTagsBg: rgb(66, 66, 66);
+  --BV-misc-noteTagsText: rgb(255, 255, 255);
+  --BV-misc-pageMaxWidth: 700px;
+  --BV-misc-pagePadding: 3rem 30px 3rem 30px;
+  --BV-misc-workspaceSidebarWidth: 300px;
   --BV-border-radius-DEFAULT: 0.25rem;
   --BV-border-radius-none: 0;
   --BV-border-radius-sm: 0.125rem;
@@ -104,7 +106,10 @@ body {
   --BV-color-app-editorBacklinkText: rgb(248, 248, 248);
   --BV-color-app-editorBg: rgb(255, 255, 255);
   --BV-color-app-editorCodeBg: rgb(213, 213, 213);
+  --BV-color-app-kbdBg: rgb(177, 177, 177);
+  --BV-color-app-kbdText: rgb(70, 70, 70);
   --BV-color-app-linkText: rgb(56, 146, 243);
+  --BV-color-app-searchHighlightBg: rgb(248, 217, 4);
   --BV-color-neutral-bgLayerTop: rgb(248, 248, 248);
   --BV-color-neutral-bgLayerMiddle: rgb(255, 255, 255);
   --BV-color-neutral-bgLayerBottom: rgb(230, 230, 230);
@@ -203,7 +208,10 @@ body {
   --BV-color-app-editorBacklinkText: rgb(235, 235, 235);
   --BV-color-app-editorBg: rgb(14, 14, 14);
   --BV-color-app-editorCodeBg: rgb(75, 75, 75);
+  --BV-color-app-kbdBg: rgb(106, 106, 106);
+  --BV-color-app-kbdText: rgb(208, 208, 208);
   --BV-color-app-linkText: rgb(64, 150, 243);
+  --BV-color-app-searchHighlightBg: rgb(161, 126, 0);
   --BV-color-neutral-bgLayerTop: rgb(29, 29, 29);
   --BV-color-neutral-bgLayerMiddle: rgb(14, 14, 14);
   --BV-color-neutral-bgLayerBottom: rgb(0, 0, 0);
@@ -295,6 +303,7 @@ body {
 .light-scheme.BU_smallscreen {
   --BV-color-app-activitybarBg: rgb(255, 255, 255);
   --BV-color-app-activitybarText: rgb(34, 34, 34);
+  --BV-misc-pagePadding: 1.5rem 10px 2rem 25px;
 }
 /* stylelint-enable */
 
@@ -302,5 +311,6 @@ body {
 /* stylelint-disable */
 .dark-scheme.BU_smallscreen {
   --BV-color-app-activitybarBg: rgb(14, 14, 14);
+  --BV-misc-pagePadding: 1.5rem 10px 2rem 25px;
 }
 /* stylelint-enable */

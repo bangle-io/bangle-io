@@ -11,9 +11,11 @@ const tokensShape: DesignTokens = {
     activitybarWidth: '',
     miniEditorWidth: '',
     noteSidebarWidth: '',
-    workspaceSidebarWidth: '',
-    noteTagsText: '',
     noteTagsBg: '',
+    noteTagsText: '',
+    pageMaxWidth: '',
+    pagePadding: '',
+    workspaceSidebarWidth: '',
   },
   border: {
     radius: {
@@ -43,7 +45,10 @@ const tokensShape: DesignTokens = {
       editorBacklinkText: '',
       editorBg: '',
       editorCodeBg: '',
+      kbdBg: '',
+      kbdText: '',
       linkText: '',
+      searchHighlightBg: '',
     },
     neutral: {
       bgLayerTop: '',

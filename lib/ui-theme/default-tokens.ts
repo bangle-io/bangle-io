@@ -134,6 +134,12 @@ const defaultMiscTokens: DesignTokens['misc'] = {
   miniEditorWidth: '400px',
   noteTagsBg: 'rgb(66, 66, 66)',
   noteTagsText: 'rgb(255, 255, 255)',
+  pagePadding: '3rem 30px 3rem 30px',
+  pageMaxWidth: '700px',
+};
+
+const defaultMiscTokensSmallscreenOverride: Partial<DesignTokens['misc']> = {
+  pagePadding: '1.5rem 10px 2rem 25px',
 };
 
 export const defaultsLight: DesignTokens = {
@@ -162,6 +168,7 @@ export const defaultSmallScreenOverrideSingle: BangleThemeInputSingleScheme = {
       activitybarText: lightColors.neutral.textSubdued,
     },
   },
+  misc: defaultMiscTokensSmallscreenOverride,
 };
 
 export const defaultSmallScreenOverrideDualColorScheme: BangleThemeInputDualColorScheme =
@@ -180,5 +187,4 @@ export const defaultSmallScreenOverrideDualColorScheme: BangleThemeInputDualColo
         },
       },
     },
-    misc: {},
   };

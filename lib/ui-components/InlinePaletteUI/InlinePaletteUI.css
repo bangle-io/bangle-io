@@ -1,12 +1,12 @@
 .B-ui-components_inline-palette-wrapper {
-  max-width: var(--BV-inline-universal-palette-max-width);
-  min-width: var(--BV-inline-universal-palette-max-width);
+  max-width: 350px;
+  min-width: 350px;
 }
 
 .B-ui-components_inline-palette-items-wrapper {
   display: flex;
   flex-direction: column;
-  max-height: var(--BV-inline-universal-palette-max-height);
+  max-height: 33vh;
   overflow-y: scroll;
 }
 

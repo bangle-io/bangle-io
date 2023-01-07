@@ -129,12 +129,14 @@ describe('default light/dark', () => {
     expect(result[CSS_SM_DARK_SCHEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(14, 14, 14);",
+        "--BV-misc-pagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
     expect(result[CSS_SM_LIGHT_SCHEME]).toMatchInlineSnapshot(`
       [
         "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
         "--BV-color-app-activitybarText: rgb(34, 34, 34);",
+        "--BV-misc-pagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
   });

@@ -42,13 +42,12 @@
   background-color: var(--BV-color-neutral-bgLayerFloat);
   margin-left: auto;
   margin-right: auto;
-  max-width: var(--BV-universal-palette-max-width);
+  max-width: 620px;
   width: 100%;
   max-height: min(75vh, 400px);
   display: flex;
   flex-direction: column;
   padding-bottom: 0.25rem;
-  z-index: var(--BV-window-popup-editor-z-index);
   position: fixed;
   left: 0;
   right: 0;

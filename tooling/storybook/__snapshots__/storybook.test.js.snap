@@ -508,8 +508,8 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"
@@ -682,8 +682,8 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-color-neutral-solid)",
+              "color": "var(--BV-color-neutral-solidText)",
             }
           }
           type="button"

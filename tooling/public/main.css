@@ -8,19 +8,6 @@ html {
 }
 
 :root {
-  --BV-window-popup-editor-z-index: 300;
-  --BV-window-tooltip-z-index: 800;
-  --BV-window-page-padding: 3rem 30px 3rem 30px;
-  --BV-window-page-mobile-padding: 1.5rem 10px 2rem 25px;
-  --BV-window-page-box-padding: 2rem;
-
-  --BV-page-max-width: 700px;
-
-  --BV-universal-palette-max-width: 620px;
-
-  --BV-inline-universal-palette-max-width: 350px;
-  --BV-inline-universal-palette-max-height: 33vh;
-
   --BV-ui-bangle-button-depression: 0.96;
   --BV-ui-bangle-button-radius: 0.25rem;
 }
@@ -45,24 +32,6 @@ html {
 
   --BV-accent-destructive-0: rgb(198, 69, 69); /* done */
   --BV-accent-destructive-1: rgb(197, 74, 74); /* done */
-
-  --BV-window-dropdown-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-dropdown-radius: var(--BV-ui-bangle-button-radius);
-  --BV-window-highlight-bg-color: yellow;
-  --BV-window-kbd-bg-color: var(--BV-base-300);
-  --BV-window-kbd-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
-  --BV-window-popup-editor-bg-color: var(--BV-base-75);
-  --BV-window-popup-editor-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-tooltip-bg-color: var(--BV-base-50);
-  --BV-window-tooltip-color: var(--BV-color-neutral-textSubdued);
-
-  --BV-workspace-sidebar-bg-color: var(--BV-base-150);
-
-  --BV-editor-core-selection-change-bg-color: var(--BV-base-300);
-
-  --BV-note-tags-color: rgb(226, 226, 226);
-  --BV-note-tags-bg-color: rgb(105, 105, 105);
 
   --BV-ui-bangle-button-active-color: var(--BV-base-900);
   --BV-ui-bangle-button-bg-color: var(--BV-base-300);
@@ -106,23 +75,6 @@ html {
   --BV-accent-primary-1: rgb(229, 92, 156); /* done */
   --BV-accent-destructive-0: rgb(219, 101, 100);
   --BV-accent-destructive-1: rgb(218, 110, 108);
-
-  --BV-window-dropdown-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
-  --BV-window-kbd-bg-color: var(--BV-base-400);
-  --BV-window-kbd-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
-  --BV-window-popup-editor-bg-color: var(--BV-base-75);
-  --BV-window-popup-editor-color: var(--BV-color-neutral-textSubdued);
-  --BV-window-tooltip-bg-color: var(--BV-base-50);
-  --BV-window-tooltip-color: var(--BV-color-neutral-text);
-
-  --BV-workspace-sidebar-bg-color: var(--BV-base-150);
-
-  --BV-editor-core-selection-change-bg-color: var(--BV-base-300);
-
-  --BV-note-tags-color: rgb(66, 66, 66);
-  --BV-note-tags-bg-color: rgb(205, 205, 205);
 
   --BV-ui-bangle-button-active-color: var(--BV-base-900);
   --BV-ui-bangle-button-bg-color: var(--BV-base-200);

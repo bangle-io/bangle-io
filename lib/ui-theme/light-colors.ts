@@ -58,7 +58,10 @@ const appColor: DesignTokens['color']['app'] = {
   editorBacklinkText: spectrumLight.gray100,
   editorBg: neutralColor.bgLayerMiddle,
   editorCodeBg: spectrumLight.gray300,
+  kbdBg: neutralColor.solidSubdued,
+  kbdText: neutralColor.textSubdued,
   linkText: spectrumLight.blue700,
+  searchHighlightBg: spectrumLight.yellow300,
 };
 
 export const lightColors: DesignTokens['color'] = {

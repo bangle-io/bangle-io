@@ -147,10 +147,8 @@ export function EditorContainer({
       <div
         className={cx('w-full smallscreen:min-h-screen')}
         style={{
-          maxWidth: 'min(var(--BV-page-max-width), 100vw)',
-          padding: widescreen
-            ? 'var(--BV-window-page-padding)'
-            : 'var(--BV-window-page-mobile-padding)',
+          maxWidth: `min(${vars.misc.pageMaxWidth}, 100vw)`,
+          padding: vars.misc.pagePadding,
         }}
       >
         {children}

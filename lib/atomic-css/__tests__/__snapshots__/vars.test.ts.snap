@@ -29,7 +29,10 @@ exports[`cssCustomProperties snapshot 1`] = `
       "editorBacklinkText": "--BV-color-app-editorBacklinkText",
       "editorBg": "--BV-color-app-editorBg",
       "editorCodeBg": "--BV-color-app-editorCodeBg",
+      "kbdBg": "--BV-color-app-kbdBg",
+      "kbdText": "--BV-color-app-kbdText",
       "linkText": "--BV-color-app-linkText",
+      "searchHighlightBg": "--BV-color-app-searchHighlightBg",
     },
     "caution": {
       "border": "--BV-color-caution-border",
@@ -133,6 +136,8 @@ exports[`cssCustomProperties snapshot 1`] = `
     "noteSidebarWidth": "--BV-misc-noteSidebarWidth",
     "noteTagsBg": "--BV-misc-noteTagsBg",
     "noteTagsText": "--BV-misc-noteTagsText",
+    "pageMaxWidth": "--BV-misc-pageMaxWidth",
+    "pagePadding": "--BV-misc-pagePadding",
     "workspaceSidebarWidth": "--BV-misc-workspaceSidebarWidth",
   },
   "ringWidth": {
@@ -253,7 +258,10 @@ exports[`vars snapshot 1`] = `
       "editorBacklinkText": "var(--BV-color-app-editorBacklinkText)",
       "editorBg": "var(--BV-color-app-editorBg)",
       "editorCodeBg": "var(--BV-color-app-editorCodeBg)",
+      "kbdBg": "var(--BV-color-app-kbdBg)",
+      "kbdText": "var(--BV-color-app-kbdText)",
       "linkText": "var(--BV-color-app-linkText)",
+      "searchHighlightBg": "var(--BV-color-app-searchHighlightBg)",
     },
     "caution": {
       "border": "var(--BV-color-caution-border)",
@@ -357,6 +365,8 @@ exports[`vars snapshot 1`] = `
     "noteSidebarWidth": "var(--BV-misc-noteSidebarWidth)",
     "noteTagsBg": "var(--BV-misc-noteTagsBg)",
     "noteTagsText": "var(--BV-misc-noteTagsText)",
+    "pageMaxWidth": "var(--BV-misc-pageMaxWidth)",
+    "pagePadding": "var(--BV-misc-pagePadding)",
     "workspaceSidebarWidth": "var(--BV-misc-workspaceSidebarWidth)",
   },
   "ringWidth": {

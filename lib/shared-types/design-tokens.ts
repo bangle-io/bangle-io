@@ -109,15 +109,18 @@ export type DesignTokens = {
       activitybarBg: string;
       activitybarBtnPress: string;
       activitybarText: string;
-      editorCodeBg: string;
+      // this is used to grab attention
+      // the color with which to flash the node which currently became active.
+      editorAttentionBg: string;
       editorBacklinkBg: string;
       editorBacklinkBgHover: string;
       editorBacklinkText: string;
       editorBg: string;
-      // the color with which to flash the node which currently became active.
-      // this is used to grab attention
-      editorAttentionBg: string;
+      editorCodeBg: string;
+      kbdBg: string;
+      kbdText: string;
       linkText: string;
+      searchHighlightBg: string;
     };
   };
 
@@ -131,6 +134,10 @@ export type DesignTokens = {
     workspaceSidebarWidth: string;
     noteTagsText: string;
     noteTagsBg: string;
+
+    pagePadding: string;
+    // not applicable to small screens
+    pageMaxWidth: string;
   };
 };
 

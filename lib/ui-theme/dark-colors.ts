@@ -1,6 +1,6 @@
 import type { DesignTokens } from '@bangle.io/shared-types';
 
-import { spectrumDarkest } from './spectrum';
+import { spectrumDarkest, spectrumLight } from './spectrum';
 
 const neutralColor: DesignTokens['color']['neutral'] = {
   bgLayerTop: spectrumDarkest.gray100,
@@ -43,7 +43,10 @@ const appColor: DesignTokens['color']['app'] = {
   editorBacklinkText: neutralColor.text,
   editorBg: neutralColor.bgLayerMiddle,
   editorCodeBg: spectrumDarkest.gray300,
+  kbdBg: neutralColor.solidSubdued,
+  kbdText: neutralColor.textSubdued,
   linkText: spectrumDarkest.blue800,
+  searchHighlightBg: spectrumDarkest.yellow700,
 };
 
 export const darkColors: DesignTokens['color'] = {
