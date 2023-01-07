@@ -24,12 +24,12 @@
   "module": "index.js",
   "publishConfig": {},
   "dependencies": {
-    "postcss": "^8.4.16",
-    "postcss-custom-properties": "^12.1.9",
+    "postcss": "^8.4.21",
+    "postcss-custom-properties": "^12.1.11",
     "postcss-discard-comments": "^5.1.2",
-    "prettier": "^2.8.0",
+    "prettier": "^2.8.2",
     "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
+    "typescript": "4.9.3"
   },
   "license": "AGPL-3.0-or-later"
 }

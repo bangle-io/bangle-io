@@ -38,7 +38,7 @@
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
     "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
+    "typescript": "4.9.3"
   },
   "devDependencies": {
     "@bangle.io/search-pm-node": "workspace:*",
