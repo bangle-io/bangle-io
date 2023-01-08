@@ -4,7 +4,7 @@
     transform: scale(0.97, 0.97);
   }
 
-  to {
+  100% {
     opacity: 1;
     transform: scale(1, 1);
   }

@@ -7,7 +7,7 @@ export const TONE = {
   POSITIVE: 'positive',
   PROMOTE: 'promote',
 } as const;
-export type Tone = typeof TONE[keyof typeof TONE];
+export type Tone = (typeof TONE)[keyof typeof TONE];
 
 export const SEVERITY = {
   INFO: 'info',
@@ -16,11 +16,11 @@ export const SEVERITY = {
   SUCCESS: 'success',
 } as const;
 
-export type Severity = typeof SEVERITY[keyof typeof SEVERITY];
+export type Severity = (typeof SEVERITY)[keyof typeof SEVERITY];
 
 export const COLOR_SCHEMA = {
   LIGHT: 'light',
   DARK: 'dark',
 };
 
-export type ColorScheme = typeof COLOR_SCHEMA[keyof typeof COLOR_SCHEMA];
+export type ColorScheme = (typeof COLOR_SCHEMA)[keyof typeof COLOR_SCHEMA];

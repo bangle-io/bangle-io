@@ -24,7 +24,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
 const workspaceStateMock = workspaceSliceKey[
   'getSliceStateAsserted'
-] as jest.MockedFunction<typeof workspaceSliceKey['getSliceStateAsserted']>;
+] as jest.MockedFunction<(typeof workspaceSliceKey)['getSliceStateAsserted']>;
 
 let historyPushSpy: jest.SpyInstance, historyReplaceSpy: jest.SpyInstance;
 

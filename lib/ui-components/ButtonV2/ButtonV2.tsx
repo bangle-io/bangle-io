@@ -17,7 +17,8 @@ export const BUTTON_VARIANT = {
   TRANSPARENT: 'transparent',
 } as const;
 
-export type ButtonVariant = typeof BUTTON_VARIANT[keyof typeof BUTTON_VARIANT];
+export type ButtonVariant =
+  (typeof BUTTON_VARIANT)[keyof typeof BUTTON_VARIANT];
 
 export function ButtonV2({
   id,
