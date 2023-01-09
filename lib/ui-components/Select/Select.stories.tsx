@@ -41,7 +41,7 @@ const Template: Story<Parameters<typeof Select>[0]> = (args) => {
 export const BasicExample = Template.bind({});
 
 BasicExample.args = {
-  size: 'medium',
+  size: 'md',
 };
 
 export const DisabledKeys = Template.bind({});
@@ -78,7 +78,7 @@ const Template2: Story<Parameters<typeof Select>[0]> = (args) => {
 export const SectionExample = Template2.bind({});
 
 SectionExample.args = {
-  size: 'medium',
+  size: 'md',
 };
 
 export const ControlledState: Story<Parameters<typeof Select>[0]> = () => {
@@ -86,33 +86,35 @@ export const ControlledState: Story<Parameters<typeof Select>[0]> = () => {
   const [selected, setSelected] = React.useState<string | null>(null);
 
   return (
-    <Select
-      label="Favorite Animal"
-      selectedKey={selected}
-      onSelectionChange={(r) => {
-        if (typeof r === 'string') {
-          setSelected(r);
-        }
-      }}
-    >
-      <Item textValue="red" key="red panda">
-        Red Panda
-      </Item>
-      <Item textValue="cat" key="cat">
-        Cat
-      </Item>
-      <Item textValue="dog" key="dog">
-        Dog
-      </Item>
-      <Item textValue="aardvark" key="aardvark">
-        Aardvark
-      </Item>
-      <Item textValue="kangaroo" key="kangaroo">
-        Really really really really big Kangaroo
-      </Item>
-      <Item textValue="snake" key="snake">
-        Snake
-      </Item>
-    </Select>
+    <div className="" style={{ width: '70vw' }}>
+      <Select
+        label="Favorite Animal"
+        selectedKey={selected}
+        onSelectionChange={(r) => {
+          if (typeof r === 'string') {
+            setSelected(r);
+          }
+        }}
+      >
+        <Item textValue="red" key="red panda">
+          Red Panda
+        </Item>
+        <Item textValue="cat" key="cat">
+          Cat
+        </Item>
+        <Item textValue="dog" key="dog">
+          Dog
+        </Item>
+        <Item textValue="aardvark" key="aardvark">
+          Aardvark
+        </Item>
+        <Item textValue="kangaroo" key="kangaroo">
+          Really really really really big Kangaroo
+        </Item>
+        <Item textValue="snake" key="snake">
+          Snake
+        </Item>
+      </Select>
+    </div>
   );
 };

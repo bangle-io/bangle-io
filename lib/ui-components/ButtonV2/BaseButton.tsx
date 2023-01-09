@@ -117,7 +117,7 @@ function btnStyling({
     }
     default: {
       let x: never = size;
-      throw new Error('Invalid size');
+      throw new Error('Invalid size ' + x);
     }
   }
 

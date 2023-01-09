@@ -6652,7 +6652,7 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
     ComboBox
   </label>
   <div
-    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral px-1 py-1 border-neutral rounded "
+    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral border-solid border-1 border-colorNeutralTextFieldBorder px-1 py-1 rounded "
   >
     <input
       aria-autocomplete="list"
@@ -6702,11 +6702,6 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
         aria-hidden="true"
         className="w-5 h-5"
         fill="currentColor"
-        style={
-          {
-            "color": "var(--BV-ui-bangle-button-color)",
-          }
-        }
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -6733,7 +6728,7 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
     ComboBox
   </label>
   <div
-    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral px-1 py-1 border-neutral rounded "
+    className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral border-solid border-1 border-colorNeutralTextFieldBorder px-1 py-1 rounded "
   >
     <input
       aria-autocomplete="list"
@@ -6783,11 +6778,6 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
         aria-hidden="true"
         className="w-5 h-5"
         fill="currentColor"
-        style={
-          {
-            "color": "var(--BV-ui-bangle-button-color)",
-          }
-        }
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -7034,7 +7024,7 @@ exports[`Storyshots ui-components/Input Primary 1`] = `
   <input
     autoCapitalize="off"
     autoCorrect="off"
-    className="outline-offset-2 text-field-neutral border-neutral rounded px-2 py-1 "
+    className="outline-offset-1 text-field-neutral border-1 border-colorNeutralTextFieldBorder rounded px-2 py-1 "
     onBlur={[Function]}
     onFocus={[Function]}
     type="text"
@@ -7070,15 +7060,15 @@ exports[`Storyshots ui-components/LocationBreadCrumb Primary 1`] = `
 
 exports[`Storyshots ui-components/Select Basic Example 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56 "
+  className="inline-flex flex-col relative mt-4 "
 >
-  <div
-    className="B-ui-components_select-label text-sm font-medium cursor-default"
+  <label
+    className="text-sm text-colorNeutralTextSubdued "
     id="react-aria-test-generated-id"
     onClick={[Function]}
   >
     Favorite Animal
-  </div>
+  </label>
   <div
     aria-hidden={true}
     onBlur={null}
@@ -7155,7 +7145,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
+    className="B-ui-components_select-button text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}
@@ -7173,32 +7163,18 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-        "borderRadius": "var(--BV-ui-bangle-button-radius)",
+        "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
+        "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
+        "color": "var(--BV-color-neutral-textFieldText)",
       }
     }
     type="button"
   >
-    <span
-      className="text-base text-left px-1 w-64 truncate overflow-ellipsis "
-      id="react-aria-test-generated-id"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
-    >
-      Select an option
-    </span>
+    Select an option
     <svg
       aria-hidden="true"
-      className="w-5 h-5"
+      className="ml-1  w-6 h-6  "
       fill="currentColor"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -7214,159 +7190,154 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
 
 exports[`Storyshots ui-components/Select Controlled State 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56 "
+  className=""
+  style={
+    {
+      "width": "70vw",
+    }
+  }
 >
   <div
-    className="B-ui-components_select-label text-sm font-medium cursor-default"
-    id="react-aria-test-generated-id"
-    onClick={[Function]}
+    className="inline-flex flex-col relative mt-4 "
   >
-    Favorite Animal
-  </div>
-  <div
-    aria-hidden={true}
-    onBlur={null}
-    onFocus={null}
-    style={
-      {
-        "border": 0,
-        "clip": "rect(0 0 0 0)",
-        "clipPath": "inset(50%)",
-        "height": 1,
-        "margin": "0 -1px -1px 0",
-        "overflow": "hidden",
-        "padding": 0,
-        "position": "absolute",
-        "whiteSpace": "nowrap",
-        "width": 1,
-      }
-    }
-  >
-    <input
-      onFocus={[Function]}
-      style={
-        {
-          "fontSize": 16,
-        }
-      }
-      tabIndex={-1}
-      type="text"
-    />
-    <label>
-      Favorite Animal
-      <select
-        onChange={[Function]}
-        size={6}
-        tabIndex={-1}
-        value=""
-      >
-        <option />
-        <option
-          value="red panda"
-        >
-          red
-        </option>
-        <option
-          value="cat"
-        >
-          cat
-        </option>
-        <option
-          value="dog"
-        >
-          dog
-        </option>
-        <option
-          value="aardvark"
-        >
-          aardvark
-        </option>
-        <option
-          value="kangaroo"
-        >
-          kangaroo
-        </option>
-        <option
-          value="snake"
-        >
-          snake
-        </option>
-      </select>
-    </label>
-  </div>
-  <button
-    aria-controls={null}
-    aria-expanded={false}
-    aria-haspopup="listbox"
-    aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
-    id="react-aria-test-generated-id"
-    onBlur={[Function]}
-    onClick={[Function]}
-    onDragStart={[Function]}
-    onFocus={[Function]}
-    onKeyDown={[Function]}
-    onKeyUp={[Function]}
-    onMouseDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    onMouseUp={[Function]}
-    onTouchCancel={[Function]}
-    onTouchEnd={[Function]}
-    onTouchMove={[Function]}
-    onTouchStart={[Function]}
-    style={
-      {
-        "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-        "borderRadius": "var(--BV-ui-bangle-button-radius)",
-      }
-    }
-    type="button"
-  >
-    <span
-      className="text-base text-left px-1 w-64 truncate overflow-ellipsis "
+    <label
+      className="text-sm text-colorNeutralTextSubdued "
       id="react-aria-test-generated-id"
+      onClick={[Function]}
+    >
+      Favorite Animal
+    </label>
+    <div
+      aria-hidden={true}
+      onBlur={null}
+      onFocus={null}
       style={
         {
-          "color": "var(--BV-ui-bangle-button-color)",
+          "border": 0,
+          "clip": "rect(0 0 0 0)",
+          "clipPath": "inset(50%)",
+          "height": 1,
+          "margin": "0 -1px -1px 0",
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
         }
       }
+    >
+      <input
+        onFocus={[Function]}
+        style={
+          {
+            "fontSize": 16,
+          }
+        }
+        tabIndex={-1}
+        type="text"
+      />
+      <label>
+        Favorite Animal
+        <select
+          onChange={[Function]}
+          size={6}
+          tabIndex={-1}
+          value=""
+        >
+          <option />
+          <option
+            value="red panda"
+          >
+            red
+          </option>
+          <option
+            value="cat"
+          >
+            cat
+          </option>
+          <option
+            value="dog"
+          >
+            dog
+          </option>
+          <option
+            value="aardvark"
+          >
+            aardvark
+          </option>
+          <option
+            value="kangaroo"
+          >
+            kangaroo
+          </option>
+          <option
+            value="snake"
+          >
+            snake
+          </option>
+        </select>
+      </label>
+    </div>
+    <button
+      aria-controls={null}
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
+      className="B-ui-components_select-button text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+      id="react-aria-test-generated-id"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragStart={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      style={
+        {
+          "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
+          "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
+          "color": "var(--BV-color-neutral-textFieldText)",
+        }
+      }
+      type="button"
     >
       Select an option
-    </span>
-    <svg
-      aria-hidden="true"
-      className="w-5 h-5"
-      fill="currentColor"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        clipRule="evenodd"
-        d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-        fillRule="evenodd"
-      />
-    </svg>
-  </button>
+      <svg
+        aria-hidden="true"
+        className="ml-1  w-6 h-6  "
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clipRule="evenodd"
+          d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+          fillRule="evenodd"
+        />
+      </svg>
+    </button>
+  </div>
 </div>
 `;
 
 exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56 "
+  className="inline-flex flex-col relative mt-4 "
 >
-  <div
-    className="B-ui-components_select-label text-sm font-medium cursor-default"
+  <label
+    className="text-sm text-colorNeutralTextSubdued "
     id="react-aria-test-generated-id"
     onClick={[Function]}
   >
     Favorite Animal
-  </div>
+  </label>
   <div
     aria-hidden={true}
     onBlur={null}
@@ -7443,7 +7414,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
+    className="B-ui-components_select-button text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}
@@ -7461,32 +7432,18 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-        "borderRadius": "var(--BV-ui-bangle-button-radius)",
+        "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
+        "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
+        "color": "var(--BV-color-neutral-textFieldText)",
       }
     }
     type="button"
   >
-    <span
-      className="text-base text-left px-1 w-64 truncate overflow-ellipsis "
-      id="react-aria-test-generated-id"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
-    >
-      Select an option
-    </span>
+    Select an option
     <svg
       aria-hidden="true"
-      className="w-5 h-5"
+      className="ml-1  w-6 h-6  "
       fill="currentColor"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -7502,15 +7459,15 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
 
 exports[`Storyshots ui-components/Select Section Example 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56 "
+  className="inline-flex flex-col relative mt-4 "
 >
-  <div
-    className="B-ui-components_select-label text-sm font-medium cursor-default"
+  <label
+    className="text-sm text-colorNeutralTextSubdued "
     id="react-aria-test-generated-id"
     onClick={[Function]}
   >
     Companies
-  </div>
+  </label>
   <div
     aria-hidden={true}
     onBlur={null}
@@ -7607,7 +7564,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
+    className="B-ui-components_select-button text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}
@@ -7625,32 +7582,18 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-        "borderRadius": "var(--BV-ui-bangle-button-radius)",
+        "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
+        "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
+        "color": "var(--BV-color-neutral-textFieldText)",
       }
     }
     type="button"
   >
-    <span
-      className="text-base text-left px-1 w-64 truncate overflow-ellipsis "
-      id="react-aria-test-generated-id"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
-    >
-      Select an option
-    </span>
+    Select an option
     <svg
       aria-hidden="true"
-      className="w-5 h-5"
+      className="ml-1  w-6 h-6  "
       fill="currentColor"
-      style={
-        {
-          "color": "var(--BV-ui-bangle-button-color)",
-        }
-      }
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -7666,7 +7609,6 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
 
 exports[`Storyshots ui-components/TextField Case 2 1`] = `
 <div
-  className=""
   style={
     {
       "display": "flex",
@@ -7675,7 +7617,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
   }
 >
   <label
-    className="text-sm text-colorNeutralTextSubdued"
+    className="text-sm text-colorNeutralTextSubdued "
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
   >
@@ -7683,7 +7625,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
   </label>
   <input
     aria-labelledby="react-aria-test-generated-id"
-    className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
+    className="outline-none text-field-neutral border-1 border-colorNeutralTextFieldBorder rounded px-2 py-2"
     disabled={false}
     id="react-aria-test-generated-id"
     onBlur={[Function]}
@@ -7705,7 +7647,6 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
 
 exports[`Storyshots ui-components/TextField Primary 1`] = `
 <div
-  className=""
   style={
     {
       "display": "flex",
@@ -7714,7 +7655,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
   }
 >
   <label
-    className="text-sm text-colorNeutralTextSubdued"
+    className="text-sm text-colorNeutralTextSubdued "
     htmlFor="react-aria-test-generated-id"
     id="react-aria-test-generated-id"
   >
@@ -7722,7 +7663,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
   </label>
   <input
     aria-labelledby="react-aria-test-generated-id"
-    className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
+    className="outline-none text-field-neutral border-1 border-colorNeutralTextFieldBorder rounded px-2 py-2"
     disabled={false}
     id="react-aria-test-generated-id"
     onBlur={[Function]}

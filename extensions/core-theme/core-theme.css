@@ -121,6 +121,7 @@ body {
   --BV-color-neutral-textInverted: rgb(255, 255, 255);
   --BV-color-neutral-textFieldBg: rgb(255, 255, 255);
   --BV-color-neutral-textFieldText: rgb(34, 34, 34);
+  --BV-color-neutral-textFieldBorder: rgb(144, 144, 144);
   --BV-color-neutral-iconDisabled: rgb(177, 177, 177);
   --BV-color-neutral-iconSubdued: rgb(70, 70, 70);
   --BV-color-neutral-icon: rgb(34, 34, 34);
@@ -223,6 +224,7 @@ body {
   --BV-color-neutral-textInverted: rgb(0, 0, 0);
   --BV-color-neutral-textFieldBg: rgb(0, 0, 0);
   --BV-color-neutral-textFieldText: rgb(235, 235, 235);
+  --BV-color-neutral-textFieldBorder: rgb(141, 141, 141);
   --BV-color-neutral-iconDisabled: rgb(106, 106, 106);
   --BV-color-neutral-iconSubdued: rgb(208, 208, 208);
   --BV-color-neutral-icon: rgb(235, 235, 235);

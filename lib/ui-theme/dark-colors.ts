@@ -12,6 +12,7 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   text: spectrumDarkest.gray800,
   textDisabled: spectrumDarkest.gray500,
   textFieldBg: spectrumDarkest.gray50,
+  textFieldBorder: spectrumDarkest.gray500,
   textFieldText: spectrumDarkest.gray800,
   textInverted: spectrumDarkest.gray50,
   textStrong: spectrumDarkest.gray900,

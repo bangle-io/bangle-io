@@ -6,41 +6,35 @@ import React from 'react';
 import { vars } from '@bangle.io/atomic-css';
 import { cx } from '@bangle.io/utils';
 
-import type { SizeType } from '../misc';
+import { FieldLabel } from './FieldLabel';
+import type { SizeType } from './misc';
 
 export function TextField(
   props: AriaTextFieldOptions<'input'> & {
-    size?: SizeType;
     spellCheck?: boolean;
+    className?: string;
   },
 ) {
-  let { label, size } = props;
+  let { label } = props;
   let ref = React.useRef<HTMLInputElement>(null);
   let { labelProps, inputProps, descriptionProps, errorMessageProps } =
     useTextField(props, ref);
 
   return (
     <div
-      className={cx(
-        size === 'small' && 'w-40',
-        size === 'medium' && 'w-56',
-        size === 'large' && 'w-64',
-        size === 'full' && 'w-full',
-      )}
+      className={props.className}
       style={{
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      <label {...labelProps} className="text-sm text-colorNeutralTextSubdued">
-        {label}
-      </label>
+      <FieldLabel label={label} labelProps={labelProps} />
       <FocusRing focusClass="B-ui-components_misc-input-ring">
         <input
           {...inputProps}
           ref={ref}
           spellCheck={props.spellCheck === undefined ? true : props.spellCheck}
-          className="outline-none text-field-neutral border-neutral rounded px-2 py-2"
+          className="outline-none text-field-neutral border-1 border-colorNeutralTextFieldBorder rounded px-2 py-2"
           style={{}}
         />
       </FocusRing>
