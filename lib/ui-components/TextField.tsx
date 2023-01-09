@@ -4,10 +4,8 @@ import { useTextField } from '@react-aria/textfield';
 import React from 'react';
 
 import { vars } from '@bangle.io/atomic-css';
-import { cx } from '@bangle.io/utils';
 
 import { FieldLabel } from './FieldLabel';
-import type { SizeType } from './misc';
 
 export function TextField(
   props: AriaTextFieldOptions<'input'> & {

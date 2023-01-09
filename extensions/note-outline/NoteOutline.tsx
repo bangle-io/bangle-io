@@ -148,7 +148,6 @@ export function NoteOutline() {
 
         return (
           <Button
-            // isQuiet={isQuiet}
             variant={
               r.isActive
                 ? 'solid'
@@ -164,11 +163,11 @@ export function NoteOutline() {
             onPress={() => {
               onExecuteItem(r);
             }}
+            justifyContent="flex-start"
             style={{
               paddingLeft: 12 * (r.level - 1),
               paddingTop: 4,
               paddingBottom: 4,
-              justifyContent: 'start',
               whiteSpace: 'nowrap',
             }}
             text={

@@ -41,21 +41,28 @@ exports[`NotificationArea renders with content 2`] = `
           <div>
             <button
               aria-label="dismiss notification"
-              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden py-1 transition-all duration-100 cursor-pointer "
               style="background-color: transparent;"
               type="button"
             >
-              <svg
-                class=" w-4 h-4  "
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+              <span
+                class="flex flex-grow-1 overflow-hidden "
+                style="justify-content: center;"
               >
-                <path
-                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-                  fill="currentColor"
-                />
-              </svg>
+                <span>
+                  <svg
+                    class=" w-4 h-4  "
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </span>
             </button>
           </div>
         </div>
@@ -107,21 +114,28 @@ exports[`NotificationArea renders with content 2`] = `
           <div>
             <button
               aria-label="dismiss notification"
-              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+              class="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden py-1 transition-all duration-100 cursor-pointer "
               style="background-color: transparent;"
               type="button"
             >
-              <svg
-                class=" w-4 h-4  "
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+              <span
+                class="flex flex-grow-1 overflow-hidden "
+                style="justify-content: center;"
               >
-                <path
-                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-                  fill="currentColor"
-                />
-              </svg>
+                <span>
+                  <svg
+                    class=" w-4 h-4  "
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </span>
             </button>
           </div>
         </div>
@@ -138,10 +152,19 @@ exports[`NotificationArea renders with content 2`] = `
       >
         <button
           aria-label="test-btn"
-          class="ml-3 text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          class="ml-3 text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden py-1 transition-all duration-100 cursor-pointer "
           type="button"
         >
-          Test Op
+          <span
+            class="flex flex-grow-1 overflow-hidden "
+            style="justify-content: center;"
+          >
+            <span
+              class="text-ellipsis overflow-hidden"
+            >
+              Test Op
+            </span>
+          </span>
         </button>
       </div>
     </div>

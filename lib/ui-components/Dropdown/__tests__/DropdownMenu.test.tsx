@@ -52,10 +52,19 @@ test('renders correctly', () => {
         <button
           aria-label=""
           aria-pressed="false"
-          class="test-button-class text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          class="test-button-class text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden py-1 transition-all duration-100 cursor-pointer "
           type="button"
         >
-          button child
+          <span
+            class="flex flex-grow-1 overflow-hidden "
+            style="justify-content: center;"
+          >
+            <span
+              class="text-ellipsis overflow-hidden"
+            >
+              button child
+            </span>
+          </span>
         </button>
       </div>
     </div>

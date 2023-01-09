@@ -39,6 +39,9 @@ export function Button({
   tone = TONE.NEUTRAL,
   tooltipPlacement,
   variant = BUTTON_VARIANT.SOLID,
+  // auto will center if only one child is present
+  // else it will space between
+  justifyContent = 'auto',
 }: {
   animateOnPress?: boolean;
   ariaLabel?: string;
@@ -58,7 +61,13 @@ export function Button({
   tone?: Tone;
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   variant?: ButtonVariant;
+  justifyContent?: React.CSSProperties['justifyContent'] | 'auto';
 }) {
+  if (style.justifyContent) {
+    console.warn(
+      'Button: Do not set justifyContent in style prop. Use justifyContent prop instead',
+    );
+  }
   const ref = useRef<HTMLButtonElement>(null);
   const { autoFocus = defaultFocus.autoFocus } = focus || defaultFocus;
 
@@ -100,6 +109,7 @@ export function Button({
           tone,
           style,
           variant,
+          justifyContent,
         },
         text,
       })}

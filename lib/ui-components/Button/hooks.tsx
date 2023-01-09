@@ -26,6 +26,9 @@ export type BaseButtonStyleProps = {
   style: React.CSSProperties | undefined;
   tone: Tone;
   variant: ButtonVariant;
+  // auto will center if only one child is present
+  // else it will space between
+  justifyContent?: React.CSSProperties['justifyContent'] | 'auto';
 };
 
 export const useButtonStyleProps = ({
@@ -39,27 +42,50 @@ export const useButtonStyleProps = ({
 } => {
   const [btnClass, btnStyle] = btnStyling(styleProps);
 
+  const oneChild =
+    (text && !leftIcon && !rightIcon) ||
+    (!text && leftIcon && !rightIcon) ||
+    (!text && !leftIcon && rightIcon);
+
   return {
     ...elementProps,
     type: (elementProps.type as any) ?? 'button',
     style: btnStyle,
     className: btnClass,
     children: (
-      <>
-        <BtnIcon
-          text={text}
-          size={styleProps.size}
-          side="left"
-          icon={leftIcon}
-        />
-        {text}
-        <BtnIcon
-          text={text}
-          size={styleProps.size}
-          side="right"
-          icon={rightIcon}
-        />
-      </>
+      <span
+        className={cx('flex flex-grow-1 overflow-hidden')}
+        style={{
+          justifyContent:
+            styleProps.justifyContent !== 'auto' && styleProps.justifyContent
+              ? styleProps.justifyContent
+              : oneChild
+              ? 'center'
+              : 'space-between',
+        }}
+      >
+        {leftIcon && (
+          <span>
+            <BtnIcon
+              text={text}
+              size={styleProps.size}
+              side="left"
+              icon={leftIcon}
+            />
+          </span>
+        )}
+        {text && <span className="text-ellipsis overflow-hidden">{text}</span>}
+        {rightIcon && (
+          <span>
+            <BtnIcon
+              text={text}
+              size={styleProps.size}
+              side="right"
+              icon={rightIcon}
+            />
+          </span>
+        )}
+      </span>
     ),
   };
 };
@@ -123,7 +149,7 @@ function btnStyling({
 
   className = cx(
     className,
-    'select-none inline-flex justify-center items-center rounded-md whitespace-nowrap',
+    'select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden',
     isTouch ? 'py-2' : 'py-1',
     isFocusVisible && 'ring-promote',
     animateOnPress

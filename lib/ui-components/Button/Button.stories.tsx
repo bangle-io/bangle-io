@@ -209,6 +209,161 @@ export const ButtonSizes: Story<Parameters<typeof Button>[0]> = (args) => {
             size="lg"
           />
         </div>
+
+        <div className="mt-2 gap-1">Take space row</div>
+        <div className="flex flex-row gap-2 ">
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Medium"
+            leftIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Medium"
+            size="md"
+          />
+        </div>
+
+        <div className="mt-2 gap-1">Take space col</div>
+
+        <div className="flex flex-col gap-2">
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Medium"
+            rightIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Medium"
+            leftIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            leftIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            rightIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Medium"
+            size="md"
+          />
+        </div>
+
+        <div className="mt-2 gap-1">justifyContent start</div>
+        <div className="flex flex-row gap-2 ">
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Start"
+            leftIcon={<FolderIcon />}
+            justifyContent="flex-start"
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Start"
+            justifyContent="flex-start"
+            size="md"
+          />
+        </div>
+
+        <div className="mt-2 gap-1">justifyContent end</div>
+        <div className="flex flex-row gap-2 ">
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="End"
+            leftIcon={<FolderIcon />}
+            justifyContent="flex-end"
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="End"
+            justifyContent="flex-end"
+            size="md"
+          />
+        </div>
+
+        <div className="mt-2 gap-1">justifyContent around</div>
+        <div className="flex flex-row gap-2 ">
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="End"
+            leftIcon={<FolderIcon />}
+            justifyContent="space-around"
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="End"
+            justifyContent="space-around"
+            size="md"
+          />
+        </div>
+
+        <div className="mt-2 gap-1">Trimming</div>
+
+        <div
+          className="flex flex-col gap-2"
+          style={{ width: 'min(40vw,300px)' }}
+        >
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Long kangaroo text that should be trimmed for sure this time"
+            rightIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Long kangaroo text that should be trimmed"
+            leftIcon={<FolderIcon />}
+            size="md"
+          />
+          <Button
+            isTouch
+            tone={TONE.NEUTRAL}
+            className="flex-grow-1"
+            text="Long kangaroo text that should be trimmed"
+            size="md"
+          />
+        </div>
       </div>
     </div>
   );

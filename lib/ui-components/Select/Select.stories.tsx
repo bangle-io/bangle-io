@@ -50,6 +50,33 @@ DisabledKeys.args = {
   disabledKeys: ['aardvark', 'kangaroo'],
 };
 
+export const fullWidth: Story<Parameters<typeof Select>[0]> = (args) => {
+  return (
+    <div style={{ width: '50vw' }}>
+      <Select label="Favorite Animal" {...args} className="w-full">
+        <Item textValue="red" key="red panda">
+          Red Panda
+        </Item>
+        <Item textValue="cat" key="cat">
+          Cat
+        </Item>
+        <Item textValue="dog" key="dog">
+          Dog
+        </Item>
+        <Item textValue="aardvark" key="aardvark">
+          Aardvark
+        </Item>
+        <Item textValue="kangaroo" key="kangaroo">
+          Really really really really big Kangaroo Kangaroo
+        </Item>
+        <Item textValue="snake" key="snake">
+          Snake
+        </Item>
+      </Select>
+    </div>
+  );
+};
+
 const Template2: Story<Parameters<typeof Select>[0]> = (args) => {
   return (
     <Select label="Companies" {...args}>
