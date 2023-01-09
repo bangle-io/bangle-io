@@ -59,7 +59,7 @@ export const Input = React.forwardRef<
             onChange={onChange}
             ref={ref}
             className={cx(
-              'outline-offset-2 text-field-neutral border-neutral rounded px-2 py-1',
+              'outline-offset-1 text-field-neutral border-1 border-colorNeutralTextFieldBorder rounded px-2 py-1',
               className,
             )}
             style={style}

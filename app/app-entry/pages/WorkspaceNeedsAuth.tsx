@@ -10,7 +10,7 @@ import {
   goToWsNameRoute,
   goToWsNameRouteNotFoundRoute,
 } from '@bangle.io/slice-workspace';
-import { ButtonV2, CenteredBoxedPage } from '@bangle.io/ui-components';
+import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 import { keybindingsHelper } from '@bangle.io/utils';
 import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
@@ -144,7 +144,7 @@ function PermissionModal({
         </span>
       }
       actions={
-        <ButtonV2
+        <Button
           tone="promote"
           ariaLabel="grant disk read permission"
           onPress={() => {

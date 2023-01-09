@@ -63,6 +63,7 @@ const tokensShape: DesignTokens = {
       textInverted: '',
       textFieldBg: '',
       textFieldText: '',
+      textFieldBorder: '',
 
       ...createToneColors(),
     },

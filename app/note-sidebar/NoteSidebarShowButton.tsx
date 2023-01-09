@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ButtonV2, ChevronDoubleLeftIcon } from '@bangle.io/ui-components';
+import { Button, ChevronDoubleLeftIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebarShowButton({
   showNoteSidebar,
@@ -16,7 +16,7 @@ export function NoteSidebarShowButton({
   }
 
   return (
-    <ButtonV2
+    <Button
       ariaLabel="Show note sidebar"
       className="fixed right-0 top-10 z-30 border-r-0"
       tooltipPlacement="bottom"

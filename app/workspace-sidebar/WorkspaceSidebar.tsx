@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
 import {
-  ButtonV2,
+  Button,
   ChevronLeftIcon,
   CloseIcon,
   ErrorBoundary,
@@ -25,7 +25,7 @@ export function WorkspaceSidebar({
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">{sidebar.title}</span>
         <span>
-          <ButtonV2
+          <Button
             variant="transparent"
             onPress={onDismiss}
             size="sm"

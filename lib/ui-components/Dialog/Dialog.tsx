@@ -6,12 +6,11 @@ import {
   useOverlay,
   usePreventScroll,
 } from '@react-aria/overlays';
-import { useViewportSize } from '@react-aria/utils';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
-import { cx, usePrevious } from '@bangle.io/utils';
+import { cx } from '@bangle.io/utils';
 
-import { ButtonV2 } from '../ButtonV2/ButtonV2';
+import { Button } from '../Button';
 import { LoadingCircleIcon } from '../Icons';
 import { Inline } from '../Inline';
 import type { SizeType } from '../misc';
@@ -146,7 +145,7 @@ export function Dialog({
               className="B-ui-components_dialog-button-group pt-12 smallscreen:pt-4 flex-row-reverse"
             >
               {primaryButtonConfig && (
-                <ButtonV2
+                <Button
                   tone={
                     primaryButtonConfig.isDestructive ? 'critical' : 'neutral'
                   }
@@ -159,7 +158,7 @@ export function Dialog({
                 />
               )}
               {isDismissable && (
-                <ButtonV2
+                <Button
                   tone="secondary"
                   ariaLabel={'dismiss'}
                   isDisabled={isLoading}

@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
-import { vars } from '@bangle.io/atomic-css';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CHANGELOG_MODAL_NAME,
@@ -33,6 +32,8 @@ import {
 } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
+import { ButtonStyleOBj } from './common';
+
 export const ActionPaletteKey = 'ActionPalette';
 export const DiscordKey = 'Discord';
 export const NewNoteKey = 'NewNote';
@@ -55,15 +56,6 @@ type AllKeysType =
   | typeof ToggleThemeKey
   | typeof TwitterKey
   | typeof WhatsNewKey;
-
-const buttonStyling = {
-  animateOnPress: true,
-  activeColor: vars.color.app.activitybarText,
-  color: vars.color.app.activitybarText,
-  hoverBgColor: vars.color.app.activitybarBtnPress,
-  hoverColor: vars.color.app.activitybarText,
-  pressedBgColor: vars.color.app.activitybarBtnPress,
-};
 
 export function ActivitybarOptionsDropdown({
   widescreen,
@@ -169,22 +161,19 @@ export function ActivitybarOptionsDropdown({
 
   return (
     <DropdownMenu
-      isButtonQuiet
-      menuPlacement={widescreen ? 'right-start' : 'bottom-start'}
-      ariaLabel={'options dropdown'}
-      buttonAriaLabel={'options menu'}
-      buttonStyling={buttonStyling}
-      buttonClassName={cx(
-        'w-full py-3 rounded-sm flex justify-center',
-        widescreen && 'BU_widescreen',
-      )}
-      buttonChildren={
-        widescreen ? (
-          <SettingsIcon className="h-7 w-7" />
-        ) : (
-          <DotsVerticalIcon className="h-5 w-5" />
-        )
-      }
+      buttonProps={{
+        variant: 'transparent',
+        ariaLabel: 'options menu',
+        size: widescreen ? 'lg' : 'sm',
+        tone: 'secondary',
+        //  we need this to use the activitybar color of the icon
+        style: widescreen ? ButtonStyleOBj : undefined,
+        leftIcon: widescreen ? <SettingsIcon /> : <DotsVerticalIcon />,
+      }}
+      menuProps={{
+        ariaLabel: 'options dropdown',
+        placement: widescreen ? 'right-start' : 'bottom-start',
+      }}
       onAction={handleDropdown}
     >
       <MenuSection aria-label="misc section">

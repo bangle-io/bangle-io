@@ -4,7 +4,7 @@ import type { Tone } from '@bangle.io/constants';
 import { SEVERITY } from '@bangle.io/constants';
 import type { EditorIssue } from '@bangle.io/slice-notification';
 import {
-  ButtonV2,
+  Button,
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationIcon,
@@ -36,16 +36,16 @@ export function EditorIssueComp({
 
 const SeverityLookup = {
   [SEVERITY.ERROR]: () => ({
-    component: <ExclamationCircleIcon className="w-5 h-5" />,
+    component: <ExclamationCircleIcon />,
   }),
   [SEVERITY.WARNING]: () => ({
-    component: <ExclamationIcon className="w-5 h-5" />,
+    component: <ExclamationIcon />,
   }),
   [SEVERITY.INFO]: () => ({
-    component: <InformationCircleIcon className="w-5 h-5" />,
+    component: <InformationCircleIcon />,
   }),
   [SEVERITY.SUCCESS]: () => ({
-    component: <CheckCircleIcon className="w-5 h-5" />,
+    component: <CheckCircleIcon />,
   }),
 };
 
@@ -89,7 +89,7 @@ function EditorIssueInner({
   }
 
   return (
-    <ButtonV2
+    <Button
       variant="solid"
       tone={tone}
       onPress={onPress}

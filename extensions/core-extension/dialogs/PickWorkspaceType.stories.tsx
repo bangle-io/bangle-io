@@ -3,7 +3,7 @@ import '../style';
 import type { Story } from '@storybook/react';
 import React, { useCallback } from 'react';
 
-import { ButtonV2, OverlayProvider } from '@bangle.io/ui-components';
+import { Button, OverlayProvider } from '@bangle.io/ui-components';
 
 import { PickWorkspaceType } from './PickWorkspaceType';
 
@@ -22,7 +22,7 @@ export const Template: Story<Parameters<typeof PickWorkspaceType>[0]> = (
 
   return (
     <div>
-      <ButtonV2
+      <Button
         ariaLabel="open"
         text="Open modal"
         onPress={() => {

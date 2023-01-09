@@ -9,8 +9,8 @@ import {
   notificationSliceKey,
 } from '@bangle.io/slice-notification';
 import {
+  Button,
   BUTTON_VARIANT,
-  ButtonV2,
   CheckCircleIcon,
   CloseIcon,
   ExclamationCircleIcon,
@@ -114,7 +114,7 @@ export function Notification({
           <div className="mr-2">{SeverityMap[severity]()}</div>
           <div className="flex-grow">{title}</div>
           <div>
-            <ButtonV2
+            <Button
               size="xs"
               variant={BUTTON_VARIANT.TRANSPARENT}
               ariaLabel="dismiss notification"
@@ -132,7 +132,7 @@ export function Notification({
       <div className="flex flex-row-reverse w-full mt-3">
         {buttons &&
           buttons.map((b, i) => (
-            <ButtonV2
+            <Button
               key={i}
               tooltipPlacement="left"
               className="ml-3"

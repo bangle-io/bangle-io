@@ -1,14 +1,11 @@
-import { useButton } from '@react-aria/button';
-import { useFocusRing } from '@react-aria/focus';
-import { useHover } from '@react-aria/interactions';
-import { mergeProps } from '@react-aria/utils';
-import React, { useRef } from 'react';
+import React from 'react';
 
 import { vars } from '@bangle.io/atomic-css';
 import type { Tone } from '@bangle.io/constants';
 import { TONE } from '@bangle.io/constants';
-import type { FirstParameter } from '@bangle.io/shared-types';
-import { cx, isTouchDevice } from '@bangle.io/utils';
+import { cx } from '@bangle.io/utils';
+
+export type BtnSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export const BUTTON_VARIANT = {
   SOLID: 'solid',
@@ -20,111 +17,45 @@ export const BUTTON_VARIANT = {
 export type ButtonVariant =
   (typeof BUTTON_VARIANT)[keyof typeof BUTTON_VARIANT];
 
-export function ButtonV2({
-  id,
-  animateOnPress = true,
-  ariaLabel,
-  className = '',
-  tooltipPlacement,
-  focus,
-  isDisabled,
-  isTouch = isTouchDevice,
-  leftIcon,
-  onPress,
-  rightIcon,
-  size = 'md',
-  style,
+export function BtnIcon({
+  icon,
+  size,
+  side = 'left',
   text,
-  tone = TONE.NEUTRAL,
-  variant = BUTTON_VARIANT.SOLID,
 }: {
-  id?: string;
-  animateOnPress?: boolean;
-  tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
-  ariaLabel?: string;
-  className?: string;
-  focus?: FocusType;
-  isDisabled?: boolean;
-  isTouch?: boolean;
-  leftIcon?: React.ReactNode;
-  onPress?: FirstParameter<typeof useButton>['onPress'];
-  rightIcon?: React.ReactNode;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
-  style?: React.CSSProperties;
-  text?: React.ReactNode;
-  tone?: Tone;
-  variant?: ButtonVariant;
+  icon?: React.ReactNode;
+  size: BtnSize;
+  side: 'left' | 'right';
+  text: React.ReactNode;
 }) {
-  let ref = useRef<HTMLButtonElement>(null);
+  if (!React.isValidElement(icon)) {
+    return null;
+  }
+  let className = '';
 
-  const {
-    allowFocusRing = defaultFocus.allowFocusRing,
-    autoFocus = defaultFocus.autoFocus,
-  } = focus || defaultFocus;
-
-  const { hoverProps, isHovered } = useHover({ isDisabled });
-  let { isFocusVisible, focusProps } = useFocusRing({
-    autoFocus: autoFocus,
-  });
-
-  let variantStyle = variantMapping[variant][tone];
-
-  const { buttonProps, isPressed } = useButton(
-    {
-      'aria-label': ariaLabel,
-      onPress,
-      isDisabled,
-      'type': 'button',
-      'autoFocus': autoFocus,
-    },
-    ref,
-  );
-
-  let leftIconClassName = '';
-  let rightIconClassName = '';
+  if (text) {
+    if (size === 'xs') {
+      className = cx(className, side === 'left' ? 'mr-0_5' : 'ml-0_5');
+    } else {
+      className = cx(className, side === 'left' ? 'mr-1' : 'ml-1');
+    }
+  }
 
   switch (size) {
     case 'xs': {
-      className = cx(
-        className,
-        'text-xs font-600 min-w-6',
-        isTouch ? 'h-7 px-3' : 'h-6 px-1_5',
-      );
-
-      leftIconClassName = cx(leftIconClassName, 'w-4 h-4', text && 'mr-0_5');
-      rightIconClassName = cx(rightIconClassName, 'w-4 h-4', text && 'ml-0_5');
+      className = cx(className, 'w-4 h-4');
       break;
     }
     case 'sm': {
-      className = cx(
-        className,
-        'text-sm font-600 h-8 min-w-8',
-        isTouch ? ' px-3' : 'px-2',
-      );
-      leftIconClassName = cx(leftIconClassName, 'w-5 h-5', text && 'mr-1');
-      rightIconClassName = cx(rightIconClassName, 'w-5 h-5', text && 'ml-1');
+      className = cx(className, 'w-5 h-5');
       break;
     }
     case 'md': {
-      className = cx(
-        className,
-        'text-base h-9 smallscreen:h-10 min-w-10',
-        isTouch ? 'px-4' : 'px-3',
-      );
-      leftIconClassName = cx(leftIconClassName, 'w-6 h-6', text && 'mr-1');
-      rightIconClassName = cx(rightIconClassName, 'w-6 h-6', text && 'ml-1');
-
+      className = cx(className, 'w-6 h-6');
       break;
     }
     case 'lg': {
-      className = cx(
-        className,
-        'text-lg font-600 h-11 min-w-12',
-        isTouch ? 'px-4' : 'px-4',
-      );
-      leftIconClassName = cx(leftIconClassName, 'w-7 h-7', text && 'mr-1');
-      rightIconClassName = cx(rightIconClassName, 'w-7 h-7', text && 'ml-1');
-
+      className = cx(className, 'w-7 h-7');
       break;
     }
     default: {
@@ -133,61 +64,20 @@ export function ButtonV2({
     }
   }
 
-  const leftIconComp =
-    leftIcon &&
-    React.isValidElement(leftIcon) &&
-    React.cloneElement(leftIcon, {
-      className: cx(leftIcon.props.className, leftIconClassName),
-    } as any);
+  if (
+    typeof icon.props.className === 'string' &&
+    (icon.props.className.includes('w-') || icon.props.className.includes('h-'))
+  ) {
+    console.warn(
+      'Icon size should not be set in Button Icon! Found class ' +
+        icon.props.className,
+    );
+  }
 
-  const rightIconComp =
-    rightIcon &&
-    React.isValidElement(rightIcon) &&
-    React.cloneElement(rightIcon, {
-      className: cx(rightIcon.props.className, rightIconClassName),
-    } as any);
-
-  return (
-    <button
-      id={id}
-      {...mergeProps(hoverProps, buttonProps, focusProps)}
-      type="button"
-      ref={ref}
-      style={createStyleObj(variantStyle, style, {
-        isDisabled,
-        isHovered,
-        isPressed,
-        variant,
-      })}
-      className={cx(
-        className,
-        'select-none inline-flex justify-center items-center rounded-md whitespace-nowrap',
-        isTouch ? 'py-2' : 'py-1',
-        isFocusVisible && allowFocusRing && 'ring-promote',
-        animateOnPress
-          ? 'transition-all duration-100'
-          : 'transition-colors duration-100',
-        animateOnPress && isPressed && (isTouch ? 'scale-94' : 'scale-97'),
-        isDisabled ? 'cursor-not-allowed ' : 'cursor-pointer',
-      )}
-    >
-      {leftIconComp && <span>{leftIconComp}</span>}
-      {text}
-      {rightIconComp && <span>{rightIconComp}</span>}
-    </button>
-  );
+  return React.cloneElement(icon, {
+    className: cx(icon.props.className, className),
+  } as any);
 }
-
-interface FocusType {
-  allowFocusRing?: boolean;
-  autoFocus?: boolean;
-  // TODO add focus ring offset color
-}
-
-const defaultFocus: FocusType = {
-  allowFocusRing: true,
-  autoFocus: false,
-};
 
 interface ButtonStyles {
   color: string;
@@ -199,7 +89,61 @@ interface ButtonStyles {
   disabledColor: string;
 }
 
-const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
+export function createStyleObj(
+  buttonStyles: ButtonStyles,
+  override: React.CSSProperties | undefined,
+  opts: {
+    isHovered: boolean;
+    isPressed: boolean;
+    isDisabled?: boolean;
+    variant: ButtonVariant;
+  },
+): React.CSSProperties {
+  let style: React.CSSProperties = {};
+
+  const isGhost = opts.variant === BUTTON_VARIANT.GHOST;
+
+  const setBorder = (color: string) => {
+    style.border = `2px solid ${color}`;
+  };
+  const setBgColor = (color: string) => {
+    style.backgroundColor = color;
+  };
+
+  style.color = buttonStyles.color;
+
+  if (isGhost) {
+    setBorder(buttonStyles.color);
+
+    if (opts.isDisabled) {
+      setBorder(buttonStyles.disabledColor);
+    }
+  }
+
+  setBgColor(buttonStyles.buttonBgColor);
+
+  if (opts.isDisabled) {
+    setBgColor(buttonStyles.disabledBgColor);
+    style.color = buttonStyles.disabledColor;
+  }
+
+  if (opts.isHovered && !opts.isDisabled) {
+    style.color = buttonStyles.hoverColor;
+    setBgColor(buttonStyles.hoverBgColor);
+  }
+
+  if (opts.isPressed && !opts.isDisabled) {
+    setBgColor(buttonStyles.pressedBgColor);
+    isGhost && setBorder(buttonStyles.hoverColor);
+  }
+
+  return { ...style, ...override };
+}
+
+export const variantMapping: Record<
+  ButtonVariant,
+  Record<Tone, ButtonStyles>
+> = {
   [BUTTON_VARIANT.SOLID]: {
     [TONE.CAUTION]: {
       color: vars.color.caution.solidText,
@@ -437,54 +381,3 @@ const variantMapping: Record<ButtonVariant, Record<Tone, ButtonStyles>> = {
     },
   },
 };
-
-function createStyleObj(
-  buttonStyles: ButtonStyles,
-  override: React.CSSProperties | undefined,
-  opts: {
-    isHovered: boolean;
-    isPressed: boolean;
-    isDisabled?: boolean;
-    variant: ButtonVariant;
-  },
-): React.CSSProperties {
-  let style: React.CSSProperties = {};
-
-  const isGhost = opts.variant === BUTTON_VARIANT.GHOST;
-
-  const setBorder = (color: string) => {
-    style.border = `2px solid ${color}`;
-  };
-  const setBgColor = (color: string) => {
-    style.backgroundColor = color;
-  };
-
-  style.color = buttonStyles.color;
-
-  if (isGhost) {
-    setBorder(buttonStyles.color);
-
-    if (opts.isDisabled) {
-      setBorder(buttonStyles.disabledColor);
-    }
-  }
-
-  setBgColor(buttonStyles.buttonBgColor);
-
-  if (opts.isDisabled) {
-    setBgColor(buttonStyles.disabledBgColor);
-    style.color = buttonStyles.disabledColor;
-  }
-
-  if (opts.isHovered && !opts.isDisabled) {
-    style.color = buttonStyles.hoverColor;
-    setBgColor(buttonStyles.hoverBgColor);
-  }
-
-  if (opts.isPressed && !opts.isDisabled) {
-    setBgColor(buttonStyles.pressedBgColor);
-    isGhost && setBorder(buttonStyles.hoverColor);
-  }
-
-  return { ...style, ...override };
-}

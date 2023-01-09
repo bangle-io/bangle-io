@@ -10,7 +10,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE } from '@bangle.io/constants';
 import type { DialogComponentType } from '@bangle.io/shared-types';
-import { ButtonV2, Dialog } from '@bangle.io/ui-components';
+import { Button, Dialog } from '@bangle.io/ui-components';
 
 import type { WorkspaceCreateErrorTypes } from './common';
 import {
@@ -203,7 +203,7 @@ function PickStorageDirectory({
             <span>
               You picked: <span className="font-bold">{dirName}</span>
             </span>
-            <ButtonV2
+            <Button
               tone="secondary"
               variant="soft"
               text="Clear"
@@ -215,7 +215,7 @@ function PickStorageDirectory({
             />
           </>
         ) : (
-          <ButtonV2
+          <Button
             id={BROWSE_BUTTON_ID}
             ariaLabel="pick directory"
             onPress={handlePickDirectory}

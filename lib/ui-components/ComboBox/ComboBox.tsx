@@ -61,7 +61,7 @@ export function ComboBox<T extends object>(
       <div
         className={cx(
           `relative inline-flex flex-row rounded-md overflow-hidden`,
-          `text-field-neutral px-1 py-1 border-neutral rounded`,
+          `text-field-neutral border-solid border-1 border-colorNeutralTextFieldBorder px-1 py-1 rounded`,
           state.isFocused && 'B-ui-components_misc-input-ring',
         )}
       >
@@ -75,13 +75,7 @@ export function ComboBox<T extends object>(
           ref={buttonRef}
           className={`px-1 cursor-pointer`}
         >
-          <ChevronDownIcon
-            className="w-5 h-5"
-            aria-hidden="true"
-            style={{
-              color: 'var(--BV-ui-bangle-button-color)',
-            }}
-          />
+          <ChevronDownIcon className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
       {state.isOpen && (

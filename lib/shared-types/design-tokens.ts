@@ -155,7 +155,7 @@ export type ToneColors = {
 
   borderSubdued: string; // // for application layout but lighter
   border: string; // for application layout
-  borderStrong: string; // for textfield/action button
+  borderStrong: string; // for a stronger border application layout
 };
 
 export type NeutralColors = ToneColors & {
@@ -171,4 +171,5 @@ export type NeutralColors = ToneColors & {
   textInverted: string;
   textFieldBg: string; // color to fill the input fields with
   textFieldText: string; // color for text inside input fields
+  textFieldBorder: string; // color for border of input fields
 };

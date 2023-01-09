@@ -155,16 +155,13 @@ const Option: ListBoxOptionComponentType = ({ item, state }) => {
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       className={cx(
-        'flex flex-row items-center',
+        'flex flex-row items-center rounded',
         isFocusVisible && 'ring-promote',
         'outline-none rounded-sm cursor-pointer my-2',
         isDisabled && 'opacity-50 cursor-not-allowed',
         isSelected && 'BU_is-active',
         isFocused && 'BU_is-focused',
       )}
-      style={{
-        borderRadius: 'var(--BV-ui-bangle-button-radius)',
-      }}
     >
       <div className="px-3 py-2">{item.rendered}</div>
       <div className="px-3">

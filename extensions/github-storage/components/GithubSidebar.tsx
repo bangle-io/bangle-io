@@ -11,7 +11,7 @@ import {
 import { SEVERITY } from '@bangle.io/constants';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import { isEntryUntouched } from '@bangle.io/remote-file-sync';
-import { ButtonV2, Sidebar } from '@bangle.io/ui-components';
+import { Button, Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 
 import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
@@ -102,7 +102,7 @@ function ModifiedEntries({
   ) : (
     <div>
       <div className="px-4 my-4">
-        <ButtonV2
+        <Button
           className="w-full"
           onPress={() => {
             notification.showNotification({

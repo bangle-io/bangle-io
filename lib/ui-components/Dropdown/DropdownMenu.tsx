@@ -1,6 +1,6 @@
 import type { Placement } from '@popperjs/core';
 import { useToggleButton } from '@react-aria/button';
-import { FocusScope } from '@react-aria/focus';
+import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { useFocus, useHover } from '@react-aria/interactions';
 import { useMenu, useMenuItem, useMenuSection } from '@react-aria/menu';
 import { useSeparator } from '@react-aria/separator';
@@ -13,10 +13,17 @@ import type { ReactNode } from 'react';
 import React, { useCallback, useEffect, useRef } from 'react';
 import reactDOM from 'react-dom';
 
-import { cx, useKeybindings, useWatchClickOutside } from '@bangle.io/utils';
+import type { Tone } from '@bangle.io/constants';
+import { TONE } from '@bangle.io/constants';
+import {
+  cx,
+  isTouchDevice,
+  useKeybindings,
+  useWatchClickOutside,
+} from '@bangle.io/utils';
 
-import type { StylingProps } from './BaseButton';
-import { BaseButton } from './BaseButton';
+import type { BaseButtonStyleProps, ButtonVariant } from '../Button';
+import { BUTTON_VARIANT, useButtonStyleProps } from '../Button';
 import { useTooltipPositioner } from './use-positioner';
 
 export {
@@ -24,59 +31,76 @@ export {
   Section as MenuSection,
 } from '@react-stately/collections';
 
+interface DropdownButtonProps {
+  animateOnPress?: boolean;
+  ariaLabel?: string;
+  autoFocus?: boolean;
+  className?: string;
+  // do not fill in the set the width and height (w-X and h-X)
+  // use size instead
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  size?: BaseButtonStyleProps['size'];
+  style?: React.CSSProperties;
+  text?: ReactNode;
+  tone?: Tone;
+  variant?: ButtonVariant;
+}
+
+interface DropdownMenuProps {
+  ariaLabel?: string;
+  className?: string;
+  placement?: Placement;
+  xOffset?: number;
+  yOffset?: number;
+  style?: React.CSSProperties;
+}
+
 export function DropdownMenu({
-  ariaLabel,
-  buttonAriaLabel,
-  buttonChildren,
-  buttonAutoFocus,
-  buttonClassName = '',
-  buttonStyle = {},
-  buttonStyling = {},
+  buttonProps: dropdownButtonProps,
   children,
-  className = '',
   disabledKeys,
-  isButtonQuiet,
-  isDisabled,
-  menuPlacement = 'bottom',
-  menuXOffset = 5,
-  menuYOffset = 5,
+  isDisabled = false,
+  isTouch = isTouchDevice,
+  menuProps: dropdownMenuProps = {},
   onAction,
   onSelectedChange,
-  style,
-  variant,
 }: {
-  ariaLabel: string;
-  buttonAriaLabel: string;
-  buttonAutoFocus?: boolean;
-  buttonChildren: ReactNode;
-  buttonClassName?: string;
-  buttonStyle?: React.CSSProperties;
-  buttonStyling?: StylingProps;
+  buttonProps: DropdownButtonProps;
   children?: JSX.Element | JSX.Element[];
-  className?: string;
   disabledKeys?: TreeProps<typeof children>['disabledKeys'];
-  isButtonQuiet?: boolean;
   isDisabled?: boolean;
-  menuPlacement?: Placement;
-  menuXOffset?: number;
-  menuYOffset?: number;
+  isTouch?: boolean;
+  menuProps?: DropdownMenuProps;
   onAction: (key: React.Key) => void;
   onSelectedChange?: (isSelected: boolean) => void;
-  style?: React.CSSProperties;
-  variant?: 'primary' | 'secondary';
 }) {
   const buttonRef = useRef<any>(null);
-
-  let state = useToggleState({ onChange: onSelectedChange });
-  let { buttonProps, isPressed } = useToggleButton(
-    { 'aria-label': buttonAriaLabel },
-    state,
+  const toggleState = useToggleState({ onChange: onSelectedChange });
+  const { buttonProps, isPressed: isButtonPressed } = useToggleButton(
+    {
+      'aria-label': dropdownButtonProps.ariaLabel,
+      isDisabled,
+      'autoFocus': dropdownButtonProps.autoFocus,
+    },
+    toggleState,
     buttonRef,
   );
 
-  const { hoverProps, isHovered } = useHover({ isDisabled });
+  const { hoverProps: buttonHoverProps, isHovered: isButtonHovered } = useHover(
+    { isDisabled },
+  );
 
-  const mergedProps = mergeProps(buttonProps, hoverProps);
+  const { isFocusVisible: buttonIsFocusVisible, focusProps: buttonFocusProps } =
+    useFocusRing({
+      autoFocus: dropdownButtonProps.autoFocus,
+    });
+
+  const mergedButtonProps = mergeProps(
+    buttonProps,
+    buttonHoverProps,
+    buttonFocusProps,
+  );
 
   const {
     isTooltipVisible,
@@ -85,10 +109,10 @@ export function DropdownMenu({
     setTriggerElement,
     triggerElement,
   } = useTooltipPositioner({
-    isActive: state.isSelected,
-    placement: menuPlacement,
-    xOffset: menuXOffset,
-    yOffset: menuYOffset,
+    isActive: toggleState.isSelected,
+    placement: dropdownMenuProps.placement ?? 'bottom',
+    xOffset: dropdownMenuProps.xOffset ?? 5,
+    yOffset: dropdownMenuProps.yOffset ?? 5,
   });
 
   useEffect(() => {
@@ -96,26 +120,38 @@ export function DropdownMenu({
   }, [triggerElement]);
 
   const onClose = useCallback(() => {
-    state.setSelected(false);
-  }, [state]);
+    toggleState.setSelected(false);
+  }, [toggleState]);
+
+  useEffect(() => {
+    if (isDisabled && toggleState.isSelected) {
+      toggleState.setSelected(false);
+    }
+  }, [isDisabled, toggleState]);
+
+  const buttonElProps = useButtonStyleProps({
+    elementProps: mergedButtonProps,
+    leftIcon: dropdownButtonProps.leftIcon,
+    rightIcon: dropdownButtonProps.rightIcon,
+    text: dropdownButtonProps.text,
+    styleProps: {
+      animateOnPress: dropdownButtonProps.animateOnPress ?? true,
+      className: dropdownButtonProps.className,
+      isDisabled: isDisabled,
+      isFocusVisible: buttonIsFocusVisible,
+      isHovered: isButtonHovered,
+      isPressed: isButtonPressed,
+      isTouch,
+      size: dropdownButtonProps.size ?? 'md',
+      tone: dropdownButtonProps.tone ?? TONE.NEUTRAL,
+      style: dropdownButtonProps.style,
+      variant: dropdownButtonProps.variant ?? BUTTON_VARIANT.SOLID,
+    },
+  });
 
   return (
     <>
-      <BaseButton
-        {...mergedProps}
-        variant={variant}
-        isQuiet={isButtonQuiet}
-        className={buttonClassName}
-        styling={buttonStyling}
-        isActive={state.isSelected}
-        isDisabled={isDisabled}
-        isHovered={isHovered}
-        isPressed={isPressed}
-        onElementReady={setTriggerElement}
-        style={{ ...buttonStyle, ...((mergedProps as any).style || {}) }}
-      >
-        {buttonChildren}
-      </BaseButton>
+      <button ref={setTriggerElement} {...buttonElProps} />
       {children &&
         isTooltipVisible &&
         reactDOM.createPortal(
@@ -126,12 +162,12 @@ export function DropdownMenu({
           >
             <FocusScope autoFocus>
               <InternalDropdownMenu
-                ariaLabel={ariaLabel}
+                ariaLabel={dropdownMenuProps.ariaLabel ?? 'Dropdown Menu'}
                 onAction={onAction}
                 onClose={onClose}
                 disabledKeys={disabledKeys}
-                className={className}
-                style={style}
+                className={dropdownMenuProps.className}
+                style={dropdownMenuProps.style}
               >
                 {children}
               </InternalDropdownMenu>

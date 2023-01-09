@@ -10,7 +10,7 @@ import { CORE_OPERATIONS_NEW_WORKSPACE } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToWsNameRoute } from '@bangle.io/slice-workspace';
 import {
-  ButtonV2,
+  Button,
   CenteredBoxedPage,
   NewNoteIcon,
 } from '@bangle.io/ui-components';
@@ -48,7 +48,7 @@ export function LandingPage() {
       title="Welcome to Bangle.io"
       actions={
         <>
-          <ButtonV2
+          <Button
             ariaLabel="new workspace"
             onPress={() => {
               dispatchSerialOperation({

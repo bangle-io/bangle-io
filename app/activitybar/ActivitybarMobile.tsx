@@ -12,7 +12,7 @@ import {
   goToWsNameRoute,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { ButtonV2, ChevronLeftIcon } from '@bangle.io/ui-components';
+import { Button, ChevronLeftIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
@@ -70,11 +70,11 @@ export function ActivitybarMobileDumb({
       >
         <div className="flex flex-row items-center flex-none">
           {primaryWsPath ? (
-            <ButtonV2
+            <Button
               variant="transparent"
               ariaLabel="Go home"
-              size="sm"
-              leftIcon={<ChevronLeftIcon className="w-6 h-6" />}
+              size="md"
+              leftIcon={<ChevronLeftIcon />}
               onPress={() => {
                 goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
                   reopenPreviousEditors: false,
@@ -89,7 +89,7 @@ export function ActivitybarMobileDumb({
           className="flex flex-row items-center shrink overflow-hidden"
           role="button"
         >
-          <ButtonV2
+          <Button
             variant="transparent"
             ariaLabel="files palette"
             size="md"
@@ -111,7 +111,7 @@ export function ActivitybarMobileDumb({
           {primaryWsPath && (
             <div className="mr-2">
               {showDone ? (
-                <ButtonV2
+                <Button
                   variant="solid"
                   tone="promote"
                   ariaLabel="done editing"
@@ -126,7 +126,7 @@ export function ActivitybarMobileDumb({
                   }}
                 />
               ) : (
-                <ButtonV2
+                <Button
                   variant="solid"
                   ariaLabel={'edit'}
                   className="capitalize"

@@ -8,9 +8,8 @@ import type {
 export type { ListBoxOptionComponentType } from './Select/ListBox';
 
 export type { AriaNode, Collection, CollectionBase, SingleSelection };
-export * from './Button/Button';
+export * from './Button';
 export * from './ButtonIcon';
-export * from './ButtonV2/ButtonV2';
 export * from './CenteredPage';
 export * from './ComboBox/ComboBox';
 export * from './Dialog';
@@ -22,7 +21,6 @@ export * from './Icons';
 export * from './Inline';
 export * from './InlinePaletteUI/InlinePaletteUI';
 export * from './Input';
-export * from './Input/TextField';
 export * from './InputPalette';
 export * from './ListPalette';
 export * from './LocationBreadCrumb';
@@ -30,6 +28,7 @@ export * from './PrettyKeybinding';
 export { ListBox } from './Select/ListBox';
 export * from './Select/Select';
 export * from './Sidebar';
+export * from './TextField';
 export * from './UniversalPalette';
 // aria
 export { CheckIcon } from '@heroicons/react/solid';

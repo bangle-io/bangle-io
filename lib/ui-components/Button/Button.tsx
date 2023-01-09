@@ -2,57 +2,80 @@ import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
-import type { ReactNode } from 'react';
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 
+import type { Tone } from '@bangle.io/constants';
+import { TONE } from '@bangle.io/constants';
 import type { FirstParameter } from '@bangle.io/shared-types';
-import { cx, isTouchDevice } from '@bangle.io/utils';
+import { isTouchDevice } from '@bangle.io/utils';
 
-import { BaseButton } from './BaseButton';
+import type { BtnSize, ButtonVariant } from './common';
+import { BUTTON_VARIANT } from './common';
+import { useButtonStyleProps } from './hooks';
 
-export type StylingProps = {
-  buttonBgColor?: string;
-  color?: string;
-  hoverBgColor?: string;
-  hoverColor?: string;
-  pressedBgColor?: string;
-  disabledBgColor?: string;
-  disabledColor?: string;
-};
-
-export const Button = ({
-  ariaLabel,
-  autoFocus = false,
-  children,
-  className,
-  id,
-  isDisabled,
-  isQuiet,
-  onPress = () => {},
-  animateOnPress = true,
-  style: incomingStyle = {},
-  styling = {},
-  variant = 'secondary',
-}: {
-  ariaLabel: string;
+interface FocusType {
   autoFocus?: boolean;
-  children: ReactNode;
-  className?: string;
-  id?: string;
+  // TODO add focus ring offset color
+}
+
+const defaultFocus = {
+  autoFocus: false,
+} satisfies FocusType;
+
+export function Button({
+  animateOnPress = true,
+  ariaLabel,
+  className = '',
+  focus,
+  id,
+  isDisabled = false,
+  isTouch = isTouchDevice,
+  leftIcon,
+  onPress,
+  rightIcon,
+  size = 'md',
+  style = {},
+  text,
+  tone = TONE.NEUTRAL,
+  tooltipPlacement,
+  variant = BUTTON_VARIANT.SOLID,
+  // auto will center if only one child is present
+  // else it will space between
+  justifyContent = 'auto',
+}: {
   animateOnPress?: boolean;
+  ariaLabel?: string;
+  className?: string;
+  focus?: FocusType;
+  id?: string;
   isDisabled?: boolean;
-  isQuiet?: 'hoverBg' | boolean;
+  isTouch?: boolean;
+  // do not fill in the set the width and height (w-X and h-X)
+  // use size instead
+  leftIcon?: React.ReactNode;
   onPress?: FirstParameter<typeof useButton>['onPress'];
+  rightIcon?: React.ReactNode;
+  size?: BtnSize;
   style?: React.CSSProperties;
-  styling?: StylingProps;
-  variant?: 'primary' | 'secondary' | 'destructive';
-}) => {
-  let ref = useRef<HTMLButtonElement>(null);
+  text?: React.ReactNode;
+  tone?: Tone;
+  tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
+  variant?: ButtonVariant;
+  justifyContent?: React.CSSProperties['justifyContent'] | 'auto';
+}) {
+  if (style.justifyContent) {
+    console.warn(
+      'Button: Do not set justifyContent in style prop. Use justifyContent prop instead',
+    );
+  }
+  const ref = useRef<HTMLButtonElement>(null);
+  const { autoFocus = defaultFocus.autoFocus } = focus || defaultFocus;
 
   const { hoverProps, isHovered } = useHover({ isDisabled });
-  // NOTE; focus ring is only shown for keyboard users
-  // ie when they use keyboard to navigate the app
-  let { isFocusVisible, focusProps } = useFocusRing({ autoFocus });
+
+  const { isFocusVisible, focusProps } = useFocusRing({
+    autoFocus: autoFocus,
+  });
 
   const { buttonProps, isPressed } = useButton(
     {
@@ -60,133 +83,36 @@ export const Button = ({
       onPress,
       isDisabled,
       'type': 'button',
-      autoFocus,
+      'autoFocus': autoFocus,
     },
     ref,
   );
 
-  const style = useMemo(() => {
-    let {
-      color,
-      buttonBgColor,
-      hoverBgColor,
-      hoverColor,
-      pressedBgColor,
-      disabledBgColor = 'var(--BV-ui-bangle-button-disabled-bg-color)',
-      disabledColor = 'var(--BV-ui-bangle-button-disabled-color)',
-    } = styling;
-
-    switch (variant) {
-      case 'secondary': {
-        ({
-          color = 'var(--BV-ui-bangle-button-color)',
-          buttonBgColor = 'var(--BV-ui-bangle-button-bg-color)',
-          hoverBgColor = 'var(--BV-ui-bangle-button-hover-bg-color)',
-          hoverColor = 'var(--BV-ui-bangle-button-hover-color)',
-          pressedBgColor = 'var(--BV-ui-bangle-button-pressed-bg-color)',
-        } = styling);
-        break;
-      }
-
-      case 'primary': {
-        ({
-          color = 'var(--BV-ui-bangle-button-primary-color)',
-          buttonBgColor = 'var(--BV-ui-bangle-button-primary-bg-color)',
-          hoverBgColor = 'var(--BV-ui-bangle-button-primary-hover-bg-color)',
-          hoverColor = 'var(--BV-ui-bangle-button-primary-hover-color)',
-          pressedBgColor = 'var(--BV-ui-bangle-button-primary-pressed-bg-color)',
-        } = styling);
-        break;
-      }
-
-      case 'destructive': {
-        ({
-          color = 'var(--BV-ui-bangle-button-destructive-color)',
-          buttonBgColor = 'var(--BV-ui-bangle-button-destructive-bg-color)',
-          hoverBgColor = 'var(--BV-ui-bangle-button-destructive-hover-bg-color)',
-          hoverColor = 'var(--BV-ui-bangle-button-destructive-hover-color)',
-          pressedBgColor = 'var(--BV-ui-bangle-button-destructive-pressed-bg-color)',
-        } = styling);
-        break;
-      }
-    }
-
-    const result = { ...incomingStyle };
-    result.color = color;
-
-    if (!isQuiet) {
-      result.backgroundColor = buttonBgColor;
-    }
-
-    if (isHovered) {
-      result.color = hoverColor;
-
-      if (!isQuiet || isQuiet === 'hoverBg') {
-        result.backgroundColor = hoverBgColor;
-      }
-    }
-
-    if (isPressed) {
-      result.backgroundColor = pressedBgColor;
-    }
-
-    if (isDisabled) {
-      result.backgroundColor = disabledBgColor;
-      result.color = disabledColor;
-    }
-
-    return result;
-  }, [
-    styling,
-    incomingStyle,
-    isHovered,
-    isDisabled,
-    isQuiet,
-    variant,
-    isPressed,
-  ]);
-
-  let variantClassName = 'BU_variant-secondary';
-  switch (variant) {
-    case 'primary': {
-      variantClassName = 'BU_variant-primary';
-      break;
-    }
-    case 'destructive': {
-      variantClassName = 'BU_variant-destructive';
-      break;
-    }
-
-    case 'secondary': {
-      variantClassName = 'BU_variant-secondary';
-      break;
-    }
-
-    default: {
-      // hack to catch switch slipping
-      let val: never = variant;
-      throw new Error('Unknown variant type ' + val);
-    }
-  }
+  const elementProps = mergeProps(hoverProps, buttonProps, focusProps);
 
   return (
-    <BaseButton
-      animateOnPress={animateOnPress}
-      disabled={isDisabled}
-      style={style}
-      isHovered={isHovered}
-      isPressed={isPressed}
-      className={cx(
-        'B-ui-components_button select-none',
-        isTouchDevice ? 'py-2 px-4' : 'py-1 px-3',
-        isFocusVisible && 'ring-promote',
-        variantClassName,
-        className,
-      )}
+    <button
       ref={ref}
-      {...mergeProps(hoverProps, buttonProps, focusProps)}
-    >
-      {children}
-    </BaseButton>
+      {...useButtonStyleProps({
+        elementProps,
+        leftIcon,
+        rightIcon,
+        styleProps: {
+          animateOnPress,
+          className,
+          isDisabled,
+          isFocusVisible,
+          isHovered,
+          isPressed,
+          isTouch,
+          size,
+          tone,
+          style,
+          variant,
+          justifyContent,
+        },
+        text,
+      })}
+    />
   );
-};
+}

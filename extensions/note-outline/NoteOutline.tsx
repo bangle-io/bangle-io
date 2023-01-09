@@ -16,7 +16,7 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { ButtonV2 } from '@bangle.io/ui-components';
+import { Button } from '@bangle.io/ui-components';
 import {
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
@@ -147,8 +147,7 @@ export function NoteOutline() {
         }
 
         return (
-          <ButtonV2
-            // isQuiet={isQuiet}
+          <Button
             variant={
               r.isActive
                 ? 'solid'
@@ -164,11 +163,11 @@ export function NoteOutline() {
             onPress={() => {
               onExecuteItem(r);
             }}
+            justifyContent="flex-start"
             style={{
               paddingLeft: 12 * (r.level - 1),
               paddingTop: 4,
               paddingBottom: 4,
-              justifyContent: 'start',
               whiteSpace: 'nowrap',
             }}
             text={
