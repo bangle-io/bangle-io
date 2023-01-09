@@ -35,6 +35,7 @@ export function SWReloadPrompt() {
         uid: 'offline-' + RELEASE_ID,
         severity: SEVERITY.INFO,
         title: 'Bangle.io is now offline ready.',
+        transient: true,
       })(bangleStore.state, bangleStore.dispatch);
     }
   }, [shownOfflineReady, offlineReady, bangleStore, updateShownOfflineReady]);

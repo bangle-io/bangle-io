@@ -149,10 +149,10 @@ export function createBasicStore<
 
 // this object exists to avoid test writers import the keys
 export interface TestInitialSliceStateOverride {
-  uiSlice?: Partial<ReturnType<typeof uiSliceKey['getSliceState']>>;
-  pageSlice?: Partial<ReturnType<typeof pageSliceKey['getSliceState']>>;
+  uiSlice?: Partial<ReturnType<(typeof uiSliceKey)['getSliceState']>>;
+  pageSlice?: Partial<ReturnType<(typeof pageSliceKey)['getSliceState']>>;
   editorManagerSlice?: Partial<
-    ReturnType<typeof editorManagerSliceKey['getSliceState']>
+    ReturnType<(typeof editorManagerSliceKey)['getSliceState']>
   >;
 }
 

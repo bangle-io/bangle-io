@@ -51,7 +51,6 @@ if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
 // WARNING: the width is hard coded at multiple places, search for it
 // by value if you want to change it
 export const SPLIT_SCREEN_MIN_WIDTH = 759;
-
 export const FILE_PALETTE_MAX_RECENT_FILES = 15;
 export const FILE_PALETTE_MAX_FILES = 200;
 export const SERVICE_WORKER_UPDATE_INTERVAL = IS_PRODUCTION_APP_ENV

@@ -23,15 +23,15 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.4",
-    "postcss": "^8.4.16"
+    "postcss": "^8.4.21"
   },
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/core-theme": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@unocss/reset": "^0.47.5",
+    "@unocss/reset": "^0.48.2",
     "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
+    "typescript": "4.9.3"
   },
   "license": "AGPL-3.0-or-later"
 }
