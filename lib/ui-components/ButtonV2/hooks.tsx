@@ -28,7 +28,7 @@ export type BaseButtonStyleProps = {
   variant: ButtonVariant;
 };
 
-export const useButtonProps = ({
+export const useButtonStyleProps = ({
   text,
   leftIcon,
   rightIcon,

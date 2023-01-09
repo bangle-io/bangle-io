@@ -6,12 +6,11 @@ import {
   useOverlay,
   usePreventScroll,
 } from '@react-aria/overlays';
-import { useViewportSize } from '@react-aria/utils';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
-import { cx, usePrevious } from '@bangle.io/utils';
+import { cx } from '@bangle.io/utils';
 
-import { ButtonV2 } from '../ButtonV2/ButtonV2';
+import { ButtonV2 } from '../ButtonV2';
 import { LoadingCircleIcon } from '../Icons';
 import { Inline } from '../Inline';
 import type { SizeType } from '../misc';

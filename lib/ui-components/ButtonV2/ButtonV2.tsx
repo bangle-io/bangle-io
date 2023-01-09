@@ -9,11 +9,9 @@ import { TONE } from '@bangle.io/constants';
 import type { FirstParameter } from '@bangle.io/shared-types';
 import { isTouchDevice } from '@bangle.io/utils';
 
-import { useButtonProps } from './BaseButton';
 import type { BtnSize, ButtonVariant } from './common';
 import { BUTTON_VARIANT } from './common';
-
-export { BUTTON_VARIANT } from './common';
+import { useButtonStyleProps } from './hooks';
 
 interface FocusType {
   autoFocus?: boolean;
@@ -86,7 +84,7 @@ export function ButtonV2({
   return (
     <button
       ref={ref}
-      {...useButtonProps({
+      {...useButtonStyleProps({
         elementProps,
         leftIcon,
         rightIcon,

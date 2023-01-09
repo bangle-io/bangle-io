@@ -9,7 +9,7 @@ export type { ListBoxOptionComponentType } from './Select/ListBox';
 
 export type { AriaNode, Collection, CollectionBase, SingleSelection };
 export * from './ButtonIcon';
-export * from './ButtonV2/ButtonV2';
+export * from './ButtonV2';
 export * from './CenteredPage';
 export * from './ComboBox/ComboBox';
 export * from './Dialog';

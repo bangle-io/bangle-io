@@ -4,7 +4,7 @@ import { OverlayProvider } from '@react-aria/overlays';
 import type { Story } from '@storybook/react';
 import React, { useCallback } from 'react';
 
-import { ButtonV2 } from '../ButtonV2/ButtonV2';
+import { ButtonV2 } from '../ButtonV2';
 import { Dialog } from './Dialog';
 
 export default {

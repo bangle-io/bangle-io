@@ -4,7 +4,6 @@ import 'uno.css';
 import '@bangle.io/core-theme/core-theme.css';
 
 import './storybook.css';
-import '../../public/main.css';
 import { themes } from '@storybook/theming';
 import {
   listenToResize,

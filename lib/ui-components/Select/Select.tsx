@@ -12,9 +12,8 @@ import { vars } from '@bangle.io/atomic-css';
 import { TONE } from '@bangle.io/constants';
 import { cx, isTouchDevice } from '@bangle.io/utils';
 
-import type { BaseButtonStyleProps } from '../ButtonV2/BaseButton';
-import { useButtonProps } from '../ButtonV2/BaseButton';
-import { BUTTON_VARIANT } from '../ButtonV2/common';
+import type { BaseButtonStyleProps } from '../ButtonV2';
+import { BUTTON_VARIANT, useButtonStyleProps } from '../ButtonV2';
 import { FieldLabel } from '../FieldLabel';
 import { ListBox } from './ListBox';
 import { Popover } from './Popover';
@@ -44,7 +43,7 @@ export function Select<T extends object>(
 
   let { focusProps, isFocusVisible } = useFocusRing();
 
-  const buttonElProps = useButtonProps({
+  const buttonElProps = useButtonStyleProps({
     elementProps: mergeProps(hoverProps, buttonProps, focusProps),
     leftIcon: undefined,
     rightIcon: <SelectorIcon />,

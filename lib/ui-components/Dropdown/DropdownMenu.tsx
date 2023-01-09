@@ -22,10 +22,8 @@ import {
   useWatchClickOutside,
 } from '@bangle.io/utils';
 
-import type { BaseButtonStyleProps } from '../ButtonV2/BaseButton';
-import { useButtonProps } from '../ButtonV2/BaseButton';
-import type { ButtonVariant } from '../ButtonV2/common';
-import { BUTTON_VARIANT } from '../ButtonV2/common';
+import type { BaseButtonStyleProps, ButtonVariant } from '../ButtonV2';
+import { BUTTON_VARIANT, useButtonStyleProps } from '../ButtonV2';
 import { useTooltipPositioner } from './use-positioner';
 
 export {
@@ -131,7 +129,7 @@ export function DropdownMenu({
     }
   }, [isDisabled, toggleState]);
 
-  const buttonElProps = useButtonProps({
+  const buttonElProps = useButtonStyleProps({
     elementProps: mergedButtonProps,
     leftIcon: dropdownButtonProps.leftIcon,
     rightIcon: dropdownButtonProps.rightIcon,
