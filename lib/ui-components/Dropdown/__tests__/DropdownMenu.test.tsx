@@ -23,14 +23,15 @@ beforeEach(() => {
   result = render(
     <div>
       <DropdownMenu
-        menuPlacement="right-start"
-        ariaLabel="test-label"
-        buttonAriaLabel=""
-        buttonStyling={{
-          activeColor: 'test-active-color',
+        menuProps={{
+          ariaLabel: 'test-label',
+          placement: 'right-start',
         }}
-        buttonClassName="test-button-class"
-        buttonChildren={<span>button child</span>}
+        buttonProps={{
+          ariaLabel: '',
+          className: 'test-button-class',
+          text: 'button child',
+        }}
         onAction={onAction}
       >
         <MenuSection aria-label="misc-test">
@@ -51,12 +52,10 @@ test('renders correctly', () => {
         <button
           aria-label=""
           aria-pressed="false"
-          class="test-button-class B-ui-components_dropdown-button p-1  transition-all duration-100 "
+          class="test-button-class text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
           type="button"
         >
-          <span>
-            button child
-          </span>
+          button child
         </button>
       </div>
     </div>

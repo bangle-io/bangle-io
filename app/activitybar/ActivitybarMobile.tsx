@@ -73,8 +73,8 @@ export function ActivitybarMobileDumb({
             <ButtonV2
               variant="transparent"
               ariaLabel="Go home"
-              size="sm"
-              leftIcon={<ChevronLeftIcon className="w-6 h-6" />}
+              size="md"
+              leftIcon={<ChevronLeftIcon />}
               onPress={() => {
                 goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
                   reopenPreviousEditors: false,

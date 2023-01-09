@@ -36,16 +36,16 @@ export function EditorIssueComp({
 
 const SeverityLookup = {
   [SEVERITY.ERROR]: () => ({
-    component: <ExclamationCircleIcon className="w-5 h-5" />,
+    component: <ExclamationCircleIcon />,
   }),
   [SEVERITY.WARNING]: () => ({
-    component: <ExclamationIcon className="w-5 h-5" />,
+    component: <ExclamationIcon />,
   }),
   [SEVERITY.INFO]: () => ({
-    component: <InformationCircleIcon className="w-5 h-5" />,
+    component: <InformationCircleIcon />,
   }),
   [SEVERITY.SUCCESS]: () => ({
-    component: <CheckCircleIcon className="w-5 h-5" />,
+    component: <CheckCircleIcon />,
   }),
 };
 

@@ -6,8 +6,9 @@ import React from 'react';
 import { TONE } from '@bangle.io/constants';
 
 import { CloseIcon, FolderIcon } from '../Icons';
-import type { ButtonVariant } from './ButtonV2';
-import { BUTTON_VARIANT, ButtonV2 } from './ButtonV2';
+import { ButtonV2 } from './ButtonV2';
+import type { ButtonVariant } from './common';
+import { BUTTON_VARIANT } from './common';
 
 export default {
   title: 'ui-components/ButtonV2',

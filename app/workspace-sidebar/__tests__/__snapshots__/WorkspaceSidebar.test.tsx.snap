@@ -22,24 +22,22 @@ exports[`renders 1`] = `
             style="background-color: transparent;"
             type="button"
           >
-            <span>
-              <svg
-                class="w-5 h-5  "
-                fill="currentColor"
-                viewBox="0 0 18 18"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  fill="#ff13dc"
-                  height="18"
-                  opacity="0"
-                  width="18"
-                />
-                <path
-                  d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
-                />
-              </svg>
-            </span>
+            <svg
+              class="w-5 h-5  "
+              fill="currentColor"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="#ff13dc"
+                height="18"
+                opacity="0"
+                width="18"
+              />
+              <path
+                d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+              />
+            </svg>
           </button>
         </span>
       </div>

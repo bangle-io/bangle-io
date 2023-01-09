@@ -13,12 +13,7 @@ import { ButtonV2, GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
-
-const ButtonStyleOBj: React.CSSProperties = {
-  borderRadius: 0,
-  color: vars.color.app.activitybarText,
-  padding: 0,
-};
+import { ButtonStyleOBj } from './common';
 
 export function Activitybar() {
   const extensionRegistry = useExtensionRegistryContext();

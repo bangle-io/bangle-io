@@ -252,12 +252,10 @@ test('activitybarIconShow is respected', async () => {
         style="background-color: transparent; border-radius: 0; padding: 0px;"
         type="button"
       >
-        <span>
-          <span
-            class="w-7 h-7  "
-          >
-            test-search-icon
-          </span>
+        <span
+          class="w-7 h-7  "
+        >
+          test-search-icon
         </span>
       </button>,
     ]

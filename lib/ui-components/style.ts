@@ -1,4 +1,3 @@
-import './Button/Button.css';
 import './Dialog/style.css';
 import './ErrorBoundary.css';
 import './Icons.css';

@@ -1,20 +1,15 @@
-import './style';
-
 import type { Story } from '@storybook/react';
 import React from 'react';
 
 import type { FirstParameter } from '@bangle.io/shared-types';
 
-import { ButtonContent } from './ButtonContent';
 import { DropdownMenu, MenuItem, MenuSection } from './DropdownMenu';
 
 export default {
-  title: 'ui-bangle-button/DropdownMenu',
+  title: 'ui-components/DropdownMenu',
   component: DropdownMenu,
 
-  argTypes: {
-    backgroundColor: { control: 'color' },
-  },
+  argTypes: {},
 };
 
 export const Primary: Story<FirstParameter<typeof DropdownMenu>> = (args) => {
@@ -22,7 +17,7 @@ export const Primary: Story<FirstParameter<typeof DropdownMenu>> = (args) => {
 };
 
 Primary.args = {
-  buttonChildren: <ButtonContent text="wow" size="small" />,
+  buttonProps: { text: 'wow' },
   children: (
     <MenuSection aria-label="misc section">
       <MenuItem aria-label="new note" key={'NewNoteKey'}>

@@ -8,7 +8,6 @@ import type {
 export type { ListBoxOptionComponentType } from './Select/ListBox';
 
 export type { AriaNode, Collection, CollectionBase, SingleSelection };
-export * from './Button/Button';
 export * from './ButtonIcon';
 export * from './ButtonV2/ButtonV2';
 export * from './CenteredPage';

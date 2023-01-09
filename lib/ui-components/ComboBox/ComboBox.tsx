@@ -75,13 +75,7 @@ export function ComboBox<T extends object>(
           ref={buttonRef}
           className={`px-1 cursor-pointer`}
         >
-          <ChevronDownIcon
-            className="w-5 h-5"
-            aria-hidden="true"
-            style={{
-              color: 'var(--BV-ui-bangle-button-color)',
-            }}
-          />
+          <ChevronDownIcon className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
       {state.isOpen && (

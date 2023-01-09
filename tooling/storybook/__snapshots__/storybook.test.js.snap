@@ -24,6 +24,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
     <button
       aria-label="Workspace Home"
       className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -48,36 +49,34 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       }
       type="button"
     >
-      <span>
-        <svg
-          className="w-7 h-7  "
-          fill="currentColor"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            cx="12"
-            cy="12"
-            r="11"
-            strokeWidth="2"
-            style={
-              {
-                "fill": "none",
-              }
+      <svg
+        className="w-7 h-7  "
+        fill="currentColor"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="11"
+          strokeWidth="2"
+          style={
+            {
+              "fill": "none",
             }
-          />
-          <text
-            alignmentBaseline="central"
-            strokeWidth="0"
-            textAnchor="middle"
-            x="50%"
-            y="50%"
-          >
-            H
-          </text>
-        </svg>
-      </span>
+          }
+        />
+        <text
+          alignmentBaseline="central"
+          strokeWidth="0"
+          textAnchor="middle"
+          x="50%"
+          y="50%"
+        >
+          H
+        </text>
+      </svg>
     </button>
     <div
       className="flex-grow"
@@ -85,6 +84,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
     <button
       aria-label="What's new"
       className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -109,27 +109,26 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       }
       type="button"
     >
-      <span>
-        <svg
-          className="w-7 h-7  "
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-          />
-        </svg>
-      </span>
+      <svg
+        className="w-7 h-7  "
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+        />
+      </svg>
     </button>
     <button
       aria-label="options menu"
       aria-pressed={false}
-      className="w-full py-3 rounded-sm flex justify-center BU_widescreen  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -146,13 +145,16 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
     >
       <svg
-        className="h-7 w-7"
+        className="w-7 h-7  "
         fill="currentColor"
         viewBox="0 0 18 18"
         xmlns="http://www.w3.org/2000/svg"
@@ -196,6 +198,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
     <button
       aria-label="Workspace Home"
       className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -220,40 +223,39 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       }
       type="button"
     >
-      <span>
-        <svg
-          className="w-7 h-7  "
-          fill="currentColor"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            cx="12"
-            cy="12"
-            r="11"
-            strokeWidth="2"
-            style={
-              {
-                "fill": "none",
-              }
+      <svg
+        className="w-7 h-7  "
+        fill="currentColor"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="11"
+          strokeWidth="2"
+          style={
+            {
+              "fill": "none",
             }
-          />
-          <text
-            alignmentBaseline="central"
-            strokeWidth="0"
-            textAnchor="middle"
-            x="50%"
-            y="50%"
-          >
-            H
-          </text>
-        </svg>
-      </span>
+          }
+        />
+        <text
+          alignmentBaseline="central"
+          strokeWidth="0"
+          textAnchor="middle"
+          x="50%"
+          y="50%"
+        >
+          H
+        </text>
+      </svg>
     </button>
     <button
       aria-label="I am a folder sidebar"
       className="border-l-2 border-colorAppActivitybarBg  text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -278,22 +280,20 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       }
       type="button"
     >
-      <span>
-        <svg
-          className="w-7 h-7  "
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-          />
-        </svg>
-      </span>
+      <svg
+        className="w-7 h-7  "
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+        />
+      </svg>
     </button>
     <div
       className="flex-grow"
@@ -301,6 +301,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
     <button
       aria-label="What's new"
       className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -325,27 +326,26 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       }
       type="button"
     >
-      <span>
-        <svg
-          className="w-7 h-7  "
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-          />
-        </svg>
-      </span>
+      <svg
+        className="w-7 h-7  "
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+        />
+      </svg>
     </button>
     <button
       aria-label="options menu"
       aria-pressed={false}
-      className="w-full py-3 rounded-sm flex justify-center BU_widescreen  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
+      className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -362,13 +362,16 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       onTouchStart={[Function]}
       style={
         {
+          "backgroundColor": "transparent",
+          "borderRadius": 0,
           "color": "var(--BV-color-app-activitybarText)",
+          "padding": 0,
         }
       }
       type="button"
     >
       <svg
-        className="h-7 w-7"
+        className="w-7 h-7  "
         fill="currentColor"
         viewBox="0 0 18 18"
         xmlns="http://www.w3.org/2000/svg"
@@ -405,7 +408,8 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
     >
       <button
         aria-label="Go home"
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -428,24 +432,22 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-6 h-6 w-5 h-5  "
-            fill="currentColor"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              fill="#ff13dc"
-              height="18"
-              opacity="0"
-              width="18"
-            />
-            <path
-              d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-6 h-6  "
+          fill="currentColor"
+          viewBox="0 0 18 18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect
+            fill="#ff13dc"
+            height="18"
+            opacity="0"
+            width="18"
+          />
+          <path
+            d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+          />
+        </svg>
       </button>
     </div>
     <div
@@ -455,6 +457,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
       <button
         aria-label="files palette"
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -492,6 +495,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         <button
           aria-label="edit"
           className="capitalize text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -523,7 +527,8 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         <button
           aria-label="options menu"
           aria-pressed={false}
-          className="w-full py-3 rounded-sm flex justify-center  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
+          className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -540,13 +545,14 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "color": "var(--BV-color-app-activitybarText)",
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-neutral-textSubdued)",
             }
           }
           type="button"
         >
           <svg
-            className="h-5 w-5"
+            className="w-5 h-5  "
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -579,7 +585,8 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
     >
       <button
         aria-label="Go home"
-        className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -602,24 +609,22 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-6 h-6 w-5 h-5  "
-            fill="currentColor"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              fill="#ff13dc"
-              height="18"
-              opacity="0"
-              width="18"
-            />
-            <path
-              d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-6 h-6  "
+          fill="currentColor"
+          viewBox="0 0 18 18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect
+            fill="#ff13dc"
+            height="18"
+            opacity="0"
+            width="18"
+          />
+          <path
+            d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+          />
+        </svg>
       </button>
     </div>
     <div
@@ -629,6 +634,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
       <button
         aria-label="files palette"
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -666,6 +672,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         <button
           aria-label="edit"
           className="capitalize text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -697,7 +704,8 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         <button
           aria-label="options menu"
           aria-pressed={false}
-          className="w-full py-3 rounded-sm flex justify-center  B-ui-components_dropdown-button p-1  transition-all duration-100 animate-on-press is-quiet "
+          className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -714,13 +722,14 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "color": "var(--BV-color-app-activitybarText)",
+              "backgroundColor": "transparent",
+              "color": "var(--BV-color-neutral-textSubdued)",
             }
           }
           type="button"
         >
           <svg
-            className="h-5 w-5"
+            className="w-5 h-5  "
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -747,6 +756,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
   <div>
     <button
       className="ml-2 text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -773,6 +783,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
     </button>
     <button
       className="ml-2 text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -799,6 +810,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
     </button>
     <button
       className="ml-2 text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -835,6 +847,7 @@ exports[`Storyshots core-extension/PickWorkspaceType Simple Submit 1`] = `
   <button
     aria-label="open"
     className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -871,6 +884,7 @@ exports[`Storyshots core-extension/PickWorkspaceType Template 1`] = `
   <button
     aria-label="open"
     className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -919,6 +933,7 @@ exports[`Storyshots editor-container/EditorIssueComp Error 1`] = `
       <button
         aria-label="Editor encountered an issue"
         className="capitalize truncate text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -941,22 +956,20 @@ exports[`Storyshots editor-container/EditorIssueComp Error 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-5 h-5 w-5 h-5 mr-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="mr-1  w-5 h-5  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
         This is a test
       </button>
     </div>
@@ -981,6 +994,7 @@ exports[`Storyshots editor-container/EditorIssueComp Warning 1`] = `
       <button
         aria-label="Editor encountered an issue"
         className="capitalize truncate text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1003,22 +1017,20 @@ exports[`Storyshots editor-container/EditorIssueComp Warning 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-5 h-5 w-5 h-5 mr-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="mr-1  w-5 h-5  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
         This is a test
       </button>
     </div>
@@ -1046,6 +1058,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
     <button
       aria-label="note path"
       className="BU_active text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1079,6 +1092,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
       <button
         aria-label="Close"
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1101,20 +1115,18 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className=" w-4 h-4  "
+        <svg
+          className=" w-4 h-4  "
+          fill="currentColor"
+          style={{}}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
             fill="currentColor"
-            style={{}}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -1141,6 +1153,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
     <button
       aria-label="note path"
       className="BU_active text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1168,6 +1181,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
     <button
       aria-label="enable editing"
       className="mx-2 text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1201,6 +1215,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       <button
         aria-label="Close"
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1223,20 +1238,18 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className=" w-4 h-4  "
+        <svg
+          className=" w-4 h-4  "
+          fill="currentColor"
+          style={{}}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
             fill="currentColor"
-            style={{}}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -1263,6 +1276,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
     <button
       aria-label="note path"
       className="BU_active text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1296,6 +1310,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
       <button
         aria-label="Close split screen"
         className="lg:mr-1 BU_is-active  text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1318,24 +1333,23 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-4 h-4  "
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              clipRule="evenodd"
-              d="M2 4H22V20H2V4ZM16 18V6H4V18H16Z"
-              fill="currentColor"
-              fillRule="evenodd"
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-4 h-4  "
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clipRule="evenodd"
+            d="M2 4H22V20H2V4ZM16 18V6H4V18H16Z"
+            fill="currentColor"
+            fillRule="evenodd"
+          />
+        </svg>
       </button>
       <button
         aria-label="Close"
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1358,20 +1372,18 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className=" w-4 h-4  "
+        <svg
+          className=" w-4 h-4  "
+          fill="currentColor"
+          style={{}}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
             fill="currentColor"
-            style={{}}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -1398,6 +1410,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
     <button
       aria-label="note path"
       className="BU_active text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+      disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
       onDragStart={[Function]}
@@ -1431,6 +1444,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
       <button
         aria-label="Close"
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1453,20 +1467,18 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className=" w-4 h-4  "
+        <svg
+          className=" w-4 h-4  "
+          fill="currentColor"
+          style={{}}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
             fill="currentColor"
-            style={{}}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -1507,213 +1519,6 @@ exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
 </button>
 `;
 
-exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
-<button
-  aria-pressed={false}
-  className="B-ui-components_dropdown-button p-1  transition-all duration-100 "
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-      "color": "var(--BV-ui-bangle-button-color)",
-    }
-  }
-  type="button"
->
-  <span
-    className=""
-  >
-    wow
-  </span>
-</button>
-`;
-
-exports[`Storyshots ui-components/BaseButton Primary 1`] = `
-<button
-  className="transition-all duration-100 cursor-default  BU_is-hovered BU_is-pressed "
-  style={
-    {
-      "transform": "scale(var(--BV-ui-bangle-button-depression))",
-    }
-  }
-  type="button"
->
-  Hello
-</button>
-`;
-
-exports[`Storyshots ui-components/BaseButton Secondary 1`] = `
-<button
-  className="transition-all duration-100 cursor-default  "
-  type="button"
->
-  Hello
-</button>
-`;
-
-exports[`Storyshots ui-components/Button Basic Test 1`] = `
-<button
-  aria-label="Hi brother"
-  className="B-ui-components_button select-none py-1 px-3 BU_variant-secondary i-am-a-class  transition-all duration-100 cursor-default  "
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
-      "color": "var(--BV-ui-bangle-button-color)",
-    }
-  }
-  type="button"
->
-  Hello
-</button>
-`;
-
-exports[`Storyshots ui-components/Button Destructive Button 1`] = `
-<button
-  aria-label="Hi brother"
-  className="B-ui-components_button select-none py-1 px-3 BU_variant-destructive  transition-all duration-100 cursor-default  "
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "backgroundColor": "var(--BV-ui-bangle-button-destructive-bg-color)",
-      "color": "var(--BV-ui-bangle-button-destructive-color)",
-    }
-  }
-  type="button"
->
-  Hello
-</button>
-`;
-
-exports[`Storyshots ui-components/Button Disabled Button 1`] = `
-<button
-  aria-label="Hi brother"
-  className="B-ui-components_button select-none py-1 px-3 BU_variant-secondary i-am-a-class  transition-all duration-100 cursor-default  cursor-not-allowed "
-  disabled={true}
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "backgroundColor": "var(--BV-ui-bangle-button-disabled-bg-color)",
-      "color": "var(--BV-ui-bangle-button-disabled-color)",
-    }
-  }
-  type="button"
->
-  Hello
-</button>
-`;
-
-exports[`Storyshots ui-components/Button Primary Button 1`] = `
-<button
-  aria-label="Hi brother"
-  className="B-ui-components_button select-none py-1 px-3 BU_variant-primary  transition-all duration-100 cursor-default  "
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "backgroundColor": "var(--BV-ui-bangle-button-primary-bg-color)",
-      "color": "var(--BV-ui-bangle-button-primary-color)",
-    }
-  }
-  type="button"
->
-  Hello
-</button>
-`;
-
-exports[`Storyshots ui-components/Button Quiet Button 1`] = `
-<button
-  aria-label="Hi brother"
-  className="B-ui-components_button select-none py-1 px-3 BU_variant-secondary  transition-all duration-100 cursor-default  "
-  onBlur={[Function]}
-  onClick={[Function]}
-  onDragStart={[Function]}
-  onFocus={[Function]}
-  onKeyDown={[Function]}
-  onKeyUp={[Function]}
-  onMouseDown={[Function]}
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
-  onMouseUp={[Function]}
-  onTouchCancel={[Function]}
-  onTouchEnd={[Function]}
-  onTouchMove={[Function]}
-  onTouchStart={[Function]}
-  style={
-    {
-      "color": "var(--BV-ui-bangle-button-color)",
-    }
-  }
-  type="button"
->
-  Hello
-</button>
-`;
-
 exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
 <div>
   <div>
@@ -1725,6 +1530,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1747,25 +1553,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-4 h-4  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-4 h-4  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1788,25 +1593,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-5 h-5  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-5 h-5  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1829,25 +1633,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-6 h-6  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-6 h-6  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1870,25 +1673,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-6 h-6  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-6 h-6  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1911,22 +1713,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-7 h-7  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -1939,6 +1739,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -1961,25 +1762,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-4 h-4  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-4 h-4  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2002,25 +1802,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-5 h-5  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-5 h-5  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2043,25 +1842,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-6 h-6  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-6 h-6  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2084,23 +1882,22 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className=" w-6 h-6  "
+        <svg
+          className=" w-6 h-6  "
+          fill="currentColor"
+          style={{}}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
             fill="currentColor"
-            style={{}}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
+          />
+        </svg>
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2123,22 +1920,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-7 h-7  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -2151,6 +1946,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2173,26 +1969,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-4 h-4 mr-0_5  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="mr-0_5  w-4 h-4  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
         XSmall
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2215,26 +2010,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-5 h-5 mr-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="mr-1  w-5 h-5  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
         Small
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2257,26 +2051,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-6 h-6 mr-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="mr-1  w-6 h-6  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
         Medium
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2299,22 +2092,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         }
         type="button"
       >
-        <span>
-          <svg
-            className="w-7 h-7 mr-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="mr-1  w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
         Large
       </button>
     </div>
@@ -2328,6 +2119,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2351,25 +2143,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         type="button"
       >
         XSmall
-        <span>
-          <svg
-            className="w-4 h-4 ml-0_5  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="ml-0_5  w-4 h-4  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2393,25 +2184,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         type="button"
       >
         Small
-        <span>
-          <svg
-            className="w-5 h-5 ml-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="ml-1  w-5 h-5  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2435,25 +2225,24 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         type="button"
       >
         Medium
-        <span>
-          <svg
-            className="w-6 h-6 ml-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="ml-1  w-6 h-6  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2477,22 +2266,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
         type="button"
       >
         Large
-        <span>
-          <svg
-            className="w-7 h-7 ml-1  "
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        </span>
+        <svg
+          className="ml-1  w-7 h-7  "
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -2507,6 +2294,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2533,6 +2321,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2559,6 +2348,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2585,6 +2375,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2620,6 +2411,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-7 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2646,6 +2438,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8  px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2672,6 +2465,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2698,6 +2492,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2730,6 +2525,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-6 px-1_5  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2757,6 +2553,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8 px-2  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2784,6 +2581,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2811,6 +2609,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2847,6 +2646,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
     >
       <button
         className="text-xs font-600 min-w-6 h-7 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2874,6 +2674,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-sm font-600 h-8 min-w-8  px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2901,6 +2702,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2928,6 +2730,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
       </button>
       <button
         className="text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+        disabled={false}
         onBlur={[Function]}
         onClick={[Function]}
         onDragStart={[Function]}
@@ -2974,6 +2777,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3000,6 +2804,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3026,6 +2831,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3052,6 +2858,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3078,6 +2885,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3104,6 +2912,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3318,6 +3127,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3344,6 +3154,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3370,6 +3181,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3396,6 +3208,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3422,6 +3235,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3448,6 +3262,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3487,6 +3302,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3513,6 +3329,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3539,6 +3356,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3565,6 +3383,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3591,6 +3410,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3617,6 +3437,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3656,6 +3477,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3678,26 +3500,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Neutral
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3720,26 +3541,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Secondary
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3762,26 +3582,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Caution
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3804,26 +3623,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Critical
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3846,26 +3664,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Positive
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3888,22 +3705,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Promote
         </button>
       </div>
@@ -3923,6 +3738,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3950,6 +3766,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -3977,6 +3794,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4004,6 +3822,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4031,6 +3850,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4058,6 +3878,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4279,6 +4100,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4306,6 +4128,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4333,6 +4156,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4360,6 +4184,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4387,6 +4212,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4414,6 +4240,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4454,6 +4281,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4481,6 +4309,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4508,6 +4337,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4535,6 +4365,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4562,6 +4393,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4589,6 +4421,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4629,6 +4462,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4652,26 +4486,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Neutral
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4695,26 +4528,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Secondary
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4738,26 +4570,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Caution
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4781,26 +4612,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Critical
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4824,26 +4654,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Positive
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4867,22 +4696,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Promote
         </button>
       </div>
@@ -4902,6 +4729,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4928,6 +4756,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4954,6 +4783,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -4980,6 +4810,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5006,6 +4837,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5032,6 +4864,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5246,6 +5079,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5272,6 +5106,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5298,6 +5133,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5324,6 +5160,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5350,6 +5187,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5376,6 +5214,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5415,6 +5254,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5441,6 +5281,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5467,6 +5308,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5493,6 +5335,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5519,6 +5362,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5545,6 +5389,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5584,6 +5429,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5606,26 +5452,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Neutral
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5648,26 +5493,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Secondary
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5690,26 +5534,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Caution
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5732,26 +5575,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Critical
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5774,26 +5616,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Positive
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5816,22 +5657,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Promote
         </button>
       </div>
@@ -5851,6 +5690,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5877,6 +5717,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5903,6 +5744,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5929,6 +5771,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5955,6 +5798,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -5981,6 +5825,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6195,6 +6040,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6221,6 +6067,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6247,6 +6094,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6273,6 +6121,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6299,6 +6148,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6325,6 +6175,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-colors duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6364,6 +6215,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6390,6 +6242,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6416,6 +6269,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6442,6 +6296,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6468,6 +6323,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6494,6 +6350,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6533,6 +6390,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
       >
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6555,26 +6413,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Neutral
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6597,26 +6454,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Secondary
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6639,26 +6495,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Caution
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6681,26 +6536,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Critical
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6723,26 +6577,25 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Positive
         </button>
         <button
           className="text-base h-9 smallscreen:h-10 min-w-10 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-2 transition-all duration-100 cursor-pointer "
+          disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
           onDragStart={[Function]}
@@ -6765,22 +6618,20 @@ exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
           }
           type="button"
         >
-          <span>
-            <svg
-              className="w-6 h-6 mr-1  "
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-              />
-            </svg>
-          </span>
+          <svg
+            className="mr-1  w-6 h-6  "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </svg>
           Promote
         </button>
       </div>
@@ -6956,6 +6807,7 @@ exports[`Storyshots ui-components/Dialog Destructive 1`] = `
   <button
     aria-label="open"
     className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -6992,6 +6844,7 @@ exports[`Storyshots ui-components/Dialog Loading Dialog 1`] = `
   <button
     aria-label="open"
     className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -7046,6 +6899,7 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
   <button
     aria-label="open"
     className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -7092,6 +6946,7 @@ exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
   <button
     aria-label="open"
     className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -7121,6 +6976,37 @@ exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
     data-overlay-container={true}
   />
 </div>
+`;
+
+exports[`Storyshots ui-components/DropdownMenu Primary 1`] = `
+<button
+  aria-pressed={false}
+  className="text-base h-9 smallscreen:h-10 min-w-10 px-3  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap py-1 transition-all duration-100 cursor-pointer "
+  disabled={false}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onDragStart={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  onMouseUp={[Function]}
+  onTouchCancel={[Function]}
+  onTouchEnd={[Function]}
+  onTouchMove={[Function]}
+  onTouchStart={[Function]}
+  style={
+    {
+      "backgroundColor": "var(--BV-color-neutral-solid)",
+      "color": "var(--BV-color-neutral-solidText)",
+    }
+  }
+  type="button"
+>
+  wow
+</button>
 `;
 
 exports[`Storyshots ui-components/ErrorBanner Primary 1`] = `
