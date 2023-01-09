@@ -22,8 +22,8 @@ import {
   useWatchClickOutside,
 } from '@bangle.io/utils';
 
-import type { BaseButtonStyleProps, ButtonVariant } from '../ButtonV2';
-import { BUTTON_VARIANT, useButtonStyleProps } from '../ButtonV2';
+import type { BaseButtonStyleProps, ButtonVariant } from '../Button';
+import { BUTTON_VARIANT, useButtonStyleProps } from '../Button';
 import { useTooltipPositioner } from './use-positioner';
 
 export {

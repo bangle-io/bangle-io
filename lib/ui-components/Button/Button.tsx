@@ -22,7 +22,7 @@ const defaultFocus = {
   autoFocus: false,
 } satisfies FocusType;
 
-export function ButtonV2({
+export function Button({
   animateOnPress = true,
   ariaLabel,
   className = '',

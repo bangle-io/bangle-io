@@ -4,7 +4,7 @@ import type { Tone } from '@bangle.io/constants';
 import { SEVERITY } from '@bangle.io/constants';
 import type { EditorIssue } from '@bangle.io/slice-notification';
 import {
-  ButtonV2,
+  Button,
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationIcon,
@@ -89,7 +89,7 @@ function EditorIssueInner({
   }
 
   return (
-    <ButtonV2
+    <Button
       variant="solid"
       tone={tone}
       onPress={onPress}

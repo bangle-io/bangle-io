@@ -6,7 +6,7 @@ import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
-  ButtonV2,
+  Button,
   CenteredBoxedPage,
   ChevronDownIcon,
   Inline,
@@ -84,7 +84,7 @@ export function EmptyEditorPage() {
       title={wsName && <WorkspaceSpan wsName={wsName} />}
       actions={
         <>
-          <ButtonV2
+          <Button
             ariaLabel="Switch workspace"
             tooltipPlacement="right"
             text="Switch workspace"
@@ -95,7 +95,7 @@ export function EmptyEditorPage() {
               );
             }}
           />
-          <ButtonV2
+          <Button
             ariaLabel="create note"
             onPress={() => {
               dispatchSerialOperation({

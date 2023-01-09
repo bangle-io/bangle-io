@@ -9,7 +9,7 @@ import {
   goToWorkspaceHomeRoute,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { ButtonV2, GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
+import { Button, GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
 import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
@@ -35,7 +35,7 @@ export function Activitybar() {
       const active = sidebar === r.name;
 
       return (
-        <ButtonV2
+        <Button
           ariaLabel={r.hint}
           key={r.name}
           onPress={() => {
@@ -64,7 +64,7 @@ export function Activitybar() {
       }}
       className="flex flex-col flex-grow gap-2 pt-2 pb-3 border-r-1 border-colorNeutralBorder"
     >
-      <ButtonV2
+      <Button
         ariaLabel="Workspace Home"
         style={ButtonStyleOBj}
         onPress={() => {
@@ -81,7 +81,7 @@ export function Activitybar() {
 
       {sideBarComponents}
       <div className="flex-grow"></div>
-      <ButtonV2
+      <Button
         ariaLabel="What's new"
         style={ButtonStyleOBj}
         onPress={() => {

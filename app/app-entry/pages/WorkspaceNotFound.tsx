@@ -7,7 +7,7 @@ import {
   CorePalette,
 } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
-import { ButtonV2, CenteredBoxedPage } from '@bangle.io/ui-components';
+import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
@@ -28,7 +28,7 @@ export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
       }
       actions={
         <>
-          <ButtonV2
+          <Button
             ariaLabel="open another workspace"
             text="Switch workspace"
             onPress={() => {
@@ -38,7 +38,7 @@ export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
               );
             }}
           />
-          <ButtonV2
+          <Button
             ariaLabel="new workspace"
             text="New workspace"
             onPress={() => {

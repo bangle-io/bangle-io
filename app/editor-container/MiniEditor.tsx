@@ -7,7 +7,7 @@ import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   ArrowsExpand,
-  ButtonV2,
+  Button,
   ChevronDownIcon,
   ChevronUpIcon,
   CloseIcon,
@@ -51,7 +51,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
         </div>
         <div className="flex flex-row">
           {isMinimized ? (
-            <ButtonV2
+            <Button
               size="xs"
               variant="transparent"
               ariaLabel="Maximize"
@@ -61,7 +61,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
               leftIcon={<ChevronUpIcon />}
             />
           ) : (
-            <ButtonV2
+            <Button
               size="xs"
               variant="transparent"
               ariaLabel="Minimize"
@@ -71,14 +71,14 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
               }}
             />
           )}
-          <ButtonV2
+          <Button
             variant="transparent"
             size="xs"
             onPress={onExpand}
             ariaLabel={'Expand to full screen'}
             leftIcon={<ArrowsExpand />}
           />
-          <ButtonV2
+          <Button
             variant="transparent"
             size="xs"
             onPress={onClose}

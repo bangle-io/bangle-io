@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { NoteSidebarWidget } from '@bangle.io/shared-types';
-import { ButtonV2, ChevronRightIcon } from '@bangle.io/ui-components';
+import { Button, ChevronRightIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebar({
   onDismiss,
@@ -15,7 +15,7 @@ export function NoteSidebar({
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">Widgets</span>
         <span>
-          <ButtonV2
+          <Button
             size="sm"
             variant="transparent"
             onPress={onDismiss}

@@ -6,13 +6,13 @@ import React from 'react';
 import { TONE } from '@bangle.io/constants';
 
 import { CloseIcon, FolderIcon } from '../Icons';
-import { ButtonV2 } from './ButtonV2';
+import { Button } from './Button';
 import type { ButtonVariant } from './common';
 import { BUTTON_VARIANT } from './common';
 
 export default {
-  title: 'ui-components/ButtonV2',
-  component: ButtonV2,
+  title: 'ui-components/Button',
+  component: Button,
   argTypes: {},
 };
 
@@ -32,7 +32,7 @@ function ButtonGroup({
   return (
     <div>
       <div className="flex flex-row gap-2">
-        <ButtonV2
+        <Button
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
@@ -41,7 +41,7 @@ function ButtonGroup({
           leftIcon={leftIcon}
           text="Neutral"
         />
-        <ButtonV2
+        <Button
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
@@ -50,7 +50,7 @@ function ButtonGroup({
           tone={TONE.SECONDARY}
           text="Secondary"
         />
-        <ButtonV2
+        <Button
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
@@ -59,7 +59,7 @@ function ButtonGroup({
           leftIcon={leftIcon}
           text="Caution"
         />
-        <ButtonV2
+        <Button
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
@@ -69,7 +69,7 @@ function ButtonGroup({
           text="Critical"
         />
 
-        <ButtonV2
+        <Button
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
@@ -78,7 +78,7 @@ function ButtonGroup({
           leftIcon={leftIcon}
           text="Positive"
         />
-        <ButtonV2
+        <Button
           animateOnPress={animateOnPress}
           isDisabled={isDisabled}
           isTouch={isTouch}
@@ -119,7 +119,7 @@ function ButtonVariantGroup({ variant }: { variant: ButtonVariant }) {
   );
 }
 
-export const ButtonVariants: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
+export const ButtonVariants: Story<Parameters<typeof Button>[0]> = (args) => {
   return (
     <>
       <ButtonVariantGroup variant={BUTTON_VARIANT.SOLID} />
@@ -130,47 +130,47 @@ export const ButtonVariants: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
   );
 };
 
-export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
+export const ButtonSizes: Story<Parameters<typeof Button>[0]> = (args) => {
   return (
     <div>
       <div>
         <div className="flex flex-row gap-2">
-          <ButtonV2 tone={TONE.NEUTRAL} text="XSmall" size="xs" />
-          <ButtonV2 tone={TONE.NEUTRAL} text="Small" size="sm" />
-          <ButtonV2 tone={TONE.NEUTRAL} text="Medium" size="md" />
-          <ButtonV2 tone={TONE.NEUTRAL} text="Large" size="lg" />
+          <Button tone={TONE.NEUTRAL} text="XSmall" size="xs" />
+          <Button tone={TONE.NEUTRAL} text="Small" size="sm" />
+          <Button tone={TONE.NEUTRAL} text="Medium" size="md" />
+          <Button tone={TONE.NEUTRAL} text="Large" size="lg" />
         </div>
 
         <div className="mt-3">Touch</div>
         <div className="flex flex-row gap-2">
-          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="XSmall" size="xs" />
-          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="Small" size="sm" />
-          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="Medium" size="md" />
-          <ButtonV2 isTouch tone={TONE.NEUTRAL} text="Large" size="lg" />
+          <Button isTouch tone={TONE.NEUTRAL} text="XSmall" size="xs" />
+          <Button isTouch tone={TONE.NEUTRAL} text="Small" size="sm" />
+          <Button isTouch tone={TONE.NEUTRAL} text="Medium" size="md" />
+          <Button isTouch tone={TONE.NEUTRAL} text="Large" size="lg" />
         </div>
       </div>
 
       <div>
         <div className="flex flex-row gap-2">
-          <ButtonV2
+          <Button
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="XSmall"
             size="xs"
           />
-          <ButtonV2
+          <Button
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
-          <ButtonV2
+          <Button
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Medium"
             size="md"
           />
-          <ButtonV2
+          <Button
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Large"
@@ -180,28 +180,28 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
 
         <div className="mt-3">Touch</div>
         <div className="flex flex-row gap-2">
-          <ButtonV2
+          <Button
             isTouch
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="XSmall"
             size="xs"
           />
-          <ButtonV2
+          <Button
             isTouch
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
-          <ButtonV2
+          <Button
             isTouch
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
             text="Medium"
             size="md"
           />
-          <ButtonV2
+          <Button
             isTouch
             variant={BUTTON_VARIANT.GHOST}
             tone={TONE.NEUTRAL}
@@ -214,48 +214,48 @@ export const ButtonSizes: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
   );
 };
 
-export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
+export const ButtonIcons: Story<Parameters<typeof Button>[0]> = (args) => {
   return (
     <div>
       <div>
         <span>No text</span>
         <div className="flex flex-row gap-2">
-          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.CRITICAL} size="xs" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="sm" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
-          <ButtonV2 leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="lg" />
+          <Button leftIcon={<FolderIcon />} tone={TONE.CRITICAL} size="xs" />
+          <Button leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="sm" />
+          <Button leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
+          <Button leftIcon={<FolderIcon />} tone={TONE.PROMOTE} size="md" />
+          <Button leftIcon={<FolderIcon />} tone={TONE.NEUTRAL} size="lg" />
         </div>
       </div>
 
       <div>
         <span>No text</span>
         <div className="flex flex-row gap-2">
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.CRITICAL}
             size="xs"
             variant={BUTTON_VARIANT.TRANSPARENT}
           />
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             size="sm"
             variant={BUTTON_VARIANT.TRANSPARENT}
           />
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.PROMOTE}
             size="md"
             variant={BUTTON_VARIANT.TRANSPARENT}
           />
-          <ButtonV2
+          <Button
             leftIcon={<CloseIcon />}
             tone={TONE.PROMOTE}
             size="md"
             variant={BUTTON_VARIANT.TRANSPARENT}
           />
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             size="lg"
@@ -267,25 +267,25 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
       <div>
         <span>Left with text</span>
         <div className="flex flex-row gap-2">
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.CRITICAL}
             text="XSmall"
             size="xs"
           />
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.PROMOTE}
             text="Medium"
             size="md"
           />
-          <ButtonV2
+          <Button
             leftIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             text="Large"
@@ -297,25 +297,25 @@ export const ButtonIcons: Story<Parameters<typeof ButtonV2>[0]> = (args) => {
       <div>
         <span>right</span>
         <div className="flex flex-row gap-2">
-          <ButtonV2
+          <Button
             rightIcon={<FolderIcon />}
             tone={TONE.CRITICAL}
             text="XSmall"
             size="xs"
           />
-          <ButtonV2
+          <Button
             rightIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             text="Small"
             size="sm"
           />
-          <ButtonV2
+          <Button
             rightIcon={<FolderIcon />}
             tone={TONE.PROMOTE}
             text="Medium"
             size="md"
           />
-          <ButtonV2
+          <Button
             rightIcon={<FolderIcon />}
             tone={TONE.NEUTRAL}
             text="Large"

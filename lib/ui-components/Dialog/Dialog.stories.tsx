@@ -4,7 +4,7 @@ import { OverlayProvider } from '@react-aria/overlays';
 import type { Story } from '@storybook/react';
 import React, { useCallback } from 'react';
 
-import { ButtonV2 } from '../ButtonV2';
+import { Button } from '../Button';
 import { Dialog } from './Dialog';
 
 export default {
@@ -23,7 +23,7 @@ const Template: Story<Parameters<typeof Dialog>[0]> = (args) => {
 
   return (
     <div>
-      <ButtonV2
+      <Button
         ariaLabel="open"
         onPress={() => {
           setShow(true);
@@ -107,7 +107,7 @@ export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
         repellat officiis cum recusandae, quas facilis eos ad rerum quibusdam
         eligendi.
       </div>
-      <ButtonV2
+      <Button
         ariaLabel="open"
         onPress={() => {
           setShow(true);

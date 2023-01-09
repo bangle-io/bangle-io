@@ -16,7 +16,7 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { ButtonV2 } from '@bangle.io/ui-components';
+import { Button } from '@bangle.io/ui-components';
 import {
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
@@ -147,7 +147,7 @@ export function NoteOutline() {
         }
 
         return (
-          <ButtonV2
+          <Button
             // isQuiet={isQuiet}
             variant={
               r.isActive

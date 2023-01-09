@@ -1519,7 +1519,7 @@ exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
 </button>
 `;
 
-exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
+exports[`Storyshots ui-components/Button Button Icons 1`] = `
 <div>
   <div>
     <span>
@@ -2286,7 +2286,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Icons 1`] = `
 </div>
 `;
 
-exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
+exports[`Storyshots ui-components/Button Button Sizes 1`] = `
 <div>
   <div>
     <div
@@ -2761,7 +2761,7 @@ exports[`Storyshots ui-components/ButtonV2 Button Sizes 1`] = `
 </div>
 `;
 
-exports[`Storyshots ui-components/ButtonV2 Button Variants 1`] = `
+exports[`Storyshots ui-components/Button Button Variants 1`] = `
 [
   <div
     className="text-xl font-600 mt-6"

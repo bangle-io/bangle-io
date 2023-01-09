@@ -3,8 +3,8 @@ import React from 'react';
 import { vars } from '@bangle.io/atomic-css';
 import { TONE, Tone } from '@bangle.io/constants';
 import {
+  Button,
   BUTTON_VARIANT,
-  ButtonV2,
   CloseIcon,
   SecondaryEditorIcon,
 } from '@bangle.io/ui-components';
@@ -54,7 +54,7 @@ export function Editorbar({
         backgroundColor: vars.color.app.editorBg,
       }}
     >
-      <ButtonV2
+      <Button
         ariaLabel="note path"
         text={path}
         size="xs"
@@ -65,7 +65,7 @@ export function Editorbar({
       />
 
       {editingDisabled && (
-        <ButtonV2
+        <Button
           ariaLabel="enable editing"
           text="Enable Editing"
           className="mx-2"
@@ -77,7 +77,7 @@ export function Editorbar({
       <div className="flex flex-row flex-1"></div>
       <div className="flex flex-row">
         {showSplitEditor && (
-          <ButtonV2
+          <Button
             size="xs"
             variant={isSplitEditorOpen ? 'soft' : 'transparent'}
             onPress={onPressSecondaryEditor}
@@ -89,7 +89,7 @@ export function Editorbar({
             tooltipPlacement="bottom"
           />
         )}
-        <ButtonV2
+        <Button
           size="xs"
           variant="transparent"
           ariaLabel="Close"

@@ -12,8 +12,8 @@ import { vars } from '@bangle.io/atomic-css';
 import { TONE } from '@bangle.io/constants';
 import { cx, isTouchDevice } from '@bangle.io/utils';
 
-import type { BaseButtonStyleProps } from '../ButtonV2';
-import { BUTTON_VARIANT, useButtonStyleProps } from '../ButtonV2';
+import type { BaseButtonStyleProps } from '../Button';
+import { BUTTON_VARIANT, useButtonStyleProps } from '../Button';
 import { FieldLabel } from '../FieldLabel';
 import { ListBox } from './ListBox';
 import { Popover } from './Popover';

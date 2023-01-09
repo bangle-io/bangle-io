@@ -4,7 +4,7 @@ import React from 'react';
 import { SEVERITY } from '@bangle.io/constants';
 import { showNotification } from '@bangle.io/slice-notification';
 import { StorybookStore } from '@bangle.io/test-utils';
-import { ButtonV2 } from '@bangle.io/ui-components';
+import { Button } from '@bangle.io/ui-components';
 
 import { NotificationArea } from './NotificationArea';
 
@@ -52,7 +52,7 @@ export const Main: Story = (args) => {
         }}
         renderChildren={(store) => (
           <>
-            <ButtonV2
+            <Button
               text="Show warning"
               className="ml-2"
               onPress={() => {
@@ -65,7 +65,7 @@ export const Main: Story = (args) => {
                 })(store.state, store.dispatch);
               }}
             />
-            <ButtonV2
+            <Button
               text="Show error"
               className="ml-2"
               onPress={() => {
@@ -79,7 +79,7 @@ export const Main: Story = (args) => {
               }}
             />
 
-            <ButtonV2
+            <Button
               text="Show success"
               className="ml-2"
               onPress={() => {
