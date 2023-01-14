@@ -8,13 +8,10 @@ import * as React from 'react';
 
 import { cx } from '@bangle.io/utils';
 
-import type { SizeType } from '../misc';
 import { ListBox } from '../Select/ListBox';
 import { Popover } from '../Select/Popover';
 
-export function ComboBox<T extends object>(
-  props: ComboBoxProps<T> & { size?: SizeType },
-) {
+export function ComboBox<T extends object>(props: ComboBoxProps<T> & {}) {
   let { contains } = useFilter({ sensitivity: 'base' });
   let state = useComboBoxState({ ...props, defaultFilter: contains });
 
@@ -40,18 +37,9 @@ export function ComboBox<T extends object>(
   );
 
   let { buttonProps } = useButton(triggerProps, buttonRef);
-  const { size = 'medium' } = props;
 
   return (
-    <div
-      className={cx(
-        'B-ui-components_combo-box flex flex-col relative',
-        size === 'small' && 'w-40',
-        size === 'medium' && 'w-56',
-        size === 'large' && 'w-64',
-        size === 'full' && 'w-full',
-      )}
-    >
+    <div className={cx('B-ui-components_combo-box flex flex-col relative')}>
       <label
         {...labelProps}
         className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"

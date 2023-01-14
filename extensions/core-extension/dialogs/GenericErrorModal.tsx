@@ -28,7 +28,7 @@ export function GenericErrorModal() {
           window.location.reload();
         },
       }}
-      size="medium"
+      size="md"
       isDismissable={true}
       headingTitle={metadata.title}
       footer={

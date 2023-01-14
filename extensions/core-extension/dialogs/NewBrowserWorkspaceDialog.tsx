@@ -85,7 +85,7 @@ export const NewBrowserWorkspaceDialog: DialogComponentType = ({
       isDismissable
       headingTitle="New Browser Workspace"
       onDismiss={onDismiss}
-      size="medium"
+      size="md"
       primaryButtonConfig={{
         disabled: !modalState.workspace,
         onPress: createWorkspace,

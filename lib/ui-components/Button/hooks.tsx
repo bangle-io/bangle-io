@@ -12,6 +12,7 @@ type BaseButtonProps = {
   rightIcon: React.ReactNode;
   styleProps: BaseButtonStyleProps;
   text: React.ReactNode;
+  textElementProps?: React.HTMLProps<HTMLSpanElement>;
 };
 
 export type BaseButtonStyleProps = {
@@ -33,6 +34,7 @@ export type BaseButtonStyleProps = {
 
 export const useButtonStyleProps = ({
   text,
+  textElementProps,
   leftIcon,
   rightIcon,
   styleProps,
@@ -74,7 +76,17 @@ export const useButtonStyleProps = ({
             />
           </span>
         )}
-        {text && <span className="text-ellipsis overflow-hidden">{text}</span>}
+        {text && (
+          <span
+            {...textElementProps}
+            className={cx(
+              'text-ellipsis overflow-hidden',
+              textElementProps?.className,
+            )}
+          >
+            {text}
+          </span>
+        )}
         {rightIcon && (
           <span>
             <BtnIcon

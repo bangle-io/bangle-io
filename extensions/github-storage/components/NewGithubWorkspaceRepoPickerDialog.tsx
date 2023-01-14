@@ -149,7 +149,6 @@ export function NewGithubWorkspaceRepoPickerDialog() {
         Please pick a repository that will be used to store your notes.
         <div className="my-4">
           <ComboBox
-            size="full"
             label="Select repository"
             menuTrigger="focus"
             onKeyUp={(e) => {

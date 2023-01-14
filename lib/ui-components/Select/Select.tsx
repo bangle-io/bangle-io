@@ -45,6 +45,7 @@ export function Select<T extends object>(
 
   const buttonElProps = useButtonStyleProps({
     elementProps: mergeProps(hoverProps, buttonProps, focusProps),
+    textElementProps: valueProps,
     leftIcon: undefined,
     rightIcon: <SelectorIcon />,
     text: state.selectedItem ? state.selectedItem.rendered : 'Select an option',

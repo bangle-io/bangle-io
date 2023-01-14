@@ -118,7 +118,7 @@ export function PickWorkspaceType({
       isDismissable
       headingTitle="Choose a storage type"
       onDismiss={onDismiss}
-      size="medium"
+      size="md"
       primaryButtonConfig={{
         text: 'Next',
         onPress: () => {
