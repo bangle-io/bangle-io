@@ -425,6 +425,10 @@ class FileHelper {
 
   constructor(public filePath: string) {}
 
+  get isCSSFile() {
+    return this.filePath.endsWith('.css');
+  }
+
   get isE2ETestFile() {
     return this.filePath.includes('.spec.');
   }

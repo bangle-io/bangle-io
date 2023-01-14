@@ -176,7 +176,7 @@ para 2
                 style="justify-content: flex-start;"
               >
                 <span
-                  class="text-ellipsis overflow-hidden"
+                  class="text-ellipsis overflow-hidden "
                 >
                   <span
                     class="pl-1"
@@ -197,7 +197,7 @@ para 2
                 style="justify-content: flex-start;"
               >
                 <span
-                  class="text-ellipsis overflow-hidden"
+                  class="text-ellipsis overflow-hidden "
                 >
                   <span
                     class="pl-1"

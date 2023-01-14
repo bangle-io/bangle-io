@@ -1,9 +1,9 @@
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest-container .bangle-emoji-square.bangle-is-selected {
-  background-color: var(--BV-color-promote-solidSubdued);
+  background-color: var(--BV-colorPromoteSolidSubdued);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest-container .bangle-emoji-square:hover {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }

@@ -18,7 +18,7 @@ exports[`renders correctly 1`] = `
           style="justify-content: center;"
         >
           <span
-            class="text-ellipsis overflow-hidden"
+            class="text-ellipsis overflow-hidden "
           >
             test-dir/magic
           </span>
@@ -78,7 +78,7 @@ exports[`renders correctly when active 1`] = `
           style="justify-content: center;"
         >
           <span
-            class="text-ellipsis overflow-hidden"
+            class="text-ellipsis overflow-hidden "
           >
             test-dir/magic
           </span>
@@ -133,7 +133,7 @@ exports[`truncates large wsPath 1`] = `
     style="justify-content: center;"
   >
     <span
-      class="text-ellipsis overflow-hidden"
+      class="text-ellipsis overflow-hidden "
     >
       …/wow/last/two
     </span>

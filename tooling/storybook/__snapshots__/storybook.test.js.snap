@@ -16,8 +16,8 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
     data-testid="app-activitybar_activitybar"
     style={
       {
-        "backgroundColor": "var(--BV-color-app-activitybarBg)",
-        "color": "var(--BV-color-app-activitybarText)",
+        "backgroundColor": "var(--BV-colorAppActivitybarBg)",
+        "color": "var(--BV-colorAppActivitybarText)",
       }
     }
   >
@@ -43,7 +43,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -114,7 +114,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -169,7 +169,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -223,8 +223,8 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
     data-testid="app-activitybar_activitybar"
     style={
       {
-        "backgroundColor": "var(--BV-color-app-activitybarBg)",
-        "color": "var(--BV-color-app-activitybarText)",
+        "backgroundColor": "var(--BV-colorAppActivitybarBg)",
+        "color": "var(--BV-colorAppActivitybarText)",
       }
     }
   >
@@ -250,7 +250,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -318,7 +318,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -375,7 +375,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -430,7 +430,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-color-app-activitybarText)",
+          "color": "var(--BV-colorAppActivitybarText)",
           "padding": 0,
         }
       }
@@ -504,7 +504,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -563,7 +563,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -577,7 +577,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             one
           </span>
@@ -613,8 +613,8 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolidText)",
             }
           }
           type="button"
@@ -628,7 +628,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               edit
             </span>
@@ -660,7 +660,7 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textSubdued)",
+              "color": "var(--BV-colorNeutralTextSubdued)",
             }
           }
           type="button"
@@ -729,7 +729,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -788,7 +788,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -802,7 +802,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             one-two-three-four-five-six-seven-eight
           </span>
@@ -838,8 +838,8 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolidText)",
             }
           }
           type="button"
@@ -853,7 +853,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               edit
             </span>
@@ -885,7 +885,7 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textSubdued)",
+              "color": "var(--BV-colorNeutralTextSubdued)",
             }
           }
           type="button"
@@ -946,8 +946,8 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-solid)",
-          "color": "var(--BV-color-neutral-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralSolid)",
+          "color": "var(--BV-colorNeutralSolidText)",
         }
       }
       type="button"
@@ -961,7 +961,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           Show warning
         </span>
@@ -986,8 +986,8 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-solid)",
-          "color": "var(--BV-color-neutral-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralSolid)",
+          "color": "var(--BV-colorNeutralSolidText)",
         }
       }
       type="button"
@@ -1001,7 +1001,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           Show error
         </span>
@@ -1026,8 +1026,8 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-solid)",
-          "color": "var(--BV-color-neutral-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralSolid)",
+          "color": "var(--BV-colorNeutralSolidText)",
         }
       }
       type="button"
@@ -1041,7 +1041,7 @@ exports[`Storyshots app-entry/NotificationArea Main 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           Show success
         </span>
@@ -1076,8 +1076,8 @@ exports[`Storyshots core-extension/PickWorkspaceType Simple Submit 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-solid)",
-        "color": "var(--BV-color-neutral-solidText)",
+        "backgroundColor": "var(--BV-colorNeutralSolid)",
+        "color": "var(--BV-colorNeutralSolidText)",
       }
     }
     type="button"
@@ -1091,7 +1091,7 @@ exports[`Storyshots core-extension/PickWorkspaceType Simple Submit 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
       >
         Open modal
       </span>
@@ -1126,8 +1126,8 @@ exports[`Storyshots core-extension/PickWorkspaceType Template 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-solid)",
-        "color": "var(--BV-color-neutral-solidText)",
+        "backgroundColor": "var(--BV-colorNeutralSolid)",
+        "color": "var(--BV-colorNeutralSolidText)",
       }
     }
     type="button"
@@ -1141,7 +1141,7 @@ exports[`Storyshots core-extension/PickWorkspaceType Template 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
       >
         Open modal
       </span>
@@ -1188,8 +1188,8 @@ exports[`Storyshots editor-container/EditorIssueComp Error 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-solid)",
-            "color": "var(--BV-color-critical-solidText)",
+            "backgroundColor": "var(--BV-colorCriticalSolid)",
+            "color": "var(--BV-colorCriticalSolidText)",
           }
         }
         type="button"
@@ -1219,7 +1219,7 @@ exports[`Storyshots editor-container/EditorIssueComp Error 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             This is a test
           </span>
@@ -1264,8 +1264,8 @@ exports[`Storyshots editor-container/EditorIssueComp Warning 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-caution-solid)",
-            "color": "var(--BV-color-caution-solidText)",
+            "backgroundColor": "var(--BV-colorCautionSolid)",
+            "color": "var(--BV-colorCautionSolidText)",
           }
         }
         type="button"
@@ -1295,7 +1295,7 @@ exports[`Storyshots editor-container/EditorIssueComp Warning 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             This is a test
           </span>
@@ -1319,7 +1319,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-color-app-editorBg)",
+        "backgroundColor": "var(--BV-colorAppEditorBg)",
       }
     }
   >
@@ -1343,8 +1343,8 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-          "color": "var(--BV-color-secondary-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+          "color": "var(--BV-colorSecondarySolidText)",
         }
       }
       type="button"
@@ -1358,7 +1358,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           one/own
         </span>
@@ -1391,7 +1391,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -1438,7 +1438,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-color-app-editorBg)",
+        "backgroundColor": "var(--BV-colorAppEditorBg)",
       }
     }
   >
@@ -1462,8 +1462,8 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-          "color": "var(--BV-color-secondary-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+          "color": "var(--BV-colorSecondarySolidText)",
         }
       }
       type="button"
@@ -1477,7 +1477,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           one/own
         </span>
@@ -1503,8 +1503,8 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-promote-solid)",
-          "color": "var(--BV-color-promote-solidText)",
+          "backgroundColor": "var(--BV-colorPromoteSolid)",
+          "color": "var(--BV-colorPromoteSolidText)",
         }
       }
       type="button"
@@ -1518,7 +1518,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           Enable Editing
         </span>
@@ -1551,7 +1551,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -1598,7 +1598,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-color-app-editorBg)",
+        "backgroundColor": "var(--BV-colorAppEditorBg)",
       }
     }
   >
@@ -1622,8 +1622,8 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-          "color": "var(--BV-color-secondary-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+          "color": "var(--BV-colorSecondarySolidText)",
         }
       }
       type="button"
@@ -1637,7 +1637,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           one/own
         </span>
@@ -1669,8 +1669,8 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-            "color": "var(--BV-color-neutral-text)",
+            "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -1720,7 +1720,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -1767,7 +1767,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-color-app-editorBg)",
+        "backgroundColor": "var(--BV-colorAppEditorBg)",
       }
     }
   >
@@ -1791,8 +1791,8 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-          "color": "var(--BV-color-secondary-solidText)",
+          "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+          "color": "var(--BV-colorSecondarySolidText)",
         }
       }
       type="button"
@@ -1806,7 +1806,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
         >
           one
         </span>
@@ -1839,7 +1839,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -1935,8 +1935,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-solid)",
-            "color": "var(--BV-color-critical-solidText)",
+            "backgroundColor": "var(--BV-colorCriticalSolid)",
+            "color": "var(--BV-colorCriticalSolidText)",
           }
         }
         type="button"
@@ -1986,8 +1986,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2037,8 +2037,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-solid)",
-            "color": "var(--BV-color-promote-solidText)",
+            "backgroundColor": "var(--BV-colorPromoteSolid)",
+            "color": "var(--BV-colorPromoteSolidText)",
           }
         }
         type="button"
@@ -2088,8 +2088,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-solid)",
-            "color": "var(--BV-color-promote-solidText)",
+            "backgroundColor": "var(--BV-colorPromoteSolid)",
+            "color": "var(--BV-colorPromoteSolidText)",
           }
         }
         type="button"
@@ -2139,8 +2139,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2200,7 +2200,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-critical-solid)",
+            "color": "var(--BV-colorCriticalSolid)",
           }
         }
         type="button"
@@ -2251,7 +2251,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -2302,7 +2302,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-promote-solid)",
+            "color": "var(--BV-colorPromoteSolid)",
           }
         }
         type="button"
@@ -2353,7 +2353,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-promote-solid)",
+            "color": "var(--BV-colorPromoteSolid)",
           }
         }
         type="button"
@@ -2402,7 +2402,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "color": "var(--BV-color-neutral-text)",
+            "color": "var(--BV-colorNeutralText)",
           }
         }
         type="button"
@@ -2461,8 +2461,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-solid)",
-            "color": "var(--BV-color-critical-solidText)",
+            "backgroundColor": "var(--BV-colorCriticalSolid)",
+            "color": "var(--BV-colorCriticalSolidText)",
           }
         }
         type="button"
@@ -2492,7 +2492,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             XSmall
           </span>
@@ -2517,8 +2517,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2548,7 +2548,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Small
           </span>
@@ -2573,8 +2573,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-solid)",
-            "color": "var(--BV-color-promote-solidText)",
+            "backgroundColor": "var(--BV-colorPromoteSolid)",
+            "color": "var(--BV-colorPromoteSolidText)",
           }
         }
         type="button"
@@ -2604,7 +2604,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -2629,8 +2629,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2660,7 +2660,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Large
           </span>
@@ -2694,8 +2694,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-critical-solid)",
-            "color": "var(--BV-color-critical-solidText)",
+            "backgroundColor": "var(--BV-colorCriticalSolid)",
+            "color": "var(--BV-colorCriticalSolidText)",
           }
         }
         type="button"
@@ -2709,7 +2709,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             XSmall
           </span>
@@ -2750,8 +2750,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2765,7 +2765,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Small
           </span>
@@ -2806,8 +2806,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-promote-solid)",
-            "color": "var(--BV-color-promote-solidText)",
+            "backgroundColor": "var(--BV-colorPromoteSolid)",
+            "color": "var(--BV-colorPromoteSolidText)",
           }
         }
         type="button"
@@ -2821,7 +2821,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -2862,8 +2862,8 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2877,7 +2877,7 @@ exports[`Storyshots ui-components/Button Button Icons 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Large
           </span>
@@ -2929,8 +2929,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2944,7 +2944,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             XSmall
           </span>
@@ -2969,8 +2969,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -2984,7 +2984,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Small
           </span>
@@ -3009,8 +3009,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3024,7 +3024,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3049,8 +3049,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3064,7 +3064,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Large
           </span>
@@ -3098,8 +3098,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3113,7 +3113,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             XSmall
           </span>
@@ -3138,8 +3138,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3153,7 +3153,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Small
           </span>
@@ -3178,8 +3178,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3193,7 +3193,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3218,8 +3218,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3233,7 +3233,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Large
           </span>
@@ -3265,8 +3265,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3280,7 +3280,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             XSmall
           </span>
@@ -3306,8 +3306,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3321,7 +3321,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Small
           </span>
@@ -3347,8 +3347,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3362,7 +3362,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3388,8 +3388,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3403,7 +3403,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Large
           </span>
@@ -3438,8 +3438,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3453,7 +3453,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             XSmall
           </span>
@@ -3479,8 +3479,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3494,7 +3494,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Small
           </span>
@@ -3520,8 +3520,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3535,7 +3535,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3561,8 +3561,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         style={
           {
             "backgroundColor": "transparent",
-            "border": "2px solid var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solid)",
+            "border": "2px solid var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolid)",
           }
         }
         type="button"
@@ -3576,7 +3576,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Large
           </span>
@@ -3610,8 +3610,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3641,7 +3641,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3666,8 +3666,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3681,7 +3681,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3715,8 +3715,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3730,7 +3730,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3771,8 +3771,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3802,7 +3802,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3827,8 +3827,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3878,8 +3878,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3929,8 +3929,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -3944,7 +3944,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Medium
           </span>
@@ -3978,8 +3978,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4009,7 +4009,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Start
           </span>
@@ -4034,8 +4034,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4049,7 +4049,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Start
           </span>
@@ -4083,8 +4083,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4114,7 +4114,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             End
           </span>
@@ -4139,8 +4139,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4154,7 +4154,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             End
           </span>
@@ -4188,8 +4188,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4219,7 +4219,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             End
           </span>
@@ -4244,8 +4244,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4259,7 +4259,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             End
           </span>
@@ -4298,8 +4298,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4313,7 +4313,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Long kangaroo text that should be trimmed for sure this time
           </span>
@@ -4354,8 +4354,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4385,7 +4385,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
             </svg>
           </span>
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Long kangaroo text that should be trimmed
           </span>
@@ -4410,8 +4410,8 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
         onTouchStart={[Function]}
         style={
           {
-            "backgroundColor": "var(--BV-color-neutral-solid)",
-            "color": "var(--BV-color-neutral-solidText)",
+            "backgroundColor": "var(--BV-colorNeutralSolid)",
+            "color": "var(--BV-colorNeutralSolidText)",
           }
         }
         type="button"
@@ -4425,7 +4425,7 @@ exports[`Storyshots ui-components/Button Button Sizes 1`] = `
           }
         >
           <span
-            className="text-ellipsis overflow-hidden"
+            className="text-ellipsis overflow-hidden "
           >
             Long kangaroo text that should be trimmed
           </span>
@@ -4469,8 +4469,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolidText)",
             }
           }
           type="button"
@@ -4484,7 +4484,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -4509,8 +4509,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-secondary-solid)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorSecondarySolid)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -4524,7 +4524,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -4549,8 +4549,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solidText)",
+              "backgroundColor": "var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolidText)",
             }
           }
           type="button"
@@ -4564,7 +4564,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -4589,8 +4589,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solidText)",
+              "backgroundColor": "var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolidText)",
             }
           }
           type="button"
@@ -4604,7 +4604,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -4629,8 +4629,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solidText)",
+              "backgroundColor": "var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolidText)",
             }
           }
           type="button"
@@ -4644,7 +4644,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -4669,8 +4669,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolidText)",
             }
           }
           type="button"
@@ -4684,7 +4684,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -4722,8 +4722,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solidFaint)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "backgroundColor": "var(--BV-colorNeutralSolidFaint)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -4737,7 +4737,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -4762,8 +4762,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-secondary-solidFaint)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "backgroundColor": "var(--BV-colorSecondarySolidFaint)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -4777,7 +4777,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -4802,8 +4802,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-caution-solidFaint)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "backgroundColor": "var(--BV-colorCautionSolidFaint)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -4817,7 +4817,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -4842,8 +4842,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-critical-solidFaint)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "backgroundColor": "var(--BV-colorCriticalSolidFaint)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -4857,7 +4857,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -4882,8 +4882,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-solidFaint)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "backgroundColor": "var(--BV-colorPositiveSolidFaint)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -4897,7 +4897,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -4922,8 +4922,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solidFaint)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "backgroundColor": "var(--BV-colorPromoteSolidFaint)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -4937,7 +4937,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -4975,8 +4975,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolidText)",
             }
           }
           type="button"
@@ -4990,7 +4990,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -5015,8 +5015,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-secondary-solid)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorSecondarySolid)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -5030,7 +5030,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -5055,8 +5055,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solidText)",
+              "backgroundColor": "var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolidText)",
             }
           }
           type="button"
@@ -5070,7 +5070,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -5095,8 +5095,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solidText)",
+              "backgroundColor": "var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolidText)",
             }
           }
           type="button"
@@ -5110,7 +5110,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -5135,8 +5135,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solidText)",
+              "backgroundColor": "var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolidText)",
             }
           }
           type="button"
@@ -5150,7 +5150,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -5175,8 +5175,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolidText)",
             }
           }
           type="button"
@@ -5190,7 +5190,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -5228,8 +5228,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolidText)",
             }
           }
           type="button"
@@ -5243,7 +5243,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -5268,8 +5268,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-secondary-solid)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorSecondarySolid)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -5283,7 +5283,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -5308,8 +5308,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solidText)",
+              "backgroundColor": "var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolidText)",
             }
           }
           type="button"
@@ -5323,7 +5323,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -5348,8 +5348,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solidText)",
+              "backgroundColor": "var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolidText)",
             }
           }
           type="button"
@@ -5363,7 +5363,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -5388,8 +5388,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solidText)",
+              "backgroundColor": "var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolidText)",
             }
           }
           type="button"
@@ -5403,7 +5403,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -5428,8 +5428,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolidText)",
             }
           }
           type="button"
@@ -5443,7 +5443,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -5481,8 +5481,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolidText)",
             }
           }
           type="button"
@@ -5512,7 +5512,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -5537,8 +5537,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-secondary-solid)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorSecondarySolid)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -5568,7 +5568,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -5593,8 +5593,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solidText)",
+              "backgroundColor": "var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolidText)",
             }
           }
           type="button"
@@ -5624,7 +5624,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -5649,8 +5649,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solidText)",
+              "backgroundColor": "var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolidText)",
             }
           }
           type="button"
@@ -5680,7 +5680,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -5705,8 +5705,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solidText)",
+              "backgroundColor": "var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolidText)",
             }
           }
           type="button"
@@ -5736,7 +5736,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -5761,8 +5761,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solidText)",
+              "backgroundColor": "var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolidText)",
             }
           }
           type="button"
@@ -5792,7 +5792,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -5833,8 +5833,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solid)",
+              "border": "2px solid var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolid)",
             }
           }
           type="button"
@@ -5848,7 +5848,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -5874,8 +5874,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-secondary-solidText)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "border": "2px solid var(--BV-colorSecondarySolidText)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -5889,7 +5889,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -5915,8 +5915,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solid)",
+              "border": "2px solid var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -5930,7 +5930,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -5956,8 +5956,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solid)",
+              "border": "2px solid var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -5971,7 +5971,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -5997,8 +5997,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solid)",
+              "border": "2px solid var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -6012,7 +6012,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -6038,8 +6038,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solid)",
+              "border": "2px solid var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -6053,7 +6053,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -6092,8 +6092,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "border": "2px solid var(--BV-colorNeutralTextDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -6107,7 +6107,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -6133,8 +6133,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "border": "2px solid var(--BV-colorNeutralTextDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -6148,7 +6148,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -6174,8 +6174,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "border": "2px solid var(--BV-colorNeutralTextDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -6189,7 +6189,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -6215,8 +6215,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "border": "2px solid var(--BV-colorNeutralTextDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -6230,7 +6230,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -6256,8 +6256,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "border": "2px solid var(--BV-colorNeutralTextDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -6271,7 +6271,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -6297,8 +6297,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-textDisabled)",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "border": "2px solid var(--BV-colorNeutralTextDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -6312,7 +6312,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -6351,8 +6351,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solid)",
+              "border": "2px solid var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolid)",
             }
           }
           type="button"
@@ -6366,7 +6366,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -6392,8 +6392,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-secondary-solidText)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "border": "2px solid var(--BV-colorSecondarySolidText)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -6407,7 +6407,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -6433,8 +6433,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solid)",
+              "border": "2px solid var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -6448,7 +6448,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -6474,8 +6474,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solid)",
+              "border": "2px solid var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -6489,7 +6489,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -6515,8 +6515,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solid)",
+              "border": "2px solid var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -6530,7 +6530,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -6556,8 +6556,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solid)",
+              "border": "2px solid var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -6571,7 +6571,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -6610,8 +6610,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solid)",
+              "border": "2px solid var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolid)",
             }
           }
           type="button"
@@ -6625,7 +6625,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -6651,8 +6651,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-secondary-solidText)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "border": "2px solid var(--BV-colorSecondarySolidText)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -6666,7 +6666,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -6692,8 +6692,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solid)",
+              "border": "2px solid var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -6707,7 +6707,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -6733,8 +6733,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solid)",
+              "border": "2px solid var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -6748,7 +6748,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -6774,8 +6774,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solid)",
+              "border": "2px solid var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -6789,7 +6789,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -6815,8 +6815,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solid)",
+              "border": "2px solid var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -6830,7 +6830,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -6869,8 +6869,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-neutral-solid)",
-              "color": "var(--BV-color-neutral-solid)",
+              "border": "2px solid var(--BV-colorNeutralSolid)",
+              "color": "var(--BV-colorNeutralSolid)",
             }
           }
           type="button"
@@ -6900,7 +6900,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -6926,8 +6926,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-secondary-solidText)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "border": "2px solid var(--BV-colorSecondarySolidText)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -6957,7 +6957,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -6983,8 +6983,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-caution-solid)",
-              "color": "var(--BV-color-caution-solid)",
+              "border": "2px solid var(--BV-colorCautionSolid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -7014,7 +7014,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -7040,8 +7040,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-critical-solid)",
-              "color": "var(--BV-color-critical-solid)",
+              "border": "2px solid var(--BV-colorCriticalSolid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -7071,7 +7071,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -7097,8 +7097,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-positive-solid)",
-              "color": "var(--BV-color-positive-solid)",
+              "border": "2px solid var(--BV-colorPositiveSolid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -7128,7 +7128,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -7154,8 +7154,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "border": "2px solid var(--BV-color-promote-solid)",
-              "color": "var(--BV-color-promote-solid)",
+              "border": "2px solid var(--BV-colorPromoteSolid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -7185,7 +7185,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -7225,8 +7225,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-neutral-text)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -7240,7 +7240,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -7265,8 +7265,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -7280,7 +7280,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -7305,8 +7305,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-caution-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -7320,7 +7320,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -7345,8 +7345,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-critical-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -7360,7 +7360,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -7385,8 +7385,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-positive-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -7400,7 +7400,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -7425,8 +7425,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-promote-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -7440,7 +7440,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -7479,7 +7479,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -7493,7 +7493,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -7519,7 +7519,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -7533,7 +7533,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -7559,7 +7559,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -7573,7 +7573,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -7599,7 +7599,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -7613,7 +7613,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -7639,7 +7639,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -7653,7 +7653,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -7679,7 +7679,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -7693,7 +7693,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -7731,8 +7731,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-neutral-text)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -7746,7 +7746,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -7771,8 +7771,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -7786,7 +7786,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -7811,8 +7811,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-caution-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -7826,7 +7826,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -7851,8 +7851,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-critical-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -7866,7 +7866,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -7891,8 +7891,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-positive-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -7906,7 +7906,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -7931,8 +7931,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-promote-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -7946,7 +7946,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -7984,8 +7984,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-neutral-text)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -7999,7 +7999,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -8024,8 +8024,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -8039,7 +8039,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -8064,8 +8064,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-caution-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -8079,7 +8079,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -8104,8 +8104,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-critical-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -8119,7 +8119,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -8144,8 +8144,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-positive-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -8159,7 +8159,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -8184,8 +8184,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-promote-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -8199,7 +8199,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -8237,8 +8237,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-neutral-text)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -8268,7 +8268,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -8293,8 +8293,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-secondary-solidText)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorSecondarySolidText)",
             }
           }
           type="button"
@@ -8324,7 +8324,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -8349,8 +8349,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-caution-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -8380,7 +8380,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -8405,8 +8405,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-critical-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -8436,7 +8436,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -8461,8 +8461,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-positive-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -8492,7 +8492,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -8517,8 +8517,8 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           onTouchStart={[Function]}
           style={
             {
-              "backgroundColor": "var(--BV-color-neutral-borderSubdued)",
-              "color": "var(--BV-color-promote-solid)",
+              "backgroundColor": "var(--BV-colorNeutralBorderSubdued)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -8548,7 +8548,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -8589,7 +8589,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -8603,7 +8603,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -8629,7 +8629,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textSubdued)",
+              "color": "var(--BV-colorNeutralTextSubdued)",
             }
           }
           type="button"
@@ -8643,7 +8643,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -8669,7 +8669,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -8683,7 +8683,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -8709,7 +8709,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -8723,7 +8723,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -8749,7 +8749,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -8763,7 +8763,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -8789,7 +8789,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -8803,7 +8803,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -8842,7 +8842,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -8856,7 +8856,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -8882,7 +8882,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -8896,7 +8896,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -8922,7 +8922,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -8936,7 +8936,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -8962,7 +8962,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -8976,7 +8976,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -9002,7 +9002,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -9016,7 +9016,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -9042,7 +9042,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textDisabled)",
+              "color": "var(--BV-colorNeutralTextDisabled)",
             }
           }
           type="button"
@@ -9056,7 +9056,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -9095,7 +9095,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -9109,7 +9109,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -9135,7 +9135,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textSubdued)",
+              "color": "var(--BV-colorNeutralTextSubdued)",
             }
           }
           type="button"
@@ -9149,7 +9149,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -9175,7 +9175,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -9189,7 +9189,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -9215,7 +9215,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -9229,7 +9229,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -9255,7 +9255,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -9269,7 +9269,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -9295,7 +9295,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -9309,7 +9309,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -9348,7 +9348,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -9362,7 +9362,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -9388,7 +9388,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textSubdued)",
+              "color": "var(--BV-colorNeutralTextSubdued)",
             }
           }
           type="button"
@@ -9402,7 +9402,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -9428,7 +9428,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -9442,7 +9442,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -9468,7 +9468,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -9482,7 +9482,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -9508,7 +9508,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -9522,7 +9522,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -9548,7 +9548,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -9562,7 +9562,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
             }
           >
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -9601,7 +9601,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-text)",
+              "color": "var(--BV-colorNeutralText)",
             }
           }
           type="button"
@@ -9631,7 +9631,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Neutral
             </span>
@@ -9657,7 +9657,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-neutral-textSubdued)",
+              "color": "var(--BV-colorNeutralTextSubdued)",
             }
           }
           type="button"
@@ -9687,7 +9687,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Secondary
             </span>
@@ -9713,7 +9713,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-caution-solid)",
+              "color": "var(--BV-colorCautionSolid)",
             }
           }
           type="button"
@@ -9743,7 +9743,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Caution
             </span>
@@ -9769,7 +9769,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-critical-solid)",
+              "color": "var(--BV-colorCriticalSolid)",
             }
           }
           type="button"
@@ -9799,7 +9799,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Critical
             </span>
@@ -9825,7 +9825,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-positive-solid)",
+              "color": "var(--BV-colorPositiveSolid)",
             }
           }
           type="button"
@@ -9855,7 +9855,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Positive
             </span>
@@ -9881,7 +9881,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
           style={
             {
               "backgroundColor": "transparent",
-              "color": "var(--BV-color-promote-solid)",
+              "color": "var(--BV-colorPromoteSolid)",
             }
           }
           type="button"
@@ -9911,7 +9911,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
               </svg>
             </span>
             <span
-              className="text-ellipsis overflow-hidden"
+              className="text-ellipsis overflow-hidden "
             >
               Promote
             </span>
@@ -9925,7 +9925,7 @@ exports[`Storyshots ui-components/Button Button Variants 1`] = `
 
 exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
 <div
-  className="B-ui-components_combo-box flex flex-col relative w-56 "
+  className="B-ui-components_combo-box flex flex-col relative "
 >
   <label
     className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"
@@ -9999,9 +9999,93 @@ exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
 </div>
 `;
 
+exports[`Storyshots ui-components/ComboBox Full Width 1`] = `
+<div
+  style={
+    {
+      "width": "50vw",
+    }
+  }
+>
+  <div
+    className="B-ui-components_combo-box flex flex-col relative "
+  >
+    <label
+      className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"
+      htmlFor="react-aria-test-generated-id"
+      id="react-aria-test-generated-id"
+    >
+      I am label
+    </label>
+    <div
+      className="relative inline-flex flex-row rounded-md overflow-hidden text-field-neutral border-solid border-1 border-colorNeutralTextFieldBorder px-1 py-1 rounded "
+    >
+      <input
+        aria-autocomplete="list"
+        aria-expanded={false}
+        aria-labelledby="react-aria-test-generated-id"
+        autoComplete="off"
+        autoCorrect="off"
+        className="w-full outline-none px-2 py-1 text-field-neutral "
+        disabled={false}
+        id="react-aria-test-generated-id"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onTouchEnd={[Function]}
+        readOnly={false}
+        role="combobox"
+        spellCheck="false"
+        type="text"
+        value=""
+      />
+      <button
+        aria-controls={null}
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-label="Show suggestions"
+        aria-labelledby="react-aria-test-generated-id"
+        className="px-1 cursor-pointer"
+        id="react-aria-test-generated-id"
+        onBlur={null}
+        onClick={[Function]}
+        onDragStart={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchCancel={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={-1}
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          className="w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clipRule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            fillRule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots ui-components/ComboBox Primary 1`] = `
 <div
-  className="B-ui-components_combo-box flex flex-col relative w-56 "
+  className="B-ui-components_combo-box flex flex-col relative "
 >
   <label
     className="block select-none text-sm font-medium text-left text-colorNeutralTextSubdued"
@@ -10097,8 +10181,8 @@ exports[`Storyshots ui-components/Dialog Destructive 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-solid)",
-        "color": "var(--BV-color-neutral-solidText)",
+        "backgroundColor": "var(--BV-colorNeutralSolid)",
+        "color": "var(--BV-colorNeutralSolidText)",
       }
     }
     type="button"
@@ -10112,7 +10196,7 @@ exports[`Storyshots ui-components/Dialog Destructive 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
       >
         Open modal
       </span>
@@ -10147,8 +10231,8 @@ exports[`Storyshots ui-components/Dialog Loading Dialog 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-solid)",
-        "color": "var(--BV-color-neutral-solidText)",
+        "backgroundColor": "var(--BV-colorNeutralSolid)",
+        "color": "var(--BV-colorNeutralSolidText)",
       }
     }
     type="button"
@@ -10162,7 +10246,7 @@ exports[`Storyshots ui-components/Dialog Loading Dialog 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
       >
         Open modal
       </span>
@@ -10215,8 +10299,8 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-solid)",
-        "color": "var(--BV-color-neutral-solidText)",
+        "backgroundColor": "var(--BV-colorNeutralSolid)",
+        "color": "var(--BV-colorNeutralSolidText)",
       }
     }
     type="button"
@@ -10230,7 +10314,7 @@ exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
       >
         Open modal
       </span>
@@ -10275,8 +10359,8 @@ exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-solid)",
-        "color": "var(--BV-color-neutral-solidText)",
+        "backgroundColor": "var(--BV-colorNeutralSolid)",
+        "color": "var(--BV-colorNeutralSolidText)",
       }
     }
     type="button"
@@ -10290,7 +10374,7 @@ exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
       >
         Open modal
       </span>
@@ -10324,8 +10408,8 @@ exports[`Storyshots ui-components/DropdownMenu Primary 1`] = `
   onTouchStart={[Function]}
   style={
     {
-      "backgroundColor": "var(--BV-color-neutral-solid)",
-      "color": "var(--BV-color-neutral-solidText)",
+      "backgroundColor": "var(--BV-colorNeutralSolid)",
+      "color": "var(--BV-colorNeutralSolidText)",
     }
   }
   type="button"
@@ -10339,7 +10423,7 @@ exports[`Storyshots ui-components/DropdownMenu Primary 1`] = `
     }
   >
     <span
-      className="text-ellipsis overflow-hidden"
+      className="text-ellipsis overflow-hidden "
     >
       wow
     </span>
@@ -10511,9 +10595,9 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
-        "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
-        "color": "var(--BV-color-neutral-textFieldText)",
+        "backgroundColor": "var(--BV-colorNeutralTextFieldBg)",
+        "border": "1px solid var(--BV-colorNeutralTextFieldBorder)",
+        "color": "var(--BV-colorNeutralTextFieldText)",
       }
     }
     type="button"
@@ -10527,7 +10611,8 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
+        id="react-aria-test-generated-id"
       >
         Select an option
       </span>
@@ -10664,9 +10749,9 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
-          "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
-          "color": "var(--BV-color-neutral-textFieldText)",
+          "backgroundColor": "var(--BV-colorNeutralTextFieldBg)",
+          "border": "1px solid var(--BV-colorNeutralTextFieldBorder)",
+          "color": "var(--BV-colorNeutralTextFieldText)",
         }
       }
       type="button"
@@ -10680,7 +10765,8 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
+          id="react-aria-test-generated-id"
         >
           Select an option
         </span>
@@ -10810,9 +10896,9 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
-        "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
-        "color": "var(--BV-color-neutral-textFieldText)",
+        "backgroundColor": "var(--BV-colorNeutralTextFieldBg)",
+        "border": "1px solid var(--BV-colorNeutralTextFieldBorder)",
+        "color": "var(--BV-colorNeutralTextFieldText)",
       }
     }
     type="button"
@@ -10826,7 +10912,8 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
+        id="react-aria-test-generated-id"
       >
         Select an option
       </span>
@@ -10962,9 +11049,9 @@ exports[`Storyshots ui-components/Select Full Width 1`] = `
       onTouchStart={[Function]}
       style={
         {
-          "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
-          "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
-          "color": "var(--BV-color-neutral-textFieldText)",
+          "backgroundColor": "var(--BV-colorNeutralTextFieldBg)",
+          "border": "1px solid var(--BV-colorNeutralTextFieldBorder)",
+          "color": "var(--BV-colorNeutralTextFieldText)",
         }
       }
       type="button"
@@ -10978,7 +11065,8 @@ exports[`Storyshots ui-components/Select Full Width 1`] = `
         }
       >
         <span
-          className="text-ellipsis overflow-hidden"
+          className="text-ellipsis overflow-hidden "
+          id="react-aria-test-generated-id"
         >
           Select an option
         </span>
@@ -11128,9 +11216,9 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     onTouchStart={[Function]}
     style={
       {
-        "backgroundColor": "var(--BV-color-neutral-textFieldBg)",
-        "border": "1px solid var(--BV-color-neutral-textFieldBorder)",
-        "color": "var(--BV-color-neutral-textFieldText)",
+        "backgroundColor": "var(--BV-colorNeutralTextFieldBg)",
+        "border": "1px solid var(--BV-colorNeutralTextFieldBorder)",
+        "color": "var(--BV-colorNeutralTextFieldText)",
       }
     }
     type="button"
@@ -11144,7 +11232,8 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
       }
     >
       <span
-        className="text-ellipsis overflow-hidden"
+        className="text-ellipsis overflow-hidden "
+        id="react-aria-test-generated-id"
       >
         Select an option
       </span>
@@ -11239,7 +11328,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     className="text-sm"
     style={
       {
-        "color": "var(--BV-color-critical-solidStrong)",
+        "color": "var(--BV-colorCriticalSolidStrong)",
       }
     }
   >
@@ -11390,7 +11479,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
     style={
       {
-        "width": "var(--BV-misc-workspaceSidebarWidth)",
+        "width": "var(--BV-miscWorkspaceSidebarWidth)",
       }
     }
   >
@@ -12474,7 +12563,7 @@ exports[`Storyshots ui-dhancha/Dhancha Primary 1`] = `
     className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
     style={
       {
-        "width": "var(--BV-misc-noteSidebarWidth)",
+        "width": "var(--BV-miscNoteSidebarWidth)",
       }
     }
   >

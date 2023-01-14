@@ -1,15 +1,15 @@
 :root {
-  --BV-universal-palette-alignment-spacing: 0.5rem;
-  --BV-universal-palette-item-disabled-bg-color: rgb(232 232 232);
-  --BV-universal-palette-item-divider-width: 1px;
-  --BV-universal-palette-item-disabled-bg-text-color: rgb(161 161 161);
+  --BV-universalPaletteAlignmentSpacing: 0.5rem;
+  --BV-universalPaletteItemDisabledBgColor: rgb(232 232 232);
+  --BV-universalPaletteItemDividerWidth: 1px;
+  --BV-universalPaletteItemDisabledBgTextColor: rgb(161 161 161);
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_left-node {
   display: inline-flex;
   flex-direction: row;
   justify-content: center;
-  margin-right: var(--BV-universal-palette-alignment-spacing);
+  margin-right: var(--BV-universalPaletteAlignmentSpacing);
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_right-node {
@@ -39,7 +39,7 @@
 }
 
 .B-ui-components_universal-palette-container {
-  background-color: var(--BV-color-neutral-bgLayerFloat);
+  background-color: var(--BV-colorNeutralBgLayerFloat);
   margin-left: auto;
   margin-right: auto;
   max-width: 620px;
@@ -51,26 +51,26 @@
   position: fixed;
   left: 0;
   right: 0;
-  top: var(--BV-misc-activitybarWidth);
+  top: var(--BV-miscActivitybarWidth);
   box-shadow: 0 0 rgb(26 24 24 / 0%), 0 0 #0000, 0 0 #0000, 0 0 #0000,
     0 25px 50px -12px rgb(0 0 0 / 25%);
 }
 
 .B-ui-components_universal-palette-input-wrapper {
-  padding: var(--BV-universal-palette-alignment-spacing);
-  border-bottom: 1px solid var(--BV-color-neutral-border);
+  padding: var(--BV-universalPaletteAlignmentSpacing);
+  border-bottom: 1px solid var(--BV-colorNeutralBorder);
   min-height: 3.2rem;
 }
 
 .B-ui-components_universal-palette-input {
   min-height: 28px;
-  padding: calc(var(--BV-universal-palette-alignment-spacing) / 2)
-    var(--BV-universal-palette-alignment-spacing);
+  padding: calc(var(--BV-universalPaletteAlignmentSpacing) / 2)
+    var(--BV-universalPaletteAlignmentSpacing);
 }
 
 .B-ui-components_universal-palette-input-wrapper .B-ui-components_left-node {
-  margin-right: calc(var(--BV-universal-palette-alignment-spacing) * 1.5);
-  margin-left: var(--BV-universal-palette-alignment-spacing);
+  margin-right: calc(var(--BV-universalPaletteAlignmentSpacing) * 1.5);
+  margin-left: var(--BV-universalPaletteAlignmentSpacing);
   display: flex;
   align-items: center;
 }
@@ -79,38 +79,38 @@
 
 /* single line item */
 .B-ui-components_universal-palette-item {
-  padding: 0 calc(2 * var(--BV-universal-palette-alignment-spacing));
+  padding: 0 calc(2 * var(--BV-universalPaletteAlignmentSpacing));
 }
 
 .B-ui-components_universal-palette-item.BU_divider {
-  border-top: var(--BV-universal-palette-item-divider-width) solid
-    var(--BV-color-neutral-border);
+  border-top: var(--BV-universalPaletteItemDividerWidth) solid
+    var(--BV-colorNeutralBorder);
 }
 
 .B-ui-components_universal-palette-item.BU_allow-hover:hover {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }
 
 .B-ui-components_universal-palette-item.BU_active {
-  background-color: var(--BV-color-promote-solidSubdued);
+  background-color: var(--BV-colorPromoteSolidSubdued);
 }
 
 .B-ui-components_universal-palette-item.BU_disabled {
-  color: var(--BV-color-neutral-textSubdued);
+  color: var(--BV-colorNeutralTextSubdued);
   cursor: not-allowed;
 }
 
 .B-ui-components_universal-palette-item.BU_disabled.BU_active {
-  background-color: var(--BV-universal-palette-item-disabled-bg-color);
+  background-color: var(--BV-universalPaletteItemDisabledBgColor);
 }
 
 .B-ui-components_universal-palette-item.BU_disabled.BU_allow-hover:hover {
-  background-color: var(--BV-universal-palette-item-disabled-bg-color);
+  background-color: var(--BV-universalPaletteItemDisabledBgColor);
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_extra-info {
-  margin-left: var(--BV-universal-palette-alignment-spacing);
-  color: var(--BV-color-neutral-textSubdued);
+  margin-left: var(--BV-universalPaletteAlignmentSpacing);
+  color: var(--BV-colorNeutralTextSubdued);
 }
 
 .B-ui-components_universal-palette-item
@@ -119,5 +119,5 @@
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_description {
-  color: var(--BV-color-neutral-textSubdued);
+  color: var(--BV-colorNeutralTextSubdued);
 }

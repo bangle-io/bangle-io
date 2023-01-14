@@ -94,7 +94,7 @@ Each extension must have the following top level files:
 
 - A utility class helper starts with `BU_` followed by the name of the helper, for example, `BU_my-helper`.
 
-- A css variable starts with `BV-` followed by the name of the variable, for example, `var(--BV-my-variable)`.
+- A css variable starts with `BV-` followed by the name of the variable, for example, `var(--BV-myVariable)`.
 
 ### Contexts
 

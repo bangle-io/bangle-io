@@ -43,7 +43,7 @@ body {
 .B-ui-dhancha_multi-column-main-content > * {
   box-sizing: border-box;
   min-width: 100%;
-  border-right: 1px solid var(--BV-color-neutral-border);
+  border-right: 1px solid var(--BV-colorNeutralBorder);
 }
 
 .B-ui-dhancha_multi-column-main-content > *:last-child {
@@ -61,7 +61,7 @@ body {
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  height: var(--BV-misc-activitybarWidth);
+  height: var(--BV-miscActivitybarWidth);
   position: sticky;
   border-bottom: 1px solid transparent;
   top: 0;
@@ -70,7 +70,7 @@ body {
 }
 
 .B-ui-dhancha_activitybar.BU_widescreen {
-  flex-basis: var(--BV-misc-activitybarWidth);
+  flex-basis: var(--BV-miscActivitybarWidth);
   flex-direction: column;
   height: 100vh;
   position: relative;
@@ -85,5 +85,5 @@ body {
 }
 
 .B-ui-dhancha_activitybar.B-ui-dhancha_down {
-  border-bottom-color: var(--BV-color-neutral-border);
+  border-bottom-color: var(--BV-colorNeutralBorder);
 }

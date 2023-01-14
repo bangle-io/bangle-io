@@ -11,5 +11,5 @@ button:focus {
 }
 
 body {
-  background-color: var(--BV-color-neutral-bgLayerTop);
+  background-color: var(--BV-colorNeutralBgLayerTop);
 }

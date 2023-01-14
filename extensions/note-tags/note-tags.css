@@ -1,8 +1,8 @@
 .B-note-tags_inline-note-tag {
-  background-color: var(--BV-misc-noteTagsBg);
+  background-color: var(--BV-miscNoteTagsBg);
   border-radius: 4rem;
   padding: 0.125rem 0.5rem;
   margin: 0 0.125rem;
-  color: var(--BV-misc-noteTagsText);
+  color: var(--BV-miscNoteTagsText);
   cursor: pointer;
 }

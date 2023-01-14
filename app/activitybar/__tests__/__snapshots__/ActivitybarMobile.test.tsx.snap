@@ -56,7 +56,7 @@ exports[`renders mobile view 1`] = `
             style="justify-content: center;"
           >
             <span
-              class="text-ellipsis overflow-hidden"
+              class="text-ellipsis overflow-hidden "
             >
               two
             </span>
@@ -82,7 +82,7 @@ exports[`renders mobile view 1`] = `
               style="justify-content: center;"
             >
               <span
-                class="text-ellipsis overflow-hidden"
+                class="text-ellipsis overflow-hidden "
               >
                 Done
               </span>
