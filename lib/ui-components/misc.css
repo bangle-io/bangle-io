@@ -9,7 +9,7 @@
 
   --BC-bangleRingOffsetWidth: 0px;
   --BC-bangleRingOffsetColor: #fff;
-  --BC-bangleRingColor: var(--BC-colorPromoteBorder);
+  --BC-bangleRingColor: var(--BV-colorPromoteBorder);
   --BC-bangleRingOffsetShadow: 0 0 0 var(--BC-bangleRingOffsetWidth)
     var(--BC-bangleRingOffsetColor);
   --BC-bangleRingShadow: 0 0 0 calc(1.5px + var(--BC-bangleRingOffsetWidth))
