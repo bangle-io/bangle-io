@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@bangle.dev/jest-utils": "0.31.6",
-    "@bangle.io/atomic-css": "workspace:*",
+    "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/e2e-types": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/jsdom-env": "workspace:*",

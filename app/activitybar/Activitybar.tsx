@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 import {

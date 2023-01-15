@@ -1,6 +1,6 @@
 import type { Theme } from '@unocss/preset-mini';
 
-import { vars } from '@bangle.io/atomic-css';
+import { vars } from '@bangle.io/css-vars';
 
 const toneColors: Array<[string, string]> = [
   ...Object.entries(vars.color)

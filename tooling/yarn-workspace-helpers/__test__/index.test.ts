@@ -58,17 +58,6 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/atomic-css",
-        {
-          "hasCSSFiles": false,
-          "isToolingWorkspace": false,
-          "isWorktree": false,
-          "location": "lib/atomic-css",
-          "name": "@bangle.io/atomic-css",
-          "type": "lib",
-        },
-      ],
-      [
         "@bangle.io/baby-fs",
         {
           "hasCSSFiles": false,
@@ -231,6 +220,17 @@ test('lists packages', async () => {
           "location": "js-lib/create-store",
           "name": "@bangle.io/create-store",
           "type": "js-lib",
+        },
+      ],
+      [
+        "@bangle.io/css-vars",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/css-vars",
+          "name": "@bangle.io/css-vars",
+          "type": "lib",
         },
       ],
       [

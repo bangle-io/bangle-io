@@ -19,8 +19,8 @@ import {
   useBangleStoreContext,
   useSerialOperationContext,
 } from '@bangle.io/api';
-import { vars } from '@bangle.io/atomic-css';
 import { EditorDisplayType } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
 import type {
   BangleApplicationStore,

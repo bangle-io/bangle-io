@@ -3,7 +3,7 @@ import './style.css';
 import type { ReactNode } from 'react';
 import React, { useRef } from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
+import { vars } from '@bangle.io/css-vars';
 
 import { useStickyNavigation } from './use-sticky-navigation';
 

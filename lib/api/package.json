@@ -33,10 +33,10 @@
     "react-dom": "^17.0.2"
   },
   "dependencies": {
-    "@bangle.io/atomic-css": "workspace:*",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",

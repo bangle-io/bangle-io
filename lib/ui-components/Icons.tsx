@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
+import { vars } from '@bangle.io/css-vars';
 import { cx } from '@bangle.io/utils';
 
 export const Svg = ({

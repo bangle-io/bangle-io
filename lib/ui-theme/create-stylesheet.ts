@@ -3,7 +3,7 @@ import {
   getFromPath,
   vars,
   walkObject,
-} from '@bangle.io/atomic-css';
+} from '@bangle.io/css-vars';
 import { deepMerge, difference, intersect } from '@bangle.io/mini-js-utils';
 import type {
   BangleThemeInputDualColorScheme,

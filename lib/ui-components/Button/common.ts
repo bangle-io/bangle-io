@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
 import type { Tone } from '@bangle.io/constants';
 import { TONE } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { cx } from '@bangle.io/utils';
 
 export type BtnSize = 'xs' | 'sm' | 'md' | 'lg';

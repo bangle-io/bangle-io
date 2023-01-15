@@ -19,8 +19,8 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/atomic-css": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@heroicons/react": "^1.0.6",
