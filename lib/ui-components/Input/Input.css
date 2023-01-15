@@ -8,7 +8,7 @@
   position: absolute;
   left: -20px;
   cursor: pointer;
-  color: var(--BV-color-neutral-textSubdued);
+  color: var(--BV-colorNeutralTextSubdued);
 }
 
 .B-ui-components_input-clear::before {

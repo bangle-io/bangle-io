@@ -25,7 +25,7 @@ export function ReloadApplicationDialog() {
           window.location.reload();
         },
       }}
-      size="medium"
+      size="md"
       isDismissable={true}
       headingTitle="Reload Application"
     >

@@ -24,7 +24,7 @@ exports[`basic renders 1`] = `
               style="justify-content: center;"
             >
               <span
-                class="text-ellipsis overflow-hidden"
+                class="text-ellipsis overflow-hidden "
               >
                 blah
               </span>
@@ -66,7 +66,7 @@ exports[`basic renders 1`] = `
       </div>
       <div
         class="w-full smallscreen:min-h-screen "
-        style="max-width: min(var(--BV-misc-pageMaxWidth), 100vw);"
+        style="max-width: min(var(--BV-miscPageMaxWidth), 100vw);"
       >
         <div
           data-testid="mock-editor"
@@ -103,7 +103,7 @@ exports[`renders correctly when file does not exist 1`] = `
               style="justify-content: center;"
             >
               <span
-                class="text-ellipsis overflow-hidden"
+                class="text-ellipsis overflow-hidden "
               >
                 blah
               </span>
@@ -145,7 +145,7 @@ exports[`renders correctly when file does not exist 1`] = `
       </div>
       <div
         class="w-full smallscreen:min-h-screen "
-        style="max-width: min(var(--BV-misc-pageMaxWidth), 100vw);"
+        style="max-width: min(var(--BV-miscPageMaxWidth), 100vw);"
       >
         <div
           class="flex flex-col justify-center h-full px-3 align-middle"
@@ -172,7 +172,7 @@ exports[`renders when no wsPath is provided 1`] = `
     >
       <div
         class="w-full smallscreen:min-h-screen "
-        style="max-width: min(var(--BV-misc-pageMaxWidth), 100vw);"
+        style="max-width: min(var(--BV-miscPageMaxWidth), 100vw);"
       >
         <div>
           Nothing was found here

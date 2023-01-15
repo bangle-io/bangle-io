@@ -13,7 +13,6 @@ import { cx } from '@bangle.io/utils';
 import { Button } from '../Button';
 import { LoadingCircleIcon } from '../Icons';
 import { Inline } from '../Inline';
-import type { SizeType } from '../misc';
 
 export type CTAConfig = {
   isDestructive?: boolean;
@@ -36,7 +35,7 @@ export function Dialog({
   isLoading = false,
   onDismiss,
   primaryButtonConfig,
-  size = 'medium',
+  size = 'md',
   allowScroll = false,
 }: {
   children: React.ReactNode;
@@ -50,7 +49,7 @@ export function Dialog({
   isLoading?: boolean;
   onDismiss: () => void;
   primaryButtonConfig?: CTAConfig;
-  size?: SizeType;
+  size?: 'sm' | 'md' | 'lg' | 'full';
   allowScroll?: boolean;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -95,9 +94,9 @@ export function Dialog({
           <div
             className={cx(
               'B-ui-components_dialog-content-container bg-colorNeutralBgLayerTop rounded-lg shadow-xl',
-              size === 'small' && 'BU_small',
-              size === 'medium' && 'BU_medium',
-              size === 'large' && 'BU_large',
+              size === 'sm' && 'BU_small',
+              size === 'md' && 'BU_medium',
+              size === 'lg' && 'BU_large',
               size === 'full' && 'w-full',
             )}
             {...overlayProps}

@@ -31,7 +31,7 @@
     "typescript": "4.9.3"
   },
   "devDependencies": {
-    "@bangle.io/atomic-css": "workspace:*",
+    "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@storybook/react": "^6.5.12",
     "@testing-library/react": "^12.1.3",

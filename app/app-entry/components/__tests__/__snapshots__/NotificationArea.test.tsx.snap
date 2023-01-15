@@ -160,7 +160,7 @@ exports[`NotificationArea renders with content 2`] = `
             style="justify-content: center;"
           >
             <span
-              class="text-ellipsis overflow-hidden"
+              class="text-ellipsis overflow-hidden "
             >
               Test Op
             </span>

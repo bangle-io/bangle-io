@@ -35,7 +35,9 @@
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/extract-css-vars": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/yarn-workspace-helpers": "workspace:*",

@@ -8,8 +8,8 @@ import { useSelectState } from '@react-stately/select';
 import type { AriaSelectProps } from '@react-types/select';
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
 import { TONE } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { cx, isTouchDevice } from '@bangle.io/utils';
 
 import type { BaseButtonStyleProps } from '../Button';
@@ -45,6 +45,7 @@ export function Select<T extends object>(
 
   const buttonElProps = useButtonStyleProps({
     elementProps: mergeProps(hoverProps, buttonProps, focusProps),
+    textElementProps: valueProps,
     leftIcon: undefined,
     rightIcon: <SelectorIcon />,
     text: state.selectedItem ? state.selectedItem.rendered : 'Select an option',

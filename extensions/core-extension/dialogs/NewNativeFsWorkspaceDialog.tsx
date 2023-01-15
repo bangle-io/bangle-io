@@ -109,7 +109,7 @@ export const NewNativeFsWorkspaceDialog: DialogComponentType = ({
       isDismissable
       headingTitle="New Workspace"
       onDismiss={onDismiss}
-      size="medium"
+      size="md"
       primaryButtonConfig={{
         disabled: !modalState.workspace,
         onPress: createWorkspace,

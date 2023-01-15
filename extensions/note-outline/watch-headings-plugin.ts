@@ -1,10 +1,7 @@
 import type { EditorState, StateField } from '@bangle.dev/pm';
 import { Plugin } from '@bangle.dev/pm';
 
-import {
-  debounceFn,
-  getEditorIntersectionObserverPluginState,
-} from '@bangle.io/utils';
+import { debounceFn } from '@bangle.io/utils';
 
 import type { HeadingNodes, WatchPluginState } from './config';
 import {
@@ -12,6 +9,7 @@ import {
   WATCH_HEADINGS_PLUGIN_DEBOUNCE_WAIT,
   watchHeadingsPluginKey,
 } from './config';
+import { getEditorIntersectionObserverPluginState } from './helpers';
 
 export function watchHeadingsPlugin() {
   let state: StateField<WatchPluginState> = {

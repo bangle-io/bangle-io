@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 

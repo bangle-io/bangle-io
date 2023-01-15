@@ -1,4 +1,4 @@
-import { vars } from '@bangle.io/atomic-css';
+import { vars } from '@bangle.io/css-vars';
 
 export const width = {
   auto: 'auto',

@@ -17,20 +17,20 @@
 
 .B-ui-components_inline-palette-items-wrapper
   > .B-ui-components_inline-palette-row.BU_disabled {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }
 
 .B-ui-components_inline-palette-items-wrapper
   > .B-ui-components_inline-palette-row.BU_active.BU_disabled {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }
 
 .B-ui-components_inline-palette-items-wrapper
   > .B-ui-components_inline-palette-row.BU_hover-allowed:hover {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }
 
 .B-ui-components_inline-palette-items-wrapper
   > .B-ui-components_inline-palette-row.BU_active {
-  background-color: var(--BV-color-promote-solidSubdued) !important;
+  background-color: var(--BV-colorPromoteSolidSubdued) !important;
 }

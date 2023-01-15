@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
 import { TONE, Tone } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import {
   Button,
   BUTTON_VARIANT,

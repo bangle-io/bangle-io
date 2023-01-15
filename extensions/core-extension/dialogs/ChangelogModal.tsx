@@ -72,7 +72,7 @@ export function ChangelogModal() {
       isDismissable
       headingTitle="What's new?"
       onDismiss={onDismiss}
-      size="large"
+      size="lg"
     >
       <div
         className="overflow-y-scroll"

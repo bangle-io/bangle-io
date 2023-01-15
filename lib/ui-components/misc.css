@@ -7,15 +7,15 @@
   outline-offset: 2px;
   border: 1px solid transparent;
 
-  --BV-bangle-ring-offset-width: 0px;
-  --BV-bangle-ring-offset-color: #fff;
-  --BV-bangle-ring-color: var(--BV-color-promote-border);
-  --BV-bangle-ring-offset-shadow: 0 0 0 var(--BV-bangle-ring-offset-width)
-    var(--BV-bangle-ring-offset-color);
-  --BV-bangle-ring-shadow: 0 0 0
-    calc(1.5px + var(--BV-bangle-ring-offset-width)) var(--BV-bangle-ring-color);
-  --BV-bangle-shadow: 0 0 #0000;
+  --BC-bangleRingOffsetWidth: 0px;
+  --BC-bangleRingOffsetColor: #fff;
+  --BC-bangleRingColor: var(--BV-colorPromoteBorder);
+  --BC-bangleRingOffsetShadow: 0 0 0 var(--BC-bangleRingOffsetWidth)
+    var(--BC-bangleRingOffsetColor);
+  --BC-bangleRingShadow: 0 0 0 calc(1.5px + var(--BC-bangleRingOffsetWidth))
+    var(--BC-bangleRingColor);
+  --BC-bangleShadow: 0 0 #0000;
 
-  box-shadow: var(--BV-bangle-ring-offset-shadow), var(--BV-bangle-ring-shadow),
-    var(--BV-bangle-shadow, 0 0 #0000);
+  box-shadow: var(--BC-bangleRingOffsetShadow), var(--BC-bangleRingShadow),
+    var(--BC-bangleShadow, 0 0 #0000);
 }

@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 
 import { useBangleStoreContext, workspace } from '@bangle.io/api';
-import { vars } from '@bangle.io/atomic-css';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {

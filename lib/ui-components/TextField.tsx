@@ -3,7 +3,7 @@ import type { AriaTextFieldOptions } from '@react-aria/textfield';
 import { useTextField } from '@react-aria/textfield';
 import React from 'react';
 
-import { vars } from '@bangle.io/atomic-css';
+import { vars } from '@bangle.io/css-vars';
 
 import { FieldLabel } from './FieldLabel';
 

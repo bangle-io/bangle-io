@@ -60,7 +60,7 @@ test('renders correctly', () => {
             style="justify-content: center;"
           >
             <span
-              class="text-ellipsis overflow-hidden"
+              class="text-ellipsis overflow-hidden "
             >
               button child
             </span>

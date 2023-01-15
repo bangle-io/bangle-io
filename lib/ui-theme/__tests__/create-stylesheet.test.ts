@@ -128,15 +128,15 @@ describe('default light/dark', () => {
   test('sets sm override', () => {
     expect(result[CSS_SM_DARK_SCHEME]).toMatchInlineSnapshot(`
       [
-        "--BV-color-app-activitybarBg: rgb(14, 14, 14);",
-        "--BV-misc-pagePadding: 1.5rem 10px 2rem 25px;",
+        "--BV-colorAppActivitybarBg: rgb(14, 14, 14);",
+        "--BV-miscPagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
     expect(result[CSS_SM_LIGHT_SCHEME]).toMatchInlineSnapshot(`
       [
-        "--BV-color-app-activitybarBg: rgb(255, 255, 255);",
-        "--BV-color-app-activitybarText: rgb(34, 34, 34);",
-        "--BV-misc-pagePadding: 1.5rem 10px 2rem 25px;",
+        "--BV-colorAppActivitybarBg: rgb(255, 255, 255);",
+        "--BV-colorAppActivitybarText: rgb(34, 34, 34);",
+        "--BV-miscPagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
   });
@@ -155,7 +155,7 @@ describe('overrides', () => {
     });
 
     expect(original[CSS_ROOT]).toContain(
-      '--BV-color-caution-icon: rgb(203, 93, 0);',
+      '--BV-colorCautionIcon: rgb(203, 93, 0);',
     );
 
     let override = createStyleSheetObj({
@@ -169,7 +169,7 @@ describe('overrides', () => {
         },
       },
     });
-    expect(override[CSS_ROOT]).toContain('--BV-color-caution-icon: red;');
+    expect(override[CSS_ROOT]).toContain('--BV-colorCautionIcon: red;');
   });
 
   test('overrides light/dark', () => {
@@ -192,12 +192,12 @@ describe('overrides', () => {
       },
     });
 
-    expect(original[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
+    expect(original[CSS_ROOT]).not.toContain('--BV-colorCautionIcon: red;');
     expect(original[CSS_DARK_SCHEME]).toContain(
-      '--BV-color-caution-icon: dark-red;',
+      '--BV-colorCautionIcon: dark-red;',
     );
     expect(original[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-color-caution-icon: light-red;',
+      '--BV-colorCautionIcon: light-red;',
     );
   });
 
@@ -220,15 +220,15 @@ describe('overrides', () => {
     });
 
     expect(override[CSS_ROOT]?.join(',')).not.toContain(
-      '--BV-color-caution-icon:',
+      '--BV-colorCautionIcon:',
     );
 
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-color-caution-icon: rgb(232, 116, 0);',
+      '--BV-colorCautionIcon: rgb(232, 116, 0);',
     );
 
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-color-caution-icon: light-red;',
+      '--BV-colorCautionIcon: light-red;',
     );
   });
 
@@ -249,15 +249,15 @@ describe('overrides', () => {
     });
 
     expect(override[CSS_ROOT]?.join(',')).not.toContain(
-      '--BV-color-caution-icon:',
+      '--BV-colorCautionIcon:',
     );
 
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-color-caution-icon: dark-red;',
+      '--BV-colorCautionIcon: dark-red;',
     );
 
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-color-caution-icon: rgb(203, 93, 0);',
+      '--BV-colorCautionIcon: rgb(203, 93, 0);',
     );
   });
 
@@ -279,10 +279,10 @@ describe('overrides', () => {
       },
     });
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-color-app-activitybarBg: activitybar-dark-red;',
+      '--BV-colorAppActivitybarBg: activitybar-dark-red;',
     );
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
+      '--BV-colorAppActivitybarBg: rgb(26, 32, 44);',
     );
   });
 });
@@ -297,7 +297,7 @@ describe('smallscreen overrides', () => {
           },
         },
       }),
-    ).toEqual(['--BV-color-app-activitybarBg: sm-dark-red;']);
+    ).toEqual(['--BV-colorAppActivitybarBg: sm-dark-red;']);
 
     expect(
       createSmallScreenOverride({
@@ -314,8 +314,8 @@ describe('smallscreen overrides', () => {
         },
       }),
     ).toEqual([
-      '--BV-border-radius-md: sm-1;',
-      '--BV-color-app-activitybarBg: sm-dark-red;',
+      '--BV-borderRadiusMd: sm-1;',
+      '--BV-colorAppActivitybarBg: sm-dark-red;',
     ]);
 
     expect(createSmallScreenOverride({})).toEqual([]);
@@ -361,11 +361,11 @@ describe('smallscreen overrides', () => {
     );
 
     expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
-      '--BV-color-caution-icon: sm-light-red;',
+      '--BV-colorCautionIcon: sm-light-red;',
     );
 
     expect(override[CSS_SM_DARK_SCHEME]).toContain(
-      '--BV-color-caution-icon: sm-dark-red;',
+      '--BV-colorCautionIcon: sm-dark-red;',
     );
   });
 
@@ -402,11 +402,11 @@ describe('smallscreen overrides', () => {
     );
 
     expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
-      '--BV-border-radius-md: nanty;',
+      '--BV-borderRadiusMd: nanty;',
     );
 
     expect(override[CSS_SM_DARK_SCHEME]).toContain(
-      '--BV-border-radius-md: nanty;',
+      '--BV-borderRadiusMd: nanty;',
     );
   });
 
@@ -453,20 +453,20 @@ describe('smallscreen overrides', () => {
       CSS_SM_DARK_SCHEME,
     ]);
 
-    expect(override[CSS_ROOT]).not.toContain('--BV-color-caution-icon: red;');
+    expect(override[CSS_ROOT]).not.toContain('--BV-colorCautionIcon: red;');
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-color-caution-icon: dark-red;',
+      '--BV-colorCautionIcon: dark-red;',
     );
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-color-caution-icon: light-red;',
+      '--BV-colorCautionIcon: light-red;',
     );
 
     expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
-      '--BV-color-caution-icon: sm-light-red;',
+      '--BV-colorCautionIcon: sm-light-red;',
     );
 
     expect(override[CSS_SM_DARK_SCHEME]).toContain(
-      '--BV-color-caution-icon: sm-dark-red;',
+      '--BV-colorCautionIcon: sm-dark-red;',
     );
   });
 
@@ -496,18 +496,19 @@ describe('smallscreen overrides', () => {
         },
       },
     });
+
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-color-app-activitybarBg: activitybar-dark-red;',
+      '--BV-colorAppActivitybarBg: activitybar-dark-red;',
     );
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-color-app-activitybarBg: rgb(26, 32, 44);',
+      '--BV-colorAppActivitybarBg: rgb(26, 32, 44);',
     );
     expect(override[CSS_SM_DARK_SCHEME]).toContain(
-      '--BV-color-app-activitybarBg: sm-activitybar-dark-red;',
+      '--BV-colorAppActivitybarBg: sm-activitybar-dark-red;',
     );
 
     expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
-      '--BV-color-app-activitybarBg: rgb(255, 255, 255);',
+      '--BV-colorAppActivitybarBg: rgb(255, 255, 255);',
     );
 
     // other overrides should be there

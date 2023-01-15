@@ -1,11 +1,11 @@
 .B-core-extension_pick-workspace-storage li:hover {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }
 
 .B-core-extension_pick-workspace-storage li.BU_is-focused {
-  background-color: var(--BV-color-neutral-solidFaint);
+  background-color: var(--BV-colorNeutralSolidFaint);
 }
 
 .B-core-extension_pick-workspace-storage li.BU_is-active {
-  background-color: var(--BV-color-promote-solid);
+  background-color: var(--BV-colorPromoteSolid);
 }

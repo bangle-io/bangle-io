@@ -68,3 +68,32 @@ DisabledCase.args = {
     </Item>,
   ],
 };
+
+export const fullWidth = () => {
+  return (
+    <div style={{ width: '50vw' }}>
+      <ComboBox label="I am label">
+        {[
+          <Item textValue="red panda" key="red panda">
+            Red Panda
+          </Item>,
+          <Item textValue="cat" key="cat">
+            Cat
+          </Item>,
+          <Item textValue="dog" key="dog">
+            Dog
+          </Item>,
+          <Item textValue="aardvark" key="aardvark">
+            Aardvark
+          </Item>,
+          <Item textValue="kangaroo" key="kangaroo">
+            Really really really really big Kangaroo
+          </Item>,
+          <Item textValue="snake" key="snake">
+            Snake
+          </Item>,
+        ]}
+      </ComboBox>
+    </div>
+  );
+};

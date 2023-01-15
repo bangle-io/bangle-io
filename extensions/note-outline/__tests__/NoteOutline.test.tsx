@@ -21,10 +21,10 @@ import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils';
-import { getEditorIntersectionObserverPluginState } from '@bangle.io/utils';
 
 import noteOutlineExtension from '..';
 import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
+import { getEditorIntersectionObserverPluginState } from '../helpers';
 import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/slice-workspace');
@@ -37,8 +37,8 @@ jest.mock('@bangle.io/slice-editor-manager', () => {
   };
 });
 
-jest.mock('@bangle.io/utils', () => {
-  const utils = jest.requireActual('@bangle.io/utils');
+jest.mock('../helpers', () => {
+  const utils = jest.requireActual('../helpers');
 
   return {
     ...utils,
@@ -176,7 +176,7 @@ para 2
                 style="justify-content: flex-start;"
               >
                 <span
-                  class="text-ellipsis overflow-hidden"
+                  class="text-ellipsis overflow-hidden "
                 >
                   <span
                     class="pl-1"
@@ -197,7 +197,7 @@ para 2
                 style="justify-content: flex-start;"
               >
                 <span
-                  class="text-ellipsis overflow-hidden"
+                  class="text-ellipsis overflow-hidden "
                 >
                   <span
                     class="pl-1"
