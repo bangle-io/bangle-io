@@ -15,11 +15,11 @@
 .B-ui-components_sidebar-row2.BU_disable {
   color: var(--BV-colorNeutralTextSubdued);
   cursor: not-allowed;
-  background-color: var(--BV-universalPaletteItemDisabledBgColor);
+  background-color: var(--BC-universalPaletteItemDisabledBgColor);
 }
 
 .B-ui-components_sidebar-row2.BU_disable.BU_hover:hover {
-  background-color: var(--BV-universalPaletteItemDisabledBgColor);
+  background-color: var(--BC-universalPaletteItemDisabledBgColor);
 }
 
 /* node positioning */

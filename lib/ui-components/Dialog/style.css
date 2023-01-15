@@ -11,8 +11,8 @@
 }
 
 .B-ui-components_dialog-content-container {
-  --BV-uiComponentsDialogPaddingX: 20px;
-  --BV-uiComponentsDialogPaddingY: 40px;
+  --BC-uiComponentsDialogPaddingX: 20px;
+  --BC-uiComponentsDialogPaddingY: 40px;
 
   /* for mobile screens */
   margin-top: 7vh;
@@ -20,10 +20,10 @@
   max-height: calc(100vh * 0.9);
   display: grid;
   grid-template-columns:
-    var(--BV-uiComponentsDialogPaddingX) auto 1fr auto minmax(0, auto)
-    var(--BV-uiComponentsDialogPaddingX);
-  grid-template-rows: auto var(--BV-uiComponentsDialogPaddingY) auto auto 1fr auto var(
-      --BV-uiComponentsDialogPaddingY
+    var(--BC-uiComponentsDialogPaddingX) auto 1fr auto minmax(0, auto)
+    var(--BC-uiComponentsDialogPaddingX);
+  grid-template-rows: auto var(--BC-uiComponentsDialogPaddingY) auto auto 1fr auto var(
+      --BC-uiComponentsDialogPaddingY
     );
   grid-template-areas:
     'hero hero hero hero hero hero'
@@ -45,7 +45,7 @@ body .B-ui-components_dialog-content-container {
 }
 
 body.BU_widescreen .B-ui-components_dialog-content-container {
-  --BV-uiComponentsDialogPaddingX: 40px;
+  --BC-uiComponentsDialogPaddingX: 40px;
 
   padding-bottom: unset;
   overflow-y: unset;

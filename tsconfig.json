@@ -27,7 +27,7 @@
     "skipLibCheck": true,
     "strict": true,
     "stripInternal": true,
-    "target": "es2020",
+    "target": "es2021",
     "useDefineForClassFields": true
   },
   "include": [

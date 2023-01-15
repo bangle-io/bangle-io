@@ -7114,7 +7114,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],\
             ["@bangle.io/config-template", "npm:0.0.7"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\

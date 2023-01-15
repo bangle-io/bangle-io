@@ -1,15 +1,15 @@
 :root {
-  --BV-universalPaletteAlignmentSpacing: 0.5rem;
-  --BV-universalPaletteItemDisabledBgColor: rgb(232 232 232);
-  --BV-universalPaletteItemDividerWidth: 1px;
-  --BV-universalPaletteItemDisabledBgTextColor: rgb(161 161 161);
+  --BC-universalPaletteAlignmentSpacing: 0.5rem;
+  --BC-universalPaletteItemDisabledBgColor: rgb(232 232 232);
+  --BC-universalPaletteItemDividerWidth: 1px;
+  --BC-universalPaletteItemDisabledBgTextColor: rgb(161 161 161);
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_left-node {
   display: inline-flex;
   flex-direction: row;
   justify-content: center;
-  margin-right: var(--BV-universalPaletteAlignmentSpacing);
+  margin-right: var(--BC-universalPaletteAlignmentSpacing);
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_right-node {
@@ -57,20 +57,20 @@
 }
 
 .B-ui-components_universal-palette-input-wrapper {
-  padding: var(--BV-universalPaletteAlignmentSpacing);
+  padding: var(--BC-universalPaletteAlignmentSpacing);
   border-bottom: 1px solid var(--BV-colorNeutralBorder);
   min-height: 3.2rem;
 }
 
 .B-ui-components_universal-palette-input {
   min-height: 28px;
-  padding: calc(var(--BV-universalPaletteAlignmentSpacing) / 2)
-    var(--BV-universalPaletteAlignmentSpacing);
+  padding: calc(var(--BC-universalPaletteAlignmentSpacing) / 2)
+    var(--BC-universalPaletteAlignmentSpacing);
 }
 
 .B-ui-components_universal-palette-input-wrapper .B-ui-components_left-node {
-  margin-right: calc(var(--BV-universalPaletteAlignmentSpacing) * 1.5);
-  margin-left: var(--BV-universalPaletteAlignmentSpacing);
+  margin-right: calc(var(--BC-universalPaletteAlignmentSpacing) * 1.5);
+  margin-left: var(--BC-universalPaletteAlignmentSpacing);
   display: flex;
   align-items: center;
 }
@@ -79,11 +79,11 @@
 
 /* single line item */
 .B-ui-components_universal-palette-item {
-  padding: 0 calc(2 * var(--BV-universalPaletteAlignmentSpacing));
+  padding: 0 calc(2 * var(--BC-universalPaletteAlignmentSpacing));
 }
 
 .B-ui-components_universal-palette-item.BU_divider {
-  border-top: var(--BV-universalPaletteItemDividerWidth) solid
+  border-top: var(--BC-universalPaletteItemDividerWidth) solid
     var(--BV-colorNeutralBorder);
 }
 
@@ -101,15 +101,15 @@
 }
 
 .B-ui-components_universal-palette-item.BU_disabled.BU_active {
-  background-color: var(--BV-universalPaletteItemDisabledBgColor);
+  background-color: var(--BC-universalPaletteItemDisabledBgColor);
 }
 
 .B-ui-components_universal-palette-item.BU_disabled.BU_allow-hover:hover {
-  background-color: var(--BV-universalPaletteItemDisabledBgColor);
+  background-color: var(--BC-universalPaletteItemDisabledBgColor);
 }
 
 .B-ui-components_universal-palette-item .B-ui-components_extra-info {
-  margin-left: var(--BV-universalPaletteAlignmentSpacing);
+  margin-left: var(--BC-universalPaletteAlignmentSpacing);
   color: var(--BV-colorNeutralTextSubdued);
 }
 

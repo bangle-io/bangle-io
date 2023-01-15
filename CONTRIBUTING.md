@@ -88,13 +88,17 @@ Each extension must have the following top level files:
 
 **Please note** your `index.ts` file should not import `style.ts`. This restriction exists to keep the imports within the realms of standard Javascript.
 
-### Styling conventions
+### Styling and design tokens
 
-- Any CSS class name is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`.
+- Bangle.io uses [unocss](https://github.com/unocss/unocss) an atomic css library which has tailwind like API. It is strongly recommended to use the [editor extension](https://marketplace.visualstudio.com/items?itemName=antfu.unocss) to get autocompletion for the css classes.
 
-- A utility class helper starts with `BU_` followed by the name of the helper, for example, `BU_my-helper`.
+- We generate the css variables ( `yarn g:generate-core-theme`) from the design tokens described in [design-tokens.ts](https://github.com/bangle-io/bangle-io/blob/dev/lib/shared-types/design-tokens.ts). These tokens are then passed to unocss to generate the atomic css classes and css variables.
 
-- A css variable starts with `BV-` followed by the name of the variable, for example, `var(--BV-myVariable)`.
+- If you cannot use the atomic css classes for some reason, you can directly import the variable by doing `import {vars} from '@bangle.io/css-vars'` in typescript or `var(--BV-myVariable)` in CSS. All design tokens are prefixed with `--BV-` followed by the name of the token.
+
+- **Not recommended** if you are going to create a custom CSS class name, make sure it is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`. A utility class helper starts with `BU_` followed by the name of the helper, for example, `BU_my-helper`.
+
+- **Not recommended** but for some reason if you want to use a custom css variable outside of the provided design tokens, you can use `BC-` followed by the name of the variable, for example, `var(--BC-myVariable)`. If you do not use this syntax, the linter will throw an error.
 
 ### Contexts
 
