@@ -278,6 +278,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/editor-common",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/editor-common",
+          "name": "@bangle.io/editor-common",
+          "type": "lib",
+        },
+      ],
+      [
         "@bangle.io/editor-container",
         {
           "hasCSSFiles": true,

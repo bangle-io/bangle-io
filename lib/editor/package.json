@@ -30,6 +30,7 @@
     "@bangle.io/api": "workspace:*",
     "@bangle.io/atomic-css": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/editor-common": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",

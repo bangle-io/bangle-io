@@ -20,10 +20,8 @@ import {
   useSerialOperationContext,
 } from '@bangle.io/api';
 import { vars } from '@bangle.io/atomic-css';
-import {
-  EditorDisplayType,
-  EditorPluginMetadataKey,
-} from '@bangle.io/constants';
+import { EditorDisplayType } from '@bangle.io/constants';
+import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
 import type {
   BangleApplicationStore,
   DispatchSerialOperationType,

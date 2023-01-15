@@ -8,7 +8,7 @@ import {
   Selection,
 } from '@bangle.dev/pm';
 
-import { intersectionObserverPluginKey } from '@bangle.io/constants';
+import { intersectionObserverPluginKey } from '@bangle.io/editor-common';
 import { hasPluginStateChanged } from '@bangle.io/utils';
 
 const name = 'collapsible_heading_deco';

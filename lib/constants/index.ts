@@ -1,5 +1,5 @@
-// This package should not import any other package and should be mostly
-// primitives.
+// This package should not import any other package and should be
+// primitives or POJOs only.
 export * from './core/core-dialogs';
 export * from './core/core-operations';
 export * from './core/core-palettes';

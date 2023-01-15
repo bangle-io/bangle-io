@@ -2347,8 +2347,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.4.1
     typescript: 4.9.3
@@ -2396,6 +2394,7 @@ __metadata:
     "@bangle.dev/utils": 0.31.6
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2511,7 +2510,6 @@ __metadata:
   resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
   dependencies:
     "@bangle.io/is-abort-error": "workspace:*"
-    "@bangle.io/mini-js-utils": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2569,6 +2567,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/editor-common@workspace:*, @bangle.io/editor-common@workspace:lib/editor-common":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/editor-common@workspace:lib/editor-common"
+  dependencies:
+    "@bangle.dev/pm": 0.31.6
+    "@bangle.io/pm-plugins": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/editor-container@workspace:*, @bangle.io/editor-container@workspace:app/editor-container":
   version: 0.0.0-use.local
   resolution: "@bangle.io/editor-container@workspace:app/editor-container"
@@ -2620,6 +2628,7 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/atomic-css": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
@@ -2995,6 +3004,7 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -3144,7 +3154,6 @@ __metadata:
   resolution: "@bangle.io/remote-file-sync@workspace:js-lib/remote-file-sync"
   dependencies:
     "@bangle.io/db-key-val": "workspace:*"
-    "@bangle.io/git-file-sha": "workspace:*"
     "@bangle.io/tri-state": "workspace:*"
     ts-pattern: ^4.0.6
     type-fest: ^3.5.1
@@ -3340,7 +3349,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-page@workspace:lib/slice-page"
   dependencies:
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3378,7 +3386,6 @@ __metadata:
   resolution: "@bangle.io/slice-ui@workspace:lib/slice-ui"
   dependencies:
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3524,7 +3531,6 @@ __metadata:
   resolution: "@bangle.io/style@workspace:app/style"
   dependencies:
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-theme": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@unocss/reset": ^0.48.2
     autoprefixer: ^10.4.4
@@ -3546,6 +3552,7 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
@@ -3691,6 +3698,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"

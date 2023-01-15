@@ -23,7 +23,7 @@ import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
 
-import { intersectionObserverPluginKey } from '@bangle.io/constants';
+import { intersectionObserverPluginKey } from '@bangle.io/editor-common';
 import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 

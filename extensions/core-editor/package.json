@@ -38,6 +38,7 @@
     "@bangle.dev/utils": "0.31.6",
     "@bangle.io/api": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/editor-common": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/pm-plugins": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",

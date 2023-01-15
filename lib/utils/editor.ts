@@ -1,9 +1,6 @@
 import type { EditorState, PluginKey } from '@bangle.dev/pm';
 
-import {
-  EditorPluginMetadataKey,
-  intersectionObserverPluginKey,
-} from '@bangle.io/constants';
+import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
 import type { EditorIdType } from '@bangle.io/shared-types';
 
 import { findWrappingScrollable } from './utility';
@@ -26,12 +23,6 @@ export function getEditorPluginMetadata(state: EditorState) {
   if (!result) {
     throw new Error('EditorPluginMetadata cannot be undefined');
   }
-
-  return result;
-}
-
-export function getEditorIntersectionObserverPluginState(state: EditorState) {
-  const result = intersectionObserverPluginKey.getState(state);
 
   return result;
 }
