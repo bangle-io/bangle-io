@@ -16,8 +16,8 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
     data-testid="app-activitybar_activitybar"
     style={
       {
-        "backgroundColor": "var(--BV-colorAppActivitybarBg)",
-        "color": "var(--BV-colorAppActivitybarText)",
+        "backgroundColor": "var(--BV-miscActivitybarBg)",
+        "color": "var(--BV-miscActivitybarText)",
       }
     }
   >
@@ -43,7 +43,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -114,7 +114,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -169,7 +169,7 @@ exports[`Storyshots activitybar/Activitybar Vanilla 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -223,8 +223,8 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
     data-testid="app-activitybar_activitybar"
     style={
       {
-        "backgroundColor": "var(--BV-colorAppActivitybarBg)",
-        "color": "var(--BV-colorAppActivitybarText)",
+        "backgroundColor": "var(--BV-miscActivitybarBg)",
+        "color": "var(--BV-miscActivitybarText)",
       }
     }
   >
@@ -250,7 +250,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -298,7 +298,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
     </button>
     <button
       aria-label="I am a folder sidebar"
-      className="border-l-2 border-colorAppActivitybarBg  text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden py-1 transition-all duration-100 cursor-pointer "
+      className="border-l-2  text-lg font-600 h-11 min-w-12 px-4  select-none inline-flex justify-center items-center rounded-md whitespace-nowrap overflow-hidden py-1 transition-all duration-100 cursor-pointer "
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -317,8 +317,9 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
       style={
         {
           "backgroundColor": "transparent",
+          "borderColor": "var(--BV-miscActivitybarBg)",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -375,7 +376,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -430,7 +431,7 @@ exports[`Storyshots activitybar/Activitybar With Sidebar Item 1`] = `
         {
           "backgroundColor": "transparent",
           "borderRadius": 0,
-          "color": "var(--BV-colorAppActivitybarText)",
+          "color": "var(--BV-miscActivitybarText)",
           "padding": 0,
         }
       }
@@ -477,8 +478,13 @@ exports[`Storyshots activitybar/ActivitybarMobile Vanilla 1`] = `
   }
 >
   <div
-    className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
+    className="flex flex-row px-2 items-center w-full select-none"
     data-testid="app-activitybar_activitybar-mobile"
+    style={
+      {
+        "backgroundColor": "var(--BV-miscActivitybarBg)",
+      }
+    }
   >
     <div
       className="flex flex-row items-center flex-none"
@@ -702,8 +708,13 @@ exports[`Storyshots activitybar/ActivitybarMobile With Long Ws Path 1`] = `
   }
 >
   <div
-    className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
+    className="flex flex-row px-2 items-center w-full select-none"
     data-testid="app-activitybar_activitybar-mobile"
+    style={
+      {
+        "backgroundColor": "var(--BV-miscActivitybarBg)",
+      }
+    }
   >
     <div
       className="flex flex-row items-center flex-none"
@@ -1319,7 +1330,7 @@ exports[`Storyshots editor-container/Editorbar Branching 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-colorAppEditorBg)",
+        "backgroundColor": "var(--BV-miscEditorBg)",
       }
     }
   >
@@ -1438,7 +1449,7 @@ exports[`Storyshots editor-container/Editorbar Editing Disabled Editor 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-colorAppEditorBg)",
+        "backgroundColor": "var(--BV-miscEditorBg)",
       }
     }
   >
@@ -1598,7 +1609,7 @@ exports[`Storyshots editor-container/Editorbar Showing Split Editor 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-colorAppEditorBg)",
+        "backgroundColor": "var(--BV-miscEditorBg)",
       }
     }
   >
@@ -1767,7 +1778,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
     data-testid="app-editor-container_editorbar"
     style={
       {
-        "backgroundColor": "var(--BV-colorAppEditorBg)",
+        "backgroundColor": "var(--BV-miscEditorBg)",
       }
     }
   >
@@ -1876,7 +1887,7 @@ exports[`Storyshots editor-container/Editorbar Vanilla 1`] = `
 exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
 <button
   aria-label="Hello"
-  className="hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start bg-colorNeutralSolidFaint "
+  className="B-inline-backlink_backlink-node hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start B-inline-backlink_backlink-node-not-found "
   data-testid="inline-backlink-button"
   draggable={false}
   onClick={[Function]}
@@ -1886,8 +1897,13 @@ exports[`Storyshots inline-backlink/BacklinkNodeButton Primary 1`] = `
 >
   <span>
     <svg
-      className="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg"
+      className="h-4 w-4 text-colorPromoteIcon"
       stroke="currentColor"
+      style={
+        {
+          "fill": "var(--BV-miscEditorBacklinkBg)",
+        }
+      }
       viewBox="0 0 18 18"
       xmlns="http://www.w3.org/2000/svg"
     >

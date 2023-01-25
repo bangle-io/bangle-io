@@ -2,7 +2,7 @@ import type { DesignTokens } from '@bangle.io/shared-types';
 
 import { spectrumDarkest, spectrumLight } from './spectrum';
 
-const neutralColor: DesignTokens['color']['neutral'] = {
+export const darkNeutralColor: DesignTokens['color']['neutral'] = {
   bgLayerTop: spectrumDarkest.gray100,
   bgLayerMiddle: spectrumDarkest.gray75,
   bgLayerBottom: spectrumDarkest.gray50,
@@ -34,25 +34,8 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   borderStrong: spectrumDarkest.gray400,
 };
 
-const appColor: DesignTokens['color']['app'] = {
-  activitybarBg: 'rgb(31, 30, 30)',
-  activitybarBtnPress: spectrumDarkest.gray300,
-  activitybarText: neutralColor.textSubdued,
-  editorAttentionBg: spectrumDarkest.gray200,
-  editorBacklinkBg: spectrumDarkest.blue200,
-  editorBacklinkBgHover: spectrumDarkest.blue300,
-  editorBacklinkText: neutralColor.text,
-  editorBg: neutralColor.bgLayerMiddle,
-  editorCodeBg: spectrumDarkest.gray300,
-  kbdBg: neutralColor.solidSubdued,
-  kbdText: neutralColor.textSubdued,
-  linkText: spectrumDarkest.blue800,
-  searchHighlightBg: spectrumDarkest.yellow700,
-};
-
 export const darkColors: DesignTokens['color'] = {
-  neutral: neutralColor,
-  app: appColor,
+  neutral: darkNeutralColor,
 
   secondary: {
     iconDisabled: spectrumDarkest.gray400,
@@ -77,7 +60,7 @@ export const darkColors: DesignTokens['color'] = {
     icon: spectrumDarkest.orange800,
 
     solid: spectrumDarkest.orange900,
-    solidText: neutralColor.text,
+    solidText: darkNeutralColor.text,
     solidStrong: spectrumDarkest.orange1000,
     solidStronger: spectrumDarkest.orange1100,
     solidSubdued: spectrumDarkest.gray800,
@@ -94,7 +77,7 @@ export const darkColors: DesignTokens['color'] = {
     icon: spectrumDarkest.red800,
 
     solid: spectrumDarkest.red800,
-    solidText: neutralColor.text,
+    solidText: darkNeutralColor.text,
     solidStrong: spectrumDarkest.red900,
     solidStronger: spectrumDarkest.red1000,
     solidSubdued: spectrumDarkest.red700,
@@ -111,7 +94,7 @@ export const darkColors: DesignTokens['color'] = {
     icon: spectrumDarkest.green800,
 
     solid: spectrumDarkest.green900,
-    solidText: neutralColor.text,
+    solidText: darkNeutralColor.text,
     solidStrong: spectrumDarkest.green1000,
     solidStronger: spectrumDarkest.green1100,
     solidSubdued: spectrumDarkest.green800,
@@ -127,7 +110,7 @@ export const darkColors: DesignTokens['color'] = {
     icon: spectrumDarkest.magenta800,
 
     solid: spectrumDarkest.magenta800,
-    solidText: neutralColor.text,
+    solidText: darkNeutralColor.text,
     solidStrong: spectrumDarkest.magenta900,
     solidStronger: spectrumDarkest.magenta1000,
     solidSubdued: spectrumDarkest.magenta700,

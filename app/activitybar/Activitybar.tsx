@@ -41,13 +41,13 @@ export function Activitybar() {
           onPress={() => {
             changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
           }}
-          style={ButtonStyleOBj}
-          className={cx(
-            'border-l-2',
-            active
-              ? 'border-colorPromoteBorder BU_is-active'
-              : 'border-colorAppActivitybarBg',
-          )}
+          style={{
+            ...ButtonStyleOBj,
+            borderColor: active
+              ? vars.color.promote.border
+              : vars.misc.activitybarBg,
+          }}
+          className={cx('border-l-2', active && 'BU_is-active')}
           variant="transparent"
           size="lg"
           leftIcon={r.activitybarIcon}
@@ -59,8 +59,8 @@ export function Activitybar() {
     <div
       data-testid="app-activitybar_activitybar"
       style={{
-        backgroundColor: vars.color.app.activitybarBg,
-        color: vars.color.app.activitybarText,
+        backgroundColor: vars.misc.activitybarBg,
+        color: vars.misc.activitybarText,
       }}
       className="flex flex-col flex-grow gap-2 pt-2 pb-3 border-r-1 border-colorNeutralBorder"
     >

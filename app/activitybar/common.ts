@@ -4,6 +4,6 @@ import { vars } from '@bangle.io/css-vars';
 
 export const ButtonStyleOBj: React.CSSProperties = {
   borderRadius: 0,
-  color: vars.color.app.activitybarText,
+  color: vars.misc.activitybarText,
   padding: 0,
 };

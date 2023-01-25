@@ -16,6 +16,21 @@ const tokensShape: DesignTokens = {
     pageMaxWidth: '',
     pagePadding: '',
     workspaceSidebarWidth: '',
+
+    activitybarBg: '',
+    activitybarBtnBgPress: '',
+    activitybarText: '',
+
+    editorAttentionBg: '',
+    editorBacklinkBg: '',
+    editorBacklinkBgHover: '',
+    editorBacklinkText: '',
+    editorBg: '',
+    editorCodeBg: '',
+    kbdBg: '',
+    kbdText: '',
+    linkText: '',
+    searchHighlightBg: '',
   },
   border: {
     radius: {
@@ -35,21 +50,6 @@ const tokensShape: DesignTokens = {
   },
   widescreenWidth: '',
   color: {
-    app: {
-      activitybarBg: '',
-      activitybarBtnPress: '',
-      activitybarText: '',
-      editorAttentionBg: '',
-      editorBacklinkBg: '',
-      editorBacklinkBgHover: '',
-      editorBacklinkText: '',
-      editorBg: '',
-      editorCodeBg: '',
-      kbdBg: '',
-      kbdText: '',
-      linkText: '',
-      searchHighlightBg: '',
-    },
     neutral: {
       bgLayerTop: '',
       bgLayerMiddle: '',

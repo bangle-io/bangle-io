@@ -124,14 +124,15 @@ describe('default light/dark', () => {
   test('sets sm override', () => {
     expect(result[CSS_SM_DARK_SCHEME]).toMatchInlineSnapshot(`
       [
-        "--BV-colorAppActivitybarBg: rgb(14, 14, 14);",
+        "--BV-miscActivitybarBg: rgb(14, 14, 14);",
+        "--BV-miscActivitybarText: rgb(70, 70, 70);",
         "--BV-miscPagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
     expect(result[CSS_SM_LIGHT_SCHEME]).toMatchInlineSnapshot(`
       [
-        "--BV-colorAppActivitybarBg: rgb(255, 255, 255);",
-        "--BV-colorAppActivitybarText: rgb(34, 34, 34);",
+        "--BV-miscActivitybarBg: rgb(255, 255, 255);",
+        "--BV-miscActivitybarText: rgb(34, 34, 34);",
         "--BV-miscPagePadding: 1.5rem 10px 2rem 25px;",
       ]
     `);
@@ -261,18 +262,16 @@ describe('overrides', () => {
       name: 'core-theme-test',
       lightTheme: {},
       darkTheme: {
-        color: {
-          app: {
-            activitybarBg: 'activitybar-dark-red',
-          },
+        misc: {
+          activitybarBg: 'activitybar-dark-red',
         },
       },
     });
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-colorAppActivitybarBg: activitybar-dark-red;',
+      '--BV-miscActivitybarBg: activitybar-dark-red;',
     );
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-colorAppActivitybarBg: rgb(26, 32, 44);',
+      '--BV-miscActivitybarBg: rgb(26, 32, 44);',
     );
   });
 });
@@ -281,20 +280,16 @@ describe('smallscreen overrides', () => {
   test('createSmallScreenOverride', () => {
     expect(
       createSmallScreenOverride({
-        color: {
-          app: {
-            activitybarBg: 'sm-dark-red',
-          },
+        misc: {
+          activitybarBg: 'sm-dark-red',
         },
       }),
-    ).toEqual(['--BV-colorAppActivitybarBg: sm-dark-red;']);
+    ).toEqual(['--BV-miscActivitybarBg: sm-dark-red;']);
 
     expect(
       createSmallScreenOverride({
-        color: {
-          app: {
-            activitybarBg: 'sm-dark-red',
-          },
+        misc: {
+          activitybarBg: 'sm-dark-red',
         },
 
         border: {
@@ -305,7 +300,7 @@ describe('smallscreen overrides', () => {
       }),
     ).toEqual([
       '--BV-borderRadiusMd: sm-1;',
-      '--BV-colorAppActivitybarBg: sm-dark-red;',
+      '--BV-miscActivitybarBg: sm-dark-red;',
     ]);
 
     expect(createSmallScreenOverride({})).toEqual([]);
@@ -476,33 +471,29 @@ describe('smallscreen overrides', () => {
       name: 'core-theme-test',
       lightTheme: {},
       darkTheme: {
-        color: {
-          app: {
-            activitybarBg: 'activitybar-dark-red',
-          },
+        misc: {
+          activitybarBg: 'activitybar-dark-red',
         },
       },
       darkSmallscreenOverride: {
-        color: {
-          app: {
-            activitybarBg: 'sm-activitybar-dark-red',
-          },
+        misc: {
+          activitybarBg: 'sm-activitybar-dark-red',
         },
       },
     });
 
     expect(override[CSS_DARK_SCHEME]).toContain(
-      '--BV-colorAppActivitybarBg: activitybar-dark-red;',
+      '--BV-miscActivitybarBg: activitybar-dark-red;',
     );
     expect(override[CSS_LIGHT_SCHEME]).toContain(
-      '--BV-colorAppActivitybarBg: rgb(26, 32, 44);',
+      '--BV-miscActivitybarBg: rgb(26, 32, 44);',
     );
     expect(override[CSS_SM_DARK_SCHEME]).toContain(
-      '--BV-colorAppActivitybarBg: sm-activitybar-dark-red;',
+      '--BV-miscActivitybarBg: sm-activitybar-dark-red;',
     );
 
     expect(override[CSS_SM_LIGHT_SCHEME]).toContain(
-      '--BV-colorAppActivitybarBg: rgb(255, 255, 255);',
+      '--BV-miscActivitybarBg: rgb(255, 255, 255);',
     );
 
     // other overrides should be there

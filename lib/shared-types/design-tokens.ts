@@ -104,30 +104,27 @@ export type DesignTokens = {
 
     positive: ToneColors;
     promote: ToneColors;
-
-    app: {
-      activitybarBg: string;
-      activitybarBtnPress: string;
-      activitybarText: string;
-      // this is used to grab attention
-      // the color with which to flash the node which currently became active.
-      editorAttentionBg: string;
-      editorBacklinkBg: string;
-      editorBacklinkBgHover: string;
-      editorBacklinkText: string;
-      editorBg: string;
-      editorCodeBg: string;
-      kbdBg: string;
-      kbdText: string;
-      linkText: string;
-      searchHighlightBg: string;
-    };
   };
 
   // misc will not be added to atomic classes
   // and can be accessed using typescript `vars.misc.myKey` or
   // directly using `var(--misc.myKey)` in css.
   misc: {
+    activitybarBg: string;
+    activitybarBtnBgPress: string;
+    activitybarText: string;
+
+    editorAttentionBg: string;
+    editorBacklinkBg: string;
+    editorBacklinkBgHover: string;
+    editorBacklinkText: string;
+    editorBg: string;
+    editorCodeBg: string;
+    kbdBg: string;
+    kbdText: string;
+    linkText: string;
+    searchHighlightBg: string;
+
     activitybarWidth: string;
     miniEditorWidth: string;
     noteSidebarWidth: string;

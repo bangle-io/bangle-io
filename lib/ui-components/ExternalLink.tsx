@@ -2,6 +2,8 @@ import { useButton } from '@react-aria/button';
 import { FocusRing } from '@react-aria/focus';
 import React, { useRef } from 'react';
 
+import { vars } from '@bangle.io/css-vars';
+
 export function ExternalLink({ text, href }: { text: string; href: string }) {
   let ref = useRef<HTMLAnchorElement>(null);
 
@@ -19,8 +21,11 @@ export function ExternalLink({ text, href }: { text: string; href: string }) {
         ref={ref}
         target="_blank"
         href={href}
-        className="underline outline-none rounded-sm text-colorAppLinkText"
+        className="underline outline-none rounded-sm"
         rel="noreferrer noopener"
+        style={{
+          color: vars.misc.linkText,
+        }}
       >
         {text}
       </a>

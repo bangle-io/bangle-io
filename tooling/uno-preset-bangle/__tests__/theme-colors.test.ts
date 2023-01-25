@@ -4,19 +4,6 @@ describe('theme-colors', () => {
   test('colors', () => {
     expect(colors).toMatchInlineSnapshot(`
       {
-        "colorAppActivitybarBg": "var(--BV-colorAppActivitybarBg)",
-        "colorAppActivitybarBtnPress": "var(--BV-colorAppActivitybarBtnPress)",
-        "colorAppActivitybarText": "var(--BV-colorAppActivitybarText)",
-        "colorAppEditorAttentionBg": "var(--BV-colorAppEditorAttentionBg)",
-        "colorAppEditorBacklinkBg": "var(--BV-colorAppEditorBacklinkBg)",
-        "colorAppEditorBacklinkBgHover": "var(--BV-colorAppEditorBacklinkBgHover)",
-        "colorAppEditorBacklinkText": "var(--BV-colorAppEditorBacklinkText)",
-        "colorAppEditorBg": "var(--BV-colorAppEditorBg)",
-        "colorAppEditorCodeBg": "var(--BV-colorAppEditorCodeBg)",
-        "colorAppKbdBg": "var(--BV-colorAppKbdBg)",
-        "colorAppKbdText": "var(--BV-colorAppKbdText)",
-        "colorAppLinkText": "var(--BV-colorAppLinkText)",
-        "colorAppSearchHighlightBg": "var(--BV-colorAppSearchHighlightBg)",
         "colorBgLayerBottom": "var(--BV-colorNeutralBgLayerBottom)",
         "colorBgLayerFloat": "var(--BV-colorNeutralBgLayerFloat)",
         "colorBgLayerMiddle": "var(--BV-colorNeutralBgLayerMiddle)",

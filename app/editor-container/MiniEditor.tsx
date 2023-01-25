@@ -35,9 +35,10 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
       data-testid="editor-container_mini-editor-wrapper"
       // setting width and height are important otherwise
       // tippy confuses and causes issue with scroll
-      className="fixed flex flex-col bottom-0 right-8 rounded drop-shadow-xl bg-colorAppEditorBg z-popup border-neutral"
+      className="fixed flex flex-col bottom-0 right-8 rounded drop-shadow-xl z-popup border-neutral"
       style={{
         width: vars.misc.miniEditorWidth,
+        background: vars.misc.editorBg,
       }}
     >
       <div className="flex flex-row w-full px-2 py-1 text-sm justify-between border-b-1 border-colorNeutralBorder">

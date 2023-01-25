@@ -1,7 +1,8 @@
 import type { DesignTokens, RecursivePartial } from '@bangle.io/shared-types';
 
-import { darkColors } from './dark-colors';
-import { lightColors } from './light-colors';
+import { darkColors, darkNeutralColor } from './dark-colors';
+import { lightColors, lightNeutralColor } from './light-colors';
+import { spectrumDarkest, spectrumLight } from './spectrum';
 
 // WARNING: the width is hard coded at multiple places, search for it
 // by value if you want to change it
@@ -117,6 +118,21 @@ export const defaultTokensLight: DesignTokens = {
     'prose': '65ch',
   },
   misc: {
+    activitybarBg: 'rgb(26, 32, 44)',
+    activitybarBtnBgPress: lightNeutralColor.textInverted,
+    activitybarText: spectrumLight.gray100,
+
+    editorAttentionBg: spectrumLight.gray200,
+    editorBacklinkBg: spectrumLight.blue100,
+    editorBacklinkBgHover: spectrumLight.blue200,
+    editorBacklinkText: lightNeutralColor.text,
+    editorBg: lightNeutralColor.bgLayerMiddle,
+    editorCodeBg: spectrumLight.gray300,
+    kbdBg: lightNeutralColor.solidSubdued,
+    kbdText: lightNeutralColor.textSubdued,
+    linkText: spectrumLight.blue700,
+    searchHighlightBg: spectrumLight.yellow300,
+
     activitybarWidth: '50px',
     noteSidebarWidth: '300px',
     workspaceSidebarWidth: '300px',
@@ -138,6 +154,21 @@ export const defaultTokensDark: DesignTokens = {
   uid: 'design-token::default-tokens-dark',
   misc: {
     ...defaultTokensLight.misc,
+
+    activitybarBg: 'rgb(31, 30, 30)',
+    activitybarBtnBgPress: spectrumDarkest.gray300,
+    activitybarText: darkNeutralColor.textSubdued,
+    editorAttentionBg: spectrumDarkest.gray200,
+    editorBacklinkBg: spectrumDarkest.blue200,
+    editorBacklinkBgHover: spectrumDarkest.blue300,
+    editorBacklinkText: darkNeutralColor.text,
+    editorBg: darkNeutralColor.bgLayerMiddle,
+    editorCodeBg: spectrumDarkest.gray300,
+    kbdBg: darkNeutralColor.solidSubdued,
+    kbdText: darkNeutralColor.textSubdued,
+    linkText: spectrumDarkest.blue800,
+    searchHighlightBg: spectrumDarkest.yellow700,
+
     noteTagsBg: 'rgb(66, 66, 66)',
     noteTagsText: 'rgb(255, 255, 255)',
   },
@@ -145,41 +176,32 @@ export const defaultTokensDark: DesignTokens = {
 };
 
 export const defaultSmallScreenOverride2: {
-  color: RecursivePartial<DesignTokens['color']>;
   misc: RecursivePartial<DesignTokens['misc']>;
 } = {
-  color: {
-    app: {
-      activitybarBg: lightColors.app.editorBg,
-      activitybarText: lightColors.neutral.textSubdued,
-    },
-  },
   misc: {
     pagePadding: '1.5rem 10px 2rem 25px',
+    activitybarBg: defaultTokensLight.misc.editorBg,
+    activitybarText: lightColors.neutral.textSubdued,
   },
 };
 
 export const defaultSmallScreenOverrideLight: {
-  color: RecursivePartial<DesignTokens['color']>;
   misc: RecursivePartial<DesignTokens['misc']>;
 } = {
-  color: {
-    app: {
-      activitybarBg: lightColors.app.editorBg,
-      activitybarText: lightColors.neutral.text,
-    },
+  misc: {
+    ...defaultSmallScreenOverride2.misc,
+    activitybarBg: defaultTokensLight.misc.editorBg,
+    activitybarText: lightColors.neutral.text,
   },
-  misc: defaultSmallScreenOverride2.misc,
 };
 
 export const defaultSmallScreenOverrideDark: {
   color: RecursivePartial<DesignTokens['color']>;
   misc: RecursivePartial<DesignTokens['misc']>;
 } = {
-  color: {
-    app: {
-      activitybarBg: darkColors.app.editorBg,
-    },
+  color: {},
+  misc: {
+    ...defaultSmallScreenOverride2.misc,
+    activitybarBg: defaultTokensDark.misc.editorBg,
   },
-  misc: defaultSmallScreenOverride2.misc,
 };

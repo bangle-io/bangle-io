@@ -116,7 +116,7 @@ export function EditorContainer({
         'w-full h-full flex flex-col items-center',
       )}
       style={{
-        backgroundColor: vars.color.app.editorBg,
+        backgroundColor: vars.misc.editorBg,
       }}
     >
       {wsPath && (
