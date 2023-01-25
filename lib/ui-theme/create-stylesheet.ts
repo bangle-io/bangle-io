@@ -5,17 +5,14 @@ import {
   walkObject,
 } from '@bangle.io/css-vars';
 import { deepMerge, difference, intersect } from '@bangle.io/mini-js-utils';
-import type {
-  BangleThemeInputDualColorScheme,
-  BangleThemeInputSingleScheme,
-  DesignTokens,
-} from '@bangle.io/shared-types';
+import type { DesignTokens, RecursivePartial } from '@bangle.io/shared-types';
 
 import {
-  defaultsDark,
-  defaultsLight,
-  defaultSmallScreenOverrideDualColorScheme,
-  defaultSmallScreenOverrideSingle,
+  defaultSmallScreenOverride2,
+  defaultSmallScreenOverrideDark,
+  defaultSmallScreenOverrideLight,
+  defaultTokensDark,
+  defaultTokensLight,
 } from './default-tokens';
 
 if (typeof window !== 'undefined') {
@@ -40,96 +37,14 @@ const base = {
   ],
 };
 
-export function createStyleSheetObj(
-  obj:
-    | {
-        colorScheme: 'light/dark';
-        name: string;
-        theme: BangleThemeInputDualColorScheme;
-        smallscreenOverride?: BangleThemeInputDualColorScheme;
-      }
-    | {
-        colorScheme: 'single';
-        name: string;
-        theme: BangleThemeInputSingleScheme;
-        smallscreenOverride?: BangleThemeInputSingleScheme;
-      },
-): CssBlocks {
-  let result: CssBlocks = { ...base };
-
-  if (obj.colorScheme === 'single') {
-    result = {
-      ...result,
-      [CSS_ROOT]: mergeWithDefaults(obj.name, defaultsLight, obj.theme),
-    };
-
-    let smOverride = deepMerge(
-      defaultSmallScreenOverrideSingle,
-      obj.smallscreenOverride || {},
-    );
-
-    result = {
-      ...result,
-      [CSS_SM_BODY]: createSmallScreenOverride(smOverride),
-    };
-
-    return result;
-  }
-
-  const { light: lightInput, dark: darkInput } = normalizeDualColorSchemeInput(
-    obj.theme,
-  );
-
-  const lightThemeVars = mergeWithDefaults(obj.name, defaultsLight, lightInput);
-  const darkThemeVars = mergeWithDefaults(obj.name, defaultsDark, darkInput);
-
-  const common = intersect(lightThemeVars, darkThemeVars);
-
-  result = {
-    ...result,
-    [CSS_ROOT]: common,
-    [CSS_LIGHT_SCHEME]: difference(lightThemeVars, common),
-    [CSS_DARK_SCHEME]: difference(darkThemeVars, common),
-  };
-
-  let smOverride = deepMerge(
-    defaultSmallScreenOverrideDualColorScheme,
-    obj.smallscreenOverride || {},
-  );
-  const { light: lightOverride, dark: darkOverride } =
-    normalizeDualColorSchemeInput(smOverride);
-
-  result = {
-    ...result,
-    [CSS_SM_LIGHT_SCHEME]: createSmallScreenOverride(lightOverride),
-    [CSS_SM_DARK_SCHEME]: createSmallScreenOverride(darkOverride),
-  };
-
-  return result;
-}
-
-function normalizeDualColorSchemeInput(
-  input: BangleThemeInputDualColorScheme,
-): {
-  light: BangleThemeInputSingleScheme;
-  dark: BangleThemeInputSingleScheme;
-} {
-  const { color, ...otherProps } = input;
-  const { light, dark } = color || {};
-
-  return {
-    light: { ...otherProps, color: light || {} },
-    dark: {
-      ...otherProps,
-      color: dark || {},
-    },
-  };
-}
+export type ThemeBase = RecursivePartial<
+  Omit<DesignTokens, 'uid' | 'theme' | 'widescreenWidth'>
+>;
 
 function mergeWithDefaults(
   name: string,
   defaultValue: DesignTokens,
-  theme: BangleThemeInputSingleScheme,
+  theme: ThemeBase,
 ) {
   const mergedTokens = deepMerge(defaultValue, {
     theme: name,
@@ -139,20 +54,87 @@ function mergeWithDefaults(
   return cssVarsToStrArray(convertTokensToVars(mergedTokens));
 }
 
-export function createStyleSheet(
-  obj:
+export function createStyleSheetObj(
+  input:
     | {
-        colorScheme: 'light/dark';
         name: string;
-        theme: BangleThemeInputDualColorScheme;
-        smallscreenOverride?: BangleThemeInputDualColorScheme;
+        type: 'single';
+        theme: ThemeBase;
+        smallscreenOverride?: ThemeBase;
       }
     | {
-        colorScheme: 'single';
         name: string;
-        theme: BangleThemeInputSingleScheme;
-        smallscreenOverride?: BangleThemeInputSingleScheme;
+        type: 'dual';
+        lightTheme: ThemeBase;
+        darkTheme: ThemeBase;
+        lightSmallscreenOverride?: ThemeBase;
+        darkSmallscreenOverride?: ThemeBase;
       },
+) {
+  let result: CssBlocks = { ...base };
+
+  if (input.type === 'single') {
+    result = {
+      ...result,
+      [CSS_ROOT]: mergeWithDefaults(
+        input.name,
+        defaultTokensLight,
+        input.theme,
+      ),
+    };
+
+    let smOverride = deepMerge(
+      defaultSmallScreenOverride2,
+      input.smallscreenOverride || {},
+    );
+
+    result = {
+      ...result,
+      [CSS_SM_BODY]: createSmallScreenOverride(smOverride),
+    };
+  } else {
+    const lightThemeVars = mergeWithDefaults(
+      input.name,
+      defaultTokensLight,
+      input.lightTheme,
+    );
+    const darkThemeVars = mergeWithDefaults(
+      input.name,
+      defaultTokensDark,
+      input.darkTheme,
+    );
+
+    const common = intersect(lightThemeVars, darkThemeVars);
+
+    result = {
+      ...result,
+      [CSS_ROOT]: common,
+      [CSS_LIGHT_SCHEME]: difference(lightThemeVars, common),
+      [CSS_DARK_SCHEME]: difference(darkThemeVars, common),
+    };
+
+    let lightSmOverride = deepMerge(
+      defaultSmallScreenOverrideLight,
+      input.lightSmallscreenOverride || {},
+    );
+
+    let darkSmOverride = deepMerge(
+      defaultSmallScreenOverrideDark,
+      input.darkSmallscreenOverride || {},
+    );
+
+    result = {
+      ...result,
+      [CSS_SM_LIGHT_SCHEME]: createSmallScreenOverride(lightSmOverride),
+      [CSS_SM_DARK_SCHEME]: createSmallScreenOverride(darkSmOverride),
+    };
+  }
+
+  return result;
+}
+
+export function createStyleSheet(
+  obj: Parameters<typeof createStyleSheetObj>[0],
 ): string {
   const result = createStyleSheetObj(obj);
 
@@ -168,9 +150,7 @@ export function createStyleSheet(
   }, '');
 }
 
-export function createSmallScreenOverride(
-  override: BangleThemeInputSingleScheme,
-) {
+export function createSmallScreenOverride(override: ThemeBase) {
   let result: Array<[string, string]> = [];
 
   walkObject(override as any, (value, path) => {

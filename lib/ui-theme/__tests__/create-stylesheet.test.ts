@@ -11,7 +11,7 @@ import {
 } from '../create-stylesheet';
 
 const defaultSheetSingle = createStyleSheetObj({
-  colorScheme: 'single',
+  type: 'single',
   name: 'core-theme-test',
   theme: {
     color: {},
@@ -19,15 +19,16 @@ const defaultSheetSingle = createStyleSheetObj({
 });
 
 const defaultObjDualColorScheme = createStyleSheetObj({
-  colorScheme: 'light/dark',
+  type: 'dual',
   name: 'core-theme-test',
-  theme: {},
+  lightTheme: {},
+  darkTheme: {},
 });
 
 describe('default', () => {
   test('sets correct keys', () => {
     let result = createStyleSheetObj({
-      colorScheme: 'single',
+      type: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -40,25 +41,24 @@ describe('default', () => {
   test('matches with the default', () => {
     expect(
       createStyleSheetObj({
-        colorScheme: 'single',
+        type: 'single',
         name: 'core-theme-test',
-        theme: {
-          color: {},
-        },
+        theme: {},
       }),
     ).toEqual(defaultSheetSingle);
     expect(
       createStyleSheetObj({
-        colorScheme: 'light/dark',
+        type: 'dual',
         name: 'core-theme-test',
-        theme: {},
+        lightTheme: {},
+        darkTheme: {},
       }),
     ).toEqual(defaultObjDualColorScheme);
   });
 
   test('sets body', () => {
     let result = createStyleSheetObj({
-      colorScheme: 'single',
+      type: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -70,7 +70,7 @@ describe('default', () => {
 
   test('sets root', () => {
     let result = createStyleSheetObj({
-      colorScheme: 'single',
+      type: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -82,7 +82,7 @@ describe('default', () => {
 
   test('sets sm override', () => {
     let result = createStyleSheetObj({
-      colorScheme: 'single',
+      type: 'single',
       name: 'core-theme-test',
       theme: {
         color: {},
@@ -95,14 +95,10 @@ describe('default', () => {
 
 describe('default light/dark', () => {
   let result = createStyleSheetObj({
-    colorScheme: 'light/dark',
+    type: 'dual',
     name: 'core-theme-test',
-    theme: {
-      color: {
-        light: {},
-        dark: {},
-      },
-    },
+    darkTheme: {},
+    lightTheme: {},
   });
 
   test('sets keys correctly in light/dark', () => {
@@ -145,7 +141,7 @@ describe('default light/dark', () => {
 describe('overrides', () => {
   test('is able to override color stylesheet', () => {
     let original = createStyleSheetObj({
-      colorScheme: 'single',
+      type: 'single',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -159,7 +155,7 @@ describe('overrides', () => {
     );
 
     let override = createStyleSheetObj({
-      colorScheme: 'single',
+      type: 'single',
       name: 'core-theme-test',
       theme: {
         color: {
@@ -174,19 +170,19 @@ describe('overrides', () => {
 
   test('overrides light/dark', () => {
     let original = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {
+      darkTheme: {
         color: {
-          dark: {
-            caution: {
-              icon: 'dark-red',
-            },
+          caution: {
+            icon: 'dark-red',
           },
-          light: {
-            caution: {
-              icon: 'light-red',
-            },
+        },
+      },
+      lightTheme: {
+        color: {
+          caution: {
+            icon: 'light-red',
           },
         },
       },
@@ -203,18 +199,18 @@ describe('overrides', () => {
 
   test('is able to override only light', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {
+      lightTheme: {
         color: {
-          dark: {
-            caution: {},
+          caution: {
+            icon: 'light-red',
           },
-          light: {
-            caution: {
-              icon: 'light-red',
-            },
-          },
+        },
+      },
+      darkTheme: {
+        color: {
+          caution: {},
         },
       },
     });
@@ -234,16 +230,14 @@ describe('overrides', () => {
 
   test('is able to override only dark', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {
+      lightTheme: {},
+      darkTheme: {
         color: {
-          dark: {
-            caution: {
-              icon: 'dark-red',
-            },
+          caution: {
+            icon: 'dark-red',
           },
-          light: {},
         },
       },
     });
@@ -263,17 +257,13 @@ describe('overrides', () => {
 
   test('is able to set app', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {
+      lightTheme: {},
+      darkTheme: {
         color: {
-          dark: {
-            app: {
-              activitybarBg: 'activitybar-dark-red',
-            },
-          },
-          light: {
-            caution: {},
+          app: {
+            activitybarBg: 'activitybar-dark-red',
           },
         },
       },
@@ -323,20 +313,22 @@ describe('smallscreen overrides', () => {
 
   test('works with no theme color', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {},
-      smallscreenOverride: {
+      lightTheme: {},
+      darkTheme: {},
+
+      lightSmallscreenOverride: {
         color: {
-          dark: {
-            caution: {
-              icon: 'sm-dark-red',
-            },
+          caution: {
+            icon: 'sm-light-red',
           },
-          light: {
-            caution: {
-              icon: 'sm-light-red',
-            },
+        },
+      },
+      darkSmallscreenOverride: {
+        color: {
+          caution: {
+            icon: 'sm-dark-red',
           },
         },
       },
@@ -371,10 +363,18 @@ describe('smallscreen overrides', () => {
 
   test('works with radius', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {},
-      smallscreenOverride: {
+      lightTheme: {},
+      darkTheme: {},
+      darkSmallscreenOverride: {
+        border: {
+          radius: {
+            md: 'nanty',
+          },
+        },
+      },
+      lightSmallscreenOverride: {
         border: {
           radius: {
             md: 'nanty',
@@ -412,33 +412,33 @@ describe('smallscreen overrides', () => {
 
   test('works with theme colors', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {
+      lightTheme: {
         color: {
-          dark: {
-            caution: {
-              icon: 'dark-red',
-            },
-          },
-          light: {
-            caution: {
-              icon: 'light-red',
-            },
+          caution: {
+            icon: 'light-red',
           },
         },
       },
-      smallscreenOverride: {
+      darkTheme: {
         color: {
-          dark: {
-            caution: {
-              icon: 'sm-dark-red',
-            },
+          caution: {
+            icon: 'dark-red',
           },
-          light: {
-            caution: {
-              icon: 'sm-light-red',
-            },
+        },
+      },
+      darkSmallscreenOverride: {
+        color: {
+          caution: {
+            icon: 'sm-dark-red',
+          },
+        },
+      },
+      lightSmallscreenOverride: {
+        color: {
+          caution: {
+            icon: 'sm-light-red',
           },
         },
       },
@@ -472,26 +472,20 @@ describe('smallscreen overrides', () => {
 
   test('is able to set app', () => {
     let override = createStyleSheetObj({
-      colorScheme: 'light/dark',
+      type: 'dual',
       name: 'core-theme-test',
-      theme: {
+      lightTheme: {},
+      darkTheme: {
         color: {
-          dark: {
-            app: {
-              activitybarBg: 'activitybar-dark-red',
-            },
-          },
-          light: {
-            caution: {},
+          app: {
+            activitybarBg: 'activitybar-dark-red',
           },
         },
       },
-      smallscreenOverride: {
+      darkSmallscreenOverride: {
         color: {
-          dark: {
-            app: {
-              activitybarBg: 'sm-activitybar-dark-red',
-            },
+          app: {
+            activitybarBg: 'sm-activitybar-dark-red',
           },
         },
       },

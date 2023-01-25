@@ -1,6 +1,6 @@
 import type { DesignTokens } from './design-tokens';
 
-type RecursivePartial<T> = {
+export type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends Array<infer U>
     ? Array<RecursivePartial<U>>
     : T[P] extends object
@@ -12,17 +12,6 @@ export type ThemeBase = Omit<
   DesignTokens,
   'uid' | 'theme' | 'widescreenWidth' | 'color'
 >;
-
-// {
-//   typography?: Partial<{
-//     fontFamily?: Partial<DesignTokens['typography']['fontFamily']>;
-//     text?: Partial<DesignTokens['typography']['text']>;
-//   }>;
-
-//   ringWidth?: Partial<DesignTokens['ringWidth']>;
-//   border?: TwoLevelPartial<DesignTokens['border']>;
-//   misc?: Partial<DesignTokens['misc']>;
-// };
 
 export type BangleThemeInput =
   | BangleThemeInputDualColorScheme
