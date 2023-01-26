@@ -21,7 +21,6 @@ const tokensShape: DesignTokens = {
     activitybarBtnBgPress: '',
     activitybarText: '',
 
-    editorAttentionBg: '',
     editorBacklinkBg: '',
     editorBacklinkBgHover: '',
     editorBacklinkText: '',

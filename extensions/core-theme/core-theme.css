@@ -98,9 +98,8 @@ body {
 /* stylelint-disable */
 .light-scheme {
   --BV-miscActivitybarBg: rgb(26, 32, 44);
-  --BV-miscActivitybarBtnBgPress: rgb(255, 255, 255);
+  --BV-miscActivitybarBtnBgPress: rgb(104 109 120);
   --BV-miscActivitybarText: rgb(248, 248, 248);
-  --BV-miscEditorAttentionBg: rgb(230, 230, 230);
   --BV-miscEditorBacklinkBg: rgb(224, 242, 255);
   --BV-miscEditorBacklinkBgHover: rgb(202, 232, 255);
   --BV-miscEditorBacklinkText: rgb(34, 34, 34);
@@ -203,7 +202,6 @@ body {
   --BV-miscActivitybarBg: rgb(31, 30, 30);
   --BV-miscActivitybarBtnBgPress: rgb(75, 75, 75);
   --BV-miscActivitybarText: rgb(208, 208, 208);
-  --BV-miscEditorAttentionBg: rgb(48, 48, 48);
   --BV-miscEditorBacklinkBg: rgb(0, 50, 106);
   --BV-miscEditorBacklinkBgHover: rgb(0, 64, 135);
   --BV-miscEditorBacklinkText: rgb(235, 235, 235);

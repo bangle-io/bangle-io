@@ -30,8 +30,13 @@ export function Button({
   id,
   isDisabled = false,
   isTouch = isTouchDevice,
+  // auto will center if only one child is present
+  // else it will space between
+  justifyContent = 'auto',
   leftIcon,
+  onHoverStyle,
   onPress,
+  onPressStyle,
   rightIcon,
   size = 'md',
   style = {},
@@ -39,10 +44,9 @@ export function Button({
   tone = TONE.NEUTRAL,
   tooltipPlacement,
   variant = BUTTON_VARIANT.SOLID,
-  // auto will center if only one child is present
-  // else it will space between
-  justifyContent = 'auto',
 }: {
+  // do not fill in the set the width and height (w-X and h-X)
+  // use size instead
   animateOnPress?: boolean;
   ariaLabel?: string;
   className?: string;
@@ -50,10 +54,13 @@ export function Button({
   id?: string;
   isDisabled?: boolean;
   isTouch?: boolean;
-  // do not fill in the set the width and height (w-X and h-X)
-  // use size instead
+  justifyContent?: React.CSSProperties['justifyContent'] | 'auto';
   leftIcon?: React.ReactNode;
+  // override default style when pressed
+  onHoverStyle?: React.CSSProperties;
   onPress?: FirstParameter<typeof useButton>['onPress'];
+  // override default style when pressed
+  onPressStyle?: React.CSSProperties;
   rightIcon?: React.ReactNode;
   size?: BtnSize;
   style?: React.CSSProperties;
@@ -61,7 +68,6 @@ export function Button({
   tone?: Tone;
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   variant?: ButtonVariant;
-  justifyContent?: React.CSSProperties['justifyContent'] | 'auto';
 }) {
   if (style.justifyContent) {
     console.warn(
@@ -110,6 +116,8 @@ export function Button({
           style,
           variant,
           justifyContent,
+          onHoverStyle,
+          onPressStyle,
         },
         text,
       })}

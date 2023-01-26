@@ -167,8 +167,11 @@ export function ActivitybarOptionsDropdown({
         size: widescreen ? 'lg' : 'sm',
         tone: 'secondary',
         //  we need this to use the activitybar color of the icon
-        style: widescreen ? ButtonStyleOBj : undefined,
+        style: widescreen ? ButtonStyleOBj.normal : undefined,
+
         leftIcon: widescreen ? <SettingsIcon /> : <DotsVerticalIcon />,
+        onHoverStyle: ButtonStyleOBj.hover,
+        onPressStyle: ButtonStyleOBj.press,
       }}
       menuProps={{
         ariaLabel: 'options dropdown',

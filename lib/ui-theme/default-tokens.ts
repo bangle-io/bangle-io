@@ -119,10 +119,9 @@ export const defaultTokensLight: DesignTokens = {
   },
   misc: {
     activitybarBg: 'rgb(26, 32, 44)',
-    activitybarBtnBgPress: lightNeutralColor.textInverted,
+    activitybarBtnBgPress: 'rgb(104 109 120)',
     activitybarText: spectrumLight.gray100,
 
-    editorAttentionBg: spectrumLight.gray200,
     editorBacklinkBg: spectrumLight.blue100,
     editorBacklinkBgHover: spectrumLight.blue200,
     editorBacklinkText: lightNeutralColor.text,
@@ -158,7 +157,6 @@ export const defaultTokensDark: DesignTokens = {
     activitybarBg: 'rgb(31, 30, 30)',
     activitybarBtnBgPress: spectrumDarkest.gray300,
     activitybarText: darkNeutralColor.textSubdued,
-    editorAttentionBg: spectrumDarkest.gray200,
     editorBacklinkBg: spectrumDarkest.blue200,
     editorBacklinkBgHover: spectrumDarkest.blue300,
     editorBacklinkText: darkNeutralColor.text,

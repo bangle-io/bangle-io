@@ -42,11 +42,13 @@ export function Activitybar() {
             changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
           }}
           style={{
-            ...ButtonStyleOBj,
+            ...ButtonStyleOBj.normal,
             borderColor: active
               ? vars.color.promote.border
               : vars.misc.activitybarBg,
           }}
+          onPressStyle={ButtonStyleOBj.press}
+          onHoverStyle={ButtonStyleOBj.hover}
           className={cx('border-l-2', active && 'BU_is-active')}
           variant="transparent"
           size="lg"
@@ -66,7 +68,9 @@ export function Activitybar() {
     >
       <Button
         ariaLabel="Workspace Home"
-        style={ButtonStyleOBj}
+        style={ButtonStyleOBj.normal}
+        onPressStyle={ButtonStyleOBj.press}
+        onHoverStyle={ButtonStyleOBj.hover}
         onPress={() => {
           changeSidebar(null)(bangleStore.state, bangleStore.dispatch);
           goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
@@ -83,7 +87,9 @@ export function Activitybar() {
       <div className="flex-grow"></div>
       <Button
         ariaLabel="What's new"
-        style={ButtonStyleOBj}
+        style={ButtonStyleOBj.normal}
+        onPressStyle={ButtonStyleOBj.press}
+        onHoverStyle={ButtonStyleOBj.hover}
         onPress={() => {
           dispatch({
             name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',

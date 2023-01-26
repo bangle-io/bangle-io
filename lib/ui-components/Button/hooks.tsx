@@ -25,6 +25,8 @@ export type BaseButtonStyleProps = {
   isTouch: boolean;
   size: BtnSize;
   style: React.CSSProperties | undefined;
+  onPressStyle?: React.CSSProperties;
+  onHoverStyle?: React.CSSProperties;
   tone: Tone;
   variant: ButtonVariant;
   // auto will center if only one child is present
@@ -114,6 +116,8 @@ function btnStyling({
   style,
   tone,
   variant,
+  onHoverStyle,
+  onPressStyle,
 }: BaseButtonStyleProps): [string, React.CSSProperties] {
   let className = classNameProp;
 
@@ -173,9 +177,19 @@ function btnStyling({
 
   let variantStyle = variantMapping[variant][tone];
 
+  let override = style;
+
+  if (onHoverStyle && isHovered) {
+    override = { ...override, ...onHoverStyle };
+  }
+
+  if (onPressStyle && isPressed) {
+    override = { ...override, ...onPressStyle };
+  }
+
   return [
     className,
-    createStyleObj(variantStyle, style, {
+    createStyleObj(variantStyle, override, {
       isDisabled,
       isHovered,
       isPressed,

@@ -114,7 +114,6 @@ export type DesignTokens = {
     activitybarBtnBgPress: string;
     activitybarText: string;
 
-    editorAttentionBg: string;
     editorBacklinkBg: string;
     editorBacklinkBgHover: string;
     editorBacklinkText: string;

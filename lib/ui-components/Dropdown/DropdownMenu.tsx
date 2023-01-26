@@ -45,6 +45,8 @@ interface DropdownButtonProps {
   text?: ReactNode;
   tone?: Tone;
   variant?: ButtonVariant;
+  onHoverStyle?: React.CSSProperties;
+  onPressStyle?: React.CSSProperties;
 }
 
 interface DropdownMenuProps {
@@ -146,6 +148,8 @@ export function DropdownMenu({
       tone: dropdownButtonProps.tone ?? TONE.NEUTRAL,
       style: dropdownButtonProps.style,
       variant: dropdownButtonProps.variant ?? BUTTON_VARIANT.SOLID,
+      onHoverStyle: dropdownButtonProps.onHoverStyle,
+      onPressStyle: dropdownButtonProps.onPressStyle,
     },
   });
 
