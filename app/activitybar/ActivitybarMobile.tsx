@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/api';
+import { useBangleStoreContext, vars } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
@@ -66,7 +66,10 @@ export function ActivitybarMobileDumb({
     <>
       <div
         data-testid="app-activitybar_activitybar-mobile"
-        className="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
+        style={{
+          backgroundColor: vars.misc.activitybarBg,
+        }}
+        className="flex flex-row px-2 items-center w-full select-none"
       >
         <div className="flex flex-row items-center flex-none">
           {primaryWsPath ? (

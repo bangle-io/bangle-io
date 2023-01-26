@@ -412,7 +412,7 @@ test('lists packages', async () => {
       [
         "@bangle.io/inline-backlink",
         {
-          "hasCSSFiles": false,
+          "hasCSSFiles": true,
           "isToolingWorkspace": false,
           "isWorktree": false,
           "location": "extensions/inline-backlink",

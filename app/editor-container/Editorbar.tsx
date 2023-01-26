@@ -51,7 +51,7 @@ export function Editorbar({
       data-testid="app-editor-container_editorbar"
       className="flex flex-row justify-between w-full px-2 py-1 lg:px-4"
       style={{
-        backgroundColor: vars.color.app.editorBg,
+        backgroundColor: vars.misc.editorBg,
       }}
     >
       <Button

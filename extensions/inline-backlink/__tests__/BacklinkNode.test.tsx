@@ -101,14 +101,15 @@ describe('BacklinkNode', () => {
       [
         <button
           aria-label="hi"
-          class="hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start bg-colorAppEditorBacklinkBg hover:bg-colorAppEditorBacklinkBgHover "
+          class="B-inline-backlink_backlink-node hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start "
           data-testid="inline-backlink-button"
           draggable="false"
         >
           <span>
             <svg
-              class="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg"
+              class="h-4 w-4 text-colorPromoteIcon"
               stroke="currentColor"
+              style="fill: var(--BV-miscEditorBacklinkBg);"
               viewBox="0 0 18 18"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -141,14 +142,15 @@ describe('BacklinkNode', () => {
       [
         <button
           aria-label="monako"
-          class="hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start bg-colorAppEditorBacklinkBg hover:bg-colorAppEditorBacklinkBgHover "
+          class="B-inline-backlink_backlink-node hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start "
           data-testid="inline-backlink-button"
           draggable="false"
         >
           <span>
             <svg
-              class="h-4 w-4 text-colorPromoteIcon fill-colorAppEditorBacklinkBg"
+              class="h-4 w-4 text-colorPromoteIcon"
               stroke="currentColor"
+              style="fill: var(--BV-miscEditorBacklinkBg);"
               viewBox="0 0 18 18"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -176,7 +178,9 @@ describe('BacklinkNode', () => {
 
     await act(() => sleep(0));
 
-    expect(container.innerHTML).toContain('bg-colorNeutralSolidFaint');
+    expect(container.innerHTML).toContain(
+      'B-inline-backlink_backlink-node-not-found',
+    );
   });
 });
 

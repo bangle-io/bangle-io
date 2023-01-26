@@ -17,7 +17,7 @@ const bangleAccent1200 = '#058bcc';
 const bangleAccent1400 = '#026da3';
 const bangleAccent1500 = '#005580';
 
-const neutralColor: DesignTokens['color']['neutral'] = {
+export const lightNeutralColor: DesignTokens['color']['neutral'] = {
   bgLayerTop: spectrumLight.gray100,
   bgLayerMiddle: spectrumLight.gray50,
   bgLayerBottom: spectrumLight.gray200,
@@ -49,26 +49,8 @@ const neutralColor: DesignTokens['color']['neutral'] = {
   borderStrong: spectrumLight.gray400,
 };
 
-const appColor: DesignTokens['color']['app'] = {
-  activitybarBg: 'rgb(26, 32, 44)',
-  activitybarBtnPress: neutralColor.textInverted,
-  activitybarText: spectrumLight.gray100,
-  editorAttentionBg: spectrumLight.gray200,
-  editorBacklinkBg: spectrumLight.blue100,
-  editorBacklinkBgHover: spectrumLight.blue200,
-  editorBacklinkText: spectrumLight.gray100,
-  editorBg: neutralColor.bgLayerMiddle,
-  editorCodeBg: spectrumLight.gray300,
-  kbdBg: neutralColor.solidSubdued,
-  kbdText: neutralColor.textSubdued,
-  linkText: spectrumLight.blue700,
-  searchHighlightBg: spectrumLight.yellow300,
-};
-
 export const lightColors: DesignTokens['color'] = {
-  neutral: neutralColor,
-
-  app: appColor,
+  neutral: lightNeutralColor,
 
   secondary: {
     iconDisabled: spectrumLight.gray400,
@@ -95,7 +77,7 @@ export const lightColors: DesignTokens['color'] = {
 
     // orange base is lighter than normal
     solid: spectrumLight.orange600,
-    solidText: neutralColor.textInverted,
+    solidText: lightNeutralColor.textInverted,
     solidStrong: spectrumLight.orange700,
     solidStronger: spectrumLight.orange800,
     solidSubdued: spectrumLight.orange500,
@@ -111,7 +93,7 @@ export const lightColors: DesignTokens['color'] = {
     icon: spectrumLight.red800,
 
     solid: spectrumLight.red800,
-    solidText: neutralColor.textInverted,
+    solidText: lightNeutralColor.textInverted,
     solidStrong: spectrumLight.red900,
     solidStronger: spectrumLight.red1000,
     solidSubdued: spectrumLight.red700,
@@ -128,7 +110,7 @@ export const lightColors: DesignTokens['color'] = {
     icon: spectrumLight.green800,
 
     solid: spectrumLight.green800,
-    solidText: neutralColor.textInverted,
+    solidText: lightNeutralColor.textInverted,
     solidStrong: spectrumLight.green900,
     solidStronger: spectrumLight.green1000,
     solidSubdued: spectrumLight.green700,
@@ -148,7 +130,7 @@ export const lightColors: DesignTokens['color'] = {
     solidStronger: bangleAccent1000,
     solidFaint: bangleAccent200,
     solidSubdued: bangleAccent500,
-    solidText: neutralColor.textInverted,
+    solidText: lightNeutralColor.textInverted,
 
     borderSubdued: bangleAccent400,
     border: bangleAccent600,

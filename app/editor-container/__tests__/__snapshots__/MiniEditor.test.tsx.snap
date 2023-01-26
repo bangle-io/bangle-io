@@ -4,7 +4,7 @@ exports[`MiniEditor works 1`] = `
 <div>
   <div>
     <div
-      class="fixed flex flex-col bottom-0 right-8 rounded drop-shadow-xl bg-colorAppEditorBg z-popup border-neutral"
+      class="fixed flex flex-col bottom-0 right-8 rounded drop-shadow-xl z-popup border-neutral"
       data-testid="editor-container_mini-editor-wrapper"
     >
       <div

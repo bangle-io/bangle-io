@@ -1,0 +1,16 @@
+.B-inline-backlink_backlink-node {
+  background-color: var(--BV-miscEditorBacklinkBg);
+  color: var(--BV-miscEditorBacklinkText);
+}
+
+.B-inline-backlink_backlink-node.B-inline-backlink_backlink-node-not-found {
+  background-color: var(--BV-colorNeutralSolidFaint);
+}
+
+.B-inline-backlink_backlink-node.B-inline-backlink_backlink-node-not-found:hover {
+  background-color: var(--BV-colorNeutralSolidFaint);
+}
+
+.B-inline-backlink_backlink-node:hover {
+  background-color: var(--BV-miscEditorBacklinkBgHover);
+}

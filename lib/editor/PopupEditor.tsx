@@ -2,6 +2,7 @@ import React from 'react';
 import reactDOM from 'react-dom';
 
 import { EditorDisplayType, POPUP_EDITOR_INDEX } from '@bangle.io/constants';
+import { vars } from '@bangle.io/css-vars';
 import { cx } from '@bangle.io/utils';
 
 import type { EditorProps } from './Editor';
@@ -23,11 +24,14 @@ export const PopupEditor = React.forwardRef<HTMLDivElement, PopupEditorProps>(
       <div
         ref={ref}
         className={cx(
-          'py-4 pl-6 overflow-y-auto rounded-md bg-colorAppEditorBg',
+          'py-4 pl-6 overflow-y-auto rounded-md ',
           popupContainerProps.className,
         )}
         {...popupContainerProps.positionProps}
-        style={popupContainerProps.style}
+        style={{
+          ...popupContainerProps.style,
+          backgroundColor: vars.misc.editorBg,
+        }}
       >
         {noContent ? (
           noContent

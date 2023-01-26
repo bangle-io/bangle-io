@@ -4,7 +4,7 @@ exports[`renders mobile view 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row px-2 items-center bg-colorAppActivitybarBg w-full select-none"
+      class="flex flex-row px-2 items-center w-full select-none"
       data-testid="app-activitybar_activitybar-mobile"
     >
       <div
