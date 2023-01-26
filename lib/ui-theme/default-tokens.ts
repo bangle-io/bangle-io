@@ -123,6 +123,7 @@ export const defaultTokensLight: DesignTokens = {
     activitybarText: spectrumLight.gray100,
 
     editorBacklinkBg: spectrumLight.blue100,
+    editorAttentionBg: spectrumLight.gray200,
     editorBacklinkBgHover: spectrumLight.blue200,
     editorBacklinkText: lightNeutralColor.text,
     editorBg: lightNeutralColor.bgLayerMiddle,
@@ -136,8 +137,9 @@ export const defaultTokensLight: DesignTokens = {
     noteSidebarWidth: '300px',
     workspaceSidebarWidth: '300px',
     miniEditorWidth: '400px',
-    noteTagsBg: 'rgb(66, 66, 66)',
-    noteTagsText: 'rgb(255, 255, 255)',
+
+    noteTagsBg: lightNeutralColor.solid,
+    noteTagsText: lightNeutralColor.textInverted,
     pagePadding: '3rem 30px 3rem 30px',
     pageMaxWidth: '700px',
   },
@@ -159,6 +161,8 @@ export const defaultTokensDark: DesignTokens = {
     activitybarText: darkNeutralColor.textSubdued,
     editorBacklinkBg: spectrumDarkest.blue200,
     editorBacklinkBgHover: spectrumDarkest.blue300,
+    editorAttentionBg: spectrumDarkest.gray200,
+
     editorBacklinkText: darkNeutralColor.text,
     editorBg: darkNeutralColor.bgLayerMiddle,
     editorCodeBg: spectrumDarkest.gray300,
@@ -167,8 +171,8 @@ export const defaultTokensDark: DesignTokens = {
     linkText: spectrumDarkest.blue800,
     searchHighlightBg: spectrumDarkest.yellow700,
 
-    noteTagsBg: 'rgb(66, 66, 66)',
-    noteTagsText: 'rgb(255, 255, 255)',
+    noteTagsBg: darkNeutralColor.solid,
+    noteTagsText: darkNeutralColor.textInverted,
   },
   color: darkColors,
 };
