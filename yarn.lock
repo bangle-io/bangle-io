@@ -3081,6 +3081,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/nsm@workspace:js-lib/nsm":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/object-uid@workspace:*, @bangle.io/object-uid@workspace:js-lib/object-uid":
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"

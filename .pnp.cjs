@@ -196,6 +196,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/mini-js-utils"\
       },\
       {\
+        "name": "@bangle.io/nsm",\
+        "reference": "workspace:js-lib/nsm"\
+      },\
+      {\
         "name": "@bangle.io/object-uid",\
         "reference": "workspace:js-lib/object-uid"\
       },\
@@ -439,6 +443,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/note-outline", ["workspace:extensions/note-outline"]],\
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],\
       ["@bangle.io/note-tags", ["workspace:extensions/note-tags"]],\
+      ["@bangle.io/nsm", ["workspace:js-lib/nsm"]],\
       ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],\
       ["@bangle.io/p-map", ["workspace:js-lib/p-map"]],\
       ["@bangle.io/playwright-e2e", ["workspace:tooling/playwright-e2e"]],\
@@ -7011,6 +7016,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/nsm", [\
+        ["workspace:js-lib/nsm", {\
+          "packageLocation": "./js-lib/nsm/",\
+          "packageDependencies": [\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"]\
           ],\
           "linkType": "SOFT"\
         }]\
