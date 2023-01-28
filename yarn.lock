@@ -3084,6 +3084,8 @@ __metadata:
 "@bangle.io/nsm@workspace:js-lib/nsm":
   version: 0.0.0-use.local
   resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
+  dependencies:
+    "@bangle.io/mini-js-utils": "workspace:*"
   languageName: unknown
   linkType: soft
 

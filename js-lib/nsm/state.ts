@@ -1,20 +1,32 @@
-import type { ActionSnapshot } from './common';
-import { throwSliceStateNotFound } from './errors';
+import { isPlainObject } from '@bangle.io/mini-js-utils';
 
-export interface SliceLike<SS = any> {
-  key: {
-    key: string;
-    initState: SS;
-    dependencies?: Record<string, SliceLike>;
-  };
+import type { SliceBase, Transaction } from './common';
 
-  applyAction: (action: ActionSnapshot, storeState: State) => SS;
+interface StoreStateOptions {
+  debug?: boolean;
 }
 
-interface Options {}
+interface SliceStatePair {
+  _isPair: string;
+  val: { slice: SliceBase; initState: unknown };
+}
 
-export class State {
-  static checkDependencyOrder(slices: SliceLike[]) {
+function isSliceStatePair(obj: any): obj is SliceStatePair {
+  return isPlainObject(obj) && obj._isPair === '$$sliceStatePair';
+}
+
+export function overrideInitState<SL extends SliceBase>(
+  slice: SL,
+  state: SL extends SliceBase<infer SS> ? SS : never,
+): SliceStatePair {
+  return {
+    _isPair: '$$sliceStatePair' as const,
+    val: { slice, initState: state },
+  };
+}
+
+export class StoreState {
+  static checkDependencyOrder(slices: SliceBase[]) {
     let seenKeys = new Set<string>();
     for (const slice of slices) {
       const { key } = slice;
@@ -23,9 +35,9 @@ export class State {
         const depKeys = Object.values(key.dependencies).map((d) => d.key.key);
 
         for (const depKey of depKeys) {
-          if (seenKeys.has(depKey)) {
+          if (!seenKeys.has(depKey)) {
             throw new Error(
-              `Slice ${key.key} has a dependency on ${depKey} which is not before it in the slice list`,
+              `Slice "${key.key}" has a dependency on Slice "${depKey}" which is either not registered or is registered after this slice.`,
             );
           }
         }
@@ -34,7 +46,7 @@ export class State {
     }
   }
 
-  static checkUniqueKeys(slices: SliceLike[]) {
+  static checkUniqueKeys(slices: SliceBase[]) {
     const keys = slices.map((s) => s.key.key);
     const unique = new Set(keys);
 
@@ -45,66 +57,79 @@ export class State {
 
   static create({
     storeName,
-    slices,
+    slices: rawSlices,
     opts,
   }: {
     storeName: string;
-    slices: SliceLike[];
-    opts?: Options;
-  }): State {
-    State.checkUniqueKeys(slices);
-    State.checkDependencyOrder(slices);
+    slices: Array<SliceBase | SliceStatePair>;
+    opts?: StoreStateOptions;
+  }): StoreState {
+    const slices: SliceBase[] = rawSlices.map((s) => {
+      if (isSliceStatePair(s)) {
+        return s.val.slice;
+      }
 
-    // const config = new AppStateConfig(slices, opts);
-    const instance = new State(storeName, slices);
-    slices.forEach((slice) => {
-      instance.slicesCurrentState[slice.key.key] = slice.key.initState;
+      return s;
     });
+
+    StoreState.checkUniqueKeys(slices);
+    StoreState.checkDependencyOrder(slices);
+
+    const instance = new StoreState(storeName, slices, opts);
+
+    for (const rawSlice of rawSlices) {
+      if (isSliceStatePair(rawSlice)) {
+        const { slice, initState } = rawSlice.val;
+        instance.slicesCurrentState[slice.key.key] = initState;
+      } else {
+        const slice = rawSlice;
+        instance.slicesCurrentState[slice.key.key] = slice.key.initState;
+      }
+    }
 
     return instance;
   }
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
 
-  constructor(public storeName: string, private _slices: SliceLike[]) {}
+  constructor(
+    public storeName: string,
+    private _slices: SliceBase[],
+    public opts?: StoreStateOptions,
+  ) {}
 
-  applyAction(action: ActionSnapshot): State {
+  applyTransaction(tx: Transaction): StoreState | undefined {
     const newState = { ...this.slicesCurrentState };
 
     let found = false;
-    this._slices.forEach((slice) => {
-      if (slice.key.key === action.sliceKey) {
+
+    for (const slice of this._slices) {
+      if (slice.key.key === tx.sliceKey) {
         found = true;
-        newState[slice.key.key] = slice.applyAction(action, this);
+        newState[slice.key.key] = slice.applyTransaction(tx, this);
       }
-    });
+    }
 
     if (!found) {
-      throw new Error(`No slice found for slice "${action.sliceKey}"`);
+      return undefined;
     }
 
     // TODO: append-action
-    const instance = new State(this.storeName, this._slices);
-    instance.slicesCurrentState = newState;
 
-    return instance;
+    return this._fork(newState);
   }
 
-  getSliceState<SL extends SliceLike>(
+  getSliceState<SL extends SliceBase>(
     slice: SL,
   ): SL['key']['initState'] | undefined {
     return this.slicesCurrentState[slice.key.key];
   }
 
-  getSliceStateAsserted<SL extends SliceLike>(
-    slice: SL,
-  ): SL['key']['initState'] {
-    const state = this.slicesCurrentState[slice.key.key];
+  private _fork(slicesState: StoreState['slicesCurrentState']): StoreState {
+    const newInstance = new StoreState(this.storeName, this._slices, this.opts);
 
-    if (state === undefined) {
-      throwSliceStateNotFound(slice, this);
-    }
+    newInstance.slicesCurrentState = slicesState;
 
-    return state;
+    return newInstance;
   }
 }

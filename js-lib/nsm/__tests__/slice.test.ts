@@ -1,91 +1,98 @@
-import { actionToActionSnapshot, Slice, SliceKey } from '../slice';
+// import { actionToActionSnapshot, Slice, SliceKey } from '../slice';
 
-const testSlice0 = new Slice({
-  key: new SliceKey('test-0', { fun: false }),
-  actions: {},
-});
+import type { Transaction } from '../common';
+import { expectType } from '../common';
+import type { Action, RawAction } from '../slice';
+import { parseRawActions, Slice } from '../slice';
 
-const testSlice1 = new Slice({
-  key: new SliceKey('test-1', { bro: '' }),
+const testSlice1 = Slice.create({
+  key: 'test-1',
+  initState: { num: 4 },
   actions: {
-    syn: (num: number) => (state, x) => {
-      return { ...state };
+    increment: (opts: { increment: boolean }) => (state) => {
+      return { ...state, num: state.num + (opts.increment ? 1 : 0) };
+    },
+    decrement: (opts: { decrement: boolean }) => (state) => {
+      return { ...state, num: state.num - (opts.decrement ? 1 : 0) };
     },
   },
 });
 
-test('with dependencies', () => {
-  const s = new Slice({
-    key: new SliceKey('test-X', { num: 1 }, { testSlice0, testSlice1 }),
-
-    actions: {
-      myAction:
-        ({ num }: { num: number }) =>
-        (state, x) => {
-          return { ...state, num: num + (x.testSlice0.fun ? 1 : 0) };
-        },
+const testSlice2 = Slice.create({
+  key: 'test-2',
+  initState: { name: 'tame' },
+  actions: {
+    prefix: (prefix: string) => (state) => {
+      return { ...state, name: prefix + state.name };
     },
-
-    effects: [
-      {
-        update: (opts, { testSlice1 }) => {
-          let f = opts.actions.myAction(1);
-
-          let z = testSlice1.actions.syn(1);
-        },
-      },
-      {
-        update: (opts) => {},
-      },
-    ],
-  });
-
-  let f = s.actions.myAction({ num: 1 });
-
-  expect(s.initState).toEqual({
-    num: 1,
-  });
-
-  expect(s.uid).toMatchInlineSnapshot(`"test-X(test-0(),test-1())"`);
+    padEnd: (length: number, pad: string) => (state) => {
+      return { ...state, name: state.name.padEnd(length, pad) };
+    },
+    uppercase: () => (state) => {
+      return { ...state, name: state.name.toUpperCase() };
+    },
+  },
 });
 
-// test('with dependencies', () => {
-//   const key = new SliceKey('test', {
-//     num: 1,
-//   });
-//   const s = new Slice(key, { testSlice });
+describe('actions', () => {
+  test('actions works', () => {
+    expectType<(p: string) => Transaction<string[]>>(testSlice2.actions.prefix);
 
-//   expect(s.initState).toEqual({
-//     num: 1,
-//   });
-// });
-
-describe('actionToActionSnapshot', () => {
-  test('works', () => {
-    const sliceKey = new SliceKey('test', { num: 1 });
-
-    let actionSnapshot = actionToActionSnapshot(sliceKey, {
-      myAction:
-        ({ num }: { num: number }) =>
-        (state) => {
-          return state;
-        },
+    expect(testSlice2.actions.prefix('me')).toEqual({
+      actionId: 'prefix',
+      payload: ['me'],
+      sliceKey: 'test-2',
     });
 
-    expect(actionSnapshot).toEqual({
-      myAction: expect.any(Function),
+    expectType<(p: number, p2: string) => Transaction<Array<string | number>>>(
+      testSlice2.actions.padEnd,
+    );
+
+    expect(testSlice2.actions.padEnd(6, 'me')).toEqual({
+      actionId: 'padEnd',
+      payload: [6, 'me'],
+      sliceKey: 'test-2',
     });
 
-    let result = actionSnapshot.myAction({ num: 2 });
+    expectType<() => Transaction<[]>>(testSlice2.actions.uppercase);
+    expect(testSlice2.actions.uppercase()).toEqual({
+      actionId: 'uppercase',
+      payload: [],
+      sliceKey: 'test-2',
+    });
+  });
 
-    expect(result).toMatchInlineSnapshot(`
-      {
-        "actionName": "myAction",
-        "payload": {
-          "num": 2,
-        },
-        "sliceKey": "test",
-      }
-    `);
+  test('parseRawActions works', () => {
+    type StateType = { num: number };
+    type DependencyType = {
+      testSlice1: typeof testSlice1;
+      testSlice2: typeof testSlice2;
+    };
+
+    const myAction: RawAction<number[], StateType, DependencyType> = (p) => {
+      expectType<number>(p);
+
+      return (state, depState) => {
+        expectType<StateType>(state);
+        expectType<{ num: number }>(depState.testSlice1);
+        expectType<{ name: string }>(depState.testSlice2);
+
+        return state;
+      };
+    };
+
+    let result = parseRawActions('test-key', { myAction });
+
+    expectType<Action<number[]>>(result.myAction);
+
+    expect(result.myAction(1)).toMatchInlineSnapshot(`
+    {
+      "actionId": "myAction",
+      "payload": [
+        1,
+      ],
+      "sliceKey": "test-key",
+    }
+  `);
   });
 });

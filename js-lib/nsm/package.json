@@ -21,5 +21,8 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*"
+  },
   "license": "AGPL-3.0-or-later"
 }

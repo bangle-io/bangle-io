@@ -7024,7 +7024,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:js-lib/nsm", {\
           "packageLocation": "./js-lib/nsm/",\
           "packageDependencies": [\
-            ["@bangle.io/nsm", "workspace:js-lib/nsm"]\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"]\
           ],\
           "linkType": "SOFT"\
         }]\

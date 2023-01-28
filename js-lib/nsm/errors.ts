@@ -1,9 +1,9 @@
-import type { Slice } from './slice';
-import type { SliceLike, State } from './state';
+import type { SliceBase } from './common';
+import type { StoreState } from './state';
 
 export function throwSliceStateNotFound(
-  slice: SliceLike,
-  appState: State,
+  slice: SliceBase,
+  appState: StoreState,
 ): never {
   throw new Error(
     `Slice "${slice.key.key}" not found in store "${appState.storeName}"`,
@@ -11,7 +11,7 @@ export function throwSliceStateNotFound(
 }
 
 export function throwSliceActionNotFound(
-  slice: SliceLike,
+  slice: SliceBase,
   actionName: string,
 ): never {
   throw new Error(
