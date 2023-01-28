@@ -1,4 +1,5 @@
 import type {
+  AnyFn,
   EffectsBase,
   SliceBase,
   SliceKeyBase,
@@ -21,6 +22,15 @@ type DependenciesState<DS extends Record<string, Slice>> = {
   [K in keyof DS]: DS[K]['key']['initState'];
 };
 
+type SelectorFn<SS, DS extends Record<string, Slice>, T> = (
+  sliceState: SS,
+  depState: DependenciesState<DS>,
+) => T;
+
+type ResolvedSelectors<SE extends Record<string, SelectorFn<any, any, any>>> = {
+  [K in keyof SE]: SE[K] extends AnyFn ? ReturnType<SE[K]> : never;
+};
+
 export type RawAction<P extends any[], SS, DS extends Record<string, Slice>> = (
   ...payload: P
 ) => (sliceState: SS, depState: DependenciesState<DS>) => SS;
@@ -33,26 +43,30 @@ export class Slice<
   SS extends object = any,
   DS extends Record<string, Slice> = any,
   A extends Record<string, RawAction<any[], SS, DS>> = any,
+  SE extends Record<string, SelectorFn<SS, DS, any>> = any,
 > implements SliceBase<SS>
 {
   static create<
     SS extends object,
     DS extends Record<string, Slice>,
     A extends Record<string, RawAction<any[], SS, DS>>,
+    SE extends Record<string, SelectorFn<SS, DS, any>>,
   >({
     key,
     initState,
     dependencies,
     actions,
     effects = [],
+    selectors,
   }: {
     key: string;
     initState: SS;
+    selectors?: SE;
     dependencies?: DS;
     actions?: A;
     effects?: EffectsBase[];
-  }): Slice<SS, DS, A> {
-    return new Slice(key, initState, dependencies, actions);
+  }) {
+    return new Slice(key, initState, dependencies, actions, selectors);
   }
 
   key: SliceKey<SS, DS>;
@@ -64,6 +78,7 @@ export class Slice<
     initState: SS,
     dependencies?: DS,
     private _rawActions: A = {} as A,
+    public selectors: SE = {} as SE,
   ) {
     this.key = new SliceKey(key, initState, dependencies);
     this.fingerPrint = `${key}(${Object.values(dependencies || {})
@@ -105,6 +120,25 @@ export class Slice<
     }
 
     return result;
+  }
+
+  resolveSelectors(storeState: StoreState): ResolvedSelectors<SE> {
+    const result = mapObjectValues(this.selectors, (selector) => {
+      return selector(
+        this.getState(storeState),
+        this.getDependenciesState(storeState),
+      );
+    });
+
+    return result as any;
+  }
+
+  // Returns the slice state with the selectors resolved
+  resolveState(storeState: StoreState): SS & ResolvedSelectors<SE> {
+    return {
+      ...this.getState(storeState),
+      ...this.resolveSelectors(storeState),
+    };
   }
 }
 
