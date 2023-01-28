@@ -5,9 +5,7 @@ export function throwSliceStateNotFound(
   slice: SliceBase,
   appState: StoreState,
 ): never {
-  throw new Error(
-    `Slice "${slice.key.key}" not found in store "${appState.storeName}"`,
-  );
+  throw new Error(`Slice "${slice.key.key}" not found in store "`);
 }
 
 export function throwSliceActionNotFound(

@@ -29,6 +29,10 @@ export interface SliceBase<SS = unknown> {
   applyTransaction: (tx: Transaction, storeState: StoreState) => SS;
 }
 
+export interface StoreTransaction extends Transaction {
+  id: string;
+}
+
 export interface Transaction<P extends unknown[] = unknown[]> {
   sliceKey: string;
   actionId: string;

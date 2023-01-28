@@ -56,11 +56,9 @@ export class StoreState {
   }
 
   static create({
-    storeName,
     slices: rawSlices,
     opts,
   }: {
-    storeName: string;
     slices: Array<SliceBase | SliceStatePair>;
     opts?: StoreStateOptions;
   }): StoreState {
@@ -75,7 +73,7 @@ export class StoreState {
     StoreState.checkUniqueKeys(slices);
     StoreState.checkDependencyOrder(slices);
 
-    const instance = new StoreState(storeName, slices, opts);
+    const instance = new StoreState(slices, opts);
 
     for (const rawSlice of rawSlices) {
       if (isSliceStatePair(rawSlice)) {
@@ -92,11 +90,7 @@ export class StoreState {
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
 
-  constructor(
-    public storeName: string,
-    private _slices: SliceBase[],
-    public opts?: StoreStateOptions,
-  ) {}
+  constructor(private _slices: SliceBase[], public opts?: StoreStateOptions) {}
 
   applyTransaction(tx: Transaction): StoreState | undefined {
     const newState = { ...this.slicesCurrentState };
@@ -126,7 +120,7 @@ export class StoreState {
   }
 
   private _fork(slicesState: StoreState['slicesCurrentState']): StoreState {
-    const newInstance = new StoreState(this.storeName, this._slices, this.opts);
+    const newInstance = new StoreState(this._slices, this.opts);
 
     newInstance.slicesCurrentState = slicesState;
 

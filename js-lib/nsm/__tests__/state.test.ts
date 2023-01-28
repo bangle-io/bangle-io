@@ -37,7 +37,6 @@ describe('selectors', () => {
     );
 
     const state = StoreState.create({
-      storeName: 'test',
       slices: [slice],
     });
 
@@ -81,7 +80,6 @@ describe('selectors', () => {
     }>(slice.selectors);
 
     const state = StoreState.create({
-      storeName: 'test',
       slices: [testSlice1, slice],
     });
 
@@ -103,7 +101,6 @@ describe('selectors', () => {
 
   test('no selectors', () => {
     const state = StoreState.create({
-      storeName: 'test',
       slices: [testSlice1],
     });
     expect(testSlice1.resolveState(state)).toEqual({
@@ -126,7 +123,6 @@ describe('applyTransaction', () => {
     });
 
     const state = StoreState.create({
-      storeName: 'test',
       slices: [slice],
     });
 
@@ -179,7 +175,6 @@ describe('applyTransaction', () => {
     });
 
     const state = StoreState.create({
-      storeName: 'test',
       slices: [sliceDep1, sliceDep2, slice],
     });
 
@@ -205,7 +200,6 @@ describe('throwing', () => {
 
     expect(() => {
       StoreState.create({
-        storeName: 'test',
         slices: [slice, slice],
       });
     }).toThrowError('Duplicate slice keys');
@@ -230,7 +224,6 @@ describe('throwing', () => {
 
     expect(() => {
       StoreState.create({
-        storeName: 'test',
         slices: [slice],
       });
     }).toThrowErrorMatchingInlineSnapshot(
@@ -257,7 +250,6 @@ describe('throwing', () => {
 
     expect(() => {
       StoreState.create({
-        storeName: 'test',
         slices: [slice, sliceDep],
       });
     }).toThrowErrorMatchingInlineSnapshot(
@@ -281,7 +273,6 @@ describe('override', () => {
     });
 
     let newState = StoreState.create({
-      storeName: 'test',
       slices: [slice1, overrideInitState(slice2, { num: 99 })],
     });
 
@@ -289,7 +280,6 @@ describe('override', () => {
     expect(newState.getSliceState(slice2)).toEqual({ num: 99 });
 
     newState = StoreState.create({
-      storeName: 'test',
       slices: [overrideInitState(slice1, { num: -1 }), slice2],
     });
 
