@@ -1,19 +1,28 @@
-import type { StoreTransaction, Transaction } from './common';
+import type {
+  AnySliceBase,
+  StoreBase,
+  StoreTransaction,
+  Transaction,
+} from './common';
+import type { InferSlicesKey, StoreStateConfig } from './state';
 import { StoreState } from './state';
 
 interface Scheduler {
   schedule: (cb: () => void) => void;
   cancel: () => void;
 }
-type DispatchTx = (store: Store, tx: StoreTransaction) => void;
+type DispatchTx<
+  ST extends StoreTransaction<any, any>,
+  SB extends AnySliceBase[],
+> = (store: Store<SB>, tx: ST) => void;
 
 let counter = 0;
 function incrementalId() {
   return counter++;
 }
 
-export class Store {
-  static create({
+export class Store<SB extends AnySliceBase[]> implements StoreBase<SB> {
+  static create<SB extends AnySliceBase[]>({
     disableSideEffects = false,
     dispatchTx = (store, tx) => {
       let newState = store.state.applyTransaction(tx);
@@ -31,10 +40,10 @@ export class Store {
     storeName,
   }: {
     disableSideEffects?: boolean;
-    dispatchTx?: DispatchTx;
+    dispatchTx?: DispatchTx<StoreTransaction<InferSlicesKey<SB>, any>, SB>;
     onError?: (error: Error) => void;
     scheduler?: Scheduler;
-    state: StoreState | Parameters<typeof StoreState.create>[0];
+    state: StoreState<SB> | StoreStateConfig<SB>;
     storeName: string;
   }) {
     if (!(state instanceof StoreState)) {
@@ -51,12 +60,12 @@ export class Store {
     );
   }
 
-  dispatch = (tx: Transaction) => {
+  dispatch = (tx: Transaction<InferSlicesKey<SB>, any>) => {
     if (this._destroyed) {
       return;
     }
 
-    let storeTx: StoreTransaction = {
+    const storeTx: StoreTransaction<InferSlicesKey<SB>, any> = {
       ...tx,
       id: this.storeName + '-' + incrementalId(),
     };
@@ -67,9 +76,9 @@ export class Store {
   private _destroyed = false;
 
   constructor(
-    public state: StoreState,
+    public state: StoreState<SB>,
     public storeName: string,
-    private _dispatchTx: DispatchTx,
+    private _dispatchTx: DispatchTx<any, SB>,
     scheduler?: Scheduler,
     onError?: (error: Error) => void,
     disableSideEffects?: boolean,
@@ -83,7 +92,7 @@ export class Store {
     this._destroyed = true;
   }
 
-  protected updateState(newState: StoreState) {
+  updateState(newState: StoreState<SB>) {
     this.state = newState;
 
     // TODO: add side effects

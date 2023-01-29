@@ -36,7 +36,9 @@ const testSlice2 = Slice.create({
 
 describe('actions', () => {
   test('actions works', () => {
-    expectType<(p: string) => Transaction<string[]>>(testSlice2.actions.prefix);
+    expectType<(p: string) => Transaction<'test-2', string[]>>(
+      testSlice2.actions.prefix,
+    );
 
     expect(testSlice2.actions.prefix('me')).toEqual({
       actionId: 'prefix',
@@ -44,9 +46,16 @@ describe('actions', () => {
       sliceKey: 'test-2',
     });
 
-    expectType<(p: number, p2: string) => Transaction<Array<string | number>>>(
-      testSlice2.actions.padEnd,
-    );
+    expectType<
+      (p: number, p2: string) => Transaction<'test-2', Array<string | number>>
+    >(testSlice2.actions.padEnd);
+
+    // @ts-expect-error - since action does not exist should always error
+    let wrong = testSlice2.actions.wrong?.();
+
+    let tx = testSlice2.actions.prefix('me');
+
+    expectType<Transaction<'test-2', Array<string | number>>>(tx);
 
     expect(testSlice2.actions.padEnd(6, 'me')).toEqual({
       actionId: 'padEnd',
@@ -54,7 +63,7 @@ describe('actions', () => {
       sliceKey: 'test-2',
     });
 
-    expectType<() => Transaction<[]>>(testSlice2.actions.uppercase);
+    expectType<() => Transaction<'test-2', []>>(testSlice2.actions.uppercase);
     expect(testSlice2.actions.uppercase()).toEqual({
       actionId: 'uppercase',
       payload: [],
@@ -77,13 +86,22 @@ describe('actions', () => {
         expectType<{ num: number }>(depState.testSlice1);
         expectType<{ name: string }>(depState.testSlice2);
 
+        // @ts-expect-error - should not allow access of any field in the state
+        let testVal = state.xyzWrong;
+
+        // @ts-expect-error - should not allow access to any slice that is not declared
+        let testVal2 = depState.testSliceXyz;
+
+        // @ts-expect-error - should not allow access to unknown field in dependency state
+        let testVal3 = depState.testSlice2.xyzWrong;
+
         return state;
       };
     };
 
     let result = parseRawActions('test-key', { myAction });
 
-    expectType<Action<number[]>>(result.myAction);
+    expectType<Action<'test-key', number[]>>(result.myAction);
 
     expect(result.myAction(1)).toMatchInlineSnapshot(`
     {

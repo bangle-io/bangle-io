@@ -10,10 +10,16 @@ export type ReplaceReturnType<T extends (...args: any) => any, R> = T extends (
   ? (...ag: P) => R
   : never;
 
-export interface SliceKeyBase<SS = unknown> {
-  key: string;
+export interface StoreStateBase<SB extends AnySliceBase[]> {}
+
+export interface StoreBase<SB extends AnySliceBase[]> {
+  state: StoreStateBase<SB>;
+}
+
+export interface SliceKeyBase<K extends string, SS> {
+  key: K;
   initState: SS;
-  dependencies?: Record<string, SliceBase<any>>;
+  dependencies?: Record<string, SliceBase<string, unknown>>;
 }
 
 export interface EffectsBase {
@@ -21,20 +27,26 @@ export interface EffectsBase {
   once?: AnyFn;
 }
 
-export interface SliceBase<SS = unknown> {
-  key: SliceKeyBase<SS>;
+export type AnySliceBase = SliceBase<string, unknown>;
+
+export interface SliceBase<K extends string, SS> {
+  key: SliceKeyBase<K, SS>;
   fingerPrint: string;
   effects?: EffectsBase[];
 
-  applyTransaction: (tx: Transaction, storeState: StoreState) => SS;
+  applyTransaction: (
+    tx: Transaction<K, unknown[]>,
+    storeState: StoreState,
+  ) => SS;
 }
 
-export interface StoreTransaction extends Transaction {
+export interface StoreTransaction<K extends string, P extends unknown[]>
+  extends Transaction<K, P> {
   id: string;
 }
 
-export interface Transaction<P extends unknown[] = unknown[]> {
-  sliceKey: string;
+export interface Transaction<K extends string, P extends unknown[]> {
+  sliceKey: K;
   actionId: string;
   payload: P;
 }

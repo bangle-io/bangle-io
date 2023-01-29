@@ -8,18 +8,21 @@ import type {
 import { mapObjectValues } from './common';
 import type { StoreState } from './state';
 
-class SliceKey<SS extends object, DS extends Record<string, Slice>>
-  implements SliceKeyBase<SS>
+export class SliceKey<
+  K extends string,
+  SS extends object,
+  DS extends Record<string, Slice>,
+> implements SliceKeyBase<K, SS>
 {
-  constructor(
-    public key: string,
-    public initState: SS,
-    public dependencies?: DS,
-  ) {}
+  constructor(public key: K, public initState: SS, public dependencies?: DS) {}
 }
 
 type DependenciesState<DS extends Record<string, Slice>> = {
   [K in keyof DS]: DS[K]['key']['initState'];
+};
+
+type DependenciesResolvedState<DS extends Record<string, Slice>> = {
+  [K in keyof DS]: ReturnType<DS[K]['resolveState']>;
 };
 
 type SelectorFn<SS, DS extends Record<string, Slice>, T> = (
@@ -35,18 +38,20 @@ export type RawAction<P extends any[], SS, DS extends Record<string, Slice>> = (
   ...payload: P
 ) => (sliceState: SS, depState: DependenciesState<DS>) => SS;
 
-export type Action<P extends any[] = unknown[]> = (
+export type Action<K extends string, P extends any[] = unknown[]> = (
   ...payload: P
-) => Transaction<P>;
+) => Transaction<K, P>;
 
 export class Slice<
+  K extends string = string,
   SS extends object = any,
   DS extends Record<string, Slice> = any,
   A extends Record<string, RawAction<any[], SS, DS>> = any,
   SE extends Record<string, SelectorFn<SS, DS, any>> = any,
-> implements SliceBase<SS>
+> implements SliceBase<K, SS>
 {
   static create<
+    K extends string,
     SS extends object,
     DS extends Record<string, Slice>,
     A extends Record<string, RawAction<any[], SS, DS>>,
@@ -59,35 +64,35 @@ export class Slice<
     effects = [],
     selectors,
   }: {
-    key: string;
+    key: K;
     initState: SS;
     selectors?: SE;
     dependencies?: DS;
     actions?: A;
     effects?: EffectsBase[];
   }) {
-    return new Slice(key, initState, dependencies, actions, selectors);
+    return new Slice(
+      new SliceKey(key, initState, dependencies),
+      actions,
+      selectors,
+    );
   }
 
-  key: SliceKey<SS, DS>;
   fingerPrint: string;
-  actions: RawActionsToActions<A>;
+  actions: RawActionsToActions<K, A>;
 
   constructor(
-    key: string,
-    initState: SS,
-    dependencies?: DS,
+    public key: SliceKey<K, SS, DS>,
     private _rawActions: A = {} as A,
     public selectors: SE = {} as SE,
   ) {
-    this.key = new SliceKey(key, initState, dependencies);
-    this.fingerPrint = `${key}(${Object.values(dependencies || {})
+    this.fingerPrint = `${key.key}(${Object.values(key.dependencies || {})
       .map((d) => d.fingerPrint)
       .join(',')})`;
-    this.actions = parseRawActions(key, _rawActions);
+    this.actions = parseRawActions(key.key, _rawActions);
   }
 
-  applyTransaction(tx: Transaction, storeState: StoreState): SS {
+  applyTransaction(tx: Transaction<any, any>, storeState: StoreState): SS {
     const action: undefined | RawAction<any, SS, DS> =
       this._rawActions[tx.actionId];
 
@@ -122,6 +127,16 @@ export class Slice<
     return result;
   }
 
+  resolveDependenciesState(
+    storeState: StoreState,
+  ): DependenciesResolvedState<DS> {
+    const result = mapObjectValues(this.key.dependencies || {}, (slice) => {
+      return slice.resolveState(storeState);
+    });
+
+    return result as DependenciesState<DS>;
+  }
+
   resolveSelectors(storeState: StoreState): ResolvedSelectors<SE> {
     const result = mapObjectValues(this.selectors, (selector) => {
       return selector(
@@ -143,23 +158,30 @@ export class Slice<
 }
 
 export type RawActionsToActions<
+  K extends string,
   A extends Record<string, RawAction<any, any, any>>,
 > = {
-  [K in keyof A]: A[K] extends (...param: infer P) => any ? Action<P> : never;
+  [KK in keyof A]: A[KK] extends (...param: infer P) => any
+    ? Action<K, P>
+    : never;
 };
 
 export function parseRawActions<
+  K extends string,
   A extends Record<string, RawAction<any, any, any>>,
->(key: string, actions: A): RawActionsToActions<A> {
-  let result = mapObjectValues(actions, (action, actionName): Action => {
-    return (...payload) => {
-      return {
-        sliceKey: key,
-        actionId: actionName,
-        payload,
+>(key: K, actions: A): RawActionsToActions<K, A> {
+  let result = mapObjectValues(
+    actions,
+    (action, actionName): Action<K, any> => {
+      return (...payload) => {
+        return {
+          sliceKey: key,
+          actionId: actionName,
+          payload,
+        };
       };
-    };
-  });
+    },
+  );
 
-  return result as RawActionsToActions<A>;
+  return result as RawActionsToActions<K, A>;
 }

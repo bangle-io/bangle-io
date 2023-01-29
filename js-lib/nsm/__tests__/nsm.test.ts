@@ -1,3 +1,4 @@
+import { expectType } from '../common';
 import { Slice } from '../slice';
 import { Store } from '../store';
 
@@ -10,6 +11,32 @@ const testSlice1 = Slice.create({
     },
     decrement: (opts: { decrement: boolean }) => (state) => {
       return { ...state, num: state.num - (opts.decrement ? 1 : 0) };
+    },
+  },
+});
+
+const testSlice2 = Slice.create({
+  key: 'test-2',
+  initState: { name: 'tame' },
+  actions: {
+    prefix: (prefix: string) => (state) => {
+      return { ...state, name: prefix + state.name };
+    },
+    padEnd: (length: number, pad: string) => (state) => {
+      return { ...state, name: state.name.padEnd(length, pad) };
+    },
+    uppercase: () => (state) => {
+      return { ...state, name: state.name.toUpperCase() };
+    },
+  },
+});
+
+const testSlice3 = Slice.create({
+  key: 'test-3',
+  initState: { name: 'tame' },
+  actions: {
+    lowercase: () => (state) => {
+      return { ...state, name: state.name.toLocaleLowerCase() };
     },
   },
 });
@@ -34,4 +61,51 @@ test('empty store', () => {
   expect(testSlice1.getState(store.state)).toEqual({
     num: 6,
   });
+});
+
+test('dispatching slices that are not registered', () => {
+  const store = Store.create({
+    storeName: 'test-store',
+    // ignore transactions for testing errorful dispatches
+    dispatchTx(store, tx) {},
+    state: {
+      slices: [testSlice1],
+    },
+  });
+
+  store.dispatch(testSlice1.actions.decrement({ decrement: true }));
+
+  // @ts-expect-error testSlice2 is not in the store, so this should always fail
+  store.dispatch(testSlice2.actions.uppercase());
+});
+
+test('custom dispatch', () => {
+  let count = 0;
+  const store = Store.create({
+    storeName: 'test-store',
+    state: {
+      slices: [testSlice1, testSlice2],
+    },
+    dispatchTx(store, tx) {
+      expectType<'test-1' | 'test-2'>(tx.sliceKey);
+
+      let newState = store.state.applyTransaction(tx);
+
+      if (!newState) {
+        count++;
+
+        return;
+      }
+
+      store.updateState(newState);
+    },
+  });
+
+  store.dispatch(testSlice1.actions.decrement({ decrement: true }));
+
+  // @ts-expect-error testSlice3 is not in the store, so this should always fail
+  store.dispatch(testSlice3.actions.lowercase());
+
+  // applyTransaction should be undefined for testSlice3 actions, since it doesn't exist in the store
+  expect(count).toBe(1);
 });

@@ -1,32 +1,46 @@
-import { isPlainObject } from '@bangle.io/mini-js-utils';
-
-import type { SliceBase, Transaction } from './common';
+import type {
+  AnySliceBase,
+  SliceBase,
+  StoreStateBase,
+  Transaction,
+} from './common';
 
 interface StoreStateOptions {
   debug?: boolean;
 }
 
-interface SliceStatePair {
-  _isPair: string;
-  val: { slice: SliceBase; initState: unknown };
-}
+type InferSliceKey<SL extends AnySliceBase> = SL extends SliceBase<infer K, any>
+  ? K
+  : never;
 
-function isSliceStatePair(obj: any): obj is SliceStatePair {
-  return isPlainObject(obj) && obj._isPair === '$$sliceStatePair';
-}
+export type InferSlicesKey<SB extends AnySliceBase[]> = {
+  [K in keyof SB]: InferSliceKey<SB[K]>;
+}[number];
 
-export function overrideInitState<SL extends SliceBase>(
+const overrideKey = Symbol('slice-init-override');
+
+export function overrideInitState<SL extends AnySliceBase>(
   slice: SL,
-  state: SL extends SliceBase<infer SS> ? SS : never,
-): SliceStatePair {
-  return {
-    _isPair: '$$sliceStatePair' as const,
-    val: { slice, initState: state },
+  state: SL['key']['initState'],
+): SL {
+  let val = {
+    ...slice,
+    [overrideKey]: state,
   };
+
+  // This is a hack to keep typescript happy
+  return val as any;
 }
 
-export class StoreState {
-  static checkDependencyOrder(slices: SliceBase[]) {
+export interface StoreStateConfig<SB extends AnySliceBase[]> {
+  slices: SB;
+  opts?: StoreStateOptions;
+}
+
+export class StoreState<SB extends AnySliceBase[] = any>
+  implements StoreStateBase<SB>
+{
+  static checkDependencyOrder(slices: AnySliceBase[]) {
     let seenKeys = new Set<string>();
     for (const slice of slices) {
       const { key } = slice;
@@ -46,7 +60,7 @@ export class StoreState {
     }
   }
 
-  static checkUniqueKeys(slices: SliceBase[]) {
+  static checkUniqueKeys(slices: AnySliceBase[]) {
     const keys = slices.map((s) => s.key.key);
     const unique = new Set(keys);
 
@@ -55,32 +69,21 @@ export class StoreState {
     }
   }
 
-  static create({
-    slices: rawSlices,
+  static create<SB extends AnySliceBase[]>({
+    slices,
     opts,
-  }: {
-    slices: Array<SliceBase | SliceStatePair>;
-    opts?: StoreStateOptions;
-  }): StoreState {
-    const slices: SliceBase[] = rawSlices.map((s) => {
-      if (isSliceStatePair(s)) {
-        return s.val.slice;
-      }
-
-      return s;
-    });
-
+  }: StoreStateConfig<SB>): StoreState<SB> {
     StoreState.checkUniqueKeys(slices);
     StoreState.checkDependencyOrder(slices);
 
     const instance = new StoreState(slices, opts);
 
-    for (const rawSlice of rawSlices) {
-      if (isSliceStatePair(rawSlice)) {
-        const { slice, initState } = rawSlice.val;
-        instance.slicesCurrentState[slice.key.key] = initState;
+    for (const slice of slices) {
+      if (Object.prototype.hasOwnProperty.call(slice, overrideKey)) {
+        instance.slicesCurrentState[slice.key.key] = (slice as any)[
+          overrideKey
+        ];
       } else {
-        const slice = rawSlice;
         instance.slicesCurrentState[slice.key.key] = slice.key.initState;
       }
     }
@@ -90,9 +93,11 @@ export class StoreState {
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
 
-  constructor(private _slices: SliceBase[], public opts?: StoreStateOptions) {}
+  constructor(private _slices: SB, public opts?: StoreStateOptions) {}
 
-  applyTransaction(tx: Transaction): StoreState | undefined {
+  applyTransaction<P extends any[]>(
+    tx: Transaction<InferSlicesKey<SB>, P>,
+  ): StoreState<SB> | undefined {
     const newState = { ...this.slicesCurrentState };
 
     let found = false;
@@ -113,7 +118,7 @@ export class StoreState {
     return this._fork(newState);
   }
 
-  getSliceState<SL extends SliceBase>(
+  getSliceState<SL extends AnySliceBase>(
     slice: SL,
   ): SL['key']['initState'] | undefined {
     return this.slicesCurrentState[slice.key.key];
