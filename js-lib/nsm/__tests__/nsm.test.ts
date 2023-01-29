@@ -1,8 +1,8 @@
 import { expectType } from '../common';
-import { Slice } from '../slice';
+import { slice } from '../create';
 import { Store } from '../store';
 
-const testSlice1 = Slice.create({
+const testSlice1 = slice({
   key: 'test-1',
   initState: { num: 4 },
   actions: {
@@ -15,7 +15,7 @@ const testSlice1 = Slice.create({
   },
 });
 
-const testSlice2 = Slice.create({
+const testSlice2 = slice({
   key: 'test-2',
   initState: { name: 'tame' },
   actions: {
@@ -31,7 +31,7 @@ const testSlice2 = Slice.create({
   },
 });
 
-const testSlice3 = Slice.create({
+const testSlice3 = slice({
   key: 'test-3',
   initState: { name: 'tame' },
   actions: {

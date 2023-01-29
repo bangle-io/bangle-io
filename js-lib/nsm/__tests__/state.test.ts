@@ -1,8 +1,8 @@
 import { expectType, mapObjectValues } from '../common';
-import { Slice } from '../slice';
+import { slice } from '../create';
 import { overrideInitState, StoreState } from '../state';
 
-const testSlice1 = Slice.create({
+const testSlice1 = slice({
   key: 'test-1',
   initState: { num: 4 },
   actions: {
@@ -15,7 +15,7 @@ const testSlice1 = Slice.create({
   },
 });
 
-const testSlice2 = Slice.create({
+const testSlice2 = slice({
   key: 'test-2',
   initState: { name: 'tame' },
   actions: {
@@ -31,7 +31,7 @@ const testSlice2 = Slice.create({
   },
 });
 
-const depTestSlice1 = Slice.create({
+const depTestSlice1 = slice({
   key: 'dep-test-1',
   initState: { myDep: 4, myDepStr: 'hi' },
   actions: {
@@ -45,7 +45,7 @@ const depTestSlice1 = Slice.create({
 
 describe('applyTransaction', () => {
   test('applyTransaction works', () => {
-    const slice = Slice.create({
+    const mySlice = slice({
       key: 'test',
       initState: { num: 1 },
       actions: {
@@ -58,45 +58,45 @@ describe('applyTransaction', () => {
     });
 
     const state = StoreState.create({
-      slices: [slice],
+      slices: [mySlice],
     });
 
     // @ts-expect-error - should error when a field is not defined
-    let testVal0 = slice.actions.myAction(5).randomValue;
+    let testVal0 = mySlice.actions.myAction(5).randomValue;
 
-    expectType<number[]>(slice.actions.myAction(5).payload);
+    expectType<number[]>(mySlice.actions.myAction(5).payload);
     expectType<[number, string, () => void]>(
-      slice.actions.action2(5, 'str', () => {}).payload,
+      mySlice.actions.action2(5, 'str', () => {}).payload,
     );
 
-    expect(slice.actions.myAction(5).payload).toEqual([5]);
-    expect(slice.actions.action2(5, 'str', () => {}).payload).toEqual([
+    expect(mySlice.actions.myAction(5).payload).toEqual([5]);
+    expect(mySlice.actions.action2(5, 'str', () => {}).payload).toEqual([
       5,
       'str',
       expect.any(Function),
     ]);
 
-    const newState = state.applyTransaction(slice.actions.myAction(5))!;
+    const newState = state.applyTransaction(mySlice.actions.myAction(5))!;
 
-    expect(newState.getSliceState(slice)).toEqual({
+    expect(newState.getSliceState(mySlice)).toEqual({
       num: 6,
     });
   });
 
   test('applyTransaction works with dependencies', () => {
-    const sliceDep1 = Slice.create({
+    const sliceDep1 = slice({
       key: 'test-dep1',
       initState: { num: 50 },
       actions: {},
     });
 
-    const sliceDep2 = Slice.create({
+    const sliceDep2 = slice({
       key: 'test-dep2',
       initState: { num: 3 },
       actions: {},
     });
 
-    const slice = Slice.create({
+    const mySlice = slice({
       key: 'test',
       initState: { num: 1 },
       dependencies: [sliceDep1, sliceDep2],
@@ -121,19 +121,19 @@ describe('applyTransaction', () => {
     });
 
     const state = StoreState.create({
-      slices: [sliceDep1, sliceDep2, slice],
+      slices: [sliceDep1, sliceDep2, mySlice],
     });
 
-    const newState = state.applyTransaction(slice.actions.myAction(5))!;
+    const newState = state.applyTransaction(mySlice.actions.myAction(5))!;
 
-    const result = newState.getSliceState(slice);
+    const result = newState.getSliceState(mySlice);
 
     // @ts-expect-error - should error when a field is not defined
     let testVal0 = result.xyz;
 
     expectType<{ num: number } | undefined>(result);
 
-    expect(newState.getSliceState(slice)).toEqual({
+    expect(newState.getSliceState(mySlice)).toEqual({
       num: 50 + 1 + 5 + 3,
     });
   });
@@ -141,7 +141,7 @@ describe('applyTransaction', () => {
 
 describe('throwing', () => {
   test('throws error if slice key not unique', () => {
-    const slice = Slice.create({
+    const mySlice = slice({
       key: 'test',
       initState: { num: 1 },
       actions: {
@@ -153,18 +153,18 @@ describe('throwing', () => {
 
     expect(() => {
       StoreState.create({
-        slices: [slice, slice],
+        slices: [mySlice, mySlice],
       });
     }).toThrowError('Duplicate slice keys');
   });
 
   test('throws error if slice dependency is not registered', () => {
-    const sliceDep = Slice.create({
+    const sliceDep = slice({
       key: 'test-dep',
       initState: { num: 1 },
       actions: {},
     });
-    const slice = Slice.create({
+    const mySlice = slice({
       key: 'test',
       initState: { num: 1 },
       dependencies: [sliceDep],
@@ -177,7 +177,7 @@ describe('throwing', () => {
 
     expect(() => {
       StoreState.create({
-        slices: [slice],
+        slices: [mySlice],
       });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Slice "test" has a dependency on Slice "test-dep" which is either not registered or is registered after this slice."`,
@@ -185,12 +185,12 @@ describe('throwing', () => {
   });
 
   test('throws error if slice dependency is not registered before', () => {
-    const sliceDep = Slice.create({
+    const sliceDep = slice({
       key: 'test-dep',
       initState: { num: 1 },
       actions: {},
     });
-    const slice = Slice.create({
+    const mySlice = slice({
       key: 'test',
       initState: { num: 1 },
       dependencies: [sliceDep],
@@ -203,7 +203,7 @@ describe('throwing', () => {
 
     expect(() => {
       StoreState.create({
-        slices: [slice, sliceDep],
+        slices: [mySlice, sliceDep],
       });
     }).toThrowErrorMatchingInlineSnapshot(
       `"Slice "test" has a dependency on Slice "test-dep" which is either not registered or is registered after this slice."`,
@@ -213,13 +213,13 @@ describe('throwing', () => {
 
 describe('override', () => {
   test('overrideInitState works', () => {
-    const slice1 = Slice.create({
+    const slice1 = slice({
       key: 'test1',
       initState: { num: 1 },
       actions: {},
     });
 
-    const slice2 = Slice.create({
+    const slice2 = slice({
       key: 'test2',
       initState: { num: 2 },
       actions: {},

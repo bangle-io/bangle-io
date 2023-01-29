@@ -1,4 +1,6 @@
-import type { RawAction } from './slice';
+import type { Slice } from './slice';
+import type { StoreState } from './state';
+import type { Store } from './store';
 
 export type AnyFn = (...args: any[]) => any;
 
@@ -10,6 +12,19 @@ export type ReplaceReturnType<T extends (...args: any) => any, R> = T extends (
   ? (...ag: P) => R
   : never;
 
+export type SelectorFn<SS, DS extends Slice[], T> = (
+  sliceState: SS,
+  storeState: StoreState<DS>,
+) => T;
+
+export type RawAction<P extends any[], SS, DS extends Slice[]> = (
+  ...payload: P
+) => (sliceState: SS, storeState: StoreState<DS>) => SS;
+
+export type Action<K extends string, P extends any[] = unknown[]> = (
+  ...payload: P
+) => Transaction<K, P>;
+
 export type InferSliceKey<SL extends AnySliceBase> = SL extends SliceBase<
   infer K,
   any
@@ -17,10 +32,22 @@ export type InferSliceKey<SL extends AnySliceBase> = SL extends SliceBase<
   ? K
   : never;
 
+export type InferSliceDep<SL extends AnySliceBase> = SL extends Slice<
+  any,
+  any,
+  infer DS
+>
+  ? DS[number]
+  : never;
+
 // returns a union of all slice keys
 export type InferSlicesKey<SlicesRegistry extends AnySliceBase[]> = {
   [K in keyof SlicesRegistry]: InferSliceKey<SlicesRegistry[K]>;
 }[number];
+
+export type MiniStoreForSlice<SL extends Slice> = Store<
+  Array<SL | InferSliceDep<SL>>
+>;
 
 // returns a slice if it is registered in the slice registry
 export type ResolveSliceIfRegistered<
@@ -38,8 +65,8 @@ export interface SliceKeyBase<K extends string, SS> {
   dependencies?: Array<SliceBase<string, unknown>>;
 }
 
-export interface EffectsBase {
-  update?: AnyFn;
+export interface EffectsBase<SL extends Slice> {
+  update?: (sl: SL, store: MiniStoreForSlice<SL>) => void;
   once?: AnyFn;
 }
 
@@ -48,7 +75,7 @@ export type AnySliceBase = SliceBase<string, unknown>;
 export interface SliceBase<K extends string, SS> {
   key: SliceKeyBase<K, SS>;
   fingerPrint: string;
-  effects?: EffectsBase[];
+  effects?: Array<EffectsBase<any>>;
   _getRawAction: (actionId: string) => RawAction<any, any, any> | undefined;
 }
 

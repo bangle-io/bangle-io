@@ -1,12 +1,18 @@
 // import { actionToActionSnapshot, Slice, SliceKey } from '../slice';
 
-import type { Transaction } from '../common';
+import type {
+  Action,
+  EffectsBase,
+  RawAction,
+  SelectorFn,
+  Transaction,
+} from '../common';
 import { expectType } from '../common';
-import type { Action, RawAction } from '../slice';
+import { slice } from '../create';
 import { parseRawActions, Slice } from '../slice';
 import { StoreState } from '../state';
 
-const testSlice1 = Slice.create({
+const testSlice1 = slice({
   key: 'test-1',
   initState: { num: 4 },
   actions: {
@@ -19,7 +25,7 @@ const testSlice1 = Slice.create({
   },
 });
 
-const testSlice2 = Slice.create({
+const testSlice2 = slice({
   key: 'test-2',
   initState: { name: 'tame' },
   actions: {
@@ -35,17 +41,39 @@ const testSlice2 = Slice.create({
   },
 });
 
+const testSlice3 = slice({
+  key: 'test-3',
+  initState: { name: 'tame' },
+  actions: {
+    lord: (prefix: string) => (state) => {
+      return { ...state, name: prefix + state.name + 'jesus' };
+    },
+  },
+});
+
+const depTestSlice1 = slice({
+  key: 'dep-test-1',
+  initState: { myDep: 4, myDepStr: 'hi' },
+  actions: {
+    increment: () => (state, storeState) => ({
+      ...state,
+      myDep: state.myDep + 1 + testSlice1.getState(storeState).num,
+    }),
+  },
+  dependencies: [testSlice1],
+});
+
 describe('dependency state', () => {
   describe('case 1', () => {
-    const unknownSlice = Slice.create({
+    const unknownSlice = slice({
       key: 'unknown-test',
       initState: { num: 1 },
       dependencies: [testSlice1],
       actions: {},
     });
 
-    const slice = Slice.create({
-      key: 'test',
+    const mySlice = slice({
+      key: 'my-test-slice',
       initState: { num: 1 },
       dependencies: [testSlice1, testSlice2],
       actions: {
@@ -74,7 +102,7 @@ describe('dependency state', () => {
     });
 
     const state = StoreState.create({
-      slices: [testSlice1, testSlice2, slice],
+      slices: [testSlice1, testSlice2, mySlice],
     });
 
     test('unknown slice should error', () => {
@@ -172,8 +200,8 @@ describe('actions', () => {
 
 describe('selectors', () => {
   test('works', () => {
-    const slice = Slice.create({
-      key: 'test',
+    const mySlice = slice({
+      key: 'my-test-slice',
       initState: { num: 3 },
       actions: {
         myAction: (num: number) => (state) => {
@@ -188,14 +216,14 @@ describe('selectors', () => {
     });
 
     expectType<{ numSquared: (state: { num: number }) => number }>(
-      slice.selectors,
+      mySlice.selectors,
     );
 
     const state = StoreState.create({
-      slices: [slice],
+      slices: [mySlice],
     });
 
-    let sliceState = slice.getState(state);
+    let sliceState = mySlice.getState(state);
 
     // @ts-expect-error - should not allow access of unknown field in the state
     let testVal0 = sliceState.xyzWrong;
@@ -203,7 +231,7 @@ describe('selectors', () => {
     expectType<{ num: number }>(sliceState);
     expect(sliceState.num).toBe(3);
 
-    let resolvedSelectors = slice.resolveSelectors(state);
+    let resolvedSelectors = mySlice.resolveSelectors(state);
 
     // @ts-expect-error - should not allow access of unknown field in the state
     let testVal1 = resolvedSelectors.xyzWrong;
@@ -214,14 +242,14 @@ describe('selectors', () => {
   });
 
   test('selectors works with dependencies', () => {
-    const myTestSlice = Slice.create({
+    const myTestSlice = slice({
       key: 'my-test',
       initState: { num: 3 },
       actions: {},
     });
 
-    const slice = Slice.create({
-      key: 'test',
+    const mySlice = slice({
+      key: 'my-slice-test',
       initState: { count: 3 },
       actions: {
         myAction: (num: number) => (state) => {
@@ -250,13 +278,13 @@ describe('selectors', () => {
 
     expectType<{
       numSquared: (state: { count: number }, storeState: StoreState) => number;
-    }>(slice.selectors);
+    }>(mySlice.selectors);
 
     const state = StoreState.create({
-      slices: [testSlice1, myTestSlice, slice],
+      slices: [testSlice1, myTestSlice, mySlice],
     });
 
-    let resolvedSelectors = slice.resolveSelectors(state);
+    let resolvedSelectors = mySlice.resolveSelectors(state);
 
     // @ts-expect-error - should error when a selector is not defined
     let testVal0 = resolvedSelectors.testXyz;
@@ -265,7 +293,7 @@ describe('selectors', () => {
 
     expect(resolvedSelectors.numSquared).toEqual(49);
 
-    let resolvedValued = slice.resolveState(state);
+    let resolvedValued = mySlice.resolveState(state);
 
     // @ts-expect-error - should error when a field is not defined
     let testVal1 = resolvedValued.testXyz;
@@ -279,7 +307,7 @@ describe('selectors', () => {
   });
 
   test('resolving selectors of dependencies', () => {
-    const sliceA = Slice.create({
+    const sliceA = slice({
       key: 'sliceA',
       initState: { count: 3 },
       actions: {
@@ -302,26 +330,26 @@ describe('selectors', () => {
       dependencies: [testSlice1],
     });
 
-    const sliceB = Slice.create({
+    const sliceB = slice({
       key: 'sliceB',
       initState: { count: 3 },
       actions: {},
       selectors: {
-        s1: (state) => {
+        s1(state, storeState) {
           return false;
         },
-        s2: (state) => {
+        s2(state, storeState) {
           return true;
         },
       },
       dependencies: [testSlice1],
     });
 
-    const mySliceZ = Slice.create({
+    const mySliceZ = slice({
       key: 'mySliceZ',
       initState: { muNum: 3 },
       selectors: {
-        myMoon: (state, storeState) => {
+        myMoon(state, storeState) {
           expectType<{ count: number }>(sliceA.getState(storeState));
 
           const sliceBState = sliceB.resolveState(storeState);
@@ -370,8 +398,8 @@ describe('selectors', () => {
   });
 
   test('type error if using slice outside of dependency', () => {
-    const slice = Slice.create({
-      key: 'test',
+    const mySlice = slice({
+      key: 'my-slice-test',
       initState: { count: 3 },
       actions: {
         myAction: (num: number) => (state) => {
@@ -404,7 +432,7 @@ describe('selectors', () => {
       dependencies: [testSlice1],
     });
 
-    const slice3 = Slice.create({
+    const slice3 = slice({
       key: 'test3',
       initState: { count: 3 },
       actions: {
@@ -412,21 +440,21 @@ describe('selectors', () => {
       },
     });
 
-    const slice4 = Slice.create({
+    const slice4 = slice({
       key: 'test4',
       initState: { count: 4 },
       actions: {
         myThing4: () => (state) => state,
       },
     });
-    const slice5 = Slice.create({
+    const slice5 = slice({
       key: 'test5',
       initState: { count: 5 },
       actions: {
         myThing5: () => (state) => state,
       },
     });
-    const slice6 = Slice.create({
+    const slice6 = slice({
       key: 'test6',
       initState: { count: 6 },
       actions: {
@@ -435,20 +463,20 @@ describe('selectors', () => {
     });
 
     // @ts-expect-error - should error when a selector is not defined
-    let f = slice.selectors.testXyz;
+    let f = mySlice.selectors.testXyz;
 
     expectType<{
       numSquared: (state: { count: number }, storeState: StoreState) => number;
-    }>(slice.selectors);
+    }>(mySlice.selectors);
 
     const state = StoreState.create({
-      slices: [testSlice1, slice, slice4, slice5, slice6],
+      slices: [testSlice1, mySlice, slice4, slice5, slice6],
     });
 
     // @ts-expect-error - slice3 is not a dependency should also error
     state.applyTransaction(slice3.actions.myThing3());
 
-    state.applyTransaction(slice.actions.myAction(5));
+    state.applyTransaction(mySlice.actions.myAction(5));
     state.applyTransaction(slice4.actions.myThing4());
     state.applyTransaction(slice6.actions.myThing6());
   });
@@ -459,5 +487,211 @@ describe('selectors', () => {
     expect(testSlice1.resolveState(state)).toEqual({
       num: 4,
     });
+  });
+});
+
+describe('effects', () => {
+  test('create effect with dependency', () => {
+    const mySlice = slice({
+      key: 'mySlice',
+      initState: { count: 3 },
+      actions: {
+        myAction: (num: number) => (state) => {
+          return { ...state, count: num + state.count };
+        },
+      },
+      dependencies: [testSlice1, testSlice2],
+      effects: [
+        {
+          update: (sl, store) => {
+            let val = sl.getState(store.state);
+            let val2 = mySlice.getState(store.state);
+
+            expectType<{ count: number }>(val);
+            expectType<{ count: number }>(val2);
+
+            let val3 = testSlice1.getState(store.state);
+
+            // @ts-expect-error - should not allow access of unknown field in the state
+            let testVal = val3.xyzTest;
+
+            expectType<{ num: number }>(val3);
+
+            testSlice2.getState(store.state);
+            // @ts-expect-error - should error when a slice is not a dependency
+            testSlice3.getState(store.state);
+          },
+        },
+      ],
+    });
+  });
+
+  test('create effect without dependency', () => {
+    const mySlice = slice({
+      key: 'mySlice',
+      initState: { count: 3 },
+      actions: {
+        myAction: (num: number) => (state) => {
+          return { ...state, count: num + state.count };
+        },
+      },
+      dependencies: [],
+      effects: [
+        {
+          update: (sl, store) => {
+            let val = sl.getState(store.state);
+            let val2 = mySlice.getState(store.state);
+
+            expectType<{ count: number }>(val);
+            expectType<{ count: number }>(val2);
+
+            // @ts-expect-error - should not allow access of unknown action
+            let testVal1 = sl.actions.xyzTest;
+            let act = sl.actions.myAction;
+            expectType<Action<'mySlice', number[]>>(act);
+
+            // @ts-expect-error - should not allow access of unknown field in the state
+            let testVal = testSlice1.getState(store.state);
+          },
+        },
+      ],
+    });
+
+    expectType<EffectsBase<typeof mySlice>>(mySlice.effects[0]!);
+
+    expect(mySlice.effects[0]).toBeDefined();
+  });
+});
+
+describe('creating with slice', () => {
+  const dependencies = [testSlice1];
+  type Slice1State = { slice1Count: number };
+  type Slice1Dependencies = typeof dependencies;
+  test('all 3 DS, A, SE', () => {
+    const slice1State = { slice1Count: 3 };
+    const slice1 = slice({
+      key: 'slice1',
+      initState: slice1State,
+      dependencies: dependencies,
+      actions: {
+        myAction: (num: number) => (state, storeState) => {
+          // @ts-expect-error - should error since testSlice2 is not a dependency
+          testSlice2.getState(storeState);
+
+          testSlice1.getState(storeState);
+
+          return { ...state, slice1Count: num + state.slice1Count };
+        },
+      },
+      selectors: {
+        numSquared(state, storeState) {
+          // @ts-expect-error - should error since testSlice2 is not a dependency
+          testSlice2.getState(storeState);
+
+          testSlice1.getState(storeState);
+
+          return state.slice1Count * state.slice1Count;
+        },
+      },
+    });
+
+    const state = StoreState.create({
+      slices: [testSlice1, slice1],
+    });
+    expectType<{ slice1Count: number }>(slice1.getState(state));
+
+    expectType<typeof dependencies>(slice1.key.dependencies);
+
+    // ACTIONS
+
+    expectType<Action<'slice1', number[]>>(slice1.actions.myAction);
+
+    const rawMyAction = slice1._rawActions.myAction;
+
+    // @ts-expect-error - should error since raw my accepts a number
+    rawMyAction('s');
+
+    expectType<RawAction<number[], Slice1State, Slice1Dependencies>>(
+      rawMyAction,
+    );
+
+    // SELECTORS
+    expectType<SelectorFn<Slice1State, Slice1Dependencies, number>>(
+      slice1.key.selectors.numSquared,
+    );
+
+    // @ts-expect-error - should error if undefined selector is accessed
+    let testVal0 = slice1.key.selectors.xyzTest;
+  });
+
+  test('7. A, SE', () => {
+    const slice1State = { slice1Count: 3 };
+    const slice1 = slice({
+      key: 'slice1',
+      initState: slice1State,
+      actions: {
+        myAction: (num: number) => (state, storeState) => {
+          // @ts-expect-error - should error since testSlice2 is not a dependency
+          testSlice2.getState(storeState);
+
+          // @ts-expect-error - should error since testSlice1 is not a dependency
+          testSlice1.getState(storeState);
+
+          return { ...state, slice1Count: num + state.slice1Count };
+        },
+      },
+      selectors: {
+        numSquared(state, storeState) {
+          // @ts-expect-error - should error since testSlice2 is not a dependency
+          testSlice2.getState(storeState);
+          // @ts-expect-error - should error since testSlice2 is not a dependency
+          testSlice1.getState(storeState);
+
+          return state.slice1Count * state.slice1Count;
+        },
+      },
+    });
+
+    expectType<[]>(slice1.key.dependencies);
+  });
+
+  test('6. DS, SE', () => {
+    const slice1State = { slice1Count: 3 };
+    const slice1 = slice({
+      key: 'slice1',
+      initState: slice1State,
+      dependencies: dependencies,
+      selectors: {
+        numSquared(state, storeState) {
+          // @ts-expect-error - should error since testSlice2 is not a dependency
+          testSlice2.getState(storeState);
+          testSlice1.getState(storeState);
+
+          return state.slice1Count * state.slice1Count;
+        },
+      },
+
+      effects: [
+        {
+          update: (sl, store) => {
+            // @ts-expect-error - should error since actions is not defined
+            let testVal0 = sl.actions.xyz;
+            let t1 = testSlice1.actions.decrement({ decrement: true });
+            let t2 = testSlice2.actions.uppercase();
+
+            store.dispatch(t1);
+
+            // @ts-expect-error - should error since testSlice2 is not a dependency
+            store.dispatch(t2);
+          },
+        },
+      ],
+    });
+
+    expectType<typeof dependencies>(slice1.key.dependencies);
+    expectType<{}>(slice1.actions);
+
+    // @ts-expect-error - should error since actions is not defined
+    let textVal0 = slice1.actions.xyz;
   });
 });
