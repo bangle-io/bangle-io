@@ -40,9 +40,7 @@ const depTestSlice1 = Slice.create({
       myDep: state.myDep + 1 + testSlice1.getState(storeState).num,
     }),
   },
-  dependencies: {
-    testSlice1,
-  },
+  dependencies: [testSlice1],
 });
 
 describe('applyTransaction', () => {
@@ -101,7 +99,7 @@ describe('applyTransaction', () => {
     const slice = Slice.create({
       key: 'test',
       initState: { num: 1 },
-      dependencies: { sliceDep1, sliceDep2 },
+      dependencies: [sliceDep1, sliceDep2],
       actions: {
         myAction: (num: number) => (state, storeState) => {
           // @ts-expect-error - should not allow access of any unknown field in the state
@@ -169,7 +167,7 @@ describe('throwing', () => {
     const slice = Slice.create({
       key: 'test',
       initState: { num: 1 },
-      dependencies: { sliceDep },
+      dependencies: [sliceDep],
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };
@@ -195,7 +193,7 @@ describe('throwing', () => {
     const slice = Slice.create({
       key: 'test',
       initState: { num: 1 },
-      dependencies: { sliceDep },
+      dependencies: [sliceDep],
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };

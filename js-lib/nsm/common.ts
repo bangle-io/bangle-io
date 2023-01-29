@@ -1,5 +1,4 @@
 import type { RawAction } from './slice';
-import type { StoreState } from './state';
 
 export type AnyFn = (...args: any[]) => any;
 
@@ -36,7 +35,7 @@ export type ResolveSliceIfRegistered<
 export interface SliceKeyBase<K extends string, SS> {
   key: K;
   initState: SS;
-  dependencies?: Record<string, SliceBase<string, unknown>>;
+  dependencies?: Array<SliceBase<string, unknown>>;
 }
 
 export interface EffectsBase {

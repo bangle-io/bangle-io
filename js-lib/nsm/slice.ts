@@ -1,7 +1,6 @@
 import type {
   AnyFn,
   EffectsBase,
-  InferSliceKey,
   InferSlicesKey,
   SliceBase,
   SliceKeyBase,
@@ -10,11 +9,8 @@ import type {
 import { mapObjectValues } from './common';
 import type { StoreState } from './state';
 
-export class SliceKey<
-  K extends string,
-  SS extends object,
-  DS extends Record<string, Slice>,
-> implements SliceKeyBase<K, SS>
+export class SliceKey<K extends string, SS extends object, DS extends Slice[]>
+  implements SliceKeyBase<K, SS>
 {
   constructor(public key: K, public initState: SS, public dependencies?: DS) {}
 }
@@ -28,11 +24,11 @@ type ResolveStoreStateIfRegistered<
     : never
   : never;
 
-type DependenciesState<DS extends Record<string, Slice>> = {
+type DependenciesState<DS extends Slice[]> = {
   [K in keyof DS]: DS[K]['key']['initState'];
 };
 
-type DependenciesResolvedState<DS extends Record<string, Slice>> = {
+type DependenciesResolvedState<DS extends Slice[]> = {
   [K in keyof DS]: ReturnType<DS[K]['resolveState']>;
 };
 
@@ -43,18 +39,18 @@ type RecordToValues<T extends Record<string, any>> = T extends Record<
   ? P
   : never;
 
-type SelectorFn<SS, DS extends Record<string, Slice>, T> = (
+type SelectorFn<SS, DS extends Slice[], T> = (
   sliceState: SS,
-  storeState: StoreState<Array<RecordToValues<DS>>>,
+  storeState: StoreState<DS>,
 ) => T;
 
 type ResolvedSelectors<SE extends Record<string, SelectorFn<any, any, any>>> = {
   [K in keyof SE]: SE[K] extends AnyFn ? ReturnType<SE[K]> : never;
 };
 
-export type RawAction<P extends any[], SS, DS extends Record<string, Slice>> = (
+export type RawAction<P extends any[], SS, DS extends Slice[]> = (
   ...payload: P
-) => (sliceState: SS, storeState: StoreState<Array<RecordToValues<DS>>>) => SS;
+) => (sliceState: SS, storeState: StoreState<DS>) => SS;
 
 export type Action<K extends string, P extends any[] = unknown[]> = (
   ...payload: P
@@ -63,7 +59,7 @@ export type Action<K extends string, P extends any[] = unknown[]> = (
 export class Slice<
   K extends string = string,
   SS extends object = any,
-  DS extends Record<string, Slice> = any,
+  DS extends Slice[] = any,
   A extends Record<string, RawAction<any[], SS, DS>> = any,
   SE extends Record<string, SelectorFn<SS, DS, any>> = any,
 > implements SliceBase<K, SS>
@@ -71,7 +67,7 @@ export class Slice<
   static create<
     K extends string,
     SS extends object,
-    DS extends Record<string, Slice>,
+    DS extends Slice[],
     A extends Record<string, RawAction<any[], SS, DS>>,
     SE extends Record<string, SelectorFn<SS, DS, any>>,
   >({
@@ -104,7 +100,7 @@ export class Slice<
     private _rawActions: A = {} as A,
     public selectors: SE = {} as SE,
   ) {
-    this.fingerPrint = `${key.key}(${Object.values(key.dependencies || {})
+    this.fingerPrint = `${key.key}(${(key.dependencies || [])
       .map((d) => d.fingerPrint)
       .join(',')})`;
     this.actions = parseRawActions(key.key, _rawActions);
@@ -130,18 +126,18 @@ export class Slice<
   //   return newState;
   // }
 
-  getDependenciesState<SSB extends StoreState>(
-    storeState: ResolveStoreStateIfRegistered<SSB, K>,
-  ): DependenciesState<DS> {
-    // ensure the slice is registered in the store
-    this.getState(storeState);
+  // getDependenciesState<SSB extends StoreState>(
+  //   storeState: ResolveStoreStateIfRegistered<SSB, K>,
+  // ): DependenciesState<DS> {
+  //   // ensure the slice is registered in the store
+  //   this.getState(storeState);
 
-    const result = mapObjectValues(this.key.dependencies || {}, (slice) => {
-      return slice.getState(storeState);
-    });
+  //   const result = (this.key.dependencies || []).map((slice) => {
+  //     return slice.getState(storeState);
+  //   });
 
-    return result as DependenciesState<DS>;
-  }
+  //   return result as DependenciesState<DS>;
+  // }
 
   getState<SSB extends StoreState>(
     storeState: ResolveStoreStateIfRegistered<SSB, K>,
@@ -149,16 +145,6 @@ export class Slice<
     const result = storeState.getSliceState(this as SliceBase<any, any>);
 
     return result;
-  }
-
-  resolveDependenciesState<SSB extends StoreState>(
-    storeState: ResolveStoreStateIfRegistered<SSB, K>,
-  ): DependenciesResolvedState<DS> {
-    const result = mapObjectValues(this.key.dependencies || {}, (slice) => {
-      return slice.resolveState(storeState);
-    });
-
-    return result as DependenciesState<DS>;
   }
 
   resolveSelectors<SSB extends StoreState>(

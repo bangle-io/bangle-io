@@ -35,8 +35,8 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     for (const slice of slices) {
       const { key } = slice;
 
-      if (key.dependencies) {
-        const depKeys = Object.values(key.dependencies).map((d) => d.key.key);
+      if (key.dependencies !== undefined) {
+        const depKeys = key.dependencies.map((d) => d.key.key);
 
         for (const depKey of depKeys) {
           if (!seenKeys.has(depKey)) {
