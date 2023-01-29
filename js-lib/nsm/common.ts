@@ -1,3 +1,4 @@
+import type { RawAction } from './slice';
 import type { StoreState } from './state';
 
 export type AnyFn = (...args: any[]) => any;
@@ -10,11 +11,27 @@ export type ReplaceReturnType<T extends (...args: any) => any, R> = T extends (
   ? (...ag: P) => R
   : never;
 
-export interface StoreStateBase<SB extends AnySliceBase[]> {}
+export type InferSliceKey<SL extends AnySliceBase> = SL extends SliceBase<
+  infer K,
+  any
+>
+  ? K
+  : never;
 
-export interface StoreBase<SB extends AnySliceBase[]> {
-  state: StoreStateBase<SB>;
-}
+// returns a union of all slice keys
+export type InferSlicesKey<SlicesRegistry extends AnySliceBase[]> = {
+  [K in keyof SlicesRegistry]: InferSliceKey<SlicesRegistry[K]>;
+}[number];
+
+// returns a slice if it is registered in the slice registry
+export type ResolveSliceIfRegistered<
+  SL extends AnySliceBase,
+  SliceRegistry extends AnySliceBase[],
+> = SL extends SliceBase<infer K, any>
+  ? K extends InferSlicesKey<SliceRegistry>
+    ? SL
+    : never
+  : never;
 
 export interface SliceKeyBase<K extends string, SS> {
   key: K;
@@ -33,11 +50,7 @@ export interface SliceBase<K extends string, SS> {
   key: SliceKeyBase<K, SS>;
   fingerPrint: string;
   effects?: EffectsBase[];
-
-  applyTransaction: (
-    tx: Transaction<K, unknown[]>,
-    storeState: StoreState,
-  ) => SS;
+  _getRawAction: (actionId: string) => RawAction<any, any, any> | undefined;
 }
 
 export interface StoreTransaction<K extends string, P extends unknown[]>

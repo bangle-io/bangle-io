@@ -53,6 +53,10 @@ test('empty store', () => {
   store.dispatch(testSlice1.actions.increment({ increment: true }));
   store.dispatch(testSlice1.actions.increment({ increment: true }));
 
+  store.state.getSliceState(testSlice1);
+
+  testSlice1.getState(store.state);
+
   expect(testSlice1.getState(store.state)).toEqual({
     num: 7,
   });

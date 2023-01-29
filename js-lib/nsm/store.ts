@@ -1,10 +1,10 @@
 import type {
   AnySliceBase,
-  StoreBase,
+  InferSlicesKey,
   StoreTransaction,
   Transaction,
 } from './common';
-import type { InferSlicesKey, StoreStateConfig } from './state';
+import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
 
 interface Scheduler {
@@ -21,7 +21,7 @@ function incrementalId() {
   return counter++;
 }
 
-export class Store<SB extends AnySliceBase[]> implements StoreBase<SB> {
+export class Store<SB extends AnySliceBase[]> {
   static create<SB extends AnySliceBase[]>({
     disableSideEffects = false,
     dispatchTx = (store, tx) => {

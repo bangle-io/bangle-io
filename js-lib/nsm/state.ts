@@ -1,21 +1,13 @@
 import type {
   AnySliceBase,
-  SliceBase,
-  StoreStateBase,
+  InferSlicesKey,
+  ResolveSliceIfRegistered,
   Transaction,
 } from './common';
 
 interface StoreStateOptions {
   debug?: boolean;
 }
-
-type InferSliceKey<SL extends AnySliceBase> = SL extends SliceBase<infer K, any>
-  ? K
-  : never;
-
-export type InferSlicesKey<SB extends AnySliceBase[]> = {
-  [K in keyof SB]: InferSliceKey<SB[K]>;
-}[number];
 
 const overrideKey = Symbol('slice-init-override');
 
@@ -37,9 +29,7 @@ export interface StoreStateConfig<SB extends AnySliceBase[]> {
   opts?: StoreStateOptions;
 }
 
-export class StoreState<SB extends AnySliceBase[] = any>
-  implements StoreStateBase<SB>
-{
+export class StoreState<SB extends AnySliceBase[] = any> {
   static checkDependencyOrder(slices: AnySliceBase[]) {
     let seenKeys = new Set<string>();
     for (const slice of slices) {
@@ -105,7 +95,23 @@ export class StoreState<SB extends AnySliceBase[] = any>
     for (const slice of this._slices) {
       if (slice.key.key === tx.sliceKey) {
         found = true;
-        newState[slice.key.key] = slice.applyTransaction(tx, this);
+        const action = slice._getRawAction(tx.actionId);
+
+        if (!action) {
+          throw new Error(
+            `Action "${tx.actionId}" not found in Slice "${slice.key.key}"`,
+          );
+        }
+
+        const sliceState = this._getSliceState(slice);
+
+        if (!sliceState.found) {
+          throw new Error(
+            `Slice "${slice.key.key}" or one of its dependencies not found in store`,
+          );
+        }
+
+        newState[slice.key.key] = action(...tx.payload)(sliceState.value, this);
       }
     }
 
@@ -114,14 +120,19 @@ export class StoreState<SB extends AnySliceBase[] = any>
     }
 
     // TODO: append-action
-
     return this._fork(newState);
   }
 
   getSliceState<SL extends AnySliceBase>(
-    slice: SL,
-  ): SL['key']['initState'] | undefined {
-    return this.slicesCurrentState[slice.key.key];
+    slice: ResolveSliceIfRegistered<SL, SB>,
+  ): SL['key']['initState'] {
+    let result = this.slicesCurrentState[slice.key.key]!;
+
+    if (result === undefined) {
+      throw new Error(`Slice "${slice.key.key}" not found in store`);
+    }
+
+    return result;
   }
 
   private _fork(slicesState: StoreState['slicesCurrentState']): StoreState {
@@ -130,5 +141,21 @@ export class StoreState<SB extends AnySliceBase[] = any>
     newInstance.slicesCurrentState = slicesState;
 
     return newInstance;
+  }
+
+  // An internal method to get the state of a slice without generic type hassles
+  private _getSliceState<SL extends AnySliceBase>(
+    slice: SL,
+  ):
+    | { found: true; value: SL['key']['initState'] }
+    | { found: false; value: undefined } {
+    if (Object.hasOwnProperty.call(this.slicesCurrentState, slice.key.key)) {
+      return {
+        found: true,
+        value: this.slicesCurrentState[slice.key.key],
+      };
+    }
+
+    return { found: false, value: undefined };
   }
 }
