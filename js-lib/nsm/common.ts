@@ -1,8 +1,24 @@
+import type { z } from 'zod';
+
 import type { Slice } from './slice';
 import type { StoreState } from './state';
 import type { Store } from './store';
 
 export type AnyFn = (...args: any[]) => any;
+
+export const serialActionCache = new WeakMap<AnyFn, ActionSerialData<any>>();
+
+export function mySerialAction<T extends z.ZodTypeAny, SS, DS extends Slice[]>(
+  schema: T,
+  cb: RawJsAction<[z.infer<T>], SS, DS>,
+): RawAction<[z.infer<T>], SS, DS> {
+  serialActionCache.set(cb, {
+    parse: (data: string) => [{}],
+    serialize: (payload: [z.infer<T>]) => '',
+  });
+
+  return cb;
+}
 
 export const expectType = <Type>(_: Type): void => void 0;
 
@@ -16,6 +32,16 @@ export type SelectorFn<SS, DS extends Slice[], T> = (
   sliceState: SS,
   storeState: StoreState<DS>,
 ) => T;
+
+export type ActionSerialData<P extends any[]> = {
+  parse: (data: string) => P;
+  serialize: (payload: P) => string;
+};
+
+//  TODO remove this
+export type RawJsAction<P extends any[], SS, DS extends Slice[]> = (
+  ...payload: P
+) => (sliceState: SS, storeState: StoreState<DS>) => SS;
 
 export type RawAction<P extends any[], SS, DS extends Slice[]> = (
   ...payload: P
@@ -76,7 +102,7 @@ export interface SliceBase<K extends string, SS> {
   key: SliceKeyBase<K, SS>;
   fingerPrint: string;
   effects?: Array<EffectsBase<any>>;
-  _getRawAction: (actionId: string) => RawAction<any, any, any> | undefined;
+  _getRawAction: (actionId: string) => RawJsAction<any, any, any> | undefined;
 }
 
 export interface StoreTransaction<K extends string, P extends unknown[]>

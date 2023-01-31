@@ -95,9 +95,9 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     for (const slice of this._slices) {
       if (slice.key.key === tx.sliceKey) {
         found = true;
-        const action = slice._getRawAction(tx.actionId);
+        const rawAction = slice._getRawAction(tx.actionId);
 
-        if (!action) {
+        if (!rawAction) {
           throw new Error(
             `Action "${tx.actionId}" not found in Slice "${slice.key.key}"`,
           );
@@ -111,7 +111,10 @@ export class StoreState<SB extends AnySliceBase[] = any> {
           );
         }
 
-        newState[slice.key.key] = action(...tx.payload)(sliceState.value, this);
+        newState[slice.key.key] = rawAction(...tx.payload)(
+          sliceState.value,
+          this,
+        );
       }
     }
 

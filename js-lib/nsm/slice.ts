@@ -1,14 +1,16 @@
 import type {
   Action,
+  ActionSerialData,
   AnyFn,
   EffectsBase,
   InferSlicesKey,
   RawAction,
+  RawJsAction,
   SelectorFn,
   SliceBase,
   SliceKeyBase,
 } from './common';
-import { mapObjectValues } from './common';
+import { mapObjectValues, serialActionCache } from './common';
 import type { StoreState } from './state';
 
 export class SliceKey<
@@ -48,8 +50,8 @@ type ResolvedSelectors<SE extends Record<string, SelectorFn<any, any, any>>> = {
 export interface SliceConfig {}
 
 export class Slice<
-  K extends string = string,
-  SS extends object = object,
+  K extends string = any,
+  SS extends object = any,
   DS extends Slice[] = any[],
   A extends Record<string, RawAction<any[], SS, DS>> = any,
   SE extends Record<string, SelectorFn<SS, DS, any>> = any,
@@ -61,7 +63,8 @@ export class Slice<
   constructor(
     public key: SliceKey<K, SS, SE, DS>,
     public _rawActions: A = {} as A,
-    public effects: Array<EffectsBase<Slice<K, SS, DS, A, SE>>> = [],
+    // Typescript acts weird if I use EffectsBase<Slice<x,y,z...>>
+    public effects: Array<EffectsBase<any>> = [],
     public config?: SliceConfig,
   ) {
     this.fingerPrint = `${key.key}(${(key.dependencies || [])
@@ -80,6 +83,21 @@ export class Slice<
     const result = storeState.getSliceState(this as SliceBase<any, any>);
 
     return result;
+  }
+
+  parseActionPayload<AK extends keyof A>(
+    payload: string,
+    actionId: AK extends string ? AK : never,
+  ): Parameters<A[AK]> {
+    const action = this._getRawSerializedAction(actionId);
+
+    if (!action) {
+      throw new Error(
+        `Action ${actionId} not found or does not have a serializer`,
+      );
+    }
+
+    return action.serialData.parse(payload);
   }
 
   resolveSelectors<SSB extends StoreState>(
@@ -102,8 +120,65 @@ export class Slice<
     };
   }
 
-  _getRawAction(actionId: string): RawAction<any, any, any> | undefined {
-    return this._rawActions[actionId];
+  serializeActionPayload(payload: unknown, actionId: string): string {
+    const action = this._getRawAction(actionId);
+
+    if (!action) {
+      throw new Error(`Action ${actionId} not found in slice ${this.key.key}`);
+    }
+
+    const serialData = serialActionCache.get(action);
+
+    if (!serialData) {
+      throw new Error(
+        `Action ${actionId} in slice ${this.key.key} is not serializable`,
+      );
+    }
+
+    return serialData.serialize(payload);
+  }
+
+  _getRawAction(actionId: string): RawJsAction<any, any, any> | undefined {
+    const action = this._rawActions[actionId];
+
+    if (!action) {
+      return undefined;
+    }
+
+    return action;
+  }
+
+  _getRawSerializedAction(actionId: string):
+    | {
+        action: RawJsAction<any, any, any>;
+        serialData: ActionSerialData<any>;
+      }
+    | undefined {
+    const action = this._getRawAction(actionId);
+
+    if (!action) {
+      throw new Error(`Action ${actionId} not found in slice ${this.key.key}`);
+    }
+
+    const serialData = serialActionCache.get(action);
+
+    if (!serialData) {
+      throw new Error(
+        `Action ${actionId} in slice ${this.key.key} is not serializable`,
+      );
+    }
+
+    return {
+      action,
+      serialData,
+    };
+  }
+
+  _isSyncReady(): boolean {
+    // all actions must be serial
+    return Object.values(this._rawActions).every((action) =>
+      serialActionCache.has(action),
+    );
   }
 }
 

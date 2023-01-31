@@ -24,5 +24,8 @@
   "dependencies": {
     "@bangle.io/mini-js-utils": "workspace:*"
   },
+  "devDependencies": {
+    "zod": "^3.20.2"
+  },
   "license": "AGPL-3.0-or-later"
 }
