@@ -1,16 +1,15 @@
+import { ActionSerializer } from './action-serializer';
 import type {
   Action,
-  ActionSerialData,
   AnyFn,
   EffectsBase,
   InferSlicesKey,
   RawAction,
-  RawJsAction,
   SelectorFn,
   SliceBase,
   SliceKeyBase,
 } from './common';
-import { mapObjectValues, serialActionCache } from './common';
+import { mapObjectValues } from './common';
 import type { StoreState } from './state';
 
 export class SliceKey<
@@ -27,7 +26,7 @@ export class SliceKey<
     selectors: SE,
     public dependencies: DS,
   ) {
-    // to allow accessing other selectors
+    // NOTE: to allow accessing other selectors, but typing doesnt work
     this.selectors = mapObjectValues(selectors, (selector) =>
       selector.bind(selectors),
     ) as SE;
@@ -60,17 +59,36 @@ export class Slice<
   fingerPrint: string;
   actions: RawActionsToActions<K, A>;
 
+  _actionSerializer: ActionSerializer<K, SS, DS, A>;
+
+  _flatDependencies: Set<string>;
+
   constructor(
     public key: SliceKey<K, SS, SE, DS>,
     public _rawActions: A = {} as A,
     // Typescript acts weird if I use EffectsBase<Slice<x,y,z...>>
-    public effects: Array<EffectsBase<any>> = [],
-    public config?: SliceConfig,
+    public effects: Array<EffectsBase<any>>,
+    public config: SliceConfig,
   ) {
     this.fingerPrint = `${key.key}(${(key.dependencies || [])
       .map((d) => d.fingerPrint)
       .join(',')})`;
     this.actions = parseRawActions(key.key, _rawActions);
+    this._actionSerializer = new ActionSerializer(key, _rawActions);
+    this._flatDependencies = this.key.dependencies.reduce((acc, dep) => {
+      acc.add(dep.key.key);
+
+      dep._flatDependencies.forEach((d) => {
+        if (d === this.key.key) {
+          throw new Error(
+            `Circular dependency detected in slice "${this.key.key}" dependency "${dep.key.key}"`,
+          );
+        }
+        acc.add(d);
+      });
+
+      return acc;
+    }, new Set<string>());
   }
 
   get selectors(): SE {
@@ -83,21 +101,6 @@ export class Slice<
     const result = storeState.getSliceState(this as SliceBase<any, any>);
 
     return result;
-  }
-
-  parseActionPayload<AK extends keyof A>(
-    payload: string,
-    actionId: AK extends string ? AK : never,
-  ): Parameters<A[AK]> {
-    const action = this._getRawSerializedAction(actionId);
-
-    if (!action) {
-      throw new Error(
-        `Action ${actionId} not found or does not have a serializer`,
-      );
-    }
-
-    return action.serialData.parse(payload);
   }
 
   resolveSelectors<SSB extends StoreState>(
@@ -118,67 +121,6 @@ export class Slice<
       ...this.getState(storeState),
       ...this.resolveSelectors(storeState),
     };
-  }
-
-  serializeActionPayload(payload: unknown, actionId: string): string {
-    const action = this._getRawAction(actionId);
-
-    if (!action) {
-      throw new Error(`Action ${actionId} not found in slice ${this.key.key}`);
-    }
-
-    const serialData = serialActionCache.get(action);
-
-    if (!serialData) {
-      throw new Error(
-        `Action ${actionId} in slice ${this.key.key} is not serializable`,
-      );
-    }
-
-    return serialData.serialize(payload);
-  }
-
-  _getRawAction(actionId: string): RawJsAction<any, any, any> | undefined {
-    const action = this._rawActions[actionId];
-
-    if (!action) {
-      return undefined;
-    }
-
-    return action;
-  }
-
-  _getRawSerializedAction(actionId: string):
-    | {
-        action: RawJsAction<any, any, any>;
-        serialData: ActionSerialData<any>;
-      }
-    | undefined {
-    const action = this._getRawAction(actionId);
-
-    if (!action) {
-      throw new Error(`Action ${actionId} not found in slice ${this.key.key}`);
-    }
-
-    const serialData = serialActionCache.get(action);
-
-    if (!serialData) {
-      throw new Error(
-        `Action ${actionId} in slice ${this.key.key} is not serializable`,
-      );
-    }
-
-    return {
-      action,
-      serialData,
-    };
-  }
-
-  _isSyncReady(): boolean {
-    // all actions must be serial
-    return Object.values(this._rawActions).every((action) =>
-      serialActionCache.has(action),
-    );
   }
 }
 
@@ -209,4 +151,32 @@ export function parseRawActions<
   );
 
   return result as RawActionsToActions<K, A>;
+}
+
+/**
+ * To be only used for testing scenarios. In production, slices should always have the same code
+ */
+export function testOverrideSlice<SL extends Slice>(
+  slice: SL,
+  {
+    dependencies = slice.key.dependencies,
+    initState = slice.key.initState,
+    effects = slice.effects,
+    config = slice.config,
+  }: {
+    // since this is for testing, we can allow any slice
+    dependencies?: Slice[];
+    initState?: SL['key']['initState'];
+    effects?: Array<EffectsBase<any>>;
+    config?: SliceConfig;
+  },
+) {
+  const key = new SliceKey(
+    slice.key.key,
+    initState,
+    slice.selectors,
+    dependencies,
+  );
+
+  return new Slice(key, slice._rawActions, effects, config);
 }

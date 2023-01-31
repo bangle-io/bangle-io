@@ -11,19 +11,6 @@ interface StoreStateOptions {
 
 const overrideKey = Symbol('slice-init-override');
 
-export function overrideInitState<SL extends AnySliceBase>(
-  slice: SL,
-  state: SL['key']['initState'],
-): SL {
-  let val = {
-    ...slice,
-    [overrideKey]: state,
-  };
-
-  // This is a hack to keep typescript happy
-  return val as any;
-}
-
 export interface StoreStateConfig<SB extends AnySliceBase[]> {
   slices: SB;
   opts?: StoreStateOptions;
@@ -55,7 +42,8 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     const unique = new Set(keys);
 
     if (keys.length !== unique.size) {
-      throw new Error('Duplicate slice keys');
+      const dups = findDuplications(keys);
+      throw new Error('Duplicate slice keys ' + dups.join(', '));
     }
   }
 
@@ -69,13 +57,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     const instance = new StoreState(slices, opts);
 
     for (const slice of slices) {
-      if (Object.prototype.hasOwnProperty.call(slice, overrideKey)) {
-        instance.slicesCurrentState[slice.key.key] = (slice as any)[
-          overrideKey
-        ];
-      } else {
-        instance.slicesCurrentState[slice.key.key] = slice.key.initState;
-      }
+      instance.slicesCurrentState[slice.key.key] = slice.key.initState;
     }
 
     return instance;
@@ -83,7 +65,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
 
-  constructor(private _slices: SB, public opts?: StoreStateOptions) {}
+  constructor(public _slices: SB, public opts?: StoreStateOptions) {}
 
   applyTransaction<P extends any[]>(
     tx: Transaction<InferSlicesKey<SB>, P>,
@@ -95,7 +77,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     for (const slice of this._slices) {
       if (slice.key.key === tx.sliceKey) {
         found = true;
-        const rawAction = slice._getRawAction(tx.actionId);
+        const rawAction = slice._actionSerializer.getRawAction(tx.actionId);
 
         if (!rawAction) {
           throw new Error(
@@ -161,4 +143,19 @@ export class StoreState<SB extends AnySliceBase[] = any> {
 
     return { found: false, value: undefined };
   }
+}
+
+function findDuplications<T>(arr: T[]): T[] {
+  const seen = new Set<T>();
+  const dupes = new Set<T>();
+
+  for (const item of arr) {
+    if (seen.has(item)) {
+      dupes.add(item);
+    } else {
+      seen.add(item);
+    }
+  }
+
+  return [...dupes];
 }

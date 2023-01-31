@@ -1,6 +1,7 @@
 import { expectType, mapObjectValues } from '../common';
 import { slice } from '../create';
-import { overrideInitState, StoreState } from '../state';
+import { testOverrideSlice } from '../slice';
+import { StoreState } from '../state';
 
 const testSlice1 = slice({
   key: 'test-1',
@@ -151,11 +152,21 @@ describe('throwing', () => {
       },
     });
 
+    const mySlice2 = slice({
+      key: 'test',
+      initState: { num: 1 },
+      actions: {
+        myAction: (num: number) => (state) => {
+          return { ...state, num: num + state.num };
+        },
+      },
+    });
+
     expect(() => {
       StoreState.create({
-        slices: [mySlice, mySlice],
+        slices: [mySlice, mySlice2],
       });
-    }).toThrowError('Duplicate slice keys');
+    }).toThrowErrorMatchingInlineSnapshot(`"Duplicate slice keys test"`);
   });
 
   test('throws error if slice dependency is not registered', () => {
@@ -212,7 +223,7 @@ describe('throwing', () => {
 });
 
 describe('override', () => {
-  test('overrideInitState works', () => {
+  test('overriding init state works', () => {
     const slice1 = slice({
       key: 'test1',
       initState: { num: 1 },
@@ -225,17 +236,48 @@ describe('override', () => {
       actions: {},
     });
 
-    let newState = StoreState.create({
-      slices: [slice1, overrideInitState(slice2, { num: 99 })],
+    let newState1 = StoreState.create({
+      slices: [slice1, testOverrideSlice(slice2, { initState: { num: 99 } })],
     });
 
-    expect(newState.getSliceState(slice1)).toEqual({ num: 1 });
-    expect(newState.getSliceState(slice2)).toEqual({ num: 99 });
+    expect(newState1.getSliceState(slice1)).toEqual({ num: 1 });
+    expect(newState1.getSliceState(slice2)).toEqual({ num: 99 });
 
-    newState = StoreState.create({
-      slices: [overrideInitState(slice1, { num: -1 }), slice2],
+    let newState2 = StoreState.create({
+      slices: [testOverrideSlice(slice1, { initState: { num: -1 } }), slice2],
+    });
+    expect(newState2.getSliceState(slice1)).toEqual({ num: -1 });
+    expect(newState1.getSliceState(slice1)).toEqual({ num: 1 });
+  });
+
+  test('overriding effects works', () => {
+    const slice1 = slice({
+      key: 'test1',
+      initState: { num: 1 },
+      actions: {},
+      effects: [
+        {
+          update: () => {},
+        },
+      ],
     });
 
-    expect(newState.getSliceState(slice1)).toEqual({ num: -1 });
+    expect(testOverrideSlice(slice1, { effects: [] }).effects).toHaveLength(0);
+    // should not affect initial slice
+    expect(slice1.effects).toHaveLength(1);
+  });
+
+  test('overriding dependencies', () => {
+    const slice1 = slice({
+      key: 'test1',
+      initState: { num: 1 },
+      actions: {},
+    });
+    expect([
+      ...testOverrideSlice(slice1, { dependencies: [testSlice1] })
+        ._flatDependencies,
+    ]).toEqual([testSlice1.key.key]);
+
+    expect(slice1._flatDependencies.size).toBe(0);
   });
 });

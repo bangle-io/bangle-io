@@ -1,14 +1,8 @@
 import { z } from 'zod';
 
-import type { Transaction } from '../common';
-import { mySerialAction, RawAction, RawJsAction } from '../common';
+import { serialAction } from '../action-serializer';
+import { expectType, Transaction } from '../common';
 import { slice } from '../create';
-import type { Slice } from '../slice';
-
-export type SerialAction2<K extends string, T extends z.ZodTypeAny> = {
-  schema: T;
-  action: (payload: z.infer<T>) => Transaction<K, z.infer<T>>;
-};
 
 test('checks work', () => {
   let case1 = slice({
@@ -18,11 +12,11 @@ test('checks work', () => {
     },
     actions: {
       nonSerial: (payload: string) => (state) => state,
-      serial: mySerialAction(z.string(), (payload: string) => (state) => state),
+      serial: serialAction(z.string(), (payload: string) => (state) => state),
     },
   });
 
-  expect(case1._isSyncReady()).toBe(false);
+  expect(case1._actionSerializer.isSyncReady()).toBe(false);
 
   let case2 = slice({
     key: 'ji',
@@ -30,11 +24,11 @@ test('checks work', () => {
       magic: 3,
     },
     actions: {
-      serial: mySerialAction(z.string(), (payload) => (state) => state),
+      serial: serialAction(z.string(), (payload) => (state) => state),
     },
   });
 
-  expect(case2._isSyncReady()).toBe(true);
+  expect(case2._actionSerializer.isSyncReady()).toBe(true);
 
   let case3 = slice({
     key: 'ji',
@@ -44,7 +38,7 @@ test('checks work', () => {
     actions: {},
   });
 
-  expect(case3._isSyncReady()).toBe(true);
+  expect(case3._actionSerializer.isSyncReady()).toBe(true);
 
   let case4 = slice({
     key: 'ji',
@@ -53,7 +47,7 @@ test('checks work', () => {
     },
   });
 
-  expect(case4._isSyncReady()).toBe(true);
+  expect(case4._actionSerializer.isSyncReady()).toBe(true);
 
   let case5 = slice({
     key: 'ji',
@@ -61,10 +55,43 @@ test('checks work', () => {
       magic: 3,
     },
     actions: {
-      serial: mySerialAction(z.string(), (payload) => (state) => state),
-      serial2: mySerialAction(z.string(), (payload) => (state) => state),
+      serial: serialAction(z.string(), (payload) => (state) => state),
+      serial2: serialAction(z.string(), (payload) => (state) => state),
     },
   });
 
-  expect(case5._isSyncReady()).toBe(true);
+  expect(case5._actionSerializer.isSyncReady()).toBe(true);
+});
+
+test('typing is correct', () => {
+  slice({
+    key: 'ji',
+    initState: {
+      magic: 3,
+    },
+    actions: {
+      serial: serialAction(z.string(), (payload) => {
+        // @ts-expect-error payload should not be any
+        let testVal0 = payload.xyzTest;
+
+        expectType<string>(payload);
+
+        return (state) => {
+          // @ts-expect-error state should not be any
+          let testVal1 = state.xyzTest;
+
+          expectType<{ magic: number }>(state);
+
+          return state;
+        };
+      }),
+
+      serial2: serialAction(
+        z.string(),
+        (payload) => (state) =>
+          // @ts-expect-error returning null should error
+          null,
+      ),
+    },
+  });
 });

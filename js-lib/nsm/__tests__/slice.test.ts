@@ -9,7 +9,8 @@ import type {
 } from '../common';
 import { expectType } from '../common';
 import { slice } from '../create';
-import { parseRawActions, Slice } from '../slice';
+import type { Slice } from '../slice';
+import { parseRawActions, testOverrideSlice } from '../slice';
 import { StoreState } from '../state';
 
 const testSlice1 = slice({
@@ -51,7 +52,7 @@ const testSlice3 = slice({
   },
 });
 
-const depTestSlice1 = slice({
+const depOnTestSlice1Slice = slice({
   key: 'dep-test-1',
   initState: { myDep: 4, myDepStr: 'hi' },
   actions: {
@@ -63,8 +64,8 @@ const depTestSlice1 = slice({
   dependencies: [testSlice1],
 });
 
-describe('dependency state', () => {
-  describe('case 1', () => {
+describe('dependencies', () => {
+  describe('dep state', () => {
     const unknownSlice = slice({
       key: 'unknown-test',
       initState: { num: 1 },
@@ -120,6 +121,72 @@ describe('dependency state', () => {
         `"Slice "unknown-test" not found in store"`,
       );
     });
+  });
+
+  test('cyclic dependencies', () => {
+    let f: Record<string, any> = {};
+    const mySlice1 = slice({
+      key: 'my-slice-1',
+      initState: { myDep: 4, myDepStr: 'hi' },
+      // actions: {},
+      dependencies: [testSlice1],
+    });
+
+    const mySlice2 = slice({
+      key: 'my-slice-2',
+      initState: { myDep: 4, myDepStr: 'hi' },
+      // actions: {},
+      dependencies: [mySlice1],
+    });
+
+    expect(() =>
+      StoreState.create({
+        slices: [
+          testOverrideSlice(testSlice1, {
+            dependencies: [mySlice2],
+          }),
+          depOnTestSlice1Slice,
+          mySlice1,
+          mySlice2,
+        ],
+      }),
+    ).toThrowError(
+      `Circular dependency detected in slice "test-1" dependency "my-slice-2"`,
+    );
+  });
+
+  test('flat dependencies', () => {
+    const createSlice = (key: string, dep: Slice[]) =>
+      slice({
+        key: key,
+        initState: {},
+        // actions: {},
+        dependencies: dep,
+      });
+
+    let prev: Slice | undefined = undefined;
+    const slices: Slice[] = [];
+    for (const key of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
+      let slice = createSlice(key, prev ? [prev] : []);
+      slices.push(slice);
+      prev = slice;
+    }
+
+    expect([...prev?._flatDependencies!].sort()).toEqual(
+      ['g', 'f', 'e', 'd', 'c', 'b', 'a'].sort(),
+    );
+
+    expect(prev?.key.dependencies?.[0]?._flatDependencies)
+      .toMatchInlineSnapshot(`
+      Set {
+        "f",
+        "e",
+        "d",
+        "c",
+        "b",
+        "a",
+      }
+    `);
   });
 });
 
@@ -606,7 +673,7 @@ describe('creating with slice', () => {
 
     expectType<Action<'slice1', number[]>>(slice1.actions.myAction);
 
-    const rawMyAction = slice1._rawActions.myAction;
+    const rawMyAction = slice1._actionSerializer.rawActions.myAction;
 
     // @ts-expect-error - should error since raw my accepts a number
     rawMyAction('s');

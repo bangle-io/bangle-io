@@ -123,7 +123,7 @@ export function slice(args: any): any {
   const {
     key,
     initState,
-    config,
+    config = {},
     effects = [],
     selectors = {},
     dependencies = [],
