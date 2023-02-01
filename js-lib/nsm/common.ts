@@ -1,6 +1,3 @@
-import type { DSAEncoding } from 'crypto';
-import type { z } from 'zod';
-
 import type { ActionSerializer } from './action-serializer';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
@@ -20,11 +17,6 @@ export type SelectorFn<SS, DS extends Slice[], T> = (
   sliceState: SS,
   storeState: StoreState<DS>,
 ) => T;
-
-//  TODO remove this
-export type RawJsAction<P extends any[], SS, DS extends Slice[]> = (
-  ...payload: P
-) => (sliceState: SS, storeState: StoreState<DS>) => SS;
 
 export type RawAction<P extends any[], SS, DS extends Slice[]> = (
   ...payload: P

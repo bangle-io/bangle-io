@@ -1,7 +1,8 @@
 import type { z } from 'zod';
 
-import type { AnyFn, RawAction, RawJsAction, SelectorFn } from './common';
+import type { AnyFn, RawAction, SelectorFn } from './common';
 import type { Slice, SliceKey } from './slice';
+import { zodFindUnsafeTypes } from './zod';
 
 export type ActionSerialData<P extends any[]> = {
   parse: (data: unknown) => P;
@@ -11,11 +12,35 @@ export const serialActionCache = new WeakMap<AnyFn, ActionSerialData<any>>();
 
 export function serialAction<T extends z.ZodTypeAny, SS, DS extends Slice[]>(
   schema: T,
-  cb: RawJsAction<[z.infer<T>], SS, DS>,
+  cb: RawAction<[z.infer<T>], SS, DS>,
+  opts?: {
+    parse?: (schema: T, data: unknown) => [z.infer<T>];
+    serialize?: (schema: T, payload: [z.infer<T>]) => unknown;
+  },
 ): RawAction<[z.infer<T>], SS, DS> {
+  let unsafeTypes = zodFindUnsafeTypes(schema);
+
+  if (unsafeTypes.length > 0) {
+    throw new Error(
+      `serialAction: schema contains unsafe types: ${unsafeTypes.join(', ')}`,
+    );
+  }
+
   serialActionCache.set(cb, {
-    parse: (data: unknown) => [data],
-    serialize: (payload: [z.infer<T>]): unknown => payload[0],
+    parse: (data: unknown) => {
+      if (opts?.parse) {
+        return opts.parse(schema, data);
+      }
+
+      return [data];
+    },
+    serialize: (payload: [z.infer<T>]): unknown => {
+      if (opts?.serialize) {
+        return opts.serialize(schema, payload);
+      }
+
+      return payload[0];
+    },
   });
 
   return cb;
@@ -28,7 +53,7 @@ export class ActionSerializer<
   A extends Record<string, RawAction<any[], SS, DS>> = any,
   SE extends Record<string, SelectorFn<SS, DS, any>> = any,
 > {
-  getRawAction = (actionId: string): RawJsAction<any, any, any> | undefined => {
+  getRawAction = (actionId: string): RawAction<any, any, any> | undefined => {
     const action = this.rawActions[actionId];
 
     if (!action) {
@@ -42,7 +67,7 @@ export class ActionSerializer<
 
   getRawSerializedAction(actionId: string):
     | {
-        action: RawJsAction<any, any, any>;
+        action: RawAction<any, any, any>;
         serialData: ActionSerialData<any>;
       }
     | undefined {
@@ -74,8 +99,8 @@ export class ActionSerializer<
   }
 
   parseActionPayload<AK extends keyof A>(
-    payload: unknown,
     actionId: AK extends string ? AK : never,
+    payload: unknown,
   ): Parameters<A[AK]> {
     const action = this.getRawSerializedAction(actionId);
 
@@ -88,7 +113,10 @@ export class ActionSerializer<
     return action.serialData.parse(payload);
   }
 
-  serializeActionPayload(payload: unknown, actionId: string): unknown {
+  serializeActionPayload<AK extends keyof A>(
+    actionId: AK extends string ? AK : never,
+    payload: Parameters<A[AK]>,
+  ): unknown {
     const action = this.getRawAction(actionId);
 
     if (!action) {
@@ -99,7 +127,7 @@ export class ActionSerializer<
 
     if (!serialData) {
       throw new Error(
-        `Action ${actionId} in slice ${this.key.key} is not serializable`,
+        `Serialize Action ${actionId} in slice ${this.key.key} not found`,
       );
     }
 

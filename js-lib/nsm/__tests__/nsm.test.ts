@@ -93,9 +93,10 @@ test('custom dispatch', () => {
     dispatchTx(store, tx) {
       expectType<'test-1' | 'test-2'>(tx.sliceKey);
 
+      let oldState = store.state;
       let newState = store.state.applyTransaction(tx);
 
-      if (!newState) {
+      if (newState === oldState) {
         count++;
 
         return;

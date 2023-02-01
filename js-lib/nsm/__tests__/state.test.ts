@@ -1,4 +1,4 @@
-import { expectType, mapObjectValues } from '../common';
+import { expectType } from '../common';
 import { slice } from '../create';
 import { testOverrideSlice } from '../slice';
 import { StoreState } from '../state';
@@ -140,7 +140,7 @@ describe('applyTransaction', () => {
   });
 });
 
-describe('throwing', () => {
+describe('validations', () => {
   test('throws error if slice key not unique', () => {
     const mySlice = slice({
       key: 'test',
@@ -222,7 +222,7 @@ describe('throwing', () => {
   });
 });
 
-describe('override', () => {
+describe('test override helper', () => {
   test('overriding init state works', () => {
     const slice1 = slice({
       key: 'test1',
@@ -279,5 +279,182 @@ describe('override', () => {
     ]).toEqual([testSlice1.key.key]);
 
     expect(slice1._flatDependencies.size).toBe(0);
+  });
+});
+
+describe('State creation', () => {
+  test('empty slices', () => {
+    const appState = StoreState.create({ slices: [] });
+
+    expect(appState).toMatchInlineSnapshot(`
+      StoreState {
+        "_slices": [],
+        "opts": undefined,
+        "slicesCurrentState": {},
+      }
+    `);
+  });
+
+  test('with a slice', () => {
+    const mySlice = slice({
+      key: 'mySlice',
+      initState: { val: null },
+    });
+
+    const appState = StoreState.create({ slices: [mySlice] });
+
+    expect(appState.getSliceState(mySlice)).toEqual({ val: null });
+    expect(appState).toMatchSnapshot();
+  });
+
+  test('throws error if action not found', () => {
+    const mySlice = slice({
+      key: 'mySlice',
+      initState: { val: null },
+    });
+
+    const appState = StoreState.create({ slices: [mySlice] });
+
+    expect(() =>
+      appState.applyTransaction({
+        actionId: 'updateNum',
+        payload: [5],
+        sliceKey: 'mySlice',
+      }),
+    ).toThrowError(`Action "updateNum" not found in Slice "mySlice"`);
+  });
+
+  test('applying action preserves states of those who donot have apply', () => {
+    const mySlice = slice({
+      key: 'mySlice',
+      initState: { num: 0 },
+    });
+
+    const mySlice2 = slice({
+      key: 'mySlice2',
+      initState: { num: 0 },
+      actions: {
+        updateNum: (num: number) => (state) => {
+          return { ...state, num };
+        },
+      },
+    });
+
+    const appState = StoreState.create({ slices: [mySlice, mySlice2] });
+    expect(mySlice.getState(appState).num).toBe(0);
+
+    let newAppState = appState.applyTransaction(mySlice2.actions.updateNum(4));
+    expect(mySlice.getState(newAppState).num).toBe(0);
+    expect(mySlice2.getState(newAppState).num).toBe(4);
+  });
+
+  test('applying action with selectors', () => {
+    const mySlice1 = slice({
+      key: 'mySlice1',
+      initState: { char: '1' },
+      selectors: {
+        s1: (state) => {
+          return {
+            val1_1: state.char,
+          };
+        },
+      },
+      actions: {
+        moreChar: (num: number) => (state) => {
+          return {
+            ...state,
+            char: Array.from(
+              {
+                length: num,
+              },
+              () => state.char,
+            ).join(''),
+          };
+        },
+      },
+    });
+
+    const mySlice2 = slice({
+      key: 'mySlice2',
+      dependencies: [mySlice1],
+      initState: { char: '2' },
+      selectors: {
+        s2: (state, storeState) => {
+          return {
+            val2_1: mySlice1.resolveSelectors(storeState).s1,
+            val2_2: state.char,
+          };
+        },
+      },
+    });
+
+    const mySlice3 = slice({
+      key: 'mySlice3',
+      dependencies: [mySlice1, mySlice2],
+      initState: { char: '3' },
+      selectors: {
+        s3: (state, storeState) => {
+          return {
+            val3_2: mySlice2.resolveSelectors(storeState).s2,
+            val3_1: mySlice1.resolveSelectors(storeState).s1,
+            val3_3: state.char,
+          };
+        },
+      },
+    });
+
+    const appState = StoreState.create({
+      slices: [mySlice1, mySlice2, mySlice3],
+    });
+
+    const result1 = {
+      s3: {
+        val3_1: {
+          val1_1: '1',
+        },
+        val3_2: {
+          val2_1: {
+            val1_1: '1',
+          },
+          val2_2: '2',
+        },
+        val3_3: '3',
+      },
+    };
+    expect(mySlice3.resolveSelectors(appState)).toEqual(result1);
+    expect(mySlice2.resolveSelectors(appState).s2).toEqual(
+      result1['s3']['val3_2'],
+    );
+    expect(mySlice1.resolveSelectors(appState).s1).toEqual(
+      result1['s3']['val3_1'],
+    );
+
+    const newAppState = appState.applyTransaction(mySlice1.actions.moreChar(2));
+
+    const result2 = {
+      s3: {
+        val3_1: {
+          val1_1: '11',
+        },
+        val3_2: {
+          val2_1: {
+            val1_1: '11',
+          },
+          val2_2: '2',
+        },
+        val3_3: '3',
+      },
+    };
+
+    expect(mySlice3.resolveSelectors(newAppState)).toEqual(result2);
+    expect(mySlice2.resolveSelectors(newAppState).s2).toEqual(
+      result2['s3']['val3_2'],
+    );
+    expect(mySlice1.resolveSelectors(newAppState).s1).toEqual(
+      result2['s3']['val3_1'],
+    );
+
+    // previous state is unaltered
+    expect(mySlice3.resolveSelectors(appState)).toEqual(result1);
   });
 });

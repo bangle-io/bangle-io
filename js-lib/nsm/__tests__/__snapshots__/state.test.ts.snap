@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`State creation with a slice 1`] = `
+StoreState {
+  "_slices": [
+    Slice {
+      "_actionSerializer": ActionSerializer {
+        "getRawAction": [Function],
+        "key": SliceKey {
+          "dependencies": [],
+          "initState": {
+            "val": null,
+          },
+          "key": "mySlice",
+          "selectors": {},
+        },
+        "rawActions": {},
+      },
+      "_flatDependencies": Set {},
+      "_rawActions": {},
+      "actions": {},
+      "config": {},
+      "effects": [],
+      "fingerPrint": "mySlice()",
+      "key": SliceKey {
+        "dependencies": [],
+        "initState": {
+          "val": null,
+        },
+        "key": "mySlice",
+        "selectors": {},
+      },
+    },
+  ],
+  "opts": undefined,
+  "slicesCurrentState": {
+    "mySlice": {
+      "val": null,
+    },
+  },
+}
+`;

@@ -69,7 +69,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
 
   applyTransaction<P extends any[]>(
     tx: Transaction<InferSlicesKey<SB>, P>,
-  ): StoreState<SB> | undefined {
+  ): StoreState<SB> {
     const newState = { ...this.slicesCurrentState };
 
     let found = false;
@@ -101,7 +101,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     }
 
     if (!found) {
-      return undefined;
+      return this;
     }
 
     // TODO: append-action
