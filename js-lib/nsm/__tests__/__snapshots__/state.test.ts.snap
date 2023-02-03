@@ -32,6 +32,7 @@ StoreState {
       },
     },
   ],
+  "_transaction": undefined,
   "opts": undefined,
   "slicesCurrentState": {
     "mySlice": {

@@ -4,6 +4,7 @@ import type {
   StoreTransaction,
   Transaction,
 } from './common';
+import { SideEffectsManager } from './effect';
 import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
 
@@ -27,11 +28,12 @@ export class Store<SB extends AnySliceBase[]> {
     dispatchTx = (store, tx) => {
       let newState = store.state.applyTransaction(tx);
 
-      if (!newState) {
-        throw new Error(
-          `Store "${store.storeName}" returned undefined from applyTransaction`,
-        );
+      if (newState === store.state) {
+        console.debug('No state change, skipping update', tx.sliceKey);
+
+        return;
       }
+
       store.updateState(newState);
     },
     onError = (error) => {},
@@ -64,7 +66,8 @@ export class Store<SB extends AnySliceBase[]> {
     if (this._destroyed) {
       return;
     }
-
+    // TODO add a check to make sure tx is actually allowed
+    // based on the slice dependencies
     const storeTx: StoreTransaction<InferSlicesKey<SB>, any> = {
       ...tx,
       id: this.storeName + '-' + incrementalId(),
@@ -74,6 +77,8 @@ export class Store<SB extends AnySliceBase[]> {
   };
 
   private _destroyed = false;
+  private _effectsManager: SideEffectsManager | undefined;
+  private _runId = 0;
 
   constructor(
     public state: StoreState<SB>,
@@ -82,10 +87,18 @@ export class Store<SB extends AnySliceBase[]> {
     scheduler?: Scheduler,
     onError?: (error: Error) => void,
     disableSideEffects?: boolean,
-  ) {}
+  ) {
+    if (!disableSideEffects) {
+      this._effectsManager = new SideEffectsManager(state._slices, state);
+    }
+  }
 
   get destroyed() {
     return this._destroyed;
+  }
+
+  get runId() {
+    return this._runId;
   }
 
   destroy() {
@@ -93,8 +106,16 @@ export class Store<SB extends AnySliceBase[]> {
   }
 
   updateState(newState: StoreState<SB>) {
+    if (this._destroyed) {
+      return;
+    }
+
     this.state = newState;
 
-    // TODO: add side effects
+    const tx = this.state.transaction;
+
+    if (tx) {
+      this._effectsManager?.runSideEffects(this, ++this._runId, tx.sliceKey);
+    }
   }
 }

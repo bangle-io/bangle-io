@@ -289,6 +289,7 @@ describe('State creation', () => {
     expect(appState).toMatchInlineSnapshot(`
       StoreState {
         "_slices": [],
+        "_transaction": undefined,
         "opts": undefined,
         "slicesCurrentState": {},
       }

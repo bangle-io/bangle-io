@@ -741,6 +741,13 @@ describe('creating with slice', () => {
       effects: [
         {
           update: (sl, store) => {
+            // @ts-expect-error - should error for unknown field
+            let testVal1 = store.state.xyzTest;
+            // @ts-expect-error - should error since testSlice2 is not a dependency
+            testSlice2.getState(store.state);
+            // should not error since testSlice1 is a dependency
+            testSlice1.getState(store.state);
+
             // @ts-expect-error - should error since actions is not defined
             let testVal0 = sl.actions.xyz;
             let t1 = testSlice1.actions.decrement({ decrement: true });

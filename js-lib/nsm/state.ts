@@ -9,13 +9,10 @@ interface StoreStateOptions {
   debug?: boolean;
 }
 
-const overrideKey = Symbol('slice-init-override');
-
 export interface StoreStateConfig<SB extends AnySliceBase[]> {
   slices: SB;
   opts?: StoreStateOptions;
 }
-
 export class StoreState<SB extends AnySliceBase[] = any> {
   static checkDependencyOrder(slices: AnySliceBase[]) {
     let seenKeys = new Set<string>();
@@ -65,7 +62,17 @@ export class StoreState<SB extends AnySliceBase[] = any> {
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
 
+  protected _transaction: undefined | Transaction<string, unknown[]> =
+    undefined;
+
   constructor(public _slices: SB, public opts?: StoreStateOptions) {}
+
+  /**
+   * Get the transaction that created this state
+   */
+  get transaction() {
+    return this._transaction;
+  }
 
   applyTransaction<P extends any[]>(
     tx: Transaction<InferSlicesKey<SB>, P>,
@@ -105,7 +112,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     }
 
     // TODO: append-action
-    return this._fork(newState);
+    return this._fork(newState, tx);
   }
 
   getSliceState<SL extends AnySliceBase>(
@@ -120,9 +127,13 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     return result;
   }
 
-  private _fork(slicesState: StoreState['slicesCurrentState']): StoreState {
+  private _fork(
+    slicesState: StoreState['slicesCurrentState'],
+    tx: Transaction<string, unknown[]>,
+  ): StoreState {
     const newInstance = new StoreState(this._slices, this.opts);
 
+    newInstance._transaction = tx;
     newInstance.slicesCurrentState = slicesState;
 
     return newInstance;

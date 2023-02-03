@@ -46,10 +46,6 @@ export type InferSlicesKey<SlicesRegistry extends AnySliceBase[]> = {
   [K in keyof SlicesRegistry]: InferSliceKey<SlicesRegistry[K]>;
 }[number];
 
-export type MiniStoreForSlice<SL extends Slice> = Store<
-  Array<SL | InferSliceDep<SL>>
->;
-
 // returns a slice if it is registered in the slice registry
 export type ResolveSliceIfRegistered<
   SL extends AnySliceBase,
@@ -63,12 +59,24 @@ export type ResolveSliceIfRegistered<
 export interface SliceKeyBase<K extends string, SS> {
   key: K;
   initState: SS;
-  dependencies?: Array<SliceBase<string, unknown>>;
+  dependencies: Array<SliceBase<string, unknown>>;
 }
 
-export interface EffectsBase<SL extends Slice> {
-  update?: (sl: SL, store: MiniStoreForSlice<SL>) => void;
-  once?: AnyFn;
+export interface EffectsBase<SL extends Slice = Slice> {
+  updateSync?: (
+    sl: SL,
+    store: Store<Array<SL | InferSliceDep<SL>>>,
+    prevStoreState: StoreState<Array<SL | InferSliceDep<SL>>>,
+  ) => void;
+  update?: (
+    sl: SL,
+    store: Store<Array<SL | InferSliceDep<SL>>>,
+    prevStoreState: StoreState<Array<SL | InferSliceDep<SL>>>,
+  ) => void;
+  once?: (
+    sl: SL,
+    store: Store<Array<SL | InferSliceDep<SL>>>,
+  ) => void | (() => void);
 }
 
 export type AnySliceBase = SliceBase<string, unknown>;
@@ -110,4 +118,72 @@ export function objectHasOwnProperty<X extends {}, Y extends PropertyKey>(
   prop: Y,
 ): obj is X & Record<Y, unknown> {
   return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+export function calcReverseDependencies(
+  slices: AnySliceBase[],
+): Record<string, Set<string>> {
+  let reverseDependencies: Record<string, Set<string>> = {};
+
+  for (const slice of slices) {
+    for (const dep of slice.key.dependencies) {
+      let result = reverseDependencies[dep.key.key];
+
+      if (!result) {
+        result = new Set();
+        reverseDependencies[dep.key.key] = result;
+      }
+
+      result.add(slice.key.key);
+    }
+  }
+
+  return reverseDependencies;
+}
+
+export function flattenReverseDependencies(
+  reverseDep: Record<string, Set<string>>,
+) {
+  const result: Record<string, Set<string>> = {};
+
+  const recurse = (key: string) => {
+    let vals = result[key];
+
+    if (vals) {
+      return vals;
+    }
+
+    vals = new Set<string>();
+    result[key] = vals;
+
+    const deps = reverseDep[key];
+
+    if (deps) {
+      for (const dep of deps) {
+        vals.add(dep);
+        for (const v of recurse(dep)) {
+          vals.add(v);
+        }
+      }
+    }
+
+    return vals;
+  };
+
+  for (const key of Object.keys(reverseDep)) {
+    recurse(key);
+  }
+
+  return result;
+}
+
+export function calcDependencies(
+  slices: AnySliceBase[],
+): Record<string, Set<string>> {
+  return Object.fromEntries(
+    slices.map((slice) => [
+      slice.key.key,
+      new Set(slice.key.dependencies.map((dep) => dep.key.key)),
+    ]),
+  );
 }
