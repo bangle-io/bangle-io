@@ -1,6 +1,5 @@
 import type {
   AnySliceBase,
-  InferSlicesKey,
   ResolveSliceIfRegistered,
   Transaction,
 } from './types';
@@ -9,11 +8,11 @@ interface StoreStateOptions {
   debug?: boolean;
 }
 
-export interface StoreStateConfig<SB extends AnySliceBase[]> {
-  slices: SB;
+export interface StoreStateConfig<SB extends AnySliceBase> {
+  slices: SB[];
   opts?: StoreStateOptions;
 }
-export class StoreState<SB extends AnySliceBase[] = any> {
+export class StoreState<SB extends AnySliceBase = any> {
   static checkDependencyOrder(slices: AnySliceBase[]) {
     let seenKeys = new Set<string>();
     for (const slice of slices) {
@@ -44,7 +43,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
     }
   }
 
-  static create<SB extends AnySliceBase[]>({
+  static create<SB extends AnySliceBase>({
     slices,
     opts,
   }: StoreStateConfig<SB>): StoreState<SB> {
@@ -65,7 +64,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
   protected _transaction: undefined | Transaction<string, unknown[]> =
     undefined;
 
-  constructor(public _slices: SB, public opts?: StoreStateOptions) {}
+  constructor(public _slices: SB[], public opts?: StoreStateOptions) {}
 
   /**
    * Get the transaction that created this state
@@ -75,7 +74,7 @@ export class StoreState<SB extends AnySliceBase[] = any> {
   }
 
   applyTransaction<P extends any[]>(
-    tx: Transaction<InferSlicesKey<SB>, P>,
+    tx: Transaction<SB['key']['key'], P>,
   ): StoreState<SB> {
     const newState = { ...this.slicesCurrentState };
 

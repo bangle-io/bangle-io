@@ -21,12 +21,12 @@ export type ReplaceReturnType<T extends (...args: any) => any, R> = T extends (
 
 export type SelectorFn<SS, DS extends Slice[], T> = (
   sliceState: SS,
-  storeState: StoreState<DS>,
+  storeState: StoreState<DS[number]>,
 ) => T;
 
 export type RawAction<P extends any[], SS, DS extends Slice[]> = (
   ...payload: P
-) => (sliceState: SS, storeState: StoreState<DS>) => SS;
+) => (sliceState: SS, storeState: StoreState<DS[number]>) => SS;
 
 export type Action<K extends string, P extends any[] = unknown[]> = (
   ...payload: P
@@ -47,17 +47,12 @@ export type InferSliceDep<SL extends AnySliceBase> = SL extends Slice<
   ? DS[number]
   : never;
 
-// returns a union of all slice keys
-export type InferSlicesKey<SlicesRegistry extends AnySliceBase[]> = {
-  [K in keyof SlicesRegistry]: InferSliceKey<SlicesRegistry[K]>;
-}[number];
-
 // returns a slice if it is registered in the slice registry
 export type ResolveSliceIfRegistered<
   SL extends AnySliceBase,
-  SliceRegistry extends AnySliceBase[],
+  SliceRegistry extends AnySliceBase,
 > = SL extends SliceBase<infer K, any>
-  ? K extends InferSlicesKey<SliceRegistry>
+  ? K extends SliceRegistry['key']['key']
     ? SL
     : never
   : never;

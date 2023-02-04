@@ -1,8 +1,8 @@
 import { calcReverseDependencies, flattenReverseDependencies } from './common';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
-import type { ReducedStore, Store } from './store';
-import type { AnySliceBase, EffectsBase, InferSliceDep } from './types';
+import type { Store } from './store';
+import type { AnySliceBase, EffectsBase } from './types';
 
 export interface Scheduler {
   schedule: (cb: () => void) => void;

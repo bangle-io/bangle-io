@@ -5,7 +5,6 @@ import type {
   Action,
   AnyFn,
   EffectsBase,
-  InferSlicesKey,
   RawAction,
   SelectorFn,
   SliceBase,
@@ -46,8 +45,8 @@ export class SliceKey<
 type ResolveStoreStateIfRegistered<
   SSB extends StoreState,
   K extends string,
-> = SSB extends StoreState<infer SLs>
-  ? K extends InferSlicesKey<SLs>
+> = SSB extends StoreState<infer SL>
+  ? K extends SL['key']['key']
     ? SSB
     : never
   : never;

@@ -3,16 +3,11 @@ import { SideEffectsManager } from './effect';
 import type { Slice } from './slice';
 import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
-import type {
-  AnySliceBase,
-  InferSlicesKey,
-  StoreTransaction,
-  Transaction,
-} from './types';
+import type { AnySliceBase, StoreTransaction, Transaction } from './types';
 
 type DispatchTx<
   ST extends StoreTransaction<any, any>,
-  SB extends AnySliceBase[],
+  SB extends AnySliceBase,
 > = (store: Store<SB>, tx: ST) => void;
 
 let counter = 0;
@@ -20,8 +15,8 @@ function incrementalId() {
   return counter++;
 }
 
-export class Store<SB extends AnySliceBase[]> {
-  static create<SB extends AnySliceBase[]>({
+export class Store<SB extends AnySliceBase> {
+  static create<SB extends AnySliceBase>({
     disableSideEffects = false,
     dispatchTx = (store, tx) => {
       let newState = store.state.applyTransaction(tx);
@@ -40,7 +35,7 @@ export class Store<SB extends AnySliceBase[]> {
     storeName,
   }: {
     disableSideEffects?: boolean;
-    dispatchTx?: DispatchTx<StoreTransaction<InferSlicesKey<SB>, any>, SB>;
+    dispatchTx?: DispatchTx<StoreTransaction<SB['key']['key'], any>, SB>;
     onError?: (error: Error) => void;
     scheduler?: Scheduler;
     state: StoreState<SB> | StoreStateConfig<SB>;
@@ -60,13 +55,13 @@ export class Store<SB extends AnySliceBase[]> {
     );
   }
 
-  dispatch = (tx: Transaction<InferSlicesKey<SB>, any>) => {
+  dispatch = (tx: Transaction<SB['key']['key'], any>) => {
     if (this._destroyed) {
       return;
     }
     // TODO add a check to make sure tx is actually allowed
     // based on the slice dependencies
-    const storeTx: StoreTransaction<InferSlicesKey<SB>, any> = {
+    const storeTx: StoreTransaction<SB['key']['key'], any> = {
       ...tx,
       id: this.storeName + '-' + incrementalId(),
     };
@@ -156,7 +151,7 @@ export class ReducedStore<SB extends Slice> {
     return this._store.destroyed;
   }
 
-  get state(): StoreState<SB[]> {
+  get state(): StoreState<SB> {
     return this._store.state;
   }
 
