@@ -1,22 +1,44 @@
-import type { AnySliceBase, EffectsBase } from './common';
+import type { AnySliceBase, EffectsBase, InferSliceDep } from './common';
 import { calcReverseDependencies, flattenReverseDependencies } from './common';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
 import type { Store } from './store';
 
-interface EffectsLookup {
-  queue: {
-    syncUpdate: Set<SyncUpdateEffectHandler>;
-    update: Set<UpdateEffectHandler>;
-  };
-  record: {
-    syncUpdate: Record<string, SyncUpdateEffectHandler[]>;
-    update: Record<string, UpdateEffectHandler[]>;
-  };
+export interface Scheduler {
+  schedule: (cb: () => void) => void;
 }
 
+export const idleCallbackScheduler: (timeout: number) => Scheduler = (
+  timeout,
+) => ({
+  schedule: (cb) => {
+    return requestIdleCallback(cb, { timeout });
+  },
+});
+
+export const timeoutSchedular: (timeout: number) => Scheduler = (timeout) => ({
+  schedule: (cb) => {
+    return setTimeout(cb, timeout);
+  },
+});
+
+export const syncSchedular: () => Scheduler = () => ({
+  schedule: (cb) => {
+    queueMicrotask(cb);
+  },
+});
+
 export class SideEffectsManager {
-  private _effects: EffectsLookup = {
+  private _effects: {
+    queue: {
+      syncUpdate: Set<SyncUpdateEffectHandler>;
+      update: Set<UpdateEffectHandler>;
+    };
+    record: {
+      syncUpdate: Record<string, SyncUpdateEffectHandler[]>;
+      update: Record<string, UpdateEffectHandler[]>;
+    };
+  } = {
     queue: {
       syncUpdate: new Set(),
       update: new Set(),
@@ -29,7 +51,11 @@ export class SideEffectsManager {
 
   private _flatReverseDep: Record<string, Set<string>>;
 
-  constructor(slices: AnySliceBase[], initState: StoreState) {
+  constructor(
+    slices: AnySliceBase[],
+    initState: StoreState,
+    private _schedular: Scheduler = idleCallbackScheduler(15),
+  ) {
     // TODO ensure deps are valid and don't have circular dependencies
     // nice to have if reverse dep are sorted in the order slice are defined
     this._flatReverseDep = flattenReverseDependencies(
@@ -49,8 +75,16 @@ export class SideEffectsManager {
     });
   }
 
-  runSideEffects(store: Store<any>, runId: number, sourceSliceKey: string) {
+  runSideEffects(store: Store<any>, sourceSliceKey: string) {
     const { record, queue } = this._effects;
+    // if there are no items in the queue that means
+    //    we will need to trigger running of the effects
+    // else if there are items, whatever we add to the queue will be run
+    //    by the previous run
+    // these are  just an optimization to avoid extra microtask calls
+    const shouldRunSyncUpdateEffects = queue.syncUpdate.size === 0;
+    const shouldRunUpdateEffects = queue.update.size === 0;
+
     // queue up effects of source slice to run
     record.syncUpdate[sourceSliceKey]?.forEach((effect) => {
       queue.syncUpdate.add(effect);
@@ -69,19 +103,70 @@ export class SideEffectsManager {
       });
     });
 
-    queueMicrotask(() => {
-      // make sure the runId is the still the current runId
-      // Some effects can lag behind a couple of state transitions
-      // if an effect before them dispatches an action.
-      while (runId === store.runId && queue.syncUpdate.size > 0) {
-        const iter = queue.syncUpdate.values().next();
+    if (shouldRunSyncUpdateEffects || shouldRunUpdateEffects) {
+      // use microtask so that we yield to the code dispatching the action
+      // for example
+      //    store.dispatch(action1)
+      //    store.state // <-- should be the correct state without interference from effects
+      // if didn't queue microtask, the store.state could include more state changes than
+      // what the user expected.
+      queueMicrotask(() => {
+        this._runLoop(store);
+      });
+    }
+  }
 
-        if (!iter.done) {
-          const effect = iter.value;
-          queue.syncUpdate.delete(effect);
-          // TODO: error handling?
-          effect.runSyncUpdate(store);
-        }
+  private _runLoop(store: Store<any>) {
+    if (store.destroyed) {
+      return;
+    }
+
+    if (this._effects.queue.syncUpdate.size > 0) {
+      this._runSyncUpdateEffects(store);
+    }
+
+    if (this._effects.queue.update.size > 0) {
+      this._runUpdateEffect(store, () => {
+        this._runLoop(store);
+      });
+    }
+  }
+
+  private _runSyncUpdateEffects(store: Store<any>) {
+    const { queue } = this._effects;
+
+    // Note that sometimes effects can lag behind a couple of state transitions
+    // if an effect before them dispatches an action or externally someone dispatches multiple
+    // actions changing the state.
+    while (queue.syncUpdate.size > 0 && !store.destroyed) {
+      const iter = queue.syncUpdate.values().next();
+
+      if (!iter.done) {
+        const effect = iter.value;
+        queue.syncUpdate.delete(effect);
+        // TODO: error handling?
+        effect.runSyncUpdate(store);
+      }
+    }
+  }
+
+  private _runUpdateEffect(store: Store<any>, onDone: () => void) {
+    this._schedular.schedule(() => {
+      const { queue } = this._effects;
+      const iter = queue.update.values().next();
+
+      if (iter.done || store.destroyed) {
+        onDone();
+
+        return;
+      }
+
+      const effect = iter.value;
+      queue.update.delete(effect);
+      try {
+        effect.runUpdate(store);
+      } finally {
+        onDone();
       }
     });
   }
@@ -93,6 +178,10 @@ abstract class EffectHandler {
     public readonly initStoreState: StoreState,
     protected _slice: AnySliceBase,
   ) {}
+
+  get sliceKey() {
+    return this._slice.key.key;
+  }
 }
 
 export class SyncUpdateEffectHandler extends EffectHandler {
@@ -123,3 +212,44 @@ export class UpdateEffectHandler extends EffectHandler {
     this._effect.update?.(this._slice as Slice, store, previouslySeenState);
   }
 }
+
+export function updateEffect<
+  SL extends Slice,
+  R extends Record<
+    string,
+    (arg: StoreState<Array<SL | InferSliceDep<SL>>>) => any
+  >,
+>(
+  selectors: R,
+  cb: (
+    sl: SL,
+    store: Store<Array<SL | InferSliceDep<SL>>>,
+    selectedVal: ExtractReturnTypes<R>,
+  ) => void,
+): EffectsBase<SL> {
+  return {
+    update: (slice, store, previouslySeenState) => {
+      const state = store.state;
+      for (const calcState of Object.values(selectors)) {
+        const newVal = calcState(state);
+        const oldVal = calcState(previouslySeenState);
+
+        if (newVal !== oldVal) {
+          const newSelectedData = Object.fromEntries(
+            Array.from(Object.entries(selectors)).map(([k, v]) => [
+              k,
+              v(state),
+            ]),
+          ) as ExtractReturnTypes<R>;
+
+          cb(slice, store, newSelectedData);
+          break;
+        }
+      }
+    },
+  };
+}
+
+type ExtractReturnTypes<T extends Record<string, (...args: any[]) => any>> = {
+  [K in keyof T]: T[K] extends (i: any) => infer R ? R : never;
+};

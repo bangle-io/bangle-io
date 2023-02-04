@@ -4,14 +4,11 @@ import type {
   StoreTransaction,
   Transaction,
 } from './common';
+import type { Scheduler } from './effect';
 import { SideEffectsManager } from './effect';
 import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
 
-interface Scheduler {
-  schedule: (cb: () => void) => void;
-  cancel: () => void;
-}
 type DispatchTx<
   ST extends StoreTransaction<any, any>,
   SB extends AnySliceBase[],
@@ -76,9 +73,10 @@ export class Store<SB extends AnySliceBase[]> {
     this._dispatchTx(this, storeTx);
   };
 
+  private _abortController = new AbortController();
   private _destroyed = false;
+
   private _effectsManager: SideEffectsManager | undefined;
-  private _runId = 0;
 
   constructor(
     public state: StoreState<SB>,
@@ -89,20 +87,37 @@ export class Store<SB extends AnySliceBase[]> {
     disableSideEffects?: boolean,
   ) {
     if (!disableSideEffects) {
-      this._effectsManager = new SideEffectsManager(state._slices, state);
+      this._effectsManager = new SideEffectsManager(
+        state._slices,
+        state,
+        scheduler,
+      );
     }
+
+    this._abortController.signal.addEventListener(
+      'abort',
+      () => {
+        this.destroy();
+      },
+      {
+        once: true,
+      },
+    );
   }
 
   get destroyed() {
     return this._destroyed;
   }
 
-  get runId() {
-    return this._runId;
-  }
-
   destroy() {
     this._destroyed = true;
+    this._abortController.abort();
+  }
+
+  onDestroy(cb: () => void) {
+    this._abortController.signal.addEventListener('abort', cb, {
+      once: true,
+    });
   }
 
   updateState(newState: StoreState<SB>) {
@@ -111,11 +126,10 @@ export class Store<SB extends AnySliceBase[]> {
     }
 
     this.state = newState;
-
     const tx = this.state.transaction;
 
     if (tx) {
-      this._effectsManager?.runSideEffects(this, ++this._runId, tx.sliceKey);
+      this._effectsManager?.runSideEffects(this, tx.sliceKey);
     }
   }
 }
