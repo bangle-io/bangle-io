@@ -1,6 +1,8 @@
 import { key, slice } from '../create';
 import { timeoutSchedular } from '../effect';
+import { StoreState } from '../state';
 import { ReducedStore, Store } from '../store';
+import { waitUntil } from '../test-helpers';
 
 const testSlice1 = slice({
   key: key('test-1', [], { num: 4 }),
@@ -84,5 +86,46 @@ describe('ReducedStore', () => {
 
     expect(reducedStore.destroyed).toBe(true);
     expect(myStore.destroyed).toBe(true);
+  });
+
+  test('reduced store props', async () => {
+    let providedStore: ReducedStore<any> | null = null;
+    let providedPrevState: ReducedStore<any>['state'] | null = null;
+    const mySlice = slice({
+      key: key('my-slice', [], { num: 4 }),
+      actions: {
+        addOne: () => (state) => ({ ...state, num: state.num + 1 }),
+      },
+      effects: {
+        update: (sl, store, prevState) => {
+          providedStore = store;
+          providedPrevState = store.state;
+        },
+      },
+    });
+
+    const myStore = Store.create({
+      storeName: 'myStore',
+      scheduler: timeoutSchedular(0),
+      state: {
+        slices: [testSlice1, testSlice2, testSlice3, mySlice],
+      },
+    });
+
+    const redStore = myStore.getReducedStore([mySlice]);
+
+    redStore.dispatch(mySlice.actions.addOne());
+
+    await waitUntil(myStore.getReducedStore([mySlice]), (state) => {
+      return mySlice.getState(state).num === 5;
+    });
+
+    expect(providedStore!.state).toEqual(myStore.state);
+    expect(providedPrevState).toBeInstanceOf(StoreState);
+    expect(mySlice.getState(providedPrevState!)).toMatchInlineSnapshot(`
+      {
+        "num": 5,
+      }
+    `);
   });
 });

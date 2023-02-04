@@ -179,7 +179,7 @@ abstract class EffectHandler {
     public readonly initStoreState: StoreState,
     protected _slice: AnySliceBase,
   ) {
-    this.sliceAndDeps = [_slice, ...this._slice.key.dependencies];
+    this.sliceAndDeps = [...this._slice.key.dependencies, _slice];
   }
 
   get sliceKey() {

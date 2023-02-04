@@ -1,6 +1,6 @@
-import type { Store } from './store';
+import type { ReducedStore, Store } from './store';
 
-export function waitUntil<S extends Store<any>>(
+export function waitUntil<S extends Store<any> | ReducedStore<any>>(
   store: S,
   condition: (state: S['state']) => boolean,
   waitUntil = 100,
