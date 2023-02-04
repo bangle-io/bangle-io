@@ -1,11 +1,17 @@
 import type { ActionSerializer } from './action-serializer';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
-import type { Store } from './store';
+import type { ReducedStore } from './store';
 
 export type AnyFn = (...args: any[]) => any;
 
 export type AnySliceBase = SliceBase<string, unknown>;
+
+export type ExtractReturnTypes<
+  T extends Record<string, (...args: any[]) => any>,
+> = {
+  [K in keyof T]: T[K] extends (i: any) => infer R ? R : never;
+};
 
 export type ReplaceReturnType<T extends (...args: any) => any, R> = T extends (
   ...args: infer P
@@ -65,18 +71,14 @@ export interface SliceKeyBase<K extends string, SS> {
 export interface EffectsBase<SL extends Slice = any> {
   updateSync?: (
     sl: SL,
-    store: Store<Array<SL | InferSliceDep<SL>>>,
-    prevStoreState: StoreState<Array<SL | InferSliceDep<SL>>>,
+    store: ReducedStore<SL | InferSliceDep<SL>>,
+    prevStoreState: ReducedStore<SL | InferSliceDep<SL>>['state'],
   ) => void;
   update?: (
     sl: SL,
-    store: Store<Array<SL | InferSliceDep<SL>>>,
-    prevStoreState: StoreState<Array<SL | InferSliceDep<SL>>>,
+    store: ReducedStore<SL | InferSliceDep<SL>>,
+    prevStoreState: ReducedStore<SL | InferSliceDep<SL>>['state'],
   ) => void;
-  once?: (
-    sl: SL,
-    store: Store<Array<SL | InferSliceDep<SL>>>,
-  ) => void | (() => void);
 }
 
 export interface SliceBase<K extends string, SS> {

@@ -1,7 +1,7 @@
 import { calcReverseDependencies, flattenReverseDependencies } from './common';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
-import type { Store } from './store';
+import type { ReducedStore, Store } from './store';
 import type { AnySliceBase, EffectsBase, InferSliceDep } from './types';
 
 export interface Scheduler {
@@ -173,11 +173,14 @@ export class SideEffectsManager {
 }
 
 abstract class EffectHandler {
+  sliceAndDeps: AnySliceBase[];
   constructor(
     protected _effect: EffectsBase,
     public readonly initStoreState: StoreState,
     protected _slice: AnySliceBase,
-  ) {}
+  ) {
+    this.sliceAndDeps = [_slice, ...this._slice.key.dependencies];
+  }
 
   get sliceKey() {
     return this._slice.key.key;
@@ -197,7 +200,11 @@ export class SyncUpdateEffectHandler extends EffectHandler {
     this._syncPreviouslySeenState = store.state;
 
     // TODO error handling
-    this._effect.updateSync?.(this._slice as Slice, store, previouslySeenState);
+    this._effect.updateSync?.(
+      this._slice as Slice,
+      store.getReducedStore(this.sliceAndDeps as Slice[]),
+      previouslySeenState,
+    );
   }
 }
 
@@ -209,47 +216,10 @@ export class UpdateEffectHandler extends EffectHandler {
     this._previouslySeen = store.state;
 
     // TODO error handling
-    this._effect.update?.(this._slice as Slice, store, previouslySeenState);
+    this._effect.update?.(
+      this._slice as Slice,
+      store.getReducedStore(this.sliceAndDeps as Slice[]),
+      previouslySeenState,
+    );
   }
 }
-
-export function updateEffect<
-  SL extends Slice,
-  R extends Record<
-    string,
-    (arg: StoreState<Array<SL | InferSliceDep<SL>>>) => any
-  >,
->(
-  selectors: R,
-  cb: (
-    sl: SL,
-    store: Store<Array<SL | InferSliceDep<SL>>>,
-    selectedVal: ExtractReturnTypes<R>,
-  ) => void,
-): EffectsBase<SL> {
-  return {
-    update: (slice, store, previouslySeenState) => {
-      const state = store.state;
-      for (const calcState of Object.values(selectors)) {
-        const newVal = calcState(state);
-        const oldVal = calcState(previouslySeenState);
-
-        if (newVal !== oldVal) {
-          const newSelectedData = Object.fromEntries(
-            Array.from(Object.entries(selectors)).map(([k, v]) => [
-              k,
-              v(state),
-            ]),
-          ) as ExtractReturnTypes<R>;
-
-          cb(slice, store, newSelectedData);
-          break;
-        }
-      }
-    },
-  };
-}
-
-type ExtractReturnTypes<T extends Record<string, (...args: any[]) => any>> = {
-  [K in keyof T]: T[K] extends (i: any) => infer R ? R : never;
-};

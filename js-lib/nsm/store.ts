@@ -115,6 +115,15 @@ export class Store<SB extends AnySliceBase[]> {
     this._abortController.abort();
   }
 
+  /**
+   * Create a new store that only has access to the given slices
+   * @param slices
+   * @returns
+   */
+  getReducedStore<SB extends Slice>(slices: SB[]): ReducedStore<SB> {
+    return new ReducedStore(this, slices);
+  }
+
   onDestroy(cb: () => void) {
     this._abortController.signal.addEventListener('abort', cb, {
       once: true,
@@ -137,12 +146,21 @@ export class Store<SB extends AnySliceBase[]> {
 
 export class ReducedStore<SB extends Slice> {
   dispatch = (tx: Transaction<SB['key']['key'], any>) => {
+    // TODO add a developer check to make sure tx slice is actually allowed
     this._store.dispatch(tx);
   };
 
-  state: StoreState<SB[]>;
+  constructor(private _store: Store<any>, private _slices: SB[]) {}
 
-  constructor(slices: SB[], private _store: Store<any>) {
-    this.state = this._store.state;
+  get destroyed() {
+    return this._store.destroyed;
+  }
+
+  get state(): StoreState<SB[]> {
+    return this._store.state;
+  }
+
+  destroy() {
+    this._store.destroy();
   }
 }
