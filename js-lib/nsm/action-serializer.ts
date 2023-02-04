@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 
-import type { AnyFn, RawAction, SelectorFn } from './common';
 import type { Slice, SliceKey } from './slice';
+import type { AnyFn, RawAction, SelectorFn } from './types';
 import { zodFindUnsafeTypes } from './zod';
 
 export type ActionSerialData<P extends any[]> = {

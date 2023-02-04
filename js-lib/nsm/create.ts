@@ -1,8 +1,8 @@
 // 3 Generics that are optional
 
-import type { EffectsBase, RawAction, SelectorFn } from './common';
 import type { SliceConfig } from './slice';
 import { Slice, SliceKey } from './slice';
+import type { EffectsBase, RawAction, SelectorFn } from './types';
 
 export function key<K extends string, SS extends object, DS extends Slice[]>(
   key: K,

@@ -1,5 +1,5 @@
-import type { SliceBase } from './common';
 import type { StoreState } from './state';
+import type { SliceBase } from './types';
 
 export function throwSliceStateNotFound(
   slice: SliceBase<any, any>,

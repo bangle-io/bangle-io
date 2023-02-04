@@ -1,17 +1,17 @@
 // import { actionToActionSnapshot, Slice, SliceKey } from '../slice';
 
+import { expectType } from '../common';
+import { key, slice } from '../create';
+import type { Slice } from '../slice';
+import { parseRawActions, testOverrideSlice } from '../slice';
+import { StoreState } from '../state';
 import type {
   Action,
   EffectsBase,
   RawAction,
   SelectorFn,
   Transaction,
-} from '../common';
-import { expectType } from '../common';
-import { key, slice } from '../create';
-import type { Slice } from '../slice';
-import { parseRawActions, testOverrideSlice } from '../slice';
-import { StoreState } from '../state';
+} from '../types';
 
 const testSliceKey1 = key('test-1', [], { num: 4 });
 const testSlice1 = slice({

@@ -1,9 +1,9 @@
-import type { RawAction } from '../common';
 import { expectType } from '../common';
 import { key, slice } from '../create';
 import { timeoutSchedular } from '../effect';
 import { Store } from '../store';
 import { waitUntil } from '../test-helpers';
+import type { RawAction } from '../types';
 
 function sleep(t = 20): Promise<void> {
   return new Promise((res) => setTimeout(res, t));

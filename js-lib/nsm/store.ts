@@ -1,13 +1,14 @@
+import type { Scheduler } from './effect';
+import { SideEffectsManager } from './effect';
+import type { Slice } from './slice';
+import type { StoreStateConfig } from './state';
+import { StoreState } from './state';
 import type {
   AnySliceBase,
   InferSlicesKey,
   StoreTransaction,
   Transaction,
-} from './common';
-import type { Scheduler } from './effect';
-import { SideEffectsManager } from './effect';
-import type { StoreStateConfig } from './state';
-import { StoreState } from './state';
+} from './types';
 
 type DispatchTx<
   ST extends StoreTransaction<any, any>,
@@ -131,5 +132,17 @@ export class Store<SB extends AnySliceBase[]> {
     if (tx) {
       this._effectsManager?.runSideEffects(this, tx.sliceKey);
     }
+  }
+}
+
+export class ReducedStore<SB extends Slice> {
+  dispatch = (tx: Transaction<SB['key']['key'], any>) => {
+    this._store.dispatch(tx);
+  };
+
+  state: StoreState<SB[]>;
+
+  constructor(slices: SB[], private _store: Store<any>) {
+    this.state = this._store.state;
   }
 }

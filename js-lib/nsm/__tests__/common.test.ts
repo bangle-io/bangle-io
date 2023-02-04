@@ -1,10 +1,10 @@
 import { ActionSerializer } from '../action-serializer';
-import type { AnySliceBase } from '../common';
 import {
   calcDependencies,
   calcReverseDependencies,
   flattenReverseDependencies,
 } from '../common';
+import type { AnySliceBase } from '../types';
 
 const actionSerializer = new ActionSerializer(
   {

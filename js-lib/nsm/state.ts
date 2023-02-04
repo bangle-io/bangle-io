@@ -3,7 +3,7 @@ import type {
   InferSlicesKey,
   ResolveSliceIfRegistered,
   Transaction,
-} from './common';
+} from './types';
 
 interface StoreStateOptions {
   debug?: boolean;
