@@ -1,3 +1,4 @@
+import { CORE_ACTION_ON_READY } from './constants';
 import type { Scheduler } from './effect';
 import { SideEffectsManager } from './effect';
 import type { Slice } from './slice';
@@ -45,7 +46,7 @@ export class Store<SB extends AnySliceBase> {
       state = StoreState.create(state);
     }
 
-    return new Store(
+    const store = new Store(
       state,
       storeName,
       dispatchTx,
@@ -53,6 +54,17 @@ export class Store<SB extends AnySliceBase> {
       onError,
       disableSideEffects,
     );
+
+    // Trigger some core actions
+    for (const slice of state._slices) {
+      let val = (slice as unknown as Slice).actions?.[CORE_ACTION_ON_READY]?.();
+
+      if (val) {
+        store.dispatch(val);
+      }
+    }
+
+    return store;
   }
 
   dispatch = (tx: Transaction<SB['key']['key'], any>) => {
