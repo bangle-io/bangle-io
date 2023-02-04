@@ -2,15 +2,14 @@ import { z } from 'zod';
 
 import { serialAction } from '../action-serializer';
 import { expectType } from '../common';
-import { slice } from '../create';
+import { key, slice } from '../create';
 import { zodFindUnsafeTypes } from '../zod';
 
 test('checks work', () => {
   let case1 = slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
     actions: {
       nonSerial: (payload: string) => (state) => state,
       serial: serialAction(z.string(), (payload: string) => (state) => state),
@@ -20,10 +19,9 @@ test('checks work', () => {
   expect(case1._actionSerializer.isSyncReady()).toBe(false);
 
   let case2 = slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
     actions: {
       serial: serialAction(z.string(), (payload) => (state) => state),
     },
@@ -32,29 +30,27 @@ test('checks work', () => {
   expect(case2._actionSerializer.isSyncReady()).toBe(true);
 
   let case3 = slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
     actions: {},
   });
 
   expect(case3._actionSerializer.isSyncReady()).toBe(true);
 
   let case4 = slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
+    actions: {},
   });
 
   expect(case4._actionSerializer.isSyncReady()).toBe(true);
 
   let case5 = slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
     actions: {
       serial: serialAction(z.string(), (payload) => (state) => state),
       serial2: serialAction(z.string(), (payload) => (state) => state),
@@ -66,10 +62,9 @@ test('checks work', () => {
 
 test('typing is correct', () => {
   slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
     actions: {
       serial: serialAction(z.string(), (payload) => {
         // @ts-expect-error payload should not be any
@@ -99,10 +94,9 @@ test('typing is correct', () => {
 
 test('serialization works', () => {
   let mySlice = slice({
-    key: 'ji',
-    initState: {
+    key: key('ji', [], {
       magic: 3,
-    },
+    }),
     actions: {
       myAction1: serialAction(
         z.object({
@@ -231,10 +225,9 @@ describe('zodFindUnsafeTypes', () => {
   test('works with action', () => {
     expect(() =>
       slice({
-        key: 'ji',
-        initState: {
+        key: key('ji', [], {
           magic: 3,
-        },
+        }),
         actions: {
           myAction1: serialAction(
             z.object({

@@ -1,11 +1,10 @@
 import { expectType } from '../common';
-import { slice } from '../create';
+import { key, slice } from '../create';
 import { testOverrideSlice } from '../slice';
 import { StoreState } from '../state';
 
 const testSlice1 = slice({
-  key: 'test-1',
-  initState: { num: 4 },
+  key: key('test-1', [], { num: 4 }),
   actions: {
     increment: (opts: { increment: boolean }) => (state) => {
       return { ...state, num: state.num + (opts.increment ? 1 : 0) };
@@ -17,8 +16,7 @@ const testSlice1 = slice({
 });
 
 const testSlice2 = slice({
-  key: 'test-2',
-  initState: { name: 'tame' },
+  key: key('test-2', [], { name: 'tame' }),
   actions: {
     prefix: (prefix: string) => (state) => {
       return { ...state, name: prefix + state.name };
@@ -33,22 +31,19 @@ const testSlice2 = slice({
 });
 
 const depTestSlice1 = slice({
-  key: 'dep-test-1',
-  initState: { myDep: 4, myDepStr: 'hi' },
+  key: key('dep-test-1', [testSlice1], { myDep: 4, myDepStr: 'hi' }),
   actions: {
     increment: () => (state, storeState) => ({
       ...state,
       myDep: state.myDep + 1 + testSlice1.getState(storeState).num,
     }),
   },
-  dependencies: [testSlice1],
 });
 
 describe('applyTransaction', () => {
   test('applyTransaction works', () => {
     const mySlice = slice({
-      key: 'test',
-      initState: { num: 1 },
+      key: key('test', [], { num: 1 }),
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };
@@ -86,21 +81,16 @@ describe('applyTransaction', () => {
 
   test('applyTransaction works with dependencies', () => {
     const sliceDep1 = slice({
-      key: 'test-dep1',
-      initState: { num: 50 },
+      key: key('test-dep1', [], { num: 50 }),
       actions: {},
     });
-
     const sliceDep2 = slice({
-      key: 'test-dep2',
-      initState: { num: 3 },
+      key: key('test-dep2', [], { num: 3 }),
       actions: {},
     });
 
     const mySlice = slice({
-      key: 'test',
-      initState: { num: 1 },
-      dependencies: [sliceDep1, sliceDep2],
+      key: key('test', [sliceDep1, sliceDep2], { num: 1 }),
       actions: {
         myAction: (num: number) => (state, storeState) => {
           // @ts-expect-error - should not allow access of any unknown field in the state
@@ -143,8 +133,7 @@ describe('applyTransaction', () => {
 describe('validations', () => {
   test('throws error if slice key not unique', () => {
     const mySlice = slice({
-      key: 'test',
-      initState: { num: 1 },
+      key: key('test', [], { num: 1 }),
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };
@@ -153,8 +142,7 @@ describe('validations', () => {
     });
 
     const mySlice2 = slice({
-      key: 'test',
-      initState: { num: 1 },
+      key: key('test', [], { num: 1 }),
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };
@@ -171,14 +159,11 @@ describe('validations', () => {
 
   test('throws error if slice dependency is not registered', () => {
     const sliceDep = slice({
-      key: 'test-dep',
-      initState: { num: 1 },
+      key: key('test-dep', [], { num: 1 }),
       actions: {},
     });
     const mySlice = slice({
-      key: 'test',
-      initState: { num: 1 },
-      dependencies: [sliceDep],
+      key: key('test', [sliceDep], { num: 1 }),
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };
@@ -197,14 +182,11 @@ describe('validations', () => {
 
   test('throws error if slice dependency is not registered before', () => {
     const sliceDep = slice({
-      key: 'test-dep',
-      initState: { num: 1 },
+      key: key('test-dep', [], { num: 1 }),
       actions: {},
     });
     const mySlice = slice({
-      key: 'test',
-      initState: { num: 1 },
-      dependencies: [sliceDep],
+      key: key('test', [sliceDep], { num: 1 }),
       actions: {
         myAction: (num: number) => (state) => {
           return { ...state, num: num + state.num };
@@ -225,14 +207,12 @@ describe('validations', () => {
 describe('test override helper', () => {
   test('overriding init state works', () => {
     const slice1 = slice({
-      key: 'test1',
-      initState: { num: 1 },
+      key: key('test1', [], { num: 1 }),
       actions: {},
     });
 
     const slice2 = slice({
-      key: 'test2',
-      initState: { num: 2 },
+      key: key('test2', [], { num: 2 }),
       actions: {},
     });
 
@@ -252,14 +232,11 @@ describe('test override helper', () => {
 
   test('overriding effects works', () => {
     const slice1 = slice({
-      key: 'test1',
-      initState: { num: 1 },
+      key: key('test1', [], { num: 1 }),
       actions: {},
-      effects: [
-        {
-          update: () => {},
-        },
-      ],
+      effects: {
+        update: (sl) => {},
+      },
     });
 
     expect(testOverrideSlice(slice1, { effects: [] }).effects).toHaveLength(0);
@@ -269,10 +246,10 @@ describe('test override helper', () => {
 
   test('overriding dependencies', () => {
     const slice1 = slice({
-      key: 'test1',
-      initState: { num: 1 },
+      key: key('test1', [], { num: 1 }),
       actions: {},
     });
+
     expect([
       ...testOverrideSlice(slice1, { dependencies: [testSlice1] })
         ._flatDependencies,
@@ -298,8 +275,8 @@ describe('State creation', () => {
 
   test('with a slice', () => {
     const mySlice = slice({
-      key: 'mySlice',
-      initState: { val: null },
+      key: key('mySlice', [], { val: null }),
+      actions: {},
     });
 
     const appState = StoreState.create({ slices: [mySlice] });
@@ -310,8 +287,8 @@ describe('State creation', () => {
 
   test('throws error if action not found', () => {
     const mySlice = slice({
-      key: 'mySlice',
-      initState: { val: null },
+      key: key('mySlice', [], { val: null }),
+      actions: {},
     });
 
     const appState = StoreState.create({ slices: [mySlice] });
@@ -327,13 +304,12 @@ describe('State creation', () => {
 
   test('applying action preserves states of those who donot have apply', () => {
     const mySlice = slice({
-      key: 'mySlice',
-      initState: { num: 0 },
+      key: key('mySlice', [], { num: 0 }),
+      actions: {},
     });
 
     const mySlice2 = slice({
-      key: 'mySlice2',
-      initState: { num: 0 },
+      key: key('mySlice2', [], { num: 0 }),
       actions: {
         updateNum: (num: number) => (state) => {
           return { ...state, num };
@@ -350,16 +326,23 @@ describe('State creation', () => {
   });
 
   test('applying action with selectors', () => {
-    const mySlice1 = slice({
-      key: 'mySlice1',
-      initState: { char: '1' },
-      selectors: {
+    const key1 = key(
+      'mySlice',
+      [],
+      {
+        char: '1',
+      },
+      {
         s1: (state) => {
           return {
             val1_1: state.char,
           };
         },
       },
+    );
+
+    const mySlice1 = slice({
+      key: key1,
       actions: {
         moreChar: (num: number) => (state) => {
           return {
@@ -376,32 +359,40 @@ describe('State creation', () => {
     });
 
     const mySlice2 = slice({
-      key: 'mySlice2',
-      dependencies: [mySlice1],
-      initState: { char: '2' },
-      selectors: {
-        s2: (state, storeState) => {
-          return {
-            val2_1: mySlice1.resolveSelectors(storeState).s1,
-            val2_2: state.char,
-          };
+      key: key(
+        'mySlice2',
+        [mySlice1],
+        {
+          char: '2',
         },
-      },
+        {
+          s2: (state, storeState) => {
+            return {
+              val2_1: mySlice1.resolveSelectors(storeState).s1,
+              val2_2: state.char,
+            };
+          },
+        },
+      ),
+      actions: {},
     });
 
     const mySlice3 = slice({
-      key: 'mySlice3',
-      dependencies: [mySlice1, mySlice2],
-      initState: { char: '3' },
-      selectors: {
-        s3: (state, storeState) => {
-          return {
-            val3_2: mySlice2.resolveSelectors(storeState).s2,
-            val3_1: mySlice1.resolveSelectors(storeState).s1,
-            val3_3: state.char,
-          };
+      key: key(
+        'mySlice3',
+        [mySlice1, mySlice2],
+        { char: '3' },
+        {
+          s3: (state, storeState) => {
+            return {
+              val3_2: mySlice2.resolveSelectors(storeState).s2,
+              val3_1: mySlice1.resolveSelectors(storeState).s1,
+              val3_3: state.char,
+            };
+          },
         },
-      },
+      ),
+      actions: {},
     });
 
     const appState = StoreState.create({

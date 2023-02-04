@@ -1,10 +1,9 @@
 import { expectType } from '../common';
-import { slice } from '../create';
+import { key, slice } from '../create';
 import { Store } from '../store';
 
 const testSlice1 = slice({
-  key: 'test-1',
-  initState: { num: 4 },
+  key: key('test-1', [], { num: 4 }),
   actions: {
     increment: (opts: { increment: boolean }) => (state) => {
       return { ...state, num: state.num + (opts.increment ? 1 : 0) };
@@ -16,8 +15,7 @@ const testSlice1 = slice({
 });
 
 const testSlice2 = slice({
-  key: 'test-2',
-  initState: { name: 'tame' },
+  key: key('test-2', [], { name: 'tame' }),
   actions: {
     prefix: (prefix: string) => (state) => {
       return { ...state, name: prefix + state.name };
@@ -32,8 +30,7 @@ const testSlice2 = slice({
 });
 
 const testSlice3 = slice({
-  key: 'test-3',
-  initState: { name: 'tame' },
+  key: key('test-3', [], { name: 'tame' }),
   actions: {
     lowercase: () => (state) => {
       return { ...state, name: state.name.toLocaleLowerCase() };
@@ -118,42 +115,36 @@ test('custom dispatch', () => {
 describe('effects', () => {
   let callOrder: string[] = [];
   test('sync update call ordering should be correct', async () => {
+    const e1Key = key('e1', [], { num: 4 });
     const e1 = slice({
-      key: 'e1',
-      initState: { num: 4 },
+      key: e1Key,
       actions: {
         increment: () => (state) => {
           return { ...state, num: state.num + 2 };
         },
       },
-      effects: [
-        {
-          updateSync(sl, store, prevStore) {
-            callOrder.push('s1');
-            sl.getState(store.state);
-          },
+      effects: {
+        updateSync(sl, store, prevStore) {
+          callOrder.push('s1');
+          sl.getState(store.state);
         },
-      ],
+      },
     });
 
     const e2 = slice({
-      key: 'e2',
-      initState: { num: 4 },
-      dependencies: [e1],
+      key: key('e2', [e1], { num: 4 }),
       actions: {
         increment: () => (state) => {
           return { ...state, num: state.num + 1 };
         },
       },
-      effects: [
-        {
-          updateSync(sl, store, prevStore) {
-            callOrder.push('s2');
+      effects: {
+        updateSync(sl, store, prevStore) {
+          callOrder.push('s2');
 
-            sl.getState(store.state);
-          },
+          sl.getState(store.state);
         },
-      ],
+      },
     });
     const store = Store.create({
       storeName: 'test-store',

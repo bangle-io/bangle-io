@@ -62,7 +62,7 @@ export interface SliceKeyBase<K extends string, SS> {
   dependencies: Array<SliceBase<string, unknown>>;
 }
 
-export interface EffectsBase<SL extends Slice = Slice> {
+export interface EffectsBase<SL extends Slice = any> {
   updateSync?: (
     sl: SL,
     store: Store<Array<SL | InferSliceDep<SL>>>,
@@ -84,7 +84,7 @@ export type AnySliceBase = SliceBase<string, unknown>;
 export interface SliceBase<K extends string, SS> {
   key: SliceKeyBase<K, SS>;
   fingerPrint: string;
-  effects?: Array<EffectsBase<any>>;
+  effects?: EffectsBase[];
   // TODO make any to SS
   _actionSerializer: ActionSerializer<K>;
 }

@@ -20,17 +20,27 @@ export class SliceKey<
 > implements SliceKeyBase<K, SS>
 {
   selectors: SE;
+
   constructor(
     public key: K,
+    public dependencies: DS,
     public initState: SS,
     selectors: SE,
-    public dependencies: DS,
   ) {
     // NOTE: to allow accessing other selectors, but typing doesnt work
     this.selectors = mapObjectValues(selectors, (selector) =>
       selector.bind(selectors),
     ) as SE;
   }
+
+  // /**
+  //  * Helper function to get a typed action record
+  //  * @param actions
+  //  * @returns
+  //  */
+  // action<T extends any[]>(action: RawAction<T, SS, DS>): RawAction<T, SS, DS> {
+  //   return action;
+  // }
 }
 
 type ResolveStoreStateIfRegistered<
@@ -51,7 +61,7 @@ export interface SliceConfig {}
 export class Slice<
   K extends string = any,
   SS extends object = any,
-  DS extends Slice[] = any[],
+  DS extends Slice[] = any,
   A extends Record<string, RawAction<any[], SS, DS>> = any,
   SE extends Record<string, SelectorFn<SS, DS, any>> = any,
 > implements SliceBase<K, SS>
@@ -65,9 +75,9 @@ export class Slice<
 
   constructor(
     public key: SliceKey<K, SS, SE, DS>,
-    public _rawActions: A = {} as A,
+    public _rawActions: A,
     // Typescript acts weird if I use EffectsBase<Slice<x,y,z...>>
-    public effects: Array<EffectsBase<any>>,
+    public effects: Array<EffectsBase<Slice>>,
     public config: SliceConfig,
   ) {
     this.fingerPrint = `${key.key}(${(key.dependencies || [])
@@ -122,6 +132,19 @@ export class Slice<
       ...this.resolveSelectors(storeState),
     };
   }
+
+  protected _fork(opts: {
+    key?: SliceKey<K, SS, SE, DS>;
+    effects?: EffectsBase[];
+    config?: SliceConfig;
+  }): Slice<K, SS, DS, A, SE> {
+    return new Slice(
+      opts.key || this.key,
+      this._rawActions,
+      opts.effects || this.effects,
+      opts.config || this.config,
+    );
+  }
 }
 
 export type RawActionsToActions<
@@ -167,15 +190,15 @@ export function testOverrideSlice<SL extends Slice>(
     // since this is for testing, we can allow any slice
     dependencies?: Slice[];
     initState?: SL['key']['initState'];
-    effects?: Array<EffectsBase<any>>;
+    effects?: EffectsBase[];
     config?: SliceConfig;
   },
 ) {
   const key = new SliceKey(
     slice.key.key,
+    dependencies,
     initState,
     slice.selectors,
-    dependencies,
   );
 
   return new Slice(key, slice._rawActions, effects, config);
