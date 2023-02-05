@@ -4,7 +4,8 @@ import { SideEffectsManager } from './effect';
 import type { Slice } from './slice';
 import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
-import type { AnySliceBase, Transaction } from './types';
+import type { Transaction } from './transaction';
+import type { AnySliceBase } from './types';
 
 type DispatchTx<TX extends Transaction<any, any>, SB extends AnySliceBase> = (
   store: Store<SB>,
@@ -16,6 +17,7 @@ function incrementalId() {
   return counter++;
 }
 
+export const STORE_TX_ID = 'store-tx-id';
 export class Store<SB extends AnySliceBase> {
   static create<SB extends AnySliceBase>({
     disableSideEffects = false,
@@ -73,12 +75,7 @@ export class Store<SB extends AnySliceBase> {
     }
     // TODO add a check to make sure tx is actually allowed
     // based on the slice dependencies
-    // const storeTx = {
-    //   ...tx,
-    //   id:
-    // };
-
-    tx.setMetadata('store-tx-id', this.storeName + '-' + incrementalId());
+    tx.setMetadata(STORE_TX_ID, this.storeName + '-' + incrementalId());
 
     this._dispatchTx(this, tx);
   };
@@ -101,6 +98,11 @@ export class Store<SB extends AnySliceBase> {
         state._slices,
         state,
         scheduler,
+        // (eff, orig) => {
+        //   console.log(
+        //     `Side effect ${eff.sliceKey} triggered by ${orig.join(',')}`,
+        //   );
+        // },
       );
     }
 
@@ -146,7 +148,12 @@ export class Store<SB extends AnySliceBase> {
 
     this.state = newState;
 
-    this._effectsManager?.runSideEffects(this, tx?.sliceKey);
+    if (tx) {
+      this._effectsManager?.queueSideEffectExecution(this, {
+        txOriginSliceKey: tx.sliceKey,
+        txOriginId: tx.originator,
+      });
+    }
   }
 }
 

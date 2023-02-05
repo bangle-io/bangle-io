@@ -2,7 +2,7 @@ import { expectType } from '../common';
 import { key, slice } from '../create';
 import { testOverrideSlice } from '../slice';
 import { StoreState } from '../state';
-import { Transaction } from '../types';
+import { Transaction } from '../transaction';
 
 const testSlice1 = slice({
   key: key('test-1', [], { num: 4 }),

@@ -1,6 +1,7 @@
 import { ActionSerializer } from './action-serializer';
 import { mapObjectValues } from './common';
 import type { StoreState } from './state';
+import { Transaction } from './transaction';
 import type {
   Action,
   AnyFn,
@@ -10,7 +11,6 @@ import type {
   SliceBase,
   SliceKeyBase,
 } from './types';
-import { Transaction } from './types';
 
 export class SliceKey<
   K extends string,

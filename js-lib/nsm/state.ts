@@ -1,8 +1,5 @@
-import type {
-  AnySliceBase,
-  ResolveSliceIfRegistered,
-  Transaction,
-} from './types';
+import type { Transaction } from './transaction';
+import type { AnySliceBase, ResolveSliceIfRegistered } from './types';
 
 interface StoreStateOptions {
   debug?: boolean;

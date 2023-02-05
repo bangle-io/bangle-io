@@ -1,5 +1,4 @@
 import { calcReverseDependencies, flattenReverseDependencies } from './common';
-import { SOURCE_SLICE_KEY_ANY } from './constants';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
 import type { Store } from './store';
@@ -30,6 +29,8 @@ export const syncSchedular: () => Scheduler = () => ({
 });
 
 export class SideEffectsManager {
+  _debugWhoRanEffect = new WeakMap<EffectHandler, string[]>();
+
   private _effects: {
     queue: {
       syncUpdate: Set<SyncUpdateEffectHandler>;
@@ -56,6 +57,9 @@ export class SideEffectsManager {
     slices: AnySliceBase[],
     initState: StoreState,
     private _schedular: Scheduler = idleCallbackScheduler(15),
+    public readonly debug:
+      | ((effect: EffectHandler, originators: string[]) => void)
+      | undefined = undefined,
   ) {
     // TODO ensure deps are valid and don't have circular dependencies
     // nice to have if reverse dep are sorted in the order slice are defined
@@ -76,10 +80,17 @@ export class SideEffectsManager {
     });
   }
 
-  runSideEffects(store: Store<any>, sourceSliceKey?: string) {
-    if (!sourceSliceKey) {
-      return;
-    }
+  queueSideEffectExecution(
+    store: Store<any>,
+    {
+      txOriginSliceKey,
+      txOriginId,
+    }: {
+      txOriginSliceKey: string;
+      txOriginId: string;
+    },
+  ) {
+    this._debugBeforeQueue(txOriginSliceKey, txOriginId);
 
     const { record, queue } = this._effects;
     // if there are no items in the queue that means
@@ -91,15 +102,15 @@ export class SideEffectsManager {
     const shouldRunUpdateEffects = queue.update.size === 0;
 
     // queue up effects of source slice to run
-    record.syncUpdate[sourceSliceKey]?.forEach((effect) => {
+    record.syncUpdate[txOriginSliceKey]?.forEach((effect) => {
       queue.syncUpdate.add(effect);
     });
-    record.update[sourceSliceKey]?.forEach((effect) => {
+    record.update[txOriginSliceKey]?.forEach((effect) => {
       queue.update.add(effect);
     });
 
     // queue up dependencies's effects to run
-    this._flatReverseDep[sourceSliceKey]?.forEach((revDepKey) => {
+    this._flatReverseDep[txOriginSliceKey]?.forEach((revDepKey) => {
       record.syncUpdate[revDepKey]?.forEach((effect) => {
         queue.syncUpdate.add(effect);
       });
@@ -119,6 +130,51 @@ export class SideEffectsManager {
         this._runLoop(store);
       });
     }
+  }
+
+  private _debugBeforeQueue(txOriginSliceKey: string, txOriginId: string) {
+    if (!this.debug) {
+    }
+    const { record } = this._effects;
+
+    const setDebug = (effect: EffectHandler) => {
+      let result = this._debugWhoRanEffect.get(effect);
+
+      if (!result) {
+        result = [];
+        this._debugWhoRanEffect.set(effect, result);
+      }
+      result.push(txOriginId);
+    };
+
+    record.syncUpdate[txOriginSliceKey]?.forEach((effect) => {
+      setDebug(effect);
+    });
+    record.update[txOriginSliceKey]?.forEach((effect) => {
+      setDebug(effect);
+    });
+
+    // queue up dependencies's effects to run
+    this._flatReverseDep[txOriginSliceKey]?.forEach((revDepKey) => {
+      record.syncUpdate[revDepKey]?.forEach((effect) => {
+        setDebug(effect);
+      });
+      record.update[revDepKey]?.forEach((effect) => {
+        setDebug(effect);
+      });
+    });
+  }
+
+  private _debugBeforeRunEffect(effect: EffectHandler) {
+    if (!this.debug) {
+      return;
+    }
+    const debugInfo = this._debugWhoRanEffect.get(effect);
+
+    if (debugInfo) {
+      this.debug(effect, debugInfo);
+    }
+    this._debugWhoRanEffect.delete(effect);
   }
 
   private _runLoop(store: Store<any>) {
@@ -149,6 +205,8 @@ export class SideEffectsManager {
       if (!iter.done) {
         const effect = iter.value;
         queue.syncUpdate.delete(effect);
+        this._debugBeforeRunEffect(effect);
+
         // TODO: error handling?
         effect.runSyncUpdate(store);
       }
@@ -168,6 +226,8 @@ export class SideEffectsManager {
 
       const effect = iter.value;
       queue.update.delete(effect);
+      this._debugBeforeRunEffect(effect);
+
       try {
         effect.runUpdate(store);
       } finally {

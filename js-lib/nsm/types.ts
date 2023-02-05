@@ -2,6 +2,7 @@ import type { ActionSerializer } from './action-serializer';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
 import type { ReducedStore } from './store';
+import type { Transaction } from './transaction';
 
 export type AnyFn = (...args: any[]) => any;
 
@@ -82,14 +83,4 @@ export interface SliceBase<K extends string, SS> {
   effects?: EffectsBase[];
   // TODO make any to SS
   _actionSerializer: ActionSerializer<K>;
-}
-
-export class Transaction<K extends string, P extends unknown[]> {
-  private _metadata: Record<string, unknown> = Object.create(null);
-
-  constructor(public sliceKey: K, public payload: P, public actionId: string) {}
-
-  setMetadata(key: string, val: unknown) {
-    this._metadata[key] = val;
-  }
 }

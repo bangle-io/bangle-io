@@ -1,7 +1,7 @@
 import { key, slice } from '../create';
 import { timeoutSchedular } from '../effect';
 import { StoreState } from '../state';
-import { ReducedStore, Store } from '../store';
+import { ReducedStore, Store, STORE_TX_ID } from '../store';
 import { waitUntil } from '../test-helpers';
 
 const testSlice1 = slice({
@@ -38,6 +38,30 @@ const testSlice3 = slice({
       return { ...state, name: state.name.toLocaleLowerCase() };
     },
   },
+});
+
+describe('store', () => {
+  test('works', () => {
+    const myStore = Store.create({
+      storeName: 'myStore',
+      scheduler: timeoutSchedular(0),
+      state: {
+        slices: [testSlice1, testSlice2, testSlice3],
+      },
+    });
+
+    const tx = testSlice1.actions.increment({ increment: true });
+
+    myStore.dispatch(tx);
+
+    expect(tx.getMetadata(STORE_TX_ID)).toBe('myStore-0');
+
+    const tx2 = testSlice1.actions.increment({ increment: true });
+
+    myStore.dispatch(tx2);
+
+    expect(tx2.getMetadata(STORE_TX_ID)).toBe('myStore-1');
+  });
 });
 
 describe('ReducedStore', () => {
