@@ -1,10 +1,5 @@
 import { expectType } from '../common';
-import {
-  changeEffect,
-  effect,
-  onceEffect,
-  syncOnceEffect,
-} from '../common-effects';
+import { changeEffect, onceEffect, syncOnceEffect } from '../common-effects';
 import { key, slice } from '../create';
 import { timeoutSchedular } from '../effect';
 import { Store } from '../store';
@@ -43,6 +38,9 @@ const testSlice2 = slice({
     },
     uppercase: () => (state) => {
       return { ...state, name: state.name.toUpperCase() };
+    },
+    age: (age: number) => (state) => {
+      return { ...state, age: state.age + age };
     },
   },
 });
@@ -166,16 +164,17 @@ describe('syncOnceEffect', () => {
   });
 });
 
-describe('effect', () => {
-  test('works', async () => {
-    const myEffect = effect(
+describe('changeEffect', () => {
+  test('types', async () => {
+    let fn = jest.fn();
+    const myEffect = changeEffect(
       'myEffect',
-      [testSlice1, testSlice2],
       {
-        numnum: (state) => testSlice1.getState(state).num,
-        foofoo: (state) => testSlice2.getState(state).name,
+        numnum: testSlice1.pick((state) => state.num),
+        foofoo: testSlice2.pick((state) => state.name),
       },
       (result, dispatch) => {
+        fn(result.numnum);
         // @ts-expect-error - should not be able to invalid keys
         result.xyz?.();
 
@@ -199,10 +198,14 @@ describe('effect', () => {
         slices: [testSlice1, testSlice2, testSlice3, myEffect],
       },
     });
-  });
-});
 
-describe('changeEffect', () => {
+    await sleep(5);
+
+    expect(fn).toBeCalledTimes(2);
+    expect(fn).nthCalledWith(1, 4);
+    // second update is thanks to myEffect
+    expect(fn).nthCalledWith(2, 5);
+  });
   test('works', async () => {
     let call = jest.fn();
     const myEffect = changeEffect(
@@ -314,5 +317,96 @@ describe('changeEffect', () => {
       ]
     `);
   });
+
+  describe('only updates when deps change', () => {
+    let fn = jest.fn();
+    beforeEach(() => {
+      fn = jest.fn();
+    });
+    const myEffect = changeEffect(
+      'myEffect',
+      {
+        age: testSlice2.pick((state) => state.age),
+      },
+      (result, dispatch) => {
+        fn(result.age);
+        // @ts-expect-error - should not be able to invalid keys
+        result.xyz?.();
+
+        expectType<number>(result.age);
+      },
+    );
+
+    test('called once on mount', async () => {
+      const store = Store.create({
+        storeName: 'test-store',
+        scheduler: timeoutSchedular(0),
+        state: {
+          slices: [testSlice1, testSlice2, testSlice3, myEffect],
+        },
+      });
+
+      await sleep(5);
+      expect(fn).toBeCalledTimes(1);
+      expect(fn).nthCalledWith(1, 4);
+    });
+
+    test('called once even if immediately dispatched', async () => {
+      const store = Store.create({
+        storeName: 'test-store',
+        scheduler: timeoutSchedular(0),
+        state: {
+          slices: [testSlice1, testSlice2, testSlice3, myEffect],
+        },
+      });
+
+      store.dispatch(testSlice2.actions.age(1));
+
+      await sleep(5);
+      expect(fn).toBeCalledTimes(1);
+      expect(fn).nthCalledWith(1, 5); // 5 because of the dispatch
+    });
+
+    test('is not called for irrelevant changes in the slice', async () => {
+      const store = Store.create({
+        storeName: 'test-store',
+        scheduler: timeoutSchedular(0),
+        state: {
+          slices: [testSlice1, testSlice2, testSlice3, myEffect],
+        },
+      });
+
+      await sleep(5);
+      expect(fn).toBeCalledTimes(1);
+
+      store.dispatch(testSlice2.actions.prefix('dad'));
+
+      await sleep(5);
+      expect(fn).toBeCalledTimes(1);
+      expect(testSlice2.getState(store.state)).toMatchInlineSnapshot(`
+        {
+          "age": 4,
+          "name": "dadtame",
+        }
+      `);
+    });
+
+    test('is not called is data does not change', async () => {
+      const store = Store.create({
+        storeName: 'test-store',
+        scheduler: timeoutSchedular(0),
+        state: {
+          slices: [testSlice1, testSlice2, testSlice3, myEffect],
+        },
+      });
+
+      await sleep(5);
+      expect(fn).toBeCalledTimes(1);
+
+      store.dispatch(testSlice2.actions.age(0));
+
+      await sleep(5);
+      expect(fn).toBeCalledTimes(1);
+    });
+  });
 });
-describe('changeSync', () => {});

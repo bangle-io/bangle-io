@@ -90,60 +90,6 @@ export const syncOnceEffect = <K extends string, DS extends Slice[]>(
   });
 };
 
-export const effect = <
-  K extends string,
-  DS extends Slice[],
-  ES extends Record<string, (state: ReducedStoreFromDS<DS>['state']) => any>,
->(
-  name: K,
-  deps: DS,
-  effectSelectors: ES,
-  cb: (
-    selectedVal: ExtractReturnTypes<ES>,
-    dispatch: ReducedStoreFromDS<DS>['dispatch'],
-    signal: AbortSignal,
-  ) => void | (() => void) | Promise<void>,
-): OpaqueSlice<K, DS> => {
-  const array = Object.entries(effectSelectors);
-  let prevCleanup: void | (() => void);
-  let prevAbort: void | AbortController;
-
-  return slice({
-    key: key(name, deps, {}),
-    actions: {},
-    effects: {
-      update(sl, store, prevStoreState) {
-        let hasNew = false;
-        let result = array.map(([k, v]) => {
-          const newVal = v(store.state);
-          const oldVal = v(prevStoreState);
-
-          if (!Object.is(newVal, oldVal)) {
-            hasNew = true;
-          }
-
-          return [k, newVal];
-        });
-
-        if (hasNew) {
-          prevCleanup?.();
-          prevAbort?.abort();
-          prevAbort = new AbortController();
-          let res = cb(
-            Object.fromEntries(result),
-            store.dispatch,
-            prevAbort.signal,
-          );
-
-          if (typeof res === 'function') {
-            prevCleanup = res;
-          }
-        }
-      },
-    },
-  });
-};
-
 export type ExtractSliceFromEffectSelectors<
   ES extends Record<string, [Slice, (storeState: StoreState) => any]>,
 > = ES extends Record<string, [infer S, (storeState: StoreState) => any]>
