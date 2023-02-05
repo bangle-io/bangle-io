@@ -84,13 +84,12 @@ export interface SliceBase<K extends string, SS> {
   _actionSerializer: ActionSerializer<K>;
 }
 
-export interface StoreTransaction<K extends string, P extends unknown[]>
-  extends Transaction<K, P> {
-  id: string;
-}
+export class Transaction<K extends string, P extends unknown[]> {
+  private _metadata: Record<string, unknown> = Object.create(null);
 
-export interface Transaction<K extends string, P extends unknown[]> {
-  sliceKey: K;
-  actionId: string;
-  payload: P;
+  constructor(public sliceKey: K, public payload: P, public actionId: string) {}
+
+  setMetadata(key: string, val: unknown) {
+    this._metadata[key] = val;
+  }
 }

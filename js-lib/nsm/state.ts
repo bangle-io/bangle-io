@@ -61,17 +61,7 @@ export class StoreState<SB extends AnySliceBase = any> {
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
 
-  protected _transaction: undefined | Transaction<string, unknown[]> =
-    undefined;
-
   constructor(public _slices: SB[], public opts?: StoreStateOptions) {}
-
-  /**
-   * Get the transaction that created this state
-   */
-  get transaction() {
-    return this._transaction;
-  }
 
   applyTransaction<P extends any[]>(
     tx: Transaction<SB['key']['key'], P>,
@@ -111,7 +101,7 @@ export class StoreState<SB extends AnySliceBase = any> {
     }
 
     // TODO: append-action
-    return this._fork(newState, tx);
+    return this._fork(newState);
   }
 
   getSliceState<SL extends AnySliceBase>(
@@ -126,13 +116,8 @@ export class StoreState<SB extends AnySliceBase = any> {
     return result;
   }
 
-  private _fork(
-    slicesState: StoreState['slicesCurrentState'],
-    tx: Transaction<string, unknown[]>,
-  ): StoreState {
+  private _fork(slicesState: StoreState['slicesCurrentState']): StoreState {
     const newInstance = new StoreState(this._slices, this.opts);
-
-    newInstance._transaction = tx;
     newInstance.slicesCurrentState = slicesState;
 
     return newInstance;

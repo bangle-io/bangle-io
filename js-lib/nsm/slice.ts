@@ -10,6 +10,7 @@ import type {
   SliceBase,
   SliceKeyBase,
 } from './types';
+import { Transaction } from './types';
 
 export class SliceKey<
   K extends string,
@@ -163,11 +164,7 @@ export function parseRawActions<
     actions,
     (action, actionName): Action<K, any> => {
       return (...payload) => {
-        return {
-          sliceKey: key,
-          actionId: actionName,
-          payload,
-        };
+        return new Transaction(key, payload, actionName);
       };
     },
   );

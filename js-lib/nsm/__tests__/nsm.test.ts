@@ -109,7 +109,7 @@ test('custom dispatch', () => {
         return;
       }
 
-      store.updateState(newState);
+      store.updateState(newState, tx);
     },
   });
 
@@ -171,7 +171,7 @@ describe('sync effects', () => {
           return;
         }
 
-        store.updateState(newState);
+        store.updateState(newState, tx);
 
         callOrder.push(`afterUpdate[${tx.sliceKey}]`);
       },
@@ -620,7 +620,7 @@ describe('effects', () => {
           return;
         }
 
-        store.updateState(newState);
+        store.updateState(newState, tx);
 
         callOrder.push(`afterUpdate[${tx.sliceKey}]`);
       },

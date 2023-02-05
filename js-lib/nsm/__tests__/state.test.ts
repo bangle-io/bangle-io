@@ -2,6 +2,7 @@ import { expectType } from '../common';
 import { key, slice } from '../create';
 import { testOverrideSlice } from '../slice';
 import { StoreState } from '../state';
+import { Transaction } from '../types';
 
 const testSlice1 = slice({
   key: key('test-1', [], { num: 4 }),
@@ -266,7 +267,6 @@ describe('State creation', () => {
     expect(appState).toMatchInlineSnapshot(`
       StoreState {
         "_slices": [],
-        "_transaction": undefined,
         "opts": undefined,
         "slicesCurrentState": {},
       }
@@ -294,11 +294,7 @@ describe('State creation', () => {
     const appState = StoreState.create({ slices: [mySlice] });
 
     expect(() =>
-      appState.applyTransaction({
-        actionId: 'updateNum',
-        payload: [5],
-        sliceKey: 'mySlice',
-      }),
+      appState.applyTransaction(new Transaction('mySlice', [5], 'updateNum')),
     ).toThrowError(`Action "updateNum" not found in Slice "mySlice"`);
   });
 

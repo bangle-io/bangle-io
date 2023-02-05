@@ -5,13 +5,8 @@ import { key, slice } from '../create';
 import type { Slice } from '../slice';
 import { parseRawActions, testOverrideSlice } from '../slice';
 import { StoreState } from '../state';
-import type {
-  Action,
-  EffectsBase,
-  RawAction,
-  SelectorFn,
-  Transaction,
-} from '../types';
+import type { Action, EffectsBase, RawAction, SelectorFn } from '../types';
+import { Transaction } from '../types';
 
 const testSliceKey1 = key('test-1', [], { num: 4 });
 const testSlice1 = slice({
@@ -188,11 +183,9 @@ describe('actions', () => {
       testSlice2.actions.prefix,
     );
 
-    expect(testSlice2.actions.prefix('me')).toEqual({
-      actionId: 'prefix',
-      payload: ['me'],
-      sliceKey: 'test-2',
-    });
+    expect(testSlice2.actions.prefix('me')).toEqual(
+      new Transaction('test-2', ['me'], 'prefix'),
+    );
 
     expectType<
       (p: number, p2: string) => Transaction<'test-2', Array<string | number>>
@@ -205,18 +198,14 @@ describe('actions', () => {
 
     expectType<Transaction<'test-2', Array<string | number>>>(tx);
 
-    expect(testSlice2.actions.padEnd(6, 'me')).toEqual({
-      actionId: 'padEnd',
-      payload: [6, 'me'],
-      sliceKey: 'test-2',
-    });
+    expect(testSlice2.actions.padEnd(6, 'me')).toEqual(
+      new Transaction('test-2', [6, 'me'], 'padEnd'),
+    );
 
     expectType<() => Transaction<'test-2', []>>(testSlice2.actions.uppercase);
-    expect(testSlice2.actions.uppercase()).toEqual({
-      actionId: 'uppercase',
-      payload: [],
-      sliceKey: 'test-2',
-    });
+    expect(testSlice2.actions.uppercase()).toEqual(
+      new Transaction('test-2', [], 'uppercase'),
+    );
   });
 
   test('parseRawActions works', () => {
@@ -246,14 +235,15 @@ describe('actions', () => {
     expectType<Action<'test-key', number[]>>(result.myAction);
 
     expect(result.myAction(1)).toMatchInlineSnapshot(`
-          {
-            "actionId": "myAction",
-            "payload": [
-              1,
-            ],
-            "sliceKey": "test-key",
-          }
-      `);
+      Transaction {
+        "_metadata": {},
+        "actionId": "myAction",
+        "payload": [
+          1,
+        ],
+        "sliceKey": "test-key",
+      }
+    `);
   });
 });
 

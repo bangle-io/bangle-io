@@ -1,4 +1,5 @@
 import { calcReverseDependencies, flattenReverseDependencies } from './common';
+import { SOURCE_SLICE_KEY_ANY } from './constants';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
 import type { Store } from './store';
@@ -75,7 +76,11 @@ export class SideEffectsManager {
     });
   }
 
-  runSideEffects(store: Store<any>, sourceSliceKey: string) {
+  runSideEffects(store: Store<any>, sourceSliceKey?: string) {
+    if (!sourceSliceKey) {
+      return;
+    }
+
     const { record, queue } = this._effects;
     // if there are no items in the queue that means
     //    we will need to trigger running of the effects

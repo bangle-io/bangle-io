@@ -4,12 +4,12 @@ import { SideEffectsManager } from './effect';
 import type { Slice } from './slice';
 import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
-import type { AnySliceBase, StoreTransaction, Transaction } from './types';
+import type { AnySliceBase, Transaction } from './types';
 
-type DispatchTx<
-  ST extends StoreTransaction<any, any>,
-  SB extends AnySliceBase,
-> = (store: Store<SB>, tx: ST) => void;
+type DispatchTx<TX extends Transaction<any, any>, SB extends AnySliceBase> = (
+  store: Store<SB>,
+  tx: TX,
+) => void;
 
 let counter = 0;
 function incrementalId() {
@@ -28,7 +28,7 @@ export class Store<SB extends AnySliceBase> {
         return;
       }
 
-      store.updateState(newState);
+      store.updateState(newState, tx);
     },
     onError = (error) => {},
     scheduler,
@@ -36,7 +36,7 @@ export class Store<SB extends AnySliceBase> {
     storeName,
   }: {
     disableSideEffects?: boolean;
-    dispatchTx?: DispatchTx<StoreTransaction<SB['key']['key'], any>, SB>;
+    dispatchTx?: DispatchTx<Transaction<any, any>, SB>;
     onError?: (error: Error) => void;
     scheduler?: Scheduler;
     state: StoreState<SB> | StoreStateConfig<SB>;
@@ -73,12 +73,14 @@ export class Store<SB extends AnySliceBase> {
     }
     // TODO add a check to make sure tx is actually allowed
     // based on the slice dependencies
-    const storeTx: StoreTransaction<SB['key']['key'], any> = {
-      ...tx,
-      id: this.storeName + '-' + incrementalId(),
-    };
+    // const storeTx = {
+    //   ...tx,
+    //   id:
+    // };
 
-    this._dispatchTx(this, storeTx);
+    tx.setMetadata('store-tx-id', this.storeName + '-' + incrementalId());
+
+    this._dispatchTx(this, tx);
   };
 
   private _abortController = new AbortController();
@@ -137,17 +139,14 @@ export class Store<SB extends AnySliceBase> {
     });
   }
 
-  updateState(newState: StoreState<SB>) {
+  updateState(newState: StoreState<SB>, tx?: Transaction<any, any>) {
     if (this._destroyed) {
       return;
     }
 
     this.state = newState;
-    const tx = this.state.transaction;
 
-    if (tx) {
-      this._effectsManager?.runSideEffects(this, tx.sliceKey);
-    }
+    this._effectsManager?.runSideEffects(this, tx?.sliceKey);
   }
 }
 
