@@ -1,8 +1,13 @@
 import { key, slice } from '../create';
 import { timeoutSchedular } from '../effect';
 import { StoreState } from '../state';
-import { ReducedStore, Store, STORE_TX_ID } from '../store';
+import { ReducedStore, Store } from '../store';
 import { waitUntil } from '../test-helpers';
+import {
+  TX_META_DISPATCH_SOURCE,
+  TX_META_STORE_NAME,
+  TX_META_STORE_TX_ID,
+} from '../transaction';
 
 const testSlice1 = slice({
   key: key('test-1', [], { num: 4 }),
@@ -37,6 +42,17 @@ const testSlice3 = slice({
     lowercase: () => (state) => {
       return { ...state, name: state.name.toLocaleLowerCase() };
     },
+    uppercase: () => (state) => {
+      return { ...state, name: state.name.toUpperCase() };
+    },
+  },
+  effects: {
+    name: 'to-lowercase',
+    updateSync(sl, store) {
+      if (sl.getState(store.state).name === 'TAME') {
+        store.dispatch(sl.actions.lowercase());
+      }
+    },
   },
 });
 
@@ -52,15 +68,96 @@ describe('store', () => {
 
     const tx = testSlice1.actions.increment({ increment: true });
 
-    myStore.dispatch(tx);
+    myStore.dispatch(tx, 'test-location');
 
-    expect(tx.getMetadata(STORE_TX_ID)).toBe('myStore-0');
+    expect(tx.getMetadata(TX_META_STORE_TX_ID)).toBe('0');
+    expect(tx.getMetadata(TX_META_STORE_NAME)).toBe('myStore');
+    expect(tx.getMetadata(TX_META_DISPATCH_SOURCE)).toBe('test-location');
 
     const tx2 = testSlice1.actions.increment({ increment: true });
 
     myStore.dispatch(tx2);
 
-    expect(tx2.getMetadata(STORE_TX_ID)).toBe('myStore-1');
+    expect(tx2.getMetadata(TX_META_STORE_TX_ID)).toBe('1');
+  });
+
+  test('logs', async () => {
+    let log: any[] = [];
+    const myStore = Store.create({
+      storeName: 'myStore',
+      scheduler: timeoutSchedular(0),
+      state: {
+        slices: [testSlice1, testSlice2, testSlice3],
+      },
+      debug(item) {
+        log.push(item);
+      },
+    });
+
+    myStore.dispatch(testSlice1.actions.increment({ increment: true }));
+
+    expect(log).toMatchInlineSnapshot(`
+      [
+        {
+          "actionId": "increment",
+          "dispatcher": undefined,
+          "payload": [
+            {
+              "increment": true,
+            },
+          ],
+          "slice": "test-1",
+          "store": "myStore",
+          "txId": "2",
+          "type": "TX",
+        },
+      ]
+    `);
+
+    myStore.dispatch(testSlice3.actions.uppercase());
+
+    await Promise.resolve();
+
+    expect(log.slice(1)).toEqual([
+      {
+        actionId: 'uppercase',
+        dispatcher: undefined,
+        payload: [],
+        slice: 'test-3',
+        store: 'myStore',
+        txId: expect.any(String),
+        type: 'TX',
+      },
+      {
+        name: 'to-lowercase',
+        source: [
+          {
+            actionId: 'uppercase',
+            sliceKey: 'test-3',
+          },
+        ],
+        type: 'EFFECT',
+      },
+      {
+        actionId: 'lowercase',
+        dispatcher: 'to-lowercase',
+        payload: [],
+        slice: 'test-3',
+        store: 'myStore',
+        txId: expect.any(String),
+        type: 'TX',
+      },
+      {
+        name: 'to-lowercase',
+        source: [
+          {
+            actionId: 'lowercase',
+            sliceKey: 'test-3',
+          },
+        ],
+        type: 'EFFECT',
+      },
+    ]);
   });
 });
 

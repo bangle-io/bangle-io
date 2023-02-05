@@ -87,7 +87,6 @@ export class Slice<
     this._actionSerializer = new ActionSerializer(key, _rawActions);
     this._flatDependencies = this.key.dependencies.reduce((acc, dep) => {
       acc.add(dep.key.key);
-
       dep._flatDependencies.forEach((d) => {
         if (d === this.key.key) {
           throw new Error(
@@ -99,6 +98,12 @@ export class Slice<
 
       return acc;
     }, new Set<string>());
+
+    this.effects.forEach((effect) => {
+      if (!effect.name) {
+        effect.name = `${this.key.key}Effect`;
+      }
+    });
   }
 
   get selectors(): SE {

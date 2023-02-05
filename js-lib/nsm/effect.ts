@@ -1,4 +1,5 @@
 import { calcReverseDependencies, flattenReverseDependencies } from './common';
+import type { DebugFunc } from './logging';
 import type { Slice } from './slice';
 import type { StoreState } from './state';
 import type { Store } from './store';
@@ -29,7 +30,10 @@ export const syncSchedular: () => Scheduler = () => ({
 });
 
 export class SideEffectsManager {
-  _debugWhoRanEffect = new WeakMap<EffectHandler, string[]>();
+  _debugWhoRanEffect = new WeakMap<
+    EffectHandler,
+    Array<{ sliceKey: string; actionId: string }>
+  >();
 
   private _effects: {
     queue: {
@@ -57,9 +61,7 @@ export class SideEffectsManager {
     slices: AnySliceBase[],
     initState: StoreState,
     private _schedular: Scheduler = idleCallbackScheduler(15),
-    public readonly debug:
-      | ((effect: EffectHandler, originators: string[]) => void)
-      | undefined = undefined,
+    private readonly _debug?: DebugFunc,
   ) {
     // TODO ensure deps are valid and don't have circular dependencies
     // nice to have if reverse dep are sorted in the order slice are defined
@@ -83,14 +85,14 @@ export class SideEffectsManager {
   queueSideEffectExecution(
     store: Store<any>,
     {
-      txOriginSliceKey,
-      txOriginId,
+      sliceKey,
+      actionId,
     }: {
-      txOriginSliceKey: string;
-      txOriginId: string;
+      sliceKey: string;
+      actionId: string;
     },
   ) {
-    this._debugBeforeQueue(txOriginSliceKey, txOriginId);
+    this._debugBeforeQueue(sliceKey, actionId);
 
     const { record, queue } = this._effects;
     // if there are no items in the queue that means
@@ -102,15 +104,15 @@ export class SideEffectsManager {
     const shouldRunUpdateEffects = queue.update.size === 0;
 
     // queue up effects of source slice to run
-    record.syncUpdate[txOriginSliceKey]?.forEach((effect) => {
+    record.syncUpdate[sliceKey]?.forEach((effect) => {
       queue.syncUpdate.add(effect);
     });
-    record.update[txOriginSliceKey]?.forEach((effect) => {
+    record.update[sliceKey]?.forEach((effect) => {
       queue.update.add(effect);
     });
 
     // queue up dependencies's effects to run
-    this._flatReverseDep[txOriginSliceKey]?.forEach((revDepKey) => {
+    this._flatReverseDep[sliceKey]?.forEach((revDepKey) => {
       record.syncUpdate[revDepKey]?.forEach((effect) => {
         queue.syncUpdate.add(effect);
       });
@@ -132,8 +134,8 @@ export class SideEffectsManager {
     }
   }
 
-  private _debugBeforeQueue(txOriginSliceKey: string, txOriginId: string) {
-    if (!this.debug) {
+  private _debugBeforeQueue(sliceKey: string, actionId: string) {
+    if (!this._debug) {
     }
     const { record } = this._effects;
 
@@ -144,18 +146,18 @@ export class SideEffectsManager {
         result = [];
         this._debugWhoRanEffect.set(effect, result);
       }
-      result.push(txOriginId);
+      result.push({ sliceKey, actionId });
     };
 
-    record.syncUpdate[txOriginSliceKey]?.forEach((effect) => {
+    record.syncUpdate[sliceKey]?.forEach((effect) => {
       setDebug(effect);
     });
-    record.update[txOriginSliceKey]?.forEach((effect) => {
+    record.update[sliceKey]?.forEach((effect) => {
       setDebug(effect);
     });
 
     // queue up dependencies's effects to run
-    this._flatReverseDep[txOriginSliceKey]?.forEach((revDepKey) => {
+    this._flatReverseDep[sliceKey]?.forEach((revDepKey) => {
       record.syncUpdate[revDepKey]?.forEach((effect) => {
         setDebug(effect);
       });
@@ -166,13 +168,17 @@ export class SideEffectsManager {
   }
 
   private _debugBeforeRunEffect(effect: EffectHandler) {
-    if (!this.debug) {
+    if (!this._debug) {
       return;
     }
     const debugInfo = this._debugWhoRanEffect.get(effect);
 
     if (debugInfo) {
-      this.debug(effect, debugInfo);
+      this._debug({
+        type: 'EFFECT',
+        name: effect.effect.name || '<unknownEffect>',
+        source: debugInfo,
+      });
     }
     this._debugWhoRanEffect.delete(effect);
   }
@@ -240,7 +246,7 @@ export class SideEffectsManager {
 abstract class EffectHandler {
   sliceAndDeps: AnySliceBase[];
   constructor(
-    protected _effect: EffectsBase,
+    public effect: EffectsBase,
     public readonly initStoreState: StoreState,
     protected _slice: AnySliceBase,
   ) {
@@ -265,9 +271,9 @@ export class SyncUpdateEffectHandler extends EffectHandler {
     this._syncPreviouslySeenState = store.state;
 
     // TODO error handling
-    this._effect.updateSync?.(
+    this.effect.updateSync?.(
       this._slice as Slice,
-      store.getReducedStore(this.sliceAndDeps as Slice[]),
+      store.getReducedStore(this.sliceAndDeps as Slice[], this.effect.name),
       previouslySeenState,
     );
   }
@@ -281,9 +287,9 @@ export class UpdateEffectHandler extends EffectHandler {
     this._previouslySeen = store.state;
 
     // TODO error handling
-    this._effect.update?.(
+    this.effect.update?.(
       this._slice as Slice,
-      store.getReducedStore(this.sliceAndDeps as Slice[]),
+      store.getReducedStore(this.sliceAndDeps as Slice[], this.effect.name),
       previouslySeenState,
     );
   }

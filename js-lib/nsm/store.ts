@@ -1,10 +1,17 @@
 import { CORE_ACTION_ON_READY } from './constants';
 import type { Scheduler } from './effect';
 import { SideEffectsManager } from './effect';
+import type { DebugFunc } from './logging';
+import { txLog } from './logging';
 import type { Slice } from './slice';
 import type { StoreStateConfig } from './state';
 import { StoreState } from './state';
 import type { Transaction } from './transaction';
+import {
+  TX_META_DISPATCH_SOURCE,
+  TX_META_STORE_NAME,
+  TX_META_STORE_TX_ID,
+} from './transaction';
 import type { AnySliceBase } from './types';
 
 type DispatchTx<TX extends Transaction<any, any>, SB extends AnySliceBase> = (
@@ -14,10 +21,9 @@ type DispatchTx<TX extends Transaction<any, any>, SB extends AnySliceBase> = (
 
 let counter = 0;
 function incrementalId() {
-  return counter++;
+  return '' + counter++;
 }
 
-export const STORE_TX_ID = 'store-tx-id';
 export class Store<SB extends AnySliceBase> {
   static create<SB extends AnySliceBase>({
     disableSideEffects = false,
@@ -36,6 +42,7 @@ export class Store<SB extends AnySliceBase> {
     scheduler,
     state,
     storeName,
+    debug,
   }: {
     disableSideEffects?: boolean;
     dispatchTx?: DispatchTx<Transaction<any, any>, SB>;
@@ -43,6 +50,7 @@ export class Store<SB extends AnySliceBase> {
     scheduler?: Scheduler;
     state: StoreState<SB> | StoreStateConfig<SB>;
     storeName: string;
+    debug?: DebugFunc;
   }) {
     if (!(state instanceof StoreState)) {
       state = StoreState.create(state);
@@ -55,6 +63,7 @@ export class Store<SB extends AnySliceBase> {
       scheduler,
       onError,
       disableSideEffects,
+      debug,
     );
 
     // Trigger some core actions
@@ -69,13 +78,21 @@ export class Store<SB extends AnySliceBase> {
     return store;
   }
 
-  dispatch = (tx: Transaction<SB['key']['key'], any>) => {
+  dispatch = (
+    tx: Transaction<SB['key']['key'], any>,
+    debugDispatch?: string,
+  ) => {
     if (this._destroyed) {
       return;
     }
     // TODO add a check to make sure tx is actually allowed
     // based on the slice dependencies
-    tx.setMetadata(STORE_TX_ID, this.storeName + '-' + incrementalId());
+    tx.setMetadata(TX_META_STORE_TX_ID, incrementalId());
+    tx.setMetadata(TX_META_STORE_NAME, this.storeName);
+
+    if (debugDispatch) {
+      tx.appendMetadata(TX_META_DISPATCH_SOURCE, debugDispatch);
+    }
 
     this._dispatchTx(this, tx);
   };
@@ -92,17 +109,14 @@ export class Store<SB extends AnySliceBase> {
     scheduler?: Scheduler,
     onError?: (error: Error) => void,
     disableSideEffects?: boolean,
+    private _debug?: DebugFunc,
   ) {
     if (!disableSideEffects) {
       this._effectsManager = new SideEffectsManager(
         state._slices,
         state,
         scheduler,
-        // (eff, orig) => {
-        //   console.log(
-        //     `Side effect ${eff.sliceKey} triggered by ${orig.join(',')}`,
-        //   );
-        // },
+        this._debug,
       );
     }
 
@@ -131,8 +145,11 @@ export class Store<SB extends AnySliceBase> {
    * @param slices
    * @returns
    */
-  getReducedStore<SB extends Slice>(slices: SB[]): ReducedStore<SB> {
-    return new ReducedStore(this, slices);
+  getReducedStore<SB extends Slice>(
+    slices: SB[],
+    debugDispatch?: string,
+  ): ReducedStore<SB> {
+    return new ReducedStore(this, slices, debugDispatch);
   }
 
   onDestroy(cb: () => void) {
@@ -146,24 +163,41 @@ export class Store<SB extends AnySliceBase> {
       return;
     }
 
+    if (this._debug && tx) {
+      this._debug(txLog(tx));
+    }
+
     this.state = newState;
 
     if (tx) {
       this._effectsManager?.queueSideEffectExecution(this, {
-        txOriginSliceKey: tx.sliceKey,
-        txOriginId: tx.originator,
+        sliceKey: tx.sliceKey,
+        actionId: tx.actionId,
       });
     }
   }
 }
 
 export class ReducedStore<SB extends Slice> {
-  dispatch = (tx: Transaction<SB['key']['key'], any>) => {
+  dispatch = (
+    tx: Transaction<SB['key']['key'], any>,
+    debugDispatch?: string,
+  ) => {
+    if (this._debugDispatchSrc) {
+      tx.appendMetadata(TX_META_DISPATCH_SOURCE, this._debugDispatchSrc);
+    }
+    if (debugDispatch) {
+      tx.appendMetadata(TX_META_DISPATCH_SOURCE, debugDispatch);
+    }
     // TODO add a developer check to make sure tx slice is actually allowed
     this._store.dispatch(tx);
   };
 
-  constructor(private _store: Store<any>, private _slices: SB[]) {}
+  constructor(
+    private _store: Store<any>,
+    private _slices: SB[],
+    public _debugDispatchSrc?: string,
+  ) {}
 
   get destroyed() {
     return this._store.destroyed;
