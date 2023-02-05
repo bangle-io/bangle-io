@@ -118,6 +118,17 @@ export class Slice<
     return result;
   }
 
+  pick<T>(
+    cb: (resolvedState: SS & ResolvedSelectors<SE>) => T,
+  ): [Slice<K, SS, DS, A, SE>, (storeState: StoreState) => T] {
+    return [
+      this,
+      (storeState: StoreState) => {
+        return cb(this.resolveState(storeState));
+      },
+    ];
+  }
+
   resolveSelectors<SSB extends StoreState>(
     storeState: ResolveStoreStateIfRegistered<SSB, K>,
   ): ResolvedSelectors<SE> {

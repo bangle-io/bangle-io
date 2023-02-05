@@ -1,7 +1,9 @@
 import { CORE_ACTION_ON_READY } from './constants';
 import { key, slice } from './create';
 import type { Slice } from './slice';
+import type { StoreState } from './state';
 import type { ReducedStore } from './store';
+import type { ExtractReturnTypes } from './types';
 
 const keys: { [k: string]: number } = Object.create(null);
 
@@ -37,11 +39,9 @@ export const onceEffect = <K extends string, DS extends Slice[]>(
       ready: false,
     }),
     actions: {
-      [CORE_ACTION_ON_READY]: () => () => {
-        return {
-          ready: true,
-        };
-      },
+      [CORE_ACTION_ON_READY]: () => () => ({
+        ready: true,
+      }),
     },
     effects: {
       update(sl, store, prevStoreState) {
@@ -88,4 +88,192 @@ export const syncOnceEffect = <K extends string, DS extends Slice[]>(
       },
     },
   });
+};
+
+export const effect = <
+  K extends string,
+  DS extends Slice[],
+  ES extends Record<string, (state: ReducedStoreFromDS<DS>['state']) => any>,
+>(
+  name: K,
+  deps: DS,
+  effectSelectors: ES,
+  cb: (
+    selectedVal: ExtractReturnTypes<ES>,
+    dispatch: ReducedStoreFromDS<DS>['dispatch'],
+    signal: AbortSignal,
+  ) => void | (() => void) | Promise<void>,
+): OpaqueSlice<K, DS> => {
+  const array = Object.entries(effectSelectors);
+  let prevCleanup: void | (() => void);
+  let prevAbort: void | AbortController;
+
+  return slice({
+    key: key(name, deps, {}),
+    actions: {},
+    effects: {
+      update(sl, store, prevStoreState) {
+        let hasNew = false;
+        let result = array.map(([k, v]) => {
+          const newVal = v(store.state);
+          const oldVal = v(prevStoreState);
+
+          if (!Object.is(newVal, oldVal)) {
+            hasNew = true;
+          }
+
+          return [k, newVal];
+        });
+
+        if (hasNew) {
+          prevCleanup?.();
+          prevAbort?.abort();
+          prevAbort = new AbortController();
+          let res = cb(
+            Object.fromEntries(result),
+            store.dispatch,
+            prevAbort.signal,
+          );
+
+          if (typeof res === 'function') {
+            prevCleanup = res;
+          }
+        }
+      },
+    },
+  });
+};
+
+export type ExtractSliceFromEffectSelectors<
+  ES extends Record<string, [Slice, (storeState: StoreState) => any]>,
+> = ES extends Record<string, [infer S, (storeState: StoreState) => any]>
+  ? S
+  : never;
+
+export const baseChangeEffect = <
+  K extends string,
+  ES extends Record<string, [Slice, (storeState: StoreState) => any]>,
+>(
+  name: K,
+  effectSelectors: ES,
+  cb: (
+    selectedVal: ExtractReturnTypes<{
+      [K in keyof ES]: ES[K][1];
+    }>,
+    dispatch: ReducedStore<ExtractSliceFromEffectSelectors<ES>>['dispatch'],
+    signal: AbortSignal,
+  ) => void | (() => void) | Promise<void>,
+  isSync = false,
+) => {
+  const array = Object.entries(effectSelectors).map(
+    (r): [string, (storeState: StoreState) => any] => [r[0], r[1][1]],
+  );
+
+  let prevCleanup: void | (() => void);
+  let prevAbort: AbortController = new AbortController();
+
+  const run = (
+    sl: Slice,
+    store: ReducedStore<any>,
+    prevStoreState: StoreState,
+  ) => {
+    let hasNew = false;
+    const firstRun =
+      sl.getState(store.state).ready && !sl.getState(prevStoreState).ready;
+
+    let result = array.map(([k, v]) => {
+      const newVal = v(store.state);
+      const oldVal = v(prevStoreState);
+
+      if (!Object.is(newVal, oldVal)) {
+        hasNew = true;
+      }
+
+      return [k, newVal];
+    });
+
+    if (hasNew || firstRun) {
+      prevCleanup?.();
+
+      if (!isSync) {
+        prevAbort?.abort();
+      }
+      // so that abort is called before running the next
+      queueMicrotask(() => {
+        if (!isSync) {
+          prevAbort = new AbortController();
+        }
+        let res = cb(
+          Object.fromEntries(result),
+          store.dispatch,
+          prevAbort.signal,
+        );
+
+        if (typeof res === 'function') {
+          prevCleanup = res;
+        }
+      });
+    }
+  };
+  let result = slice({
+    key: key(
+      name,
+      Object.values(effectSelectors).map((r) => r[0]),
+      {
+        ready: false,
+      },
+    ),
+    actions: {
+      [CORE_ACTION_ON_READY]: () => () => ({
+        ready: true,
+      }),
+    },
+    effects: {
+      update(sl, store, prevStoreState) {
+        if (!isSync) {
+          run(sl, store, prevStoreState);
+        }
+      },
+      updateSync(sl, store, prevStoreState) {
+        if (isSync) {
+          run(sl, store, prevStoreState);
+        }
+      },
+    },
+  });
+
+  return result;
+};
+
+export const changeEffect = <
+  K extends string,
+  ES extends Record<string, [Slice, (storeState: StoreState) => any]>,
+>(
+  name: K,
+  effectSelectors: ES,
+  cb: (
+    selectedVal: ExtractReturnTypes<{
+      [K in keyof ES]: ES[K][1];
+    }>,
+    dispatch: ReducedStore<ExtractSliceFromEffectSelectors<ES>>['dispatch'],
+    signal: AbortSignal,
+  ) => void | (() => void) | Promise<void>,
+) => {
+  return baseChangeEffect(name, effectSelectors, cb, false);
+};
+
+export const changeEffectSync = <
+  K extends string,
+  ES extends Record<string, [Slice, (storeState: StoreState) => any]>,
+>(
+  name: K,
+  effectSelectors: ES,
+  cb: (
+    selectedVal: ExtractReturnTypes<{
+      [K in keyof ES]: ES[K][1];
+    }>,
+    dispatch: ReducedStore<ExtractSliceFromEffectSelectors<ES>>['dispatch'],
+  ) => void | (() => void) | Promise<void>,
+) => {
+  return baseChangeEffect(name, effectSelectors, cb, true);
 };
