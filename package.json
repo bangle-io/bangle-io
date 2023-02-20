@@ -36,7 +36,7 @@
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "test:network": "yarn jest --selectProjects network",
-    "test:regular": "yarn jest --selectProjects regular",
+    "test:regular": "yarn jest --selectProjects regular --collectCoverage",
     "test": "yarn run test:regular",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w"

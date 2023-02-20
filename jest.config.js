@@ -8,7 +8,6 @@ const config = {
     '^.+\\.(t|j)sx?$': ['@swc/jest'],
   },
   transformIgnorePatterns: [],
-  coverageReporters: ['json', 'lcov', 'text', 'clover'],
   coveragePathIgnorePatterns: [`<rootDir>/.yarn`],
   // collectCoverage: true,
   clearMocks: true,
