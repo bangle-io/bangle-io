@@ -17,7 +17,12 @@ import {
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
 } from '../common';
 import type { RepositoryInfo } from '../github-api-helpers';
-import { getRepos } from '../github-api-helpers';
+import {
+  getRepos,
+  isFineGrainedToken,
+  serialGetRepoTree,
+  testWriteAccess,
+} from '../github-api-helpers';
 
 const MIN_HEIGHT = 200;
 
@@ -45,11 +50,23 @@ export function NewGithubWorkspaceRepoPickerDialog() {
       : undefined;
 
   const onCreate = useCallback(async () => {
-    if (!selectedRepo) {
+    if (!selectedRepo || !githubToken) {
       return;
     }
     try {
       updateIsLoading(true);
+
+      if (isFineGrainedToken(githubToken)) {
+        await testWriteAccess({
+          config: {
+            githubToken: githubToken,
+            owner: selectedRepo.owner,
+            branch: selectedRepo.branch,
+            repoName: selectedRepo.name,
+          },
+        });
+      }
+
       await workspace.createWorkspace(
         selectedRepo.name,
         GITHUB_STORAGE_PROVIDER_NAME,
@@ -156,6 +173,9 @@ export function NewGithubWorkspaceRepoPickerDialog() {
                 onCreate();
               }
             }}
+            disabledKeys={repoList
+              .filter((r) => !r.writeAccess)
+              .map((r) => `${r.owner}/${r.name}`)}
             onSelectionChange={(key) => {
               if (typeof key === 'string') {
                 const [owner, name] = key.split('/');

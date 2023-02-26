@@ -8,10 +8,30 @@ import {
   sleep,
 } from '@bangle.io/utils';
 
-import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
+import {
+  GITHUB_API_ERROR,
+  INVALID_GITHUB_RESPONSE,
+  INVALID_GITHUB_TOKEN,
+} from './errors';
+
+export function isFineGrainedToken(token: string) {
+  return token.startsWith('github_pat_');
+}
 
 export interface GithubTokenConfig {
   githubToken: string;
+}
+
+export interface PushChangesConfig {
+  abortSignal: AbortSignal;
+  headSha: string;
+  commitMessage: {
+    headline: string;
+    body?: string;
+  };
+  additions: Array<{ path: string; base64Content: string }>;
+  deletions: Array<{ path: string }>;
+  config: GithubConfig;
 }
 
 export interface GithubConfig extends GithubTokenConfig {
@@ -180,6 +200,7 @@ export type RepositoryInfo = {
   owner: string;
   branch: string;
   description: string;
+  writeAccess: boolean;
 };
 
 export async function getBranchHead({
@@ -237,6 +258,11 @@ export async function hasValidGithubScope({
   abortSignal?: AbortSignal;
 }) {
   let scopeStr = (await getScopes({ token, abortSignal })) || '';
+
+  if (isFineGrainedToken(token)) {
+    return true;
+  }
+
   let scopes = scopeStr.split(',').map((s) => s.trim());
 
   return ALLOWED_GH_SCOPES.some((s) => scopes.includes(s));
@@ -249,7 +275,7 @@ export async function getScopes({
   token: GithubTokenConfig['githubToken'];
   abortSignal?: AbortSignal;
 }): Promise<string | null> {
-  const { headers } = await makeV3GetApi({
+  const { headers, data } = await makeV3GetApi({
     path: `?cacheBust=${Date.now()}`,
     token: token,
     abortSignal,
@@ -263,7 +289,29 @@ export async function* getRepos({
 }: {
   token: GithubTokenConfig['githubToken'];
 }): AsyncIterable<RepositoryInfo[]> {
-  const query = `
+  if (isFineGrainedToken(token)) {
+    let result2 = await makeV3GetApi({
+      path: '/user/repos',
+      token,
+    });
+
+    if (!result2.data) {
+      return;
+    }
+
+    yield result2.data.map((item: any): RepositoryInfo => {
+      console.log(item.permissions?.push);
+
+      return {
+        name: item.name,
+        owner: item.owner.login,
+        branch: item.default_branch,
+        description: item.description,
+        writeAccess: Boolean(item.permissions?.push),
+      };
+    });
+  } else {
+    const query = `
     query ($after: String) {
       ${RATELIMIT_STRING}
       viewer {
@@ -274,6 +322,7 @@ export async function* getRepos({
           }
           edges {
             node {
+              viewerPermission
               name
               defaultBranchRef {
                 name
@@ -288,45 +337,52 @@ export async function* getRepos({
         }
       }
     }`;
-  let hasNextPage;
+    let hasNextPage;
 
-  let endCursor = undefined;
-  let calls = 0;
-  let result: RepositoryInfo[] = [];
-  do {
-    let data: any = await makeGraphql({
-      query,
-      variables: { after: endCursor },
-      token,
-    });
+    let endCursor = undefined;
+    let calls = 0;
+    let result: RepositoryInfo[] = [];
+    do {
+      let data: any = await makeGraphql({
+        query,
+        variables: { after: endCursor },
+        token,
+      });
 
-    if (calls++ > 20) {
-      break;
-    }
+      if (calls++ > 20) {
+        break;
+      }
 
-    if (!Array.isArray(data.viewer.repositories?.edges)) {
+      if (!Array.isArray(data.viewer.repositories?.edges)) {
+        yield result;
+        break;
+      }
+
+      ({ hasNextPage, endCursor } = data.viewer.repositories.pageInfo);
+
+      result = result.concat(
+        data.viewer.repositories.edges
+          .map((r: any): RepositoryInfo => {
+            const { viewerPermission } = r.node;
+
+            return {
+              name: r.node?.name,
+              owner: r.node?.nameWithOwner?.split('/')[0],
+              branch: r.node?.defaultBranchRef?.name,
+              description: r.node?.description || '',
+              writeAccess:
+                viewerPermission === 'ADMIN' ||
+                viewerPermission === 'WRITE' ||
+                viewerPermission === 'MAINTAIN',
+            };
+          })
+          .filter((r: RepositoryInfo) => {
+            return r.name && r.owner && r.branch;
+          }),
+      );
       yield result;
-      break;
-    }
-
-    ({ hasNextPage, endCursor } = data.viewer.repositories.pageInfo);
-
-    result = result.concat(
-      data.viewer.repositories.edges
-        .map((r: any): RepositoryInfo => {
-          return {
-            name: r.node?.name,
-            owner: r.node?.nameWithOwner?.split('/')[0],
-            branch: r.node?.defaultBranchRef?.name,
-            description: r.node?.description || '',
-          };
-        })
-        .filter((r: RepositoryInfo) => {
-          return r.name && r.owner && r.branch;
-        }),
-    );
-    yield result;
-  } while (hasNextPage);
+    } while (hasNextPage);
+  }
 }
 
 /**
@@ -491,6 +547,160 @@ async function _getTree({
   };
 }
 
+export async function pushChangesV3({
+  headSha,
+  commitMessage,
+  additions,
+  deletions,
+  config,
+  abortSignal,
+}: PushChangesConfig) {
+  const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repoName}/git`;
+  // TODO check if access
+  const headers = {
+    Authorization: `token ${config.githubToken}`,
+    Accept: 'application/vnd.github.v3.raw+json',
+  };
+
+  const createCommit = async ({
+    treeSha,
+  }: {
+    treeSha: string;
+  }): Promise<string> => {
+    const commitData = {
+      message: commitMessage.headline,
+      parents: [headSha],
+      tree: treeSha,
+    };
+
+    const response = await fetch(`${apiUrl}/commits`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(commitData),
+    });
+    const data = await response.json();
+
+    return data.sha;
+  };
+
+  const createTree = async (
+    tree: Array<{
+      path: string;
+      mode: string;
+      type: string;
+      sha: string | null;
+    }>,
+  ): Promise<string> => {
+    const treeData = {
+      base_tree: headSha,
+      tree: tree,
+    };
+
+    const response = await fetch(`${apiUrl}/trees`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(treeData),
+    });
+    const data = await response.json();
+
+    return data.sha;
+  };
+
+  const updateBranch = async (commitSha: string) => {
+    const response = await fetch(`${apiUrl}/refs/heads/${config.branch}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({
+        sha: commitSha,
+        ref: `/refs/heads/${config.branch}`,
+        // force: true,
+      }),
+    });
+    const data = await response.json();
+
+    return data;
+  };
+
+  const createBlob = async (content: string): Promise<string> => {
+    const response = await fetch(`${apiUrl}/blobs`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ content, encoding: 'base64' }),
+    });
+
+    return response.json().then((data) => data.sha);
+  };
+
+  const latestSha = await getLatestCommitSha({
+    config,
+    abortSignal: abortSignal,
+    cacheBustValue: Date.now(),
+  });
+
+  const tree = await (
+    await fetch(`${apiUrl}/trees/${latestSha}`, {
+      method: 'GET',
+      headers,
+    })
+  ).json();
+
+  const newAdds = await Promise.all(
+    additions.map(async (add) => {
+      return {
+        path: add.path,
+        mode: '100644',
+        type: 'blob',
+        sha: await createBlob(add.base64Content),
+      };
+    }),
+  );
+
+  const newDels = await Promise.all(
+    deletions.map(async (add) => {
+      return {
+        path: add.path,
+        mode: '100644',
+        type: 'blob',
+        sha: null,
+      };
+    }),
+  );
+
+  let newTreeSha = await createTree([...newAdds, ...newDels]);
+
+  const commitSha = await createCommit({ treeSha: newTreeSha });
+
+  await updateBranch(commitSha);
+}
+
+export async function testWriteAccess({ config }: { config: GithubConfig }) {
+  const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repoName}/git`;
+  const headers = {
+    Authorization: `token ${config.githubToken}`,
+    Accept: 'application/vnd.github.v3.raw+json',
+  };
+
+  const createBlob = async (): Promise<string> => {
+    const response = await fetch(`${apiUrl}/blobs`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ content: 'bangle test write', encoding: 'utf-8' }),
+    });
+
+    if (!response.ok) {
+      throw new BaseError({
+        message:
+          'No write access, please ensure you have write access to the repo',
+        code: INVALID_GITHUB_TOKEN,
+      });
+    }
+
+    return response.json().then((data) => data.sha);
+  };
+
+  await createBlob();
+}
+
 export async function pushChanges({
   headSha,
   commitMessage,
@@ -498,17 +708,7 @@ export async function pushChanges({
   deletions,
   config,
   abortSignal,
-}: {
-  abortSignal: AbortSignal;
-  headSha: string;
-  commitMessage: {
-    headline: string;
-    body?: string;
-  };
-  additions: Array<{ path: string; base64Content: string }>;
-  deletions: Array<{ path: string }>;
-  config: GithubConfig;
-}): Promise<Array<[string, string]>> {
+}: PushChangesConfig): Promise<void> {
   let query = `
     mutation ($input: CreateCommitOnBranchInput!) {
       createCommitOnBranch(input: $input) {
@@ -520,7 +720,7 @@ export async function pushChanges({
     }
   `;
 
-  const makeRequest = () => {
+  const makeGraphQlReq = () => {
     return makeGraphql({
       query,
       variables: {
@@ -544,7 +744,7 @@ export async function pushChanges({
     });
   };
 
-  const result = await makeRequest().catch((error) => {
+  const result = await makeGraphQlReq().catch((error) => {
     // try one more time for cases where the headSha has not updated yet
     // on github's side
     if (
@@ -557,7 +757,7 @@ export async function pushChanges({
         error.message,
       );
 
-      return sleep(2000).then(() => makeRequest());
+      return sleep(2000).then(() => makeGraphQlReq());
     }
     throw error;
   });
@@ -817,7 +1017,7 @@ export async function commitToGithub({
     deletions,
   );
 
-  await pushChanges({
+  let pushConfig: PushChangesConfig = {
     abortSignal,
     headSha: sha,
     commitMessage: {
@@ -838,7 +1038,14 @@ export async function commitToGithub({
       return { path: filePath };
     }),
     config,
-  });
+  };
+
+  // graphql api doesn't support fine grained tokens
+  if (isFineGrainedToken(config.githubToken)) {
+    await pushChangesV3(pushConfig);
+  } else {
+    await pushChanges(pushConfig);
+  }
 }
 
 function makeGitCommitMessage(
