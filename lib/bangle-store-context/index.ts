@@ -6,6 +6,20 @@ import {
   ApplicationStore,
   AppState as ApplicationState,
 } from '@bangle.io/create-store';
+import type { BareStore } from '@bangle.io/nsm';
+import { Store, timeoutSchedular } from '@bangle.io/nsm';
+
+export const initialNsmStore: BareStore<any> = Store.create({
+  storeName: 'nsm-store-main',
+  scheduler: timeoutSchedular(0),
+  state: [] as any[],
+});
+
+export const NsmStoreContext = React.createContext<typeof initialNsmStore>(
+  // Note: this is just a dummy value to satisfy typescript and some tests,
+  // it is guaranteed to be replaced by the real value in the provider.
+  initialNsmStore,
+);
 
 export const initialBangleStore = ApplicationStore.create({
   storeName: MAIN_STORE_NAME,

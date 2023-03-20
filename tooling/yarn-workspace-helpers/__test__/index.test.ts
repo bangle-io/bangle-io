@@ -553,6 +553,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/nsm-slice-workspace",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "lib/nsm-slice-workspace",
+          "name": "@bangle.io/nsm-slice-workspace",
+          "type": "lib",
+        },
+      ],
+      [
         "@bangle.io/object-uid",
         {
           "hasCSSFiles": false,

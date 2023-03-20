@@ -280,6 +280,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/markdown"\
       },\
       {\
+        "name": "@bangle.io/nsm-slice-workspace",\
+        "reference": "workspace:lib/nsm-slice-workspace"\
+      },\
+      {\
         "name": "@bangle.io/shared-types",\
         "reference": "workspace:lib/shared-types"\
       },\
@@ -444,6 +448,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],\
       ["@bangle.io/note-tags", ["workspace:extensions/note-tags"]],\
       ["@bangle.io/nsm", ["workspace:js-lib/nsm"]],\
+      ["@bangle.io/nsm-slice-workspace", ["workspace:lib/nsm-slice-workspace"]],\
       ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],\
       ["@bangle.io/p-map", ["workspace:js-lib/p-map"]],\
       ["@bangle.io/playwright-e2e", ["workspace:tooling/playwright-e2e"]],\
@@ -7033,6 +7038,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"],\
             ["superjson", "npm:1.12.2"],\
             ["zod", "npm:3.21.4"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/nsm-slice-workspace", [\
+        ["workspace:lib/nsm-slice-workspace", {\
+          "packageLocation": "./lib/nsm-slice-workspace/",\
+          "packageDependencies": [\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"]\
           ],\
           "linkType": "SOFT"\
         }]\

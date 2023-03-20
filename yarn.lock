@@ -3085,6 +3085,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/nsm-slice-workspace@workspace:lib/nsm-slice-workspace":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm-slice-workspace@workspace:lib/nsm-slice-workspace"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/nsm@workspace:*, @bangle.io/nsm@workspace:js-lib/nsm":
   version: 0.0.0-use.local
   resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
