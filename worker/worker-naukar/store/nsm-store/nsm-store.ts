@@ -23,7 +23,7 @@ export const createNsmStore = ({
     sync: {
       type: 'replica',
       slices: [nsmPageSlice],
-      mainStore: 'bangle-stores',
+      mainStore: 'bangle-store',
       validate({ syncSlices }) {
         validateSlicesForSerialization(syncSlices);
       },
