@@ -2,7 +2,6 @@ import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
 import { changeEffect, createSlice, syncChangeEffect } from '@bangle.io/nsm';
 import { nsmPageSlice } from '@bangle.io/slice-page';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 export interface HistoryStateType {
   history: BaseHistory | undefined;

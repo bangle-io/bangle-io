@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { createDispatchSpy, Store, timeoutSchedular } from '@bangle.io/nsm';
+import { createTestDebugger, Store, timeoutSchedular } from '@bangle.io/nsm';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 
 import { historySliceFamily } from '../history-slice';
@@ -34,13 +34,13 @@ beforeEach(() => {
 
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    let dispatchSpy = createDispatchSpy();
+    let testSpy = createTestDebugger();
 
     let store = Store.create({
       storeName: 'bangle-store',
       scheduler: timeoutSchedular(0),
-      dispatchTx: dispatchSpy.dispatch,
-      debug: dispatchSpy.debug,
+      dispatchTx: testSpy.dispatch,
+      debug: testSpy.debug,
       state: [nsmPageSlice, ...historySliceFamily],
     });
 
@@ -49,13 +49,13 @@ describe('watchHistoryEffect', () => {
     jest.runAllTimers();
 
     expect(
-      dispatchSpy.getSimplifiedTransactions({
+      testSpy.getSimplifiedTransactions({
         filterBySource: [nsmPageSlice],
       }),
     ).toEqual([
       {
         actionId: 'syncPageLocation',
-        dispatchSource: undefined,
+        dispatchSource: 'watchHistoryEffect(changeEffect)',
         payload: [
           {
             pathname: '/ws/foo',
@@ -71,19 +71,19 @@ describe('watchHistoryEffect', () => {
 
 describe('applyPendingNavigation', () => {
   const createTestStore = () => {
-    let dispatchSpy = createDispatchSpy();
+    let testSpy = createTestDebugger();
 
     let store = Store.create({
       storeName: 'bangle-store',
       scheduler: timeoutSchedular(0),
-      dispatchTx: dispatchSpy.dispatch,
-      debug: dispatchSpy.debug,
+      dispatchTx: testSpy.dispatch,
+      debug: testSpy.debug,
       state: [nsmPageSlice, ...historySliceFamily],
     });
 
     return {
       store,
-      dispatchSpy,
+      testSpy: testSpy,
     };
   };
   beforeAll(() => {

@@ -15,9 +15,9 @@ export type {
 export {
   ActionSerializer,
   changeEffect,
-  createDispatchSpy,
   createSlice,
   createSyncStore,
+  createDispatchSpy as createTestDebugger,
   idleCallbackScheduler,
   Store,
   syncChangeEffect,

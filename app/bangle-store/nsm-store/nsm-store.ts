@@ -12,13 +12,19 @@ import { nsmPageSlice } from '@bangle.io/slice-page';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { historySliceFamily } from './history-slice';
+import {
+  pageLifeCycleBlockReload,
+  pageLifeCycleWatch,
+} from './page-lifecycle-slice';
 
 export const createNsmStore = () => {
   const storeName = 'bangle-store';
 
   const store = createSyncStore({
     storeName,
-    debug: (log) => {},
+    debug: (log) => {
+      console.log(storeName, '=>', log);
+    },
     sync: {
       type: 'main',
       slices: [nsmPageSlice],
@@ -36,7 +42,11 @@ export const createNsmStore = () => {
         }
       },
     },
-    slices: [...historySliceFamily],
+    slices: [
+      ...historySliceFamily,
+      pageLifeCycleWatch,
+      pageLifeCycleBlockReload,
+    ],
     scheduler: idleCallbackScheduler(15),
   });
 
