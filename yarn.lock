@@ -2156,6 +2156,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -2211,6 +2212,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
@@ -2233,6 +2235,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2251,6 +2254,7 @@ __metadata:
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    comlink: ^4.3.1
     page-lifecycle: ^0.1.2
     tslib: ^2.4.1
     typescript: 4.9.3
@@ -3081,6 +3085,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/nsm@workspace:*, @bangle.io/nsm@workspace:js-lib/nsm":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
+  dependencies:
+    nalanda: "portal:/Users/kushanjoshi/code/nalanda"
+    superjson: ^1.12.2
+    zod: ^3.21.4
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/object-uid@workspace:*, @bangle.io/object-uid@workspace:js-lib/object-uid":
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"
@@ -3353,6 +3367,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3390,6 +3405,7 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
@@ -3558,6 +3574,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
@@ -3787,6 +3804,7 @@ __metadata:
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-collab-comms": "workspace:*"
@@ -11666,6 +11684,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"copy-anything@npm:^3.0.2":
+  version: 3.0.3
+  resolution: "copy-anything@npm:3.0.3"
+  dependencies:
+    is-what: ^4.1.8
+  checksum: d456dc5ec98dee7c7cf87d809eac30dc2ac942acd4cf970fab394e280ceb6dd7a8a7a5a44fcbcc50e0206658de3cc20b92863562f5797930bb2619f164f4c182
+  languageName: node
+  linkType: hard
+
 "copy-concurrently@npm:^1.0.0":
   version: 1.0.5
   resolution: "copy-concurrently@npm:1.0.5"
@@ -16536,6 +16563,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-what@npm:^4.1.8":
+  version: 4.1.8
+  resolution: "is-what@npm:4.1.8"
+  checksum: b9bec3acff102d14ad467f4c74c9886af310fa160e07a63292c8c181e6768c7c4c1054644e13d67185b963644e4a513bce8c6b8ce3d3ca6f9488a69fccad5f97
+  languageName: node
+  linkType: hard
+
 "is-whitespace-character@npm:^1.0.0":
   version: 1.0.4
   resolution: "is-whitespace-character@npm:1.0.4"
@@ -18947,6 +18981,23 @@ __metadata:
   checksum: ff48d251fc3f827e5b1206cda0ffdaec885e56057ee86a3155e1951bc940fd5f33531774b1cc8414d7668c10a8907f863f6561875ee6e8768931a62121a531a1
   languageName: node
   linkType: hard
+
+"nalanda@portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm":
+  version: 0.0.0-use.local
+  resolution: "nalanda@portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"
+  dependencies:
+    type-fest: ^3.6.0
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ">=17.0"
+    zod: ">=3.20.0"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    zod:
+      optional: true
+  languageName: node
+  linkType: soft
 
 "nan@npm:^2.12.1":
   version: 2.17.0
@@ -23495,6 +23546,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"superjson@npm:^1.12.2":
+  version: 1.12.2
+  resolution: "superjson@npm:1.12.2"
+  dependencies:
+    copy-anything: ^3.0.2
+  checksum: cf7735e172811ed87476a7c2f1bb0e83725a0e3c2d7a50a71303a973060b3c710288767fb767a7a7eee8e5625d3ccaee1176a93e27f43841627512c15c4cdf84
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:^5.3.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -24329,6 +24389,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "type-fest@npm:3.6.0"
+  checksum: 3cb3b27fc1dc69e0a7524041d9d32cfd3786b16591952e0b2b87ca44b53acaed1bf86ee62a7cc3033a55154d44542e8b488d500d1b363d828f62a9fae9d2a043
+  languageName: node
+  linkType: hard
+
 "type-is@npm:~1.6.18":
   version: 1.6.18
   resolution: "type-is@npm:1.6.18"
@@ -24857,7 +24924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.0.0":
+"use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.2.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
   peerDependencies:
@@ -26040,6 +26107,13 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.21.4":
+  version: 3.21.4
+  resolution: "zod@npm:3.21.4"
+  checksum: f185ba87342ff16f7a06686767c2b2a7af41110c7edf7c1974095d8db7a73792696bcb4a00853de0d2edeb34a5b2ea6a55871bc864227dace682a0a28de33e1f
   languageName: node
   linkType: hard
 
