@@ -1,3 +1,7 @@
+export {
+  type UISliceState,
+  initialUISliceState as initialState,
+} from './constants';
 export { nsmUISlice } from './nsm-ui-slice';
 export {
   changeSidebar,
@@ -9,9 +13,4 @@ export {
   toggleTheme,
 } from './operations';
 export { useUIManagerContext } from './ui-context';
-export {
-  type UISliceState,
-  initialUISliceState as initialState,
-  uiSlice,
-  uiSliceKey,
-} from './ui-slice';
+export { uiSlice, uiSliceKey } from './ui-slice';

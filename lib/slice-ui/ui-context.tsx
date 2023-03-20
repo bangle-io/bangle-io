@@ -3,7 +3,8 @@ import { useMemo } from 'react';
 import { useSliceState } from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
 
-import type { UiContextAction, UISliceState } from './ui-slice';
+import type { UISliceState } from './constants';
+import type { UiContextAction } from './ui-slice';
 import { uiSliceKey } from './ui-slice';
 
 export type UIStateObj = UISliceState & {

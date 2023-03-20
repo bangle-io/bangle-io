@@ -19,6 +19,7 @@ export {
   createSyncStore,
   createDispatchSpy as createTestDebugger,
   idleCallbackScheduler,
+  mergeSlices,
   Store,
   syncChangeEffect,
   timeoutSchedular,

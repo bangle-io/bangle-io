@@ -1,6 +1,6 @@
 import type { ColorScheme, CorePalette } from '@bangle.io/constants';
 import { COLOR_SCHEMA } from '@bangle.io/constants';
-import { changeEffect, createSlice } from '@bangle.io/nsm';
+import { changeEffect, createSlice, mergeSlices } from '@bangle.io/nsm';
 import {
   changeColorScheme,
   checkWidescreen,
@@ -8,10 +8,10 @@ import {
   setRootWidescreenClass,
 } from '@bangle.io/utils';
 
-import { initialUISliceState } from './ui-slice';
+import { initialUISliceState } from './constants';
 
-export const nsmUISlice = createSlice([], {
-  name: '@bangle.io/ui-slice',
+const uiSlice = createSlice([], {
+  name: 'ui-slice',
   initState: initialUISliceState,
   selectors: {},
   actions: {
@@ -120,11 +120,11 @@ export const nsmUISlice = createSlice([], {
   },
 });
 
-export const uiSliceEffect = changeEffect(
+const uiSliceEffect = changeEffect(
   '@bangle.io/ui-slice-change-effect',
   {
-    colorSchema: nsmUISlice.passivePick((state) => state.colorScheme),
-    widescreen: nsmUISlice.passivePick((state) => state.widescreen),
+    colorSchema: uiSlice.passivePick((state) => state.colorScheme),
+    widescreen: uiSlice.passivePick((state) => state.widescreen),
   },
   ({ colorSchema, widescreen }, dispatch) => {
     changeColorScheme(colorSchema);
@@ -132,7 +132,7 @@ export const uiSliceEffect = changeEffect(
 
     const controller = new AbortController();
     listenToResize((obj) => {
-      dispatch(nsmUISlice.actions.updateWindowSize(obj));
+      dispatch(uiSlice.actions.updateWindowSize(obj));
     }, controller.signal);
 
     return () => {
@@ -140,3 +140,8 @@ export const uiSliceEffect = changeEffect(
     };
   },
 );
+
+export const nsmUISlice = mergeSlices({
+  name: '@bangle.io/ui-slice',
+  children: [uiSlice, uiSliceEffect],
+});

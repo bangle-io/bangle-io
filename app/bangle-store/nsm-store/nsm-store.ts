@@ -9,6 +9,7 @@ import {
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
 import { nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmUISlice } from '@bangle.io/slice-ui';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { historySliceFamily } from './history-slice';
@@ -46,6 +47,7 @@ export const createNsmStore = () => {
       ...historySliceFamily,
       pageLifeCycleWatch,
       pageLifeCycleBlockReload,
+      nsmUISlice,
     ],
     scheduler: idleCallbackScheduler(15),
   });

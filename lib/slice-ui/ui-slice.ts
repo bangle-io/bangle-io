@@ -7,7 +7,14 @@ import {
   changeColorScheme,
   checkWidescreen,
   listenToResize,
+  setRootWidescreenClass,
 } from '@bangle.io/utils';
+
+import {
+  getThemePreference,
+  initialUISliceState,
+  UISliceState,
+} from './constants';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};
@@ -16,19 +23,6 @@ export type UiContextDispatchType = ApplicationStore<
   UISliceState,
   UiContextAction
 >['dispatch'];
-
-export interface UISliceState {
-  changelogHasUpdates: boolean;
-  dialogName?: string | null;
-  dialogMetadata?: undefined | { [key: string]: any };
-  noteSidebar: boolean;
-  paletteInitialQuery?: string | null;
-  paletteMetadata?: any | null;
-  paletteType?: CorePalette | null;
-  sidebar?: string | null;
-  colorScheme: ColorScheme;
-  widescreen: boolean;
-}
 
 export const UI_CONTEXT_TOGGLE_COLOR_SCHEME =
   'action::@bangle.io/slice-ui:TOGGLE_COLOR_SCHEME';
@@ -86,20 +80,6 @@ export type UiContextAction =
       value: { visible: boolean };
     }
   | { name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR'; value: {} };
-
-export const initialUISliceState: UISliceState = {
-  // UI
-  changelogHasUpdates: false,
-  dialogName: undefined,
-  dialogMetadata: undefined,
-  noteSidebar: false,
-  paletteInitialQuery: undefined,
-  paletteMetadata: undefined,
-  paletteType: undefined,
-  sidebar: undefined,
-  colorScheme: getThemePreference(),
-  widescreen: checkWidescreen(),
-};
 
 export const uiSliceKey = new SliceKey<UISliceState, UiContextAction>(
   'ui-slice',
@@ -305,38 +285,4 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
       };
     },
   });
-}
-
-function getThemePreference() {
-  if (typeof window === 'undefined' || !window.matchMedia) {
-    return COLOR_SCHEMA.LIGHT;
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? COLOR_SCHEMA.DARK
-    : COLOR_SCHEMA.LIGHT;
-}
-
-function setRootWidescreenClass(widescreen?: boolean) {
-  if (typeof document === 'undefined') {
-    console.debug('setRootWidescreenClass called in non-browser environment');
-
-    return;
-  }
-  const root = document.getElementById('root');
-  const body = document.body;
-
-  if (widescreen) {
-    root?.classList.add('BU_widescreen');
-    body.classList.add('BU_widescreen');
-
-    root?.classList.remove('BU_smallscreen');
-    body.classList.remove('BU_smallscreen');
-  } else {
-    root?.classList.remove('BU_widescreen');
-    body.classList.remove('BU_widescreen');
-
-    root?.classList.add('BU_smallscreen');
-    body.classList.add('BU_smallscreen');
-  }
 }
