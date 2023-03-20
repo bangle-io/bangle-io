@@ -4,13 +4,16 @@ import type { Key } from 'path-to-regexp';
 import { pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
+import { z } from '@bangle.io/nsm';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath } from '@bangle.io/ws-path';
 
-export interface Location {
-  pathname?: string;
-  search?: string;
-}
+export const locationSchema = z.object({
+  pathname: z.string().optional(),
+  search: z.string().optional(),
+});
+
+export type Location = z.infer<typeof locationSchema>;
 
 const convertPathToRegexp = (path: string) => {
   let keys: Key[] = [];

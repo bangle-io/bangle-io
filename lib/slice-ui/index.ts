@@ -1,3 +1,4 @@
+export { nsmUISlice } from './nsm-ui-slice';
 export {
   changeSidebar,
   dismissDialog,

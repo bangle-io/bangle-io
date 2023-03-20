@@ -1,5 +1,6 @@
 import type { ApplicationStore, ExtractAction } from '@bangle.io/create-store';
 import { SliceKey } from '@bangle.io/create-store';
+import { z } from '@bangle.io/nsm';
 
 import type { Location } from './location-helpers';
 
@@ -11,13 +12,16 @@ export type PageDispatchType = ApplicationStore<
   PageSliceAction
 >['dispatch'];
 
-export type PageLifeCycleState =
-  | 'active'
-  | 'passive'
-  | 'hidden'
-  | 'frozen'
-  | 'terminated'
-  | undefined;
+export const pageLifeCycleState = z.union([
+  z.literal('active'),
+  z.literal('passive'),
+  z.literal('hidden'),
+  z.literal('frozen'),
+  z.literal('terminated'),
+  z.undefined(),
+]);
+
+export type PageLifeCycleState = z.infer<typeof pageLifeCycleState>;
 
 export interface PageSliceStateType {
   blockReload: boolean;

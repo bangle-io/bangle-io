@@ -542,6 +542,17 @@ test('lists packages', async () => {
         },
       ],
       [
+        "@bangle.io/nsm",
+        {
+          "hasCSSFiles": false,
+          "isToolingWorkspace": false,
+          "isWorktree": false,
+          "location": "js-lib/nsm",
+          "name": "@bangle.io/nsm",
+          "type": "js-lib",
+        },
+      ],
+      [
         "@bangle.io/object-uid",
         {
           "hasCSSFiles": false,

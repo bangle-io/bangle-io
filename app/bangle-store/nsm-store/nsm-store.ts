@@ -8,7 +8,10 @@ import {
   serializeTransaction,
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
+import { nsmPageSlice } from '@bangle.io/slice-page';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
+
+import { historySliceFamily } from './history-slice';
 
 export const createNsmStore = () => {
   const storeName = 'bangle-store';
@@ -18,7 +21,7 @@ export const createNsmStore = () => {
     debug: (log) => {},
     sync: {
       type: 'main',
-      slices: [],
+      slices: [nsmPageSlice],
       replicaStores: ['naukar-store'],
       validate({ syncSlices }) {
         validateSlicesForSerialization(syncSlices);
@@ -33,7 +36,7 @@ export const createNsmStore = () => {
         }
       },
     },
-    slices: [],
+    slices: [...historySliceFamily],
     scheduler: idleCallbackScheduler(15),
   });
 

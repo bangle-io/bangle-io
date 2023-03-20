@@ -6,6 +6,7 @@ import {
   timeoutSchedular,
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
+import { nsmPageSlice } from '@bangle.io/slice-page';
 
 export const createNsmStore = ({
   sendMessage,
@@ -21,7 +22,7 @@ export const createNsmStore = ({
     },
     sync: {
       type: 'replica',
-      slices: [],
+      slices: [nsmPageSlice],
       mainStore: 'bangle-stores',
       validate({ syncSlices }) {
         validateSlicesForSerialization(syncSlices);
