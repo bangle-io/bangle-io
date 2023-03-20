@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { initializeBangleStore } from '@bangle.io/bangle-store';
+import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 
 import { Entry } from './entry';
@@ -33,12 +33,16 @@ runAfterPolyfills(() => {
   let storeChanged = 0;
   const root = document.getElementById('root');
 
+  const nsmStore = createNsmStore();
+
+  (window as any).nsmStore = nsmStore;
   const store = initializeBangleStore({
     onUpdate: () => {
       ReactDOM.render(
         React.createElement(Entry, {
           storeChanged: storeChanged++,
           store,
+          nsmStore,
         }),
         root,
       );
@@ -47,6 +51,7 @@ runAfterPolyfills(() => {
 
   ReactDOM.render(
     React.createElement(Entry, {
+      nsmStore,
       storeChanged: storeChanged++,
       store,
     }),

@@ -12,6 +12,7 @@ import { getCollabManager } from '@bangle.io/worker-editor';
 
 import { abortableServices } from './abortable-services';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
+import { createNsmStore } from './store/nsm-store/nsm-store';
 
 // if naukar is running in window, no need to initialize as the app already has one initialized
 if (isWorkerGlobalScope() && APP_ENV !== 'local') {
@@ -38,6 +39,19 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     (self as any).storeRef = storeRef;
   }
 
+  let sendQueue: any[] = [];
+  let sendMessageCb: ((message: any) => void) | undefined = undefined;
+
+  const nsmNaukarStore = createNsmStore({
+    sendMessage: (message) => {
+      if (sendMessageCb) {
+        sendMessageCb(message);
+      } else {
+        sendQueue.push(message);
+      }
+    },
+  });
+
   return {
     // setup up store and store syncing
     async sendMessagePort(port: MessageChannel['port2']) {
@@ -49,6 +63,17 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
     async status() {
       return true;
+    },
+
+    async nsmNaukarStoreReceive(m: any) {
+      nsmNaukarStore.receiveMessage(m);
+    },
+    async nsmNaukarStoreRegisterCb(cb: (m: any) => void) {
+      sendMessageCb = cb;
+      sendQueue.forEach((m) => {
+        cb(m);
+      });
+      sendQueue = [];
     },
 
     async testGetStore() {

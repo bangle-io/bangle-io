@@ -10,11 +10,13 @@ import { historySliceKey } from '@bangle.io/bangle-store';
 import {
   BangleStoreChanged,
   BangleStoreContext,
+  NsmStoreContext,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
+import type { BareStore } from '@bangle.io/nsm';
 import { pageSliceKey, pathMatcher } from '@bangle.io/slice-page';
 
 import { AppContainer } from './AppContainer';
@@ -53,9 +55,11 @@ const useRouterHook: BaseLocationHook = () => {
 };
 
 export function Entry({
+  nsmStore,
   storeChanged: bangleStoreChanged,
   store: bangleStore,
 }: {
+  nsmStore: BareStore<any>;
   storeChanged: number;
   store: ApplicationStore;
 }) {
@@ -99,16 +103,18 @@ export function Entry({
         <Router hook={useRouterHook} matcher={pathMatcher as any}>
           {/* Used by OverlayContainer -- any modal or popover */}
           <OverlayProvider>
-            <BangleStoreContext.Provider value={bangleStoreRef}>
-              <BangleStoreChanged.Provider value={bangleStoreChanged}>
-                <SWReloadPrompt />
-                <WatchWorkspace />
-                <WatchUI />
-                <SerialOperationContextProvider>
-                  <AppContainer />
-                </SerialOperationContextProvider>
-              </BangleStoreChanged.Provider>
-            </BangleStoreContext.Provider>
+            <NsmStoreContext.Provider value={nsmStore}>
+              <BangleStoreContext.Provider value={bangleStoreRef}>
+                <BangleStoreChanged.Provider value={bangleStoreChanged}>
+                  <SWReloadPrompt />
+                  <WatchWorkspace />
+                  <WatchUI />
+                  <SerialOperationContextProvider>
+                    <AppContainer />
+                  </SerialOperationContextProvider>
+                </BangleStoreChanged.Provider>
+              </BangleStoreContext.Provider>
+            </NsmStoreContext.Provider>
           </OverlayProvider>
         </Router>
       </ErrorBoundary>
