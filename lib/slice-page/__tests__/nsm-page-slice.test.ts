@@ -1,4 +1,4 @@
-import { createDispatchSpy, Store, timeoutSchedular } from '@bangle.io/nsm';
+import { createTestDebugger, Store, timeoutSchedular } from '@bangle.io/nsm';
 
 import { nsmPageSlice } from '../nsm-page-slice';
 import { lifeCycleMock } from './test-utils';
@@ -9,19 +9,19 @@ beforeEach(() => {
 });
 
 export const createTestStore = () => {
-  let dispatchSpy = createDispatchSpy();
+  let testSpy = createTestDebugger();
 
   let store = Store.create({
     storeName: 'bangle-store',
     scheduler: timeoutSchedular(0),
-    dispatchTx: dispatchSpy.dispatch,
-    debug: dispatchSpy.debug,
+    dispatchTx: testSpy.dispatch,
+    debug: testSpy.debug,
     state: [nsmPageSlice],
   });
 
   return {
     store,
-    dispatchSpy,
+    testSpy: testSpy,
   };
 };
 
