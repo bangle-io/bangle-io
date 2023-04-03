@@ -95,6 +95,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
   constructor(public config: AppStateConfig<S, A, Op>) {}
+
   applyAction(rootAction: A): AppState<S, A, Op> {
     let newInstance = this._applyInner(rootAction);
 

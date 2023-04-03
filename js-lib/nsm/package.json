@@ -1,0 +1,31 @@
+{
+  "name": "@bangle.io/nsm",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/nsm"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "zod": "^3.20.2"
+  },
+  "license": "AGPL-3.0-or-later"
+}
