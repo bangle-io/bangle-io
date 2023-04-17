@@ -55,15 +55,15 @@ describe('watchHistoryEffect', () => {
     ).toEqual([
       {
         actionId: 'syncPageLocation',
-        dispatchSource: 'watchHistoryEffect(changeEffect)',
+        dispatchSource: 'l_watchHistoryEffect$',
         payload: [
           {
             pathname: '/ws/foo',
             search: '',
           },
         ],
-        sourceSliceKey: 'key_@bangle.io/page-slice',
-        targetSliceKey: 'key_@bangle.io/page-slice',
+        sourceSliceLineage: 'l_bangle/page-slice$',
+        targetSliceLineage: 'l_bangle/page-slice$',
       },
     ]);
   });

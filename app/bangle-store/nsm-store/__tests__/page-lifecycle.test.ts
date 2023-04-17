@@ -119,15 +119,15 @@ describe('watchPageLifeCycleEffect', () => {
         .find((r) => r.actionId === 'setPageLifeCycleState'),
     ).toEqual({
       actionId: 'setPageLifeCycleState',
-      dispatchSource: 'pageLifeCycleWatch(changeEffect)',
+      dispatchSource: 'l_pageLifeCycleWatch$',
       payload: [
         {
           current: 'active',
           previous: undefined,
         },
       ],
-      sourceSliceKey: 'key_@bangle.io/page-slice',
-      targetSliceKey: 'key_@bangle.io/page-slice',
+      sourceSliceLineage: 'l_bangle/page-slice$',
+      targetSliceLineage: 'l_bangle/page-slice$',
     });
 
     store?.destroy();

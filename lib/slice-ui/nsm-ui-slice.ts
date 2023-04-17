@@ -1,6 +1,6 @@
 import type { ColorScheme, CorePalette } from '@bangle.io/constants';
 import { COLOR_SCHEMA } from '@bangle.io/constants';
-import { changeEffect, createSlice, mergeSlices } from '@bangle.io/nsm';
+import { changeEffect, createSlice, mergeAll } from '@bangle.io/nsm';
 import {
   changeColorScheme,
   checkWidescreen,
@@ -11,9 +11,9 @@ import {
 import { initialUISliceState } from './constants';
 
 const uiSlice = createSlice([], {
-  name: 'ui-slice',
+  name: 'bangle/ui-slice-main',
   initState: initialUISliceState,
-  selectors: {},
+  selector: () => ({}),
   actions: {
     toggleSidebar: (type: string) => (state) => ({
       ...state,
@@ -121,7 +121,7 @@ const uiSlice = createSlice([], {
 });
 
 const uiSliceEffect = changeEffect(
-  '@bangle.io/ui-slice-change-effect',
+  'bangle/ui-slice-change-effect',
   {
     colorSchema: uiSlice.passivePick((state) => state.colorScheme),
     widescreen: uiSlice.passivePick((state) => state.widescreen),
@@ -141,7 +141,6 @@ const uiSliceEffect = changeEffect(
   },
 );
 
-export const nsmUISlice = mergeSlices({
-  name: '@bangle.io/ui-slice',
-  children: [uiSlice, uiSliceEffect],
+export const nsmUISlice = mergeAll([uiSlice, uiSliceEffect], {
+  name: 'bangle/ui-slice',
 });

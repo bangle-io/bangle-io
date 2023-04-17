@@ -3,9 +3,10 @@ import * as Comlink from 'comlink';
 import type { SyncMessage } from '@bangle.io/nsm';
 import {
   createSyncStore,
-  deserializeTransaction,
   idleCallbackScheduler,
-  serializeTransaction,
+  payloadParser,
+  payloadSerializer,
+  Store,
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
 import { nsmPageSlice } from '@bangle.io/slice-page';
@@ -21,26 +22,23 @@ import {
 export const createNsmStore = () => {
   const storeName = 'bangle-store';
 
+  const syncSlices = [nsmPageSlice];
   const store = createSyncStore({
     storeName,
     debug: (log) => {
-      console.log(storeName, '=>', log);
+      console.info(storeName, '=>', log);
     },
     sync: {
       type: 'main',
-      slices: [nsmPageSlice],
+      slices: syncSlices,
       replicaStores: ['naukar-store'],
       validate({ syncSlices }) {
         validateSlicesForSerialization(syncSlices);
       },
+      payloadParser,
+      payloadSerializer,
       sendMessage(msg) {
-        if (msg.type === 'tx') {
-          const txObj = serializeTransaction(msg.body, store.store);
-
-          naukarProxy.nsmNaukarStoreReceive({ ...msg, body: txObj });
-        } else {
-          naukarProxy.nsmNaukarStoreReceive(msg);
-        }
+        naukarProxy.nsmNaukarStoreReceive(msg);
       },
     },
     slices: [
@@ -50,25 +48,20 @@ export const createNsmStore = () => {
       nsmUISlice,
     ],
     scheduler: idleCallbackScheduler(15),
+    dispatchTx: (store, tx) => {
+      let newState = store.state.applyTransaction(tx);
+      syncSlices.forEach((sl) => {
+        console.debug('main', sl.lineageId, sl.getState(newState));
+      });
+      Store.updateState(store, newState, tx);
+    },
   });
 
   naukarProxy.nsmNaukarStoreRegisterCb(
     Comlink.proxy((msg) => {
       const obj: SyncMessage = msg;
 
-      if (obj.type === 'tx') {
-        const tx = deserializeTransaction(obj.body as any, store.store);
-        store.receiveMessage({
-          ...obj,
-          body: tx,
-        });
-
-        return;
-      } else {
-        store.receiveMessage(obj);
-
-        return;
-      }
+      store.receiveMessage(obj);
     }),
   );
 

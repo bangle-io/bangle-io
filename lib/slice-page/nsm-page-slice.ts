@@ -11,7 +11,7 @@ import { locationSchema, locationSetWsPath } from './location-helpers';
 import { pageSliceInitialState } from './page-slice';
 
 export const nsmPageSlice = createSlice([], {
-  name: '@bangle.io/page-slice',
+  name: 'bangle/page-slice',
   initState: pageSliceInitialState,
   actions: {
     blockReload: serialAction(z.boolean(), (block) => (state) => ({
@@ -124,7 +124,9 @@ export const nsmPageSlice = createSlice([], {
       },
     ),
   },
-  selectors: {
-    getCurrentPageLifeCycle: (state) => state.lifeCycleState.current,
+  selector: (state) => {
+    return {
+      currentPageLifeCycle: state.lifeCycleState.current,
+    };
   },
 });

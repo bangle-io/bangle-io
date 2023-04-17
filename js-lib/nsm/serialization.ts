@@ -1,5 +1,11 @@
-import type { ActionBuilder, BareStore, Slice } from 'nalanda';
-import { getActionBuilderByKey, Transaction } from 'nalanda';
+import type {
+  ActionBuilder,
+  AnySlice,
+  LineageId,
+  PayloadParser,
+  PayloadSerializer,
+} from 'nalanda';
+import { StoreState } from 'nalanda';
 import { parse, stringify } from 'superjson';
 import type { z } from 'zod';
 
@@ -7,105 +13,69 @@ import { zodFindUnsafeTypes } from './zod-helpers';
 
 export type NoInfer<T> = [T][T extends any ? 0 : never];
 
-type AnyActionBuilder = ActionBuilder<any, any, any>;
-type AnyActionSlice = Slice<
-  string,
-  any,
-  any,
-  Record<string, AnyActionBuilder>,
-  {}
->;
-
-const METADATA_KEY = Symbol('serialization_metadata');
-
 interface SerializationMetadata<T = unknown> {
   schema: z.ZodTypeAny;
   serialize?: (val: [T]) => any;
   deserialize?: (val: any) => [T];
 }
 
-function setSerializationMetadata<T = unknown>(
-  action: AnyActionBuilder,
-  metadata: SerializationMetadata<T>,
-) {
-  if (!action.metadata) {
-    action.metadata = {};
-  }
-  action.metadata[METADATA_KEY] = metadata;
-}
+const lookupTable = new Map<string, SerializationMetadata<any>>();
 
 function getSerializationMetadata(
-  action: AnyActionBuilder,
+  lineageId: LineageId,
+  actionId: string,
 ): undefined | SerializationMetadata {
-  return action.metadata?.[METADATA_KEY];
+  return lookupTable.get(lineageId + actionId);
 }
 
-export function serializeTransaction(
-  tx: Transaction<any, any>,
-  store: BareStore<any>,
-) {
-  const action = getActionBuilderByKey(store, tx.sourceSliceKey, tx.actionId);
-
-  if (!action) {
-    throw new Error(
-      `serializeTransaction: action with id "${tx.actionId}" wasn't serializable in slice "${tx.sourceSliceKey}"`,
-    );
-  }
-
-  const serial = getSerializationMetadata(action);
+export const payloadSerializer: PayloadSerializer = (payload, tx) => {
+  const serial = getSerializationMetadata(tx.sourceSliceLineage, tx.actionId);
 
   if (!serial) {
     throw new Error(
-      `Unable to serialize action with id "${tx.actionId}" in slice "${tx.sourceSliceKey}", did you forget to use serialAction?`,
+      `Unable to serialize action with id "${tx.actionId}" in slice "${tx.sourceSliceLineage}", did you forget to use serialAction?`,
     );
   }
 
-  return tx.toJSONObj((payload) => {
-    if (serial.serialize) {
-      return stringify(serial.serialize([payload[0]]));
-    }
-
-    return stringify(payload);
-  });
-}
-
-export function deserializeTransaction(
-  txObj: ReturnType<Transaction<any, any>['toJSONObj']>,
-  store: BareStore<any>,
-): Transaction<string, any[]> {
-  const { sourceSliceKey, actionId } = txObj;
-
-  if (!sourceSliceKey || !actionId) {
+  if (payload.length !== 1) {
     throw new Error(
-      `deserializeTransaction: transaction object is missing sourceSliceKey or actionId`,
+      `Unable to serialize action with id "${tx.actionId}" in slice "${tx.sourceSliceLineage}", payload must be an array of length 1`,
     );
   }
-  let action = getActionBuilderByKey(store, sourceSliceKey, actionId);
 
-  if (!action) {
+  if (serial.serialize) {
+    return stringify(serial.serialize([payload[0]]));
+  }
+
+  return stringify(payload);
+};
+
+export const payloadParser: PayloadParser = (payload, txnJSON, store) => {
+  // TODO we can probably cleanup some of this extra checks to improve perf
+  const lineageId = StoreState.getLineageId(store.state, txnJSON.sourceSliceId);
+
+  const serial = getSerializationMetadata(lineageId, txnJSON.actionId);
+
+  if (!serial) {
     throw new Error(
-      `deserializeTransaction: action with id "${actionId}" wasn't serializable in slice "${sourceSliceKey}"`,
+      `Unable to deserializeTransaction, slice ${lineageId} with ${txnJSON.actionId} was not found`,
     );
   }
 
-  const serial = getSerializationMetadata(action)!;
+  if (typeof payload !== 'string') {
+    throw new Error(`deserializeTransaction: payload is not a string`);
+  }
 
-  return Transaction.fromJSONObj(txObj, (payload) => {
-    if (serial.deserialize) {
-      return serial.deserialize(parse(payload));
-    }
+  if (serial.deserialize) {
+    return serial.deserialize(parse(payload));
+  }
 
-    return parse(payload);
-  });
-}
+  return parse(payload);
+};
 
-export function serialAction<
-  Z extends z.ZodTypeAny,
-  SS,
-  DS extends AnyActionSlice,
->(
+export function serialAction<Z extends z.ZodTypeAny, SS, DS extends AnySlice>(
   schema: Z,
-  action: ActionBuilder<[z.infer<Z>], SS, DS>,
+  actionBuilder: ActionBuilder<[z.infer<Z>], SS, DS>,
 ): ActionBuilder<[z.infer<Z>], SS, DS> {
   let unsafeTypes = zodFindUnsafeTypes(schema);
 
@@ -115,20 +85,23 @@ export function serialAction<
     );
   }
 
-  setSerializationMetadata(action, { schema });
+  // this gets called on slice init
+  actionBuilder.setContextDetails = (context) => {
+    lookupTable.set(context.lineageId + context.actionId, { schema });
+  };
 
-  return action;
+  return actionBuilder;
 }
 
 // when you have some custom type that you can convert to zod type
 export function customSerialAction<
   T extends any,
   SS,
-  DS extends AnyActionSlice,
+  DS extends AnySlice,
   Z extends z.ZodTypeAny,
   R,
 >(
-  action: ActionBuilder<[T], SS, DS>,
+  actionBuilder: ActionBuilder<[T], SS, DS>,
   {
     schema,
     serialize,
@@ -147,29 +120,28 @@ export function customSerialAction<
     );
   }
 
-  setSerializationMetadata<T>(action, {
-    schema,
-    serialize: (v) => {
-      return serialize(v[0]);
-    },
-    deserialize: (obj) => {
-      return [deserialize(obj)];
-    },
-  });
+  // this gets called on slice init
+  actionBuilder.setContextDetails = (context) => {
+    lookupTable.set(context.lineageId + context.actionId, {
+      schema,
+      serialize: (v) => {
+        return serialize(v[0]);
+      },
+      deserialize: (obj) => {
+        return [deserialize(obj)];
+      },
+    });
+  };
 
-  return action;
+  return actionBuilder;
 }
 
-function isActionSerializable(action: AnyActionBuilder): boolean {
-  return action.metadata?.[METADATA_KEY] !== undefined;
-}
-
-export function validateSlicesForSerialization(sl: AnyActionSlice[]) {
+export function validateSlicesForSerialization(sl: AnySlice[]) {
   for (const slice of sl) {
-    for (const [actionName, action] of Object.entries(slice.spec.actions)) {
-      if (!isActionSerializable(action)) {
+    for (const [actionName] of Object.entries(slice.actions)) {
+      if (!lookupTable.has(slice.lineageId + actionName)) {
         throw new Error(
-          `validateSlices: slice ${slice.name} is using an action ${actionName} that is not serializable`,
+          `validateSlices: slice ${slice.name} is using an action ${actionName} that does not have serialization setup`,
         );
       }
     }

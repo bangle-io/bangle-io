@@ -1,25 +1,18 @@
 export {
   customSerialAction,
-  deserializeTransaction,
+  payloadParser,
+  payloadSerializer,
   serialAction,
-  serializeTransaction,
   validateSlicesForSerialization,
 } from './serialization';
-export type {
-  BareStore,
-  MainChannel,
-  MainStoreInfo,
-  ReplicaChannel,
-  SyncMessage,
-} from 'nalanda';
+export type { BareStore, MainStoreInfo, SyncMessage } from 'nalanda';
 export {
-  ActionSerializer,
   changeEffect,
   createSlice,
   createSyncStore,
   createDispatchSpy as createTestDebugger,
   idleCallbackScheduler,
-  mergeSlices,
+  mergeAll,
   Store,
   syncChangeEffect,
   timeoutSchedular,

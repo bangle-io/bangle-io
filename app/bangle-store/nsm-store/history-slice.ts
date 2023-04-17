@@ -20,7 +20,7 @@ const historySlice = createSlice([], {
       history,
     }),
   },
-  selectors: {},
+  selector: () => ({}),
 });
 
 const pendingNavEffect = syncChangeEffect(
