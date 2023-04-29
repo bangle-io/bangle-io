@@ -30,6 +30,7 @@
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/nsm": "workspace:*",
+    "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-collab-comms": "workspace:*",

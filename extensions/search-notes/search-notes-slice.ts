@@ -1,7 +1,7 @@
 import { search } from '@bangle.dev/search';
 
-import { editor, Slice, workspace } from '@bangle.io/api';
-import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
+import { getNewStore, Slice, workspace } from '@bangle.io/api';
+import { forEachEditor } from '@bangle.io/slice-editor-manager';
 import { assertActionName, isAbortError } from '@bangle.io/utils';
 
 import type { SearchNotesExtensionState } from './constants';
@@ -157,6 +157,7 @@ const searchEffect = searchNotesSliceKey.effect(() => {
 const highlightEditorsEffect = searchNotesSliceKey.effect(() => {
   return {
     deferredUpdate(store, prevState) {
+      const nsmStore = getNewStore(store);
       const searchQuery = searchNotesSliceKey.getValueIfChanged(
         'searchQuery',
         store.state,
@@ -167,23 +168,20 @@ const highlightEditorsEffect = searchNotesSliceKey.effect(() => {
         return;
       }
 
-      editorManagerSliceKey.callQueryOp(
-        store.state,
-        editor.forEachEditor((editor) => {
-          if (editor?.destroyed === false) {
-            const queryRegex = searchQuery
-              ? new RegExp(
-                  searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'),
-                  'i',
-                )
-              : undefined;
-            search.updateSearchQuery(searchPluginKey, queryRegex)(
-              editor.view.state,
-              editor.view.dispatch,
-            );
-          }
-        }),
-      );
+      forEachEditor(nsmStore.state, (editor) => {
+        if (!editor?.destroyed) {
+          const queryRegex = searchQuery
+            ? new RegExp(
+                searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'),
+                'i',
+              )
+            : undefined;
+          search.updateSearchQuery(searchPluginKey, queryRegex)(
+            editor.view.state,
+            editor.view.dispatch,
+          );
+        }
+      });
     },
   };
 });

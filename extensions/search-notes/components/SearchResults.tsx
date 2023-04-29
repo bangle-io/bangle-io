@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { NodeSelection, Selection } from '@bangle.dev/pm';
 
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
@@ -76,7 +77,8 @@ export function SearchResults({
     results,
     collapseAllCounter,
   );
-  const { primaryEditor } = useEditorManagerContext();
+  const [{ primaryEditor }] = useNsmSlice(nsmEditorManagerSlice);
+
   const {
     openedWsPaths: { primaryWsPath },
   } = useWorkspaceContext();

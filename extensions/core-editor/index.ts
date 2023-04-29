@@ -1,6 +1,7 @@
 import { heading, listItem } from '@bangle.dev/base-components';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
+import { getNewStore } from '@bangle.io/api';
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { dispatchEditorCommand } from '@bangle.io/slice-editor-manager';
@@ -46,39 +47,45 @@ const extension = Extension.create({
 
       return {
         handle(operation, payload, bangleStore) {
+          const nsmStore = getNewStore(bangleStore);
+
           switch (operation.name) {
             case 'operation::@bangle.io/core-editor:collapse-heading': {
               dispatchEditorCommand(
+                nsmStore.state,
                 PRIMARY_EDITOR_INDEX,
                 toggleHeadingCollapse(),
-              )(bangleStore.state);
+              );
 
               return true;
             }
 
             case 'operation::@bangle.io/core-editor:uncollapse-all-heading': {
               dispatchEditorCommand(
+                nsmStore.state,
                 PRIMARY_EDITOR_INDEX,
                 uncollapseAllHeadings(),
-              )(bangleStore.state);
+              );
 
               return true;
             }
 
             case 'operation::@bangle.io/core-editor:move-list-up': {
               dispatchEditorCommand(
+                nsmStore.state,
                 PRIMARY_EDITOR_INDEX,
                 moveListItemUp(),
-              )(bangleStore.state);
+              );
 
               return true;
             }
 
             case 'operation::@bangle.io/core-editor:move-list-down': {
               dispatchEditorCommand(
+                nsmStore.state,
                 PRIMARY_EDITOR_INDEX,
                 moveListItemDown(),
-              )(bangleStore.state);
+              );
 
               return true;
             }

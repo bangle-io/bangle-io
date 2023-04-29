@@ -1,7 +1,7 @@
 import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
-import { changeEffect, createSlice, syncChangeEffect } from '@bangle.io/nsm';
-import { nsmPageSlice } from '@bangle.io/slice-page';
+import { changeEffect, createSliceV2, syncChangeEffect } from '@bangle.io/nsm';
+import { nsmPageSlice, syncPageLocation } from '@bangle.io/slice-page';
 
 export interface HistoryStateType {
   history: BaseHistory | undefined;
@@ -11,17 +11,20 @@ const historyInitState: HistoryStateType = {
   history: undefined,
 };
 
-const historySlice = createSlice([], {
+const historySlice = createSliceV2([], {
   name: 'history-slice',
   initState: historyInitState,
-  actions: {
-    setHistory: (history: HistoryStateType['history']) => (state) => ({
+});
+
+const setHistory = historySlice.createAction(
+  'setHistory',
+  (history: HistoryStateType['history']) => {
+    return (state) => ({
       ...state,
       history,
-    }),
+    });
   },
-  selector: () => ({}),
-});
+);
 
 const pendingNavEffect = syncChangeEffect(
   'pendingNavEffect',
@@ -59,13 +62,13 @@ const watchHistoryEffect = changeEffect(
   },
   (_, dispatch) => {
     const browserHistory = new BrowserHistory('', (location) => {
-      dispatch(nsmPageSlice.actions.syncPageLocation(location));
+      dispatch(syncPageLocation(location));
     });
 
-    dispatch(historySlice.actions.setHistory(browserHistory));
+    dispatch(setHistory(browserHistory));
 
     dispatch(
-      nsmPageSlice.actions.syncPageLocation({
+      syncPageLocation({
         search: browserHistory.search,
         pathname: browserHistory.pathname,
       }),

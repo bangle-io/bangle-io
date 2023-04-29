@@ -1,6 +1,6 @@
 import lifeCycle from 'page-lifecycle';
 
-import { createTestDebugger, Store, timeoutSchedular } from '@bangle.io/nsm';
+import { createDispatchSpy, Store, timeoutSchedular } from '@bangle.io/nsm';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';

@@ -41,7 +41,7 @@ export const createNsmStore = ({
       let newState = store.state.applyTransaction(tx);
 
       synSlices.forEach((sl) => {
-        console.debug('worker', sl.lineageId, sl.getState(newState));
+        console.debug('worker', sl.spec.lineageId, sl.getState(newState));
       });
       Store.updateState(store, newState, tx);
     },

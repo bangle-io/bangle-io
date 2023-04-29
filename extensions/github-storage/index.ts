@@ -25,6 +25,7 @@ import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
+import { nsmGhSlice } from './nsm-github-slices';
 import { optimizeDatabaseOperation, syncRunner } from './operations';
 
 const extensionName = '@bangle.io/github-storage';
@@ -33,6 +34,7 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     slices: [githubStorageSlice()],
+    nsmSlices: [nsmGhSlice],
     storageProvider: new GithubStorageProvider(),
     dialogs: [
       {

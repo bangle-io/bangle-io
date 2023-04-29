@@ -46,9 +46,9 @@ test.describe('worker', () => {
 
     const pageSliceState = async () =>
       page.evaluate(() => {
-        const state = window._newE2eHelpers2?.store.state!;
+        const { getPageSliceState } = window._nsmE2e!;
 
-        return window._newE2eHelpers2?.pageSliceKey.getSliceState(state);
+        return getPageSliceState();
       });
 
     await sleep(50);

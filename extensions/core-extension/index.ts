@@ -1,4 +1,4 @@
-import { ui, workspace } from '@bangle.io/api';
+import { getNewStore, ui, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -28,9 +28,7 @@ import {
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import {
-  focusPrimaryEditor,
-  focusSecondaryEditor,
-  isEditingAllowed,
+  nsmEditorManagerSlice,
   toggleEditing,
 } from '@bangle.io/slice-editor-manager';
 import {
@@ -228,6 +226,7 @@ const extension = Extension.create({
     operationHandler() {
       return {
         handle(operation, payload: unknown, bangleStore) {
+          const nsmStore = getNewStore(bangleStore);
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
               // TODO fix payload as any
@@ -247,7 +246,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              renameActiveNote()(bangleStore.state, bangleStore.dispatch);
+              renameActiveNote(bangleStore);
 
               return true;
             }
@@ -261,11 +260,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-              deleteActiveNote()(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              deleteActiveNote(nsmStore);
 
               return true;
             }
@@ -277,7 +272,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_OPEN_IN_MINI_EDITOR: {
-              openMiniEditor()(bangleStore.state, bangleStore.dispatch);
+              openMiniEditor(nsmStore);
 
               return true;
             }
@@ -335,13 +330,17 @@ const extension = Extension.create({
               return true;
             }
             case 'operation::@bangle.io/core-extension:focus-primary-editor': {
-              focusPrimaryEditor()(bangleStore.state);
+              nsmEditorManagerSlice
+                .resolveState(nsmStore.state)
+                .primaryEditor?.focusView();
 
               return true;
             }
 
             case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
-              focusSecondaryEditor()(bangleStore.state);
+              nsmEditorManagerSlice
+                .resolveState(nsmStore.state)
+                .secondaryEditor?.focusView();
 
               return true;
             }
@@ -399,12 +398,15 @@ const extension = Extension.create({
             }
 
             case 'operation::@bangle.io/core-extension:toggle-editing-mode': {
-              toggleEditing()(bangleStore.state, bangleStore.dispatch);
-              let isEditing = isEditingAllowed()(bangleStore.state);
+              toggleEditing(nsmStore.state, nsmStore.dispatch);
+              let { editingAllowed } = nsmEditorManagerSlice.getState(
+                nsmStore.state,
+              );
+
               showNotification({
-                severity: isEditing ? SEVERITY.INFO : SEVERITY.WARNING,
-                uid: 'editing-mode' + isEditing + Date.now(),
-                title: 'Editing mode is now ' + (isEditing ? 'on' : 'off'),
+                severity: editingAllowed ? SEVERITY.INFO : SEVERITY.WARNING,
+                uid: 'editing-mode' + editingAllowed + Date.now(),
+                title: 'Editing mode is now ' + (editingAllowed ? 'on' : 'off'),
               })(bangleStore.state, bangleStore.dispatch);
 
               return true;

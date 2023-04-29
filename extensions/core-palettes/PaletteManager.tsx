@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  focusPrimaryEditor,
-  useEditorManagerContext,
-} from '@bangle.io/slice-editor-manager';
+import { useNsmEditorManagerStore } from '@bangle.io/slice-editor-manager';
+import { focusEditorIfNotFocused } from '@bangle.io/slice-editor-manager/nsm-editor-manager-slice';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import { UniversalPalette } from '@bangle.io/ui-components';
@@ -38,7 +36,7 @@ export function PaletteManager() {
     useUIManagerContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
-  const { bangleStore } = useEditorManagerContext();
+  const editorStore = useNsmEditorManagerStore();
 
   const dismissPalette = useCallback(
     (focus = true) => {
@@ -50,11 +48,11 @@ export function PaletteManager() {
 
       if (focus) {
         safeRequestAnimationFrame(() => {
-          focusPrimaryEditor()(bangleStore.state);
+          focusEditorIfNotFocused(editorStore.state);
         });
       }
     },
-    [dispatch, bangleStore],
+    [dispatch, editorStore],
   );
 
   const paletteRef = useRef<PaletteManagerImperativeHandle>(null);

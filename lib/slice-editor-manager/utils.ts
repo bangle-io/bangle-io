@@ -1,4 +1,5 @@
 import type { BangleEditor } from '@bangle.dev/core';
+import type { EditorView } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import type { EditorIdType } from '@bangle.io/shared-types';
@@ -24,13 +25,13 @@ export const calculateSelection = (
 
 export const calculateScrollPosition = (
   editorId: EditorIdType,
-  editor: BangleEditor,
+  view: EditorView,
 ) => {
   const top = getScrollParentElement(editorId)?.scrollTop;
 
   if (typeof top === 'number') {
     return {
-      wsPath: getEditorPluginMetadata(editor.view.state).wsPath,
+      wsPath: getEditorPluginMetadata(view.state).wsPath,
       editorId: editorId,
       scrollPosition: top,
     };

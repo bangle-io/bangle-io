@@ -4,6 +4,7 @@ import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type { Slice } from '@bangle.io/create-store';
+import type { AnySlice } from '@bangle.io/nsm';
 import type {
   EditorWatchPluginState,
   SerialOperationDefinitionType,
@@ -99,6 +100,7 @@ export class ExtensionRegistry {
     undefined
   >;
 
+  private _nsmSlices: AnySlice[];
   private _onStorageErrorHandlers: {
     [storageProviderName: string]: Exclude<
       ApplicationConfig['onStorageError'],
@@ -183,6 +185,7 @@ export class ExtensionRegistry {
     assertUniqueName(this._noteSidebarWidgets, 'noteSidebarWidgets');
 
     this._slices = filterFlatMap(applicationConfig, 'slices');
+    this._nsmSlices = filterFlatMap(applicationConfig, 'nsmSlices');
     this._operationHandlers = _extensions
       .map((e) => e.application?.operationHandler)
       .filter(
@@ -234,6 +237,10 @@ export class ExtensionRegistry {
 
   getNoteSidebarWidgets() {
     return this._noteSidebarWidgets;
+  }
+
+  getNsmSlices() {
+    return this._nsmSlices;
   }
 
   getOnStorageErrorHandlers(name: string) {

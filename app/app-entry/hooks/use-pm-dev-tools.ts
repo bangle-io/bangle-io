@@ -1,15 +1,11 @@
 import { useEffect } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
+import { useNsmPlainStore } from '@bangle.io/bangle-store-context';
+import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
 
-const LOG = false;
-
-const log = LOG ? console.log.bind(console, 'AppStateContext') : () => {};
-
 export function usePMDevTools() {
-  const bangleStore = useBangleStoreContext();
+  const nsmStore = useNsmPlainStore();
 
   useEffect(() => {
     // TODO: this setup should be done in app
@@ -18,9 +14,9 @@ export function usePMDevTools() {
         typeof window !== 'undefined' &&
         window.location.hash.includes('debug_pm')
       ) {
-        const primaryEditor = editorManagerSliceKey.getSliceState(
-          bangleStore.state,
-        )?.primaryEditor;
+        const primaryEditor = nsmEditorManagerSlice.getState(
+          nsmStore.state,
+        ).primaryEditor;
 
         if (primaryEditor) {
           console.log('debugging pm');
@@ -32,5 +28,5 @@ export function usePMDevTools() {
         }
       }
     });
-  }, [bangleStore]);
+  }, [nsmStore]);
 }

@@ -1,10 +1,10 @@
 import React from 'react';
 
-import type { initializeBangleStore } from '@bangle.io/bangle-store';
+import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseError } from '@bangle.io/utils';
 
 export class ErrorBoundary extends React.Component<{
-  store: ReturnType<typeof initializeBangleStore>;
+  store: ApplicationStore;
 }> {
   static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.

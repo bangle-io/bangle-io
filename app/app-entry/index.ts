@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 
 import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
+import { initExtensionRegistry } from '@bangle.io/shared';
 
 import { Entry } from './entry';
 import { runAfterPolyfills } from './run-after-polyfills';
@@ -33,10 +34,15 @@ runAfterPolyfills(() => {
   let storeChanged = 0;
   const root = document.getElementById('root');
 
-  const nsmStore = createNsmStore();
+  const extensionRegistry = initExtensionRegistry();
+  const nsmStore = createNsmStore({
+    extensionRegistry,
+  });
 
   (window as any).nsmStore = nsmStore;
+
   const store = initializeBangleStore({
+    extensionRegistry,
     onUpdate: () => {
       ReactDOM.render(
         React.createElement(Entry, {
@@ -48,6 +54,10 @@ runAfterPolyfills(() => {
       );
     },
   });
+
+  // TODO remove this
+  (nsmStore as any).oldStore = store;
+  (store as any).newStore = nsmStore;
 
   ReactDOM.render(
     React.createElement(Entry, {

@@ -7,6 +7,7 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 
 import type { DispatchSerialOperationType } from './extension-registry';
+import type { NsmStore } from './store';
 
 export type { EditorIdType } from '@bangle.io/slice-editor-manager';
 
@@ -17,6 +18,8 @@ export interface EditorPluginMetadata {
   editorId?: EditorIdType;
   dispatchSerialOperation: DispatchSerialOperationType;
   bangleStore: ApplicationStore;
+  nsmStore: NsmStore;
+  createdAt: number;
 }
 
 export type EditorPlugin = ({

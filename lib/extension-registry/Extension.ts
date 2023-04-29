@@ -5,12 +5,15 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
+import type { AnySlice } from '@bangle.io/nsm';
+import { Slice as NsmSlice } from '@bangle.io/nsm';
 import type {
   BangleApplicationStore,
   DialogType,
   EditorWatchPluginState,
   NoteFormatProvider,
   NoteSidebarWidget,
+  NsmStore,
   OnStorageProviderError,
   SerialOperationDefinitionType,
   SerialOperationHandler,
@@ -55,6 +58,17 @@ export type SerialOperationHandler2<
     store: ApplicationStore,
   ) => boolean | void;
 };
+
+export type SerialOperationHandlerNsm<
+  OpType extends SerialOperationDefinitionType,
+> = () => {
+  handle: (
+    serialOperation: { name: OpType['name']; value?: any },
+    payload: any,
+    store: NsmStore,
+  ) => boolean | void;
+};
+
 export interface ApplicationConfig<
   OpType extends SerialOperationDefinitionType = any,
 > {
@@ -66,8 +80,10 @@ export interface ApplicationConfig<
   sidebars?: SidebarType[];
   dialogs?: DialogType[];
   operationHandler?: SerialOperationHandler2<OpType>;
+  operationHandlerNsm?: SerialOperationHandler2<OpType>;
   noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Slice[];
+  nsmSlices?: AnySlice[];
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;
   // Return true if the error was handled by your callback
@@ -196,6 +212,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       dialogs,
       noteSidebarWidgets,
       slices,
+      nsmSlices,
       operationHandler,
       storageProvider,
       noteFormatProvider,
@@ -261,6 +278,24 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       ) {
         throw new Error(
           `Extension "${name}": invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'slice::my-extension-name:xyz\')"`,
+        );
+      }
+    }
+
+    if (nsmSlices) {
+      if (
+        !nsmSlices.every(
+          (slice) =>
+            slice instanceof NsmSlice &&
+            slice.spec.name.startsWith(
+              `slice::${pkgNameWithoutBangleIo(name)}:`,
+            ),
+        )
+      ) {
+        throw new Error(
+          `Extension "${name}": invalid slice name. Must start with ${`slice::${pkgNameWithoutBangleIo(
+            name,
+          )}:`}`,
         );
       }
     }
@@ -355,6 +390,10 @@ function hasCorrectScheme(scheme: string, slug: string) {
 
 function hasCorrectPackageName(pkgName: string, slug: string) {
   return pkgName === resolveSlug(slug).pkgName;
+}
+
+function pkgNameWithoutBangleIo(pkgName: string) {
+  return pkgName.replace('@bangle.io/', '');
 }
 
 function resolveSlug(slug: string) {

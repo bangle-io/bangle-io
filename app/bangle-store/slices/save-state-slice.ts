@@ -1,6 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
-import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
+import { oldPageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { assertNotUndefined } from '@bangle.io/utils';
 
 // monitor the pages life cycle and call the saveState handle to persist things
@@ -11,7 +11,7 @@ export function saveStateSlice() {
 
       return {
         update(store, prevState) {
-          const didChange = pageLifeCycleTransitionedTo(
+          const didChange = oldPageLifeCycleTransitionedTo(
             ['passive', 'terminated', 'hidden'],
             prevState,
           )(store.state);

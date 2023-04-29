@@ -9,11 +9,10 @@ import React, {
 import { Selection } from '@bangle.dev/pm';
 
 import { useSerialOperationHandler } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   getEditor,
-  getEditorState,
-  useEditorManagerContext,
+  useNsmEditorManagerState,
+  useNsmEditorManagerStore,
 } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { Button } from '@bangle.io/ui-components';
@@ -32,12 +31,12 @@ import {
 } from './config';
 
 export function NoteOutline() {
-  const { focusedEditorId } = useEditorManagerContext();
+  const { focusedEditorId } = useNsmEditorManagerState();
+  const editorStore = useNsmEditorManagerStore();
   const { wsName } = useWorkspaceContext();
   const [headingNodes, updateHeadingsState] = useState<
     HeadingNodes | undefined
   >();
-  const store = useBangleStoreContext();
 
   const lastClickedOnHeading = useRef(0);
 
@@ -49,7 +48,8 @@ export function NoteOutline() {
 
   const updateHeadingNodes = useCallback(() => {
     const state =
-      focusedEditorId != null && getEditorState(focusedEditorId)(store.state);
+      focusedEditorId != null &&
+      getEditor(editorStore.state, focusedEditorId)?.view.state;
 
     if (!state) {
       updateHeadingsState(undefined);
@@ -64,7 +64,7 @@ export function NoteOutline() {
     updateHeadingsState(watchHeadingsPluginState.headings);
 
     return;
-  }, [focusedEditorId, store]);
+  }, [focusedEditorId, editorStore]);
 
   useSerialOperationHandler(
     (sOperation) => {
@@ -94,7 +94,8 @@ export function NoteOutline() {
   const onExecuteItem = useCallback(
     (item: HeadingNodes[0]) => {
       const focusedEditor =
-        focusedEditorId != null && getEditor(focusedEditorId)(store.state);
+        focusedEditorId != null &&
+        getEditor(editorStore.state, focusedEditorId);
 
       if (focusedEditor) {
         if (!focusedEditor || focusedEditor.destroyed) {
@@ -112,7 +113,7 @@ export function NoteOutline() {
         );
       }
     },
-    [focusedEditorId, store],
+    [focusedEditorId, editorStore],
   );
 
   // Calculate headings on initial mount

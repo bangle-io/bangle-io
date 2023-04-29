@@ -1,5 +1,6 @@
 export {
-  getCurrentPageLifeCycle,
-  pageLifeCycleTransitionedTo,
+  nsmPageSlice,
+  oldGetCurrentPageLifeCycle,
+  oldPageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';

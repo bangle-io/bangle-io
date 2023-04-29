@@ -1,5 +1,6 @@
 import {
-  createSlice,
+  createSelector,
+  createSliceWithSelectors,
   customSerialAction,
   serialAction,
   z,
@@ -10,123 +11,139 @@ import { pageLifeCycleState } from './common';
 import { locationSchema, locationSetWsPath } from './location-helpers';
 import { pageSliceInitialState } from './page-slice';
 
-export const nsmPageSlice = createSlice([], {
+export const nsmPageSlice = createSliceWithSelectors([], {
   name: 'bangle/page-slice',
   initState: pageSliceInitialState,
-  actions: {
-    blockReload: serialAction(z.boolean(), (block) => (state) => ({
-      ...state,
-      blockReload: block,
-    })),
 
-    setPageLifeCycleState: serialAction(
-      z.object({
-        current: pageLifeCycleState,
-        previous: pageLifeCycleState,
-      }),
-      ({ current, previous }) =>
-        (state) => ({
-          ...state,
-          lifeCycleState: {
-            current,
-            previous,
-          },
-        }),
+  selectors: {
+    currentPageLifeCycle: createSelector(
+      { current: (state) => state.lifeCycleState.current },
+      (computed) => computed.current,
     ),
+  },
+});
 
-    syncPageLocation: serialAction(locationSchema, (location) => (state) => ({
-      ...state,
-      location,
-    })),
+export const blockReload = nsmPageSlice.createAction(
+  'blockReload',
+  serialAction(z.boolean(), (block) => (state) => ({
+    ...state,
+    blockReload: block,
+  })),
+);
 
-    goToLocation: serialAction(
-      z.object({
-        location: z.union([locationSchema, z.string()]),
-        replace: z.boolean().optional(),
-      }),
-      ({ location, replace = false }) =>
-        (state) => {
-          if (typeof location === 'string') {
-            const [pathname, search] = location.split('?');
-
-            return {
-              ...state,
-              pendingNavigation: {
-                location: { pathname, search },
-                replaceHistory: replace,
-                preserve: false,
-              },
-            };
-          } else {
-            return {
-              ...state,
-              pendingNavigation: {
-                location,
-                replaceHistory: replace,
-                preserve: true,
-              },
-            };
-          }
+export const setPageLifeCycleState = nsmPageSlice.createAction(
+  'setPageLifeCycleState',
+  serialAction(
+    z.object({
+      current: pageLifeCycleState,
+      previous: pageLifeCycleState,
+    }),
+    ({ current, previous }) =>
+      (state) => ({
+        ...state,
+        lifeCycleState: {
+          current,
+          previous,
         },
-    ),
+      }),
+  ),
+);
 
-    historyUpdateOpenedWsPaths: customSerialAction(
-      ({
-          openedWsPath,
-          wsName,
-          replace = false,
-          clearSearch = true,
-        }: {
-          openedWsPath: OpenedWsPaths;
-          wsName: string;
-          replace?: boolean;
-          clearSearch?: boolean;
-        }) =>
-        (sliceState) => {
-          const existingLoc = {
-            ...sliceState.location,
-          };
+export const syncPageLocation = nsmPageSlice.createAction(
+  'syncPageLocation',
+  serialAction(locationSchema, (location) => (state) => ({
+    ...state,
+    location,
+  })),
+);
 
-          if (clearSearch) {
-            existingLoc.search = '';
-          }
-
-          const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
+export const goToLocation = nsmPageSlice.createAction(
+  'goToLocation',
+  serialAction(
+    z.object({
+      location: z.union([locationSchema, z.string()]),
+      replace: z.boolean().optional(),
+    }),
+    ({ location, replace = false }) =>
+      (state) => {
+        if (typeof location === 'string') {
+          const [pathname, search] = location.split('?');
 
           return {
-            ...sliceState,
+            ...state,
             pendingNavigation: {
-              location,
+              location: { pathname, search },
               replaceHistory: replace,
               preserve: false,
             },
           };
-        },
-      {
-        schema: z.object({
-          openedWsPath: z.array(z.string().or(z.null())),
-          wsName: z.string(),
-          replace: z.boolean().optional(),
-          clearSearch: z.boolean().optional(),
-        }),
-        serialize: ({ openedWsPath, ...rest }) => {
+        } else {
           return {
-            ...rest,
-            openedWsPath: openedWsPath.toArray(),
+            ...state,
+            pendingNavigation: {
+              location,
+              replaceHistory: replace,
+              preserve: true,
+            },
           };
-        },
-        deserialize: (obj) => {
-          return {
-            ...obj,
-            openedWsPath: OpenedWsPaths.createFromArray(obj.openedWsPath),
-          };
-        },
+        }
       },
-    ),
-  },
-  selector: (state) => {
-    return {
-      currentPageLifeCycle: state.lifeCycleState.current,
-    };
-  },
-});
+  ),
+);
+
+export const historyUpdateOpenedWsPaths = nsmPageSlice.createAction(
+  'historyUpdateOpenedWsPaths',
+  customSerialAction(
+    ({
+        openedWsPath,
+        wsName,
+        replace = false,
+        clearSearch = true,
+      }: {
+        openedWsPath: OpenedWsPaths;
+        wsName: string;
+        replace?: boolean;
+        clearSearch?: boolean;
+      }) =>
+      (sliceState) => {
+        const existingLoc = {
+          ...sliceState.location,
+        };
+
+        if (clearSearch) {
+          existingLoc.search = '';
+        }
+
+        const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
+
+        return {
+          ...sliceState,
+          pendingNavigation: {
+            location,
+            replaceHistory: replace,
+            preserve: false,
+          },
+        };
+      },
+    {
+      schema: z.object({
+        openedWsPath: z.array(z.string().or(z.null())),
+        wsName: z.string(),
+        replace: z.boolean().optional(),
+        clearSearch: z.boolean().optional(),
+      }),
+      serialize: ({ openedWsPath, ...rest }) => {
+        return {
+          ...rest,
+          openedWsPath: openedWsPath.toArray(),
+        };
+      },
+      deserialize: (obj) => {
+        return {
+          ...obj,
+          openedWsPath: OpenedWsPaths.createFromArray(obj.openedWsPath),
+        };
+      },
+    },
+  ),
+);

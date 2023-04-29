@@ -1,5 +1,4 @@
-import type { BangleAppDispatch } from '@bangle.io/api';
-import { editor } from '@bangle.io/api';
+import { editor, getNewStore, getOldStore } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
   NEW_NOTE_DIALOG_NAME,
@@ -9,6 +8,7 @@ import {
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
+import type { NsmStore } from '@bangle.io/shared-types';
 import {
   notificationSliceKey,
   showNotification,
@@ -160,99 +160,96 @@ export function openNewNoteDialog(initialValue?: string) {
   });
 }
 
-export function renameActiveNote() {
-  return (state: AppState, dispatch: BangleAppDispatch): boolean => {
-    const focusedWsPath = editor.getFocusedWsPath()(state);
+export function renameActiveNote(store: ApplicationStore) {
+  const nsmStore = getNewStore(store);
+  const { state, dispatch } = store;
+  const focusedWsPath = editor.getFocusedWsPath(nsmStore.state);
 
-    if (!focusedWsPath) {
-      showNotification({
-        severity: SEVERITY.ERROR,
-        uid: 'delete-wsPath-not-found',
-        title: 'Cannot rename because there is no active note',
-      })(
-        notificationSliceKey.getState(state),
-        notificationSliceKey.getDispatch(dispatch),
-      );
-
-      return true;
-    }
-
-    // To avoid overlapping
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
-      value: { type: null },
-    });
-
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-      value: {
-        dialogName: RENAME_NOTE_DIALOG_NAME,
-      },
-    });
+  if (!focusedWsPath) {
+    showNotification({
+      severity: SEVERITY.ERROR,
+      uid: 'delete-wsPath-not-found',
+      title: 'Cannot rename because there is no active note',
+    })(
+      notificationSliceKey.getState(state),
+      notificationSliceKey.getDispatch(dispatch),
+    );
 
     return true;
-  };
+  }
+
+  // To avoid overlapping
+  dispatch({
+    name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
+    value: { type: null },
+  });
+
+  dispatch({
+    name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+    value: {
+      dialogName: RENAME_NOTE_DIALOG_NAME,
+    },
+  });
+
+  return true;
 }
 
-export function deleteActiveNote() {
-  return (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ): boolean => {
-    const focusedWsPath = editor.getFocusedWsPath()(state);
+export function deleteActiveNote(nsmStore: NsmStore) {
+  const focusedWsPath = editor.getFocusedWsPath(nsmStore.state);
 
-    if (!focusedWsPath) {
-      showNotification({
-        severity: SEVERITY.ERROR,
-        uid: 'delete-wsPath-not-found',
-        title: 'Cannot delete because there is no active note',
-      })(
-        notificationSliceKey.getState(state),
-        notificationSliceKey.getDispatch(dispatch),
-      );
+  const oldStore = getOldStore(nsmStore);
+  const { state, dispatch } = oldStore;
 
-      return true;
-    }
-
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
-      value: { type: null },
-    });
-
-    if (
-      typeof window !== 'undefined' &&
-      window.confirm(
-        `Are you sure you want to remove "${
-          resolvePath(focusedWsPath).filePath
-        }"? It cannot be undone.`,
-      )
-    ) {
-      deleteNote(focusedWsPath)(state, dispatch, store)
-        .then((error) => {
-          showNotification({
-            severity: SEVERITY.SUCCESS,
-            uid: 'success-delete-' + focusedWsPath,
-            title: 'Successfully deleted ' + focusedWsPath,
-          })(
-            notificationSliceKey.getState(state),
-            notificationSliceKey.getDispatch(dispatch),
-          );
-        })
-        .catch((error) => {
-          showNotification({
-            severity: SEVERITY.ERROR,
-            uid: 'delete-' + deleteActiveNote,
-            title: error.displayMessage || error.message,
-          })(
-            notificationSliceKey.getState(state),
-            notificationSliceKey.getDispatch(dispatch),
-          );
-        });
-    }
+  if (!focusedWsPath) {
+    showNotification({
+      severity: SEVERITY.ERROR,
+      uid: 'delete-wsPath-not-found',
+      title: 'Cannot delete because there is no active note',
+    })(
+      notificationSliceKey.getState(state),
+      notificationSliceKey.getDispatch(dispatch),
+    );
 
     return true;
-  };
+  }
+
+  dispatch({
+    name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
+    value: { type: null },
+  });
+
+  if (
+    typeof window !== 'undefined' &&
+    window.confirm(
+      `Are you sure you want to remove "${
+        resolvePath(focusedWsPath).filePath
+      }"? It cannot be undone.`,
+    )
+  ) {
+    deleteNote(focusedWsPath)(state, dispatch, oldStore)
+      .then((error) => {
+        showNotification({
+          severity: SEVERITY.SUCCESS,
+          uid: 'success-delete-' + focusedWsPath,
+          title: 'Successfully deleted ' + focusedWsPath,
+        })(
+          notificationSliceKey.getState(state),
+          notificationSliceKey.getDispatch(dispatch),
+        );
+      })
+      .catch((error) => {
+        showNotification({
+          severity: SEVERITY.ERROR,
+          uid: 'delete-' + deleteActiveNote,
+          title: error.displayMessage || error.message,
+        })(
+          notificationSliceKey.getState(state),
+          notificationSliceKey.getDispatch(dispatch),
+        );
+      });
+  }
+
+  return true;
 }
 
 export function openNewWorkspaceDialog() {
@@ -291,24 +288,25 @@ export function splitEditor() {
   };
 }
 
-export function openMiniEditor() {
-  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
-    const workspaceSliceState = workspaceSliceKey.getSliceStateAsserted(state);
+export function openMiniEditor(nsmStore: NsmStore) {
+  const oldStore = getOldStore(nsmStore);
+  const workspaceSliceState = workspaceSliceKey.getSliceStateAsserted(
+    oldStore.state,
+  );
 
-    const targetWsPath =
-      editor.getFocusedWsPath()(state) ||
-      workspaceSliceState.openedWsPaths.primaryWsPath;
+  const targetWsPath =
+    editor.getFocusedWsPath(nsmStore.state) ||
+    workspaceSliceState.openedWsPaths.primaryWsPath;
 
-    if (targetWsPath) {
-      updateOpenedWsPaths((openedWsPath) =>
-        openedWsPath.updateMiniEditorWsPath(targetWsPath),
-      )(state, dispatch);
+  if (targetWsPath) {
+    updateOpenedWsPaths((openedWsPath) =>
+      openedWsPath.updateMiniEditorWsPath(targetWsPath),
+    )(oldStore.state, oldStore.dispatch);
 
-      return true;
-    }
+    return true;
+  }
 
-    return false;
-  };
+  return false;
 }
 
 export function removeWorkspace(wsName?: string) {

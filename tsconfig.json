@@ -35,7 +35,9 @@
     "**/*.tsx",
   ],
   "exclude": [
-    ".yarn/__virtual__"
+    ".yarn/__virtual__",
+    "**/__tests__/*",
+    "**/test-utils/*",
   ],
   "typeAcquisition": {
     "include": []

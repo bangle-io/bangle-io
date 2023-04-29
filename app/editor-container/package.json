@@ -35,6 +35,7 @@
     "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",

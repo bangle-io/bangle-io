@@ -16,7 +16,7 @@ import {
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
-import type { BareStore } from '@bangle.io/nsm';
+import type { NsmStore } from '@bangle.io/shared-types';
 import { pageSliceKey, pathMatcher } from '@bangle.io/slice-page';
 
 import { AppContainer } from './AppContainer';
@@ -59,7 +59,7 @@ export function Entry({
   storeChanged: bangleStoreChanged,
   store: bangleStore,
 }: {
-  nsmStore: BareStore<any>;
+  nsmStore: NsmStore;
   storeChanged: number;
   store: ApplicationStore;
 }) {

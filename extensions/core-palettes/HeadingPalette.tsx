@@ -3,7 +3,7 @@ import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { Selection } from '@bangle.dev/pm';
 
 import { CorePalette } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { useNsmEditorManagerState } from '@bangle.io/slice-editor-manager';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
@@ -13,7 +13,7 @@ const identifierPrefix = '#';
 
 const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, onSelect, getActivePaletteItem }, ref) => {
-    const editorContext = useEditorManagerContext();
+    const editorContext = useNsmEditorManagerState();
 
     const items = useMemo(() => {
       const { primaryEditor } = editorContext;

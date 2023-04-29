@@ -1,0 +1,519 @@
+import type { BangleEditor } from '@bangle.dev/core';
+import type {
+  EditorState,
+  EditorView,
+  Node,
+  Transaction,
+} from '@bangle.dev/pm';
+import { Selection } from '@bangle.dev/pm';
+
+import {
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
+import type { InferSliceName, Store, StoreState } from '@bangle.io/nsm';
+import {
+  changeEffect,
+  createSelector,
+  createSliceWithSelectors,
+  mountEffect,
+  Slice,
+  syncChangeEffect,
+  updateObj,
+} from '@bangle.io/nsm';
+import type { EditorIdType, JsonObject } from '@bangle.io/shared-types';
+import { nsmPageSlice } from '@bangle.io/slice-page';
+import {
+  debounceFn,
+  getEditorPluginMetadata,
+  getScrollParentElement,
+  trimEndWhiteSpaceBeforeCursor,
+} from '@bangle.io/utils';
+
+import { initialEditorSliceState } from './constants';
+import type { EditorSliceState } from './types';
+import {
+  assertValidEditorId,
+  calculateSelection,
+  isValidEditorId,
+} from './utils';
+
+const initState: EditorSliceState & {
+  // the editor that was last opened
+  // the most recent editor id is the first in array
+  editorOpenOrder: EditorIdType[];
+} = {
+  ...initialEditorSliceState,
+  editorOpenOrder: [],
+};
+
+export const nsmEditorManagerSlice = createSliceWithSelectors([nsmPageSlice], {
+  name: 'editor-manager-slice',
+  initState: initState,
+
+  selectors: {
+    primaryEditor: createSelector(
+      {
+        mainEditors: (s) => s.mainEditors,
+      },
+      (computed) => computed.mainEditors[PRIMARY_EDITOR_INDEX],
+    ),
+    secondaryEditor: createSelector(
+      {
+        mainEditors: (s) => s.mainEditors,
+      },
+      (computed) => computed.mainEditors[SECONDARY_EDITOR_INDEX],
+    ),
+    lastOpenedEditor: createSelector(
+      {
+        editorOpenOrder: (s) => s.editorOpenOrder,
+        mainEditors: (s) => s.mainEditors,
+      },
+      (computed) => {
+        const lastEditorId = computed.editorOpenOrder[0];
+        const lastEditor =
+          typeof lastEditorId === 'number'
+            ? computed.mainEditors[lastEditorId]
+            : undefined;
+
+        return typeof lastEditorId === 'number' && lastEditor
+          ? {
+              editorId: lastEditorId,
+              editor: lastEditor,
+            }
+          : undefined;
+      },
+    ),
+  },
+});
+
+Slice.registerEffectSlice(nsmEditorManagerSlice, [
+  mountEffect('watchScrollPos', [nsmEditorManagerSlice], (store) => {
+    const updateScrollPos = () => {
+      const { mainEditors } = nsmEditorManagerSlice.getState(store.state);
+      for (const editor of mainEditors) {
+        if (!editor) {
+          continue;
+        }
+        const { editorId, wsPath } = getEditorPluginMetadata(editor.view.state);
+
+        if (editorId == null) {
+          return;
+        }
+
+        const top = getScrollParentElement(editorId)?.scrollTop;
+
+        if (typeof top !== 'number') {
+          return;
+        }
+
+        store.dispatch(
+          updateScrollPosition({
+            editorId,
+            scrollPosition: top,
+            wsPath,
+          }),
+        );
+      }
+    };
+
+    const deb = debounceFn(updateScrollPos, {
+      wait: 300,
+      maxWait: 600,
+    });
+
+    const opts = {
+      capture: true,
+      passive: true,
+    };
+    const isWindow = typeof window !== 'undefined';
+
+    if (isWindow) {
+      window.addEventListener('scroll', deb, opts);
+    }
+
+    return () => {
+      console.warn('abort called');
+      deb.cancel();
+
+      if (isWindow) {
+        window.removeEventListener('scroll', deb, opts);
+      }
+    };
+  }),
+]);
+
+Slice.registerEffectSlice(nsmEditorManagerSlice, [
+  changeEffect(
+    'initialSelectionEffect',
+    {
+      mainEditors: nsmEditorManagerSlice.pick((s) => s.mainEditors),
+    },
+    ({ mainEditors }, dispatch, ref) => {
+      for (const [index, editor] of mainEditors.entries()) {
+        if (!editor) {
+          continue;
+        }
+        const value = calculateSelection(index, editor);
+        dispatch(updateSelection(value));
+      }
+    },
+  ),
+
+  changeEffect(
+    'trimWhiteSpaceEffect',
+    {
+      mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
+      currentPageLifeCycle: nsmPageSlice.pick((s) => s.currentPageLifeCycle),
+    },
+    ({ mainEditors, currentPageLifeCycle }) => {
+      if (
+        currentPageLifeCycle === 'passive' ||
+        currentPageLifeCycle === 'hidden'
+      ) {
+        for (const editor of mainEditors) {
+          if (!editor) {
+            continue;
+          }
+          trimEndWhiteSpaceBeforeCursor()(
+            editor.view.state,
+            editor.view.dispatch,
+          );
+        }
+      }
+    },
+  ),
+
+  syncChangeEffect(
+    'focusEffect',
+    {
+      lastOpenedEditor: nsmEditorManagerSlice.pick((s) => s.lastOpenedEditor),
+    },
+    ({ lastOpenedEditor }) => {
+      lastOpenedEditor?.editor.focusView();
+    },
+  ),
+]);
+
+type EditorManagerStoreState = StoreState<
+  InferSliceName<typeof nsmEditorManagerSlice>
+>;
+type EditorManagerStoreDispatch = Store<
+  InferSliceName<typeof nsmEditorManagerSlice>
+>['dispatch'];
+
+export const setEditingAllowed = nsmEditorManagerSlice.createAction(
+  'setEditingAllowed',
+  ({ editingAllowed }: { editingAllowed: boolean }) => {
+    return (state) =>
+      updateObj(state, {
+        editingAllowed,
+      });
+  },
+);
+
+export const setEditor = nsmEditorManagerSlice.createAction(
+  'setEditor',
+  ({
+    editorId,
+    editor,
+  }: {
+    editor: BangleEditor | undefined;
+    editorId: EditorIdType;
+  }) => {
+    return (state) => {
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
+
+      const newEditors: EditorSliceState['mainEditors'] = [
+        ...state.mainEditors,
+      ];
+      newEditors[editorId] = editor;
+
+      const editorOpenOrder = [editorId, ...state.editorOpenOrder].filter(
+        (index) => {
+          return Boolean(newEditors[index]);
+        },
+      );
+
+      return updateObj(state, {
+        mainEditors: newEditors,
+        editorOpenOrder,
+      });
+    };
+  },
+);
+
+// when editors focus changes sync with state
+export const onFocusUpdate = nsmEditorManagerSlice.createAction(
+  'onFocusUpdate',
+  ({ editorId }: { editorId: EditorIdType }) => {
+    return (state) => {
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
+
+      return updateObj(state, {
+        focusedEditorId: editorId,
+      });
+    };
+  },
+);
+
+export const updateScrollPosition = nsmEditorManagerSlice.createAction(
+  'updateScrollPosition',
+  ({
+    editorId,
+    wsPath,
+    scrollPosition,
+  }: {
+    editorId: EditorIdType;
+    wsPath: string;
+    scrollPosition: number;
+  }) => {
+    return (state) => {
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
+
+      const newEditorConfig = state.editorConfig.updateScrollPosition(
+        scrollPosition,
+        wsPath,
+        editorId,
+      );
+
+      return updateObj(state, {
+        editorConfig: newEditorConfig,
+      });
+    };
+  },
+);
+
+export const updateSelection = nsmEditorManagerSlice.createAction(
+  'updateSelection',
+  ({
+    editorId,
+    wsPath,
+    selectionJson,
+  }: {
+    editorId: EditorIdType;
+    wsPath: string;
+    selectionJson: JsonObject;
+  }) => {
+    return (state) => {
+      if (!isValidEditorId(editorId)) {
+        return state;
+      }
+
+      const newEditorConfig = state.editorConfig.updateSelection(
+        selectionJson,
+        wsPath,
+        editorId,
+      );
+
+      return updateObj(state, {
+        editorConfig: newEditorConfig,
+      });
+    };
+  },
+);
+
+export function setEditorScrollPos(
+  state: EditorManagerStoreState,
+  wsPath: string,
+  editorId: EditorIdType,
+) {
+  const scrollParent = getScrollParentElement(editorId);
+  const editorConfig = nsmEditorManagerSlice.getState(state).editorConfig;
+  const pos = editorConfig.getScrollPosition(wsPath, editorId);
+
+  if (typeof pos === 'number' && scrollParent) {
+    scrollParent.scrollTop = pos;
+  }
+}
+
+export function focusEditorIfNotFocused(
+  state: EditorManagerStoreState,
+  editorId?: EditorIdType,
+) {
+  if (querySomeEditor(state, (editor) => editor.view.hasFocus())) {
+    return;
+  }
+
+  if (editorId != null) {
+    const editor = getEditor(state, editorId);
+
+    if (editor) {
+      editor.focusView();
+
+      return;
+    }
+  }
+
+  nsmEditorManagerSlice
+    .resolveState(state)
+    .lastOpenedEditor?.editor?.focusView();
+}
+
+export function getEditor(
+  state: EditorManagerStoreState,
+  editorId: EditorIdType,
+): BangleEditor | undefined {
+  assertValidEditorId(editorId);
+
+  const sliceState = nsmEditorManagerSlice.getState(state);
+
+  return sliceState.mainEditors[editorId];
+}
+
+export function getInitialSelection(
+  state: EditorManagerStoreState,
+  editorId: EditorIdType,
+  wsPath: string,
+  doc: Node,
+) {
+  assertValidEditorId(editorId);
+
+  const sliceState = nsmEditorManagerSlice.getState(state);
+
+  if (!sliceState) {
+    return undefined;
+  }
+
+  const initialSelection: any = sliceState.editorConfig.getSelection(
+    wsPath,
+    editorId,
+  );
+
+  if (initialSelection) {
+    let selection =
+      Math.max(initialSelection?.anchor, initialSelection?.head) >=
+      doc.content.size
+        ? Selection.atEnd(doc)
+        : safeSelectionFromJSON(doc, initialSelection);
+    let { from } = selection;
+
+    if (from >= doc.content.size) {
+      selection = Selection.atEnd(doc);
+    } else {
+      selection = Selection.near(doc.resolve(from));
+    }
+
+    return selection;
+  }
+
+  return undefined;
+}
+
+/**
+ * Enables or disables editing.
+ *
+ * @param param0.focusOrBlur - if true : focuses when enabling editing, blurs when disabling editing
+ * @returns
+ */
+export function toggleEditing(
+  state: EditorManagerStoreState,
+  dispatch: EditorManagerStoreDispatch,
+  {
+    focusOrBlur = true,
+    editingAllowed,
+  }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
+) {
+  const sliceState = nsmEditorManagerSlice.getState(state);
+  const newEditingAllowed = editingAllowed ?? !sliceState.editingAllowed;
+
+  dispatch(
+    setEditingAllowed({
+      editingAllowed: newEditingAllowed,
+    }),
+  );
+
+  if (!focusOrBlur) {
+    return;
+  }
+
+  for (const editor of sliceState.mainEditors) {
+    if (editor?.view.isDestroyed) {
+      continue;
+    }
+
+    // send empty transaction so that editor view can update
+    // the editing state
+    editor?.view.dispatch(
+      editor.view.state.tr.setMeta('__activitybar_empty__', true),
+    );
+
+    if (newEditingAllowed) {
+      editor?.focusView();
+    } else {
+      editor?.view.dom.blur();
+    }
+  }
+}
+
+function safeSelectionFromJSON(doc: Node, json: any) {
+  try {
+    // this can throw error if invalid json is passed
+    // since we donot control the json we need swallow the error
+    return Selection.fromJSON(doc, json);
+  } catch (error) {
+    if (error instanceof RangeError) {
+      return Selection.atStart(doc);
+    }
+    throw error;
+  }
+}
+
+export function dispatchEditorCommand<T>(
+  state: EditorManagerStoreState,
+  editorId: EditorIdType,
+  cmdCallback: (
+    state: EditorState,
+    dispatch?: (tr: Transaction) => void,
+    view?: EditorView,
+  ) => T,
+): T | false {
+  assertValidEditorId(editorId);
+
+  const currentEditor = getEditor(state, editorId);
+
+  if (!currentEditor) {
+    return false;
+  }
+
+  const view = currentEditor.view;
+
+  return cmdCallback(view.state, view.dispatch, view);
+}
+
+export function forEachEditor(
+  state: EditorManagerStoreState,
+  callback: (editor: BangleEditor, editorId: EditorIdType) => void,
+) {
+  const sliceState = nsmEditorManagerSlice.getState(state);
+
+  for (const [editorId, editor] of sliceState.mainEditors.entries()) {
+    if (editor) {
+      callback(editor, editorId);
+    }
+  }
+}
+
+function querySomeEditor(
+  state: EditorManagerStoreState,
+  callback: (editor: BangleEditor, editorId: EditorIdType) => boolean,
+): boolean {
+  const sliceState = nsmEditorManagerSlice.getState(state);
+
+  return someEditor(sliceState.mainEditors, callback);
+}
+
+function someEditor(
+  mainEditors: EditorSliceState['mainEditors'],
+  callback: (editor: BangleEditor, editorId: EditorIdType) => boolean,
+): boolean {
+  return Array.from(mainEditors.entries()).some(([editorId, editor]) =>
+    editor ? callback(editor, editorId) : false,
+  );
+}

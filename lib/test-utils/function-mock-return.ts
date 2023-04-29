@@ -9,10 +9,11 @@
 // }
 import type { Writable } from 'type-fest';
 
-import { initialBangleStore } from '@bangle.io/bangle-store-context';
+import {
+  initialBangleStore,
+  initialNsmStore,
+} from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
-import type { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
-import { initialEditorSliceState } from '@bangle.io/slice-editor-manager';
 import type { useUIManagerContext } from '@bangle.io/slice-ui';
 import { initialState } from '@bangle.io/slice-ui';
 import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -26,6 +27,8 @@ export const getEditorPluginMetadataReturn: ReturnType<
   editorDisplayType: EditorDisplayType.Page,
   bangleStore: initialBangleStore,
   wsPath: 'test-workspace:my-test-note.md',
+  nsmStore: initialNsmStore,
+  createdAt: 0,
 };
 
 export const getUseUIManagerContextReturn: Writable<
@@ -47,11 +50,4 @@ export const getUseWorkspaceContextReturn: Writable<
   refreshCounter: 0,
   wsName: 'test-ws',
   wsPaths: [],
-};
-
-export const getUseEditorManagerContextReturn: ReturnType<
-  typeof useEditorManagerContext
-> = {
-  ...initialEditorSliceState,
-  bangleStore: initialBangleStore,
 };

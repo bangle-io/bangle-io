@@ -63,7 +63,6 @@ describe('zodFindUnsafeTypes', () => {
       createSlice([], {
         name: 'ji',
         initState: {},
-        selector: () => ({}),
         actions: {
           myAction1: serialAction(
             z.object({
@@ -84,7 +83,6 @@ describe('validateSlicesForSerialization', () => {
     const slice1 = createSlice([], {
       name: 'ji',
       initState: {},
-      selector: () => ({}),
       actions: {
         myAction1: serialAction(
           z.object({
@@ -101,7 +99,6 @@ describe('validateSlicesForSerialization', () => {
     const slice2 = createSlice([], {
       name: 'slice2',
       initState: {},
-      selector: () => ({}),
       actions: {
         myAction1: (payload) => (state) => state,
         myAction2: (payload) => (state) => state,
@@ -111,7 +108,7 @@ describe('validateSlicesForSerialization', () => {
     expect(() =>
       validateSlicesForSerialization([slice1]),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"validateSlices: slice ji is using an action myAction1 that does not have serialization setup"`,
+      `"validateSlices: slice ji is using an action myAction2 that does not have serialization setup"`,
     );
     expect(() => validateSlicesForSerialization([slice2])).toThrowError();
   });
@@ -123,7 +120,6 @@ describe('serializing transaction', () => {
     initState: {
       counter: 0,
     },
-    selector: () => ({}),
     actions: {
       myAction1: serialAction(
         z.object({
@@ -145,7 +141,6 @@ describe('serializing transaction', () => {
       counter: 0,
       map: new Map(),
     },
-    selector: () => ({}),
     actions: {
       myAction1: serialAction(
         z.object({

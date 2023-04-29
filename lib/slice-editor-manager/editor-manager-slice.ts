@@ -1,16 +1,11 @@
 import {
-  MAX_OPEN_EDITORS,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
-import {
-  assertActionName,
-  checkWidescreen,
-  createEmptyArray,
-} from '@bangle.io/utils';
+import { assertActionName } from '@bangle.io/utils';
 
-import { editorManagerSliceKey } from './constants';
+import { editorManagerSliceKey, initialEditorSliceState } from './constants';
 import {
   disableEditingOnPageInactiveEffect,
   focusEditorEffect,
@@ -29,21 +24,6 @@ import {
 } from './utils';
 
 export const JSON_SCHEMA_VERSION = 'editor-slice/2';
-
-export const initialEditorSliceState: EditorSliceState = {
-  focusedEditorId: undefined,
-  mainEditors: createEmptyArray(MAX_OPEN_EDITORS),
-  editorConfig: OpenedEditorsConfig.fromJsonObj({
-    selections: [],
-    scrollPositions: [],
-  }),
-  primaryEditor: undefined,
-  secondaryEditor: undefined,
-
-  // We disable editing in mobile devices by default.
-  // TODO: move this to a config stating the widescreen status
-  editingAllowed: checkWidescreen(),
-};
 
 const applyState = (
   action: EditorManagerAction,
@@ -188,7 +168,7 @@ export function editorManagerSlice(): Slice<
 
             const scroll = calculateScrollPosition(
               editorId,
-              editor,
+              editor.view,
             )?.scrollPosition;
             newEditorConfig = newEditorConfig.updateSelection(
               selectionJson,

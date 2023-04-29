@@ -1,7 +1,7 @@
 import { DISK_SHA_CHECK_INTERVAL } from '@bangle.io/constants';
 import {
-  blockReload,
-  pageLifeCycleTransitionedTo,
+  oldBlockReload,
+  oldPageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
 import { workspaceSliceKey } from '@bangle.io/slice-workspace';
@@ -76,7 +76,7 @@ export const blockOnPendingWriteEffect = workspaceOpenedDocInfoKey.effect(
 
         if (shouldBlock(Object.values(openedFiles))) {
           log('[blockOnPendingWriteEffect] blocking on pending write');
-          blockReload(true)(
+          oldBlockReload(true)(
             store.state,
             pageSliceKey.getDispatch(store.dispatch),
           );
@@ -84,7 +84,7 @@ export const blockOnPendingWriteEffect = workspaceOpenedDocInfoKey.effect(
       },
 
       // set it to 'false' at a slower cadence to do a sort of debounce
-      // since it is of lower priority compared to `blockReload(true)`. This helps
+      // since it is of lower priority compared to `oldBlockReload(true)`. This helps
       // smoothen out the `true` -> `false` -> ... -> `true`.
       deferredUpdate(store, prevState, abortSignal) {
         const openedFiles = workspaceOpenedDocInfoKey.getSliceStateAsserted(
@@ -92,7 +92,7 @@ export const blockOnPendingWriteEffect = workspaceOpenedDocInfoKey.effect(
         ).openedFiles;
 
         if (!shouldBlock(Object.values(openedFiles))) {
-          blockReload(false)(
+          oldBlockReload(false)(
             store.state,
             pageSliceKey.getDispatch(store.dispatch),
           );
@@ -150,7 +150,7 @@ export const calculateCurrentDiskShaEffect = workspaceOpenedDocInfoKey.effect(
       //  There is a high likely hood (compared to already being active) that the user
       //  modified the file externally.
       update(store, prevState) {
-        const pageTransitionedToActive = pageLifeCycleTransitionedTo(
+        const pageTransitionedToActive = oldPageLifeCycleTransitionedTo(
           'active',
           prevState,
         )(store.state);

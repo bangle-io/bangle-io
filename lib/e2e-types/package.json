@@ -33,6 +33,7 @@
     "@bangle.dev/utils": "0.31.6",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/pm-manual-paste": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",

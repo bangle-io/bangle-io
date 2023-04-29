@@ -3,7 +3,7 @@ import { sleep } from '@bangle.dev/utils';
 import type { AppState } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
-  goToLocation,
+  oldGoToLocation,
   pageSliceKey,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
@@ -119,7 +119,7 @@ export function createWorkspace(
       workspaceInfo,
     );
 
-    goToLocation(wsNameToPathname(wsName))(
+    oldGoToLocation(wsNameToPathname(wsName))(
       store.state,
       pageSliceKey.getDispatch(store.dispatch),
     );

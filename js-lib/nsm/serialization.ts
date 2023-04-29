@@ -73,7 +73,7 @@ export const payloadParser: PayloadParser = (payload, txnJSON, store) => {
   return parse(payload);
 };
 
-export function serialAction<Z extends z.ZodTypeAny, SS, DS extends AnySlice>(
+export function serialAction<Z extends z.ZodTypeAny, SS, DS extends string>(
   schema: Z,
   actionBuilder: ActionBuilder<[z.infer<Z>], SS, DS>,
 ): ActionBuilder<[z.infer<Z>], SS, DS> {
@@ -97,7 +97,7 @@ export function serialAction<Z extends z.ZodTypeAny, SS, DS extends AnySlice>(
 export function customSerialAction<
   T extends any,
   SS,
-  DS extends AnySlice,
+  DS extends string,
   Z extends z.ZodTypeAny,
   R,
 >(
@@ -138,10 +138,10 @@ export function customSerialAction<
 
 export function validateSlicesForSerialization(sl: AnySlice[]) {
   for (const slice of sl) {
-    for (const [actionName] of Object.entries(slice.actions)) {
-      if (!lookupTable.has(slice.lineageId + actionName)) {
+    for (const [actionName] of Object.entries(slice.spec.actionBuilders)) {
+      if (!lookupTable.has(slice.spec.lineageId + actionName)) {
         throw new Error(
-          `validateSlices: slice ${slice.name} is using an action ${actionName} that does not have serialization setup`,
+          `validateSlices: slice ${slice.spec.name} is using an action ${actionName} that does not have serialization setup`,
         );
       }
     }

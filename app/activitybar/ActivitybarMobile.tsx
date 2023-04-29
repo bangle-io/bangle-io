@@ -5,7 +5,8 @@ import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   toggleEditing,
-  useEditorManagerContext,
+  useNsmEditorManagerState,
+  useNsmEditorManagerStore,
 } from '@bangle.io/slice-editor-manager';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 import {
@@ -23,11 +24,13 @@ export function ActivitybarMobile() {
   const { wsName, openedWsPaths } = useWorkspaceContext();
   const { primaryWsPath } = openedWsPaths;
 
-  const { editingAllowed: showDone } = useEditorManagerContext();
+  const editorStore = useNsmEditorManagerStore();
+  const { editingAllowed: showDone } = useNsmEditorManagerState();
   const { sidebar: activeSidebar } = useUIManagerContext();
 
   return (
     <ActivitybarMobileDumb
+      editorStore={editorStore}
       bangleStore={bangleStore}
       primaryWsPath={primaryWsPath}
       wsName={wsName}
@@ -39,6 +42,7 @@ export function ActivitybarMobile() {
 }
 
 export function ActivitybarMobileDumb({
+  editorStore,
   bangleStore,
   primaryWsPath,
   wsName,
@@ -46,6 +50,7 @@ export function ActivitybarMobileDumb({
   extensionRegistry,
   activeSidebar,
 }: {
+  editorStore: ReturnType<typeof useNsmEditorManagerStore>;
   bangleStore: ReturnType<typeof useBangleStoreContext>;
   primaryWsPath: string | undefined;
   wsName: string | undefined;
@@ -122,10 +127,10 @@ export function ActivitybarMobileDumb({
                   size="sm"
                   text="Done"
                   onPress={() => {
-                    toggleEditing({
+                    toggleEditing(editorStore.state, editorStore.dispatch, {
                       focusOrBlur: true,
                       editingAllowed: false,
-                    })(bangleStore.state, bangleStore.dispatch);
+                    });
                   }}
                 />
               ) : (
@@ -136,10 +141,10 @@ export function ActivitybarMobileDumb({
                   size="sm"
                   text="edit"
                   onPress={() => {
-                    toggleEditing({
+                    toggleEditing(editorStore.state, editorStore.dispatch, {
                       focusOrBlur: true,
                       editingAllowed: true,
-                    })(bangleStore.state, bangleStore.dispatch);
+                    });
                   }}
                 />
               )}

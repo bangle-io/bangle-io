@@ -3,8 +3,8 @@ import type { AppState } from '@bangle.io/create-store';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import {
   getPageLocation,
-  goToLocation,
-  historyUpdateOpenedWsPaths,
+  oldGoToLocation,
+  oldHistoryUpdateOpenedWsPaths,
   pageSliceKey,
   wsNameToPathname,
   wsPathToPathname,
@@ -64,7 +64,7 @@ export function closeOpenedEditor(index?: EditorIdType) {
 // Navigation ops
 export const updateOpenedWsPaths = (
   newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
-  opts?: Parameters<typeof historyUpdateOpenedWsPaths>[2],
+  opts?: Parameters<typeof oldHistoryUpdateOpenedWsPaths>[2],
 ) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     const sliceState = workspaceSliceKey.getSliceState(state);
@@ -123,7 +123,7 @@ export const updateOpenedWsPaths = (
       sliceState.openedWsPaths.primaryWsPath !== newOpened.primaryWsPath ||
       sliceState.openedWsPaths.secondaryWsPath !== newOpened.secondaryWsPath
     ) {
-      historyUpdateOpenedWsPaths(
+      oldHistoryUpdateOpenedWsPaths(
         newOpened,
         wsName,
         opts,
@@ -161,7 +161,7 @@ export const replaceAnyMatchingOpenedWsPath = (
       const newOpened = openedWsPaths.updateIfFound(targetWsPath, newWsPath);
 
       if (!newOpened.equal(openedWsPaths)) {
-        historyUpdateOpenedWsPaths(newOpened, wsName, { replace: true })(
+        oldHistoryUpdateOpenedWsPaths(newOpened, wsName, { replace: true })(
           state,
           pageSliceKey.getDispatch(dispatch),
         );
@@ -200,7 +200,7 @@ export const goToLandingPage = ({
   replace = false,
 }: { replace?: boolean } = {}) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    goToLocation('/landing', { replace })(
+    oldGoToLocation('/landing', { replace })(
       state,
       pageSliceKey.getDispatch(dispatch),
     );
@@ -213,7 +213,10 @@ export const goToWorkspaceHomeRoute = ({
   replace = false,
 }: { replace?: boolean } = {}) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    goToLocation('/', { replace })(state, pageSliceKey.getDispatch(dispatch));
+    oldGoToLocation('/', { replace })(
+      state,
+      pageSliceKey.getDispatch(dispatch),
+    );
 
     return;
   };
@@ -253,7 +256,7 @@ export function goToWsNameRoute(
       }
     }
 
-    goToLocation(wsNameToPathname(wsName), { replace })(
+    oldGoToLocation(wsNameToPathname(wsName), { replace })(
       state,
       pageSliceKey.getDispatch(dispatch),
     );
@@ -272,7 +275,7 @@ export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
       savePrevOpenedWsPathsToSearch(openedWsPaths, search);
     }
 
-    return goToLocation(
+    return oldGoToLocation(
       `/ws-auth/${encodeURIComponent(wsName)}?${search.toString()}`,
       {
         replace: true,
@@ -283,7 +286,7 @@ export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
 
 export const goToInvalidPathRoute = (wsName: string, invalidPath?: string) => {
   return (state: AppState, dispatch: WorkspaceDispatchType): void => {
-    return goToLocation(`/ws-invalid-path/${encodeURIComponent(wsName)}`, {
+    return oldGoToLocation(`/ws-invalid-path/${encodeURIComponent(wsName)}`, {
       replace: true,
     })(state, pageSliceKey.getDispatch(dispatch));
   };
@@ -291,7 +294,7 @@ export const goToInvalidPathRoute = (wsName: string, invalidPath?: string) => {
 
 export function goToWsNameRouteNotFoundRoute(wsName: string) {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    goToLocation(`/ws-not-found/${encodeURIComponent(wsName)}`, {
+    oldGoToLocation(`/ws-not-found/${encodeURIComponent(wsName)}`, {
       replace: true,
     })(state, pageSliceKey.getDispatch(dispatch));
   };

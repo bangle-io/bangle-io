@@ -1,8 +1,10 @@
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { initExtensionRegistry } from '@bangle.io/shared';
-import type { BangleStateConfig, JsonValue } from '@bangle.io/shared-types';
-import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
+import type {
+  BangleStateConfig,
+  ExtensionRegistry,
+  JsonValue,
+} from '@bangle.io/shared-types';
 import { uncaughtExceptionNotification } from '@bangle.io/slice-notification';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
@@ -29,10 +31,11 @@ const MAX_DEFERRED_WAIT_TIME = 400;
 
 export function initializeBangleStore({
   onUpdate,
+  extensionRegistry,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
+  extensionRegistry: ExtensionRegistry;
 }) {
-  const extensionRegistry = initExtensionRegistry();
   const extensionSlices = extensionRegistry.getSlices();
 
   const stateOpts: BangleStateConfig = {
@@ -48,9 +51,7 @@ export function initializeBangleStore({
       );
       toSessionStorage(
         store.state.stateToJSON({
-          sliceFields: {
-            editorManagerSlice: editorManagerSlice(),
-          },
+          sliceFields: {},
         }),
       );
     },
@@ -70,7 +71,6 @@ export function initializeBangleStore({
       json: stateJson,
       sliceFields: {
         uiSlice: uiSlice(),
-        editorManagerSlice: editorManagerSlice(),
       },
       opts: stateOpts,
     });

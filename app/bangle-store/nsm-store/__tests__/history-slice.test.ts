@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { createTestDebugger, Store, timeoutSchedular } from '@bangle.io/nsm';
+import { createDispatchSpy, Store, timeoutSchedular } from '@bangle.io/nsm';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 
 import { historySliceFamily } from '../history-slice';
@@ -34,7 +34,7 @@ beforeEach(() => {
 
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    let testSpy = createTestDebugger();
+    let testSpy = createDispatchSpy();
 
     let store = Store.create({
       storeName: 'bangle-store',

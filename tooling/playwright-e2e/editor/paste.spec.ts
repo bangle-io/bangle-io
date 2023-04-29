@@ -24,10 +24,15 @@ test.beforeEach(async ({ page, bangleApp }, testInfo) => {
 
 const pasteSliceJson = async (page: Page, sliceJson: object) => {
   await page.evaluate(async (sliceJson) => {
-    const h = (window as any)._e2eHelpers;
-    h._sliceManualPaste(
-      h._primaryEditor.view,
-      h._EditorSlice.fromJSON(h._editorSchema, sliceJson),
+    const e2e = window._nsmE2e;
+
+    if (!e2e) {
+      throw new Error('e2e not found');
+    }
+
+    e2e.sliceManualPaste(
+      e2e.primaryEditor!.view,
+      e2e.EditorSlice.fromJSON(e2e.primaryEditor!.view.state.schema, sliceJson),
     );
   }, sliceJson);
 };

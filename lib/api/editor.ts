@@ -1,31 +1,21 @@
-import type { AppState } from '@bangle.io/create-store';
-import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
-import { workspaceSliceKey } from '@bangle.io/slice-workspace';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import type { NsmStoreState } from '@bangle.io/shared-types';
+import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 
 export {
-  blurEditor,
-  editorManagerSliceKey,
-  focusPrimaryEditor,
   forEachEditor,
+  nsmEditorManagerSlice,
 } from '@bangle.io/slice-editor-manager';
 
-export function getFocusedWsPath() {
-  return (state: AppState) => {
-    const workspaceSliceState = workspaceSliceKey.getSliceState(state);
-    const editorSliceState = editorManagerSliceKey.getSliceState(state);
+export function getFocusedWsPath(state: NsmStoreState) {
+  const { openedWsPaths } = nsmSliceWorkspace.getState(state);
+  const { focusedEditorId } = nsmEditorManagerSlice.getState(state);
 
-    if (!workspaceSliceState || !editorSliceState) {
-      return false;
-    }
+  if (focusedEditorId == null) {
+    return false;
+  }
 
-    const { focusedEditorId } = editorSliceState;
-    const { openedWsPaths } = workspaceSliceState;
+  const focusedWsPath = openedWsPaths.getByIndex(focusedEditorId);
 
-    if (focusedEditorId == null) {
-      return false;
-    }
-    const focusedWsPath = openedWsPaths.getByIndex(focusedEditorId);
-
-    return focusedWsPath;
-  };
+  return focusedWsPath;
 }

@@ -1,12 +1,16 @@
 import React, { useCallback, useState } from 'react';
 
 import { editor } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  useBangleStoreContext,
+  useNsmPlainStore,
+} from '@bangle.io/bangle-store-context';
 import {
   NEW_NOTE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
 } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { useNsmEditorManagerState } from '@bangle.io/slice-editor-manager';
+import { focusEditorIfNotFocused } from '@bangle.io/slice-editor-manager/nsm-editor-manager-slice';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   createNote,
@@ -24,7 +28,7 @@ import {
 
 export function NewNoteInputModal() {
   const { dispatch, dialogName, dialogMetadata } = useUIManagerContext();
-  const { primaryEditor } = useEditorManagerContext();
+  const { primaryEditor } = useNsmEditorManagerState();
 
   const onDismiss = useCallback(
     (focusEditor = true) => {
@@ -119,7 +123,7 @@ export function NewNoteInputModal() {
 
 export function RenameNoteInputModal() {
   const { dispatch } = useUIManagerContext();
-  const { primaryEditor } = useEditorManagerContext();
+  const nsmStore = useNsmPlainStore();
 
   const onDismiss = useCallback(
     (focusEditor = true) => {
@@ -131,10 +135,10 @@ export function RenameNoteInputModal() {
       });
 
       if (focusEditor) {
-        primaryEditor?.focusView();
+        focusEditorIfNotFocused(nsmStore.state);
       }
     },
-    [primaryEditor, dispatch],
+    [nsmStore, dispatch],
   );
 
   const destroyedRef = useDestroyRef();
@@ -142,7 +146,7 @@ export function RenameNoteInputModal() {
 
   const { wsName, bangleStore } = useWorkspaceContext();
 
-  const targetWsPath = editor.getFocusedWsPath()(bangleStore.state);
+  const targetWsPath = editor.getFocusedWsPath(nsmStore.state);
 
   const [error, updateError] = useState<Error | undefined>();
   const onExecute = useCallback(

@@ -6,10 +6,11 @@ import {
   ApplicationStore,
   AppState as ApplicationState,
 } from '@bangle.io/create-store';
-import type { BareStore } from '@bangle.io/nsm';
-import { Store, timeoutSchedular } from '@bangle.io/nsm';
+import type { AnySlice, AnySliceWithName, StoreState } from '@bangle.io/nsm';
+import { createUseSliceHook, Store, timeoutSchedular } from '@bangle.io/nsm';
+import type { NsmStore } from '@bangle.io/shared-types';
 
-export const initialNsmStore: BareStore<any> = Store.create({
+export const initialNsmStore: NsmStore = Store.create({
   storeName: 'nsm-store-main',
   scheduler: timeoutSchedular(0),
   state: [] as any[],
@@ -20,6 +21,35 @@ export const NsmStoreContext = React.createContext<typeof initialNsmStore>(
   // it is guaranteed to be replaced by the real value in the provider.
   initialNsmStore,
 );
+
+export function useNsmSlice<TSlice extends AnySlice>(
+  slice: TSlice,
+): [
+  ReturnType<TSlice['resolveState']>,
+  Store<TSlice extends AnySliceWithName<infer N> ? N : never>['dispatch'],
+] {
+  const store: Store<string> = useContext(NsmStoreContext);
+
+  return createUseSliceHook(store)(slice as AnySliceWithName<string>);
+}
+
+export function useNsmState<TSliceName extends string>(
+  slices: Array<AnySliceWithName<TSliceName>>,
+): [StoreState<TSliceName>, Store<TSliceName>['dispatch']] {
+  const store = useContext(NsmStoreContext);
+
+  return [store.state, store.dispatch];
+}
+
+export function useNsmStore<TSliceName extends string>(
+  slices: Array<AnySliceWithName<TSliceName>>,
+): Store<TSliceName> {
+  return useContext(NsmStoreContext);
+}
+
+export function useNsmPlainStore(): NsmStore {
+  return useContext(NsmStoreContext);
+}
 
 export const initialBangleStore = ApplicationStore.create({
   storeName: MAIN_STORE_NAME,

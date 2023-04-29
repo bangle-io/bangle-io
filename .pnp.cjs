@@ -5691,6 +5691,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
@@ -5724,6 +5725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
@@ -5759,6 +5761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
@@ -5808,6 +5811,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -5875,6 +5879,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -5939,6 +5944,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -6164,6 +6170,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
@@ -6203,6 +6210,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
@@ -6236,6 +6244,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
@@ -6345,6 +6354,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
@@ -6374,6 +6384,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -6411,6 +6422,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -6457,6 +6469,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
@@ -6497,6 +6510,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
@@ -6561,6 +6575,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
@@ -6641,6 +6656,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],\
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -6686,6 +6702,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/utils", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -6736,6 +6753,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -6895,6 +6913,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -6927,6 +6946,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -7012,6 +7032,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -7036,6 +7057,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"],\
+            ["reselect", "npm:4.1.8"],\
             ["superjson", "npm:1.12.2"],\
             ["zod", "npm:3.21.4"]\
           ],\
@@ -7046,7 +7068,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:lib/nsm-slice-workspace", {\
           "packageLocation": "./lib/nsm-slice-workspace/",\
           "packageDependencies": [\
-            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"]\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -7186,6 +7214,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/contextual-ui-components", "workspace:lib/contextual-ui-components"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -7273,6 +7302,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
@@ -7456,6 +7487,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -7580,6 +7612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
@@ -7780,6 +7813,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -7815,6 +7849,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
@@ -7862,6 +7897,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
@@ -31351,6 +31387,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/reselect-npm-4.1.7-c37108c640-738d8e2b8f.zip/node_modules/reselect/",\
           "packageDependencies": [\
             ["reselect", "npm:4.1.7"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:4.1.8", {\
+          "packageLocation": "./.yarn/cache/reselect-npm-4.1.8-cad5f0a3f3-a4ac87ceda.zip/node_modules/reselect/",\
+          "packageDependencies": [\
+            ["reselect", "npm:4.1.8"]\
           ],\
           "linkType": "HARD"\
         }]\

@@ -8,6 +8,7 @@ import type { JsonObject } from '@bangle.io/shared-types';
 
 import type { OpenedEditorsConfig } from './opened-editors-config';
 
+// TODO: can make this a nominal type
 export type EditorIdType = number;
 
 export type EditorDispatchType = ApplicationStore<

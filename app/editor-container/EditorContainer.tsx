@@ -20,7 +20,8 @@ import type {
 } from '@bangle.io/shared-types';
 import {
   toggleEditing,
-  useEditorManagerContext,
+  useNsmEditorManagerState,
+  useNsmEditorManagerStore,
 } from '@bangle.io/slice-editor-manager';
 import { getEditorIssue } from '@bangle.io/slice-notification';
 import { togglePaletteType } from '@bangle.io/slice-ui';
@@ -46,9 +47,10 @@ export function EditorContainer({
   const bangleStore = useBangleStoreContext();
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
-  const { focusedEditorId, editingAllowed } = useEditorManagerContext();
+  const { focusedEditorId, editingAllowed } = useNsmEditorManagerState();
   const { dispatchSerialOperation } = useSerialOperationContext();
   const extensionRegistry = useExtensionRegistryContext();
+  const editorStore = useNsmEditorManagerStore();
 
   const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
 
@@ -78,11 +80,10 @@ export function EditorContainer({
   );
 
   const onEnableEditing = useCallback(() => {
-    toggleEditing({ editingAllowed: true })(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
-  }, [bangleStore]);
+    toggleEditing(editorStore.state, editorStore.dispatch, {
+      editingAllowed: true,
+    });
+  }, [editorStore]);
 
   let children;
 

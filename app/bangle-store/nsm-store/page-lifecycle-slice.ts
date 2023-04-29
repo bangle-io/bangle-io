@@ -4,7 +4,7 @@ import lifecycle from 'page-lifecycle';
 
 import { changeEffect } from '@bangle.io/nsm';
 import type { PageLifeCycleState } from '@bangle.io/slice-page';
-import { nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmPageSlice, setPageLifeCycleState } from '@bangle.io/slice-page';
 
 const pendingSymbol = Symbol('pending');
 
@@ -21,7 +21,7 @@ export const pageLifeCycleWatch = changeEffect(
   (_, dispatch) => {
     const handler = (event: PageLifeCycleEvent) => {
       dispatch(
-        nsmPageSlice.actions.setPageLifeCycleState({
+        setPageLifeCycleState({
           current: event.newState,
           previous: event.oldState,
         }),

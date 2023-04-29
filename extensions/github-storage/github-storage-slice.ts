@@ -1,4 +1,10 @@
-import { editor, notification, page, Slice, workspace } from '@bangle.io/api';
+import {
+  getNewStore,
+  notification,
+  page,
+  Slice,
+  workspace,
+} from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { abortableSetInterval } from '@bangle.io/utils';
 
@@ -9,6 +15,7 @@ import {
   OPERATION_SHOW_CONFLICT_DIALOG,
 } from './common';
 import { handleError } from './error-handling';
+import { nsmGhSlice, updateGithubDetails } from './nsm-github-slices';
 import {
   checkForConflicts,
   optimizeDatabaseOperation,
@@ -85,12 +92,27 @@ export function githubStorageSlice() {
       syncEffect,
       conflictEffect,
       setConflictNotification,
+      syncWithNsmEffect,
     ],
     onError: (error: any, store) => {
       return handleError(error, store);
     },
   });
 }
+
+export const syncWithNsmEffect = ghSliceKey.effect(() => {
+  return {
+    deferredUpdate(store, prevState) {
+      const nsmStore = getNewStore(store);
+      const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
+      const existingName = nsmGhSlice.getState(nsmStore.state).githubWsName;
+
+      if (existingName !== githubWsName) {
+        nsmStore.dispatch(updateGithubDetails({ githubWsName }));
+      }
+    },
+  };
+});
 
 export const ghWorkspaceEffect = ghSliceKey.effect(() => {
   return {
@@ -140,12 +162,13 @@ export const ghWorkspaceEffect = ghSliceKey.effect(() => {
 export const syncEffect = ghSliceKey.deferredReactor(
   {
     // mostly for mobile: sync whenever a user presses done, so that we save the latest changes
-    editingAllowed: editor.editorManagerSliceKey.select('editingAllowed'),
+    // TODO fix this in nsm
+    // editingAllowed: editor.editorManagerSliceKey.select('editingAllowed'),
     // sync whenever page lifecycle changes
     lifeCycleState: page.pageSliceKey.select('lifeCycleState'),
     githubWsName: ghSliceKey.select('githubWsName'),
   },
-  (store, { editingAllowed, lifeCycleState, githubWsName }) => {
+  (store, { lifeCycleState, githubWsName }) => {
     if (!githubWsName) {
       return;
     }
@@ -169,7 +192,7 @@ export const periodSyncEffect = ghSliceKey.intervalRunEffect(
   (store, storeDestroyedSignal) => {
     const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
 
-    const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
+    const pageLifecycle = page.oldGetCurrentPageLifeCycle()(store.state);
 
     if (githubWsName && pageLifecycle === 'active') {
       debug('Periodic Github sync in background');
@@ -197,7 +220,7 @@ export const conflictEffect = ghSliceKey.effect(() => {
             store.state,
           );
 
-          const pageLifecycle = page.getCurrentPageLifeCycle()(store.state);
+          const pageLifecycle = page.oldGetCurrentPageLifeCycle()(store.state);
 
           if (githubWsName && pageLifecycle === 'active') {
             debug('Periodic Github conflict check in background');
@@ -210,7 +233,7 @@ export const conflictEffect = ghSliceKey.effect(() => {
     },
 
     update(store, prevState) {
-      const pageDidChange = page.pageLifeCycleTransitionedTo(
+      const pageDidChange = page.oldPageLifeCycleTransitionedTo(
         ['passive', 'terminated', 'hidden'],
         prevState,
       )(store.state);

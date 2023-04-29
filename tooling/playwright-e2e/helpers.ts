@@ -293,12 +293,12 @@ export async function getPrimaryEditorHandler(
   await waitForEditorIdToLoad(page, PRIMARY_EDITOR_INDEX);
 
   await page.waitForFunction(() => {
-    return (window as any)._e2eHelpers._primaryEditor?.destroyed === false;
+    return window._nsmE2e?.primaryEditor?.destroyed === false;
   });
 
   if (focus) {
     await page.evaluate(async () => {
-      (window as any)._e2eHelpers._primaryEditor?.view?.focus();
+      window._nsmE2e?.primaryEditor?.view?.focus();
     });
     await waitForPrimaryEditorFocus(page);
   }
@@ -328,9 +328,9 @@ export async function getEditorLocator(
   if (focus) {
     await page.evaluate(
       async ([editorId, wsPath]) => {
-        (window as any)[`editor-${editorId}`]?.editor?.view.focus();
+        _nsmE2e?.getEditorDetailsById(editorId)?.editor.view.focus();
       },
-      [editorId, wsPath],
+      [editorId, wsPath] as const,
     );
     await waitForEditorFocus(page, editorId);
   }
@@ -355,12 +355,11 @@ export async function getEditorDebugString(
 ) {
   await getEditorLocator(page, editorId, { wsPath });
 
-  // TODO fix the as any
-  return page.evaluate(
-    async (editorId) =>
-      (window as any)[`editor-${editorId}`]?.editor?.view.state.doc.toString(),
-    editorId,
-  );
+  return page.evaluate(async (editorId) => {
+    return _nsmE2e
+      ?.getEditorDetailsById(editorId)
+      ?.editor?.view.state.doc.toString();
+  }, editorId);
 }
 
 export async function getEditorSelectionJson(
@@ -368,18 +367,19 @@ export async function getEditorSelectionJson(
   editorId: EditorIdType,
 ) {
   return await page.evaluate(
-    async ([editorId]) =>
-      (window as any)[
-        `editor-${editorId}`
-      ]?.editor?.view.state.selection.toJSON(),
-    [editorId],
+    async ([editorId]) => {
+      return _nsmE2e
+        ?.getEditorDetailsById(editorId)
+        ?.editor?.view.state.selection.toJSON();
+    },
+    [editorId] as const,
   );
 }
 
 export async function getPrimaryEditorDebugString(el: any) {
   // TODO fix the as any
   return (el as any).evaluate(async () =>
-    (window as any)._e2eHelpers._primaryEditor?.view?.state.doc.toString(),
+    window._nsmE2e?.primaryEditor?.view?.state.doc.toString(),
   );
 }
 
@@ -398,7 +398,7 @@ function frmtHTML(doc: string) {
 
 export async function getSecondaryEditorDebugString(page: Page) {
   return (page as any).evaluate(async () =>
-    (window as any)._e2eHelpers._secondaryEditor?.view?.state.doc.toString(),
+    window._nsmE2e?.secondaryEditor?.view?.state.doc.toString(),
   );
 }
 
@@ -486,7 +486,7 @@ export async function getEditorJSON(page: Page, editorId: EditorIdType) {
 
   return page.evaluate(
     async (editorId: EditorIdType) =>
-      (window as any)[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
+      _nsmE2e?.getEditorDetailsById(editorId)?.editor.view.state.doc.toJSON(),
     editorId,
   );
 }
@@ -523,7 +523,7 @@ export async function waitForWsPathToLoad(
   await Promise.all([
     page.waitForFunction(
       ({ editorId, wsPath }) => {
-        return (window as any)[`editor-${editorId}`]?.wsPath === wsPath;
+        return _nsmE2e?.getEditorDetailsById(editorId)?.wsPath === wsPath;
       },
       { editorId, wsPath },
     ),
@@ -539,7 +539,7 @@ export async function waitForEditorIdToLoad(
     ({ editorId }) => {
       try {
         return (
-          (window as any)[`editor-${editorId}`]?.editor?.destroyed === false
+          _nsmE2e?.getEditorDetailsById(editorId)?.editor?.destroyed === false
         );
       } catch (error) {
         if (

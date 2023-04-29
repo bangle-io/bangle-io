@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/api';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { useNsmEditorManagerState } from '@bangle.io/slice-editor-manager';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
@@ -151,7 +151,7 @@ export function BacklinkWidget() {
 }
 
 function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
-  const { focusedEditorId } = useEditorManagerContext();
+  const { focusedEditorId } = useNsmEditorManagerState();
   const { wsName, openedWsPaths } = useWorkspaceContext();
   const [results, updateResults] = useState<BacklinkSearchResult[] | undefined>(
     undefined,

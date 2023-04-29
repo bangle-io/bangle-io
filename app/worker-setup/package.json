@@ -36,6 +36,7 @@
     "typescript": "4.9.3"
   },
   "devDependencies": {
+    "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*"

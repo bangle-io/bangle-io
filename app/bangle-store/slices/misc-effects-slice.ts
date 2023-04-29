@@ -1,10 +1,11 @@
-import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { Slice, SliceKey } from '@bangle.io/create-store';
+import { stopGap_setWsData } from '@bangle.io/nsm-slice-workspace/nsm-slice-workspace';
+import type { NsmStore } from '@bangle.io/shared-types';
 import type {
   WorkspaceSliceAction,
   WorkspaceSliceState,
 } from '@bangle.io/slice-workspace';
-import { getWsName, workspaceSliceKey } from '@bangle.io/slice-workspace';
+import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
@@ -16,7 +17,7 @@ const miscEffectsKey = new SliceKey<WorkspaceSliceState, WorkspaceSliceAction>(
 export function miscEffectsSlice() {
   return new Slice({
     key: miscEffectsKey,
-    sideEffect: [saveLastUsedWorkspaceEffect],
+    sideEffect: [saveLastUsedWorkspaceEffect, syncNsmWorkspaceSlice],
   });
 }
 
@@ -66,3 +67,21 @@ export const lastWorkspaceUsed = {
     return undefined;
   },
 };
+
+// TODO remove this post migration
+export const syncNsmWorkspaceSlice = miscEffectsKey.reactor(
+  {
+    wsName: workspaceSliceKey.select('wsName'),
+    openedWsPaths: workspaceSliceKey.select('openedWsPaths'),
+  },
+  (_, __, { wsName, openedWsPaths }) => {
+    const nsmStore: NsmStore = (window as any).nsmStore;
+
+    nsmStore.dispatch(
+      stopGap_setWsData({
+        wsName: wsName,
+        openedWsPaths: openedWsPaths,
+      }),
+    );
+  },
+);

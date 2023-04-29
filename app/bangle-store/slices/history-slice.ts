@@ -3,7 +3,7 @@ import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
 import type { PageSliceStateType } from '@bangle.io/slice-page';
-import { pageSliceKey, syncPageLocation } from '@bangle.io/slice-page';
+import { oldSyncPageLocation, pageSliceKey } from '@bangle.io/slice-page';
 import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
@@ -107,7 +107,7 @@ const watchHistoryEffect = historySliceKey.effect(() => {
   return {
     deferredOnce(store, abortSignal) {
       const browserHistory = new BrowserHistory('', (location) => {
-        syncPageLocation(location)(
+        oldSyncPageLocation(location)(
           store.state,
           pageSliceKey.getDispatch(store.dispatch),
         );
@@ -118,7 +118,7 @@ const watchHistoryEffect = historySliceKey.effect(() => {
         value: { history: browserHistory },
       });
 
-      syncPageLocation({
+      oldSyncPageLocation({
         search: browserHistory.search,
         pathname: browserHistory.pathname,
       })(store.state, pageSliceKey.getDispatch(store.dispatch));
