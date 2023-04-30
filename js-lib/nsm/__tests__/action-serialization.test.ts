@@ -6,7 +6,7 @@ import {
   payloadSerializer,
   serialAction,
   validateSlicesForSerialization,
-} from '../serialization';
+} from '../action-serialization';
 import { zodFindUnsafeTypes } from '../zod-helpers';
 
 type AnyTransaction = Transaction<any, any[]>;

@@ -2,6 +2,7 @@ import type { BangleEditor } from '@bangle.dev/core';
 import type { EditorView } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { z } from '@bangle.io/nsm';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import {
   getEditorPluginMetadata,
@@ -10,16 +11,40 @@ import {
 
 import type { EditorSliceState } from './types';
 
+// In PM selection.toJSON() is of different types based on the selection type
+// we only care about serializing and this type is good enough.
+export type SelectionJson = z.infer<typeof selectionJsonSchema>;
+// WARNING: before changing this schema, make sure to update the
+//  make sure to update the manual check in `calculateSelection`
+export const selectionJsonSchema = z.record(
+  z.union([z.undefined(), z.string(), z.number(), z.null()]),
+);
 export const calculateSelection = (
   editorId: EditorIdType,
   editor: BangleEditor,
-) => {
+): {
+  wsPath: string;
+  editorId: EditorIdType;
+  selectionJson: SelectionJson;
+} => {
   const selection = editor.view.state.selection;
+
+  const json = selection.toJSON();
+
+  for (const value of Object.values(json)) {
+    if (
+      typeof value !== 'number' &&
+      typeof value !== 'string' &&
+      value != null
+    ) {
+      throw new Error(`Invalid editor selection json value type: ${json}`);
+    }
+  }
 
   return {
     wsPath: getEditorPluginMetadata(editor.view.state).wsPath,
     editorId: editorId,
-    selectionJson: selection.toJSON(),
+    selectionJson: json as SelectionJson,
   };
 };
 

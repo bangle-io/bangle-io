@@ -18,10 +18,12 @@ import {
   createSliceWithSelectors,
   mountEffect,
   Slice,
+  sliceStateSerializer,
   syncChangeEffect,
   updateObj,
+  z,
 } from '@bangle.io/nsm';
-import type { EditorIdType, JsonObject } from '@bangle.io/shared-types';
+import type { EditorIdType } from '@bangle.io/shared-types';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   debounceFn,
@@ -31,9 +33,15 @@ import {
 } from '@bangle.io/utils';
 
 import { initialEditorSliceState } from './constants';
+import {
+  OpenedEditorsConfig,
+  openedEditorsConfigSchema,
+} from './opened-editors-config';
 import type { EditorSliceState } from './types';
+import type { SelectionJson } from './utils';
 import {
   assertValidEditorId,
+  calculateScrollPosition,
   calculateSelection,
   isValidEditorId,
 } from './utils';
@@ -188,9 +196,57 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
     'focusEffect',
     {
       lastOpenedEditor: nsmEditorManagerSlice.pick((s) => s.lastOpenedEditor),
+      focusedEditorId: nsmEditorManagerSlice.passivePick(
+        (s) => s.focusedEditorId,
+      ),
+      mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
+      primaryWsPath: nsmPageSlice.passivePick((s) => s.primaryWsPath),
+      secondaryWsPath: nsmPageSlice.passivePick((s) => s.secondaryWsPath),
     },
-    ({ lastOpenedEditor }) => {
-      lastOpenedEditor?.editor.focusView();
+    (
+      {
+        lastOpenedEditor,
+        focusedEditorId,
+        mainEditors,
+        primaryWsPath,
+        secondaryWsPath,
+      },
+      _,
+      ref: { focusedOnMount?: boolean },
+    ) => {
+      // no point in focusing if we don't have any editors
+      if (primaryWsPath == null && secondaryWsPath == null) {
+        return;
+      }
+
+      const isPrimaryReady = Boolean(
+        primaryWsPath ? mainEditors[PRIMARY_EDITOR_INDEX] : true,
+      );
+
+      const isSecondaryReady = Boolean(
+        secondaryWsPath ? mainEditors[SECONDARY_EDITOR_INDEX] : true,
+      );
+
+      if (!isPrimaryReady && !isSecondaryReady) {
+        return;
+      }
+
+      // if we have already focused on mount, then we can continue focusing
+      // on the last opened editor
+      if (ref.focusedOnMount) {
+        lastOpenedEditor?.editor.focusView();
+
+        return;
+      }
+
+      if (isPrimaryReady && isSecondaryReady) {
+        ref.focusedOnMount = true;
+
+        if (typeof focusedEditorId === 'number') {
+          // if mounting for the first time, focus on the focusedEditorId
+          mainEditors[focusedEditorId]?.focusView();
+        }
+      }
     },
   ),
 ]);
@@ -299,7 +355,7 @@ export const updateSelection = nsmEditorManagerSlice.createAction(
   }: {
     editorId: EditorIdType;
     wsPath: string;
-    selectionJson: JsonObject;
+    selectionJson: SelectionJson;
   }) => {
     return (state) => {
       if (!isValidEditorId(editorId)) {
@@ -381,17 +437,31 @@ export function getInitialSelection(
     return undefined;
   }
 
-  const initialSelection: any = sliceState.editorConfig.getSelection(
+  const initialSelection = sliceState.editorConfig.getSelection(
     wsPath,
     editorId,
   );
 
   if (initialSelection) {
-    let selection =
-      Math.max(initialSelection?.anchor, initialSelection?.head) >=
-      doc.content.size
-        ? Selection.atEnd(doc)
-        : safeSelectionFromJSON(doc, initialSelection);
+    const anchor =
+      typeof initialSelection?.anchor === 'number'
+        ? initialSelection.anchor
+        : undefined;
+
+    const head =
+      typeof initialSelection?.head === 'number'
+        ? initialSelection.head
+        : undefined;
+
+    let isOutside = false;
+
+    if (anchor != null && head != null) {
+      isOutside = Math.max(anchor, head) >= doc.content.size;
+    }
+
+    let selection = isOutside
+      ? Selection.atEnd(doc)
+      : safeSelectionFromJSON(doc, initialSelection);
     let { from } = selection;
 
     if (from >= doc.content.size) {
@@ -491,14 +561,69 @@ export function forEachEditor(
   state: EditorManagerStoreState,
   callback: (editor: BangleEditor, editorId: EditorIdType) => void,
 ) {
-  const sliceState = nsmEditorManagerSlice.getState(state);
+  const { mainEditors } = nsmEditorManagerSlice.getState(state);
 
-  for (const [editorId, editor] of sliceState.mainEditors.entries()) {
+  for (const [editorId, editor] of mainEditors.entries()) {
     if (editor) {
       callback(editor, editorId);
     }
   }
 }
+
+const SERIAL_VERSION = 1;
+
+export const persistState = sliceStateSerializer(nsmEditorManagerSlice, {
+  dbKey: 'editorManagerSlice',
+  schema: z.object({
+    focusedEditorId: z.union([z.number(), z.undefined()]),
+    editorConfig: openedEditorsConfigSchema,
+  }),
+  serialize: (state) => {
+    const { editorConfig, focusedEditorId } =
+      nsmEditorManagerSlice.resolveState(state);
+
+    let newEditorConfig = editorConfig;
+
+    forEachEditor(state, (editor, editorId) => {
+      const { selectionJson, wsPath } = calculateSelection(editorId, editor);
+
+      const scroll = calculateScrollPosition(
+        editorId,
+        editor.view,
+      )?.scrollPosition;
+
+      newEditorConfig = newEditorConfig.updateSelection(
+        selectionJson,
+        wsPath,
+        editorId,
+      );
+      newEditorConfig = newEditorConfig.updateScrollPosition(
+        scroll,
+        wsPath,
+        editorId,
+      );
+    });
+
+    return {
+      version: SERIAL_VERSION,
+      data: {
+        focusedEditorId: focusedEditorId,
+        editorConfig: newEditorConfig.toJsonObj(),
+      },
+    };
+  },
+
+  deserialize: ({ version, data }) => {
+    if (version < SERIAL_VERSION) {
+      return initState;
+    }
+
+    return updateObj(initState, {
+      focusedEditorId: data.focusedEditorId,
+      editorConfig: OpenedEditorsConfig.fromJsonObj(data.editorConfig),
+    });
+  },
+});
 
 function querySomeEditor(
   state: EditorManagerStoreState,

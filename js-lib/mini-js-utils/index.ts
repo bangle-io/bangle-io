@@ -91,3 +91,10 @@ export function safeJSONStringify(
     return { success: false };
   }
 }
+
+/**
+ * Hack for nominal typing
+ * https://basarat.gitbook.io/typescript/main-1/nominaltyping
+ */
+declare const __brand: unique symbol;
+export type Brand<T, K> = T & { [__brand]: K };

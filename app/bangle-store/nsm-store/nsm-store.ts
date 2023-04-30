@@ -22,6 +22,11 @@ import {
   pageLifeCycleBlockReload,
   pageLifeCycleWatch,
 } from './page-lifecycle-slice';
+import {
+  getLocalStorageData,
+  getSessionStorageData,
+  persistStateSlice,
+} from './persist-state-slice';
 
 export const createNsmStore = ({
   extensionRegistry,
@@ -32,18 +37,25 @@ export const createNsmStore = ({
 
   const storeName = 'bangle-store';
 
+  const localStorageData = getLocalStorageData();
+  const sessionStorageData = getSessionStorageData();
+
+  const initStateOverride = { ...localStorageData, ...sessionStorageData };
+
+  console.log({ initStateOverride });
+
   const syncSlices = [nsmPageSlice];
   const store = createSyncStore({
     storeName,
     debug: (log) => {
-      if (log.type === 'TX') {
-        console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
-        console.info(log.payload);
-        console.info(log);
-        console.groupEnd();
-      } else {
-        console.info('NSM', log.type, log);
-      }
+      // if (log.type === 'TX') {
+      //   console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
+      //   console.info(log.payload);
+      //   console.info(log);
+      //   console.groupEnd();
+      // } else {
+      //   console.info('NSM', log.type, log);
+      // }
     },
     sync: {
       type: 'main',
@@ -69,7 +81,9 @@ export const createNsmStore = ({
       // TODO: remove e2e effects for production
       nsmE2eEffect,
       nsmE2eSyncEffect,
+      persistStateSlice,
     ],
+    initStateOverride,
     scheduler: idleCallbackScheduler(15),
     dispatchTx: (store, tx) => {
       let newState = store.state.applyTransaction(tx);

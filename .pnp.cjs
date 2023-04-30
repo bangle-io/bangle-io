@@ -5943,6 +5943,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],\
@@ -7056,8 +7057,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/nsm/",\
           "packageDependencies": [\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"],\
-            ["reselect", "npm:4.1.8"],\
             ["superjson", "npm:1.12.2"],\
             ["zod", "npm:3.21.4"]\
           ],\
@@ -7980,6 +7981,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@types/react", "npm:17.0.52"],\
@@ -31387,13 +31389,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/reselect-npm-4.1.7-c37108c640-738d8e2b8f.zip/node_modules/reselect/",\
           "packageDependencies": [\
             ["reselect", "npm:4.1.7"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:4.1.8", {\
-          "packageLocation": "./.yarn/cache/reselect-npm-4.1.8-cad5f0a3f3-a4ac87ceda.zip/node_modules/reselect/",\
-          "packageDependencies": [\
-            ["reselect", "npm:4.1.8"]\
           ],\
           "linkType": "HARD"\
         }]\

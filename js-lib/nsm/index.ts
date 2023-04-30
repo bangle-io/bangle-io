@@ -4,11 +4,17 @@ export {
   payloadSerializer,
   serialAction,
   validateSlicesForSerialization,
-} from './serialization';
+} from './action-serialization';
+export type {
+  InferSliceState,
+  SliceStateSerialData,
+} from './slice-state-serialization';
+export { sliceStateSerializer } from './slice-state-serialization';
 export type {
   AnySlice,
   AnySliceWithName,
   InferSliceName,
+  LineageId,
   MainStoreInfo,
   SyncMessage,
 } from 'nalanda';
@@ -32,6 +38,7 @@ export {
   timeoutSchedular,
   Transaction,
 } from 'nalanda';
+export * as superJson from 'superjson';
 export { z } from 'zod';
 
 export function updateObj<T extends object>(

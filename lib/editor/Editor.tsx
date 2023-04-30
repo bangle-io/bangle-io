@@ -38,7 +38,9 @@ import {
   nsmEditorManagerSlice,
   setEditor,
   setEditorScrollPos,
+  updateSelection,
 } from '@bangle.io/slice-editor-manager';
+import { calculateSelection } from '@bangle.io/slice-editor-manager/utils';
 import { getNote } from '@bangle.io/slice-workspace';
 import { cx } from '@bangle.io/utils';
 
@@ -132,6 +134,9 @@ function EditorInner({
               editorId,
             }),
           );
+          // update the last selection before unmounting
+          const value = calculateSelection(editorId, currentEditor);
+          editorStore.dispatch(updateSelection(value));
         }
 
         // Avoiding MEMORY LEAK

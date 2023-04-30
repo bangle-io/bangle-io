@@ -12,14 +12,12 @@ import {
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import type { AppState } from '@bangle.io/create-store';
-import { getScrollParentElement } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import type { EditorDispatchType, EditorIdType } from './types';
 import {
   assertValidEditorId,
   calculateScrollPosition,
-  calculateSelection,
   getEachEditorIterable,
   isValidEditorId,
 } from './utils';
@@ -90,31 +88,6 @@ export function getEditor(editorId: EditorIdType) {
 
     return editorManagerSliceKey.getSliceState(state)?.mainEditors[editorId];
   });
-}
-
-export function updateInitialSelection(editorId: EditorIdType) {
-  return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    assertValidEditorId(editorId);
-
-    const editor = getEditor(editorId)(state);
-
-    if (!editor) {
-      return false;
-    }
-
-    const value = calculateSelection(editorId, editor);
-
-    if (value) {
-      dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
-        value: value,
-      });
-
-      return true;
-    }
-
-    return false;
-  };
 }
 
 export function forEachEditor(

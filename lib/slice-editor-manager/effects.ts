@@ -22,7 +22,6 @@ import {
   getEditor,
   someEditorHasFocus,
   toggleEditing,
-  updateInitialSelection,
   updateScrollPosition,
 } from './operations';
 import { getEachEditorIterable } from './utils';
@@ -37,7 +36,7 @@ export const initialSelectionEffect = editorManagerSliceKey.effect(() => {
         const prevEditor = getEditor(editorId)(prevState);
 
         if (prevEditor && currentEditor !== prevEditor) {
-          updateInitialSelection(editorId)(prevState, store.dispatch);
+          // updateInitialSelection(editorId)(prevState, store.dispatch);
         }
       }
     },

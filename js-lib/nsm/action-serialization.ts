@@ -9,7 +9,7 @@ import { StoreState } from 'nalanda';
 import { parse, stringify } from 'superjson';
 import type { z } from 'zod';
 
-import { zodFindUnsafeTypes } from './zod-helpers';
+import { assertSafeZodSchema } from './zod-helpers';
 
 export type NoInfer<T> = [T][T extends any ? 0 : never];
 
@@ -77,13 +77,7 @@ export function serialAction<Z extends z.ZodTypeAny, SS, DS extends string>(
   schema: Z,
   actionBuilder: ActionBuilder<[z.infer<Z>], SS, DS>,
 ): ActionBuilder<[z.infer<Z>], SS, DS> {
-  let unsafeTypes = zodFindUnsafeTypes(schema);
-
-  if (unsafeTypes.length > 0) {
-    throw new Error(
-      `serialAction: schema contains unsafe types: ${unsafeTypes.join(', ')}`,
-    );
-  }
+  assertSafeZodSchema(schema);
 
   // this gets called on slice init
   actionBuilder.setContextDetails = (context) => {
@@ -112,13 +106,7 @@ export function customSerialAction<
     deserialize: (args: NoInfer<R>) => NoInfer<T>;
   },
 ): ActionBuilder<[T], SS, DS> {
-  let unsafeTypes = zodFindUnsafeTypes(schema);
-
-  if (unsafeTypes.length > 0) {
-    throw new Error(
-      `serialAction: schema contains unsafe types: ${unsafeTypes.join(', ')}`,
-    );
-  }
+  assertSafeZodSchema(schema);
 
   // this gets called on slice init
   actionBuilder.setContextDetails = (context) => {

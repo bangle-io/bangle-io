@@ -22,6 +22,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*",
     "nalanda": "portal:/Users/kushanjoshi/code/nalanda",
     "superjson": "^1.12.2",
     "zod": "^3.21.4"

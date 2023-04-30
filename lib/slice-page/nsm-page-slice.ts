@@ -8,7 +8,12 @@ import {
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { pageLifeCycleState } from './common';
-import { locationSchema, locationSetWsPath } from './location-helpers';
+import {
+  locationSchema,
+  locationSetWsPath,
+  pathnameToWsPath,
+  searchToWsPath,
+} from './location-helpers';
 import { pageSliceInitialState } from './page-slice';
 
 export const nsmPageSlice = createSliceWithSelectors([], {
@@ -19,6 +24,25 @@ export const nsmPageSlice = createSliceWithSelectors([], {
     currentPageLifeCycle: createSelector(
       { current: (state) => state.lifeCycleState.current },
       (computed) => computed.current,
+    ),
+
+    primaryWsPath: createSelector(
+      { location: (state) => state.location },
+      ({ location }) => {
+        return OpenedWsPaths.createEmpty().updatePrimaryWsPath(
+          pathnameToWsPath(location.pathname),
+        ).primaryWsPath;
+      },
+    ),
+
+    secondaryWsPath: createSelector(
+      { location: (state) => state.location },
+      ({ location }) => {
+        return OpenedWsPaths.createEmpty()
+          .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
+          .updateSecondaryWsPath(searchToWsPath(location.search))
+          .secondaryWsPath;
+      },
     ),
   },
 });

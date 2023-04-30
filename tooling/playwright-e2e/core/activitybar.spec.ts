@@ -135,7 +135,7 @@ test.describe('mobile', () => {
       await page.keyboard.type('sugar', { delay: 30 });
 
       let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
-      expect(primaryText.includes('sugar')).toBe(false);
+      expect(primaryText?.includes('sugar')).toBe(false);
     });
   });
 });
