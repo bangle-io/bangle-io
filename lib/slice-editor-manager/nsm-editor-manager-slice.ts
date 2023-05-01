@@ -16,6 +16,7 @@ import {
   changeEffect,
   createSelector,
   createSliceWithSelectors,
+  intervalRunEffect,
   mountEffect,
   Slice,
   sliceStateSerializer,
@@ -25,6 +26,7 @@ import {
 } from '@bangle.io/nsm';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmUISlice } from '@bangle.io/slice-ui';
 import {
   debounceFn,
   getEditorPluginMetadata,
@@ -50,9 +52,11 @@ const initState: EditorSliceState & {
   // the editor that was last opened
   // the most recent editor id is the first in array
   editorOpenOrder: EditorIdType[];
+  disableEditingCounter: number | undefined;
 } = {
   ...initialEditorSliceState,
   editorOpenOrder: [],
+  disableEditingCounter: undefined,
 };
 
 export const nsmEditorManagerSlice = createSliceWithSelectors([nsmPageSlice], {
@@ -141,7 +145,6 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
     }
 
     return () => {
-      console.warn('abort called');
       deb.cancel();
 
       if (isWindow) {
@@ -149,9 +152,79 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
       }
     };
   }),
-]);
 
-Slice.registerEffectSlice(nsmEditorManagerSlice, [
+  intervalRunEffect(
+    'checkForInactiveEditor',
+    [nsmEditorManagerSlice, nsmUISlice],
+    // WARNING: do not reduce the interval below 500 as it can prevent manual toggling
+    // of editing.
+    // WARNING: when changing time, make sure to account for sleep time below
+    500,
+    (state, dispatch) => {
+      let timer: NodeJS.Timeout | undefined;
+
+      if (!nsmUISlice.getState(state).widescreen) {
+        const { editingAllowed } = nsmEditorManagerSlice.getState(state);
+
+        if (editingAllowed) {
+          timer = setTimeout(() => {
+            dispatch(incrementDisableEditingCounter());
+          }, 300);
+        }
+      }
+
+      return () => {
+        clearTimeout(timer);
+      };
+    },
+  ),
+
+  // Disable editing when the user is inactive
+  changeEffect(
+    'toggleEditingEffect',
+    {
+      disableEditingCounter: nsmEditorManagerSlice.pick(
+        (s) => s.disableEditingCounter,
+      ),
+      isInactivePage: nsmPageSlice.pick((s) => s.isInactivePage),
+      widescreen: nsmUISlice.pick((s) => s.widescreen),
+      mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
+      editingAllowed: nsmEditorManagerSlice.passivePick(
+        (s) => s.editingAllowed,
+      ),
+    },
+    (state, dispatch, ref) => {
+      if (state.widescreen) {
+        return;
+      }
+
+      if (state.disableEditingCounter === undefined) {
+        return;
+      }
+
+      const noEditorInFocus = !someEditor(state.mainEditors, (editor) =>
+        editor.view.hasFocus(),
+      );
+
+      if (noEditorInFocus || state.isInactivePage) {
+        if (noEditorInFocus) {
+          console.warn('disabling editing due to no editor in focus');
+        }
+        if (state.isInactivePage) {
+          console.warn('disabling editing due to inactive page');
+        }
+        toggleEditingDirect(
+          {
+            editingAllowed: state.editingAllowed,
+            mainEditors: state.mainEditors,
+          },
+          dispatch,
+          { editingAllowed: false },
+        );
+      }
+    },
+  ),
+
   changeEffect(
     'initialSelectionEffect',
     {
@@ -172,13 +245,10 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
     'trimWhiteSpaceEffect',
     {
       mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
-      currentPageLifeCycle: nsmPageSlice.pick((s) => s.currentPageLifeCycle),
+      isInactivePage: nsmPageSlice.pick((s) => s.isInactivePage),
     },
-    ({ mainEditors, currentPageLifeCycle }) => {
-      if (
-        currentPageLifeCycle === 'passive' ||
-        currentPageLifeCycle === 'hidden'
-      ) {
+    ({ mainEditors, isInactivePage }) => {
+      if (isInactivePage) {
         for (const editor of mainEditors) {
           if (!editor) {
             continue;
@@ -192,6 +262,10 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
     },
   ),
 
+  // This effect does:
+  // 1. Focus on the correct editor on initial mount.
+  // 2. Automatically focus on any new mounted editor thereafter.
+  // 3. If no current editor has any focus, focus on one automatically.
   syncChangeEffect(
     'focusEffect',
     {
@@ -346,6 +420,15 @@ export const updateScrollPosition = nsmEditorManagerSlice.createAction(
   },
 );
 
+export const incrementDisableEditingCounter =
+  nsmEditorManagerSlice.createAction('incrementDisableEditingCounter', () => {
+    return (state) => {
+      return updateObj(state, {
+        disableEditingCounter: (state.disableEditingCounter || 0) + 1,
+      });
+    };
+  });
+
 export const updateSelection = nsmEditorManagerSlice.createAction(
   'updateSelection',
   ({
@@ -491,6 +574,24 @@ export function toggleEditing(
   }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
 ) {
   const sliceState = nsmEditorManagerSlice.getState(state);
+
+  return toggleEditingDirect(sliceState, dispatch, {
+    focusOrBlur,
+    editingAllowed,
+  });
+}
+
+function toggleEditingDirect(
+  sliceState: {
+    editingAllowed: EditorSliceState['editingAllowed'];
+    mainEditors: EditorSliceState['mainEditors'];
+  },
+  dispatch: EditorManagerStoreDispatch,
+  {
+    focusOrBlur = true,
+    editingAllowed,
+  }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
+) {
   const newEditingAllowed = editingAllowed ?? !sliceState.editingAllowed;
 
   dispatch(

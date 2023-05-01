@@ -1,3 +1,5 @@
+import type { AnySlice } from 'nalanda';
+
 export {
   customSerialAction,
   payloadParser,
@@ -29,6 +31,7 @@ export {
   createSyncStore,
   createUseSliceHook,
   idleCallbackScheduler,
+  intervalRunEffect,
   mergeAll,
   mountEffect,
   Slice,
@@ -49,3 +52,10 @@ export function updateObj<T extends object>(
 
   return { ...obj, ...val };
 }
+
+// InferSliceName<typeof nsmEditorManagerSlice>
+
+export function query<TSlice extends AnySlice, TCallback extends () => any>(
+  slice: TSlice,
+  callback: () => TCallback,
+) {}

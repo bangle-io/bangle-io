@@ -28,20 +28,33 @@ export const nsmPageSlice = createSliceWithSelectors([], {
 
     primaryWsPath: createSelector(
       { location: (state) => state.location },
-      ({ location }) => {
+      (computed) => {
         return OpenedWsPaths.createEmpty().updatePrimaryWsPath(
-          pathnameToWsPath(location.pathname),
+          pathnameToWsPath(computed.location.pathname),
         ).primaryWsPath;
       },
     ),
 
     secondaryWsPath: createSelector(
       { location: (state) => state.location },
-      ({ location }) => {
+      (computed) => {
         return OpenedWsPaths.createEmpty()
-          .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
-          .updateSecondaryWsPath(searchToWsPath(location.search))
+          .updatePrimaryWsPath(pathnameToWsPath(computed.location.pathname))
+          .updateSecondaryWsPath(searchToWsPath(computed.location.search))
           .secondaryWsPath;
+      },
+    ),
+
+    isInactivePage: createSelector(
+      {
+        current: (state) => state.lifeCycleState.current,
+      },
+      (computed) => {
+        return (
+          computed.current === 'passive' ||
+          computed.current === 'hidden' ||
+          computed.current === 'terminated'
+        );
       },
     ),
   },
