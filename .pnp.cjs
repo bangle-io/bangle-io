@@ -7071,6 +7071,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
@@ -7303,6 +7304,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -7456,6 +7458,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\

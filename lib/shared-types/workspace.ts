@@ -1,3 +1,5 @@
+import type { Brand } from '@bangle.io/mini-js-utils';
+
 export type WorkspaceInfo = {
   name: string;
   type: string;
@@ -9,3 +11,6 @@ export type WorkspaceInfo = {
 };
 
 export type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
+
+export type WsName = Brand<string, 'WsName'>;
+export type WsPath = Brand<string, 'WsPath'>;

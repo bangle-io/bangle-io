@@ -42,20 +42,18 @@ export const createNsmStore = ({
 
   const initStateOverride = { ...localStorageData, ...sessionStorageData };
 
-  console.log({ initStateOverride });
-
   const syncSlices = [nsmPageSlice];
   const store = createSyncStore({
     storeName,
     debug: (log) => {
-      // if (log.type === 'TX') {
-      //   console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
-      //   console.info(log.payload);
-      //   console.info(log);
-      //   console.groupEnd();
-      // } else {
-      //   console.info('NSM', log.type, log);
-      // }
+      if (log.type === 'TX') {
+        console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
+        console.info(log.payload);
+        console.info(log);
+        console.groupEnd();
+      } else {
+        console.info('NSM', log.type, log);
+      }
     },
     sync: {
       type: 'main',

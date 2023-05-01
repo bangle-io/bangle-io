@@ -1,4 +1,4 @@
-import { createSliceV2, updateObj } from '@bangle.io/nsm';
+import { createSliceV2, updateState } from '@bangle.io/nsm';
 
 const defaultInitState: {
   githubWsName: string | undefined;
@@ -11,6 +11,8 @@ export const nsmGhSlice = createSliceV2([], {
 
   initState: defaultInitState,
 });
+
+const updateObj = updateState(defaultInitState);
 
 export const updateGithubDetails = nsmGhSlice.createAction(
   'updateGithubDetails',

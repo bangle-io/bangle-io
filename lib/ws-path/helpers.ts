@@ -1,3 +1,4 @@
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { BaseError, getLast } from '@bangle.io/utils';
 
 export const DEFAULT_NOTE_EXTENSION = '.md';
@@ -6,6 +7,18 @@ export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
 // works on any string
 export function hasValidNoteExtension(str: string) {
   return VALID_NOTE_EXTENSIONS.some((ext) => str.endsWith(ext));
+}
+
+export function createWsName(wsName: string): WsName {
+  validWsName(wsName);
+
+  return wsName as WsName;
+}
+
+export function createWsPath(wsPath: string): WsPath {
+  validateWsPath(wsPath);
+
+  return wsPath as WsPath;
 }
 
 export function getExtension(str: string) {

@@ -16,7 +16,8 @@ test('work with serializable data', () => {
     },
   });
 
-  sliceStateSerializer(testSlice1, 'uid', {
+  sliceStateSerializer(testSlice1, {
+    dbKey: 'uid',
     schema: z.object({
       counter: z.number(),
       veggie: z.object({

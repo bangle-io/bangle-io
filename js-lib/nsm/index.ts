@@ -1,4 +1,4 @@
-import type { AnySlice } from 'nalanda';
+import type { AnySlice, InferSliceName, StoreState } from 'nalanda';
 
 export {
   customSerialAction,
@@ -44,18 +44,29 @@ export {
 export * as superJson from 'superjson';
 export { z } from 'zod';
 
-export function updateObj<T extends object>(
-  obj: T,
-  callback: Partial<T> | ((obj: T) => Partial<T>) = {},
-): T {
-  const val = typeof callback === 'function' ? callback(obj) : callback;
+export function updateState<T extends object>(
+  initState: T,
+  override: (newState: T, oldState: T) => T = (newState) => newState,
+) {
+  return (
+    oldState: T,
+    callback: Partial<T> | ((obj: T) => Partial<T>) = {},
+  ) => {
+    const val = typeof callback === 'function' ? callback(oldState) : callback;
+    const newState = { ...oldState, ...val };
 
-  return { ...obj, ...val };
+    return override(newState, oldState);
+  };
 }
 
-// InferSliceName<typeof nsmEditorManagerSlice>
-
-export function query<TSlice extends AnySlice, TCallback extends () => any>(
-  slice: TSlice,
-  callback: () => TCallback,
-) {}
+export function subSelectorBuilder<
+  N extends string,
+  TState,
+  TDepSlice extends AnySlice,
+>(deps: TDepSlice[], name: N, initState: TState) {
+  return <T>(
+    cb: (state: TState, storeState: StoreState<InferSliceName<TDepSlice>>) => T,
+  ) => {
+    return cb;
+  };
+}

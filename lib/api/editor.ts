@@ -8,8 +8,8 @@ export {
 } from '@bangle.io/slice-editor-manager';
 
 export function getFocusedWsPath(state: NsmStoreState) {
-  const { openedWsPaths } = nsmSliceWorkspace.getState(state);
-  const { focusedEditorId } = nsmEditorManagerSlice.getState(state);
+  const { openedWsPaths } = nsmSliceWorkspace.resolveState(state);
+  const { focusedEditorId } = nsmEditorManagerSlice.resolveState(state);
 
   if (focusedEditorId == null) {
     return false;
