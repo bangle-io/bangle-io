@@ -12,6 +12,7 @@ import type {
   SerialOperationKeybindingMapping,
   SerialOperationNameType,
 } from '@bangle.io/shared-types';
+import type { BaseStorageProvider } from '@bangle.io/storage';
 
 import type {
   ApplicationConfig,
@@ -221,6 +222,10 @@ export class ExtensionRegistry {
         .filter((r) => Boolean(r.storageProvider) && Boolean(r.onStorageError))
         .map((a) => [a.storageProvider!.name, a.onStorageError!]),
     );
+  }
+
+  getAllStorageProviders(): BaseStorageProvider[] {
+    return Object.values(this._storageProviders);
   }
 
   getDialog(name: string) {

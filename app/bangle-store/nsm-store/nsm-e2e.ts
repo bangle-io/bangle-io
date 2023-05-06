@@ -24,7 +24,8 @@ let e2e: NSME2eTypes = {
     return nsmPageSlice.getState(getGlobalNsmStore().state);
   },
   getOpenedWsPaths: () => {
-    return nsmSliceWorkspace.getState(getGlobalNsmStore().state).openedWsPaths;
+    return nsmSliceWorkspace.resolveState(getGlobalNsmStore().state)
+      .openedWsPaths;
   },
   getEditorDetailsById: (id) => {
     const editor = getEditor(getGlobalNsmStore().state, id);

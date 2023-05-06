@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 
 import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
-import { initExtensionRegistry } from '@bangle.io/shared';
+import { onBeforeStoreLoad } from '@bangle.io/shared';
 
 import { Entry } from './entry';
 import { runAfterPolyfills } from './run-after-polyfills';
@@ -34,15 +34,15 @@ runAfterPolyfills(() => {
   let storeChanged = 0;
   const root = document.getElementById('root');
 
-  const extensionRegistry = initExtensionRegistry();
+  const { registry } = onBeforeStoreLoad();
   const nsmStore = createNsmStore({
-    extensionRegistry,
+    extensionRegistry: registry,
   });
 
   (window as any).nsmStore = nsmStore;
 
   const store = initializeBangleStore({
-    extensionRegistry,
+    extensionRegistry: registry,
     onUpdate: () => {
       ReactDOM.render(
         React.createElement(Entry, {

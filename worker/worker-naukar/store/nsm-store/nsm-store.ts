@@ -1,3 +1,5 @@
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { SyncMessage } from '@bangle.io/nsm';
 import {
   createSyncStore,
@@ -11,12 +13,18 @@ import { nsmPageSlice } from '@bangle.io/slice-page';
 
 export const createNsmStore = ({
   sendMessage,
+  extensionRegistry,
 }: {
   sendMessage: (msg: any) => void;
+  extensionRegistry: ExtensionRegistry;
 }) => {
   const storeName = 'naukar-store';
 
   const synSlices = [nsmPageSlice];
+  const initStateOverride = {
+    [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
+  };
+
   const syncStore = createSyncStore({
     storeName,
     debug: (log) => {
@@ -35,7 +43,8 @@ export const createNsmStore = ({
         sendMessage(msg);
       },
     },
-    slices: [],
+    slices: [nsmExtensionRegistry],
+    initStateOverride,
     scheduler: timeoutSchedular(5),
     dispatchTx: (store, tx) => {
       let newState = store.state.applyTransaction(tx);

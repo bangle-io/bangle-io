@@ -15,10 +15,17 @@ import noteBrowser from '@bangle.io/note-browser';
 import noteOutline from '@bangle.io/note-outline';
 import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
+import { registerStorageProvider } from '@bangle.io/workspace-info';
 
 // TODO move this async, i think a promise should be fine.
-export const initExtensionRegistry = () => {
-  return new ExtensionRegistry([
+/**
+ * Do certain setup before loading the store
+ * @returns
+ */
+export const onBeforeStoreLoad = (): {
+  registry: ExtensionRegistry;
+} => {
+  const registry = new ExtensionRegistry([
     inlineEmoji,
     browserStorage,
     browserNativefsStorage,
@@ -39,4 +46,14 @@ export const initExtensionRegistry = () => {
     // as it has note palette in it
     corePalette,
   ]);
+
+  for (const storageProvider of registry.getAllStorageProviders()) {
+    // TODO do we need to pass specRegistry here? we should remove it if possible
+    // to avoid coupling
+    registerStorageProvider(storageProvider, registry.specRegistry);
+  }
+
+  return {
+    registry,
+  };
 };

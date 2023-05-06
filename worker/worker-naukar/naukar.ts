@@ -43,6 +43,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   let sendMessageCb: ((message: any) => void) | undefined = undefined;
 
   const nsmNaukarStore = createNsmStore({
+    extensionRegistry,
     sendMessage: (message) => {
       if (sendMessageCb) {
         sendMessageCb(message);

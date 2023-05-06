@@ -1,6 +1,7 @@
 import * as Comlink from 'comlink';
 
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { SyncMessage } from '@bangle.io/nsm';
 import {
   createSyncStore,
@@ -40,7 +41,11 @@ export const createNsmStore = ({
   const localStorageData = getLocalStorageData();
   const sessionStorageData = getSessionStorageData();
 
-  const initStateOverride = { ...localStorageData, ...sessionStorageData };
+  const initStateOverride = {
+    ...localStorageData,
+    ...sessionStorageData,
+    [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
+  };
 
   const syncSlices = [nsmPageSlice];
   const store = createSyncStore({
@@ -72,6 +77,7 @@ export const createNsmStore = ({
       ...historySliceFamily,
       pageLifeCycleWatch,
       pageLifeCycleBlockReload,
+      nsmExtensionRegistry,
       nsmUISlice,
       nsmEditorManagerSlice,
       nsmSliceWorkspace,
