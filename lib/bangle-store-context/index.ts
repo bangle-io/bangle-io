@@ -22,6 +22,16 @@ export const NsmStoreContext = React.createContext<typeof initialNsmStore>(
   initialNsmStore,
 );
 
+export function useNsmSliceState<TSlice extends AnySlice>(
+  slice: TSlice,
+): ReturnType<TSlice['resolveState']> {
+  const store: Store<string> = useContext(NsmStoreContext);
+
+  // TODO move this to a more performance friendly approach which
+  // directly gets the state
+  return createUseSliceHook(store)(slice as AnySliceWithName<string>)[0];
+}
+
 export function useNsmSlice<TSlice extends AnySlice>(
   slice: TSlice,
 ): [

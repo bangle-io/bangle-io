@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import {
   useBangleStoreContext,
+  useNsmSliceState,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import { togglePaletteType } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
@@ -17,7 +18,7 @@ import { SearchResults } from './SearchResults';
 
 export function SearchNotesSidebar() {
   const bangleStore = useBangleStoreContext();
-  const { wsName } = useWorkspaceContext();
+  const { wsName } = useNsmSliceState(nsmSliceWorkspace);
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
   const {
     sliceState: {

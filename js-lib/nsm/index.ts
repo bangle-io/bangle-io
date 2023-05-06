@@ -19,6 +19,7 @@ export type {
   LineageId,
   MainStoreInfo,
   SyncMessage,
+  ValidStoreState,
 } from 'nalanda';
 export {
   changeEffect,

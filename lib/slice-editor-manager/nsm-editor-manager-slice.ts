@@ -21,7 +21,7 @@ import {
   Slice,
   sliceStateSerializer,
   syncChangeEffect,
-  updateObj,
+  updateState,
   z,
 } from '@bangle.io/nsm';
 import type { EditorIdType } from '@bangle.io/shared-types';
@@ -58,6 +58,8 @@ const initState: EditorSliceState & {
   editorOpenOrder: [],
   disableEditingCounter: undefined,
 };
+
+const updateObj = updateState(initState);
 
 export const nsmEditorManagerSlice = createSliceWithSelectors([nsmPageSlice], {
   name: 'editor-manager-slice',
