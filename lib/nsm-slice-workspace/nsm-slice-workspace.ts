@@ -17,6 +17,7 @@ type WorkspaceData = {
 };
 
 type WorkspaceState = {
+  // TODO clear workspace data when workspace is changed
   workspaceData: Record<WsName, WorkspaceData>;
 };
 

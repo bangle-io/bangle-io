@@ -15,6 +15,7 @@ export interface FileStat {
 }
 
 export interface StorageOpts {
+  // TODO why do we need spec-registry here?
   specRegistry: SpecRegistry;
   readWorkspaceMetadata: (wsName: string) => Promise<{ [key: string]: any }>;
   updateWorkspaceMetadata: (

@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Node } from '@bangle.dev/pm';
 
+import { nsmApi, useNsmPlainStore, useNsmSliceState } from '@bangle.io/api';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
-import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { isAbortError } from '@bangle.io/utils';
 
 const FZF_SEARCH_LIMIT = 16;
@@ -59,21 +59,20 @@ export async function listAllTags(
 }
 
 export function useSearchAllTags(query: string, isVisible: boolean): string[] {
-  const { noteWsPaths = [], bangleStore } = useWorkspaceContext();
+  const { noteWsPaths = [] } = useNsmSliceState(
+    nsmApi.workspace.nsmSliceWorkspace,
+  );
   const [allTags, setAllTags] = useState<string[]>([]);
+  const nsmStore = useNsmPlainStore();
 
   const getNoteForTags = useCallback(
     (wsPath: string) => {
-      return getNote(wsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      ).catch((error) => {
+      return nsmApi.workspace.getNote(nsmStore, wsPath).catch((error) => {
         // Ignore errors as this is not a great place to handle errors
         return undefined;
       });
     },
-    [bangleStore],
+    [nsmStore],
   );
 
   useEffect(() => {

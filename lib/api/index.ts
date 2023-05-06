@@ -16,6 +16,7 @@ export {
   useBangleStoreContext,
   useNsmPlainStore,
   useNsmSlice,
+  useNsmSliceState,
   useNsmState,
   useNsmStore,
   useSliceState,
@@ -26,6 +27,7 @@ export { browserInfo } from '@bangle.io/utils';
 export type { BangleApplicationStore };
 export type BangleAppState = BangleApplicationStore['state'];
 export type BangleAppDispatch = BangleApplicationStore['dispatch'];
+export * as nsmApi from './nsm-api';
 export { vars } from '@bangle.io/css-vars';
 
 export function getOldStore(nsmStore: NsmStore): ApplicationStore {

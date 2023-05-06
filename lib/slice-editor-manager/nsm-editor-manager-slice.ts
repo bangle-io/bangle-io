@@ -11,9 +11,15 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import type { InferSliceName, Store, StoreState } from '@bangle.io/nsm';
+import type {
+  InferSliceName,
+  Store,
+  StoreState,
+  ValidStoreState,
+} from '@bangle.io/nsm';
 import {
   changeEffect,
+  createOp,
   createSelector,
   createSliceWithSelectors,
   intervalRunEffect,
@@ -61,8 +67,9 @@ const initState: EditorSliceState & {
 
 const updateObj = updateState(initState);
 
+const SLICE_NAME = 'editor-manager-slice';
 export const nsmEditorManagerSlice = createSliceWithSelectors([nsmPageSlice], {
-  name: 'editor-manager-slice',
+  name: SLICE_NAME,
   initState: initState,
 
   selectors: {
@@ -460,19 +467,18 @@ export const updateSelection = nsmEditorManagerSlice.createAction(
   },
 );
 
-export function setEditorScrollPos(
-  state: EditorManagerStoreState,
-  wsPath: string,
-  editorId: EditorIdType,
-) {
-  const scrollParent = getScrollParentElement(editorId);
-  const editorConfig = nsmEditorManagerSlice.getState(state).editorConfig;
-  const pos = editorConfig.getScrollPosition(wsPath, editorId);
+export const setEditorScrollPos = createOp(
+  nsmEditorManagerSlice,
+  (state: EditorManagerStoreState, wsPath: string, editorId: EditorIdType) => {
+    const scrollParent = getScrollParentElement(editorId);
+    const editorConfig = nsmEditorManagerSlice.getState(state).editorConfig;
+    const pos = editorConfig.getScrollPosition(wsPath, editorId);
 
-  if (typeof pos === 'number' && scrollParent) {
-    scrollParent.scrollTop = pos;
-  }
-}
+    if (typeof pos === 'number' && scrollParent) {
+      scrollParent.scrollTop = pos;
+    }
+  },
+);
 
 export function focusEditorIfNotFocused(
   state: EditorManagerStoreState,
@@ -497,69 +503,75 @@ export function focusEditorIfNotFocused(
     .lastOpenedEditor?.editor?.focusView();
 }
 
-export function getEditor(
-  state: EditorManagerStoreState,
-  editorId: EditorIdType,
-): BangleEditor | undefined {
-  assertValidEditorId(editorId);
+export const getEditor = createOp(
+  nsmEditorManagerSlice,
+  (
+    state: EditorManagerStoreState,
+    editorId: EditorIdType,
+  ): BangleEditor | undefined => {
+    assertValidEditorId(editorId);
 
-  const sliceState = nsmEditorManagerSlice.getState(state);
+    const sliceState = nsmEditorManagerSlice.getState(state);
 
-  return sliceState.mainEditors[editorId];
-}
+    return sliceState.mainEditors[editorId];
+  },
+);
 
-export function getInitialSelection(
-  state: EditorManagerStoreState,
-  editorId: EditorIdType,
-  wsPath: string,
-  doc: Node,
-) {
-  assertValidEditorId(editorId);
+export const getInitialSelection = createOp(
+  nsmEditorManagerSlice,
+  (
+    state: EditorManagerStoreState,
+    editorId: EditorIdType,
+    wsPath: string,
+    doc: Node,
+  ) => {
+    assertValidEditorId(editorId);
 
-  const sliceState = nsmEditorManagerSlice.getState(state);
+    const sliceState = nsmEditorManagerSlice.getState(state);
 
-  if (!sliceState) {
+    if (!sliceState) {
+      return undefined;
+    }
+
+    const initialSelection = sliceState.editorConfig.getSelection(
+      wsPath,
+      editorId,
+    );
+
+    if (initialSelection) {
+      const anchor =
+        typeof initialSelection?.anchor === 'number'
+          ? initialSelection.anchor
+          : undefined;
+
+      const head =
+        typeof initialSelection?.head === 'number'
+          ? initialSelection.head
+          : undefined;
+
+      let isOutside = false;
+
+      if (anchor != null && head != null) {
+        isOutside = Math.max(anchor, head) >= doc.content.size;
+      }
+
+      let selection = isOutside
+        ? Selection.atEnd(doc)
+        : safeSelectionFromJSON(doc, initialSelection);
+      let { from } = selection;
+
+      if (from >= doc.content.size) {
+        selection = Selection.atEnd(doc);
+      } else {
+        selection = Selection.near(doc.resolve(from));
+      }
+
+      return selection;
+    }
+
     return undefined;
-  }
-
-  const initialSelection = sliceState.editorConfig.getSelection(
-    wsPath,
-    editorId,
-  );
-
-  if (initialSelection) {
-    const anchor =
-      typeof initialSelection?.anchor === 'number'
-        ? initialSelection.anchor
-        : undefined;
-
-    const head =
-      typeof initialSelection?.head === 'number'
-        ? initialSelection.head
-        : undefined;
-
-    let isOutside = false;
-
-    if (anchor != null && head != null) {
-      isOutside = Math.max(anchor, head) >= doc.content.size;
-    }
-
-    let selection = isOutside
-      ? Selection.atEnd(doc)
-      : safeSelectionFromJSON(doc, initialSelection);
-    let { from } = selection;
-
-    if (from >= doc.content.size) {
-      selection = Selection.atEnd(doc);
-    } else {
-      selection = Selection.near(doc.resolve(from));
-    }
-
-    return selection;
-  }
-
-  return undefined;
-}
+  },
+);
 
 /**
  * Enables or disables editing.

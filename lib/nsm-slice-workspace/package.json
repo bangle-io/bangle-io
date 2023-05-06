@@ -23,11 +23,13 @@
   },
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/markdown": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"
   },
   "license": "AGPL-3.0-or-later"

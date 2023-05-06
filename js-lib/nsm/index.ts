@@ -1,4 +1,10 @@
-import type { AnySlice, InferSliceName, StoreState } from 'nalanda';
+import type {
+  AnySlice,
+  AnySliceWithName,
+  InferSliceName,
+  StoreState,
+  ValidStoreState,
+} from 'nalanda';
 
 export {
   customSerialAction,
@@ -71,3 +77,19 @@ export function subSelectorBuilder<
     return cb;
   };
 }
+
+export function createOp<
+  N extends string,
+  TCallback extends (storeState: StoreState<N>, ...args: any[]) => any,
+>(slice: AnySliceWithName<N>, cb: TCallback) {
+  return <TStateSlices extends string>(
+    storeState: ValidStoreState<TStateSlices, N>,
+    ...args: InferRemainingParams<TCallback>
+  ): ReturnType<TCallback> => {
+    return cb(storeState as StoreState<any>, ...args);
+    // cb(storeState as StoreState<N>, ...slice.deps.map((dep) => dep.name));
+  };
+}
+
+type InferRemainingParams<TCallback extends (x: any, ...args: any) => any> =
+  TCallback extends (x: any, ...args: infer TRem) => any ? TRem : never;
