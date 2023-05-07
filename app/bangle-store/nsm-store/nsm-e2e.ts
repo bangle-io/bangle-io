@@ -13,8 +13,9 @@ import { nsmPageSlice } from '@bangle.io/slice-page';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 
 const getGlobalNsmStore = (): NsmStore => {
-  return (window as any).nsmStore;
+  return (window as any).globalNsmStore;
 };
+
 let e2e: NSME2eTypes = {
   sliceManualPaste,
   EditorSlice,

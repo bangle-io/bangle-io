@@ -82,7 +82,7 @@ export function syncToNewNsmWorkspaceSlice() {
         },
         (_, __, { wsPaths, wsName }) => {
           // TODO remove this
-          const nsmStore: NsmStore = (window as any).nsmStore;
+          const nsmStore: NsmStore = (window as any).globalNsmStore;
 
           if (wsName) {
             nsmStore.dispatch(

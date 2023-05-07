@@ -60,6 +60,9 @@ export function useNsmStore<TSliceName extends string>(
 export function useNsmPlainStore(): NsmStore {
   return useContext(NsmStoreContext);
 }
+export function useNsmDispatch(): NsmStore['dispatch'] {
+  return useContext(NsmStoreContext).dispatch;
+}
 
 export const initialBangleStore = ApplicationStore.create({
   storeName: MAIN_STORE_NAME,

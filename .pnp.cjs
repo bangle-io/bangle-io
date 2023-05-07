@@ -5446,10 +5446,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.31.6", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-search-virtual-19b41c09c0/0/cache/@bangle.dev-search-npm-0.31.6-82793f61b4-632c973646.zip/node_modules/@bangle.dev/search/",\
+        ["virtual:104a753493946a0b96a4c509c38e86defce8f65c9d0b652985317a1eb8900e5a42fa04a62755cd9ec27686ee5eab469b8883539a0b43e6c146131977bc0ca45d#npm:0.31.6", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-search-virtual-73e6232bfd/0/cache/@bangle.dev-search-npm-0.31.6-82793f61b4-632c973646.zip/node_modules/@bangle.dev/search/",\
           "packageDependencies": [\
-            ["@bangle.dev/search", "virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.31.6"],\
+            ["@bangle.dev/search", "virtual:104a753493946a0b96a4c509c38e86defce8f65c9d0b652985317a1eb8900e5a42fa04a62755cd9ec27686ee5eab469b8883539a0b43e6c146131977bc0ca45d#npm:0.31.6"],\
             ["@bangle.dev/core", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.dev/pm", "npm:0.31.6"],\
             ["@bangle.dev/utils", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
@@ -5755,12 +5755,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/all-base-components", "npm:0.31.6"],\
             ["@bangle.dev/core", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.dev/pm", "npm:0.31.6"],\
+            ["@bangle.dev/search", "virtual:104a753493946a0b96a4c509c38e86defce8f65c9d0b652985317a1eb8900e5a42fa04a62755cd9ec27686ee5eab469b8883539a0b43e6c146131977bc0ca45d#npm:0.31.6"],\
             ["@bangle.dev/utils", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
@@ -5936,6 +5938,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],\
             ["@bangle.dev/pm", "npm:0.31.6"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
@@ -6128,6 +6131,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react-emoji-suggest", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/react-menu", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/react-stopwatch", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
+            ["@bangle.dev/search", "virtual:104a753493946a0b96a4c509c38e86defce8f65c9d0b652985317a1eb8900e5a42fa04a62755cd9ec27686ee5eab469b8883539a0b43e6c146131977bc0ca45d#npm:0.31.6"],\
             ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.31.6"],\
             ["@bangle.dev/timestamp", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/tooltip", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.31.6"],\
@@ -7211,7 +7215,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/search-notes", "workspace:extensions/search-notes"],\
             ["@bangle.dev/core", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.dev/pm", "npm:0.31.6"],\
-            ["@bangle.dev/search", "virtual:f3d2f39eefa8d5bd99a93ac20cba93e71717f3ce06e614a082bdf001da9031ed2b4c9d30cb11e2b368cee0bea44e25cc79dc3ab735cafea9d2fcf2f2fc245775#npm:0.31.6"],\
+            ["@bangle.dev/search", "virtual:104a753493946a0b96a4c509c38e86defce8f65c9d0b652985317a1eb8900e5a42fa04a62755cd9ec27686ee5eab469b8883539a0b43e6c146131977bc0ca45d#npm:0.31.6"],\
             ["@bangle.dev/utils", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\

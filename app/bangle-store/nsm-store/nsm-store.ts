@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink';
 
+import { nsmApi2 } from '@bangle.io/api';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { SyncMessage } from '@bangle.io/nsm';
@@ -81,6 +82,7 @@ export const createNsmStore = ({
       nsmUISlice,
       nsmEditorManagerSlice,
       nsmSliceWorkspace,
+      nsmApi2.editor._editorManagerProxy,
       ...extensionSlices,
       // TODO: remove e2e effects for production
       nsmE2eEffect,

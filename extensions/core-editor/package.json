@@ -31,6 +31,7 @@
     "@bangle.dev/react-emoji-suggest": "0.31.6",
     "@bangle.dev/react-menu": "0.31.6",
     "@bangle.dev/react-stopwatch": "0.31.6",
+    "@bangle.dev/search": "0.31.6",
     "@bangle.dev/table": "0.31.6",
     "@bangle.dev/timestamp": "0.31.6",
     "@bangle.dev/tooltip": "0.31.6",

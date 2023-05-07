@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { internals } from '@bangle.io/api';
 import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import { onBeforeStoreLoad } from '@bangle.io/shared';
@@ -39,7 +40,9 @@ runAfterPolyfills(() => {
     extensionRegistry: registry,
   });
 
-  (window as any).nsmStore = nsmStore;
+  (window as any).globalNsmStore = nsmStore;
+
+  internals.setStore(nsmStore);
 
   const store = initializeBangleStore({
     extensionRegistry: registry,

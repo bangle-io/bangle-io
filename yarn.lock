@@ -2105,12 +2105,14 @@ __metadata:
     "@bangle.dev/all-base-components": 0.31.6
     "@bangle.dev/core": 0.31.6
     "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/search": 0.31.6
     "@bangle.dev/utils": 0.31.6
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -2231,6 +2233,7 @@ __metadata:
   resolution: "@bangle.io/bangle-store@workspace:app/bangle-store"
   dependencies:
     "@bangle.dev/pm": 0.31.6
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2386,6 +2389,7 @@ __metadata:
     "@bangle.dev/react-emoji-suggest": 0.31.6
     "@bangle.dev/react-menu": 0.31.6
     "@bangle.dev/react-stopwatch": 0.31.6
+    "@bangle.dev/search": 0.31.6
     "@bangle.dev/table": 0.31.6
     "@bangle.dev/timestamp": 0.31.6
     "@bangle.dev/tooltip": 0.31.6

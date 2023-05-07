@@ -16,7 +16,6 @@ import {
 import { valuePlugin } from '@bangle.dev/utils';
 
 import {
-  nsmApi,
   useBangleStoreContext,
   useNsmPlainStore,
   useNsmStore,
@@ -25,6 +24,7 @@ import {
 import { EditorDisplayType } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
   BangleApplicationStore,
   DispatchSerialOperationType,
@@ -74,10 +74,7 @@ function EditorInner({
   const bangleStore = useBangleStoreContext();
 
   const { dispatchSerialOperation } = useSerialOperationContext();
-  const editorStore = useNsmStore([
-    nsmEditorManagerSlice,
-    nsmApi.workspace.nsmSliceWorkspace,
-  ]);
+  const editorStore = useNsmStore([nsmEditorManagerSlice, nsmSliceWorkspace]);
   const nsmStore = useNsmPlainStore();
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
