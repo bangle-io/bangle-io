@@ -1,5 +1,6 @@
 import { NativeBrowserFileSystem } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
 import { safeNavigatorStorageGetDirectory } from '@bangle.io/utils';
 
 import {
@@ -11,6 +12,7 @@ export class PrivateFsStorageProvider extends BaseFsStorageProvider {
   name = WorkspaceType.PrivateFS;
   displayName = 'Private file system storage';
   description = 'Saves data in your browsers file system storage';
+  onChange: StorageProviderOnChange = () => {};
 
   isSupported() {
     return true;

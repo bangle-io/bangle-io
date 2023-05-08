@@ -1,15 +1,16 @@
 import { readFileAsText as _readFileAsText } from '@bangle.io/baby-fs';
-import type { ExtensionRegistry } from '@bangle.io/shared-types';
-import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
+import type { ExtensionRegistry, WsPath } from '@bangle.io/shared-types';
+import type {
+  BaseStorageProvider,
+  StorageOpts,
+  WsName,
+} from '@bangle.io/storage';
 
 import {
-  readWorkspaceInfo,
   readWorkspaceMetadata,
   updateWorkspaceMetadata,
 } from './workspace-info';
 
-// TODO move this to nominal typing
-type WsPath = string;
 type StorageProviderType = string;
 
 const storageProviders: Record<string, StorageProviderConfig> = {};
@@ -57,6 +58,16 @@ export async function deleteFile(
 ) {
   const { options, provider } = getStorageProviderObj(storageProvideType);
   await provider.deleteFile(wsPath, options);
+}
+
+export async function listAllFiles(
+  abortSignal: AbortSignal,
+  wsName: WsName,
+  storageProvideType: StorageProviderType,
+) {
+  const { options, provider } = getStorageProviderObj(storageProvideType);
+
+  return provider.listAllFiles(abortSignal, wsName, options);
 }
 
 function getStorageProviderObj(

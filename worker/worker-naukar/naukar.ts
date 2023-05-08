@@ -2,6 +2,8 @@ import * as Sentry from '@sentry/browser';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { StorageProviderChangeType } from '@bangle.io/shared-types';
+import type { Emitter } from '@bangle.io/utils';
 import {
   assertNotUndefined,
   BaseError,
@@ -26,7 +28,10 @@ export interface StoreRef {
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
-export function createNaukar(extensionRegistry: ExtensionRegistry) {
+export function createNaukar(
+  extensionRegistry: ExtensionRegistry,
+  storageEmitter: Emitter<StorageProviderChangeType>,
+) {
   const envType = getSelfType();
   const storeRef: StoreRef = {
     current: undefined,
@@ -44,6 +49,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
   const nsmNaukarStore = createNsmStore({
     extensionRegistry,
+    storageEmitter,
     sendMessage: (message) => {
       if (sendMessageCb) {
         sendMessageCb(message);

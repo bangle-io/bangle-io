@@ -1,6 +1,7 @@
 import { BaseError } from '@bangle.io/base-error';
 import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { HELP_FS_INDEX_WS_PATH, WorkspaceType } from '@bangle.io/constants';
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
 import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { toFSPath } from '@bangle.io/ws-path';
 
@@ -58,6 +59,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
   displayName = 'Help documentation';
   description = '';
   hidden = true;
+  onChange: StorageProviderOnChange = () => {};
 
   private _idbProvider = new IndexedDbStorageProvider();
   async createFile(
@@ -66,6 +68,10 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.writeFile(wsPath, file, opts);
+    this.onChange({
+      type: 'create',
+      wsPath,
+    });
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
@@ -74,6 +80,10 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     }
 
     await this._idbProvider.deleteFile(wsPath, opts);
+    this.onChange({
+      type: 'delete',
+      wsPath,
+    });
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -134,6 +144,12 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return;
     }
     await this._idbProvider.renameFile(wsPath, newWsPath, opts);
+
+    this.onChange({
+      type: 'rename',
+      oldWsPath: wsPath,
+      newWsPath,
+    });
   }
 
   serializeError(error: Error) {
@@ -149,5 +165,9 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return;
     }
     await this._idbProvider.writeFile(wsPath, file, opts);
+    this.onChange({
+      type: 'write',
+      wsPath,
+    });
   }
 }

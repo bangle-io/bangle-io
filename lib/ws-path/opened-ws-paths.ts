@@ -5,10 +5,11 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import type { MaybeWsPath } from './helpers';
-import { resolvePath } from './helpers';
+import { createWsName, createWsPath, resolvePath } from './helpers';
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -53,6 +54,13 @@ export class OpenedWsPaths {
     return this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
   }
 
+  // TODO: move to nominal typing
+  get miniEditorWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result) : undefined;
+  }
+
   get openCount() {
     let count = 0;
     this.forEachWsPath((wsPath) => {
@@ -68,12 +76,30 @@ export class OpenedWsPaths {
     return this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
   }
 
+  get popupEditorWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result) : undefined;
+  }
+
   get primaryWsPath() {
     return this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
   }
 
+  get primaryWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result) : undefined;
+  }
+
   get secondaryWsPath() {
     return this._wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
+  }
+
+  get secondaryWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result) : undefined;
   }
 
   // if no wsName is provided, will match against the internal wsName
@@ -134,6 +160,16 @@ export class OpenedWsPaths {
     return this._wsPaths[index];
   }
 
+  getOneWsName(): WsName | undefined {
+    const result = this.getWsNames()[0];
+
+    if (result == null) {
+      return result;
+    }
+
+    return createWsName(result);
+  }
+
   // Returns the unique wsName (workspace name) of all the paths.
   getWsNames(): string[] {
     let wsNames: Set<string> = new Set();
@@ -151,6 +187,10 @@ export class OpenedWsPaths {
     return Array.from(
       new Set(this.toArray().filter((r): r is string => typeof r === 'string')),
     );
+  }
+
+  getWsPaths2(): WsPath[] {
+    return this.getWsPaths().map((r) => createWsPath(r));
   }
 
   /**

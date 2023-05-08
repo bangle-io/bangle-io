@@ -1,4 +1,5 @@
 import { FILE_NOT_FOUND_ERROR } from '@bangle.io/baby-fs';
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
 import {
   assertSignal,
   BaseError,
@@ -14,6 +15,7 @@ export class MemoryStorageProvider implements BaseStorageProvider {
   name: string = 'MemoryStorageProvider';
   displayName = 'Memory Storage';
   description = 'Temporary storage';
+  onChange: StorageProviderOnChange = () => {};
 
   _fileStat = new Map<
     string,
@@ -30,11 +32,20 @@ export class MemoryStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.writeFile(wsPath, file, opts);
+    this.onChange({
+      type: 'create',
+      wsPath,
+    });
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this._fileStat.delete(toFSPath(wsPath));
     await this._store.delete(toFSPath(wsPath));
+
+    this.onChange({
+      type: 'delete',
+      wsPath,
+    });
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -123,6 +134,12 @@ export class MemoryStorageProvider implements BaseStorageProvider {
 
     await this.deleteFile(wsPath, opts);
     await this.writeFile(newWsPath, file, opts);
+
+    this.onChange({
+      type: 'rename',
+      oldWsPath: wsPath,
+      newWsPath,
+    });
   }
 
   serializeError(error: Error) {
@@ -143,5 +160,9 @@ export class MemoryStorageProvider implements BaseStorageProvider {
     });
 
     await this._store.set(path, file);
+    this.onChange({
+      type: 'write',
+      wsPath,
+    });
   }
 }

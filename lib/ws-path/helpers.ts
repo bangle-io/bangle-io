@@ -86,6 +86,12 @@ export function resolvePath(wsPath: string, skipValidation = false) {
   };
 }
 
+export function resolvePath2(wsPath: WsPath): { wsName: WsName } {
+  const { wsName } = resolvePath(wsPath, true);
+
+  return { wsName: createWsName(wsName) };
+}
+
 export class PathValidationError extends BaseError {}
 
 export function validWsName(wsName: string) {
@@ -249,4 +255,12 @@ export function filePathToWsPath(wsName: string, filePath: string) {
   }
 
   return wsName + ':' + filePath;
+}
+
+export function filePathToWsPath2(wsName: string, filePath: string): WsPath {
+  if (filePath.startsWith('/')) {
+    filePath = filePath.slice(1);
+  }
+
+  return createWsPath(wsName + ':' + filePath);
 }

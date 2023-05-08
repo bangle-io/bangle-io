@@ -14,10 +14,7 @@ import { workerSetupSlices } from '@bangle.io/worker-setup';
 
 import { e2eHelpers, e2eHelpers2 } from './e2e-helpers';
 import { historySlice } from './slices/history-slice';
-import {
-  miscEffectsSlice,
-  syncToNewNsmWorkspaceSlice,
-} from './slices/misc-effects-slice';
+import { miscEffectsSlice } from './slices/misc-effects-slice';
 import { pageLifeCycleSlice } from './slices/page-lifecycle-slice';
 import { saveStateSlice } from './slices/save-state-slice';
 
@@ -54,7 +51,6 @@ export function bangleStateSlices({
     uiSlice(),
     saveStateSlice(),
     miscEffectsSlice(),
-    syncToNewNsmWorkspaceSlice(),
     notificationSlice(),
     editorSyncSlice(),
     // Disabled side effects in main because it carries heavy sha calculations

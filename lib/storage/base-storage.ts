@@ -1,5 +1,7 @@
 import type { SpecRegistry } from '@bangle.dev/core';
 
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
+
 export type WsPath = string;
 export type WsName = string;
 
@@ -30,6 +32,8 @@ export interface BaseStorageProvider {
   // hide creating a workspace of this type
   readonly hidden?: boolean;
   readonly name: string;
+
+  onChange: StorageProviderOnChange;
 
   isSupported: () => boolean;
 

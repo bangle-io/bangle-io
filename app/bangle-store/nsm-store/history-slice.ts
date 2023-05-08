@@ -29,7 +29,7 @@ const setHistory = historySlice.createAction(
 const pendingNavEffect = syncChangeEffect(
   'pendingNavEffect',
   {
-    pendingNavigation: nsmPageSlice.passivePick((s) => s.pendingNavigation),
+    pendingNavigation: nsmPageSlice.pick((s) => s.pendingNavigation),
     history: historySlice.pick((s) => s.history),
   },
   ({ history, pendingNavigation }) => {

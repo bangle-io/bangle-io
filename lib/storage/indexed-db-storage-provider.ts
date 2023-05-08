@@ -4,6 +4,7 @@ import {
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
 import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
@@ -14,6 +15,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
   name: string = WorkspaceType.Browser;
   displayName = 'Browser Storage';
   description = 'Saves data in your browsers local storage';
+  onChange: StorageProviderOnChange = () => {};
 
   private _idb = new IndexedDBFileSystem();
   async createFile(
@@ -22,10 +24,18 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.writeFile(wsPath, file, opts);
+    this.onChange({
+      type: 'create',
+      wsPath,
+    });
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this._idb.unlink(toFSPath(wsPath));
+    this.onChange({
+      type: 'delete',
+      wsPath,
+    });
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -106,6 +116,12 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this._idb.rename(toFSPath(wsPath), toFSPath(newWsPath));
+
+    this.onChange({
+      type: 'rename',
+      oldWsPath: wsPath,
+      newWsPath,
+    });
   }
 
   serializeError(error: Error) {
@@ -119,5 +135,9 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
   ): Promise<void> {
     const path = toFSPath(wsPath);
     await this._idb.writeFile(path, file);
+    this.onChange({
+      type: 'write',
+      wsPath,
+    });
   }
 }

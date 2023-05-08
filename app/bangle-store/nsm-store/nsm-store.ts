@@ -1,6 +1,7 @@
 import * as Comlink from 'comlink';
 
 import { nsmApi2 } from '@bangle.io/api';
+import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { SyncMessage } from '@bangle.io/nsm';
@@ -13,9 +14,15 @@ import {
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import type { StorageProviderChangeType } from '@bangle.io/shared-types';
 import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { nsmPageSlice } from '@bangle.io/slice-page';
+import {
+  incrementCounter,
+  sliceRefreshWorkspace,
+} from '@bangle.io/slice-refresh-workspace';
 import { nsmUISlice } from '@bangle.io/slice-ui';
+import type { Emitter } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { historySliceFamily } from './history-slice';
@@ -32,8 +39,10 @@ import {
 
 export const createNsmStore = ({
   extensionRegistry,
+  storageEmitter,
 }: {
   extensionRegistry: ExtensionRegistry;
+  storageEmitter: Emitter<StorageProviderChangeType>;
 }) => {
   const extensionSlices = extensionRegistry.getNsmSlices();
 
@@ -48,7 +57,7 @@ export const createNsmStore = ({
     [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
   };
 
-  const syncSlices = [nsmPageSlice];
+  const syncSlices = [sliceRefreshWorkspace, nsmPageSlice];
   const store = createSyncStore({
     storeName,
     debug: (log) => {
@@ -99,6 +108,25 @@ export const createNsmStore = ({
       Store.updateState(store, newState, tx);
     },
   });
+
+  const onStorageProviderChange = (msg: StorageProviderChangeType) => {
+    store.store.dispatch(incrementCounter(null));
+  };
+
+  storageEmitter.on(STORAGE_ON_CHANGE_EMITTER_KEY, onStorageProviderChange);
+
+  store.store.destroySignal.addEventListener(
+    'abort',
+    () => {
+      storageEmitter.off(
+        STORAGE_ON_CHANGE_EMITTER_KEY,
+        onStorageProviderChange,
+      );
+    },
+    {
+      once: true,
+    },
+  );
 
   naukarProxy.nsmNaukarStoreRegisterCb(
     Comlink.proxy((msg) => {

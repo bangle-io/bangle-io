@@ -14,3 +14,12 @@ export type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 
 export type WsName = Brand<string, 'WsName'>;
 export type WsPath = Brand<string, 'WsPath'>;
+
+export type StorageProviderChangeType =
+  // TODO move types to Nominal WsPath
+  | { type: 'create'; wsPath: string }
+  | { type: 'write'; wsPath: string }
+  | { type: 'rename'; oldWsPath: string; newWsPath: string }
+  | { type: 'delete'; wsPath: string };
+
+export type StorageProviderOnChange = (type: StorageProviderChangeType) => void;

@@ -1,10 +1,4 @@
-export {
-  deleteFile,
-  readFile,
-  readFileAsText,
-  registerStorageProvider,
-  writeFile,
-} from './files';
+export * from './files';
 export {
   compareWorkspaceInfo,
   helpFSWorkspaceInfo,

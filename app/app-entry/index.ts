@@ -35,9 +35,10 @@ runAfterPolyfills(() => {
   let storeChanged = 0;
   const root = document.getElementById('root');
 
-  const { registry } = onBeforeStoreLoad();
+  const { registry, storageEmitter } = onBeforeStoreLoad();
   const nsmStore = createNsmStore({
     extensionRegistry: registry,
+    storageEmitter,
   });
 
   (window as any).globalNsmStore = nsmStore;
