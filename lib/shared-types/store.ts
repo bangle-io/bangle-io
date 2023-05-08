@@ -22,7 +22,8 @@ export interface NaukarStateConfig extends BaseStateConfig {
 
 export type BangleApplicationStore = ApplicationStore;
 
-export type NsmStore = Store;
+// TODO prefer using API store type
+export type NsmStore<N extends string = any> = Store<N>;
 export type NsmStoreState = Store['state'];
 
 type SerialFormat = {

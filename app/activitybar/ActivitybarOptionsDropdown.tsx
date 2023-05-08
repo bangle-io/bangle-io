@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_NEW_NOTE,
@@ -13,11 +13,7 @@ import {
 } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import {
-  changeSidebar,
-  togglePaletteType,
-  toggleTheme,
-} from '@bangle.io/slice-ui';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import {
   BangleIcon,
   DiscordIcon,
@@ -30,7 +26,6 @@ import {
   SettingsIcon,
   TwitterIcon,
 } from '@bangle.io/ui-components';
-import { cx } from '@bangle.io/utils';
 
 import { ButtonStyleOBj } from './common';
 
@@ -68,7 +63,7 @@ export function ActivitybarOptionsDropdown({
   sidebarItems?: SidebarType[];
   activeSidebar?: string;
 }) {
-  const store = useBangleStoreContext();
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
 
   const { dispatchSerialOperation } = useSerialOperationContext();
 
@@ -77,7 +72,7 @@ export function ActivitybarOptionsDropdown({
       let key: AllKeysType = k;
       switch (key) {
         case ActionPaletteKey: {
-          togglePaletteType(CorePalette.Operation)(store.state, store.dispatch);
+          uiDispatch(nsmUI.togglePalette(CorePalette.Operation));
           break;
         }
         case NewNoteKey: {
@@ -93,7 +88,7 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case NotesPaletteKey: {
-          togglePaletteType(CorePalette.Notes)(store.state, store.dispatch);
+          uiDispatch(nsmUI.togglePalette(CorePalette.Notes));
           break;
         }
         case ReportIssueKey: {
@@ -104,11 +99,11 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case SwitchWorkspaceKey: {
-          togglePaletteType(CorePalette.Workspace)(store.state, store.dispatch);
+          uiDispatch(nsmUI.togglePalette(CorePalette.Workspace));
           break;
         }
         case ToggleThemeKey: {
-          toggleTheme()(store.state, store.dispatch);
+          uiDispatch(nsmUI.toggleColorSchema());
           break;
         }
         case DiscordKey: {
@@ -120,12 +115,12 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case WhatsNewKey: {
-          store.dispatch({
-            name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-            value: {
+          uiDispatch(
+            nsmUI.showDialog({
               dialogName: CHANGELOG_MODAL_NAME,
-            },
-          });
+            }),
+          );
+
           break;
         }
         default: {
@@ -133,13 +128,13 @@ export function ActivitybarOptionsDropdown({
 
           if (match) {
             if (match.name !== activeSidebar) {
-              changeSidebar(match.name)(store.state, store.dispatch);
+              uiDispatch(nsmUI.changeSidebar(match.name));
             }
           }
         }
       }
     },
-    [store, activeSidebar, dispatchSerialOperation, sidebarItems],
+    [activeSidebar, dispatchSerialOperation, uiDispatch, sidebarItems],
   );
 
   const sidebarChildren: any =

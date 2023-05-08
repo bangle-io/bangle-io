@@ -8,3 +8,5 @@ export enum WorkspaceType {
   PrivateFS = 'privatefs',
   Github = 'github-storage',
 }
+
+export const STORAGE_ON_CHANGE_EMITTER_KEY = 'storage-on-change-emitter';

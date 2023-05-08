@@ -5,13 +5,7 @@ import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import {
-  Button,
-  CenteredBoxedPage,
-  ChevronDownIcon,
-  Inline,
-  NewNoteIcon,
-} from '@bangle.io/ui-components';
+import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';

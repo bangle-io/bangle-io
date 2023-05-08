@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 
 import { Activitybar, ActivitybarMobile } from '@bangle.io/activitybar';
+import { useNsmSlice, useNsmSliceState } from '@bangle.io/api';
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  useRecentlyUsedWsPaths,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
+import { useRecentlyUsedWsPaths } from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
@@ -22,41 +21,30 @@ import { Routes } from './Routes';
 let requestedStorage = false;
 
 export function AppContainer() {
-  const { widescreen } = useUIManagerContext();
-  const { wsName } = useWorkspaceContext();
+  const { wsName } = useNsmSliceState(nsmSliceWorkspace);
+  const [{ widescreen, sidebar, noteSidebar }, uiDispatch] =
+    useNsmSlice(nsmUISlice);
   const extensionRegistry = useExtensionRegistryContext();
 
   useSetDocumentTitle();
 
   const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
 
-  const { sidebar, dispatch, noteSidebar } = useUIManagerContext();
   const currentSidebar = sidebar
     ? extensionRegistry.getSidebars().find((s) => s.name === sidebar)
     : null;
 
   const onDismissSidebar = useCallback(() => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
-      value: {
-        type: null,
-      },
-    });
-  }, [dispatch]);
+    uiDispatch(nsmUI.closeSidebar());
+  }, [uiDispatch]);
 
   const onDismissNoteSidebar = useCallback(() => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:UPDATE_NOTE_SIDEBAR',
-      value: { visible: false },
-    });
-  }, [dispatch]);
+    uiDispatch(nsmUI.updateNoteSidebar({ visible: false }));
+  }, [uiDispatch]);
 
   const showNoteSidebar = useCallback(() => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:UPDATE_NOTE_SIDEBAR',
-      value: { visible: true },
-    });
-  }, [dispatch]);
+    uiDispatch(nsmUI.updateNoteSidebar({ visible: true }));
+  }, [uiDispatch]);
 
   useEffect(() => {
     // do not ask for persistence if user never interacted with app

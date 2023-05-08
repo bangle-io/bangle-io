@@ -24,6 +24,7 @@
     "slice-ui",
     "slice-workspace",
     "slice-workspace-opened-doc-info",
+    "slice-refresh-workspace",
     "storage",
     "store-sync",
     "test-utils",

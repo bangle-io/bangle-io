@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { useBangleStoreContext, vars } from '@bangle.io/api';
+import { vars } from '@bangle.io/api';
+import { useNsmSlice, useNsmSliceState } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import type { WsName } from '@bangle.io/shared-types';
 import {
-  toggleEditing,
+  nsmEditorManagerSlice,
+  toggleEditingDirect,
   useNsmEditorManagerState,
-  useNsmEditorManagerStore,
 } from '@bangle.io/slice-editor-manager';
-import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  goToWsNameRoute,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { goToWorkspaceHome, nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { Button, ChevronLeftIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -20,51 +20,42 @@ import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
 export function ActivitybarMobile() {
   const extensionRegistry = useExtensionRegistryContext();
-  const bangleStore = useBangleStoreContext();
-  const { wsName, openedWsPaths } = useWorkspaceContext();
-  const { primaryWsPath } = openedWsPaths;
+  const { wsName, primaryWsPath } = useNsmSliceState(nsmSliceWorkspace);
 
-  const editorStore = useNsmEditorManagerStore();
   const { editingAllowed: showDone } = useNsmEditorManagerState();
-  const { sidebar: activeSidebar } = useUIManagerContext();
 
   return (
     <ActivitybarMobileDumb
-      editorStore={editorStore}
-      bangleStore={bangleStore}
       primaryWsPath={primaryWsPath}
       wsName={wsName}
       showDone={showDone}
       extensionRegistry={extensionRegistry}
-      activeSidebar={activeSidebar}
     />
   );
 }
 
 export function ActivitybarMobileDumb({
-  editorStore,
-  bangleStore,
   primaryWsPath,
   wsName,
   showDone,
   extensionRegistry,
-  activeSidebar,
 }: {
-  editorStore: ReturnType<typeof useNsmEditorManagerStore>;
-  bangleStore: ReturnType<typeof useBangleStoreContext>;
   primaryWsPath: string | undefined;
-  wsName: string | undefined;
+  wsName: WsName | undefined;
   showDone: boolean;
   extensionRegistry: ReturnType<typeof useExtensionRegistryContext>;
-  activeSidebar: ReturnType<typeof useUIManagerContext>['sidebar'];
 }) {
+  const { sidebar: activeSidebar } = useNsmSliceState(nsmUISlice);
+
+  const [, pageDispatch] = useNsmSlice(nsmPageSlice);
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
+  const [editorState, editorDispatch] = useNsmSlice(nsmEditorManagerSlice);
+
   const operationKeybindings =
     extensionRegistry.getSerialOperationKeybindingMapping();
 
   const sidebarItems = extensionRegistry.getSidebars().filter((r) => {
-    return r.activitybarIconShow
-      ? r.activitybarIconShow(wsName, bangleStore.state)
-      : true;
+    return r.activitybarIconShow ? r.activitybarIconShow(wsName) : true;
   });
 
   return (
@@ -84,10 +75,13 @@ export function ActivitybarMobileDumb({
               size="md"
               leftIcon={<ChevronLeftIcon />}
               onPress={() => {
-                goToWsNameRoute(resolvePath(primaryWsPath).wsName, {
-                  reopenPreviousEditors: false,
-                  replace: false,
-                })(bangleStore.state, bangleStore.dispatch);
+                if (wsName) {
+                  pageDispatch(
+                    goToWorkspaceHome({
+                      wsName,
+                    }),
+                  );
+                }
               }}
             />
           ) : null}
@@ -107,10 +101,7 @@ export function ActivitybarMobileDumb({
                 : wsName || 'bangle-io'
             }
             onPress={() => {
-              togglePaletteType(CorePalette.Notes)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              uiDispatch(nsmUI.togglePalette(CorePalette.Notes));
             }}
           />
         </div>
@@ -127,7 +118,7 @@ export function ActivitybarMobileDumb({
                   size="sm"
                   text="Done"
                   onPress={() => {
-                    toggleEditing(editorStore.state, editorStore.dispatch, {
+                    toggleEditingDirect(editorState, editorDispatch, {
                       focusOrBlur: true,
                       editingAllowed: false,
                     });
@@ -141,7 +132,7 @@ export function ActivitybarMobileDumb({
                   size="sm"
                   text="edit"
                   onPress={() => {
-                    toggleEditing(editorStore.state, editorStore.dispatch, {
+                    toggleEditingDirect(editorState, editorDispatch, {
                       focusOrBlur: true,
                       editingAllowed: true,
                     });

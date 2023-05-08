@@ -103,10 +103,7 @@ export interface SidebarType {
   activitybarIcon: JSX.Element;
   // if provided will be used to decide whether to show the sidebar icon in activitybar
   // or not. If not provided, the icon will always be shown.
-  activitybarIconShow?: (
-    wsName: string | undefined,
-    state: BangleApplicationStore['state'],
-  ) => boolean;
+  activitybarIconShow?: (wsName: string | undefined) => boolean;
   hint: string;
   name: `sidebar::${string}`;
   ReactComponent: React.ComponentType;
