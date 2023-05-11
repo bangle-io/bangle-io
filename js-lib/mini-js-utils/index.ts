@@ -98,3 +98,13 @@ export function safeJSONStringify(
  */
 declare const __brand: unique symbol;
 export type Brand<T, K> = T & { [__brand]: K };
+
+export type IfEquals<T, U, Y = unknown, N = never> = (<G>() => G extends T
+  ? 1
+  : 2) extends <G>() => G extends U ? 1 : 2
+  ? Y
+  : N;
+
+export const expectType = <Expected, Actual>(
+  actual: IfEquals<Actual, Expected, Actual>,
+) => void 0;

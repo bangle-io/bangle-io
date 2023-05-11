@@ -1,119 +1,181 @@
 import type { ColorScheme, CorePalette } from '@bangle.io/constants';
 import { COLOR_SCHEMA } from '@bangle.io/constants';
-import { createSlice } from '@bangle.io/nsm';
+import { createSliceV2 } from '@bangle.io/nsm';
 import {
   changeColorScheme,
   checkWidescreen,
   setRootWidescreenClass,
 } from '@bangle.io/utils';
 
+import type { UISliceState } from './constants';
 import { initialUISliceState } from './constants';
 
-export const nsmUISlice = createSlice([], {
+export const nsmUISlice = createSliceV2([], {
   name: 'bangle/ui-slice-main',
   initState: initialUISliceState,
-  actions: {
-    toggleSidebar: (type: string) => (state) => ({
+});
+
+export const toggleSideBar = nsmUISlice.createAction(
+  'toggleSideBar',
+  (type: string) => {
+    return (state): UISliceState => {
+      return {
+        ...state,
+        sidebar: state.sidebar === type ? undefined : type,
+      };
+    };
+  },
+);
+
+export const changeSidebar = nsmUISlice.createAction(
+  'changeSidebar',
+  (type: string) => {
+    return (state): UISliceState => {
+      return {
+        ...state,
+        sidebar: type,
+      };
+    };
+  },
+);
+
+export const closeSidebar = nsmUISlice.createAction('closeSidebar', () => {
+  return (state): UISliceState => {
+    return {
       ...state,
-      sidebar: Boolean(state.sidebar) ? undefined : type,
-    }),
-    changeSidebar: (type: string) => (state) => ({
-      ...state,
-      sidebar: type,
-    }),
-    updatePalette:
-      (type: CorePalette | undefined, initialQuery?: string) => (state) => ({
+      sidebar: undefined,
+    };
+  };
+});
+
+export const updatePalette = nsmUISlice.createAction(
+  'updatePalette',
+  (type: CorePalette | undefined, initialQuery?: string) => {
+    return (state): UISliceState => {
+      return {
         ...state,
         paletteType: type,
         paletteInitialQuery: initialQuery,
-      }),
+      };
+    };
+  },
+);
 
-    togglePalette: (type: CorePalette) => (state) => ({
-      ...state,
-      paletteType: state.paletteType === type ? undefined : type,
-      paletteInitialQuery: undefined,
-    }),
+export const togglePalette = nsmUISlice.createAction(
+  'togglePalette',
+  (type: CorePalette) => {
+    return (state): UISliceState => {
+      return {
+        ...state,
+        paletteType: state.paletteType === type ? undefined : type,
+        paletteInitialQuery: undefined,
+      };
+    };
+  },
+);
 
-    resetPalette: () => (state) => ({
+export const resetPalette = nsmUISlice.createAction('resetPalette', () => {
+  return (state): UISliceState => {
+    return {
       ...state,
       paletteType: undefined,
       paletteInitialQuery: '',
       paletteMetadata: {},
-    }),
+    };
+  };
+});
 
-    toggleColorSchema: () => (state) => {
+export const toggleColorSchema = nsmUISlice.createAction(
+  'toggleColorSchema',
+  () => {
+    return (state): UISliceState => {
       const schema: ColorScheme =
         state.colorScheme === COLOR_SCHEMA.DARK
           ? COLOR_SCHEMA.LIGHT
           : COLOR_SCHEMA.DARK;
+
       changeColorScheme(schema);
 
       return {
         ...state,
         colorScheme: schema,
       };
-    },
+    };
+  },
+);
 
-    updateColorSchema: (colorScheme: ColorScheme) => (state) => {
+export const updateColorSchema = nsmUISlice.createAction(
+  'updateColorSchema',
+  (colorScheme: ColorScheme) => {
+    return (state): UISliceState => {
       changeColorScheme(colorScheme);
 
       return {
         ...state,
         colorScheme,
       };
-    },
+    };
+  },
+);
 
-    updateWindowSize:
-      (windowSize: { height: number; width: number }) => (state) => {
-        const widescreen = checkWidescreen(windowSize.width);
-        setRootWidescreenClass(widescreen);
+export const updateWindowSize = nsmUISlice.createAction(
+  'updateWindowSize',
+  (windowSize: { height: number; width: number }) => {
+    return (state): UISliceState => {
+      const widescreen = checkWidescreen(windowSize.width);
+      setRootWidescreenClass(widescreen);
 
-        return {
-          ...state,
-          windowSize,
-        };
-      },
-
-    showDialog:
-      (value: {
-        dialogName: string;
-        metadata?: undefined | { [key: string]: any };
-      }) =>
-      (state) => {
-        return {
-          ...state,
-          dialogName: value.dialogName,
-          dialogMetadata: value.metadata,
-        };
-      },
-
-    dismissDialog: () => (state) => {
       return {
         ...state,
-        dialogName: undefined,
-        dialogMetadata: undefined,
+        widescreen,
       };
-    },
+    };
+  },
+);
 
-    updateNewChangelog: (value: { hasUpdates: boolean }) => (state) => {
+export const showDialog = nsmUISlice.createAction(
+  'showDialog',
+  (value: { dialogName: string; metadata?: { [key: string]: any } }) => {
+    return (state): UISliceState => {
       return {
         ...state,
-        newChangelog: value.hasUpdates,
+        dialogName: value.dialogName,
+        dialogMetadata: value.metadata,
       };
-    },
+    };
+  },
+);
 
-    updateNoteSidebar: (value: { visible: boolean }) => (state) => {
+export const dismissDialog = nsmUISlice.createAction('dismissDialog', () => {
+  return (state): UISliceState => {
+    return {
+      ...state,
+      dialogName: undefined,
+      dialogMetadata: undefined,
+    };
+  };
+});
+
+export const updateNoteSidebar = nsmUISlice.createAction(
+  'updateNoteSidebar',
+  (value: { visible: boolean }) => {
+    return (state): UISliceState => {
       return {
         ...state,
         noteSidebar: value.visible,
       };
-    },
+    };
+  },
+);
 
-    toggleNoteSidebar: () => (state) => {
+export const toggleNoteSidebar = nsmUISlice.createAction(
+  'toggleNoteSidebar',
+  () => {
+    return (state): UISliceState => {
       return {
         ...state,
         noteSidebar: !state.noteSidebar,
       };
-    },
+    };
   },
-});
+);

@@ -28,6 +28,7 @@
     "@bangle.io/nsm": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/slice-refresh-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"

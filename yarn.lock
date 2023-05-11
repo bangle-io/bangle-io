@@ -2078,8 +2078,8 @@ __metadata:
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3416,9 +3416,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/slice-refresh-workspace@workspace:*, @bangle.io/slice-refresh-workspace@workspace:js-lib/slice-refresh-workspace":
+"@bangle.io/slice-refresh-workspace@workspace:*, @bangle.io/slice-refresh-workspace@workspace:lib/slice-refresh-workspace":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-refresh-workspace@workspace:js-lib/slice-refresh-workspace"
+  resolution: "@bangle.io/slice-refresh-workspace@workspace:lib/slice-refresh-workspace"
   dependencies:
     "@bangle.io/nsm": "workspace:*"
   languageName: unknown

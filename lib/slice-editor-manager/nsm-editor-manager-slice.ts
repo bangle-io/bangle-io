@@ -11,21 +11,17 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import type {
-  InferSliceName,
-  Store,
-  StoreState,
-  ValidStoreState,
-} from '@bangle.io/nsm';
+import type { InferSliceName, Store } from '@bangle.io/nsm';
 import {
   changeEffect,
-  createOp,
+  createQueryState,
   createSelector,
   createSliceWithSelectors,
   intervalRunEffect,
   mountEffect,
   Slice,
   sliceStateSerializer,
+  StoreState,
   syncChangeEffect,
   updateState,
   z,
@@ -64,6 +60,8 @@ const initState: EditorSliceState & {
   editorOpenOrder: [],
   disableEditingCounter: undefined,
 };
+
+type NsmEditorManagerState = typeof initState;
 
 const updateObj = updateState(initState);
 
@@ -467,8 +465,8 @@ export const updateSelection = nsmEditorManagerSlice.createAction(
   },
 );
 
-export const setEditorScrollPos = createOp(
-  nsmEditorManagerSlice,
+export const setEditorScrollPos = createQueryState(
+  [nsmEditorManagerSlice],
   (state: EditorManagerStoreState, wsPath: string, editorId: EditorIdType) => {
     const scrollParent = getScrollParentElement(editorId);
     const editorConfig = nsmEditorManagerSlice.getState(state).editorConfig;
@@ -503,8 +501,8 @@ export function focusEditorIfNotFocused(
     .lastOpenedEditor?.editor?.focusView();
 }
 
-export const getEditor = createOp(
-  nsmEditorManagerSlice,
+export const getEditor = createQueryState(
+  [nsmEditorManagerSlice],
   (
     state: EditorManagerStoreState,
     editorId: EditorIdType,
@@ -517,8 +515,8 @@ export const getEditor = createOp(
   },
 );
 
-export const getInitialSelection = createOp(
-  nsmEditorManagerSlice,
+export const getInitialSelection = createQueryState(
+  [nsmEditorManagerSlice],
   (
     state: EditorManagerStoreState,
     editorId: EditorIdType,
@@ -595,7 +593,7 @@ export function toggleEditing(
   });
 }
 
-function toggleEditingDirect(
+export function toggleEditingDirect(
   sliceState: {
     editingAllowed: EditorSliceState['editingAllowed'];
     mainEditors: EditorSliceState['mainEditors'];
@@ -673,10 +671,11 @@ export function dispatchEditorCommand<T>(
 }
 
 export function forEachEditor(
-  state: EditorManagerStoreState,
+  state: EditorManagerStoreState | NsmEditorManagerState,
   callback: (editor: BangleEditor, editorId: EditorIdType) => void,
 ) {
-  const { mainEditors } = nsmEditorManagerSlice.getState(state);
+  const { mainEditors } =
+    state instanceof StoreState ? nsmEditorManagerSlice.getState(state) : state;
 
   for (const [editorId, editor] of mainEditors.entries()) {
     if (editor) {

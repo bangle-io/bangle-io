@@ -2,6 +2,7 @@ import type { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { InferSliceName, Store, Transaction } from '@bangle.io/nsm';
 import type { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
+import type { nsmPageSlice } from '@bangle.io/slice-page';
 import type { nsmUISlice } from '@bangle.io/slice-ui';
 
 import type { _editorManagerProxy } from './nsm/editor';
@@ -31,6 +32,7 @@ export function dispatchWrapper<
 export type ApiSliceNames =
   | InferSliceName<typeof nsmUISlice>
   | InferSliceName<typeof nsmEditorManagerSlice>
+  | InferSliceName<typeof nsmPageSlice>
   | InferSliceName<typeof nsmSliceWorkspace>
   | InferSliceName<typeof _editorManagerProxy>
   | InferSliceName<typeof nsmExtensionRegistry>;

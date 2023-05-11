@@ -3,6 +3,7 @@ import type {
   AnySliceWithName,
   InferSliceName,
   StoreState,
+  Transaction,
   ValidStoreState,
 } from 'nalanda';
 
@@ -78,15 +79,45 @@ export function subSelectorBuilder<
   };
 }
 
-export function createOp<
+export function createQueryState<
   N extends string,
   TCallback extends (storeState: StoreState<N>, ...args: any[]) => any,
->(slice: AnySliceWithName<N>, cb: TCallback) {
+>(slice: Array<AnySliceWithName<N>>, cb: TCallback) {
   return <TStateSlices extends string>(
     storeState: ValidStoreState<TStateSlices, N>,
     ...args: InferRemainingParams<TCallback>
-  ): ReturnType<TCallback> => {
+  ): // shortcut for checking if n is a subset of TStateSlices
+  [N] extends [TStateSlices]
+    ? ReturnType<TCallback>
+    : 'Error: Store does not have a required slice' => {
     return cb(storeState as StoreState<any>, ...args);
+  };
+}
+
+/**
+ * Helpers which creates a transaction based on state of multiple slices
+ * Its meta because the regular slice createAction also has state
+ */
+export function createMetaAction<
+  N extends string,
+  TCallback extends (
+    storeState: StoreState<N>,
+    ...args: any[]
+  ) => Transaction<any, any>,
+>(slices: Array<AnySliceWithName<N>>, cb: TCallback) {
+  return <TStateSlices extends string>(
+    storeState: StoreState<TStateSlices>,
+    ...args: InferRemainingParams<TCallback>
+  ): // shortcut for checking if n is a subset of TStateSlices
+  [N] extends [TStateSlices]
+    ? ReturnType<TCallback>
+    : 'Error: Store does not have a required slice' => {
+    let result: Transaction<any, any> = cb(
+      storeState as StoreState<any>,
+      ...args,
+    );
+
+    return result as any;
     // cb(storeState as StoreState<N>, ...slice.deps.map((dep) => dep.name));
   };
 }

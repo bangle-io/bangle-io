@@ -224,10 +224,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/search-pm-node"\
       },\
       {\
-        "name": "@bangle.io/slice-refresh-workspace",\
-        "reference": "workspace:js-lib/slice-refresh-workspace"\
-      },\
-      {\
         "name": "@bangle.io/tri-state",\
         "reference": "workspace:js-lib/tri-state"\
       },\
@@ -306,6 +302,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@bangle.io/slice-page",\
         "reference": "workspace:lib/slice-page"\
+      },\
+      {\
+        "name": "@bangle.io/slice-refresh-workspace",\
+        "reference": "workspace:lib/slice-refresh-workspace"\
       },\
       {\
         "name": "@bangle.io/slice-storage-provider",\
@@ -468,7 +468,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],\
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],\
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],\
-      ["@bangle.io/slice-refresh-workspace", ["workspace:js-lib/slice-refresh-workspace"]],\
+      ["@bangle.io/slice-refresh-workspace", ["workspace:lib/slice-refresh-workspace"]],\
       ["@bangle.io/slice-storage-provider", ["workspace:lib/slice-storage-provider"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],\
@@ -5699,8 +5699,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
-            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -5733,8 +5733,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
-            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -5961,7 +5961,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
-            ["@bangle.io/slice-refresh-workspace", "workspace:js-lib/slice-refresh-workspace"],\
+            ["@bangle.io/slice-refresh-workspace", "workspace:lib/slice-refresh-workspace"],\
             ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
@@ -7081,7 +7081,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
-            ["@bangle.io/slice-refresh-workspace", "workspace:js-lib/slice-refresh-workspace"],\
+            ["@bangle.io/slice-refresh-workspace", "workspace:lib/slice-refresh-workspace"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"]\
@@ -7407,10 +7407,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@bangle.io/slice-refresh-workspace", [\
-        ["workspace:js-lib/slice-refresh-workspace", {\
-          "packageLocation": "./js-lib/slice-refresh-workspace/",\
+        ["workspace:lib/slice-refresh-workspace", {\
+          "packageLocation": "./lib/slice-refresh-workspace/",\
           "packageDependencies": [\
-            ["@bangle.io/slice-refresh-workspace", "workspace:js-lib/slice-refresh-workspace"],\
+            ["@bangle.io/slice-refresh-workspace", "workspace:lib/slice-refresh-workspace"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"]\
           ],\
           "linkType": "SOFT"\
@@ -7870,7 +7870,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-editor-collab-comms", "workspace:lib/slice-editor-collab-comms"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
-            ["@bangle.io/slice-refresh-workspace", "workspace:js-lib/slice-refresh-workspace"],\
+            ["@bangle.io/slice-refresh-workspace", "workspace:lib/slice-refresh-workspace"],\
             ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/slice-workspace-opened-doc-info", "workspace:lib/slice-workspace-opened-doc-info"],\

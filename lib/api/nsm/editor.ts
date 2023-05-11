@@ -68,6 +68,18 @@ Slice.registerEffectSlice(_editorManagerProxy, [
   ),
 ]);
 
+const _updateQueryAction = _editorManagerProxy.createAction(
+  'updateEditorSearchQuery',
+  (searchQuery: RegExp | undefined) => {
+    return (state): EditorProxyState => {
+      return {
+        ...state,
+        searchQuery,
+      };
+    };
+  },
+);
+
 export const pick = nsmEditorManagerSlice.pick;
 export const passivePick = nsmEditorManagerSlice.passivePick;
 
@@ -80,17 +92,11 @@ export function useEditor() {
   }, [focusedEditorId]);
 }
 
-export const updateEditorSearchQuery = _editorManagerProxy.createAction(
-  'updateEditorSearchQuery',
-  (searchQuery: RegExp | undefined) => {
-    return (state): EditorProxyState => {
-      return {
-        ...state,
-        searchQuery,
-      };
-    };
-  },
-);
+export const updateEditorSearchQuery = (
+  searchQuery: RegExp | undefined,
+): void => {
+  getStore().dispatch(_updateQueryAction(searchQuery));
+};
 
 export function getEditor(editorId: EditorIdType) {
   const store = getStore();

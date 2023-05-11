@@ -1,22 +1,21 @@
 import {
   createSelector,
   createSliceWithSelectors,
-  customSerialAction,
   serialAction,
   updateState,
   z,
 } from '@bangle.io/nsm';
-import type { WsName } from '@bangle.io/shared-types';
-import { createWsName, OpenedWsPaths } from '@bangle.io/ws-path';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
+import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 import type { PageSliceStateType } from './common';
 import { pageLifeCycleState } from './common';
 import {
   locationSchema,
-  locationSetWsPath,
   pathnameToWsName,
   pathnameToWsPath,
   searchToWsPath,
+  wsNameToPathname,
 } from './location-helpers';
 import { pageSliceInitialState } from './page-slice';
 
@@ -54,15 +53,23 @@ export const nsmPageSlice = createSliceWithSelectors([], {
 
     primaryWsPath: createSelector(
       { location: (state) => state.location },
-      (computed) => {
-        return pathnameToWsPath(computed.location.pathname);
+      (computed): WsPath | undefined => {
+        const primary = pathnameToWsPath(computed.location.pathname);
+
+        return primary ? createWsPath(primary) : undefined;
       },
     ),
 
     secondaryWsPath: createSelector(
       { location: (state) => state.location },
-      (computed) => {
-        return searchToWsPath(computed.location.search);
+      (computed): WsPath | undefined => {
+        let result = pathnameToWsName(computed.location.pathname);
+
+        const secondary = result
+          ? searchToWsPath(computed.location.search)
+          : undefined;
+
+        return secondary ? createWsPath(secondary) : undefined;
       },
     ),
 
@@ -80,6 +87,14 @@ export const nsmPageSlice = createSliceWithSelectors([], {
     ),
   },
 });
+export const noOp = nsmPageSlice.createAction(
+  'noOp',
+  serialAction(z.null(), () => {
+    return (state) => {
+      return state;
+    };
+  }),
+);
 
 export const blockReload = nsmPageSlice.createAction(
   'blockReload',
@@ -151,58 +166,35 @@ export const goToLocation = nsmPageSlice.createAction(
   ),
 );
 
-export const historyUpdateOpenedWsPaths = nsmPageSlice.createAction(
-  'historyUpdateOpenedWsPaths',
-  customSerialAction(
-    ({
-        openedWsPath,
-        wsName,
-        replace = false,
-        clearSearch = true,
-      }: {
-        openedWsPath: OpenedWsPaths;
-        wsName: string;
-        replace?: boolean;
-        clearSearch?: boolean;
-      }) =>
-      (sliceState) => {
-        const existingLoc = {
-          ...sliceState.location,
-        };
+export function goToInvalidWorkspacePage({
+  invalidWsName,
+  replace,
+}: {
+  invalidWsName: WsName;
+  replace?: boolean;
+}) {
+  return goToLocation({
+    location: `/ws-invalid-path/${encodeURIComponent(invalidWsName)}`,
+    replace: false,
+  });
+}
 
-        if (clearSearch) {
-          existingLoc.search = '';
-        }
+export function goToLandingPage({ replace }: { replace?: boolean } = {}) {
+  return goToLocation({
+    location: '/landing',
+    replace: replace,
+  });
+}
 
-        const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
-
-        return selectiveUpdate(sliceState, {
-          pendingNavigation: {
-            location,
-            replaceHistory: replace,
-            preserve: false,
-          },
-        });
-      },
-    {
-      schema: z.object({
-        openedWsPath: z.array(z.string().or(z.null())),
-        wsName: z.string(),
-        replace: z.boolean().optional(),
-        clearSearch: z.boolean().optional(),
-      }),
-      serialize: ({ openedWsPath, ...rest }) => {
-        return {
-          ...rest,
-          openedWsPath: openedWsPath.toArray(),
-        };
-      },
-      deserialize: (obj) => {
-        return {
-          ...obj,
-          openedWsPath: OpenedWsPaths.createFromArray(obj.openedWsPath),
-        };
-      },
-    },
-  ),
-);
+export function goToWorkspaceHome({
+  wsName,
+  replace,
+}: {
+  wsName: WsName;
+  replace?: boolean;
+}) {
+  return goToLocation({
+    location: wsNameToPathname(wsName),
+    replace: replace,
+  });
+}
