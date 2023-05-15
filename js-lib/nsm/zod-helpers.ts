@@ -94,6 +94,22 @@ export const zodFindUnsafeTypes = (topZod: ZodTypeAny): string[] => {
         break;
       }
 
+      // case 'ZodEffects': {
+      //   recurse(zod._def.schema);
+      //   break;
+      // }
+
+      case 'ZodNativeEnum': {
+        for (const [key, val] of Object.entries(zod._def.values)) {
+          if (typeof val !== 'number' && typeof val !== 'string') {
+            found.push(
+              `ZodNativeEnum: for ${key} only supports string, number and boolean`,
+            );
+          }
+        }
+        break;
+      }
+
       case 'ZodIntersection': {
         recurse(zod._def.left);
         recurse(zod._def.right);

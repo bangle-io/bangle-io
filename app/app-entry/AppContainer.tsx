@@ -24,6 +24,7 @@ export function AppContainer() {
   const { wsName } = useNsmSliceState(nsmSliceWorkspace);
   const [{ widescreen, sidebar, noteSidebar }, uiDispatch] =
     useNsmSlice(nsmUISlice);
+
   const extensionRegistry = useExtensionRegistryContext();
 
   useSetDocumentTitle();

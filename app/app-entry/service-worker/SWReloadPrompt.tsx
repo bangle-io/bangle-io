@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
 
 import { useSerialOperationHandler } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import { RELEASE_ID } from '@bangle.io/config';
 import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
   SEVERITY,
 } from '@bangle.io/constants';
-import {
-  dismissNotification,
-  showNotification,
-} from '@bangle.io/slice-notification';
+import { nsmNotification } from '@bangle.io/slice-notification';
 import { useLocalStorage } from '@bangle.io/utils';
 
 import { useRegisterSW } from './use-sw';
@@ -24,36 +21,41 @@ export function SWReloadPrompt() {
     'sw-show-offline',
     false,
   );
-  const bangleStore = useBangleStoreContext();
 
+  const [, notificationDispatch] = useNsmSlice(
+    nsmNotification.nsmNotificationSlice,
+  );
   const { needRefresh, offlineReady, acceptPrompt, closePrompt } =
     useRegisterSW();
   useEffect(() => {
     if (offlineReady && !shownOfflineReady) {
       updateShownOfflineReady(true);
-      showNotification({
-        uid: 'offline-' + RELEASE_ID,
-        severity: SEVERITY.INFO,
-        title: 'Bangle.io is now offline ready.',
-        transient: true,
-      })(bangleStore.state, bangleStore.dispatch);
+      notificationDispatch(
+        nsmNotification.showNotification({
+          uid: 'offline-' + RELEASE_ID,
+          severity: SEVERITY.INFO,
+          title: 'Bangle.io is now offline ready.',
+          transient: true,
+        }),
+      );
     }
-  }, [shownOfflineReady, offlineReady, bangleStore, updateShownOfflineReady]);
+  }, [
+    shownOfflineReady,
+    notificationDispatch,
+    offlineReady,
+    updateShownOfflineReady,
+  ]);
 
   useSerialOperationHandler(
     (sOperation) => {
       if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_RELOAD) {
-        dismissNotification({
-          uid,
-        })(bangleStore.state, bangleStore.dispatch);
+        notificationDispatch(nsmNotification.dismissNotification(uid));
         acceptPrompt();
 
         return true;
       }
       if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE) {
-        dismissNotification({
-          uid,
-        })(bangleStore.state, bangleStore.dispatch);
+        notificationDispatch(nsmNotification.dismissNotification(uid));
         closePrompt();
 
         return true;
@@ -61,31 +63,33 @@ export function SWReloadPrompt() {
 
       return false;
     },
-    [acceptPrompt, bangleStore, closePrompt],
+    [acceptPrompt, notificationDispatch, closePrompt],
   );
 
   useEffect(() => {
     if (needRefresh) {
-      showNotification({
-        severity: SEVERITY.INFO,
-        uid,
-        title: '📦 Update available',
-        content: `There is a new version of Bangle.io available, would you like to update?`,
-        buttons: [
-          {
-            title: 'Update',
-            hint: `Will reload the page with the newer version`,
-            operation: CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
-          },
-          {
-            title: 'Later',
-            hint: `Will reload the page with the newer version`,
-            operation: CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
-          },
-        ],
-      })(bangleStore.state, bangleStore.dispatch);
+      notificationDispatch(
+        nsmNotification.showNotification({
+          severity: SEVERITY.INFO,
+          uid,
+          title: '📦 Update available',
+          content: `There is a new version of Bangle.io available, would you like to update?`,
+          buttons: [
+            {
+              title: 'Update',
+              hint: `Will reload the page with the newer version`,
+              operation: CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+            },
+            {
+              title: 'Later',
+              hint: `Will reload the page with the newer version`,
+              operation: CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+            },
+          ],
+        }),
+      );
     }
-  }, [acceptPrompt, needRefresh, closePrompt, bangleStore]);
+  }, [acceptPrompt, needRefresh, closePrompt, notificationDispatch]);
 
   return null;
 }

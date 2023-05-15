@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import {
-  ui,
   useBangleStoreContext,
+  useNsmSlice,
+  useNsmSliceState,
   useSerialOperationContext,
 } from '@bangle.io/api';
 import {
@@ -14,17 +15,14 @@ import {
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import type {
-  BangleApplicationStore,
-  EditorIdType,
-} from '@bangle.io/shared-types';
+import type { EditorIdType } from '@bangle.io/shared-types';
 import {
   toggleEditing,
   useNsmEditorManagerState,
   useNsmEditorManagerStore,
 } from '@bangle.io/slice-editor-manager';
-import { getEditorIssue } from '@bangle.io/slice-notification';
-import { togglePaletteType } from '@bangle.io/slice-ui';
+import { nsmNotification } from '@bangle.io/slice-notification';
+import { nsmUI, nsmUISlice, togglePaletteType } from '@bangle.io/slice-ui';
 import {
   checkFileExists,
   useWorkspaceContext,
@@ -74,10 +72,7 @@ export function EditorContainer({
     );
   }, [bangleStore]);
 
-  const { editorIssue, onPressEditorIssue } = useEditorIssue(
-    wsPath,
-    bangleStore,
-  );
+  const { editorIssue, onPressEditorIssue } = useEditorIssue(wsPath);
 
   const onEnableEditing = useCallback(() => {
     toggleEditing(editorStore.state, editorStore.dispatch, {
@@ -158,11 +153,15 @@ export function EditorContainer({
   );
 }
 
-function useEditorIssue(
-  wsPath: string | undefined,
-  bangleStore: BangleApplicationStore,
-) {
-  const editorIssue = wsPath && getEditorIssue(wsPath)(bangleStore.state);
+function useEditorIssue(wsPath: string | undefined) {
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
+  const { editorIssues } = useNsmSliceState(
+    nsmNotification.nsmNotificationSlice,
+  );
+  const editorIssue = wsPath
+    ? editorIssues.find((e) => e.wsPath === wsPath)
+    : undefined;
+
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   const onPressEditorIssue = useCallback(() => {
@@ -175,12 +174,14 @@ function useEditorIssue(
     if (serialOperation) {
       dispatchSerialOperation({ name: serialOperation });
     } else {
-      ui.showGenericErrorModal({
-        title: editorIssue.title,
-        description: editorIssue.description,
-      })(bangleStore.state, bangleStore.dispatch);
+      uiDispatch(
+        nsmUI.showGenericErrorModal({
+          title: editorIssue.title,
+          description: editorIssue.description,
+        }),
+      );
     }
-  }, [bangleStore, dispatchSerialOperation, editorIssue]);
+  }, [uiDispatch, dispatchSerialOperation, editorIssue]);
 
   return { editorIssue, onPressEditorIssue };
 }

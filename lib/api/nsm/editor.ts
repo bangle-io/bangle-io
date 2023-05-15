@@ -7,6 +7,7 @@ import { useNsmSliceState } from '@bangle.io/bangle-store-context';
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { changeEffect, createSliceWithSelectors, Slice } from '@bangle.io/nsm';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import type { WsPath } from '@bangle.io/shared-types';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   forEachEditor,
@@ -25,6 +26,12 @@ const initState: {
 };
 
 type EditorProxyState = typeof initState;
+
+export const editorState = () => {
+  const store = getStore();
+
+  return nsmEditorManagerSlice.resolveState(store.state);
+};
 
 export const _editorManagerProxy = createSliceWithSelectors(
   [nsmEditorManagerSlice],
@@ -108,4 +115,19 @@ export function getPrimaryEditor() {
   const store = getStore();
 
   return _getEditor(store.state, PRIMARY_EDITOR_INDEX);
+}
+
+export function getFocusedWsPath(): WsPath | undefined {
+  const store = getStore();
+
+  const { openedWsPaths } = nsmSliceWorkspace.resolveState(store.state);
+  const { focusedEditorId } = nsmEditorManagerSlice.resolveState(store.state);
+
+  if (focusedEditorId == null) {
+    return undefined;
+  }
+
+  const focusedWsPath = openedWsPaths.getByIndex2(focusedEditorId);
+
+  return focusedWsPath;
 }

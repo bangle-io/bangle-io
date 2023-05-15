@@ -16,6 +16,7 @@ import {
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type { StorageProviderChangeType } from '@bangle.io/shared-types';
 import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
+import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   incrementCounter,
@@ -57,7 +58,12 @@ export const createNsmStore = ({
     [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
   };
 
-  const syncSlices = [sliceRefreshWorkspace, nsmPageSlice];
+  const syncSlices = [
+    sliceRefreshWorkspace,
+    nsmPageSlice,
+    nsmNotification.nsmNotificationSlice,
+  ];
+
   const store = createSyncStore({
     storeName,
     debug: (log) => {

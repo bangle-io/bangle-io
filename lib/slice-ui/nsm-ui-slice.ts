@@ -1,6 +1,7 @@
 import type { ColorScheme, CorePalette } from '@bangle.io/constants';
-import { COLOR_SCHEMA } from '@bangle.io/constants';
+import { COLOR_SCHEMA, GENERIC_ERROR_MODAL_NAME } from '@bangle.io/constants';
 import { createSliceV2 } from '@bangle.io/nsm';
+import type { GenericErrorModalMetadata } from '@bangle.io/shared-types';
 import {
   changeColorScheme,
   checkWidescreen,
@@ -17,8 +18,11 @@ export const nsmUISlice = createSliceV2([], {
 
 export const toggleSideBar = nsmUISlice.createAction(
   'toggleSideBar',
-  (type: string) => {
+  (_type?: string) => {
     return (state): UISliceState => {
+      // use the current state to toggle
+      let type = _type === undefined ? state.sidebar : _type;
+
       return {
         ...state,
         sidebar: state.sidebar === type ? undefined : type,
@@ -179,3 +183,16 @@ export const toggleNoteSidebar = nsmUISlice.createAction(
     };
   },
 );
+
+export function showGenericErrorModal({
+  title,
+  description,
+}: GenericErrorModalMetadata) {
+  return showDialog({
+    dialogName: GENERIC_ERROR_MODAL_NAME,
+    metadata: {
+      title,
+      description,
+    },
+  });
+}

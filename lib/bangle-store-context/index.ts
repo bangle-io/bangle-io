@@ -32,6 +32,16 @@ export function useNsmSliceState<TSlice extends AnySlice>(
   return createUseSliceHook(store)(slice as AnySliceWithName<string>)[0];
 }
 
+export function useNsmSliceDispatch<TSlice extends AnySlice>(
+  slice: TSlice,
+): Store<TSlice extends AnySliceWithName<infer N> ? N : never>['dispatch'] {
+  const store: Store<string> = useContext(NsmStoreContext);
+
+  // TODO move this to a more performance friendly approach which
+  // directly gets the state
+  return createUseSliceHook(store)(slice as AnySliceWithName<string>)[1];
+}
+
 export function useNsmSlice<TSlice extends AnySlice>(
   slice: TSlice,
 ): [

@@ -11,6 +11,7 @@ import {
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
 import type { StorageProviderChangeType } from '@bangle.io/shared-types';
+import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   incrementCounter,
@@ -29,7 +30,11 @@ export const createNsmStore = ({
 }) => {
   const storeName = 'naukar-store';
 
-  const synSlices = [sliceRefreshWorkspace, nsmPageSlice];
+  const synSlices = [
+    sliceRefreshWorkspace,
+    nsmPageSlice,
+    nsmNotification.nsmNotificationSlice,
+  ];
   const initStateOverride = {
     [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
   };

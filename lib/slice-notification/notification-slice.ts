@@ -1,21 +1,9 @@
-import type { Severity } from '@bangle.io/constants';
 import type { ExtractActionValue } from '@bangle.io/create-store';
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import type {
-  NotificationPayloadType,
-  SerialOperationNameType,
-} from '@bangle.io/shared-types';
+import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import { assertActionName } from '@bangle.io/utils';
 
-export interface EditorIssue {
-  title: string; // keep it short
-  description: string;
-  uid: string;
-  wsPath: string;
-  severity: Severity;
-  serialOperation?: SerialOperationNameType;
-  dismissOnPress?: boolean;
-}
+import type { EditorIssue } from './common';
 
 export type GetActionValue<R> = ExtractActionValue<NotificationAction, R>;
 

@@ -86,10 +86,13 @@ export function resolvePath(wsPath: string, skipValidation = false) {
   };
 }
 
-export function resolvePath2(wsPath: WsPath): { wsName: WsName } {
-  const { wsName } = resolvePath(wsPath, true);
+export function resolvePath2(wsPath: WsPath): {
+  wsName: WsName;
+  fileName: string;
+} {
+  const { wsName, fileName } = resolvePath(wsPath, true);
 
-  return { wsName: createWsName(wsName) };
+  return { wsName: createWsName(wsName), fileName };
 }
 
 export class PathValidationError extends BaseError {}
@@ -211,6 +214,10 @@ export function parseLocalFilePath(filePath: string, wsPath: string) {
 
   // need to decode uri as filesystems dont do encoding
   return filePathToWsPath(wsName, decodeURIComponent(webPath));
+}
+
+export function parseLocalFilePath2(filePath: string, wsPath: WsPath): WsPath {
+  return createWsPath(parseLocalFilePath(filePath, wsPath));
 }
 
 export const toFSPath = (wsPath: string) => {

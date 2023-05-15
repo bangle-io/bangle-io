@@ -19,7 +19,7 @@ import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
 import type { StorageProviderChangeType } from '@bangle.io/shared-types';
 import { Emitter } from '@bangle.io/utils';
-import { registerStorageProvider } from '@bangle.io/workspace-info';
+import { fs } from '@bangle.io/workspace-info';
 
 // TODO move this async, i think a promise should be fine.
 /**
@@ -59,7 +59,7 @@ export const onBeforeStoreLoad = (): {
     };
     // TODO do we need to pass specRegistry here? we should remove it if possible
     // to avoid coupling
-    registerStorageProvider(storageProvider, registry.specRegistry);
+    fs.registerStorageProvider(storageProvider, registry.specRegistry);
   }
 
   return {

@@ -6053,6 +6053,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.31.6"],\
             ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.31.6"],\
             ["@bangle.dev/pm", "npm:0.31.6"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
@@ -6093,6 +6094,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/constants/",\
           "packageDependencies": [\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
@@ -6954,10 +6956,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
-            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
-            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -7075,7 +7074,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/nsm-slice-workspace/",\
           "packageDependencies": [\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
+            ["@bangle.dev/pm", "npm:0.31.6"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
@@ -7374,6 +7375,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -7943,7 +7945,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.io/utils", "workspace:lib/utils"]\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"]\
           ],\
           "linkType": "SOFT"\
         }]\

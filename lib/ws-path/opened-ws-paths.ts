@@ -142,7 +142,23 @@ export class OpenedWsPaths {
     return false;
   }
 
-  // runs through wsPath of each opened editor.
+  // find all indices of the wsPath
+  find(wsPath: WsPath): number[] | undefined {
+    let foundIndex: number[] = [];
+
+    this.forEachWsPath((path, index) => {
+      if (path && path === wsPath) {
+        foundIndex.push(index);
+      }
+    });
+
+    if (foundIndex.length === 0) {
+      return undefined;
+    }
+
+    return foundIndex;
+  }
+
   // Note: There might be multiple editor with the same wsPath
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
     this._wsPaths.forEach((p, i) => {
@@ -158,6 +174,12 @@ export class OpenedWsPaths {
     }
 
     return this._wsPaths[index];
+  }
+
+  getByIndex2(index: number): WsPath | undefined {
+    let res = this.getByIndex(index);
+
+    return res != null ? createWsPath(res) : undefined;
   }
 
   getOneWsName(): WsName | undefined {

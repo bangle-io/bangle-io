@@ -14,7 +14,7 @@ export interface DialogType {
   ReactComponent: DialogComponentType;
 }
 
-export type SerialOperationNameType = `operation::${string}`;
+export type SerialOperationNameType = string;
 export interface SerialOperationType {
   name: SerialOperationNameType;
   value?: any;

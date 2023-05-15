@@ -5,7 +5,6 @@ import type {
   ExtensionRegistry,
   JsonValue,
 } from '@bangle.io/shared-types';
-import { uncaughtExceptionNotification } from '@bangle.io/slice-notification';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
   assertNonWorkerGlobalScope,
@@ -87,7 +86,8 @@ export function initializeBangleStore({
         (window as any).Sentry?.captureException(error);
 
         Promise.resolve().then(() => {
-          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+          // TODO better alerting
+          alert(error.message);
         });
 
         return false;

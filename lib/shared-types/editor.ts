@@ -27,3 +27,5 @@ export type EditorPlugin = ({
 }: {
   metadata: EditorPluginMetadata;
 }) => Plugin | Plugin[];
+
+export type { Node } from '@bangle.dev/pm';
