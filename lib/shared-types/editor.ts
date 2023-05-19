@@ -8,12 +8,13 @@ import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 
 import type { DispatchSerialOperationType } from './extension-registry';
 import type { NsmStore } from './store';
+import type { WsPath } from './workspace';
 
 export type { EditorIdType } from '@bangle.io/slice-editor-manager';
 
 // as pluginMetadata field by bangle.dev
 export interface EditorPluginMetadata {
-  wsPath: string;
+  wsPath: WsPath;
   editorDisplayType: EditorDisplayType;
   editorId?: EditorIdType;
   dispatchSerialOperation: DispatchSerialOperationType;

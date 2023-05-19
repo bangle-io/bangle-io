@@ -14,7 +14,6 @@ import {
   editorManagerSlice,
   editorManagerSliceKey,
 } from '@bangle.io/slice-editor-manager';
-import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice, pageSliceKey } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { uiSlice, uiSliceKey } from '@bangle.io/slice-ui';
@@ -113,7 +112,7 @@ export function createBasicStore<
     pageSlice(),
     workspaceSlice(),
     useEditorManagerSlice ? editorManagerSlice() : undefined,
-    notificationSlice(),
+    // notificationSlice(),
     useUISlice ? uiSlice() : undefined,
     ...extensionRegistry.getSlices(),
     ...slices,

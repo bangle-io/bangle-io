@@ -1,4 +1,4 @@
-import { getNewStore, ui, workspace } from '@bangle.io/api';
+import { getNewStore, nsmApi2, ui, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -31,10 +31,6 @@ import {
   nsmEditorManagerSlice,
   toggleEditing,
 } from '@bangle.io/slice-editor-manager';
-import {
-  notificationSliceKey,
-  showNotification,
-} from '@bangle.io/slice-notification';
 import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
@@ -60,13 +56,11 @@ import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
   deleteActiveNote,
   downloadWorkspace,
-  openMiniEditor,
   openNewNoteDialog,
   openNewWorkspaceDialog,
   removeWorkspace,
   renameActiveNote,
   restoreWorkspaceFromBackup,
-  splitEditor,
 } from './operations';
 
 const extension = Extension.create({
@@ -252,9 +246,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
-              bangleStore.dispatch({
-                name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR',
-              });
+              nsmApi2.ui.toggleNoteSidebar();
 
               return true;
             }
@@ -266,36 +258,49 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-              splitEditor()(bangleStore.state, bangleStore.dispatch);
+              const { openedWsPaths } = nsmApi2.workspace.workspaceState();
+
+              if (openedWsPaths.secondaryWsPath) {
+                nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                  openedWsPath.updateSecondaryWsPath(undefined),
+                );
+              } else if (openedWsPaths.primaryWsPath) {
+                nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                  openedWsPath.updateSecondaryWsPath(
+                    openedWsPaths.primaryWsPath,
+                  ),
+                );
+              }
 
               return true;
             }
 
             case CORE_OPERATIONS_OPEN_IN_MINI_EDITOR: {
-              openMiniEditor(nsmStore);
+              const targetWsPath = nsmApi2.editor.getFocusedWsPath();
+
+              if (targetWsPath) {
+                nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                  openedWsPath.updateMiniEditorWsPath(targetWsPath),
+                );
+              }
 
               return true;
             }
             case CORE_OPERATIONS_CLOSE_MINI_EDITOR: {
-              return workspace.closeMiniEditor()(
-                bangleStore.state,
-                bangleStore.dispatch,
+              nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                openedWsPath.updateMiniEditorWsPath(undefined),
               );
+
+              return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
-                workspace.closeOpenedEditor(payload)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                nsmApi2.workspace.closeEditor(payload);
 
                 return true;
               } else {
-                workspace.closeOpenedEditor(undefined)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                nsmApi2.workspace.closeEditor();
 
                 return true;
               }
@@ -403,11 +408,11 @@ const extension = Extension.create({
                 nsmStore.state,
               );
 
-              showNotification({
+              nsmApi2.ui.showNotification({
                 severity: editingAllowed ? SEVERITY.INFO : SEVERITY.WARNING,
                 uid: 'editing-mode' + editingAllowed + Date.now(),
                 title: 'Editing mode is now ' + (editingAllowed ? 'on' : 'off'),
-              })(bangleStore.state, bangleStore.dispatch);
+              });
 
               return true;
             }
@@ -460,15 +465,12 @@ function createNativeFsWorkspace(rootDirHandle: any) {
 
         (window as any).fathom?.trackGoal('K3NFTGWX', 0);
       } catch (error: any) {
-        showNotification({
+        nsmApi2.ui.showNotification({
           severity: SEVERITY.ERROR,
           uid: 'error-create-workspace-' + rootDirHandle?.name,
           title: 'Unable to create workspace ' + rootDirHandle?.name,
           content: error.displayMessage || error.message,
-        })(
-          notificationSliceKey.getState(store.state),
-          notificationSliceKey.getDispatch(store.dispatch),
-        );
+        });
 
         throw error;
       }
@@ -503,15 +505,12 @@ function createBrowserWorkspace(wsName: string) {
       );
       (window as any).fathom?.trackGoal('AISLCLRF', 0);
     } catch (error: any) {
-      showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         uid: 'error-create-workspace-' + wsName,
         title: 'Unable to create workspace ' + wsName,
         content: error.displayMessage || error.message,
-      })(
-        notificationSliceKey.getState(state),
-        notificationSliceKey.getDispatch(dispatch),
-      );
+      });
       throw error;
     }
 
@@ -540,16 +539,12 @@ function createPrivateFsWorkspace(wsName: string) {
       );
       (window as any).fathom?.trackGoal('KWXITXAK', 0);
     } catch (error: any) {
-      notificationSliceKey.callOp(
-        state,
-        dispatch,
-        showNotification({
-          severity: SEVERITY.ERROR,
-          uid: 'error-create-workspace-' + wsName,
-          title: 'Unable to create workspace ' + wsName,
-          content: error.displayMessage || error.message,
-        }),
-      );
+      nsmApi2.ui.showNotification({
+        severity: SEVERITY.ERROR,
+        uid: 'error-create-workspace-' + wsName,
+        title: 'Unable to create workspace ' + wsName,
+        content: error.displayMessage || error.message,
+      });
       throw error;
     }
 

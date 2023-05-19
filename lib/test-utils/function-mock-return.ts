@@ -18,7 +18,7 @@ import type { useUIManagerContext } from '@bangle.io/slice-ui';
 import { initialState } from '@bangle.io/slice-ui';
 import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import { createWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 export const getEditorPluginMetadataReturn: ReturnType<
   typeof getEditorPluginMetadata
@@ -26,7 +26,7 @@ export const getEditorPluginMetadataReturn: ReturnType<
   dispatchSerialOperation: typeof jest === 'undefined' ? () => {} : jest.fn(),
   editorDisplayType: EditorDisplayType.Page,
   bangleStore: initialBangleStore,
-  wsPath: 'test-workspace:my-test-note.md',
+  wsPath: createWsPath('test-workspace:my-test-note.md'),
   nsmStore: initialNsmStore,
   createdAt: 0,
 };

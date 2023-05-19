@@ -10,8 +10,10 @@ import {
   pushSecondaryWsPath as _pushSecondaryWsPath,
 } from '@bangle.io/nsm-slice-workspace';
 import type { EditorIdType, Node, WsPath } from '@bangle.io/shared-types';
+import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
+import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { getStore } from '../internals';
 
@@ -59,7 +61,17 @@ export const createNote = async (
 export const renameNote = async (wsPath: WsPath, newWsPath: WsPath) => {
   const store = getStore();
 
-  const { openedWsPaths } = nsmSliceWorkspace.resolveState(store.state);
+  const { openedWsPaths, noteWsPaths } = nsmSliceWorkspace.resolveState(
+    store.state,
+  );
+
+  if (noteWsPaths?.includes(newWsPath)) {
+    throw new BaseError({
+      message: `Cannot rename. Note "${
+        resolvePath2(newWsPath).fileName
+      }" already exists.`,
+    });
+  }
 
   store.dispatch(closeIfFound(store.state, wsPath));
 

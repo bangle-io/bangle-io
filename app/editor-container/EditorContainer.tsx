@@ -15,7 +15,7 @@ import {
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import type { EditorIdType } from '@bangle.io/shared-types';
+import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
 import {
   toggleEditing,
   useNsmEditorManagerState,
@@ -40,7 +40,7 @@ export function EditorContainer({
 }: {
   widescreen: boolean;
   editorId: EditorIdType;
-  wsPath: string | undefined;
+  wsPath: WsPath | undefined;
 }) {
   const bangleStore = useBangleStoreContext();
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
@@ -153,7 +153,7 @@ export function EditorContainer({
   );
 }
 
-function useEditorIssue(wsPath: string | undefined) {
+function useEditorIssue(wsPath: WsPath | undefined) {
   const [, uiDispatch] = useNsmSlice(nsmUISlice);
   const { editorIssues } = useNsmSliceState(
     nsmNotification.nsmNotificationSlice,
@@ -194,8 +194,8 @@ function useEditorIssue(wsPath: string | undefined) {
  * @param {*} incomingWsPath
  * @returns
  */
-function useHandleWsPath(incomingWsPath?: string) {
-  const [wsPath, updateWsPath] = useState<string | undefined>(undefined);
+function useHandleWsPath(incomingWsPath?: WsPath) {
+  const [wsPath, updateWsPath] = useState<WsPath | undefined>(undefined);
   const [noteExists, updateFileExists] = useState<
     'LOADING' | 'FOUND' | 'NOT_FOUND' | 'NO_WS_PATH'
   >(incomingWsPath ? 'LOADING' : 'NO_WS_PATH');

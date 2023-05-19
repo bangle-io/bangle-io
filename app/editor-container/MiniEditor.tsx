@@ -5,6 +5,7 @@ import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { WsPath } from '@bangle.io/shared-types';
 import {
   ArrowsExpand,
   Button,
@@ -14,7 +15,7 @@ import {
 } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
-export function MiniEditor({ wsPath }: { wsPath: string }) {
+export function MiniEditor({ wsPath }: { wsPath: WsPath }) {
   const { fileNameWithoutExt } = resolvePath(wsPath, true);
   const extensionRegistry = useExtensionRegistryContext();
   const bangleStore = useBangleStoreContext();

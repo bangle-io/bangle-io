@@ -3,7 +3,7 @@ import type { EditorView } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { z } from '@bangle.io/nsm';
-import type { EditorIdType } from '@bangle.io/shared-types';
+import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
 import {
   getEditorPluginMetadata,
   getScrollParentElement,
@@ -23,7 +23,7 @@ export const calculateSelection = (
   editorId: EditorIdType,
   editor: BangleEditor,
 ): {
-  wsPath: string;
+  wsPath: WsPath;
   editorId: EditorIdType;
   selectionJson: SelectionJson;
 } => {

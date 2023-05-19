@@ -1,30 +1,51 @@
 import type {
   ExtensionRegistry,
+  Node,
   WsName,
   WsPath,
 } from '@bangle.io/shared-types';
-import * as fs from '@bangle.io/workspace-info';
-import { createWsPath, resolvePath, resolvePath2 } from '@bangle.io/ws-path';
+import { fs } from '@bangle.io/workspace-info';
+import { resolvePath2 } from '@bangle.io/ws-path';
 
+import { defaultDoc } from './default-doc';
 import { markdownFormatProvider } from './note-format';
+
+export async function createNote(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+  doc?: Node,
+) {
+  const { wsName, fileName } = resolvePath2(wsPath);
+
+  if (doc == null) {
+    doc = defaultDoc(wsPath, extensionRegistry);
+  }
+
+  const serialValue = getNoteFormatProvider(wsName).serializeNote(
+    doc,
+    extensionRegistry.specRegistry,
+    fileName,
+  );
+
+  await fs.writeFile(
+    wsPath,
+    new File([serialValue], fileName, {
+      type: 'text/plain',
+    }),
+  );
+}
 
 export async function getNote(
   wsPath: WsPath,
   extensionRegistry: ExtensionRegistry,
 ) {
-  const wsName = resolvePath2(wsPath).wsName;
-
-  const info = await fs.readWorkspaceInfo(wsName);
-
-  if (!info) {
-    throw new Error(`Workspace ${wsName} not found`);
-  }
-
-  const textContent = await fs.readFileAsText(wsPath, info.type);
+  const textContent = await fs.readFileAsText(wsPath);
 
   if (!textContent) {
     return undefined;
   }
+  const { wsName } = resolvePath2(wsPath);
+
   const doc = getNoteFormatProvider(wsName).parseNote(
     textContent,
     extensionRegistry.specRegistry,
@@ -32,33 +53,6 @@ export async function getNote(
   );
 
   return doc;
-}
-
-export async function deleteNote(wsPath: WsPath) {
-  const wsName = resolvePath(wsPath).wsName;
-
-  const info = await fs.readWorkspaceInfo(wsName);
-
-  if (!info) {
-    throw new Error(`Workspace ${wsName} not found`);
-  }
-
-  await fs.deleteFile(wsPath, info?.type);
-}
-
-export async function listFiles(
-  wsName: WsName,
-  abortSignal: AbortSignal = new AbortController().signal,
-): Promise<WsPath[]> {
-  const info = await fs.readWorkspaceInfo(wsName);
-
-  if (!info) {
-    throw new Error(`Workspace ${wsName} not found`);
-  }
-
-  let result = await fs.listAllFiles(abortSignal, wsName, info?.type);
-
-  return result.map((w) => createWsPath(w));
 }
 
 function getNoteFormatProvider(wsName: WsName) {

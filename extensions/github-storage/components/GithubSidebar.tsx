@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  notification,
+  nsmApi2,
   useBangleStoreContext,
   useSerialOperationContext,
   useSliceState,
@@ -105,12 +105,12 @@ function ModifiedEntries({
         <Button
           className="w-full"
           onPress={() => {
-            notification.showNotification({
+            nsmApi2.ui.showNotification({
               title: 'Starting sync',
               severity: SEVERITY.INFO,
               uid: 'starting-sync' + Date.now(),
               transient: true,
-            })(store.state, store.dispatch);
+            });
 
             dispatchSerialOperation({ name: OPERATION_SYNC_GITHUB_CHANGES });
           }}

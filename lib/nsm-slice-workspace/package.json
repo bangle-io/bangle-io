@@ -22,7 +22,9 @@
     "access": "public"
   },
   "dependencies": {
+    "@bangle.dev/pm": "0.31.6",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm": "workspace:*",

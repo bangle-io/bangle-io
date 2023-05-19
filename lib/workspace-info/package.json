@@ -26,11 +26,13 @@
   },
   "dependencies": {
     "@bangle.io/baby-fs": "workspace:*",
+    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/db-app": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/storage": "workspace:*",
-    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   },
   "license": "AGPL-3.0-or-later"
 }

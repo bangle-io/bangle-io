@@ -21,6 +21,7 @@ import {
 } from '@bangle.io/slice-page';
 import { sliceRefreshWorkspace } from '@bangle.io/slice-refresh-workspace';
 import { weakCache } from '@bangle.io/utils';
+import { fs } from '@bangle.io/workspace-info';
 import {
   createWsName,
   isValidNoteWsPath,
@@ -28,7 +29,6 @@ import {
   resolvePath2,
 } from '@bangle.io/ws-path';
 
-import { listFiles } from './file-ops';
 import { validateOpenedWsPaths } from './helpers';
 
 type WorkspaceData = {
@@ -185,6 +185,13 @@ export const nsmSliceWorkspace = createSliceWithSelectors(SLICE_DEPS, {
       (computed): WsPath | undefined => computed.primaryWsPath,
     ),
 
+    miniWsPath: createSelector(
+      {
+        miniWsPath: selectMiniWsPath,
+      },
+      (computed): WsPath | undefined => computed.miniWsPath,
+    ),
+
     openedWsPaths: createSelector(
       {
         primaryWsPath: selectPrimaryWsPath,
@@ -240,7 +247,7 @@ Slice.registerEffectSlice(nsmSliceWorkspace, [
       ref.controller = controller;
 
       if (wsName) {
-        listFiles(wsName, controller.signal).then((items) => {
+        fs.listFiles(wsName, controller.signal).then((items) => {
           dispatch(setWsPaths({ wsPaths: items, wsName }));
         });
       }
@@ -375,7 +382,7 @@ export const pushOpenedWsPaths = createMetaAction(
 
     // If primary or secondary are changing let the update happen via the  history
     // so that we can record the changes in browser history. Any other wsPaths in
-    // openedWsPaths donot need to be recorded in history, so update them directly.
+    // openedWsPaths do not need to be recorded in history, so update them directly.
     if (
       openedWsPaths.primaryWsPath !== newOpened.primaryWsPath ||
       openedWsPaths.secondaryWsPath !== newOpened.secondaryWsPath

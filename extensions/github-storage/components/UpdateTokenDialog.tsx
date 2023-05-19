@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import {
-  notification,
+  nsmApi2,
   ui,
   useBangleStoreContext,
   useSliceState,
@@ -66,10 +66,10 @@ export function UpdateTokenDialog() {
         updateGithubToken(githubWsName, inputToken),
       );
 
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         title: 'Github token updated',
         uid: 'github-token-updated' + Date.now(),
-      })(bangleStore.state, bangleStore.dispatch);
+      });
 
       dismiss();
     } catch (e) {

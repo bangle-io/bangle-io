@@ -3612,6 +3612,7 @@ __metadata:
     "@bangle.dev/pm": 0.31.6
     "@bangle.dev/test-helpers": 0.31.6
     "@bangle.dev/utils": 0.31.6
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -3905,6 +3906,7 @@ __metadata:
   resolution: "@bangle.io/workspace-info@workspace:lib/workspace-info"
   dependencies:
     "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/db-app": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

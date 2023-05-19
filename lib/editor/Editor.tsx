@@ -31,6 +31,7 @@ import type {
   EditorPluginMetadata,
   ExtensionRegistry,
   NsmStore,
+  WsPath,
 } from '@bangle.io/shared-types';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
@@ -55,7 +56,7 @@ export interface EditorProps {
   editorDisplayType?: EditorDisplayType;
   editorId: EditorIdType;
   extensionRegistry: ExtensionRegistry;
-  wsPath: string;
+  wsPath: WsPath;
 }
 
 export function Editor(props: EditorProps) {
@@ -205,7 +206,7 @@ function EditorInner2({
   initialValue: any;
   initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
-  wsPath: string;
+  wsPath: WsPath;
   bangleStore: BangleApplicationStore;
 }) {
   const editorState = useGetEditorState({
@@ -277,7 +278,7 @@ export function useGetEditorState({
   extensionRegistry: ExtensionRegistry;
   initialSelection: Selection | undefined;
   initialValue: any;
-  wsPath: string;
+  wsPath: WsPath;
   bangleStore: BangleApplicationStore;
 }) {
   // TODO decouple pluginMetadata, this should be provided as a prop

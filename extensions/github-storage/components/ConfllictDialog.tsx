@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { notification, ui, useSliceState } from '@bangle.io/api';
+import { nsmApi2, ui, useSliceState } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { Dialog } from '@bangle.io/ui-components';
@@ -23,16 +23,12 @@ export function ConflictDialog() {
     if (conflictedWsPaths.length === 0) {
       dismiss();
 
-      notification.notificationSliceKey.callOp(
-        bangleStore.state,
-        bangleStore.dispatch,
-        notification.showNotification({
-          title: 'No Github conflicts',
-          severity: SEVERITY.INFO,
-          uid: 'gh-conflict' + Date.now(),
-          transient: true,
-        }),
-      );
+      nsmApi2.ui.showNotification({
+        title: 'No Github conflicts',
+        severity: SEVERITY.INFO,
+        uid: 'gh-conflict' + Date.now(),
+        transient: true,
+      });
     }
   }, [conflictedWsPaths, dismiss, bangleStore]);
 

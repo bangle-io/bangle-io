@@ -4,7 +4,6 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
-import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
@@ -35,7 +34,6 @@ export function naukarSlices({
     pageSlice(),
     workspaceSlice(),
     workerEditorSlice(),
-    notificationSlice(),
     // TODO: write why this is disabled
     disableSideEffect(editorSyncSlice()),
     workspaceOpenedDocInfoSlice(),

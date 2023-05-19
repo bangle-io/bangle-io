@@ -89,10 +89,11 @@ export function resolvePath(wsPath: string, skipValidation = false) {
 export function resolvePath2(wsPath: WsPath): {
   wsName: WsName;
   fileName: string;
+  filePath: string;
 } {
-  const { wsName, fileName } = resolvePath(wsPath, true);
+  const { wsName, fileName, filePath } = resolvePath(wsPath, true);
 
-  return { wsName: createWsName(wsName), fileName };
+  return { wsName: createWsName(wsName), fileName, filePath };
 }
 
 export class PathValidationError extends BaseError {}

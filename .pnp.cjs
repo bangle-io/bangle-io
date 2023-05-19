@@ -7621,6 +7621,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.31.6"],\
             ["@bangle.dev/test-helpers", "npm:0.31.6"],\
             ["@bangle.dev/utils", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
@@ -7940,6 +7941,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/db-app", "workspace:lib/db-app"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\

@@ -1,4 +1,5 @@
-export * from './files';
+export * as fs from './files';
+export { registerStorageProvider } from './storage-providers';
 export {
   compareWorkspaceInfo,
   helpFSWorkspaceInfo,

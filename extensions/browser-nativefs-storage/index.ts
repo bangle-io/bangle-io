@@ -1,4 +1,4 @@
-import { Extension, notification, workspace } from '@bangle.io/api';
+import { Extension, nsmApi2, workspace } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   SEVERITY,
@@ -39,7 +39,8 @@ const extension = Extension.create({
         error.name === BaseFileSystemError.name
       ) {
         console.debug(error.code, error.name, error.stack);
-        notification.showNotification({
+
+        nsmApi2.ui.showNotification({
           severity: SEVERITY.ERROR,
           title: 'File system error',
           content: error.message,
@@ -51,7 +52,7 @@ const extension = Extension.create({
               operation: CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
             },
           ],
-        })(store.state, store.dispatch);
+        });
 
         return true;
       }

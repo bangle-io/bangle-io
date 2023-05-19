@@ -2,6 +2,7 @@ import { BangleEditor, BangleEditorState } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import { valuePlugin } from '@bangle.dev/utils';
 
+import { getNewStore } from '@bangle.io/api';
 import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType, PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
@@ -11,6 +12,7 @@ import type {
 } from '@bangle.io/extension-registry';
 import { markdownParser } from '@bangle.io/markdown';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
+import { createWsPath } from '@bangle.io/ws-path';
 
 import { createExtensionRegistry } from './extension-registry';
 
@@ -57,11 +59,13 @@ export function createEditorFromMd(
       specRegistry: registry.specRegistry,
       plugins: () => [
         valuePlugin(EditorPluginMetadataKey, {
-          wsPath: 'test:my-test.md',
+          wsPath: createWsPath('test:my-test.md'),
           editorDisplayType: EditorDisplayType.Page,
           editorId: PRIMARY_EDITOR_INDEX,
           bangleStore: initialBangleStore,
           dispatchSerialOperation: () => {},
+          nsmStore: getNewStore(initialBangleStore),
+          createdAt: Date.now(),
           ...pluginMetadata,
         }),
         ...registry.getPlugins(),
@@ -108,11 +112,13 @@ export function createEditorFromNode(
       specRegistry: registry.specRegistry,
       plugins: () => [
         valuePlugin(EditorPluginMetadataKey, {
-          wsPath: 'test:my-test.md',
+          wsPath: createWsPath('test:my-test.md'),
           editorDisplayType: EditorDisplayType.Page,
           editorId: PRIMARY_EDITOR_INDEX,
           bangleStore: initialBangleStore,
           dispatchSerialOperation: () => {},
+          createdAt: Date.now(),
+          nsmStore: getNewStore(initialBangleStore),
           ...pluginMetadata,
         }),
         ...registry.getPlugins(),
