@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Node } from '@bangle.dev/pm';
 
-import { nsmApi, useNsmPlainStore, useNsmSliceState } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
+import type { WsPath } from '@bangle.io/shared-types';
 import { isAbortError } from '@bangle.io/utils';
 
 const FZF_SEARCH_LIMIT = 16;
@@ -23,8 +24,8 @@ export function _listTags(doc: Node) {
  * List tags across all wsPaths
  */
 export async function listAllTags(
-  wsPaths: string[],
-  getDoc: (wsPath: string) => Promise<Node | undefined>,
+  wsPaths: WsPath[],
+  getDoc: (wsPath: WsPath) => Promise<Node | undefined>,
   signal?: AbortSignal,
 ): Promise<string[]> {
   let destroyed = false;
@@ -51,7 +52,9 @@ export async function listAllTags(
     }
     if (doc) {
       const tagSet = _listTags(doc);
-      tagSet.forEach((t) => result.add(t));
+      tagSet.forEach((t) => {
+        result.add(t);
+      });
     }
   }
 
@@ -59,21 +62,15 @@ export async function listAllTags(
 }
 
 export function useSearchAllTags(query: string, isVisible: boolean): string[] {
-  const { noteWsPaths = [] } = useNsmSliceState(
-    nsmApi.workspace.nsmSliceWorkspace,
-  );
+  const { noteWsPaths = [] } = nsmApi2.workspace.useWorkspace();
   const [allTags, setAllTags] = useState<string[]>([]);
-  const nsmStore = useNsmPlainStore();
 
-  const getNoteForTags = useCallback(
-    (wsPath: string) => {
-      return nsmApi.workspace.getNote(nsmStore, wsPath).catch((error) => {
-        // Ignore errors as this is not a great place to handle errors
-        return undefined;
-      });
-    },
-    [nsmStore],
-  );
+  const getNoteForTags = useCallback((wsPath: WsPath) => {
+    return nsmApi2.workspace.getNote(wsPath).catch((error) => {
+      // Ignore errors as this is not a great place to handle errors
+      return undefined;
+    });
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();

@@ -3,6 +3,7 @@ import React from 'react';
 import { vars } from '@bangle.io/api';
 import { PopupEditor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { WsPath } from '@bangle.io/shared-types';
 
 export const LinkPreview = React.forwardRef<
   HTMLDivElement,
@@ -12,7 +13,7 @@ export const LinkPreview = React.forwardRef<
       typeof PopupEditor
     >[0]['popupContainerProps']['positionProps'];
     style?: React.CSSProperties;
-    wsPath: string;
+    wsPath: WsPath;
   }
 >(({ positionProps, wsPath, style }, ref) => {
   const extensionRegistry = useExtensionRegistryContext();

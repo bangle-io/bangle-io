@@ -2,8 +2,10 @@ import type { EditorState } from '@bangle.dev/pm';
 import { findChildrenByType } from '@bangle.dev/utils';
 import { wikiLink } from '@bangle.dev/wiki-link';
 
+import type { WsPath } from '@bangle.io/shared-types';
 import { weakCache, weakCacheDuo } from '@bangle.io/utils';
 import {
+  createWsPath,
   getExtension,
   removeExtension,
   resolvePath,
@@ -23,7 +25,7 @@ export const getAllWikiLinks = weakCache((state: EditorState): string[] => {
   return result;
 });
 
-const processWsPaths = weakCache((allWsPaths: string[]) => {
+const processWsPaths = weakCache((allWsPaths: WsPath[]) => {
   allWsPaths = [...allWsPaths];
 
   const wsPathSet = new Set(allWsPaths);
@@ -71,12 +73,12 @@ const processWsPaths = weakCache((allWsPaths: string[]) => {
  * @returns
  */
 export const calcWikiLinkMapping = weakCacheDuo(
-  (noteWsPaths: string[], wikiLinks: string[]): Map<string, string> => {
-    let result = new Map<string, string>();
+  (noteWsPaths: WsPath[], wikiLinks: string[]): Map<string, WsPath> => {
+    let result = new Map<string, WsPath>();
     const matchWithFileName = (
-      wsPath: string,
+      wsPath: WsPath,
       wikiLink: string,
-    ): string | undefined => {
+    ): WsPath | undefined => {
       const wikiLinkExtension = getExtension(wikiLink);
 
       const { fileName, fileNameWithoutExt } = resolvePath(wsPath, true);
@@ -115,7 +117,7 @@ export const calcWikiLinkMapping = weakCacheDuo(
         const wikiLinkWithoutExt = removeExtension(wikiLink);
 
         if (processedAllWsPaths.filePathsWithoutExt.has(wikiLinkWithoutExt)) {
-          let matchingWsPath: string | undefined;
+          let matchingWsPath: WsPath | undefined;
 
           if (wikiLinkExtension) {
             matchingWsPath = processedAllWsPaths.sortedByNesting.find((w) => {
@@ -149,8 +151,8 @@ export const calcWikiLinkMapping = weakCacheDuo(
         // for cases where file name has a dot example bangle.io.md
         processedAllWsPaths.lowerCaseFileNameWithoutExt.has(lowerCaseWikiLink)
       ) {
-        let exactMatch: string | undefined;
-        let caseInsensitiveMatch: string | undefined;
+        let exactMatch: WsPath | undefined;
+        let caseInsensitiveMatch: WsPath | undefined;
 
         // we prefer the least nested wsPath in case of multiple matches
         for (const wsPath of processedAllWsPaths.sortedByNesting) {
@@ -166,7 +168,10 @@ export const calcWikiLinkMapping = weakCacheDuo(
           // the loop, just in case there is an exact match later
           if (
             !caseInsensitiveMatch &&
-            matchWithFileName(wsPath.toLocaleLowerCase(), lowerCaseWikiLink)
+            matchWithFileName(
+              createWsPath(wsPath.toLocaleLowerCase()),
+              lowerCaseWikiLink,
+            )
           ) {
             caseInsensitiveMatch = wsPath;
           }

@@ -65,8 +65,11 @@ const extension = Extension.create({
         ReactComponent: GithubSidebar,
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
-        activitybarIconShow(wsName, state) {
-          return Boolean(ghSliceKey.getSliceState(state)?.githubWsName);
+        activitybarIconShow(wsName) {
+          // TODO fix this
+
+          // return Boolean(ghSliceKey.getSliceState(state)?.githubWsName);
+          return false;
         },
       },
     ],

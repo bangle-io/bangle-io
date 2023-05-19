@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { Extension } from '@bangle.io/extension-registry';
-import { changeSidebar } from '@bangle.io/slice-ui';
 import { FolderIcon } from '@bangle.io/ui-components';
 import { keyDisplayValue } from '@bangle.io/utils';
 
@@ -44,9 +44,8 @@ const extension = Extension.create({
         handle(operation, _, bangleStore) {
           switch (operation.name) {
             case 'operation::@bangle.io/note-browser:toggle-note-browser': {
-              changeSidebar('sidebar::@bangle.io/note-browser:note-browser')(
-                bangleStore.state,
-                bangleStore.dispatch,
+              nsmApi2.ui.changeSidebar(
+                'sidebar::@bangle.io/note-browser:note-browser',
               );
 
               return true;

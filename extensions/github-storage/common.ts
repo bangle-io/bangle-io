@@ -1,5 +1,5 @@
 import type { BangleApplicationStore } from '@bangle.io/api';
-import { notification, SliceKey } from '@bangle.io/api';
+import { nsmApi2, SliceKey } from '@bangle.io/api';
 import type { Severity } from '@bangle.io/constants';
 import { SEVERITY, WorkspaceType } from '@bangle.io/constants';
 import { acquireLockIfAvailable, isMobile } from '@bangle.io/utils';
@@ -109,21 +109,12 @@ export async function getGithubSyncLockWrapper<
 
 export const getSyncInterval = () => (isMobile ? 15 * 1000 : 1000 * 60);
 
-export function notify(
-  store: BangleApplicationStore,
-  title: string,
-  severity: Severity,
-  content?: string,
-) {
-  return notification.notificationSliceKey.callOp(
-    store.state,
-    store.dispatch,
-    notification.showNotification({
-      severity,
-      title,
-      uid: 'sync notification-' + Math.random(),
-      transient: severity !== SEVERITY.ERROR,
-      content,
-    }),
-  );
+export function notify(title: string, severity: Severity, content?: string) {
+  return nsmApi2.ui.showNotification({
+    severity,
+    title,
+    uid: 'sync notification-' + Math.random(),
+    transient: severity !== SEVERITY.ERROR,
+    content,
+  });
 }

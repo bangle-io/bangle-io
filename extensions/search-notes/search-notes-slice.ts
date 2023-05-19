@@ -1,216 +1,145 @@
-import { search } from '@bangle.dev/search';
-
-import { getNewStore, Slice, workspace } from '@bangle.io/api';
-import { forEachEditor } from '@bangle.io/slice-editor-manager';
-import { assertActionName, isAbortError } from '@bangle.io/utils';
+import { changeEffect, createSliceV2, nsmApi2, NsmSlice } from '@bangle.io/api';
+import { isAbortError } from '@bangle.io/utils';
 
 import type { SearchNotesExtensionState } from './constants';
-import {
-  extensionName,
-  searchNotesSliceKey,
-  searchPluginKey,
-} from './constants';
 import { searchNotes } from './search-notes';
 
-export function searchNotesSlice() {
-  assertActionName(extensionName, searchNotesSliceKey);
+const initState: SearchNotesExtensionState = {
+  searchQuery: '',
+  externalInputChange: 0,
+  pendingSearch: false,
+  searchResults: null,
+};
 
-  return new Slice({
-    key: searchNotesSliceKey,
-    state: {
-      init() {
-        return {
-          searchQuery: '',
-          externalInputChange: 0,
-          pendingSearch: false,
-          searchResults: null,
-        };
-      },
-      apply(action, state) {
-        switch (action.name) {
-          case 'action::@bangle.io/search-notes:input-search-query': {
-            return {
-              ...state,
-              searchQuery: action.value.query,
-            };
-          }
-          case 'action::@bangle.io/search-notes:external-search-query-update': {
-            return {
-              ...state,
-              searchQuery: action.value.query,
-              externalInputChange: state.externalInputChange + 1,
-            };
-          }
-          case 'action::@bangle.io/search-notes:update-state': {
-            return {
-              ...state,
-              ...action.value,
-            };
-          }
-          default: {
-            return state;
-          }
-        }
-      },
+export const SLICE_NAME = 'slice::search-notes:main';
+
+export const searchSlice = createSliceV2([], {
+  name: SLICE_NAME,
+  initState,
+});
+
+export const updateSearchQuery = searchSlice.createAction(
+  'updateSearchQuery',
+  (data: { query: string }) => {
+    return (state) => {
+      return {
+        ...state,
+        searchQuery: data.query,
+      };
+    };
+  },
+);
+
+export const updateExternalSearchQuery = searchSlice.createAction(
+  'updateExternalSearchQuery',
+  (query: string) => {
+    return (state): SearchNotesExtensionState => {
+      return {
+        ...state,
+        searchQuery: query,
+        externalInputChange: state.externalInputChange + 1,
+      };
+    };
+  },
+);
+
+export const updateSliceState = searchSlice.createAction(
+  'updateSliceState',
+  (data: Omit<Partial<SearchNotesExtensionState>, 'searchQuery'>) => {
+    return (state): SearchNotesExtensionState => {
+      return {
+        ...state,
+        ...data,
+      };
+    };
+  },
+);
+
+NsmSlice.registerEffectSlice(searchSlice, [
+  changeEffect(
+    'wsNameEffect',
+    {
+      wsName: nsmApi2.workspace.pick((s) => s.wsName),
+      // need passive pick to get correct dispatch typing
+      searchResults: searchSlice.passivePick((s) => s.searchResults),
     },
-    sideEffect: [wsNameEffect, searchEffect, highlightEditorsEffect],
-  });
-}
-const wsNameEffect = searchNotesSliceKey.effect(() => {
-  return {
-    deferredUpdate(store, prevState) {
-      if (
-        workspace.workspaceSliceKey.valueChanged(
-          'wsName',
-          store.state,
-          prevState,
-        )
-      ) {
+    ({ wsName }, dispatch) => {
+      dispatch(
         updateSliceState({
           searchResults: null,
           pendingSearch: false,
-        })(store.state, store.dispatch);
-      }
+        }),
+      );
     },
-  };
-});
+  ),
 
-const searchEffect = searchNotesSliceKey.effect(() => {
-  let controller = new AbortController();
-
-  return {
-    deferredUpdate(store, prevState) {
-      const searchQuery = searchNotesSliceKey.getValueIfChanged(
-        'searchQuery',
-        store.state,
-        prevState,
-      );
-
-      if (searchQuery == null) {
-        return;
-      }
-
-      const wsName = workspace.workspaceSliceKey.callOp(
-        store.state,
-        store.dispatch,
-        workspace.getWsName(),
-      );
+  changeEffect(
+    'searchEffect',
+    {
+      searchQuery: searchSlice.pick((s) => s.searchQuery),
+      wsName: nsmApi2.workspace.pick((s) => s.wsName),
+    },
+    (
+      { wsName, searchQuery },
+      dispatch,
+      ref: {
+        controller?: AbortController;
+      },
+    ) => {
+      ref.controller?.abort();
 
       if (!wsName) {
         return;
       }
 
-      controller?.abort();
-      controller = new AbortController();
-
       if (searchQuery === '') {
-        updateSliceState({
-          searchResults: null,
-          pendingSearch: false,
-        })(store.state, store.dispatch);
+        dispatch(
+          updateSliceState({ searchResults: null, pendingSearch: false }),
+        );
 
         return;
       }
 
-      updateSliceState({ searchResults: null, pendingSearch: true })(
-        store.state,
-        store.dispatch,
-      );
+      dispatch(updateSliceState({ searchResults: null, pendingSearch: true }));
+
+      let controller = new AbortController();
+      ref.controller = controller;
 
       searchNotes(controller.signal, searchQuery, wsName)
         .then((result) => {
-          // make sure it is the same workspace name
-          if (
-            !controller.signal.aborted &&
-            wsName ===
-              workspace.workspaceSliceKey.callOp(
-                store.state,
-                store.dispatch,
-                workspace.getWsName(),
-              )
-          ) {
-            updateSliceState({ searchResults: result, pendingSearch: false })(
-              store.state,
-              store.dispatch,
+          if (!controller.signal.aborted) {
+            dispatch(
+              updateSliceState({ searchResults: result, pendingSearch: false }),
             );
+          } else {
+            console.warn('Search aborted', result);
           }
         })
         .catch((error) => {
           if (isAbortError(error)) {
             return;
           }
-
-          updateSliceState({ pendingSearch: false })(
-            store.state,
-            store.dispatch,
-          );
+          dispatch(updateSliceState({ pendingSearch: false }));
 
           throw error;
         });
     },
-  };
-});
+  ),
 
-/**
- * Highlights open editors based on the current search query
- */
-const highlightEditorsEffect = searchNotesSliceKey.effect(() => {
-  return {
-    deferredUpdate(store, prevState) {
-      const nsmStore = getNewStore(store);
-      const searchQuery = searchNotesSliceKey.getValueIfChanged(
-        'searchQuery',
-        store.state,
-        prevState,
-      );
-
-      if (searchQuery == null) {
+  changeEffect(
+    'highlightEditorsEffect',
+    {
+      searchQuery: searchSlice.pick((s) => s.searchQuery),
+    },
+    ({ searchQuery }) => {
+      if (!searchQuery) {
         return;
       }
+      const queryRegex = searchQuery
+        ? new RegExp(searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'), 'i')
+        : undefined;
 
-      forEachEditor(nsmStore.state, (editor) => {
-        if (!editor?.destroyed) {
-          const queryRegex = searchQuery
-            ? new RegExp(
-                searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'),
-                'i',
-              )
-            : undefined;
-          search.updateSearchQuery(searchPluginKey, queryRegex)(
-            editor.view.state,
-            editor.view.dispatch,
-          );
-        }
-      });
+      nsmApi2.editor.updateEditorSearchQuery(queryRegex);
     },
-  };
-});
-
-export function updateInputSearchQuery(query: string) {
-  return searchNotesSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/search-notes:input-search-query',
-      value: { query },
-    });
-  });
-}
-
-export function externalUpdateInputSearchQuery(query: string) {
-  return searchNotesSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/search-notes:external-search-query-update',
-      value: { query },
-    });
-  });
-}
-
-export function updateSliceState(
-  val: Omit<Partial<SearchNotesExtensionState>, 'searchQuery'>,
-) {
-  return searchNotesSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/search-notes:update-state',
-      value: val,
-    });
-  });
-}
+  ),
+]);

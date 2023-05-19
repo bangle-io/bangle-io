@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 import type { EditorState } from '@bangle.dev/pm';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { EditorDisplayType } from '@bangle.io/constants';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
-import {
-  updateOpenedWsPaths,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import type { WsPath } from '@bangle.io/shared-types';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-components';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 
@@ -30,7 +28,7 @@ export function BacklinkNode({
   const { wsPath: currentWsPath, editorDisplayType } =
     getEditorPluginMetadata(editorState);
 
-  const { wsName, noteWsPaths, bangleStore } = useWorkspaceContext();
+  const { wsName, noteWsPaths } = nsmApi2.workspace.useWorkspace();
 
   let { path: wikiLink, title } = nodeAttrs;
   title = title || wikiLink;
@@ -41,7 +39,7 @@ export function BacklinkNode({
     editorState,
   });
 
-  const [backlinksWsPath, updateBacklinksWsPath] = useState<string | undefined>(
+  const [backlinksWsPath, updateBacklinksWsPath] = useState<WsPath | undefined>(
     undefined,
   );
 
@@ -84,14 +82,14 @@ export function BacklinkNode({
 
     if (targetWsPath && isTooltipVisible) {
       didSet = true;
-      updateOpenedWsPaths((openedWsPaths) => {
+      nsmApi2.workspace.pushOpenedWsPath((openedWsPaths) => {
         return openedWsPaths.updatePopupEditorWsPath(targetWsPath);
-      })(bangleStore.state, bangleStore.dispatch);
+      });
     }
 
     return () => {
       if (didSet) {
-        updateOpenedWsPaths((openedWsPaths) => {
+        nsmApi2.workspace.pushOpenedWsPath((openedWsPaths) => {
           // make sure we are unsetting the correct wsPath
           if (
             targetWsPath &&
@@ -101,10 +99,10 @@ export function BacklinkNode({
           }
 
           return openedWsPaths;
-        })(bangleStore.state, bangleStore.dispatch);
+        });
       }
     };
-  }, [backlinksWsPath, isTooltipVisible, bangleStore]);
+  }, [backlinksWsPath, isTooltipVisible]);
 
   return (
     <>

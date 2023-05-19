@@ -2,12 +2,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { NodeSelection, Selection } from '@bangle.dev/pm';
 
-import { useNsmSlice } from '@bangle.io/bangle-store-context';
+import { nsmApi2, resolvePath } from '@bangle.io/api';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
-import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
-import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -15,7 +12,6 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import { cx, safeRequestAnimationFrame, usePrevious } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
 
 import { HighlightText } from './HighlightText';
 
@@ -77,12 +73,10 @@ export function SearchResults({
     results,
     collapseAllCounter,
   );
-  const [{ primaryEditor }] = useNsmSlice(nsmEditorManagerSlice);
 
-  const {
-    openedWsPaths: { primaryWsPath },
-  } = useWorkspaceContext();
-  const { widescreen, bangleStore } = useUIManagerContext();
+  const { widescreen } = nsmApi2.ui.useUi();
+  const { primaryWsPath } = nsmApi2.workspace.useWorkspace();
+
   const [currentlyClicked, updateCurrentlyClicked] = useState<null | {
     wsPath: string;
     match: SearchMatch;
@@ -96,7 +90,7 @@ export function SearchResults({
       // TODO this is a mess, we need a better api to know when the editor is ready
       setTimeout(() => {
         safeRequestAnimationFrame(() => {
-          const editor = primaryEditor;
+          const editor = nsmApi2.editor.getPrimaryEditor();
 
           if (cancelled || !editor || editor.destroyed) {
             return;
@@ -154,7 +148,7 @@ export function SearchResults({
     return () => {
       cancelled = true;
     };
-  }, [currentlyClicked, primaryWsPath, primaryEditor]);
+  }, [currentlyClicked, primaryWsPath]);
 
   // cannot used currently clicked because it gets set to null
   // right after focusing
@@ -216,13 +210,12 @@ export function SearchResults({
                         : '',
                     )}
                     onClick={() => {
+                      const primaryEditor = nsmApi2.editor.getPrimaryEditor();
+
                       // if not in a widescreen close the sidebar
                       // after click
                       if (!widescreen) {
-                        changeSidebar(null)(
-                          bangleStore.state,
-                          bangleStore.dispatch,
-                        );
+                        nsmApi2.ui.closeSidebar();
                       } else if (primaryEditor && !primaryEditor.destroyed) {
                         updateCurrentlyClicked({
                           wsPath: r.uid,

@@ -1,4 +1,4 @@
-import { notification, workspace } from '@bangle.io/api';
+import { nsmApi2, workspace } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
 import {
@@ -53,7 +53,7 @@ export function syncRunner(
     const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
 
     if (githubWsName !== wsName) {
-      notify(store, 'Not a Github workspace', SEVERITY.WARNING);
+      notify('Not a Github workspace', SEVERITY.WARNING);
 
       return false;
     }
@@ -65,8 +65,7 @@ export function syncRunner(
     }
 
     if (ghSliceKey.getSliceStateAsserted(store.state).isSyncing) {
-      notifyVerbose &&
-        notify(store, 'Github sync already in progress', SEVERITY.INFO);
+      notifyVerbose && notify('Github sync already in progress', SEVERITY.INFO);
 
       return false;
     }
@@ -90,7 +89,7 @@ export function syncRunner(
 
       if (!lockAcquired) {
         notifyVerbose &&
-          notify(store, 'Github sync already in progress', SEVERITY.INFO);
+          notify('Github sync already in progress', SEVERITY.INFO);
 
         console.warn('Github sync: lock not acquired');
 
@@ -102,32 +101,27 @@ export function syncRunner(
         result.status === 'merge-conflict' &&
         notifyVerbose
       ) {
-        notification.notificationSliceKey.callOp(
-          store.state,
-          store.dispatch,
-          notification.showNotification({
-            severity: SEVERITY.ERROR,
-            title: 'Github sync failed',
-            uid: 'sync notification-' + Math.random(),
-            content:
-              'Syncing failed due to merge conflicts. Please resolve the issues and try again.',
-            transient: false,
-            buttons: [
-              {
-                operation: OPERATION_SHOW_CONFLICT_DIALOG,
-                title: 'Resolve Conflicts',
-                dismissOnClick: true,
-              },
-            ],
-          }),
-        );
+        nsmApi2.ui.showNotification({
+          severity: SEVERITY.ERROR,
+          title: 'Github sync failed',
+          uid: 'sync notification-' + Math.random(),
+          content:
+            'Syncing failed due to merge conflicts. Please resolve the issues and try again.',
+          transient: false,
+          buttons: [
+            {
+              operation: OPERATION_SHOW_CONFLICT_DIALOG,
+              title: 'Resolve Conflicts',
+              dismissOnClick: true,
+            },
+          ],
+        });
       }
 
       return result;
     } catch (error) {
       console.error(error);
       notify(
-        store,
         'Github sync failed',
         SEVERITY.ERROR,
         error instanceof Error ? error.message : 'Unknown error',
@@ -184,12 +178,10 @@ export function syncRunner(
 
       if (typeof changeCount === 'number') {
         if (changeCount === 0) {
-          notifyVerbose &&
-            notify(store, 'Github sync completed', SEVERITY.INFO);
+          notifyVerbose && notify('Github sync completed', SEVERITY.INFO);
         }
         if (changeCount > 0) {
           notify(
-            store,
             'Github sync completed',
             SEVERITY.INFO,
             `Synced ${changeCount} file${changeCount === 1 ? '' : 's'}`,
@@ -217,7 +209,6 @@ export function discardLocalChanges(wsName: string) {
 
     if (isSyncing) {
       notify(
-        store,
         'Cannot discard local changes',
         SEVERITY.INFO,
         'A sync is already in progress, please wait for it to finish.',
@@ -254,7 +245,6 @@ export function discardLocalChanges(wsName: string) {
 
     if (!lockAcquired) {
       notify(
-        store,
         'Cannot discard local changes',
         SEVERITY.INFO,
         'A sync is already in progress, please wait for it to finish.',
@@ -265,7 +255,6 @@ export function discardLocalChanges(wsName: string) {
 
     if (!result) {
       notify(
-        store,
         'Failed to discard local changes',
         SEVERITY.INFO,
         'Failed to discard local changes. Please try again.',
@@ -288,7 +277,7 @@ export const updateGithubToken = (
       await updateGhToken(token);
 
       if (showNotification) {
-        notify(store, 'Github token successfully updated', SEVERITY.SUCCESS);
+        notify('Github token successfully updated', SEVERITY.SUCCESS);
       }
 
       return true;
@@ -296,7 +285,6 @@ export const updateGithubToken = (
 
     if (showNotification) {
       notify(
-        store,
         'Github token not updated',
         SEVERITY.ERROR,
         'Please open a Github workspace before updating the token.',
@@ -345,7 +333,6 @@ export function manuallyResolveConflict(wsName: string) {
         }
 
         notify(
-          store,
           'Unable to resolve conflict',
           SEVERITY.ERROR,
           'Please close any other Bangle tab and try again.',
@@ -367,7 +354,6 @@ export function manuallyResolveConflict(wsName: string) {
         );
 
         notify(
-          store,
           'Manual Conflict Resolution',
           SEVERITY.SUCCESS,
           'Successfully created copies of the the conflicted files. Please resolve the conflicts manually and then sync again.',
@@ -397,7 +383,6 @@ export function manuallyResolveConflict(wsName: string) {
     } catch (e) {
       console.error(e);
       notify(
-        store,
         'Unable to resolve conflict',
         SEVERITY.ERROR,
         'Something went wrong, please reload and try again.',

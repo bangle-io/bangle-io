@@ -8,13 +8,7 @@ import React, {
 
 import { Selection } from '@bangle.dev/pm';
 
-import { useSerialOperationHandler } from '@bangle.io/api';
-import {
-  getEditor,
-  useNsmEditorManagerState,
-  useNsmEditorManagerStore,
-} from '@bangle.io/slice-editor-manager';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import { nsmApi2, useSerialOperationHandler } from '@bangle.io/api';
 import { Button } from '@bangle.io/ui-components';
 import {
   safeCancelIdleCallback,
@@ -31,9 +25,8 @@ import {
 } from './config';
 
 export function NoteOutline() {
-  const { focusedEditorId } = useNsmEditorManagerState();
-  const editorStore = useNsmEditorManagerStore();
-  const { wsName } = useWorkspaceContext();
+  const { focusedEditorId } = nsmApi2.editor.useEditor();
+  const { wsName } = nsmApi2.workspace.useWorkspace();
   const [headingNodes, updateHeadingsState] = useState<
     HeadingNodes | undefined
   >();
@@ -49,7 +42,7 @@ export function NoteOutline() {
   const updateHeadingNodes = useCallback(() => {
     const state =
       focusedEditorId != null &&
-      getEditor(editorStore.state, focusedEditorId)?.view.state;
+      nsmApi2.editor.getEditor(focusedEditorId)?.view.state;
 
     if (!state) {
       updateHeadingsState(undefined);
@@ -64,7 +57,7 @@ export function NoteOutline() {
     updateHeadingsState(watchHeadingsPluginState.headings);
 
     return;
-  }, [focusedEditorId, editorStore]);
+  }, [focusedEditorId]);
 
   useSerialOperationHandler(
     (sOperation) => {
@@ -94,8 +87,7 @@ export function NoteOutline() {
   const onExecuteItem = useCallback(
     (item: HeadingNodes[0]) => {
       const focusedEditor =
-        focusedEditorId != null &&
-        getEditor(editorStore.state, focusedEditorId);
+        focusedEditorId != null && nsmApi2.editor.getEditor(focusedEditorId);
 
       if (focusedEditor) {
         if (!focusedEditor || focusedEditor.destroyed) {
@@ -113,7 +105,7 @@ export function NoteOutline() {
         );
       }
     },
-    [focusedEditorId, editorStore],
+    [focusedEditorId],
   );
 
   // Calculate headings on initial mount

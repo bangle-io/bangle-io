@@ -1,12 +1,6 @@
-import {
-  getNewStore,
-  notification,
-  page,
-  Slice,
-  workspace,
-} from '@bangle.io/api';
+import { getNewStore, nsmApi2, page, Slice, workspace } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
-import { abortableSetInterval } from '@bangle.io/utils';
+import { abortableSetInterval, generateUid } from '@bangle.io/utils';
 
 import {
   getSyncInterval,
@@ -271,17 +265,16 @@ export const setConflictNotification = ghSliceKey.effect(() => {
 
       if (conflictedWsPaths) {
         for (const wsPath of conflictedWsPaths) {
-          const uid = notification.notificationSliceKey.callOp(
-            store.state,
-            store.dispatch,
-            notification.setEditorIssue({
-              description: `There is a conflict with ${wsPath} on Github. Please resolve the conflict on Github and then click on the sync button to resolve the conflict.`,
-              title: 'Encountered Conflict',
-              severity: SEVERITY.WARNING,
-              wsPath,
-              serialOperation: OPERATION_SHOW_CONFLICT_DIALOG,
-            }),
-          );
+          const uid = generateUid();
+
+          nsmApi2.ui.setEditorIssue({
+            uid,
+            description: `There is a conflict with ${wsPath} on Github. Please resolve the conflict on Github and then click on the sync button to resolve the conflict.`,
+            title: 'Encountered Conflict',
+            severity: SEVERITY.WARNING,
+            wsPath,
+            serialOperation: OPERATION_SHOW_CONFLICT_DIALOG,
+          });
 
           wsPathToUidMap.set(wsPath, uid);
         }
@@ -289,11 +282,7 @@ export const setConflictNotification = ghSliceKey.effect(() => {
         // clear out the notifications for the paths that are no longer conflicted
         for (const [wsPath, uid] of wsPathToUidMap) {
           if (!conflictedWsPaths.includes(wsPath)) {
-            notification.notificationSliceKey.callOp(
-              store.state,
-              store.dispatch,
-              notification.clearEditorIssue(uid),
-            );
+            nsmApi2.ui.clearEditorIssue(uid);
             wsPathToUidMap.delete(wsPath);
           }
         }

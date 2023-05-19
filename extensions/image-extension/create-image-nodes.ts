@@ -2,7 +2,7 @@ import type { EditorView, NodeType } from '@bangle.dev/pm';
 
 import { writeFile } from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { calcImageDimensions } from './image-file-helpers';
 import { createImage } from './image-writing';
@@ -15,7 +15,7 @@ export async function createImageNodes(
   const { wsPath: currentWsPath, bangleStore } = getEditorPluginMetadata(
     view.state,
   );
-  const { wsName } = resolvePath(currentWsPath);
+  const { wsName } = resolvePath2(currentWsPath);
 
   const sources = await Promise.all(
     files.map(async (file) => {
