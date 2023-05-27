@@ -330,7 +330,7 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
 
       {
         type: 'modify',
-        path: 'app/shared/init-extension-registry.ts',
+        path: 'app/shared/on-before-store-load.ts',
         transform: (fileContents, data) => {
           fileContents = fileContents.replace(
             '// <-- PLOP INSERT EXTENSION IMPORT -->',

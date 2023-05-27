@@ -116,6 +116,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/github-storage"\
       },\
       {\
+        "name": "@bangle.io/helpfs-storage",\
+        "reference": "workspace:extensions/helpfs-storage"\
+      },\
+      {\
         "name": "@bangle.io/image-extension",\
         "reference": "workspace:extensions/image-extension"\
       },\
@@ -436,6 +440,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/fzf-search", ["virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search", "workspace:js-lib/fzf-search"]],\
       ["@bangle.io/git-file-sha", ["workspace:js-lib/git-file-sha"]],\
       ["@bangle.io/github-storage", ["workspace:extensions/github-storage"]],\
+      ["@bangle.io/helpfs-storage", ["workspace:extensions/helpfs-storage"]],\
       ["@bangle.io/history", ["workspace:js-lib/history"]],\
       ["@bangle.io/image-extension", ["workspace:extensions/image-extension"]],\
       ["@bangle.io/independent-e2e-tests-server", ["workspace:tooling/independent-e2e-tests-server"]],\
@@ -5951,6 +5956,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/helpfs-storage", "workspace:extensions/helpfs-storage"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
@@ -6695,6 +6701,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/helpfs-storage", [\
+        ["workspace:extensions/helpfs-storage", {\
+          "packageLocation": "./extensions/helpfs-storage/",\
+          "packageDependencies": [\
+            ["@bangle.io/helpfs-storage", "workspace:extensions/helpfs-storage"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/storage", "workspace:lib/storage"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["tslib", "npm:2.4.1"],\
+            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/history", [\
         ["workspace:js-lib/history", {\
           "packageLocation": "./js-lib/history/",\
@@ -7283,6 +7306,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/core-palettes", "virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/github-storage", "workspace:extensions/github-storage"],\
+            ["@bangle.io/helpfs-storage", "workspace:extensions/helpfs-storage"],\
             ["@bangle.io/image-extension", "workspace:extensions/image-extension"],\
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],\
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],\

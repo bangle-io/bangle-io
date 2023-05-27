@@ -1,9 +1,7 @@
 import * as Sentry from '@sentry/browser';
 
-import { config } from '@bangle.io/config';
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
 
 import type { NaukarStateConfig } from '../common';
 import { naukarSlices } from './naukar-slices';
@@ -51,14 +49,6 @@ export function initializeNaukarStore({
       return true;
     },
   });
-
-  const helpers: E2ENaukarTypes = {
-    store,
-    config,
-  };
-
-  // eslint-disable-next-line no-restricted-globals
-  self._e2eNaukarHelpers = helpers;
 
   return store;
 }

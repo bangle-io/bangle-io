@@ -1,4 +1,6 @@
+import { config } from '@bangle.io/config';
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
+import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { SyncMessage } from '@bangle.io/nsm';
@@ -91,6 +93,13 @@ export const createNsmStore = ({
       once: true,
     },
   );
+
+  const helpers: E2ENaukarTypes = {
+    config,
+  };
+
+  // eslint-disable-next-line no-restricted-globals
+  self._e2eNaukarHelpers = helpers;
 
   return {
     store,

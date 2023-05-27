@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 
 import { testWithConfig } from '../fixture-test-with-config';
-import { withBangle as test } from '../fixture-with-bangle';
 
 testWithConfig.use({
   bangleDebugConfig: {

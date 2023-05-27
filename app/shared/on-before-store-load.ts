@@ -9,6 +9,7 @@ import coreActions from '@bangle.io/core-extension';
 import corePalette from '@bangle.io/core-palettes';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import githubStorage from '@bangle.io/github-storage';
+import helpFsStorage from '@bangle.io/helpfs-storage';
 import imageExtension from '@bangle.io/image-extension';
 import inlineBacklinkPalette from '@bangle.io/inline-backlink';
 import inlineCommandPalette from '@bangle.io/inline-command-palette';
@@ -34,6 +35,7 @@ export const onBeforeStoreLoad = (): {
     inlineEmoji,
     browserStorage,
     browserNativefsStorage,
+    helpFsStorage,
     browserPrivateFs,
     editorCore,
     inlineCommandPalette,
