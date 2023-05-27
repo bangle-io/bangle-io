@@ -1,18 +1,19 @@
-import type { FzfOptions } from '@bangle.io/fzf-search';
+import type { FzfOptions, FzfResultItem } from '@bangle.io/fzf-search';
 import { byLengthAsc, byStartAsc, Fzf } from '@bangle.io/fzf-search';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { assertSignal } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 export function fzfSearchNoteWsPaths(
-  getNoteWsPaths: () => undefined | string[],
+  getNoteWsPaths: () => undefined | WsPath[],
 ) {
   return async (
     abortSignal: AbortSignal,
-    wsName: string,
+    wsName: WsName,
     query: string,
     limit: number = 128,
-  ) => {
-    const wsPaths = getNoteWsPaths();
+  ): Promise<Array<FzfResultItem<WsPath>>> => {
+    const wsPaths: string[] | undefined = getNoteWsPaths();
 
     assertSignal(abortSignal);
 
@@ -29,7 +30,7 @@ export function fzfSearchNoteWsPaths(
 
     const fzf = new Fzf(wsPaths, options);
 
-    const result = fzf.find(query);
+    const result: Array<FzfResultItem<any>> = fzf.find(query);
 
     return result;
   };

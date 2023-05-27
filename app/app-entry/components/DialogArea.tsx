@@ -1,18 +1,19 @@
 import React, { useCallback } from 'react';
 
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import { dismissDialog, useUIManagerContext } from '@bangle.io/slice-ui';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 
 export function DialogArea() {
-  const { dialogName, bangleStore } = useUIManagerContext();
+  const [{ dialogName }, uiDispatch] = useNsmSlice(nsmUISlice);
   const extensionRegistry = useExtensionRegistryContext();
   const match = dialogName && extensionRegistry.getDialog(dialogName);
 
   const onDismiss = useCallback(
     (dialog: string) => {
-      dismissDialog(dialog)(bangleStore.state, bangleStore.dispatch);
+      uiDispatch(nsmUI.dismissDialog(dialog));
     },
-    [bangleStore],
+    [uiDispatch],
   );
 
   if (!match) {

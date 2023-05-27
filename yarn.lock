@@ -2112,12 +2112,14 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/markdown": "workspace:*"
     "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2568,6 +2570,7 @@ __metadata:
     "@bangle.dev/core": 0.31.6
     "@bangle.dev/pm": 0.31.6
     "@bangle.dev/utils": 0.31.6
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2620,6 +2623,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@storybook/react": ^6.5.12
     "@testing-library/react": ^12.1.3
@@ -3158,7 +3162,6 @@ __metadata:
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/independent-e2e-tests-server": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
     "@playwright/test": ^1.29.0
     "@types/node": ^18.11.9
     "@types/prettier": ^2.7.0

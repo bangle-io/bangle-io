@@ -8,7 +8,7 @@ import {
   SECONDARY_EDITOR_INDEX,
   WorkspaceType,
 } from '@bangle.io/constants';
-import type { EditorIdType } from '@bangle.io/shared-types';
+import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
 
 import { filePathToWsPath, resolvePath } from './bangle-helpers';
 
@@ -115,9 +115,11 @@ export async function getAllWsPaths(
   }
 
   const result = JSON.parse(
-    await page.evaluate(() =>
-      JSON.stringify((window as any)._e2eHelpers._getWsPaths()),
-    ),
+    await page.evaluate(() => {
+      return JSON.stringify(
+        window._nsmE2e?.nsmApi2.workspace.workspaceState().wsPaths || [],
+      );
+    }),
   );
 
   if (attempt > 3) {
@@ -135,11 +137,16 @@ export async function getAllWsPaths(
 
 export async function pushWsPathToPrimary(
   page: Page,
-  wsPath: string,
+  _wsPath: string,
   { waitForEditorToLoad = true } = {},
 ) {
+  const wsPath = createWsPath(_wsPath);
   await page.evaluate(
-    ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath),
+    ([wsPath]) => {
+      if (wsPath != null) {
+        return _nsmE2e?.nsmApi2.workspace.pushPrimaryWsPath(wsPath);
+      }
+    },
     [wsPath],
   );
 
@@ -149,11 +156,17 @@ export async function pushWsPathToPrimary(
 }
 export async function pushWsPathToSecondary(
   page: Page,
-  wsPath: string,
+  _wsPath: string,
   { waitForEditorToLoad = true } = {},
 ) {
+  const wsPath = createWsPath(_wsPath);
+
   await page.evaluate(
-    ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath, true),
+    ([wsPath]) => {
+      if (wsPath != null) {
+        return _nsmE2e?.nsmApi2.workspace.pushSecondaryWsPath(wsPath);
+      }
+    },
     [wsPath],
   );
 
@@ -214,6 +227,7 @@ export async function createNewNote(
   const editorId = PRIMARY_EDITOR_INDEX;
 
   await waitForWsPathToLoad(page, editorId, { wsPath });
+
   await sleep();
 
   return wsPath;
@@ -223,6 +237,8 @@ async function waitForPrimaryEditorFocus(page: Page) {
   await page.isVisible(
     `.B-editor-container_editor-${PRIMARY_EDITOR_INDEX} .ProseMirror-focused`,
   );
+
+  await waitForEditorFocus(page, PRIMARY_EDITOR_INDEX);
 }
 export async function waitForEditorFocus(
   page: Page,
@@ -606,4 +622,23 @@ export function testIdSelector(testId: string) {
 
 export function getTestIdLocator(testId: string, page: Page): Locator {
   return page.locator(testIdSelector(testId));
+}
+
+// cant use the original createWsPath because of dep issues
+export function createWsPath(wsPath: string): WsPath {
+  if (wsPath.split('/').some((r) => r.length === 0)) {
+    throw new Error('Invalid path ' + wsPath);
+  }
+
+  const [wsName, filePath, ...others] = wsPath.split(':');
+
+  if (others.length > 0) {
+    throw new Error('Invalid path ' + wsPath);
+  }
+
+  if (!wsName || !filePath) {
+    throw new Error('Invalid path ' + wsPath);
+  }
+
+  return wsPath as WsPath;
 }

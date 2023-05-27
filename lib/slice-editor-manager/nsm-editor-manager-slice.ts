@@ -14,6 +14,7 @@ import {
 import type { InferSliceName, Store } from '@bangle.io/nsm';
 import {
   changeEffect,
+  createMetaAction,
   createQueryState,
   createSelector,
   createSliceWithSelectors,
@@ -213,22 +214,24 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
         editor.view.hasFocus(),
       );
 
-      if (noEditorInFocus || state.isInactivePage) {
-        if (noEditorInFocus) {
-          console.warn('disabling editing due to no editor in focus');
-        }
-        if (state.isInactivePage) {
-          console.warn('disabling editing due to inactive page');
-        }
-        toggleEditingDirect(
-          {
-            editingAllowed: state.editingAllowed,
-            mainEditors: state.mainEditors,
-          },
-          dispatch,
-          { editingAllowed: false },
-        );
-      }
+      // TODO this isn't working and is always disabling editor
+      // if (noEditorInFocus || state.isInactivePage) {
+      //   if (noEditorInFocus) {
+      //     console.warn('disabling editing due to no editor in focus');
+      //   }
+      //   if (state.isInactivePage) {
+      //     console.warn('disabling editing due to inactive page');
+      //   }
+      //   dispatch(
+      //     toggleEditingDirect(
+      //       {
+      //         editingAllowed: state.editingAllowed,
+      //         mainEditors: state.mainEditors,
+      //       },
+      //       { editingAllowed: false },
+      //     ),
+      //   );
+      // }
     },
   ),
 
@@ -326,6 +329,8 @@ Slice.registerEffectSlice(nsmEditorManagerSlice, [
         if (typeof focusedEditorId === 'number') {
           // if mounting for the first time, focus on the focusedEditorId
           mainEditors[focusedEditorId]?.focusView();
+        } else {
+          lastOpenedEditor?.editor.focusView();
         }
       }
     },
@@ -338,6 +343,12 @@ type EditorManagerStoreState = StoreState<
 type EditorManagerStoreDispatch = Store<
   InferSliceName<typeof nsmEditorManagerSlice>
 >['dispatch'];
+
+export const noOp = nsmEditorManagerSlice.createAction('noOp', () => {
+  return (state) => {
+    return state;
+  };
+});
 
 export const setEditingAllowed = nsmEditorManagerSlice.createAction(
   'setEditingAllowed',
@@ -390,6 +401,8 @@ export const onFocusUpdate = nsmEditorManagerSlice.createAction(
       if (!isValidEditorId(editorId)) {
         return state;
       }
+
+      console.warn({ editorId });
 
       return updateObj(state, {
         focusedEditorId: editorId,
@@ -478,28 +491,28 @@ export const setEditorScrollPos = createQueryState(
   },
 );
 
-export function focusEditorIfNotFocused(
-  state: EditorManagerStoreState,
-  editorId?: EditorIdType,
-) {
-  if (querySomeEditor(state, (editor) => editor.view.hasFocus())) {
-    return;
-  }
-
-  if (editorId != null) {
-    const editor = getEditor(state, editorId);
-
-    if (editor) {
-      editor.focusView();
-
+export const focusEditorIfNotFocused = createQueryState(
+  [nsmEditorManagerSlice],
+  (state, editorId?: EditorIdType) => {
+    if (querySomeEditor(state, (editor) => editor.view.hasFocus())) {
       return;
     }
-  }
 
-  nsmEditorManagerSlice
-    .resolveState(state)
-    .lastOpenedEditor?.editor?.focusView();
-}
+    if (editorId != null) {
+      const editor = getEditor(state, editorId);
+
+      if (editor) {
+        editor.focusView();
+
+        return;
+      }
+    }
+
+    nsmEditorManagerSlice
+      .resolveState(state)
+      .lastOpenedEditor?.editor?.focusView();
+  },
+);
 
 export const getEditor = createQueryState(
   [nsmEditorManagerSlice],
@@ -577,28 +590,29 @@ export const getInitialSelection = createQueryState(
  * @param param0.focusOrBlur - if true : focuses when enabling editing, blurs when disabling editing
  * @returns
  */
-export function toggleEditing(
-  state: EditorManagerStoreState,
-  dispatch: EditorManagerStoreDispatch,
-  {
-    focusOrBlur = true,
-    editingAllowed,
-  }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
-) {
-  const sliceState = nsmEditorManagerSlice.getState(state);
+export const toggleEditing = createMetaAction(
+  [nsmEditorManagerSlice],
+  (
+    state,
+    {
+      focusOrBlur = true,
+      editingAllowed,
+    }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
+  ) => {
+    const sliceState = nsmEditorManagerSlice.getState(state);
 
-  return toggleEditingDirect(sliceState, dispatch, {
-    focusOrBlur,
-    editingAllowed,
-  });
-}
+    return toggleEditingDirect(sliceState, {
+      focusOrBlur,
+      editingAllowed,
+    });
+  },
+);
 
 export function toggleEditingDirect(
   sliceState: {
     editingAllowed: EditorSliceState['editingAllowed'];
     mainEditors: EditorSliceState['mainEditors'];
   },
-  dispatch: EditorManagerStoreDispatch,
   {
     focusOrBlur = true,
     editingAllowed,
@@ -606,14 +620,8 @@ export function toggleEditingDirect(
 ) {
   const newEditingAllowed = editingAllowed ?? !sliceState.editingAllowed;
 
-  dispatch(
-    setEditingAllowed({
-      editingAllowed: newEditingAllowed,
-    }),
-  );
-
   if (!focusOrBlur) {
-    return;
+    return noOp();
   }
 
   for (const editor of sliceState.mainEditors) {
@@ -633,6 +641,10 @@ export function toggleEditingDirect(
       editor?.view.dom.blur();
     }
   }
+
+  return setEditingAllowed({
+    editingAllowed: newEditingAllowed,
+  });
 }
 
 function safeSelectionFromJSON(doc: Node, json: any) {
@@ -670,7 +682,7 @@ export function dispatchEditorCommand<T>(
   return cmdCallback(view.state, view.dispatch, view);
 }
 
-export function forEachEditor(
+export function forEachEditorPlain(
   state: EditorManagerStoreState | NsmEditorManagerState,
   callback: (editor: BangleEditor, editorId: EditorIdType) => void,
 ) {
@@ -683,6 +695,18 @@ export function forEachEditor(
     }
   }
 }
+export const forEachEditor = createQueryState(
+  [nsmEditorManagerSlice],
+  (state, callback: (editor: BangleEditor, editorId: EditorIdType) => void) => {
+    const { mainEditors } = nsmEditorManagerSlice.getState(state);
+
+    for (const [editorId, editor] of mainEditors.entries()) {
+      if (editor) {
+        callback(editor, editorId);
+      }
+    }
+  },
+);
 
 const SERIAL_VERSION = 1;
 

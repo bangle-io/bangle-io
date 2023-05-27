@@ -15,6 +15,7 @@ import {
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
 import {
   toggleEditing,
@@ -22,12 +23,9 @@ import {
   useNsmEditorManagerStore,
 } from '@bangle.io/slice-editor-manager';
 import { nsmNotification } from '@bangle.io/slice-notification';
-import { nsmUI, nsmUISlice, togglePaletteType } from '@bangle.io/slice-ui';
-import {
-  checkFileExists,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { cx, useDestroyRef } from '@bangle.io/utils';
+import { fs } from '@bangle.io/workspace-info';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { Editorbar } from './Editorbar';
@@ -42,13 +40,13 @@ export function EditorContainer({
   editorId: EditorIdType;
   wsPath: WsPath | undefined;
 }) {
-  const bangleStore = useBangleStoreContext();
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { openedWsPaths } = useWorkspaceContext();
+  const { openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
   const { focusedEditorId, editingAllowed } = useNsmEditorManagerState();
   const { dispatchSerialOperation } = useSerialOperationContext();
   const extensionRegistry = useExtensionRegistryContext();
   const editorStore = useNsmEditorManagerStore();
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
 
   const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
 
@@ -66,18 +64,17 @@ export function EditorContainer({
   }, [dispatchSerialOperation, editorId]);
 
   const openNotesPalette = useCallback(() => {
-    togglePaletteType(CorePalette.Notes)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
-  }, [bangleStore]);
+    uiDispatch(nsmUI.togglePalette(CorePalette.Notes));
+  }, [uiDispatch]);
 
   const { editorIssue, onPressEditorIssue } = useEditorIssue(wsPath);
 
   const onEnableEditing = useCallback(() => {
-    toggleEditing(editorStore.state, editorStore.dispatch, {
-      editingAllowed: true,
-    });
+    editorStore.dispatch(
+      toggleEditing(editorStore.state, {
+        editingAllowed: true,
+      }),
+    );
   }, [editorStore]);
 
   let children;
@@ -207,11 +204,7 @@ function useHandleWsPath(incomingWsPath?: WsPath) {
   useEffect(() => {
     if (incomingWsPath) {
       updateFileExists('LOADING');
-      checkFileExists(incomingWsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      ).then(
+      fs.fileExists(incomingWsPath).then(
         (r) => {
           if (!destroyedRef.current) {
             if (r) {

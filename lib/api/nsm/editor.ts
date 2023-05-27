@@ -9,11 +9,7 @@ import { changeEffect, createSliceWithSelectors, Slice } from '@bangle.io/nsm';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type { WsPath } from '@bangle.io/shared-types';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
-import {
-  forEachEditor,
-  getEditor as _getEditor,
-  nsmEditorManagerSlice,
-} from '@bangle.io/slice-editor-manager';
+import * as editorManager from '@bangle.io/slice-editor-manager';
 
 import { getStore } from '../internals';
 
@@ -30,11 +26,11 @@ type EditorProxyState = typeof initState;
 export const editorState = () => {
   const store = getStore();
 
-  return nsmEditorManagerSlice.resolveState(store.state);
+  return editorManager.nsmEditorManagerSlice.resolveState(store.state);
 };
 
 export const _editorManagerProxy = createSliceWithSelectors(
-  [nsmEditorManagerSlice],
+  [editorManager.nsmEditorManagerSlice],
   {
     name: 'api-editor-manager-proxy',
     initState,
@@ -47,10 +43,12 @@ Slice.registerEffectSlice(_editorManagerProxy, [
     'set-editor-search-query',
     {
       searchQuery: _editorManagerProxy.pick((s) => s.searchQuery),
-      editorManagerState: nsmEditorManagerSlice.passivePick((s) => s),
+      editorManagerState: editorManager.nsmEditorManagerSlice.passivePick(
+        (s) => s,
+      ),
     },
     ({ searchQuery, editorManagerState }) => {
-      forEachEditor(editorManagerState, (editor) => {
+      editorManager.forEachEditorPlain(editorManagerState, (editor) => {
         search.updateSearchQuery(searchPluginKey, searchQuery)(
           editor.view.state,
           editor.view.dispatch,
@@ -62,10 +60,12 @@ Slice.registerEffectSlice(_editorManagerProxy, [
     'clear-editor-search-query',
     {
       wsName: nsmSliceWorkspace.pick((s) => s.wsName),
-      editorManagerState: nsmEditorManagerSlice.passivePick((s) => s),
+      editorManagerState: editorManager.nsmEditorManagerSlice.passivePick(
+        (s) => s,
+      ),
     },
     ({ wsName, editorManagerState }) => {
-      forEachEditor(editorManagerState, (editor) => {
+      editorManager.forEachEditorPlain(editorManagerState, (editor) => {
         search.updateSearchQuery(searchPluginKey, undefined)(
           editor.view.state,
           editor.view.dispatch,
@@ -87,12 +87,14 @@ const _updateQueryAction = _editorManagerProxy.createAction(
   },
 );
 
-export const pick = nsmEditorManagerSlice.pick;
-export const passivePick = nsmEditorManagerSlice.passivePick;
+export const pick = editorManager.nsmEditorManagerSlice.pick;
+export const passivePick = editorManager.nsmEditorManagerSlice.passivePick;
 
 // WARNING: Do not expose editor to react, get can use get methods below
 export function useEditor() {
-  const { focusedEditorId } = useNsmSliceState(nsmEditorManagerSlice);
+  const { focusedEditorId } = useNsmSliceState(
+    editorManager.nsmEditorManagerSlice,
+  );
 
   return useMemo(() => {
     return { focusedEditorId };
@@ -108,26 +110,39 @@ export const updateEditorSearchQuery = (
 export function getEditor(editorId: EditorIdType) {
   const store = getStore();
 
-  return _getEditor(store.state, editorId);
+  return editorManager.getEditor(store.state, editorId);
 }
 
 export function getPrimaryEditor() {
   const store = getStore();
 
-  return _getEditor(store.state, PRIMARY_EDITOR_INDEX);
+  return editorManager.getEditor(store.state, PRIMARY_EDITOR_INDEX);
 }
 
 export function getFocusedWsPath(): WsPath | undefined {
   const store = getStore();
 
-  const { openedWsPaths } = nsmSliceWorkspace.resolveState(store.state);
-  const { focusedEditorId } = nsmEditorManagerSlice.resolveState(store.state);
+  let focused = editorManager.nsmEditorManagerSlice.resolveState(
+    store.state,
+  ).focusedEditorId;
 
-  if (focusedEditorId == null) {
-    return undefined;
+  if (typeof focused === 'number') {
+    return nsmSliceWorkspace
+      .resolveState(store.state)
+      .openedWsPaths.getByIndex2(focused);
   }
 
-  const focusedWsPath = openedWsPaths.getByIndex2(focusedEditorId);
+  return undefined;
+}
 
-  return focusedWsPath;
+export function toggleEditing(): void {
+  const store = getStore();
+
+  store.dispatch(editorManager.toggleEditing(store.state));
+}
+
+export function focusEditorIfNotFocused(): void {
+  const store = getStore();
+
+  editorManager.focusEditorIfNotFocused(store.state);
 }

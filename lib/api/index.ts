@@ -2,7 +2,6 @@ import type { ApplicationStore } from '@bangle.io/create-store';
 import type { AnySlice, InferSliceName, Store } from '@bangle.io/nsm';
 import type { BangleApplicationStore, NsmStore } from '@bangle.io/shared-types';
 
-export * as editor from './editor';
 export * as nsmApi2 from './nsm/index';
 export * as page from './page';
 export * as search from './search';
@@ -10,7 +9,6 @@ export {
   useSerialOperationContext,
   useSerialOperationHandler,
 } from './serial-operation-context';
-export * as ui from './ui';
 export * as workspace from './workspace';
 export * as wsPathHelpers from './ws-path-helpers';
 export {

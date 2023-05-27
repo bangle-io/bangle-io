@@ -6,5 +6,6 @@ export {
   pushOpenedWsPaths,
   pushPrimaryWsPath,
   pushSecondaryWsPath,
+  setRecentlyUsedWsPaths,
   setWsPaths,
 } from './nsm-slice-workspace';

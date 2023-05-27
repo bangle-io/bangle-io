@@ -7,7 +7,6 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
-import { useRecentlyUsedWsPaths } from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
@@ -15,6 +14,7 @@ import { DialogArea } from './components/DialogArea';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { usePMDevTools } from './hooks/use-pm-dev-tools';
+import { useRecentlyUsedWsPaths } from './hooks/use-recently-used-ws-paths';
 import { useSetDocumentTitle } from './misc/use-set-document-title';
 import { Routes } from './Routes';
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import { expect } from '@playwright/test';
 
 import { withBangle as test } from '../fixture-with-bangle';
@@ -28,10 +29,8 @@ for (const screenType of ['desktop', 'mobile']) {
       // manually trigger an error
       await page.evaluate(
         async ([wsPath1]) => {
-          const e2eHelpers = window._newE2eHelpers2;
-
           // deleting a collab instance will cause current editor to crash
-          e2eHelpers!.naukarProxy.testRequestDeleteCollabInstance(wsPath1);
+          _nsmE2e?.testRequestDeleteCollabInstance(wsPath1);
         },
         [wsPath1] as const,
       );

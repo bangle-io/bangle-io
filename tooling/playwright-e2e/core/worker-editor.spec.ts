@@ -7,6 +7,7 @@ import { withBangle as test } from '../fixture-with-bangle';
 import {
   createNewNote,
   createWorkspace,
+  createWsPath,
   getEditorDebugString,
   SELECTOR_TIMEOUT,
   sleep,
@@ -17,20 +18,14 @@ test.beforeEach(async ({ bangleApp }, testInfo) => {
   await bangleApp.open();
 });
 
-const executeOverwrite = async (page: Page, wsPath: string) => {
+const executeOverwrite = async (page: Page, _wsPath: string) => {
+  const wsPath = createWsPath(_wsPath);
   await page.evaluate(
     async ([wsPath]) => {
-      const e2eHelpers = window._newE2eHelpers2;
-
-      if (!e2eHelpers) {
-        return;
-      }
-      const { store, pm } = e2eHelpers;
-
-      await e2eHelpers.writeNote(
+      await _nsmE2e?.nsmApi2.workspace.createNoteFromMd(
         wsPath,
-        pm.createNodeFromMd(`I am _overwrite_`),
-      )(store.state, store.dispatch, store);
+        `I am _overwrite_`,
+      );
     },
     [wsPath] as const,
   );

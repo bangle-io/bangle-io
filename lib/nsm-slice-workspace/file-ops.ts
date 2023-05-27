@@ -15,11 +15,19 @@ export async function createNote(
   extensionRegistry: ExtensionRegistry,
   doc?: Node,
 ) {
-  const { wsName, fileName } = resolvePath2(wsPath);
-
   if (doc == null) {
     doc = defaultDoc(wsPath, extensionRegistry);
   }
+
+  await writeNote(wsPath, extensionRegistry, doc);
+}
+
+export async function writeNote(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+  doc: Node,
+) {
+  const { wsName, fileName } = resolvePath2(wsPath);
 
   const serialValue = getNoteFormatProvider(wsName).serializeNote(
     doc,

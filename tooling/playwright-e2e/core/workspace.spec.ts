@@ -46,7 +46,6 @@ test.describe('workspace', () => {
   test('Rename note', async ({ page, baseURL }) => {
     const wsName1 = await createWorkspace(page);
     const n1 = await createNewNote(page, wsName1, 'file-1');
-
     await runOperation(
       page,
       'operation::@bangle.io/core-extension:RENAME_ACTIVE_NOTE',

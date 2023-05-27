@@ -26,9 +26,7 @@ test.describe('worker', () => {
 
     expect(page.workers()).toHaveLength(1);
 
-    const result = await page.evaluate(() =>
-      window._newE2eHelpers2?.e2eHealthCheck(),
-    );
+    const result = await page.evaluate(() => window._nsmE2e?.e2eHealthCheck());
 
     expect(result).toBe(true);
   });

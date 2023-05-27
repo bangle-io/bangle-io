@@ -6,6 +6,7 @@ import { workerAbortable } from '@bangle.io/abortable-worker';
 import { BaseError } from '@bangle.io/base-error';
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { searchPmNode } from '@bangle.io/search-pm-node';
+import type { WsPath } from '@bangle.io/shared-types';
 import {
   getFile,
   getNote,
@@ -13,12 +14,16 @@ import {
   writeFile,
 } from '@bangle.io/slice-workspace';
 import { assertNotUndefined, assertSignal } from '@bangle.io/utils';
-import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+import {
+  createWsPath,
+  filePathToWsPath,
+  resolvePath,
+} from '@bangle.io/ws-path';
 
 import { fzfSearchNoteWsPaths } from './abortable-services/fzf-search-notes-ws-path';
 import type { StoreRef } from './naukar';
 
-type GetWsPaths = () => string[] | undefined;
+type GetWsPaths = () => WsPath[] | undefined;
 export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
   const services = workerAbortable(({ abortWrapper }) => {
     const getNoteWsPaths: GetWsPaths = () => {
@@ -27,8 +32,11 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
       if (!state) {
         return undefined;
       }
-      const noteWsPaths =
-        workspaceSliceKey.getSliceStateAsserted(state).noteWsPaths;
+      const noteWsPaths = workspaceSliceKey
+        .getSliceStateAsserted(state)
+        .noteWsPaths?.map((r) => {
+          return createWsPath(r);
+        });
 
       return noteWsPaths;
     };
@@ -39,8 +47,11 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
       if (!state) {
         return undefined;
       }
-      const noteWsPaths =
-        workspaceSliceKey.getSliceStateAsserted(state).wsPaths;
+      const noteWsPaths = workspaceSliceKey
+        .getSliceStateAsserted(state)
+        .wsPaths?.map((r) => {
+          return createWsPath(r);
+        });
 
       return noteWsPaths;
     };

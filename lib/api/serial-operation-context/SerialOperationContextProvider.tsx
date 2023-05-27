@@ -3,8 +3,9 @@ import React, { createContext, useCallback, useMemo, useState } from 'react';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
-import { uiSliceKey } from '@bangle.io/slice-ui';
 import { useKeybindings } from '@bangle.io/utils';
+
+import { ui } from '../nsm/index';
 
 const LOG = true;
 let log = LOG ? console.debug.bind(console, 'SerialOperationCotext') : () => {};
@@ -98,9 +99,7 @@ export function SerialOperationContextProvider({
         .map((r) => [
           r.keybinding,
           () => {
-            const { dialogName } = uiSliceKey.getSliceStateAsserted(
-              bangleStore.state,
-            );
+            const { dialogName } = ui.uiState();
 
             // DONOT listen for keys if we are in a dialog
             if (!dialogName) {
@@ -117,7 +116,7 @@ export function SerialOperationContextProvider({
     );
 
     return keys;
-  }, [extensionRegistry, bangleStore, dispatchSerialOperation]);
+  }, [extensionRegistry, dispatchSerialOperation]);
 
   return (
     <SerialOperationContext.Provider value={value}>

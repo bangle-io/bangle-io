@@ -90,10 +90,11 @@ export function resolvePath2(wsPath: WsPath): {
   wsName: WsName;
   fileName: string;
   filePath: string;
+  dirPath: string;
 } {
-  const { wsName, fileName, filePath } = resolvePath(wsPath, true);
+  const { wsName, fileName, filePath, dirPath } = resolvePath(wsPath, true);
 
-  return { wsName: createWsName(wsName), fileName, filePath };
+  return { wsName: createWsName(wsName), fileName, filePath, dirPath };
 }
 
 export class PathValidationError extends BaseError {}

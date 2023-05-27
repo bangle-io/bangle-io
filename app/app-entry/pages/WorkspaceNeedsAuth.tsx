@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  useBangleStoreContext,
+  useNsmSliceState,
+} from '@bangle.io/bangle-store-context';
 import { WorkspaceType } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { nsmUISlice } from '@bangle.io/slice-ui';
 import {
   goToLandingPage,
   goToWsNameRoute,
@@ -110,7 +113,8 @@ function PermissionModal({
   requestFSPermission: () => Promise<boolean>;
   wsName: string;
 }) {
-  const { paletteType, dialogName } = useUIManagerContext();
+  const { dialogName, paletteType } = useNsmSliceState(nsmUISlice);
+
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {
     let callback = keybindingsHelper({

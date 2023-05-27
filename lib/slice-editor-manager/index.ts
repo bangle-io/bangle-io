@@ -4,7 +4,9 @@ export {
 } from './EditorManagerContext';
 export {
   dispatchEditorCommand,
+  focusEditorIfNotFocused,
   forEachEditor,
+  forEachEditorPlain,
   getEditor,
   getInitialSelection,
   nsmEditorManagerSlice,

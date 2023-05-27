@@ -1,5 +1,6 @@
 import { useNsmSliceState } from '@bangle.io/bangle-store-context';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
+import { markdownParser } from '@bangle.io/markdown';
 import {
   closeIfFound,
   fileOps,
@@ -10,6 +11,7 @@ import {
   pushSecondaryWsPath as _pushSecondaryWsPath,
 } from '@bangle.io/nsm-slice-workspace';
 import type { EditorIdType, Node, WsPath } from '@bangle.io/shared-types';
+import { incrementCounter } from '@bangle.io/slice-refresh-workspace';
 import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -48,6 +50,14 @@ export const createNote = async (
 ): Promise<void> => {
   const store = getStore();
   const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
+
+  if (await getNote(wsPath)) {
+    throw new BaseError({
+      message: `Cannot create. Note "${
+        resolvePath2(wsPath).fileName
+      }" already exists.`,
+    });
+  }
 
   await fileOps.createNote(wsPath, extensionRegistry, opts.doc);
 
@@ -92,6 +102,34 @@ export const deleteNote = (wsPath: WsPath) => {
 
   return fs.deleteFile(wsPath);
 };
+
+export const writeNote = async (wsPath: WsPath, doc: Node) => {
+  const store = getStore();
+  const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
+
+  await fileOps.writeNote(wsPath, extensionRegistry, doc);
+};
+
+export async function createNoteFromMd(wsPath: WsPath, mdText: string) {
+  const store = getStore();
+  const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
+
+  if (await getNote(wsPath)) {
+    throw new BaseError({
+      message: `Cannot create. Note "${
+        resolvePath2(wsPath).fileName
+      }" already exists.`,
+    });
+  }
+
+  const doc = markdownParser(
+    mdText,
+    extensionRegistry.specRegistry,
+    extensionRegistry.markdownItPlugins,
+  )!;
+
+  await fileOps.writeNote(wsPath, extensionRegistry, doc);
+}
 
 export const pushWsPath = (
   wsPath: WsPath,
@@ -147,4 +185,13 @@ export const closeEditor = (index?: EditorIdType): void => {
       }
     }),
   );
+};
+
+/**
+ * Refreshes to sync any updated files or workspaces
+ */
+export const refresh = () => {
+  const store = getStore();
+
+  store.dispatch(incrementCounter(null));
 };

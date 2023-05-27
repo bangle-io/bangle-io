@@ -1,5 +1,4 @@
 import { useNsmSliceState } from '@bangle.io/bangle-store-context';
-import type { NotificationPayloadType } from '@bangle.io/constants';
 import type { WsPath } from '@bangle.io/shared-types';
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
@@ -30,11 +29,31 @@ export const togglePalette = (
   store.dispatch(nsmUI.togglePalette(...args));
 };
 
+export const updatePalette = (
+  ...args: Parameters<typeof nsmUI.updatePalette>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmUI.updatePalette(...args));
+};
+
+export const resetPalette = (
+  ...args: Parameters<typeof nsmUI.resetPalette>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmUI.resetPalette(...args));
+};
+
 export const changeSidebar = (
   ...args: Parameters<typeof nsmUI.changeSidebar>
 ): void => {
   const store = getStore();
   store.dispatch(nsmUI.changeSidebar(...args));
+};
+export const toggleSideBar = (
+  ...args: Parameters<typeof nsmUI.toggleSideBar>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmUI.toggleSideBar(...args));
 };
 
 export const toggleNoteSidebar = (
@@ -44,11 +63,32 @@ export const toggleNoteSidebar = (
   store.dispatch(nsmUI.toggleNoteSidebar(...args));
 };
 
-export const showNotification = (
-  notification: NotificationPayloadType,
+export const toggleColorSchema = (
+  ...args: Parameters<typeof nsmUI.toggleColorSchema>
 ): void => {
   const store = getStore();
-  store.dispatch(nsmNotification.showNotification(notification));
+  store.dispatch(nsmUI.toggleColorSchema(...args));
+};
+
+export const showDialog = (
+  ...args: Parameters<typeof nsmUI.showDialog>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmUI.showDialog(...args));
+};
+
+export const dismissDialog = (
+  ...args: Parameters<typeof nsmUI.dismissDialog>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmUI.dismissDialog(...args));
+};
+
+export const showNotification = (
+  ...args: Parameters<typeof nsmNotification.showNotification>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmNotification.showNotification(...args));
 };
 
 export const setEditorIssue = (

@@ -118,10 +118,12 @@ export function ActivitybarMobileDumb({
                   size="sm"
                   text="Done"
                   onPress={() => {
-                    toggleEditingDirect(editorState, editorDispatch, {
-                      focusOrBlur: true,
-                      editingAllowed: false,
-                    });
+                    editorDispatch(
+                      toggleEditingDirect(editorState, {
+                        focusOrBlur: true,
+                        editingAllowed: false,
+                      }),
+                    );
                   }}
                 />
               ) : (
@@ -132,10 +134,12 @@ export function ActivitybarMobileDumb({
                   size="sm"
                   text="edit"
                   onPress={() => {
-                    toggleEditingDirect(editorState, editorDispatch, {
-                      focusOrBlur: true,
-                      editingAllowed: true,
-                    });
+                    editorDispatch(
+                      toggleEditingDirect(editorState, {
+                        focusOrBlur: true,
+                        editingAllowed: true,
+                      }),
+                    );
                   }}
                 />
               )}

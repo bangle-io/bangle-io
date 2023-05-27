@@ -1,3 +1,4 @@
+import type { StoreState } from '@bangle.io/nsm';
 import {
   changeEffect,
   createMetaAction,
@@ -167,6 +168,18 @@ const selectWsPaths = subSelector((state, storeState): WsPath[] | undefined => {
   return state.workspaceData[wsName]?.wsPaths;
 });
 
+const selectRecentWsPaths = subSelector(
+  (state, storeState): WsPath[] | undefined => {
+    const wsName = selectWsName(state, storeState);
+
+    if (!wsName) {
+      return undefined;
+    }
+
+    return state.workspaceData[wsName]?.recentlyUsedWsPaths;
+  },
+);
+
 export const nsmSliceWorkspace = createSliceWithSelectors(SLICE_DEPS, {
   name: SLICE_NAME,
   initState,
@@ -221,6 +234,15 @@ export const nsmSliceWorkspace = createSliceWithSelectors(SLICE_DEPS, {
       },
       (computed) => {
         return computed.wsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
+      },
+    ),
+
+    recentWsPaths: createSelector(
+      {
+        recentWsPaths: selectRecentWsPaths,
+      },
+      (computed) => {
+        return computed.recentWsPaths;
       },
     ),
   },
@@ -437,7 +459,11 @@ export const openWsPathInNewTab = (wsPath: WsPath) => {
 
 export const closeIfFound = createMetaAction(
   [nsmSliceWorkspace, nsmPageSlice],
-  (state, wsPath: WsPath, opts?: LocationOptions) => {
+  (
+    state: StoreState<'bangle/page-slice' | 'nsm-slice-workspace'>,
+    wsPath: WsPath,
+    opts?: LocationOptions,
+  ) => {
     const { openedWsPaths } = nsmSliceWorkspace.resolveState(state);
 
     let newOpened = openedWsPaths.closeIfFound(wsPath);
@@ -449,6 +475,6 @@ export const closeIfFound = createMetaAction(
       });
     }
 
-    return pushOpenedWsPaths(state, newOpened, opts);
+    return pushOpenedWsPaths(state, newOpened.optimizeSpace(), opts);
   },
 );

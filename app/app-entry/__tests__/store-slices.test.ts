@@ -37,8 +37,6 @@ test('exhaustive main slices list', () => {
     'notificationSliceKey$',
     '@bangle.io/slice-editor-collab-comms-key$',
     '@bangle.io/slice-workspace-opened-doc-info/slice-key$',
-    expect.stringMatching(/e2eHelpers1\$/),
-    expect.stringMatching(/e2eHelpers2\$/),
     expect.stringMatching(/slice\$/),
   ]);
 });

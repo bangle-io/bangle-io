@@ -1,15 +1,19 @@
 import { useCallback, useEffect } from 'react';
 
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
+import {
+  nsmSliceWorkspace,
+  setRecentlyUsedWsPaths,
+} from '@bangle.io/nsm-slice-workspace';
 import { isMobile, usePrevious, useRecencyMonitor } from '@bangle.io/utils';
+import { createWsPath, isValidNoteWsPath } from '@bangle.io/ws-path';
 
-import { useWorkspaceContext } from './WorkspaceContext';
-
-export const MAX_ENTRIES = isMobile ? 12 : 64;
-export const MAX_TIMESTAMPS_PER_ENTRY = 5;
+const MAX_ENTRIES = isMobile ? 12 : 64;
+const MAX_TIMESTAMPS_PER_ENTRY = 5;
 
 export function useRecentlyUsedWsPaths() {
-  const { openedWsPaths, wsName, noteWsPaths, bangleStore } =
-    useWorkspaceContext();
+  const [{ openedWsPaths, wsName, noteWsPaths }, workspaceDispatch] =
+    useNsmSlice(nsmSliceWorkspace);
 
   const prevOpenedPaths = usePrevious(openedWsPaths);
   const { records, updateRecord: _updateRecord } = useRecencyMonitor({
@@ -52,15 +56,21 @@ export function useRecentlyUsedWsPaths() {
 
   useEffect(() => {
     if (wsName && Array.isArray(noteWsPaths)) {
-      bangleStore.dispatch({
-        name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
-        value: {
+      workspaceDispatch(
+        setRecentlyUsedWsPaths({
           wsName,
           recentlyUsedWsPaths: records
-            .map((r) => r.key)
+            .filter((r) => {
+              return isValidNoteWsPath(r.key);
+            })
+            .map((r) => {
+              const { key } = r;
+
+              return createWsPath(key);
+            })
             .filter((r) => noteWsPaths.includes(r)),
-        },
-      });
+        }),
+      );
     }
-  }, [noteWsPaths, bangleStore, wsName, records]);
+  }, [noteWsPaths, workspaceDispatch, wsName, records]);
 }

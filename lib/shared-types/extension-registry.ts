@@ -26,6 +26,8 @@ export interface SerialOperationDefinitionType {
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;
+  // when true, will prevent editor focus when executed
+  preventEditorFocusOnExecute?: boolean;
 }
 export type DispatchSerialOperationType = (
   sOperation: SerialOperationType,

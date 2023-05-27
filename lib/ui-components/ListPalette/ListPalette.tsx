@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import type { PaletteOnExecuteItem } from '../UniversalPalette';
 import { UniversalPalette } from '../UniversalPalette';
 import type { ItemType } from '../UniversalPalette/PaletteItem';
 
@@ -50,7 +51,7 @@ export function ListPalette({
     description: error.displayMessage || error.message,
   };
 
-  const onExecuteItem = useCallback(
+  const onExecuteItem = useCallback<PaletteOnExecuteItem>(
     async (getUid) => {
       const uid = getUid(items);
       onSelectItem(items.find((item) => item.uid === uid));

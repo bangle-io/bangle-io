@@ -150,15 +150,36 @@ export const showDialog = nsmUISlice.createAction(
   },
 );
 
-export const dismissDialog = nsmUISlice.createAction('dismissDialog', () => {
-  return (state): UISliceState => {
-    return {
-      ...state,
-      dialogName: undefined,
-      dialogMetadata: undefined,
+/**
+ * if name provided will only close if the dialog exists
+ * if not provided will close any dialog
+ */
+export const dismissDialog = nsmUISlice.createAction(
+  'dismissDialog',
+  (dialogName?: string) => {
+    return (state): UISliceState => {
+      // if a name is provided only close dialog if it matches the name
+      if (typeof dialogName === 'string') {
+        if (dialogName === state.dialogName) {
+          return {
+            ...state,
+            dialogName: undefined,
+            dialogMetadata: undefined,
+          };
+        } else {
+          return state;
+        }
+      }
+
+      // else close any dialog
+      return {
+        ...state,
+        dialogName: undefined,
+        dialogMetadata: undefined,
+      };
     };
-  };
-});
+  },
+);
 
 export const updateNoteSidebar = nsmUISlice.createAction(
   'updateNoteSidebar',
@@ -167,6 +188,18 @@ export const updateNoteSidebar = nsmUISlice.createAction(
       return {
         ...state,
         noteSidebar: value.visible,
+      };
+    };
+  },
+);
+
+export const updateChangelogHasUpdates = nsmUISlice.createAction(
+  'updateChangelogHasUpdates',
+  (value: { hasUpdates: boolean }) => {
+    return (state): UISliceState => {
+      return {
+        ...state,
+        changelogHasUpdates: value.hasUpdates,
       };
     };
   },

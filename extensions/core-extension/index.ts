@@ -27,10 +27,7 @@ import {
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
-import {
-  nsmEditorManagerSlice,
-  toggleEditing,
-} from '@bangle.io/slice-editor-manager';
+import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
@@ -403,7 +400,7 @@ const extension = Extension.create({
             }
 
             case 'operation::@bangle.io/core-extension:toggle-editing-mode': {
-              toggleEditing(nsmStore.state, nsmStore.dispatch);
+              nsmApi2.editor.toggleEditing();
               let { editingAllowed } = nsmEditorManagerSlice.getState(
                 nsmStore.state,
               );
