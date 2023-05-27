@@ -8,9 +8,7 @@ export function browserStorageSlice() {
 
     sideEffect() {
       return {
-        update() {
-          // console.log('hi');
-        },
+        update() {},
       };
     },
   });

@@ -4,13 +4,11 @@ import type { BangleApplicationStore, NsmStore } from '@bangle.io/shared-types';
 
 export * as nsmApi2 from './nsm/index';
 export * as page from './page';
-export * as search from './search';
 export {
   useSerialOperationContext,
   useSerialOperationHandler,
 } from './serial-operation-context';
 export * as workspace from './workspace';
-export * as wsPathHelpers from './ws-path-helpers';
 export {
   useBangleStoreContext,
   useNsmDispatch,
@@ -31,12 +29,13 @@ export {
   Slice as NsmSlice,
 } from '@bangle.io/nsm';
 export { browserInfo } from '@bangle.io/utils';
+export * as wsPathHelpers from '@bangle.io/ws-path';
 export { resolvePath } from '@bangle.io/ws-path';
 export type { BangleApplicationStore };
 export type BangleAppDispatch = BangleApplicationStore['dispatch'];
 export type BangleAppState = BangleApplicationStore['state'];
 
-export * as internals from './internals';
+export { _internal_setStore } from './internals';
 
 export function getOldStore(nsmStore: NsmStore): ApplicationStore {
   let val: ApplicationStore = (nsmStore as any).oldStore;

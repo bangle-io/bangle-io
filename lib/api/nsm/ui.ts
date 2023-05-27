@@ -77,6 +77,13 @@ export const showDialog = (
   store.dispatch(nsmUI.showDialog(...args));
 };
 
+export const updateChangelogHasUpdates = (
+  ...args: Parameters<typeof nsmUI.updateChangelogHasUpdates>
+): void => {
+  const store = getStore();
+  store.dispatch(nsmUI.updateChangelogHasUpdates(...args));
+};
+
 export const dismissDialog = (
   ...args: Parameters<typeof nsmUI.dismissDialog>
 ): void => {

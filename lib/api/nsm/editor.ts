@@ -4,10 +4,16 @@ import { PluginKey } from '@bangle.dev/pm';
 import { search } from '@bangle.dev/search';
 
 import { useNsmSliceState } from '@bangle.io/bangle-store-context';
-import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+import {
+  EXECUTE_SEARCH_OPERATION,
+  PRIMARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { changeEffect, createSliceWithSelectors, Slice } from '@bangle.io/nsm';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
-import type { WsPath } from '@bangle.io/shared-types';
+import type {
+  DispatchSerialOperationType,
+  WsPath,
+} from '@bangle.io/shared-types';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import * as editorManager from '@bangle.io/slice-editor-manager';
 
@@ -90,6 +96,15 @@ const _updateQueryAction = _editorManagerProxy.createAction(
 export const pick = editorManager.nsmEditorManagerSlice.pick;
 export const passivePick = editorManager.nsmEditorManagerSlice.passivePick;
 
+export function searchByTag(
+  dispatchSerialOperation: DispatchSerialOperationType,
+  tagValue: string,
+) {
+  dispatchSerialOperation({
+    name: EXECUTE_SEARCH_OPERATION,
+    value: `tag:${tagValue}`,
+  });
+}
 // WARNING: Do not expose editor to react, get can use get methods below
 export function useEditor() {
   const { focusedEditorId } = useNsmSliceState(

@@ -11,7 +11,7 @@ import type { _editorManagerProxy } from './nsm/editor';
 
 let _store: ApiStore;
 
-export function setStore(store: ApiStore) {
+export function _internal_setStore(store: ApiStore) {
   _store = store;
 }
 

@@ -1,5 +1,4 @@
 export {
-  nsmPageSlice,
   oldGetCurrentPageLifeCycle,
   oldPageLifeCycleTransitionedTo,
   pageSliceKey,
