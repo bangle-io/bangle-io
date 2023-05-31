@@ -25,9 +25,9 @@ import { Plugin, SpecRegistry } from '@bangle.dev/core';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { CHANGELOG_TEXT } from '@bangle.io/config';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { Dialog } from '@bangle.io/ui-components';
 import { useLocalStorage } from '@bangle.io/utils';
 
@@ -53,18 +53,11 @@ const specRegistry = new SpecRegistry([
 ]);
 
 export function ChangelogModal() {
-  const { dispatch } = useUIManagerContext();
-
   useLastSeenChangelog(true);
 
   const onDismiss = useCallback(() => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
-      value: {
-        dialogName: CHANGELOG_MODAL_NAME,
-      },
-    });
-  }, [dispatch]);
+    nsmApi2.ui.dismissDialog(CHANGELOG_MODAL_NAME);
+  }, []);
 
   return (
     <Dialog
@@ -136,7 +129,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
     '',
   );
 
-  const { changelogHasUpdates, dispatch } = useUIManagerContext();
+  const { changelogHasUpdates } = nsmApi2.ui.uiState();
   // Update the last seen whenever a user sees a changelog
   useEffect(() => {
     const topHeading = getTopHeading();
@@ -151,10 +144,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
     const hasUpdates = lastSeenHeading !== getTopHeading();
 
     if (hasUpdates !== changelogHasUpdates) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:UPDATE_NEW_CHANGELOG',
-        value: { hasUpdates },
-      });
+      nsmApi2.ui.updateChangelogHasUpdates({ hasUpdates: true });
     }
-  }, [dispatch, changelogHasUpdates, lastSeenHeading]);
+  }, [changelogHasUpdates, lastSeenHeading]);
 }

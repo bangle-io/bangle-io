@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@bangle.io/mini-js-utils": "workspace:*",
-    "nalanda": "portal:/Users/kushanjoshi/code/nalanda",
+    "nalanda": "1.3.0-alpha.3",
     "superjson": "^1.12.2",
     "zod": "^3.21.4"
   },

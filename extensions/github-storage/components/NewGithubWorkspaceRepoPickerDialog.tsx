@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ui, useBangleStoreContext, workspace } from '@bangle.io/api';
+import { nsmApi2, useBangleStoreContext, workspace } from '@bangle.io/api';
 import {
   ComboBox,
   Dialog,
@@ -23,7 +23,7 @@ const MIN_HEIGHT = 200;
 
 export function NewGithubWorkspaceRepoPickerDialog() {
   const bangleStore = useBangleStoreContext();
-  const { dialogMetadata } = ui.useUIManagerContext();
+  const { dialogMetadata } = nsmApi2.ui.useUi();
   const [isLoading, updateIsLoading] = useState(false);
   const deferredIsLoading = useDebouncedValue(isLoading, { wait: 100 });
   const [error, updateError] = useState<Error | undefined>(undefined);
@@ -33,11 +33,8 @@ export function NewGithubWorkspaceRepoPickerDialog() {
   >();
 
   const onDismiss = useCallback(() => {
-    ui.dismissDialog(NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
-  }, [bangleStore]);
+    nsmApi2.ui.dismissDialog(NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG);
+  }, []);
 
   const githubToken =
     typeof dialogMetadata?.githubToken === 'string'
@@ -71,12 +68,9 @@ export function NewGithubWorkspaceRepoPickerDialog() {
 
   useEffect(() => {
     if (!githubToken) {
-      ui.dismissDialog(NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
+      nsmApi2.ui.dismissDialog(NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG);
     }
-  }, [githubToken, bangleStore]);
+  }, [githubToken]);
 
   useEffect(() => {
     let destroyed = false;

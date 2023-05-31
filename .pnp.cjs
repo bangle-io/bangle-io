@@ -6486,6 +6486,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.31.6"],\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
@@ -6495,6 +6496,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -6528,6 +6530,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.31.6"],\
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
             ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
@@ -6537,6 +6540,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -7090,7 +7094,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
-            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"],\
+            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.3"],\
             ["superjson", "npm:1.12.2"],\
             ["zod", "npm:3.21.4"]\
           ],\
@@ -27778,22 +27782,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["nalanda", [\
-        ["portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm", {\
-          "packageLocation": "../../nalanda/",\
+        ["npm:1.3.0-alpha.3", {\
+          "packageLocation": "./.yarn/cache/nalanda-npm-1.3.0-alpha.3-d549d6d5d1-f7a069d1bf.zip/node_modules/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"]\
+            ["nalanda", "npm:1.3.0-alpha.3"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm", {\
-          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-525d5900b0/3/nalanda/",\
+        ["virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.3", {\
+          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-41afa29470/0/cache/nalanda-npm-1.3.0-alpha.3-d549d6d5d1-f7a069d1bf.zip/node_modules/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"],\
+            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.3"],\
             ["@types/react", null],\
             ["@types/zod", null],\
             ["react", null],\
             ["type-fest", "npm:3.6.0"],\
-            ["use-sync-external-store", "virtual:525d5900b04a42b7f74cc951dedb81b11b19031f58a47a83cab5a6f057b48aa3370b5b9f8b98ed782c1cf60f094eb3b1b5b89eb31032c13490156b32885a3121#npm:1.2.0"],\
+            ["use-sync-external-store", "virtual:41afa29470376df0070c8dee4fd37d5f82943ffdc6003f68571de59c3fe3ab7c2158a3d57f303aa4e6854539568b2d5d311c8febfaec78eea48eed4021625679#npm:1.2.0"],\
             ["zod", "npm:3.21.4"]\
           ],\
           "packagePeers": [\
@@ -27802,7 +27806,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "react",\
             "zod"\
           ],\
-          "linkType": "SOFT"\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["nan", [\
@@ -34877,10 +34881,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:525d5900b04a42b7f74cc951dedb81b11b19031f58a47a83cab5a6f057b48aa3370b5b9f8b98ed782c1cf60f094eb3b1b5b89eb31032c13490156b32885a3121#npm:1.2.0", {\
-          "packageLocation": "./.yarn/__virtual__/use-sync-external-store-virtual-4421942d0d/0/cache/use-sync-external-store-npm-1.2.0-44f75d2564-5c639e0f8d.zip/node_modules/use-sync-external-store/",\
+        ["virtual:41afa29470376df0070c8dee4fd37d5f82943ffdc6003f68571de59c3fe3ab7c2158a3d57f303aa4e6854539568b2d5d311c8febfaec78eea48eed4021625679#npm:1.2.0", {\
+          "packageLocation": "./.yarn/__virtual__/use-sync-external-store-virtual-13bd27574e/0/cache/use-sync-external-store-npm-1.2.0-44f75d2564-5c639e0f8d.zip/node_modules/use-sync-external-store/",\
           "packageDependencies": [\
-            ["use-sync-external-store", "virtual:525d5900b04a42b7f74cc951dedb81b11b19031f58a47a83cab5a6f057b48aa3370b5b9f8b98ed782c1cf60f094eb3b1b5b89eb31032c13490156b32885a3121#npm:1.2.0"],\
+            ["use-sync-external-store", "virtual:41afa29470376df0070c8dee4fd37d5f82943ffdc6003f68571de59c3fe3ab7c2158a3d57f303aa4e6854539568b2d5d311c8febfaec78eea48eed4021625679#npm:1.2.0"],\
             ["@types/react", null],\
             ["react", null]\
           ],\

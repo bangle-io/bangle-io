@@ -22,9 +22,11 @@ export type Severity = (typeof SEVERITY)[keyof typeof SEVERITY];
 export const COLOR_SCHEMA = {
   LIGHT: 'light',
   DARK: 'dark',
-};
+} as const;
 
-export type ColorScheme = (typeof COLOR_SCHEMA)[keyof typeof COLOR_SCHEMA];
+export const colorSchema = z.nativeEnum(COLOR_SCHEMA);
+
+export type ColorScheme = z.infer<typeof colorSchema>;
 
 export const NotificationPayloadSchema = z.object({
   uid: z.string(),

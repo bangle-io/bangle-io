@@ -44,7 +44,7 @@ const extension = Extension.create({
         handle(operation, _, bangleStore) {
           switch (operation.name) {
             case 'operation::@bangle.io/note-browser:toggle-note-browser': {
-              nsmApi2.ui.changeSidebar(
+              nsmApi2.ui.toggleSideBar(
                 'sidebar::@bangle.io/note-browser:note-browser',
               );
 

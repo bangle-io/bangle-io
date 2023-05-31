@@ -14,6 +14,7 @@ import {
 } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToWsNameRoute } from '@bangle.io/slice-workspace';
+import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import {
   AlbumIcon,
   CloseIcon,
@@ -91,12 +92,12 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
 
       const activeItem = getActivePaletteItem(items);
 
-      const onExecuteItem = useCallback(
+      const onExecuteItem = useCallback<PaletteOnExecuteItem>(
         (getUid, sourceInfo) => {
           const uid = getUid(items);
           const item = items.find((item) => item.uid === uid);
 
-          if (item) {
+          if (item && uid != null) {
             goToWsNameRoute(item.data.workspace.name, {
               newTab: sourceInfo.metaKey,
               reopenPreviousEditors: false,

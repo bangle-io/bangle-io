@@ -5,7 +5,6 @@ import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
 import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
-import { uiSlice } from '@bangle.io/slice-ui';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
@@ -46,7 +45,7 @@ export function bangleStateSlices({
     extensionRegistrySlice(),
     storageProviderSlice(),
     disableSideEffect(workspaceSlice()),
-    uiSlice(),
+    // uiSlice(),
     saveStateSlice(),
     miscEffectsSlice(),
     editorSyncSlice(),

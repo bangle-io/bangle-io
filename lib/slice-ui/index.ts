@@ -5,4 +5,5 @@ export {
 export { nsmUISlice } from './nsm-ui-slice';
 export * as nsmUI from './nsm-ui-slice';
 export { useUIManagerContext } from './ui-context';
+// TODO remove
 export { uiSlice, uiSliceKey } from './ui-slice';

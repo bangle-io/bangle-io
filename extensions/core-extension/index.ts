@@ -1,4 +1,4 @@
-import { getNewStore, nsmApi2, ui, workspace } from '@bangle.io/api';
+import { nsmApi2, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -22,13 +22,12 @@ import {
   NEW_WORKSPACE_DIALOG_NAME,
   RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
+  SECONDARY_EDITOR_INDEX,
   SEVERITY,
   WorkspaceType,
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
-import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
-import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
   CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
@@ -53,10 +52,7 @@ import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
   deleteActiveNote,
   downloadWorkspace,
-  openNewNoteDialog,
-  openNewWorkspaceDialog,
   removeWorkspace,
-  renameActiveNote,
   restoreWorkspaceFromBackup,
 } from './operations';
 
@@ -116,18 +112,24 @@ const extension = Extension.create({
         name: CORE_OPERATIONS_NEW_NOTE,
         title: 'New note',
         keywords: ['create'],
+        preventEditorFocusOnExecute: true,
       },
       {
         name: CORE_OPERATIONS_NEW_WORKSPACE,
         title: 'New workspace',
         keywords: ['create'],
+        preventEditorFocusOnExecute: true,
       },
       {
         name: CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
         title: 'Remove active workspace',
         keywords: ['delete'],
       },
-      { name: CORE_OPERATIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
+      {
+        name: CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
+        title: 'Rename active note',
+        preventEditorFocusOnExecute: true,
+      },
       {
         name: CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
         title: 'Show/Hide Note Widget Sidebar',
@@ -212,12 +214,12 @@ const extension = Extension.create({
         name: 'operation::@bangle.io/core-extension:show-changelog',
         title: 'Show Changelog',
         keywords: ['update', 'what is new'],
+        preventEditorFocusOnExecute: true,
       },
     ],
     operationHandler() {
       return {
         handle(operation, payload: unknown, bangleStore) {
-          const nsmStore = getNewStore(bangleStore);
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
               // TODO fix payload as any
@@ -225,19 +227,29 @@ const extension = Extension.create({
 
               let _path = typeof path === 'string' ? path : undefined;
 
-              openNewNoteDialog(_path)(bangleStore.state, bangleStore.dispatch);
+              nsmApi2.ui.showDialog({
+                dialogName: NEW_NOTE_DIALOG_NAME,
+                metadata: {
+                  initialValue: _path,
+                },
+              });
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE: {
-              openNewWorkspaceDialog()(bangleStore.state, bangleStore.dispatch);
+              nsmApi2.ui.showDialog({
+                dialogName: NEW_WORKSPACE_DIALOG_NAME,
+              });
 
               return true;
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              renameActiveNote(bangleStore);
+              nsmApi2.ui.updatePalette(undefined);
+              nsmApi2.ui.showDialog({
+                dialogName: RENAME_NOTE_DIALOG_NAME,
+              });
 
               return true;
             }
@@ -249,7 +261,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-              deleteActiveNote(nsmStore);
+              deleteActiveNote();
 
               return true;
             }
@@ -273,7 +285,8 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_OPEN_IN_MINI_EDITOR: {
-              const targetWsPath = nsmApi2.editor.getFocusedWsPath();
+              const targetWsPath =
+                nsmApi2.workspace.workspaceState().primaryWsPath;
 
               if (targetWsPath) {
                 nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
@@ -304,17 +317,13 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
-              downloadWorkspace()(bangleStore.state, bangleStore.dispatch);
+              downloadWorkspace();
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP: {
-              restoreWorkspaceFromBackup()(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              restoreWorkspaceFromBackup();
 
               return true;
             }
@@ -332,23 +341,19 @@ const extension = Extension.create({
               return true;
             }
             case 'operation::@bangle.io/core-extension:focus-primary-editor': {
-              nsmEditorManagerSlice
-                .resolveState(nsmStore.state)
-                .primaryEditor?.focusView();
+              nsmApi2.editor.getPrimaryEditor()?.focusView();
 
               return true;
             }
 
             case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
-              nsmEditorManagerSlice
-                .resolveState(nsmStore.state)
-                .secondaryEditor?.focusView();
+              nsmApi2.editor.getEditor(SECONDARY_EDITOR_INDEX)?.focusView();
 
               return true;
             }
 
             case CORE_OPERATIONS_TOGGLE_UI_COLOR_SCHEME: {
-              toggleTheme()(bangleStore.state, bangleStore.dispatch);
+              nsmApi2.ui.toggleColorSchema();
 
               return true;
             }
@@ -401,9 +406,7 @@ const extension = Extension.create({
 
             case 'operation::@bangle.io/core-extension:toggle-editing-mode': {
               nsmApi2.editor.toggleEditing();
-              let { editingAllowed } = nsmEditorManagerSlice.getState(
-                nsmStore.state,
-              );
+              let { editingAllowed } = nsmApi2.editor.editorState();
 
               nsmApi2.ui.showNotification({
                 severity: editingAllowed ? SEVERITY.INFO : SEVERITY.WARNING,
@@ -415,18 +418,16 @@ const extension = Extension.create({
             }
 
             case 'operation::@bangle.io/core-extension:reload-application': {
-              ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              nsmApi2.ui.showDialog({
+                dialogName: RELOAD_APPLICATION_DIALOG_NAME,
+              });
 
               return true;
             }
             case 'operation::@bangle.io/core-extension:show-changelog': {
-              ui.showDialog(CHANGELOG_MODAL_NAME)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              nsmApi2.ui.showDialog({
+                dialogName: CHANGELOG_MODAL_NAME,
+              });
 
               return true;
             }

@@ -10,6 +10,7 @@
     "core-theme",
     "example-extension",
     "github-storage",
+    "helpfs-storage",
     "image-extension",
     "inline-backlink",
     "inline-command-palette",

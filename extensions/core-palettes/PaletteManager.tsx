@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useNsmEditorManagerStore } from '@bangle.io/slice-editor-manager';
-import { focusEditorIfNotFocused } from '@bangle.io/slice-editor-manager/nsm-editor-manager-slice';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { nsmApi2 } from '@bangle.io/api';
 import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
@@ -32,58 +30,51 @@ const paletteByType = Object.fromEntries(
 );
 
 export function PaletteManager() {
-  const { paletteMetadata, paletteType, paletteInitialQuery, dispatch } =
-    useUIManagerContext();
+  const { paletteMetadata, paletteType, paletteInitialQuery } =
+    nsmApi2.ui.useUi();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
-  const editorStore = useNsmEditorManagerStore();
 
-  const dismissPalette = useCallback(
-    (focus = true) => {
-      updateQuery('');
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:RESET_PALETTE',
-        value: {},
+  const dismissPalette = useCallback((focus = true) => {
+    updateQuery('');
+    nsmApi2.ui.resetPalette();
+
+    if (focus) {
+      safeRequestAnimationFrame(() => {
+        nsmApi2.editor.focusEditorIfNotFocused();
       });
-
-      if (focus) {
-        safeRequestAnimationFrame(() => {
-          focusEditorIfNotFocused(editorStore.state);
-        });
-      }
-    },
-    [dispatch, editorStore],
-  );
+    }
+  }, []);
 
   const paletteRef = useRef<PaletteManagerImperativeHandle>(null);
 
   const onExecuteItem = useCallback<PaletteOnExecuteItem>(
     (items, info) => {
-      dismissPalette();
-      paletteRef.current?.onExecuteItem(items, info);
+      const maybeAsyncResult = paletteRef.current?.onExecuteItem(items, info);
+
+      Promise.resolve(maybeAsyncResult).then((result) => {
+        dismissPalette(!result?.shouldPreventFocus);
+      });
+
+      return maybeAsyncResult;
     },
     [dismissPalette],
   );
 
   const updatePalette = useCallback<
     PaletteManagerReactComponentProps['updatePalette']
-  >(
-    (type, initialQuery = '') => {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
-        value: { type, initialQuery },
-      });
+  >((type, initialQuery = '') => {
+    nsmApi2.ui.updatePalette(type, initialQuery);
 
-      if (type) {
-        document
-          .querySelector<HTMLInputElement>(
-            '.B-ui-components_universal-palette-container input',
-          )
-          ?.focus();
-      }
-    },
-    [dispatch],
-  );
+    if (type) {
+      document
+        .querySelector<HTMLInputElement>(
+          '.B-ui-components_universal-palette-container input',
+        )
+        ?.focus();
+    }
+  }, []);
 
   const { inputProps, updateCounter, resetCounter, counter, onSelect } =
     UniversalPalette.usePaletteDriver(dismissPalette, onExecuteItem);

@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { Extension, ui, workspace } from '@bangle.io/api';
+import { Extension, nsmApi2, workspace } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
   CONFLICT_DIALOG,
   DISCARD_LOCAL_CHANGES_DIALOG,
-  ghSliceKey,
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
@@ -119,25 +118,21 @@ const extension = Extension.create({
             }
 
             case OPERATION_DISCARD_LOCAL_CHANGES: {
-              ui.showDialog(DISCARD_LOCAL_CHANGES_DIALOG)(
-                store.state,
-                store.dispatch,
-              );
+              nsmApi2.ui.showDialog({
+                dialogName: DISCARD_LOCAL_CHANGES_DIALOG,
+              });
 
               return true;
             }
 
             case OPERATION_UPDATE_GITHUB_TOKEN: {
-              ui.showDialog(UPDATE_GITHUB_TOKEN_DIALOG)(
-                store.state,
-                store.dispatch,
-              );
+              nsmApi2.ui.showDialog({ dialogName: UPDATE_GITHUB_TOKEN_DIALOG });
 
               return true;
             }
 
             case OPERATION_SHOW_CONFLICT_DIALOG: {
-              ui.showDialog(CONFLICT_DIALOG)(store.state, store.dispatch);
+              nsmApi2.ui.showDialog({ dialogName: CONFLICT_DIALOG });
 
               return true;
             }

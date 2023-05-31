@@ -1,6 +1,7 @@
 import React, { useCallback, useImperativeHandle } from 'react';
 
 import { CorePalette } from '@bangle.io/constants';
+import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 
 import type { ExtensionPaletteType } from './config';
@@ -27,7 +28,7 @@ const QuestionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         })
         .filter((obj) => strMatch(obj.title, query));
 
-      const onExecuteItem = useCallback(
+      const onExecuteItem = useCallback<PaletteOnExecuteItem>(
         (getUid, sourceInfo) => {
           const uid = getUid(items);
           const item = items.find((item) => item.uid === uid);

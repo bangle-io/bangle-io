@@ -1,11 +1,16 @@
 import React, { useCallback, useState } from 'react';
 
-import { useBangleStoreContext, workspace } from '@bangle.io/api';
+import { useNsmStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import {
+  nsmSliceWorkspace,
+  pushOpenedWsPaths,
+} from '@bangle.io/nsm-slice-workspace';
 import type { WsPath } from '@bangle.io/shared-types';
+import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   ArrowsExpand,
   Button,
@@ -18,18 +23,25 @@ import { resolvePath } from '@bangle.io/ws-path';
 export function MiniEditor({ wsPath }: { wsPath: WsPath }) {
   const { fileNameWithoutExt } = resolvePath(wsPath, true);
   const extensionRegistry = useExtensionRegistryContext();
-  const bangleStore = useBangleStoreContext();
 
+  const nsmStore = useNsmStore([nsmPageSlice, nsmSliceWorkspace]);
   const [isMinimized, updateIsMinimized] = useState(false);
 
   const onClose = useCallback(() => {
-    workspace.closeMiniEditor()(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore]);
+    nsmStore.dispatch(
+      pushOpenedWsPaths(nsmStore.state, (oPaths) =>
+        oPaths.updateMiniEditorWsPath(undefined),
+      ),
+    );
+  }, [nsmStore]);
 
   const onExpand = useCallback(() => {
-    onClose();
-    workspace.pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
-  }, [wsPath, onClose, bangleStore]);
+    nsmStore.dispatch(
+      pushOpenedWsPaths(nsmStore.state, (oPaths) =>
+        oPaths.updatePrimaryWsPath(wsPath).updateMiniEditorWsPath(undefined),
+      ),
+    );
+  }, [wsPath, nsmStore]);
 
   return (
     <div

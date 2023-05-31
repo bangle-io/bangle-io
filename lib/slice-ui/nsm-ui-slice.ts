@@ -1,10 +1,21 @@
 import type { ColorScheme, CorePalette } from '@bangle.io/constants';
-import { COLOR_SCHEMA, GENERIC_ERROR_MODAL_NAME } from '@bangle.io/constants';
-import { createSliceV2 } from '@bangle.io/nsm';
+import {
+  COLOR_SCHEMA,
+  colorSchema,
+  GENERIC_ERROR_MODAL_NAME,
+} from '@bangle.io/constants';
+import {
+  createSliceV2,
+  mountEffect,
+  Slice,
+  sliceStateSerializer,
+  z,
+} from '@bangle.io/nsm';
 import type { GenericErrorModalMetadata } from '@bangle.io/shared-types';
 import {
   changeColorScheme,
   checkWidescreen,
+  listenToResize,
   setRootWidescreenClass,
 } from '@bangle.io/utils';
 
@@ -229,3 +240,57 @@ export function showGenericErrorModal({
     },
   });
 }
+
+Slice.registerEffectSlice(nsmUISlice, [
+  mountEffect('uiSliceMountEffect', [nsmUISlice], (store) => {
+    const state = nsmUISlice.resolveState(store.state);
+    changeColorScheme(state.colorScheme);
+    setRootWidescreenClass(state.widescreen);
+
+    const controller = new AbortController();
+
+    listenToResize((obj) => {
+      store.dispatch(updateWindowSize(obj));
+    }, controller.signal);
+
+    return () => {
+      controller.abort();
+    };
+  }),
+]);
+
+const SERIAL_VERSION = 1;
+
+export const persistState = sliceStateSerializer(nsmUISlice, {
+  dbKey: 'nsmUiSlice',
+  schema: z.object({
+    sidebar: z.union([z.string(), z.undefined()]),
+    colorScheme: colorSchema,
+    noteSidebar: z.boolean(),
+  }),
+  serialize: (state) => {
+    const { sidebar, colorScheme, noteSidebar } =
+      nsmUISlice.resolveState(state);
+
+    return {
+      version: SERIAL_VERSION,
+      data: {
+        sidebar: sidebar === null ? undefined : sidebar,
+        colorScheme,
+        noteSidebar: noteSidebar,
+      },
+    };
+  },
+  deserialize: ({ version, data }) => {
+    if (version < SERIAL_VERSION) {
+      return initialUISliceState;
+    }
+
+    const result: UISliceState = {
+      ...initialUISliceState,
+      ...data,
+    };
+
+    return result;
+  },
+});

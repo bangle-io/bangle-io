@@ -1,215 +1,136 @@
-import { editor, getNewStore, getOldStore, nsmApi2 } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
-  NEW_NOTE_DIALOG_NAME,
-  NEW_WORKSPACE_DIALOG_NAME,
-  RENAME_NOTE_DIALOG_NAME,
   SEVERITY,
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import type { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type { NsmStore } from '@bangle.io/shared-types';
-import { uiSliceKey } from '@bangle.io/slice-ui';
-import {
-  deleteNote,
-  deleteWorkspace,
-  refreshWsPaths,
-  updateOpenedWsPaths,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { deleteWorkspace } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-import { resolvePath } from '@bangle.io/ws-path';
+import { resolvePath2 } from '@bangle.io/ws-path';
 
 export function downloadWorkspace() {
-  return (state: AppState, dispatch: ApplicationStore['dispatch']) => {
-    const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
+  const { wsName } = nsmApi2.workspace.workspaceState();
 
-    if (!wsName) {
-      nsmApi2.ui.showNotification({
-        severity: SEVERITY.ERROR,
-        uid: 'new-note-not-no-workspace',
-        title: 'Please first select a workspace',
-        buttons: [],
-      });
-
-      return;
-    }
-
-    const abortController = new AbortController();
+  if (!wsName) {
     nsmApi2.ui.showNotification({
-      severity: SEVERITY.INFO,
-      uid: 'downloading-ws-copy' + wsName,
-      title: 'Hang tight! your backup zip will be downloaded momentarily.',
+      severity: SEVERITY.ERROR,
+      uid: 'new-note-not-no-workspace',
+      title: 'Please first select a workspace',
       buttons: [],
     });
 
-    naukarProxy
-      .abortableBackupAllFiles(abortController.signal, wsName)
-      .then((blob: File) => {
-        downloadBlob(blob, blob.name);
-      });
-  };
+    return;
+  }
+
+  const abortController = new AbortController();
+  nsmApi2.ui.showNotification({
+    severity: SEVERITY.INFO,
+    uid: 'downloading-ws-copy' + wsName,
+    title: 'Hang tight! your backup zip will be downloaded momentarily.',
+    buttons: [],
+  });
+
+  naukarProxy
+    .abortableBackupAllFiles(abortController.signal, wsName)
+    .then((blob: File) => {
+      downloadBlob(blob, blob.name);
+    });
 }
 
 export function restoreWorkspaceFromBackup() {
-  return workspaceSliceKey.asyncOp(async (_, __, store) => {
-    const wsName = workspaceSliceKey.getSliceState(store.state)?.wsName;
+  const { wsName } = nsmApi2.workspace.workspaceState();
 
-    if (!wsName) {
+  if (!wsName) {
+    nsmApi2.ui.showNotification({
+      buttons: [],
+      severity: SEVERITY.ERROR,
+      uid: 'restoreWorkspaceFromBackup-no-workspace',
+      title: 'Please create an empty workspace first',
+    });
+
+    return false;
+  }
+
+  filePicker()
+    .then((file) => {
+      const abortController = new AbortController();
+
       nsmApi2.ui.showNotification({
         buttons: [],
-        severity: SEVERITY.ERROR,
-        uid: 'restoreWorkspaceFromBackup-no-workspace',
-        title: 'Please create an empty workspace first',
+        severity: SEVERITY.INFO,
+        uid: 'restoreWorkspaceFromBackup-' + wsName,
+        title:
+          'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
       });
 
-      return false;
-    }
-
-    filePicker()
-      .then((file) => {
-        const abortController = new AbortController();
+      return naukarProxy.abortableCreateWorkspaceFromBackup(
+        abortController.signal,
+        wsName,
+        file,
+      );
+    })
+    .then(() => {
+      return sleep(100);
+    })
+    .then(
+      () => {
+        nsmApi2.workspace.refresh();
 
         nsmApi2.ui.showNotification({
           buttons: [],
-          severity: SEVERITY.INFO,
-          uid: 'restoreWorkspaceFromBackup-' + wsName,
-          title:
-            'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
+          severity: SEVERITY.SUCCESS,
+          uid: 'recovery-finished-' + wsName,
+          title: `Restored ${
+            nsmApi2.workspace.workspaceState().noteWsPaths?.length || 0
+          } notes.`,
         });
-
-        return naukarProxy.abortableCreateWorkspaceFromBackup(
-          abortController.signal,
-          wsName,
-          file,
-        );
-      })
-      .then(() => {
-        return sleep(100);
-      })
-      .then(
-        () => {
-          refreshWsPaths()(store.state, store.dispatch);
-
+      },
+      (error) => {
+        // comlink is unable to understand custom errors
+        if (error?.message?.includes(WorkerErrorCode.EMPTY_WORKSPACE_NEEDED)) {
           nsmApi2.ui.showNotification({
             buttons: [],
-            severity: SEVERITY.SUCCESS,
-            uid: 'recovery-finished-' + wsName,
-            title: 'Your notes have successfully restored.',
+            severity: SEVERITY.ERROR,
+            uid: 'restoreWorkspaceFromBackup-workspace-has-things',
+            title: 'This operation requires an empty workspace.',
           });
-        },
-        (error) => {
-          // comlink is unable to understand custom errors
-          if (
-            error?.message?.includes(WorkerErrorCode.EMPTY_WORKSPACE_NEEDED)
-          ) {
-            nsmApi2.ui.showNotification({
-              buttons: [],
-              severity: SEVERITY.ERROR,
-              uid: 'restoreWorkspaceFromBackup-workspace-has-things',
-              title: 'This operation requires an empty workspace.',
-            });
 
-            return;
-          }
-        },
-      );
-
-    return true;
-  });
-}
-
-export function openNewNoteDialog(initialValue?: string) {
-  return uiSliceKey.op((state, dispatch) => {
-    const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
-
-    if (!wsName) {
-      nsmApi2.ui.showNotification({
-        buttons: [],
-        severity: SEVERITY.ERROR,
-        uid: 'new-note-not-no-workspace',
-        title: 'Please first select a workspace',
-      });
-
-      return;
-    }
-
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-      value: {
-        dialogName: NEW_NOTE_DIALOG_NAME,
-        metadata: {
-          initialValue: initialValue,
-        },
+          return;
+        }
       },
-    });
-  });
-}
-
-export function renameActiveNote(store: ApplicationStore) {
-  const nsmStore = getNewStore(store);
-  const { state, dispatch } = store;
-  const focusedWsPath = editor.getFocusedWsPath(nsmStore.state);
-
-  if (!focusedWsPath) {
-    nsmApi2.ui.showNotification({
-      severity: SEVERITY.ERROR,
-      uid: 'delete-wsPath-not-found',
-      title: 'Cannot rename because there is no active note',
-      buttons: [],
-    });
-
-    return true;
-  }
-
-  // To avoid overlapping
-  dispatch({
-    name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
-    value: { type: null },
-  });
-
-  dispatch({
-    name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-    value: {
-      dialogName: RENAME_NOTE_DIALOG_NAME,
-    },
-  });
+    );
 
   return true;
 }
 
-export function deleteActiveNote(nsmStore: NsmStore) {
-  const focusedWsPath = editor.getFocusedWsPath(nsmStore.state);
-
-  const oldStore = getOldStore(nsmStore);
-  const { state, dispatch } = oldStore;
+export function deleteActiveNote() {
+  const focusedWsPath = nsmApi2.editor.getFocusedWsPath();
 
   if (!focusedWsPath) {
     nsmApi2.ui.showNotification({
       severity: SEVERITY.ERROR,
       uid: 'delete-wsPath-not-found',
-      title: 'Cannot delete because there is no active note',
+      title: 'Cannot delete because there is no primary note',
       buttons: [],
     });
 
     return true;
   }
 
-  dispatch({
-    name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
-    value: { type: null },
-  });
+  nsmApi2.ui.updatePalette(undefined);
 
   if (
     typeof window !== 'undefined' &&
     window.confirm(
       `Are you sure you want to remove "${
-        resolvePath(focusedWsPath).filePath
+        resolvePath2(focusedWsPath).filePath
       }"? It cannot be undone.`,
     )
   ) {
-    deleteNote(focusedWsPath)(state, dispatch, oldStore)
+    nsmApi2.workspace
+      .deleteNote(focusedWsPath)
       .then((error) => {
         nsmApi2.ui.showNotification({
           buttons: [],
@@ -231,24 +152,13 @@ export function deleteActiveNote(nsmStore: NsmStore) {
   return true;
 }
 
-export function openNewWorkspaceDialog() {
-  return uiSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-      value: {
-        dialogName: NEW_WORKSPACE_DIALOG_NAME,
-      },
-    });
-  });
-}
-
 export function removeWorkspace(wsName?: string) {
   return async (
     state: AppState,
     dispatch: ApplicationStore['dispatch'],
     store: ApplicationStore,
   ) => {
-    wsName = wsName || workspaceSliceKey.getSliceState(state)?.wsName;
+    wsName = wsName || nsmApi2.workspace.workspaceState().wsName;
 
     if (!wsName) {
       nsmApi2.ui.showNotification({

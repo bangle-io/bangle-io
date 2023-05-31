@@ -1,23 +1,18 @@
 import React, { useCallback } from 'react';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { GENERIC_ERROR_MODAL_NAME } from '@bangle.io/constants';
 import type { GenericErrorModalMetadata } from '@bangle.io/shared-types';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { Dialog, ExternalLink } from '@bangle.io/ui-components';
 
 export function GenericErrorModal() {
-  const { dispatch, dialogMetadata } = useUIManagerContext();
+  const { dialogMetadata } = nsmApi2.ui.uiState();
 
   const metadata = parseMetadata(dialogMetadata);
 
   const onDismiss = useCallback(() => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
-      value: {
-        dialogName: GENERIC_ERROR_MODAL_NAME,
-      },
-    });
-  }, [dispatch]);
+    nsmApi2.ui.dismissDialog(GENERIC_ERROR_MODAL_NAME);
+  }, []);
 
   return (
     <Dialog

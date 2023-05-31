@@ -58,6 +58,8 @@ export const createNsmStore = ({
     [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
   };
 
+  console.debug('Overriding with state', initStateOverride);
+
   const syncSlices = [
     sliceRefreshWorkspace,
     nsmPageSlice,
@@ -67,14 +69,14 @@ export const createNsmStore = ({
   const store = createSyncStore({
     storeName,
     debug: (log) => {
-      // if (log.type === 'TX') {
-      //   console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
-      //   console.info(log.payload);
-      //   console.info(log);
-      //   console.groupEnd();
-      // } else {
-      //   console.info('NSM', log.type, log);
-      // }
+      if (log.type === 'TX') {
+        console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
+        console.info(log.payload);
+        console.info(log);
+        console.groupEnd();
+      } else {
+        // console.info('NSM', log.type, log);
+      }
     },
     sync: {
       type: 'main',

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ui } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import {
   Dialog,
   ErrorBanner,
@@ -20,8 +20,6 @@ import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
 const MIN_HEIGHT = 200;
 
 export function NewGithubWorkspaceTokenDialog() {
-  const { bangleStore } = ui.useUIManagerContext();
-
   const [inputToken, updateInputToken] = useState<string | undefined>(
     undefined,
   );
@@ -36,7 +34,7 @@ export function NewGithubWorkspaceTokenDialog() {
         updateInputToken(token);
       }
     });
-  }, [bangleStore]);
+  }, []);
 
   const onNext = useCallback(async () => {
     if (!inputToken) {
@@ -54,9 +52,12 @@ export function NewGithubWorkspaceTokenDialog() {
         );
       }
       await updateGhToken(inputToken);
-      ui.showDialog(NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG, {
-        githubToken: inputToken,
-      })(bangleStore.state, bangleStore.dispatch);
+      nsmApi2.ui.showDialog({
+        dialogName: NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
+        metadata: {
+          githubToken: inputToken,
+        },
+      });
     } catch (error) {
       if (error instanceof Error) {
         updateError(error);
@@ -64,7 +65,7 @@ export function NewGithubWorkspaceTokenDialog() {
     } finally {
       updateIsLoading(false);
     }
-  }, [bangleStore, inputToken]);
+  }, [inputToken]);
 
   const onKeyDown = useCallback(
     (e) => {
@@ -87,10 +88,7 @@ export function NewGithubWorkspaceTokenDialog() {
         onPress: onNext,
       }}
       onDismiss={() => {
-        ui.dismissDialog(NEW_GITHUB_WORKSPACE_TOKEN_DIALOG)(
-          bangleStore.state,
-          bangleStore.dispatch,
-        );
+        nsmApi2.ui.dismissDialog(NEW_GITHUB_WORKSPACE_TOKEN_DIALOG);
       }}
       headingIcon={<GithubIcon className="w-8 h-8" />}
       footer={

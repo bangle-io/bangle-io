@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-  nsmApi2,
-  ui,
-  useBangleStoreContext,
-  useSliceState,
-} from '@bangle.io/api';
+import { nsmApi2, useBangleStoreContext, useSliceState } from '@bangle.io/api';
 import { Dialog, ErrorBanner, TextField } from '@bangle.io/ui-components';
 import { BaseError } from '@bangle.io/utils';
 
@@ -34,12 +29,9 @@ export function UpdateTokenDialog() {
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {
-      ui.dismissDialog(UPDATE_GITHUB_TOKEN_DIALOG)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
+      nsmApi2.ui.dismissDialog(UPDATE_GITHUB_TOKEN_DIALOG);
     }
-  }, [bangleStore, isProcessing]);
+  }, [isProcessing]);
 
   const verifyAndUpdateToken = useCallback(async () => {
     if (isProcessing || !inputToken || !githubWsName) {

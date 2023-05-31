@@ -5,7 +5,6 @@ import type {
   ExtensionRegistry,
   JsonValue,
 } from '@bangle.io/shared-types';
-import { uiSlice } from '@bangle.io/slice-ui';
 import {
   assertNonWorkerGlobalScope,
   safeCancelIdleCallback,
@@ -44,7 +43,7 @@ export function initializeBangleStore({
       toLocalStorage(
         store.state.stateToJSON({
           sliceFields: {
-            uiSlice: uiSlice(),
+            // uiSlice: uiSlice(),
           },
         }),
       );
@@ -69,7 +68,7 @@ export function initializeBangleStore({
       }),
       json: stateJson,
       sliceFields: {
-        uiSlice: uiSlice(),
+        // uiSlice: uiSlice(),
       },
       opts: stateOpts,
     });

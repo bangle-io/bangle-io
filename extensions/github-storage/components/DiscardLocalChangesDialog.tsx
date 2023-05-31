@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
-import { ui, useSliceState } from '@bangle.io/api';
+import { nsmApi2, useBangleStoreContext, useSliceState } from '@bangle.io/api';
 import { Dialog } from '@bangle.io/ui-components';
 
 import { DISCARD_LOCAL_CHANGES_DIALOG, ghSliceKey } from '../common';
 import { discardLocalChanges } from '../operations';
 
 export function DiscardLocalChangesDialog() {
-  const { bangleStore } = ui.useUIManagerContext();
+  const bangleStore = useBangleStoreContext();
 
   const [isProcessing, updateIsProcessing] = useState(false);
   const [manuallyReload, updateManuallyReload] = useState(false);
@@ -18,12 +18,9 @@ export function DiscardLocalChangesDialog() {
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {
-      ui.dismissDialog(DISCARD_LOCAL_CHANGES_DIALOG)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
+      nsmApi2.ui.dismissDialog(DISCARD_LOCAL_CHANGES_DIALOG);
     }
-  }, [bangleStore, isProcessing]);
+  }, [isProcessing]);
 
   if (manuallyReload) {
     return (

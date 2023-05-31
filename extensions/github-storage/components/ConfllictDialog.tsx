@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { nsmApi2, ui, useSliceState } from '@bangle.io/api';
+import { nsmApi2, useBangleStoreContext, useSliceState } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { Dialog } from '@bangle.io/ui-components';
@@ -9,11 +9,11 @@ import { CONFLICT_DIALOG, ghSliceKey } from '../common';
 import { manuallyResolveConflict } from '../operations';
 
 export function ConflictDialog() {
-  const { bangleStore } = ui.useUIManagerContext();
+  const bangleStore = useBangleStoreContext();
 
   const dismiss = useCallback(() => {
-    ui.dismissDialog(CONFLICT_DIALOG)(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore]);
+    nsmApi2.ui.dismissDialog(CONFLICT_DIALOG);
+  }, []);
 
   const {
     sliceState: { conflictedWsPaths, githubWsName },
@@ -30,7 +30,7 @@ export function ConflictDialog() {
         transient: true,
       });
     }
-  }, [conflictedWsPaths, dismiss, bangleStore]);
+  }, [conflictedWsPaths, dismiss]);
 
   return (
     <Dialog

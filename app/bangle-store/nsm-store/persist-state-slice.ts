@@ -3,14 +3,19 @@ import type { LineageId, SliceStateSerialData } from '@bangle.io/nsm';
 import { createSliceV2, Slice } from '@bangle.io/nsm';
 import * as editorManager from '@bangle.io/slice-editor-manager';
 import { nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmUI } from '@bangle.io/slice-ui';
 
 export const LOCAL_STORAGE_KEY = 'nsm-local-storage-v1';
 export const SESSION_STORAGE_KEY = 'nsm-session-storage-v1';
 
 export const getLocalStorageData = () =>
-  retrieveData(LOCAL_STORAGE_KEY, localStorage, () => {
+  retrieveData(LOCAL_STORAGE_KEY, localStorage, (data) => {
+    const result: Record<LineageId, unknown> = {};
+
     //   Add slices here
-    return {};
+    result[nsmUI.nsmUISlice.spec.lineageId] = nsmUI.persistState.retrieve(data);
+
+    return result;
   });
 
 export const getSessionStorageData = () =>
@@ -25,7 +30,8 @@ export const getSessionStorageData = () =>
   });
 
 export const persistStateSlice = createSliceV2(
-  [nsmPageSlice, editorManager.nsmEditorManagerSlice],
+  // Add slices here
+  [nsmPageSlice, editorManager.nsmEditorManagerSlice, nsmUI.nsmUISlice],
   {
     name: 'persistStateSlice',
     initState: {},
@@ -50,6 +56,7 @@ Slice._registerEffect(persistStateSlice, {
 
     persistData(LOCAL_STORAGE_KEY, localStorage, (data) => {
       //   Add slices here
+      nsmUI.persistState.populate(store.state, data);
     });
   },
 });

@@ -2610,6 +2610,7 @@ __metadata:
     "@bangle.dev/react": 0.31.6
     "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
@@ -2619,6 +2620,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3145,7 +3147,7 @@ __metadata:
   resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
   dependencies:
     "@bangle.io/mini-js-utils": "workspace:*"
-    nalanda: "portal:/Users/kushanjoshi/code/nalanda"
+    nalanda: 1.3.0-alpha.3
     superjson: ^1.12.2
     zod: ^3.21.4
   languageName: unknown
@@ -19058,9 +19060,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nalanda@portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm":
-  version: 0.0.0-use.local
-  resolution: "nalanda@portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm%40workspace%3Ajs-lib%2Fnsm"
+"nalanda@npm:1.3.0-alpha.3":
+  version: 1.3.0-alpha.3
+  resolution: "nalanda@npm:1.3.0-alpha.3"
   dependencies:
     type-fest: ^3.6.0
     use-sync-external-store: ^1.2.0
@@ -19072,8 +19074,9 @@ __metadata:
       optional: true
     zod:
       optional: true
+  checksum: f7a069d1bfd36e759875e3abfbf068959915cf302b4a925918f2289120199cd8ec0af86a812a34b03e256b70ff6196b60862fcf58b42cc6cb0bef6d20dfac220
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "nan@npm:^2.12.1":
   version: 2.17.0
