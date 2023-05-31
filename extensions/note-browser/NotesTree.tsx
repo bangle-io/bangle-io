@@ -3,7 +3,7 @@ import { useVirtual } from 'react-virtual';
 
 import { nsmApi2, useSerialOperationContext } from '@bangle.io/api';
 import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
-import type { WsPath } from '@bangle.io/shared-types';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -120,7 +120,7 @@ export function GenericFileBrowser({
   closeSidebar,
   createNewFile,
 }: {
-  wsName: string;
+  wsName: WsName;
   files: string[];
   activeFilePath?: string;
   closeSidebar: () => void;
@@ -154,7 +154,7 @@ const RenderItems = ({
   closeSidebar,
   createNewFile,
 }: {
-  wsName: string;
+  wsName: WsName;
   filesAndDirList: string[];
   dirSet: Set<string>;
   activeFilePath?: string;

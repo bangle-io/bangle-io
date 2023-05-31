@@ -629,17 +629,21 @@ export function toggleEditingDirect(
       continue;
     }
 
-    // send empty transaction so that editor view can update
-    // the editing state
-    editor?.view.dispatch(
-      editor.view.state.tr.setMeta('__activitybar_empty__', true),
-    );
-
     if (newEditingAllowed) {
       editor?.focusView();
     } else {
       editor?.view.dom.blur();
     }
+
+    // send empty transaction so that editor view can update
+    // the editing state.
+    // queue it up so it is dispatched after store updated, so that
+    // when editor queries the state, the state is correct.
+    queueMicrotask(() => {
+      editor?.view.dispatch(
+        editor.view.state.tr.setMeta('__activitybar_empty__', true),
+      );
+    });
   }
 
   return setEditingAllowed({

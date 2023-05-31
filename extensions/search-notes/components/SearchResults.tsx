@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { NodeSelection, Selection } from '@bangle.dev/pm';
 
-import { nsmApi2, resolvePath } from '@bangle.io/api';
+import { nsmApi2, wsPathHelpers } from '@bangle.io/api';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
 import {
@@ -157,6 +157,8 @@ export function SearchResults({
   return (
     <>
       {results.map((r, i) => {
+        const wsPath = wsPathHelpers.createWsPath(r.uid);
+
         return (
           <React.Fragment key={i}>
             <Sidebar.Row2
@@ -171,8 +173,8 @@ export function SearchResults({
               item={{
                 uid: 'search-notes-result-' + i,
                 showDividerAbove: false,
-                title: resolvePath(r.uid).fileNameWithoutExt,
-                extraInfo: resolvePath(r.uid).dirPath,
+                title: wsPathHelpers.resolvePath2(wsPath).fileNameWithoutExt,
+                extraInfo: wsPathHelpers.resolvePath2(wsPath).dirPath,
                 leftNode: (
                   <ButtonIcon>
                     {isCollapsed(r) ? (

@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
 
+import type {
+  EditorState,
+  EditorView,
+  Node,
+  Transaction,
+} from '@bangle.dev/pm';
 import { PluginKey } from '@bangle.dev/pm';
 import { search } from '@bangle.dev/search';
 
@@ -150,6 +156,13 @@ export function getFocusedWsPath(): WsPath | undefined {
   return undefined;
 }
 
+export const onFocusUpdate = (
+  ...args: Parameters<typeof editorManager.onFocusUpdate>
+): void => {
+  const store = getStore();
+  store.dispatch(editorManager.onFocusUpdate(...args));
+};
+
 export function toggleEditing(): void {
   const store = getStore();
 
@@ -160,4 +173,23 @@ export function focusEditorIfNotFocused(): void {
   const store = getStore();
 
   editorManager.focusEditorIfNotFocused(store.state);
+}
+
+export function dispatchEditorCommand<T>(
+  editorId: EditorIdType,
+  cmdCallback: (
+    state: EditorState,
+    dispatch?: (tr: Transaction) => void,
+    view?: EditorView,
+  ) => T,
+): T | false {
+  const currentEditor = getEditor(editorId);
+
+  if (!currentEditor) {
+    return false;
+  }
+
+  const view = currentEditor.view;
+
+  return cmdCallback(view.state, view.dispatch, view);
 }

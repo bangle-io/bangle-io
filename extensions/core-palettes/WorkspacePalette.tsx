@@ -6,14 +6,13 @@ import React, {
   useState,
 } from 'react';
 
-import { useSerialOperationContext, workspace } from '@bangle.io/api';
+import { nsmApi2, useSerialOperationContext, workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CorePalette,
 } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { goToWsNameRoute } from '@bangle.io/slice-workspace';
 import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import {
   AlbumIcon,
@@ -21,6 +20,7 @@ import {
   UniversalPalette,
 } from '@bangle.io/ui-components';
 import { keyDisplayValue } from '@bangle.io/utils';
+import { createWsName } from '@bangle.io/ws-path';
 
 import type { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
@@ -98,15 +98,16 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
           const item = items.find((item) => item.uid === uid);
 
           if (item && uid != null) {
-            goToWsNameRoute(item.data.workspace.name, {
-              newTab: sourceInfo.metaKey,
-              reopenPreviousEditors: false,
-            })(bangleStore.state, bangleStore.dispatch);
+            const wsName = createWsName(item.data.workspace.name);
+            nsmApi2.workspace.goToWorkspace({
+              wsName,
+              type: sourceInfo.metaKey ? 'newTab' : 'replace',
+            });
 
             updateRecency(uid);
           }
         },
-        [bangleStore, updateRecency, items],
+        [updateRecency, items],
       );
 
       useImperativeHandle(

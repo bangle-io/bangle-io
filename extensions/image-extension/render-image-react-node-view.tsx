@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { nsmApi2 } from '@bangle.io/api';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
-import { getFile, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useDestroyRef } from '@bangle.io/utils';
 import { isValidFileWsPath, parseLocalFilePath } from '@bangle.io/ws-path';
 
@@ -34,13 +34,10 @@ const isOtherSources = (src?: string) => {
 export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState<string | null>(null);
-  const {
-    openedWsPaths: { primaryWsPath },
-    bangleStore,
-  } = useWorkspaceContext();
+  const { openedWsPaths } = nsmApi2.workspace.useWorkspace();
   const imageWsPath =
-    primaryWsPath && !isOtherSources(inputSrc)
-      ? parseLocalFilePath(inputSrc, primaryWsPath)
+    openedWsPaths.primaryWsPath2 && !isOtherSources(inputSrc)
+      ? parseLocalFilePath(inputSrc, openedWsPaths.primaryWsPath2)
       : undefined;
 
   const [dim, updateDimensions] = useState(() => {
@@ -60,7 +57,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
   useEffect(() => {
     let objectUrl: string | null = null;
 
-    if (primaryWsPath) {
+    if (openedWsPaths.primaryWsPath2) {
       if (isOtherSources(inputSrc)) {
         updateImageSrc(inputSrc);
       } else {
@@ -69,11 +66,8 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
         }
 
         if (imageWsPath) {
-          getFile(imageWsPath)(
-            bangleStore.state,
-            bangleStore.dispatch,
-            bangleStore,
-          )
+          nsmApi2.workspace
+            .readFile(imageWsPath)
             .then((file) => {
               if (!file) {
                 return;
@@ -105,7 +99,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
         window.URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [inputSrc, primaryWsPath, bangleStore, destroyRef, imageWsPath, width]);
+  }, [inputSrc, openedWsPaths.primaryWsPath2, destroyRef, imageWsPath, width]);
 
   let newWidth = width;
   let newHeight = height;

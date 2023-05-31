@@ -30,7 +30,6 @@ export {
 } from '@bangle.io/nsm';
 export { browserInfo } from '@bangle.io/utils';
 export * as wsPathHelpers from '@bangle.io/ws-path';
-export { resolvePath } from '@bangle.io/ws-path';
 export type { BangleApplicationStore };
 export type BangleAppDispatch = BangleApplicationStore['dispatch'];
 export type BangleAppState = BangleApplicationStore['state'];

@@ -1,5 +1,6 @@
 import type { Brand } from '@bangle.io/mini-js-utils';
 
+// TODO move types to Nominal WsName
 export type WorkspaceInfo = {
   name: string;
   type: string;

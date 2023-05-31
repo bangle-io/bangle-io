@@ -9,7 +9,12 @@ import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import type { MaybeWsPath } from './helpers';
-import { createWsName, createWsPath, resolvePath } from './helpers';
+import {
+  createWsName,
+  createWsPath,
+  resolvePath,
+  validateWsPath,
+} from './helpers';
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -48,17 +53,21 @@ export class OpenedWsPaths {
         `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
       );
     }
+    for (const wsPath of _wsPaths) {
+      if (typeof wsPath === 'string') {
+        validateWsPath(wsPath);
+      }
+    }
   }
 
   get miniEditorWsPath() {
     return this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
   }
 
-  // TODO: move to nominal typing
   get miniEditorWsPath2(): WsPath | undefined {
     let result = this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
 
-    return result ? createWsPath(result) : undefined;
+    return result ? createWsPath(result, false) : undefined;
   }
 
   get openCount() {
@@ -79,7 +88,7 @@ export class OpenedWsPaths {
   get popupEditorWsPath2(): WsPath | undefined {
     let result = this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
 
-    return result ? createWsPath(result) : undefined;
+    return result ? createWsPath(result, false) : undefined;
   }
 
   get primaryWsPath() {
@@ -89,7 +98,7 @@ export class OpenedWsPaths {
   get primaryWsPath2(): WsPath | undefined {
     let result = this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
 
-    return result ? createWsPath(result) : undefined;
+    return result ? createWsPath(result, false) : undefined;
   }
 
   get secondaryWsPath() {
@@ -99,7 +108,7 @@ export class OpenedWsPaths {
   get secondaryWsPath2(): WsPath | undefined {
     let result = this._wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
 
-    return result ? createWsPath(result) : undefined;
+    return result ? createWsPath(result, false) : undefined;
   }
 
   // if no wsName is provided, will match against the internal wsName
@@ -212,7 +221,7 @@ export class OpenedWsPaths {
   }
 
   getWsPaths2(): WsPath[] {
-    return this.getWsPaths().map((r) => createWsPath(r));
+    return this.getWsPaths().map((r) => createWsPath(r, false));
   }
 
   /**

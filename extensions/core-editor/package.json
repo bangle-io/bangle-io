@@ -44,7 +44,6 @@
     "@bangle.io/pm-plugins": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-collab-comms": "workspace:*",
-    "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

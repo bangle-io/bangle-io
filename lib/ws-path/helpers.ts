@@ -15,8 +15,10 @@ export function createWsName(wsName: string): WsName {
   return wsName as WsName;
 }
 
-export function createWsPath(wsPath: string): WsPath {
-  validateWsPath(wsPath);
+export function createWsPath(wsPath: string, validate = true): WsPath {
+  if (validate) {
+    validateWsPath(wsPath);
+  }
 
   return wsPath as WsPath;
 }
@@ -91,10 +93,18 @@ export function resolvePath2(wsPath: WsPath): {
   fileName: string;
   filePath: string;
   dirPath: string;
+  fileNameWithoutExt: string;
 } {
-  const { wsName, fileName, filePath, dirPath } = resolvePath(wsPath, true);
+  const { wsName, fileName, filePath, dirPath, fileNameWithoutExt } =
+    resolvePath(wsPath, true);
 
-  return { wsName: createWsName(wsName), fileName, filePath, dirPath };
+  return {
+    wsName: createWsName(wsName),
+    fileName,
+    filePath,
+    dirPath,
+    fileNameWithoutExt,
+  };
 }
 
 export class PathValidationError extends BaseError {}
@@ -192,7 +202,7 @@ export function sanitizeFilePath(filePath: string) {
  * @param {String} wsPath - the current file wsPath to resolve the relative path from
  * @returns {String} a valid wsPath to it
  */
-export function parseLocalFilePath(filePath: string, wsPath: string) {
+export function parseLocalFilePath(filePath: string, wsPath: WsPath): WsPath {
   if (filePath.includes(':')) {
     throw new PathValidationError({
       message: 'Invalid character ":" in  "' + filePath + '" .',
@@ -202,7 +212,7 @@ export function parseLocalFilePath(filePath: string, wsPath: string) {
   if (filePath.startsWith('./')) {
     filePath = filePath.slice(2);
   }
-  const { wsName, dirPath } = resolvePath(wsPath);
+  const { wsName, dirPath } = resolvePath2(wsPath);
   let sampleDomain = 'https://bangle.io';
 
   if (dirPath) {
@@ -215,7 +225,7 @@ export function parseLocalFilePath(filePath: string, wsPath: string) {
   }
 
   // need to decode uri as filesystems dont do encoding
-  return filePathToWsPath(wsName, decodeURIComponent(webPath));
+  return filePathToWsPath2(wsName, decodeURIComponent(webPath));
 }
 
 export function parseLocalFilePath2(filePath: string, wsPath: WsPath): WsPath {
@@ -252,10 +262,10 @@ export function splitWsPath(wsPath: string): [string, string] {
   return [wsName, filePath];
 }
 
-export function updateFileName(wsPath: string, newFileName: string) {
-  const { wsName, dirPath } = resolvePath(wsPath);
+export function updateFileName2(wsPath: WsPath, newFileName: string): WsPath {
+  const { wsName, dirPath } = resolvePath2(wsPath);
 
-  return filePathToWsPath(wsName, `${dirPath}/${newFileName}`);
+  return filePathToWsPath2(wsName, `${dirPath}/${newFileName}`);
 }
 
 export function filePathToWsPath(wsName: string, filePath: string) {
@@ -266,7 +276,7 @@ export function filePathToWsPath(wsName: string, filePath: string) {
   return wsName + ':' + filePath;
 }
 
-export function filePathToWsPath2(wsName: string, filePath: string): WsPath {
+export function filePathToWsPath2(wsName: WsName, filePath: string): WsPath {
   if (filePath.startsWith('/')) {
     filePath = filePath.slice(1);
   }

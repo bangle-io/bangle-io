@@ -10,7 +10,16 @@ import {
   pushPrimaryWsPath as _pushPrimaryWsPath,
   pushSecondaryWsPath as _pushSecondaryWsPath,
 } from '@bangle.io/nsm-slice-workspace';
-import type { EditorIdType, Node, WsPath } from '@bangle.io/shared-types';
+import type {
+  EditorIdType,
+  Node,
+  WsName,
+  WsPath,
+} from '@bangle.io/shared-types';
+import {
+  goToWorkspaceHome as _goToWorkspaceHome,
+  wsNameToPathname,
+} from '@bangle.io/slice-page';
 import { incrementCounter } from '@bangle.io/slice-refresh-workspace';
 import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
@@ -110,6 +119,14 @@ export const writeNote = async (wsPath: WsPath, doc: Node) => {
   await fileOps.writeNote(wsPath, extensionRegistry, doc);
 };
 
+export const writeFile = async (...args: Parameters<typeof fs.writeFile>) => {
+  await fs.writeFile(...args);
+};
+
+export const readFile = async (...args: Parameters<typeof fs.readFile>) => {
+  return await fs.readFile(...args);
+};
+
 export async function createNoteFromMd(wsPath: WsPath, mdText: string) {
   const store = getStore();
   const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
@@ -159,6 +176,28 @@ export const pushSecondaryWsPath = (wsPath: WsPath): void => {
   const store = getStore();
 
   store.dispatch(_pushSecondaryWsPath(store.state, wsPath));
+};
+
+export const goToWorkspace = ({
+  wsName,
+  type = 'replace',
+}: {
+  wsName: WsName;
+  type: 'newTab' | 'replace';
+}): void => {
+  const store = getStore();
+
+  if (type === 'newTab' && typeof window !== 'undefined') {
+    window.open(wsNameToPathname(wsName));
+
+    return;
+  }
+  store.dispatch(
+    _goToWorkspaceHome({
+      wsName,
+      replace: type === 'replace',
+    }),
+  );
 };
 
 export const openWsPathInNewTab = (wsPath: WsPath): void => {
