@@ -81,18 +81,15 @@ export async function updateWorkspaceMetadata(
     return false;
   }
 
-  return await saveWorkspaceInfo(
-    wsName,
-    (existing) => ({
-      ...existing,
-      metadata: {
-        ...(typeof metadata === 'function'
-          ? metadata(existing.metadata)
-          : metadata),
-      },
-    }),
-    currentWsInfo,
-  );
+  return await updateWorkspaceInfo(wsName, (existing) => ({
+    ...currentWsInfo,
+    ...existing,
+    metadata: {
+      ...(typeof metadata === 'function'
+        ? metadata((existing || currentWsInfo).metadata)
+        : metadata),
+    },
+  }));
 }
 
 export async function readAllWorkspacesInfo(
@@ -120,11 +117,10 @@ export async function readAllWorkspacesInfo(
   ].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function saveWorkspaceInfo(
+export async function createWorkspaceInfo(
   wsName: string,
-  workspaceInfo: (existing: WorkspaceInfo) => WorkspaceInfo,
-  defaultValue: WorkspaceInfo,
-) {
+  workspaceInfo: WorkspaceInfo,
+): Promise<boolean> {
   if (wsName === HELP_FS_WORKSPACE_NAME) {
     return false;
   }
@@ -137,14 +133,46 @@ export async function saveWorkspaceInfo(
 
   const existing = await objStore.get(wsName);
 
+  if (existing) {
+    return false;
+  }
+
   const newInfo: WorkspaceInfo = {
-    ...workspaceInfo(existing?.value || defaultValue),
+    ...workspaceInfo,
     lastModified: Date.now(),
   };
-
   await Promise.all([objStore.put(makeDbRecord(wsName, newInfo)), tx.done]);
 
   return true;
+}
+
+export async function updateWorkspaceInfo(
+  wsName: string,
+  workspaceInfo: (existing: WorkspaceInfo) => WorkspaceInfo,
+): Promise<boolean> {
+  if (wsName === HELP_FS_WORKSPACE_NAME) {
+    return false;
+  }
+
+  const db = await getAppDb();
+
+  const tx = db.transaction(WORKSPACE_INFO_TABLE, 'readwrite');
+
+  const objStore = tx.objectStore(WORKSPACE_INFO_TABLE);
+
+  const existing = await objStore.get(wsName);
+
+  if (existing) {
+    const newInfo: WorkspaceInfo = {
+      ...workspaceInfo(existing.value),
+      lastModified: Date.now(),
+    };
+    await Promise.all([objStore.put(makeDbRecord(wsName, newInfo)), tx.done]);
+
+    return true;
+  }
+
+  return false;
 }
 
 /**

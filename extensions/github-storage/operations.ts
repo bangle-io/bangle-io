@@ -1,4 +1,4 @@
-import { nsmApi2, workspace } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { pMap } from '@bangle.io/p-map';
 import {
@@ -6,6 +6,8 @@ import {
   isEntryModified,
   isEntryNew,
 } from '@bangle.io/remote-file-sync';
+import type { WsPath } from '@bangle.io/shared-types';
+import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 import {
   getGithubSyncLockWrapper,
@@ -29,7 +31,7 @@ import { readGhWorkspaceMetadata } from './helpers';
 const getGhConfig = async (
   wsName: string,
 ): Promise<GithubConfig | undefined> => {
-  const ghMetadata = await readGhWorkspaceMetadata(wsName);
+  const ghMetadata = await readGhWorkspaceMetadata(createWsName(wsName));
   const githubToken = await getGhToken();
 
   if (!ghMetadata || !githubToken) {
@@ -142,8 +144,7 @@ export function syncRunner(
     store: ReturnType<typeof ghSliceKey.getStore>,
     config: GithubConfig,
   ) {
-    const { wsName: currentWsName } =
-      workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+    const { wsName: currentWsName } = nsmApi2.workspace.workspaceState();
 
     if (currentWsName !== wsName) {
       return false;
@@ -162,16 +163,15 @@ export function syncRunner(
     if (result === false) {
       console.debug('gh-sync returned false');
     } else {
-      workspace.workspaceSliceKey.callOp(
-        store.state,
-        store.dispatch,
-        workspace.refreshWsPaths(),
-      );
+      nsmApi2.workspace.refresh();
 
       const { count: changeCount } = result;
 
       if (result.status === 'merge-conflict') {
-        setConflictedWsPaths(result.conflict)(store.state, store.dispatch);
+        setConflictedWsPaths(result.conflict.map((r) => createWsPath(r)))(
+          store.state,
+          store.dispatch,
+        );
 
         return;
       }
@@ -192,7 +192,7 @@ export function syncRunner(
   });
 }
 
-export function setConflictedWsPaths(conflictedWsPaths: string[]) {
+export function setConflictedWsPaths(conflictedWsPaths: WsPath[]) {
   return ghSliceKey.op((state, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
@@ -347,11 +347,7 @@ export function manuallyResolveConflict(wsName: string) {
           },
         });
 
-        workspace.workspaceSliceKey.callOp(
-          store.state,
-          store.dispatch,
-          workspace.refreshWsPaths(),
-        );
+        nsmApi2.workspace.refresh();
 
         notify(
           'Manual Conflict Resolution',
@@ -363,16 +359,10 @@ export function manuallyResolveConflict(wsName: string) {
 
         if (firstConflictedWsPath) {
           // open the first conflicted file for easier manual conflict resolution
-          workspace.workspaceSliceKey.callOp(
-            store.state,
-            store.dispatch,
-            workspace.updateOpenedWsPaths((openedWsPaths) =>
-              openedWsPaths
-                .updatePrimaryWsPath(firstConflictedWsPath.remoteContentWsPath)
-                .updateSecondaryWsPath(
-                  firstConflictedWsPath.localContentWsPath,
-                ),
-            ),
+          nsmApi2.workspace.pushOpenedWsPath((openedWsPaths) =>
+            openedWsPaths
+              .updatePrimaryWsPath(firstConflictedWsPath.remoteContentWsPath)
+              .updateSecondaryWsPath(firstConflictedWsPath.localContentWsPath),
           );
         }
 
@@ -403,8 +393,7 @@ export function checkForConflicts(wsName: string) {
 
     const conflicts = await getConflicts({ wsName, config });
 
-    const { wsName: currentWsName } =
-      workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+    const { wsName: currentWsName } = nsmApi2.workspace.workspaceState();
 
     if (currentWsName === wsName) {
       const { conflictedWsPaths } = ghSliceKey.getSliceStateAsserted(
@@ -457,8 +446,8 @@ export function optimizeDatabaseOperation(
         const {
           openedWsPaths,
           wsName: currentWsName,
-          recentlyUsedWsPaths,
-        } = workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
+          recentWsPaths: recentlyUsedWsPaths,
+        } = nsmApi2.workspace.workspaceState();
 
         if (currentWsName !== githubWsName) {
           return false;

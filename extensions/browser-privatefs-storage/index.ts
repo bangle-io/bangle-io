@@ -1,4 +1,4 @@
-import { Extension, nsmApi2, workspace } from '@bangle.io/api';
+import { Extension, nsmApi2 } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   SEVERITY,
@@ -23,13 +23,10 @@ const extension = Extension.create({
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
       ) {
-        const wsName = workspace.getWsName()(store.state);
+        const wsName = nsmApi2.workspace.workspaceState().wsName;
 
         if (wsName) {
-          workspace.goToWorkspaceAuthRoute(wsName, error.code)(
-            store.state,
-            store.dispatch,
-          );
+          nsmApi2.workspace.goToWorkspaceAuthRoute(wsName, error.code);
 
           return true;
         }

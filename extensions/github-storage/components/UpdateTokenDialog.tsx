@@ -11,6 +11,7 @@ import { updateGithubToken } from '../operations';
 
 export function UpdateTokenDialog() {
   const bangleStore = useBangleStoreContext();
+
   const [inputToken, updateInputToken] = useState<string | undefined>();
   const [error, updateError] = useState<Error | undefined>(undefined);
   const [isProcessing, updateIsProcessing] = useState(false);
@@ -25,7 +26,7 @@ export function UpdateTokenDialog() {
         updateInputToken(token);
       }
     });
-  }, [bangleStore]);
+  }, []);
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {

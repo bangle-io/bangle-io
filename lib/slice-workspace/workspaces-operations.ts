@@ -14,7 +14,7 @@ import {
 import {
   compareWorkspaceInfo,
   readWorkspaceInfo,
-  saveWorkspaceInfo,
+  updateWorkspaceInfo,
 } from '@bangle.io/workspace-info';
 import { validWsName } from '@bangle.io/ws-path';
 
@@ -108,16 +108,12 @@ export function createWorkspace(
       metadata: wsMetadata,
     };
 
-    await saveWorkspaceInfo(
-      wsName,
-      (w) => ({
-        ...w,
-        // if there was a previously deleted workspace with the same name,
-        // overwrite it
-        ...workspaceInfo,
-      }),
-      workspaceInfo,
-    );
+    await updateWorkspaceInfo(wsName, (w) => ({
+      ...w,
+      // if there was a previously deleted workspace with the same name,
+      // overwrite it
+      ...workspaceInfo,
+    }));
 
     oldGoToLocation(wsNameToPathname(wsName))(
       store.state,
@@ -147,18 +143,15 @@ export function deleteWorkspace(targetWsName: string) {
       await Promise.resolve();
     }
 
-    await saveWorkspaceInfo(
-      targetWsName,
-      (existing) => ({
-        ...existing,
-        deleted: true,
-      }),
-      targetWsInfo,
-    );
+    await updateWorkspaceInfo(targetWsName, (existing) => ({
+      ...existing,
+      deleted: true,
+    }));
 
     return true;
   };
 }
+
 let count = 0;
 
 export function updateCachedWorkspaceInfo(wsName: string) {

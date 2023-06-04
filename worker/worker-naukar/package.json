@@ -43,6 +43,7 @@
     "@bangle.io/store-sync": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-editor": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@sentry/browser": "^6.18.1",
     "@zip.js/zip.js": "~2.4.5",

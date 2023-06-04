@@ -7076,7 +7076,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
             ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
-            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.3"],\
+            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.4"],\
             ["superjson", "npm:1.12.2"],\
             ["zod", "npm:3.21.4"]\
           ],\
@@ -7895,6 +7895,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-editor", "workspace:worker/worker-editor"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@sentry/browser", "npm:6.19.7"],\
             ["@zip.js/zip.js", "npm:2.4.26"],\
@@ -27764,22 +27765,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["nalanda", [\
-        ["npm:1.3.0-alpha.3", {\
-          "packageLocation": "./.yarn/cache/nalanda-npm-1.3.0-alpha.3-d549d6d5d1-f7a069d1bf.zip/node_modules/nalanda/",\
+        ["npm:1.3.0-alpha.4", {\
+          "packageLocation": "./.yarn/cache/nalanda-npm-1.3.0-alpha.4-e82fdb1dc0-5ae82d9c77.zip/node_modules/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "npm:1.3.0-alpha.3"]\
+            ["nalanda", "npm:1.3.0-alpha.4"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.3", {\
-          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-41afa29470/0/cache/nalanda-npm-1.3.0-alpha.3-d549d6d5d1-f7a069d1bf.zip/node_modules/nalanda/",\
+        ["virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.4", {\
+          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-9191133425/0/cache/nalanda-npm-1.3.0-alpha.4-e82fdb1dc0-5ae82d9c77.zip/node_modules/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.3"],\
+            ["nalanda", "virtual:f2c65082414a8080c7c1a31345b1754f67809ac69b16bf4e0ca4fbc2613bf31f1e35df9f0b60b7285ad5b1831cbd6a7195a7da944fd0466172f470622f84f4f9#npm:1.3.0-alpha.4"],\
             ["@types/react", null],\
             ["@types/zod", null],\
             ["react", null],\
-            ["type-fest", "npm:3.6.0"],\
-            ["use-sync-external-store", "virtual:41afa29470376df0070c8dee4fd37d5f82943ffdc6003f68571de59c3fe3ab7c2158a3d57f303aa4e6854539568b2d5d311c8febfaec78eea48eed4021625679#npm:1.2.0"],\
+            ["type-fest", "npm:3.11.1"],\
+            ["use-sync-external-store", "virtual:9191133425a8c0d454ffdcfcf67ba1377a0899f294507484e9fa2f691a5be60006f5d2841fa2bb48a185b08fffed82d2227e0dc76d2028ae7ae811a060e04a58#npm:1.2.0"],\
             ["zod", "npm:3.21.4"]\
           ],\
           "packagePeers": [\
@@ -34218,17 +34219,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
+        ["npm:3.11.1", {\
+          "packageLocation": "./.yarn/cache/type-fest-npm-3.11.1-96f477e7ef-33be49e3b6.zip/node_modules/type-fest/",\
+          "packageDependencies": [\
+            ["type-fest", "npm:3.11.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:3.5.1", {\
           "packageLocation": "./.yarn/cache/type-fest-npm-3.5.1-1e69b4a7a2-b79991ef13.zip/node_modules/type-fest/",\
           "packageDependencies": [\
             ["type-fest", "npm:3.5.1"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:3.6.0", {\
-          "packageLocation": "./.yarn/cache/type-fest-npm-3.6.0-9c4645bee7-3cb3b27fc1.zip/node_modules/type-fest/",\
-          "packageDependencies": [\
-            ["type-fest", "npm:3.6.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -34863,10 +34864,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:41afa29470376df0070c8dee4fd37d5f82943ffdc6003f68571de59c3fe3ab7c2158a3d57f303aa4e6854539568b2d5d311c8febfaec78eea48eed4021625679#npm:1.2.0", {\
-          "packageLocation": "./.yarn/__virtual__/use-sync-external-store-virtual-13bd27574e/0/cache/use-sync-external-store-npm-1.2.0-44f75d2564-5c639e0f8d.zip/node_modules/use-sync-external-store/",\
+        ["virtual:9191133425a8c0d454ffdcfcf67ba1377a0899f294507484e9fa2f691a5be60006f5d2841fa2bb48a185b08fffed82d2227e0dc76d2028ae7ae811a060e04a58#npm:1.2.0", {\
+          "packageLocation": "./.yarn/__virtual__/use-sync-external-store-virtual-293ed054bc/0/cache/use-sync-external-store-npm-1.2.0-44f75d2564-5c639e0f8d.zip/node_modules/use-sync-external-store/",\
           "packageDependencies": [\
-            ["use-sync-external-store", "virtual:41afa29470376df0070c8dee4fd37d5f82943ffdc6003f68571de59c3fe3ab7c2158a3d57f303aa4e6854539568b2d5d311c8febfaec78eea48eed4021625679#npm:1.2.0"],\
+            ["use-sync-external-store", "virtual:9191133425a8c0d454ffdcfcf67ba1377a0899f294507484e9fa2f691a5be60006f5d2841fa2bb48a185b08fffed82d2227e0dc76d2028ae7ae811a060e04a58#npm:1.2.0"],\
             ["@types/react", null],\
             ["react", null]\
           ],\

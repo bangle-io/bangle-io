@@ -1,11 +1,10 @@
-import { nsmApi2 } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
   SEVERITY,
   WorkerErrorCode,
 } from '@bangle.io/constants';
-import type { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { deleteWorkspace } from '@bangle.io/slice-workspace';
+import type { WsName } from '@bangle.io/shared-types';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { resolvePath2 } from '@bangle.io/ws-path';
@@ -82,9 +81,9 @@ export function restoreWorkspaceFromBackup() {
           buttons: [],
           severity: SEVERITY.SUCCESS,
           uid: 'recovery-finished-' + wsName,
-          title: `Restored ${
+          title: `Restore success! ${
             nsmApi2.workspace.workspaceState().noteWsPaths?.length || 0
-          } notes.`,
+          } notes were restored.`,
         });
       },
       (error) => {
@@ -131,7 +130,7 @@ export function deleteActiveNote() {
   ) {
     nsmApi2.workspace
       .deleteNote(focusedWsPath)
-      .then((error) => {
+      .then(() => {
         nsmApi2.ui.showNotification({
           buttons: [],
           severity: SEVERITY.SUCCESS,
@@ -139,64 +138,60 @@ export function deleteActiveNote() {
           title: 'Successfully deleted ' + focusedWsPath,
         });
       })
-      .catch((error) => {
-        nsmApi2.ui.showNotification({
-          buttons: [],
-          severity: SEVERITY.ERROR,
-          uid: 'delete-' + deleteActiveNote,
-          title: error.displayMessage || error.message,
-        });
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          nsmApi2.ui.showNotification({
+            buttons: [],
+            severity: SEVERITY.ERROR,
+            uid: 'delete-' + deleteActiveNote,
+            title: error.message,
+          });
+        }
       });
   }
 
   return true;
 }
 
-export function removeWorkspace(wsName?: string) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    wsName = wsName || nsmApi2.workspace.workspaceState().wsName;
+export function removeWorkspace(wsName?: WsName) {
+  wsName = wsName || nsmApi2.workspace.workspaceState().wsName;
 
-    if (!wsName) {
-      nsmApi2.ui.showNotification({
-        buttons: [],
-        severity: SEVERITY.ERROR,
-        uid: 'removeWorkspace-no-workspace',
-        title: 'Please open a workspace first',
-      });
+  if (!wsName) {
+    nsmApi2.ui.showNotification({
+      buttons: [],
+      severity: SEVERITY.ERROR,
+      uid: 'removeWorkspace-no-workspace',
+      title: 'Please open a workspace first',
+    });
 
-      return;
-    }
+    return;
+  }
 
-    if (wsName === HELP_FS_WORKSPACE_NAME) {
-      nsmApi2.ui.showNotification({
-        buttons: [],
-        severity: SEVERITY.ERROR,
-        uid: 'removeWorkspace-not-allowed',
-        title: 'Cannot remove help workspace',
-      });
+  if (wsName === HELP_FS_WORKSPACE_NAME) {
+    nsmApi2.ui.showNotification({
+      buttons: [],
+      severity: SEVERITY.ERROR,
+      uid: 'removeWorkspace-not-allowed',
+      title: 'Cannot remove help workspace',
+    });
 
-      return;
-    }
+    return;
+  }
 
-    if (
-      window.confirm(
-        `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
-      )
-    ) {
-      await deleteWorkspace(wsName)(state, dispatch, store);
+  if (
+    window.confirm(
+      `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
+    )
+  ) {
+    internalApi.workspace.deleteWorkspace(wsName);
 
-      nsmApi2.ui.showNotification({
-        buttons: [],
-        severity: SEVERITY.SUCCESS,
-        uid: 'success-removed-' + wsName,
-        title: 'Successfully removed ' + wsName,
-      });
-    }
-  };
+    nsmApi2.ui.showNotification({
+      buttons: [],
+      severity: SEVERITY.SUCCESS,
+      uid: 'success-removed-' + wsName,
+      title: 'Successfully removed ' + wsName,
+    });
+  }
 }
 
 function filePicker(): Promise<File> {

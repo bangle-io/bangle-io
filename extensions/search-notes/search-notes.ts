@@ -1,3 +1,4 @@
+import type { WsName } from '@bangle.io/shared-types';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { CONCURRENCY } from './constants';
@@ -5,7 +6,7 @@ import { CONCURRENCY } from './constants';
 export async function searchNotes(
   signal: AbortSignal,
   query: string,
-  wsName: string,
+  wsName: WsName,
   {
     caseSensitive = false,
     maxChars = 75,

@@ -1,4 +1,4 @@
-import { nsmApi2, workspace } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -26,8 +26,9 @@ import {
   SEVERITY,
   WorkspaceType,
 } from '@bangle.io/constants';
-import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
+import type { WsName } from '@bangle.io/shared-types';
+import { createWsName } from '@bangle.io/ws-path';
 
 import {
   CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
@@ -222,6 +223,15 @@ const extension = Extension.create({
         handle(operation, payload: unknown, bangleStore) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
+              if (!nsmApi2.workspace.workspaceState().wsName) {
+                nsmApi2.ui.showNotification({
+                  severity: SEVERITY.ERROR,
+                  uid: 'new-note-not-no-workspace',
+                  title: 'Please first select a workspace',
+                });
+
+                return true;
+              }
               // TODO fix payload as any
               const { path } = (payload as any) || {};
 
@@ -332,10 +342,8 @@ const extension = Extension.create({
               const targetWsName =
                 typeof payload === 'string' ? payload : undefined;
 
-              removeWorkspace(targetWsName)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
+              removeWorkspace(
+                targetWsName ? createWsName(targetWsName) : undefined,
               );
 
               return true;
@@ -362,11 +370,7 @@ const extension = Extension.create({
               // TODO fix payload as any
               const { wsName } = (payload as any) || {};
 
-              createBrowserWorkspace(wsName)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              createBrowserWorkspace(wsName);
 
               return true;
             }
@@ -377,11 +381,7 @@ const extension = Extension.create({
 
               console.debug('Creating private fs workspace', wsName);
 
-              createPrivateFsWorkspace(wsName)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              createPrivateFsWorkspace(wsName);
 
               return true;
             }
@@ -389,11 +389,7 @@ const extension = Extension.create({
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
               // TODO fix payload as any
               const { rootDirHandle } = (payload as any) || {};
-              createNativeFsWorkspace(rootDirHandle)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              createNativeFsWorkspace(rootDirHandle);
 
               return true;
             }
@@ -442,110 +438,94 @@ const extension = Extension.create({
   },
 });
 
-export * from './operations';
 export default extension;
 
-function createNativeFsWorkspace(rootDirHandle: any) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof rootDirHandle?.name === 'string') {
-      try {
-        await workspace.createWorkspace(
-          rootDirHandle.name,
-          WorkspaceType.NativeFS,
-          {
-            rootDirHandle,
-          },
-        )(state, dispatch, store);
+export * from './operations';
 
-        (window as any).fathom?.trackGoal('K3NFTGWX', 0);
-      } catch (error: any) {
-        nsmApi2.ui.showNotification({
-          severity: SEVERITY.ERROR,
-          uid: 'error-create-workspace-' + rootDirHandle?.name,
-          title: 'Unable to create workspace ' + rootDirHandle?.name,
-          content: error.displayMessage || error.message,
-        });
+async function createNativeFsWorkspace(rootDirHandle: any) {
+  const wsName = rootDirHandle?.name;
 
-        throw error;
-      }
-    } else {
-      throw new Error(
-        'Incorrect parameters for ' +
-          CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
-      );
-    }
-
-    return true;
-  };
-}
-
-function createBrowserWorkspace(wsName: string) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof wsName !== 'string') {
-      throw new Error(
-        'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
-      );
-    }
-
+  if (typeof wsName === 'string') {
     try {
-      await workspace.createWorkspace(wsName, WorkspaceType.Browser, {})(
-        state,
-        dispatch,
-        store,
+      await internalApi.workspace.createWorkspace(
+        createWsName(wsName),
+        WorkspaceType.NativeFS,
+        {
+          rootDirHandle,
+        },
       );
-      (window as any).fathom?.trackGoal('AISLCLRF', 0);
+      (window as any).fathom?.trackGoal('K3NFTGWX', 0);
     } catch (error: any) {
       nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
-        uid: 'error-create-workspace-' + wsName,
-        title: 'Unable to create workspace ' + wsName,
+        uid: 'error-create-workspace-' + rootDirHandle?.name,
+        title: 'Unable to create workspace ' + rootDirHandle?.name,
         content: error.displayMessage || error.message,
       });
+
       throw error;
     }
+  } else {
+    throw new Error(
+      'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+    );
+  }
 
-    return true;
-  };
+  return true;
 }
 
-function createPrivateFsWorkspace(wsName: string) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof wsName !== 'string') {
-      throw new Error(
-        'Incorrect parameters for ' +
-          CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
-      );
-    }
+async function createBrowserWorkspace(wsName: WsName) {
+  if (typeof wsName !== 'string') {
+    throw new Error(
+      'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+    );
+  }
 
-    try {
-      await workspace.createWorkspace(wsName, WorkspaceType.PrivateFS, {})(
-        state,
-        dispatch,
-        store,
-      );
-      (window as any).fathom?.trackGoal('KWXITXAK', 0);
-    } catch (error: any) {
-      nsmApi2.ui.showNotification({
-        severity: SEVERITY.ERROR,
-        uid: 'error-create-workspace-' + wsName,
-        title: 'Unable to create workspace ' + wsName,
-        content: error.displayMessage || error.message,
-      });
-      throw error;
-    }
+  try {
+    await internalApi.workspace.createWorkspace(
+      wsName,
+      WorkspaceType.Browser,
+      {},
+    );
 
-    return true;
-  };
+    (window as any).fathom?.trackGoal('AISLCLRF', 0);
+  } catch (error: any) {
+    nsmApi2.ui.showNotification({
+      severity: SEVERITY.ERROR,
+      uid: 'error-create-workspace-' + wsName,
+      title: 'Unable to create workspace ' + wsName,
+      content: error.displayMessage || error.message,
+    });
+    throw error;
+  }
+
+  return true;
+}
+
+async function createPrivateFsWorkspace(wsName: WsName) {
+  if (typeof wsName !== 'string') {
+    throw new Error(
+      'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
+    );
+  }
+
+  try {
+    await internalApi.workspace.createWorkspace(
+      wsName,
+      WorkspaceType.PrivateFS,
+      {},
+    );
+
+    (window as any).fathom?.trackGoal('KWXITXAK', 0);
+  } catch (error: any) {
+    nsmApi2.ui.showNotification({
+      severity: SEVERITY.ERROR,
+      uid: 'error-create-workspace-' + wsName,
+      title: 'Unable to create workspace ' + wsName,
+      content: error.displayMessage || error.message,
+    });
+    throw error;
+  }
+
+  return true;
 }

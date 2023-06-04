@@ -64,6 +64,15 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
 
   await expect(page).toHaveURL(new RegExp('/ws/' + wsName));
 
+  await page.waitForFunction(
+    ({ wsName }) => {
+      return (
+        window._nsmE2e?.nsmApi2.workspace.workspaceState().wsName === wsName
+      );
+    },
+    { wsName },
+  );
+
   return wsName;
 }
 
@@ -492,7 +501,7 @@ export async function getWsPathsShownInFilePalette(page: Page) {
     [...nodes].map((n) => n.getAttribute('data-id')),
   );
 
-  await page.keyboard.press('Escape');
+  // await page.keyboard.press('Escape');
 
   return wsPaths;
 }
@@ -582,7 +591,10 @@ export async function waitForEditorIdToLoad(
 
 export async function waitForNotification(page: Page, text: string) {
   await page
-    .locator(`[data-testid="app-entry_notification"]:has-text("${text}")`)
+    .locator(`[data-testid="app-entry_notification"]`)
+    .filter({
+      hasText: text,
+    })
     .waitFor();
 }
 

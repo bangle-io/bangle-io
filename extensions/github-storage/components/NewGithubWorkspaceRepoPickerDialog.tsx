@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { nsmApi2, useBangleStoreContext, workspace } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import {
   ComboBox,
   Dialog,
@@ -11,6 +11,7 @@ import {
   Section,
 } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
+import { createWsName } from '@bangle.io/ws-path';
 
 import {
   GITHUB_STORAGE_PROVIDER_NAME,
@@ -22,7 +23,6 @@ import { getRepos } from '../github-api-helpers';
 const MIN_HEIGHT = 200;
 
 export function NewGithubWorkspaceRepoPickerDialog() {
-  const bangleStore = useBangleStoreContext();
   const { dialogMetadata } = nsmApi2.ui.useUi();
   const [isLoading, updateIsLoading] = useState(false);
   const deferredIsLoading = useDebouncedValue(isLoading, { wait: 100 });
@@ -47,15 +47,16 @@ export function NewGithubWorkspaceRepoPickerDialog() {
     }
     try {
       updateIsLoading(true);
-      await workspace.createWorkspace(
-        selectedRepo.name,
+      await internalApi.workspace.createWorkspace(
+        createWsName(selectedRepo.name),
         GITHUB_STORAGE_PROVIDER_NAME,
         {
           githubToken: githubToken,
           owner: selectedRepo.owner,
           branch: selectedRepo.branch,
         },
-      )(bangleStore.state, bangleStore.dispatch, bangleStore);
+      );
+
       (window as any).fathom?.trackGoal('JSUCQKTL', 0);
       onDismiss();
     } catch (error) {
@@ -64,7 +65,7 @@ export function NewGithubWorkspaceRepoPickerDialog() {
         updateIsLoading(false);
       }
     }
-  }, [onDismiss, selectedRepo, githubToken, bangleStore]);
+  }, [onDismiss, selectedRepo, githubToken]);
 
   useEffect(() => {
     if (!githubToken) {
@@ -98,7 +99,7 @@ export function NewGithubWorkspaceRepoPickerDialog() {
     return () => {
       destroyed = true;
     };
-  }, [githubToken, bangleStore]);
+  }, [githubToken]);
 
   const groupedItems = useMemo(() => {
     return Array.from(

@@ -1,6 +1,8 @@
 import { getNewStore, nsmApi2, page, Slice, workspace } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
+import type { WsPath } from '@bangle.io/shared-types';
 import { abortableSetInterval, generateUid } from '@bangle.io/utils';
+import { createWsName } from '@bangle.io/ws-path';
 
 import {
   getSyncInterval,
@@ -118,11 +120,9 @@ export const ghWorkspaceEffect = ghSliceKey.effect(() => {
       );
 
       if (wsName) {
-        const isGhWorkspace = Boolean(
-          await workspace.readWorkspaceInfo(wsName, {
-            type: GITHUB_STORAGE_PROVIDER_NAME,
-          }),
-        );
+        const isGhWorkspace =
+          (await nsmApi2.workspace.readWorkspaceInfo(createWsName(wsName)))
+            ?.type === GITHUB_STORAGE_PROVIDER_NAME;
 
         const currentWsName = workspace.workspaceSliceKey.callQueryOp(
           store.state,
@@ -250,7 +250,7 @@ export const conflictEffect = ghSliceKey.effect(() => {
 
 // keeps the conflict notification in sync with the conflictedWsPaths
 export const setConflictNotification = ghSliceKey.effect(() => {
-  const wsPathToUidMap = new Map<string, string>();
+  const wsPathToUidMap = new Map<WsPath, string>();
 
   return {
     destroy() {

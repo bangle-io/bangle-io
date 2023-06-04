@@ -6,54 +6,39 @@ import { workerAbortable } from '@bangle.io/abortable-worker';
 import { BaseError } from '@bangle.io/base-error';
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { searchPmNode } from '@bangle.io/search-pm-node';
-import type { WsPath } from '@bangle.io/shared-types';
-import {
-  getFile,
-  getNote,
-  workspaceSliceKey,
-  writeFile,
-} from '@bangle.io/slice-workspace';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
+import { getFile, getNote, writeFile } from '@bangle.io/slice-workspace';
 import { assertNotUndefined, assertSignal } from '@bangle.io/utils';
+import { fs } from '@bangle.io/workspace-info';
 import {
   createWsPath,
   filePathToWsPath,
+  isValidNoteWsPath,
   resolvePath,
 } from '@bangle.io/ws-path';
 
 import { fzfSearchNoteWsPaths } from './abortable-services/fzf-search-notes-ws-path';
 import type { StoreRef } from './naukar';
 
-type GetWsPaths = () => WsPath[] | undefined;
+export type GetWsPaths = (
+  wsName: WsName,
+  abortSignal: AbortSignal,
+) => Promise<WsPath[]>;
 export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
   const services = workerAbortable(({ abortWrapper }) => {
-    const getNoteWsPaths: GetWsPaths = () => {
-      const state = storeRef.current?.state;
-
-      if (!state) {
-        return undefined;
-      }
-      const noteWsPaths = workspaceSliceKey
-        .getSliceStateAsserted(state)
-        .noteWsPaths?.map((r) => {
-          return createWsPath(r);
-        });
-
-      return noteWsPaths;
+    const getWsPaths: GetWsPaths = async (wsName, abortSignal) => {
+      return (await fs.listFiles(wsName, abortSignal)).map((r) => {
+        return createWsPath(r);
+      });
     };
 
-    const getWsPaths: GetWsPaths = () => {
-      const state = storeRef.current?.state;
-
-      if (!state) {
-        return undefined;
-      }
-      const noteWsPaths = workspaceSliceKey
-        .getSliceStateAsserted(state)
-        .wsPaths?.map((r) => {
-          return createWsPath(r);
-        });
-
-      return noteWsPaths;
+    const getNoteWsPaths: GetWsPaths = async (
+      wsName: WsName,
+      abortSignal: AbortSignal,
+    ) => {
+      return (await getWsPaths(wsName, abortSignal)).filter((wsPath) =>
+        isValidNoteWsPath(wsPath),
+      );
     };
 
     const _getDoc = async (wsPath: string) => {
@@ -107,14 +92,14 @@ function searchWsForPmNode(
 ) {
   return async (
     abortSignal: AbortSignal,
-    wsName: string,
+    wsName: WsName,
     query: string,
     atomSearchTypes: Parameters<typeof searchPmNode>[4],
     opts?: Parameters<typeof searchPmNode>[5],
   ) => {
     assertSignal(abortSignal);
 
-    const wsPaths = getNoteWsPaths();
+    const wsPaths = await getNoteWsPaths(wsName, abortSignal);
 
     if (!wsPaths) {
       return [];
@@ -135,8 +120,8 @@ function backupAllFiles(
   getWsPaths: GetWsPaths,
   getFile: (wsPath: string) => Promise<File | undefined>,
 ) {
-  return async (abortSignal: AbortSignal, wsName: string): Promise<File> => {
-    const wsPaths = getWsPaths();
+  return async (abortSignal: AbortSignal, wsName: WsName): Promise<File> => {
+    const wsPaths = await getWsPaths(wsName, abortSignal);
 
     if (!wsPaths || wsPaths.length === 0) {
       throw new BaseError({
@@ -213,10 +198,10 @@ function createWorkspaceFromBackup(
 ) {
   return async (
     abortSignal: AbortSignal,
-    wsName: string,
+    wsName: WsName,
     backupFile: File,
   ): Promise<void> => {
-    const wsPaths = getWsPaths();
+    const wsPaths = await getWsPaths(wsName, abortSignal);
 
     if (!wsPaths || wsPaths.length > 0) {
       throw new BaseError({

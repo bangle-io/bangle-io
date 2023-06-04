@@ -6,14 +6,11 @@ import {
   isIndexedDbException,
 } from '@bangle.io/storage';
 
-import { browserStorageSlice } from './browser-storage-slice';
-
 const extensionName = '@bangle.io/browser-storage';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    slices: [browserStorageSlice()],
     storageProvider: new IndexedDbStorageProvider(),
     onStorageError: (error, store) => {
       if (isIndexedDbException(error)) {

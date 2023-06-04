@@ -4,16 +4,16 @@ import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { assertSignal } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
-export function fzfSearchNoteWsPaths(
-  getNoteWsPaths: () => undefined | WsPath[],
-) {
+import type { GetWsPaths } from '../abortable-services';
+
+export function fzfSearchNoteWsPaths(getNoteWsPaths: GetWsPaths) {
   return async (
     abortSignal: AbortSignal,
     wsName: WsName,
     query: string,
     limit: number = 128,
   ): Promise<Array<FzfResultItem<WsPath>>> => {
-    const wsPaths: string[] | undefined = getNoteWsPaths();
+    const wsPaths: string[] = await getNoteWsPaths(wsName, abortSignal);
 
     assertSignal(abortSignal);
 

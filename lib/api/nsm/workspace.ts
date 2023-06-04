@@ -28,6 +28,11 @@ import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { getStore } from '../internals';
 
+export {
+  goToWorkspaceAuthRoute,
+  readWorkspaceInfo,
+} from './internal/workspace';
+
 export function useWorkspace() {
   return useNsmSliceState(nsmSliceWorkspace);
 }

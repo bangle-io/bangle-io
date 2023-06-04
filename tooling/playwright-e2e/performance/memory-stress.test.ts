@@ -13,7 +13,7 @@ import {
   waitForNotification,
 } from '../helpers';
 
-test('Openning a lot of notes should not leak', async ({ baseURL }) => {
+test('Opening a lot of notes should not leak', async ({ baseURL }) => {
   test.slow();
   test.setTimeout(2 * 60000);
 
@@ -37,7 +37,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     buffer: f,
   });
 
-  await waitForNotification(page, 'Your notes have successfully restored.');
+  await waitForNotification(page, 'Restore success!');
 
   const wsPaths = await getAllWsPaths(page, { lowerBound: 111 });
   // the fixture's asset count

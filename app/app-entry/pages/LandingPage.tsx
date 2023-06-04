@@ -3,17 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   useBangleStoreContext,
   useSerialOperationContext,
-  workspace,
 } from '@bangle.io/api';
 import { lastWorkspaceUsed } from '@bangle.io/bangle-store';
 import { CORE_OPERATIONS_NEW_WORKSPACE } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToWsNameRoute } from '@bangle.io/slice-workspace';
-import {
-  Button,
-  CenteredBoxedPage,
-  NewNoteIcon,
-} from '@bangle.io/ui-components';
+import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
+import { readAllWorkspacesInfo } from '@bangle.io/workspace-info';
 
 export function LandingPage() {
   const bangleStore = useBangleStoreContext();
@@ -22,7 +18,7 @@ export function LandingPage() {
 
   useEffect(() => {
     let destroyed = false;
-    workspace.readAllWorkspacesInfo().then((wsInfos) => {
+    readAllWorkspacesInfo().then((wsInfos) => {
       if (destroyed) {
         return;
       }

@@ -6,6 +6,7 @@ import {
   z,
 } from '@bangle.io/nsm';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
+import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 import type { PageSliceStateType } from './common';
@@ -197,4 +198,33 @@ export function goToWorkspaceHome({
     location: wsNameToPathname(wsName),
     replace: replace,
   });
+}
+
+export const goToWorkspaceAuthRoute = (
+  wsName: WsName,
+  errorCode: string,
+  openedWsPaths?: OpenedWsPaths,
+) => {
+  const search = new URLSearchParams([['error_code', errorCode]]);
+
+  if (openedWsPaths) {
+    savePrevOpenedWsPathsToSearch(openedWsPaths, search);
+  }
+
+  return goToLocation({
+    location: {
+      pathname: `/ws-auth/${encodeURIComponent(wsName)}`,
+      search: search.toString(),
+    },
+    replace: true,
+  });
+};
+
+export function savePrevOpenedWsPathsToSearch(
+  openedWsPaths: OpenedWsPaths,
+  searchParams: URLSearchParams,
+) {
+  if (openedWsPaths.hasSomeOpenedWsPaths()) {
+    searchParams.append('ws_paths', JSON.stringify(openedWsPaths.toArray()));
+  }
 }

@@ -3,6 +3,7 @@ import type { AnySlice, InferSliceName, Store } from '@bangle.io/nsm';
 import type { BangleApplicationStore, NsmStore } from '@bangle.io/shared-types';
 
 export * as nsmApi2 from './nsm/index';
+export * as internalApi from './nsm/internal';
 export * as page from './page';
 export {
   useSerialOperationContext,

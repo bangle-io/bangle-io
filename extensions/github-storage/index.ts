@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Extension, nsmApi2, workspace } from '@bangle.io/api';
+import { Extension, nsmApi2 } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
@@ -102,7 +102,7 @@ const extension = Extension.create({
         handle(operation, payload, store) {
           switch (operation.name) {
             case OPERATION_SYNC_GITHUB_CHANGES: {
-              const wsName = workspace.getWsName()(store.state);
+              const { wsName } = nsmApi2.workspace.workspaceState();
 
               if (!wsName) {
                 return false;

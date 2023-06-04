@@ -15,7 +15,7 @@ import {
 import { createEmptyArray, sleep } from '@bangle.io/utils';
 import {
   readWorkspaceInfo,
-  saveWorkspaceInfo,
+  updateWorkspaceInfo,
 } from '@bangle.io/workspace-info';
 
 import { goToWsNameRouteNotFoundRoute } from '..';
@@ -431,16 +431,12 @@ describe('cachedWorkspaceInfoEffect', () => {
       type: WorkspaceType.Browser,
     });
 
-    await saveWorkspaceInfo(
-      'test-ws-1',
-      (wsInfo) => ({
-        ...wsInfo!,
-        metadata: {
-          test: '1234',
-        },
-      }),
-      wsInfo!,
-    );
+    await updateWorkspaceInfo('test-ws-1', (wsInfo) => ({
+      ...wsInfo!,
+      metadata: {
+        test: '1234',
+      },
+    }));
 
     expect(await readWorkspaceInfo('test-ws-1')).toEqual({
       deleted: false,

@@ -3133,7 +3133,7 @@ __metadata:
   resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
   dependencies:
     "@bangle.io/mini-js-utils": "workspace:*"
-    nalanda: 1.3.0-alpha.3
+    nalanda: 1.3.0-alpha.4
     superjson: ^1.12.2
     zod: ^3.21.4
   languageName: unknown
@@ -3875,6 +3875,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-editor": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@sentry/browser": ^6.18.1
     "@zip.js/zip.js": ~2.4.5
@@ -19046,11 +19047,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nalanda@npm:1.3.0-alpha.3":
-  version: 1.3.0-alpha.3
-  resolution: "nalanda@npm:1.3.0-alpha.3"
+"nalanda@npm:1.3.0-alpha.4":
+  version: 1.3.0-alpha.4
+  resolution: "nalanda@npm:1.3.0-alpha.4"
   dependencies:
-    type-fest: ^3.6.0
+    type-fest: ^3.11.1
     use-sync-external-store: ^1.2.0
   peerDependencies:
     react: ">=17.0"
@@ -19060,7 +19061,7 @@ __metadata:
       optional: true
     zod:
       optional: true
-  checksum: f7a069d1bfd36e759875e3abfbf068959915cf302b4a925918f2289120199cd8ec0af86a812a34b03e256b70ff6196b60862fcf58b42cc6cb0bef6d20dfac220
+  checksum: 5ae82d9c77bd7e3185dc25c30dc390e926d324ec46929bb5781590652c527d9dd31661ceb946c5255c139974e3e9b7905e7679a169367ef1c7aeb8f1b3496fe4
   languageName: node
   linkType: hard
 
@@ -24447,17 +24448,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^3.11.1":
+  version: 3.11.1
+  resolution: "type-fest@npm:3.11.1"
+  checksum: 33be49e3b671c2ff3b5e320ef8c160c488205b08ab7631369116909a1baf2aebfcf45234c045e6902b8aa35730ac2bfd0655ea9e0fe3f8d26af9d99a16b07abd
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:^3.5.1":
   version: 3.5.1
   resolution: "type-fest@npm:3.5.1"
   checksum: b79991ef1310bd114210c8f697b510cefd2276c6ed4fd5026430b6e73a4253916c6551f773327a1e4c47ac2b31205294c8e68030e4999f262e0d47d541f7b7cb
-  languageName: node
-  linkType: hard
-
-"type-fest@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "type-fest@npm:3.6.0"
-  checksum: 3cb3b27fc1dc69e0a7524041d9d32cfd3786b16591952e0b2b87ca44b53acaed1bf86ee62a7cc3033a55154d44542e8b488d500d1b363d828f62a9fae9d2a043
   languageName: node
   linkType: hard
 

@@ -6,6 +6,7 @@ export {
   readAllWorkspacesInfo,
   readWorkspaceInfo,
   readWorkspaceMetadata,
-  saveWorkspaceInfo,
+  updateWorkspaceInfo,
   updateWorkspaceMetadata,
 } from './workspace-info';
+export { createWorkspace, deleteWorkspace } from './workspace-ops';

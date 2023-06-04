@@ -6,8 +6,11 @@ import React, {
   useState,
 } from 'react';
 
-import { nsmApi2, useSerialOperationContext, workspace } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  internalApi,
+  nsmApi2,
+  useSerialOperationContext,
+} from '@bangle.io/api';
 import {
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CorePalette,
@@ -38,16 +41,14 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
     ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
       const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
-      const bangleStore = useBangleStoreContext();
-
       const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
 
       const { dispatchSerialOperation } = useSerialOperationContext();
       useEffect(() => {
-        workspace.readAllWorkspacesInfo().then((wsInfos) => {
+        internalApi.workspace.readAllWorkspacesInfo().then((wsInfos) => {
           updateWorkspaces(wsInfos);
         });
-      }, [bangleStore]);
+      }, []);
 
       const items = useMemo(() => {
         const _items = injectRecency(

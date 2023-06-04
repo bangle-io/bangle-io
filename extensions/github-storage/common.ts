@@ -1,7 +1,7 @@
-import type { BangleApplicationStore } from '@bangle.io/api';
 import { nsmApi2, SliceKey } from '@bangle.io/api';
 import type { Severity } from '@bangle.io/constants';
 import { SEVERITY, WorkspaceType } from '@bangle.io/constants';
+import type { WsPath } from '@bangle.io/shared-types';
 import { acquireLockIfAvailable, isMobile } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
@@ -41,7 +41,7 @@ export const ghSliceKey = new SliceKey<
   {
     isSyncing: boolean;
     githubWsName: string | undefined;
-    conflictedWsPaths: string[];
+    conflictedWsPaths: WsPath[];
   },
   | {
       name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
@@ -52,7 +52,7 @@ export const ghSliceKey = new SliceKey<
   | {
       name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS';
       value: {
-        conflictedWsPaths: string[];
+        conflictedWsPaths: WsPath[];
       };
     }
   | {
