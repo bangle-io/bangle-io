@@ -25,6 +25,8 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "nalanda": "1.3.0-alpha.4",
     "superjson": "^1.12.2",
+    "tslib": "2.4.1",
+    "typescript": "4.9.3",
     "zod": "^3.21.4"
   },
   "license": "AGPL-3.0-or-later"

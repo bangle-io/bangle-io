@@ -22,7 +22,9 @@
     "access": "public"
   },
   "dependencies": {
-    "idb": "^7.1.1"
+    "idb": "^7.1.1",
+    "tslib": "2.4.1",
+    "typescript": "4.9.3"
   },
   "license": "AGPL-3.0-or-later"
 }

@@ -35,7 +35,7 @@
     "debounce-fn": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tslib": "^2.4.1",
+    "tslib": "2.4.1",
     "typescript": "4.9.3",
     "w3c-keyname": "^2.2.6"
   },

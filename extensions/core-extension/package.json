@@ -42,7 +42,7 @@
     "@bangle.io/ws-path": "workspace:*",
     "@react-aria/focus": "^3.5.5",
     "react": "^17.0.2",
-    "tslib": "^2.4.1",
+    "tslib": "2.4.1",
     "typescript": "4.9.3"
   },
   "devDependencies": {
