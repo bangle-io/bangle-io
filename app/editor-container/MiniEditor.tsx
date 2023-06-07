@@ -38,8 +38,14 @@ export function MiniEditor({ wsPath }: { wsPath: WsPath }) {
   const onExpand = useCallback(() => {
     nsmStore.dispatch(
       pushOpenedWsPaths(nsmStore.state, (oPaths) =>
-        oPaths.updatePrimaryWsPath(wsPath).updateMiniEditorWsPath(undefined),
+        oPaths.updateMiniEditorWsPath(undefined),
       ),
+    );
+    nsmStore.dispatch(
+      pushOpenedWsPaths(nsmStore.state, (oPaths) => {
+        const result = oPaths.updatePrimaryWsPath(wsPath);
+        return result;
+      }),
     );
   }, [wsPath, nsmStore]);
 

@@ -1,4 +1,3 @@
-export * as fileOps from './file-ops';
 export {
   closeIfFound,
   nsmSliceWorkspace,

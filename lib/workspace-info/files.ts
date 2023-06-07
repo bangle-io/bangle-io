@@ -1,11 +1,18 @@
 import { readFileAsText as _readFileAsText } from '@bangle.io/baby-fs';
+import type { Node } from '@bangle.dev/pm';
 import { BaseError } from '@bangle.io/base-error';
-import type { WorkspaceInfo, WsName, WsPath } from '@bangle.io/shared-types';
+import type {
+  ExtensionRegistry,
+  WorkspaceInfo,
+  WsName,
+  WsPath,
+} from '@bangle.io/shared-types';
 import {
   createWsPath,
   isValidFileWsPath,
   resolvePath2,
 } from '@bangle.io/ws-path';
+import { markdownFormatProvider } from './note-format';
 
 import { getStorageProviderObj } from './storage-providers';
 import { readWorkspaceInfo } from './workspace-info';
@@ -17,6 +24,58 @@ function assertWsInfo(
   if (!info) {
     throw new Error(`Workspace ${wsName} not found`);
   }
+}
+
+export async function writeNote(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+  doc: Node,
+) {
+  const { wsName, fileName } = resolvePath2(wsPath);
+
+  const serialValue = getNoteFormatProvider(wsName).serializeNote(
+    doc,
+    extensionRegistry.specRegistry,
+    fileName,
+  );
+
+  await writeFile(
+    wsPath,
+    new File([serialValue], fileName, {
+      type: 'text/plain',
+    }),
+  );
+}
+
+export async function getNote(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+) {
+  const textContent = await readFileAsText(wsPath);
+
+  if (!textContent) {
+    return undefined;
+  }
+  const { wsName } = resolvePath2(wsPath);
+
+  const doc = getNoteFormatProvider(wsName).parseNote(
+    textContent,
+    extensionRegistry.specRegistry,
+    extensionRegistry.markdownItPlugins,
+  );
+
+  return doc;
+}
+
+function getNoteFormatProvider(wsName: WsName) {
+  // TODO implement custom format provider
+  let provider = markdownFormatProvider;
+
+  if (!provider) {
+    throw new Error('Note storage provider not found.');
+  }
+
+  return provider;
 }
 
 export async function readFile(wsPath: WsPath): Promise<File | undefined> {

@@ -3,7 +3,6 @@ import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import { markdownParser } from '@bangle.io/markdown';
 import {
   closeIfFound,
-  fileOps,
   nsmSliceWorkspace,
   openWsPathInNewTab as _openWsPathInNewTab,
   pushOpenedWsPaths as _pushOpenedWsPaths,
@@ -25,6 +24,7 @@ import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath2 } from '@bangle.io/ws-path';
+import { defaultDoc } from '../default-doc';
 
 import { getStore } from '../internals';
 
@@ -52,7 +52,7 @@ export const getNote = (wsPath: WsPath) => {
   const store = getStore();
   const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
 
-  return fileOps.getNote(wsPath, extensionRegistry);
+  return fs.getNote(wsPath, extensionRegistry);
 };
 
 export const createNote = async (
@@ -73,7 +73,11 @@ export const createNote = async (
     });
   }
 
-  await fileOps.createNote(wsPath, extensionRegistry, opts.doc);
+  await fs.writeNote(
+    wsPath,
+    extensionRegistry,
+    opts.doc || defaultDoc(wsPath, extensionRegistry),
+  );
 
   if (opts.open) {
     return pushWsPath(wsPath, opts.open);
@@ -121,7 +125,7 @@ export const writeNote = async (wsPath: WsPath, doc: Node) => {
   const store = getStore();
   const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
 
-  await fileOps.writeNote(wsPath, extensionRegistry, doc);
+  await fs.writeNote(wsPath, extensionRegistry, doc);
 };
 
 export const writeFile = async (...args: Parameters<typeof fs.writeFile>) => {
@@ -150,7 +154,7 @@ export async function createNoteFromMd(wsPath: WsPath, mdText: string) {
     extensionRegistry.markdownItPlugins,
   )!;
 
-  await fileOps.writeNote(wsPath, extensionRegistry, doc);
+  await fs.writeNote(wsPath, extensionRegistry, doc);
 }
 
 export const pushWsPath = (

@@ -402,6 +402,8 @@ export const pushOpenedWsPaths = createMetaAction(
       });
     }
 
+    // TODO update newOpened changed a bunch of things, it is not possible to dispatch multiple actions
+
     // If primary or secondary are changing let the update happen via the  history
     // so that we can record the changes in browser history. Any other wsPaths in
     // openedWsPaths do not need to be recorded in history, so update them directly.
