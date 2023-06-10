@@ -7,8 +7,6 @@ import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
-import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
-import { workerSetupSlices } from '@bangle.io/worker-setup';
 
 import { historySlice } from './slices/history-slice';
 import { miscEffectsSlice } from './slices/misc-effects-slice';
@@ -39,8 +37,6 @@ export function bangleStateSlices({
 
   // Order matters: any subsequent slice may depend on the previous slices
   return [
-    ...workerSetupSlices(),
-    naukarProxySlice(),
     ...pageBlock,
     extensionRegistrySlice(),
     storageProviderSlice(),

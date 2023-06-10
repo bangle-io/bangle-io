@@ -6,25 +6,32 @@ import { workerAbortable } from '@bangle.io/abortable-worker';
 import { BaseError } from '@bangle.io/base-error';
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { searchPmNode } from '@bangle.io/search-pm-node';
-import type { WsName, WsPath } from '@bangle.io/shared-types';
-import { getFile, getNote, writeFile } from '@bangle.io/slice-workspace';
-import { assertNotUndefined, assertSignal } from '@bangle.io/utils';
+import type {
+  ExtensionRegistry,
+  WsName,
+  WsPath,
+} from '@bangle.io/shared-types';
+import { assertSignal } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import {
   createWsPath,
-  filePathToWsPath,
+  filePathToWsPath2,
   isValidNoteWsPath,
   resolvePath,
 } from '@bangle.io/ws-path';
 
 import { fzfSearchNoteWsPaths } from './abortable-services/fzf-search-notes-ws-path';
-import type { StoreRef } from './naukar';
 
 export type GetWsPaths = (
   wsName: WsName,
   abortSignal: AbortSignal,
 ) => Promise<WsPath[]>;
-export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
+
+export function abortableServices({
+  extensionRegistry,
+}: {
+  extensionRegistry: ExtensionRegistry;
+}) {
   const services = workerAbortable(({ abortWrapper }) => {
     const getWsPaths: GetWsPaths = async (wsName, abortSignal) => {
       return (await fs.listFiles(wsName, abortSignal)).map((r) => {
@@ -42,28 +49,15 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
     };
 
     const _getDoc = async (wsPath: string) => {
-      const store = storeRef.current;
-      assertNotUndefined(store, 'store cannot be undefined');
-
-      return getNote(wsPath)(store.state, store.dispatch, store).catch(
-        () => undefined,
-      );
+      return fs.getNote(createWsPath(wsPath), extensionRegistry);
     };
 
-    const _getFile = async (wsPath: string) => {
-      const store = storeRef.current;
-
-      assertNotUndefined(store, 'store cannot be undefined');
-
-      return getFile(wsPath)(store.state, store.dispatch, store);
+    const _getFile = async (wsPath: WsPath) => {
+      return fs.readFile(wsPath);
     };
 
-    const _saveFile = async (wsPath: string, file: File) => {
-      const store = storeRef.current;
-
-      assertNotUndefined(store, 'store cannot be undefined');
-
-      await writeFile(wsPath, file)(store.state, store.dispatch, store);
+    const _saveFile = async (wsPath: WsPath, file: File) => {
+      return fs.writeFile(wsPath, file);
     };
 
     return {
@@ -118,7 +112,7 @@ function searchWsForPmNode(
 
 function backupAllFiles(
   getWsPaths: GetWsPaths,
-  getFile: (wsPath: string) => Promise<File | undefined>,
+  getFile: (wsPath: WsPath) => Promise<File | undefined>,
 ) {
   return async (abortSignal: AbortSignal, wsName: WsName): Promise<File> => {
     const wsPaths = await getWsPaths(wsName, abortSignal);
@@ -194,7 +188,7 @@ function readAllFilesBackup() {
 
 function createWorkspaceFromBackup(
   getWsPaths: GetWsPaths,
-  saveFile: (wsPath: string, file: File) => Promise<void>,
+  saveFile: (wsPath: WsPath, file: File) => Promise<void>,
 ) {
   return async (
     abortSignal: AbortSignal,
@@ -214,7 +208,7 @@ function createWorkspaceFromBackup(
 
     for (const file of files) {
       const { filePath } = resolvePath(decodeURIComponent(file.name));
-      const newWsPath = filePathToWsPath(wsName, filePath);
+      const newWsPath = filePathToWsPath2(wsName, filePath);
       await saveFile(newWsPath, file);
     }
   };

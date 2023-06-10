@@ -1,10 +1,29 @@
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
+import { WORKER_SUPPORTED } from './worker-support';
+
 assertNonWorkerGlobalScope();
+
+export async function workerSetup(
+  abortSignal: AbortSignal,
+): Promise<import('@bangle.io/worker-naukar').WorkerAPI> {
+  const result = await loadNaukarModule(WORKER_SUPPORTED);
+
+  abortSignal.addEventListener(
+    'abort',
+    () => {
+      result.terminate?.();
+    },
+
+    { once: true },
+  );
+
+  return result.naukar;
+}
 
 export async function loadNaukarModule(loadWebworker: boolean): Promise<{
   naukar: import('@bangle.io/worker-naukar').WorkerAPI;
-  terminate?: () => void;
+  terminate?: () => Promise<void>;
 }> {
   // both these files intialize the naukar module the same way
   // the only difference is the execution environment, one of them

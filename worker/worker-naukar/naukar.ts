@@ -13,7 +13,7 @@ import {
 import { getCollabManager } from '@bangle.io/worker-editor';
 
 import { abortableServices } from './abortable-services';
-import { initializeNaukarStore } from './store/initialize-naukar-store';
+import type { initializeNaukarStore } from './store/initialize-naukar-store';
 import { createNsmStore } from './store/nsm-store/nsm-store';
 
 // if naukar is running in window, no need to initialize as the app already has one initialized
@@ -33,16 +33,8 @@ export function createNaukar(
   storageEmitter: Emitter<StorageProviderChangeType>,
 ) {
   const envType = getSelfType();
-  const storeRef: StoreRef = {
-    current: undefined,
-  };
-  console.debug('Naukar running in ', envType);
 
-  // eslint-disable-next-line no-restricted-globals
-  if (typeof self !== 'undefined') {
-    // eslint-disable-next-line no-restricted-globals, no-undef
-    (self as any).storeRef = storeRef;
-  }
+  console.debug('Naukar running in ', envType);
 
   let sendQueue: any[] = [];
   let sendMessageCb: ((message: any) => void) | undefined = undefined;
@@ -60,14 +52,6 @@ export function createNaukar(
   });
 
   return {
-    // setup up store and store syncing
-    async sendMessagePort(port: MessageChannel['port2']) {
-      storeRef.current = initializeNaukarStore({
-        port,
-        extensionRegistry,
-      });
-    },
-
     async status() {
       return true;
     },
@@ -83,15 +67,6 @@ export function createNaukar(
       sendQueue = [];
     },
 
-    async testGetStore() {
-      return storeRef.current;
-    },
-
-    async testDestroyStore() {
-      storeRef.current?.destroy();
-      storeRef.current = undefined;
-    },
-
     async testIsWorkerEnv() {
       return isWorkerGlobalScope();
     },
@@ -101,7 +76,6 @@ export function createNaukar(
     },
 
     async testRequestDeleteCollabInstance(wsPath: string) {
-      assertNotUndefined(storeRef.current, 'storeRef.current must be defined');
       const collabManager = getCollabManager()(storeRef.current.state);
       assertNotUndefined(collabManager, 'collabManager must be defined');
       collabManager.requestDeleteInstance(wsPath);
@@ -122,7 +96,7 @@ export function createNaukar(
       }, 0);
     },
 
-    ...abortableServices({ storeRef }),
+    ...abortableServices({ extensionRegistry }),
   };
 }
 

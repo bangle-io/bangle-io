@@ -1,8 +1,7 @@
 import './comlink-transfer-handlers';
+import './module-support';
 
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
-export { checkModuleWorkerSupport } from './module-support';
-export { workerSetupSlices } from './worker-setup-slice';
-
 assertNonWorkerGlobalScope();
+export { workerSetup } from './worker-setup';

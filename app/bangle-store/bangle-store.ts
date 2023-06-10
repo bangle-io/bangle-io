@@ -11,7 +11,6 @@ import {
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
-import { checkModuleWorkerSupport } from '@bangle.io/worker-setup';
 
 import { bangleStateSlices } from './bangle-slices';
 
@@ -38,7 +37,7 @@ export function initializeBangleStore({
 
   const stateOpts: BangleStateConfig = {
     extensionRegistry,
-    useWebWorker: checkModuleWorkerSupport(),
+    useWebWorker: false,
     saveState: (store) => {
       toLocalStorage(
         store.state.stateToJSON({

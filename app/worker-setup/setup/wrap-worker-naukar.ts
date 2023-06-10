@@ -11,6 +11,7 @@ const worker = new Worker(new URL('./worker.ts', import.meta.url), {
 });
 
 export const wrapper = Comlink.wrap(worker);
+
 export const terminate = async () => {
   wrapper[Comlink.releaseProxy]();
   // wait for comlink to release proxy

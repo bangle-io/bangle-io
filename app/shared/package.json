@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/shared",
+  "description": "things that are run and shared by both worker (naukar) and main thread",
   "version": "0.0.0",
   "authors": [
     {

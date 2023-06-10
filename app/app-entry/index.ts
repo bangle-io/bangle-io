@@ -7,6 +7,8 @@ import { _internal_setStore } from '@bangle.io/api';
 import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import { onBeforeStoreLoad } from '@bangle.io/shared';
+import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
+import { workerSetup } from '@bangle.io/worker-setup';
 
 import { Entry } from './entry';
 import { runAfterPolyfills } from './run-after-polyfills';
@@ -36,6 +38,22 @@ runAfterPolyfills(() => {
   const root = document.getElementById('root');
 
   const { registry, storageEmitter } = onBeforeStoreLoad();
+  const abort = new AbortController();
+
+  workerSetup(abort.signal).then((worker) => {
+    _setWorker(worker);
+  });
+
+  abort.signal.addEventListener(
+    'abort',
+    () => {
+      _clearWorker();
+    },
+    {
+      once: true,
+    },
+  );
+
   const nsmStore = createNsmStore({
     extensionRegistry: registry,
     storageEmitter,
