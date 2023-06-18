@@ -3124,6 +3124,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/nsm-slice-file-sha@workspace:lib/nsm-slice-file-sha":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm-slice-file-sha@workspace:lib/nsm-slice-file-sha"
+  dependencies:
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/git-file-sha": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/nsm-slice-workspace@workspace:*, @bangle.io/nsm-slice-workspace@workspace:lib/nsm-slice-workspace":
   version: 0.0.0-use.local
   resolution: "@bangle.io/nsm-slice-workspace@workspace:lib/nsm-slice-workspace"
@@ -3872,7 +3887,6 @@ __metadata:
   dependencies:
     "@bangle.io/abortable-worker": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar": "workspace:*"

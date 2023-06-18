@@ -699,6 +699,7 @@ export function forEachEditorPlain(
     }
   }
 }
+
 export const forEachEditor = createQueryState(
   [nsmEditorManagerSlice],
   (state, callback: (editor: BangleEditor, editorId: EditorIdType) => void) => {

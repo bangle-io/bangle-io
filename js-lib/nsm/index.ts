@@ -33,7 +33,6 @@ export {
   createBaseSlice,
   createDispatchSpy,
   createSelector,
-  createSlice,
   createSliceV2,
   createSliceWithSelectors,
   createSyncStore,

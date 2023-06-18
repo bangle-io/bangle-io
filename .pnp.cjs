@@ -284,6 +284,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/markdown"\
       },\
       {\
+        "name": "@bangle.io/nsm-slice-file-sha",\
+        "reference": "workspace:lib/nsm-slice-file-sha"\
+      },\
+      {\
         "name": "@bangle.io/nsm-slice-workspace",\
         "reference": "workspace:lib/nsm-slice-workspace"\
       },\
@@ -457,6 +461,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],\
       ["@bangle.io/note-tags", ["workspace:extensions/note-tags"]],\
       ["@bangle.io/nsm", ["workspace:js-lib/nsm"]],\
+      ["@bangle.io/nsm-slice-file-sha", ["workspace:lib/nsm-slice-file-sha"]],\
       ["@bangle.io/nsm-slice-workspace", ["workspace:lib/nsm-slice-workspace"]],\
       ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],\
       ["@bangle.io/p-map", ["workspace:js-lib/p-map"]],\
@@ -7099,6 +7104,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/nsm-slice-file-sha", [\
+        ["workspace:lib/nsm-slice-file-sha", {\
+          "packageLocation": "./lib/nsm-slice-file-sha/",\
+          "packageDependencies": [\
+            ["@bangle.io/nsm-slice-file-sha", "workspace:lib/nsm-slice-file-sha"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/nsm", "workspace:js-lib/nsm"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/nsm-slice-workspace", [\
         ["workspace:lib/nsm-slice-workspace", {\
           "packageLocation": "./lib/nsm-slice-workspace/",\
@@ -7942,7 +7964,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
