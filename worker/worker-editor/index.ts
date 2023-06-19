@@ -1,2 +1,7 @@
-export { workerEditorSliceKey } from './common';
-export { getCollabManager, workerEditorSlice } from './worker-editor-slice';
+import './nsm-worker-editor-effects';
+
+export {
+  getCollabManager,
+  nsmWorkerEditor,
+  setCollabManager,
+} from './nsm-worker-editor';

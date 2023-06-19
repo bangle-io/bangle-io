@@ -9,9 +9,9 @@ import { createWsPath } from '@bangle.io/ws-path';
 
 import type { OpenedFile } from './nsm-slice-file-sha';
 import {
+  actSyncEntries,
+  actUpdateEntry,
   nsmSliceFileSha,
-  syncEntries,
-  updateEntry,
 } from './nsm-slice-file-sha';
 
 const LOG = true;
@@ -46,7 +46,7 @@ Slice.registerEffectSlice(nsmSliceFileSha, [
 
       if (additions.length > 0 || removals.length > 0) {
         dispatch(
-          syncEntries({
+          actSyncEntries({
             additions,
             removals,
           }),
@@ -112,7 +112,7 @@ const runUpdateShas = async (
         );
         queueMicrotask(() => {
           dispatch(
-            updateEntry({
+            actUpdateEntry({
               wsPath: info.wsPath,
               info: {
                 currentDiskSha: sha,
@@ -182,7 +182,7 @@ Slice.registerEffectSlice(nsmSliceFileSha, [
                 );
 
                 dispatch(
-                  updateEntry({
+                  actUpdateEntry({
                     wsPath: openedFile.wsPath,
                     info: {
                       lastKnownDiskSha: sha,

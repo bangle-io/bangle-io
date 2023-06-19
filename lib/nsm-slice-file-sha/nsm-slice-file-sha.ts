@@ -41,7 +41,7 @@ export const nsmSliceFileSha = createSliceV2([], {
   initState: initState,
 });
 
-export const syncEntries = nsmSliceFileSha.createAction(
+export const actSyncEntries = nsmSliceFileSha.createAction(
   'syncEntries',
   serialAction(
     z.object({
@@ -77,7 +77,7 @@ export const syncEntries = nsmSliceFileSha.createAction(
   ),
 );
 
-export const updateEntry = nsmSliceFileSha.createAction(
+export const actUpdateEntry = nsmSliceFileSha.createAction(
   'updateEntry',
   serialAction(
     z.object({
@@ -114,7 +114,7 @@ export const updateEntry = nsmSliceFileSha.createAction(
   ),
 );
 
-export const bulkUpdateShas = nsmSliceFileSha.createAction(
+export const actBulkUpdateShas = nsmSliceFileSha.createAction(
   'bulkUpdateShas',
   serialAction(
     z.object({

@@ -1,55 +1,59 @@
 import * as Sentry from '@sentry/browser';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import type { StorageProviderChangeType } from '@bangle.io/shared-types';
-import type { Emitter } from '@bangle.io/utils';
+import { wireCollabMessageBus } from '@bangle.io/editor-common';
+import type { EternalVars } from '@bangle.io/shared-types';
 import {
   assertNotUndefined,
   BaseError,
   getSelfType,
   isWorkerGlobalScope,
 } from '@bangle.io/utils';
-import { getCollabManager } from '@bangle.io/worker-editor';
+import {
+  getCollabManager,
+  nsmWorkerEditor,
+  setCollabManager,
+} from '@bangle.io/worker-editor';
 
 import { abortableServices } from './abortable-services';
-import type { initializeNaukarStore } from './store/initialize-naukar-store';
-import { createNsmStore } from './store/nsm-store/nsm-store';
+import { createNsmStore } from './store';
 
 // if naukar is running in window, no need to initialize as the app already has one initialized
 if (isWorkerGlobalScope() && APP_ENV !== 'local') {
   Sentry.init(sentryConfig);
 }
 
-export interface StoreRef {
-  current: undefined | ReturnType<typeof initializeNaukarStore>;
-}
-
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
 export function createNaukar(
-  extensionRegistry: ExtensionRegistry,
-  storageEmitter: Emitter<StorageProviderChangeType>,
+  eternalVars: EternalVars,
+  abortSignal: AbortSignal = new AbortController().signal,
 ) {
   const envType = getSelfType();
 
   console.debug('Naukar running in ', envType);
 
-  let sendQueue: any[] = [];
-  let sendMessageCb: ((message: any) => void) | undefined = undefined;
+  let nsmSendQueue: any[] = [];
+  let nsmSendMessageCb: ((message: any) => void) | undefined = undefined;
+
+  const { extensionRegistry } = eternalVars;
 
   const nsmNaukarStore = createNsmStore({
-    extensionRegistry,
-    storageEmitter,
+    eternalVars,
     sendMessage: (message) => {
-      if (sendMessageCb) {
-        sendMessageCb(message);
+      if (nsmSendMessageCb) {
+        nsmSendMessageCb(message);
       } else {
-        sendQueue.push(message);
+        nsmSendQueue.push(message);
       }
     },
   });
+  // TODO ensure errors are sent to sentry
+  const unhandledError = (error: Error) => {
+    Sentry.captureException(error);
+    console.error(error);
+  };
 
   return {
     async status() {
@@ -59,12 +63,14 @@ export function createNaukar(
     async nsmNaukarStoreReceive(m: any) {
       nsmNaukarStore.receiveMessage(m);
     },
+
     async nsmNaukarStoreRegisterCb(cb: (m: any) => void) {
-      sendMessageCb = cb;
-      sendQueue.forEach((m) => {
+      nsmSendMessageCb = cb;
+      nsmSendQueue.forEach((m) => {
+        console.log('handling queued message', m);
         cb(m);
       });
-      sendQueue = [];
+      nsmSendQueue = [];
     },
 
     async testIsWorkerEnv() {
@@ -76,9 +82,32 @@ export function createNaukar(
     },
 
     async testRequestDeleteCollabInstance(wsPath: string) {
-      const collabManager = getCollabManager()(storeRef.current.state);
+      const collabManager = getCollabManager(
+        nsmWorkerEditor.getState(nsmNaukarStore.store.state),
+      );
       assertNotUndefined(collabManager, 'collabManager must be defined');
+
       collabManager.requestDeleteInstance(wsPath);
+    },
+
+    async registerCollabMessagePort(
+      port: MessageChannel['port2'],
+      handleStorageError: (error: Error) => void,
+    ) {
+      wireCollabMessageBus(
+        port,
+        eternalVars.editorCollabMessageBus,
+        abortSignal,
+      );
+
+      setCollabManager(
+        nsmNaukarStore.store.dispatch,
+        eternalVars,
+        abortSignal,
+        (error) => {
+          handleStorageError(error);
+        },
+      );
     },
 
     async testHandlesBaseError(e: BaseError) {

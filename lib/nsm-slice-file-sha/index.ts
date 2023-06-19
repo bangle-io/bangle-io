@@ -1,1 +1,1 @@
-export { nsmSliceFileSha } from './nsm-slice-file-sha';
+export { actUpdateEntry, nsmSliceFileSha } from './nsm-slice-file-sha';

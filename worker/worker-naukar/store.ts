@@ -1,9 +1,8 @@
 import { config } from '@bangle.io/config';
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
 import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
-import type { SyncMessage } from '@bangle.io/nsm';
+import type { InferSliceName, SyncMessage } from '@bangle.io/nsm';
 import {
   createSyncStore,
   payloadParser,
@@ -12,33 +11,54 @@ import {
   timeoutSchedular,
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
-import type { StorageProviderChangeType } from '@bangle.io/shared-types';
+import { nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
+import type {
+  EternalVars,
+  StorageProviderChangeType,
+} from '@bangle.io/shared-types';
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   incrementCounter,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
-import type { Emitter } from '@bangle.io/utils';
+import { nsmWorkerEditor } from '@bangle.io/worker-editor';
+
+// TODO: some of the slices are async and some are sync
+//       this means the dispatching the async ones will not immediately
+//       update the state.
+export type WorkerStore = Store<
+  | InferSliceName<typeof nsmExtensionRegistry>
+  | InferSliceName<typeof nsmNotification.nsmNotificationSlice>
+  | InferSliceName<typeof nsmPageSlice>
+  | InferSliceName<typeof nsmSliceFileSha>
+  | InferSliceName<typeof nsmWorkerEditor>
+  | InferSliceName<typeof sliceRefreshWorkspace>
+>;
 
 export const createNsmStore = ({
   sendMessage,
-  extensionRegistry,
-  storageEmitter,
+  eternalVars,
 }: {
   sendMessage: (msg: any) => void;
-  extensionRegistry: ExtensionRegistry;
-  storageEmitter: Emitter<StorageProviderChangeType>;
-}) => {
+  eternalVars: EternalVars;
+}): {
+  store: WorkerStore;
+  receiveMessage: (msg: SyncMessage) => void;
+} => {
   const storeName = 'naukar-store';
 
   const synSlices = [
-    sliceRefreshWorkspace,
-    nsmPageSlice,
+    // ensure types are also updated
     nsmNotification.nsmNotificationSlice,
+    nsmPageSlice,
+    nsmSliceFileSha,
+    sliceRefreshWorkspace,
   ];
   const initStateOverride = {
-    [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
+    [nsmExtensionRegistry.spec.lineageId]: {
+      extensionRegistry: eternalVars.extensionRegistry,
+    },
   };
 
   const syncStore = createSyncStore({
@@ -59,14 +79,18 @@ export const createNsmStore = ({
         sendMessage(msg);
       },
     },
-    slices: [nsmExtensionRegistry],
+    slices: [
+      // ensure types are also updated
+      nsmExtensionRegistry,
+      nsmWorkerEditor,
+    ],
     initStateOverride,
     scheduler: timeoutSchedular(5),
     dispatchTx: (store, tx) => {
       let newState = store.state.applyTransaction(tx);
 
       synSlices.forEach((sl) => {
-        console.debug('worker', sl.spec.lineageId, sl.getState(newState));
+        console.log('worker=>', sl.spec.lineageId, sl.getState(newState));
       });
       Store.updateState(store, newState, tx);
     },
@@ -75,16 +99,25 @@ export const createNsmStore = ({
   const store = syncStore.store;
 
   const onStorageProviderChange = (msg: StorageProviderChangeType) => {
-    // TODO test if this works
-    console.warn('worker', msg);
-    store.dispatch(incrementCounter(null));
+    // Note: ensure you also update the main store
+    if (
+      msg.type === 'delete' ||
+      msg.type === 'create' ||
+      msg.type === 'rename'
+    ) {
+      store.dispatch(incrementCounter(null));
+    }
   };
-  storageEmitter.on(STORAGE_ON_CHANGE_EMITTER_KEY, onStorageProviderChange);
+
+  eternalVars.storageEmitter.on(
+    STORAGE_ON_CHANGE_EMITTER_KEY,
+    onStorageProviderChange,
+  );
 
   store.destroySignal.addEventListener(
     'abort',
     () => {
-      storageEmitter.off(
+      eternalVars.storageEmitter.off(
         STORAGE_ON_CHANGE_EMITTER_KEY,
         onStorageProviderChange,
       );
@@ -103,7 +136,7 @@ export const createNsmStore = ({
 
   return {
     store,
-    receiveMessage: (msg: any) => {
+    receiveMessage: (msg) => {
       const obj: SyncMessage = msg;
       syncStore.receiveMessage(obj);
     },
