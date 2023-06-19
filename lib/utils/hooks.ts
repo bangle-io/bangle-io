@@ -72,21 +72,6 @@ export function useWatchClickOutside(
   }, [ref, onClickOutside, onClickInside]);
 }
 
-/**
- * Catches unhandled sync and async error
- */
-export function useCatchRejection(
-  callback: (event: PromiseRejectionEvent) => void,
-) {
-  useEffect(() => {
-    window.addEventListener('unhandledrejection', callback);
-
-    return () => {
-      window.removeEventListener('unhandledrejection', callback);
-    };
-  }, [callback]);
-}
-
 export function useDestroyRef() {
   const destroyed = useRef(false);
 

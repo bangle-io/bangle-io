@@ -66,6 +66,8 @@ export function createEditorFromMd(
           dispatchSerialOperation: () => {},
           nsmStore: getNewStore(initialBangleStore),
           createdAt: Date.now(),
+          collabMessageBus: {} as any,
+
           ...pluginMetadata,
         }),
         ...registry.getPlugins(),
@@ -119,6 +121,7 @@ export function createEditorFromNode(
           dispatchSerialOperation: () => {},
           createdAt: Date.now(),
           nsmStore: getNewStore(initialBangleStore),
+          collabMessageBus: {} as any,
           ...pluginMetadata,
         }),
         ...registry.getPlugins(),

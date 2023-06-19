@@ -1,6 +1,6 @@
-import { onBeforeStoreLoad } from '@bangle.io/shared';
+import { setupEternalVars } from '@bangle.io/shared';
 import { createNaukar } from '@bangle.io/worker-naukar';
 
-const { registry, storageEmitter } = onBeforeStoreLoad();
+const eternalVars = setupEternalVars();
 // Note this will either be run in worker environment or (fallback) main thread
-export default createNaukar(registry, storageEmitter);
+export default createNaukar(eternalVars);

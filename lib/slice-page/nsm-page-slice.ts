@@ -220,6 +220,13 @@ export const goToWorkspaceAuthRoute = (
   });
 };
 
+export function goToWsNameRouteNotFoundRoute({ wsName }: { wsName: WsName }) {
+  return goToLocation({
+    location: `/ws-not-found/${encodeURIComponent(wsName)}`,
+    replace: true,
+  });
+}
+
 export function savePrevOpenedWsPathsToSearch(
   openedWsPaths: OpenedWsPaths,
   searchParams: URLSearchParams,

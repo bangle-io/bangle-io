@@ -21,7 +21,6 @@
   "module": "index.ts",
   "publishConfig": {},
   "dependencies": {
-    "@bangle.io/api": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",

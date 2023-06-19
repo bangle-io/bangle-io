@@ -140,7 +140,7 @@ const propagateStorageProviderErrors = storageProviderSliceKey.effect(() => {
         const error = storageProvider?.parseError(errorInfo.serializedError);
 
         if (error instanceof Error) {
-          const handled = handler(error, store);
+          const handled = handler(error);
 
           if (!handled) {
             console.warn(

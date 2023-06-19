@@ -1,10 +1,7 @@
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type {
-  BangleStateConfig,
-  ExtensionRegistry,
-  JsonValue,
-} from '@bangle.io/shared-types';
+import type { BangleStateConfig, JsonValue } from '@bangle.io/shared-types';
+import type { EternalVars } from '@bangle.io/shared-types';
 import {
   assertNonWorkerGlobalScope,
   safeCancelIdleCallback,
@@ -28,15 +25,15 @@ const MAX_DEFERRED_WAIT_TIME = 400;
 
 export function initializeBangleStore({
   onUpdate,
-  extensionRegistry,
+  eternalVars,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
-  extensionRegistry: ExtensionRegistry;
+  eternalVars: EternalVars;
 }) {
-  const extensionSlices = extensionRegistry.getSlices();
+  const extensionSlices = eternalVars.extensionRegistry.getSlices();
 
   const stateOpts: BangleStateConfig = {
-    extensionRegistry,
+    extensionRegistry: eternalVars.extensionRegistry,
     useWebWorker: false,
     saveState: (store) => {
       toLocalStorage(

@@ -3,6 +3,7 @@ import { createSliceV2, mountEffect, Slice } from '@bangle.io/nsm';
 import { ExtensionRegistry } from './ExtensionRegistry';
 
 const defaultRegistry = new ExtensionRegistry([], []);
+
 export const nsmExtensionRegistry = createSliceV2([], {
   name: 'nsm-extension-registry',
   initState: {

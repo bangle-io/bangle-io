@@ -24,8 +24,8 @@ import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath2 } from '@bangle.io/ws-path';
-import { defaultDoc } from '../default-doc';
 
+import { defaultDoc } from '../default-doc';
 import { getStore } from '../internals';
 
 export {
@@ -240,6 +240,5 @@ export const closeEditor = (index?: EditorIdType): void => {
  */
 export const refresh = () => {
   const store = getStore();
-
   store.dispatch(incrementCounter(null));
 };

@@ -1,7 +1,9 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
 import { changeEffect, createSliceV2, syncChangeEffect } from '@bangle.io/nsm';
 import { nsmPageSlice, syncPageLocation } from '@bangle.io/slice-page';
+import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
 export interface HistoryStateType {
   history: BaseHistory | undefined;
@@ -80,8 +82,43 @@ const watchHistoryEffect = changeEffect(
   },
 );
 
+const saveWorkspaceInfoEffect = changeEffect(
+  'saveWorkspaceInfoEffect',
+  {
+    history: historySlice.passivePick((s) => s.history),
+    wsName: nsmPageSlice.pick((s) => s.wsName),
+  },
+  ({ wsName, history }) => {
+    let destroyed = false;
+
+    if (wsName) {
+      readWorkspaceInfo(wsName).then((info) => {
+        if (!info || destroyed) {
+          return;
+        }
+        if (!history || !(history instanceof BrowserHistory)) {
+          return;
+        }
+
+        if (info.type === WorkspaceType.NativeFS) {
+          history.updateHistoryState({
+            workspaceRootDir: info.metadata.rootDirHandle,
+          });
+        } else {
+          history.updateHistoryState({});
+        }
+      });
+    }
+
+    return () => {
+      destroyed = true;
+    };
+  },
+);
+
 export const historySliceFamily = [
   historySlice,
   pendingNavEffect,
   watchHistoryEffect,
+  saveWorkspaceInfoEffect,
 ];

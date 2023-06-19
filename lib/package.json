@@ -18,6 +18,7 @@
     "shared-operations",
     "shared-types",
     "slice-editor-collab-comms",
+    "nsm-slice-workspace-opened-doc-info",
     "slice-editor-manager",
     "slice-notification",
     "slice-page",

@@ -18,7 +18,7 @@ const extension = Extension.create({
   application: {
     slices: [],
     storageProvider: new PrivateFsStorageProvider(),
-    onStorageError: (error, store) => {
+    onStorageError: (error) => {
       if (
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR

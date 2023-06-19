@@ -72,8 +72,8 @@ const extension = Extension.create({
         },
       },
     ],
-    onStorageError: (error, store) => {
-      return handleError(error, store);
+    onStorageError: (error) => {
+      return handleError(error);
     },
     operations: [
       {

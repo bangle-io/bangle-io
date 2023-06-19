@@ -1,2 +1,2 @@
-export * from './on-before-store-load';
 export * from './polyfill';
+export * from './setup-eternal-vars';

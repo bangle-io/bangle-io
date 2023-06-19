@@ -29,6 +29,7 @@ export const getEditorPluginMetadataReturn: ReturnType<
   wsPath: createWsPath('test-workspace:my-test-note.md'),
   nsmStore: initialNsmStore,
   createdAt: 0,
+  collabMessageBus: {} as any,
 };
 
 export const getUseUIManagerContextReturn: Writable<

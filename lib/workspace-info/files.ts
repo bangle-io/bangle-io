@@ -1,19 +1,22 @@
-import { readFileAsText as _readFileAsText } from '@bangle.io/baby-fs';
 import type { Node } from '@bangle.dev/pm';
+
+import { readFileAsText as _readFileAsText } from '@bangle.io/baby-fs';
 import { BaseError } from '@bangle.io/base-error';
+import { DEBUG_WRITE_SLOWDOWN } from '@bangle.io/config';
 import type {
   ExtensionRegistry,
   WorkspaceInfo,
   WsName,
   WsPath,
 } from '@bangle.io/shared-types';
+import { sleep } from '@bangle.io/utils';
 import {
   createWsPath,
   isValidFileWsPath,
   resolvePath2,
 } from '@bangle.io/ws-path';
-import { markdownFormatProvider } from './note-format';
 
+import { markdownFormatProvider } from './note-format';
 import { getStorageProviderObj } from './storage-providers';
 import { readWorkspaceInfo } from './workspace-info';
 
@@ -26,10 +29,10 @@ function assertWsInfo(
   }
 }
 
-export async function writeNote(
+export function docToFile(
   wsPath: WsPath,
-  extensionRegistry: ExtensionRegistry,
   doc: Node,
+  extensionRegistry: ExtensionRegistry,
 ) {
   const { wsName, fileName } = resolvePath2(wsPath);
 
@@ -39,12 +42,17 @@ export async function writeNote(
     fileName,
   );
 
-  await writeFile(
-    wsPath,
-    new File([serialValue], fileName, {
-      type: 'text/plain',
-    }),
-  );
+  return new File([serialValue], fileName, {
+    type: 'text/plain',
+  });
+}
+
+export async function writeNote(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+  doc: Node,
+) {
+  await writeFile(wsPath, docToFile(wsPath, doc, extensionRegistry));
 }
 
 export async function getNote(
@@ -132,15 +140,14 @@ export async function renameFile(currentWsPath: WsPath, newWsPath: WsPath) {
 export async function writeFile(wsPath: WsPath, file: File, sha?: string) {
   const wsName = resolvePath2(wsPath).wsName;
 
+  if (DEBUG_WRITE_SLOWDOWN && DEBUG_WRITE_SLOWDOWN > 0) {
+    console.warn('Slowing down write by ' + DEBUG_WRITE_SLOWDOWN + 'ms');
+    await sleep(DEBUG_WRITE_SLOWDOWN);
+  }
+
   const info = await readWorkspaceInfo(wsName);
 
   assertWsInfo(wsName, info);
-
-  const exists = await fileExists(wsPath);
-
-  if (exists) {
-    throw new BaseError({ message: `File ${wsPath} already exists` });
-  }
 
   const { options, provider } = getStorageProviderObj(info.type);
   await provider.writeFile(wsPath, file, options, sha);

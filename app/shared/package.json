@@ -20,6 +20,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.dev/collab-comms": "0.31.6",
     "@bangle.dev/core": "0.31.6",
     "@bangle.dev/markdown": "0.31.6",
     "@bangle.dev/markdown-front-matter": "0.31.6",

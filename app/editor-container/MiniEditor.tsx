@@ -4,12 +4,11 @@ import { useNsmStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType, MINI_EDITOR_INDEX } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   nsmSliceWorkspace,
   pushOpenedWsPaths,
 } from '@bangle.io/nsm-slice-workspace';
-import type { WsPath } from '@bangle.io/shared-types';
+import type { EternalVars, WsPath } from '@bangle.io/shared-types';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   ArrowsExpand,
@@ -20,9 +19,14 @@ import {
 } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
-export function MiniEditor({ wsPath }: { wsPath: WsPath }) {
+export function MiniEditor({
+  wsPath,
+  eternalVars,
+}: {
+  wsPath: WsPath;
+  eternalVars: EternalVars;
+}) {
   const { fileNameWithoutExt } = resolvePath(wsPath, true);
-  const extensionRegistry = useExtensionRegistryContext();
 
   const nsmStore = useNsmStore([nsmPageSlice, nsmSliceWorkspace]);
   const [isMinimized, updateIsMinimized] = useState(false);
@@ -44,6 +48,7 @@ export function MiniEditor({ wsPath }: { wsPath: WsPath }) {
     nsmStore.dispatch(
       pushOpenedWsPaths(nsmStore.state, (oPaths) => {
         const result = oPaths.updatePrimaryWsPath(wsPath);
+
         return result;
       }),
     );
@@ -117,7 +122,7 @@ export function MiniEditor({ wsPath }: { wsPath: WsPath }) {
           <Editor
             editorDisplayType={EditorDisplayType.Floating}
             editorId={MINI_EDITOR_INDEX}
-            extensionRegistry={extensionRegistry}
+            eternalVars={eternalVars}
             wsPath={wsPath}
           />
         </div>

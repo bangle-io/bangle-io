@@ -6,6 +6,7 @@ import type { EditorDisplayType } from '@bangle.io/constants';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 
+import type { EternalVars } from './eternal-vars';
 import type { DispatchSerialOperationType } from './extension-registry';
 import type { NsmStore } from './store';
 import type { WsPath } from './workspace';
@@ -21,6 +22,7 @@ export interface EditorPluginMetadata {
   bangleStore: ApplicationStore;
   nsmStore: NsmStore;
   createdAt: number;
+  collabMessageBus: EternalVars['editorCollabMessageBus'];
 }
 
 export type EditorPlugin = ({

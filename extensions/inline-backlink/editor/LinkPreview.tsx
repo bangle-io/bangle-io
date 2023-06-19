@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { vars } from '@bangle.io/api';
+import { internalApi, vars } from '@bangle.io/api';
 import { PopupEditor } from '@bangle.io/editor';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { WsPath } from '@bangle.io/shared-types';
 
 export const LinkPreview = React.forwardRef<
@@ -16,13 +15,11 @@ export const LinkPreview = React.forwardRef<
     wsPath: WsPath;
   }
 >(({ positionProps, wsPath, style }, ref) => {
-  const extensionRegistry = useExtensionRegistryContext();
-
   return (
     <PopupEditor
       ref={ref}
       editorProps={{
-        extensionRegistry,
+        eternalVars: internalApi.eternalVars.getEternalVars(),
         wsPath: wsPath,
       }}
       popupContainerProps={{

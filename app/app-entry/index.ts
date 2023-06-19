@@ -1,16 +1,24 @@
 /// <reference path="./missing-types.d.ts" />
 
+import * as Comlink from 'comlink';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { _internal_setStore } from '@bangle.io/api';
 import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
-import { onBeforeStoreLoad } from '@bangle.io/shared';
+import { SEVERITY } from '@bangle.io/constants';
+import { wireCollabMessageBus } from '@bangle.io/editor-common';
+import { setupEternalVars } from '@bangle.io/shared';
+import { nsmNotification } from '@bangle.io/slice-notification';
+import { nsmPageSlice } from '@bangle.io/slice-page';
+import { BaseError } from '@bangle.io/utils';
 import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
 import { workerSetup } from '@bangle.io/worker-setup';
+import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
 import { Entry } from './entry';
+import { setEternalVars } from './eternal-vars';
 import { runAfterPolyfills } from './run-after-polyfills';
 
 if (typeof window !== undefined && APP_ENV !== 'local') {
@@ -33,16 +41,20 @@ if (typeof window !== undefined && APP_ENV !== 'local') {
   };
 }
 
-runAfterPolyfills(() => {
+runAfterPolyfills(async () => {
   let storeChanged = 0;
   const root = document.getElementById('root');
 
-  const { registry, storageEmitter } = onBeforeStoreLoad();
+  const eternalVars = setupEternalVars();
   const abort = new AbortController();
 
-  workerSetup(abort.signal).then((worker) => {
-    _setWorker(worker);
-  });
+  const editorCollabMessageChannel = new MessageChannel();
+
+  wireCollabMessageBus(
+    editorCollabMessageChannel.port1,
+    eternalVars.editorCollabMessageBus,
+    abort.signal,
+  );
 
   abort.signal.addEventListener(
     'abort',
@@ -54,23 +66,110 @@ runAfterPolyfills(() => {
     },
   );
 
-  const nsmStore = createNsmStore({
-    extensionRegistry: registry,
-    storageEmitter,
+  const handleStorageErrors = (error: BaseError) => {
+    const wsName = nsmPageSlice.resolveState(nsmStore.state).wsName;
+
+    if (!wsName) {
+      console.warn('Unable to handle error as wsName is not set');
+
+      return false;
+    }
+
+    readWorkspaceInfo(wsName).then((wsInfo) => {
+      if (!wsInfo) {
+        console.log('Unable to find workspace info when handling error');
+
+        return;
+      }
+
+      const handler = eternalVars.extensionRegistry.getOnStorageErrorHandlers(
+        wsInfo.type,
+      );
+
+      if (!handler) {
+        throw new Error(
+          `Unable to find storage error handler for workspace type ${wsInfo.type}`,
+        );
+      }
+      const result = handler(error);
+
+      if (!result) {
+        console.error(error);
+
+        nsmStore.dispatch(
+          nsmNotification.showNotification({
+            severity: SEVERITY.ERROR,
+            title: error.name,
+            content: error.message,
+            uid: `storage-unable-to-handle` + Date.now(),
+          }),
+        );
+
+        return;
+      }
+    });
+
+    return true;
+  };
+
+  workerSetup(abort.signal).then((naukar) => {
+    naukar.registerCollabMessagePort(
+      Comlink.transfer(editorCollabMessageChannel.port2, [
+        editorCollabMessageChannel.port2,
+      ]),
+      Comlink.proxy((error: Error) => {
+        if (error instanceof BaseError) {
+          console.warn('Base Error from Worker', error.name);
+
+          if (handleStorageErrors(error)) {
+            return;
+          }
+        }
+
+        console.warn('Error from Worker', error);
+        throw error;
+      }),
+    );
+    _setWorker(naukar);
   });
+
+  const nsmStore = createNsmStore(eternalVars);
+
+  setEternalVars(nsmStore, eternalVars);
 
   (window as any).globalNsmStore = nsmStore;
 
   _internal_setStore(nsmStore);
 
+  // TODO we need a better way to handle storage errors
+  window.addEventListener('unhandledrejection', (event) => {
+    if (!event) {
+      return;
+    }
+    const error = event?.reason;
+
+    if (!(error instanceof BaseError)) {
+      return;
+    }
+
+    if (handleStorageErrors(error)) {
+      event.preventDefault();
+
+      return;
+    }
+
+    console.warn('Unhandled Rejection at:', event?.reason?.stack || event);
+  });
+
   const store = initializeBangleStore({
-    extensionRegistry: registry,
+    eternalVars,
     onUpdate: () => {
       ReactDOM.render(
         React.createElement(Entry, {
           storeChanged: storeChanged++,
           store,
           nsmStore,
+          eternalVars,
         }),
         root,
       );
@@ -86,6 +185,7 @@ runAfterPolyfills(() => {
       nsmStore,
       storeChanged: storeChanged++,
       store,
+      eternalVars,
     }),
     root,
   );

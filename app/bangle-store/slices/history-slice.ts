@@ -54,11 +54,7 @@ export function historySlice() {
         }
       },
     },
-    sideEffect: [
-      watchHistoryEffect,
-      applyPendingNavigation,
-      saveWorkspaceInfoEffect,
-    ],
+    sideEffect: [watchHistoryEffect, applyPendingNavigation],
   });
 }
 
@@ -134,33 +130,33 @@ const watchHistoryEffect = historySliceKey.effect(() => {
   };
 });
 
-// Persist rootDirectory handle in the browser history to
-// prevent release of the authorized native browser FS permission on reload
-export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
-  let lastSavedWsName: string | undefined = undefined;
+// // Persist rootDirectory handle in the browser history to
+// // prevent release of the authorized native browser FS permission on reload
+// export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
+//   let lastSavedWsName: string | undefined = undefined;
 
-  return {
-    deferredUpdate(store) {
-      const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
-        store.state,
-      );
+//   return {
+//     deferredUpdate(store) {
+//       const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
+//         store.state,
+//       );
 
-      if (cachedWorkspaceInfo && cachedWorkspaceInfo.name !== lastSavedWsName) {
-        const { history } = historySliceKey.getSliceStateAsserted(store.state);
+//       if (cachedWorkspaceInfo && cachedWorkspaceInfo.name !== lastSavedWsName) {
+//         const { history } = historySliceKey.getSliceStateAsserted(store.state);
 
-        if (!history || !(history instanceof BrowserHistory)) {
-          return;
-        }
+//         if (!history || !(history instanceof BrowserHistory)) {
+//           return;
+//         }
 
-        if (cachedWorkspaceInfo.type === WorkspaceType.NativeFS) {
-          history.updateHistoryState({
-            workspaceRootDir: cachedWorkspaceInfo.metadata.rootDirHandle,
-          });
-        } else {
-          history.updateHistoryState({});
-        }
-        lastSavedWsName = cachedWorkspaceInfo.name;
-      }
-    },
-  };
-});
+//         if (cachedWorkspaceInfo.type === WorkspaceType.NativeFS) {
+//           history.updateHistoryState({
+//             workspaceRootDir: cachedWorkspaceInfo.metadata.rootDirHandle,
+//           });
+//         } else {
+//           history.updateHistoryState({});
+//         }
+//         lastSavedWsName = cachedWorkspaceInfo.name;
+//       }
+//     },
+//   };
+// });

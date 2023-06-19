@@ -79,7 +79,4 @@ export interface NoteFormatProvider {
   ) => Node | undefined;
 }
 
-export type OnStorageProviderError = (
-  error: Error,
-  store: ApplicationStore,
-) => boolean;
+export type OnStorageProviderError = (error: Error) => boolean;

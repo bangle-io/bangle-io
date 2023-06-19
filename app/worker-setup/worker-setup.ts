@@ -7,6 +7,7 @@ assertNonWorkerGlobalScope();
 export async function workerSetup(
   abortSignal: AbortSignal,
 ): Promise<import('@bangle.io/worker-naukar').WorkerAPI> {
+  console.log('Initializing naukar.... t=', performance.now());
   const result = await loadNaukarModule(WORKER_SUPPORTED);
 
   abortSignal.addEventListener(

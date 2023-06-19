@@ -14,9 +14,12 @@ import {
 } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
-import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
+import type {
+  EditorIdType,
+  EternalVars,
+  WsPath,
+} from '@bangle.io/shared-types';
 import {
   toggleEditing,
   useNsmEditorManagerState,
@@ -35,17 +38,19 @@ export function EditorContainer({
   widescreen,
   editorId,
   wsPath: incomingWsPath,
+  eternalVars,
 }: {
   widescreen: boolean;
   editorId: EditorIdType;
   wsPath: WsPath | undefined;
+  eternalVars: EternalVars;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
   const { focusedEditorId, editingAllowed } = useNsmEditorManagerState();
   const { dispatchSerialOperation } = useSerialOperationContext();
-  const extensionRegistry = useExtensionRegistryContext();
   const editorStore = useNsmEditorManagerStore();
+
   const [, uiDispatch] = useNsmSlice(nsmUISlice);
 
   const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
@@ -94,7 +99,7 @@ export function EditorContainer({
       <Editor
         editorId={editorId}
         wsPath={wsPath}
-        extensionRegistry={extensionRegistry}
+        eternalVars={eternalVars}
         className={`B-editor-container_editor B-editor-container_editor-${editorId}`}
       />
     );
@@ -215,7 +220,7 @@ function useHandleWsPath(incomingWsPath?: WsPath) {
             updateWsPath(incomingWsPath);
           }
         },
-        () => {
+        (error) => {
           // silence any errors here as other part of code will handle them
         },
       );

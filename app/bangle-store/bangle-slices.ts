@@ -2,11 +2,9 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
-import { editorSyncSlice } from '@bangle.io/slice-editor-collab-comms';
 import { pageSlice } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
-import { workspaceOpenedDocInfoSlice } from '@bangle.io/slice-workspace-opened-doc-info';
 
 import { historySlice } from './slices/history-slice';
 import { miscEffectsSlice } from './slices/misc-effects-slice';
@@ -44,9 +42,6 @@ export function bangleStateSlices({
     // uiSlice(),
     saveStateSlice(),
     miscEffectsSlice(),
-    editorSyncSlice(),
-    // Disabled side effects in main because it carries heavy sha calculations
-    disableSideEffect(workspaceOpenedDocInfoSlice()),
 
     // <-- PLOP INSERT SLICE -->
 

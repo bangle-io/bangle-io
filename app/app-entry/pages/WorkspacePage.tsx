@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import {
+  useNsmPlainStore,
   useNsmSliceDispatch,
   useNsmSliceState,
   useNsmStore,
@@ -18,10 +19,10 @@ import {
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUISlice } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { createWsPath } from '@bangle.io/ws-path';
 
+import { getEternalVars } from '../eternal-vars';
 import { EmptyEditorPage } from './EmptyEditorPage';
 
 export function WorkspacePage() {
@@ -30,10 +31,8 @@ export function WorkspacePage() {
   const notificationDispatch = useNsmSliceDispatch(
     nsmNotification.nsmNotificationSlice,
   );
-  const { miniWsPath } = useNsmSliceState(nsmSliceWorkspace);
-
-  // TODO once nalanda migration is done, remove this
-  const { openedWsPaths } = useWorkspaceContext();
+  const { miniWsPath, openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
+  const eternalVars = getEternalVars(useNsmPlainStore());
 
   const store = useNsmStore([nsmSliceWorkspace, nsmPageSlice]);
   const { primaryWsPath, secondaryWsPath } = openedWsPaths;
@@ -42,7 +41,7 @@ export function WorkspacePage() {
 
   if (miniWsPath) {
     if (widescreen) {
-      mini = <MiniEditor wsPath={miniWsPath} />;
+      mini = <MiniEditor wsPath={miniWsPath} eternalVars={eternalVars} />;
     }
   }
 
@@ -74,6 +73,7 @@ export function WorkspacePage() {
             widescreen={widescreen}
             editorId={PRIMARY_EDITOR_INDEX}
             wsPath={createWsPath(primaryWsPath)}
+            eternalVars={eternalVars}
           />
         )}
         {/* avoid split screen for small screens */}
@@ -82,6 +82,7 @@ export function WorkspacePage() {
             widescreen={widescreen}
             editorId={SECONDARY_EDITOR_INDEX}
             wsPath={createWsPath(secondaryWsPath)}
+            eternalVars={eternalVars}
           />
         )}
       </MultiColumnMainContent>

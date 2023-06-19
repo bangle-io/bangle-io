@@ -12,7 +12,7 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     storageProvider: new IndexedDbStorageProvider(),
-    onStorageError: (error, store) => {
+    onStorageError: (error) => {
       if (isIndexedDbException(error)) {
         console.debug(error.code, error.name);
 

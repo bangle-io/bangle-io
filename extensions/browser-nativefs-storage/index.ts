@@ -17,7 +17,7 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     storageProvider: new NativeFsStorageProvider(),
-    onStorageError: (error, store) => {
+    onStorageError: (error) => {
       if (
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR

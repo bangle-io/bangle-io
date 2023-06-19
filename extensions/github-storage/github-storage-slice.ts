@@ -90,8 +90,8 @@ export function githubStorageSlice() {
       setConflictNotification,
       syncWithNsmEffect,
     ],
-    onError: (error: any, store) => {
-      return handleError(error, store);
+    onError: (error) => {
+      return handleError(error);
     },
   });
 }

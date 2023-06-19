@@ -2,7 +2,6 @@ import * as Comlink from 'comlink';
 
 import { nsmApi2 } from '@bangle.io/api';
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type { SyncMessage } from '@bangle.io/nsm';
 import {
@@ -13,8 +12,12 @@ import {
   Store,
   validateSlicesForSerialization,
 } from '@bangle.io/nsm';
+import { nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
-import type { StorageProviderChangeType } from '@bangle.io/shared-types';
+import type {
+  EternalVars,
+  StorageProviderChangeType,
+} from '@bangle.io/shared-types';
 import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
@@ -23,7 +26,6 @@ import {
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
 import { nsmUISlice } from '@bangle.io/slice-ui';
-import type { Emitter } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { historySliceFamily } from './history-slice';
@@ -38,14 +40,8 @@ import {
   persistStateSlice,
 } from './persist-state-slice';
 
-export const createNsmStore = ({
-  extensionRegistry,
-  storageEmitter,
-}: {
-  extensionRegistry: ExtensionRegistry;
-  storageEmitter: Emitter<StorageProviderChangeType>;
-}) => {
-  const extensionSlices = extensionRegistry.getNsmSlices();
+export const createNsmStore = (eternalVars: EternalVars) => {
+  const extensionSlices = eternalVars.extensionRegistry.getNsmSlices();
 
   const storeName = 'bangle-store';
 
@@ -55,7 +51,9 @@ export const createNsmStore = ({
   const initStateOverride = {
     ...localStorageData,
     ...sessionStorageData,
-    [nsmExtensionRegistry.spec.lineageId]: { extensionRegistry },
+    [nsmExtensionRegistry.spec.lineageId]: {
+      extensionRegistry: eternalVars.extensionRegistry,
+    },
   };
 
   console.debug('Overriding with state', initStateOverride);
@@ -64,6 +62,7 @@ export const createNsmStore = ({
     sliceRefreshWorkspace,
     nsmPageSlice,
     nsmNotification.nsmNotificationSlice,
+    nsmSliceFileSha,
   ];
 
   const store = createSyncStore({
@@ -99,7 +98,9 @@ export const createNsmStore = ({
       nsmUISlice,
       nsmEditorManagerSlice,
       nsmSliceWorkspace,
+
       nsmApi2.editor._editorManagerProxy,
+
       ...extensionSlices,
       // TODO: remove e2e effects for production
       nsmE2eEffect,
@@ -118,15 +119,25 @@ export const createNsmStore = ({
   });
 
   const onStorageProviderChange = (msg: StorageProviderChangeType) => {
-    store.store.dispatch(incrementCounter(null));
+    // Note: ensure you also update the worker store
+    if (
+      msg.type === 'delete' ||
+      msg.type === 'create' ||
+      msg.type === 'rename'
+    ) {
+      store.store.dispatch(incrementCounter(null));
+    }
   };
 
-  storageEmitter.on(STORAGE_ON_CHANGE_EMITTER_KEY, onStorageProviderChange);
+  eternalVars.storageEmitter.on(
+    STORAGE_ON_CHANGE_EMITTER_KEY,
+    onStorageProviderChange,
+  );
 
   store.store.destroySignal.addEventListener(
     'abort',
     () => {
-      storageEmitter.off(
+      eternalVars.storageEmitter.off(
         STORAGE_ON_CHANGE_EMITTER_KEY,
         onStorageProviderChange,
       );

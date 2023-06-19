@@ -5,7 +5,6 @@ import { uuid } from '@bangle.dev/utils';
 import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
-import { getCollabMessageBus } from '@bangle.io/slice-editor-collab-comms';
 import { generateUid, getEditorPluginMetadata } from '@bangle.io/utils';
 
 export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
@@ -13,7 +12,7 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
     collabClient.plugins({
       docName: metadata.wsPath,
       clientID: 'client-' + metadata.editorId + '-' + uuid(4),
-      collabMessageBus: getCollabMessageBus()(metadata.bangleStore.state),
+      collabMessageBus: metadata.collabMessageBus,
       cooldownTime: 550,
       requestTimeout: 1000,
       warmupTime: 20,

@@ -1,4 +1,5 @@
 // <-- PLOP INSERT EXTENSION IMPORT -->
+import { CollabMessageBus } from '@bangle.dev/collab-comms';
 
 import browserNativefsStorage from '@bangle.io/browser-nativefs-storage';
 import browserPrivateFs from '@bangle.io/browser-privatefs-storage';
@@ -18,20 +19,21 @@ import noteBrowser from '@bangle.io/note-browser';
 import noteOutline from '@bangle.io/note-outline';
 import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
-import type { StorageProviderChangeType } from '@bangle.io/shared-types';
+import type {
+  EternalVars,
+  StorageProviderChangeType,
+} from '@bangle.io/shared-types';
 import { Emitter } from '@bangle.io/utils';
 import { registerStorageProvider } from '@bangle.io/workspace-info';
 
 // TODO move this async, i think a promise should be fine.
 /**
- * Do certain setup before loading the store
+ * Ensure editorCollabMessageBus is wired with message ports.
+ *
  * @returns
  */
-export const onBeforeStoreLoad = (): {
-  registry: ExtensionRegistry;
-  storageEmitter: Emitter<StorageProviderChangeType>;
-} => {
-  const registry = new ExtensionRegistry([
+export const setupEternalVars = (): EternalVars => {
+  const extensionRegistry = new ExtensionRegistry([
     inlineEmoji,
     browserStorage,
     browserNativefsStorage,
@@ -55,17 +57,21 @@ export const onBeforeStoreLoad = (): {
   ]);
 
   const emitter = new Emitter<StorageProviderChangeType>();
-  for (const storageProvider of registry.getAllStorageProviders()) {
+  for (const storageProvider of extensionRegistry.getAllStorageProviders()) {
     storageProvider.onChange = (data) => {
       emitter.emit(STORAGE_ON_CHANGE_EMITTER_KEY, data);
     };
     // TODO do we need to pass specRegistry here? we should remove it if possible
     // to avoid coupling
-    registerStorageProvider(storageProvider, registry.specRegistry);
+    registerStorageProvider(storageProvider, extensionRegistry.specRegistry);
   }
 
+  // WARNING: donot forget to wire this up with ports
+  const editorCollabMessageBus = new CollabMessageBus({});
+
   return {
-    registry,
+    extensionRegistry,
     storageEmitter: emitter,
+    editorCollabMessageBus,
   };
 };

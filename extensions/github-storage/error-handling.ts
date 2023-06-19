@@ -5,7 +5,6 @@ import {
 } from '@bangle.io/constants';
 import type { ErrorCodeType as RemoteFileSyncErrorCodeType } from '@bangle.io/remote-file-sync';
 import { ErrorCode as RemoteSyncErrorCode } from '@bangle.io/remote-file-sync';
-import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { isIndexedDbException } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
 
@@ -19,7 +18,7 @@ import {
   INVALID_GITHUB_TOKEN,
 } from './errors';
 
-export function handleError(error: Error, store: BangleApplicationStore) {
+export function handleError(error: Error) {
   if (!(error instanceof BaseError)) {
     return false;
   }

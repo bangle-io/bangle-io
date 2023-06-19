@@ -29,7 +29,7 @@ import type {
   BangleApplicationStore,
   DispatchSerialOperationType,
   EditorPluginMetadata,
-  ExtensionRegistry,
+  EternalVars,
   NsmStore,
   WsPath,
 } from '@bangle.io/shared-types';
@@ -55,7 +55,7 @@ export interface EditorProps {
   className?: string;
   editorDisplayType?: EditorDisplayType;
   editorId: EditorIdType;
-  extensionRegistry: ExtensionRegistry;
+  eternalVars: EternalVars;
   wsPath: WsPath;
 }
 
@@ -69,7 +69,7 @@ function EditorInner({
   className,
   editorDisplayType = EditorDisplayType.Page,
   editorId,
-  extensionRegistry,
+  eternalVars,
   wsPath,
 }: EditorProps) {
   const bangleStore = useBangleStoreContext();
@@ -174,7 +174,7 @@ function EditorInner({
       dispatchSerialOperation={dispatchSerialOperation}
       className={className}
       editorId={editorId}
-      extensionRegistry={extensionRegistry}
+      eternalVars={eternalVars}
       initialValue={initialValue}
       wsPath={wsPath}
       onEditorReady={_onEditorReady}
@@ -190,19 +190,19 @@ function EditorInner2({
   dispatchSerialOperation,
   editorDisplayType,
   editorId,
-  extensionRegistry,
+  eternalVars,
   initialValue,
   onEditorReady,
   initialSelection,
   wsPath,
   bangleStore,
 }: {
+  eternalVars: EternalVars;
   nsmStore: NsmStore;
   className?: string;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
   editorId?: EditorIdType;
-  extensionRegistry: ExtensionRegistry;
   initialValue: any;
   initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
@@ -213,7 +213,7 @@ function EditorInner2({
     dispatchSerialOperation,
     editorDisplayType,
     editorId,
-    extensionRegistry,
+    eternalVars,
     initialSelection,
     initialValue,
     wsPath,
@@ -223,11 +223,11 @@ function EditorInner2({
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
     (nodeViewRenderArg) => {
-      return extensionRegistry.renderReactNodeViews({
+      return eternalVars.extensionRegistry.renderReactNodeViews({
         nodeViewRenderArg,
       });
     },
-    [extensionRegistry],
+    [eternalVars],
   );
 
   let displayClass = 'B-editor_display-page';
@@ -255,7 +255,7 @@ function EditorInner2({
       renderNodeViews={renderNodeViews}
       state={editorState}
     >
-      {extensionRegistry.renderExtensionEditorComponents()}
+      {eternalVars.extensionRegistry.renderExtensionEditorComponents()}
     </ReactBangleEditor>
   );
 }
@@ -264,18 +264,18 @@ export function useGetEditorState({
   dispatchSerialOperation,
   editorDisplayType,
   editorId,
-  extensionRegistry,
   initialSelection,
   initialValue,
   wsPath,
   bangleStore,
   nsmStore,
+  eternalVars,
 }: {
   nsmStore: NsmStore;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
   editorId?: EditorIdType;
-  extensionRegistry: ExtensionRegistry;
+  eternalVars: EternalVars;
   initialSelection: Selection | undefined;
   initialValue: any;
   wsPath: WsPath;
@@ -291,6 +291,7 @@ export function useGetEditorState({
       bangleStore,
       nsmStore,
       createdAt: Date.now(),
+      collabMessageBus: eternalVars.editorCollabMessageBus,
     }),
 
     [
@@ -300,6 +301,7 @@ export function useGetEditorState({
       dispatchSerialOperation,
       bangleStore,
       editorDisplayType,
+      eternalVars,
     ],
   );
 
@@ -307,21 +309,21 @@ export function useGetEditorState({
     return [
       // needs to be at top so that other plugins get depend on this
       valuePlugin(EditorPluginMetadataKey, pluginMetadata),
-      ...extensionRegistry.getPlugins(),
+      ...eternalVars.extensionRegistry.getPlugins(),
 
       // Needs to be at bottom so that it can dispatch
       // operations for any plugin state updates before it
       watchPluginHost(
         pluginMetadata,
-        extensionRegistry.getEditorWatchPluginStates(),
+        eternalVars.extensionRegistry.getEditorWatchPluginStates(),
       ),
     ];
-  }, [extensionRegistry, pluginMetadata]);
+  }, [eternalVars, pluginMetadata]);
 
   const editorState = useEditorState({
     plugins,
     pluginMetadata,
-    specRegistry: extensionRegistry.specRegistry,
+    specRegistry: eternalVars.extensionRegistry.specRegistry,
     initialValue,
     pmStateOpts: {
       selection: initialSelection,
