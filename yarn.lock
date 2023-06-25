@@ -3325,9 +3325,11 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
+    "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3836,6 +3838,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/worker-entry@workspace:*, @bangle.io/worker-entry@workspace:worker/worker-entry":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/worker-entry@workspace:worker/worker-entry"
+  dependencies:
+    "@bangle.io/abortable-worker": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/fzf-search": "workspace:*"
+    "@bangle.io/nsm": "workspace:*"
+    "@bangle.io/search-pm-node": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-editor": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@zip.js/zip.js": ~2.4.5
+    tslib: 2.4.1
+    typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/worker-naukar-proxy@workspace:*, @bangle.io/worker-naukar-proxy@workspace:app/worker-naukar-proxy":
   version: 0.0.0-use.local
   resolution: "@bangle.io/worker-naukar-proxy@workspace:app/worker-naukar-proxy"
@@ -3898,6 +3921,7 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-entry": "workspace:*"
     "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"

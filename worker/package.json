@@ -2,7 +2,8 @@
   "name": "worker",
   "workspaces": [
     "worker-naukar",
-    "worker-editor"
+    "worker-editor",
+    "worker-entry"
   ],
   "repository": {
     "directory": "worker",
