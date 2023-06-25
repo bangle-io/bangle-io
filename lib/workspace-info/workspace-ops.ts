@@ -2,6 +2,7 @@ import type { WorkspaceInfo, WsName } from '@bangle.io/shared-types';
 import { BaseError } from '@bangle.io/utils';
 import { validWsName } from '@bangle.io/ws-path';
 
+import { WorkspaceInfoError } from './error';
 import { getStorageProviderObj } from './storage-providers';
 import { createWorkspaceInfo, updateWorkspaceInfo } from './workspace-info';
 
@@ -13,6 +14,7 @@ export async function deleteWorkspace(wsName: WsName): Promise<void> {
 
   if (!result) {
     throw new BaseError({
+      code: WorkspaceInfoError.WorkspaceDeleteNotAllowed,
       message: `Unable to delete workspace "${wsName}". It either is already deleted or is not allowed.`,
     });
   }
@@ -42,6 +44,7 @@ export async function createWorkspace(
 
   if (!result) {
     throw new BaseError({
+      code: WorkspaceInfoError.WorkspaceCreateNotAllowed,
       message: `Unable to create workspace "${wsName}" as it either already exists or the operation is not allowed.`,
     });
   }

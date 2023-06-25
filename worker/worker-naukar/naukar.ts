@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/browser';
 
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import { wireCollabMessageBus } from '@bangle.io/editor-common';
-import type { EternalVars } from '@bangle.io/shared-types';
+import type { EternalVars, NaukarMainHandler } from '@bangle.io/shared-types';
 import {
   assertNotUndefined,
   BaseError,
@@ -32,11 +32,26 @@ export function createNaukar(
 ) {
   const envType = getSelfType();
 
-  console.debug('Naukar running in ', envType);
+  if (envType === 'worker') {
+    // eslint-disable-next-line no-restricted-globals
+    self.addEventListener('error', (errorEvent) => {
+      console.warn('[naukar] error', errorEvent.error);
+      mainHandler?.sendError(errorEvent.error);
+    });
+
+    // eslint-disable-next-line no-restricted-globals
+    self.addEventListener('unhandledrejection', (rejectionEvent) => {
+      console.warn('[naukar] unhandledrejection', rejectionEvent.reason);
+      mainHandler?.sendError(rejectionEvent.reason);
+    });
+  }
+
+  console.debug('[naukar] running in ', envType);
 
   let nsmSendQueue: any[] = [];
   let nsmSendMessageCb: ((message: any) => void) | undefined = undefined;
 
+  let mainHandler: NaukarMainHandler | undefined = undefined;
   const { extensionRegistry } = eternalVars;
 
   const nsmNaukarStore = createNsmStore({
@@ -49,11 +64,6 @@ export function createNaukar(
       }
     },
   });
-  // TODO ensure errors are sent to sentry
-  const unhandledError = (error: Error) => {
-    Sentry.captureException(error);
-    console.error(error);
-  };
 
   return {
     async status() {
@@ -67,7 +77,7 @@ export function createNaukar(
     async nsmNaukarStoreRegisterCb(cb: (m: any) => void) {
       nsmSendMessageCb = cb;
       nsmSendQueue.forEach((m) => {
-        console.log('handling queued message', m);
+        console.log('[naukar] handling queued message', m);
         cb(m);
       });
       nsmSendQueue = [];
@@ -78,7 +88,11 @@ export function createNaukar(
     },
 
     async testThrowError() {
-      throw new Error('[worker] I am a testThrowError');
+      throw new Error('[naukar] I am a testThrowError');
+    },
+
+    async registerMainHandler(_mainHandler: NaukarMainHandler) {
+      mainHandler = _mainHandler;
     },
 
     async testRequestDeleteCollabInstance(wsPath: string) {
@@ -90,10 +104,7 @@ export function createNaukar(
       collabManager.requestDeleteInstance(wsPath);
     },
 
-    async registerCollabMessagePort(
-      port: MessageChannel['port2'],
-      handleStorageError: (error: Error) => void,
-    ) {
+    async registerCollabMessagePort(port: MessageChannel['port2']) {
       wireCollabMessageBus(
         port,
         eternalVars.editorCollabMessageBus,
@@ -104,8 +115,9 @@ export function createNaukar(
         nsmNaukarStore.store.dispatch,
         eternalVars,
         abortSignal,
-        (error) => {
-          handleStorageError(error);
+        // TODO somehow this error is only caught if async
+        async (error) => {
+          throw error;
         },
       );
     },
@@ -121,7 +133,7 @@ export function createNaukar(
 
     async testThrowCallbackError() {
       setTimeout(() => {
-        throw new Error('[worker] I am a testThrowCallbackError');
+        throw new Error('[naukar] I am a testThrowCallbackError');
       }, 0);
     },
 

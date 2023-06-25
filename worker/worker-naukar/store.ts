@@ -19,7 +19,7 @@ import type {
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
-  incrementCounter,
+  refreshWorkspace,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
 import { nsmWorkerEditor } from '@bangle.io/worker-editor';
@@ -105,7 +105,7 @@ export const createNsmStore = ({
       msg.type === 'create' ||
       msg.type === 'rename'
     ) {
-      store.dispatch(incrementCounter(null));
+      store.dispatch(refreshWorkspace(null), 'storage-provider-change');
     }
   };
 

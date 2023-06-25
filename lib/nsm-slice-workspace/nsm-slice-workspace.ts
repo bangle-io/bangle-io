@@ -85,10 +85,6 @@ const SLICE_NAME = 'nsm-slice-workspace';
 
 const getWsPathsSet = weakCache((wsPaths: WsPath[]) => new Set(wsPaths));
 
-const isPathInWsPaths = (wsPaths: WsPath[], path: WsPath) => {
-  return getWsPathsSet(wsPaths).has(path);
-};
-
 const subSelector = subSelectorBuilder(SLICE_DEPS, SLICE_NAME, initState);
 
 const selectWsName = subSelector((state, storeState): WsName | undefined => {
@@ -97,12 +93,7 @@ const selectWsName = subSelector((state, storeState): WsName | undefined => {
 
 const selectPrimaryWsPath = subSelector(
   (state, storeState): WsPath | undefined => {
-    const wsPaths = selectWsPaths(state, storeState);
     const primaryWsPath = nsmPageSlice.resolveState(storeState).primaryWsPath;
-
-    if (wsPaths && primaryWsPath && !isPathInWsPaths(wsPaths, primaryWsPath)) {
-      return undefined;
-    }
 
     return primaryWsPath;
   },
@@ -110,17 +101,8 @@ const selectPrimaryWsPath = subSelector(
 
 const selectSecondaryWsPath = subSelector(
   (state, storeState): WsPath | undefined => {
-    const wsPaths = selectWsPaths(state, storeState);
     const secondaryWsPaths =
       nsmPageSlice.resolveState(storeState).secondaryWsPath;
-
-    if (
-      wsPaths &&
-      secondaryWsPaths &&
-      !isPathInWsPaths(wsPaths, secondaryWsPaths)
-    ) {
-      return undefined;
-    }
 
     return secondaryWsPaths;
   },
@@ -129,12 +111,17 @@ const selectSecondaryWsPath = subSelector(
 const selectMiniWsPath = subSelector(
   (state, storeState): WsPath | undefined => {
     const wsName = selectWsName(state, storeState);
-    const wsPaths = selectWsPaths(state, storeState);
     const miniPath = wsName
       ? state.workspaceData[wsName]?.miniEditorWsPath
       : undefined;
 
-    if (wsPaths && miniPath && !isPathInWsPaths(wsPaths, miniPath)) {
+    if (!miniPath) {
+      return undefined;
+    }
+
+    if (!isValidNoteWsPath(miniPath)) {
+      console.warn('Invalid miniPath', miniPath);
+
       return undefined;
     }
 
@@ -145,12 +132,17 @@ const selectMiniWsPath = subSelector(
 const selectPopupWsPath = subSelector(
   (state, storeState): WsPath | undefined => {
     const wsName = selectWsName(state, storeState);
-    const wsPaths = selectWsPaths(state, storeState);
     const popupPath = wsName
       ? state.workspaceData[wsName]?.popupEditorWsPath
       : undefined;
 
-    if (wsPaths && popupPath && !isPathInWsPaths(wsPaths, popupPath)) {
+    if (!popupPath) {
+      return undefined;
+    }
+
+    if (!isValidNoteWsPath(popupPath)) {
+      console.warn('Invalid popupPath', popupPath);
+
       return undefined;
     }
 
@@ -276,6 +268,15 @@ Slice.registerEffectSlice(nsmSliceWorkspace, [
     },
   ),
 ]);
+
+export const queryIsInWsPaths = (
+  sliceState: ReturnType<typeof nsmSliceWorkspace.resolveState>,
+  wsPath: WsPath,
+) => {
+  return sliceState.wsPaths
+    ? getWsPathsSet(sliceState.wsPaths).has(wsPath)
+    : false;
+};
 
 export const setRecentlyUsedWsPaths = nsmSliceWorkspace.createAction(
   'setRecentlyUsedWsPaths',
@@ -467,9 +468,11 @@ export const closeIfFound = createMetaAction(
     opts?: LocationOptions,
   ) => {
     const { openedWsPaths } = nsmSliceWorkspace.resolveState(state);
-
     let newOpened = openedWsPaths.closeIfFound(wsPath);
 
+    // TODO need to dispatch two transactions here
+    // 1. close primary and secondary
+    // 2. close mini and popup <-- this is not happening and its a bug
     if (!newOpened.hasSomeOpenedWsPaths()) {
       return goToWorkspaceHome({
         wsName: resolvePath2(wsPath).wsName,

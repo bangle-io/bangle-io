@@ -5,6 +5,7 @@ import { pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
 import { z } from '@bangle.io/nsm';
+import type { WsPath } from '@bangle.io/shared-types';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -25,7 +26,7 @@ const convertPathToRegexp = (path: string) => {
 
 export const pathMatcher = makeMatcher(convertPathToRegexp);
 
-export function wsPathToPathname(wsPath: string) {
+export function wsPathToPathname(wsPath: WsPath) {
   let { wsName, filePath } = resolvePath(wsPath);
 
   wsName = encodeURIComponent(wsName);
@@ -113,8 +114,8 @@ export function locationSetWsPath(
   let pathname = location.pathname;
   let search = location.search || '';
 
-  if (openedWsPaths.primaryWsPath) {
-    pathname = wsPathToPathname(openedWsPaths.primaryWsPath);
+  if (openedWsPaths.primaryWsPath2) {
+    pathname = wsPathToPathname(openedWsPaths.primaryWsPath2);
   } else {
     pathname = wsNameToPathname(wsName);
   }

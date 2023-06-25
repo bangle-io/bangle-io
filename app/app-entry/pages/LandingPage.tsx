@@ -1,20 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-  useBangleStoreContext,
-  useSerialOperationContext,
-} from '@bangle.io/api';
+import { useSerialOperationContext } from '@bangle.io/api';
 import { lastWorkspaceUsed } from '@bangle.io/bangle-store';
+import { useNsmSliceDispatch } from '@bangle.io/bangle-store-context';
 import { CORE_OPERATIONS_NEW_WORKSPACE } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { goToWsNameRoute } from '@bangle.io/slice-workspace';
+import { goToWorkspaceHome, nsmPageSlice } from '@bangle.io/slice-page';
 import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 import { readAllWorkspacesInfo } from '@bangle.io/workspace-info';
+import { createWsName } from '@bangle.io/ws-path';
 
 export function LandingPage() {
-  const bangleStore = useBangleStoreContext();
-
   const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
+  const pageDispatch = useNsmSliceDispatch(nsmPageSlice);
 
   useEffect(() => {
     let destroyed = false;
@@ -28,15 +26,20 @@ export function LandingPage() {
     return () => {
       destroyed = true;
     };
-  }, [bangleStore]);
+  }, []);
 
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   const onClickWsName = useCallback(
     (wsName: string) => {
-      goToWsNameRoute(wsName)(bangleStore.state, bangleStore.dispatch);
+      pageDispatch(
+        goToWorkspaceHome({
+          wsName: createWsName(wsName),
+          replace: true,
+        }),
+      );
     },
-    [bangleStore],
+    [pageDispatch],
   );
 
   return (

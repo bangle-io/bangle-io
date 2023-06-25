@@ -22,13 +22,14 @@ import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
-  incrementCounter,
+  refreshWorkspace,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
 import { nsmUISlice } from '@bangle.io/slice-ui';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { historySliceFamily } from './history-slice';
+import { miscEffects } from './misc-effects';
 import { nsmE2eEffect, nsmE2eSyncEffect } from './nsm-e2e';
 import {
   pageLifeCycleBlockReload,
@@ -40,7 +41,7 @@ import {
   persistStateSlice,
 } from './persist-state-slice';
 
-export const createNsmStore = (eternalVars: EternalVars) => {
+export const createNsmStore = (eternalVars: EternalVars): Store => {
   const extensionSlices = eternalVars.extensionRegistry.getNsmSlices();
 
   const storeName = 'bangle-store';
@@ -100,7 +101,7 @@ export const createNsmStore = (eternalVars: EternalVars) => {
       nsmSliceWorkspace,
 
       nsmApi2.editor._editorManagerProxy,
-
+      ...miscEffects,
       ...extensionSlices,
       // TODO: remove e2e effects for production
       nsmE2eEffect,
@@ -125,7 +126,7 @@ export const createNsmStore = (eternalVars: EternalVars) => {
       msg.type === 'create' ||
       msg.type === 'rename'
     ) {
-      store.store.dispatch(incrementCounter(null));
+      store.store.dispatch(refreshWorkspace(null), 'storage-provider-change');
     }
   };
 

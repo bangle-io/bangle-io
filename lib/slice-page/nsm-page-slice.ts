@@ -7,7 +7,12 @@ import {
 } from '@bangle.io/nsm';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
-import { createWsName, createWsPath } from '@bangle.io/ws-path';
+import {
+  createWsName,
+  createWsPath,
+  isValidNoteWsPath,
+  isValidWsName,
+} from '@bangle.io/ws-path';
 
 import type { PageSliceStateType } from './common';
 import { pageLifeCycleState } from './common';
@@ -44,11 +49,41 @@ export const nsmPageSlice = createSliceWithSelectors([], {
       (computed): WsName | undefined => {
         let result = pathnameToWsName(computed.location.pathname);
 
-        if (result) {
-          return createWsName(result);
+        if (!result) {
+          return undefined;
         }
 
-        return undefined;
+        if (!isValidWsName(result)) {
+          console.warn('Invalid wsName', result);
+
+          return undefined;
+        }
+
+        return createWsName(result);
+      },
+    ),
+
+    // raw wsPath is the wsPath without any validation
+    rawPrimaryWsPath: createSelector(
+      { location: (state) => state.location },
+      (computed): string | undefined => {
+        const primary = pathnameToWsPath(computed.location.pathname);
+
+        return primary;
+      },
+    ),
+
+    // raw wsPath is the wsPath without any validation
+    rawSecondaryWsPath: createSelector(
+      { location: (state) => state.location },
+      (computed): string | undefined => {
+        let result = pathnameToWsName(computed.location.pathname);
+
+        const secondary = result
+          ? searchToWsPath(computed.location.search)
+          : undefined;
+
+        return secondary;
       },
     ),
 
@@ -57,7 +92,17 @@ export const nsmPageSlice = createSliceWithSelectors([], {
       (computed): WsPath | undefined => {
         const primary = pathnameToWsPath(computed.location.pathname);
 
-        return primary ? createWsPath(primary) : undefined;
+        if (!primary) {
+          return undefined;
+        }
+
+        if (!isValidNoteWsPath(primary)) {
+          console.warn('Invalid primaryWsPath', primary);
+
+          return undefined;
+        }
+
+        return createWsPath(primary);
       },
     ),
 
@@ -70,7 +115,17 @@ export const nsmPageSlice = createSliceWithSelectors([], {
           ? searchToWsPath(computed.location.search)
           : undefined;
 
-        return secondary ? createWsPath(secondary) : undefined;
+        if (!secondary) {
+          return undefined;
+        }
+
+        if (!isValidNoteWsPath(secondary)) {
+          console.warn('Invalid secondaryWsPath', secondary);
+
+          return undefined;
+        }
+
+        return createWsPath(secondary);
       },
     ),
 
@@ -88,6 +143,7 @@ export const nsmPageSlice = createSliceWithSelectors([], {
     ),
   },
 });
+
 export const noOp = nsmPageSlice.createAction(
   'noOp',
   serialAction(z.null(), () => {

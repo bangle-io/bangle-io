@@ -7,7 +7,7 @@ export const sliceRefreshWorkspace = createSliceV2([], {
   },
 });
 
-export const incrementCounter = sliceRefreshWorkspace.createAction(
+export const refreshWorkspace = sliceRefreshWorkspace.createAction(
   'incrementCounter',
   serialAction(z.null(), () => {
     return (state) => ({

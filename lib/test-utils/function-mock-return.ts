@@ -16,7 +16,6 @@ import {
 import { EditorDisplayType } from '@bangle.io/constants';
 import type { useUIManagerContext } from '@bangle.io/slice-ui';
 import { initialState } from '@bangle.io/slice-ui';
-import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import { createWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -40,9 +39,7 @@ export const getUseUIManagerContextReturn: Writable<
   bangleStore: initialBangleStore,
 };
 
-export const getUseWorkspaceContextReturn: Writable<
-  ReturnType<typeof useWorkspaceContext>
-> = {
+export const getUseWorkspaceContextReturn: Writable<ReturnType<any>> = {
   bangleStore: initialBangleStore,
   cachedWorkspaceInfo: undefined,
   noteWsPaths: [],

@@ -43,8 +43,8 @@ import {
   updateSelection,
 } from '@bangle.io/slice-editor-manager';
 import { calculateSelection } from '@bangle.io/slice-editor-manager/utils';
-import { getNote } from '@bangle.io/slice-workspace';
 import { cx } from '@bangle.io/utils';
+import { fs } from '@bangle.io/workspace-info';
 
 import { watchPluginHost } from './watch-plugin-host';
 
@@ -85,22 +85,16 @@ function EditorInner({
   useEffect(() => {
     let destroyed = false;
 
-    getNote(wsPath)(bangleStore.state, bangleStore.dispatch, bangleStore)
-      .then((doc) => {
-        if (!destroyed) {
-          setInitialDoc(doc);
-        }
-      })
-      .catch((err) => {
-        bangleStore.errorHandler(err);
-
-        return undefined;
-      });
+    fs.getNote(wsPath, eternalVars.extensionRegistry).then((doc) => {
+      if (!destroyed) {
+        setInitialDoc(doc);
+      }
+    });
 
     return () => {
       destroyed = true;
     };
-  }, [wsPath, bangleStore]);
+  }, [wsPath, eternalVars.extensionRegistry]);
 
   const editorRef = useRef<ReturnType<typeof Proxy.revocable> | null>(null);
 

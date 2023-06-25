@@ -24,6 +24,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.writeFile(wsPath, file, opts);
+
     this.onChange({
       type: 'create',
       wsPath,

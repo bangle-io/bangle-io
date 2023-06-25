@@ -10,6 +10,7 @@ import {
   wsPathToPathname,
 } from '@bangle.io/slice-page';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
+import { createWsPath } from '@bangle.io/ws-path';
 
 import type { WorkspaceDispatchType } from './common';
 import { workspaceSliceKey } from './common';
@@ -181,7 +182,7 @@ export const pushWsPath = (
 ) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     if (newTab && typeof window !== 'undefined') {
-      window.open(wsPathToPathname(wsPath));
+      window.open(wsPathToPathname(createWsPath(wsPath)));
 
       return true;
     }

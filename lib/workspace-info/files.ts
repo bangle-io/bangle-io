@@ -16,6 +16,7 @@ import {
   resolvePath2,
 } from '@bangle.io/ws-path';
 
+import { WorkspaceInfoError } from './error';
 import { markdownFormatProvider } from './note-format';
 import { getStorageProviderObj } from './storage-providers';
 import { readWorkspaceInfo } from './workspace-info';
@@ -25,7 +26,10 @@ function assertWsInfo(
   info: WorkspaceInfo | undefined,
 ): asserts info is WorkspaceInfo {
   if (!info) {
-    throw new Error(`Workspace ${wsName} not found`);
+    throw new BaseError({
+      code: WorkspaceInfoError.WorkspaceNotFound,
+      message: `Workspace "${wsName}" not found`,
+    });
   }
 }
 
@@ -47,12 +51,32 @@ export function docToFile(
   });
 }
 
-export async function writeNote(
+export async function createNote(
   wsPath: WsPath,
   extensionRegistry: ExtensionRegistry,
   doc: Node,
 ) {
-  await writeFile(wsPath, docToFile(wsPath, doc, extensionRegistry));
+  const file = docToFile(wsPath, doc, extensionRegistry);
+  await createFile(wsPath, extensionRegistry, file);
+}
+
+export async function createFile(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+  file: File,
+) {
+  const wsName = resolvePath2(wsPath).wsName;
+
+  if (DEBUG_WRITE_SLOWDOWN && DEBUG_WRITE_SLOWDOWN > 0) {
+    console.warn('Slowing down write by ' + DEBUG_WRITE_SLOWDOWN + 'ms');
+    await sleep(DEBUG_WRITE_SLOWDOWN);
+  }
+
+  const info = await readWorkspaceInfo(wsName);
+
+  assertWsInfo(wsName, info);
+  const { options, provider } = getStorageProviderObj(info.type);
+  await provider.createFile(wsPath, file, options);
 }
 
 export async function getNote(
@@ -126,6 +150,7 @@ export async function renameFile(currentWsPath: WsPath, newWsPath: WsPath) {
 
   if (currentWsName !== newWsName) {
     throw new BaseError({
+      code: WorkspaceInfoError.FileRenameNotAllowed,
       message: `Cannot rename file ${currentWsPath} to ${newWsPath} as they are in different workspaces`,
     });
   }
@@ -135,6 +160,14 @@ export async function renameFile(currentWsPath: WsPath, newWsPath: WsPath) {
   const { options, provider } = getStorageProviderObj(wsInfo.type);
 
   await provider.renameFile(currentWsPath, newWsPath, options);
+}
+
+export async function writeNote(
+  wsPath: WsPath,
+  extensionRegistry: ExtensionRegistry,
+  doc: Node,
+) {
+  await writeFile(wsPath, docToFile(wsPath, doc, extensionRegistry));
 }
 
 export async function writeFile(wsPath: WsPath, file: File, sha?: string) {
@@ -148,7 +181,6 @@ export async function writeFile(wsPath: WsPath, file: File, sha?: string) {
   const info = await readWorkspaceInfo(wsName);
 
   assertWsInfo(wsName, info);
-
   const { options, provider } = getStorageProviderObj(info.type);
   await provider.writeFile(wsPath, file, options, sha);
 }

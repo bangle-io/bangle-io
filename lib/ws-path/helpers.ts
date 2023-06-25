@@ -109,6 +109,17 @@ export function resolvePath2(wsPath: WsPath): {
 
 export class PathValidationError extends BaseError {}
 
+export function isValidWsName(wsName: string | undefined): boolean {
+  if (!wsName) {
+    return false;
+  }
+  if (wsName.includes(':')) {
+    return false;
+  }
+
+  return true;
+}
+
 export function validWsName(wsName: string) {
   if (wsName === '') {
     throw new PathValidationError({
@@ -126,7 +137,18 @@ export function isWsPath(wsPath: string) {
   if (!wsPath || typeof wsPath !== 'string') {
     return false;
   }
-  if (wsPath.split(':').length !== 2) {
+
+  if (wsPath.split('/').some((r) => r.length === 0)) {
+    return false;
+  }
+
+  const [wsName, filePath, ...others] = wsPath.split(':');
+
+  if (others.length > 0) {
+    return false;
+  }
+
+  if (!wsName || !filePath) {
     return false;
   }
 
@@ -160,7 +182,7 @@ export function validateWsPath(wsPath: string) {
     });
   }
 
-  if (!wsName || !filePath) {
+  if (!isWsPath(wsPath)) {
     throw new PathValidationError({ message: 'Invalid wsPath ' + wsPath });
   }
 }
@@ -187,8 +209,8 @@ export function validateNoteWsPath(wsPath: string) {
   }
 }
 
-export function isValidNoteWsPath(wsPath: string) {
-  return hasValidNoteExtension(wsPath);
+export function isValidNoteWsPath(wsPath: string | undefined) {
+  return wsPath ? hasValidNoteExtension(wsPath) : false;
 }
 
 export function sanitizeFilePath(filePath: string) {

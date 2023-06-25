@@ -16,10 +16,11 @@ import type {
   WsPath,
 } from '@bangle.io/shared-types';
 import {
+  goToInvalidWorkspacePage as _goToInvalidWorkspacePage,
   goToWorkspaceHome as _goToWorkspaceHome,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
-import { incrementCounter } from '@bangle.io/slice-refresh-workspace';
+import { refreshWorkspace } from '@bangle.io/slice-refresh-workspace';
 import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -73,7 +74,7 @@ export const createNote = async (
     });
   }
 
-  await fs.writeNote(
+  await fs.createNote(
     wsPath,
     extensionRegistry,
     opts.doc || defaultDoc(wsPath, extensionRegistry),
@@ -209,6 +210,17 @@ export const goToWorkspace = ({
   );
 };
 
+export const goToInvalidWorkspacePage = (wsName: WsName): void => {
+  const store = getStore();
+
+  store.dispatch(
+    _goToInvalidWorkspacePage({
+      invalidWsName: wsName,
+      replace: true,
+    }),
+  );
+};
+
 export const openWsPathInNewTab = (wsPath: WsPath): void => {
   _openWsPathInNewTab(wsPath);
 };
@@ -240,5 +252,5 @@ export const closeEditor = (index?: EditorIdType): void => {
  */
 export const refresh = () => {
   const store = getStore();
-  store.dispatch(incrementCounter(null));
+  store.dispatch(refreshWorkspace(null), 'refresh-nsm-api');
 };

@@ -10,12 +10,23 @@ import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import { SEVERITY } from '@bangle.io/constants';
 import { wireCollabMessageBus } from '@bangle.io/editor-common';
 import { setupEternalVars } from '@bangle.io/shared';
+import type {
+  EternalVars,
+  NaukarMainHandler as NaukarMainHandlerType,
+  NsmStore,
+} from '@bangle.io/shared-types';
 import { nsmNotification } from '@bangle.io/slice-notification';
-import { nsmPageSlice } from '@bangle.io/slice-page';
+import {
+  goToWsNameRouteNotFoundRoute,
+  nsmPageSlice,
+} from '@bangle.io/slice-page';
 import { BaseError } from '@bangle.io/utils';
 import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
 import { workerSetup } from '@bangle.io/worker-setup';
-import { readWorkspaceInfo } from '@bangle.io/workspace-info';
+import {
+  readWorkspaceInfo,
+  WorkspaceInfoError,
+} from '@bangle.io/workspace-info';
 
 import { Entry } from './entry';
 import { setEternalVars } from './eternal-vars';
@@ -66,74 +77,33 @@ runAfterPolyfills(async () => {
     },
   );
 
-  const handleStorageErrors = (error: BaseError) => {
-    const wsName = nsmPageSlice.resolveState(nsmStore.state).wsName;
-
-    if (!wsName) {
-      console.warn('Unable to handle error as wsName is not set');
-
-      return false;
-    }
-
-    readWorkspaceInfo(wsName).then((wsInfo) => {
-      if (!wsInfo) {
-        console.log('Unable to find workspace info when handling error');
-
-        return;
-      }
-
-      const handler = eternalVars.extensionRegistry.getOnStorageErrorHandlers(
-        wsInfo.type,
-      );
-
-      if (!handler) {
-        throw new Error(
-          `Unable to find storage error handler for workspace type ${wsInfo.type}`,
-        );
-      }
-      const result = handler(error);
-
-      if (!result) {
-        console.error(error);
-
-        nsmStore.dispatch(
-          nsmNotification.showNotification({
-            severity: SEVERITY.ERROR,
-            title: error.name,
-            content: error.message,
-            uid: `storage-unable-to-handle` + Date.now(),
-          }),
-        );
-
-        return;
-      }
-    });
-
-    return true;
-  };
-
   workerSetup(abort.signal).then((naukar) => {
     naukar.registerCollabMessagePort(
       Comlink.transfer(editorCollabMessageChannel.port2, [
         editorCollabMessageChannel.port2,
       ]),
-      Comlink.proxy((error: Error) => {
-        if (error instanceof BaseError) {
-          console.warn('Base Error from Worker', error.name);
-
-          if (handleStorageErrors(error)) {
-            return;
-          }
-        }
-
-        console.warn('Error from Worker', error);
-        throw error;
-      }),
     );
+    naukar.registerMainHandler(Comlink.proxy(naukarMainHandler));
     _setWorker(naukar);
   });
 
   const nsmStore = createNsmStore(eternalVars);
+
+  class NaukarMainHandler implements NaukarMainHandlerType {
+    constructor(private _store: NsmStore) {}
+
+    sendError(error: Error) {
+      if (error instanceof BaseError) {
+        handleErrors(error, this._store, eternalVars);
+
+        return;
+      }
+      console.warn('Unhandled naukar error', error.message);
+      throw error;
+    }
+  }
+
+  const naukarMainHandler = new NaukarMainHandler(nsmStore);
 
   setEternalVars(nsmStore, eternalVars);
 
@@ -152,7 +122,7 @@ runAfterPolyfills(async () => {
       return;
     }
 
-    if (handleStorageErrors(error)) {
+    if (handleErrors(error, nsmStore, eternalVars)) {
       event.preventDefault();
 
       return;
@@ -190,3 +160,110 @@ runAfterPolyfills(async () => {
     root,
   );
 });
+
+function handleErrors(
+  error: BaseError,
+  nsmStore: NsmStore,
+  eternalVars: EternalVars,
+) {
+  if (handleWorkspaceInfoErrors(error, nsmStore, eternalVars)) {
+    return true;
+  }
+
+  // Keep at last
+  // TODO always returns true
+  if (handleStorageErrors(error, nsmStore, eternalVars)) {
+    return true;
+  }
+
+  return false;
+}
+
+function handleStorageErrors(
+  error: BaseError,
+  nsmStore: NsmStore,
+  eternalVars: EternalVars,
+) {
+  const wsName = nsmPageSlice.resolveState(nsmStore.state).wsName;
+
+  if (!wsName) {
+    console.warn('Unable to handle error as wsName is not set');
+
+    return false;
+  }
+
+  readWorkspaceInfo(wsName).then((wsInfo) => {
+    if (!wsInfo) {
+      console.log('Unable to find workspace info when handling error');
+
+      return;
+    }
+
+    const handler = eternalVars.extensionRegistry.getOnStorageErrorHandlers(
+      wsInfo.type,
+    );
+
+    if (!handler) {
+      throw new Error(
+        `Unable to find storage error handler for workspace type ${wsInfo.type}`,
+      );
+    }
+    const result = handler(error);
+
+    if (!result) {
+      console.error(error);
+
+      nsmStore.dispatch(
+        nsmNotification.showNotification({
+          severity: SEVERITY.ERROR,
+          title: error.name,
+          content: error.message,
+          uid: `storage-unable-to-handle` + Date.now(),
+        }),
+      );
+
+      return;
+    }
+  });
+
+  return true;
+}
+
+function handleWorkspaceInfoErrors(
+  error: BaseError,
+  nsmStore: NsmStore,
+  eternalVars: EternalVars,
+) {
+  const code = error.code as WorkspaceInfoError;
+  switch (code) {
+    case WorkspaceInfoError.WorkspaceCreateNotAllowed: {
+      return false;
+    }
+    case WorkspaceInfoError.WorkspaceDeleteNotAllowed: {
+      return false;
+    }
+    case WorkspaceInfoError.WorkspaceNotFound: {
+      const { wsName } = nsmPageSlice.resolveState(nsmStore.state);
+
+      if (wsName) {
+        nsmStore.dispatch(
+          goToWsNameRouteNotFoundRoute({
+            wsName,
+          }),
+        );
+
+        return true;
+      }
+
+      return false;
+    }
+    case WorkspaceInfoError.FileRenameNotAllowed: {
+      return false;
+    }
+    default: {
+      let x: never = code;
+
+      return false;
+    }
+  }
+}

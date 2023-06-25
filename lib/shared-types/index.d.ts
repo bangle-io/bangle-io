@@ -8,6 +8,7 @@ export * from './editor';
 export * from './eternal-vars';
 export * from './extension-registry';
 export * from './helper';
+export * from './naukar-main-handler';
 export * from './store';
 export * from './ui';
 export * from './utils';

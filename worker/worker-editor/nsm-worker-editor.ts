@@ -5,7 +5,6 @@ import type { InferSliceName, Transaction } from '@bangle.io/nsm';
 import { createSliceV2 } from '@bangle.io/nsm';
 import { actUpdateEntry, nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
 import type { EternalVars } from '@bangle.io/shared-types';
-import { BaseError } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import { createWsPath } from '@bangle.io/ws-path';
 
@@ -98,12 +97,11 @@ export function setCollabManager(
           }),
         );
       } catch (error) {
-        if (error instanceof BaseError) {
+        if (error instanceof Error) {
           onError(error);
-
-          return;
+        } else {
+          throw error;
         }
-        throw error;
       }
     },
     (type, wsPath, pendingWrites) => {

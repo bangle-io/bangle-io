@@ -1,3 +1,4 @@
+export { WorkspaceInfoError } from './error';
 export * as fs from './files';
 export { registerStorageProvider } from './storage-providers';
 export {

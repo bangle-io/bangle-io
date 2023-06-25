@@ -2,6 +2,7 @@ import './style';
 
 import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useRef } from 'react';
+import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import type { BaseLocationHook } from 'wouter';
 import { Router } from 'wouter';
 
@@ -99,7 +100,7 @@ export function Entry({
 
   return (
     <React.StrictMode>
-      <ErrorBoundary store={bangleStore}>
+      <ReactErrorBoundary FallbackComponent={ErrorBoundary}>
         <Router hook={useRouterHook} matcher={pathMatcher as any}>
           {/* Used by OverlayContainer -- any modal or popover */}
           <OverlayProvider>
@@ -117,7 +118,7 @@ export function Entry({
             </NsmStoreContext.Provider>
           </OverlayProvider>
         </Router>
-      </ErrorBoundary>
+      </ReactErrorBoundary>
     </React.StrictMode>
   );
 }

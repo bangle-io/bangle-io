@@ -30,7 +30,7 @@ let e2e: NSME2eTypes = {
   getEditorPluginMetadata,
   getNsmStore: getGlobalNsmStore,
   getPageSliceState: () => {
-    return nsmPageSlice.getState(getGlobalNsmStore().state);
+    return nsmPageSlice.resolveState(getGlobalNsmStore().state);
   },
   getOpenedWsPaths: () => {
     return nsmSliceWorkspace.resolveState(getGlobalNsmStore().state)

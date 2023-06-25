@@ -7,9 +7,7 @@ import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 
 import { historySlice } from './slices/history-slice';
-import { miscEffectsSlice } from './slices/misc-effects-slice';
 import { pageLifeCycleSlice } from './slices/page-lifecycle-slice';
-import { saveStateSlice } from './slices/save-state-slice';
 
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
@@ -40,8 +38,7 @@ export function bangleStateSlices({
     storageProviderSlice(),
     disableSideEffect(workspaceSlice()),
     // uiSlice(),
-    saveStateSlice(),
-    miscEffectsSlice(),
+    // saveStateSlice(),
 
     // <-- PLOP INSERT SLICE -->
 

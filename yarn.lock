@@ -2169,6 +2169,7 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/style": "workspace:*"
@@ -2193,6 +2194,7 @@ __metadata:
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-error-boundary: ^4.0.10
     react-test-renderer: ^17.0.2
     safari-14-idb-fix: ^3.0.0
     vite-plugin-pwa: ^0.13.1
@@ -2646,9 +2648,9 @@ __metadata:
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -3476,24 +3478,6 @@ __metadata:
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/slice-workspace-opened-doc-info@workspace:lib/slice-workspace-opened-doc-info":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-workspace-opened-doc-info@workspace:lib/slice-workspace-opened-doc-info"
-  dependencies:
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/git-file-sha": "workspace:*"
-    "@bangle.io/nsm-slice-workspace": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
@@ -21453,6 +21437,17 @@ __metadata:
   peerDependencies:
     react: ">=16.13.1"
   checksum: f36270a5d775a25c8920f854c0d91649ceea417b15b5bc51e270a959b0476647bb79abb4da3be7dd9a4597b029214e8fe43ea914a7f16fa7543c91f784977f1b
+  languageName: node
+  linkType: hard
+
+"react-error-boundary@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "react-error-boundary@npm:4.0.10"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+  peerDependencies:
+    react: ">=16.13.1"
+  checksum: 4ad4864d2a5fc2264a24d03e83176e6a70d7adbe3c1edbdc5b0bd452a695104bc59456e23b5aea1b9729220672fe46614221daa8b3bd59327968d4aa7eb8bc71
   languageName: node
   linkType: hard
 
