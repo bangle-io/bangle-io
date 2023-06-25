@@ -7,6 +7,10 @@ import type { WsName, WsPath } from './workspace';
 // the same process as the main thread and continue to communicate with
 // serialization just like had it been a worker.
 
+export type NaukarWorkerAPIInternal = NaukarWorkerAPI & {
+  __internal_register_main_cb: (mainApi: NaukarMainAPI) => Promise<boolean>;
+};
+
 // Endpoints in naukar exposed to main thread
 export interface NaukarWorkerAPI {
   test: {
@@ -55,10 +59,13 @@ export interface NaukarWorkerAPI {
       wsName: WsName,
       backupFile: File,
     ) => Promise<void>;
+
+    // TODO: lets move out of this way of doing things
+    __signalWorkerToAbort: (uid: string) => void;
   };
 }
 
 // Endpoints in main exposed to naukar
 export interface NaukarMainAPI {
-  onBaseError: (error: BaseError) => Promise<void>;
+  onError: (error: Error) => Promise<void>;
 }

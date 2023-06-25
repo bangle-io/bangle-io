@@ -21,5 +21,4 @@ async function workerInitialSetup() {
     await Promise.all(polyfills);
   }
 }
-
 Comlink.expose(naukar);

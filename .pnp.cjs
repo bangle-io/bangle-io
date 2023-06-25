@@ -392,6 +392,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/yarn-workspace-helpers"\
       },\
       {\
+        "name": "@bangle.io/worker-common",\
+        "reference": "workspace:worker/worker-common"\
+      },\
+      {\
         "name": "@bangle.io/worker-editor",\
         "reference": "workspace:worker/worker-editor"\
       },\
@@ -489,6 +493,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/uno-preset-bangle", ["workspace:tooling/uno-preset-bangle"]],\
       ["@bangle.io/utils", ["workspace:lib/utils"]],\
       ["@bangle.io/weak-cache", ["workspace:js-lib/weak-cache"]],\
+      ["@bangle.io/worker-common", ["workspace:worker/worker-common"]],\
       ["@bangle.io/worker-editor", ["workspace:worker/worker-editor"]],\
       ["@bangle.io/worker-entry", ["workspace:worker/worker-entry"]],\
       ["@bangle.io/worker-naukar", ["workspace:worker/worker-naukar"]],\
@@ -5063,10 +5068,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.31.6", {\
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-af63f951a3/0/cache/@bangle.dev-collab-client-npm-0.31.6-9d27901b71-88fb31a73c.zip/node_modules/@bangle.dev/collab-client/",\
+        ["virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-97c4ec5af6/0/cache/@bangle.dev-collab-client-npm-0.31.6-9d27901b71-88fb31a73c.zip/node_modules/@bangle.dev/collab-client/",\
           "packageDependencies": [\
-            ["@bangle.dev/collab-client", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.31.6"],\
+            ["@bangle.dev/collab-client", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/collab-comms", "npm:0.31.6"],\
             ["@bangle.dev/core", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.dev/pm", "npm:0.31.6"],\
@@ -5860,7 +5865,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
-            ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
@@ -5932,7 +5936,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
-            ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
@@ -6163,7 +6166,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],\
             ["@bangle.dev/base-components", "virtual:80585cc3ac4b0cfda469a8969e33e9c05baedab3bf0c412c3c1663cae9bd3275dff61a55742d091a72cbf0f809b53bf9fef6f97f5daa6652558b2dbe1af58aea#npm:0.31.6"],\
-            ["@bangle.dev/collab-client", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.31.6"],\
+            ["@bangle.dev/collab-client", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/core", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
             ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.31.6"],\
@@ -7850,12 +7853,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@bangle.io/worker-common", [\
+        ["workspace:worker/worker-common", {\
+          "packageLocation": "./worker/worker-common/",\
+          "packageDependencies": [\
+            ["@bangle.io/worker-common", "workspace:worker/worker-common"],\
+            ["@bangle.io/config", "workspace:lib/config"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
+            ["tslib", "npm:2.4.1"],\
+            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@bangle.io/worker-editor", [\
         ["workspace:worker/worker-editor", {\
           "packageLocation": "./worker/worker-editor/",\
           "packageDependencies": [\
             ["@bangle.io/worker-editor", "workspace:worker/worker-editor"],\
-            ["@bangle.dev/collab-client", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.31.6"],\
+            ["@bangle.dev/collab-client", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.31.6"],\
             ["@bangle.dev/collab-comms", "npm:0.31.6"],\
             ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.31.6"],\
             ["@bangle.dev/core", "virtual:5f54adb32b1c27a351f398289068e0232d99b7156da3315e8cf98dc8b52efe4770a4986774f17386e28de6205b749f9f20faf7db529c9fddd214931e8bbc0c3e#npm:0.31.6"],\
@@ -7872,6 +7891,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/worker-common", "workspace:worker/worker-common"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.5"],\
@@ -7892,6 +7912,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/worker-entry", "workspace:worker/worker-entry"],\
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],\
+            ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/fzf-search", "virtual:8258b7e2ef22016490add75cfb3fb996102c43ceaa7da7437e8ac99add924980580f8c10fa521c0480ec5b698f84c49c7ec61c5cc45d3aa0a636b498f300d035#workspace:js-lib/fzf-search"],\
@@ -7899,9 +7920,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/worker-common", "workspace:worker/worker-common"],\
             ["@bangle.io/worker-editor", "workspace:worker/worker-editor"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
+            ["@sentry/browser", "npm:6.19.7"],\
             ["@zip.js/zip.js", "npm:2.4.26"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
@@ -7954,7 +7977,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
-            ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["tslib", "npm:2.4.1"],\
             ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"]\
           ],\
@@ -7977,7 +7999,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-entry", "workspace:worker/worker-entry"],\
-            ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["comlink", "npm:4.3.1"],\

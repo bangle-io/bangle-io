@@ -14,7 +14,7 @@ export async function searchNotes(
     totalMatchMax = 2000,
   } = {},
 ) {
-  return naukarProxy.abortableSearchWsForPmNode(
+  const result = await naukarProxy.abortable.abortableSearchWsForPmNode(
     signal,
     wsName,
     query,
@@ -41,4 +41,6 @@ export async function searchNotes(
       concurrency: CONCURRENCY,
     },
   );
+
+  return result;
 }

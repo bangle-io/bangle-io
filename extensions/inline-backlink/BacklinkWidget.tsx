@@ -163,8 +163,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
       if (!wsName) {
         return;
       }
-
-      naukarProxy
+      naukarProxy.abortable
         .abortableSearchWsForPmNode(controller.signal, wsName, 'backlink:*', [
           {
             nodeName: 'wikiLink',

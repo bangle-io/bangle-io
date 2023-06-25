@@ -12,7 +12,7 @@ import { wireCollabMessageBus } from '@bangle.io/editor-common';
 import { setupEternalVars } from '@bangle.io/shared';
 import type {
   EternalVars,
-  NaukarMainHandler as NaukarMainHandlerType,
+  NaukarMainAPI,
   NsmStore,
 } from '@bangle.io/shared-types';
 import { nsmNotification } from '@bangle.io/slice-notification';
@@ -78,32 +78,20 @@ runAfterPolyfills(async () => {
   );
 
   workerSetup(abort.signal).then((naukar) => {
-    naukar.registerCollabMessagePort(
+    naukar.__internal_register_main_cb(
+      Comlink.proxy(naukarMainAPI(nsmStore, eternalVars)),
+    );
+
+    naukar.editor.registerCollabMessagePort(
       Comlink.transfer(editorCollabMessageChannel.port2, [
         editorCollabMessageChannel.port2,
       ]),
     );
-    naukar.registerMainHandler(Comlink.proxy(naukarMainHandler));
+
     _setWorker(naukar);
   });
 
   const nsmStore = createNsmStore(eternalVars);
-
-  class NaukarMainHandler implements NaukarMainHandlerType {
-    constructor(private _store: NsmStore) {}
-
-    sendError(error: Error) {
-      if (error instanceof BaseError) {
-        handleErrors(error, this._store, eternalVars);
-
-        return;
-      }
-      console.warn('Unhandled naukar error', error.message);
-      throw error;
-    }
-  }
-
-  const naukarMainHandler = new NaukarMainHandler(nsmStore);
 
   setEternalVars(nsmStore, eternalVars);
 
@@ -266,4 +254,29 @@ function handleWorkspaceInfoErrors(
       return false;
     }
   }
+}
+
+export function naukarMainAPI(
+  store: NsmStore,
+  eternalVars: EternalVars,
+): NaukarMainAPI {
+  const api: NaukarMainAPI = {
+    onError: async (error: Error) => {
+      try {
+        if (error instanceof BaseError) {
+          handleErrors(error, store, eternalVars);
+
+          return;
+        }
+        console.error('Unhandled naukar error', error.message);
+        (window as any).Sentry?.captureException(error);
+      } catch (e) {
+        // important to not throw any error, as it can create infinite loop
+        // by sending back to naukar and it sending back to us
+        console.error(e);
+      }
+    },
+  };
+
+  return api;
 }

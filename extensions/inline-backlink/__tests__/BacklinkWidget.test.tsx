@@ -40,10 +40,10 @@ let useEditorManagerContextMock =
     typeof useEditorManagerContext
   >;
 
-let abortableSearchWsForPmNodeMock =
-  naukarProxy.abortableSearchWsForPmNode as jest.MockedFunction<
-    typeof naukarProxy.abortableSearchWsForPmNode
-  >;
+let abortableSearchWsForPmNodeMock = naukarProxy.abortable
+  .abortableSearchWsForPmNode as jest.MockedFunction<
+  typeof naukarProxy.abortable.abortableSearchWsForPmNode
+>;
 
 beforeEach(() => {
   abortableSearchWsForPmNodeMock.mockImplementation(async () => []);

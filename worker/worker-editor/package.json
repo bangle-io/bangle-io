@@ -32,6 +32,7 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/worker-common": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "tslib": "2.4.1",

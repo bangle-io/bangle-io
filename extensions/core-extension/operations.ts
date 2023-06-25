@@ -31,7 +31,7 @@ export function downloadWorkspace() {
     buttons: [],
   });
 
-  naukarProxy
+  naukarProxy.abortable
     .abortableBackupAllFiles(abortController.signal, wsName)
     .then((blob: File) => {
       downloadBlob(blob, blob.name);
@@ -64,7 +64,7 @@ export function restoreWorkspaceFromBackup() {
           'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
       });
 
-      return naukarProxy.abortableCreateWorkspaceFromBackup(
+      return naukarProxy.abortable.abortableCreateWorkspaceFromBackup(
         abortController.signal,
         wsName,
         file,

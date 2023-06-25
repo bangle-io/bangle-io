@@ -56,7 +56,6 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-dhancha": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/worker-naukar": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
     "@bangle.io/worker-setup": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",

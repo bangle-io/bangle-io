@@ -28,7 +28,7 @@ jest.mock('@bangle.io/worker-naukar-proxy', () => {
 });
 
 let abortableSearchWsForPmNodeMock = jest.mocked(
-  naukarProxy.abortableSearchWsForPmNode,
+  naukarProxy.abortable.abortableSearchWsForPmNode,
 );
 
 const setup = async (

@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@bangle.io/abortable-worker": "workspace:*",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/editor-common": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
@@ -13,9 +14,11 @@
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/worker-common": "workspace:*",
     "@bangle.io/worker-editor": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
+    "@sentry/browser": "^6.18.1",
     "@zip.js/zip.js": "~2.4.5",
     "tslib": "2.4.1",
     "typescript": "4.9.3"

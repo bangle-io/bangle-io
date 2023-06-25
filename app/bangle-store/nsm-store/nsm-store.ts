@@ -1,17 +1,7 @@
-import * as Comlink from 'comlink';
-
 import { nsmApi2 } from '@bangle.io/api';
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
-import type { SyncMessage } from '@bangle.io/nsm';
-import {
-  createSyncStore,
-  idleCallbackScheduler,
-  payloadParser,
-  payloadSerializer,
-  Store,
-  validateSlicesForSerialization,
-} from '@bangle.io/nsm';
+import { idleCallbackScheduler, Store } from '@bangle.io/nsm';
 import { nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
@@ -66,7 +56,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
     nsmSliceFileSha,
   ];
 
-  const store = createSyncStore({
+  const store = Store.create({
     storeName,
     debug: (log) => {
       if (log.type === 'TX') {
@@ -78,20 +68,9 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
         // console.info('NSM', log.type, log);
       }
     },
-    sync: {
-      type: 'main',
-      slices: syncSlices,
-      replicaStores: ['naukar-store'],
-      validate({ syncSlices }) {
-        validateSlicesForSerialization(syncSlices);
-      },
-      payloadParser,
-      payloadSerializer,
-      sendMessage(msg) {
-        naukarProxy.nsmNaukarStoreReceive(msg);
-      },
-    },
-    slices: [
+    state: [
+      ...syncSlices,
+
       ...historySliceFamily,
       pageLifeCycleWatch,
       pageLifeCycleBlockReload,
@@ -108,6 +87,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
       nsmE2eSyncEffect,
       persistStateSlice,
     ],
+
     initStateOverride,
     scheduler: idleCallbackScheduler(15),
     dispatchTx: (store, tx) => {
@@ -126,7 +106,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
       msg.type === 'create' ||
       msg.type === 'rename'
     ) {
-      store.store.dispatch(refreshWorkspace(null), 'storage-provider-change');
+      store.dispatch(refreshWorkspace(null), 'storage-provider-change');
     }
   };
 
@@ -135,7 +115,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
     onStorageProviderChange,
   );
 
-  store.store.destroySignal.addEventListener(
+  store.destroySignal.addEventListener(
     'abort',
     () => {
       eternalVars.storageEmitter.off(
@@ -148,13 +128,5 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
     },
   );
 
-  naukarProxy.nsmNaukarStoreRegisterCb(
-    Comlink.proxy((msg) => {
-      const obj: SyncMessage = msg;
-
-      store.receiveMessage(obj);
-    }),
-  );
-
-  return store.store;
+  return store;
 };

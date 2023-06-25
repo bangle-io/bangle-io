@@ -253,7 +253,9 @@ export function useSearchWsPaths(query: string) {
 
 function useSearchNotePaths(query: string, wsName: WsName | undefined) {
   const [result, updateResult] = useState<
-    | Awaited<ReturnType<typeof naukarProxy.abortableFzfSearchNoteWsPaths>>
+    | Awaited<
+        ReturnType<typeof naukarProxy.abortable.abortableFzfSearchNoteWsPaths>
+      >
     | undefined
   >(undefined);
 
@@ -262,7 +264,7 @@ function useSearchNotePaths(query: string, wsName: WsName | undefined) {
     let destroyed = false;
 
     if (wsName) {
-      naukarProxy
+      naukarProxy.abortable
         .abortableFzfSearchNoteWsPaths(
           controller.signal,
           wsName,

@@ -13,7 +13,9 @@ import { useSearchWsPaths } from '../NotesPalette';
 jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
     naukarProxy: {
-      abortableFzfSearchNoteWsPaths: jest.fn(),
+      abortable: {
+        abortableFzfSearchNoteWsPaths: jest.fn(),
+      },
     },
   };
 });
@@ -27,10 +29,10 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
-let abortableFzfSearchNoteWsPathsMock =
-  naukarProxy.abortableFzfSearchNoteWsPaths as jest.MockedFunction<
-    typeof naukarProxy.abortableFzfSearchNoteWsPaths
-  >;
+let abortableFzfSearchNoteWsPathsMock = naukarProxy.abortable
+  .abortableFzfSearchNoteWsPaths as jest.MockedFunction<
+  typeof naukarProxy.abortable.abortableFzfSearchNoteWsPaths
+>;
 
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
   typeof useWorkspaceContext

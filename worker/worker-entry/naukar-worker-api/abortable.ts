@@ -94,7 +94,6 @@ function searchWsForPmNode(
     opts?: Parameters<typeof searchPmNode>[5],
   ) => {
     assertSignal(abortSignal);
-
     const wsPaths = await getNoteWsPaths(wsName, abortSignal);
 
     if (!wsPaths) {

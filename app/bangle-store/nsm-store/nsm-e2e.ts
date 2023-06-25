@@ -51,26 +51,26 @@ let e2e: NSME2eTypes = {
   },
 
   testRequestDeleteCollabInstance: async (wsPath: WsPath) => {
-    await naukarProxy.testRequestDeleteCollabInstance(wsPath);
+    await naukarProxy.test.requestDeleteCollabInstance(wsPath);
   },
 
   e2eHealthCheck: async () => {
-    assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
+    assertOk(await naukarProxy.test.status(), 'naukarProxy.status failed');
 
     assertOk(
-      (await naukarProxy.testHandlesBaseError(
+      (await naukarProxy.test.handlesBaseError(
         new BaseError({ message: 'test' }),
       )) instanceof BaseError,
-      'naukarProxy.testHandlesBaseError failed',
+      'naukarProxy.test.handlesBaseError failed',
     );
     assertOk(
-      await naukarProxy.testIsWorkerEnv(),
-      'naukarProxy.testIsWorkerEnv failed',
+      await naukarProxy.test.isWorkerEnv(),
+      'naukarProxy.test.isWorkerEnv failed',
     );
 
     // one more status at end to make sure worker is
     // still alive
-    assertOk(await naukarProxy.status(), 'naukarProxy.status failed');
+    assertOk(await naukarProxy.test.status(), 'naukarProxy.status failed');
 
     return true;
   },
