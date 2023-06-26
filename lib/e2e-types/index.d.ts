@@ -13,20 +13,6 @@ import type { workspaceSliceKey, writeNote } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
-export interface E2ETypes {
-  config: FinalConfig;
-  constants: typeof constants;
-  naukarProxy: typeof _naukarProxy;
-  pushWsPath: typeof workspaceContext.pushWsPath;
-  store: ApplicationStore;
-  workspaceSliceKey: typeof workspaceSliceKey;
-  writeNote: typeof writeNote;
-  pm: {
-    getEditorSchema: () => Schema;
-    Slice;
-  };
-}
-
 export type NSME2eTypes = {
   config: FinalConfig;
   testRequestDeleteCollabInstance: (wsPath: WsPath) => Promise<void>;
@@ -47,11 +33,6 @@ export type NSME2eTypes = {
   getPageSliceState: () => ReturnType<typeof nsmPageSlice.getState>;
   getNsmStore: () => NsmStore;
   nsmApi2: typeof nsmApi2;
-  // pm: {
-  //   createNodeFromMd: (md: string) => Node;
-  //   getEditorSchema: () => Schema;
-  //   Slice;
-  // };
 };
 
 export interface E2ENaukarTypes {

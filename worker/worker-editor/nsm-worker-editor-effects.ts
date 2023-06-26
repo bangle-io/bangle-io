@@ -1,6 +1,6 @@
 import { changeEffect, Slice } from '@bangle.io/nsm';
-import { actUpdateEntry, nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
-import { nsmPageSlice } from '@bangle.io/slice-page';
+import { mainApi } from '@bangle.io/worker-common';
+import { replicaWorkspaceSlice } from '@bangle.io/worker-replica-slices';
 import { createWsPath, resolvePath2 } from '@bangle.io/ws-path';
 
 import { getCollabManager, nsmWorkerEditor } from './nsm-worker-editor';
@@ -11,7 +11,7 @@ import { getCollabManager, nsmWorkerEditor } from './nsm-worker-editor';
 const purgeUnopenedDocs = changeEffect(
   'purgeUnopenedDocs',
   {
-    wsName: nsmPageSlice.pick((s) => s.wsName),
+    wsName: replicaWorkspaceSlice.pick((s) => s.wsName),
     sliceState: nsmWorkerEditor.passivePick((s) => s),
   },
   ({ wsName, sliceState }) => {
@@ -33,15 +33,15 @@ const purgeUnopenedDocs = changeEffect(
 const staleDocEffect = changeEffect(
   'staleDocEffect',
   {
-    openedFiles: nsmSliceFileSha.pick((s) => s.openedFiles),
+    openedFilesSha: replicaWorkspaceSlice.pick((s) => s.openedFilesSha),
     sliceState: nsmWorkerEditor.passivePick((s) => s),
   },
-  ({ openedFiles, sliceState }, dispatch) => {
-    if (!openedFiles) {
+  ({ openedFilesSha, sliceState }) => {
+    if (!openedFilesSha) {
       return;
     }
     const collabManager = getCollabManager(sliceState);
-    for (const info of Object.values(openedFiles)) {
+    for (const info of Object.values(openedFilesSha)) {
       const { pendingWrite, wsPath, currentDiskSha, lastKnownDiskSha } = info;
 
       if (
@@ -51,16 +51,13 @@ const staleDocEffect = changeEffect(
         currentDiskSha !== lastKnownDiskSha
       ) {
         queueMicrotask(() => {
-          dispatch(
-            actUpdateEntry({
-              wsPath,
-              info: {
-                currentDiskSha: currentDiskSha,
-                lastKnownDiskSha: currentDiskSha,
-              },
-            }),
-          );
-
+          mainApi().replicaSlices.replicaWorkspaceUpdateFileShaEntry({
+            wsPath,
+            info: {
+              currentDiskSha: currentDiskSha,
+              lastKnownDiskSha: currentDiskSha,
+            },
+          });
           collabManager?.resetDoc(info.wsPath);
         });
       }

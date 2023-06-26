@@ -217,5 +217,4 @@ const effects = [
   calculateLastKnownDiskShaEffect,
 ];
 
-// TODO
 Slice.registerEffectSlice(nsmSliceWorkspace, effects);

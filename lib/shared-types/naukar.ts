@@ -1,4 +1,9 @@
+import type {
+  naukarReplicaWorkspaceSchema,
+  NaukarReplicaWorkspaceState,
+} from '@bangle.io/constants';
 import type { FzfResultItem } from '@bangle.io/fzf-search';
+import type { z } from '@bangle.io/nsm';
 import type { searchPmNode, SearchResultItem } from '@bangle.io/search-pm-node';
 import type { BaseError } from '@bangle.io/utils';
 
@@ -12,22 +17,9 @@ export type NaukarWorkerAPIInternal = NaukarWorkerAPI & {
 };
 
 // Endpoints in naukar exposed to main thread
+// this interface allows main thread to hit naukar
+// Note: Keep API always 2 level nested only
 export interface NaukarWorkerAPI {
-  test: {
-    handlesBaseError: (error: BaseError) => Promise<boolean | BaseError>;
-    isWorkerEnv: () => Promise<boolean>;
-    requestDeleteCollabInstance: (wsPath: string) => Promise<void>;
-    status: () => Promise<boolean>;
-    throwCallbackError: () => Promise<void>;
-    throwError: () => Promise<void>;
-  };
-
-  editor: {
-    registerCollabMessagePort: (port: MessageChannel['port2']) => Promise<void>;
-  };
-
-  workspace: {};
-
   abortable: {
     abortableSearchWsForPmNode: (
       abortSignal: AbortSignal,
@@ -63,9 +55,44 @@ export interface NaukarWorkerAPI {
     // TODO: lets move out of this way of doing things
     __signalWorkerToAbort: (uid: string) => void;
   };
+
+  editor: {
+    registerCollabMessagePort: (port: MessageChannel['port2']) => Promise<void>;
+  };
+
+  // ensure these methods are called in main thread's effect
+  replicaSlices: {
+    setReplicaWorkspaceState: (
+      state: NaukarReplicaWorkspaceState,
+    ) => Promise<void>;
+  };
+
+  test: {
+    handlesBaseError: (error: BaseError) => Promise<boolean | BaseError>;
+    isWorkerEnv: () => Promise<boolean>;
+    requestDeleteCollabInstance: (wsPath: string) => Promise<void>;
+    status: () => Promise<boolean>;
+    throwCallbackError: () => Promise<void>;
+    throwError: () => Promise<void>;
+  };
+
+  workspace: {};
 }
 
-// Endpoints in main exposed to naukar
+// Endpoints in main exposed for naukar
+// this allows naukar to hit main.
+// Note: Keep API always 2 level nested only
 export interface NaukarMainAPI {
-  onError: (error: Error) => Promise<void>;
+  application: {
+    onError: (error: Error) => Promise<void>;
+  };
+
+  // interface for updating counterparts to replica slices in main
+  // to read the implementation of each method in main, see 'app/bangle-store'
+  replicaSlices: {
+    replicaWorkspaceUpdateFileShaEntry: (
+      obj: z.infer<(typeof naukarReplicaWorkspaceSchema)['updateFileShaEntry']>,
+    ) => Promise<void>;
+    refreshWorkspace: () => Promise<void>;
+  };
 }

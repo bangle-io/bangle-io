@@ -2,7 +2,8 @@
   "name": "@bangle.io/worker-common",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "worker/worker-common"
   },
   "dependencies": {
     "@bangle.io/config": "workspace:*",

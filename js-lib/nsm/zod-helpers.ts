@@ -4,14 +4,18 @@ import type { ZodTypeAny } from 'zod';
  * Checks if the zod schema contains any types that are not supported by superjson
  * @param schema - the zod schema to check
  */
-export function assertSafeZodSchema(schema: ZodTypeAny) {
+export function assertSafeZodSchema<T extends ZodTypeAny>(schema: T): T {
   let unsafeTypes = zodFindUnsafeTypes(schema);
 
   if (unsafeTypes.length > 0) {
     throw new Error(
-      `serialAction: schema contains unsafe types: ${unsafeTypes.join(', ')}`,
+      `assertSafeZodSchema: schema contains unsafe types: ${unsafeTypes.join(
+        ', ',
+      )}`,
     );
   }
+
+  return schema;
 }
 
 // dealing with types that are valid with superjson

@@ -3,8 +3,9 @@ import type { CollabManager } from '@bangle.dev/collab-manager';
 import { cachedCalculateGitFileSha } from '@bangle.io/git-file-sha';
 import type { InferSliceName, Transaction } from '@bangle.io/nsm';
 import { createSliceV2 } from '@bangle.io/nsm';
-import { actUpdateEntry, nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
 import type { EternalVars } from '@bangle.io/shared-types';
+import { mainApi } from '@bangle.io/worker-common';
+import { replicaWorkspaceSlice } from '@bangle.io/worker-replica-slices';
 import { fs } from '@bangle.io/workspace-info';
 import { createWsPath } from '@bangle.io/ws-path';
 
@@ -18,7 +19,7 @@ const initState: {
 
 const collabWeakMap = new WeakMap<RefKey, CollabManager>();
 
-export const nsmWorkerEditor = createSliceV2([nsmSliceFileSha], {
+export const nsmWorkerEditor = createSliceV2([replicaWorkspaceSlice], {
   name: 'worker/worker-editor',
   initState,
 });
@@ -54,7 +55,7 @@ export function getCollabManager(
 export function setCollabManager(
   dispatch: (
     tx: Transaction<
-      | InferSliceName<typeof nsmSliceFileSha>
+      | InferSliceName<typeof replicaWorkspaceSlice>
       | InferSliceName<typeof nsmWorkerEditor>,
       any
     >,
@@ -85,17 +86,15 @@ export function setCollabManager(
 
         await fs.writeFile(wsPath, file, lastWrittenSha);
 
-        dispatch(
-          actUpdateEntry({
-            wsPath,
-            info: {
-              pendingWrite: false,
-              // since both the shas at this time will be the same
-              lastKnownDiskSha: lastWrittenSha,
-              currentDiskSha: lastWrittenSha,
-            },
-          }),
-        );
+        mainApi().replicaSlices.replicaWorkspaceUpdateFileShaEntry({
+          wsPath,
+          info: {
+            pendingWrite: false,
+            // since both the shas at this time will be the same
+            lastKnownDiskSha: lastWrittenSha,
+            currentDiskSha: lastWrittenSha,
+          },
+        });
       } catch (error) {
         if (error instanceof Error) {
           onError(error);
@@ -105,14 +104,12 @@ export function setCollabManager(
       }
     },
     (type, wsPath, pendingWrites) => {
-      dispatch(
-        actUpdateEntry({
-          wsPath,
-          info: {
-            pendingWrite: type === 'ADD',
-          },
-        }),
-      );
+      mainApi().replicaSlices.replicaWorkspaceUpdateFileShaEntry({
+        wsPath,
+        info: {
+          pendingWrite: type === 'ADD',
+        },
+      });
     },
     abortSignal,
     eternalVars.extensionRegistry,

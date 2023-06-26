@@ -1,9 +1,12 @@
 import * as Sentry from '@sentry/browser';
 
-import { APP_ENV, sentryConfig } from '@bangle.io/config';
+import { APP_ENV, config, sentryConfig } from '@bangle.io/config';
+import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
+import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
 import type {
   EternalVars,
   NaukarWorkerAPIInternal,
+  StorageProviderChangeType,
 } from '@bangle.io/shared-types';
 import { getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
 import { mainApi, registerMainApi } from '@bangle.io/worker-common';
@@ -29,7 +32,7 @@ export function createNaukar(
     self.addEventListener('error', (errorEvent) => {
       console.warn('[naukar] error', errorEvent.error);
       console.error(errorEvent.error);
-      mainApi().onError(errorEvent.error);
+      mainApi().application.onError(errorEvent.error);
       errorEvent.preventDefault();
     });
 
@@ -37,7 +40,7 @@ export function createNaukar(
     self.addEventListener('unhandledrejection', (rejectionEvent) => {
       console.warn('[naukar] unhandledrejection');
       console.error(rejectionEvent.reason);
-      mainApi().onError(rejectionEvent.reason);
+      mainApi().application.onError(rejectionEvent.reason);
       rejectionEvent.preventDefault();
     });
   }
@@ -49,6 +52,42 @@ export function createNaukar(
     eternalVars,
     abortSignal,
   );
+
+  const onStorageProviderChange = (msg: StorageProviderChangeType) => {
+    // Note: ensure you also update the main store
+    if (
+      msg.type === 'delete' ||
+      msg.type === 'create' ||
+      msg.type === 'rename'
+    ) {
+      mainApi().replicaSlices.refreshWorkspace();
+    }
+  };
+
+  eternalVars.storageEmitter.on(
+    STORAGE_ON_CHANGE_EMITTER_KEY,
+    onStorageProviderChange,
+  );
+
+  naukarStore.destroySignal.addEventListener(
+    'abort',
+    () => {
+      eternalVars.storageEmitter.off(
+        STORAGE_ON_CHANGE_EMITTER_KEY,
+        onStorageProviderChange,
+      );
+    },
+    {
+      once: true,
+    },
+  );
+
+  const helpers: E2ENaukarTypes = {
+    config,
+  };
+
+  // eslint-disable-next-line no-restricted-globals
+  self._e2eNaukarHelpers = helpers;
 
   return {
     ...workerInterface,

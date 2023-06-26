@@ -2,7 +2,8 @@
   "name": "@bangle.io/worker-entry",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "worker/worker-entry"
   },
   "dependencies": {
     "@bangle.io/abortable-worker": "workspace:*",
@@ -16,10 +17,14 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-common": "workspace:*",
     "@bangle.io/worker-editor": "workspace:*",
+    "@bangle.io/worker-replica-slices": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@sentry/browser": "^6.18.1",
-    "@zip.js/zip.js": "~2.4.5",
+    "@zip.js/zip.js": "~2.4.5"
+  },
+  "devDependencies": {
+    "@bangle.io/e2e-types": "workspace:*",
     "tslib": "2.4.1",
     "typescript": "4.9.3"
   },

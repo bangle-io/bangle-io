@@ -19,6 +19,7 @@ export type {
   SliceStateSerialData,
 } from './slice-state-serialization';
 export { sliceStateSerializer } from './slice-state-serialization';
+export { assertSafeZodSchema } from './zod-helpers';
 export type {
   AnySlice,
   AnySliceWithName,

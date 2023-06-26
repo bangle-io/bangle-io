@@ -55,4 +55,12 @@ export const naukarProxy: NaukarWorkerAPI = {
       return undefined;
     }, emitter),
   ),
+
+  replicaSlices: waitProxy<NaukarWorkerAPI['replicaSlices']>(() => {
+    if (naukarRef.current) {
+      return naukarRef.current.replicaSlices;
+    }
+
+    return undefined;
+  }, emitter),
 };

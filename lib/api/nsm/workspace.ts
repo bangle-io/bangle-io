@@ -137,17 +137,9 @@ export const readFile = async (...args: Parameters<typeof fs.readFile>) => {
   return await fs.readFile(...args);
 };
 
-export async function createNoteFromMd(wsPath: WsPath, mdText: string) {
+export async function writeNoteFromMd(wsPath: WsPath, mdText: string) {
   const store = getStore();
   const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
-
-  if (await getNote(wsPath)) {
-    throw new BaseError({
-      message: `Cannot create. Note "${
-        resolvePath2(wsPath).fileName
-      }" already exists.`,
-    });
-  }
 
   const doc = markdownParser(
     mdText,

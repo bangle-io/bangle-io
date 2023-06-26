@@ -5,7 +5,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { _internal_setStore } from '@bangle.io/api';
-import { createNsmStore, initializeBangleStore } from '@bangle.io/bangle-store';
+import {
+  createNsmStore,
+  initializeBangleStore,
+  naukarReplicaSlicesDispatch,
+} from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import { SEVERITY } from '@bangle.io/constants';
 import { wireCollabMessageBus } from '@bangle.io/editor-common';
@@ -261,21 +265,24 @@ export function naukarMainAPI(
   eternalVars: EternalVars,
 ): NaukarMainAPI {
   const api: NaukarMainAPI = {
-    onError: async (error: Error) => {
-      try {
-        if (error instanceof BaseError) {
-          handleErrors(error, store, eternalVars);
+    application: {
+      onError: async (error: Error) => {
+        try {
+          if (error instanceof BaseError) {
+            handleErrors(error, store, eternalVars);
 
-          return;
+            return;
+          }
+          console.error('Unhandled naukar error', error.message);
+          (window as any).Sentry?.captureException(error);
+        } catch (e) {
+          // important to not throw any error, as it can create infinite loop
+          // by sending back to naukar and it sending back to us
+          console.error(e);
         }
-        console.error('Unhandled naukar error', error.message);
-        (window as any).Sentry?.captureException(error);
-      } catch (e) {
-        // important to not throw any error, as it can create infinite loop
-        // by sending back to naukar and it sending back to us
-        console.error(e);
-      }
+      },
     },
+    replicaSlices: naukarReplicaSlicesDispatch(store),
   };
 
   return api;

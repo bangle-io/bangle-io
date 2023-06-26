@@ -41,7 +41,6 @@ export function bangleStateSlices({
     // saveStateSlice(),
 
     // <-- PLOP INSERT SLICE -->
-
     ...extensionSlices,
 
     // keep this at the end

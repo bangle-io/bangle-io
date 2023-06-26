@@ -1,3 +1,5 @@
+// <-- PLOP INSERT SLICE IMPORT -->
+
 import { nsmApi2 } from '@bangle.io/api';
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
@@ -16,7 +18,6 @@ import {
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
 import { nsmUISlice } from '@bangle.io/slice-ui';
-import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { historySliceFamily } from './history-slice';
 import { miscEffects } from './misc-effects';
@@ -30,6 +31,7 @@ import {
   getSessionStorageData,
   persistStateSlice,
 } from './persist-state-slice';
+import { syncNaukarReplicaSlices } from './sync-naukar-replica-slices';
 
 export const createNsmStore = (eternalVars: EternalVars): Store => {
   const extensionSlices = eternalVars.extensionRegistry.getNsmSlices();
@@ -80,8 +82,12 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
       nsmSliceWorkspace,
 
       nsmApi2.editor._editorManagerProxy,
+      // <-- PLOP INSERT SLICE -->
+
       ...miscEffects,
+      ...syncNaukarReplicaSlices,
       ...extensionSlices,
+
       // TODO: remove e2e effects for production
       nsmE2eEffect,
       nsmE2eSyncEffect,

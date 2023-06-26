@@ -41,6 +41,7 @@
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "type-fest": "^3.5.1"
   },

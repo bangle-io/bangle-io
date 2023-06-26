@@ -22,7 +22,7 @@ const executeOverwrite = async (page: Page, _wsPath: string) => {
   const wsPath = createWsPath(_wsPath);
   await page.evaluate(
     async ([wsPath]) => {
-      await _nsmE2e?.nsmApi2.workspace.createNoteFromMd(
+      await _nsmE2e?.nsmApi2.workspace.writeNoteFromMd(
         wsPath,
         `I am _overwrite_`,
       );

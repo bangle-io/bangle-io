@@ -1,10 +1,10 @@
 {
   "name": "worker",
   "workspaces": [
-    "worker-naukar",
     "worker-editor",
     "worker-entry",
-    "worker-common"
+    "worker-common",
+    "worker-replica-slices"
   ],
   "repository": {
     "directory": "worker",
