@@ -254,7 +254,7 @@ Slice.registerEffectSlice(nsmSliceWorkspace, [
         controller?: AbortController;
       },
     ) => {
-      console.warn({ refreshWorkspace });
+      console.debug({ refreshWorkspace });
       ref.controller?.abort();
 
       let controller = new AbortController();

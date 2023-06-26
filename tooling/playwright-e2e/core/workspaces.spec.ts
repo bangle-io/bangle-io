@@ -91,7 +91,7 @@ test.describe('workspaces', () => {
 
     await expect(page).toHaveURL(new RegExp('/ws/' + wsName1));
 
-    await getPrimaryEditorHandler(page);
+    await getPrimaryEditorHandler(page, { focus: true });
 
     expect((await getWsPathsShownInFilePalette(page)).sort()).toEqual(
       [n2, n1].sort(),

@@ -7165,7 +7165,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
             ["@bangle.io/independent-e2e-tests-server", "workspace:tooling/independent-e2e-tests-server"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@playwright/test", "npm:1.29.0"],\
+            ["@playwright/test", "npm:1.35.1"],\
             ["@types/node", "npm:18.11.9"],\
             ["@types/prettier", "npm:2.7.1"],\
             ["http-server", "npm:0.12.3"],\
@@ -9061,12 +9061,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@playwright/test", [\
-        ["npm:1.29.0", {\
-          "packageLocation": "./.yarn/cache/@playwright-test-npm-1.29.0-69c24cba92-ff7bd88c80.zip/node_modules/@playwright/test/",\
+        ["npm:1.35.1", {\
+          "packageLocation": "./.yarn/cache/@playwright-test-npm-1.35.1-3073e07fa7-3509d2f2c7.zip/node_modules/@playwright/test/",\
           "packageDependencies": [\
-            ["@playwright/test", "npm:1.29.0"],\
+            ["@playwright/test", "npm:1.35.1"],\
             ["@types/node", "npm:18.11.9"],\
-            ["playwright-core", "npm:1.29.0"]\
+            ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+            ["playwright-core", "npm:1.35.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -29281,10 +29282,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["playwright-core", [\
-        ["npm:1.29.0", {\
-          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.29.0-2eb0a7d245/node_modules/playwright-core/",\
+        ["npm:1.35.1", {\
+          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.35.1-69a99ef963/node_modules/playwright-core/",\
           "packageDependencies": [\
-            ["playwright-core", "npm:1.29.0"]\
+            ["playwright-core", "npm:1.35.1"]\
           ],\
           "linkType": "HARD"\
         }]\

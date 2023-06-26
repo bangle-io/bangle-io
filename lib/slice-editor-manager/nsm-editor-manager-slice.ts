@@ -402,8 +402,6 @@ export const onFocusUpdate = nsmEditorManagerSlice.createAction(
         return state;
       }
 
-      console.warn({ editorId });
-
       return updateObj(state, {
         focusedEditorId: editorId,
       });

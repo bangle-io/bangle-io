@@ -14,7 +14,6 @@ import {
   getEditorDebugString,
   getEditorLocator,
   getEditorSelectionJson,
-  isIntersectingViewport,
   longSleep,
   runOperation,
   sleep,
@@ -70,7 +69,7 @@ const typeScrollableThings = async (page: Page) => {
   await longSleep();
 };
 
-test.describe('scroll', () => {
+test.describe.only('scroll', () => {
   for (const screenType of ['regular', 'split-screen']) {
     test(screenType + ' scroll state preserve', async ({ page }) => {
       const wsName = await createWorkspace(page);
@@ -94,8 +93,8 @@ test.describe('scroll', () => {
       let { topLocator, lastLocator } = await getTopAndLastElement(page);
 
       // check that the last element is in view port
-      expect(await isIntersectingViewport(topLocator)).toBe(false);
-      expect(await isIntersectingViewport(lastLocator)).toBe(true);
+      await expect(topLocator).not.toBeInViewport();
+      await expect(lastLocator).toBeInViewport();
 
       await createNewNote(page, wsName, 'other-note-1');
 
@@ -122,8 +121,8 @@ test.describe('scroll', () => {
 
       await longSleep();
 
-      expect(await isIntersectingViewport(topLocator)).toBe(false);
-      expect(await isIntersectingViewport(lastLocator)).toBe(true);
+      await expect(topLocator).not.toBeInViewport();
+      await expect(lastLocator).toBeInViewport();
 
       // check if selection is preserved
       expect(selectionJSON).toEqual(
@@ -139,8 +138,8 @@ test.describe('scroll', () => {
 
     let { topLocator, lastLocator } = await getTopAndLastElement(page);
     // check that the last element is in view port
-    expect(await isIntersectingViewport(topLocator)).toBe(false);
-    expect(await isIntersectingViewport(lastLocator)).toBe(true);
+    await expect(topLocator).not.toBeInViewport();
+    await expect(lastLocator).toBeInViewport();
 
     // let editor flush out changes or it will block reload
     await longSleep(300);
@@ -153,8 +152,8 @@ test.describe('scroll', () => {
     await expect(page).toHaveTitle(/test123/);
 
     // check if the scroll state is preserved
-    expect(await isIntersectingViewport(topLocator)).toBe(false);
-    expect(await isIntersectingViewport(lastLocator)).toBe(true);
+    await expect(topLocator).not.toBeInViewport();
+    await expect(lastLocator).toBeInViewport();
 
     await page.keyboard.press('Enter');
 
@@ -163,8 +162,8 @@ test.describe('scroll', () => {
       '#### My existence at the bottom proves that I was spared from a reload.',
     );
 
-    expect(await isIntersectingViewport(topLocator)).toBe(false);
-    expect(await isIntersectingViewport(lastLocator)).toBe(true);
+    await expect(topLocator).not.toBeInViewport();
+    await expect(lastLocator).toBeInViewport();
     expect(await getEditorDebugString(page, PRIMARY_EDITOR_INDEX)).toEqual(
       `doc(heading("top element"), heading("0"), heading("1"), heading("2"), heading("3"), heading("4"), heading("5"), heading("6"), heading("7"), heading("8"), heading("9"), heading("10"), heading("11"), heading("12"), heading("13"), heading("14"), heading("last element"), heading("My existence at the bottom proves that I was spared from a reload."), paragraph)`,
     );

@@ -64,14 +64,7 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
 
   await expect(page).toHaveURL(new RegExp('/ws/' + wsName));
 
-  await page.waitForFunction(
-    ({ wsName }) => {
-      return (
-        window._nsmE2e?.nsmApi2.workspace.workspaceState().wsName === wsName
-      );
-    },
-    { wsName },
-  );
+  await page.getByText(`📖 Workspace ${wsName}`).isVisible();
 
   return wsName;
 }
@@ -501,7 +494,7 @@ export async function getWsPathsShownInFilePalette(page: Page) {
     [...nodes].map((n) => n.getAttribute('data-id')),
   );
 
-  // await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape');
 
   return wsPaths;
 }
@@ -521,23 +514,6 @@ export async function splitScreen(page: Page) {
     page.waitForNavigation(),
     page.press('.bangle-editor', ctrlKey + '+\\'),
   ]);
-}
-
-export async function isIntersectingViewport(loc: Locator) {
-  return loc.evaluate(async (element) => {
-    const visibleRatio: number = await new Promise((resolve) => {
-      const observer = new IntersectionObserver((entries: any[]) => {
-        resolve(entries[0].intersectionRatio);
-        observer.disconnect();
-      });
-      observer.observe(element);
-      // Firefox doesn't call IntersectionObserver callback unless
-      // there are rafs.
-      requestAnimationFrame(() => {});
-    });
-
-    return visibleRatio > 0;
-  });
 }
 
 export async function waitForWsPathToLoad(
