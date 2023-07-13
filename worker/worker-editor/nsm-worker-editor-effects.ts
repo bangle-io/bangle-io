@@ -94,7 +94,7 @@ const purgeUnopenedDocs = effect(function purgeUnopenedDocs(store) {
   collabManager?.getAllDocNames().forEach((docName) => {
     const wsPath = createWsPath(docName);
 
-    if (wsName() !== resolvePath2(wsPath).wsName) {
+    if (wsName !== resolvePath2(wsPath).wsName) {
       console.log('worker-editor: deleting instance', docName);
       collabManager?.requestDeleteInstance(docName);
     }

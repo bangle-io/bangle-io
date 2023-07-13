@@ -1,9 +1,5 @@
 import type { Slice, Store } from '@bangle.io/nsm-3';
-import {
-  DEFAULT_DISPATCH_TRANSACTION,
-  store,
-  TX_META_DISPATCH_SOURCE,
-} from '@bangle.io/nsm-3';
+import { store } from '@bangle.io/nsm-3';
 import type { EternalVars } from '@bangle.io/shared-types';
 import { workerEditorEffects } from '@bangle.io/worker-editor';
 import { replicaWorkspaceSlice } from '@bangle.io/worker-replica-slices';
@@ -15,16 +11,9 @@ export type NaukarStore = Store<InferSliceName<typeof replicaWorkspaceSlice>>;
 export function createNaukarStore(eternalVars: EternalVars): NaukarStore {
   const naukarStore = store({
     storeName: 'naukar-store',
-    dispatchTransaction: (store, updateState, tr) => {
-      DEFAULT_DISPATCH_TRANSACTION(store, updateState, tr);
-
-      console.group(
-        '[naukar] TX >',
-        tr.metadata.getMetadata(TX_META_DISPATCH_SOURCE),
-      );
-      for (const step of tr.steps) {
-        console.info(tr.txId, step.targetSliceId, step.sourceSliceId);
-      }
+    debug: (log) => {
+      console.group(`[naukar] ${log.type} update`);
+      console.log(log);
       console.groupEnd();
     },
 
