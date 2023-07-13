@@ -34,6 +34,7 @@
     "@bangle.io/history": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/nsm": "workspace:*",
+    "@bangle.io/nsm-3": "workspace:*",
     "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",

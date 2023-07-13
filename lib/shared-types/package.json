@@ -36,6 +36,7 @@
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm": "workspace:*",
+    "@bangle.io/nsm-3": "workspace:*",
     "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
