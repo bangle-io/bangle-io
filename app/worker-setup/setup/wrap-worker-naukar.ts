@@ -13,6 +13,7 @@ const worker = new Worker(new URL('./worker.ts', import.meta.url), {
 export const wrapper = Comlink.wrap(worker);
 
 export const terminate = async () => {
+  console.warn('Terminating naukar worker');
   wrapper[Comlink.releaseProxy]();
   // wait for comlink to release proxy
   // if we terminate immediately proxy is not released

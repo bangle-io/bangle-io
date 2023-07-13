@@ -8,13 +8,12 @@ import type { NaukarStore } from '../store';
 // This is to prevent accidental update of replica slices.
 // replica slices should be treated as read-only.
 
-const _setReplicaWorkspaceState = replicaWorkspaceSlice.createAction(
-  'replicaWorkspaceSliceUpdateAction',
+const _setReplicaWorkspaceState = replicaWorkspaceSlice.action(
   (obj: NaukarReplicaWorkspaceState) => {
-    return () => {
+    return replicaWorkspaceSlice.tx(() => {
       // completely replace the state
       return obj;
-    };
+    });
   },
 );
 

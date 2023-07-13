@@ -18,7 +18,7 @@ export const editorInterface = (
       );
 
       setCollabManager(
-        naukarStore.dispatch,
+        naukarStore,
         eternalVars,
         abortSignal,
         // TODO somehow this error is only caught if async

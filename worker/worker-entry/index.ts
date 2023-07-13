@@ -69,9 +69,10 @@ export function createNaukar(
     onStorageProviderChange,
   );
 
-  naukarStore.destroySignal.addEventListener(
+  abortSignal.addEventListener(
     'abort',
     () => {
+      naukarStore.destroy();
       eternalVars.storageEmitter.off(
         STORAGE_ON_CHANGE_EMITTER_KEY,
         onStorageProviderChange,

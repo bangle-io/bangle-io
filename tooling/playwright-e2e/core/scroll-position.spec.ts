@@ -69,7 +69,7 @@ const typeScrollableThings = async (page: Page) => {
   await longSleep();
 };
 
-test.describe.only('scroll', () => {
+test.describe('scroll', () => {
   for (const screenType of ['regular', 'split-screen']) {
     test(screenType + ' scroll state preserve', async ({ page }) => {
       const wsName = await createWorkspace(page);

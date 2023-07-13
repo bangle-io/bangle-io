@@ -4,7 +4,7 @@ import {
   BaseError,
   isWorkerGlobalScope,
 } from '@bangle.io/utils';
-import { getCollabManager, nsmWorkerEditor } from '@bangle.io/worker-editor';
+import { getCollabManager } from '@bangle.io/worker-editor';
 
 import type { NaukarStore } from '../store';
 
@@ -30,9 +30,7 @@ export const testInterface = (
     },
 
     requestDeleteCollabInstance: async (wsPath: string) => {
-      const collabManager = getCollabManager(
-        nsmWorkerEditor.getState(naukarStore.state),
-      );
+      const collabManager = getCollabManager(naukarStore);
       assertNotUndefined(collabManager, 'collabManager must be defined');
 
       collabManager.requestDeleteInstance(wsPath);
