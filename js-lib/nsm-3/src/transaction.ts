@@ -10,8 +10,7 @@ export type Step<TSliceName extends string, TParams extends any[]> = {
   targetSliceId: SliceId;
 };
 
-export const TX_META_DISPATCH_SOURCE = 'DEBUG_DISPATCH_SOURCE';
-export const TX_META_STORE_TX_ID = 'store-tx-id';
+export const META_DISPATCHER = 'DEBUG__DISPATCHER';
 export const TX_META_STORE_NAME = 'store-name';
 
 type TransactionOpts = {};
@@ -87,31 +86,3 @@ export class Metadata {
     this._metadata[key] = val;
   }
 }
-
-export interface EffectLog {
-  type: 'SYNC_UPDATE_EFFECT' | 'UPDATE_EFFECT';
-  name: string;
-  source: Array<{ sliceId: string; actionId: ActionId }>;
-}
-
-export interface TransactionLog {
-  type: 'TX';
-  actionId: ActionId;
-  sourceSliceName: string;
-  sourceSliceId: SliceId;
-  targetSliceName: string;
-  targetSliceId: SliceId;
-  dispatcher: string | undefined;
-  store: string | undefined;
-  txId: string | undefined;
-  params: unknown[];
-}
-
-export function txLog(tx: Transaction<any>): TransactionLog {
-  // TODO
-  return {} as any;
-}
-
-export type LogItem = EffectLog | TransactionLog;
-
-export type DebugFunc = (item: LogItem) => void;

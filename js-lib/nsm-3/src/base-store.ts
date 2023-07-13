@@ -42,7 +42,10 @@ export abstract class DerivativeStore<TSliceName extends string>
    * @internal
    */
   _rootStore: Store | undefined;
-  constructor(_rootStore: Store, public readonly name: string) {
+  constructor(
+    _rootStore: Store,
+    public readonly name: string,
+  ) {
     this._rootStore = _rootStore;
   }
 

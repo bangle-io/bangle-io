@@ -2,7 +2,7 @@ import { calcReverseDependencies as _calcReverseDependencies } from '../helpers'
 import { AnySlice } from '../types';
 
 const createSlice = (id: string) =>
-  ({ sliceId: id, dependencies: [] } as unknown as AnySlice);
+  ({ sliceId: id, dependencies: [] }) as unknown as AnySlice;
 
 const setDeps = (slice: AnySlice, deps: string[]) => {
   return {

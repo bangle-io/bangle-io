@@ -114,7 +114,7 @@ test('multiple effects can share the ref value', async () => {
   }));
 
   myStore.effect((store) => {
-    const val = sliceA.track(store).sliceAField1();
+    const val = sliceA.track(store).sliceAField1;
 
     const myRef = getMyRef(store);
 
@@ -122,7 +122,7 @@ test('multiple effects can share the ref value', async () => {
   });
 
   myStore.effect((store) => {
-    const val = sliceB.track(store).sliceBField1();
+    const val = sliceB.track(store).sliceBField1;
 
     const myRef = getMyRef(store);
 

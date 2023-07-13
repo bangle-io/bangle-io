@@ -56,18 +56,18 @@ describe('RunInstance', () => {
   });
 });
 
-describe('didDependenciesStateChange', () => {
+describe('whatDependenciesStateChange', () => {
   it('should return false for a blank instance', () => {
     let runInstance1 = new RunInstance(store, 'test');
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(false);
+    expect(runInstance1.whatDependenciesStateChange()).toBe(false);
   });
 
   it('should return false when value is the same', () => {
     let runInstance1 = new RunInstance(store, 'test');
     runInstance1.addTrackedField(sliceA, 'foo', 'bar');
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(false);
+    expect(runInstance1.whatDependenciesStateChange()).toBe(false);
     expect(runInstance1.dependencies.has(sliceA)).toBe(true);
   });
 
@@ -82,7 +82,7 @@ describe('didDependenciesStateChange', () => {
 
     expect(runInstance2.dependencies.has(sliceA)).toBe(true);
 
-    expect(runInstance2.didDependenciesStateChange()).toBe(true);
+    expect(runInstance2.whatDependenciesStateChange()).toBe('foo');
   });
 
   it('should return true when store state have changed', () => {
@@ -95,19 +95,19 @@ describe('didDependenciesStateChange', () => {
     let runInstance1 = new RunInstance(store, 'test');
     runInstance1.addTrackedField(sliceA, 'foo', sliceA.get(store.state).foo);
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(false);
+    expect(runInstance1.whatDependenciesStateChange()).toBe(false);
 
     store.dispatch(myAction('xyz'));
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(true);
+    expect(runInstance1.whatDependenciesStateChange()).toBe('foo');
 
     let runInstance2 = runInstance1.newRun();
 
-    expect(runInstance2.didDependenciesStateChange()).toBe(false);
+    expect(runInstance2.whatDependenciesStateChange()).toBe(false);
 
     runInstance2.addTrackedField(sliceA, 'foo', sliceA.get(store.state).foo);
 
-    expect(runInstance2.didDependenciesStateChange()).toBe(false);
+    expect(runInstance2.whatDependenciesStateChange()).toBe(false);
   });
 
   it('should only focus on the tracked field and ignore other fields in the slice', () => {
@@ -130,15 +130,15 @@ describe('didDependenciesStateChange', () => {
       sliceB.get(store.state).sliceBField,
     );
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(false);
+    expect(runInstance1.whatDependenciesStateChange()).toBe(false);
 
     store.dispatch(updateOtherField('xyz'));
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(false);
+    expect(runInstance1.whatDependenciesStateChange()).toBe(false);
 
     store.dispatch(updateField('xyz'));
 
-    expect(runInstance1.didDependenciesStateChange()).toBe(true);
+    expect(runInstance1.whatDependenciesStateChange()).toBe('sliceBField');
   });
 });
 

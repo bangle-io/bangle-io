@@ -3,6 +3,7 @@ import type { Effect, EffectCallback, EffectOpts } from './effect';
 import { effect, EffectManager } from './effect';
 import type { EffectCreator } from './effect/effect';
 import { calcReverseDependencies } from './helpers';
+import { DebugLogger, opLog, txLog } from './logger';
 import type { Operation, OperationCallback, OperationOpts } from './operation';
 import { operation } from './operation';
 import type { Slice } from './slice';
@@ -10,7 +11,7 @@ import type { StoreStateOpts } from './store-state';
 import { StoreState } from './store-state';
 import {
   Transaction,
-  TX_META_DISPATCH_SOURCE,
+  META_DISPATCHER,
   TX_META_STORE_NAME,
 } from './transaction';
 import type { SliceId } from './types';
@@ -21,8 +22,8 @@ type StoreOpts<TSliceName extends string = any> = {
   dispatchTransaction?: DispatchTransaction;
   dispatchOperation?: DispatchOperation;
   storeName: string;
+  debug?: DebugLogger;
 };
-
 type DispatchOperation = (store: Store, operation: Operation) => void;
 
 type DispatchTransaction = (
@@ -77,6 +78,7 @@ export class Store<TSliceName extends string = any>
   private updateState = (state: StoreState<any>) => {
     const oldState = this._state;
     this._state = state;
+
     this._effectsManager.run(this._state._getChangedSlices(oldState));
   };
 
@@ -88,13 +90,15 @@ export class Store<TSliceName extends string = any>
     txn.metadata.setMetadata(TX_META_STORE_NAME, this.opts.storeName);
 
     if (opts?.debugInfo) {
-      txn.metadata.setMetadata(TX_META_DISPATCH_SOURCE, opts.debugInfo);
+      txn.metadata.setMetadata(META_DISPATCHER, opts.debugInfo);
     }
 
     if (txn instanceof Transaction) {
+      this.opts.debug?.(txLog(txn));
       this._dispatchTxn(this, this.updateState, txn);
     } else {
       const operation = txn;
+      this.opts.debug?.(opLog(txn));
       this._dispatchOperation(this, operation);
     }
   };
@@ -116,7 +120,7 @@ export class Store<TSliceName extends string = any>
     this._dispatchOperation =
       opts.dispatchOperation || DEFAULT_DISPATCH_OPERATION;
 
-    this._effectsManager = new EffectManager(this.opts.slices);
+    this._effectsManager = new EffectManager(this.opts.slices, this.opts.debug);
   }
 
   get destroyed() {
@@ -157,6 +161,9 @@ export class Store<TSliceName extends string = any>
   }
 
   registerEffect(ef: EffectCreator) {
-    this._effectsManager.registerEffect(ef(this));
+    const effect = ef(this);
+    this._effectsManager.registerEffect(effect);
+
+    return effect;
   }
 }

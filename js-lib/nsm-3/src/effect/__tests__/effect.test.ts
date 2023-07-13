@@ -132,7 +132,7 @@ describe('effect with store', () => {
       (effectStore) => {
         const { sliceAField1 } = sliceA.track(effectStore);
 
-        effectCalled(sliceAField1());
+        effectCalled(sliceAField1);
       },
       {
         deferred: false,
@@ -165,7 +165,7 @@ describe('effect with store', () => {
       function effect2(store) {
         const { sliceAField2 } = sliceA.track(store);
 
-        effectCalled(sliceAField2());
+        effectCalled(sliceAField2);
       },
       {
         deferred: false,
@@ -194,7 +194,7 @@ describe('effect with store', () => {
       function effect2(store) {
         const { sliceAField2 } = sliceA.track(store);
 
-        effectCalled(sliceAField2());
+        effectCalled(sliceAField2);
       },
       {
         deferred: false,
@@ -232,7 +232,7 @@ describe('effect with store', () => {
       function effect1(store) {
         const { sliceCDepBSelector1 } = sliceCDepB.track(store);
 
-        effect1Called(sliceCDepBSelector1());
+        effect1Called(sliceCDepBSelector1);
       },
       {
         deferred: false,
@@ -243,7 +243,7 @@ describe('effect with store', () => {
       function effect2(store) {
         const { sliceCDepBSelector2 } = sliceCDepB.track(store);
 
-        effect2Called(sliceCDepBSelector2());
+        effect2Called(sliceCDepBSelector2);
       },
       {
         deferred: false,
@@ -254,7 +254,7 @@ describe('effect with store', () => {
       function effect3(store) {
         const { sliceCDepBField } = sliceCDepB.track(store);
 
-        effect3Called(sliceCDepBField());
+        effect3Called(sliceCDepBField);
       },
       {
         deferred: false,
@@ -307,7 +307,7 @@ describe('effect with store', () => {
         (effectStore) => {
           const { sliceAField1 } = sliceA.track(effectStore);
 
-          effectCalled(sliceAField1());
+          effectCalled(sliceAField1);
 
           cleanup(effectStore, cleanupCalled);
         },
@@ -344,7 +344,7 @@ describe('effect with store', () => {
         (effectStore) => {
           const { sliceBField1 } = sliceB.track(effectStore);
 
-          effectCalled(sliceBField1());
+          effectCalled(sliceBField1);
 
           cleanup(effectStore, cleanupCalled);
         },
@@ -370,7 +370,7 @@ describe('effect with store', () => {
       const eff = store.effect((store) => {
         const { sliceBField1 } = sliceB.track(store);
 
-        effectCalled(sliceBField1());
+        effectCalled(sliceBField1);
       });
 
       await waitForExpect(() => {
@@ -406,7 +406,7 @@ describe('effect with store', () => {
       store.effect(
         function effectCb1(store) {
           const { sliceAField1 } = sliceA.track(store);
-          effect1(sliceAField1());
+          effect1(sliceAField1);
         },
         { deferred: false },
       );
@@ -416,7 +416,7 @@ describe('effect with store', () => {
           const { sliceAField1 } = sliceA.track(store);
           const { sliceBField1 } = sliceB.track(store);
 
-          effect2(sliceAField1(), sliceBField1());
+          effect2(sliceAField1, sliceBField1);
         },
         { deferred: false },
       );
@@ -436,11 +436,11 @@ describe('effect with store', () => {
             sliceCDepB.track(store);
 
           effect4(
-            sliceAField1(),
-            sliceAField2(),
-            sliceBField1(),
-            sliceCDepBField(),
-            sliceCDepBSelector1(),
+            sliceAField1,
+            sliceAField2,
+            sliceBField1,
+            sliceCDepBField,
+            sliceCDepBSelector1,
           );
         },
         { deferred: false },
@@ -449,7 +449,7 @@ describe('effect with store', () => {
       store.effect(
         function effectCb5(store) {
           const { sliceCDepBSelector1 } = sliceCDepB.track(store);
-          effect5(sliceCDepBSelector1());
+          effect5(sliceCDepBSelector1);
         },
         { deferred: false },
       );
@@ -618,15 +618,15 @@ describe('effect only', () => {
   });
 
   test('runs the effect if it has run once and dependencies have changed', async () => {
-    const { effect, callback, store } = setup();
+    const { effect, callback } = setup();
 
     effect.run();
 
     await sleep(5);
 
     jest
-      .spyOn(effect['runInstance'], 'didDependenciesStateChange')
-      .mockReturnValue(true);
+      .spyOn(effect['runInstance'], 'whatDependenciesStateChange')
+      .mockReturnValue('someChange');
 
     effect.run();
     await sleep(5);
@@ -635,14 +635,14 @@ describe('effect only', () => {
   });
 
   test('does not run the effect if it has run once and dependencies have not changed', async () => {
-    const { effect, callback, store } = setup();
+    const { effect, callback } = setup();
     effect.run();
 
     await sleep(5);
     expect(callback).toHaveBeenCalledTimes(1);
 
     jest
-      .spyOn(effect['runInstance'], 'didDependenciesStateChange')
+      .spyOn(effect['runInstance'], 'whatDependenciesStateChange')
       .mockReturnValue(false);
 
     effect.run();

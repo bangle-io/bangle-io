@@ -1,4 +1,5 @@
 import { calcReverseDependencies } from '../helpers';
+import { DebugLogger } from '../logger';
 import { AnySlice, SliceId } from '../types';
 import { Effect } from './effect';
 
@@ -8,7 +9,10 @@ export class EffectManager {
 
   reverseDependencies: Record<SliceId, Set<AnySlice>> = {};
 
-  constructor(private readonly slices: AnySlice[]) {
+  constructor(
+    private readonly slices: AnySlice[],
+    private readonly debug?: DebugLogger,
+  ) {
     this.slicesLookup = Object.fromEntries(
       slices.map((slice) => [slice.sliceId, slice]),
     );

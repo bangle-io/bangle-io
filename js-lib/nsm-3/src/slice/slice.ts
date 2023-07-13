@@ -61,23 +61,15 @@ export class Slice<
 
   track<TStoreSlices extends string>(
     store: ValidEffectStore<TStoreSlices, TSliceName>,
-  ): {
-    [TKey in keyof TState]-?: () => TState[TKey];
-  } {
-    const result = Object.fromEntries(
-      Object.keys(this.get(store.state as StoreState<any>)).map((key) => [
-        key,
-        () => {
-          return (this.get(store.state as StoreState<any>) as any)[key];
-        },
-      ]),
-    );
-
-    return new Proxy(result, {
+  ): TState {
+    return new Proxy(this.get(store.state as StoreState<any>), {
       get: (target, prop: string) => {
-        store._addTrackedField(this, prop, target[prop]!());
+        // @ts-expect-error not sure how to fix this
+        const val = target[prop];
 
-        return target[prop];
+        store._addTrackedField(this, prop, val);
+
+        return val;
       },
     }) as any;
   }

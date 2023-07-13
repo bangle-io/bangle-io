@@ -62,7 +62,7 @@ export class RunInstance {
     this.effectStore = new EffectStore(this, rootStore, this.name);
   }
 
-  didDependenciesStateChange(): boolean {
+  whatDependenciesStateChange(): false | string {
     for (const [slice, fields] of this._dependencies) {
       const currentSliceState = slice.get(this.rootStore.state) as Record<
         string,
@@ -71,7 +71,7 @@ export class RunInstance {
 
       for (const obj of fields) {
         if (!Object.is(obj.value, currentSliceState[obj.field])) {
-          return true;
+          return obj.field;
         }
       }
     }

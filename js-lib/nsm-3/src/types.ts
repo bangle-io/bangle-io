@@ -32,7 +32,7 @@ export type IfEquals<T, U, Y = unknown, N = never> = (<G>() => G extends T
   : N;
 
 export const expectType = <Expected, Actual>(
-  actual: IfEquals<Actual, Expected, Actual>,
+  _actual: IfEquals<Actual, Expected, Actual>,
 ) => void 0;
 
 export type InferSliceNameFromSlice<T> = T extends BaseSlice<

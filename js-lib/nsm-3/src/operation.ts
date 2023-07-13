@@ -167,7 +167,6 @@ class OperationExecutor {
       return;
     }
 
-    console.debug(`Running operation ${this.name}`);
     const result = this.operationCallback(...params)(opStore);
 
     if (result instanceof Promise) {

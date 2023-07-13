@@ -1,5 +1,6 @@
 import type { BaseStore, InferSliceNameFromStore } from '../base-store';
 import { hasIdleCallback } from '../helpers';
+import { DebugLogger } from '../logger';
 import type { Store } from '../store';
 import type { AnySlice } from '../types';
 import type { EffectStore } from './run-instance';
@@ -33,6 +34,8 @@ export type EffectCallback<TStore extends BaseStore<any>> = (
 export class Effect {
   private runInstance: RunInstance;
 
+  private debug: DebugLogger | undefined;
+
   private destroyed = false;
 
   private pendingRun = false;
@@ -48,6 +51,7 @@ export class Effect {
   ) {
     this.name = callback.name || 'anonymous';
     this.runInstance = new RunInstance(rootStore, this.name);
+    this.debug = rootStore.opts.debug;
   }
 
   destroy(): void {
@@ -114,18 +118,27 @@ export class Effect {
   }
 
   private _run(): void {
+    let fieldChanged: string = '';
     // if runCount is 0, always= run, to ensure the effect runs at least once
     if (this.runCount > 0) {
-      const depChanged = this.runInstance.didDependenciesStateChange();
+      const depChanged = this.runInstance.whatDependenciesStateChange();
 
-      if (!depChanged) {
+      if (depChanged === false) {
         return;
       }
+
+      fieldChanged = depChanged;
     }
 
-    this.runInstance = this.runInstance.newRun();
-    console.debug(`Running effect ${this.name} ${this.runCount}`);
+    const oldInstance = this.runInstance;
+    this.runInstance = oldInstance.newRun();
+
     void this.callback(this.runInstance.effectStore);
+    this.debug?.({
+      type: this.opts.deferred ? 'UPDATE_EFFECT' : 'SYNC_UPDATE_EFFECT',
+      name: this.name,
+      changed: fieldChanged,
+    });
     this.runCount++;
   }
 }
