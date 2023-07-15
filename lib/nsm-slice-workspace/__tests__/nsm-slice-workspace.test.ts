@@ -1,9 +1,8 @@
-import { Store } from '@bangle.io/nsm';
+import { store } from '@bangle.io/nsm-3';
 import { nsmPageSlice, syncPageLocation } from '@bangle.io/slice-page';
 import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 import {
-  getWorkspaceData,
   nsmSliceWorkspace,
   setMiniWsPath,
   setPopupWsPath,
@@ -12,13 +11,13 @@ import {
 } from '../nsm-slice-workspace';
 
 const createStore = () => {
-  const store = Store.create({
+  const myStore = store({
     storeName: 'myStore',
-    state: [nsmPageSlice, nsmSliceWorkspace],
+    slices: [nsmPageSlice, nsmSliceWorkspace],
   });
 
   return {
-    store,
+    store: myStore,
   };
 };
 describe('nsmSliceWorkspace', () => {
@@ -44,7 +43,8 @@ describe('nsmSliceWorkspace', () => {
     );
 
     const state = store.state;
-    const { recentlyUsedWsPaths } = getWorkspaceData(state, testWsName1) || {};
+    const { recentlyUsedWsPaths } =
+      nsmSliceWorkspace.get(state).workspaceData[testWsName1] || {};
     expect(recentlyUsedWsPaths).toEqual([path1, path2]);
   });
 
@@ -57,7 +57,8 @@ describe('nsmSliceWorkspace', () => {
     );
 
     const state = store.state;
-    const { wsPaths } = getWorkspaceData(state, testWsName1) || {};
+    const { wsPaths } =
+      nsmSliceWorkspace.get(state).workspaceData[testWsName1] || {};
     expect(wsPaths).toEqual([path1, path2]);
   });
 
@@ -70,7 +71,8 @@ describe('nsmSliceWorkspace', () => {
     );
 
     const state = store.state;
-    const { miniEditorWsPath } = getWorkspaceData(state, testWsName1) || {};
+    const { miniEditorWsPath } =
+      nsmSliceWorkspace.get(state).workspaceData[testWsName1] || {};
     expect(miniEditorWsPath).toEqual(path1);
   });
 
@@ -83,7 +85,8 @@ describe('nsmSliceWorkspace', () => {
     );
 
     const state = store.state;
-    const { popupEditorWsPath } = getWorkspaceData(state, testWsName1) || {};
+    const { popupEditorWsPath } =
+      nsmSliceWorkspace.get(state).workspaceData[testWsName1] || {};
     expect(popupEditorWsPath).toEqual(path1);
   });
 
@@ -95,15 +98,11 @@ describe('nsmSliceWorkspace', () => {
       }),
     );
 
-    expect(
-      nsmSliceWorkspace.resolveState(store.state).noteWsPaths,
-    ).toBeUndefined();
-    expect(
-      nsmSliceWorkspace.resolveState(store.state).openedWsPaths.openCount,
-    ).toBe(0);
-    expect(nsmSliceWorkspace.resolveState(store.state).wsName).toBeUndefined();
-    expect(nsmSliceWorkspace.resolveState(store.state).wsPaths).toBeUndefined();
-    expect(nsmSliceWorkspace.resolveState(store.state).workspaceData)
+    expect(nsmSliceWorkspace.get(store.state).noteWsPaths).toBeUndefined();
+    expect(nsmSliceWorkspace.get(store.state).openedWsPaths.openCount).toBe(0);
+    expect(nsmSliceWorkspace.get(store.state).wsName).toBeUndefined();
+    expect(nsmSliceWorkspace.get(store.state).wsPaths).toBeUndefined();
+    expect(nsmSliceWorkspace.get(store.state).workspaceData)
       .toMatchInlineSnapshot(`
       {
         "test-ws-1": {
@@ -125,7 +124,7 @@ describe('nsmSliceWorkspace', () => {
       }),
     );
 
-    expect(nsmSliceWorkspace.resolveState(store.state).workspaceData)
+    expect(nsmSliceWorkspace.get(store.state).workspaceData)
       .toMatchInlineSnapshot(`
       {
         "test-ws-1": {
@@ -148,22 +147,17 @@ describe('nsmSliceWorkspace', () => {
       }),
     );
 
-    expect(nsmSliceWorkspace.resolveState(store.state).wsName).toBe(
-      testWsName1,
-    );
+    expect(nsmSliceWorkspace.get(store.state).wsName).toBe(testWsName1);
 
     store.dispatch(
       syncPageLocation({
-        pathname: '/ws/test-ws-1/path1',
+        pathname: '/ws/test-ws-1/path1.md',
         search: 'secondary=test-ws-1%253A1-rule.md',
       }),
     );
-    expect(
-      nsmSliceWorkspace.resolveState(store.state).openedWsPaths.openCount,
-    ).toBe(2);
-    expect(nsmSliceWorkspace.resolveState(store.state).noteWsPaths).toEqual([
-      notePath3,
-    ]);
+
+    expect(nsmSliceWorkspace.get(store.state).openedWsPaths.openCount).toBe(2);
+    expect(nsmSliceWorkspace.get(store.state).noteWsPaths).toEqual([notePath3]);
 
     store.dispatch(
       setWsPaths({
@@ -171,7 +165,7 @@ describe('nsmSliceWorkspace', () => {
         wsPaths: [testWsName2Path1],
       }),
     );
-    expect(nsmSliceWorkspace.resolveState(store.state).workspaceData)
+    expect(nsmSliceWorkspace.get(store.state).workspaceData)
       .toMatchInlineSnapshot(`
       {
         "test-ws-1": {
@@ -202,7 +196,7 @@ describe('nsmSliceWorkspace', () => {
       }),
     );
 
-    expect(nsmSliceWorkspace.resolveState(store.state).noteWsPaths).toEqual([
+    expect(nsmSliceWorkspace.get(store.state).noteWsPaths).toEqual([
       'test-ws-2:path1.md',
     ]);
   });

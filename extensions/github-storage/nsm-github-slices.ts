@@ -1,4 +1,4 @@
-import { createSliceV2, updateState } from '@bangle.io/nsm';
+import { slice } from '@bangle.io/nsm-3';
 
 const defaultInitState: {
   githubWsName: string | undefined;
@@ -6,17 +6,15 @@ const defaultInitState: {
   githubWsName: undefined,
 };
 
-export const nsmGhSlice = createSliceV2([], {
+export const nsmGhSlice = slice([], {
   name: 'slice::github-storage:main',
-
-  initState: defaultInitState,
+  state: defaultInitState,
 });
 
-const updateObj = updateState(defaultInitState);
-
-export const updateGithubDetails = nsmGhSlice.createAction(
-  'updateGithubDetails',
-  (data: { githubWsName?: string | undefined }) => {
-    return (state) => updateObj(state, data);
+export const updateGithubDetails = nsmGhSlice.action(
+  function updateGithubDetails(data: { githubWsName?: string | undefined }) {
+    return nsmGhSlice.tx((state) => {
+      return nsmGhSlice.update(state, data);
+    });
   },
 );

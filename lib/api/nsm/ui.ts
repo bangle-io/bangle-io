@@ -15,7 +15,7 @@ export function useUi() {
 export const uiState = () => {
   const store = getStore();
 
-  return nsmUI.nsmUISlice.resolveState(store.state);
+  return nsmUI.nsmUISlice.get(store.state);
 };
 
 export const closeSidebar = (): void => {

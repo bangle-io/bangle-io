@@ -121,7 +121,7 @@ export function GenericFileBrowser({
   createNewFile,
 }: {
   wsName: WsName;
-  files: string[];
+  files: readonly WsPath[];
   activeFilePath?: string;
   closeSidebar: () => void;
   createNewFile: (path?: string) => void;

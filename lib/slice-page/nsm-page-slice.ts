@@ -1,11 +1,5 @@
-import {
-  createSelector,
-  createSliceWithSelectors,
-  serialAction,
-  updateState,
-  z,
-} from '@bangle.io/nsm';
-import type { WsName, WsPath } from '@bangle.io/shared-types';
+import { sliceKey } from '@bangle.io/nsm-3';
+import type { WsName } from '@bangle.io/shared-types';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import {
   createWsName,
@@ -14,10 +8,9 @@ import {
   isValidWsName,
 } from '@bangle.io/ws-path';
 
-import type { PageSliceStateType } from './common';
-import { pageLifeCycleState } from './common';
+import type { PageLifeCycleState, PageSliceStateType } from './common';
+import type { Location } from './location-helpers';
 import {
-  locationSchema,
   pathnameToWsName,
   pathnameToWsPath,
   searchToWsPath,
@@ -30,198 +23,179 @@ const initState: StateType = {
   ...pageSliceInitialState,
 };
 
-const selectiveUpdate = updateState(initState, (state, prevState) => {
-  return state;
+export const nsmPageSliceKey = sliceKey([], {
+  name: 'bangle/page-slice',
+  state: initState,
 });
 
-export const nsmPageSlice = createSliceWithSelectors([], {
-  name: 'bangle/page-slice',
-  initState: initState,
+const currentPageLifeCycle = nsmPageSliceKey.selector((storeState) => {
+  const { lifeCycleState } = nsmPageSliceKey.get(storeState);
 
-  selectors: {
-    currentPageLifeCycle: createSelector(
-      { current: (state) => state.lifeCycleState.current },
-      (computed) => computed.current,
-    ),
+  return lifeCycleState.current;
+});
 
-    wsName: createSelector(
-      { location: (state) => state.location },
-      (computed): WsName | undefined => {
-        let result = pathnameToWsName(computed.location.pathname);
+const wsName = nsmPageSliceKey.selector((storeState) => {
+  const { location } = nsmPageSliceKey.get(storeState);
+  let result = pathnameToWsName(location.pathname);
 
-        if (!result) {
-          return undefined;
-        }
+  if (!result) {
+    return undefined;
+  }
 
-        if (!isValidWsName(result)) {
-          console.warn('Invalid wsName', result);
+  if (!isValidWsName(result)) {
+    console.warn('Invalid wsName', result);
 
-          return undefined;
-        }
+    return undefined;
+  }
 
-        return createWsName(result);
-      },
-    ),
+  return createWsName(result);
+});
 
-    // raw wsPath is the wsPath without any validation
-    rawPrimaryWsPath: createSelector(
-      { location: (state) => state.location },
-      (computed): string | undefined => {
-        const primary = pathnameToWsPath(computed.location.pathname);
+const rawPrimaryWsPath = nsmPageSliceKey.selector(
+  (storeState): string | undefined => {
+    const { location } = nsmPageSliceKey.get(storeState);
 
-        return primary;
-      },
-    ),
+    return pathnameToWsPath(location.pathname);
+  },
+);
 
-    // raw wsPath is the wsPath without any validation
-    rawSecondaryWsPath: createSelector(
-      { location: (state) => state.location },
-      (computed): string | undefined => {
-        let result = pathnameToWsName(computed.location.pathname);
+const rawSecondaryWsPath = nsmPageSliceKey.selector((storeState) => {
+  const { location } = nsmPageSliceKey.get(storeState);
+  let result = pathnameToWsName(location.pathname);
 
-        const secondary = result
-          ? searchToWsPath(computed.location.search)
-          : undefined;
+  return result ? searchToWsPath(location.search) : undefined;
+});
 
-        return secondary;
-      },
-    ),
+const primaryWsPath = nsmPageSliceKey.selector((storeState) => {
+  const { location } = nsmPageSliceKey.get(storeState);
+  const primary = pathnameToWsPath(location.pathname);
 
-    primaryWsPath: createSelector(
-      { location: (state) => state.location },
-      (computed): WsPath | undefined => {
-        const primary = pathnameToWsPath(computed.location.pathname);
+  if (!primary) {
+    return undefined;
+  }
 
-        if (!primary) {
-          return undefined;
-        }
+  if (!isValidNoteWsPath(primary)) {
+    console.warn('Invalid primaryWsPath', primary);
 
-        if (!isValidNoteWsPath(primary)) {
-          console.warn('Invalid primaryWsPath', primary);
+    return undefined;
+  }
 
-          return undefined;
-        }
+  return createWsPath(primary);
+});
 
-        return createWsPath(primary);
-      },
-    ),
+const secondaryWsPath = nsmPageSliceKey.selector((storeState) => {
+  const { location } = nsmPageSliceKey.get(storeState);
+  let result = pathnameToWsName(location.pathname);
+  const secondary = result ? searchToWsPath(location.search) : undefined;
 
-    secondaryWsPath: createSelector(
-      { location: (state) => state.location },
-      (computed): WsPath | undefined => {
-        let result = pathnameToWsName(computed.location.pathname);
+  if (!secondary) {
+    return undefined;
+  }
 
-        const secondary = result
-          ? searchToWsPath(computed.location.search)
-          : undefined;
+  if (!isValidNoteWsPath(secondary)) {
+    console.warn('Invalid secondaryWsPath', secondary);
 
-        if (!secondary) {
-          return undefined;
-        }
+    return undefined;
+  }
 
-        if (!isValidNoteWsPath(secondary)) {
-          console.warn('Invalid secondaryWsPath', secondary);
+  return createWsPath(secondary);
+});
 
-          return undefined;
-        }
+const isInactivePage = nsmPageSliceKey.selector((storeState) => {
+  const { lifeCycleState } = nsmPageSliceKey.get(storeState);
+  const { current } = lifeCycleState;
 
-        return createWsPath(secondary);
-      },
-    ),
+  return (
+    current === 'passive' || current === 'hidden' || current === 'terminated'
+  );
+});
 
-    isInactivePage: createSelector(
-      {
-        current: (state) => state.lifeCycleState.current,
-      },
-      (computed) => {
-        return (
-          computed.current === 'passive' ||
-          computed.current === 'hidden' ||
-          computed.current === 'terminated'
-        );
-      },
-    ),
+export const nsmPageSlice = nsmPageSliceKey.slice({
+  derivedState: {
+    currentPageLifeCycle,
+    wsName,
+    rawPrimaryWsPath,
+    rawSecondaryWsPath,
+    primaryWsPath,
+    secondaryWsPath,
+    isInactivePage,
   },
 });
 
-export const noOp = nsmPageSlice.createAction(
-  'noOp',
-  serialAction(z.null(), () => {
-    return (state) => {
-      return state;
-    };
-  }),
-);
+export const noOp = nsmPageSlice.action(function noOp() {
+  return nsmPageSlice.tx((storeState) => {
+    return nsmPageSlice.update(storeState, (state) => state);
+  });
+});
 
-export const blockReload = nsmPageSlice.createAction(
-  'blockReload',
-  serialAction(z.boolean(), (block) => {
-    return (state) =>
-      selectiveUpdate(state, {
-        blockReload: block,
-      });
-  }),
-);
-
-export const setPageLifeCycleState = nsmPageSlice.createAction(
-  'setPageLifeCycleState',
-  serialAction(
-    z.object({
-      current: pageLifeCycleState,
-      previous: pageLifeCycleState,
+export const blockReload = nsmPageSlice.action(function blockReload(
+  block: boolean,
+) {
+  return nsmPageSlice.tx((storeState) =>
+    nsmPageSlice.update(storeState, {
+      blockReload: block,
     }),
-    ({ current, previous }) => {
-      return (state) =>
-        selectiveUpdate(state, {
-          lifeCycleState: {
-            current,
-            previous,
-          },
-        });
-    },
-  ),
+  );
+});
+
+export const setPageLifeCycleState = nsmPageSlice.action(
+  function setPageLifeCycleState({
+    current,
+    previous,
+  }: {
+    current: PageLifeCycleState;
+    previous: PageLifeCycleState;
+  }) {
+    return nsmPageSlice.tx((storeState) => {
+      return nsmPageSlice.update(storeState, {
+        lifeCycleState: {
+          current,
+          previous,
+        },
+      });
+    });
+  },
 );
 
-export const syncPageLocation = nsmPageSlice.createAction(
-  'syncPageLocation',
-  serialAction(locationSchema, (location) => (state) => {
-    return selectiveUpdate(state, {
+export const syncPageLocation = nsmPageSlice.action(function syncPageLocation(
+  location: Location,
+) {
+  return nsmPageSlice.tx((storeState) => {
+    return nsmPageSlice.update(storeState, {
       location,
     });
-  }),
-);
+  });
+});
 
-export const goToLocation = nsmPageSlice.createAction(
-  'goToLocation',
-  serialAction(
-    z.object({
-      location: z.union([locationSchema, z.string()]),
-      replace: z.boolean().optional(),
-    }),
-    ({ location, replace = false }) =>
-      (state) => {
-        if (typeof location === 'string') {
-          const [pathname, search] = location.split('?');
+export const goToLocation = nsmPageSlice.action(function goToLocation({
+  location,
+  replace = false,
+}: {
+  location: Location | string;
+  replace?: boolean;
+}) {
+  return nsmPageSlice.tx((storeState) => {
+    if (typeof location === 'string') {
+      const [pathname, search] = location.split('?');
 
-          return selectiveUpdate(state, {
-            pendingNavigation: {
-              location: { pathname, search },
-              replaceHistory: replace,
-              preserve: false,
-            },
-          });
-        } else {
-          return selectiveUpdate(state, {
-            pendingNavigation: {
-              location,
-              replaceHistory: replace,
-              preserve: true,
-            },
-          });
-        }
-      },
-  ),
-);
+      return nsmPageSlice.update(storeState, {
+        pendingNavigation: {
+          location: { pathname, search },
+          replaceHistory: replace,
+          preserve: false,
+        },
+      });
+    } else {
+      return nsmPageSlice.update(storeState, {
+        pendingNavigation: {
+          location,
+          replaceHistory: replace,
+          preserve: true,
+        },
+      });
+    }
+  });
+});
 
 export function goToInvalidWorkspacePage({
   invalidWsName,

@@ -57,7 +57,7 @@ export function WorkspacePage() {
       );
 
       store.dispatch(
-        pushOpenedWsPaths(store.state, (openedWsPaths) =>
+        pushOpenedWsPaths((openedWsPaths) =>
           openedWsPaths.updateMiniEditorWsPath(undefined),
         ),
       );

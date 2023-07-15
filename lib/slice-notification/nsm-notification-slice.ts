@@ -1,14 +1,7 @@
-import { NotificationPayloadSchema } from '@bangle.io/constants';
-import {
-  createQueryState,
-  createSliceV2,
-  serialAction,
-  z,
-} from '@bangle.io/nsm';
+import { slice } from '@bangle.io/nsm-3';
 import type { NotificationPayloadType, WsPath } from '@bangle.io/shared-types';
 
 import type { EditorIssue } from './common';
-import { EditorIssueSchema } from './common';
 
 const notificationSliceInitState: {
   notifications: NotificationPayloadType[];
@@ -18,106 +11,101 @@ const notificationSliceInitState: {
   editorIssues: [],
 };
 
-export const nsmNotificationSlice = createSliceV2([], {
+export const nsmNotificationSlice = slice([], {
   name: 'notificationSliceKey',
-  initState: notificationSliceInitState,
+  state: notificationSliceInitState,
 });
+export const setEditorIssue = nsmNotificationSlice.action(
+  function setEditorIssue(editorIssue: EditorIssue) {
+    return nsmNotificationSlice.tx((state) => {
+      return nsmNotificationSlice.update(state, (sliceState) => {
+        const { editorIssues } = sliceState;
 
-export const setEditorIssue = nsmNotificationSlice.createAction(
-  'setEditorIssue',
-  serialAction(EditorIssueSchema, (editorIssue) => {
-    return (state) => {
-      const { editorIssues } = state;
+        const newIssues = editorIssues.filter(
+          (issue) =>
+            issue.uid !== editorIssue.uid &&
+            issue.wsPath !== editorIssue.wsPath,
+        );
 
-      const newIssues = editorIssues.filter(
-        (issue) =>
-          issue.uid !== editorIssue.uid && issue.wsPath !== editorIssue.wsPath,
-      );
+        newIssues.push(editorIssue);
 
-      newIssues.push(editorIssue);
-
-      return {
-        ...state,
-        editorIssues: newIssues,
-      };
-    };
-  }),
-);
-
-export const clearEditorIssue = nsmNotificationSlice.createAction(
-  'clearEditorIssue',
-  serialAction(z.string(), (uid) => {
-    return (state) => {
-      const { editorIssues } = state;
-
-      if (!editorIssues.find((issue) => issue.uid === uid)) {
-        return state;
-      }
-
-      return {
-        ...state,
-        editorIssues: editorIssues.filter((issue) => issue.uid !== uid),
-      };
-    };
-  }),
-);
-
-export const showNotification = nsmNotificationSlice.createAction(
-  'showNotification',
-  serialAction(NotificationPayloadSchema, (notification) => {
-    return (state) => {
-      const { uid } = notification;
-
-      if (state.notifications.find((n) => n.uid === uid)) {
-        // Prevent repeat firing of notifications
-        return state;
-      }
-
-      return {
-        ...state,
-        notifications: [...state.notifications, notification],
-      };
-    };
-  }),
-);
-
-export const clearAllNotifications = nsmNotificationSlice.createAction(
-  'clearAllNotifications',
-  serialAction(z.undefined(), () => {
-    return (state) => {
-      return {
-        ...state,
-        notifications: [],
-      };
-    };
-  }),
-);
-
-export const dismissNotification = nsmNotificationSlice.createAction(
-  'dismissNotification',
-  serialAction(z.union([z.string(), z.array(z.string())]), (uids) => {
-    return (state) => {
-      let newNotifications = state.notifications.filter((n) => {
-        return !uids.includes(n.uid);
+        return { editorIssues: newIssues };
       });
-
-      if (newNotifications.length !== state.notifications.length) {
-        return {
-          ...state,
-          notifications: newNotifications,
-        };
-      }
-
-      return state;
-    };
-  }),
-);
-
-export const getEditorIssue = createQueryState(
-  [nsmNotificationSlice],
-  (state, wsPath: WsPath) => {
-    const { editorIssues } = nsmNotificationSlice.getState(state);
-
-    return editorIssues.find((issue) => issue.wsPath === wsPath);
+    });
   },
 );
+
+export const clearEditorIssue = nsmNotificationSlice.action(
+  function clearEditorIssue(uid: string) {
+    return nsmNotificationSlice.tx((state) => {
+      return nsmNotificationSlice.update(state, (sliceState) => {
+        const { editorIssues } = sliceState;
+
+        if (!editorIssues.find((issue) => issue.uid === uid)) {
+          return sliceState;
+        }
+
+        return {
+          editorIssues: editorIssues.filter((issue) => issue.uid !== uid),
+        };
+      });
+    });
+  },
+);
+
+export const showNotification = nsmNotificationSlice.action(
+  function showNotification(notification: NotificationPayloadType) {
+    return nsmNotificationSlice.tx((state) => {
+      return nsmNotificationSlice.update(state, (sliceState) => {
+        const { uid } = notification;
+
+        if (sliceState.notifications.find((n) => n.uid === uid)) {
+          // Prevent repeat firing of notifications
+          return sliceState;
+        }
+
+        return {
+          notifications: [...sliceState.notifications, notification],
+        };
+      });
+    });
+  },
+);
+
+export const clearAllNotifications = nsmNotificationSlice.action(
+  function clearAllNotifications() {
+    return nsmNotificationSlice.tx((state) => {
+      return nsmNotificationSlice.update(state, {
+        notifications: [],
+      });
+    });
+  },
+);
+
+export const dismissNotification = nsmNotificationSlice.action(
+  function dismissNotification(uids: string[] | string) {
+    return nsmNotificationSlice.tx((state) => {
+      return nsmNotificationSlice.update(state, (sliceState) => {
+        const newNotifications = sliceState.notifications.filter((n) => {
+          return !uids.includes(n.uid);
+        });
+
+        if (newNotifications.length !== sliceState.notifications.length) {
+          return {
+            notifications: newNotifications,
+          };
+        }
+
+        return sliceState;
+      });
+    });
+  },
+);
+
+export const getEditorIssue = nsmNotificationSlice.query((wsPath: WsPath) => {
+  return (state): EditorIssue | undefined => {
+    const { editorIssues } = nsmNotificationSlice.get(state);
+
+    return editorIssues.find((issue) => issue.wsPath === wsPath);
+  };
+});

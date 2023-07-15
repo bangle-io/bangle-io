@@ -1,4 +1,4 @@
-import { assertSafeZodSchema, z } from '@bangle.io/nsm';
+import { assertSafeZodSchema, z } from '@bangle.io/nsm-3';
 
 export const openedFileSchema = assertSafeZodSchema(
   z.object({
@@ -14,6 +14,8 @@ export const openedFileSchema = assertSafeZodSchema(
     currentDiskShaTimestamp: z.union([z.number(), z.undefined()]),
   }),
 );
+
+export type OpenedFile = z.infer<typeof openedFileSchema>;
 
 export type NaukarReplicaWorkspaceState = z.infer<
   (typeof naukarReplicaWorkspaceSchema)['state']

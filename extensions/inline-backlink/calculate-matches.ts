@@ -25,8 +25,8 @@ export const getAllWikiLinks = weakCache((state: EditorState): string[] => {
   return result;
 });
 
-const processWsPaths = weakCache((allWsPaths: WsPath[]) => {
-  allWsPaths = [...allWsPaths];
+const processWsPaths = weakCache((_allWsPaths: readonly WsPath[]) => {
+  let allWsPaths: WsPath[] = [..._allWsPaths];
 
   const wsPathSet = new Set(allWsPaths);
   // sort by the least nested to most nested
@@ -73,7 +73,10 @@ const processWsPaths = weakCache((allWsPaths: WsPath[]) => {
  * @returns
  */
 export const calcWikiLinkMapping = weakCacheDuo(
-  (noteWsPaths: WsPath[], wikiLinks: string[]): Map<string, WsPath> => {
+  (
+    noteWsPaths: readonly WsPath[],
+    wikiLinks: string[],
+  ): Map<string, WsPath> => {
     let result = new Map<string, WsPath>();
     const matchWithFileName = (
       wsPath: WsPath,

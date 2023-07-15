@@ -1,14 +1,14 @@
-import { createSliceV2 } from 'nalanda';
 import { z } from 'zod';
 
 import { sliceStateSerializer } from '../slice-state-serialization';
+import { slice } from '../src';
 
 const expectType = <Type>(_: Type): void => void 0;
 
 test('work with serializable data', () => {
-  const testSlice1 = createSliceV2([], {
+  const testSlice1 = slice([], {
     name: 'test-slice-1',
-    initState: {
+    state: {
       counter: 0,
       veggie: {
         items: ['carrot', 'potato'],
@@ -25,7 +25,7 @@ test('work with serializable data', () => {
       }),
     }),
     serialize: (state) => {
-      const { counter, veggie } = testSlice1.resolveState(state);
+      const { counter, veggie } = testSlice1.get(state);
 
       expectType<number>(counter);
       expectType<{

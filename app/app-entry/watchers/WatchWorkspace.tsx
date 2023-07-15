@@ -70,7 +70,7 @@ export function WatchWorkspace() {
           ) {
             log('refreshing wsPaths');
 
-            nsmStore.dispatch(refreshWorkspace(null));
+            nsmStore.dispatch(refreshWorkspace());
             checkCurrentEditors.current = true;
           }
           break;
@@ -92,7 +92,6 @@ export function WatchWorkspace() {
       checkCurrentEditors.current = false;
       nsmStore.dispatch(
         pushOpenedWsPaths(
-          nsmStore.state,
           (openedWsPaths) => {
             let newOpenedWsPaths = openedWsPaths;
 

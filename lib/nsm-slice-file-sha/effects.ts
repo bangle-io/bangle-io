@@ -1,13 +1,13 @@
+import type { OpenedFile } from '@bangle.io/constants';
 import { DISK_SHA_CHECK_INTERVAL } from '@bangle.io/constants';
 import { cachedCalculateGitFileSha } from '@bangle.io/git-file-sha';
-import type { Transaction } from '@bangle.io/nsm';
-import { changeEffect, intervalRunEffect, Slice } from '@bangle.io/nsm';
+import type { InferSliceNameFromSlice } from '@bangle.io/nsm-3';
+import { cleanup, effect, operation, ref } from '@bangle.io/nsm-3';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
-import { blockReload, nsmPageSlice } from '@bangle.io/slice-page';
+import { blockReload } from '@bangle.io/slice-page';
 import { fs } from '@bangle.io/workspace-info';
 import { createWsPath } from '@bangle.io/ws-path';
 
-import type { OpenedFile } from './nsm-slice-file-sha';
 import {
   actSyncEntries,
   actUpdateEntry,
@@ -19,117 +19,178 @@ const log = LOG
   ? console.debug.bind(console, '[slice-workspace-opened-doc-info] ')
   : () => {};
 
-const syncWithOpenedWsPathsEffect = changeEffect(
-  'syncWithOpenedWsPathsEffect',
-  {
-    openedWsPaths: nsmSliceWorkspace.pick((s) => s.openedWsPaths),
-    openedFiles: nsmSliceFileSha.passivePick((s) => s.openedFiles),
-  },
-  ({ openedWsPaths, openedFiles }, dispatch) => {
-    let additions: string[] = [];
-    let removals: string[] = [];
+const getPendingRunRef = ref(() => {
+  return {
+    pendingRun: false,
+  };
+});
 
-    // cleanup data that is not opened anymore and does not have a pending write
-    Object.entries(openedFiles).forEach(([wsPath, val]) => {
-      if (!openedWsPaths.has(wsPath) && !val.pendingWrite) {
-        removals.push(wsPath);
+const runUpdateShas = operation<
+  InferSliceNameFromSlice<typeof nsmSliceFileSha>
+>()(() => async (store) => {
+  const pendingRunRef = getPendingRunRef(store);
+
+  if (pendingRunRef.current.pendingRun) {
+    return;
+  }
+
+  const { openedFiles } = nsmSliceFileSha.get(store.state);
+  const openedFilesArray = Object.values(openedFiles);
+
+  if (openedFilesArray.length === 0) {
+    return;
+  }
+
+  let destroyed = false;
+
+  cleanup(store, () => {
+    destroyed = true;
+  });
+
+  await Promise.all(
+    openedFilesArray.map(async (info) => {
+      if (destroyed) {
+        return;
       }
-    });
 
-    // add new data
-    openedWsPaths.getWsPaths().forEach((wsPath) => {
-      if (!openedFiles[wsPath]) {
-        additions.push(wsPath);
+      const sha = await getDiskSha(info.wsPath);
+
+      pendingRunRef.current.pendingRun = false;
+
+      if (sha === info.currentDiskSha) {
+        return;
       }
-    });
 
-    if (additions.length > 0 || removals.length > 0) {
-      dispatch(
-        actSyncEntries({
-          additions,
-          removals,
-        }),
-      );
+      if (sha) {
+        log(
+          '[calculateCurrentDiskShaEffect] updateCurrentDiskSha',
+          info.wsPath,
+        );
+        queueMicrotask(() => {
+          store.dispatch(
+            actUpdateEntry({
+              wsPath: info.wsPath,
+              info: {
+                currentDiskSha: sha,
+              },
+            }),
+          );
+        });
+      }
+
+      return;
+    }),
+  );
+});
+
+const syncWithOpenedWsPathsEffect = effect(function syncWithOpenedWsPathsEffect(
+  store,
+) {
+  const { openedWsPaths } = nsmSliceWorkspace.track(store);
+  const { openedFiles } = nsmSliceFileSha.get(store.state);
+
+  let additions: string[] = [];
+  let removals: string[] = [];
+  // cleanup data that is not opened anymore and does not have a pending write
+  Object.entries(openedFiles).forEach(([wsPath, val]) => {
+    if (!openedWsPaths.has(wsPath) && !val.pendingWrite) {
+      removals.push(wsPath);
     }
-  },
-);
+  });
+  // add new data
+  openedWsPaths.getWsPaths().forEach((wsPath) => {
+    if (!openedFiles[wsPath]) {
+      additions.push(wsPath);
+    }
+  });
 
-const blockWriteEffectSync = changeEffect(
-  'blockWriteEffectSync',
-  {
-    openedFiles: nsmSliceFileSha.pick((s) => s.openedFiles),
-    blockReload: nsmPageSlice.passivePick((s) => s.blockReload),
-  },
-  ({ openedFiles }, dispatch) => {
+  if (additions.length > 0 || removals.length > 0) {
+    store.dispatch(
+      actSyncEntries({
+        additions,
+        removals,
+      }),
+    );
+
+    return;
+  }
+});
+
+const blockWriteEffectSync = effect(
+  function blockWriteEffectSync(store) {
+    const { openedFiles } = nsmSliceFileSha.track(store);
+
     if (shouldBlock(Object.values(openedFiles))) {
-      dispatch(blockReload(true));
+      store.dispatch(blockReload(true));
     }
   },
-  {
-    sync: true,
-  },
+  { deferred: false },
 );
+
 // set it to 'false' at a slower cadence to do a sort of debounce
 // since it is of lower priority compared to `oldBlockReload(true)`. This helps
 // smoothen out the `true` -> `false` -> ... -> `true`.
-const unblockWriteEffect = changeEffect(
-  'unblockWriteEffect',
-  {
-    openedFiles: nsmSliceFileSha.pick((s) => s.openedFiles),
-    blockReload: nsmPageSlice.passivePick((s) => s.blockReload),
-  },
-  ({ openedFiles }, dispatch) => {
-    if (!shouldBlock(Object.values(openedFiles))) {
-      dispatch(blockReload(false));
-    }
-  },
-);
+const unblockWriteEffect = effect(function unblockWriteEffect(store) {
+  const { openedFiles } = nsmSliceFileSha.track(store);
+
+  if (!shouldBlock(Object.values(openedFiles))) {
+    store.dispatch(blockReload(false));
+  }
+});
 
 // Check and persist git hash calculation of the current disk state of opened files
-const calculateCurrentDiskShaEffect = changeEffect(
-  'calculateCurrentDiskShaEffect',
-  {
-    openedFiles: nsmSliceFileSha.pick((s) => s.openedFiles),
-  },
-  ({ openedFiles }, dispatch, _ref) => {
-    let ref = _ref as { pendingRun?: boolean };
-    ref.pendingRun = ref.pendingRun ?? false;
+const calculateCurrentDiskShaEffect = effect(
+  function calculateCurrentDiskShaEffect(store) {
+    // tracking opened files
+    void nsmSliceFileSha.track(store).openedFiles;
 
-    if (!ref.pendingRun) {
-      ref.pendingRun = true;
-      runUpdateShas(openedFiles, dispatch)
-        .then(() => {
-          ref.pendingRun = false;
-        })
-        .catch(() => {
-          ref.pendingRun = false;
-        });
+    const pendingRef = getPendingRunRef(store);
+
+    if (pendingRef.current.pendingRun) {
+      return;
     }
+
+    store.dispatch(runUpdateShas());
+  },
+);
+const calculateCurrentDiskShaEffectInterval = effect(
+  function calculateCurrentDiskShaEffectInterval(store) {
+    const intervalId = setInterval(() => {
+      const pendingRef = getPendingRunRef(store);
+
+      if (pendingRef.current.pendingRun) {
+        return;
+      }
+
+      store.dispatch(runUpdateShas());
+    }, DISK_SHA_CHECK_INTERVAL);
+
+    cleanup(store, () => {
+      clearInterval(intervalId);
+    });
   },
 );
 
-const calculateCurrentDiskShaEffectInterval = intervalRunEffect(
-  'calculateCurrentDiskShaEffectInterval',
-  [nsmSliceFileSha],
-  DISK_SHA_CHECK_INTERVAL,
-  (state, dispatch) => {
-    const { openedFiles } = nsmSliceFileSha.resolveState(state);
-    runUpdateShas(openedFiles, dispatch);
-  },
-);
+const calculateLastKnownDiskShaEffect = effect(
+  function calculateLastKnownDiskShaEffect(store) {
+    const { openedFiles } = nsmSliceFileSha.track(store);
 
-const calculateLastKnownDiskShaEffect = changeEffect(
-  'calculateLastKnownDiskShaEffect',
-  {
-    openedFiles: nsmSliceFileSha.pick((s) => s.openedFiles),
-  },
-  ({ openedFiles }, dispatch) => {
     const openedFilesArray = Object.values(openedFiles);
+
+    let destroyed = false;
+
+    cleanup(store, () => {
+      destroyed = true;
+    });
 
     openedFilesArray.forEach((openedFile) => {
       // lastKnownDiskSha will be undefined for newly opened files
       if (!openedFile.lastKnownDiskSha) {
         getDiskSha(openedFile.wsPath).then((sha) => {
+          if (destroyed) {
+            return;
+          }
+
           if (sha) {
             // queue it so that we can finish the current loop
             queueMicrotask(() => {
@@ -138,7 +199,7 @@ const calculateLastKnownDiskShaEffect = changeEffect(
                 openedFile.wsPath,
               );
 
-              dispatch(
+              store.dispatch(
                 actUpdateEntry({
                   wsPath: openedFile.wsPath,
                   info: {
@@ -154,46 +215,6 @@ const calculateLastKnownDiskShaEffect = changeEffect(
   },
 );
 
-async function runUpdateShas(
-  openedFiles: Record<string, OpenedFile>,
-  dispatch: (tx: Transaction<'nsm-slice-file-sha', any>) => void,
-): Promise<void> {
-  const openedFilesArray = Object.values(openedFiles);
-
-  if (openedFilesArray.length === 0) {
-    return;
-  }
-
-  await Promise.all(
-    openedFilesArray.map(async (info) => {
-      const sha = await getDiskSha(info.wsPath);
-
-      if (sha === info.currentDiskSha) {
-        return;
-      }
-
-      if (sha) {
-        log(
-          '[calculateCurrentDiskShaEffect] updateCurrentDiskSha',
-          info.wsPath,
-        );
-        queueMicrotask(() => {
-          dispatch(
-            actUpdateEntry({
-              wsPath: info.wsPath,
-              info: {
-                currentDiskSha: sha,
-              },
-            }),
-          );
-        });
-      }
-
-      return;
-    }),
-  );
-}
-
 function shouldBlock(openedFiles: OpenedFile[]) {
   return openedFiles.some((info) => info.pendingWrite);
 }
@@ -208,7 +229,7 @@ async function getDiskSha(wsPath: string): Promise<string | undefined> {
   return undefined;
 }
 
-const effects = [
+export const nsmSliceFileShaEffects = [
   syncWithOpenedWsPathsEffect,
   blockWriteEffectSync,
   unblockWriteEffect,
@@ -216,5 +237,3 @@ const effects = [
   calculateCurrentDiskShaEffectInterval,
   calculateLastKnownDiskShaEffect,
 ];
-
-Slice.registerEffectSlice(nsmSliceWorkspace, effects);

@@ -1,4 +1,4 @@
-import { superJson } from '@bangle.io/nsm';
+import { superJson } from '@bangle.io/nsm-3';
 
 import { persistData, retrieveData } from '../persist-state-slice';
 

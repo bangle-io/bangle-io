@@ -6,14 +6,13 @@ import {
   ApplicationStore,
   AppState as ApplicationState,
 } from '@bangle.io/create-store';
-import type { AnySlice, AnySliceWithName, StoreState } from '@bangle.io/nsm';
-import { createUseSliceHook, Store, timeoutSchedular } from '@bangle.io/nsm';
+import type { AnySlice, Slice, Store } from '@bangle.io/nsm-3';
+import { createUseSliceHook, store } from '@bangle.io/nsm-3';
 import type { NsmStore } from '@bangle.io/shared-types';
 
-export const initialNsmStore: NsmStore = Store.create({
+export const initialNsmStore: NsmStore = store({
   storeName: 'nsm-store-main',
-  scheduler: timeoutSchedular(0),
-  state: [] as any[],
+  slices: [] as any,
 });
 
 export const NsmStoreContext = React.createContext<typeof initialNsmStore>(
@@ -24,54 +23,43 @@ export const NsmStoreContext = React.createContext<typeof initialNsmStore>(
 
 export function useNsmSliceState<TSlice extends AnySlice>(
   slice: TSlice,
-): ReturnType<TSlice['resolveState']> {
-  const store: Store<string> = useContext(NsmStoreContext);
+): ReturnType<TSlice['get']> {
+  const appStore: Store = useContext(NsmStoreContext);
 
   // TODO move this to a more performance friendly approach which
   // directly gets the state
-  return createUseSliceHook(store)(slice as AnySliceWithName<string>)[0];
+  return createUseSliceHook(appStore)(slice as AnySlice, (s) => s)[0];
 }
 
 export function useNsmSliceDispatch<TSlice extends AnySlice>(
   slice: TSlice,
-): Store<TSlice extends AnySliceWithName<infer N> ? N : never>['dispatch'] {
-  const store: Store<string> = useContext(NsmStoreContext);
+): Store<TSlice extends Slice<infer N, any, any> ? N : never>['dispatch'] {
+  const appStore: Store<string> = useContext(NsmStoreContext);
 
   // TODO move this to a more performance friendly approach which
   // directly gets the state
-  return createUseSliceHook(store)(slice as AnySliceWithName<string>)[1];
+  return appStore.dispatch;
 }
 
 export function useNsmSlice<TSlice extends AnySlice>(
   slice: TSlice,
 ): [
-  ReturnType<TSlice['resolveState']>,
-  Store<TSlice extends AnySliceWithName<infer N> ? N : never>['dispatch'],
+  ReturnType<TSlice['get']>,
+  Store<TSlice extends Slice<infer N, any, any> ? N : never>['dispatch'],
 ] {
-  const store: Store<string> = useContext(NsmStoreContext);
+  const appStore: Store<string> = useContext(NsmStoreContext);
 
-  return createUseSliceHook(store)(slice as AnySliceWithName<string>);
-}
-
-export function useNsmState<TSliceName extends string>(
-  slices: Array<AnySliceWithName<TSliceName>>,
-): [StoreState<TSliceName>, Store<TSliceName>['dispatch']] {
-  const store = useContext(NsmStoreContext);
-
-  return [store.state, store.dispatch];
+  return createUseSliceHook(appStore)(slice as AnySlice, (s) => s);
 }
 
 export function useNsmStore<TSliceName extends string>(
-  slices: Array<AnySliceWithName<TSliceName>>,
+  slices: Array<Slice<TSliceName, any, any>>,
 ): Store<TSliceName> {
   return useContext(NsmStoreContext);
 }
 
 export function useNsmPlainStore(): NsmStore {
   return useContext(NsmStoreContext);
-}
-export function useNsmDispatch(): NsmStore['dispatch'] {
-  return useContext(NsmStoreContext).dispatch;
 }
 
 export const initialBangleStore = ApplicationStore.create({

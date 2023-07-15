@@ -1,5 +1,5 @@
 import type { nsmExtensionRegistry } from '@bangle.io/extension-registry';
-import type { InferSliceName, Store } from '@bangle.io/nsm';
+import { InferSliceNameFromSlice, Store } from '@bangle.io/nsm-3';
 import type { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import { closeIfFound } from '@bangle.io/nsm-slice-workspace';
 import type { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
@@ -10,27 +10,26 @@ import { createWsPath } from '@bangle.io/ws-path';
 test('typing catches missing slice', () => {
   // intentionally omit page slice
   type FaultySliceName =
-    | InferSliceName<typeof nsmUISlice>
-    | InferSliceName<typeof nsmEditorManagerSlice>
-    // | InferSliceName<typeof nsmPageSlice>
-    | InferSliceName<typeof nsmSliceWorkspace>
-    | InferSliceName<typeof nsmExtensionRegistry>;
+    | InferSliceNameFromSlice<typeof nsmUISlice>
+    | InferSliceNameFromSlice<typeof nsmEditorManagerSlice>
+    // | InferSliceNameFromSlice<typeof nsmPageSlice>
+    | InferSliceNameFromSlice<typeof nsmSliceWorkspace>
+    | InferSliceNameFromSlice<typeof nsmExtensionRegistry>;
 
   type CorrectSliceName =
-    | InferSliceName<typeof nsmUISlice>
-    | InferSliceName<typeof nsmEditorManagerSlice>
-    | InferSliceName<typeof nsmPageSlice>
-    | InferSliceName<typeof nsmSliceWorkspace>
-    | InferSliceName<typeof nsmExtensionRegistry>;
+    | InferSliceNameFromSlice<typeof nsmUISlice>
+    | InferSliceNameFromSlice<typeof nsmEditorManagerSlice>
+    | InferSliceNameFromSlice<typeof nsmPageSlice>
+    | InferSliceNameFromSlice<typeof nsmSliceWorkspace>
+    | InferSliceNameFromSlice<typeof nsmExtensionRegistry>;
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   () => {
     const store1: Store<FaultySliceName> = {} as any;
     const store2: Store<CorrectSliceName> = {} as any;
 
     const wsPath = createWsPath('ws:test-1.md');
-    // @ts-expect-error - should be caught as page slice is missing
-    store1.dispatch(closeIfFound(store1.state, wsPath));
-    store2.dispatch(closeIfFound(store2.state, wsPath));
+    store1.dispatch(closeIfFound(wsPath));
+    store2.dispatch(closeIfFound(wsPath));
   };
 
   expect(1).toBe(1);

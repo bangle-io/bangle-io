@@ -11,7 +11,11 @@ import {
   SEARCH_SIDEBAR_NAME,
   SHOW_SEARCH_SIDEBAR_OPERATION,
 } from './constants';
-import { searchSlice, updateExternalSearchQuery } from './search-notes-slice';
+import {
+  searchEffects,
+  searchSlice,
+  updateExternalSearchQuery,
+} from './search-notes-slice';
 
 const key = 'Mod-F';
 
@@ -20,6 +24,7 @@ const extension = Extension.create({
 
   application: {
     nsmSlices: [searchSlice],
+    nsmEffects: searchEffects,
     operations: [
       {
         name: SHOW_SEARCH_SIDEBAR_OPERATION,

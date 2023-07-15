@@ -60,7 +60,7 @@ export const deleteWorkspace = async (wsName: WsName) => {
 
   const store = getStore();
 
-  if (nsmSliceWorkspace.resolveState(store.state).wsName === wsName) {
+  if (nsmSliceWorkspace.get(store.state).wsName === wsName) {
     store.dispatch(goToLandingPage({ replace: true }));
     await Promise.resolve();
   }

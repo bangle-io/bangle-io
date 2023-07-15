@@ -2,7 +2,7 @@
 
 import lifecycle from 'page-lifecycle';
 
-import { changeEffect } from '@bangle.io/nsm';
+import { cleanup, effect } from '@bangle.io/nsm-3';
 import type { PageLifeCycleState } from '@bangle.io/slice-page';
 import { nsmPageSlice, setPageLifeCycleState } from '@bangle.io/slice-page';
 
@@ -13,44 +13,38 @@ type PageLifeCycleEvent = {
   oldState: PageLifeCycleState;
 };
 
-export const pageLifeCycleWatch = changeEffect(
-  'pageLifeCycleWatch',
-  {
-    _: nsmPageSlice.passivePick((s) => s),
-  },
-  (_, dispatch) => {
-    const handler = (event: PageLifeCycleEvent) => {
-      dispatch(
-        setPageLifeCycleState({
-          current: event.newState,
-          previous: event.oldState,
-        }),
-      );
-    };
+const pageLifeCycleWatch = effect(function pageLifeCycleWatch(store) {
+  const handler = (event: PageLifeCycleEvent) => {
+    store.dispatch(
+      setPageLifeCycleState({
+        current: event.newState,
+        previous: event.oldState,
+      }),
+    );
+  };
 
-    lifecycle.addEventListener('statechange', handler);
+  lifecycle.addEventListener('statechange', handler);
+  handler({ newState: lifecycle.state, oldState: undefined });
 
-    handler({ newState: lifecycle.state, oldState: undefined });
+  cleanup(store, () => {
+    lifecycle.removeEventListener('statechange', handler);
+  });
+});
 
-    return () => {
-      lifecycle.removeEventListener('statechange', handler);
-    };
-  },
-);
+export const pageLifeCycleBlockReload = effect(
+  function pageLifeCycleBlockReload(store) {
+    const { blockReload } = nsmPageSlice.track(store);
 
-export const pageLifeCycleBlockReload = changeEffect(
-  'pageLifeCycleBlockReload',
-  {
-    blockReload: nsmPageSlice.pick((s) => s.blockReload),
-  },
-  ({ blockReload }) => {
     if (blockReload) {
       lifecycle.addUnsavedChanges(pendingSymbol);
     } else {
       lifecycle.removeUnsavedChanges(pendingSymbol);
     }
   },
-  {
-    sync: true,
-  },
+  { deferred: false },
 );
+
+export const pageLifeCycleEffects = [
+  pageLifeCycleWatch,
+  pageLifeCycleBlockReload,
+];

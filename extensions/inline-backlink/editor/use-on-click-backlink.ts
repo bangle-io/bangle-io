@@ -89,7 +89,7 @@ async function handleClick({
   wikiLink: string;
   currentWsPath: WsPath;
   wsName: WsName;
-  noteWsPaths: WsPath[];
+  noteWsPaths: readonly WsPath[];
   editorState: EditorState;
 }) {
   const wikiLinkMapping = calcWikiLinkMapping(

@@ -1,29 +1,27 @@
-import { createSliceV2, mountEffect, Slice } from '@bangle.io/nsm';
+import { effect, slice } from '@bangle.io/nsm-3';
 
 import { ExtensionRegistry } from './ExtensionRegistry';
 
 const defaultRegistry = new ExtensionRegistry([], []);
 
-export const nsmExtensionRegistry = createSliceV2([], {
+export const nsmExtensionRegistry = slice([], {
   name: 'nsm-extension-registry',
-  initState: {
+  state: {
     // Note: This will be overridden by respective stores
     // with correct instance of ExtensionRegistry
     extensionRegistry: defaultRegistry,
   },
 });
 
-Slice.registerEffectSlice(nsmExtensionRegistry, [
-  mountEffect(
-    'nsm-extension-registry-check',
-    [nsmExtensionRegistry],
-    (store) => {
-      const { extensionRegistry } = nsmExtensionRegistry.getState(store.state);
+const extensionRegistryCheckEffect = effect(
+  function extensionRegistryCheckEffect(store) {
+    const { extensionRegistry } = nsmExtensionRegistry.get(store.state);
 
-      if (extensionRegistry === defaultRegistry) {
-        // we should always be overriding the default value with the correct value
-        throw new Error(`ExtensionRegistry not set in store`);
-      }
-    },
-  ),
-]);
+    if (extensionRegistry === defaultRegistry) {
+      // we should always be overriding the default value with the correct value
+      throw new Error(`ExtensionRegistry not set in store`);
+    }
+  },
+);
+
+export const extensionRegistryEffects = [extensionRegistryCheckEffect];

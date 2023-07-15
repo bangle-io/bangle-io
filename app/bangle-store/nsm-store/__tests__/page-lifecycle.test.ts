@@ -1,15 +1,13 @@
 import lifeCycle from 'page-lifecycle';
 
-import { createDispatchSpy, Store, timeoutSchedular } from '@bangle.io/nsm';
-import { nsmPageSlice } from '@bangle.io/slice-page';
+import { store as createStore } from '@bangle.io/nsm-3';
+import { blockReload, nsmPageSlice } from '@bangle.io/slice-page';
 import { waitForExpect } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
-
 import {
   pageLifeCycleBlockReload,
-  pageLifeCycleWatch,
+  pageLifeCycleEffects,
 } from '../page-lifecycle-slice';
-
 jest.mock('page-lifecycle', () => {
   return {
     state: 'active' as const,
@@ -31,22 +29,24 @@ beforeEach(() => {
 
 describe('blockReloadEffect', () => {
   test('blocks', async () => {
-    let store = Store.create({
+    let store = createStore({
       storeName: 'bangle-store',
-      scheduler: timeoutSchedular(0),
-      state: [nsmPageSlice, pageLifeCycleBlockReload],
+      slices: [nsmPageSlice],
     });
+
+    store.registerEffect(pageLifeCycleBlockReload);
+
     const { dispatch } = store;
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(0);
 
-    dispatch(nsmPageSlice.actions.blockReload(true));
+    dispatch(blockReload(true));
     await sleep(0);
 
     expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
 
-    dispatch(nsmPageSlice.actions.blockReload(false));
+    dispatch(blockReload(false));
     await sleep(0);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
@@ -54,37 +54,38 @@ describe('blockReloadEffect', () => {
   });
 
   test('repeat calling does not affect', async () => {
-    let store = Store.create({
+    let store = createStore({
       storeName: 'bangle-store',
-      scheduler: timeoutSchedular(0),
-      state: [nsmPageSlice, pageLifeCycleBlockReload],
+      slices: [nsmPageSlice],
     });
+    store.registerEffect(pageLifeCycleBlockReload);
+
     const { dispatch } = store;
 
-    dispatch(nsmPageSlice.actions.blockReload(true));
-    dispatch(nsmPageSlice.actions.blockReload(true));
-    dispatch(nsmPageSlice.actions.blockReload(true));
+    dispatch(blockReload(true));
+    dispatch(blockReload(true));
+    dispatch(blockReload(true));
 
     await sleep(0);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
     expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
 
-    dispatch(nsmPageSlice.actions.blockReload(false));
-    dispatch(nsmPageSlice.actions.blockReload(false));
+    dispatch(blockReload(false));
+    dispatch(blockReload(false));
 
     await sleep(0);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
     expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(1);
 
-    dispatch(nsmPageSlice.actions.blockReload(true));
+    dispatch(blockReload(true));
     await sleep(0);
-    dispatch(nsmPageSlice.actions.blockReload(false));
+    dispatch(blockReload(false));
     await sleep(0);
-    dispatch(nsmPageSlice.actions.blockReload(true));
+    dispatch(blockReload(true));
     await sleep(0);
-    dispatch(nsmPageSlice.actions.blockReload(false));
+    dispatch(blockReload(false));
     await sleep(0);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(3);
@@ -94,14 +95,18 @@ describe('blockReloadEffect', () => {
 
 describe('watchPageLifeCycleEffect', () => {
   test('initializes & destroys correctly', async () => {
-    let testSpy = createTestDebugger();
+    let testSpy = jest.fn();
 
-    let store = Store.create({
+    let store = createStore({
+      debug: testSpy,
       storeName: 'bangle-store',
-      dispatchTx: testSpy.dispatch,
-      scheduler: timeoutSchedular(0),
-      state: [nsmPageSlice, pageLifeCycleBlockReload, pageLifeCycleWatch],
+      slices: [nsmPageSlice],
     });
+
+    pageLifeCycleEffects.forEach((effect) => {
+      store.registerEffect(effect);
+    });
+
     const { dispatch } = store;
 
     await waitForExpect(() => {
@@ -113,22 +118,36 @@ describe('watchPageLifeCycleEffect', () => {
       );
     });
 
-    expect(
-      testSpy
-        .getSimplifiedTransactions()
-        .find((r) => r.actionId === 'setPageLifeCycleState'),
-    ).toEqual({
-      actionId: 'setPageLifeCycleState',
-      dispatchSource: 'l_pageLifeCycleWatch$',
-      payload: [
+    const calls = testSpy.mock.calls
+      .filter((r) => r[0].type === 'TRANSACTION')
+      .map((r) => {
+        return r.map((rr) => {
+          return {
+            ...rr,
+            txId: undefined,
+          };
+        });
+      });
+
+    expect(calls).toEqual([
+      [
         {
-          current: 'active',
-          previous: undefined,
+          actionId: 'a_setPageLifeCycleState[sl_bangle/page-slice$]1',
+          dispatcher: 'pageLifeCycleWatch',
+          params: [
+            {
+              current: 'active',
+              previous: undefined,
+            },
+          ],
+          sourceSlices: 'sl_bangle/page-slice$',
+          store: 'bangle-store',
+          targetSlices: 'sl_bangle/page-slice$',
+          txId: undefined,
+          type: 'TRANSACTION',
         },
       ],
-      sourceSliceLineage: 'l_bangle/page-slice$',
-      targetSliceLineage: 'l_bangle/page-slice$',
-    });
+    ]);
 
     store?.destroy();
 
@@ -141,14 +160,18 @@ describe('watchPageLifeCycleEffect', () => {
   });
 
   test('dispatches correctly', async () => {
-    let testSpy = createTestDebugger();
+    let testSpy = jest.fn();
 
-    let store = Store.create({
+    let store = createStore({
       storeName: 'bangle-store',
-      dispatchTx: testSpy.dispatch,
-      scheduler: timeoutSchedular(0),
-      state: [nsmPageSlice, pageLifeCycleBlockReload, pageLifeCycleWatch],
+      debug: testSpy,
+      slices: [nsmPageSlice],
     });
+
+    pageLifeCycleEffects.forEach((effect) => {
+      store.registerEffect(effect);
+    });
+
     const { dispatch } = store;
 
     await waitForExpect(() => {
@@ -159,24 +182,53 @@ describe('watchPageLifeCycleEffect', () => {
 
     cb({ newState: 'active', oldState: 'passive' });
 
-    expect(
-      testSpy
-        .getSimplifiedTransactions()
-        .filter((r) => r.actionId === 'setPageLifeCycleState')
-        .map((r) => r.payload),
-    ).toEqual([
+    const calls = testSpy.mock.calls
+      .filter((r) => r[0].type === 'TRANSACTION')
+      .map((r) => {
+        return r.map((rr) => {
+          return {
+            ...rr,
+            txId: undefined,
+          };
+        });
+      });
+    expect(calls).toMatchInlineSnapshot(`
       [
-        {
-          current: 'active',
-          previous: undefined,
-        },
-      ],
-      [
-        {
-          current: 'active',
-          previous: 'passive',
-        },
-      ],
-    ]);
+        [
+          {
+            "actionId": "a_setPageLifeCycleState[sl_bangle/page-slice$]1",
+            "dispatcher": "pageLifeCycleWatch",
+            "params": [
+              {
+                "current": "active",
+                "previous": undefined,
+              },
+            ],
+            "sourceSlices": "sl_bangle/page-slice$",
+            "store": "bangle-store",
+            "targetSlices": "sl_bangle/page-slice$",
+            "txId": undefined,
+            "type": "TRANSACTION",
+          },
+        ],
+        [
+          {
+            "actionId": "a_setPageLifeCycleState[sl_bangle/page-slice$]1",
+            "dispatcher": "pageLifeCycleWatch",
+            "params": [
+              {
+                "current": "active",
+                "previous": "passive",
+              },
+            ],
+            "sourceSlices": "sl_bangle/page-slice$",
+            "store": "bangle-store",
+            "targetSlices": "sl_bangle/page-slice$",
+            "txId": undefined,
+            "type": "TRANSACTION",
+          },
+        ],
+      ]
+    `);
   });
 });

@@ -1,5 +1,9 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
-import type { AnySlice, InferSliceName, Store } from '@bangle.io/nsm';
+import type {
+  AnySlice,
+  InferSliceNameFromSlice,
+  Store,
+} from '@bangle.io/nsm-3';
 import type { BangleApplicationStore, NsmStore } from '@bangle.io/shared-types';
 
 export * as nsmApi2 from './nsm/index';
@@ -12,23 +16,16 @@ export {
 export * as workspace from './workspace';
 export {
   useBangleStoreContext,
-  useNsmDispatch,
   useNsmPlainStore,
   useNsmSlice,
   useNsmSliceState,
-  useNsmState,
   useNsmStore,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
 export { Slice, SliceKey } from '@bangle.io/create-store';
 export { vars } from '@bangle.io/css-vars';
 export { Extension } from '@bangle.io/extension-registry';
-export {
-  type AnySlice,
-  changeEffect,
-  createSliceV2,
-  Slice as NsmSlice,
-} from '@bangle.io/nsm';
+export * as nsm from '@bangle.io/nsm-3';
 export { browserInfo } from '@bangle.io/utils';
 export * as wsPathHelpers from '@bangle.io/ws-path';
 export type { BangleApplicationStore };
@@ -59,6 +56,6 @@ export function getNewStore(oldStore: ApplicationStore): NsmStore {
 
 export function getExtensionStore<TSlice extends AnySlice>(
   slice: TSlice,
-): Store<InferSliceName<TSlice>> {
+): Store<InferSliceNameFromSlice<TSlice>> {
   return (window as any).globalNsmStore;
 }

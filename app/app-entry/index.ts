@@ -176,7 +176,7 @@ function handleStorageErrors(
   nsmStore: NsmStore,
   eternalVars: EternalVars,
 ) {
-  const wsName = nsmPageSlice.resolveState(nsmStore.state).wsName;
+  const wsName = nsmPageSlice.get(nsmStore.state).wsName;
 
   if (!wsName) {
     console.warn('Unable to handle error as wsName is not set');
@@ -235,7 +235,7 @@ function handleWorkspaceInfoErrors(
       return false;
     }
     case WorkspaceInfoError.WorkspaceNotFound: {
-      const { wsName } = nsmPageSlice.resolveState(nsmStore.state);
+      const { wsName } = nsmPageSlice.get(nsmStore.state);
 
       if (wsName) {
         nsmStore.dispatch(

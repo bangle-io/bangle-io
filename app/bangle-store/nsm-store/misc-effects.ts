@@ -2,7 +2,7 @@ import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
 } from '@bangle.io/constants';
-import { changeEffect } from '@bangle.io/nsm';
+import { effect } from '@bangle.io/nsm-3';
 import {
   goToInvalidWorkspacePage,
   goToLocation,
@@ -15,27 +15,22 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 assertNonWorkerGlobalScope();
 
-const saveLastUsedWorkspaceEffect = changeEffect(
-  'saveLastUsedWorkspaceEffect',
-  {
-    wsName: nsmPageSlice.pick((s) => s.wsName),
-  },
-  ({ wsName }) => {
-    if (wsName) {
-      lastWorkspaceUsed.save(wsName);
-    }
-  },
-);
+const saveLastUsedWorkspaceEffect = effect(function saveLastUsedWorkspaceEffect(
+  store,
+) {
+  const { wsName } = nsmPageSlice.track(store);
 
+  if (wsName) {
+    lastWorkspaceUsed.save(wsName);
+  }
+});
 // redirects user to the index path if they are on `help-fs` workspace landing page.
-const helpFsWorkspaceRedirectEffect = changeEffect(
-  'helpFsWorkspaceRedirectEffect',
-  {
-    location: nsmPageSlice.pick((s) => s.location),
-  },
-  ({ location }, dispatch) => {
+const helpFsWorkspaceRedirectEffect = effect(
+  function helpFsWorkspaceRedirectEffect(store) {
+    const { location } = nsmPageSlice.track(store);
+
     if (location.pathname === wsNameToPathname(HELP_FS_WORKSPACE_NAME)) {
-      dispatch(
+      store.dispatch(
         goToLocation({
           location: locationSetWsPath(
             location,
@@ -49,35 +44,28 @@ const helpFsWorkspaceRedirectEffect = changeEffect(
     }
   },
 );
-
 // redirect user to the invalid workspace page if the primaryWsPath is not valid.
-const invalidWsPathRedirectEffect = changeEffect(
-  'invalidWsPathRedirectEffect',
-  {
-    rawPrimaryWsPath: nsmPageSlice.pick((s) => s.rawPrimaryWsPath),
-    primaryWsPath: nsmPageSlice.pick((s) => s.primaryWsPath),
-    wsName: nsmPageSlice.pick((s) => s.wsName),
+const invalidWsPathRedirectEffect = effect(function invalidWsPathRedirectEffect(
+  store,
+) {
+  const { wsName, rawPrimaryWsPath, primaryWsPath } = nsmPageSlice.track(store);
 
-    rawSecondaryWsPath: nsmPageSlice.pick((s) => s.rawSecondaryWsPath),
-  },
-  ({ wsName, rawPrimaryWsPath, primaryWsPath }, dispatch) => {
-    if (!wsName) {
-      return;
-    }
+  if (!wsName) {
+    return;
+  }
 
-    if (
-      typeof rawPrimaryWsPath === 'string' &&
-      primaryWsPath !== rawPrimaryWsPath
-    ) {
-      dispatch(
-        goToInvalidWorkspacePage({
-          invalidWsName: wsName,
-          replace: true,
-        }),
-      );
-    }
-  },
-);
+  if (
+    typeof rawPrimaryWsPath === 'string' &&
+    primaryWsPath !== rawPrimaryWsPath
+  ) {
+    store.dispatch(
+      goToInvalidWorkspacePage({
+        invalidWsName: wsName,
+        replace: true,
+      }),
+    );
+  }
+});
 
 export const miscEffects = [
   saveLastUsedWorkspaceEffect,

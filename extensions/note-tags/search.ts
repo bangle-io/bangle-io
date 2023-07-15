@@ -24,7 +24,7 @@ export function _listTags(doc: Node) {
  * List tags across all wsPaths
  */
 export async function listAllTags(
-  wsPaths: WsPath[],
+  wsPaths: readonly WsPath[],
   getDoc: (wsPath: WsPath) => Promise<Node | undefined>,
   signal?: AbortSignal,
 ): Promise<string[]> {

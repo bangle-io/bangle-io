@@ -4,7 +4,7 @@ import type { Key } from 'path-to-regexp';
 import { pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
-import { z } from '@bangle.io/nsm';
+import { z } from '@bangle.io/nsm-3';
 import type { WsPath } from '@bangle.io/shared-types';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath } from '@bangle.io/ws-path';

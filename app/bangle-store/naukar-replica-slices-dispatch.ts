@@ -15,7 +15,7 @@ export function naukarReplicaSlicesDispatch(
     },
 
     refreshWorkspace: async () => {
-      nsmStore.dispatch(refreshWorkspace(null));
+      nsmStore.dispatch(refreshWorkspace());
     },
   };
 

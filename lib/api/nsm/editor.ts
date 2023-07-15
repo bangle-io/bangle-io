@@ -14,7 +14,7 @@ import {
   EXECUTE_SEARCH_OPERATION,
   PRIMARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import { changeEffect, createSliceWithSelectors, Slice } from '@bangle.io/nsm';
+import { effect, slice } from '@bangle.io/nsm-3';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
   DispatchSerialOperationType,
@@ -38,69 +38,58 @@ type EditorProxyState = typeof initState;
 export const editorState = () => {
   const store = getStore();
 
-  return editorManager.nsmEditorManagerSlice.resolveState(store.state);
+  return editorManager.nsmEditorManagerSlice.get(store.state);
 };
 
-export const _editorManagerProxy = createSliceWithSelectors(
-  [editorManager.nsmEditorManagerSlice],
-  {
-    name: 'api-editor-manager-proxy',
-    initState,
-    selectors: {},
+export const editorManagerProxy = slice([editorManager.nsmEditorManagerSlice], {
+  name: 'api-editor-manager-proxy',
+  state: initState,
+});
+
+const setEditorSearchQueryEffect = effect(function setEditorSearchQueryEffect(
+  store,
+) {
+  const { searchQuery } = editorManagerProxy.track(store);
+
+  editorManager.forEachEditor(store.state, (editor) => {
+    search.updateSearchQuery(searchPluginKey, searchQuery)(
+      editor.view.state,
+      editor.view.dispatch,
+    );
+  });
+});
+
+const clearEditorSearchQueryEffect = effect(
+  function clearEditorSearchQueryEffect(store) {
+    void nsmSliceWorkspace.track(store).wsName;
+
+    editorManager.forEachEditor(store.state, (editor) => {
+      search.updateSearchQuery(searchPluginKey, undefined)(
+        editor.view.state,
+        editor.view.dispatch,
+      );
+    });
   },
 );
 
-Slice.registerEffectSlice(_editorManagerProxy, [
-  changeEffect(
-    'set-editor-search-query',
-    {
-      searchQuery: _editorManagerProxy.pick((s) => s.searchQuery),
-      editorManagerState: editorManager.nsmEditorManagerSlice.passivePick(
-        (s) => s,
-      ),
-    },
-    ({ searchQuery, editorManagerState }) => {
-      editorManager.forEachEditorPlain(editorManagerState, (editor) => {
-        search.updateSearchQuery(searchPluginKey, searchQuery)(
-          editor.view.state,
-          editor.view.dispatch,
-        );
-      });
-    },
-  ),
-  changeEffect(
-    'clear-editor-search-query',
-    {
-      wsName: nsmSliceWorkspace.pick((s) => s.wsName),
-      editorManagerState: editorManager.nsmEditorManagerSlice.passivePick(
-        (s) => s,
-      ),
-    },
-    ({ wsName, editorManagerState }) => {
-      editorManager.forEachEditorPlain(editorManagerState, (editor) => {
-        search.updateSearchQuery(searchPluginKey, undefined)(
-          editor.view.state,
-          editor.view.dispatch,
-        );
-      });
-    },
-  ),
-]);
+export const editorManagerProxyEffects = [
+  setEditorSearchQueryEffect,
+  clearEditorSearchQueryEffect,
+];
 
-const _updateQueryAction = _editorManagerProxy.createAction(
-  'updateEditorSearchQuery',
-  (searchQuery: RegExp | undefined) => {
-    return (state): EditorProxyState => {
-      return {
-        ...state,
+const _updateQueryAction = editorManagerProxy.action(
+  function updateEditorSearchQuery(searchQuery: RegExp | undefined) {
+    return editorManagerProxy.tx((state) => {
+      return editorManagerProxy.update(state, {
         searchQuery,
-      };
-    };
+      });
+    });
   },
 );
 
-export const pick = editorManager.nsmEditorManagerSlice.pick;
-export const passivePick = editorManager.nsmEditorManagerSlice.passivePick;
+export const track = editorManager.nsmEditorManagerSlice.track.bind(
+  editorManager.nsmEditorManagerSlice,
+);
 
 export function searchByTag(
   dispatchSerialOperation: DispatchSerialOperationType,
@@ -143,13 +132,13 @@ export function getPrimaryEditor() {
 export function getFocusedWsPath(): WsPath | undefined {
   const store = getStore();
 
-  let focused = editorManager.nsmEditorManagerSlice.resolveState(
+  let focused = editorManager.nsmEditorManagerSlice.get(
     store.state,
   ).focusedEditorId;
 
   if (typeof focused === 'number') {
     return nsmSliceWorkspace
-      .resolveState(store.state)
+      .get(store.state)
       .openedWsPaths.getByIndex2(focused);
   }
 
@@ -166,7 +155,7 @@ export const onFocusUpdate = (
 export function toggleEditing(): void {
   const store = getStore();
 
-  store.dispatch(editorManager.toggleEditing(store.state));
+  store.dispatch(editorManager.toggleEditing());
 }
 
 export function focusEditorIfNotFocused(): void {

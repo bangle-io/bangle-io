@@ -14,7 +14,6 @@
     "is-abort-error",
     "jsdom-env",
     "mini-js-utils",
-    "nsm",
     "nsm-3",
     "object-uid",
     "p-map",

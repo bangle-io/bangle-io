@@ -1,9 +1,7 @@
-import { openedFileSchema } from '@bangle.io/constants';
-import { createSliceV2, serialAction, z } from '@bangle.io/nsm';
+import type { OpenedFile } from '@bangle.io/constants';
+import { slice } from '@bangle.io/nsm-3';
 
 const SLICE_NAME = 'nsm-slice-file-sha';
-
-export type OpenedFile = z.infer<typeof openedFileSchema>;
 
 export function createDefaultOpenedFile(wsPath: string): OpenedFile {
   return {
@@ -24,102 +22,93 @@ const initState: InitState = {
   openedFiles: {},
 };
 
-export const nsmSliceFileSha = createSliceV2([], {
+export const nsmSliceFileSha = slice([], {
   name: SLICE_NAME,
-  initState: initState,
+  state: initState,
 });
 
-export const actSyncEntries = nsmSliceFileSha.createAction(
-  'syncEntries',
-  serialAction(
-    z.object({
-      removals: z.array(z.string()),
-      additions: z.array(z.string()),
-    }),
-    ({ removals, additions }) => {
-      return (state): InitState => {
-        if (removals.length === 0 && additions.length === 0) {
-          return state;
-        }
+export const actSyncEntries = nsmSliceFileSha.action(function actSyncEntries({
+  removals,
+  additions,
+}: {
+  removals: string[];
+  additions: string[];
+}) {
+  return nsmSliceFileSha.tx((state) => {
+    return nsmSliceFileSha.update(state, (sliceState) => {
+      if (removals.length === 0 && additions.length === 0) {
+        return sliceState;
+      }
 
-        const newOpenedFiles = { ...state.openedFiles };
+      const newOpenedFiles = { ...sliceState.openedFiles };
 
-        removals.forEach((wsPath) => {
-          delete newOpenedFiles[wsPath];
-        });
+      removals.forEach((wsPath) => {
+        delete newOpenedFiles[wsPath];
+      });
 
-        additions.forEach((wsPath) => {
-          newOpenedFiles[wsPath] = {
-            ...createDefaultOpenedFile(wsPath),
-            wsPath,
-            pendingWrite: false,
-          };
-        });
-
-        return {
-          ...state,
-          openedFiles: newOpenedFiles,
+      additions.forEach((wsPath) => {
+        newOpenedFiles[wsPath] = {
+          ...createDefaultOpenedFile(wsPath),
+          wsPath,
+          pendingWrite: false,
         };
+      });
+
+      return {
+        openedFiles: newOpenedFiles,
       };
-    },
-  ),
-);
+    });
+  });
+});
+export const actUpdateEntry = nsmSliceFileSha.action(function actUpdateEntry({
+  wsPath,
+  info,
+}: {
+  wsPath: string;
+  info: Partial<OpenedFile>;
+}) {
+  return nsmSliceFileSha.tx((state) => {
+    return nsmSliceFileSha.update(state, (sliceState): InitState => {
+      const { openedFiles } = sliceState;
 
-export const actUpdateEntry = nsmSliceFileSha.createAction(
-  'updateEntry',
-  serialAction(
-    z.object({
-      wsPath: z.string(),
-      info: openedFileSchema.partial(),
-    }),
-    ({ wsPath, info }) => {
-      return (state): InitState => {
-        const { openedFiles } = state;
+      const entry = openedFiles[wsPath];
 
-        const entry = openedFiles[wsPath];
+      if (!entry) {
+        return sliceState;
+      }
 
-        if (!entry) {
-          return state;
-        }
+      // do a merge of entry updating any that was provided
+      const newEntry: OpenedFile = {
+        ...entry,
+        ...info,
+      };
 
-        // do a merge of entry updating any that was provided
-        const newEntry: OpenedFile = {
-          ...entry,
-          ...info,
-        };
-
-        const newOpenedFiles = {
+      return {
+        openedFiles: {
           ...openedFiles,
           [wsPath]: newEntry,
-        };
-
-        return {
-          ...state,
-          openedFiles: newOpenedFiles,
-        };
+        },
       };
-    },
-  ),
-);
+    });
+  });
+});
 
-export const actBulkUpdateShas = nsmSliceFileSha.createAction(
-  'bulkUpdateShas',
-  serialAction(
-    z.object({
-      data: z.array(
-        z.object({
-          wsPath: z.string(),
-          currentDiskSha: z.union([z.string(), z.undefined()]),
-          lastKnownDiskSha: z.union([z.string(), z.undefined()]),
-        }),
-      ),
-    }),
-    ({ data }) => {
-      return (state): InitState => {
-        const { openedFiles } = state;
+export const actBulkUpdateShas = nsmSliceFileSha.action(
+  function actBulkUpdateShas({
+    data,
+  }: {
+    data: Array<{
+      wsPath: string;
+      currentDiskSha: string | undefined;
+      lastKnownDiskSha: string | undefined;
+    }>;
+  }) {
+    return nsmSliceFileSha.tx((state) => {
+      return nsmSliceFileSha.update(state, (sliceState) => {
+        const { openedFiles } = sliceState;
 
         if (data.length === 0) {
-          return state;
+          return sliceState;
         }
 
         const newOpenedFiles = { ...openedFiles };
@@ -139,10 +128,9 @@ export const actBulkUpdateShas = nsmSliceFileSha.createAction(
         }
 
         return {
-          ...state,
           openedFiles: newOpenedFiles,
         };
-      };
-    },
-  ),
+      });
+    });
+  },
 );

@@ -101,7 +101,7 @@ export const syncWithNsmEffect = ghSliceKey.effect(() => {
     deferredUpdate(store, prevState) {
       const nsmStore = getNewStore(store);
       const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-      const existingName = nsmGhSlice.getState(nsmStore.state).githubWsName;
+      const existingName = nsmGhSlice.get(nsmStore.state).githubWsName;
 
       if (existingName !== githubWsName) {
         nsmStore.dispatch(updateGithubDetails({ githubWsName }));

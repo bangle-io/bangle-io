@@ -1,7 +1,7 @@
 import { WorkspaceType } from '@bangle.io/constants';
 import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
-import { changeEffect, createSliceV2, syncChangeEffect } from '@bangle.io/nsm';
+import { cleanup, effect, slice } from '@bangle.io/nsm-3';
 import { nsmPageSlice, syncPageLocation } from '@bangle.io/slice-page';
 import { readWorkspaceInfo } from '@bangle.io/workspace-info';
 
@@ -13,28 +13,24 @@ const historyInitState: HistoryStateType = {
   history: undefined,
 };
 
-const historySlice = createSliceV2([], {
+export const historySlice = slice([], {
   name: 'history-slice',
-  initState: historyInitState,
+  state: historyInitState,
 });
 
-const setHistory = historySlice.createAction(
-  'setHistory',
-  (history: HistoryStateType['history']) => {
-    return (state) => ({
-      ...state,
-      history,
-    });
-  },
-);
+const setHistory = historySlice.action(function setHistory(
+  history: HistoryStateType['history'],
+) {
+  return historySlice.tx((storeState) => {
+    return historySlice.update(storeState, { history });
+  });
+});
 
-const pendingNavEffect = syncChangeEffect(
-  'pendingNavEffect',
-  {
-    pendingNavigation: nsmPageSlice.pick((s) => s.pendingNavigation),
-    history: historySlice.pick((s) => s.history),
-  },
-  ({ history, pendingNavigation }) => {
+const pendingNavEffect = effect(
+  function pendingNavEffect(store) {
+    const { pendingNavigation } = nsmPageSlice.track(store);
+    const { history } = historySlice.track(store);
+
     if (!history || !pendingNavigation) {
       return;
     }
@@ -54,70 +50,61 @@ const pendingNavEffect = syncChangeEffect(
       });
     }
   },
+  {
+    deferred: false,
+  },
 );
 
-const watchHistoryEffect = changeEffect(
-  'watchHistoryEffect',
-  {
-    history: historySlice.passivePick((s) => s.history),
-    pageSlice: nsmPageSlice.passivePick((s) => s),
-  },
-  (_, dispatch) => {
-    const browserHistory = new BrowserHistory('', (location) => {
-      dispatch(syncPageLocation(location));
+const watchHistoryEffect = effect(function watchHistoryEffect(store) {
+  const browserHistory = new BrowserHistory('', (location) => {
+    store.dispatch(syncPageLocation(location));
+  });
+
+  store.dispatch(setHistory(browserHistory));
+
+  store.dispatch(
+    syncPageLocation({
+      search: browserHistory.search,
+      pathname: browserHistory.pathname,
+    }),
+  );
+
+  cleanup(store, () => {
+    browserHistory.destroy();
+  });
+});
+
+const saveWorkspaceInfoEffect = effect(function saveWorkspaceInfoEffect(store) {
+  const { wsName } = nsmPageSlice.track(store);
+  const { history } = historySlice.get(store.state);
+
+  let destroyed = false;
+
+  if (wsName) {
+    readWorkspaceInfo(wsName).then((info) => {
+      if (!info || destroyed) {
+        return;
+      }
+      if (!history || !(history instanceof BrowserHistory)) {
+        return;
+      }
+
+      if (info.type === WorkspaceType.NativeFS) {
+        history.updateHistoryState({
+          workspaceRootDir: info.metadata.rootDirHandle,
+        });
+      } else {
+        history.updateHistoryState({});
+      }
     });
+  }
 
-    dispatch(setHistory(browserHistory));
+  cleanup(store, () => {
+    destroyed = true;
+  });
+});
 
-    dispatch(
-      syncPageLocation({
-        search: browserHistory.search,
-        pathname: browserHistory.pathname,
-      }),
-    );
-
-    return () => {
-      browserHistory.destroy();
-    };
-  },
-);
-
-const saveWorkspaceInfoEffect = changeEffect(
-  'saveWorkspaceInfoEffect',
-  {
-    history: historySlice.passivePick((s) => s.history),
-    wsName: nsmPageSlice.pick((s) => s.wsName),
-  },
-  ({ wsName, history }) => {
-    let destroyed = false;
-
-    if (wsName) {
-      readWorkspaceInfo(wsName).then((info) => {
-        if (!info || destroyed) {
-          return;
-        }
-        if (!history || !(history instanceof BrowserHistory)) {
-          return;
-        }
-
-        if (info.type === WorkspaceType.NativeFS) {
-          history.updateHistoryState({
-            workspaceRootDir: info.metadata.rootDirHandle,
-          });
-        } else {
-          history.updateHistoryState({});
-        }
-      });
-    }
-
-    return () => {
-      destroyed = true;
-    };
-  },
-);
-
-export const historySliceFamily = [
-  historySlice,
+export const historyEffects = [
   pendingNavEffect,
   watchHistoryEffect,
   saveWorkspaceInfoEffect,

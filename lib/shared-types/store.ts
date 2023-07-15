@@ -1,11 +1,6 @@
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import type {
-  AnySlice,
-  InferSliceName,
-  InferSliceState,
-  Store,
-} from '@bangle.io/nsm';
+import type { Store } from '@bangle.io/nsm-3';
 
 export interface BaseStateConfig {
   readonly extensionRegistry: ExtensionRegistry;
@@ -25,14 +20,3 @@ export type BangleApplicationStore = ApplicationStore;
 // TODO prefer using API store type
 export type NsmStore<N extends string = any> = Store<N>;
 export type NsmStoreState = Store['state'];
-
-type SerialFormat = {
-  version: number;
-  name: string;
-  data: string;
-};
-
-export type SlicePersist<TSlice extends AnySlice> = {
-  serialize: (state: Store<InferSliceName<TSlice>>['state']) => SerialFormat;
-  deserialize: (data: SerialFormat) => InferSliceState<TSlice>;
-};

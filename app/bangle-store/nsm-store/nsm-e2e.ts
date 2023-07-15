@@ -4,10 +4,10 @@ import { nsmApi2 } from '@bangle.io/api';
 import { config } from '@bangle.io/config';
 import * as constants from '@bangle.io/constants';
 import type { NSME2eTypes } from '@bangle.io/e2e-types';
-import { changeEffect, syncChangeEffect } from '@bangle.io/nsm';
+import type { Store } from '@bangle.io/nsm-3';
+import { effect } from '@bangle.io/nsm-3';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
-import type { NsmStore } from '@bangle.io/shared-types';
 import {
   getEditor,
   nsmEditorManagerSlice,
@@ -17,7 +17,7 @@ import type { WsPath } from '@bangle.io/storage';
 import { BaseError, getEditorPluginMetadata } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
-const getGlobalNsmStore = (): NsmStore => {
+const getGlobalNsmStore = (): Store => {
   return (window as any).globalNsmStore;
 };
 
@@ -30,11 +30,10 @@ let e2e: NSME2eTypes = {
   getEditorPluginMetadata,
   getNsmStore: getGlobalNsmStore,
   getPageSliceState: () => {
-    return nsmPageSlice.resolveState(getGlobalNsmStore().state);
+    return nsmPageSlice.get(getGlobalNsmStore().state);
   },
   getOpenedWsPaths: () => {
-    return nsmSliceWorkspace.resolveState(getGlobalNsmStore().state)
-      .openedWsPaths;
+    return nsmSliceWorkspace.get(getGlobalNsmStore().state).openedWsPaths;
   },
   getEditorDetailsById: (id) => {
     const editor = getEditor(getGlobalNsmStore().state, id);
@@ -78,19 +77,19 @@ let e2e: NSME2eTypes = {
 
 window._nsmE2e = e2e;
 
-export const nsmE2eSyncEffect = syncChangeEffect(
-  'nsmE2eSyncEffect',
-  {
-    primaryEditor: nsmEditorManagerSlice.pick((sl) => sl.primaryEditor),
-    secondaryEditor: nsmEditorManagerSlice.pick((sl) => sl.secondaryEditor),
-  },
-  ({ primaryEditor, secondaryEditor }) => {
+const nsmE2eSyncEffect = effect(
+  function nsmE2eSyncEffect(store) {
+    const { primaryEditor } = nsmEditorManagerSlice.track(store);
+    const { secondaryEditor } = nsmEditorManagerSlice.track(store);
+
     e2e.primaryEditor = primaryEditor;
     e2e.secondaryEditor = secondaryEditor;
   },
+  { deferred: false },
 );
+const nsmE2eEffect = effect(function nsmE2eEffect() {});
 
-export const nsmE2eEffect = changeEffect('nsmE2eEffect', {}, ({}) => {});
+export const nsmE2eEffects = [nsmE2eSyncEffect, nsmE2eEffect];
 
 function assertOk(value: boolean, message?: string) {
   if (!value) {

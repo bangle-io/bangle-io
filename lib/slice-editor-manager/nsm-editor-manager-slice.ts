@@ -1,32 +1,21 @@
 import type { BangleEditor } from '@bangle.dev/core';
-import type {
-  EditorState,
-  EditorView,
-  Node,
-  Transaction,
-} from '@bangle.dev/pm';
+import type { Node } from '@bangle.dev/pm';
 import { Selection } from '@bangle.dev/pm';
 
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import type { InferSliceName, Store } from '@bangle.io/nsm';
+import type { InferSliceNameFromSlice } from '@bangle.io/nsm-3';
 import {
-  changeEffect,
-  createMetaAction,
-  createQueryState,
-  createSelector,
-  createSliceWithSelectors,
-  intervalRunEffect,
-  mountEffect,
-  Slice,
+  cleanup,
+  effect,
+  operation,
+  ref,
+  sliceKey,
   sliceStateSerializer,
-  StoreState,
-  syncChangeEffect,
-  updateState,
   z,
-} from '@bangle.io/nsm';
+} from '@bangle.io/nsm-3';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUISlice } from '@bangle.io/slice-ui';
@@ -34,6 +23,7 @@ import {
   debounceFn,
   getEditorPluginMetadata,
   getScrollParentElement,
+  shallowEqual,
   trimEndWhiteSpaceBeforeCursor,
 } from '@bangle.io/utils';
 
@@ -64,354 +54,332 @@ const initState: EditorSliceState & {
 
 type NsmEditorManagerState = typeof initState;
 
-const updateObj = updateState(initState);
+export const nsmEditorManagerSliceKey = sliceKey([nsmPageSlice], {
+  name: 'editor-manager-slice',
+  state: initState,
+});
 
-const SLICE_NAME = 'editor-manager-slice';
-export const nsmEditorManagerSlice = createSliceWithSelectors([nsmPageSlice], {
-  name: SLICE_NAME,
-  initState: initState,
+const primaryEditor = nsmEditorManagerSliceKey.selector((storeState) => {
+  const { mainEditors } = nsmEditorManagerSliceKey.get(storeState);
 
-  selectors: {
-    primaryEditor: createSelector(
-      {
-        mainEditors: (s) => s.mainEditors,
-      },
-      (computed) => computed.mainEditors[PRIMARY_EDITOR_INDEX],
-    ),
-    secondaryEditor: createSelector(
-      {
-        mainEditors: (s) => s.mainEditors,
-      },
-      (computed) => computed.mainEditors[SECONDARY_EDITOR_INDEX],
-    ),
-    lastOpenedEditor: createSelector(
-      {
-        editorOpenOrder: (s) => s.editorOpenOrder,
-        mainEditors: (s) => s.mainEditors,
-      },
-      (computed) => {
-        const lastEditorId = computed.editorOpenOrder[0];
-        const lastEditor =
-          typeof lastEditorId === 'number'
-            ? computed.mainEditors[lastEditorId]
-            : undefined;
+  return mainEditors[PRIMARY_EDITOR_INDEX];
+});
 
-        return typeof lastEditorId === 'number' && lastEditor
-          ? {
-              editorId: lastEditorId,
-              editor: lastEditor,
-            }
-          : undefined;
-      },
-    ),
+const secondaryEditor = nsmEditorManagerSliceKey.selector((storeState) => {
+  const { mainEditors } = nsmEditorManagerSliceKey.get(storeState);
+
+  return mainEditors[SECONDARY_EDITOR_INDEX];
+});
+
+const lastOpenedEditor = nsmEditorManagerSliceKey.selector(
+  (storeState) => {
+    const { editorOpenOrder, mainEditors } =
+      nsmEditorManagerSliceKey.get(storeState);
+    const lastEditorId = editorOpenOrder[0];
+    const lastEditor =
+      typeof lastEditorId === 'number' ? mainEditors[lastEditorId] : undefined;
+
+    return typeof lastEditorId === 'number' && lastEditor
+      ? {
+          editorId: lastEditorId,
+          editor: lastEditor,
+        }
+      : undefined;
+  },
+  {
+    equal: shallowEqual,
+  },
+);
+
+export const nsmEditorManagerSlice = nsmEditorManagerSliceKey.slice({
+  derivedState: {
+    primaryEditor,
+    secondaryEditor,
+    lastOpenedEditor,
   },
 });
 
-Slice.registerEffectSlice(nsmEditorManagerSlice, [
-  mountEffect('watchScrollPos', [nsmEditorManagerSlice], (store) => {
-    const updateScrollPos = () => {
-      const { mainEditors } = nsmEditorManagerSlice.getState(store.state);
-      for (const editor of mainEditors) {
-        if (!editor) {
-          continue;
-        }
-        const { editorId, wsPath } = getEditorPluginMetadata(editor.view.state);
-
-        if (editorId == null) {
-          return;
-        }
-
-        const top = getScrollParentElement(editorId)?.scrollTop;
-
-        if (typeof top !== 'number') {
-          return;
-        }
-
-        store.dispatch(
-          updateScrollPosition({
-            editorId,
-            scrollPosition: top,
-            wsPath,
-          }),
-        );
+const watchScrollPos = effect(function watchScrollPos(store) {
+  const updateScrollPos = () => {
+    const { mainEditors } = nsmEditorManagerSlice.get(store.state);
+    for (const editor of mainEditors) {
+      if (!editor) {
+        continue;
       }
-    };
+      const { editorId, wsPath } = getEditorPluginMetadata(editor.view.state);
 
-    const deb = debounceFn(updateScrollPos, {
-      wait: 300,
-      maxWait: 600,
-    });
+      if (editorId == null) {
+        return;
+      }
 
-    const opts = {
-      capture: true,
-      passive: true,
-    };
-    const isWindow = typeof window !== 'undefined';
+      const top = getScrollParentElement(editorId)?.scrollTop;
+
+      if (typeof top !== 'number') {
+        return;
+      }
+
+      store.dispatch(
+        updateScrollPosition({
+          editorId,
+          scrollPosition: top,
+          wsPath,
+        }),
+      );
+    }
+  };
+
+  const deb = debounceFn(updateScrollPos, {
+    wait: 300,
+    maxWait: 600,
+  });
+
+  const opts = {
+    capture: true,
+    passive: true,
+  };
+  const isWindow = typeof window !== 'undefined';
+
+  if (isWindow) {
+    window.addEventListener('scroll', deb, opts);
+  }
+
+  cleanup(store, () => {
+    deb.cancel();
 
     if (isWindow) {
-      window.addEventListener('scroll', deb, opts);
+      window.removeEventListener('scroll', deb, opts);
     }
+  });
+});
 
-    return () => {
-      deb.cancel();
-
-      if (isWindow) {
-        window.removeEventListener('scroll', deb, opts);
+const checkForInactiveEditor = effect(function checkForInactiveEditor(store) {
+  let timer: NodeJS.Timeout | undefined;
+  const intervalId = setInterval(
+    () => {
+      if (timer) {
+        clearTimeout(timer);
       }
-    };
-  }),
 
-  intervalRunEffect(
-    'checkForInactiveEditor',
-    [nsmEditorManagerSlice, nsmUISlice],
+      if (!nsmUISlice.get(store.state).widescreen) {
+        const { editingAllowed } = nsmEditorManagerSlice.get(store.state);
+
+        if (editingAllowed) {
+          timer = setTimeout(() => {
+            store.dispatch(incrementDisableEditingCounter());
+          }, 300);
+        }
+      }
+    },
     // WARNING: do not reduce the interval below 500 as it can prevent manual toggling
     // of editing.
     // WARNING: when changing time, make sure to account for sleep time below
     500,
-    (state, dispatch) => {
-      let timer: NodeJS.Timeout | undefined;
+  );
 
-      if (!nsmUISlice.getState(state).widescreen) {
-        const { editingAllowed } = nsmEditorManagerSlice.getState(state);
-
-        if (editingAllowed) {
-          timer = setTimeout(() => {
-            dispatch(incrementDisableEditingCounter());
-          }, 300);
-        }
-      }
-
-      return () => {
-        clearTimeout(timer);
-      };
-    },
-  ),
-
-  // Disable editing when the user is inactive
-  changeEffect(
-    'toggleEditingEffect',
-    {
-      disableEditingCounter: nsmEditorManagerSlice.pick(
-        (s) => s.disableEditingCounter,
-      ),
-      isInactivePage: nsmPageSlice.pick((s) => s.isInactivePage),
-      widescreen: nsmUISlice.pick((s) => s.widescreen),
-      mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
-      editingAllowed: nsmEditorManagerSlice.passivePick(
-        (s) => s.editingAllowed,
-      ),
-    },
-    (state, dispatch, ref) => {
-      if (state.widescreen) {
-        return;
-      }
-
-      if (state.disableEditingCounter === undefined) {
-        return;
-      }
-
-      const noEditorInFocus = !someEditor(state.mainEditors, (editor) =>
-        editor.view.hasFocus(),
-      );
-
-      // TODO this isn't working and is always disabling editor
-      // if (noEditorInFocus || state.isInactivePage) {
-      //   if (noEditorInFocus) {
-      //     console.warn('disabling editing due to no editor in focus');
-      //   }
-      //   if (state.isInactivePage) {
-      //     console.warn('disabling editing due to inactive page');
-      //   }
-      //   dispatch(
-      //     toggleEditingDirect(
-      //       {
-      //         editingAllowed: state.editingAllowed,
-      //         mainEditors: state.mainEditors,
-      //       },
-      //       { editingAllowed: false },
-      //     ),
-      //   );
-      // }
-    },
-  ),
-
-  changeEffect(
-    'initialSelectionEffect',
-    {
-      mainEditors: nsmEditorManagerSlice.pick((s) => s.mainEditors),
-    },
-    ({ mainEditors }, dispatch, ref) => {
-      for (const [index, editor] of mainEditors.entries()) {
-        if (!editor) {
-          continue;
-        }
-        const value = calculateSelection(index, editor);
-        dispatch(updateSelection(value));
-      }
-    },
-  ),
-
-  changeEffect(
-    'trimWhiteSpaceEffect',
-    {
-      mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
-      isInactivePage: nsmPageSlice.pick((s) => s.isInactivePage),
-    },
-    ({ mainEditors, isInactivePage }) => {
-      if (isInactivePage) {
-        for (const editor of mainEditors) {
-          if (!editor) {
-            continue;
-          }
-          trimEndWhiteSpaceBeforeCursor()(
-            editor.view.state,
-            editor.view.dispatch,
-          );
-        }
-      }
-    },
-  ),
-
-  // This effect does:
-  // 1. Focus on the correct editor on initial mount.
-  // 2. Automatically focus on any new mounted editor thereafter.
-  // 3. If no current editor has any focus, focus on one automatically.
-  syncChangeEffect(
-    'focusEffect',
-    {
-      lastOpenedEditor: nsmEditorManagerSlice.pick((s) => s.lastOpenedEditor),
-      focusedEditorId: nsmEditorManagerSlice.passivePick(
-        (s) => s.focusedEditorId,
-      ),
-      mainEditors: nsmEditorManagerSlice.passivePick((s) => s.mainEditors),
-      primaryWsPath: nsmPageSlice.passivePick((s) => s.primaryWsPath),
-      secondaryWsPath: nsmPageSlice.passivePick((s) => s.secondaryWsPath),
-    },
-    (
-      {
-        lastOpenedEditor,
-        focusedEditorId,
-        mainEditors,
-        primaryWsPath,
-        secondaryWsPath,
-      },
-      _,
-      ref: { focusedOnMount?: boolean },
-    ) => {
-      // no point in focusing if we don't have any editors
-      if (primaryWsPath == null && secondaryWsPath == null) {
-        return;
-      }
-
-      const isPrimaryReady = Boolean(
-        primaryWsPath ? mainEditors[PRIMARY_EDITOR_INDEX] : true,
-      );
-
-      const isSecondaryReady = Boolean(
-        secondaryWsPath ? mainEditors[SECONDARY_EDITOR_INDEX] : true,
-      );
-
-      if (!isPrimaryReady && !isSecondaryReady) {
-        return;
-      }
-
-      // if we have already focused on mount, then we can continue focusing
-      // on the last opened editor
-      if (ref.focusedOnMount) {
-        lastOpenedEditor?.editor.focusView();
-
-        return;
-      }
-
-      if (isPrimaryReady && isSecondaryReady) {
-        ref.focusedOnMount = true;
-
-        if (typeof focusedEditorId === 'number') {
-          // if mounting for the first time, focus on the focusedEditorId
-          mainEditors[focusedEditorId]?.focusView();
-        } else {
-          lastOpenedEditor?.editor.focusView();
-        }
-      }
-    },
-  ),
-]);
-
-type EditorManagerStoreState = StoreState<
-  InferSliceName<typeof nsmEditorManagerSlice>
->;
-type EditorManagerStoreDispatch = Store<
-  InferSliceName<typeof nsmEditorManagerSlice>
->['dispatch'];
-
-export const noOp = nsmEditorManagerSlice.createAction('noOp', () => {
-  return (state) => {
-    return state;
-  };
+  cleanup(store, () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    clearInterval(intervalId);
+  });
 });
 
-export const setEditingAllowed = nsmEditorManagerSlice.createAction(
-  'setEditingAllowed',
-  ({ editingAllowed }: { editingAllowed: boolean }) => {
-    return (state) =>
-      updateObj(state, {
+const toggleEditingEffect = effect(function toggleEditingEffect(store) {
+  void nsmPageSlice.track(store).isInactivePage;
+
+  const { disableEditingCounter } = nsmEditorManagerSlice.track(store);
+  const { widescreen } = nsmUISlice.track(store);
+
+  const { mainEditors, editingAllowed } = nsmEditorManagerSlice.get(
+    store.state,
+  );
+
+  if (widescreen || disableEditingCounter === undefined) {
+    return;
+  }
+
+  const noEditorInFocus = !someEditor(mainEditors, (editor) =>
+    editor.view.hasFocus(),
+  );
+
+  // TODO this isn't working and is always disabling editor
+  // if (noEditorInFocus || state.isInactivePage) {
+  //   if (noEditorInFocus) {
+  //     console.warn('disabling editing due to no editor in focus');
+  //   }
+  //   if (state.isInactivePage) {
+  //     console.warn('disabling editing due to inactive page');
+  //   }
+  //   dispatch(
+  //     toggleEditingDirect(
+  //       {
+  //         editingAllowed: state.editingAllowed,
+  //         mainEditors: state.mainEditors,
+  //       },
+  //       { editingAllowed: false },
+  //     ),
+  //   );
+  // }
+});
+
+const initialSelectionEffect = effect(function initialSelectionEffect(store) {
+  const { mainEditors } = nsmEditorManagerSlice.track(store);
+
+  for (const [index, editor] of mainEditors.entries()) {
+    if (!editor) {
+      continue;
+    }
+    const value = calculateSelection(index, editor);
+    store.dispatch(updateSelection(value));
+  }
+});
+
+const trimWhiteSpaceEffect = effect(function trimWhiteSpaceEffect(store) {
+  const { mainEditors } = nsmEditorManagerSlice.get(store.state);
+  const { isInactivePage } = nsmPageSlice.track(store);
+
+  if (isInactivePage) {
+    for (const editor of mainEditors) {
+      if (!editor) {
+        continue;
+      }
+      trimEndWhiteSpaceBeforeCursor()(editor.view.state, editor.view.dispatch);
+    }
+  }
+});
+
+const getFocusedOnMountRef = ref(() => ({
+  focusedOnMount: false,
+}));
+
+// This effect does:
+// 1. Focus on the correct editor on initial mount.
+// 2. Automatically focus on any new mounted editor thereafter.
+// 3. If no current editor has any focus, focus on one automatically.
+const focusEffect = effect(
+  function focusEffect(store) {
+    const { lastOpenedEditor } = nsmEditorManagerSlice.track(store);
+
+    const { focusedEditorId, mainEditors } = nsmEditorManagerSlice.get(
+      store.state,
+    );
+    const { primaryWsPath, secondaryWsPath } = nsmPageSlice.get(store.state);
+
+    const focusedRef = getFocusedOnMountRef(store);
+
+    if (primaryWsPath == null && secondaryWsPath == null) {
+      return;
+    }
+
+    const isPrimaryReady = Boolean(
+      primaryWsPath ? mainEditors[PRIMARY_EDITOR_INDEX] : true,
+    );
+    const isSecondaryReady = Boolean(
+      secondaryWsPath ? mainEditors[SECONDARY_EDITOR_INDEX] : true,
+    );
+
+    if (!isPrimaryReady && !isSecondaryReady) {
+      return;
+    }
+    // if we have already focused on mount, then we can continue focusing
+    // on the last opened editor
+    if (focusedRef.current.focusedOnMount) {
+      lastOpenedEditor?.editor.focusView();
+
+      return;
+    }
+
+    if (isPrimaryReady && isSecondaryReady) {
+      focusedRef.current.focusedOnMount = true;
+
+      if (typeof focusedEditorId === 'number') {
+        // if mounting for the first time, focus on the focusedEditorId
+        mainEditors[focusedEditorId]?.focusView();
+      } else {
+        lastOpenedEditor?.editor.focusView();
+      }
+    }
+  },
+  { deferred: false },
+);
+
+export const nsmEditorEffects = [
+  watchScrollPos,
+  checkForInactiveEditor,
+  toggleEditingEffect,
+  initialSelectionEffect,
+  trimWhiteSpaceEffect,
+  focusEffect,
+];
+
+export const noOp = nsmEditorManagerSlice.action(function noOp() {
+  return nsmEditorManagerSlice.tx((state) => {
+    return nsmEditorManagerSlice.update(state, (sliceState) => {
+      return sliceState;
+    });
+  });
+});
+
+export const setEditingAllowed = nsmEditorManagerSlice.action(
+  function setEditingAllowed({ editingAllowed }: { editingAllowed: boolean }) {
+    return nsmEditorManagerSlice.tx((state) => {
+      return nsmEditorManagerSlice.update(state, {
         editingAllowed,
       });
+    });
   },
 );
 
-export const setEditor = nsmEditorManagerSlice.createAction(
-  'setEditor',
-  ({
-    editorId,
-    editor,
-  }: {
-    editor: BangleEditor | undefined;
-    editorId: EditorIdType;
-  }) => {
-    return (state) => {
+export const setEditor = nsmEditorManagerSlice.action(function setEditor({
+  editorId,
+  editor,
+}: {
+  editor: BangleEditor | undefined;
+  editorId: EditorIdType;
+}) {
+  return nsmEditorManagerSlice.tx((state) => {
+    return nsmEditorManagerSlice.update(state, (sliceState) => {
       if (!isValidEditorId(editorId)) {
-        return state;
+        return sliceState;
       }
 
       const newEditors: EditorSliceState['mainEditors'] = [
-        ...state.mainEditors,
+        ...sliceState.mainEditors,
       ];
       newEditors[editorId] = editor;
 
-      const editorOpenOrder = [editorId, ...state.editorOpenOrder].filter(
+      const editorOpenOrder = [editorId, ...sliceState.editorOpenOrder].filter(
         (index) => {
           return Boolean(newEditors[index]);
         },
       );
 
-      return updateObj(state, {
+      return {
         mainEditors: newEditors,
         editorOpenOrder,
+      };
+    });
+  });
+});
+
+export const onFocusUpdate = nsmEditorManagerSlice.action(
+  function onFocusUpdate({ editorId }: { editorId: EditorIdType }) {
+    return nsmEditorManagerSlice.tx((state) => {
+      return nsmEditorManagerSlice.update(state, (sliceState) => {
+        if (!isValidEditorId(editorId)) {
+          return sliceState;
+        }
+
+        return {
+          focusedEditorId: editorId,
+        };
       });
-    };
+    });
   },
 );
 
-// when editors focus changes sync with state
-export const onFocusUpdate = nsmEditorManagerSlice.createAction(
-  'onFocusUpdate',
-  ({ editorId }: { editorId: EditorIdType }) => {
-    return (state) => {
-      if (!isValidEditorId(editorId)) {
-        return state;
-      }
-
-      return updateObj(state, {
-        focusedEditorId: editorId,
-      });
-    };
-  },
-);
-
-export const updateScrollPosition = nsmEditorManagerSlice.createAction(
-  'updateScrollPosition',
-  ({
+export const updateScrollPosition = nsmEditorManagerSlice.action(
+  function updateScrollPosition({
     editorId,
     wsPath,
     scrollPosition,
@@ -419,37 +387,41 @@ export const updateScrollPosition = nsmEditorManagerSlice.createAction(
     editorId: EditorIdType;
     wsPath: string;
     scrollPosition: number;
-  }) => {
-    return (state) => {
-      if (!isValidEditorId(editorId)) {
-        return state;
-      }
+  }) {
+    return nsmEditorManagerSlice.tx((state) => {
+      return nsmEditorManagerSlice.update(state, (sliceState) => {
+        if (!isValidEditorId(editorId)) {
+          return sliceState;
+        }
 
-      const newEditorConfig = state.editorConfig.updateScrollPosition(
-        scrollPosition,
-        wsPath,
-        editorId,
-      );
+        const newEditorConfig = sliceState.editorConfig.updateScrollPosition(
+          scrollPosition,
+          wsPath,
+          editorId,
+        );
 
-      return updateObj(state, {
-        editorConfig: newEditorConfig,
+        return {
+          editorConfig: newEditorConfig,
+        };
       });
-    };
+    });
   },
 );
 
-export const incrementDisableEditingCounter =
-  nsmEditorManagerSlice.createAction('incrementDisableEditingCounter', () => {
-    return (state) => {
-      return updateObj(state, {
-        disableEditingCounter: (state.disableEditingCounter || 0) + 1,
+export const incrementDisableEditingCounter = nsmEditorManagerSlice.action(
+  function incrementDisableEditingCounter() {
+    return nsmEditorManagerSlice.tx((state) => {
+      return nsmEditorManagerSlice.update(state, (sliceState) => {
+        return {
+          disableEditingCounter: (sliceState.disableEditingCounter || 0) + 1,
+        };
       });
-    };
-  });
+    });
+  },
+);
 
-export const updateSelection = nsmEditorManagerSlice.createAction(
-  'updateSelection',
-  ({
+export const updateSelection = nsmEditorManagerSlice.action(
+  function updateSelection({
     editorId,
     wsPath,
     selectionJson,
@@ -457,41 +429,43 @@ export const updateSelection = nsmEditorManagerSlice.createAction(
     editorId: EditorIdType;
     wsPath: string;
     selectionJson: SelectionJson;
-  }) => {
-    return (state) => {
+  }) {
+    return nsmEditorManagerSlice.tx((state) => {
       if (!isValidEditorId(editorId)) {
-        return state;
+        return nsmEditorManagerSlice.get(state);
       }
 
-      const newEditorConfig = state.editorConfig.updateSelection(
-        selectionJson,
-        wsPath,
-        editorId,
-      );
+      return nsmEditorManagerSlice.update(state, (sliceState) => {
+        const newEditorConfig = sliceState.editorConfig.updateSelection(
+          selectionJson,
+          wsPath,
+          editorId,
+        );
 
-      return updateObj(state, {
-        editorConfig: newEditorConfig,
+        return {
+          editorConfig: newEditorConfig,
+        };
       });
+    });
+  },
+);
+
+export const setEditorScrollPos = nsmEditorManagerSlice.query(
+  (wsPath: string, editorId: EditorIdType) => {
+    return (state) => {
+      const scrollParent = getScrollParentElement(editorId);
+      const editorConfig = nsmEditorManagerSlice.get(state).editorConfig;
+      const pos = editorConfig.getScrollPosition(wsPath, editorId);
+
+      if (typeof pos === 'number' && scrollParent) {
+        scrollParent.scrollTop = pos;
+      }
     };
   },
 );
 
-export const setEditorScrollPos = createQueryState(
-  [nsmEditorManagerSlice],
-  (state: EditorManagerStoreState, wsPath: string, editorId: EditorIdType) => {
-    const scrollParent = getScrollParentElement(editorId);
-    const editorConfig = nsmEditorManagerSlice.getState(state).editorConfig;
-    const pos = editorConfig.getScrollPosition(wsPath, editorId);
-
-    if (typeof pos === 'number' && scrollParent) {
-      scrollParent.scrollTop = pos;
-    }
-  },
-);
-
-export const focusEditorIfNotFocused = createQueryState(
-  [nsmEditorManagerSlice],
-  (state, editorId?: EditorIdType) => {
+export const focusEditorIfNotFocused = nsmEditorManagerSlice.query(
+  (editorId?: EditorIdType) => (state) => {
     if (querySomeEditor(state, (editor) => editor.view.hasFocus())) {
       return;
     }
@@ -506,81 +480,77 @@ export const focusEditorIfNotFocused = createQueryState(
       }
     }
 
-    nsmEditorManagerSlice
-      .resolveState(state)
-      .lastOpenedEditor?.editor?.focusView();
+    nsmEditorManagerSlice.get(state).lastOpenedEditor?.editor?.focusView();
   },
 );
 
-export const getEditor = createQueryState(
-  [nsmEditorManagerSlice],
-  (
-    state: EditorManagerStoreState,
-    editorId: EditorIdType,
-  ): BangleEditor | undefined => {
-    assertValidEditorId(editorId);
+export const getEditor = nsmEditorManagerSlice.query(
+  (editorId: EditorIdType) => {
+    return (state) => {
+      assertValidEditorId(editorId);
 
-    const sliceState = nsmEditorManagerSlice.getState(state);
+      const sliceState = nsmEditorManagerSlice.get(state);
 
-    return sliceState.mainEditors[editorId];
+      return sliceState.mainEditors[editorId];
+    };
   },
 );
 
-export const getInitialSelection = createQueryState(
-  [nsmEditorManagerSlice],
-  (
-    state: EditorManagerStoreState,
-    editorId: EditorIdType,
-    wsPath: string,
-    doc: Node,
-  ) => {
-    assertValidEditorId(editorId);
+export const getInitialSelection = nsmEditorManagerSlice.query(
+  (editorId: EditorIdType, wsPath: string, doc: Node) => {
+    return (state) => {
+      assertValidEditorId(editorId);
 
-    const sliceState = nsmEditorManagerSlice.getState(state);
+      const sliceState = nsmEditorManagerSlice.get(state);
 
-    if (!sliceState) {
+      if (!sliceState) {
+        return undefined;
+      }
+
+      const initialSelection = sliceState.editorConfig.getSelection(
+        wsPath,
+        editorId,
+      );
+
+      if (initialSelection) {
+        const anchor =
+          typeof initialSelection?.anchor === 'number'
+            ? initialSelection.anchor
+            : undefined;
+
+        const head =
+          typeof initialSelection?.head === 'number'
+            ? initialSelection.head
+            : undefined;
+
+        let isOutside = false;
+
+        if (anchor != null && head != null) {
+          isOutside = Math.max(anchor, head) >= doc.content.size;
+        }
+
+        let selection = isOutside
+          ? Selection.atEnd(doc)
+          : safeSelectionFromJSON(doc, initialSelection);
+        let { from } = selection;
+
+        if (from >= doc.content.size) {
+          selection = Selection.atEnd(doc);
+        } else {
+          selection = Selection.near(doc.resolve(from));
+        }
+
+        return selection;
+      }
+
       return undefined;
-    }
-
-    const initialSelection = sliceState.editorConfig.getSelection(
-      wsPath,
-      editorId,
-    );
-
-    if (initialSelection) {
-      const anchor =
-        typeof initialSelection?.anchor === 'number'
-          ? initialSelection.anchor
-          : undefined;
-
-      const head =
-        typeof initialSelection?.head === 'number'
-          ? initialSelection.head
-          : undefined;
-
-      let isOutside = false;
-
-      if (anchor != null && head != null) {
-        isOutside = Math.max(anchor, head) >= doc.content.size;
-      }
-
-      let selection = isOutside
-        ? Selection.atEnd(doc)
-        : safeSelectionFromJSON(doc, initialSelection);
-      let { from } = selection;
-
-      if (from >= doc.content.size) {
-        selection = Selection.atEnd(doc);
-      } else {
-        selection = Selection.near(doc.resolve(from));
-      }
-
-      return selection;
-    }
-
-    return undefined;
+    };
   },
 );
+
+const editorOperations = operation<
+  InferSliceNameFromSlice<typeof nsmEditorManagerSlice>
+>({});
 
 /**
  * Enables or disables editing.
@@ -588,66 +558,71 @@ export const getInitialSelection = createQueryState(
  * @param param0.focusOrBlur - if true : focuses when enabling editing, blurs when disabling editing
  * @returns
  */
-export const toggleEditing = createMetaAction(
-  [nsmEditorManagerSlice],
+export const toggleEditing = editorOperations(
+  ({
+    focusOrBlur = true,
+    editingAllowed,
+  }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {}) => {
+    return (store) => {
+      const sliceState = nsmEditorManagerSlice.get(store.state);
+
+      toggleEditingDirect(sliceState, {
+        focusOrBlur,
+        editingAllowed,
+      });
+    };
+  },
+);
+
+export const toggleEditingDirect = nsmEditorManagerSlice.action(
   (
-    state,
+    sliceState: {
+      editingAllowed: EditorSliceState['editingAllowed'];
+      mainEditors: EditorSliceState['mainEditors'];
+    },
     {
       focusOrBlur = true,
       editingAllowed,
     }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
   ) => {
-    const sliceState = nsmEditorManagerSlice.getState(state);
+    return nsmEditorManagerSlice.tx((storeState) => {
+      if (!focusOrBlur) {
+        // NOOP
+        return nsmEditorManagerSlice.get(storeState);
+      }
 
-    return toggleEditingDirect(sliceState, {
-      focusOrBlur,
-      editingAllowed,
+      return nsmEditorManagerSlice.update(storeState, (sliceState) => {
+        const newEditingAllowed = editingAllowed ?? !sliceState.editingAllowed;
+
+        for (const editor of sliceState.mainEditors) {
+          if (editor?.view.isDestroyed) {
+            continue;
+          }
+
+          if (newEditingAllowed) {
+            editor?.focusView();
+          } else {
+            editor?.view.dom.blur();
+          }
+
+          // send empty transaction so that editor view can update
+          // the editing state.
+          // queue it up so it is dispatched after store updated, so that
+          // when editor queries the state, the state is correct.
+          queueMicrotask(() => {
+            editor?.view.dispatch(
+              editor.view.state.tr.setMeta('__activitybar_empty__', true),
+            );
+          });
+        }
+
+        return {
+          editingAllowed: newEditingAllowed,
+        };
+      });
     });
   },
 );
-
-export function toggleEditingDirect(
-  sliceState: {
-    editingAllowed: EditorSliceState['editingAllowed'];
-    mainEditors: EditorSliceState['mainEditors'];
-  },
-  {
-    focusOrBlur = true,
-    editingAllowed,
-  }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
-) {
-  const newEditingAllowed = editingAllowed ?? !sliceState.editingAllowed;
-
-  if (!focusOrBlur) {
-    return noOp();
-  }
-
-  for (const editor of sliceState.mainEditors) {
-    if (editor?.view.isDestroyed) {
-      continue;
-    }
-
-    if (newEditingAllowed) {
-      editor?.focusView();
-    } else {
-      editor?.view.dom.blur();
-    }
-
-    // send empty transaction so that editor view can update
-    // the editing state.
-    // queue it up so it is dispatched after store updated, so that
-    // when editor queries the state, the state is correct.
-    queueMicrotask(() => {
-      editor?.view.dispatch(
-        editor.view.state.tr.setMeta('__activitybar_empty__', true),
-      );
-    });
-  }
-
-  return setEditingAllowed({
-    editingAllowed: newEditingAllowed,
-  });
-}
 
 function safeSelectionFromJSON(doc: Node, json: any) {
   try {
@@ -662,66 +637,31 @@ function safeSelectionFromJSON(doc: Node, json: any) {
   }
 }
 
-export function dispatchEditorCommand<T>(
-  state: EditorManagerStoreState,
-  editorId: EditorIdType,
-  cmdCallback: (
-    state: EditorState,
-    dispatch?: (tr: Transaction) => void,
-    view?: EditorView,
-  ) => T,
-): T | false {
-  assertValidEditorId(editorId);
+export const forEachEditor = nsmEditorManagerSlice.query(
+  (callback: (editor: BangleEditor, editorId: EditorIdType) => void) => {
+    return (state) => {
+      const { mainEditors } = nsmEditorManagerSlice.get(state);
 
-  const currentEditor = getEditor(state, editorId);
-
-  if (!currentEditor) {
-    return false;
-  }
-
-  const view = currentEditor.view;
-
-  return cmdCallback(view.state, view.dispatch, view);
-}
-
-export function forEachEditorPlain(
-  state: EditorManagerStoreState | NsmEditorManagerState,
-  callback: (editor: BangleEditor, editorId: EditorIdType) => void,
-) {
-  const { mainEditors } =
-    state instanceof StoreState ? nsmEditorManagerSlice.getState(state) : state;
-
-  for (const [editorId, editor] of mainEditors.entries()) {
-    if (editor) {
-      callback(editor, editorId);
-    }
-  }
-}
-
-export const forEachEditor = createQueryState(
-  [nsmEditorManagerSlice],
-  (state, callback: (editor: BangleEditor, editorId: EditorIdType) => void) => {
-    const { mainEditors } = nsmEditorManagerSlice.getState(state);
-
-    for (const [editorId, editor] of mainEditors.entries()) {
-      if (editor) {
-        callback(editor, editorId);
+      for (const [editorId, editor] of mainEditors.entries()) {
+        if (editor) {
+          callback(editor, editorId);
+        }
       }
-    }
+    };
   },
 );
 
 const SERIAL_VERSION = 1;
 
-export const persistState = sliceStateSerializer(nsmEditorManagerSlice, {
+export const persistState = sliceStateSerializer(nsmEditorManagerSliceKey, {
   dbKey: 'editorManagerSlice',
   schema: z.object({
     focusedEditorId: z.union([z.number(), z.undefined()]),
     editorConfig: openedEditorsConfigSchema,
   }),
+
   serialize: (state) => {
-    const { editorConfig, focusedEditorId } =
-      nsmEditorManagerSlice.resolveState(state);
+    const { editorConfig, focusedEditorId } = nsmEditorManagerSlice.get(state);
 
     let newEditorConfig = editorConfig;
 
@@ -754,26 +694,28 @@ export const persistState = sliceStateSerializer(nsmEditorManagerSlice, {
     };
   },
 
-  deserialize: ({ version, data }) => {
+  deserialize: ({ version, data }): NsmEditorManagerState => {
     if (version < SERIAL_VERSION) {
       return initState;
     }
 
-    return updateObj(initState, {
+    return {
+      ...initState,
       focusedEditorId: data.focusedEditorId,
       editorConfig: OpenedEditorsConfig.fromJsonObj(data.editorConfig),
-    });
+    };
   },
 });
 
-function querySomeEditor(
-  state: EditorManagerStoreState,
-  callback: (editor: BangleEditor, editorId: EditorIdType) => boolean,
-): boolean {
-  const sliceState = nsmEditorManagerSlice.getState(state);
+const querySomeEditor = nsmEditorManagerSlice.query(
+  (callback: (editor: BangleEditor, editorId: EditorIdType) => boolean) => {
+    return (state): boolean => {
+      const sliceState = nsmEditorManagerSlice.get(state);
 
-  return someEditor(sliceState.mainEditors, callback);
-}
+      return someEditor(sliceState.mainEditors, callback);
+    };
+  },
+);
 
 function someEditor(
   mainEditors: EditorSliceState['mainEditors'],

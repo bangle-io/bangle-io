@@ -5,12 +5,12 @@ import {
   GENERIC_ERROR_MODAL_NAME,
 } from '@bangle.io/constants';
 import {
-  createSliceV2,
-  mountEffect,
-  Slice,
+  cleanup,
+  effect,
+  slice,
   sliceStateSerializer,
   z,
-} from '@bangle.io/nsm';
+} from '@bangle.io/nsm-3';
 import type { GenericErrorModalMetadata } from '@bangle.io/shared-types';
 import {
   changeColorScheme,
@@ -22,209 +22,206 @@ import {
 import type { UISliceState } from './constants';
 import { initialUISliceState } from './constants';
 
-export const nsmUISlice = createSliceV2([], {
+export const nsmUISlice = slice([], {
   name: 'bangle/ui-slice-main',
-  initState: initialUISliceState,
+  state: initialUISliceState,
 });
 
-export const toggleSideBar = nsmUISlice.createAction(
-  'toggleSideBar',
-  (_type?: string) => {
-    return (state): UISliceState => {
-      // use the current state to toggle
-      let type = _type === undefined ? state.sidebar : _type;
+export const toggleSideBar = nsmUISlice.action(function toggleSideBar(
+  _type?: string,
+) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, (sliceState) => {
+      let type = _type === undefined ? sliceState.sidebar : _type;
 
       return {
-        ...state,
-        sidebar: state.sidebar === type ? undefined : type,
+        sidebar: sliceState.sidebar === type ? undefined : type,
       };
-    };
-  },
-);
+    });
+  });
+});
 
-export const changeSidebar = nsmUISlice.createAction(
-  'changeSidebar',
-  (type: string) => {
-    return (state): UISliceState => {
+export const changeSidebar = nsmUISlice.action(function changeSidebar(
+  type: string,
+) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, (sliceState) => {
       return {
-        ...state,
         sidebar: type,
       };
-    };
-  },
-);
-
-export const closeSidebar = nsmUISlice.createAction('closeSidebar', () => {
-  return (state): UISliceState => {
-    return {
-      ...state,
-      sidebar: undefined,
-    };
-  };
+    });
+  });
 });
 
-export const updatePalette = nsmUISlice.createAction(
-  'updatePalette',
-  (type: CorePalette | undefined, initialQuery?: string) => {
-    return (state): UISliceState => {
+export const closeSidebar = nsmUISlice.action(function closeSidebar() {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, () => {
       return {
-        ...state,
+        sidebar: undefined,
+      };
+    });
+  });
+});
+
+export const updatePalette = nsmUISlice.action(function updatePalette(
+  type: CorePalette | undefined,
+  initialQuery?: string,
+) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, () => {
+      return {
         paletteType: type,
         paletteInitialQuery: initialQuery,
       };
-    };
-  },
-);
-
-export const togglePalette = nsmUISlice.createAction(
-  'togglePalette',
-  (type: CorePalette) => {
-    return (state): UISliceState => {
-      return {
-        ...state,
-        paletteType: state.paletteType === type ? undefined : type,
-        paletteInitialQuery: undefined,
-      };
-    };
-  },
-);
-
-export const resetPalette = nsmUISlice.createAction('resetPalette', () => {
-  return (state): UISliceState => {
-    return {
-      ...state,
-      paletteType: undefined,
-      paletteInitialQuery: '',
-      paletteMetadata: {},
-    };
-  };
+    });
+  });
 });
 
-export const toggleColorSchema = nsmUISlice.createAction(
-  'toggleColorSchema',
-  () => {
-    return (state): UISliceState => {
-      const schema: ColorScheme =
-        state.colorScheme === COLOR_SCHEMA.DARK
-          ? COLOR_SCHEMA.LIGHT
-          : COLOR_SCHEMA.DARK;
-
-      changeColorScheme(schema);
-
+export const togglePalette = nsmUISlice.action(function togglePalette(
+  type: CorePalette,
+) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, (sliceState) => {
       return {
-        ...state,
-        colorScheme: schema,
+        paletteType: sliceState.paletteType === type ? undefined : type,
+        paletteInitialQuery: undefined,
       };
-    };
+    });
+  });
+});
+
+export const resetPalette = nsmUISlice.action(function resetPalette() {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, () => {
+      return {
+        paletteType: undefined,
+        paletteInitialQuery: '',
+        paletteMetadata: {},
+      };
+    });
+  });
+});
+
+export const toggleColorSchema = nsmUISlice.action(
+  function toggleColorSchema() {
+    return nsmUISlice.tx((state) => {
+      return nsmUISlice.update(state, (sliceState) => {
+        const schema: ColorScheme =
+          sliceState.colorScheme === COLOR_SCHEMA.DARK
+            ? COLOR_SCHEMA.LIGHT
+            : COLOR_SCHEMA.DARK;
+        changeColorScheme(schema);
+
+        return {
+          colorScheme: schema,
+        };
+      });
+    });
   },
 );
 
-export const updateColorSchema = nsmUISlice.createAction(
-  'updateColorSchema',
-  (colorScheme: ColorScheme) => {
-    return (state): UISliceState => {
-      changeColorScheme(colorScheme);
+export const updateColorSchema = nsmUISlice.action(function updateColorSchema(
+  colorScheme: ColorScheme,
+) {
+  return nsmUISlice.tx((state) => {
+    changeColorScheme(colorScheme);
 
+    return nsmUISlice.update(state, () => {
       return {
-        ...state,
         colorScheme,
       };
-    };
-  },
-);
+    });
+  });
+});
 
-export const updateWindowSize = nsmUISlice.createAction(
-  'updateWindowSize',
-  (windowSize: { height: number; width: number }) => {
-    return (state): UISliceState => {
+export const updateWindowSize = nsmUISlice.action(
+  function updateWindowSize(windowSize: { height: number; width: number }) {
+    return nsmUISlice.tx((state) => {
       const widescreen = checkWidescreen(windowSize.width);
       setRootWidescreenClass(widescreen);
 
-      return {
-        ...state,
-        widescreen,
-      };
-    };
+      return nsmUISlice.update(state, () => {
+        return {
+          widescreen,
+        };
+      });
+    });
   },
 );
 
-export const showDialog = nsmUISlice.createAction(
-  'showDialog',
-  (value: { dialogName: string; metadata?: { [key: string]: any } }) => {
-    return (state): UISliceState => {
+export const showDialog = nsmUISlice.action(function showDialog(value: {
+  dialogName: string;
+  metadata?: { [key: string]: any };
+}) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, () => {
       return {
-        ...state,
         dialogName: value.dialogName,
         dialogMetadata: value.metadata,
       };
-    };
-  },
-);
+    });
+  });
+});
 
-/**
- * if name provided will only close if the dialog exists
- * if not provided will close any dialog
- */
-export const dismissDialog = nsmUISlice.createAction(
-  'dismissDialog',
-  (dialogName?: string) => {
-    return (state): UISliceState => {
+export const dismissDialog = nsmUISlice.action(function dismissDialog(
+  dialogName?: string,
+) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, (sliceState) => {
       // if a name is provided only close dialog if it matches the name
       if (typeof dialogName === 'string') {
-        if (dialogName === state.dialogName) {
+        if (dialogName === sliceState.dialogName) {
           return {
-            ...state,
+            ...sliceState,
             dialogName: undefined,
             dialogMetadata: undefined,
           };
         } else {
-          return state;
+          return sliceState;
         }
       }
 
       // else close any dialog
+
       return {
-        ...state,
         dialogName: undefined,
         dialogMetadata: undefined,
       };
-    };
+    });
+  });
+});
+
+export const updateNoteSidebar = nsmUISlice.action(
+  function updateNoteSidebar(value: { visible: boolean }) {
+    return nsmUISlice.tx((state) => {
+      return nsmUISlice.update(state, () => {
+        return {
+          noteSidebar: value.visible,
+        };
+      });
+    });
   },
 );
 
-export const updateNoteSidebar = nsmUISlice.createAction(
-  'updateNoteSidebar',
-  (value: { visible: boolean }) => {
-    return (state): UISliceState => {
-      return {
-        ...state,
-        noteSidebar: value.visible,
-      };
-    };
+export const updateChangelogHasUpdates = nsmUISlice.action(
+  function updateChangelogHasUpdates(value: { hasUpdates: boolean }) {
+    return nsmUISlice.tx((state) => {
+      return nsmUISlice.update(state, () => {
+        return {
+          changelogHasUpdates: value.hasUpdates,
+        };
+      });
+    });
   },
 );
 
-export const updateChangelogHasUpdates = nsmUISlice.createAction(
-  'updateChangelogHasUpdates',
-  (value: { hasUpdates: boolean }) => {
-    return (state): UISliceState => {
-      return {
-        ...state,
-        changelogHasUpdates: value.hasUpdates,
-      };
-    };
-  },
-);
-
-export const toggleNoteSidebar = nsmUISlice.createAction(
-  'toggleNoteSidebar',
-  () => {
-    return (state): UISliceState => {
-      return {
-        ...state,
-        noteSidebar: !state.noteSidebar,
-      };
-    };
+export const toggleNoteSidebar = nsmUISlice.action(
+  function toggleNoteSidebar() {
+    return nsmUISlice.tx((state) => {
+      return nsmUISlice.update(state, (sliceState) => ({
+        noteSidebar: !sliceState.noteSidebar,
+      }));
+    });
   },
 );
 
@@ -241,23 +238,23 @@ export function showGenericErrorModal({
   });
 }
 
-Slice.registerEffectSlice(nsmUISlice, [
-  mountEffect('uiSliceMountEffect', [nsmUISlice], (store) => {
-    const state = nsmUISlice.resolveState(store.state);
-    changeColorScheme(state.colorScheme);
-    setRootWidescreenClass(state.widescreen);
+const uiSliceMountEffect = effect((store) => {
+  const state = nsmUISlice.get(store.state);
+  changeColorScheme(state.colorScheme);
+  setRootWidescreenClass(state.widescreen);
 
-    const controller = new AbortController();
+  const controller = new AbortController();
 
-    listenToResize((obj) => {
-      store.dispatch(updateWindowSize(obj));
-    }, controller.signal);
+  listenToResize((obj) => {
+    store.dispatch(updateWindowSize(obj));
+  }, controller.signal);
 
-    return () => {
-      controller.abort();
-    };
-  }),
-]);
+  cleanup(store, () => {
+    controller.abort();
+  });
+});
+
+export const uiEffects = [uiSliceMountEffect];
 
 const SERIAL_VERSION = 1;
 
@@ -269,8 +266,7 @@ export const persistState = sliceStateSerializer(nsmUISlice, {
     noteSidebar: z.boolean(),
   }),
   serialize: (state) => {
-    const { sidebar, colorScheme, noteSidebar } =
-      nsmUISlice.resolveState(state);
+    const { sidebar, colorScheme, noteSidebar } = nsmUISlice.get(state);
 
     return {
       version: SERIAL_VERSION,

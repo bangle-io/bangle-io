@@ -1,6 +1,7 @@
 export {
   closeIfFound,
   nsmSliceWorkspace,
+  nsmWorkspaceEffects,
   openWsPathInNewTab,
   pushOpenedWsPaths,
   pushPrimaryWsPath,

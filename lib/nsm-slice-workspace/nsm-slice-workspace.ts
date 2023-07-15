@@ -1,14 +1,5 @@
-import type { StoreState } from '@bangle.io/nsm';
-import {
-  changeEffect,
-  createMetaAction,
-  createQueryState,
-  createSelector,
-  createSliceWithSelectors,
-  Slice,
-  subSelectorBuilder,
-  updateState,
-} from '@bangle.io/nsm';
+import type { InferSliceNameFromSlice, StoreState } from '@bangle.io/nsm-3';
+import { cleanup, effect, operation, sliceKey } from '@bangle.io/nsm-3';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
 import {
   goToInvalidWorkspacePage,
@@ -16,7 +7,6 @@ import {
   goToLocation,
   goToWorkspaceHome,
   locationSetWsPath,
-  noOp,
   nsmPageSlice,
   wsPathToPathname,
 } from '@bangle.io/slice-page';
@@ -58,61 +48,70 @@ const initState: WorkspaceState = {
   workspaceData: {},
 };
 
-const updateObj = updateState(initState);
-
 const updateWorkspaceData = (
-  state: WorkspaceState,
+  storeState: StoreState<any>,
   wsName: WsName,
   wsData: Partial<WorkspaceData>,
 ) => {
-  const existingWorkspaceData = state.workspaceData[wsName];
-  const newWorkspaceData: WorkspaceData = {
-    ...initWorkspaceData,
-    ...existingWorkspaceData,
-    ...wsData,
-  };
+  return nsmSliceWorkspaceKey.update(storeState, (state) => {
+    const existingWorkspaceData = state.workspaceData[wsName];
+    const newWorkspaceData: WorkspaceData = {
+      ...initWorkspaceData,
+      ...existingWorkspaceData,
+      ...wsData,
+    };
 
-  return updateObj(state, {
-    workspaceData: {
-      ...state.workspaceData,
-      [wsName]: newWorkspaceData,
-    },
+    return {
+      workspaceData: {
+        ...state.workspaceData,
+        [wsName]: newWorkspaceData,
+      },
+    };
   });
 };
 
-const SLICE_DEPS = [nsmPageSlice];
 const SLICE_NAME = 'nsm-slice-workspace';
 
 const getWsPathsSet = weakCache((wsPaths: WsPath[]) => new Set(wsPaths));
 
-const subSelector = subSelectorBuilder(SLICE_DEPS, SLICE_NAME, initState);
-
-const selectWsName = subSelector((state, storeState): WsName | undefined => {
-  return nsmPageSlice.resolveState(storeState).wsName;
+const selectWsName = nsmPageSlice.query(() => {
+  return (storeState): WsName | undefined =>
+    nsmPageSlice.get(storeState).wsName;
 });
 
-const selectPrimaryWsPath = subSelector(
-  (state, storeState): WsPath | undefined => {
-    const primaryWsPath = nsmPageSlice.resolveState(storeState).primaryWsPath;
-
-    return primaryWsPath;
-  },
+const selectPrimaryWsPath = nsmPageSlice.query(
+  () =>
+    (storeState): WsPath | undefined => {
+      return nsmPageSlice.get(storeState).primaryWsPath;
+    },
+);
+const selectSecondaryWsPath = nsmPageSlice.query(
+  () =>
+    (storeState): WsPath | undefined => {
+      return nsmPageSlice.get(storeState).secondaryWsPath;
+    },
 );
 
-const selectSecondaryWsPath = subSelector(
-  (state, storeState): WsPath | undefined => {
-    const secondaryWsPaths =
-      nsmPageSlice.resolveState(storeState).secondaryWsPath;
+export const nsmSliceWorkspaceKey = sliceKey([nsmPageSlice], {
+  name: SLICE_NAME,
+  state: initState,
+});
 
-    return secondaryWsPaths;
-  },
-);
+const wsName = nsmSliceWorkspaceKey.selector((storeState) => {
+  return selectWsName(storeState);
+});
 
-const selectMiniWsPath = subSelector(
-  (state, storeState): WsPath | undefined => {
-    const wsName = selectWsName(state, storeState);
+const primaryWsPath = nsmSliceWorkspaceKey.selector((storeState) => {
+  return nsmPageSlice.get(storeState).primaryWsPath;
+});
+
+const selectMiniWsPath = nsmSliceWorkspaceKey.selector(
+  (storeState): WsPath | undefined => {
+    const wsName = selectWsName(storeState);
+
+    const { workspaceData } = nsmSliceWorkspaceKey.get(storeState);
     const miniPath = wsName
-      ? state.workspaceData[wsName]?.miniEditorWsPath
+      ? workspaceData[wsName]?.miniEditorWsPath
       : undefined;
 
     if (!miniPath) {
@@ -129,11 +128,13 @@ const selectMiniWsPath = subSelector(
   },
 );
 
-const selectPopupWsPath = subSelector(
-  (state, storeState): WsPath | undefined => {
-    const wsName = selectWsName(state, storeState);
+const selectPopupWsPath = nsmSliceWorkspaceKey.selector(
+  (storeState): WsPath | undefined => {
+    const wsName = selectWsName(storeState);
+    const { workspaceData } = nsmSliceWorkspaceKey.get(storeState);
+
     const popupPath = wsName
-      ? state.workspaceData[wsName]?.popupEditorWsPath
+      ? workspaceData[wsName]?.popupEditorWsPath
       : undefined;
 
     if (!popupPath) {
@@ -150,171 +151,149 @@ const selectPopupWsPath = subSelector(
   },
 );
 
-const selectWsPaths = subSelector((state, storeState): WsPath[] | undefined => {
-  const wsName = selectWsName(state, storeState);
+const openedWsPaths = nsmSliceWorkspaceKey.selector(
+  (storeState) => {
+    const primaryWsPath = selectPrimaryWsPath(storeState);
+    const secondaryWsPath = selectSecondaryWsPath(storeState);
+    const miniWsPath = selectMiniWsPath(storeState);
+    const popupWsPath = selectPopupWsPath(storeState);
+
+    return OpenedWsPaths.createEmpty()
+      .updatePrimaryWsPath(primaryWsPath)
+      .updateSecondaryWsPath(secondaryWsPath)
+      .updateMiniEditorWsPath(miniWsPath)
+      .updatePopupEditorWsPath(popupWsPath);
+  },
+  {
+    equal: (a, b) => {
+      return a.equal(b);
+    },
+  },
+);
+
+const selectWsPaths = nsmSliceWorkspaceKey.selector((storeState) => {
+  const wsName = selectWsName(storeState);
+  const { workspaceData } = nsmSliceWorkspaceKey.get(storeState);
 
   if (!wsName) {
     return undefined;
   }
 
-  return state.workspaceData[wsName]?.wsPaths;
+  return workspaceData[wsName]?.wsPaths;
 });
 
-const selectRecentWsPaths = subSelector(
-  (state, storeState): WsPath[] | undefined => {
-    const wsName = selectWsName(state, storeState);
+const cachedFilterNoteWsPaths = weakCache((wsPaths: WsPath[]) => {
+  return wsPaths.filter((wsPath) => isValidNoteWsPath(wsPath));
+});
+
+const EMPTY_ARRAY: readonly WsPath[] = [];
+
+const noteWsPaths = nsmSliceWorkspaceKey.selector(
+  (storeState): readonly WsPath[] | undefined => {
+    const wsName = selectWsName(storeState);
+
+    const { workspaceData } = nsmSliceWorkspaceKey.get(storeState);
 
     if (!wsName) {
       return undefined;
     }
 
-    return state.workspaceData[wsName]?.recentlyUsedWsPaths;
+    const wsPaths = workspaceData[wsName]?.wsPaths;
+
+    if (!wsPaths) {
+      return EMPTY_ARRAY;
+    }
+
+    return cachedFilterNoteWsPaths(wsPaths);
   },
 );
 
-export const nsmSliceWorkspace = createSliceWithSelectors(SLICE_DEPS, {
-  name: SLICE_NAME,
-  initState,
-  selectors: {
-    wsName: createSelector(
-      {
-        wsName: selectWsName,
-      },
-      (computed): WsName | undefined => computed.wsName,
-    ),
+const selectRecentWsPaths = nsmSliceWorkspaceKey.selector(
+  (storeState): WsPath[] | undefined => {
+    const wsName = selectWsName(storeState);
+    const { workspaceData } = nsmSliceWorkspaceKey.get(storeState);
 
-    primaryWsPath: createSelector(
-      {
-        primaryWsPath: selectPrimaryWsPath,
-      },
-      (computed): WsPath | undefined => computed.primaryWsPath,
-    ),
+    if (!wsName) {
+      return undefined;
+    }
 
-    miniWsPath: createSelector(
-      {
-        miniWsPath: selectMiniWsPath,
-      },
-      (computed): WsPath | undefined => computed.miniWsPath,
-    ),
+    return workspaceData[wsName]?.recentlyUsedWsPaths;
+  },
+);
 
-    openedWsPaths: createSelector(
-      {
-        primaryWsPath: selectPrimaryWsPath,
-        secondaryWsPath: selectSecondaryWsPath,
-        miniWsPath: selectMiniWsPath,
-        popupWsPath: selectPopupWsPath,
-      },
-      (computed) => {
-        return OpenedWsPaths.createEmpty()
-          .updatePrimaryWsPath(computed.primaryWsPath)
-          .updateSecondaryWsPath(computed.secondaryWsPath)
-          .updateMiniEditorWsPath(computed.miniWsPath)
-          .updatePopupEditorWsPath(computed.popupWsPath);
-      },
-    ),
-
-    wsPaths: createSelector(
-      {
-        wsPaths: selectWsPaths,
-      },
-      (computed) => computed.wsPaths,
-    ),
-
-    noteWsPaths: createSelector(
-      {
-        wsPaths: selectWsPaths,
-      },
-      (computed) => {
-        return computed.wsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
-      },
-    ),
-
-    recentWsPaths: createSelector(
-      {
-        recentWsPaths: selectRecentWsPaths,
-      },
-      (computed) => {
-        return computed.recentWsPaths;
-      },
-    ),
+export const nsmSliceWorkspace = nsmSliceWorkspaceKey.slice({
+  derivedState: {
+    wsName,
+    primaryWsPath,
+    miniWsPath: selectMiniWsPath,
+    openedWsPaths,
+    wsPaths: selectWsPaths,
+    noteWsPaths,
+    recentWsPaths: selectRecentWsPaths,
   },
 });
 
-Slice.registerEffectSlice(nsmSliceWorkspace, [
-  changeEffect(
-    'watchWorkspaceRefresh',
-    {
-      wsName: nsmSliceWorkspace.pick((s) => s.wsName),
-      refreshWorkspace: sliceRefreshWorkspace.pick((s) => s.refreshWorkspace),
-    },
-    (
-      { wsName, refreshWorkspace },
-      dispatch,
-      ref: {
-        controller?: AbortController;
-      },
-    ) => {
-      console.debug({ refreshWorkspace });
-      ref.controller?.abort();
+const watchWorkspaceRefresh = effect(function watchWorkspaceRefresh(store) {
+  const { wsName } = nsmSliceWorkspace.track(store);
+  const { refreshWorkspace } = sliceRefreshWorkspace.track(store);
 
-      let controller = new AbortController();
-      ref.controller = controller;
+  console.debug({ refreshWorkspace });
 
-      if (wsName) {
-        fs.listFiles(wsName, controller.signal).then((items) => {
-          dispatch(setWsPaths({ wsPaths: items, wsName }));
-        });
-      }
-    },
-  ),
-]);
+  let controller = new AbortController();
+
+  cleanup(store, () => {
+    controller?.abort();
+  });
+
+  if (wsName) {
+    fs.listFiles(wsName, controller.signal).then((items) => {
+      store.dispatch(setWsPaths({ wsPaths: items, wsName }));
+    });
+  }
+});
+
+export const nsmWorkspaceEffects = [watchWorkspaceRefresh];
 
 export const queryIsInWsPaths = (
-  sliceState: ReturnType<typeof nsmSliceWorkspace.resolveState>,
+  sliceState: ReturnType<typeof nsmSliceWorkspace.get>,
   wsPath: WsPath,
 ) => {
   return sliceState.wsPaths
     ? getWsPathsSet(sliceState.wsPaths).has(wsPath)
     : false;
 };
-
-export const setRecentlyUsedWsPaths = nsmSliceWorkspace.createAction(
-  'setRecentlyUsedWsPaths',
-  ({
+export const setRecentlyUsedWsPaths = nsmSliceWorkspace.action(
+  function setRecentlyUsedWsPaths({
     wsName,
     recentlyUsedWsPaths,
   }: {
     wsName: WsName;
     recentlyUsedWsPaths: WorkspaceData['recentlyUsedWsPaths'];
-  }) => {
-    return (state) => {
+  }) {
+    return nsmSliceWorkspace.tx((state) => {
       return updateWorkspaceData(state, wsName, {
         recentlyUsedWsPaths,
       });
-    };
+    });
   },
 );
 
-export const setWsPaths = nsmSliceWorkspace.createAction(
-  'setWsPaths',
-  ({
-    wsName,
-    wsPaths,
-  }: {
-    wsName: WsName;
-    wsPaths: WorkspaceData['wsPaths'];
-  }) => {
-    return (state) => {
-      return updateWorkspaceData(state, wsName, {
-        wsPaths,
-      });
-    };
-  },
-);
+export const setWsPaths = nsmSliceWorkspace.action(function setWsPaths({
+  wsName,
+  wsPaths,
+}: {
+  wsName: WsName;
+  wsPaths: WorkspaceData['wsPaths'];
+}) {
+  return nsmSliceWorkspace.tx((state) => {
+    return updateWorkspaceData(state, wsName, {
+      wsPaths,
+    });
+  });
+});
 
-export const setMiniAndPopupPath = nsmSliceWorkspace.createAction(
-  'setMiniAndPopupPath',
-  ({
+export const setMiniAndPopupPath = nsmSliceWorkspace.action(
+  function setMiniAndPopupPath({
     mini,
     wsName,
     popup,
@@ -322,61 +301,65 @@ export const setMiniAndPopupPath = nsmSliceWorkspace.createAction(
     wsName: WsName;
     mini: WsPath | undefined;
     popup: WsPath | undefined;
-  }) => {
-    return (state) => {
+  }) {
+    return nsmSliceWorkspace.tx((state) => {
       return updateWorkspaceData(state, wsName, {
         miniEditorWsPath: mini,
         popupEditorWsPath: popup,
       });
-    };
+    });
   },
 );
 
-export const setMiniWsPath = nsmSliceWorkspace.createAction(
-  'setMiniWsPath',
-  ({ wsName, wsPath }: { wsName: WsName; wsPath: WsPath | undefined }) => {
-    return (state) => {
-      return updateWorkspaceData(state, wsName, {
-        miniEditorWsPath: wsPath,
-      });
-    };
-  },
-);
+export const setMiniWsPath = nsmSliceWorkspace.action(function setMiniWsPath({
+  wsName,
+  wsPath,
+}: {
+  wsName: WsName;
+  wsPath: WsPath | undefined;
+}) {
+  return nsmSliceWorkspace.tx((state) => {
+    return updateWorkspaceData(state, wsName, {
+      miniEditorWsPath: wsPath,
+    });
+  });
+});
 
-export const setPopupWsPath = nsmSliceWorkspace.createAction(
-  'setPopupWsPath',
-  ({ wsName, wsPath }: { wsName: WsName; wsPath: WsPath | undefined }) => {
-    return (state) => {
-      return updateWorkspaceData(state, wsName, {
-        popupEditorWsPath: wsPath,
-      });
-    };
-  },
-);
+export const setPopupWsPath = nsmSliceWorkspace.action(function setPopupWsPath({
+  wsName,
+  wsPath,
+}: {
+  wsName: WsName;
+  wsPath: WsPath | undefined;
+}) {
+  return nsmSliceWorkspace.tx((state) => {
+    return updateWorkspaceData(state, wsName, {
+      popupEditorWsPath: wsPath,
+    });
+  });
+});
 
-export const getWorkspaceData = createQueryState(
-  [nsmSliceWorkspace],
-  (state, wsName: WsName): WorkspaceData | undefined => {
-    return nsmSliceWorkspace.resolveState(state).workspaceData[wsName];
-  },
-);
+const workspaceOperation = operation<
+  | InferSliceNameFromSlice<typeof nsmPageSlice>
+  | InferSliceNameFromSlice<typeof nsmSliceWorkspace>
+>({
+  deferred: false,
+});
 
-export const pushOpenedWsPaths = createMetaAction(
-  [nsmSliceWorkspace, nsmPageSlice],
-  (
-    state,
-    newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
-    opts: LocationOptions = {},
-  ) => {
-    const { openedWsPaths, wsName } = nsmSliceWorkspace.resolveState(state);
-    const { location } = nsmPageSlice.resolveState(state);
+export const pushOpenedWsPaths = workspaceOperation(function pushOpenedWsPaths(
+  newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
+  opts: LocationOptions = {},
+) {
+  return (store) => {
+    const { openedWsPaths, wsName } = nsmSliceWorkspace.get(store.state);
+    const { location } = nsmPageSlice.get(store.state);
 
     if (newOpened instanceof Function) {
       newOpened = newOpened(openedWsPaths);
     }
 
     if (newOpened.equal(openedWsPaths)) {
-      return noOp(null);
+      return;
     }
 
     const validity = validateOpenedWsPaths(newOpened);
@@ -384,23 +367,33 @@ export const pushOpenedWsPaths = createMetaAction(
     const proposedWsName = newOpened.getOneWsName();
 
     if (!validity.valid) {
-      return goToInvalidWorkspacePage({
-        invalidWsName: proposedWsName || createWsName('unknown-ws'),
-        ...opts,
-      });
+      store.dispatch(
+        goToInvalidWorkspacePage({
+          invalidWsName: proposedWsName || createWsName('unknown-ws'),
+          ...opts,
+        }),
+      );
+
+      return;
     }
 
     if (!proposedWsName) {
-      return goToLandingPage(opts);
+      store.dispatch(goToLandingPage(opts));
+
+      return;
     }
 
     if (!newOpened.allBelongToSameWsName(wsName)) {
       console.error('Cannot have different wsNames');
 
-      return goToInvalidWorkspacePage({
-        invalidWsName: createWsName('unknown-ws'),
-        ...opts,
-      });
+      store.dispatch(
+        goToInvalidWorkspacePage({
+          invalidWsName: createWsName('unknown-ws'),
+          ...opts,
+        }),
+      );
+
+      return;
     }
 
     // TODO update newOpened changed a bunch of things, it is not possible to dispatch multiple actions
@@ -418,39 +411,55 @@ export const pushOpenedWsPaths = createMetaAction(
         newOpened,
       );
 
-      return goToLocation({
-        location: newLocation,
-        ...opts,
-      });
+      store.dispatch(
+        goToLocation({
+          location: newLocation,
+          ...opts,
+        }),
+      );
+
+      return;
     } else {
-      return setMiniAndPopupPath({
-        mini: newOpened.miniEditorWsPath2,
-        popup: newOpened.popupEditorWsPath2,
-        wsName: proposedWsName,
-      });
+      store.dispatch(
+        setMiniAndPopupPath({
+          mini: newOpened.miniEditorWsPath2,
+          popup: newOpened.popupEditorWsPath2,
+          wsName: proposedWsName,
+        }),
+      );
+
+      return;
     }
+  };
+});
+
+export const pushPrimaryWsPath = workspaceOperation(
+  (wsPath: WsPath, opts?: LocationOptions) => {
+    return (store) => {
+      store.dispatch(
+        pushOpenedWsPaths(
+          (openedWsPath) => openedWsPath.updatePrimaryWsPath(wsPath),
+          opts,
+        ),
+      );
+
+      return;
+    };
   },
 );
 
-export const pushPrimaryWsPath = createMetaAction(
-  [nsmSliceWorkspace, nsmPageSlice],
-  (state, wsPath: WsPath, opts?: LocationOptions) => {
-    return pushOpenedWsPaths(
-      state,
-      (openedWsPath) => openedWsPath.updatePrimaryWsPath(wsPath),
-      opts,
-    );
-  },
-);
+export const pushSecondaryWsPath = workspaceOperation(
+  (wsPath: WsPath, opts?: LocationOptions) => {
+    return (store) => {
+      store.dispatch(
+        pushOpenedWsPaths(
+          (openedWsPath) => openedWsPath.updateSecondaryWsPath(wsPath),
+          opts,
+        ),
+      );
 
-export const pushSecondaryWsPath = createMetaAction(
-  [nsmSliceWorkspace, nsmPageSlice],
-  (state, wsPath: WsPath, opts?: LocationOptions) => {
-    return pushOpenedWsPaths(
-      state,
-      (openedWsPath) => openedWsPath.updateSecondaryWsPath(wsPath),
-      opts,
-    );
+      return;
+    };
   },
 );
 
@@ -460,26 +469,29 @@ export const openWsPathInNewTab = (wsPath: WsPath) => {
   }
 };
 
-export const closeIfFound = createMetaAction(
-  [nsmSliceWorkspace, nsmPageSlice],
-  (
-    state: StoreState<'bangle/page-slice' | 'nsm-slice-workspace'>,
-    wsPath: WsPath,
-    opts?: LocationOptions,
-  ) => {
-    const { openedWsPaths } = nsmSliceWorkspace.resolveState(state);
-    let newOpened = openedWsPaths.closeIfFound(wsPath);
+export const closeIfFound = workspaceOperation(
+  (wsPath: WsPath, opts?: LocationOptions) => {
+    return (store) => {
+      const { openedWsPaths } = nsmSliceWorkspace.get(store.state);
+      let newOpened = openedWsPaths.closeIfFound(wsPath);
 
-    // TODO need to dispatch two transactions here
-    // 1. close primary and secondary
-    // 2. close mini and popup <-- this is not happening and its a bug
-    if (!newOpened.hasSomeOpenedWsPaths()) {
-      return goToWorkspaceHome({
-        wsName: resolvePath2(wsPath).wsName,
-        ...opts,
-      });
-    }
+      // TODO need to dispatch two transactions here
+      // 1. close primary and secondary
+      // 2. close mini and popup <-- this is not happening and its a bug
+      if (!newOpened.hasSomeOpenedWsPaths()) {
+        store.dispatch(
+          goToWorkspaceHome({
+            wsName: resolvePath2(wsPath).wsName,
+            ...opts,
+          }),
+        );
 
-    return pushOpenedWsPaths(state, newOpened.optimizeSpace(), opts);
+        return;
+      }
+
+      store.dispatch(pushOpenedWsPaths(newOpened.optimizeSpace(), opts));
+
+      return;
+    };
   },
 );

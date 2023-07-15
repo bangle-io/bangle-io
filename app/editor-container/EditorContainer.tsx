@@ -76,7 +76,7 @@ export function EditorContainer({
 
   const onEnableEditing = useCallback(() => {
     editorStore.dispatch(
-      toggleEditing(editorStore.state, {
+      toggleEditing({
         editingAllowed: true,
       }),
     );

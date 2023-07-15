@@ -1,4 +1,4 @@
-import { z } from '@bangle.io/nsm';
+import { z } from '@bangle.io/nsm-3';
 // See https://seek-oss.github.io/braid-design-system/foundations/tones
 export const TONE = {
   CAUTION: 'caution',

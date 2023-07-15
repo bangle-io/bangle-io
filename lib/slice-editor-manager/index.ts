@@ -3,12 +3,11 @@ export {
   useNsmEditorManagerStore,
 } from './EditorManagerContext';
 export {
-  dispatchEditorCommand,
   focusEditorIfNotFocused,
   forEachEditor,
-  forEachEditorPlain,
   getEditor,
   getInitialSelection,
+  nsmEditorEffects,
   nsmEditorManagerSlice,
   onFocusUpdate,
   persistState,

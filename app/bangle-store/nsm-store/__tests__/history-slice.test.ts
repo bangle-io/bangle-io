@@ -1,10 +1,10 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { createDispatchSpy, Store, timeoutSchedular } from '@bangle.io/nsm';
-import { nsmPageSlice } from '@bangle.io/slice-page';
+import { store } from '@bangle.io/nsm-3';
+import { goToLocation, nsmPageSlice } from '@bangle.io/slice-page';
 
-import { historySliceFamily } from '../history-slice';
+import { historyEffects, historySlice } from '../history-slice';
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const other = jest.requireActual('@bangle.io/slice-workspace');
@@ -32,59 +32,74 @@ beforeEach(() => {
   historyReplaceSpy = jest.spyOn(window.history, 'replaceState');
 });
 
+const setupStore = () => {
+  let testSpy = jest.fn();
+
+  let myStore = store({
+    storeName: 'bangle-store',
+    debug: testSpy,
+    slices: [nsmPageSlice, historySlice],
+  });
+
+  historyEffects.forEach((effect) => {
+    myStore.registerEffect(effect);
+  });
+
+  return {
+    store: myStore,
+    testSpy: testSpy,
+  };
+};
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    let testSpy = createDispatchSpy();
-
-    let store = Store.create({
-      storeName: 'bangle-store',
-      scheduler: timeoutSchedular(0),
-      dispatchTx: testSpy.dispatch,
-      debug: testSpy.debug,
-      state: [nsmPageSlice, ...historySliceFamily],
-    });
+    let setup = setupStore();
 
     window.history.pushState(null, '', '/ws/foo');
 
     jest.runAllTimers();
 
     expect(
-      testSpy.getSimplifiedTransactions({
-        filterBySource: [nsmPageSlice],
+      setup.testSpy.mock.calls.filter((call) => {
+        return call[0]?.type.includes('EFFECT');
       }),
-    ).toEqual([
-      {
-        actionId: 'syncPageLocation',
-        dispatchSource: 'l_watchHistoryEffect$',
-        payload: [
+    ).toMatchInlineSnapshot(`
+      [
+        [
           {
-            pathname: '/ws/foo',
-            search: '',
+            "changed": "",
+            "name": "pendingNavEffect",
+            "type": "SYNC_UPDATE_EFFECT",
           },
         ],
-        sourceSliceLineage: 'l_bangle/page-slice$',
-        targetSliceLineage: 'l_bangle/page-slice$',
-      },
-    ]);
+        [
+          {
+            "changed": "",
+            "name": "watchHistoryEffect",
+            "type": "UPDATE_EFFECT",
+          },
+        ],
+        [
+          {
+            "changed": "history",
+            "name": "pendingNavEffect",
+            "type": "SYNC_UPDATE_EFFECT",
+          },
+        ],
+        [
+          {
+            "changed": "",
+            "name": "saveWorkspaceInfoEffect",
+            "type": "UPDATE_EFFECT",
+          },
+        ],
+      ]
+    `);
   });
 });
 
 describe('applyPendingNavigation', () => {
   const createTestStore = () => {
-    let testSpy = createTestDebugger();
-
-    let store = Store.create({
-      storeName: 'bangle-store',
-      scheduler: timeoutSchedular(0),
-      dispatchTx: testSpy.dispatch,
-      debug: testSpy.debug,
-      state: [nsmPageSlice, ...historySliceFamily],
-    });
-
-    return {
-      store,
-      testSpy: testSpy,
-    };
+    return setupStore();
   };
   beforeAll(() => {
     jest.useFakeTimers();
@@ -92,7 +107,7 @@ describe('applyPendingNavigation', () => {
   test('works', async () => {
     const { store } = createTestStore();
 
-    store.dispatch(nsmPageSlice.actions.goToLocation({ location: '/ws/home' }));
+    store.dispatch(goToLocation({ location: '/ws/home' }));
 
     jest.runAllTimers();
 
@@ -110,7 +125,7 @@ describe('applyPendingNavigation', () => {
     const { store } = createTestStore();
 
     store.dispatch(
-      nsmPageSlice.actions.goToLocation({
+      goToLocation({
         location: '/ws/home',
         replace: true,
       }),
@@ -132,7 +147,7 @@ describe('applyPendingNavigation', () => {
     const { store } = createTestStore();
 
     store.dispatch(
-      nsmPageSlice.actions.goToLocation({
+      goToLocation({
         location: {
           pathname: '/ws/home/my-note.md',
           search: 'secondary=garden2%253A1-rule.md',
@@ -157,7 +172,7 @@ describe('applyPendingNavigation', () => {
     const { store } = createTestStore();
 
     store.dispatch(
-      nsmPageSlice.actions.goToLocation({
+      goToLocation({
         location: `/ws/home/my-note.md?secondary=garden2%253A1-rule.md`,
         replace: true,
       }),
@@ -179,7 +194,7 @@ describe('applyPendingNavigation', () => {
     const { store } = createTestStore();
 
     store.dispatch(
-      nsmPageSlice.actions.goToLocation({
+      goToLocation({
         location: {
           pathname: '/ws/home/my-note.md',
           search: 'secondary=garden2%253A1-rule.md',

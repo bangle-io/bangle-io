@@ -25,7 +25,10 @@ import { getBacklinkPath, wsPathFromQuery } from '../utils';
 const FZF_SEARCH_LIMIT = 12;
 
 // Creating this also closes the palette
-const createBacklinkNode = (wsPath: string, allNoteWsPaths: string[]) => {
+const createBacklinkNode = (
+  wsPath: string,
+  allNoteWsPaths: readonly string[],
+) => {
   return (
     state: EditorState,
     dispatch: EditorView['dispatch'] | undefined,
@@ -87,7 +90,7 @@ function InlineBacklinkPaletteInner({
 
   const match = useFzfSearch(noteWsPaths, query, {
     limit: FZF_SEARCH_LIMIT,
-    selector: (item) => resolvePath(item, true).filePath,
+    selector: (item: any) => resolvePath(item, true).filePath,
     tiebreakers: [byLengthAsc],
   });
 

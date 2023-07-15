@@ -2113,7 +2113,6 @@ __metadata:
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2223,7 +2222,6 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.49
@@ -2250,7 +2248,6 @@ __metadata:
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/mini-js-utils": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-file-sha": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
@@ -2357,7 +2354,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
@@ -2706,7 +2702,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
@@ -2772,7 +2767,6 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/p-map": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
@@ -3124,6 +3118,18 @@ __metadata:
 "@bangle.io/nsm-3@workspace:*, @bangle.io/nsm-3@workspace:js-lib/nsm-3":
   version: 0.0.0-use.local
   resolution: "@bangle.io/nsm-3@workspace:js-lib/nsm-3"
+  dependencies:
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
+    "@types/use-sync-external-store": ^0.0.3
+    nalanda: v1.3.0-alpha.8
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    superjson: ^1.12.2
+    tslib: 2.4.1
+    typescript: 4.9.3
+    use-sync-external-store: ^1.2.0
+    zod: ^3.21.4
   languageName: unknown
   linkType: soft
 
@@ -3133,7 +3139,6 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3150,7 +3155,6 @@ __metadata:
     "@bangle.dev/pm": 0.31.6
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3160,18 +3164,6 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
     typescript: 4.9.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/nsm@workspace:*, @bangle.io/nsm@workspace:js-lib/nsm":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/nsm@workspace:js-lib/nsm"
-  dependencies:
-    nalanda: 1.3.0-alpha.4
-    superjson: ^1.12.2
-    tslib: 2.4.1
-    typescript: 4.9.3
-    zod: ^3.21.4
   languageName: unknown
   linkType: soft
 
@@ -3341,7 +3333,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/mini-js-utils": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
@@ -3404,7 +3395,6 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3427,7 +3417,6 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3443,7 +3432,6 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3463,7 +3451,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-refresh-workspace@workspace:lib/slice-refresh-workspace"
   dependencies:
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     tslib: 2.4.1
     typescript: 4.9.3
@@ -3493,7 +3480,6 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3649,7 +3635,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
-    "@bangle.io/nsm": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -8077,6 +8062,13 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 25cb860ff10dde48b54622d58b23e66214211a61c84c0f15f88d38b61aa1b53d4d46e42b557924a93178c501c166aa37e28d7f6d994aba13d24685326272d5db
+  languageName: node
+  linkType: hard
+
+"@types/use-sync-external-store@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@types/use-sync-external-store@npm:0.0.3"
+  checksum: 161ddb8eec5dbe7279ac971531217e9af6b99f7783213566d2b502e2e2378ea19cf5e5ea4595039d730aa79d3d35c6567d48599f69773a02ffcff1776ec2a44e
   languageName: node
   linkType: hard
 
@@ -19094,11 +19086,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nalanda@npm:1.3.0-alpha.4":
-  version: 1.3.0-alpha.4
-  resolution: "nalanda@npm:1.3.0-alpha.4"
+"nalanda@npm:v1.3.0-alpha.8":
+  version: 1.3.0-alpha.8
+  resolution: "nalanda@npm:1.3.0-alpha.8"
   dependencies:
-    type-fest: ^3.11.1
+    type-fest: ^3.13.0
     use-sync-external-store: ^1.2.0
   peerDependencies:
     react: ">=17.0"
@@ -19108,7 +19100,7 @@ __metadata:
       optional: true
     zod:
       optional: true
-  checksum: 5ae82d9c77bd7e3185dc25c30dc390e926d324ec46929bb5781590652c527d9dd31661ceb946c5255c139974e3e9b7905e7679a169367ef1c7aeb8f1b3496fe4
+  checksum: 25d2d7d7df87b16091b5a83842b574f74667e1d7adede928712a7aa814b88158d0ad305631418bbb6d40b385951951060cb4f3463b76fd08e4a7b0fc52f5ea62
   languageName: node
   linkType: hard
 
@@ -24506,10 +24498,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^3.11.1":
-  version: 3.11.1
-  resolution: "type-fest@npm:3.11.1"
-  checksum: 33be49e3b671c2ff3b5e320ef8c160c488205b08ab7631369116909a1baf2aebfcf45234c045e6902b8aa35730ac2bfd0655ea9e0fe3f8d26af9d99a16b07abd
+"type-fest@npm:^3.13.0":
+  version: 3.13.0
+  resolution: "type-fest@npm:3.13.0"
+  checksum: f7be142ae1ad0582eafd52d085350799c8cd918c15455896a06c82c147b61f8cea58892bedf1348943478e37740562219375b3b59fd855db99cd2b2766510f98
   languageName: node
   linkType: hard
 

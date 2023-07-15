@@ -1,41 +1,69 @@
 // <-- PLOP INSERT SLICE IMPORT -->
 
-import { nsmApi2 } from '@bangle.io/api';
+import {
+  editorManagerProxy,
+  editorManagerProxyEffects,
+} from '@bangle.io/api/nsm/editor';
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
-import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
-import { idleCallbackScheduler, Store } from '@bangle.io/nsm';
-import { nsmSliceFileSha } from '@bangle.io/nsm-slice-file-sha';
-import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import {
+  extensionRegistryEffects,
+  nsmExtensionRegistry,
+} from '@bangle.io/extension-registry';
+import type { EffectCreator, Store } from '@bangle.io/nsm-3';
+import { store } from '@bangle.io/nsm-3';
+import {
+  nsmSliceFileSha,
+  nsmSliceFileShaEffects,
+} from '@bangle.io/nsm-slice-file-sha';
+import {
+  nsmSliceWorkspace,
+  nsmWorkspaceEffects,
+} from '@bangle.io/nsm-slice-workspace';
 import type {
   EternalVars,
   StorageProviderChangeType,
 } from '@bangle.io/shared-types';
-import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
-import { nsmNotification } from '@bangle.io/slice-notification';
+import {
+  nsmEditorEffects,
+  nsmEditorManagerSlice,
+} from '@bangle.io/slice-editor-manager';
+import { nsmNotificationSlice } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   refreshWorkspace,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
 import { nsmUISlice } from '@bangle.io/slice-ui';
+import { uiEffects } from '@bangle.io/slice-ui/nsm-ui-slice';
 
-import { historySliceFamily } from './history-slice';
+import { historyEffects, historySlice } from './history-slice';
 import { miscEffects } from './misc-effects';
-import { nsmE2eEffect, nsmE2eSyncEffect } from './nsm-e2e';
-import {
-  pageLifeCycleBlockReload,
-  pageLifeCycleWatch,
-} from './page-lifecycle-slice';
+import { nsmE2eEffects } from './nsm-e2e';
+import { pageLifeCycleEffects } from './page-lifecycle-slice';
 import {
   getLocalStorageData,
   getSessionStorageData,
+  persistEffects,
   persistStateSlice,
 } from './persist-state-slice';
-import { syncNaukarReplicaSlices } from './sync-naukar-replica-slices';
+import { syncNaukarReplicaEffects } from './sync-naukar-replica-slices';
+
+const allEffects: EffectCreator[] = [
+  ...editorManagerProxyEffects,
+  ...extensionRegistryEffects,
+  ...historyEffects,
+  ...miscEffects,
+  ...nsmE2eEffects,
+  ...nsmEditorEffects,
+  ...nsmSliceFileShaEffects,
+  ...nsmWorkspaceEffects,
+  ...pageLifeCycleEffects,
+  ...persistEffects,
+  ...syncNaukarReplicaEffects,
+  ...uiEffects,
+];
 
 export const createNsmStore = (eternalVars: EternalVars): Store => {
-  const extensionSlices = eternalVars.extensionRegistry.getNsmSlices();
-
   const storeName = 'bangle-store';
 
   const localStorageData = getLocalStorageData();
@@ -44,65 +72,47 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
   const initStateOverride = {
     ...localStorageData,
     ...sessionStorageData,
-    [nsmExtensionRegistry.spec.lineageId]: {
+    [nsmExtensionRegistry.sliceId]: {
       extensionRegistry: eternalVars.extensionRegistry,
     },
   };
 
   console.debug('Overriding with state', initStateOverride);
 
-  const syncSlices = [
-    sliceRefreshWorkspace,
-    nsmPageSlice,
-    nsmNotification.nsmNotificationSlice,
-    nsmSliceFileSha,
-  ];
-
-  const store = Store.create({
+  const bangleStore = store({
     storeName,
     debug: (log) => {
-      if (log.type === 'TX') {
-        console.group('TX >', log.sourceSliceLineage, '>', log.actionId);
-        console.info(log.payload);
-        console.info(log);
-        console.groupEnd();
-      } else {
-        // console.info('NSM', log.type, log);
-      }
+      console.group(`[main] ${log.type} >`);
+      console.info(log);
+      console.groupEnd();
     },
-    state: [
-      ...syncSlices,
-
-      ...historySliceFamily,
-      pageLifeCycleWatch,
-      pageLifeCycleBlockReload,
+    slices: [
       nsmExtensionRegistry,
+      sliceRefreshWorkspace,
+      nsmPageSlice,
+      nsmNotificationSlice,
+      nsmSliceFileSha,
       nsmUISlice,
-      nsmEditorManagerSlice,
-      nsmSliceWorkspace,
-
-      nsmApi2.editor._editorManagerProxy,
       // <-- PLOP INSERT SLICE -->
 
-      ...miscEffects,
-      ...syncNaukarReplicaSlices,
-      ...extensionSlices,
+      historySlice,
+      nsmEditorManagerSlice,
 
-      // TODO: remove e2e effects for production
-      nsmE2eEffect,
-      nsmE2eSyncEffect,
+      nsmSliceWorkspace,
       persistStateSlice,
+      editorManagerProxy,
+
+      ...eternalVars.extensionRegistry.getNsmSlices(),
     ],
 
-    initStateOverride,
-    scheduler: idleCallbackScheduler(15),
-    dispatchTx: (store, tx) => {
-      let newState = store.state.applyTransaction(tx);
-      syncSlices.forEach((sl) => {
-        console.debug('main', sl.spec.lineageId, sl.getState(newState));
-      });
-      Store.updateState(store, newState, tx);
-    },
+    stateOverride: initStateOverride,
+  });
+
+  allEffects.forEach((effect) => {
+    bangleStore.registerEffect(effect);
+  });
+  eternalVars.extensionRegistry.getNsmEffects().forEach((effect) => {
+    bangleStore.registerEffect(effect);
   });
 
   const onStorageProviderChange = (msg: StorageProviderChangeType) => {
@@ -112,7 +122,9 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
       msg.type === 'create' ||
       msg.type === 'rename'
     ) {
-      store.dispatch(refreshWorkspace(null), 'storage-provider-change');
+      bangleStore.dispatch(refreshWorkspace(), {
+        debugInfo: 'storage-provider-change',
+      });
     }
   };
 
@@ -121,7 +133,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
     onStorageProviderChange,
   );
 
-  store.destroySignal.addEventListener(
+  bangleStore.destroySignal.addEventListener(
     'abort',
     () => {
       eternalVars.storageEmitter.off(
@@ -134,5 +146,5 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
     },
   );
 
-  return store;
+  return bangleStore;
 };

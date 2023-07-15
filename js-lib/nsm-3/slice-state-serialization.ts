@@ -1,7 +1,6 @@
 import type {
-  AnySlice,
-  InferSliceName,
-  Slice,
+  BaseSlice,
+  InferSliceNameFromSlice,
   StoreState,
   ValidStoreState,
 } from 'nalanda';
@@ -13,7 +12,7 @@ import { assertSafeZodSchema } from './zod-helpers';
 
 export type SliceStateSerialData = Record<string, SuperJSONResult>;
 
-export type InferSliceState<T> = T extends Slice<any, infer TState, any, any>
+export type InferSliceState<T> = T extends BaseSlice<any, infer TState, any>
   ? TState
   : never;
 
@@ -23,32 +22,37 @@ type SliceData<TSchema extends z.ZodTypeAny> = {
 };
 
 export interface SliceStateSerializer<
-  TSlice extends AnySlice,
+  TBaseSlice extends BaseSlice<any, any, any>,
   TSchema extends z.ZodTypeAny,
 > {
   dbKey: string;
   schema: TSchema;
-  serialize: (state: StoreState<InferSliceName<TSlice>>) => SliceData<TSchema>;
-  deserialize: (param: SliceData<TSchema>) => InferSliceState<TSlice>;
+  serialize: (
+    state: StoreState<InferSliceNameFromSlice<TBaseSlice>>,
+  ) => SliceData<TSchema>;
+  deserialize: (param: SliceData<TSchema>) => InferSliceState<TBaseSlice>;
 }
 
 export function sliceStateSerializer<
-  TSlice extends AnySlice,
+  TBaseSlice extends BaseSlice<any, any, any>,
   TSchema extends z.ZodTypeAny,
 >(
-  slice: TSlice,
+  slice: TBaseSlice,
   {
     dbKey,
     schema,
     serialize,
     deserialize,
-  }: SliceStateSerializer<TSlice, TSchema>,
+  }: SliceStateSerializer<TBaseSlice, TSchema>,
 ) {
   assertSafeZodSchema(schema);
 
   return {
     populate: <TStoreSliceNames extends string>(
-      state: ValidStoreState<TStoreSliceNames, InferSliceName<TSlice>>,
+      state: ValidStoreState<
+        TStoreSliceNames,
+        InferSliceNameFromSlice<TBaseSlice>
+      >,
       db: SliceStateSerialData,
     ) => {
       const data = serialize(state as StoreState<any>);
@@ -59,11 +63,11 @@ export function sliceStateSerializer<
 
       db[dbKey] = superjson.serialize(data);
     },
-    retrieve: (data: SliceStateSerialData): InferSliceState<TSlice> => {
+    retrieve: (data: SliceStateSerialData): InferSliceState<TBaseSlice> => {
       const dbData = data[dbKey];
 
       if (dbData === undefined) {
-        return slice.spec.initState;
+        return slice.initialState;
       }
 
       const parsedObject: SliceData<any> = superjson.deserialize(dbData);
@@ -71,7 +75,7 @@ export function sliceStateSerializer<
       if (typeof parsedObject.version !== 'number') {
         console.error('Version number is not a number');
 
-        return slice.spec.initState;
+        return slice.initialState;
       }
 
       const result = schema.safeParse(parsedObject.data);
@@ -79,7 +83,7 @@ export function sliceStateSerializer<
       if (!result.success) {
         console.error(result.error);
 
-        return slice.spec.initState;
+        return slice.initialState;
       }
 
       return deserialize({

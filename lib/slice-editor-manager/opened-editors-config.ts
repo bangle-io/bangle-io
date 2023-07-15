@@ -1,5 +1,5 @@
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { z } from '@bangle.io/nsm';
+import { z } from '@bangle.io/nsm-3';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import type { EditorIdType } from './types';

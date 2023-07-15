@@ -2,7 +2,7 @@ import type { BangleEditor } from '@bangle.dev/core';
 import type { EditorView } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { z } from '@bangle.io/nsm';
+import { z } from '@bangle.io/nsm-3';
 import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
 import {
   getEditorPluginMetadata,

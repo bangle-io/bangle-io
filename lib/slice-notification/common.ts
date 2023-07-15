@@ -1,5 +1,5 @@
 import { SEVERITY } from '@bangle.io/constants';
-import { z } from '@bangle.io/nsm';
+import { z } from '@bangle.io/nsm-3';
 
 export const EditorIssueSchema = z.object({
   title: z.string(),

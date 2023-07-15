@@ -14,7 +14,7 @@ export function usePMDevTools() {
         typeof window !== 'undefined' &&
         window.location.hash.includes('debug_pm')
       ) {
-        const primaryEditor = nsmEditorManagerSlice.getState(
+        const primaryEditor = nsmEditorManagerSlice.get(
           nsmStore.state,
         ).primaryEditor;
 

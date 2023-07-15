@@ -4,7 +4,7 @@ import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type { Slice } from '@bangle.io/create-store';
-import type { AnySlice } from '@bangle.io/nsm';
+import type { EffectCreator, Slice as NsmSlice } from '@bangle.io/nsm-3';
 import type {
   EditorWatchPluginState,
   SerialOperationDefinitionType,
@@ -101,7 +101,9 @@ export class ExtensionRegistry {
     undefined
   >;
 
-  private _nsmSlices: AnySlice[];
+  private _nsmEffects: EffectCreator[];
+  private _nsmSlices: Array<NsmSlice<any, any, any>>;
+
   private _onStorageErrorHandlers: {
     [storageProviderName: string]: Exclude<
       ApplicationConfig['onStorageError'],
@@ -187,6 +189,8 @@ export class ExtensionRegistry {
 
     this._slices = filterFlatMap(applicationConfig, 'slices');
     this._nsmSlices = filterFlatMap(applicationConfig, 'nsmSlices');
+    this._nsmEffects = filterFlatMap(applicationConfig, 'nsmEffects');
+
     this._operationHandlers = _extensions
       .map((e) => e.application?.operationHandler)
       .filter(
@@ -242,6 +246,10 @@ export class ExtensionRegistry {
 
   getNoteSidebarWidgets() {
     return this._noteSidebarWidgets;
+  }
+
+  getNsmEffects() {
+    return this._nsmEffects;
   }
 
   getNsmSlices() {

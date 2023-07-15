@@ -5,5 +5,8 @@ export * from './Extension';
 export * from './extension-registry-slice';
 export * from './ExtensionRegistry';
 export * from './ExtensionRegistryContext';
-export { nsmExtensionRegistry } from './nsm-extension-registry-slice';
+export {
+  extensionRegistryEffects,
+  nsmExtensionRegistry,
+} from './nsm-extension-registry-slice';
 export * from './PluginType';

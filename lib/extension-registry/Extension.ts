@@ -5,10 +5,9 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
-import type { AnySlice } from '@bangle.io/nsm';
-import { Slice as NsmSlice } from '@bangle.io/nsm';
+import type { AnySlice, EffectCreator } from '@bangle.io/nsm-3';
+import { isSlice } from '@bangle.io/nsm-3';
 import type {
-  BangleApplicationStore,
   DialogType,
   EditorWatchPluginState,
   NoteFormatProvider,
@@ -84,6 +83,7 @@ export interface ApplicationConfig<
   noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Slice[];
   nsmSlices?: AnySlice[];
+  nsmEffects?: EffectCreator[];
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;
   // Return true if the error was handled by your callback
@@ -210,6 +210,7 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       noteSidebarWidgets,
       slices,
       nsmSlices,
+      nsmEffects,
       operationHandler,
       storageProvider,
       noteFormatProvider,
@@ -283,10 +284,8 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       if (
         !nsmSlices.every(
           (slice) =>
-            slice instanceof NsmSlice &&
-            slice.spec.name.startsWith(
-              `slice::${pkgNameWithoutBangleIo(name)}:`,
-            ),
+            isSlice(slice) &&
+            slice.name.startsWith(`slice::${pkgNameWithoutBangleIo(name)}:`),
         )
       ) {
         throw new Error(
@@ -294,6 +293,16 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
             name,
           )}:`}`,
         );
+      }
+    }
+
+    if (nsmEffects) {
+      if (
+        !nsmEffects.every(
+          (effectCreator) => typeof effectCreator === 'function',
+        )
+      ) {
+        throw new Error(`Extension "${name}": invalid slice effect.`);
       }
     }
 

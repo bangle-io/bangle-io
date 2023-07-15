@@ -33,20 +33,16 @@ export function MiniEditor({
 
   const onClose = useCallback(() => {
     nsmStore.dispatch(
-      pushOpenedWsPaths(nsmStore.state, (oPaths) =>
-        oPaths.updateMiniEditorWsPath(undefined),
-      ),
+      pushOpenedWsPaths((oPaths) => oPaths.updateMiniEditorWsPath(undefined)),
     );
   }, [nsmStore]);
 
   const onExpand = useCallback(() => {
     nsmStore.dispatch(
-      pushOpenedWsPaths(nsmStore.state, (oPaths) =>
-        oPaths.updateMiniEditorWsPath(undefined),
-      ),
+      pushOpenedWsPaths((oPaths) => oPaths.updateMiniEditorWsPath(undefined)),
     );
     nsmStore.dispatch(
-      pushOpenedWsPaths(nsmStore.state, (oPaths) => {
+      pushOpenedWsPaths((oPaths) => {
         const result = oPaths.updatePrimaryWsPath(wsPath);
 
         return result;

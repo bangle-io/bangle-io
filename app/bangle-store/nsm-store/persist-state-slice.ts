@@ -1,6 +1,6 @@
 import { safeJSONParse, safeJSONStringify } from '@bangle.io/mini-js-utils';
-import type { LineageId, SliceStateSerialData } from '@bangle.io/nsm';
-import { createSliceV2, Slice } from '@bangle.io/nsm';
+import type { SliceId, SliceStateSerialData } from '@bangle.io/nsm-3';
+import { effect, slice } from '@bangle.io/nsm-3';
 import * as editorManager from '@bangle.io/slice-editor-manager';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUI } from '@bangle.io/slice-ui';
@@ -10,44 +10,37 @@ export const SESSION_STORAGE_KEY = 'nsm-session-storage-v1';
 
 export const getLocalStorageData = () =>
   retrieveData(LOCAL_STORAGE_KEY, localStorage, (data) => {
-    const result: Record<LineageId, unknown> = {};
+    const result: Record<SliceId, unknown> = {};
 
     //   Add slices here
-    result[nsmUI.nsmUISlice.spec.lineageId] = nsmUI.persistState.retrieve(data);
+    result[nsmUI.nsmUISlice.sliceId] = nsmUI.persistState.retrieve(data);
 
     return result;
   });
 
 export const getSessionStorageData = () =>
   retrieveData(SESSION_STORAGE_KEY, sessionStorage, (data) => {
-    const result: Record<LineageId, unknown> = {};
+    const result: Record<SliceId, unknown> = {};
 
     //   Add slices here
-    result[editorManager.nsmEditorManagerSlice.spec.lineageId] =
+    result[editorManager.nsmEditorManagerSlice.sliceId] =
       editorManager.persistState.retrieve(data);
 
     return result;
   });
 
-export const persistStateSlice = createSliceV2(
+export const persistStateSlice = slice(
   // Add slices here
   [nsmPageSlice, editorManager.nsmEditorManagerSlice, nsmUI.nsmUISlice],
   {
     name: 'persistStateSlice',
-    initState: {},
+    state: {},
   },
 );
 
-Slice._registerEffect(persistStateSlice, {
-  name: 'persistStateWatch',
-  init(slice, store, ref) {},
-  updateSync(slice, store, prevState) {
-    const newPageState = nsmPageSlice.getState(store.state).lifeCycleState;
-    const oldPageState = nsmPageSlice.getState(prevState).lifeCycleState;
-
-    if (newPageState === oldPageState) {
-      return;
-    }
+const persistStateWatch = effect(
+  function persistStateWatch(store) {
+    void nsmPageSlice.track(store).lifeCycleState;
 
     persistData(SESSION_STORAGE_KEY, sessionStorage, (data) => {
       //   Add slices here
@@ -59,7 +52,12 @@ Slice._registerEffect(persistStateSlice, {
       nsmUI.persistState.populate(store.state, data);
     });
   },
-});
+  {
+    deferred: false,
+  },
+);
+
+export const persistEffects = [persistStateWatch];
 
 export function persistData(
   key: string,
@@ -90,8 +88,8 @@ export function retrieveData(
     getItem: (key: string) => string | null;
     removeItem: (key: string) => void;
   },
-  handle: (data: SliceStateSerialData) => Record<LineageId, unknown>,
-): Record<LineageId, unknown> {
+  handle: (data: SliceStateSerialData) => Record<SliceId, unknown>,
+): Record<SliceId, unknown> {
   const rawData = storage.getItem(key);
 
   if (rawData == null) {

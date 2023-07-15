@@ -33,7 +33,6 @@
     "@bangle.io/history": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
-    "@bangle.io/nsm": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
     "@bangle.io/nsm-slice-file-sha": "workspace:*",
     "@bangle.io/nsm-slice-workspace": "workspace:*",

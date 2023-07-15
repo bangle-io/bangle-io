@@ -44,7 +44,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
                 role="link"
                 onClick={(e) => {
                   nsmStore.dispatch(
-                    pushOpenedWsPaths(nsmStore.state, (openedWsPath) => {
+                    pushOpenedWsPaths((openedWsPath) => {
                       return openedWsPath.updatePrimaryWsPath(r.wsPath);
                     }),
                   );

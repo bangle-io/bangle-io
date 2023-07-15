@@ -3,7 +3,7 @@ import type {
   NaukarReplicaWorkspaceState,
 } from '@bangle.io/constants';
 import type { FzfResultItem } from '@bangle.io/fzf-search';
-import type { z } from '@bangle.io/nsm';
+import type { z } from '@bangle.io/nsm-3';
 import type { searchPmNode, SearchResultItem } from '@bangle.io/search-pm-node';
 import type { BaseError } from '@bangle.io/utils';
 

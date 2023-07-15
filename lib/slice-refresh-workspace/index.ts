@@ -1,18 +1,18 @@
-import { createSliceV2, serialAction, z } from '@bangle.io/nsm';
+import { slice } from '@bangle.io/nsm-3';
 
-export const sliceRefreshWorkspace = createSliceV2([], {
+export const sliceRefreshWorkspace = slice([], {
   name: 'bangle/slice-refresh-workspace',
-  initState: {
+  state: {
     refreshWorkspace: 0,
   },
 });
 
-export const refreshWorkspace = sliceRefreshWorkspace.createAction(
-  'incrementCounter',
-  serialAction(z.null(), () => {
-    return (state) => ({
-      ...state,
-      refreshWorkspace: state.refreshWorkspace + 1,
+export const refreshWorkspace = sliceRefreshWorkspace.action(
+  function refreshWorkspace() {
+    return sliceRefreshWorkspace.tx((state) => {
+      return sliceRefreshWorkspace.update(state, (state) => ({
+        refreshWorkspace: state.refreshWorkspace + 1,
+      }));
     });
-  }),
+  },
 );
