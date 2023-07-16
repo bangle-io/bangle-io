@@ -28,10 +28,10 @@
     "typescript": "4.9.3"
   },
   "devDependencies": {
-    "@bangle.dev/collab-comms": "0.31.6",
-    "@bangle.dev/core": "0.31.6",
-    "@bangle.dev/pm": "0.31.6",
-    "@bangle.dev/utils": "0.31.6",
+    "@bangle.dev/collab-comms": "0.32.0",
+    "@bangle.dev/core": "0.32.0",
+    "@bangle.dev/pm": "0.32.0",
+    "@bangle.dev/utils": "0.32.0",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",

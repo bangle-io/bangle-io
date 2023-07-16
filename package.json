@@ -66,7 +66,7 @@
     "unocss": "^0.48.2"
   },
   "devDependencies": {
-    "@bangle.dev/jest-utils": "0.31.6",
+    "@bangle.dev/jest-utils": "0.32.0",
     "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/e2e-types": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",

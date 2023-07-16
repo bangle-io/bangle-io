@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.31.6",
+    "@bangle.dev/pm": "0.32.0",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
