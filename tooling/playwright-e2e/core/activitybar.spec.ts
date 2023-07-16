@@ -8,8 +8,10 @@ import { withBangle as test } from '../fixture-with-bangle';
 import {
   getEditorDebugString,
   getPrimaryEditorDebugString,
+  getPrimaryEditorHandler,
   isDarwin,
   SELECTOR_TIMEOUT,
+  sleep,
 } from '../helpers';
 
 test.beforeEach(async ({ bangleApp }, testInfo) => {
@@ -120,6 +122,25 @@ test.describe('mobile', () => {
 
       await edit.click();
       await done.waitFor();
+
+      await expect(done).toContainText(/done/i);
+      expect(
+        await page.evaluate(
+          async ([editorId]) => {
+            return _nsmE2e?.getEditorDetailsById(editorId)?.editor.view
+              .editable;
+          },
+          [PRIMARY_EDITOR_INDEX] as const,
+        ),
+      ).toBe(true);
+
+      await sleep(100);
+
+      await getPrimaryEditorHandler(page, {
+        focus: true,
+      });
+
+      await sleep(50);
 
       // clicking edit should focus editor
       await page.keyboard.type('manthanoy', { delay: 30 });

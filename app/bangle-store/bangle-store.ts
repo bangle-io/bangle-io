@@ -1,7 +1,10 @@
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type { BangleStateConfig, JsonValue } from '@bangle.io/shared-types';
-import type { EternalVars } from '@bangle.io/shared-types';
+import type {
+  BangleStateConfig,
+  EternalVars,
+  JsonValue,
+} from '@bangle.io/shared-types';
 import {
   assertNonWorkerGlobalScope,
   safeCancelIdleCallback,

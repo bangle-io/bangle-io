@@ -81,6 +81,10 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
   const bangleStore = store({
     storeName,
+    dispatchTransaction: (store, updateState, tx) => {
+      const newState = store.state.applyTransaction(tx);
+      updateState(newState);
+    },
     debug: (log) => {
       console.group(`[main] ${log.type} >`);
       console.info(log);

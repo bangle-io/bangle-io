@@ -2,7 +2,7 @@ import { actUpdateEntry } from '@bangle.io/nsm-slice-file-sha';
 import type { NaukarMainAPI } from '@bangle.io/shared-types';
 import { refreshWorkspace } from '@bangle.io/slice-refresh-workspace';
 
-import type { createNsmStore } from './nsm-store/nsm-store';
+import type { createNsmStore } from './nsm-store';
 
 // wires up the main store for naukar to update the
 // counter part of its replica slices

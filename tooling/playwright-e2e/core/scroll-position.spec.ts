@@ -45,15 +45,16 @@ const typeScrollableThings = async (page: Page) => {
   let editorLocator = await getEditorLocator(page, PRIMARY_EDITOR_INDEX, {
     focus: true,
   });
+  // TODO there is a bug that sometimes typed thing is missed and never recorded
   await clearEditor(page, PRIMARY_EDITOR_INDEX);
-  await page.keyboard.type('## top element');
+  await page.keyboard.type('## top element', { delay: 5 });
   await page.keyboard.press('Enter');
   for (let i = 0; i < 15; i++) {
-    await page.keyboard.type('# ' + i);
-    await page.keyboard.press('Enter');
+    await page.keyboard.type('# ' + i, { delay: 10 });
+    await page.keyboard.press('Enter', { delay: 10 });
   }
 
-  await page.keyboard.type('### last element');
+  await page.keyboard.type('### last element', { delay: 5 });
 
   await sleep();
 

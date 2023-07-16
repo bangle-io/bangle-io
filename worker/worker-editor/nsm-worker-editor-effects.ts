@@ -1,5 +1,6 @@
 import type { CollabManager } from '@bangle.dev/collab-manager';
 
+import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
 import { cachedCalculateGitFileSha } from '@bangle.io/git-file-sha';
 import type { Store } from '@bangle.io/nsm-3';
 import { effect, ref } from '@bangle.io/nsm-3';
@@ -104,10 +105,16 @@ const purgeUnopenedDocs = effect(function purgeUnopenedDocs(store) {
 // An effect that compares the content of file in the disk and
 // in the memory. If they are different it will trigger a reset
 const staleDocEffect = effect(function staleDocEffect(store) {
-  const { openedFilesSha } = replicaWorkspaceSlice.track(store);
+  const { openedFilesSha, wsName } = replicaWorkspaceSlice.track(store);
   const collabManager = getCollabManagerRef(store).current;
 
-  if (!openedFilesSha) {
+  if (!openedFilesSha || !wsName) {
+    return;
+  }
+
+  // donot reset doc needlessly for Helpfs which is a special workspace and
+  // does not persist any data
+  if (HELP_FS_WORKSPACE_NAME === wsName) {
     return;
   }
 

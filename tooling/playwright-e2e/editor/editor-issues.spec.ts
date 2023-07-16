@@ -5,13 +5,15 @@ import { withBangle as test } from '../fixture-with-bangle';
 import {
   createNewNote,
   createWorkspace,
+  getPrimaryEditorHandler,
   mobileEnableEditing,
 } from '../helpers';
 
 for (const screenType of ['desktop', 'mobile']) {
+  const isMobile = screenType === 'mobile';
   test.describe(screenType + ' editor issue', () => {
     test.beforeEach(async ({ page, bangleApp }, testInfo) => {
-      if (screenType === 'mobile') {
+      if (isMobile) {
         await page.setViewportSize({ width: 480, height: 960 });
       }
 
@@ -20,10 +22,14 @@ for (const screenType of ['desktop', 'mobile']) {
 
     test('displays editor issue correctly', async ({ page }) => {
       const wsName1 = await createWorkspace(page);
-      const wsPath1 = await createNewNote(page, wsName1, 'file-1');
+      const wsPath1 = await createNewNote(page, wsName1, 'file-1', {
+        // since editor is disabled by default in isMobile, we need to focus it
+        skipWaitForFocus: isMobile,
+      });
 
-      if (screenType === 'mobile') {
+      if (isMobile) {
         await mobileEnableEditing(page);
+        await getPrimaryEditorHandler(page, { focus: true });
       }
 
       // manually trigger an error

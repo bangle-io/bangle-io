@@ -200,6 +200,11 @@ export async function createNewNote(
   page: Page,
   wsName: string,
   noteName = 'new_file.md',
+  {
+    skipWaitForFocus = false,
+  }: {
+    skipWaitForFocus?: boolean;
+  } = {},
 ) {
   await runOperation(page, 'operation::@bangle.io/core-extension:NEW_NOTE');
 
@@ -217,7 +222,9 @@ export async function createNewNote(
     clickPaletteRow(page, 'input-confirm'),
   ]);
 
-  await waitForPrimaryEditorFocus(page);
+  if (!skipWaitForFocus) {
+    await waitForPrimaryEditorFocus(page);
+  }
 
   const wsPath = filePathToWsPath(wsName, noteName);
 
