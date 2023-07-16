@@ -27,60 +27,64 @@ const getPendingRunRef = ref(() => {
 
 const runUpdateShas = operation<
   InferSliceNameFromSlice<typeof nsmSliceFileSha>
->()(() => async (store) => {
-  const pendingRunRef = getPendingRunRef(store);
+>({
+  deferred: true,
+})(function runUpdateShas() {
+  return async (store) => {
+    const pendingRunRef = getPendingRunRef(store);
 
-  if (pendingRunRef.current.pendingRun) {
-    return;
-  }
-
-  const { openedFiles } = nsmSliceFileSha.get(store.state);
-  const openedFilesArray = Object.values(openedFiles);
-
-  if (openedFilesArray.length === 0) {
-    return;
-  }
-
-  let destroyed = false;
-
-  cleanup(store, () => {
-    destroyed = true;
-  });
-
-  await Promise.all(
-    openedFilesArray.map(async (info) => {
-      if (destroyed) {
-        return;
-      }
-
-      const sha = await getDiskSha(info.wsPath);
-
-      pendingRunRef.current.pendingRun = false;
-
-      if (sha === info.currentDiskSha) {
-        return;
-      }
-
-      if (sha) {
-        log(
-          '[calculateCurrentDiskShaEffect] updateCurrentDiskSha',
-          info.wsPath,
-        );
-        queueMicrotask(() => {
-          store.dispatch(
-            actUpdateEntry({
-              wsPath: info.wsPath,
-              info: {
-                currentDiskSha: sha,
-              },
-            }),
-          );
-        });
-      }
-
+    if (pendingRunRef.current.pendingRun) {
       return;
-    }),
-  );
+    }
+
+    const { openedFiles } = nsmSliceFileSha.get(store.state);
+    const openedFilesArray = Object.values(openedFiles);
+
+    if (openedFilesArray.length === 0) {
+      return;
+    }
+
+    let destroyed = false;
+
+    cleanup(store, () => {
+      destroyed = true;
+    });
+
+    await Promise.all(
+      openedFilesArray.map(async (info) => {
+        if (destroyed) {
+          return;
+        }
+
+        const sha = await getDiskSha(info.wsPath);
+
+        pendingRunRef.current.pendingRun = false;
+
+        if (sha === info.currentDiskSha) {
+          return;
+        }
+
+        if (sha) {
+          log(
+            '[calculateCurrentDiskShaEffect] updateCurrentDiskSha',
+            info.wsPath,
+          );
+          queueMicrotask(() => {
+            store.dispatch(
+              actUpdateEntry({
+                wsPath: info.wsPath,
+                info: {
+                  currentDiskSha: sha,
+                },
+              }),
+            );
+          });
+        }
+
+        return;
+      }),
+    );
+  };
 });
 
 const syncWithOpenedWsPathsEffect = effect(function syncWithOpenedWsPathsEffect(

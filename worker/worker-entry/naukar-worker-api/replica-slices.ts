@@ -23,7 +23,6 @@ export const replicaSlicesInterface = (
 ): NaukarWorkerAPI['replicaSlices'] => {
   const replicaSlicesInterface: NaukarWorkerAPI['replicaSlices'] = {
     setReplicaWorkspaceState: async (state) => {
-      console.warn(state);
       naukarStore.dispatch(_setReplicaWorkspaceState(state));
     },
   };
