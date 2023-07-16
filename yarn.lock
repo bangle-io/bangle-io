@@ -3122,7 +3122,7 @@ __metadata:
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     "@types/use-sync-external-store": ^0.0.3
-    nalanda: v1.3.0-alpha.8
+    nalanda: v1.3.0-alpha.10
     react: ^17.0.2
     react-dom: ^17.0.2
     superjson: ^1.12.2
@@ -19038,11 +19038,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nalanda@npm:v1.3.0-alpha.8":
-  version: 1.3.0-alpha.8
-  resolution: "nalanda@npm:1.3.0-alpha.8"
+"nalanda@npm:v1.3.0-alpha.10":
+  version: 1.3.0-alpha.10
+  resolution: "nalanda@npm:1.3.0-alpha.10"
   dependencies:
-    type-fest: ^3.13.0
     use-sync-external-store: ^1.2.0
   peerDependencies:
     react: ">=17.0"
@@ -19052,7 +19051,7 @@ __metadata:
       optional: true
     zod:
       optional: true
-  checksum: 25d2d7d7df87b16091b5a83842b574f74667e1d7adede928712a7aa814b88158d0ad305631418bbb6d40b385951951060cb4f3463b76fd08e4a7b0fc52f5ea62
+  checksum: e90a99dde8e54efdaac25a44dc16d59d0a0ba2250abf4bf892c024414796b1bd95b3ca10a97126115cb1fe5f88fa2c4cbb608ce3b721859079ea70b7d8f9af4f
   languageName: node
   linkType: hard
 
@@ -24451,7 +24450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^3.13.0, type-fest@npm:^3.5.1":
+"type-fest@npm:^3.5.1":
   version: 3.13.0
   resolution: "type-fest@npm:3.13.0"
   checksum: f7be142ae1ad0582eafd52d085350799c8cd918c15455896a06c82c147b61f8cea58892bedf1348943478e37740562219375b3b59fd855db99cd2b2766510f98
