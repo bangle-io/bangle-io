@@ -157,6 +157,7 @@ const calculateCurrentDiskShaEffect = effect(
     store.dispatch(runUpdateShas());
   },
 );
+
 const calculateCurrentDiskShaEffectInterval = effect(
   function calculateCurrentDiskShaEffectInterval(store) {
     const intervalId = setInterval(() => {

@@ -11,11 +11,16 @@ export function naukarReplicaSlicesDispatch(
 ): NaukarMainAPI['replicaSlices'] {
   const replicaSlicesInterface: NaukarMainAPI['replicaSlices'] = {
     replicaWorkspaceUpdateFileShaEntry: async (obj) => {
-      nsmStore.dispatch(actUpdateEntry(obj));
+      nsmStore.dispatch(actUpdateEntry(obj), {
+        debugInfo:
+          'naukarReplicaSlicesDispatch.replicaWorkspaceUpdateFileShaEntry',
+      });
     },
 
     refreshWorkspace: async () => {
-      nsmStore.dispatch(refreshWorkspace());
+      nsmStore.dispatch(refreshWorkspace(), {
+        debugInfo: 'naukarReplicaSlicesDispatch.refreshWorkspace',
+      });
     },
   };
 
