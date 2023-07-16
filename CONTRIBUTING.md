@@ -47,7 +47,7 @@ Playwright creates two types of snapshots, one for mac (darwin) and other for li
 Run the following in mac to update linux snapshots:
 
 ```bash
-docker run -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.35.1-focal bash -c 'cd work && yarn install &&  yarn g:playwright-dep && NODE_OPTIONS="--max-old-space-size=8144"  yarn g:e2e '
+docker run -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.36.1-focal bash -c 'cd work && yarn install &&  yarn g:playwright-dep && NODE_OPTIONS="--max-old-space-size=8144"  yarn g:e2e '
 ```
 
 If you are running the tests on a linux machine, you will have to update the darwin snapshots. I haven't found a way to run the tests on a linux machine and update the darwin snapshots. Please open an issue if you have any ideas on how to deal with this.
