@@ -13,6 +13,7 @@
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
+    "@bangle.io/setup-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-common": "workspace:*",

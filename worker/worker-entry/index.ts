@@ -1,12 +1,10 @@
 import * as Sentry from '@sentry/browser';
 
 import { APP_ENV, config, sentryConfig } from '@bangle.io/config';
-import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
 import type { E2ENaukarTypes } from '@bangle.io/e2e-types';
 import type {
   EternalVars,
   NaukarWorkerAPIInternal,
-  StorageProviderChangeType,
 } from '@bangle.io/shared-types';
 import { getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
 import { mainApi, registerMainApi } from '@bangle.io/worker-common';
@@ -53,30 +51,10 @@ export function createNaukar(
     abortSignal,
   );
 
-  const onStorageProviderChange = (msg: StorageProviderChangeType) => {
-    // Note: ensure you also update the main store
-    if (
-      msg.type === 'delete' ||
-      msg.type === 'create' ||
-      msg.type === 'rename'
-    ) {
-      mainApi().replicaSlices.refreshWorkspace();
-    }
-  };
-
-  eternalVars.storageEmitter.on(
-    STORAGE_ON_CHANGE_EMITTER_KEY,
-    onStorageProviderChange,
-  );
-
   abortSignal.addEventListener(
     'abort',
     () => {
       naukarStore.destroy();
-      eternalVars.storageEmitter.off(
-        STORAGE_ON_CHANGE_EMITTER_KEY,
-        onStorageProviderChange,
-      );
     },
     {
       once: true,

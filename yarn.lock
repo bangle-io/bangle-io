@@ -2252,6 +2252,7 @@ __metadata:
     "@bangle.io/nsm-slice-file-sha": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/pm-manual-paste": "workspace:*"
+    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -3320,6 +3321,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/setup-store@workspace:*, @bangle.io/setup-store@workspace:lib/setup-store":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/setup-store@workspace:lib/setup-store"
+  dependencies:
+    "@bangle.io/config": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/shared-types@workspace:*, @bangle.io/shared-types@workspace:lib/shared-types":
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared-types@workspace:lib/shared-types"
@@ -3869,6 +3881,7 @@ __metadata:
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
+    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-common": "workspace:*"

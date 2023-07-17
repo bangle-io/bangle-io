@@ -37,6 +37,7 @@
     "@bangle.io/nsm-slice-file-sha": "workspace:*",
     "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/pm-manual-paste": "workspace:*",
+    "@bangle.io/setup-store": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",

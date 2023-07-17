@@ -4,13 +4,11 @@ import {
   editorManagerProxy,
   editorManagerProxyEffects,
 } from '@bangle.io/api/nsm/editor';
-import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
 import {
   extensionRegistryEffects,
   nsmExtensionRegistry,
 } from '@bangle.io/extension-registry';
 import type { EffectCreator, Store } from '@bangle.io/nsm-3';
-import { store } from '@bangle.io/nsm-3';
 import {
   nsmSliceFileSha,
   nsmSliceFileShaEffects,
@@ -19,10 +17,8 @@ import {
   nsmSliceWorkspace,
   nsmWorkspaceEffects,
 } from '@bangle.io/nsm-slice-workspace';
-import type {
-  EternalVars,
-  StorageProviderChangeType,
-} from '@bangle.io/shared-types';
+import { setupStore } from '@bangle.io/setup-store';
+import type { EternalVars } from '@bangle.io/shared-types';
 import {
   nsmEditorEffects,
   nsmEditorManagerSlice,
@@ -64,8 +60,6 @@ const allEffects: EffectCreator[] = [
 ];
 
 export const createNsmStore = (eternalVars: EternalVars): Store => {
-  const storeName = 'bangle-store';
-
   const localStorageData = getLocalStorageData();
   const sessionStorageData = getSessionStorageData();
 
@@ -79,17 +73,27 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
   console.debug('Overriding with state', initStateOverride);
 
-  const bangleStore = store({
-    storeName,
-    dispatchTransaction: (store, updateState, tx) => {
-      const newState = store.state.applyTransaction(tx);
-      updateState(newState);
+  const bangleStore = setupStore({
+    type: 'window',
+    eternalVars,
+    otherStoreParams: {
+      dispatchTransaction: (store, updateState, tx) => {
+        const newState = store.state.applyTransaction(tx);
+        updateState(newState);
+      },
+      debug: (log) => {
+        console.group(`[main] ${log.type} >`);
+        console.info(log);
+        console.groupEnd();
+      },
+      stateOverride: initStateOverride,
     },
-    debug: (log) => {
-      console.group(`[main] ${log.type} >`);
-      console.info(log);
-      console.groupEnd();
+    onRefreshWorkspace: (store) => {
+      store.dispatch(refreshWorkspace(), {
+        debugInfo: 'storage-provider-change',
+      });
     },
+    effects: [...allEffects, ...eternalVars.extensionRegistry.getNsmEffects()],
     slices: [
       nsmExtensionRegistry,
       sliceRefreshWorkspace,
@@ -108,47 +112,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
       ...eternalVars.extensionRegistry.getNsmSlices(),
     ],
-
-    stateOverride: initStateOverride,
   });
-
-  allEffects.forEach((effect) => {
-    bangleStore.registerEffect(effect);
-  });
-  eternalVars.extensionRegistry.getNsmEffects().forEach((effect) => {
-    bangleStore.registerEffect(effect);
-  });
-
-  const onStorageProviderChange = (msg: StorageProviderChangeType) => {
-    // Note: ensure you also update the worker store
-    if (
-      msg.type === 'delete' ||
-      msg.type === 'create' ||
-      msg.type === 'rename'
-    ) {
-      bangleStore.dispatch(refreshWorkspace(), {
-        debugInfo: 'storage-provider-change',
-      });
-    }
-  };
-
-  eternalVars.storageEmitter.on(
-    STORAGE_ON_CHANGE_EMITTER_KEY,
-    onStorageProviderChange,
-  );
-
-  bangleStore.destroySignal.addEventListener(
-    'abort',
-    () => {
-      eternalVars.storageEmitter.off(
-        STORAGE_ON_CHANGE_EMITTER_KEY,
-        onStorageProviderChange,
-      );
-    },
-    {
-      once: true,
-    },
-  );
 
   return bangleStore;
 };
