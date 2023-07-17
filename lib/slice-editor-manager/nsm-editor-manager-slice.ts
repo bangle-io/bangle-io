@@ -558,33 +558,11 @@ const editorOperations = operation<
  * @param param0.focusOrBlur - if true : focuses when enabling editing, blurs when disabling editing
  * @returns
  */
-export const toggleEditing = editorOperations(
+export const toggleEditing = nsmEditorManagerSlice.action(
   ({
     focusOrBlur = true,
     editingAllowed,
   }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {}) => {
-    return (store) => {
-      const sliceState = nsmEditorManagerSlice.get(store.state);
-
-      toggleEditingDirect(sliceState, {
-        focusOrBlur,
-        editingAllowed,
-      });
-    };
-  },
-);
-
-export const toggleEditingDirect = nsmEditorManagerSlice.action(
-  (
-    sliceState: {
-      editingAllowed: EditorSliceState['editingAllowed'];
-      mainEditors: EditorSliceState['mainEditors'];
-    },
-    {
-      focusOrBlur = true,
-      editingAllowed,
-    }: { focusOrBlur?: boolean; editingAllowed?: boolean } = {},
-  ) => {
     return nsmEditorManagerSlice.tx((storeState) => {
       if (!focusOrBlur) {
         // NOOP

@@ -10,6 +10,7 @@ import {
   getPrimaryEditorDebugString,
   getPrimaryEditorHandler,
   isDarwin,
+  runOperation,
   SELECTOR_TIMEOUT,
   sleep,
 } from '../helpers';
@@ -159,6 +160,29 @@ test.describe('mobile', () => {
       expect(primaryText?.includes('sugar')).toBe(false);
     });
   });
+});
+
+test('edit button works in desktop', async ({ page }) => {
+  await runOperation(
+    page,
+    'operation::@bangle.io/core-extension:toggle-editing-mode',
+  );
+
+  const done = await page.getByLabel('enable editing');
+
+  await done.waitFor();
+
+  await expect(done).toContainText(/enable editing/i);
+  await done.click();
+
+  await getPrimaryEditorHandler(page, {
+    focus: true,
+  });
+
+  await page.keyboard.type('sugar', { delay: 30 });
+
+  let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
+  expect(primaryText?.includes('sugar')).toBe(true);
 });
 
 test('clicking on new workspace', async ({ page }) => {

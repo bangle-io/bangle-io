@@ -8,7 +8,7 @@ import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type { WsName } from '@bangle.io/shared-types';
 import {
   nsmEditorManagerSlice,
-  toggleEditingDirect,
+  toggleEditing,
   useNsmEditorManagerState,
 } from '@bangle.io/slice-editor-manager';
 import { goToWorkspaceHome, nsmPageSlice } from '@bangle.io/slice-page';
@@ -119,7 +119,7 @@ export function ActivitybarMobileDumb({
                   text="Done"
                   onPress={() => {
                     editorDispatch(
-                      toggleEditingDirect(editorState, {
+                      toggleEditing({
                         focusOrBlur: true,
                         editingAllowed: false,
                       }),
@@ -135,7 +135,7 @@ export function ActivitybarMobileDumb({
                   text="edit"
                   onPress={() => {
                     editorDispatch(
-                      toggleEditingDirect(editorState, {
+                      toggleEditing({
                         focusOrBlur: true,
                         editingAllowed: true,
                       }),
