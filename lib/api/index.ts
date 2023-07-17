@@ -20,7 +20,7 @@ export {
   useNsmSlice,
   useNsmSliceState,
   useNsmStore,
-  useSliceState,
+  useOldSliceState as useSliceState,
 } from '@bangle.io/bangle-store-context';
 export { Slice, SliceKey } from '@bangle.io/create-store';
 export { vars } from '@bangle.io/css-vars';

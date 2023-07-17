@@ -1,8 +1,4 @@
 export {
-  useNsmEditorManagerState,
-  useNsmEditorManagerStore,
-} from './EditorManagerContext';
-export {
   focusEditorIfNotFocused,
   forEachEditor,
   getEditor,

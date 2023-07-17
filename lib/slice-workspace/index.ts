@@ -28,5 +28,4 @@ export {
 } from './operations';
 export { workspaceSlice, workspaceSliceInitialState } from './workspace-slice';
 export { WorkspaceSliceState } from './workspace-slice-state';
-export type { WorkspaceContextType } from './WorkspaceContext';
 export { createWorkspace, deleteWorkspace } from './workspaces-operations';

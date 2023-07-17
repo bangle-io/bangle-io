@@ -1,7 +1,10 @@
 import React from 'react';
 
 import { vars } from '@bangle.io/api';
-import { useNsmSlice, useNsmSliceState } from '@bangle.io/bangle-store-context';
+import {
+  useNsmSliceDispatch,
+  useNsmSliceState,
+} from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
@@ -9,7 +12,6 @@ import type { WsName } from '@bangle.io/shared-types';
 import {
   nsmEditorManagerSlice,
   toggleEditing,
-  useNsmEditorManagerState,
 } from '@bangle.io/slice-editor-manager';
 import { goToWorkspaceHome, nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
@@ -22,7 +24,7 @@ export function ActivitybarMobile() {
   const extensionRegistry = useExtensionRegistryContext();
   const { wsName, primaryWsPath } = useNsmSliceState(nsmSliceWorkspace);
 
-  const { editingAllowed: showDone } = useNsmEditorManagerState();
+  const { editingAllowed: showDone } = useNsmSliceState(nsmEditorManagerSlice);
 
   return (
     <ActivitybarMobileDumb
@@ -46,10 +48,9 @@ export function ActivitybarMobileDumb({
   extensionRegistry: ReturnType<typeof useExtensionRegistryContext>;
 }) {
   const { sidebar: activeSidebar } = useNsmSliceState(nsmUISlice);
-
-  const [, pageDispatch] = useNsmSlice(nsmPageSlice);
-  const [, uiDispatch] = useNsmSlice(nsmUISlice);
-  const [editorState, editorDispatch] = useNsmSlice(nsmEditorManagerSlice);
+  const pageDispatch = useNsmSliceDispatch(nsmPageSlice);
+  const uiDispatch = useNsmSliceDispatch(nsmUISlice);
+  const editorDispatch = useNsmSliceDispatch(nsmEditorManagerSlice);
 
   const operationKeybindings =
     extensionRegistry.getSerialOperationKeybindingMapping();

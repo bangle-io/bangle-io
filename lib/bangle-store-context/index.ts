@@ -7,7 +7,7 @@ import {
   AppState as ApplicationState,
 } from '@bangle.io/create-store';
 import type { AnySlice, Slice, Store } from '@bangle.io/nsm-3';
-import { createUseSliceHook, store } from '@bangle.io/nsm-3';
+import { createUseTrackSliceHook, store } from '@bangle.io/nsm-3';
 import type { NsmStore } from '@bangle.io/shared-types';
 
 export const initialNsmStore: NsmStore = store({
@@ -28,7 +28,7 @@ export function useNsmSliceState<TSlice extends AnySlice>(
 
   // TODO move this to a more performance friendly approach which
   // directly gets the state
-  return createUseSliceHook(appStore)(slice as AnySlice, (s) => s)[0];
+  return createUseTrackSliceHook(appStore)(slice as AnySlice);
 }
 
 export function useNsmSliceDispatch<TSlice extends AnySlice>(
@@ -49,7 +49,10 @@ export function useNsmSlice<TSlice extends AnySlice>(
 ] {
   const appStore: Store<string> = useContext(NsmStoreContext);
 
-  return createUseSliceHook(appStore)(slice as AnySlice, (s) => s);
+  return [
+    createUseTrackSliceHook(appStore)(slice as AnySlice),
+    appStore.dispatch,
+  ];
 }
 
 export function useNsmStore<TSliceName extends string>(
@@ -84,7 +87,7 @@ export function useBangleStoreContext() {
   return useContext(BangleStoreContext).current;
 }
 
-export function useSliceState<SL, A extends BaseAction, S = SL>(
+export function useOldSliceState<SL, A extends BaseAction, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
 ) {
   const store: ApplicationStore<S, A> = useBangleStoreContext();

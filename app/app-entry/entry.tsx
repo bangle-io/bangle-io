@@ -7,18 +7,18 @@ import type { BaseLocationHook } from 'wouter';
 import { Router } from 'wouter';
 
 import { SerialOperationContextProvider } from '@bangle.io/api/internal';
-import { historySliceKey } from '@bangle.io/bangle-store';
+import { historySlice } from '@bangle.io/bangle-store';
 import {
   BangleStoreChanged,
   BangleStoreContext,
   NsmStoreContext,
-  useSliceState,
+  useNsmSliceState,
 } from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
 import type { NsmStore } from '@bangle.io/shared-types';
-import { pageSliceKey, pathMatcher } from '@bangle.io/slice-page';
+import { nsmPageSlice, pathMatcher } from '@bangle.io/slice-page';
 
 import { AppContainer } from './AppContainer';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -28,13 +28,10 @@ import { WatchUI } from './watchers/WatchUI';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
 
 const useRouterHook: BaseLocationHook = () => {
-  const { sliceState: pageState } = useSliceState(pageSliceKey);
+  const { location } = useNsmSliceState(nsmPageSlice);
+  const { history } = useNsmSliceState(historySlice);
 
-  const { sliceState } = useSliceState(historySliceKey);
-  const history = sliceState.history;
-
-  const to =
-    history && pageState ? createTo(pageState.location, history) || '' : '';
+  const to = history ? createTo(location, history) || '' : '';
   const pendingCalls = useRef<Array<Parameters<BaseHistory['navigate']>>>([]);
 
   const navigate = history

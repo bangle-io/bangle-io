@@ -14,7 +14,6 @@ import {
   initialNsmStore,
 } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
-import type { useUIManagerContext } from '@bangle.io/slice-ui';
 import { initialState } from '@bangle.io/slice-ui';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import { createWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
@@ -31,9 +30,7 @@ export const getEditorPluginMetadataReturn: ReturnType<
   collabMessageBus: {} as any,
 };
 
-export const getUseUIManagerContextReturn: Writable<
-  ReturnType<typeof useUIManagerContext>
-> = {
+export const getUseUIManagerContextReturn: Writable<any> = {
   ...initialState,
   dispatch: typeof jest === 'undefined' ? () => {} : jest.fn(() => {}),
   bangleStore: initialBangleStore,

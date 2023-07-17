@@ -33,6 +33,6 @@ export {
   DEFAULT_DISPATCH_OPERATION,
   DEFAULT_DISPATCH_TRANSACTION,
 } from 'nalanda';
-export { createUseSliceHook } from 'nalanda';
+export { createUseTrackSliceHook } from 'nalanda';
 export * as superJson from 'superjson';
 export { z } from 'zod';
