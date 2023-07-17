@@ -340,6 +340,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/test-utils"\
       },\
       {\
+        "name": "@bangle.io/test-utils-2",\
+        "reference": "workspace:lib/test-utils-2"\
+      },\
+      {\
         "name": "@bangle.io/ui-components",\
         "reference": "workspace:lib/ui-components"\
       },\
@@ -491,6 +495,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/storybook", ["workspace:tooling/storybook"]],\
       ["@bangle.io/style", ["workspace:app/style"]],\
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],\
+      ["@bangle.io/test-utils-2", ["workspace:lib/test-utils-2"]],\
       ["@bangle.io/tri-state", ["workspace:js-lib/tri-state"]],\
       ["@bangle.io/ui-components", ["workspace:lib/ui-components"]],\
       ["@bangle.io/ui-dhancha", ["workspace:lib/ui-dhancha"]],\
@@ -7449,7 +7454,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@types/react", "npm:17.0.52"],\
@@ -7670,6 +7675,51 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-storage-provider", "workspace:lib/slice-storage-provider"],\
+            ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
+            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],\
+            ["@bangle.io/storage", "workspace:lib/storage"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
+            ["@types/react", "npm:17.0.52"],\
+            ["@types/react-dom", "npm:17.0.18"],\
+            ["react", "npm:17.0.2"],\
+            ["react-dom", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:17.0.2"],\
+            ["tslib", "npm:2.4.1"],\
+            ["type-fest", "npm:3.13.0"],\
+            ["typescript", "patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"],\
+            ["wait-for-expect", "npm:3.0.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/test-utils-2", [\
+        ["workspace:lib/test-utils-2", {\
+          "packageLocation": "./lib/test-utils-2/",\
+          "packageDependencies": [\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
+            ["@bangle.dev/all-base-components", "npm:0.32.0"],\
+            ["@bangle.dev/collab-comms", "npm:0.32.0"],\
+            ["@bangle.dev/core", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
+            ["@bangle.dev/pm", "npm:0.32.0"],\
+            ["@bangle.dev/test-helpers", "npm:0.32.0"],\
+            ["@bangle.dev/utils", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/history", "workspace:js-lib/history"],\
+            ["@bangle.io/markdown", "workspace:lib/markdown"],\
+            ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
+            ["@bangle.io/setup-store", "workspace:lib/setup-store"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\

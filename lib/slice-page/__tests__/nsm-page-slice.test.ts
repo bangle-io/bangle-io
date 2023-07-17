@@ -1,35 +1,36 @@
-import { store } from '@bangle.io/nsm-3';
+import { setupTestStore } from '@bangle.io/test-utils-2';
 
 import {
   blockReload,
   nsmPageSlice,
   setPageLifeCycleState,
 } from '../nsm-page-slice';
-import { lifeCycleMock } from './test-utils';
 
+const lifeCycleMock = {
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  removeUnsavedChanges: jest.fn(),
+  addUnsavedChanges: jest.fn(),
+};
+
+let abort: AbortController;
 beforeEach(() => {
+  abort = new AbortController();
   lifeCycleMock.addEventListener.mockImplementation(() => {});
   lifeCycleMock.removeEventListener.mockImplementation(() => {});
 });
 
-export const createTestStore = () => {
-  const testSpy = jest.fn();
-  let myStore = store({
-    storeName: 'bangle-store',
-    debug: testSpy,
-    slices: [nsmPageSlice],
-  });
-
-  return {
-    store: myStore,
-    testSpy: testSpy,
-  };
-};
+afterEach(() => {
+  abort?.abort();
+});
 
 test('sets up', () => {
-  const { store } = createTestStore();
+  const { testStore } = setupTestStore({
+    slices: [nsmPageSlice],
+    abortSignal: abort.signal,
+  });
 
-  expect(nsmPageSlice.get(store.state)).toMatchInlineSnapshot(`
+  expect(nsmPageSlice.get(testStore.state)).toMatchInlineSnapshot(`
     {
       "blockReload": false,
       "currentPageLifeCycle": undefined,
@@ -54,41 +55,47 @@ test('sets up', () => {
 
 describe('updating state', () => {
   test('upload lifecycle', () => {
-    const { store } = createTestStore();
+    const { testStore } = setupTestStore({
+      slices: [nsmPageSlice],
+      abortSignal: abort.signal,
+    });
 
-    store.dispatch(
+    testStore.dispatch(
       setPageLifeCycleState({
         current: 'active',
         previous: 'frozen',
       }),
     );
 
-    expect(nsmPageSlice.get(store.state).lifeCycleState).toEqual({
+    expect(nsmPageSlice.get(testStore.state).lifeCycleState).toEqual({
       current: 'active',
       previous: 'frozen',
     });
 
-    store.dispatch(
+    testStore.dispatch(
       setPageLifeCycleState({
         current: 'frozen',
         previous: 'active',
       }),
     );
 
-    expect(nsmPageSlice.get(store.state).lifeCycleState).toEqual({
+    expect(nsmPageSlice.get(testStore.state).lifeCycleState).toEqual({
       current: 'frozen',
       previous: 'active',
     });
   });
 
   test('blocking reload', () => {
-    const { store } = createTestStore();
+    const { testStore } = setupTestStore({
+      slices: [nsmPageSlice],
+      abortSignal: abort.signal,
+    });
 
-    store.dispatch(blockReload(true));
+    testStore.dispatch(blockReload(true));
 
-    expect(nsmPageSlice.get(store.state).blockReload).toBe(true);
+    expect(nsmPageSlice.get(testStore.state).blockReload).toBe(true);
 
-    store.dispatch(blockReload(false));
-    expect(nsmPageSlice.get(store.state).blockReload).toBe(false);
+    testStore.dispatch(blockReload(false));
+    expect(nsmPageSlice.get(testStore.state).blockReload).toBe(false);
   });
 });
