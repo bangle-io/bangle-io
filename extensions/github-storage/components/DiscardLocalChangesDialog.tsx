@@ -4,7 +4,7 @@ import { nsmApi2, useBangleStoreContext, useSliceState } from '@bangle.io/api';
 import { Dialog } from '@bangle.io/ui-components';
 
 import { DISCARD_LOCAL_CHANGES_DIALOG, ghSliceKey } from '../common';
-import { discardLocalChanges } from '../operations';
+import { discardLocalChanges } from '../state/operations';
 
 export function DiscardLocalChangesDialog() {
   const bangleStore = useBangleStoreContext();

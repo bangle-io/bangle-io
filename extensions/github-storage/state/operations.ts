@@ -14,19 +14,19 @@ import {
   ghSliceKey,
   notify,
   OPERATION_SHOW_CONFLICT_DIALOG,
-} from './common';
-import { getGhToken, updateGhToken } from './database';
-import { fileEntryManager } from './file-entry-manager';
-import type { GithubConfig } from './github-api-helpers';
-import { serialGetRepoTree } from './github-api-helpers';
+} from '../common';
+import { getGhToken, updateGhToken } from '../database';
+import { fileEntryManager } from '../file-entry-manager';
+import type { GithubConfig } from '../github-api-helpers';
+import { serialGetRepoTree } from '../github-api-helpers';
 import {
   discardLocalEntryChanges,
   duplicateAndResetToRemote,
   getConflicts,
   githubSync,
   optimizeDatabase,
-} from './github-sync';
-import { readGhWorkspaceMetadata } from './helpers';
+} from '../github-sync';
+import { readGhWorkspaceMetadata } from '../helpers';
 
 const getGhConfig = async (
   wsName: string,

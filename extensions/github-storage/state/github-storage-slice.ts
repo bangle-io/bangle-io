@@ -9,8 +9,8 @@ import {
   ghSliceKey,
   GITHUB_STORAGE_PROVIDER_NAME,
   OPERATION_SHOW_CONFLICT_DIALOG,
-} from './common';
-import { handleError } from './error-handling';
+} from '../common';
+import { handleError } from '../error-handling';
 import { nsmGhSlice, updateGithubDetails } from './nsm-github-slices';
 import {
   checkForConflicts,

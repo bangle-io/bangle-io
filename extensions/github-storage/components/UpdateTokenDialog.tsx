@@ -7,7 +7,7 @@ import { BaseError } from '@bangle.io/utils';
 import { ghSliceKey, UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
 import { getGhToken } from '../database';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
-import { updateGithubToken } from '../operations';
+import { updateGithubToken } from '../state/operations';
 
 export function UpdateTokenDialog() {
   const bangleStore = useBangleStoreContext();

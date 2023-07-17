@@ -6,7 +6,7 @@ import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { Dialog } from '@bangle.io/ui-components';
 
 import { CONFLICT_DIALOG, ghSliceKey } from '../common';
-import { manuallyResolveConflict } from '../operations';
+import { manuallyResolveConflict } from '../state/operations';
 
 export function ConflictDialog() {
   const bangleStore = useBangleStoreContext();

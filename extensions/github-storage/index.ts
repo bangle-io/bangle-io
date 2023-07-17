@@ -23,9 +23,9 @@ import { NewGithubWorkspaceRepoPickerDialog } from './components/NewGithubWorksp
 import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
 import { GithubStorageProvider } from './github-storage-provider';
-import { githubStorageSlice } from './github-storage-slice';
-import { nsmGhSlice } from './nsm-github-slices';
-import { optimizeDatabaseOperation, syncRunner } from './operations';
+import { githubStorageSlice } from './state/github-storage-slice';
+import { nsmGhSlice } from './state/nsm-github-slices';
+import { optimizeDatabaseOperation, syncRunner } from './state/operations';
 
 const extensionName = '@bangle.io/github-storage';
 
