@@ -18,6 +18,7 @@ export {
   useBangleStoreContext,
   useNsmPlainStore,
   useNsmSlice,
+  useNsmSliceDispatch,
   useNsmSliceState,
   useNsmStore,
   useOldSliceState as useSliceState,

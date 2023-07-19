@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Extension, nsmApi2 } from '@bangle.io/api';
+import { Extension, getExtensionStore, nsmApi2 } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
@@ -23,17 +23,15 @@ import { NewGithubWorkspaceRepoPickerDialog } from './components/NewGithubWorksp
 import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
 import { GithubStorageProvider } from './github-storage-provider';
-import { githubStorageSlice } from './state/github-storage-slice';
-import { nsmGhSlice } from './state/nsm-github-slices';
-import { optimizeDatabaseOperation, syncRunner } from './state/operations';
+import { githubEffects, nsmGhSlice, operations } from './state';
 
 const extensionName = '@bangle.io/github-storage';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    slices: [githubStorageSlice()],
     nsmSlices: [nsmGhSlice],
+    nsmEffects: githubEffects,
     storageProvider: new GithubStorageProvider(),
     dialogs: [
       {
@@ -65,10 +63,9 @@ const extension = Extension.create({
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
         activitybarIconShow(wsName) {
-          // TODO fix this
+          const store = getExtensionStore(nsmGhSlice).state;
 
-          // return Boolean(ghSliceKey.getSliceState(state)?.githubWsName);
-          return false;
+          return nsmGhSlice.get(store).githubWsName === wsName;
         },
       },
     ],
@@ -108,10 +105,8 @@ const extension = Extension.create({
                 return false;
               }
 
-              syncRunner(wsName, new AbortController().signal, true)(
-                store.state,
-                store.dispatch,
-                store,
+              getExtensionStore(nsmGhSlice).dispatch(
+                operations.syncRunner(new AbortController().signal, true),
               );
 
               return true;
@@ -138,10 +133,11 @@ const extension = Extension.create({
             }
 
             case OPERATION_OPTIMIZE_GITHUB_STORAGE: {
-              optimizeDatabaseOperation(true)(
-                store.state,
-                store.dispatch,
-                store,
+              getExtensionStore(nsmGhSlice).dispatch(
+                operations.optimizeDatabaseOperation(
+                  true,
+                  new AbortController().signal,
+                ),
               );
 
               return true;

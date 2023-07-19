@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import {
   nsmApi2,
+  useNsmSliceState,
   useSerialOperationContext,
-  useSliceState,
   wsPathHelpers,
 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
@@ -13,8 +13,9 @@ import { Button, Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
 import { createWsPath } from '@bangle.io/ws-path';
 
-import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
+import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { fileEntryManager } from '../file-entry-manager';
+import { nsmGhSlice } from '../state/github-storage-slice';
 
 const LOG = false;
 
@@ -25,9 +26,7 @@ const REFRESH_INTERVAL = 3000;
 export function GithubSidebar() {
   const { openedWsPaths } = nsmApi2.workspace.useWorkspace();
 
-  const {
-    sliceState: { githubWsName },
-  } = useSliceState(ghSliceKey);
+  const { githubWsName } = useNsmSliceState(nsmGhSlice);
 
   return githubWsName ? (
     <ModifiedEntries wsName={githubWsName} openedWsPaths={openedWsPaths} />
@@ -49,9 +48,8 @@ function ModifiedEntries({
 
   const [refreshEntries, updateRefreshEntries] = useState(0);
 
-  const {
-    sliceState: { conflictedWsPaths },
-  } = useSliceState(ghSliceKey);
+  const { conflictedWsPaths } = useNsmSliceState(nsmGhSlice);
+
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   useEffect(() => {

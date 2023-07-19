@@ -1,17 +1,19 @@
 import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
+import type { OperationStore } from '@bangle.io/nsm-3';
+import { operation, ref } from '@bangle.io/nsm-3';
 import { pMap } from '@bangle.io/p-map';
 import {
   isEntryDeleted,
   isEntryModified,
   isEntryNew,
 } from '@bangle.io/remote-file-sync';
-import type { WsPath } from '@bangle.io/shared-types';
+import type { WsName } from '@bangle.io/storage';
+import { isAbortError } from '@bangle.io/utils';
 import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 import {
   getGithubSyncLockWrapper,
-  ghSliceKey,
   notify,
   OPERATION_SHOW_CONFLICT_DIALOG,
 } from '../common';
@@ -27,6 +29,7 @@ import {
   optimizeDatabase,
 } from '../github-sync';
 import { readGhWorkspaceMetadata } from '../helpers';
+import { nsmGhSlice, updateGithubDetails } from './github-storage-slice';
 
 const getGhConfig = async (
   wsName: string,
@@ -43,30 +46,29 @@ const getGhConfig = async (
   return ghConfig;
 };
 
-export function syncRunner(
-  wsName: string,
-  abort: AbortSignal,
-  notifyVerbose = false,
-) {
-  async function syncRunGuard(
-    store: ReturnType<typeof ghSliceKey.getStore>,
-    notifyVerbose: boolean,
-  ) {
-    const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
+const getIsSyncingRef = ref(() => false);
 
-    if (githubWsName !== wsName) {
+export const syncRunner = operation({
+  deferred: false,
+})((abort: AbortSignal, notifyVerbose = false) => {
+  async function syncRunGuard(store: OperationStore, notifyVerbose: boolean) {
+    const { githubWsName } = nsmGhSlice.get(store.state);
+
+    if (!githubWsName) {
       notify('Not a Github workspace', SEVERITY.WARNING);
 
       return false;
     }
 
-    const ghConfig = await getGhConfig(wsName);
+    const ghConfig = await getGhConfig(githubWsName);
 
     if (!ghConfig) {
       return false;
     }
 
-    if (ghSliceKey.getSliceStateAsserted(store.state).isSyncing) {
+    const isSyncingRef = getIsSyncingRef(store);
+
+    if (isSyncingRef.current) {
       notifyVerbose && notify('Github sync already in progress', SEVERITY.INFO);
 
       return false;
@@ -74,14 +76,9 @@ export function syncRunner(
 
     try {
       const { lockAcquired, result } = await getGithubSyncLockWrapper(
-        wsName,
+        githubWsName,
         async () => {
-          store.dispatch({
-            name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
-            value: {
-              isSyncing: true,
-            },
-          });
+          isSyncingRef.current = true;
 
           const result = await runSync(store, ghConfig);
 
@@ -122,6 +119,10 @@ export function syncRunner(
 
       return result;
     } catch (error) {
+      if (isAbortError(error)) {
+        return;
+      }
+
       console.error(error);
       notify(
         'Github sync failed',
@@ -131,33 +132,26 @@ export function syncRunner(
 
       return false;
     } finally {
-      store.dispatch({
-        name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE',
-        value: {
-          isSyncing: false,
-        },
-      });
+      isSyncingRef.current = false;
     }
   }
 
-  async function runSync(
-    store: ReturnType<typeof ghSliceKey.getStore>,
-    config: GithubConfig,
-  ) {
+  async function runSync(store: OperationStore, config: GithubConfig) {
     const { wsName: currentWsName } = nsmApi2.workspace.workspaceState();
+    const { githubWsName } = nsmGhSlice.get(store.state);
 
-    if (currentWsName !== wsName) {
+    if (currentWsName !== githubWsName || !githubWsName || abort.aborted) {
       return false;
     }
 
     return githubSync({
-      wsName,
+      wsName: githubWsName,
       config,
       abortSignal: abort,
     });
   }
 
-  return ghSliceKey.asyncOp(async (_, __, store) => {
+  return async (store) => {
     const result = await syncRunGuard(store, notifyVerbose);
 
     if (result === false) {
@@ -168,9 +162,10 @@ export function syncRunner(
       const { count: changeCount } = result;
 
       if (result.status === 'merge-conflict') {
-        setConflictedWsPaths(result.conflict.map((r) => createWsPath(r)))(
-          store.state,
-          store.dispatch,
+        store.dispatch(
+          updateGithubDetails({
+            conflictedWsPaths: result.conflict.map((r) => createWsPath(r)),
+          }),
         );
 
         return;
@@ -189,32 +184,35 @@ export function syncRunner(
         }
       }
     }
-  });
-}
+  };
+});
 
-export function setConflictedWsPaths(conflictedWsPaths: WsPath[]) {
-  return ghSliceKey.op((state, dispatch) => {
-    dispatch({
-      name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
-      value: {
-        conflictedWsPaths,
-      },
-    });
-  });
-}
+export const discardLocalChanges = operation({
+  deferred: false,
+})(function discardLocalChanges(wsName: WsName, reloadOnSuccess?: boolean) {
+  return async (store) => {
+    const isSyncingRef = getIsSyncingRef(store);
 
-export function discardLocalChanges(wsName: string) {
-  return ghSliceKey.asyncOp(async (_, __, store) => {
-    const { isSyncing } = ghSliceKey.getSliceStateAsserted(store.state);
-
-    if (isSyncing) {
+    if (isSyncingRef.current) {
       notify(
         'Cannot discard local changes',
         SEVERITY.INFO,
         'A sync is already in progress, please wait for it to finish.',
       );
 
-      return false;
+      return;
+    }
+
+    const { githubWsName } = nsmGhSlice.get(store.state);
+
+    if (githubWsName !== wsName) {
+      notify(
+        'Cannot discard local changes',
+        SEVERITY.INFO,
+        'This is not a Github workspace',
+      );
+
+      return;
     }
 
     const { lockAcquired, result } = await getGithubSyncLockWrapper(
@@ -250,7 +248,7 @@ export function discardLocalChanges(wsName: string) {
         'A sync is already in progress, please wait for it to finish.',
       );
 
-      return false;
+      return;
     }
 
     if (!result) {
@@ -260,50 +258,48 @@ export function discardLocalChanges(wsName: string) {
         'Failed to discard local changes. Please try again.',
       );
 
-      return false;
+      return;
     }
 
-    return true;
-  });
-}
+    notify('Successfully discarded local changes', SEVERITY.SUCCESS);
 
-export const updateGithubToken = (
-  wsName: string,
-  token: string | undefined,
-  showNotification = false,
-) => {
-  return ghSliceKey.asyncOp(async (_, __, store) => {
-    if (ghSliceKey.getSliceStateAsserted(store.state).githubWsName === wsName) {
-      await updateGhToken(token);
-
-      if (showNotification) {
-        notify('Github token successfully updated', SEVERITY.SUCCESS);
-      }
-
-      return true;
+    if (reloadOnSuccess) {
+      window.location.reload();
     }
+  };
+});
 
-    if (showNotification) {
+export const updateGithubToken = operation({
+  deferred: false,
+})(function updateGithubToken(wsName: WsName, token: string) {
+  return async (store) => {
+    const { githubWsName } = nsmGhSlice.get(store.state);
+
+    if (githubWsName !== wsName) {
       notify(
-        'Github token not updated',
-        SEVERITY.ERROR,
-        'Please open a Github workspace before updating the token.',
+        'Cannot update Github token',
+        SEVERITY.INFO,
+        'This is not a Github workspace',
       );
+
+      return;
     }
 
-    return false;
-  });
-};
+    await updateGhToken(token);
+  };
+});
 
-export function manuallyResolveConflict(wsName: string) {
-  return ghSliceKey.asyncOp(async (_, __, store) => {
+export const manuallyResolveConflict = operation({
+  deferred: false,
+})(function manuallyResolveConflict(wsName: WsName) {
+  return async (store) => {
     const config = await getGhConfig(wsName);
 
     if (!config) {
-      return false;
+      return;
     }
 
-    const { conflictedWsPaths } = ghSliceKey.getSliceStateAsserted(store.state);
+    const { conflictedWsPaths } = nsmGhSlice.get(store.state);
 
     try {
       const { lockAcquired, result } = await getGithubSyncLockWrapper(
@@ -338,15 +334,9 @@ export function manuallyResolveConflict(wsName: string) {
           'Please close any other Bangle tab and try again.',
         );
 
-        return false;
+        return;
       } else if (result) {
-        store.dispatch({
-          name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
-          value: {
-            conflictedWsPaths: [],
-          },
-        });
-
+        store.dispatch(updateGithubDetails({ conflictedWsPaths: [] }));
         nsmApi2.workspace.refresh();
 
         notify(
@@ -366,10 +356,10 @@ export function manuallyResolveConflict(wsName: string) {
           );
         }
 
-        return true;
+        return;
       }
 
-      return false;
+      return;
     } catch (e) {
       console.error(e);
       notify(
@@ -378,66 +368,74 @@ export function manuallyResolveConflict(wsName: string) {
         'Something went wrong, please reload and try again.',
       );
 
-      return false;
+      return;
     }
-  });
-}
+  };
+});
 
-export function checkForConflicts(wsName: string) {
-  return ghSliceKey.asyncOp(async (_, __, store) => {
-    const config = await getGhConfig(wsName);
-
-    if (!config) {
-      return false;
-    }
-
-    const conflicts = await getConflicts({ wsName, config });
-
-    const { wsName: currentWsName } = nsmApi2.workspace.workspaceState();
-
-    if (currentWsName === wsName) {
-      const { conflictedWsPaths } = ghSliceKey.getSliceStateAsserted(
-        store.state,
-      );
-
-      if (
-        conflicts.length > 0 ||
-        (conflictedWsPaths.length > 0 && conflicts.length === 0)
-      ) {
-        store.dispatch({
-          name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS',
-          value: {
-            conflictedWsPaths: conflicts,
-          },
-        });
-      }
-    }
-
-    return true;
-  });
-}
-
-export function optimizeDatabaseOperation(
-  pruneUnused: boolean = true,
-  abortSignal = new AbortController().signal,
-) {
-  return ghSliceKey.asyncOp(async (_, __, store) => {
-    const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
+export const checkForConflicts = operation({
+  deferred: false,
+})(function checkForConflicts() {
+  return async (store) => {
+    const { githubWsName } = nsmGhSlice.get(store.state);
 
     if (!githubWsName) {
-      return false;
+      return;
     }
 
     const config = await getGhConfig(githubWsName);
 
     if (!config) {
-      return false;
+      return;
+    }
+
+    const conflicts = await getConflicts({ wsName: githubWsName, config });
+
+    const { wsName: currentWsName } = nsmApi2.workspace.workspaceState();
+
+    if (currentWsName !== githubWsName) {
+      return;
+    }
+
+    const { conflictedWsPaths } = nsmGhSlice.get(store.state);
+
+    if (conflicts.length > 0) {
+      store.dispatch(updateGithubDetails({ conflictedWsPaths: conflicts }));
+
+      return;
+    }
+
+    if (conflictedWsPaths.length > 0 && conflicts.length === 0) {
+      store.dispatch(updateGithubDetails({ conflictedWsPaths: [] }));
+
+      return;
+    }
+  };
+});
+
+export const optimizeDatabaseOperation = operation({
+  deferred: false,
+})(function optimizeDatabaseOperation(
+  pruneUnused: boolean,
+  abortSignal: AbortSignal,
+) {
+  const optimize = async (store: OperationStore) => {
+    const { githubWsName } = nsmGhSlice.get(store.state);
+
+    if (!githubWsName) {
+      return;
+    }
+
+    const config = await getGhConfig(githubWsName);
+
+    if (!config) {
+      return;
     }
 
     const tree = await serialGetRepoTree({
       wsName: githubWsName,
       config,
-      abortSignal,
+      abortSignal: abortSignal,
     });
 
     const { lockAcquired, result } = await getGithubSyncLockWrapper(
@@ -449,7 +447,7 @@ export function optimizeDatabaseOperation(
           recentWsPaths: recentlyUsedWsPaths,
         } = nsmApi2.workspace.workspaceState();
 
-        if (currentWsName !== githubWsName) {
+        if (currentWsName !== githubWsName || abortSignal.aborted) {
           return false;
         }
 
@@ -461,7 +459,7 @@ export function optimizeDatabaseOperation(
 
         return optimizeDatabase({
           tree,
-          abortSignal,
+          abortSignal: abortSignal,
           config,
           retainedWsPaths,
           wsName: githubWsName,
@@ -474,9 +472,15 @@ export function optimizeDatabaseOperation(
       !lockAcquired &&
         console.debug('cannot cleanup ws paths, lock not acquired');
 
-      return false;
+      return;
     }
 
-    return true;
-  });
-}
+    return;
+  };
+
+  return async (store) => {
+    return optimize(store).finally(() => {
+      store.dispatch(syncRunner(abortSignal));
+    });
+  };
+});

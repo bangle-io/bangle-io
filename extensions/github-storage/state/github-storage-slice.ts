@@ -1,292 +1,32 @@
-import { getNewStore, nsmApi2, page, Slice, workspace } from '@bangle.io/api';
-import { SEVERITY } from '@bangle.io/constants';
+import { slice } from '@bangle.io/nsm-3';
 import type { WsPath } from '@bangle.io/shared-types';
-import { abortableSetInterval, generateUid } from '@bangle.io/utils';
-import { createWsName } from '@bangle.io/ws-path';
 
-import {
-  getSyncInterval,
-  ghSliceKey,
-  GITHUB_STORAGE_PROVIDER_NAME,
-  OPERATION_SHOW_CONFLICT_DIALOG,
-} from '../common';
-import { handleError } from '../error-handling';
-import { nsmGhSlice, updateGithubDetails } from './nsm-github-slices';
-import {
-  checkForConflicts,
-  optimizeDatabaseOperation,
-  syncRunner,
-} from './operations';
-
-const LOG = true;
-const debug = LOG
-  ? console.debug.bind(console, 'github-storage-slice')
-  : () => {};
-
-const defaultState = {
-  isSyncing: false,
+const defaultInitState: {
+  githubWsName: string | undefined;
+  conflictedWsPaths: WsPath[];
+} = {
   githubWsName: undefined,
   conflictedWsPaths: [],
 };
 
-export function githubStorageSlice() {
-  return new Slice({
-    key: ghSliceKey,
-    state: {
-      init() {
-        return defaultState;
-      },
-      apply(action, state) {
-        switch (action.name) {
-          case 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS': {
-            return {
-              ...state,
-              conflictedWsPaths: action.value.conflictedWsPaths,
-            };
-          }
-
-          case 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE': {
-            const existingSyncState = state.isSyncing;
-
-            if (existingSyncState === action.value.isSyncing) {
-              return state;
-            }
-
-            return {
-              ...state,
-              isSyncing: action.value.isSyncing,
-            };
-          }
-          case 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME': {
-            const existingData = state.githubWsName;
-
-            if (existingData === action.value.githubWsName) {
-              return state;
-            }
-
-            return {
-              ...defaultState,
-              githubWsName: action.value.githubWsName,
-            };
-          }
-
-          case 'action::@bangle.io/github-storage:RESET_GITHUB_STATE': {
-            return defaultState;
-          }
-
-          default: {
-            let x: never = action;
-
-            return state;
-          }
-        }
-      },
-    },
-    sideEffect: [
-      ghWorkspaceEffect,
-      periodSyncEffect,
-      syncEffect,
-      conflictEffect,
-      setConflictNotification,
-      syncWithNsmEffect,
-    ],
-    onError: (error) => {
-      return handleError(error);
-    },
-  });
-}
-
-export const syncWithNsmEffect = ghSliceKey.effect(() => {
-  return {
-    deferredUpdate(store, prevState) {
-      const nsmStore = getNewStore(store);
-      const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-      const existingName = nsmGhSlice.get(nsmStore.state).githubWsName;
-
-      if (existingName !== githubWsName) {
-        nsmStore.dispatch(updateGithubDetails({ githubWsName }));
-      }
-    },
-  };
+export const nsmGhSlice = slice([], {
+  name: 'slice::github-storage:main',
+  state: defaultInitState,
 });
 
-export const ghWorkspaceEffect = ghSliceKey.effect(() => {
-  return {
-    async deferredUpdate(store, prevState) {
-      const wsName = workspace.workspaceSliceKey.getValueIfChanged(
-        'wsName',
-        store.state,
-        prevState,
-      );
-
-      if (wsName) {
-        const isGhWorkspace =
-          (await nsmApi2.workspace.readWorkspaceInfo(createWsName(wsName)))
-            ?.type === GITHUB_STORAGE_PROVIDER_NAME;
-
-        const currentWsName = workspace.workspaceSliceKey.callQueryOp(
-          store.state,
-          workspace.getWsName(),
-        );
-
-        const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-
-        if (currentWsName === wsName && githubWsName !== wsName) {
-          if (isGhWorkspace) {
-            store.dispatch({
-              name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME',
-              value: {
-                githubWsName: wsName,
-              },
-            });
-          }
-          // reset the state as the workspace is not a github workspace
-          else {
-            store.dispatch({
-              name: 'action::@bangle.io/github-storage:RESET_GITHUB_STATE',
-              value: {},
-            });
-          }
-        }
-      }
-    },
-  };
-});
-
-export const syncEffect = ghSliceKey.deferredReactor(
-  {
-    // mostly for mobile: sync whenever a user presses done, so that we save the latest changes
-    // TODO fix this in nsm
-    // editingAllowed: editor.editorManagerSliceKey.select('editingAllowed'),
-    // sync whenever page lifecycle changes
-    lifeCycleState: page.pageSliceKey.select('lifeCycleState'),
-    githubWsName: ghSliceKey.select('githubWsName'),
-  },
-  (store, { lifeCycleState, githubWsName }) => {
-    if (!githubWsName) {
-      return;
-    }
-
-    optimizeDatabaseOperation(false)(
-      store.state,
-      store.dispatch,
-      store,
-    ).finally(() => {
-      syncRunner(githubWsName, new AbortController().signal)(
-        store.state,
-        store.dispatch,
-        store,
-      );
+export const updateGithubDetails = nsmGhSlice.action(
+  function updateGithubDetails(data: {
+    githubWsName?: string | undefined;
+    conflictedWsPaths?: WsPath[];
+  }) {
+    return nsmGhSlice.tx((state) => {
+      return nsmGhSlice.update(state, data);
     });
   },
 );
 
-export const periodSyncEffect = ghSliceKey.intervalRunEffect(
-  getSyncInterval(),
-  (store, storeDestroyedSignal) => {
-    const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-
-    const pageLifecycle = page.oldGetCurrentPageLifeCycle()(store.state);
-
-    if (githubWsName && pageLifecycle === 'active') {
-      debug('Periodic Github sync in background');
-      optimizeDatabaseOperation(true)(
-        store.state,
-        store.dispatch,
-        store,
-      ).finally(() => {
-        syncRunner(githubWsName, storeDestroyedSignal)(
-          store.state,
-          store.dispatch,
-          store,
-        );
-      });
-    }
-  },
-);
-
-export const conflictEffect = ghSliceKey.effect(() => {
-  return {
-    deferredOnce(store, signal) {
-      abortableSetInterval(
-        () => {
-          const { githubWsName } = ghSliceKey.getSliceStateAsserted(
-            store.state,
-          );
-
-          const pageLifecycle = page.oldGetCurrentPageLifeCycle()(store.state);
-
-          if (githubWsName && pageLifecycle === 'active') {
-            debug('Periodic Github conflict check in background');
-            checkForConflicts(githubWsName)(store.state, store.dispatch, store);
-          }
-        },
-        signal,
-        getSyncInterval(),
-      );
-    },
-
-    update(store, prevState) {
-      const pageDidChange = page.oldPageLifeCycleTransitionedTo(
-        ['passive', 'terminated', 'hidden'],
-        prevState,
-      )(store.state);
-      const githubWsNameChanged = ghSliceKey.getValueIfChanged(
-        'githubWsName',
-        store.state,
-        prevState,
-      );
-
-      const { githubWsName } = ghSliceKey.getSliceStateAsserted(store.state);
-
-      if (pageDidChange || githubWsNameChanged) {
-        if (githubWsName) {
-          checkForConflicts(githubWsName)(store.state, store.dispatch, store);
-        }
-      }
-    },
-  };
-});
-
-// keeps the conflict notification in sync with the conflictedWsPaths
-export const setConflictNotification = ghSliceKey.effect(() => {
-  const wsPathToUidMap = new Map<WsPath, string>();
-
-  return {
-    destroy() {
-      wsPathToUidMap.clear();
-    },
-    deferredUpdate(store, prevState) {
-      const conflictedWsPaths = ghSliceKey.getValueIfChanged(
-        'conflictedWsPaths',
-        store.state,
-        prevState,
-      );
-
-      if (conflictedWsPaths) {
-        for (const wsPath of conflictedWsPaths) {
-          const uid = generateUid();
-
-          nsmApi2.ui.setEditorIssue({
-            uid,
-            description: `There is a conflict with ${wsPath} on Github. Please resolve the conflict on Github and then click on the sync button to resolve the conflict.`,
-            title: 'Encountered Conflict',
-            severity: SEVERITY.WARNING,
-            wsPath,
-            serialOperation: OPERATION_SHOW_CONFLICT_DIALOG,
-          });
-
-          wsPathToUidMap.set(wsPath, uid);
-        }
-
-        // clear out the notifications for the paths that are no longer conflicted
-        for (const [wsPath, uid] of wsPathToUidMap) {
-          if (!conflictedWsPaths.includes(wsPath)) {
-            nsmApi2.ui.clearEditorIssue(uid);
-            wsPathToUidMap.delete(wsPath);
-          }
-        }
-      }
-    },
-  };
+export const resetGithubState = nsmGhSlice.action(function resetGithubState() {
+  return nsmGhSlice.tx((state) => {
+    return nsmGhSlice.update(state, defaultInitState);
+  });
 });

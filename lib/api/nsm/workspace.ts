@@ -1,7 +1,7 @@
 import { useNsmSliceState } from '@bangle.io/bangle-store-context';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import { markdownParser } from '@bangle.io/markdown';
-import type { EffectStore } from '@bangle.io/nsm-3';
+import type { EffectStore, StoreState } from '@bangle.io/nsm-3';
 import {
   closeIfFound,
   nsmSliceWorkspace,
@@ -19,15 +19,17 @@ import type {
 import {
   goToInvalidWorkspacePage as _goToInvalidWorkspacePage,
   goToWorkspaceHome as _goToWorkspaceHome,
+  nsmPageSlice,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
 import { refreshWorkspace } from '@bangle.io/slice-refresh-workspace';
-import { BaseError } from '@bangle.io/utils';
+import { BaseError, weakCache } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { defaultDoc } from '../default-doc';
+import type { ApiStoreState } from '../internals';
 import { getStore } from '../internals';
 
 export {
@@ -42,18 +44,28 @@ export function useWorkspace() {
 // lets try reduce the usage of these, since they couple internal state management
 // with extensions
 
-export function trackWorkspace(effectStore: EffectStore<any>) {
-  return nsmSliceWorkspace.track(effectStore);
-}
-
 export function trackWorkspaceName(effectStore: EffectStore<any>) {
   return nsmSliceWorkspace.track(effectStore).wsName;
 }
 
+export function trackPageLifeCycleState(effectStore: EffectStore<any>) {
+  return nsmPageSlice.track(effectStore).lifeCycleState;
+}
+
+const cachedApiState = weakCache((storeState: ApiStoreState) => {
+  const wsState = nsmSliceWorkspace.get(storeState);
+  const { isInactivePage } = nsmPageSlice.get(storeState);
+
+  return {
+    ...wsState,
+    isInactivePage,
+  };
+});
+
 export const workspaceState = () => {
   const store = getStore();
 
-  return nsmSliceWorkspace.get(store.state);
+  return cachedApiState(store.state);
 };
 
 export const getNote = (wsPath: WsPath) => {

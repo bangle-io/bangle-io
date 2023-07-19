@@ -1,20 +1,18 @@
 import React, { useCallback, useState } from 'react';
 
-import { nsmApi2, useBangleStoreContext, useSliceState } from '@bangle.io/api';
+import { nsmApi2, useNsmSliceDispatch, useNsmSliceState } from '@bangle.io/api';
 import { Dialog } from '@bangle.io/ui-components';
 
-import { DISCARD_LOCAL_CHANGES_DIALOG, ghSliceKey } from '../common';
-import { discardLocalChanges } from '../state/operations';
+import { DISCARD_LOCAL_CHANGES_DIALOG } from '../common';
+import { nsmGhSlice, operations } from '../state';
 
 export function DiscardLocalChangesDialog() {
-  const bangleStore = useBangleStoreContext();
-
   const [isProcessing, updateIsProcessing] = useState(false);
   const [manuallyReload, updateManuallyReload] = useState(false);
 
-  const {
-    sliceState: { githubWsName },
-  } = useSliceState(ghSliceKey);
+  const { githubWsName } = useNsmSliceState(nsmGhSlice);
+
+  const dispatch = useNsmSliceDispatch(nsmGhSlice);
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {
@@ -64,18 +62,7 @@ export function DiscardLocalChangesDialog() {
           if (githubWsName) {
             updateIsProcessing(true);
 
-            const success = await ghSliceKey.callAsyncOp(
-              bangleStore,
-              discardLocalChanges(githubWsName),
-            );
-
-            if (success) {
-              window.location.reload();
-              // if we reach here ask user to reload manually
-              setTimeout(() => {
-                updateManuallyReload(true);
-              }, 2000);
-            }
+            dispatch(operations.discardLocalChanges(githubWsName, true));
 
             dismiss();
           }

@@ -1,23 +1,20 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { nsmApi2, useBangleStoreContext, useSliceState } from '@bangle.io/api';
+import { nsmApi2, useNsmSliceDispatch, useNsmSliceState } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { Dialog } from '@bangle.io/ui-components';
 
-import { CONFLICT_DIALOG, ghSliceKey } from '../common';
-import { manuallyResolveConflict } from '../state/operations';
+import { CONFLICT_DIALOG } from '../common';
+import { nsmGhSlice, operations } from '../state';
 
 export function ConflictDialog() {
-  const bangleStore = useBangleStoreContext();
-
   const dismiss = useCallback(() => {
     nsmApi2.ui.dismissDialog(CONFLICT_DIALOG);
   }, []);
 
-  const {
-    sliceState: { conflictedWsPaths, githubWsName },
-  } = useSliceState(ghSliceKey);
+  const { conflictedWsPaths, githubWsName } = useNsmSliceState(nsmGhSlice);
+  const nsmDispatch = useNsmSliceDispatch(nsmGhSlice);
 
   useEffect(() => {
     if (conflictedWsPaths.length === 0) {
@@ -41,10 +38,7 @@ export function ConflictDialog() {
         text: 'Resolve Manually',
         onPress: () => {
           if (githubWsName) {
-            ghSliceKey.callAsyncOp(
-              bangleStore,
-              manuallyResolveConflict(githubWsName),
-            );
+            nsmDispatch(operations.manuallyResolveConflict(githubWsName));
           }
           dismiss();
         },
