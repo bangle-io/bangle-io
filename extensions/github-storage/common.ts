@@ -1,7 +1,6 @@
-import { nsmApi2, SliceKey } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import type { Severity } from '@bangle.io/constants';
 import { SEVERITY, WorkspaceType } from '@bangle.io/constants';
-import type { WsPath } from '@bangle.io/shared-types';
 import { acquireLockIfAvailable, isMobile } from '@bangle.io/utils';
 
 export const EXTENSION_NAME = '@bangle.io/github-storage';
@@ -36,36 +35,6 @@ export const UPDATE_GITHUB_TOKEN_DIALOG =
   'dialog::@bangle.io/github-storage:UPDATE_GITHUB_TOKEN_DIALOG';
 
 export const CONFLICT_DIALOG = 'dialog::@bangle.io/github-storage:conflict';
-
-export const ghSliceKey = new SliceKey<
-  {
-    isSyncing: boolean;
-    githubWsName: string | undefined;
-    conflictedWsPaths: WsPath[];
-  },
-  | {
-      name: 'action::@bangle.io/github-storage:UPDATE_SYNC_STATE';
-      value: {
-        isSyncing: boolean;
-      };
-    }
-  | {
-      name: 'action::@bangle.io/github-storage:SET_CONFLICTED_WS_PATHS';
-      value: {
-        conflictedWsPaths: WsPath[];
-      };
-    }
-  | {
-      name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME';
-      value: {
-        githubWsName: string | undefined;
-      };
-    }
-  | {
-      name: 'action::@bangle.io/github-storage:RESET_GITHUB_STATE';
-      value: {};
-    }
->('slice::@bangle.io/github-storage:slice-key');
 
 export const LOCK_NAME = '@bangle.io/github-storage:sync-lock';
 

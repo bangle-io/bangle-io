@@ -53,7 +53,7 @@ const extension = Extension.create({
       }
 
       return {
-        handle(operation, payload, bangleStore) {
+        handle(operation, payload) {
           const nsmStore = getExtensionStore(searchSlice);
 
           switch (operation.name) {

@@ -2,7 +2,6 @@ import { BangleEditor, BangleEditorState } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import { valuePlugin } from '@bangle.dev/utils';
 
-import { getNewStore } from '@bangle.io/api';
 import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType, PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
@@ -62,9 +61,8 @@ export function createEditorFromMd(
           wsPath: createWsPath('test:my-test.md'),
           editorDisplayType: EditorDisplayType.Page,
           editorId: PRIMARY_EDITOR_INDEX,
-          bangleStore: initialBangleStore,
           dispatchSerialOperation: () => {},
-          nsmStore: getNewStore(initialBangleStore),
+          nsmStore: {} as any,
           createdAt: Date.now(),
           collabMessageBus: {} as any,
 
@@ -117,10 +115,9 @@ export function createEditorFromNode(
           wsPath: createWsPath('test:my-test.md'),
           editorDisplayType: EditorDisplayType.Page,
           editorId: PRIMARY_EDITOR_INDEX,
-          bangleStore: initialBangleStore,
           dispatchSerialOperation: () => {},
           createdAt: Date.now(),
-          nsmStore: getNewStore(initialBangleStore),
+          nsmStore: {} as any,
           collabMessageBus: {} as any,
           ...pluginMetadata,
         }),

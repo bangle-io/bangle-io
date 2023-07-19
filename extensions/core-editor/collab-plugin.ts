@@ -34,9 +34,7 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
             const error = collabClient.commands.queryFatalError()(view.state);
 
             if (error) {
-              const { bangleStore, wsPath } = getEditorPluginMetadata(
-                view.state,
-              );
+              const { wsPath } = getEditorPluginMetadata(view.state);
               console.warn(error);
 
               if (!nsmApi2.ui.getEditorIssue(wsPath)) {
@@ -44,7 +42,7 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
                 //       there is an error thrown. So this waits until to avoid
                 ///      setting error if the editor is unmounted.
                 clearTimeoutId = setTimeout(() => {
-                  if (!view.isDestroyed && !bangleStore.destroyed) {
+                  if (!view.isDestroyed) {
                     nsmApi2.ui.setEditorIssue({
                       wsPath,
                       title: 'Editor crashed!',

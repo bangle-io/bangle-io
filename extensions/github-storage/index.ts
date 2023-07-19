@@ -96,7 +96,7 @@ const extension = Extension.create({
     ],
     operationHandler() {
       return {
-        handle(operation, payload, store) {
+        handle(operation, payload) {
           switch (operation.name) {
             case OPERATION_SYNC_GITHUB_CHANGES: {
               const { wsName } = nsmApi2.workspace.workspaceState();

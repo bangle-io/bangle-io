@@ -19,7 +19,6 @@ export interface EditorPluginMetadata {
   editorDisplayType: EditorDisplayType;
   editorId?: EditorIdType;
   dispatchSerialOperation: DispatchSerialOperationType;
-  bangleStore: ApplicationStore;
   nsmStore: NsmStore;
   createdAt: number;
   collabMessageBus: EternalVars['editorCollabMessageBus'];

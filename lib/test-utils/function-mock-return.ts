@@ -23,7 +23,6 @@ export const getEditorPluginMetadataReturn: ReturnType<
 > = {
   dispatchSerialOperation: typeof jest === 'undefined' ? () => {} : jest.fn(),
   editorDisplayType: EditorDisplayType.Page,
-  bangleStore: initialBangleStore,
   wsPath: createWsPath('test-workspace:my-test-note.md'),
   nsmStore: initialNsmStore,
   createdAt: 0,

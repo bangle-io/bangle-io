@@ -120,7 +120,7 @@ export const syncRunner = operation({
       return result;
     } catch (error) {
       if (isAbortError(error)) {
-        return;
+        return false;
       }
 
       console.error(error);

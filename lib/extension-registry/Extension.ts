@@ -54,7 +54,6 @@ export type SerialOperationHandler2<
   handle: (
     serialOperation: { name: OpType['name']; value?: any },
     payload: any,
-    store: ApplicationStore,
   ) => boolean | void;
 };
 

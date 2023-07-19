@@ -220,7 +220,7 @@ const extension = Extension.create({
     ],
     operationHandler() {
       return {
-        handle(operation, payload: unknown, bangleStore) {
+        handle(operation, payload: unknown) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
               if (!nsmApi2.workspace.workspaceState().wsName) {

@@ -6,7 +6,7 @@ import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import type { BaseLocationHook } from 'wouter';
 import { Router } from 'wouter';
 
-import { SerialOperationContextProvider } from '@bangle.io/api/internal';
+import { _SerialOperationContextProvider } from '@bangle.io/api';
 import { historySlice } from '@bangle.io/bangle-store';
 import {
   BangleStoreChanged,
@@ -107,9 +107,9 @@ export function Entry({
                   <SWReloadPrompt />
                   <WatchWorkspace />
                   <WatchUI />
-                  <SerialOperationContextProvider>
+                  <_SerialOperationContextProvider>
                     <AppContainer />
-                  </SerialOperationContextProvider>
+                  </_SerialOperationContextProvider>
                 </BangleStoreChanged.Provider>
               </BangleStoreContext.Provider>
             </NsmStoreContext.Provider>

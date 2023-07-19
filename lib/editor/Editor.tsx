@@ -16,7 +16,6 @@ import {
 import { valuePlugin } from '@bangle.dev/utils';
 
 import {
-  useBangleStoreContext,
   useNsmPlainStore,
   useNsmStore,
   useSerialOperationContext,
@@ -26,7 +25,6 @@ import { vars } from '@bangle.io/css-vars';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
-  BangleApplicationStore,
   DispatchSerialOperationType,
   EditorPluginMetadata,
   EternalVars,
@@ -72,8 +70,6 @@ function EditorInner({
   eternalVars,
   wsPath,
 }: EditorProps) {
-  const bangleStore = useBangleStoreContext();
-
   const { dispatchSerialOperation } = useSerialOperationContext();
   const editorStore = useNsmStore([nsmEditorManagerSlice, nsmSliceWorkspace]);
   const nsmStore = useNsmPlainStore();
@@ -173,7 +169,6 @@ function EditorInner({
       wsPath={wsPath}
       onEditorReady={_onEditorReady}
       editorDisplayType={editorDisplayType}
-      bangleStore={bangleStore}
     />
   ) : null;
 }
@@ -189,7 +184,6 @@ function EditorInner2({
   onEditorReady,
   initialSelection,
   wsPath,
-  bangleStore,
 }: {
   eternalVars: EternalVars;
   nsmStore: NsmStore;
@@ -201,7 +195,6 @@ function EditorInner2({
   initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: WsPath;
-  bangleStore: BangleApplicationStore;
 }) {
   const editorState = useGetEditorState({
     dispatchSerialOperation,
@@ -211,7 +204,6 @@ function EditorInner2({
     initialSelection,
     initialValue,
     wsPath,
-    bangleStore,
     nsmStore,
   });
 
@@ -261,7 +253,6 @@ export function useGetEditorState({
   initialSelection,
   initialValue,
   wsPath,
-  bangleStore,
   nsmStore,
   eternalVars,
 }: {
@@ -273,7 +264,6 @@ export function useGetEditorState({
   initialSelection: Selection | undefined;
   initialValue: any;
   wsPath: WsPath;
-  bangleStore: BangleApplicationStore;
 }) {
   // TODO decouple pluginMetadata, this should be provided as a prop
   const pluginMetadata: EditorPluginMetadata = useMemo(
@@ -282,7 +272,6 @@ export function useGetEditorState({
       editorId,
       editorDisplayType,
       dispatchSerialOperation,
-      bangleStore,
       nsmStore,
       createdAt: Date.now(),
       collabMessageBus: eternalVars.editorCollabMessageBus,
@@ -293,7 +282,6 @@ export function useGetEditorState({
       nsmStore,
       wsPath,
       dispatchSerialOperation,
-      bangleStore,
       editorDisplayType,
       eternalVars,
     ],

@@ -1,7 +1,6 @@
 import type { Story } from '@storybook/react';
 import React from 'react';
 
-import { getNewStore } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { nsmNotification } from '@bangle.io/slice-notification';
 import { StorybookStore } from '@bangle.io/test-utils';
@@ -19,9 +18,7 @@ export const Main: Story = (args) => {
   return (
     <div style={{ width: 400 }}>
       <StorybookStore
-        onMount={(store) => {
-          const newStore = getNewStore(store);
-
+        onMount={(newStore) => {
           newStore.dispatch(
             nsmNotification.showNotification({
               buttons: [],
@@ -65,9 +62,7 @@ export const Main: Story = (args) => {
             }),
           );
         }}
-        renderChildren={(store) => {
-          const newStore = getNewStore(store);
-
+        renderChildren={(newStore) => {
           return (
             <>
               <Button

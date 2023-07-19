@@ -1,6 +1,5 @@
 import React, { createContext, useCallback, useMemo, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
@@ -25,7 +24,6 @@ export function SerialOperationContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const bangleStore = useBangleStoreContext();
   const extensionRegistry = useExtensionRegistryContext();
 
   const operationNameSet = useMemo(() => {
@@ -65,7 +63,7 @@ export function SerialOperationContextProvider({
       }
 
       for (const handler of operationHandlers) {
-        let result = handler.handle({ name, value }, value, bangleStore);
+        let result = handler.handle({ name, value }, value);
 
         if (result) {
           return;
@@ -80,7 +78,7 @@ export function SerialOperationContextProvider({
         handler(operation);
       }
     },
-    [extensionRegistry, operationNameSet, operationHandlers, bangleStore],
+    [extensionRegistry, operationNameSet, operationHandlers],
   );
 
   const value = useMemo(() => {

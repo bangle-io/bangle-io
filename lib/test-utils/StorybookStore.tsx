@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import type { BangleApplicationStore } from '@bangle.io/shared-types';
+import type { BangleApplicationStore, NsmStore } from '@bangle.io/shared-types';
 
 import { createBasicStore } from './create-basic-store';
 import { TestStoreProvider } from './TestStoreProvider';
@@ -11,7 +11,7 @@ export function StorybookStore({
   onMount,
 }: {
   renderChildren: (store: BangleApplicationStore) => React.ReactNode;
-  onMount?: (store: BangleApplicationStore) => void;
+  onMount?: (store: NsmStore) => void;
   createStoreParams?: Omit<
     Parameters<typeof createBasicStore>[0],
     'onUpdate' | 'storageProvider' | 'useUISlice'
@@ -34,6 +34,7 @@ export function StorybookStore({
   });
 
   useEffect(() => {
+    // @ts-expect-error TODOO fix this
     onMountRef.current?.(store);
   }, [store]);
 
