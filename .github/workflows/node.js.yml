@@ -58,14 +58,14 @@ jobs:
       - name: yarn install
         run: yarn install --immutable --immutable-cache
       - run: yarn ${{ matrix.test-kind }}
-      - name: Upload coverage report
-        if: matrix.test-kind == 'test:regular'
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          flags: unittests # optional
-          fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
+      # - name: Upload coverage report
+      # if: matrix.test-kind == 'test:regular'
+      # uses: codecov/codecov-action@v3
+      # with:
+      #   token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      #   flags: unittests # optional
+      #   fail_ci_if_error: true # optional (default = false)
+      #   verbose: true # optional (default = false)
 
   tests-network:
     runs-on: ubuntu-latest
