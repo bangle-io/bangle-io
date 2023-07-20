@@ -226,14 +226,14 @@ test.describe('auto complete', () => {
     await page.keyboard.type('#');
     await page.keyboard.type('hello', { delay: 3 });
     await page.keyboard.press('Space');
-    await longSleep();
+    await longSleep(150);
 
     // we are creating a new note because currently newly created
     // tags in the same page donot show up in auto complete
     await createNewNote(page, wsName, 'test-two');
     await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
-    await sleep();
+    await longSleep();
 
     await page.keyboard.type('#hel', { delay: 20 });
 

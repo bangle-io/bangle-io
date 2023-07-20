@@ -365,7 +365,7 @@ export async function getEditorLocator(
   );
 }
 
-export function sleep(t = 20) {
+export function sleep(t = 30) {
   return new Promise((res) => setTimeout(res, t));
 }
 
