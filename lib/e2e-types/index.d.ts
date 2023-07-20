@@ -37,4 +37,5 @@ export type NSME2eTypes = {
 
 export interface E2ENaukarTypes {
   config: FinalConfig;
+  isReady: () => Promise<boolean>;
 }

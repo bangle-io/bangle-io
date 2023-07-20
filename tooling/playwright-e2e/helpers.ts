@@ -66,6 +66,20 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
 
   await page.getByText(`📖 Workspace ${wsName}`).isVisible();
 
+  await expect(page.workers()).toHaveLength(1);
+
+  for (const worker of page.workers()) {
+    await expect
+      .poll(async () => {
+        return worker.evaluate(() => {
+          const helpers = globalThis._e2eNaukarHelpers;
+
+          return helpers?.isReady();
+        });
+      })
+      .toBe(true);
+  }
+
   return wsName;
 }
 

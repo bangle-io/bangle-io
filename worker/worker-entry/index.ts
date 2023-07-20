@@ -8,6 +8,7 @@ import type {
 } from '@bangle.io/shared-types';
 import { getSelfType, isWorkerGlobalScope } from '@bangle.io/utils';
 import { mainApi, registerMainApi } from '@bangle.io/worker-common';
+import { getCollabManager } from '@bangle.io/worker-editor';
 
 import { naukarWorkerAPI } from './naukar-worker-api';
 import { createNaukarStore } from './store';
@@ -63,6 +64,12 @@ export function createNaukar(
 
   const helpers: E2ENaukarTypes = {
     config,
+    isReady: async () => {
+      return (
+        !naukarStore.destroyed &&
+        Boolean(getCollabManager(naukarStore)?.managerId)
+      );
+    },
   };
 
   // eslint-disable-next-line no-restricted-globals
