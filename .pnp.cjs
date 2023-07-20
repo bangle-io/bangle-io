@@ -8513,7 +8513,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@antfu/utils", "npm:0.7.2"],\
             ["@iconify/types", "npm:2.0.0"],\
             ["debug", "virtual:68fa1c73c8a72515d25eaa47c88fa7c560bf130de4f3364a9b6d609d13e1829a816ec0c736f56d3fcc20f15ad0950c234159dca04d6c003fcb753985d78df618#npm:4.3.4"],\
-            ["kolorist", "npm:1.6.0"],\
+            ["kolorist", "npm:1.8.0"],\
             ["local-pkg", "npm:0.4.2"]\
           ],\
           "linkType": "HARD"\
@@ -8905,7 +8905,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@jridgewell/gen-mapping", "npm:0.1.1"],\
             ["@jridgewell/set-array", "npm:1.1.2"],\
-            ["@jridgewell/sourcemap-codec", "npm:1.4.14"]\
+            ["@jridgewell/sourcemap-codec", "npm:1.4.15"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -8914,7 +8914,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@jridgewell/gen-mapping", "npm:0.3.2"],\
             ["@jridgewell/set-array", "npm:1.1.2"],\
-            ["@jridgewell/sourcemap-codec", "npm:1.4.14"],\
+            ["@jridgewell/sourcemap-codec", "npm:1.4.15"],\
             ["@jridgewell/trace-mapping", "npm:0.3.17"]\
           ],\
           "linkType": "HARD"\
@@ -8980,7 +8980,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@jridgewell/trace-mapping", "npm:0.3.9"],\
             ["@jridgewell/resolve-uri", "npm:3.1.0"],\
-            ["@jridgewell/sourcemap-codec", "npm:1.4.14"]\
+            ["@jridgewell/sourcemap-codec", "npm:1.4.15"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -26122,13 +26122,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["jiti", [\
-        ["npm:1.16.0", {\
-          "packageLocation": "./.yarn/cache/jiti-npm-1.16.0-a3cbfd13e3-28844cd691.zip/node_modules/jiti/",\
-          "packageDependencies": [\
-            ["jiti", "npm:1.16.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.19.1", {\
           "packageLocation": "./.yarn/cache/jiti-npm-1.19.1-eef2f0ec29-fdf55e315f.zip/node_modules/jiti/",\
           "packageDependencies": [\
@@ -26488,13 +26481,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["kolorist", [\
-        ["npm:1.6.0", {\
-          "packageLocation": "./.yarn/cache/kolorist-npm-1.6.0-d7d152ff92-4d898b782c.zip/node_modules/kolorist/",\
-          "packageDependencies": [\
-            ["kolorist", "npm:1.6.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.8.0", {\
           "packageLocation": "./.yarn/cache/kolorist-npm-1.8.0-2cc04dcc05-b056de671a.zip/node_modules/kolorist/",\
           "packageDependencies": [\
@@ -26971,7 +26957,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/magic-string-npm-0.27.0-a60a83c0b4-273faaa50b.zip/node_modules/magic-string/",\
           "packageDependencies": [\
             ["magic-string", "npm:0.27.0"],\
-            ["@jridgewell/sourcemap-codec", "npm:1.4.14"]\
+            ["@jridgewell/sourcemap-codec", "npm:1.4.15"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -34435,7 +34421,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["unconfig", "npm:0.3.7"],\
             ["@antfu/utils", "npm:0.5.2"],\
             ["defu", "npm:6.1.1"],\
-            ["jiti", "npm:1.16.0"]\
+            ["jiti", "npm:1.19.1"]\
           ],\
           "linkType": "HARD"\
         }]\
