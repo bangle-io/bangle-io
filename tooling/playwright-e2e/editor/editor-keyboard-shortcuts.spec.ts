@@ -9,6 +9,7 @@ import {
   createWorkspace,
   getEditorJSON,
   isDarwin,
+  sleep,
 } from '../helpers';
 
 test.beforeEach(async ({ page, bangleApp }) => {
@@ -22,6 +23,7 @@ test.describe('creating node above or below', () => {
   test('above a paragraph', async ({ page }) => {
     await page.keyboard.type('### Hello world!', { delay: 10 });
     await page.keyboard.press('Enter');
+    await sleep();
     await page.keyboard.type('I am a para!', { delay: 10 });
 
     if (isDarwin) {

@@ -84,9 +84,11 @@ test.describe('loading', () => {
     });
     await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
-    await editorHandle.type('# Wow', { delay: 3 });
+    await sleep();
+
+    await editorHandle.type('# Wow', { delay: 10 });
     await editorHandle.press('Enter', { delay: 20 });
-    await editorHandle.type('[ ] list', { delay: 3 });
+    await editorHandle.type('[ ] list', { delay: 10 });
 
     await sleep();
 
