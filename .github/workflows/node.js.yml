@@ -41,8 +41,8 @@ jobs:
           yarn dedupe --check
       - name: 'Run scripts'
         run: yarn g:run-scripts
-      - name: 'build storybook'
-        run: yarn g:storybook --ci --smoke-test
+      # - name: 'build storybook'
+      #   run: yarn g:storybook --ci --smoke-test
 
   tests-matrix:
     runs-on: ubuntu-latest

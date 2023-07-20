@@ -10226,7 +10226,7 @@ __metadata:
     css-loader: ^5.2.7
     date-fns: ^2.25.0
     ejs: ^3.1.6
-    esbuild-linux-64: 0.15.16
+    esbuild-linux-64: 0.15.18
     eslint: ^8.23.0
     eslint-config-react-app: ^7.0.1
     eslint-import-resolver-node: ^0.3.6
@@ -13227,17 +13227,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-linux-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-64@npm:0.15.16"
-  checksum: ff56b0a6c63f71b2aedc2e7dc9e6af65da970b60e3d4bf5091f60273d8059aee8c14a585cd1444bd64a62d7780d2cd64bb07e70f34cfddfe0269be6bdf95f067
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
 "esbuild-linux-64@npm:0.15.18":
   version: 0.15.18
   resolution: "esbuild-linux-64@npm:0.15.18"
+  checksum: 19aa0c5dae7a94ab0f78896a8e56b9791f0f549d2707b2983c9d0fa1fd8e8e8404edc78a5539265593c257b29ca86177ee8d8678bcbcc6d1df6935460cd66140
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
