@@ -64,8 +64,9 @@ const extension = Extension.create({
         hint: 'Sync your local workspace with Github',
         activitybarIconShow(wsName) {
           const store = getExtensionStore(nsmGhSlice).state;
+          const ghWsName = nsmGhSlice.get(store).githubWsName;
 
-          return nsmGhSlice.get(store).githubWsName === wsName;
+          return ghWsName ? ghWsName === wsName : false;
         },
       },
     ],

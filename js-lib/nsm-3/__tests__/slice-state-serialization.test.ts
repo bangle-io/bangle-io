@@ -1,7 +1,7 @@
+import { slice } from 'nalanda';
 import { z } from 'zod';
 
 import { sliceStateSerializer } from '../slice-state-serialization';
-import { slice } from '../src';
 
 const expectType = <Type>(_: Type): void => void 0;
 

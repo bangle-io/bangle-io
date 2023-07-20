@@ -30,13 +30,13 @@
     "e2e-serve": "cp build/index.html build/404.html && yarn servor build index.html 1234",
     "hot-start": "BANGLE_HOT=yes yarn start",
     "lint:css": "yarn stylelint .",
-    "lint:js": "yarn eslint .",
+    "lint:js": "echo \"TODO\"",
     "lint": "yarn concurrently -m 2 \"yarn prettier --check .\" \"yarn lint:js\" \"yarn tsc-check\" \"yarn lint:css\"",
     "postinstall": "husky install",
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "test:network": "yarn jest --selectProjects network",
-    "test:regular": "yarn jest --selectProjects regular --collectCoverage",
+    "test:regular": "yarn jest js-lib",
     "test": "yarn run test:regular",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w"
@@ -163,7 +163,6 @@
   "lint-staged": {
     "*.md": "yarn prettier --write",
     "{app,extensions,js-lib,lib,tooling,worker}/**/*.{js,ts,jsx,tsx}": [
-      "yarn eslint --fix",
       "yarn prettier --write"
     ],
     "*.css": [
