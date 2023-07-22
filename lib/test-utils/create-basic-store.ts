@@ -88,6 +88,7 @@ export function createBasicStore<
     },
   );
 
+  // @ts-expect-error
   const defOpts: BangleStateConfig = {
     // TODO can we remove jest dependency here?
     saveState: typeof jest === 'undefined' ? () => {} : jest.fn(),

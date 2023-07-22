@@ -40,6 +40,7 @@ export function createBasicTestStore<
     store,
     actionsDispatched,
     getWsName: () => {
+      // @ts-expect-error
       return getWsName()(store.state as any);
     },
     // if user editor, checks if editor is ready to be edited
@@ -80,7 +81,7 @@ export async function setupMockWorkspaceWithNotes(
   if ((await readAllWorkspacesInfo()).find((r) => r.name === wsName)) {
     throw new Error(`Workspace ${wsName} already exists`);
   }
-
+  // @ts-expect-error
   await createWorkspace(wsName, storageProvider)(
     store.state,
     store.dispatch,
@@ -88,10 +89,12 @@ export async function setupMockWorkspaceWithNotes(
   );
 
   await waitForExpect(() => {
+    // @ts-expect-error
     expect(getWsName()(store.state)).toBe(wsName);
   });
 
   for (const [noteWsPath, str] of noteWsPaths) {
+    // @ts-expect-error
     await createNote(noteWsPath, {
       doc: createPMNode([], str.trim()),
     })(store.state, store.dispatch, store);
@@ -105,6 +108,7 @@ export async function setupMockWorkspaceWithNotes(
 
   await waitForExpect(() => {
     expect(
+      // @ts-expect-error
       workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length,
     ).toBe(noteWsPaths.length);
   });
@@ -115,6 +119,7 @@ export async function setupMockWorkspaceWithNotes(
     store,
     createTestNote: async (wsPath: string, str: string, open: boolean) => {
       assertNotUndefined(store, 'store must be defined');
+      // @ts-expect-error
       await createNote(wsPath, {
         open,
         doc: createPMNode([], str.trim()),
@@ -125,6 +130,7 @@ export async function setupMockWorkspaceWithNotes(
 
       await waitForExpect(() => {
         expect(
+          // @ts-expect-error
           workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths?.length,
         ).toBe(set.size);
       });
