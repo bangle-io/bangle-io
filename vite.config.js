@@ -73,7 +73,6 @@ const config = async ({ command, mode }) => {
       Unocss(),
       VitePWA({
         minify: false,
-        selfDestroying: true,
         includeAssets: [
           'favicon.svg',
           'favicon-dev.svg',
