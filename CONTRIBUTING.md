@@ -36,7 +36,7 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 ### Updating Vite version
 
-Search the code base (excluding `.yarn` and lock files)  for the currently installed version of the Vite and then replace it with the new version. You will also have to update the `esbuild-linux-64` to match with what the new version of Vite is using.
+Search the code base (excluding `.yarn` and lock files)  for the currently installed version of the Vite and then replace it with the new version. You will also have to update the `@esbuild/linux-x64` to match with what the new version of Vite is using.
 
 ## E2E Tests
 
