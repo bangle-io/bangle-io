@@ -7,7 +7,6 @@ import ReactDOM from 'react-dom';
 import { _internal_setStore } from '@bangle.io/api';
 import {
   createNsmStore,
-  initializeBangleStore,
   naukarReplicaSlicesDispatch,
 } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
@@ -123,30 +122,10 @@ runAfterPolyfills(async () => {
     console.warn('Unhandled Rejection at:', event?.reason?.stack || event);
   });
 
-  const store = initializeBangleStore({
-    eternalVars,
-    onUpdate: () => {
-      ReactDOM.render(
-        React.createElement(Entry, {
-          storeChanged: storeChanged++,
-          store,
-          nsmStore,
-          eternalVars,
-        }),
-        root,
-      );
-    },
-  });
-
-  // TODO remove this
-  (nsmStore as any).oldStore = store;
-  (store as any).newStore = nsmStore;
-
   ReactDOM.render(
     React.createElement(Entry, {
       nsmStore,
       storeChanged: storeChanged++,
-      store,
       eternalVars,
     }),
     root,

@@ -9,12 +9,9 @@ import { Router } from 'wouter';
 import { _SerialOperationContextProvider } from '@bangle.io/api';
 import { historySlice } from '@bangle.io/bangle-store';
 import {
-  BangleStoreChanged,
-  BangleStoreContext,
   NsmStoreContext,
   useNsmSliceState,
 } from '@bangle.io/bangle-store-context';
-import type { ApplicationStore } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { createTo } from '@bangle.io/history';
 import type { NsmStore } from '@bangle.io/shared-types';
@@ -52,21 +49,7 @@ const useRouterHook: BaseLocationHook = () => {
   return [to, navigate];
 };
 
-export function Entry({
-  nsmStore,
-  storeChanged: bangleStoreChanged,
-  store: bangleStore,
-}: {
-  nsmStore: NsmStore;
-  storeChanged: number;
-  store: ApplicationStore;
-}) {
-  useEffect(() => {
-    return () => {
-      bangleStore.destroy();
-    };
-  }, [bangleStore]);
-
+export function Entry({ nsmStore }: { nsmStore: NsmStore }) {
   useEffect(() => {
     const installCallback = (event: BeforeInstallPromptEvent) => {
       console.debug('before install prompt');
@@ -93,8 +76,6 @@ export function Entry({
 
   useUsageAnalytics();
 
-  const bangleStoreRef = useRef(bangleStore);
-
   return (
     <React.StrictMode>
       <ReactErrorBoundary FallbackComponent={ErrorBoundary}>
@@ -102,16 +83,12 @@ export function Entry({
           {/* Used by OverlayContainer -- any modal or popover */}
           <OverlayProvider>
             <NsmStoreContext.Provider value={nsmStore}>
-              <BangleStoreContext.Provider value={bangleStoreRef}>
-                <BangleStoreChanged.Provider value={bangleStoreChanged}>
-                  <SWReloadPrompt />
-                  <WatchWorkspace />
-                  <WatchUI />
-                  <_SerialOperationContextProvider>
-                    <AppContainer />
-                  </_SerialOperationContextProvider>
-                </BangleStoreChanged.Provider>
-              </BangleStoreContext.Provider>
+              <SWReloadPrompt />
+              <WatchWorkspace />
+              <WatchUI />
+              <_SerialOperationContextProvider>
+                <AppContainer />
+              </_SerialOperationContextProvider>
             </NsmStoreContext.Provider>
           </OverlayProvider>
         </Router>

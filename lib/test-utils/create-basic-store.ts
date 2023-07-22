@@ -5,15 +5,9 @@ import type {
   SliceKey,
 } from '@bangle.io/create-store';
 import { overrideSliceInit, Slice } from '@bangle.io/create-store';
-import {
-  Extension,
-  extensionRegistrySlice,
-} from '@bangle.io/extension-registry';
-import type { BangleStateConfig } from '@bangle.io/shared-types';
+import { Extension } from '@bangle.io/extension-registry';
 import {} from '@bangle.io/slice-editor-manager';
 import { pageSlice, pageSliceKey } from '@bangle.io/slice-page';
-import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
-import { workspaceSlice } from '@bangle.io/slice-workspace';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import {
   IndexedDbStorageProvider,
@@ -58,7 +52,7 @@ export function createBasicStore<
   useEditorManagerSlice?: boolean;
   useUISlice?: boolean;
   onError?: OnErrorType<S, A>;
-  opts?: Partial<BangleStateConfig>;
+  opts?: Partial<any>;
   onUpdate?: (store: ApplicationStore) => void;
   overrideInitialSliceState?: Parameters<typeof overrideSliceStates>[1];
 }) {
@@ -102,11 +96,11 @@ export function createBasicStore<
   };
 
   const finalSlices = [
-    extensionRegistrySlice(),
+    // extensionRegistrySlice(),
     useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
-    storageProviderSlice(),
+    // storageProviderSlice(),
     pageSlice(),
-    workspaceSlice(),
+    // workspaceSlice(),
     // useEditorManagerSlice ? editorManagerSlice() : undefined,
     // notificationSlice(),
     // useUISlice ? uiSlice() : undefined,

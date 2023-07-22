@@ -1,9 +1,5 @@
-import React, { useRef } from 'react';
+import type React from 'react';
 
-import {
-  BangleStoreChanged,
-  BangleStoreContext,
-} from '@bangle.io/bangle-store-context';
 import type { ApplicationStore } from '@bangle.io/create-store';
 
 export function TestStoreProvider({
@@ -15,13 +11,5 @@ export function TestStoreProvider({
   bangleStoreChanged: number;
   children: React.ReactNode;
 }) {
-  let res: React.ReactNode = children;
-
-  return (
-    <BangleStoreContext.Provider value={useRef(bangleStore)}>
-      <BangleStoreChanged.Provider value={bangleStoreChanged}>
-        {res}
-      </BangleStoreChanged.Provider>
-    </BangleStoreContext.Provider>
-  );
+  return children;
 }

@@ -1,8 +1,6 @@
 import type { SpecRegistry } from '@bangle.dev/core';
 import type { Node, PluginKey } from '@bangle.dev/pm';
 
-import type { ApplicationStore } from '@bangle.io/create-store';
-
 export type { ExtensionRegistry } from '@bangle.io/extension-registry';
 export type DialogComponentType = React.ComponentType<{
   dialogName: string;

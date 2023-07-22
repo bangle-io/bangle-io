@@ -1,5 +1,3 @@
-export { bangleStateSlices } from './bangle-slices';
-export * from './bangle-store';
 export { historySlice } from './nsm-store/history-slice';
 export { lastWorkspaceUsed } from './nsm-store/misc-effects';
 export { naukarReplicaSlicesDispatch } from './nsm-store/naukar-replica-slices-dispatch';

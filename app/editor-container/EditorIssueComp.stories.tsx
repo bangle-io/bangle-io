@@ -4,7 +4,6 @@ import type { Story } from '@storybook/react';
 import React from 'react';
 
 import { SEVERITY } from '@bangle.io/constants';
-import { createBasicStore, TestStoreProvider } from '@bangle.io/test-utils';
 
 import { EditorIssueComp } from './EditorIssueComp';
 
@@ -15,18 +14,18 @@ export default {
 };
 
 const Template: Story<Parameters<typeof EditorIssueComp>[0]> = (args) => {
-  const { store } = createBasicStore({
-    storageProvider: 'in-memory',
-    useUISlice: true,
-    useEditorManagerSlice: true,
-  });
+  // const { store } = createBasicStore({
+  //   storageProvider: 'in-memory',
+  //   useUISlice: true,
+  //   useEditorManagerSlice: true,
+  // });
 
   return (
-    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
-      <div style={{ width: 400 }}>
-        <EditorIssueComp {...args}></EditorIssueComp>
-      </div>
-    </TestStoreProvider>
+    // <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+    <div style={{ width: 400 }}>
+      <EditorIssueComp {...args}></EditorIssueComp>
+    </div>
+    // </TestStoreProvider>
   );
 };
 
