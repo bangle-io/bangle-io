@@ -61,12 +61,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.18.6, @babel/code-frame@npm:^7.5.5, @babel/code-frame@npm:^7.8.3":
-  version: 7.18.6
-  resolution: "@babel/code-frame@npm:7.18.6"
+"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.18.6, @babel/code-frame@npm:^7.22.5, @babel/code-frame@npm:^7.5.5, @babel/code-frame@npm:^7.8.3":
+  version: 7.22.5
+  resolution: "@babel/code-frame@npm:7.22.5"
   dependencies:
-    "@babel/highlight": ^7.18.6
-  checksum: 195e2be3172d7684bf95cff69ae3b7a15a9841ea9d27d3c843662d50cdd7d6470fd9c8e64be84d031117e4a4083486effba39f9aef6bbb2c89f7f21bcfba33ba
+    "@babel/highlight": ^7.22.5
+  checksum: cfe804f518f53faaf9a1d3e0f9f74127ab9a004912c3a16fda07fb6a633393ecb9918a053cb71804204c1b7ec3d49e1699604715e2cfb0c9f7bc4933d324ebb6
   languageName: node
   linkType: hard
 
@@ -149,12 +149,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-annotate-as-pure@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/helper-annotate-as-pure@npm:7.18.6"
+"@babel/helper-annotate-as-pure@npm:^7.18.6, @babel/helper-annotate-as-pure@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-annotate-as-pure@npm:7.22.5"
   dependencies:
-    "@babel/types": ^7.18.6
-  checksum: 88ccd15ced475ef2243fdd3b2916a29ea54c5db3cd0cfabf9d1d29ff6e63b7f7cd1c27264137d7a40ac2e978b9b9a542c332e78f40eb72abe737a7400788fc1b
+    "@babel/types": ^7.22.5
+  checksum: 53da330f1835c46f26b7bf4da31f7a496dee9fd8696cca12366b94ba19d97421ce519a74a837f687749318f94d1a37f8d1abcbf35e8ed22c32d16373b2f6198d
   languageName: node
   linkType: hard
 
@@ -183,20 +183,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-create-class-features-plugin@npm:^7.18.6, @babel/helper-create-class-features-plugin@npm:^7.20.2":
-  version: 7.20.2
-  resolution: "@babel/helper-create-class-features-plugin@npm:7.20.2"
+"@babel/helper-create-class-features-plugin@npm:^7.18.6, @babel/helper-create-class-features-plugin@npm:^7.20.2, @babel/helper-create-class-features-plugin@npm:^7.22.9":
+  version: 7.22.9
+  resolution: "@babel/helper-create-class-features-plugin@npm:7.22.9"
   dependencies:
-    "@babel/helper-annotate-as-pure": ^7.18.6
-    "@babel/helper-environment-visitor": ^7.18.9
-    "@babel/helper-function-name": ^7.19.0
-    "@babel/helper-member-expression-to-functions": ^7.18.9
-    "@babel/helper-optimise-call-expression": ^7.18.6
-    "@babel/helper-replace-supers": ^7.19.1
-    "@babel/helper-split-export-declaration": ^7.18.6
+    "@babel/helper-annotate-as-pure": ^7.22.5
+    "@babel/helper-environment-visitor": ^7.22.5
+    "@babel/helper-function-name": ^7.22.5
+    "@babel/helper-member-expression-to-functions": ^7.22.5
+    "@babel/helper-optimise-call-expression": ^7.22.5
+    "@babel/helper-replace-supers": ^7.22.9
+    "@babel/helper-skip-transparent-expression-wrappers": ^7.22.5
+    "@babel/helper-split-export-declaration": ^7.22.6
+    semver: ^6.3.1
   peerDependencies:
     "@babel/core": ^7.0.0
-  checksum: e89a8841db3f6340996f395fc372ee4bec361230eb9345b763314f768e68421d43461918fdedfb9a69b71f1d0433439f3e318d1b1b9ba04fbd7aac1c84959e37
+  checksum: 6c2436d1a5a3f1ff24628d78fa8c6d3120c40285aa3eda7815b1adbf8c5951e0dd73d368cf845825888fa3dc2f207dadce53309825598d7c67953e5ed9dd51d2
   languageName: node
   linkType: hard
 
@@ -246,10 +248,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-environment-visitor@npm:^7.18.9":
-  version: 7.18.9
-  resolution: "@babel/helper-environment-visitor@npm:7.18.9"
-  checksum: b25101f6162ddca2d12da73942c08ad203d7668e06663df685634a8fde54a98bc015f6f62938e8554457a592a024108d45b8f3e651fd6dcdb877275b73cc4420
+"@babel/helper-environment-visitor@npm:^7.18.9, @babel/helper-environment-visitor@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-environment-visitor@npm:7.22.5"
+  checksum: 248532077d732a34cd0844eb7b078ff917c3a8ec81a7f133593f71a860a582f05b60f818dc5049c2212e5baa12289c27889a4b81d56ef409b4863db49646c4b1
   languageName: node
   linkType: hard
 
@@ -262,13 +264,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-function-name@npm:^7.18.9, @babel/helper-function-name@npm:^7.19.0":
-  version: 7.19.0
-  resolution: "@babel/helper-function-name@npm:7.19.0"
+"@babel/helper-function-name@npm:^7.18.9, @babel/helper-function-name@npm:^7.19.0, @babel/helper-function-name@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-function-name@npm:7.22.5"
   dependencies:
-    "@babel/template": ^7.18.10
-    "@babel/types": ^7.19.0
-  checksum: eac1f5db428ba546270c2b8d750c24eb528b8fcfe50c81de2e0bdebf0e20f24bec688d4331533b782e4a907fad435244621ca2193cfcf80a86731299840e0f6e
+    "@babel/template": ^7.22.5
+    "@babel/types": ^7.22.5
+  checksum: 6b1f6ce1b1f4e513bf2c8385a557ea0dd7fa37971b9002ad19268ca4384bbe90c09681fe4c076013f33deabc63a53b341ed91e792de741b4b35e01c00238177a
   languageName: node
   linkType: hard
 
@@ -281,46 +283,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-member-expression-to-functions@npm:^7.18.9":
-  version: 7.18.9
-  resolution: "@babel/helper-member-expression-to-functions@npm:7.18.9"
+"@babel/helper-member-expression-to-functions@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-member-expression-to-functions@npm:7.22.5"
   dependencies:
-    "@babel/types": ^7.18.9
-  checksum: fcf8184e3b55051c4286b2cbedf0eccc781d0f3c9b5cbaba582eca19bf0e8d87806cdb7efc8554fcb969ceaf2b187d5ea748d40022d06ec7739fbb18c1b19a7a
+    "@babel/types": ^7.22.5
+  checksum: 4bd5791529c280c00743e8bdc669ef0d4cd1620d6e3d35e0d42b862f8262bc2364973e5968007f960780344c539a4b9cf92ab41f5b4f94560a9620f536de2a39
   languageName: node
   linkType: hard
 
-"@babel/helper-module-imports@npm:^7.10.4, @babel/helper-module-imports@npm:^7.12.13, @babel/helper-module-imports@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/helper-module-imports@npm:7.18.6"
+"@babel/helper-module-imports@npm:^7.10.4, @babel/helper-module-imports@npm:^7.12.13, @babel/helper-module-imports@npm:^7.18.6, @babel/helper-module-imports@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-module-imports@npm:7.22.5"
   dependencies:
-    "@babel/types": ^7.18.6
-  checksum: f393f8a3b3304b1b7a288a38c10989de754f01d29caf62ce7c4e5835daf0a27b81f3ac687d9d2780d39685aae7b55267324b512150e7b2be967b0c493b6a1def
+    "@babel/types": ^7.22.5
+  checksum: 9ac2b0404fa38b80bdf2653fbeaf8e8a43ccb41bd505f9741d820ed95d3c4e037c62a1bcdcb6c9527d7798d2e595924c4d025daed73283badc180ada2c9c49ad
   languageName: node
   linkType: hard
 
-"@babel/helper-module-transforms@npm:^7.12.1, @babel/helper-module-transforms@npm:^7.18.6, @babel/helper-module-transforms@npm:^7.19.6, @babel/helper-module-transforms@npm:^7.20.11":
-  version: 7.20.11
-  resolution: "@babel/helper-module-transforms@npm:7.20.11"
+"@babel/helper-module-transforms@npm:^7.12.1, @babel/helper-module-transforms@npm:^7.18.6, @babel/helper-module-transforms@npm:^7.19.6, @babel/helper-module-transforms@npm:^7.20.11, @babel/helper-module-transforms@npm:^7.22.5":
+  version: 7.22.9
+  resolution: "@babel/helper-module-transforms@npm:7.22.9"
   dependencies:
-    "@babel/helper-environment-visitor": ^7.18.9
-    "@babel/helper-module-imports": ^7.18.6
-    "@babel/helper-simple-access": ^7.20.2
-    "@babel/helper-split-export-declaration": ^7.18.6
-    "@babel/helper-validator-identifier": ^7.19.1
-    "@babel/template": ^7.20.7
-    "@babel/traverse": ^7.20.10
-    "@babel/types": ^7.20.7
-  checksum: 29319ebafa693d48756c6ba0d871677bb0037e0da084fbe221a17c38d57093fc8aa38543c07d76e788266a937976e37ab4901971ca7f237c5ab45f524b9ecca0
+    "@babel/helper-environment-visitor": ^7.22.5
+    "@babel/helper-module-imports": ^7.22.5
+    "@babel/helper-simple-access": ^7.22.5
+    "@babel/helper-split-export-declaration": ^7.22.6
+    "@babel/helper-validator-identifier": ^7.22.5
+  peerDependencies:
+    "@babel/core": ^7.0.0
+  checksum: 2751f77660518cf4ff027514d6f4794f04598c6393be7b04b8e46c6e21606e11c19f3f57ab6129a9c21bacdf8b3ffe3af87bb401d972f34af2d0ffde02ac3001
   languageName: node
   linkType: hard
 
-"@babel/helper-optimise-call-expression@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/helper-optimise-call-expression@npm:7.18.6"
+"@babel/helper-optimise-call-expression@npm:^7.18.6, @babel/helper-optimise-call-expression@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-optimise-call-expression@npm:7.22.5"
   dependencies:
-    "@babel/types": ^7.18.6
-  checksum: e518fe8418571405e21644cfb39cf694f30b6c47b10b006609a92469ae8b8775cbff56f0b19732343e2ea910641091c5a2dc73b56ceba04e116a33b0f8bd2fbd
+    "@babel/types": ^7.22.5
+  checksum: c70ef6cc6b6ed32eeeec4482127e8be5451d0e5282d5495d5d569d39eb04d7f1d66ec99b327f45d1d5842a9ad8c22d48567e93fc502003a47de78d122e355f7c
   languageName: node
   linkType: hard
 
@@ -331,10 +332,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-plugin-utils@npm:^7.0.0, @babel/helper-plugin-utils@npm:^7.10.4, @babel/helper-plugin-utils@npm:^7.12.13, @babel/helper-plugin-utils@npm:^7.13.0, @babel/helper-plugin-utils@npm:^7.14.5, @babel/helper-plugin-utils@npm:^7.16.7, @babel/helper-plugin-utils@npm:^7.18.6, @babel/helper-plugin-utils@npm:^7.18.9, @babel/helper-plugin-utils@npm:^7.19.0, @babel/helper-plugin-utils@npm:^7.20.2, @babel/helper-plugin-utils@npm:^7.8.0, @babel/helper-plugin-utils@npm:^7.8.3":
-  version: 7.20.2
-  resolution: "@babel/helper-plugin-utils@npm:7.20.2"
-  checksum: f6cae53b7fdb1bf3abd50fa61b10b4470985b400cc794d92635da1e7077bb19729f626adc0741b69403d9b6e411cddddb9c0157a709cc7c4eeb41e663be5d74b
+"@babel/helper-plugin-utils@npm:^7.0.0, @babel/helper-plugin-utils@npm:^7.10.4, @babel/helper-plugin-utils@npm:^7.12.13, @babel/helper-plugin-utils@npm:^7.13.0, @babel/helper-plugin-utils@npm:^7.14.5, @babel/helper-plugin-utils@npm:^7.16.7, @babel/helper-plugin-utils@npm:^7.18.6, @babel/helper-plugin-utils@npm:^7.18.9, @babel/helper-plugin-utils@npm:^7.19.0, @babel/helper-plugin-utils@npm:^7.20.2, @babel/helper-plugin-utils@npm:^7.22.5, @babel/helper-plugin-utils@npm:^7.8.0, @babel/helper-plugin-utils@npm:^7.8.3":
+  version: 7.22.5
+  resolution: "@babel/helper-plugin-utils@npm:7.22.5"
+  checksum: c0fc7227076b6041acd2f0e818145d2e8c41968cc52fb5ca70eed48e21b8fe6dd88a0a91cbddf4951e33647336eb5ae184747ca706817ca3bef5e9e905151ff5
   languageName: node
   linkType: hard
 
@@ -352,64 +353,64 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-replace-supers@npm:^7.18.6, @babel/helper-replace-supers@npm:^7.19.1":
-  version: 7.19.1
-  resolution: "@babel/helper-replace-supers@npm:7.19.1"
+"@babel/helper-replace-supers@npm:^7.18.6, @babel/helper-replace-supers@npm:^7.19.1, @babel/helper-replace-supers@npm:^7.22.9":
+  version: 7.22.9
+  resolution: "@babel/helper-replace-supers@npm:7.22.9"
   dependencies:
-    "@babel/helper-environment-visitor": ^7.18.9
-    "@babel/helper-member-expression-to-functions": ^7.18.9
-    "@babel/helper-optimise-call-expression": ^7.18.6
-    "@babel/traverse": ^7.19.1
-    "@babel/types": ^7.19.0
-  checksum: a0e4bf79ebe7d2bb5947169e47a0b4439c73fb0ec57d446cf3ea81b736721129ec373c3f94d2ebd2716b26dd65f8e6c083dac898170d42905e7ba815a2f52c25
+    "@babel/helper-environment-visitor": ^7.22.5
+    "@babel/helper-member-expression-to-functions": ^7.22.5
+    "@babel/helper-optimise-call-expression": ^7.22.5
+  peerDependencies:
+    "@babel/core": ^7.0.0
+  checksum: d41471f56ff2616459d35a5df1900d5f0756ae78b1027040365325ef332d66e08e3be02a9489756d870887585ff222403a228546e93dd7019e19e59c0c0fe586
   languageName: node
   linkType: hard
 
-"@babel/helper-simple-access@npm:^7.19.4, @babel/helper-simple-access@npm:^7.20.2":
-  version: 7.20.2
-  resolution: "@babel/helper-simple-access@npm:7.20.2"
+"@babel/helper-simple-access@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-simple-access@npm:7.22.5"
   dependencies:
-    "@babel/types": ^7.20.2
-  checksum: ad1e96ee2e5f654ffee2369a586e5e8d2722bf2d8b028a121b4c33ebae47253f64d420157b9f0a8927aea3a9e0f18c0103e74fdd531815cf3650a0a4adca11a1
+    "@babel/types": ^7.22.5
+  checksum: fe9686714caf7d70aedb46c3cce090f8b915b206e09225f1e4dbc416786c2fdbbee40b38b23c268b7ccef749dd2db35f255338fb4f2444429874d900dede5ad2
   languageName: node
   linkType: hard
 
-"@babel/helper-skip-transparent-expression-wrappers@npm:^7.18.9":
-  version: 7.20.0
-  resolution: "@babel/helper-skip-transparent-expression-wrappers@npm:7.20.0"
+"@babel/helper-skip-transparent-expression-wrappers@npm:^7.18.9, @babel/helper-skip-transparent-expression-wrappers@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-skip-transparent-expression-wrappers@npm:7.22.5"
   dependencies:
-    "@babel/types": ^7.20.0
-  checksum: 34da8c832d1c8a546e45d5c1d59755459ffe43629436707079989599b91e8c19e50e73af7a4bd09c95402d389266731b0d9c5f69e372d8ebd3a709c05c80d7dd
+    "@babel/types": ^7.22.5
+  checksum: 1012ef2295eb12dc073f2b9edf3425661e9b8432a3387e62a8bc27c42963f1f216ab3124228015c748770b2257b4f1fda882ca8fa34c0bf485e929ae5bc45244
   languageName: node
   linkType: hard
 
-"@babel/helper-split-export-declaration@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/helper-split-export-declaration@npm:7.18.6"
+"@babel/helper-split-export-declaration@npm:^7.18.6, @babel/helper-split-export-declaration@npm:^7.22.6":
+  version: 7.22.6
+  resolution: "@babel/helper-split-export-declaration@npm:7.22.6"
   dependencies:
-    "@babel/types": ^7.18.6
-  checksum: c6d3dede53878f6be1d869e03e9ffbbb36f4897c7cc1527dc96c56d127d834ffe4520a6f7e467f5b6f3c2843ea0e81a7819d66ae02f707f6ac057f3d57943a2b
+    "@babel/types": ^7.22.5
+  checksum: e141cace583b19d9195f9c2b8e17a3ae913b7ee9b8120246d0f9ca349ca6f03cb2c001fd5ec57488c544347c0bb584afec66c936511e447fd20a360e591ac921
   languageName: node
   linkType: hard
 
-"@babel/helper-string-parser@npm:^7.19.4":
-  version: 7.19.4
-  resolution: "@babel/helper-string-parser@npm:7.19.4"
-  checksum: b2f8a3920b30dfac81ec282ac4ad9598ea170648f8254b10f475abe6d944808fb006aab325d3eb5a8ad3bea8dfa888cfa6ef471050dae5748497c110ec060943
+"@babel/helper-string-parser@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-string-parser@npm:7.22.5"
+  checksum: 836851ca5ec813077bbb303acc992d75a360267aa3b5de7134d220411c852a6f17de7c0d0b8c8dcc0f567f67874c00f4528672b2a4f1bc978a3ada64c8c78467
   languageName: node
   linkType: hard
 
-"@babel/helper-validator-identifier@npm:^7.18.6, @babel/helper-validator-identifier@npm:^7.19.1":
-  version: 7.19.1
-  resolution: "@babel/helper-validator-identifier@npm:7.19.1"
-  checksum: 0eca5e86a729162af569b46c6c41a63e18b43dbe09fda1d2a3c8924f7d617116af39cac5e4cd5d431bb760b4dca3c0970e0c444789b1db42bcf1fa41fbad0a3a
+"@babel/helper-validator-identifier@npm:^7.19.1, @babel/helper-validator-identifier@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-validator-identifier@npm:7.22.5"
+  checksum: 7f0f30113474a28298c12161763b49de5018732290ca4de13cdaefd4fd0d635a6fe3f6686c37a02905fb1e64f21a5ee2b55140cf7b070e729f1bd66866506aea
   languageName: node
   linkType: hard
 
-"@babel/helper-validator-option@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/helper-validator-option@npm:7.18.6"
-  checksum: f9cc6eb7cc5d759c5abf006402180f8d5e4251e9198197428a97e05d65eb2f8ae5a0ce73b1dfd2d35af41d0eb780627a64edf98a4e71f064eeeacef8de58f2cf
+"@babel/helper-validator-option@npm:^7.18.6, @babel/helper-validator-option@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/helper-validator-option@npm:7.22.5"
+  checksum: bbeca8a85ee86990215c0424997438b388b8d642d69b9f86c375a174d3cdeb270efafd1ff128bc7a1d370923d13b6e45829ba8581c027620e83e3a80c5c414b3
   languageName: node
   linkType: hard
 
@@ -436,23 +437,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/highlight@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/highlight@npm:7.18.6"
+"@babel/highlight@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/highlight@npm:7.22.5"
   dependencies:
-    "@babel/helper-validator-identifier": ^7.18.6
+    "@babel/helper-validator-identifier": ^7.22.5
     chalk: ^2.0.0
     js-tokens: ^4.0.0
-  checksum: 92d8ee61549de5ff5120e945e774728e5ccd57fd3b2ed6eace020ec744823d4a98e242be1453d21764a30a14769ecd62170fba28539b211799bbaf232bbb2789
+  checksum: f61ae6de6ee0ea8d9b5bcf2a532faec5ab0a1dc0f7c640e5047fc61630a0edb88b18d8c92eb06566d30da7a27db841aca11820ecd3ebe9ce514c9350fbed39c4
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.20.7":
-  version: 7.20.7
-  resolution: "@babel/parser@npm:7.20.7"
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.22.5":
+  version: 7.22.7
+  resolution: "@babel/parser@npm:7.22.7"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 25b5266e3bd4be837092685f6b7ef886f1308ff72659a24342eb646ae5014f61ed1771ce8fc20636c890fcae19304fc72c069564ca6075207b7fbf3f75367275
+  checksum: 02209ddbd445831ee8bf966fdf7c29d189ed4b14343a68eb2479d940e7e3846340d7cc6bd654a5f3d87d19dc84f49f50a58cf9363bee249dc5409ff3ba3dab54
   languageName: node
   linkType: hard
 
@@ -852,14 +853,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-syntax-jsx@npm:^7.18.6, @babel/plugin-syntax-jsx@npm:^7.7.2":
-  version: 7.18.6
-  resolution: "@babel/plugin-syntax-jsx@npm:7.18.6"
+"@babel/plugin-syntax-jsx@npm:^7.18.6, @babel/plugin-syntax-jsx@npm:^7.22.5, @babel/plugin-syntax-jsx@npm:^7.7.2":
+  version: 7.22.5
+  resolution: "@babel/plugin-syntax-jsx@npm:7.22.5"
   dependencies:
-    "@babel/helper-plugin-utils": ^7.18.6
+    "@babel/helper-plugin-utils": ^7.22.5
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 6d37ea972970195f1ffe1a54745ce2ae456e0ac6145fae9aa1480f297248b262ea6ebb93010eddb86ebfacb94f57c05a1fc5d232b9a67325b09060299d515c67
+  checksum: 8829d30c2617ab31393d99cec2978e41f014f4ac6f01a1cecf4c4dd8320c3ec12fdc3ce121126b2d8d32f6887e99ca1a0bad53dedb1e6ad165640b92b24980ce
   languageName: node
   linkType: hard
 
@@ -951,14 +952,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-syntax-typescript@npm:^7.20.0, @babel/plugin-syntax-typescript@npm:^7.7.2":
-  version: 7.20.0
-  resolution: "@babel/plugin-syntax-typescript@npm:7.20.0"
+"@babel/plugin-syntax-typescript@npm:^7.22.5, @babel/plugin-syntax-typescript@npm:^7.7.2":
+  version: 7.22.5
+  resolution: "@babel/plugin-syntax-typescript@npm:7.22.5"
   dependencies:
-    "@babel/helper-plugin-utils": ^7.19.0
+    "@babel/helper-plugin-utils": ^7.22.5
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 6189c0b5c32ba3c9a80a42338bd50719d783b20ef29b853d4f03929e971913d3cefd80184e924ae98ad6db09080be8fe6f1ffde9a6db8972523234f0274d36f7
+  checksum: 8ab7718fbb026d64da93681a57797d60326097fd7cb930380c8bffd9eb101689e90142c760a14b51e8e69c88a73ba3da956cb4520a3b0c65743aee5c71ef360a
   languageName: node
   linkType: hard
 
@@ -1154,16 +1155,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-modules-commonjs@npm:^7.19.6":
-  version: 7.19.6
-  resolution: "@babel/plugin-transform-modules-commonjs@npm:7.19.6"
+"@babel/plugin-transform-modules-commonjs@npm:^7.19.6, @babel/plugin-transform-modules-commonjs@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/plugin-transform-modules-commonjs@npm:7.22.5"
   dependencies:
-    "@babel/helper-module-transforms": ^7.19.6
-    "@babel/helper-plugin-utils": ^7.19.0
-    "@babel/helper-simple-access": ^7.19.4
+    "@babel/helper-module-transforms": ^7.22.5
+    "@babel/helper-plugin-utils": ^7.22.5
+    "@babel/helper-simple-access": ^7.22.5
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 85d46945ab5ba3fff89e962d560a5d40253f228b9659a697683db3de07c0236e8cd60e5eb41958007359951a42bc268bf32350fcdb5b4a86f58dff1e032c096e
+  checksum: 2067aca8f6454d54ffcce69b02c457cfa61428e11372f6a1d99ff4fcfbb55c396ed2ca6ca886bf06c852e38c1a205b8095921b2364fd0243f3e66bc1dda61caa
   languageName: node
   linkType: hard
 
@@ -1416,16 +1417,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-typescript@npm:^7.18.6":
-  version: 7.20.2
-  resolution: "@babel/plugin-transform-typescript@npm:7.20.2"
+"@babel/plugin-transform-typescript@npm:^7.22.5":
+  version: 7.22.9
+  resolution: "@babel/plugin-transform-typescript@npm:7.22.9"
   dependencies:
-    "@babel/helper-create-class-features-plugin": ^7.20.2
-    "@babel/helper-plugin-utils": ^7.20.2
-    "@babel/plugin-syntax-typescript": ^7.20.0
+    "@babel/helper-annotate-as-pure": ^7.22.5
+    "@babel/helper-create-class-features-plugin": ^7.22.9
+    "@babel/helper-plugin-utils": ^7.22.5
+    "@babel/plugin-syntax-typescript": ^7.22.5
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 14434eb77cb3c8c4187a055eabdd5ff8b3e90a37ac95ecc7c9007ea8fc5660e0652c445646a2a25836a02d91944e0dc1e8b58ef55b063a901e54a24fdb4168af
+  checksum: 6d1317a54d093b302599a4bee8ba9865d0de8b7b6ac1a0746c4316231d632f75b7f086e6e78acb9ac95ba12ba3b9da462dc9ca69370abb4603c4cc987f62e67e
   languageName: node
   linkType: hard
 
@@ -1581,16 +1583,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.12.7, @babel/preset-typescript@npm:^7.16.0, @babel/preset-typescript@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/preset-typescript@npm:7.18.6"
+"@babel/preset-typescript@npm:^7.12.7, @babel/preset-typescript@npm:^7.16.0, @babel/preset-typescript@npm:^7.22.5":
+  version: 7.22.5
+  resolution: "@babel/preset-typescript@npm:7.22.5"
   dependencies:
-    "@babel/helper-plugin-utils": ^7.18.6
-    "@babel/helper-validator-option": ^7.18.6
-    "@babel/plugin-transform-typescript": ^7.18.6
+    "@babel/helper-plugin-utils": ^7.22.5
+    "@babel/helper-validator-option": ^7.22.5
+    "@babel/plugin-syntax-jsx": ^7.22.5
+    "@babel/plugin-transform-modules-commonjs": ^7.22.5
+    "@babel/plugin-transform-typescript": ^7.22.5
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 7fe0da5103eb72d3cf39cf3e138a794c8cdd19c0b38e3e101507eef519c46a87a0d6d0e8bc9e28a13ea2364001ebe7430b9d75758aab4c3c3a8db9a487b9dc7c
+  checksum: 7be1670cb4404797d3a473bd72d66eb2b3e0f2f8a672a5e40bdb0812cc66085ec84bcd7b896709764cabf042fdc6b7f2d4755ac7cce10515eb596ff61dab5154
   languageName: node
   linkType: hard
 
@@ -1646,18 +1650,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/template@npm:^7.12.7, @babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7, @babel/template@npm:^7.3.3":
-  version: 7.20.7
-  resolution: "@babel/template@npm:7.20.7"
+"@babel/template@npm:^7.12.7, @babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7, @babel/template@npm:^7.22.5, @babel/template@npm:^7.3.3":
+  version: 7.22.5
+  resolution: "@babel/template@npm:7.22.5"
   dependencies:
-    "@babel/code-frame": ^7.18.6
-    "@babel/parser": ^7.20.7
-    "@babel/types": ^7.20.7
-  checksum: 2eb1a0ab8d415078776bceb3473d07ab746e6bb4c2f6ca46ee70efb284d75c4a32bb0cd6f4f4946dec9711f9c0780e8e5d64b743208deac6f8e9858afadc349e
+    "@babel/code-frame": ^7.22.5
+    "@babel/parser": ^7.22.5
+    "@babel/types": ^7.22.5
+  checksum: c5746410164039aca61829cdb42e9a55410f43cace6f51ca443313f3d0bdfa9a5a330d0b0df73dc17ef885c72104234ae05efede37c1cc8a72dc9f93425977a3
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.1.6, @babel/traverse@npm:^7.12.11, @babel/traverse@npm:^7.12.9, @babel/traverse@npm:^7.13.0, @babel/traverse@npm:^7.19.0, @babel/traverse@npm:^7.19.1, @babel/traverse@npm:^7.20.10, @babel/traverse@npm:^7.20.12, @babel/traverse@npm:^7.20.7, @babel/traverse@npm:^7.7.2":
+"@babel/traverse@npm:^7.1.6, @babel/traverse@npm:^7.12.11, @babel/traverse@npm:^7.12.9, @babel/traverse@npm:^7.13.0, @babel/traverse@npm:^7.19.0, @babel/traverse@npm:^7.20.12, @babel/traverse@npm:^7.20.7, @babel/traverse@npm:^7.7.2":
   version: 7.20.12
   resolution: "@babel/traverse@npm:7.20.12"
   dependencies:
@@ -1675,14 +1679,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.12.11, @babel/types@npm:^7.12.7, @babel/types@npm:^7.18.6, @babel/types@npm:^7.18.9, @babel/types@npm:^7.19.0, @babel/types@npm:^7.2.0, @babel/types@npm:^7.20.0, @babel/types@npm:^7.20.2, @babel/types@npm:^7.20.7, @babel/types@npm:^7.3.0, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
-  version: 7.20.7
-  resolution: "@babel/types@npm:7.20.7"
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.12.11, @babel/types@npm:^7.12.7, @babel/types@npm:^7.18.6, @babel/types@npm:^7.18.9, @babel/types@npm:^7.19.0, @babel/types@npm:^7.2.0, @babel/types@npm:^7.20.2, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.5, @babel/types@npm:^7.3.0, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
+  version: 7.22.5
+  resolution: "@babel/types@npm:7.22.5"
   dependencies:
-    "@babel/helper-string-parser": ^7.19.4
-    "@babel/helper-validator-identifier": ^7.19.1
+    "@babel/helper-string-parser": ^7.22.5
+    "@babel/helper-validator-identifier": ^7.22.5
     to-fast-properties: ^2.0.0
-  checksum: b39af241f0b72bba67fd6d0d23914f6faec8c0eba8015c181cbd5ea92e59fc91a52a1ab490d3520c7dbd19ddb9ebb76c476308f6388764f16d8201e37fae6811
+  checksum: c13a9c1dc7d2d1a241a2f8363540cb9af1d66e978e8984b400a20c4f38ba38ca29f06e26a0f2d49a70bad9e57615dac09c35accfddf1bb90d23cd3e0a0bab892
   languageName: node
   linkType: hard
 
@@ -2054,8 +2058,8 @@ __metadata:
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/object-uid": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2084,8 +2088,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2124,8 +2128,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2204,8 +2208,8 @@ __metadata:
     "@bangle.io/is-abort-error": "workspace:*"
     cross-fetch: ^3.1.5
     idb: ^7.1.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2221,8 +2225,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2264,8 +2268,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     comlink: ^4.3.1
     page-lifecycle: ^0.1.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2273,8 +2277,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2287,8 +2291,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2302,8 +2306,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2320,8 +2324,8 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2339,8 +2343,8 @@ __metadata:
     "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2350,8 +2354,8 @@ __metadata:
   dependencies:
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2369,8 +2373,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2406,8 +2410,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2442,8 +2446,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2470,8 +2474,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2490,8 +2494,8 @@ __metadata:
     prettier: ^2.8.8
     tailwindcss: ^3.2.4
     ts-node: ^10.9.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2506,9 +2510,9 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2517,8 +2521,8 @@ __metadata:
   resolution: "@bangle.io/css-vars@workspace:lib/css-vars"
   dependencies:
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2530,8 +2534,8 @@ __metadata:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2540,8 +2544,8 @@ __metadata:
   resolution: "@bangle.io/db-key-val@workspace:js-lib/db-key-val"
   dependencies:
     idb: ^7.1.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2566,9 +2570,9 @@ __metadata:
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2580,8 +2584,8 @@ __metadata:
     "@bangle.dev/pm": 0.32.0
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2618,8 +2622,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2652,8 +2656,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
     react-dom: "*"
@@ -2667,8 +2671,8 @@ __metadata:
     "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2679,8 +2683,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2706,8 +2710,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2719,8 +2723,8 @@ __metadata:
     postcss-custom-properties: ^12.1.11
     postcss-discard-comments: ^5.1.2
     prettier: ^2.8.8
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2731,8 +2735,8 @@ __metadata:
     "@types/react": ^17.0.49
     fzf: ^0.5.1
     react: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2744,8 +2748,8 @@ __metadata:
   dependencies:
     "@bangle.io/weak-cache": "workspace:*"
     base64-js: ^1.5.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2776,8 +2780,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2790,8 +2794,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2799,8 +2803,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/history@workspace:js-lib/history"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2829,8 +2833,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2839,8 +2843,8 @@ __metadata:
   resolution: "@bangle.io/independent-e2e-tests-server@workspace:tooling/independent-e2e-tests-server"
   dependencies:
     "@bangle.io/baby-fs": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     vite: ^3.2.7
   languageName: unknown
   linkType: soft
@@ -2878,8 +2882,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2903,8 +2907,8 @@ __metadata:
     chrono-node: ^2.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2934,8 +2938,8 @@ __metadata:
     emoji-lookup-data: ^1.3.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2952,8 +2956,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2961,8 +2965,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/is-abort-error@workspace:js-lib/is-abort-error"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2971,8 +2975,8 @@ __metadata:
   resolution: "@bangle.io/jsdom-env@workspace:js-lib/jsdom-env"
   dependencies:
     jest-environment-jsdom: ^29.3.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2989,8 +2993,8 @@ __metadata:
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -2998,8 +3002,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3021,8 +3025,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3048,8 +3052,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3069,8 +3073,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -3104,8 +3108,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3120,8 +3124,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     superjson: ^1.12.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     use-sync-external-store: ^1.2.0
     zod: ^3.21.4
   languageName: unknown
@@ -3156,8 +3160,8 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3165,8 +3169,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3174,8 +3178,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/p-map@workspace:js-lib/p-map"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3185,7 +3189,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.20.12
     "@babel/preset-env": ^7.20.2
-    "@babel/preset-typescript": ^7.18.6
+    "@babel/preset-typescript": ^7.22.5
     "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
@@ -3196,8 +3200,8 @@ __metadata:
     "@types/prettier": ^2.7.0
     http-server: ^0.12.3
     prettier: ^2.8.8
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3206,8 +3210,8 @@ __metadata:
   resolution: "@bangle.io/pm-manual-paste@workspace:js-lib/pm-manual-paste"
   dependencies:
     "@bangle.dev/pm": 0.32.0
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3226,8 +3230,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3237,10 +3241,10 @@ __metadata:
   dependencies:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/tri-state": "workspace:*"
-    ts-pattern: ^4.0.6
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    ts-pattern: ^5.0.4
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3266,8 +3270,8 @@ __metadata:
     globby: ^13.1.3
     prettier: ^2.8.8
     ts-node: ^10.9.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3293,8 +3297,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3309,8 +3313,8 @@ __metadata:
     "@bangle.dev/utils": 0.32.0
     "@bangle.dev/wiki-link": 0.32.0
     "@bangle.io/p-map": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3345,9 +3349,9 @@ __metadata:
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3383,8 +3387,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3411,8 +3415,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3426,8 +3430,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3446,8 +3450,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.1
     react: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     wouter: ^2.10.0-alpha.1
   languageName: unknown
   linkType: soft
@@ -3457,8 +3461,8 @@ __metadata:
   resolution: "@bangle.io/slice-refresh-workspace@workspace:lib/slice-refresh-workspace"
   dependencies:
     "@bangle.io/nsm-3": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3473,8 +3477,8 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3491,8 +3495,8 @@ __metadata:
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3528,9 +3532,9 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     reselect: ^4.1.5
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3551,8 +3555,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3564,8 +3568,8 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3575,7 +3579,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.20.12
     "@babel/preset-env": ^7.20.2
-    "@babel/preset-typescript": ^7.18.6
+    "@babel/preset-typescript": ^7.22.5
     "@bangle.io/core-theme": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3603,8 +3607,8 @@ __metadata:
     postcss: ^8.4.21
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     webpack: ^5.75.0
   languageName: unknown
   linkType: soft
@@ -3618,8 +3622,8 @@ __metadata:
     "@unocss/reset": ^0.53.6
     autoprefixer: ^10.4.4
     postcss: ^8.4.21
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3659,9 +3663,9 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
     wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
@@ -3700,9 +3704,9 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    type-fest: ^3.5.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    type-fest: ^4.0.0
+    typescript: 5.1.6
     wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
@@ -3711,8 +3715,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/tri-state@workspace:js-lib/tri-state"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3758,8 +3762,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.3.0
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3781,8 +3785,8 @@ __metadata:
     postcss-import: ^15.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     vite: ^3.2.7
   languageName: unknown
   linkType: soft
@@ -3797,8 +3801,8 @@ __metadata:
     gradient-parser: ^1.0.2
     polished: ^4.2.2
     tailwindcss: ^3.2.4
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3811,8 +3815,8 @@ __metadata:
     "@unocss/preset-mini": ^0.53.6
     "@unocss/preset-uno": ^0.53.6
     "@unocss/preset-wind": ^0.53.6
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3843,8 +3847,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     w3c-keyname: ^2.2.8
   languageName: unknown
   linkType: soft
@@ -3853,8 +3857,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/weak-cache@workspace:js-lib/weak-cache"
   dependencies:
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3867,8 +3871,8 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3900,8 +3904,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3927,8 +3931,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@sentry/browser": ^6.18.1
     "@zip.js/zip.js": ~2.4.5
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3940,8 +3944,8 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3953,8 +3957,8 @@ __metadata:
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3977,8 +3981,8 @@ __metadata:
     "@bangle.io/workspace-info": "workspace:*"
     comlink: ^4.3.1
     react: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3998,8 +4002,8 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -4017,8 +4021,8 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -4036,8 +4040,8 @@ __metadata:
     path-to-regexp: ^6.2.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     wouter: ^2.10.0-alpha.1
   languageName: unknown
   linkType: soft
@@ -4048,8 +4052,8 @@ __metadata:
   dependencies:
     "@types/node": ^18.11.9
     execa: ^5.1.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -7862,10 +7866,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.11.9, @types/node@npm:^18.7.6":
-  version: 18.11.9
-  resolution: "@types/node@npm:18.11.9"
-  checksum: cc0aae109e9b7adefc32eecb838d6fad931663bb06484b5e9cbbbf74865c721b03d16fd8d74ad90e31dbe093d956a7c2c306ba5429ba0c00f3f7505103d7a496
+"@types/node@npm:*, @types/node@npm:^18.11.9, @types/node@npm:^18.15.11":
+  version: 18.17.0
+  resolution: "@types/node@npm:18.17.0"
+  checksum: 3a43c5c5541342751b514485144818a515fac5427f663066068eaacbe8a108cbe1207aae75ec89d34c3b32414c334aad84e9083cf7fcf3ebfd970adc871314a4
   languageName: node
   linkType: hard
 
@@ -8954,23 +8958,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/core@npm:^4.0.0-rc.31":
-  version: 4.0.0-rc.31
-  resolution: "@yarnpkg/core@npm:4.0.0-rc.31"
+"@yarnpkg/core@npm:^4.0.0-rc.48":
+  version: 4.0.0-rc.48
+  resolution: "@yarnpkg/core@npm:4.0.0-rc.48"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@yarnpkg/fslib": ^3.0.0-rc.31
-    "@yarnpkg/libzip": ^3.0.0-rc.31
-    "@yarnpkg/parsers": ^3.0.0-rc.31
-    "@yarnpkg/shell": ^4.0.0-rc.31
+    "@yarnpkg/fslib": ^3.0.0-rc.48
+    "@yarnpkg/libzip": ^3.0.0-rc.48
+    "@yarnpkg/parsers": ^3.0.0-rc.48
+    "@yarnpkg/shell": ^4.0.0-rc.48
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^3.2.0
-    clipanion: ^3.2.0-rc.10
+    clipanion: ^3.2.1
     cross-spawn: 7.0.3
     diff: ^5.1.0
+    dotenv: ^16.3.1
     globby: ^11.0.1
     got: ^11.7.0
     lodash: ^4.17.15
@@ -8983,93 +8988,93 @@ __metadata:
     treeify: ^1.1.0
     tslib: ^2.4.0
     tunnel: ^0.0.6
-  checksum: 9f2f558d48ba19a4d3f871afadb636486badbfb8dab9fb7155445186267663e8e1af427b450456787312f099ced3fedc92a9a8486f8139d5f9454e5d541aac4f
+  checksum: f42a81bb7bf70005485fbc0e93a6e135b491c3182e094bbbc84c138c49cdd007dafb6322a31f1449d8d9d02a69fd2ce2860d7b40037513e7387aa2f7f6e0281b
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^3.0.0-rc.31":
-  version: 3.0.0-rc.31
-  resolution: "@yarnpkg/fslib@npm:3.0.0-rc.31"
+"@yarnpkg/fslib@npm:^3.0.0-rc.48":
+  version: 3.0.0-rc.48
+  resolution: "@yarnpkg/fslib@npm:3.0.0-rc.48"
   dependencies:
     tslib: ^2.4.0
-  checksum: c900c3df1d09f8796146694fb072372122f8a534c2c88dc0ad73b9704cc323dccf49adf63ae54440131802a38171ee39768dbbba5edc8a77884d812212a6daf5
+  checksum: 658b8c1b688d875de06adf1a4be167641b3082445e310b9a1312deb71a7ef816f829675a571acad10725aed3ee5d0791d6c370a6565af05e1f4f38f470d457d2
   languageName: node
   linkType: hard
 
-"@yarnpkg/libzip@npm:^3.0.0-rc.31":
-  version: 3.0.0-rc.31
-  resolution: "@yarnpkg/libzip@npm:3.0.0-rc.31"
+"@yarnpkg/libzip@npm:^3.0.0-rc.48":
+  version: 3.0.0-rc.48
+  resolution: "@yarnpkg/libzip@npm:3.0.0-rc.48"
   dependencies:
     "@types/emscripten": ^1.39.6
-    "@yarnpkg/fslib": ^3.0.0-rc.31
+    "@yarnpkg/fslib": ^3.0.0-rc.48
     tslib: ^2.4.0
   peerDependencies:
-    "@yarnpkg/fslib": ^3.0.0-rc.31
-  checksum: 5440b89ce618318bcdd903dffde41aa2ff7bff3d40da05c698f4331bcdf799c4e1fdaa954e2df21bf4090d4d3cfac9afffbe1b4c6d96b4c9a0452bbacf1cba4e
+    "@yarnpkg/fslib": ^3.0.0-rc.48
+  checksum: 9e699e4315a92693de303d0c447a0b104e6171e5c4a583761f0a690bcc9917ba3c7cd051737eac94e1a52e7012fcad294db345ffd31261a5e74d2aad10ec35f6
   languageName: node
   linkType: hard
 
-"@yarnpkg/nm@npm:^4.0.0-rc.31":
-  version: 4.0.0-rc.31
-  resolution: "@yarnpkg/nm@npm:4.0.0-rc.31"
+"@yarnpkg/nm@npm:^4.0.0-rc.48":
+  version: 4.0.0-rc.48
+  resolution: "@yarnpkg/nm@npm:4.0.0-rc.48"
   dependencies:
-    "@yarnpkg/core": ^4.0.0-rc.31
-    "@yarnpkg/fslib": ^3.0.0-rc.31
-    "@yarnpkg/pnp": ^4.0.0-rc.31
-  checksum: 2e47969a3112e26f082f480a52dfff03041fb3b644b29aaf01ae9b2d92c47cde73f125f2b015595efde2039cb2650fcbb619f2784df5b6ae441d40ae166ea155
+    "@yarnpkg/core": ^4.0.0-rc.48
+    "@yarnpkg/fslib": ^3.0.0-rc.48
+    "@yarnpkg/pnp": ^4.0.0-rc.48
+  checksum: b5b91f7f04ec76745699d1f3a60c9750fb6335ec84d3599d6abd7762e86692b8b6b8912559b5d47a78ea5edb96e02e8d26d99cc9fbb452c9a34b69e0c20ca949
   languageName: node
   linkType: hard
 
-"@yarnpkg/parsers@npm:^3.0.0-rc.31":
-  version: 3.0.0-rc.31
-  resolution: "@yarnpkg/parsers@npm:3.0.0-rc.31"
+"@yarnpkg/parsers@npm:^3.0.0-rc.48":
+  version: 3.0.0-rc.48.1
+  resolution: "@yarnpkg/parsers@npm:3.0.0-rc.48.1"
   dependencies:
     js-yaml: ^3.10.0
     tslib: ^2.4.0
-  checksum: 84aba51e28b5a5b5a982d4646b8cf9b160144487c231e3ca41f5cd12c3f52a8e4de40f0b3505052005155a11677c8ee4a47ed78521bee7da001094c8d09db1dd
+  checksum: c4328cad81ec91de0840b065dfcfda9afa038dadf7507f27f73415675e257a9ad3b21247a6e28a6e90533c411645320104fd529ef85659173932ae38b26a7b0e
   languageName: node
   linkType: hard
 
-"@yarnpkg/pnp@npm:^4.0.0-rc.31":
-  version: 4.0.0-rc.31
-  resolution: "@yarnpkg/pnp@npm:4.0.0-rc.31"
+"@yarnpkg/pnp@npm:^4.0.0-rc.48":
+  version: 4.0.0-rc.48
+  resolution: "@yarnpkg/pnp@npm:4.0.0-rc.48"
   dependencies:
-    "@types/node": ^18.7.6
-    "@yarnpkg/fslib": ^3.0.0-rc.31
-  checksum: 75e485886b5b52b14d1a845b450a451d97b676484f298e8aa79041ac943702bf232adfdc4c4b4a698d7afb84033c7a5e4c24ddc80a71bbbe17aec904b10345d2
+    "@types/node": ^18.15.11
+    "@yarnpkg/fslib": ^3.0.0-rc.48
+  checksum: 61e5101359512e135f4c9f099e00a96482ab403e141d51940d65acd9a44128b1446243bcc926a39f7e2d177062cd42c0cfc118b76345dc4a0c7d6438f0b1cac4
   languageName: node
   linkType: hard
 
-"@yarnpkg/pnpify@npm:^4.0.0-rc.15":
-  version: 4.0.0-rc.31
-  resolution: "@yarnpkg/pnpify@npm:4.0.0-rc.31"
+"@yarnpkg/pnpify@npm:^4.0.0-rc.48":
+  version: 4.0.0-rc.48
+  resolution: "@yarnpkg/pnpify@npm:4.0.0-rc.48"
   dependencies:
-    "@yarnpkg/core": ^4.0.0-rc.31
-    "@yarnpkg/fslib": ^3.0.0-rc.31
-    "@yarnpkg/nm": ^4.0.0-rc.31
-    clipanion: ^3.2.0-rc.10
+    "@yarnpkg/core": ^4.0.0-rc.48
+    "@yarnpkg/fslib": ^3.0.0-rc.48
+    "@yarnpkg/nm": ^4.0.0-rc.48
+    clipanion: ^3.2.1
     tslib: ^2.4.0
   bin:
     pnpify: ./lib/cli.js
-  checksum: 0b3ff281a8b22b9a031227663799686ab26028394594b7d8b179866fa32cec467ce0d06bd3c91a0328bf024f0f6a9e8ab31fc7fb27a069e6f22cd1bce3ad0211
+  checksum: bcc97e2745817c1b877e774e9840c3e473d7e988f50fc63cbed24b68fddd32982f4e3011af163508b237166d6fe7d77cc8ddd9224af59208ce38010ccc595c5f
   languageName: node
   linkType: hard
 
-"@yarnpkg/shell@npm:^4.0.0-rc.31":
-  version: 4.0.0-rc.31
-  resolution: "@yarnpkg/shell@npm:4.0.0-rc.31"
+"@yarnpkg/shell@npm:^4.0.0-rc.48":
+  version: 4.0.0-rc.48
+  resolution: "@yarnpkg/shell@npm:4.0.0-rc.48"
   dependencies:
-    "@yarnpkg/fslib": ^3.0.0-rc.31
-    "@yarnpkg/parsers": ^3.0.0-rc.31
+    "@yarnpkg/fslib": ^3.0.0-rc.48
+    "@yarnpkg/parsers": ^3.0.0-rc.48
     chalk: ^3.0.0
-    clipanion: ^3.2.0-rc.10
+    clipanion: ^3.2.1
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
     tslib: ^2.4.0
   bin:
     shell: ./lib/cli.js
-  checksum: 3ac419729daf234c2eb342deff275fcfe703f8eb0885f0db12416262017367e90c4d042002e527750aaad9766fc81692bcb0f01bded0fff91bde15b7e71b12ea
+  checksum: 7a5cc1e4718f0294eee80d085c6e7b2ccf794d196ecc885d2faff343a34f2f9aca1919266cdcd94b51ef5f33ad356a4e0dacb620c92a7716b12367b9d2aaf2c2
   languageName: node
   linkType: hard
 
@@ -9481,8 +9486,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -10236,7 +10241,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.27.1
     "@unocss/vite": ^0.53.6
     "@vitejs/plugin-react": ^2.1.0
-    "@yarnpkg/pnpify": ^4.0.0-rc.15
+    "@yarnpkg/pnpify": ^4.0.0-rc.48
     autoprefixer: ^10.4.4
     bangle-io-help: ^1.11.0
     case-sensitive-paths-webpack-plugin: ^2.4.0
@@ -10290,8 +10295,8 @@ __metadata:
     stylelint-config-standard: ^29.0.0
     surge: ^0.23.1
     ts-node: ^10.9.1
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
     unocss: ^0.53.6
     vite: ^3.2.7
     vite-plugin-html: ^3.2.0
@@ -11379,14 +11384,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^3.2.0-rc.10":
-  version: 3.2.0-rc.14
-  resolution: "clipanion@npm:3.2.0-rc.14"
+"clipanion@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "clipanion@npm:3.2.1"
   dependencies:
     typanion: ^3.8.0
   peerDependencies:
     typanion: "*"
-  checksum: 0bedf6c70d8f3f986fe105ba4a2182cf8d398201ed639095927ceef5d50f370ee2bb7e14239be2b5ddcf3dc8f3b72a1666d67e903ee405fcddf1f378a4704c54
+  checksum: 448efd122ead3c802e61ba7a2002e2080c8cce01ce8a0a789d9b9e4f8fe70fd887dcf163ef8c778f5364a9e6f4b498b9f1853f709d7ed4291713e78bcfb88ee8
   languageName: node
   linkType: hard
 
@@ -12832,10 +12837,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0":
-  version: 16.0.3
-  resolution: "dotenv@npm:16.0.3"
-  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
+"dotenv@npm:^16.0.0, dotenv@npm:^16.3.1":
+  version: 16.3.1
+  resolution: "dotenv@npm:16.3.1"
+  checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
   languageName: node
   linkType: hard
 
@@ -14128,8 +14133,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -17585,8 +17590,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -17961,8 +17966,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -22549,12 +22554,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
+"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.3.0, semver@npm:^6.3.1":
+  version: 6.3.1
+  resolution: "semver@npm:6.3.1"
   bin:
-    semver: ./bin/semver.js
-  checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+    semver: bin/semver.js
+  checksum: ae47d06de28836adb9d3e25f22a92943477371292d9b665fb023fae278d345d508ca1958232af086d85e0155aee22e313e100971898bbb8d5d89b8b1d4054ca2
   languageName: node
   linkType: hard
 
@@ -24165,8 +24170,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -24329,10 +24334,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-pattern@npm:^4.0.6":
-  version: 4.0.6
-  resolution: "ts-pattern@npm:4.0.6"
-  checksum: d65d715f5269d6264253e11e89a6f2ff576382e7efecc080747540454cda489d302ffe0c8f096fac72efe0b106ee1d6bfd662d1a5d77dbc831801ec490bef95c
+"ts-pattern@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "ts-pattern@npm:5.0.4"
+  checksum: 3325dfe42f32c7acdac15cf87a4693692f72e26d04e8aba7afa1449a4dcce0d88eb96d6514ff64f9ad69c4c7628eda2928a951a37b61abd2edc09412f1429e67
   languageName: node
   linkType: hard
 
@@ -24381,10 +24386,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.4.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
-  version: 2.4.1
-  resolution: "tslib@npm:2.4.1"
-  checksum: 19480d6e0313292bd6505d4efe096a6b31c70e21cf08b5febf4da62e95c265c8f571f7b36fcc3d1a17e068032f59c269fab3459d6cd3ed6949eafecf64315fca
+"tslib@npm:2.6.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
+  version: 2.6.0
+  resolution: "tslib@npm:2.6.0"
+  checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
   languageName: node
   linkType: hard
 
@@ -24510,10 +24515,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^3.5.1":
-  version: 3.13.0
-  resolution: "type-fest@npm:3.13.0"
-  checksum: f7be142ae1ad0582eafd52d085350799c8cd918c15455896a06c82c147b61f8cea58892bedf1348943478e37740562219375b3b59fd855db99cd2b2766510f98
+"type-fest@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "type-fest@npm:4.0.0"
+  checksum: 716f32ac341b1cf35bf08cc5cc6a11822436333966d3f4d94758112f45829efa3efb643ebc74a53e514e68a1bddab144d0153d654e072b41ba9bd98bcf841d75
   languageName: node
   linkType: hard
 
@@ -24543,23 +24548,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.3":
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
+"typescript@npm:5.1.6":
+  version: 5.1.6
+  resolution: "typescript@npm:5.1.6"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
+  checksum: b2f2c35096035fe1f5facd1e38922ccb8558996331405eb00a5111cc948b2e733163cc22fab5db46992aba7dd520fff637f2c1df4996ff0e134e77d3249a7350
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.3#~builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"
+"typescript@patch:typescript@5.1.6#~builtin<compat/typescript>":
+  version: 5.1.6
+  resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 67ca21a387c0572f1c04936e638dde7782c5aa520c3754aadc7cc9b7c915da9ebc3e27c601bfff4ccb7d7264e82dce6d277ada82ec09dc75024349e0ef64926d
+  checksum: f53bfe97f7c8b2b6d23cf572750d4e7d1e0c5fff1c36d859d0ec84556a827b8785077bc27676bf7e71fae538e517c3ecc0f37e7f593be913d884805d931bc8be
   languageName: node
   linkType: hard
 
@@ -26016,8 +26021,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: 2.4.1
-    typescript: 4.9.3
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 

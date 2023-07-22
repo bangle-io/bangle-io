@@ -52,9 +52,9 @@
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tslib": "2.4.1",
-    "type-fest": "^3.5.1",
-    "typescript": "4.9.3",
+    "tslib": "2.6.0",
+    "type-fest": "^4.0.0",
+    "typescript": "5.1.6",
     "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {

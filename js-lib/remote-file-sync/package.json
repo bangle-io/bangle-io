@@ -23,13 +23,13 @@
   },
   "dependencies": {
     "@bangle.io/tri-state": "workspace:*",
-    "ts-pattern": "^4.0.6",
-    "tslib": "2.4.1",
-    "typescript": "4.9.3"
+    "ts-pattern": "^5.0.4",
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
   },
   "devDependencies": {
     "@bangle.io/db-key-val": "workspace:*",
-    "type-fest": "^3.5.1"
+    "type-fest": "^4.0.0"
   },
   "license": "AGPL-3.0-or-later"
 }

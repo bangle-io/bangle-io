@@ -30,8 +30,8 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
     "react": "^17.0.2",
-    "tslib": "2.4.1",
-    "typescript": "4.9.3"
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
   },
   "devDependencies": {
     "@bangle.io/search-pm-node": "workspace:*",
