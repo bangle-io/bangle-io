@@ -4291,6 +4291,7 @@ __metadata:
 "@esbuild/linux-x64@npm:0.18.15":
   version: 0.18.15
   resolution: "@esbuild/linux-x64@npm:0.18.15"
+  checksum: f2ba531503eb029ac8c94579ddac34c1cbf324b54347be4c3e49fc9c159d09912d7fac5ccd7ae51b5386737adb9df904d27415be85e0b6e2878d3a432e462863
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
@@ -10359,6 +10360,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/uno-preset-bangle": "workspace:*"
     "@bangle.io/yarn-workspace-helpers": "workspace:*"
+    "@esbuild/linux-x64": 0.18.15
     "@sentry/react": ^6.18.1
     "@sentry/tracing": ^6.18.1
     "@sentry/webpack-plugin": ^1.18.8
@@ -10388,7 +10390,6 @@ __metadata:
     css-loader: ^5.2.7
     date-fns: ^2.25.0
     ejs: ^3.1.6
-    esbuild-linux-64: 0.15.18
     eslint: ^8.23.0
     eslint-config-react-app: ^7.0.1
     eslint-import-resolver-node: ^0.3.6
@@ -13335,14 +13336,6 @@ __metadata:
   version: 0.35.6
   resolution: "es6-shim@npm:0.35.6"
   checksum: 31b27a7ce0432dd97c523da97e43dbcbf607093ac139697ac2e70d7ab67a90e9c362477a85f36961ebb0d09d0ffdaace45f5c9807f788849b28cc6a847e68c53
-  languageName: node
-  linkType: hard
-
-"esbuild-linux-64@npm:0.15.18":
-  version: 0.15.18
-  resolution: "esbuild-linux-64@npm:0.15.18"
-  checksum: 19aa0c5dae7a94ab0f78896a8e56b9791f0f549d2707b2983c9d0fa1fd8e8e8404edc78a5539265593c257b29ca86177ee8d8678bcbcc6d1df6935460cd66140
-  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
