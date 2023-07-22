@@ -27,8 +27,8 @@
     "@bangle.io/ws-path": "workspace:*",
     "path-to-regexp": "^6.2.1",
     "react": "^17.0.2",
-    "tslib": "2.4.1",
-    "typescript": "4.9.5",
+    "tslib": "2.6.0",
+    "typescript": "5.1.6",
     "wouter": "^2.10.0-alpha.1"
   },
   "devDependencies": {

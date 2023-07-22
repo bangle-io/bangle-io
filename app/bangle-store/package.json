@@ -55,8 +55,8 @@
     "@bangle.io/ws-path": "workspace:*",
     "comlink": "^4.3.1",
     "page-lifecycle": "^0.1.2",
-    "tslib": "2.4.1",
-    "typescript": "4.9.5"
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
   },
   "publishConfig": {
     "access": "restricted"
