@@ -68,9 +68,9 @@ export const markdownParser = (
   specRegistry: SpecRegistry,
   markdownItPlugins: any[],
 ) => {
-  return (
-    getParser(specRegistry, markdownItPlugins)?.parse(markdownStr) ?? undefined
-  );
+  const parser = getParser(specRegistry, markdownItPlugins);
+
+  return parser?.parse(markdownStr) ?? undefined;
 };
 
 export const markdownSerializer = (doc: Node, specRegistry: SpecRegistry) => {
