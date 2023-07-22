@@ -2119,7 +2119,6 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
@@ -2169,7 +2168,6 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/style": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -2257,9 +2255,7 @@ __metadata:
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-refresh-workspace": "workspace:*"
-    "@bangle.io/slice-storage-provider": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2566,7 +2562,6 @@ __metadata:
     "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
@@ -2610,7 +2605,6 @@ __metadata:
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3339,7 +3333,6 @@ __metadata:
     "@bangle.dev/pm": 0.32.0
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/mini-js-utils": "workspace:*"
@@ -3347,7 +3340,6 @@ __metadata:
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.6.0
@@ -3467,22 +3459,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/slice-storage-provider@workspace:*, @bangle.io/slice-storage-provider@workspace:lib/slice-storage-provider":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-storage-provider@workspace:lib/slice-storage-provider"
-  dependencies:
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/storage": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    tslib: 2.6.0
-    typescript: 5.1.6
-  languageName: unknown
-  linkType: soft
-
 "@bangle.io/slice-ui@workspace:*, @bangle.io/slice-ui@workspace:lib/slice-ui":
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-ui@workspace:lib/slice-ui"
@@ -3497,44 +3473,6 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     tslib: 2.6.0
-    typescript: 5.1.6
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/slice-workspace@workspace:*, @bangle.io/slice-workspace@workspace:lib/slice-workspace":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-workspace@workspace:lib/slice-workspace"
-  dependencies:
-    "@bangle.dev/core": 0.32.0
-    "@bangle.dev/pm": 0.32.0
-    "@bangle.dev/utils": 0.32.0
-    "@bangle.io/baby-fs": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/base-error": "workspace:*"
-    "@bangle.io/config": "workspace:*"
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/markdown": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-storage-provider": "workspace:*"
-    "@bangle.io/storage": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/workspace-info": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
-    "@testing-library/react": ^12.1.3
-    "@testing-library/react-hooks": ^7.0.2
-    "@types/history": ^4.7.11
-    "@types/react": ^17.0.49
-    "@types/react-dom": ^17.0.17
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-test-renderer: ^17.0.2
-    reselect: ^4.1.5
-    tslib: 2.6.0
-    type-fest: ^4.0.0
     typescript: 5.1.6
   languageName: unknown
   linkType: soft
@@ -3653,9 +3591,7 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-storage-provider": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
@@ -3694,9 +3630,7 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-storage-provider": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
@@ -3974,7 +3908,6 @@ __metadata:
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-entry": "workspace:*"
@@ -7799,13 +7732,6 @@ __metadata:
   dependencies:
     "@types/unist": "*"
   checksum: fff47998f4c11e21a7454b58673f70478740ecdafd95aaf50b70a3daa7da9cdc57315545bf9c039613732c40b7b0e9e49d11d03fe9a4304721cdc3b29a88141e
-  languageName: node
-  linkType: hard
-
-"@types/history@npm:^4.7.11":
-  version: 4.7.11
-  resolution: "@types/history@npm:4.7.11"
-  checksum: c92e2ba407dcab0581a9afdf98f533aa41b61a71133420a6d92b1ca9839f741ab1f9395b17454ba5b88cb86020b70b22d74a1950ccfbdfd9beeaa5459fdc3464
   languageName: node
   linkType: hard
 
@@ -22078,13 +22004,6 @@ __metadata:
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"
   checksum: eee0e303adffb69be55d1a214e415cf42b7441ae858c76dfc5353148644f6fd6e698926fc4643f510d5c126d12a705e7c8ed7e38061113bdf37547ab356797ff
-  languageName: node
-  linkType: hard
-
-"reselect@npm:^4.1.5":
-  version: 4.1.7
-  resolution: "reselect@npm:4.1.7"
-  checksum: 738d8e2b8f0dca154ad29de6a209c9fbca2d70ae6788fd85df87f2c74b95a65bbf2d16d43a9e2faff39de34d17a29d706ba08a6b2ee5660c09589edbd19af7e1
   languageName: node
   linkType: hard
 

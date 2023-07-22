@@ -47,7 +47,6 @@
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-refresh-workspace": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
