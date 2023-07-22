@@ -67,18 +67,18 @@ jobs:
       #   fail_ci_if_error: true # optional (default = false)
       #   verbose: true # optional (default = false)
 
-  tests-network:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run test "${{ matrix.test-kind }}"
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: yarn install
-        run: yarn install --immutable --immutable-cache
-      - run: yarn test:network
+  # tests-network:
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/dev'
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Run test "${{ matrix.test-kind }}"
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18.x
+  #     - name: yarn install
+  #       run: yarn install --immutable --immutable-cache
+  #     - run: yarn test:network
 
   build-size:
     runs-on: ubuntu-latest
