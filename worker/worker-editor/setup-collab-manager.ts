@@ -2,15 +2,15 @@ import type { CollabMessageBus } from '@bangle.dev/collab-comms';
 import { CollabManager, CollabServerState } from '@bangle.dev/collab-manager';
 import type { Schema } from '@bangle.dev/pm';
 
-import type { ApplicationStore } from '@bangle.io/create-store';
-import { getNote, getOpenedWsPaths } from '@bangle.io/slice-workspace';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { fs } from '@bangle.io/workspace-info';
+import { createWsPath } from '@bangle.io/ws-path';
 
 import type { CollabStateInfo } from './common';
 import { WriteQueue } from './write-queue';
 
 export function setupCollabManager(
   schema: Schema,
-  store: ApplicationStore,
   collabMessageBus: CollabMessageBus,
   write: (collabStateInfo: CollabStateInfo) => Promise<void>,
   onPendingChange: (
@@ -19,7 +19,9 @@ export function setupCollabManager(
     pendingWrites: string[],
   ) => void,
   abortSignal: AbortSignal,
-) {
+  extensionRegistry: ExtensionRegistry,
+  onError: (error: Error) => void,
+): CollabManager {
   const writeQueue = new WriteQueue(abortSignal, write, onPendingChange);
 
   return new CollabManager({
@@ -31,15 +33,15 @@ export function setupCollabManager(
     },
     getInitialState: async (docName) => {
       try {
-        const doc = await getNote(docName)(store.state, store.dispatch, store);
+        const doc = await fs.getNote(createWsPath(docName), extensionRegistry);
+        // TODO should we check if the doc is opened?
+        // // We need to make sure the wsPath currently requested is registered
+        // // with openedWsPaths.
+        // if (!getOpenedWsPaths()(store.state).has(docName)) {
+        //   console.warn('setupCollabManager: doc not opened', docName);
 
-        // We need to make sure the wsPath currently requested is registered
-        // with openedWsPaths.
-        if (!getOpenedWsPaths()(store.state).has(docName)) {
-          console.warn('setupCollabManager: doc not opened', docName);
-
-          return undefined;
-        }
+        //   return undefined;
+        // }
 
         if (abortSignal.aborted) {
           console.warn('setupCollabManager: abortSignal aborted');
@@ -55,7 +57,7 @@ export function setupCollabManager(
         return new CollabServerState(doc);
       } catch (error) {
         if (error instanceof Error) {
-          store.errorHandler(error);
+          onError(error);
         }
 
         return undefined;

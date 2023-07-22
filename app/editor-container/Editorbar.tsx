@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { TONE, Tone } from '@bangle.io/constants';
+import { TONE } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
+import type { WsPath } from '@bangle.io/shared-types';
 import {
   Button,
   BUTTON_VARIANT,
@@ -9,7 +10,7 @@ import {
   SecondaryEditorIcon,
 } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
-import { removeExtension, resolvePath } from '@bangle.io/ws-path';
+import { removeExtension, resolvePath2 } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
 
@@ -32,9 +33,9 @@ export function Editorbar({
   onEnableEditing: () => void;
   editingDisabled?: boolean;
   showSplitEditor?: boolean;
-  wsPath: string;
+  wsPath: WsPath;
 }) {
-  let path = removeExtension(resolvePath(wsPath).filePath);
+  let path = removeExtension(resolvePath2(wsPath).filePath);
 
   if (path.split('/').length > MAX_ENTRIES) {
     let p = path.split('/').slice(-1 * MAX_ENTRIES);

@@ -1,4 +1,5 @@
-import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+import type { WsName } from '@bangle.io/shared-types';
+import { filePathToWsPath2, resolvePath2 } from '@bangle.io/ws-path';
 
 import { IMAGE_SAVE_DIR } from './config';
 import type { Dimension } from './image-file-helpers';
@@ -14,11 +15,11 @@ import { setImageMetadataInWsPath } from './image-file-helpers';
  */
 export async function createImage(
   fileName: string,
-  wsName: string,
+  wsName: WsName,
   dimension: Dimension,
   timestamp?: boolean,
 ) {
-  let imageWsPath = filePathToWsPath(wsName, IMAGE_SAVE_DIR + '/' + fileName);
+  let imageWsPath = filePathToWsPath2(wsName, IMAGE_SAVE_DIR + '/' + fileName);
 
   imageWsPath = await setImageMetadataInWsPath(imageWsPath, dimension, true);
 
@@ -26,6 +27,6 @@ export async function createImage(
   // since we are returning a web url we need to encode it
   return {
     wsPath: imageWsPath,
-    srcUrl: encodeURI('/' + resolvePath(imageWsPath).filePath),
+    srcUrl: encodeURI('/' + resolvePath2(imageWsPath).filePath),
   };
 }

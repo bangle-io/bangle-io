@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 
+import { useNsmSliceState } from '@bangle.io/bangle-store-context';
 import { APP_ENV, IS_PRODUCTION_APP_ENV } from '@bangle.io/config';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import { resolvePath } from '@bangle.io/ws-path';
 
 export function useSetDocumentTitle() {
-  const { wsName, openedWsPaths } = useWorkspaceContext();
+  const { wsName, openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
   const { primaryWsPath } = openedWsPaths;
 
   useEffect(() => {

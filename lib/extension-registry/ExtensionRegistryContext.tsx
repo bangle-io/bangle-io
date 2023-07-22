@@ -1,16 +1,16 @@
 import React from 'react';
 
-import { useSliceState } from '@bangle.io/bangle-store-context';
+import { useNsmSliceState } from '@bangle.io/bangle-store-context';
 
-import { extensionRegistrySliceKey } from './common';
 import type { ExtensionRegistry } from './ExtensionRegistry';
+import { nsmExtensionRegistry } from './nsm-extension-registry-slice';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
   undefined as any,
 );
 
 export function useExtensionRegistryContext() {
-  const { sliceState } = useSliceState(extensionRegistrySliceKey);
+  const { extensionRegistry } = useNsmSliceState(nsmExtensionRegistry);
 
-  return sliceState.extensionRegistry;
+  return extensionRegistry;
 }

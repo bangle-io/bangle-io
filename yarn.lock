@@ -1693,178 +1693,178 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/all-base-components@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/all-base-components@npm:0.31.6"
+"@bangle.dev/all-base-components@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/all-base-components@npm:0.32.0"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@types/jest": ^27.5.2
-  checksum: 3c1cf82dd4b3cad0051d82cb9ee04d630380a1f5f4550a381ad5235de4475bff41d045374220a72caa4a15a5b4dbba251edcf042c4006777bbcb02f8b69f28d5
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@types/jest": ^29.5.3
+  checksum: a4b97ec2dd5853fa2a1430ee075f6258743e4257606f6aee289bf877d2c8bd3641038ccaa63a2a72f3822c8ce38d6bf0b9b16b2103b071189b5297c29cb360c8
   languageName: node
   linkType: hard
 
-"@bangle.dev/base-components@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/base-components@npm:0.31.6"
+"@bangle.dev/base-components@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/base-components@npm:0.32.0"
   dependencies:
-    "@bangle.dev/pm-commands": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/pm-commands": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: dd6cf8ed70ff2fa94940f25e618e7e607cab61aacc5137ca226b54130e6b63753f6333620a8344ca47c9cc319329063891fcdaddbba79d20fcc8104a73a02ac2
+  checksum: e710f0a2a670129b46bf828868017acb256f86779d7b01f7dfc89a2de361c8d061d148f2646e559c7ecf7d801c8f189f376cf48f3b9677b5f075d4ed2f435983
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-client@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/collab-client@npm:0.31.6"
+"@bangle.dev/collab-client@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/collab-client@npm:0.32.0"
   dependencies:
-    "@bangle.dev/collab-comms": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
-    prosemirror-collab: ^1.3.0
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
+    prosemirror-collab: ^1.3.1
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 88fb31a73c3ffc716032a7bbfd687fb00fe35c300ca26a75f466a522a8b67f106103a0b842200d3ef6c92c3be5c411646763c7c6f2bc7abc5db66a421d595299
+  checksum: f2bc0ca0a83bb122de4498c8356b6fc72a7335e14b7cd881c6f3be421d9e22ad55b753a18257e492df75229d11c1d4acd638a08d6983e5c76fd9029ee5a22c15
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-comms@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/collab-comms@npm:0.31.6"
+"@bangle.dev/collab-comms@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/collab-comms@npm:0.32.0"
   dependencies:
-    "@types/jest": ^27.5.2
-  checksum: b2931b9ae073375d59b4b11b8bb0b686d1f6f8f180713ae1e919ae49b3caeb2591e98c60b9fd0836bc421bf64f5057844dd64bd7f663e6f523777cb1c109fd60
+    "@types/jest": ^29.5.3
+  checksum: c0c832b0c44b809cfd9f6340de0eb032865806a96e4bba020abeabd9a27643c1726df6bc24ec12e157ad16013b48f11c9735436c81a12e1193a3b0f45539e085
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-manager@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/collab-manager@npm:0.31.6"
+"@bangle.dev/collab-manager@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/collab-manager@npm:0.32.0"
   dependencies:
-    "@bangle.dev/collab-comms": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
-    prosemirror-collab: ^1.3.0
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
+    prosemirror-collab: ^1.3.1
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: f438198ee2b451fb5e1735d6e5fe2d6258c0a53e7c74ce399206a361b0e09d8085ae3cee52b820dd49dbe1f686eb3459f8498cf1269353a4c97cc98d067e4a3b
+  checksum: 43f3c0c15d4cbf68d2d31bdc3f4c832e8911318716a6fe603a343bb32f7cf3333d746141e1b77e7e783e6d26fea69b02d2b27baba14dc6958fb2421ffb4dbc7a
   languageName: node
   linkType: hard
 
-"@bangle.dev/core@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/core@npm:0.31.6"
+"@bangle.dev/core@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/core@npm:0.32.0"
   dependencies:
-    "@bangle.dev/pm-commands": 0.31.6
-    "@bangle.dev/shared-types": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/pm-commands": 0.32.0
+    "@bangle.dev/shared-types": 0.32.0
+    "@bangle.dev/utils": 0.32.0
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: 610e9f4c9ed79ef84f60c65011647e8808b1bf312c0f300f546985816b3dba89eed743fade41f5e417e7ffa54a61c09ac5ab6b73e8fc8abb76dc80f2f226d293
+  checksum: 69a09b59916714b875e2f6296ff68fb49243274cd7d65443fc6f87206b57635dd13c1622512ef37b4f2aee43560317c62f27e0605a1b128d4febcef8d29d5653
   languageName: node
   linkType: hard
 
-"@bangle.dev/emoji@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/emoji@npm:0.31.6"
+"@bangle.dev/emoji@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/emoji@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
-    markdown-it-emoji: ^2.0.0
-  peerDependencies:
-    "@bangle.dev/core": "*"
-    "@bangle.dev/pm": "*"
-  checksum: cda31d1a4e8f849667a3c41a2faee0a792a0314513b36dbfd45bb923e0f2cdd0776749d09f2f7b2d896d5499f14823a7b72553e33cea482a2dc8c20dabc0c5e0
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/jest-utils@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/jest-utils@npm:0.31.6"
-  dependencies:
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@types/jest": ^27.5.2
-    prettier: ^2.6.2
-  checksum: 155b6211baa4a4bc48f5985e7539ad4b3a6a33aa492f3054b41049ab0fc99404b91945ce6f4eeebc5b6c3dfa157c070f6a599183d540e69b151d6906dd3f0514
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/markdown-front-matter@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/markdown-front-matter@npm:0.31.6"
-  dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
+    markdown-it-emoji: ^2.0.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 22d2cabeb78ec2f7fcfdd924fcafc7b83217bc86bfa1ca53d3e7659c31fb8ff0fe630e9be2b57e5a81124161cca9a39f8b0efc81297426ef823e54e226344114
+  checksum: 49448c68ead1d44e73b9cc15d1428a430e40b4df780e30ec96e2740fe7add06c7fa2a429da08ff52ab349e9cb0e6726f38952bd48fb7e53f9ff6c7f28ce12133
   languageName: node
   linkType: hard
 
-"@bangle.dev/markdown@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/markdown@npm:0.31.6"
+"@bangle.dev/jest-utils@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/jest-utils@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@types/jest": ^29.5.3
+    prettier: ^2.8.8
+  checksum: 00a0021d2c8d74d798957bdb8919e184ee34e34822993dbb51c43773cb981d5c3fc3d6c5bd8c4cab331ed857be5940c6ac0b9919358b14a51a013eb0c51ddb85
+  languageName: node
+  linkType: hard
+
+"@bangle.dev/markdown-front-matter@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/markdown-front-matter@npm:0.32.0"
+  dependencies:
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    "@bangle.dev/pm": "*"
+  checksum: a9be83f3ac2e97082a933e137b847f3fcb462c773d52ba5ca04ba27fe10da20d06c0615c9c663bbaf7b57e1d3c27eb061104a289ca624393b3190b29d744f11e
+  languageName: node
+  linkType: hard
+
+"@bangle.dev/markdown@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/markdown@npm:0.32.0"
+  dependencies:
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
     markdown-it: ^10.0.0
-    prosemirror-markdown: ^1.9.3
+    prosemirror-markdown: ^1.11.1
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 669ce8f9da2eb78f45c149d9fd2ba054f8805358e12cb902eaa52627697f193ddc10eb8d36f55b3f1ff36951cd48bbb15abec52577aa81985145a40b4614139a
+  checksum: 17f7a47459cc5f8f4ae7dee64055f3e83c1952a0897bc8e0eeeb0af3ce97f22add7e1c93712d45cd2f691bee9442050192245d08e0deaf7ce22ed478cd1eb4f9
   languageName: node
   linkType: hard
 
-"@bangle.dev/pm-commands@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/pm-commands@npm:0.31.6"
+"@bangle.dev/pm-commands@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/pm-commands@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: 04201baafbf7728d96c76bd2d52e4734682110bb9f5c496f20905abffb8f1da8348fbbeb0850ac3a56221981f621e325e45d2fd0a61014495cf6422f18ce3d64
+  checksum: d96ac370bf0383348510fdd1a705b7a2ba2b512f9119188e9f7efe3a0cb4a7fcdf61438c6d1b4fd9e112002b110d3133accbce811d04fb418ed849f3448ab007
   languageName: node
   linkType: hard
 
-"@bangle.dev/pm@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/pm@npm:0.31.6"
+"@bangle.dev/pm@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/pm@npm:0.32.0"
   dependencies:
-    "@types/jest": ^27.5.2
-    prosemirror-commands: ^1.3.0
-    prosemirror-dropcursor: ^1.5.0
-    prosemirror-gapcursor: ^1.3.1
-    prosemirror-history: ^1.3.0
-    prosemirror-inputrules: ^1.2.0
-    prosemirror-keymap: ^1.2.0
-    prosemirror-model: ^1.18.1
-    prosemirror-schema-list: ^1.2.0
-    prosemirror-state: ^1.4.1
-    prosemirror-tables: ^1.2.3
-    prosemirror-transform: ^1.6.0
-    prosemirror-view: ^1.26.5
-  checksum: fc97efd2735ae5b1d5902f6360d1ea6cea4278c0492e26b805fe78c614581576cc61e3f2a6b990f213b9d76c5220ad542dfadbddfd0ce6381defb2e04b259f83
+    "@types/jest": ^29.5.3
+    prosemirror-commands: ^1.5.2
+    prosemirror-dropcursor: ^1.8.1
+    prosemirror-gapcursor: ^1.3.2
+    prosemirror-history: ^1.3.2
+    prosemirror-inputrules: ^1.2.1
+    prosemirror-keymap: ^1.2.2
+    prosemirror-model: ^1.19.3
+    prosemirror-schema-list: ^1.3.0
+    prosemirror-state: ^1.4.3
+    prosemirror-tables: ^1.3.4
+    prosemirror-transform: ^1.7.3
+    prosemirror-view: ^1.31.6
+  checksum: 7c7737b6e3a5bc27e7a56169771ba591c7b8c7cd8135e57c0d179f2faf441a44ed214f0fac26004636ba600c4497fef680aea4e49943c6dbca5d5fb003354f21
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-emoji-suggest@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/react-emoji-suggest@npm:0.31.6"
+"@bangle.dev/react-emoji-suggest@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/react-emoji-suggest@npm:0.32.0"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/emoji": "*"
@@ -1872,17 +1872,17 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: ded6748981bcca96dcf327de1bd750135ed12241a3e9c281617f24734445a1daa5ff03b808402cdb037f752ea0a1f03f23dd08322b0800b935cfba8ef241ab3c
+  checksum: c37f2bdd29831b373cba0b892c1ee88b8979c62770ae462a6d329abd3f4e45ea0927c4b3154c6d40dd51aa7876f180cec9af54dff917c7e8826b40237311c98f
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-menu@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/react-menu@npm:0.31.6"
+"@bangle.dev/react-menu@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/react-menu@npm:0.32.0"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
     prop-types: ^15.7.2
   peerDependencies:
     "@bangle.dev/core": "*"
@@ -1891,16 +1891,16 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 83852d95b285f2e8661f73ccb8e0484f9cf5492ab6f90a68cd40b7ea3af813bc7f396c955d5492ac7463d25a0b709108715500fd706861404070ef2f1861196d
+  checksum: 878978477eeb619c0249aaaba243f7c39a9045dda30bd82aec24cdf26e2b646fd8dd006acde2cd3177be5a50e0f1c47147fc9a804e1782f59e46023d1019589e
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-stopwatch@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/react-stopwatch@npm:0.31.6"
+"@bangle.dev/react-stopwatch@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/react-stopwatch@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
@@ -1908,16 +1908,16 @@ __metadata:
     "@bangle.dev/react": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: bcb5d1130d35add625d5f34b7970607d95c88da1a659d7c130eda7b42783e87fc6dc430efd5855a81843046d966c3a33b782f39ce0048d7d8ab80b44a92be193
+  checksum: d0d9952cc5df43965755a039ee56fb0bced3449771e4113ee014f152ed45777a079598eec6a8efcf01cc5a1603bab44ad5341506e10f386290638b4a5d1caab6
   languageName: node
   linkType: hard
 
-"@bangle.dev/react@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/react@npm:0.31.6"
+"@bangle.dev/react@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/react@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
     prop-types: ^15.7.2
     punycode: ^2.1.1
   peerDependencies:
@@ -1925,131 +1925,131 @@ __metadata:
     "@bangle.dev/pm": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: c5131f29641137af5ee2b7753e089a1456abcdf1d3fcb01edbb8820778a3103fe42e47310d45069fc04ca1f38d96f51f244b2a75cbb1a2474f60f5cf967bb4d9
+  checksum: 2df26f07286845271fe3d431351fa6ce943b878734ae49016d24a6bd059e46451c421fd84d3e0a4479ea7d1422f0b8b910543b0059c8351884278ad2945374a6
   languageName: node
   linkType: hard
 
-"@bangle.dev/search@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/search@npm:0.31.6"
+"@bangle.dev/search@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/search@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 632c973646647b6eb6af528e83b0dce7587d1602527776671805452cef792894e1968cdee573b33ba64415bf12a9491bc6278f3b6642b61a6858a9a33da6f268
+  checksum: e6083f2072dfd7964f33b739ec9e549eaf1ce8dcaad9a71b9c88eabf1dacd0e40601e3e95e295ea6fe68f985cd1b52e1569b5dbcf993ca2c92f2accccc610398
   languageName: node
   linkType: hard
 
-"@bangle.dev/shared-types@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/shared-types@npm:0.31.6"
+"@bangle.dev/shared-types@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/shared-types@npm:0.32.0"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/pm-commands": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    prosemirror-markdown: ^1.9.3
-  checksum: bd6d4b7851dc86dc69737b177a0589a95d669ef6020e8d4bcff476782ad447ac3f7924f11058abc77999a6d762583b62892e50c2a34113575789b59a9e7c3fcb
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/pm-commands": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    prosemirror-markdown: ^1.11.1
+  checksum: eb37b7598f10b75e7d3d0fb7968b915ae87ec578891d903ae8566a5e6c9b18db169194f4ff3b6efeb7512c19e5fffee511247b51a8bb94f372e808754e0ebd06
   languageName: node
   linkType: hard
 
-"@bangle.dev/table@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/table@npm:0.31.6"
+"@bangle.dev/table@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/table@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: f05c3cebc4d4d3666a2ce02eaed487b2cb586d3585a579be8f94ddc945dc03b65b64b01448ffdcf1ca703fb6e953fe3209a6d234fb2fd14d92492cae63cfd9de
+  checksum: 97ef1630fe379e24968357ddc59e6a7104bbf69b21da6e7f987aedde64adcd616ad28a7ec10a0b6dccf470cbea95fe5e01d6d0da9bcf6c86f14f93390fec5b3b
   languageName: node
   linkType: hard
 
-"@bangle.dev/test-helpers@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/test-helpers@npm:0.31.6"
+"@bangle.dev/test-helpers@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/test-helpers@npm:0.32.0"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
     "@types/markdown-it": ^12.2.3
     "@types/prettier": ^2.6.3
     markdown-it: ^10.0.0
-    prettier: ^2.6.2
-    prosemirror-markdown: ^1.9.3
-  checksum: b01ef7e581fa5a9d80f286e4d5f7bc9fdbfb68be5168a6486c52a6f183d93e85fe20d6fd8d16855efa36177f1d98b836395b93d13c965e2b155bd1e5ad852d98
+    prettier: ^2.8.8
+    prosemirror-markdown: ^1.11.1
+  checksum: 01b3f0b6a71b8f9da3b8297dfb4c01463ae40a5566bf976f0fbca23c9273c39437bcff5a13ba2b5d093e27f7c13c0cba4c7211e94276f9cc90ccb1ab33fdac53
   languageName: node
   linkType: hard
 
-"@bangle.dev/timestamp@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/timestamp@npm:0.31.6"
+"@bangle.dev/timestamp@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/timestamp@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 72f219a7e7cfbbdd09923d9731bd0e34e77359c0ce9d406a783c3efe76c4bb38ec7e92b59a64155e8d02507b2ce2292a9804a2264ea7f53593d6d9afd8172a47
+  checksum: a7f1aba7fb4f6958b066c1aa28a651acfd9a64219998cbc30bb8e9a1469ca4875a286cf933ec360e95fa4dc730e65c771e5923a1eb693a63f7f4fe09fafe3458
   languageName: node
   linkType: hard
 
-"@bangle.dev/tooltip@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/tooltip@npm:0.31.6"
+"@bangle.dev/tooltip@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/tooltip@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/utils": 0.32.0
     "@popperjs/core": ^2.11.5
-    "@types/jest": ^27.5.2
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: c11525dce6c900a30822d0568e510f34143add29030750b815592d52de5250052844bffd054583632b1dce72071213b30a8cffbbeb269117b03887e7c529e114
+  checksum: 32bb85ac56da3d5e48b801d90ddb98c330ab0842367cd674d2fbf79f363ee42b5c548a1da2eb6165a97951724bfcb5d541d8030b3c6408b0cb83d831001f67aa
   languageName: node
   linkType: hard
 
-"@bangle.dev/trailing-node@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/trailing-node@npm:0.31.6"
+"@bangle.dev/trailing-node@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/trailing-node@npm:0.32.0"
   dependencies:
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: fee20bd0d343b06e2be8ac9d37e75f1b21c47d7e34934c62c27fcb1f6b9308fcdcfb604fe734820c9e3b9ce16f2f6a7c44e313109138d1bb8c236f3bc5c31865
+  checksum: 37dff9bd450cf3c4e64032087f42a417f4b3c36bf6513d76b97f809d2bc69d8ed9731230687fbf996918afa1924aa4cb747d44b4be2c3dddb58a5171395f563c
   languageName: node
   linkType: hard
 
-"@bangle.dev/utils@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/utils@npm:0.31.6"
+"@bangle.dev/utils@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/utils@npm:0.32.0"
   dependencies:
-    "@types/jest": ^27.5.2
-    prosemirror-model: ^1.18.1
-    prosemirror-state: ^1.4.1
+    "@types/jest": ^29.5.3
+    prosemirror-model: ^1.19.3
+    prosemirror-state: ^1.4.3
     prosemirror-utils-bangle: 0.0.4
     tsd: ^0.22.0
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: aea9b68aad84d6738df121a0a23eed952bfd2cf80ef5d7a227924424595a35f60c8d450e5141fdc2e078da147a33e07fc5493d2f60c0efde7ba4b7d2dcb18952
+  checksum: 0e8db1a56e3166875a92642a3172dc870eadb134ee134e4a63cce5e30ac80f7b78d7e1bb4dba2ab2049ed9b162c3cbb1ab13f7fa5e50fe5ec97ae3f66b6b009f
   languageName: node
   linkType: hard
 
-"@bangle.dev/wiki-link@npm:0.31.6":
-  version: 0.31.6
-  resolution: "@bangle.dev/wiki-link@npm:0.31.6"
+"@bangle.dev/wiki-link@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@bangle.dev/wiki-link@npm:0.32.0"
   dependencies:
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@types/jest": ^27.5.2
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@types/jest": ^29.5.3
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 9a8297ba3352f5e9b5f47271e0a94a304f2b5a33e88dbdfa965b483d42b5a6f8b2e7f26a18f7d0a74ba49fae362bb9096b2234be33381213021016fe5264af91
+  checksum: 3b4ccabb7068ae7f0c62631a436b27853f9ff778f7fdff66843b12b30dfe7e2b7db7a8d2bb6b2c45c582b2e6da6b5fa1c22a66b91385cdf5fd341f5a13415633
   languageName: node
   linkType: hard
 
@@ -2057,11 +2057,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/abortable-worker@workspace:js-lib/abortable-worker"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/object-uid": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2075,10 +2075,11 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2090,7 +2091,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -2101,19 +2102,24 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/api@workspace:lib/api"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/search": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2125,7 +2131,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2134,14 +2140,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/app-entry@workspace:app/app-entry"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/markdown-front-matter": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/table": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/api": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
@@ -2152,15 +2158,18 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-app": "workspace:*"
     "@bangle.io/editor": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/style": "workspace:*"
@@ -2168,8 +2177,8 @@ __metadata:
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-dhancha": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
+    "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/workspace-sidebar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2180,12 +2189,14 @@ __metadata:
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
+    comlink: ^4.3.1
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-error-boundary: ^4.0.10
     react-test-renderer: ^17.0.2
     safari-14-idb-fix: ^3.0.0
-    vite-plugin-pwa: ^0.13.1
+    vite-plugin-pwa: ^0.16.4
     wouter: ^2.10.0-alpha.1
   peerDependencies:
     vite: "*"
@@ -2200,7 +2211,7 @@ __metadata:
     "@bangle.io/is-abort-error": "workspace:*"
     cross-fetch: ^3.1.5
     idb: ^7.1.1
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2211,12 +2222,13 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2225,25 +2237,31 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/bangle-store@workspace:app/bangle-store"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/helpfs-storage": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-slice-file-sha": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/pm-manual-paste": "workspace:*"
+    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-collab-comms": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-storage-provider": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2251,8 +2269,9 @@ __metadata:
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    comlink: ^4.3.1
     page-lifecycle: ^0.1.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2261,7 +2280,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
   dependencies:
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2275,7 +2294,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2290,7 +2309,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2299,17 +2318,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/browser-storage@workspace:extensions/browser-storage"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/markdown-front-matter": 0.31.6
-    "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/storage": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2328,7 +2346,7 @@ __metadata:
     "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2337,8 +2355,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2357,7 +2376,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2366,36 +2385,35 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/core-editor@workspace:extensions/core-editor"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/collab-client": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/emoji": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/markdown-front-matter": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/react-emoji-suggest": 0.31.6
-    "@bangle.dev/react-menu": 0.31.6
-    "@bangle.dev/react-stopwatch": 0.31.6
-    "@bangle.dev/table": 0.31.6
-    "@bangle.dev/timestamp": 0.31.6
-    "@bangle.dev/tooltip": 0.31.6
-    "@bangle.dev/trailing-node": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/collab-client": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/emoji": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/react-emoji-suggest": 0.32.0
+    "@bangle.dev/react-menu": 0.32.0
+    "@bangle.dev/react-stopwatch": 0.32.0
+    "@bangle.dev/search": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/timestamp": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/trailing-node": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-collab-comms": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2404,25 +2422,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/core-extension@workspace:extensions/core-extension"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-notification": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/tri-state": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2437,7 +2449,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2446,19 +2458,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/core-palettes@workspace:extensions/core-palettes"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2470,7 +2477,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -2487,10 +2494,10 @@ __metadata:
     "@bangle.io/ui-theme": "workspace:*"
     "@types/prettier": ^2.7.0
     polished: ^4.2.2
-    prettier: ^2.8.2
+    prettier: ^2.8.8
     tailwindcss: ^3.2.4
     ts-node: ^10.9.1
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2506,7 +2513,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     type-fest: ^3.5.1
     typescript: 4.9.3
   languageName: unknown
@@ -2517,7 +2524,7 @@ __metadata:
   resolution: "@bangle.io/css-vars@workspace:lib/css-vars"
   dependencies:
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2530,7 +2537,7 @@ __metadata:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2540,6 +2547,8 @@ __metadata:
   resolution: "@bangle.io/db-key-val@workspace:js-lib/db-key-val"
   dependencies:
     idb: ^7.1.1
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2547,21 +2556,24 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/e2e-types@workspace:lib/e2e-types"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     type-fest: ^3.5.1
     typescript: 4.9.3
   languageName: unknown
@@ -2571,9 +2583,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/editor-common@workspace:lib/editor-common"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/pm": 0.32.0
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2581,25 +2596,27 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/editor-container@workspace:app/editor-container"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.io/activitybar": "workspace:*"
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/editor": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@storybook/react": ^6.5.12
     "@testing-library/react": ^12.1.3
@@ -2608,7 +2625,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -2619,21 +2636,22 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/editor@workspace:lib/editor"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
@@ -2641,7 +2659,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -2656,7 +2674,7 @@ __metadata:
     "@bangle.io/config-template": ^0.0.7
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2665,11 +2683,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/example-extension@workspace:extensions/example-extension"
   dependencies:
-    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2678,14 +2695,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/extension-registry@workspace:lib/extension-registry"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -2695,7 +2713,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2707,8 +2725,8 @@ __metadata:
     postcss: ^8.4.21
     postcss-custom-properties: ^12.1.11
     postcss-discard-comments: ^5.1.2
-    prettier: ^2.8.2
-    tslib: ^2.4.1
+    prettier: ^2.8.8
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2720,7 +2738,7 @@ __metadata:
     "@types/react": ^17.0.49
     fzf: ^0.5.1
     react: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -2733,6 +2751,8 @@ __metadata:
   dependencies:
     "@bangle.io/weak-cache": "workspace:*"
     base64-js: ^1.5.1
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2740,14 +2760,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/github-storage@workspace:extensions/github-storage"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/p-map": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2762,7 +2783,21 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
+    typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/helpfs-storage@workspace:*, @bangle.io/helpfs-storage@workspace:extensions/helpfs-storage":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/helpfs-storage@workspace:extensions/helpfs-storage"
+  dependencies:
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/storage": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2771,7 +2806,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/history@workspace:js-lib/history"
   dependencies:
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2780,17 +2815,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/image-extension@workspace:extensions/image-extension"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/react-menu": 0.31.6
-    "@bangle.dev/tooltip": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/react-menu": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2801,7 +2836,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2811,7 +2846,7 @@ __metadata:
   resolution: "@bangle.io/independent-e2e-tests-server@workspace:tooling/independent-e2e-tests-server"
   dependencies:
     "@bangle.io/baby-fs": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
     vite: ^3.2.1
   languageName: unknown
@@ -2821,14 +2856,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/inline-backlink@workspace:extensions/inline-backlink"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@bangle.dev/wiki-link": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.dev/wiki-link": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor": "workspace:*"
@@ -2837,8 +2872,6 @@ __metadata:
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2852,7 +2885,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2861,11 +2894,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/inline-command-palette@workspace:extensions/inline-command-palette"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
@@ -2877,7 +2910,7 @@ __metadata:
     chrono-node: ^2.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2886,15 +2919,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/inline-emoji@workspace:extensions/inline-emoji"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/emoji": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/react-emoji-suggest": 0.31.6
-    "@bangle.dev/table": 0.31.6
-    "@bangle.dev/tooltip": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/emoji": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/react-emoji-suggest": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2908,7 +2941,7 @@ __metadata:
     emoji-lookup-data: ^1.3.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2917,16 +2950,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/inline-palette@workspace:js-lib/inline-palette"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/tooltip": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2934,6 +2967,9 @@ __metadata:
 "@bangle.io/is-abort-error@workspace:*, @bangle.io/is-abort-error@workspace:js-lib/is-abort-error":
   version: 0.0.0-use.local
   resolution: "@bangle.io/is-abort-error@workspace:js-lib/is-abort-error"
+  dependencies:
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2942,6 +2978,8 @@ __metadata:
   resolution: "@bangle.io/jsdom-env@workspace:js-lib/jsdom-env"
   dependencies:
     jest-environment-jsdom: ^29.3.1
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2949,16 +2987,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/markdown@workspace:lib/markdown"
   dependencies:
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/markdown-front-matter": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/table": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2966,6 +3004,9 @@ __metadata:
 "@bangle.io/mini-js-utils@workspace:*, @bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils":
   version: 0.0.0-use.local
   resolution: "@bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils"
+  dependencies:
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -2977,8 +3018,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2989,7 +3028,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -2998,17 +3037,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-outline@workspace:extensions/note-outline"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3019,7 +3055,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3028,8 +3064,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-sidebar@workspace:app/note-sidebar"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3040,7 +3076,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -3051,21 +3087,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-tags@workspace:extensions/note-tags"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -3076,7 +3111,59 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
+    typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/nsm-3@workspace:*, @bangle.io/nsm-3@workspace:js-lib/nsm-3":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm-3@workspace:js-lib/nsm-3"
+  dependencies:
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
+    "@types/use-sync-external-store": ^0.0.3
+    nalanda: v1.3.0-alpha.11
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    superjson: ^1.12.2
+    tslib: 2.4.1
+    typescript: 4.9.3
+    use-sync-external-store: ^1.2.0
+    zod: ^3.21.4
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/nsm-slice-file-sha@workspace:*, @bangle.io/nsm-slice-file-sha@workspace:lib/nsm-slice-file-sha":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm-slice-file-sha@workspace:lib/nsm-slice-file-sha"
+  dependencies:
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/git-file-sha": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/nsm-slice-workspace@workspace:*, @bangle.io/nsm-slice-workspace@workspace:lib/nsm-slice-workspace":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/nsm-slice-workspace@workspace:lib/nsm-slice-workspace"
+  dependencies:
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3085,7 +3172,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"
   dependencies:
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3093,6 +3180,9 @@ __metadata:
 "@bangle.io/p-map@workspace:*, @bangle.io/p-map@workspace:js-lib/p-map":
   version: 0.0.0-use.local
   resolution: "@bangle.io/p-map@workspace:js-lib/p-map"
+  dependencies:
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3108,13 +3198,12 @@ __metadata:
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/independent-e2e-tests-server": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
-    "@playwright/test": ^1.29.0
+    "@playwright/test": ^1.36.1
     "@types/node": ^18.11.9
     "@types/prettier": ^2.7.0
     http-server: ^0.12.3
-    prettier: ^2.8.2
-    tslib: ^2.4.1
+    prettier: ^2.8.8
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3123,8 +3212,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/pm-manual-paste@workspace:js-lib/pm-manual-paste"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
-    tslib: ^2.4.1
+    "@bangle.dev/pm": 0.32.0
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3133,18 +3222,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/pm-plugins@workspace:js-lib/pm-plugins"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/tooltip": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3156,7 +3245,9 @@ __metadata:
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/tri-state": "workspace:*"
     ts-pattern: ^4.0.6
+    tslib: 2.4.1
     type-fest: ^3.5.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3178,11 +3269,11 @@ __metadata:
     date-fns: ^2.25.0
     domexception: ^4.0.0
     execa: ^5.1.1
-    fake-indexeddb: ^4.0.1
+    fake-indexeddb: ^4.0.2
     globby: ^13.1.3
-    prettier: ^2.8.2
+    prettier: ^2.8.8
     ts-node: ^10.9.1
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3191,32 +3282,25 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/search-notes@workspace:extensions/search-notes"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/search": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-ui": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3225,15 +3309,26 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/search-pm-node@workspace:js-lib/search-pm-node"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
-    "@bangle.dev/wiki-link": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.dev/wiki-link": 0.32.0
     "@bangle.io/p-map": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/setup-store@workspace:*, @bangle.io/setup-store@workspace:lib/setup-store":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/setup-store@workspace:lib/setup-store"
+  dependencies:
+    "@bangle.io/config": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -3241,16 +3336,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared-types@workspace:lib/shared-types"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/fzf-search": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
+    "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     type-fest: ^3.5.1
     typescript: 4.9.3
   languageName: unknown
@@ -3260,12 +3362,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared@workspace:app/shared"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/markdown-front-matter": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/table": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/browser-nativefs-storage": "workspace:*"
     "@bangle.io/browser-privatefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
@@ -3275,6 +3378,7 @@ __metadata:
     "@bangle.io/core-palettes": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/github-storage": "workspace:*"
+    "@bangle.io/helpfs-storage": "workspace:*"
     "@bangle.io/image-extension": "workspace:*"
     "@bangle.io/inline-backlink": "workspace:*"
     "@bangle.io/inline-command-palette": "workspace:*"
@@ -3285,23 +3389,8 @@ __metadata:
     "@bangle.io/search-notes": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
-    typescript: 4.9.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/slice-editor-collab-comms@workspace:*, @bangle.io/slice-editor-collab-comms@workspace:lib/slice-editor-collab-comms":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-editor-collab-comms@workspace:lib/slice-editor-collab-comms"
-  dependencies:
-    "@bangle.dev/collab-comms": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/store-sync": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@testing-library/dom": ^8.11.3
-    tslib: ^2.4.1
+    "@bangle.io/workspace-info": "workspace:*"
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3310,14 +3399,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-editor-manager@workspace:lib/slice-editor-manager"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
@@ -3328,7 +3418,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3339,10 +3429,11 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3353,17 +3444,28 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/test-utils-2": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.1
     react: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
     wouter: ^2.10.0-alpha.1
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/slice-refresh-workspace@workspace:*, @bangle.io/slice-refresh-workspace@workspace:lib/slice-refresh-workspace":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/slice-refresh-workspace@workspace:lib/slice-refresh-workspace"
+  dependencies:
+    "@bangle.io/nsm-3": "workspace:*"
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3378,7 +3480,7 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3390,29 +3492,13 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
-    tslib: ^2.4.1
-    typescript: 4.9.3
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/slice-workspace-opened-doc-info@workspace:*, @bangle.io/slice-workspace-opened-doc-info@workspace:lib/slice-workspace-opened-doc-info":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-workspace-opened-doc-info@workspace:lib/slice-workspace-opened-doc-info"
-  dependencies:
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/git-file-sha": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3421,9 +3507,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-workspace@workspace:lib/slice-workspace"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/base-error": "workspace:*"
@@ -3449,7 +3535,7 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     reselect: ^4.1.5
-    tslib: ^2.4.1
+    tslib: 2.4.1
     type-fest: ^3.5.1
     typescript: 4.9.3
   languageName: unknown
@@ -3459,11 +3545,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/storage@workspace:lib/storage"
   dependencies:
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/markdown": 0.31.6
-    "@bangle.dev/markdown-front-matter": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
@@ -3472,12 +3558,12 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
-"@bangle.io/store-sync@workspace:*, @bangle.io/store-sync@workspace:lib/store-sync":
+"@bangle.io/store-sync@workspace:lib/store-sync":
   version: 0.0.0-use.local
   resolution: "@bangle.io/store-sync@workspace:lib/store-sync"
   dependencies:
@@ -3485,7 +3571,7 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3524,6 +3610,8 @@ __metadata:
     postcss: ^8.4.21
     react: ^17.0.2
     react-dom: ^17.0.2
+    tslib: 2.4.1
+    typescript: 4.9.3
     webpack: ^5.75.0
   languageName: unknown
   linkType: soft
@@ -3537,20 +3625,22 @@ __metadata:
     "@unocss/reset": ^0.48.2
     autoprefixer: ^10.4.4
     postcss: ^8.4.21
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
-"@bangle.io/test-utils@workspace:*, @bangle.io/test-utils@workspace:lib/test-utils":
+"@bangle.io/test-utils-2@workspace:*, @bangle.io/test-utils-2@workspace:lib/test-utils-2":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/test-utils@workspace:lib/test-utils"
+  resolution: "@bangle.io/test-utils-2@workspace:lib/test-utils-2"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -3558,6 +3648,9 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
+    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
@@ -3573,7 +3666,48 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
+    type-fest: ^3.5.1
+    typescript: 4.9.3
+    wait-for-expect: ^3.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/test-utils@workspace:*, @bangle.io/test-utils@workspace:lib/test-utils":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/test-utils@workspace:lib/test-utils"
+  dependencies:
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.io/api": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/history": "workspace:*"
+    "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-editor-manager": "workspace:*"
+    "@bangle.io/slice-notification": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-storage-provider": "workspace:*"
+    "@bangle.io/slice-ui": "workspace:*"
+    "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/storage": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    tslib: 2.4.1
     type-fest: ^3.5.1
     typescript: 4.9.3
     wait-for-expect: ^3.0.2
@@ -3583,6 +3717,9 @@ __metadata:
 "@bangle.io/tri-state@workspace:*, @bangle.io/tri-state@workspace:js-lib/tri-state":
   version: 0.0.0-use.local
   resolution: "@bangle.io/tri-state@workspace:js-lib/tri-state"
+  dependencies:
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3628,7 +3765,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.3.0
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3651,7 +3788,7 @@ __metadata:
     postcss-import: ^15.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
     vite: ^3.2.1
   languageName: unknown
@@ -3667,7 +3804,7 @@ __metadata:
     gradient-parser: ^1.0.2
     polished: ^4.2.2
     tailwindcss: ^3.2.4
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3681,7 +3818,7 @@ __metadata:
     "@unocss/preset-mini": ^0.48.2
     "@unocss/preset-uno": ^0.48.2
     "@unocss/preset-wind": ^0.48.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3690,12 +3827,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/utils@workspace:lib/utils"
   dependencies:
-    "@bangle.dev/all-base-components": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.dev/react": 0.31.6
-    "@bangle.dev/test-helpers": 0.31.6
-    "@bangle.dev/utils": 0.31.6
+    "@bangle.dev/all-base-components": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/test-helpers": 0.32.0
+    "@bangle.dev/utils": 0.32.0
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
@@ -3713,7 +3850,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
     w3c-keyname: ^2.2.6
   languageName: unknown
@@ -3722,6 +3859,23 @@ __metadata:
 "@bangle.io/weak-cache@workspace:*, @bangle.io/weak-cache@workspace:js-lib/weak-cache":
   version: 0.0.0-use.local
   resolution: "@bangle.io/weak-cache@workspace:js-lib/weak-cache"
+  dependencies:
+    tslib: 2.4.1
+    typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/worker-common@workspace:*, @bangle.io/worker-common@workspace:worker/worker-common":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/worker-common@workspace:worker/worker-common"
+  dependencies:
+    "@bangle.io/config": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3729,24 +3883,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/worker-editor@workspace:worker/worker-editor"
   dependencies:
-    "@bangle.dev/collab-client": 0.31.6
-    "@bangle.dev/collab-comms": 0.31.6
-    "@bangle.dev/collab-manager": 0.31.6
-    "@bangle.dev/core": 0.31.6
-    "@bangle.dev/pm": 0.31.6
+    "@bangle.dev/collab-client": 0.32.0
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/collab-manager": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/pm": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-collab-comms": "workspace:*"
-    "@bangle.io/slice-editor-manager": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-common": "workspace:*"
+    "@bangle.io/worker-replica-slices": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
@@ -3754,7 +3907,34 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
+    typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/worker-entry@workspace:*, @bangle.io/worker-entry@workspace:worker/worker-entry":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/worker-entry@workspace:worker/worker-entry"
+  dependencies:
+    "@bangle.io/abortable-worker": "workspace:*"
+    "@bangle.io/config": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/e2e-types": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/fzf-search": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/search-pm-node": "workspace:*"
+    "@bangle.io/setup-store": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-common": "workspace:*"
+    "@bangle.io/worker-editor": "workspace:*"
+    "@bangle.io/worker-replica-slices": "workspace:*"
+    "@bangle.io/workspace-info": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@sentry/browser": ^6.18.1
+    "@zip.js/zip.js": ~2.4.5
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3765,44 +3945,22 @@ __metadata:
   dependencies:
     "@bangle.io/abortable-worker": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
-"@bangle.io/worker-naukar@workspace:*, @bangle.io/worker-naukar@workspace:worker/worker-naukar":
+"@bangle.io/worker-replica-slices@workspace:*, @bangle.io/worker-replica-slices@workspace:worker/worker-replica-slices":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/worker-naukar@workspace:worker/worker-naukar"
+  resolution: "@bangle.io/worker-replica-slices@workspace:worker/worker-replica-slices"
   dependencies:
-    "@bangle.dev/pm": 0.31.6
-    "@bangle.io/abortable-worker": "workspace:*"
-    "@bangle.io/base-error": "workspace:*"
-    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/e2e-types": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/fzf-search": "workspace:*"
-    "@bangle.io/search-pm-node": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-editor-collab-comms": "workspace:*"
-    "@bangle.io/slice-notification": "workspace:*"
-    "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-storage-provider": "workspace:*"
-    "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspace-opened-doc-info": "workspace:*"
-    "@bangle.io/store-sync": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-editor": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
-    "@sentry/browser": ^6.18.1
-    "@zip.js/zip.js": ~2.4.5
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3814,20 +3972,19 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/store-sync": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@bangle.io/worker-naukar": "workspace:*"
+    "@bangle.io/worker-entry": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     comlink: ^4.3.1
     react: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -3836,11 +3993,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/workspace-info@workspace:lib/workspace-info"
   dependencies:
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/db-app": "workspace:*"
+    "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3858,7 +4024,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   peerDependencies:
     react: "*"
@@ -3877,7 +4043,7 @@ __metadata:
     path-to-regexp: ^6.2.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
     wouter: ^2.10.0-alpha.1
   languageName: unknown
@@ -3889,7 +4055,8 @@ __metadata:
   dependencies:
     "@types/node": ^18.11.9
     execa: ^5.1.1
-    tslib: ^2.4.1
+    tslib: 2.4.1
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -4018,16 +4185,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/android-arm@npm:0.15.16":
-  version: 0.15.16
-  resolution: "@esbuild/android-arm@npm:0.15.16"
+"@esbuild/android-arm@npm:0.15.18":
+  version: 0.15.18
+  resolution: "@esbuild/android-arm@npm:0.15.18"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@esbuild/linux-loong64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "@esbuild/linux-loong64@npm:0.15.16"
+"@esbuild/linux-loong64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "@esbuild/linux-loong64@npm:0.15.18"
   conditions: os=linux & cpu=loong64
   languageName: node
   linkType: hard
@@ -4550,10 +4717,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:1.4.14, @jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.13":
+"@jridgewell/sourcemap-codec@npm:1.4.14":
   version: 1.4.14
   resolution: "@jridgewell/sourcemap-codec@npm:1.4.14"
   checksum: 61100637b6d173d3ba786a5dff019e1a74b1f394f323c1fee337ff390239f053b87266c7a948777f4b1ee68c01a8ad0ab61e5ff4abb5a012a0b091bec391ab97
+  languageName: node
+  linkType: hard
+
+"@jridgewell/sourcemap-codec@npm:^1.4.10, @jridgewell/sourcemap-codec@npm:^1.4.13, @jridgewell/sourcemap-codec@npm:^1.4.15":
+  version: 1.4.15
+  resolution: "@jridgewell/sourcemap-codec@npm:1.4.15"
+  checksum: b881c7e503db3fc7f3c1f35a1dd2655a188cc51a3612d76efc8a6eb74728bef5606e6758ee77423e564092b4a518aba569bbb21c9bac5ab7a35b0c6ae7e344c8
   languageName: node
   linkType: hard
 
@@ -4713,15 +4887,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.29.0":
-  version: 1.29.0
-  resolution: "@playwright/test@npm:1.29.0"
+"@playwright/test@npm:^1.36.1":
+  version: 1.36.1
+  resolution: "@playwright/test@npm:1.36.1"
   dependencies:
     "@types/node": "*"
-    playwright-core: 1.29.0
+    fsevents: 2.3.2
+    playwright-core: 1.36.1
+  dependenciesMeta:
+    fsevents:
+      optional: true
   bin:
     playwright: cli.js
-  checksum: ff7bd88c805348b80d28cd4d39ed31a3f2d645c5b87e791e49bf8ca60ec6d3e1db646ed351536d0f8c05902cca940c86f23dc5d37c1acaab994369a2ce2707f6
+  checksum: a0127e0dccc458e7feb1b5742c90f79db0b895288b135310d056be5e3c6bb2c47c4503d5b7a584db2b1ef518f87020dafa0016c198c98fd3df719d66cd2ab7b7
   languageName: node
   linkType: hard
 
@@ -5476,18 +5654,6 @@ __metadata:
   peerDependencies:
     rollup: ^1.20.0 || ^2.0.0
   checksum: b2f1618ee5526d288e2f8ae328dcb326e20e8dc8bd1f60d3e14d6708a5832e4aa44811f7d493f4aed2deeadca86e3b6b0503cd39bf50cfb4b595bb9da027fad0
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-replace@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@rollup/plugin-replace@npm:4.0.0"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    magic-string: ^0.25.7
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0
-  checksum: b61701e612661a46da06ca88f390c3839b586708abc0329a476411b90aa8ac59fe94437ede4c3fe53fea268b3054ea9d7d4ee851d7bd0cb7a5f06906002067cb
   languageName: node
   linkType: hard
 
@@ -7585,13 +7751,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^29.0.0":
-  version: 29.2.3
-  resolution: "@types/jest@npm:29.2.3"
+"@types/jest@npm:*, @types/jest@npm:^29.0.0, @types/jest@npm:^29.5.3":
+  version: 29.5.3
+  resolution: "@types/jest@npm:29.5.3"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 55370906711b600a05b9e497c22aa74d80d8adcdbe4ac2f1bc9311f6f6ca0dd192862b6f38df6ac0d45e92396bcd796e377b1d8058c10bdfd584aeee580c3ce1
+  checksum: e36bb92e0b9e5ea7d6f8832baa42f087fc1697f6cd30ec309a07ea4c268e06ec460f1f0cfd2581daf5eff5763475190ec1ad8ac6520c49ccfe4f5c0a48bfa676
   languageName: node
   linkType: hard
 
@@ -7602,16 +7768,6 @@ __metadata:
     jest-diff: ^26.0.0
     pretty-format: ^26.0.0
   checksum: ae39675412f08d884926254e9b12bfd2b5a4e4d204c94d3148cb942174a474930d0c60540133c968f22241d4712b7940c96cbc883096eb326a4d5b206fb78bd0
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:^27.5.2":
-  version: 27.5.2
-  resolution: "@types/jest@npm:27.5.2"
-  dependencies:
-    jest-matcher-utils: ^27.0.0
-    pretty-format: ^27.0.0
-  checksum: 7e11c6826aa429ad990dc262e4e4b54aa36573287fddf15773e4137f07d11d3105f0dd9f1baff73252160a057df23f5529bb83b1bf83cd3f45f9460a5ca5c22e
   languageName: node
   linkType: hard
 
@@ -7947,6 +8103,13 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 25cb860ff10dde48b54622d58b23e66214211a61c84c0f15f88d38b61aa1b53d4d46e42b557924a93178c501c166aa37e28d7f6d994aba13d24685326272d5db
+  languageName: node
+  linkType: hard
+
+"@types/use-sync-external-store@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@types/use-sync-external-store@npm:0.0.3"
+  checksum: 161ddb8eec5dbe7279ac971531217e9af6b99f7783213566d2b502e2e2378ea19cf5e5ea4595039d730aa79d3d35c6567d48599f69773a02ffcff1776ec2a44e
   languageName: node
   linkType: hard
 
@@ -8732,29 +8895,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@windicss/config@npm:1.8.8":
-  version: 1.8.8
-  resolution: "@windicss/config@npm:1.8.8"
+"@windicss/config@npm:1.9.0":
+  version: 1.9.0
+  resolution: "@windicss/config@npm:1.9.0"
   dependencies:
     debug: ^4.3.4
-    jiti: ^1.14.0
+    jiti: ^1.18.2
     windicss: ^3.5.6
-  checksum: 152b53fe5e9f3b8bd9709de3221b98c6d1c40688e12bd041c40ef8dcbfc3d930ceb27f338035e268c1f7b6d1e2d4e25bf6cf10e7f7ee762cb9e7cd40891e321e
+  checksum: cfe741ba6e985a057bdd5d1f695ae98935a5ca6fc51ff54381de0cc9aa24e66d8d47de19439406fb294d85b8a46236236fcfc40813509ff3e15cce7bd01e2717
   languageName: node
   linkType: hard
 
-"@windicss/plugin-utils@npm:1.8.8":
-  version: 1.8.8
-  resolution: "@windicss/plugin-utils@npm:1.8.8"
+"@windicss/plugin-utils@npm:1.9.0":
+  version: 1.9.0
+  resolution: "@windicss/plugin-utils@npm:1.9.0"
   dependencies:
-    "@antfu/utils": ^0.5.2
-    "@windicss/config": 1.8.8
+    "@antfu/utils": ^0.7.2
+    "@windicss/config": 1.9.0
     debug: ^4.3.4
-    fast-glob: ^3.2.11
-    magic-string: ^0.26.2
+    fast-glob: ^3.2.12
+    magic-string: ^0.30.0
     micromatch: ^4.0.5
     windicss: ^3.5.6
-  checksum: 99b220ce7de2267fa7fbbe6ba91f594bc1c67e63420a6d9c90e827422e17c294c2a13d6e286de28b2785307bca041aeb1c9d2688f4b71f534f7b44fa576ccecd
+  checksum: accac0ed77e8aa955acbed08d986fa9eb23df3cf324dcfc2161067007d762780e3783d8327ec316ea4bb895cd64a1b7759ebc2e60a758e40e0e755d797e79fff
   languageName: node
   linkType: hard
 
@@ -9299,7 +9462,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -10023,7 +10186,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bangle-io@workspace:."
   dependencies:
-    "@bangle.dev/jest-utils": 0.31.6
+    "@bangle.dev/jest-utils": 0.32.0
     "@bangle.io/app-entry": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
@@ -10063,7 +10226,7 @@ __metadata:
     css-loader: ^5.2.7
     date-fns: ^2.25.0
     ejs: ^3.1.6
-    esbuild-linux-64: 0.15.16
+    esbuild-linux-64: 0.15.18
     eslint: ^8.23.0
     eslint-config-react-app: ^7.0.1
     eslint-import-resolver-node: ^0.3.6
@@ -10077,7 +10240,7 @@ __metadata:
     eslint-plugin-sort-class-members: ^1.14.1
     eslint-plugin-storybook: ^0.6.4
     eslint-plugin-testing-library: ^5.6.0
-    fake-indexeddb: ^4.0.1
+    fake-indexeddb: ^4.0.2
     file-loader: ^6.2.0
     git-revision-webpack-plugin: ^3.0.6
     html-webpack-plugin: ^5.5.0
@@ -10089,14 +10252,14 @@ __metadata:
     lint-staged: ^13.1.0
     mini-css-extract-plugin: ^2.7.2
     minimist: ^1.2.7
-    plop: ^3.1.1
+    plop: ^3.1.2
     pnp-webpack-plugin: ^1.7.0
     postcss: ^8.4.21
     postcss-custom-properties: ^12.1.11
     postcss-import: ^15.1.0
     postcss-loader: ^7.0.2
     postcss-nested: ^6.0.0
-    prettier: ^2.8.2
+    prettier: ^2.8.8
     punycode: ^2.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -10108,12 +10271,12 @@ __metadata:
     stylelint-config-standard: ^29.0.0
     surge: ^0.23.1
     ts-node: ^10.9.1
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
     unocss: ^0.48.2
     vite: ^3.2.1
     vite-plugin-html: ^3.2.0
-    vite-plugin-pwa: ^0.13.1
+    vite-plugin-pwa: ^0.16.4
     vite-plugin-windicss: ^1.8.8
     windicss: ^3.5.6
     workbox-window: ^6.5.4
@@ -11666,6 +11829,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"copy-anything@npm:^3.0.2":
+  version: 3.0.3
+  resolution: "copy-anything@npm:3.0.3"
+  dependencies:
+    is-what: ^4.1.8
+  checksum: d456dc5ec98dee7c7cf87d809eac30dc2ac942acd4cf970fab394e280ceb6dd7a8a7a5a44fcbcc50e0206658de3cc20b92863562f5797930bb2619f164f4c182
+  languageName: node
+  linkType: hard
+
 "copy-concurrently@npm:^1.0.0":
   version: 1.0.5
   resolution: "copy-concurrently@npm:1.0.5"
@@ -12458,13 +12630,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"diff-sequences@npm:^27.5.1":
-  version: 27.5.1
-  resolution: "diff-sequences@npm:27.5.1"
-  checksum: a00db5554c9da7da225db2d2638d85f8e41124eccbd56cbaefb3b276dcbb1c1c2ad851c32defe2055a54a4806f030656cbf6638105fd6ce97bb87b90b32a33ca
-  languageName: node
-  linkType: hard
-
 "diff-sequences@npm:^29.3.1":
   version: 29.3.1
   resolution: "diff-sequences@npm:29.3.1"
@@ -13013,173 +13178,173 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-android-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-android-64@npm:0.15.16"
+"esbuild-android-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-android-64@npm:0.15.18"
   conditions: os=android & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-android-arm64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-android-arm64@npm:0.15.16"
+"esbuild-android-arm64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-android-arm64@npm:0.15.18"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"esbuild-darwin-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-darwin-64@npm:0.15.16"
+"esbuild-darwin-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-darwin-64@npm:0.15.18"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-darwin-arm64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-darwin-arm64@npm:0.15.16"
+"esbuild-darwin-arm64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-darwin-arm64@npm:0.15.18"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"esbuild-freebsd-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-freebsd-64@npm:0.15.16"
+"esbuild-freebsd-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-freebsd-64@npm:0.15.18"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-freebsd-arm64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-freebsd-arm64@npm:0.15.16"
+"esbuild-freebsd-arm64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-freebsd-arm64@npm:0.15.18"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"esbuild-linux-32@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-32@npm:0.15.16"
+"esbuild-linux-32@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-32@npm:0.15.18"
   conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
 
-"esbuild-linux-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-64@npm:0.15.16"
-  checksum: ff56b0a6c63f71b2aedc2e7dc9e6af65da970b60e3d4bf5091f60273d8059aee8c14a585cd1444bd64a62d7780d2cd64bb07e70f34cfddfe0269be6bdf95f067
+"esbuild-linux-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-64@npm:0.15.18"
+  checksum: 19aa0c5dae7a94ab0f78896a8e56b9791f0f549d2707b2983c9d0fa1fd8e8e8404edc78a5539265593c257b29ca86177ee8d8678bcbcc6d1df6935460cd66140
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-linux-arm64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-arm64@npm:0.15.16"
+"esbuild-linux-arm64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-arm64@npm:0.15.18"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"esbuild-linux-arm@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-arm@npm:0.15.16"
+"esbuild-linux-arm@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-arm@npm:0.15.18"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"esbuild-linux-mips64le@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-mips64le@npm:0.15.16"
+"esbuild-linux-mips64le@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-mips64le@npm:0.15.18"
   conditions: os=linux & cpu=mips64el
   languageName: node
   linkType: hard
 
-"esbuild-linux-ppc64le@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-ppc64le@npm:0.15.16"
+"esbuild-linux-ppc64le@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-ppc64le@npm:0.15.18"
   conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
-"esbuild-linux-riscv64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-riscv64@npm:0.15.16"
+"esbuild-linux-riscv64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-riscv64@npm:0.15.18"
   conditions: os=linux & cpu=riscv64
   languageName: node
   linkType: hard
 
-"esbuild-linux-s390x@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-linux-s390x@npm:0.15.16"
+"esbuild-linux-s390x@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-linux-s390x@npm:0.15.18"
   conditions: os=linux & cpu=s390x
   languageName: node
   linkType: hard
 
-"esbuild-netbsd-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-netbsd-64@npm:0.15.16"
+"esbuild-netbsd-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-netbsd-64@npm:0.15.18"
   conditions: os=netbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-openbsd-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-openbsd-64@npm:0.15.16"
+"esbuild-openbsd-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-openbsd-64@npm:0.15.18"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-sunos-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-sunos-64@npm:0.15.16"
+"esbuild-sunos-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-sunos-64@npm:0.15.18"
   conditions: os=sunos & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-windows-32@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-windows-32@npm:0.15.16"
+"esbuild-windows-32@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-windows-32@npm:0.15.18"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"esbuild-windows-64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-windows-64@npm:0.15.16"
+"esbuild-windows-64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-windows-64@npm:0.15.18"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"esbuild-windows-arm64@npm:0.15.16":
-  version: 0.15.16
-  resolution: "esbuild-windows-arm64@npm:0.15.16"
+"esbuild-windows-arm64@npm:0.15.18":
+  version: 0.15.18
+  resolution: "esbuild-windows-arm64@npm:0.15.18"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
 "esbuild@npm:^0.15.9":
-  version: 0.15.16
-  resolution: "esbuild@npm:0.15.16"
+  version: 0.15.18
+  resolution: "esbuild@npm:0.15.18"
   dependencies:
-    "@esbuild/android-arm": 0.15.16
-    "@esbuild/linux-loong64": 0.15.16
-    esbuild-android-64: 0.15.16
-    esbuild-android-arm64: 0.15.16
-    esbuild-darwin-64: 0.15.16
-    esbuild-darwin-arm64: 0.15.16
-    esbuild-freebsd-64: 0.15.16
-    esbuild-freebsd-arm64: 0.15.16
-    esbuild-linux-32: 0.15.16
-    esbuild-linux-64: 0.15.16
-    esbuild-linux-arm: 0.15.16
-    esbuild-linux-arm64: 0.15.16
-    esbuild-linux-mips64le: 0.15.16
-    esbuild-linux-ppc64le: 0.15.16
-    esbuild-linux-riscv64: 0.15.16
-    esbuild-linux-s390x: 0.15.16
-    esbuild-netbsd-64: 0.15.16
-    esbuild-openbsd-64: 0.15.16
-    esbuild-sunos-64: 0.15.16
-    esbuild-windows-32: 0.15.16
-    esbuild-windows-64: 0.15.16
-    esbuild-windows-arm64: 0.15.16
+    "@esbuild/android-arm": 0.15.18
+    "@esbuild/linux-loong64": 0.15.18
+    esbuild-android-64: 0.15.18
+    esbuild-android-arm64: 0.15.18
+    esbuild-darwin-64: 0.15.18
+    esbuild-darwin-arm64: 0.15.18
+    esbuild-freebsd-64: 0.15.18
+    esbuild-freebsd-arm64: 0.15.18
+    esbuild-linux-32: 0.15.18
+    esbuild-linux-64: 0.15.18
+    esbuild-linux-arm: 0.15.18
+    esbuild-linux-arm64: 0.15.18
+    esbuild-linux-mips64le: 0.15.18
+    esbuild-linux-ppc64le: 0.15.18
+    esbuild-linux-riscv64: 0.15.18
+    esbuild-linux-s390x: 0.15.18
+    esbuild-netbsd-64: 0.15.18
+    esbuild-openbsd-64: 0.15.18
+    esbuild-sunos-64: 0.15.18
+    esbuild-windows-32: 0.15.18
+    esbuild-windows-64: 0.15.18
+    esbuild-windows-arm64: 0.15.18
   dependenciesMeta:
     "@esbuild/android-arm":
       optional: true
@@ -13227,7 +13392,7 @@ __metadata:
       optional: true
   bin:
     esbuild: bin/esbuild
-  checksum: 6f9262784b115363290cc9aa54692b3b646cd0508364333a609cc7be5ede4d93f91561ae8da48125e077da2e7add5368105486233ac2258f7169b171e8d78564
+  checksum: ec12682b2cb2d4f0669d0e555028b87a9284ca7f6a1b26e35e69a8697165b35cc682ad598abc70f0bbcfdc12ca84ef888caf5ceee389237862e8f8c17da85f89
   languageName: node
   linkType: hard
 
@@ -13946,7 +14111,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -13992,12 +14157,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fake-indexeddb@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "fake-indexeddb@npm:4.0.1"
+"fake-indexeddb@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "fake-indexeddb@npm:4.0.2"
   dependencies:
     realistic-structured-clone: ^3.0.0
-  checksum: dd1c82111e3b97c262a647a29dc012209f8c3bed0fbe7ae9630927772842fe8d3276794ff196d0021a5e60563a25a4323eca622a6a7bc6575b62e074328a0c90
+  checksum: ad257e5cc6273d9ea667b4129d8b0798830d56a68c7c77ddba752b3fd0088cb33e34b9569b218d16dfc8a78733d360d325f89c2ce352b70a0587c1f46f6f881d
   languageName: node
   linkType: hard
 
@@ -14563,6 +14728,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:2.3.2, fsevents@npm:^2.1.2, fsevents@npm:^2.3.2, fsevents@npm:~2.3.2":
+  version: 2.3.2
+  resolution: "fsevents@npm:2.3.2"
+  dependencies:
+    node-gyp: latest
+  checksum: 97ade64e75091afee5265e6956cb72ba34db7819b4c3e94c431d4be2b19b8bb7a2d4116da417950c3425f17c8fe693d25e20212cac583ac1521ad066b77ae31f
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^1.2.7":
   version: 1.2.13
   resolution: "fsevents@npm:1.2.13"
@@ -14574,12 +14749,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:^2.1.2, fsevents@npm:^2.3.2, fsevents@npm:~2.3.2":
+"fsevents@patch:fsevents@2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@npm:2.3.2"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: latest
-  checksum: 97ade64e75091afee5265e6956cb72ba34db7819b4c3e94c431d4be2b19b8bb7a2d4116da417950c3425f17c8fe693d25e20212cac583ac1521ad066b77ae31f
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -14590,15 +14764,6 @@ __metadata:
   dependencies:
     bindings: ^1.5.0
     nan: ^2.12.1
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
-  version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
-  dependencies:
-    node-gyp: latest
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -16536,6 +16701,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-what@npm:^4.1.8":
+  version: 4.1.8
+  resolution: "is-what@npm:4.1.8"
+  checksum: b9bec3acff102d14ad467f4c74c9886af310fa160e07a63292c8c181e6768c7c4c1054644e13d67185b963644e4a513bce8c6b8ce3d3ca6f9488a69fccad5f97
+  languageName: node
+  linkType: hard
+
 "is-whitespace-character@npm:^1.0.0":
   version: 1.0.4
   resolution: "is-whitespace-character@npm:1.0.4"
@@ -16845,18 +17017,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^27.5.1":
-  version: 27.5.1
-  resolution: "jest-diff@npm:27.5.1"
-  dependencies:
-    chalk: ^4.0.0
-    diff-sequences: ^27.5.1
-    jest-get-type: ^27.5.1
-    pretty-format: ^27.5.1
-  checksum: 8be27c1e1ee57b2bb2bef9c0b233c19621b4c43d53a3c26e2c00a4e805eb4ea11fe1694a06a9fb0e80ffdcfdc0d2b1cb0b85920b3f5c892327ecd1e7bd96b865
-  languageName: node
-  linkType: hard
-
 "jest-diff@npm:^29.3.1":
   version: 29.3.1
   resolution: "jest-diff@npm:29.3.1"
@@ -16930,13 +17090,6 @@ __metadata:
   version: 26.3.0
   resolution: "jest-get-type@npm:26.3.0"
   checksum: 1cc6465ae4f5e880be22ba52fd270fa64c21994915f81b41f8f7553a7957dd8e077cc8d03035de9412e2d739f8bad6a032ebb5dab5805692a5fb9e20dd4ea666
-  languageName: node
-  linkType: hard
-
-"jest-get-type@npm:^27.5.1":
-  version: 27.5.1
-  resolution: "jest-get-type@npm:27.5.1"
-  checksum: 63064ab70195c21007d897c1157bf88ff94a790824a10f8c890392e7d17eda9c3900513cb291ca1c8d5722cad79169764e9a1279f7c8a9c4cd6e9109ff04bbc0
   languageName: node
   linkType: hard
 
@@ -17014,18 +17167,6 @@ __metadata:
     jest-get-type: ^26.3.0
     pretty-format: ^26.6.2
   checksum: 74d2165c1ac7fe98fe27cd2b5407499478e6b2fe99dd54e26d8ee5c9f5f913bdd7bdc07c7221b9b04df0c15e9be0e866ff3455b03e38cc66c480d9996d6d5405
-  languageName: node
-  linkType: hard
-
-"jest-matcher-utils@npm:^27.0.0":
-  version: 27.5.1
-  resolution: "jest-matcher-utils@npm:27.5.1"
-  dependencies:
-    chalk: ^4.0.0
-    jest-diff: ^27.5.1
-    jest-get-type: ^27.5.1
-    pretty-format: ^27.5.1
-  checksum: bb2135fc48889ff3fe73888f6cc7168ddab9de28b51b3148f820c89fdfd2effdcad005f18be67d0b9be80eda208ad47290f62f03d0a33f848db2dd0273c8217a
   languageName: node
   linkType: hard
 
@@ -17412,12 +17553,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.14.0, jiti@npm:^1.16.0":
-  version: 1.16.0
-  resolution: "jiti@npm:1.16.0"
+"jiti@npm:^1.16.0, jiti@npm:^1.18.2":
+  version: 1.19.1
+  resolution: "jiti@npm:1.19.1"
   bin:
     jiti: bin/jiti.js
-  checksum: 28844cd69168fd0491b296d4925e0034cc9f23aba51bdb94b896818e444059092af838f98d406477dc1b6e0ca15a5ff4522e060bf3f289f9e1ca1ee572a54e6b
+  checksum: fdf55e315f9e81c04ae902416642062851d92c6cdcc17a59d5d1d35e1a0842e4e79be38da86613c5776fa18c579954542a441b93d1c347a50137dee2e558cbd0
   languageName: node
   linkType: hard
 
@@ -17427,7 +17568,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -17734,10 +17875,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kolorist@npm:^1.5.1, kolorist@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "kolorist@npm:1.6.0"
-  checksum: 4d898b782ceaaac3a51d9820a13563fcd0ed516d5493374a0e04ceda93ed4d74f9e267e8da5fb4453e508099b9f6b22e38ac1bff92fdc227081f460c003401c0
+"kolorist@npm:^1.6.0, kolorist@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "kolorist@npm:1.8.0"
+  checksum: b056de671acc8a17f1e78d6d46c47dae3e06481eabc9fed213dd9079a7454fd3a7ea1226ec718df81c9208877f7475d038ac27a400958fec278d975839e33643
   languageName: node
   linkType: hard
 
@@ -17803,7 +17944,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -18155,7 +18296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.26.2, magic-string@npm:^0.26.7":
+"magic-string@npm:^0.26.7":
   version: 0.26.7
   resolution: "magic-string@npm:0.26.7"
   dependencies:
@@ -18170,6 +18311,15 @@ __metadata:
   dependencies:
     "@jridgewell/sourcemap-codec": ^1.4.13
   checksum: 273faaa50baadb7a2df6e442eac34ad611304fc08fe16e24fe2e472fd944bfcb73ffb50d2dc972dc04e92784222002af46868cb9698b1be181c81830fd95a13e
+  languageName: node
+  linkType: hard
+
+"magic-string@npm:^0.30.0":
+  version: 0.30.1
+  resolution: "magic-string@npm:0.30.1"
+  dependencies:
+    "@jridgewell/sourcemap-codec": ^1.4.15
+  checksum: 7bc7e4493e32a77068f3753bf8652d4ab44142122eb7fb9fa871af83bef2cd2c57518a6769701cd5d0379bd624a13bc8c72ca25ac5655b27e5a61adf1fd38db2
   languageName: node
   linkType: hard
 
@@ -18294,7 +18444,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"markdown-it-emoji@npm:^2.0.0":
+"markdown-it-emoji@npm:^2.0.2":
   version: 2.0.2
   resolution: "markdown-it-emoji@npm:2.0.2"
   checksum: e93ca19591b8dd543029e1997763e094a0861185f71403ffa522f09860da0a6457b3a2bd50e6e59cf1551b28ff464a2c2f596045a577323bd1d546cd1f0cc377
@@ -18948,6 +19098,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nalanda@npm:v1.3.0-alpha.11":
+  version: 1.3.0-alpha.11
+  resolution: "nalanda@npm:1.3.0-alpha.11"
+  dependencies:
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ">=17.0"
+    zod: ">=3.20.0"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    zod:
+      optional: true
+  checksum: c392188ad29574e3fddf5f9d6438afb6389462108b2a7c317450fe18a9ff61ea91c526eee2cc4867e1118ee49d21d49738fd8c9b095246d39f75d3a9f387ea93
+  languageName: node
+  linkType: hard
+
 "nan@npm:^2.12.1":
   version: 2.17.0
   resolution: "nan@npm:2.17.0"
@@ -19142,9 +19309,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-plop@npm:^0.31.0":
-  version: 0.31.0
-  resolution: "node-plop@npm:0.31.0"
+"node-plop@npm:^0.31.1":
+  version: 0.31.1
+  resolution: "node-plop@npm:0.31.1"
   dependencies:
     "@types/inquirer": ^8.2.1
     change-case: ^4.1.2
@@ -19159,7 +19326,7 @@ __metadata:
     resolve: ^1.20.0
     title-case: ^3.0.3
     upper-case: ^2.0.2
-  checksum: 0ba41c9e950e246e24d5e8409c6c978485cf8c5e58ff3b1f61e7bb6bf50d6ae9633a5b876497f5ee4c101044ee77a78e31f3dff2ed577d6140f7acf27c7e57c2
+  checksum: be25e05cdf8c73d23724d7dbab6df4a16dfb4bc77036894fb7c0bf72b4e54cb669be331ee6da434e9b8c86f5f0f86e78879e3d652f74e38027729578d93163b6
   languageName: node
   linkType: hard
 
@@ -20268,30 +20435,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.29.0":
-  version: 1.29.0
-  resolution: "playwright-core@npm:1.29.0"
+"playwright-core@npm:1.36.1":
+  version: 1.36.1
+  resolution: "playwright-core@npm:1.36.1"
   bin:
-    playwright: cli.js
-  checksum: 5e4b690b0b449ed27ab7f7d7c9bf778db53e6c6b37a8e7258fb070fe6e96f147ad5d66221a3953c9e4d0b2044b701c493d7a0708d7bdb6486e38a3518f62fdce
+    playwright-core: cli.js
+  checksum: bbde807294053b50f0dbbc81f0dacc43fe525830ce1526e6ca74012582dd1645eae2391719cfb020051abea90704057cfabcbfe45ca530b37becc491e9459790
   languageName: node
   linkType: hard
 
-"plop@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "plop@npm:3.1.1"
+"plop@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "plop@npm:3.1.2"
   dependencies:
     "@types/liftoff": ^4.0.0
     chalk: ^5.0.1
     interpret: ^2.2.0
     liftoff: ^4.0.0
     minimist: ^1.2.6
-    node-plop: ^0.31.0
+    node-plop: ^0.31.1
     ora: ^6.0.1
     v8flags: ^4.0.0
   bin:
     plop: bin/plop.js
-  checksum: 3ef13673107397c389fb1cb861215a60317a67622121b98221d1f5d448f289a25e9b1f4bb9cbdcb91f28e7339c7583cd21a9738c2bee92602916ede6c04aa848
+  checksum: 97ce8574f4c3921bdc931b5b0b801d1f336372c19e62aaf071483c77e6cfd52eb8d1d6fe5ca0c85482cbf7d5d7af8f1f14de609f3666a525ccd7e571e49e4704
   languageName: node
   linkType: hard
 
@@ -20654,12 +20821,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.6.2, prettier@npm:^2.8.2":
-  version: 2.8.2
-  resolution: "prettier@npm:2.8.2"
+"prettier@npm:^2.8.8":
+  version: 2.8.8
+  resolution: "prettier@npm:2.8.8"
   bin:
     prettier: bin-prettier.js
-  checksum: 740c56c2128d587d656ea1dde9bc9c3503dfc94db4f3ac387259215eeb2e216680bdad9d18a0c9feecc6b42cfa188d6fa777df4c36c1d00cedd4199074fbfbd2
+  checksum: b49e409431bf129dd89238d64299ba80717b57ff5a6d1c1a8b1a28b590d998a34e083fa13573bc732bb8d2305becb4c9a4407f8486c81fa7d55100eb08263cf8
   languageName: node
   linkType: hard
 
@@ -20709,7 +20876,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^27.0.0, pretty-format@npm:^27.0.2, pretty-format@npm:^27.5.1":
+"pretty-format@npm:^27.0.2":
   version: 27.5.1
   resolution: "pretty-format@npm:27.5.1"
   dependencies:
@@ -20845,23 +21012,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-collab@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "prosemirror-collab@npm:1.3.0"
+"prosemirror-collab@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "prosemirror-collab@npm:1.3.1"
   dependencies:
     prosemirror-state: ^1.0.0
-  checksum: 3a7fcf424621a5a5cf0765d914c6edbe6ee13e8928168fef55dc8d818c551f73c6a7b7603065193acf87ad6f25cfdba1a33e2249c622c6d37c62cb0d6cb434ca
+  checksum: 674fd2227d2070b6b28d1982748c4e60d5e637c460a160d732e398f131ba960500476f745aff7de9426d2cc9bbb33e33bcd2bdc56a345cb691b33c54f8ccff37
   languageName: node
   linkType: hard
 
-"prosemirror-commands@npm:^1.3.0":
-  version: 1.3.1
-  resolution: "prosemirror-commands@npm:1.3.1"
+"prosemirror-commands@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "prosemirror-commands@npm:1.5.2"
   dependencies:
     prosemirror-model: ^1.0.0
     prosemirror-state: ^1.0.0
     prosemirror-transform: ^1.0.0
-  checksum: 6d5d740a056886e53ecfb63d4eeacb8b062a9e611db914572b6f49c9db538145ac83a0a4040703743d0052ffbb07efa2c0d8349d3848799a49974e9da860d932
+  checksum: ff65063a8c7ba1044eb193f31ddaf75a6a9ae656c5e2ccb9e546263b85f016419bcb1a1b6eae7a5004c377775acd3ac3c97d291adb11b71e3ddf26dcb211008d
   languageName: node
   linkType: hard
 
@@ -20875,120 +21042,121 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-dropcursor@npm:^1.5.0":
-  version: 1.6.1
-  resolution: "prosemirror-dropcursor@npm:1.6.1"
+"prosemirror-dropcursor@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "prosemirror-dropcursor@npm:1.8.1"
   dependencies:
     prosemirror-state: ^1.0.0
     prosemirror-transform: ^1.1.0
     prosemirror-view: ^1.1.0
-  checksum: 22bf50e6bf6082943afcd830ca7694c505e3e218e4c8afbc45d6943f74414367131cf7e59cbab37e7cfdedf6764a5006a5899e1fad0f12bb6a959c2c35d9dc7b
+  checksum: 9c9c58502c101548bd66d8d6ead6aceac92330e52a951b49698adaca9877245955db49b1e7abac906d50929ed3f6efb5f2ab158dbc02db2a497d75fb82d79433
   languageName: node
   linkType: hard
 
-"prosemirror-gapcursor@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "prosemirror-gapcursor@npm:1.3.1"
+"prosemirror-gapcursor@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "prosemirror-gapcursor@npm:1.3.2"
   dependencies:
     prosemirror-keymap: ^1.0.0
     prosemirror-model: ^1.0.0
     prosemirror-state: ^1.0.0
     prosemirror-view: ^1.0.0
-  checksum: d8562d31c7d7b6e3a8bdddd7ebd183406892e7055af39e08a6e957bec51889e06484a7b4c522b71aef5a61d49f4454dc9d476560c77516297fa0a6f675309970
+  checksum: a1a359f9cb701417f00b330d24b70aaba48ef48a906bc1a7425de1c81c3fa67b19352c432075419ec363827006799964ab47f1ca192e25a2c4fb696e6d1db3ed
   languageName: node
   linkType: hard
 
-"prosemirror-history@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "prosemirror-history@npm:1.3.0"
+"prosemirror-history@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "prosemirror-history@npm:1.3.2"
   dependencies:
     prosemirror-state: ^1.2.2
     prosemirror-transform: ^1.0.0
+    prosemirror-view: ^1.31.0
     rope-sequence: ^1.3.0
-  checksum: 023feff7022ae4a67a5d796e20b07c21fd6b24f819cb5295fb0be31c3d9aeb0df1df6d92c09c7662b50d18bae4fb93e4ba6a78c18be0a303a6bf627fa121b885
+  checksum: b85fe6378a2fe99d514ca44ed926c0c88f1447313a9806fdf7e246e5e39e90180ab3be97c327a48e9975915b16186f6e7d4fc520bd8b8ddb024da8bfcd3a6d4b
   languageName: node
   linkType: hard
 
-"prosemirror-inputrules@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "prosemirror-inputrules@npm:1.2.0"
+"prosemirror-inputrules@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "prosemirror-inputrules@npm:1.2.1"
   dependencies:
     prosemirror-state: ^1.0.0
     prosemirror-transform: ^1.0.0
-  checksum: c6c3e4c4d68870fd6079ceb15983fc697060c96cb3bdf25685f5df22669dd9e240d61acd6b0906159f82e5fceb916063c84d8953706d6d4507d210272a2b6dc1
+  checksum: fc414d8376a09ad2a403be682b60c883d69c9fa249dddef3956707f0cd50500c8bd427fb5696c6836f546dbc8241120ffe5d806142bb2d77bbac31c7a9dbf704
   languageName: node
   linkType: hard
 
-"prosemirror-keymap@npm:^1.0.0, prosemirror-keymap@npm:^1.1.2, prosemirror-keymap@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "prosemirror-keymap@npm:1.2.0"
+"prosemirror-keymap@npm:^1.0.0, prosemirror-keymap@npm:^1.1.2, prosemirror-keymap@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "prosemirror-keymap@npm:1.2.2"
   dependencies:
     prosemirror-state: ^1.0.0
     w3c-keyname: ^2.2.0
-  checksum: 35ce499a7281078e2c6a92c52325243433ddce9536b377b615b945a418267a5e0b839ff8dbd3f276539668de7524916e3dfb4879eec4a53b6cc07dc26ac13aab
+  checksum: 85fe4fc3038499b6dabd9a16581c0ee7a4358835c200f8a6a17dbe05733ea3df1f2571b0d02c071dbd51ce32e909da3ebb9227f25434587238e89f8c9ba293f9
   languageName: node
   linkType: hard
 
-"prosemirror-markdown@npm:^1.9.3":
-  version: 1.10.1
-  resolution: "prosemirror-markdown@npm:1.10.1"
+"prosemirror-markdown@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "prosemirror-markdown@npm:1.11.1"
   dependencies:
     markdown-it: ^13.0.1
     prosemirror-model: ^1.0.0
-  checksum: 1c74ef1571c87c53303e5dc7b3116fa81cdc7bcda6d26f652e51f2a94d9d18de9a048890ed368d5b87364bace497fe5f6a611c6c331c33f00a54c1caf6df9527
+  checksum: c89690757fa8b569cf8a9f58348b68d45089612e8eb2fec13dce10d110a4c3b8c525a9e35852a4f615dd0cdb62a6672fe523c3e79af266283763a32504ca4f08
   languageName: node
   linkType: hard
 
-"prosemirror-model@npm:*, prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.16.0, prosemirror-model@npm:^1.18.1, prosemirror-model@npm:^1.8.1":
-  version: 1.18.3
-  resolution: "prosemirror-model@npm:1.18.3"
+"prosemirror-model@npm:*, prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.16.0, prosemirror-model@npm:^1.19.3, prosemirror-model@npm:^1.8.1":
+  version: 1.19.3
+  resolution: "prosemirror-model@npm:1.19.3"
   dependencies:
     orderedmap: ^2.0.0
-  checksum: f535445029d875c36dd23b7d6661fc6acc4537da91867939785793d88e0389e7d6f7511b446865f265318334797ef9452f8024219e249b8ee843784a283a2f1b
+  checksum: a0c32127dfde5d5df7b990d85475533ed7c721fa424d5eb521f7b7ba6b2d65064da752013377f830b7d2961f3ca2507f5ed5a9117c3464c7551c1baff677dd5f
   languageName: node
   linkType: hard
 
-"prosemirror-schema-list@npm:^1.2.0":
-  version: 1.2.2
-  resolution: "prosemirror-schema-list@npm:1.2.2"
+"prosemirror-schema-list@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "prosemirror-schema-list@npm:1.3.0"
   dependencies:
     prosemirror-model: ^1.0.0
     prosemirror-state: ^1.0.0
-    prosemirror-transform: ^1.0.0
-  checksum: ddfa2f05bbf415c841510c2fb7c7751cb91718c8658246b878a896cfba04b19bf2ef66825e231704cd24edc27c248b6e6dac71b8fc3ac1df1952aaacbd8205ed
+    prosemirror-transform: ^1.7.3
+  checksum: 03654e37c8e11598ade33a72cff20e5fdd4d87f129a2c83b378e8255e8003a37cdafc40fd7e7519ba6440f872127ef327d7063c7799325a40e9853ebfc83b544
   languageName: node
   linkType: hard
 
-"prosemirror-state@npm:^1.0.0, prosemirror-state@npm:^1.2.2, prosemirror-state@npm:^1.3.1, prosemirror-state@npm:^1.4.1":
-  version: 1.4.2
-  resolution: "prosemirror-state@npm:1.4.2"
+"prosemirror-state@npm:^1.0.0, prosemirror-state@npm:^1.2.2, prosemirror-state@npm:^1.3.1, prosemirror-state@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "prosemirror-state@npm:1.4.3"
   dependencies:
     prosemirror-model: ^1.0.0
     prosemirror-transform: ^1.0.0
     prosemirror-view: ^1.27.0
-  checksum: a9e44df56aeb53fb99036742fbb63826380cf74cb115efffdd9f4e096bfb27dc7bf35c46d4b5fb5f260cd84e8bdc467aa5dc9540bd06f9f802de70b4873d8db4
+  checksum: 28857d935c443efae185407e2b6fe4ab481840a3609dfac344ee16eeeaebf39765207c8e525bd628d72755f9257cd51a743e543c8c9d4357b7e67ab22c9dc44c
   languageName: node
   linkType: hard
 
-"prosemirror-tables@npm:^1.2.3":
-  version: 1.2.5
-  resolution: "prosemirror-tables@npm:1.2.5"
+"prosemirror-tables@npm:^1.3.4":
+  version: 1.3.4
+  resolution: "prosemirror-tables@npm:1.3.4"
   dependencies:
     prosemirror-keymap: ^1.1.2
     prosemirror-model: ^1.8.1
     prosemirror-state: ^1.3.1
     prosemirror-transform: ^1.2.1
     prosemirror-view: ^1.13.3
-  checksum: 4208368a2824145cfd851fbe628993b0937c296f515f0292116d525bfabe61e43ca8bac69ce2ad32eb01f79f8a1c4c72323a4676e56fad0e366e6a120e98d828
+  checksum: d2e4631934d8f0518432b42fd5501d677b8d0edd6631a982c029c57797ce7bb6685338387fe089b01c39d90a33e6ed19659869f33979713dfb4b917ef42fdc39
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:*, prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.2.1, prosemirror-transform@npm:^1.6.0":
-  version: 1.7.0
-  resolution: "prosemirror-transform@npm:1.7.0"
+"prosemirror-transform@npm:*, prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.2.1, prosemirror-transform@npm:^1.7.3":
+  version: 1.7.3
+  resolution: "prosemirror-transform@npm:1.7.3"
   dependencies:
     prosemirror-model: ^1.0.0
-  checksum: 8d099ae0dcc3835350a23fcb6080e4248ca6798186e28044467f22cf92966e48b3b4d17102ab9143c27b6d26eb04d9c5b61887ef706400fdb6c3cc40781b55aa
+  checksum: dbafa4cee8a0ea3ff0a27eda27e3b5ff21f8b39619b09894963c68f5fb2454b67bd2206fb18fdb4176f65fb4f72f307f8a41ddbb4fa35a6feb83675902cc2889
   languageName: node
   linkType: hard
 
@@ -21002,14 +21170,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-view@npm:*, prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.13.3, prosemirror-view@npm:^1.26.5, prosemirror-view@npm:^1.27.0":
-  version: 1.29.1
-  resolution: "prosemirror-view@npm:1.29.1"
+"prosemirror-view@npm:*, prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.13.3, prosemirror-view@npm:^1.27.0, prosemirror-view@npm:^1.31.0, prosemirror-view@npm:^1.31.6":
+  version: 1.31.6
+  resolution: "prosemirror-view@npm:1.31.6"
   dependencies:
     prosemirror-model: ^1.16.0
     prosemirror-state: ^1.0.0
     prosemirror-transform: ^1.1.0
-  checksum: c800a182339e7d343b3f3593556c9c815843fcc6a7f41430b4f7d489e9a0905fe9492900cf5d9285c2da96692344a0a492537ca14e1ae54cd949bb0ee78a4141
+  checksum: ca3dfe76e92ced560cdc7aa4f3f082dbc0a9822adb1330aef738c4324f82c71c6624762a5de0745f1bb1ceab517d8a68a09b862fd006413464b9e9483d514f00
   languageName: node
   linkType: hard
 
@@ -21317,6 +21485,17 @@ __metadata:
   peerDependencies:
     react: ">=16.13.1"
   checksum: f36270a5d775a25c8920f854c0d91649ceea417b15b5bc51e270a959b0476647bb79abb4da3be7dd9a4597b029214e8fe43ea914a7f16fa7543c91f784977f1b
+  languageName: node
+  linkType: hard
+
+"react-error-boundary@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "react-error-boundary@npm:4.0.10"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+  peerDependencies:
+    react: ">=16.13.1"
+  checksum: 4ad4864d2a5fc2264a24d03e83176e6a70d7adbe3c1edbdc5b0bd452a695104bc59456e23b5aea1b9729220672fe46614221daa8b3bd59327968d4aa7eb8bc71
   languageName: node
   linkType: hard
 
@@ -22127,7 +22306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.43.1, rollup@npm:^2.79.0, rollup@npm:^2.79.1":
+"rollup@npm:^2.43.1, rollup@npm:^2.79.1":
   version: 2.79.1
   resolution: "rollup@npm:2.79.1"
   dependencies:
@@ -23495,6 +23674,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"superjson@npm:^1.12.2":
+  version: 1.12.2
+  resolution: "superjson@npm:1.12.2"
+  dependencies:
+    copy-anything: ^3.0.2
+  checksum: cf7735e172811ed87476a7c2f1bb0e83725a0e3c2d7a50a71303a973060b3c710288767fb767a7a7eee8e5625d3ccaee1176a93e27f43841627512c15c4cdf84
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:^5.3.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -23977,7 +24165,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -24193,17 +24381,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:2.4.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
+  version: 2.4.1
+  resolution: "tslib@npm:2.4.1"
+  checksum: 19480d6e0313292bd6505d4efe096a6b31c70e21cf08b5febf4da62e95c265c8f571f7b36fcc3d1a17e068032f59c269fab3459d6cd3ed6949eafecf64315fca
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "tslib@npm:2.4.1"
-  checksum: 19480d6e0313292bd6505d4efe096a6b31c70e21cf08b5febf4da62e95c265c8f571f7b36fcc3d1a17e068032f59c269fab3459d6cd3ed6949eafecf64315fca
   languageName: node
   linkType: hard
 
@@ -24323,9 +24511,9 @@ __metadata:
   linkType: hard
 
 "type-fest@npm:^3.5.1":
-  version: 3.5.1
-  resolution: "type-fest@npm:3.5.1"
-  checksum: b79991ef1310bd114210c8f697b510cefd2276c6ed4fd5026430b6e73a4253916c6551f773327a1e4c47ac2b31205294c8e68030e4999f262e0d47d541f7b7cb
+  version: 3.13.0
+  resolution: "type-fest@npm:3.13.0"
+  checksum: f7be142ae1ad0582eafd52d085350799c8cd918c15455896a06c82c147b61f8cea58892bedf1348943478e37740562219375b3b59fd855db99cd2b2766510f98
   languageName: node
   linkType: hard
 
@@ -24857,7 +25045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.0.0":
+"use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.2.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
   peerDependencies:
@@ -25049,42 +25237,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-pwa@npm:^0.13.1":
-  version: 0.13.3
-  resolution: "vite-plugin-pwa@npm:0.13.3"
+"vite-plugin-pwa@npm:^0.16.4":
+  version: 0.16.4
+  resolution: "vite-plugin-pwa@npm:0.16.4"
   dependencies:
-    "@rollup/plugin-replace": ^4.0.0
     debug: ^4.3.4
-    fast-glob: ^3.2.11
+    fast-glob: ^3.2.12
     pretty-bytes: ^6.0.0
-    rollup: ^2.79.0
-    workbox-build: ^6.5.4
-    workbox-window: ^6.5.4
+    workbox-build: ^7.0.0
+    workbox-window: ^7.0.0
   peerDependencies:
-    vite: ^3.1.0
-    workbox-build: ^6.5.4
-    workbox-window: ^6.5.4
-  checksum: be1e8699e2fb4fea98454d20c8df4bcbd828aecb2b714a1251405fde4dc9ac9c95520b33fdfc1a3d91d51f9d920501d93f57f4f0a2f1361ba38785c86e4756a4
+    vite: ^3.1.0 || ^4.0.0
+    workbox-build: ^7.0.0
+    workbox-window: ^7.0.0
+  checksum: 16810da98ca3d347f2c760024ac2f2ab5d1e61cb7f0157c5f4b75a7e1c8f91442ac304463f1b3e3a5088b4aab4ca464ff8a67f6c996ffdd23e78a2a75c4fc03e
   languageName: node
   linkType: hard
 
 "vite-plugin-windicss@npm:^1.8.8":
-  version: 1.8.8
-  resolution: "vite-plugin-windicss@npm:1.8.8"
+  version: 1.9.0
+  resolution: "vite-plugin-windicss@npm:1.9.0"
   dependencies:
-    "@windicss/plugin-utils": 1.8.8
+    "@windicss/plugin-utils": 1.9.0
     debug: ^4.3.4
-    kolorist: ^1.5.1
+    kolorist: ^1.8.0
     windicss: ^3.5.6
   peerDependencies:
-    vite: ^2.0.1 || ^3.0.0
-  checksum: e07c0d43f2359df5944feaa8f46e2f059a30def50698c5c256aecc8a88a2586da1d9d210057fc52a3ede6bf29e1623a2785e766d43ebd8013c2805c5e111fe25
+    vite: ^2.0.1 || ^3.0.0 || ^4.0.0
+  checksum: fab727ae02c8bbdf272f078c291377b8882c1224226b5d5106d5bbfa13e14c628a403e7b7585491aaba67b7834c1414609b04396641537f532ed85ed39722dea
   languageName: node
   linkType: hard
 
 "vite@npm:^3.2.1":
-  version: 3.2.4
-  resolution: "vite@npm:3.2.4"
+  version: 3.2.7
+  resolution: "vite@npm:3.2.7"
   dependencies:
     esbuild: ^0.15.9
     fsevents: ~2.3.2
@@ -25116,7 +25302,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 0f3e8f89c15809bd6bd8dec54b04b7c9b87374314d00928035f9d70190b4b220e8206b5d77a1e4097a5019cebf7862df4fbc11fbbb35c4f75f359999123d2c25
+  checksum: 4c5883b721b6ec406419e61d0b3fae8528e80f8c2eb20c087c7b1b76daec3665a0a49c83cd8ac7fdda6089625094b70c6a132daa5edc650c515ddc9f5eed44f0
   languageName: node
   linkType: hard
 
@@ -25593,28 +25779,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workbox-background-sync@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-background-sync@npm:6.5.4"
+"workbox-background-sync@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-background-sync@npm:7.0.0"
   dependencies:
     idb: ^7.0.1
-    workbox-core: 6.5.4
-  checksum: 60ac80275cc9083b82eb53b6034e3d555d15146927a21c6017329e2b5de12d802619cc2cc6cf023f534a1f1a51671d89cdb59b26a80587d5391e8dc4b7f7dd1d
+    workbox-core: 7.0.0
+  checksum: 79b64416563761d36b91342d6ce2618d1c984bebcd511ce56b80098127e42c676d4831dd566a0a80a6bb52a618ad815b277ce6b310e4a5c5043e7394829d30c6
   languageName: node
   linkType: hard
 
-"workbox-broadcast-update@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-broadcast-update@npm:6.5.4"
+"workbox-broadcast-update@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-broadcast-update@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-  checksum: 63cbab2012456871ffeae401e10b16668a0654fa3fa311743cf14e05b8719b797ac3afb47dc8955d87e24f0f1199a547b090bcfdbddd67191b07697d24ac5746
+    workbox-core: 7.0.0
+  checksum: eee5c09fd78b3439348c7c92013f63700f14004d46161f19b0daf0d01303c6785f0953b746258cfb2627932108631370c8fa52ec5b526177cd528ae02530370e
   languageName: node
   linkType: hard
 
-"workbox-build@npm:^6.5.4":
-  version: 6.5.4
-  resolution: "workbox-build@npm:6.5.4"
+"workbox-build@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "workbox-build@npm:7.0.0"
   dependencies:
     "@apideck/better-ajv-errors": ^0.3.1
     "@babel/core": ^7.11.1
@@ -25638,31 +25824,31 @@ __metadata:
     strip-comments: ^2.0.1
     tempy: ^0.6.0
     upath: ^1.2.0
-    workbox-background-sync: 6.5.4
-    workbox-broadcast-update: 6.5.4
-    workbox-cacheable-response: 6.5.4
-    workbox-core: 6.5.4
-    workbox-expiration: 6.5.4
-    workbox-google-analytics: 6.5.4
-    workbox-navigation-preload: 6.5.4
-    workbox-precaching: 6.5.4
-    workbox-range-requests: 6.5.4
-    workbox-recipes: 6.5.4
-    workbox-routing: 6.5.4
-    workbox-strategies: 6.5.4
-    workbox-streams: 6.5.4
-    workbox-sw: 6.5.4
-    workbox-window: 6.5.4
-  checksum: 7336bbab4ce8e6e43a17873beedf7360ec32e72310306c670cd4d9ebd7e5a6a729257b2806e63830136a9bf01955632c96b27edf7a00d52c7744dbe875cca6c1
+    workbox-background-sync: 7.0.0
+    workbox-broadcast-update: 7.0.0
+    workbox-cacheable-response: 7.0.0
+    workbox-core: 7.0.0
+    workbox-expiration: 7.0.0
+    workbox-google-analytics: 7.0.0
+    workbox-navigation-preload: 7.0.0
+    workbox-precaching: 7.0.0
+    workbox-range-requests: 7.0.0
+    workbox-recipes: 7.0.0
+    workbox-routing: 7.0.0
+    workbox-strategies: 7.0.0
+    workbox-streams: 7.0.0
+    workbox-sw: 7.0.0
+    workbox-window: 7.0.0
+  checksum: f230463833a8b6d1beadbfb4db5526d1b6b047ffa23abcd2afdc306510e1f3f942a74d1c59c76ee371a326bb2fe616ced05d0c53aefee5902c68a3f31faa27dc
   languageName: node
   linkType: hard
 
-"workbox-cacheable-response@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-cacheable-response@npm:6.5.4"
+"workbox-cacheable-response@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-cacheable-response@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-  checksum: f7545b71c1505d6f56f4ba1191989ea7af7119e67fa4eb414d80603221acd0fa31362014106c1df9b9ea0e28bdcf1e2b440859acab06a75e38e978a0d1c2e489
+    workbox-core: 7.0.0
+  checksum: c9d834b25564ee01dd4df17b1f27e61160a3b610f40c0e297a9973712878fe617e168e3b1541c7b70b0de3828cb4b62de3088424b4a2872ed5a106e7e777772f
   languageName: node
   linkType: hard
 
@@ -25673,107 +25859,124 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workbox-expiration@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-expiration@npm:6.5.4"
+"workbox-core@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-core@npm:7.0.0"
+  checksum: ca64872f9ce59ee1f3f32a5ecbde36377081a221930c6f925e2c0d7fe39d3fdc309166c430d56d972eba4f7c40d2e7e91a0020699a0745790fbef578ff8f34f6
+  languageName: node
+  linkType: hard
+
+"workbox-expiration@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-expiration@npm:7.0.0"
   dependencies:
     idb: ^7.0.1
-    workbox-core: 6.5.4
-  checksum: 4b012b69ceafeb5afb3dd6c5c9abe6d55f2eb70666ab603bd78ff839f602336e7493990f729d507ded1fa505b852a5f9135f63afb75b9554c8f948e571143fce
+    workbox-core: 7.0.0
+  checksum: 3d7cce573111bfb32f35d97ea95d5016ac42bdc0f3ab5096e5c0fd799dd466ccc3cbfdbdeab4e7158923ae3e406f2002add01e5c9369f9c3e2623e41bc04b324
   languageName: node
   linkType: hard
 
-"workbox-google-analytics@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-google-analytics@npm:6.5.4"
+"workbox-google-analytics@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-google-analytics@npm:7.0.0"
   dependencies:
-    workbox-background-sync: 6.5.4
-    workbox-core: 6.5.4
-    workbox-routing: 6.5.4
-    workbox-strategies: 6.5.4
-  checksum: fcce5e313780cb4f74ac962c4809fe04f9a93d3d3905d282552a2cbe6d5c6c1b8744641fe7c57d1e4b62754b90c56155e97e589712f99f6a4cab750731d60b93
+    workbox-background-sync: 7.0.0
+    workbox-core: 7.0.0
+    workbox-routing: 7.0.0
+    workbox-strategies: 7.0.0
+  checksum: defb12c3f4cf924aef8c647724c32d1100042447aed20128702815eba0f6d55ba6dde6557036dc13d68c0ab0570188757136bd453823fe25f2fa541cb18b8e0c
   languageName: node
   linkType: hard
 
-"workbox-navigation-preload@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-navigation-preload@npm:6.5.4"
+"workbox-navigation-preload@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-navigation-preload@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-  checksum: c8c341b799f328bb294de8eb9e331a55501d495153237e4ddbaa08bf8630efa700621df5d81f08fb9bffc0f40ecd191a60581f72a3cd5cc72ed2e5baa318c63a
+    workbox-core: 7.0.0
+  checksum: 329018003ce44812d37f1e168960abe34c7ac4b8cd1c8f86da172e73919fb51ba94a63db3b4024614066bf1ea38e1a89839eafd46eed9a13015dd4cf6fcd056c
   languageName: node
   linkType: hard
 
-"workbox-precaching@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-precaching@npm:6.5.4"
+"workbox-precaching@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-precaching@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-    workbox-routing: 6.5.4
-    workbox-strategies: 6.5.4
-  checksum: 15ef24ffb04edd13bcdfa6c4e7f64002551badce2d507031c343019b3bcdc569591fdff8f8e30cf1262d641d3eff611115bdda7b2ad0deb9d4ccef8f4be8bd20
+    workbox-core: 7.0.0
+    workbox-routing: 7.0.0
+    workbox-strategies: 7.0.0
+  checksum: 311b1c4a162e976e0a41e36e6a96eb64fea381eda538d8a9ae962d4f39c5ba420617753aac44e19105de19aef5242c9c68a09226d144ca3cf62738fc9f491f5d
   languageName: node
   linkType: hard
 
-"workbox-range-requests@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-range-requests@npm:6.5.4"
+"workbox-range-requests@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-range-requests@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-  checksum: 50f144ced7af7db77b3c64c06c0f9924db5b8573ff2c50b3899fc22c4a360baaf6b332e65f47cf812adfc9dec882a94556fed1cf90ae4ef20b645caa03d1149e
+    workbox-core: 7.0.0
+  checksum: 04f6d7921a8a4a024b0bf0049a592ebedcdd285a52d1b8714e0a53efc936339dac39c3a5b5b6db9a3356b9f3ed1876024403260ec426cf9dc65e3b7ba5464914
   languageName: node
   linkType: hard
 
-"workbox-recipes@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-recipes@npm:6.5.4"
+"workbox-recipes@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-recipes@npm:7.0.0"
   dependencies:
-    workbox-cacheable-response: 6.5.4
-    workbox-core: 6.5.4
-    workbox-expiration: 6.5.4
-    workbox-precaching: 6.5.4
-    workbox-routing: 6.5.4
-    workbox-strategies: 6.5.4
-  checksum: 397befeb7c4c63adb0eb1913934ecaf496846844124044f0b39348288ad5950ffb45eb488cfef2504adeafe28a51cdbcc21af2a234813d81ab3da0949942c265
+    workbox-cacheable-response: 7.0.0
+    workbox-core: 7.0.0
+    workbox-expiration: 7.0.0
+    workbox-precaching: 7.0.0
+    workbox-routing: 7.0.0
+    workbox-strategies: 7.0.0
+  checksum: 253d50a315855917ca6683d6a3e910ac3c6f8915a8bcc80a7f15f277db7f48dc288c0ec2d9cdc64390bdd50446e66910246f384ce19f46688db97c715b323123
   languageName: node
   linkType: hard
 
-"workbox-routing@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-routing@npm:6.5.4"
+"workbox-routing@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-routing@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-  checksum: 7198c50b9016d3cea0e5b51512d66f5813d6e6ad5e99c201435d6c0ab3baee1c90aa2bbdd72dd954f439267b6e6196fb04ec96e62347e6c89385db6c1a4dec79
+    workbox-core: 7.0.0
+  checksum: 9ea5b00fde5d90819e29ebf6d4aec3b84abec97854eb333c71b83548f1ba12b7f92d764a159f23cfa9e8164940e7b7136536fc0477784560cf2108d8dfe7f83b
   languageName: node
   linkType: hard
 
-"workbox-strategies@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-strategies@npm:6.5.4"
+"workbox-strategies@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-strategies@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-  checksum: 52134ecd6c05f4edd31e7b022b33a91b7b59c215bfdfb987bc0f10be02fea4d4e6385a9638a2303ba336190c5d28f9721182cd78a6779b9c817a66ec12cb1c6b
+    workbox-core: 7.0.0
+  checksum: 4f20604e762fb43b32a16d60e014d14c0933300083c109a95251c06c65c25c9d78ab16bbe638b64435911d4a01ae5f7c28c7e78d611a122ee6453be2c42a87dc
   languageName: node
   linkType: hard
 
-"workbox-streams@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-streams@npm:6.5.4"
+"workbox-streams@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-streams@npm:7.0.0"
   dependencies:
-    workbox-core: 6.5.4
-    workbox-routing: 6.5.4
-  checksum: efd6917ead915011be2b25dc3ebbb9d051dbd10ba2d91cdaec36ca742360e2c33627564653fc40f336dee874d501e94bcc4a25d1b65eaf5a6ee5f1a8b894af44
+    workbox-core: 7.0.0
+    workbox-routing: 7.0.0
+  checksum: e2975eb773bcf765c9cc8166936a9a2aaec2609fcddc178cbf6b2da54a113c4e2e62cbd257104861ea21b80c2a051936d62249f06d2414072405147f5181c0ef
   languageName: node
   linkType: hard
 
-"workbox-sw@npm:6.5.4":
-  version: 6.5.4
-  resolution: "workbox-sw@npm:6.5.4"
-  checksum: b95c76a74b84ff268ef7691447125697f4de85b076ebc33c9545fb7532b020b6f66b37f7a4bedbc21ab45473d1109337a5f037c45b3d99126ae8f5eeb898a687
+"workbox-sw@npm:7.0.0":
+  version: 7.0.0
+  resolution: "workbox-sw@npm:7.0.0"
+  checksum: f2673bc3f73ef5a54349eb7c4c63aefb7dfe6b6492947851ffa44079efdbfff07a26e68a0f7ea3801e03ab3fdc29acdc36cd315b9fbdb8a60963c7cb95f2de43
   languageName: node
   linkType: hard
 
-"workbox-window@npm:6.5.4, workbox-window@npm:^6.5.4":
+"workbox-window@npm:7.0.0, workbox-window@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "workbox-window@npm:7.0.0"
+  dependencies:
+    "@types/trusted-types": ^2.0.2
+    workbox-core: 7.0.0
+  checksum: 486ceaf2c04953cd73fe04760929a9c42818b57fffbbaca3fc9065cfd6bf3f5a571d2ea78db177e548a98041c8752faa360dda8eaf0f10b8638ef3eb1b696b13
+  languageName: node
+  linkType: hard
+
+"workbox-window@npm:^6.5.4":
   version: 6.5.4
   resolution: "workbox-window@npm:6.5.4"
   dependencies:
@@ -25819,7 +26022,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    tslib: ^2.4.1
+    tslib: 2.4.1
     typescript: 4.9.3
   languageName: unknown
   linkType: soft
@@ -26040,6 +26243,13 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.21.4":
+  version: 3.21.4
+  resolution: "zod@npm:3.21.4"
+  checksum: f185ba87342ff16f7a06686767c2b2a7af41110c7edf7c1974095d8db7a73792696bcb4a00853de0d2edeb34a5b2ea6a55871bc864227dace682a0a28de33e1f
   languageName: node
   linkType: hard
 

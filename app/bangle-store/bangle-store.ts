@@ -1,17 +1,16 @@
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { initExtensionRegistry } from '@bangle.io/shared';
-import type { BangleStateConfig, JsonValue } from '@bangle.io/shared-types';
-import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
-import { uncaughtExceptionNotification } from '@bangle.io/slice-notification';
-import { uiSlice } from '@bangle.io/slice-ui';
+import type {
+  BangleStateConfig,
+  EternalVars,
+  JsonValue,
+} from '@bangle.io/shared-types';
 import {
   assertNonWorkerGlobalScope,
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
-import { checkModuleWorkerSupport } from '@bangle.io/worker-setup';
 
 import { bangleStateSlices } from './bangle-slices';
 
@@ -29,28 +28,27 @@ const MAX_DEFERRED_WAIT_TIME = 400;
 
 export function initializeBangleStore({
   onUpdate,
+  eternalVars,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
+  eternalVars: EternalVars;
 }) {
-  const extensionRegistry = initExtensionRegistry();
-  const extensionSlices = extensionRegistry.getSlices();
+  const extensionSlices = eternalVars.extensionRegistry.getSlices();
 
   const stateOpts: BangleStateConfig = {
-    extensionRegistry,
-    useWebWorker: checkModuleWorkerSupport(),
+    extensionRegistry: eternalVars.extensionRegistry,
+    useWebWorker: false,
     saveState: (store) => {
       toLocalStorage(
         store.state.stateToJSON({
           sliceFields: {
-            uiSlice: uiSlice(),
+            // uiSlice: uiSlice(),
           },
         }),
       );
       toSessionStorage(
         store.state.stateToJSON({
-          sliceFields: {
-            editorManagerSlice: editorManagerSlice(),
-          },
+          sliceFields: {},
         }),
       );
     },
@@ -69,8 +67,7 @@ export function initializeBangleStore({
       }),
       json: stateJson,
       sliceFields: {
-        uiSlice: uiSlice(),
-        editorManagerSlice: editorManagerSlice(),
+        // uiSlice: uiSlice(),
       },
       opts: stateOpts,
     });
@@ -87,7 +84,8 @@ export function initializeBangleStore({
         (window as any).Sentry?.captureException(error);
 
         Promise.resolve().then(() => {
-          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+          // TODO better alerting
+          alert(error.message);
         });
 
         return false;

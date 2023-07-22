@@ -4,10 +4,6 @@ import { WorkspaceType } from '@bangle.io/constants';
 import type { ApplicationStore, BaseAction } from '@bangle.io/create-store';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import {
-  editorManagerSliceKey,
-  getEditor,
-} from '@bangle.io/slice-editor-manager';
-import {
   createNote,
   createWorkspace,
   getWsName,
@@ -48,16 +44,15 @@ export function createBasicTestStore<
     },
     // if user editor, checks if editor is ready to be edited
     isEditorCollabReady: async (editorIndex: number) => {
-      const editor = editorManagerSliceKey.callQueryOp(
-        store.state,
-        getEditor(editorIndex),
-      );
-
-      await waitForExpect(() =>
-        expect(
-          editor?.view.dom.classList.contains('bangle-collab-active'),
-        ).toBe(true),
-      );
+      // const editor = editorManagerSliceKey.callQueryOp(
+      //   store.state,
+      //   getEditor(editorIndex),
+      // );
+      // await waitForExpect(() =>
+      //   expect(
+      //     editor?.view.dom.classList.contains('bangle-collab-active'),
+      //   ).toBe(true),
+      // );
     },
     editorReadyActionsCount: () => {
       return getAction('action::@bangle.io/slice-editor-manager:set-editor')

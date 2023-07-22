@@ -56,6 +56,7 @@ test('Is able to search note tags', async ({ page }) => {
   expect(noteMatches.length).toBe(1);
   expect(noteMatches).toEqual(['test-one\n1']);
 
+  await sleep(100);
   expect(await page.screenshot()).toMatchSnapshot({
     maxDiffPixels: 20,
   });

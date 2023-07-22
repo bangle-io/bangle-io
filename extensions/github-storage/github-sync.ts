@@ -7,8 +7,9 @@ import {
   makeLocalEntryFromRemote,
   makeLocallyCreatedEntry,
 } from '@bangle.io/remote-file-sync';
+import type { WsPath } from '@bangle.io/shared-types';
 import { assertSignal } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { createWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { LOCAL_ENTRIES_TABLE, openDatabase } from './database';
 import { fileEntryManager } from './file-entry-manager';
@@ -486,7 +487,7 @@ export async function getConflicts({
 }: {
   config: GithubConfig;
   wsName: string;
-}): Promise<string[]> {
+}): Promise<WsPath[]> {
   const [tree, localEntries] = await Promise.all([
     serialGetRepoTree({
       wsName,
@@ -497,7 +498,7 @@ export async function getConflicts({
 
   const job = processSyncJob(localEntries, tree);
 
-  return job.conflicts;
+  return job.conflicts.map((item) => createWsPath(item));
 }
 
 export async function optimizeDatabase({

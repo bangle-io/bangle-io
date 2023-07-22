@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { useBangleStoreContext, workspace } from '@bangle.io/api';
+import { nsmApi2, wsPathHelpers } from '@bangle.io/api';
 /**
  * Component for opening a note link
  */
@@ -15,12 +15,10 @@ export function NoteLink({
   className?: string;
   onClick?: () => void;
 }) {
-  const bangleStore = useBangleStoreContext();
-
   const _onClick = useCallback(() => {
-    workspace.pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
+    nsmApi2.workspace.pushPrimaryWsPath(wsPathHelpers.createWsPath(wsPath));
     onClick?.();
-  }, [wsPath, onClick, bangleStore]);
+  }, [wsPath, onClick]);
 
   return (
     <a

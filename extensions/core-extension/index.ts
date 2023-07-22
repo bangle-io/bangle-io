@@ -1,4 +1,4 @@
-import { ui, workspace } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -22,22 +22,13 @@ import {
   NEW_WORKSPACE_DIALOG_NAME,
   RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
+  SECONDARY_EDITOR_INDEX,
   SEVERITY,
   WorkspaceType,
 } from '@bangle.io/constants';
-import type { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
-import {
-  focusPrimaryEditor,
-  focusSecondaryEditor,
-  isEditingAllowed,
-  toggleEditing,
-} from '@bangle.io/slice-editor-manager';
-import {
-  notificationSliceKey,
-  showNotification,
-} from '@bangle.io/slice-notification';
-import { toggleTheme } from '@bangle.io/slice-ui';
+import type { WsName } from '@bangle.io/shared-types';
+import { createWsName } from '@bangle.io/ws-path';
 
 import {
   CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
@@ -62,13 +53,8 @@ import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
   deleteActiveNote,
   downloadWorkspace,
-  openMiniEditor,
-  openNewNoteDialog,
-  openNewWorkspaceDialog,
   removeWorkspace,
-  renameActiveNote,
   restoreWorkspaceFromBackup,
-  splitEditor,
 } from './operations';
 
 const extension = Extension.create({
@@ -127,18 +113,24 @@ const extension = Extension.create({
         name: CORE_OPERATIONS_NEW_NOTE,
         title: 'New note',
         keywords: ['create'],
+        preventEditorFocusOnExecute: true,
       },
       {
         name: CORE_OPERATIONS_NEW_WORKSPACE,
         title: 'New workspace',
         keywords: ['create'],
+        preventEditorFocusOnExecute: true,
       },
       {
         name: CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
         title: 'Remove active workspace',
         keywords: ['delete'],
       },
-      { name: CORE_OPERATIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
+      {
+        name: CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
+        title: 'Rename active note',
+        preventEditorFocusOnExecute: true,
+      },
       {
         name: CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
         title: 'Show/Hide Note Widget Sidebar',
@@ -223,101 +215,125 @@ const extension = Extension.create({
         name: 'operation::@bangle.io/core-extension:show-changelog',
         title: 'Show Changelog',
         keywords: ['update', 'what is new'],
+        preventEditorFocusOnExecute: true,
       },
     ],
     operationHandler() {
       return {
-        handle(operation, payload: unknown, bangleStore) {
+        handle(operation, payload: unknown) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
+              if (!nsmApi2.workspace.workspaceState().wsName) {
+                nsmApi2.ui.showNotification({
+                  severity: SEVERITY.ERROR,
+                  uid: 'new-note-not-no-workspace',
+                  title: 'Please first select a workspace',
+                });
+
+                return true;
+              }
               // TODO fix payload as any
               const { path } = (payload as any) || {};
 
               let _path = typeof path === 'string' ? path : undefined;
 
-              openNewNoteDialog(_path)(bangleStore.state, bangleStore.dispatch);
-
-              return true;
-            }
-
-            case CORE_OPERATIONS_NEW_WORKSPACE: {
-              openNewWorkspaceDialog()(bangleStore.state, bangleStore.dispatch);
-
-              return true;
-            }
-
-            case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              renameActiveNote()(bangleStore.state, bangleStore.dispatch);
-
-              return true;
-            }
-
-            case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
-              bangleStore.dispatch({
-                name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR',
+              nsmApi2.ui.showDialog({
+                dialogName: NEW_NOTE_DIALOG_NAME,
+                metadata: {
+                  initialValue: _path,
+                },
               });
 
               return true;
             }
 
+            case CORE_OPERATIONS_NEW_WORKSPACE: {
+              nsmApi2.ui.showDialog({
+                dialogName: NEW_WORKSPACE_DIALOG_NAME,
+              });
+
+              return true;
+            }
+
+            case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
+              nsmApi2.ui.updatePalette(undefined);
+              nsmApi2.ui.showDialog({
+                dialogName: RENAME_NOTE_DIALOG_NAME,
+              });
+
+              return true;
+            }
+
+            case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
+              nsmApi2.ui.toggleNoteSidebar();
+
+              return true;
+            }
+
             case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-              deleteActiveNote()(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              deleteActiveNote();
 
               return true;
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-              splitEditor()(bangleStore.state, bangleStore.dispatch);
+              const { openedWsPaths } = nsmApi2.workspace.workspaceState();
+
+              if (openedWsPaths.secondaryWsPath) {
+                nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                  openedWsPath.updateSecondaryWsPath(undefined),
+                );
+              } else if (openedWsPaths.primaryWsPath) {
+                nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                  openedWsPath.updateSecondaryWsPath(
+                    openedWsPaths.primaryWsPath,
+                  ),
+                );
+              }
 
               return true;
             }
 
             case CORE_OPERATIONS_OPEN_IN_MINI_EDITOR: {
-              openMiniEditor()(bangleStore.state, bangleStore.dispatch);
+              const targetWsPath =
+                nsmApi2.workspace.workspaceState().primaryWsPath;
+
+              if (targetWsPath) {
+                nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                  openedWsPath.updateMiniEditorWsPath(targetWsPath),
+                );
+              }
 
               return true;
             }
             case CORE_OPERATIONS_CLOSE_MINI_EDITOR: {
-              return workspace.closeMiniEditor()(
-                bangleStore.state,
-                bangleStore.dispatch,
+              nsmApi2.workspace.pushOpenedWsPath((openedWsPath) =>
+                openedWsPath.updateMiniEditorWsPath(undefined),
               );
+
+              return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
-                workspace.closeOpenedEditor(payload)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                nsmApi2.workspace.closeEditor(payload);
 
                 return true;
               } else {
-                workspace.closeOpenedEditor(undefined)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                nsmApi2.workspace.closeEditor();
 
                 return true;
               }
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
-              downloadWorkspace()(bangleStore.state, bangleStore.dispatch);
+              downloadWorkspace();
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP: {
-              restoreWorkspaceFromBackup()(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              restoreWorkspaceFromBackup();
 
               return true;
             }
@@ -326,28 +342,26 @@ const extension = Extension.create({
               const targetWsName =
                 typeof payload === 'string' ? payload : undefined;
 
-              removeWorkspace(targetWsName)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
+              removeWorkspace(
+                targetWsName ? createWsName(targetWsName) : undefined,
               );
 
               return true;
             }
             case 'operation::@bangle.io/core-extension:focus-primary-editor': {
-              focusPrimaryEditor()(bangleStore.state);
+              nsmApi2.editor.getPrimaryEditor()?.focusView();
 
               return true;
             }
 
             case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
-              focusSecondaryEditor()(bangleStore.state);
+              nsmApi2.editor.getEditor(SECONDARY_EDITOR_INDEX)?.focusView();
 
               return true;
             }
 
             case CORE_OPERATIONS_TOGGLE_UI_COLOR_SCHEME: {
-              toggleTheme()(bangleStore.state, bangleStore.dispatch);
+              nsmApi2.ui.toggleColorSchema();
 
               return true;
             }
@@ -356,11 +370,7 @@ const extension = Extension.create({
               // TODO fix payload as any
               const { wsName } = (payload as any) || {};
 
-              createBrowserWorkspace(wsName)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              createBrowserWorkspace(wsName);
 
               return true;
             }
@@ -371,11 +381,7 @@ const extension = Extension.create({
 
               console.debug('Creating private fs workspace', wsName);
 
-              createPrivateFsWorkspace(wsName)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              createPrivateFsWorkspace(wsName);
 
               return true;
             }
@@ -383,11 +389,7 @@ const extension = Extension.create({
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
               // TODO fix payload as any
               const { rootDirHandle } = (payload as any) || {};
-              createNativeFsWorkspace(rootDirHandle)(
-                bangleStore.state,
-                bangleStore.dispatch,
-                bangleStore,
-              );
+              createNativeFsWorkspace(rootDirHandle);
 
               return true;
             }
@@ -399,30 +401,29 @@ const extension = Extension.create({
             }
 
             case 'operation::@bangle.io/core-extension:toggle-editing-mode': {
-              toggleEditing()(bangleStore.state, bangleStore.dispatch);
-              let isEditing = isEditingAllowed()(bangleStore.state);
-              showNotification({
-                severity: isEditing ? SEVERITY.INFO : SEVERITY.WARNING,
-                uid: 'editing-mode' + isEditing + Date.now(),
-                title: 'Editing mode is now ' + (isEditing ? 'on' : 'off'),
-              })(bangleStore.state, bangleStore.dispatch);
+              nsmApi2.editor.toggleEditing();
+              let { editingAllowed } = nsmApi2.editor.editorState();
+
+              nsmApi2.ui.showNotification({
+                severity: editingAllowed ? SEVERITY.INFO : SEVERITY.WARNING,
+                uid: 'editing-mode' + editingAllowed + Date.now(),
+                title: 'Editing mode is now ' + (editingAllowed ? 'on' : 'off'),
+              });
 
               return true;
             }
 
             case 'operation::@bangle.io/core-extension:reload-application': {
-              ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              nsmApi2.ui.showDialog({
+                dialogName: RELOAD_APPLICATION_DIALOG_NAME,
+              });
 
               return true;
             }
             case 'operation::@bangle.io/core-extension:show-changelog': {
-              ui.showDialog(CHANGELOG_MODAL_NAME)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              nsmApi2.ui.showDialog({
+                dialogName: CHANGELOG_MODAL_NAME,
+              });
 
               return true;
             }
@@ -437,120 +438,94 @@ const extension = Extension.create({
   },
 });
 
-export * from './operations';
 export default extension;
 
-function createNativeFsWorkspace(rootDirHandle: any) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof rootDirHandle?.name === 'string') {
-      try {
-        await workspace.createWorkspace(
-          rootDirHandle.name,
-          WorkspaceType.NativeFS,
-          {
-            rootDirHandle,
-          },
-        )(state, dispatch, store);
+export * from './operations';
 
-        (window as any).fathom?.trackGoal('K3NFTGWX', 0);
-      } catch (error: any) {
-        showNotification({
-          severity: SEVERITY.ERROR,
-          uid: 'error-create-workspace-' + rootDirHandle?.name,
-          title: 'Unable to create workspace ' + rootDirHandle?.name,
-          content: error.displayMessage || error.message,
-        })(
-          notificationSliceKey.getState(store.state),
-          notificationSliceKey.getDispatch(store.dispatch),
-        );
+async function createNativeFsWorkspace(rootDirHandle: any) {
+  const wsName = rootDirHandle?.name;
 
-        throw error;
-      }
-    } else {
-      throw new Error(
-        'Incorrect parameters for ' +
-          CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
-      );
-    }
-
-    return true;
-  };
-}
-
-function createBrowserWorkspace(wsName: string) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof wsName !== 'string') {
-      throw new Error(
-        'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
-      );
-    }
-
+  if (typeof wsName === 'string') {
     try {
-      await workspace.createWorkspace(wsName, WorkspaceType.Browser, {})(
-        state,
-        dispatch,
-        store,
+      await internalApi.workspace.createWorkspace(
+        createWsName(wsName),
+        WorkspaceType.NativeFS,
+        {
+          rootDirHandle,
+        },
       );
-      (window as any).fathom?.trackGoal('AISLCLRF', 0);
+      (window as any).fathom?.trackGoal('K3NFTGWX', 0);
     } catch (error: any) {
-      showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
-        uid: 'error-create-workspace-' + wsName,
-        title: 'Unable to create workspace ' + wsName,
+        uid: 'error-create-workspace-' + rootDirHandle?.name,
+        title: 'Unable to create workspace ' + rootDirHandle?.name,
         content: error.displayMessage || error.message,
-      })(
-        notificationSliceKey.getState(state),
-        notificationSliceKey.getDispatch(dispatch),
-      );
+      });
+
       throw error;
     }
+  } else {
+    throw new Error(
+      'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+    );
+  }
 
-    return true;
-  };
+  return true;
 }
 
-function createPrivateFsWorkspace(wsName: string) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof wsName !== 'string') {
-      throw new Error(
-        'Incorrect parameters for ' +
-          CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
-      );
-    }
+async function createBrowserWorkspace(wsName: WsName) {
+  if (typeof wsName !== 'string') {
+    throw new Error(
+      'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+    );
+  }
 
-    try {
-      await workspace.createWorkspace(wsName, WorkspaceType.PrivateFS, {})(
-        state,
-        dispatch,
-        store,
-      );
-      (window as any).fathom?.trackGoal('KWXITXAK', 0);
-    } catch (error: any) {
-      notificationSliceKey.callOp(
-        state,
-        dispatch,
-        showNotification({
-          severity: SEVERITY.ERROR,
-          uid: 'error-create-workspace-' + wsName,
-          title: 'Unable to create workspace ' + wsName,
-          content: error.displayMessage || error.message,
-        }),
-      );
-      throw error;
-    }
+  try {
+    await internalApi.workspace.createWorkspace(
+      wsName,
+      WorkspaceType.Browser,
+      {},
+    );
 
-    return true;
-  };
+    (window as any).fathom?.trackGoal('AISLCLRF', 0);
+  } catch (error: any) {
+    nsmApi2.ui.showNotification({
+      severity: SEVERITY.ERROR,
+      uid: 'error-create-workspace-' + wsName,
+      title: 'Unable to create workspace ' + wsName,
+      content: error.displayMessage || error.message,
+    });
+    throw error;
+  }
+
+  return true;
+}
+
+async function createPrivateFsWorkspace(wsName: WsName) {
+  if (typeof wsName !== 'string') {
+    throw new Error(
+      'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_PRIVATE_FS_WORKSPACE,
+    );
+  }
+
+  try {
+    await internalApi.workspace.createWorkspace(
+      wsName,
+      WorkspaceType.PrivateFS,
+      {},
+    );
+
+    (window as any).fathom?.trackGoal('KWXITXAK', 0);
+  } catch (error: any) {
+    nsmApi2.ui.showNotification({
+      severity: SEVERITY.ERROR,
+      uid: 'error-create-workspace-' + wsName,
+      title: 'Unable to create workspace ' + wsName,
+      content: error.displayMessage || error.message,
+    });
+    throw error;
+  }
+
+  return true;
 }

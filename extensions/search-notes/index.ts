@@ -1,11 +1,9 @@
 import React from 'react';
 
-import { ui } from '@bangle.io/api';
+import { Extension, getExtensionStore, nsmApi2 } from '@bangle.io/api';
 import { EXECUTE_SEARCH_OPERATION } from '@bangle.io/constants';
-import { Extension } from '@bangle.io/extension-registry';
-import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { SearchIcon } from '@bangle.io/ui-components';
-import { keyDisplayValue, sleep } from '@bangle.io/utils';
+import { keyDisplayValue } from '@bangle.io/utils';
 
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
 import {
@@ -13,10 +11,10 @@ import {
   SEARCH_SIDEBAR_NAME,
   SHOW_SEARCH_SIDEBAR_OPERATION,
 } from './constants';
-import { searchPlugin } from './editor-plugins';
 import {
-  externalUpdateInputSearchQuery,
-  searchNotesSlice,
+  searchEffects,
+  searchSlice,
+  updateExternalSearchQuery,
 } from './search-notes-slice';
 
 const key = 'Mod-F';
@@ -25,7 +23,8 @@ const extension = Extension.create({
   name: extensionName,
 
   application: {
-    slices: [searchNotesSlice()],
+    nsmSlices: [searchSlice],
+    nsmEffects: searchEffects,
     operations: [
       {
         name: SHOW_SEARCH_SIDEBAR_OPERATION,
@@ -39,39 +38,40 @@ const extension = Extension.create({
       },
     ],
     operationHandler() {
-      function showSidebar(bangleStore: BangleApplicationStore) {
-        if (
-          ui.uiSliceKey.getSliceStateAsserted(bangleStore.state).sidebar ===
-          SEARCH_SIDEBAR_NAME
-        ) {
+      function showSidebar() {
+        const sidebar = nsmApi2.ui.uiState().sidebar;
+
+        if (sidebar === SEARCH_SIDEBAR_NAME) {
           const inputEl = document.querySelector<HTMLInputElement>(
             'input[aria-label="Search"]',
           );
           inputEl?.focus();
           inputEl?.select();
         } else {
-          ui.setSidebar(SEARCH_SIDEBAR_NAME)(
-            bangleStore.state,
-            bangleStore.dispatch,
-          );
+          nsmApi2.ui.changeSidebar(SEARCH_SIDEBAR_NAME);
         }
       }
 
       return {
-        handle(operation, payload, bangleStore) {
+        handle(operation, payload) {
+          const nsmStore = getExtensionStore(searchSlice);
+
           switch (operation.name) {
             case SHOW_SEARCH_SIDEBAR_OPERATION: {
-              showSidebar(bangleStore);
+              showSidebar();
 
               return true;
             }
             case EXECUTE_SEARCH_OPERATION: {
-              showSidebar(bangleStore);
+              showSidebar();
 
-              externalUpdateInputSearchQuery(payload)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              if (typeof payload !== 'string') {
+                throw new Error(
+                  `Invalid payload for ${EXECUTE_SEARCH_OPERATION} operation`,
+                );
+              }
+
+              nsmStore.dispatch(updateExternalSearchQuery(payload));
 
               return true;
             }
@@ -92,9 +92,7 @@ const extension = Extension.create({
       },
     ],
   },
-  editor: {
-    plugins: [searchPlugin],
-  },
+  editor: {},
 });
 
 export default extension;

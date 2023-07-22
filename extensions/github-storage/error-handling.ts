@@ -1,11 +1,10 @@
-import { notification } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   SEVERITY,
 } from '@bangle.io/constants';
 import type { ErrorCodeType as RemoteFileSyncErrorCodeType } from '@bangle.io/remote-file-sync';
 import { ErrorCode as RemoteSyncErrorCode } from '@bangle.io/remote-file-sync';
-import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { isIndexedDbException } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
 
@@ -19,7 +18,7 @@ import {
   INVALID_GITHUB_TOKEN,
 } from './errors';
 
-export function handleError(error: Error, store: BangleApplicationStore) {
+export function handleError(error: Error) {
   if (!(error instanceof BaseError)) {
     return false;
   }
@@ -28,12 +27,14 @@ export function handleError(error: Error, store: BangleApplicationStore) {
 
   if (isIndexedDbException(error)) {
     console.debug(error.code, error.name);
-    notification.showNotification({
+
+    nsmApi2.ui.showNotification({
       severity: SEVERITY.ERROR,
       title: 'Error writing to browser storage',
       content: error.message,
       uid: errorCode + Math.random(),
-    })(store.state, store.dispatch);
+      buttons: [],
+    });
 
     return true;
   }
@@ -41,7 +42,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
   switch (errorCode) {
     case GITHUB_API_ERROR: {
       if (error.message.includes('Bad credentials')) {
-        notification.showNotification({
+        nsmApi2.ui.showNotification({
           severity: SEVERITY.ERROR,
           title: 'Bad Github credentials',
           content:
@@ -55,29 +56,31 @@ export function handleError(error: Error, store: BangleApplicationStore) {
               dismissOnClick: true,
             },
           ],
-        })(store.state, store.dispatch);
+        });
 
         break;
       }
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Github API error',
         content: error.message,
         uid: `github-storage-error-${errorCode}`,
-      })(store.state, store.dispatch);
+        buttons: [],
+      });
       break;
     }
     case INVALID_GITHUB_FILE_FORMAT: {
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Invalid file format',
         content: error.message,
         uid: `github-file-format`,
-      })(store.state, store.dispatch);
+        buttons: [],
+      });
       break;
     }
     case INVALID_GITHUB_TOKEN: {
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Github token is invalid',
         content:
@@ -91,38 +94,41 @@ export function handleError(error: Error, store: BangleApplicationStore) {
             dismissOnClick: true,
           },
         ],
-      })(store.state, store.dispatch);
+      });
 
       break;
     }
 
     case INVALID_GITHUB_RESPONSE: {
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Received invalid response from Github',
         content: error.message,
         uid: INVALID_GITHUB_RESPONSE,
-      })(store.state, store.dispatch);
+        buttons: [],
+      });
       break;
     }
 
     case GITHUB_STORAGE_NOT_ALLOWED: {
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Not allowed',
         content: error.message,
         uid: GITHUB_STORAGE_NOT_ALLOWED + error.message,
-      })(store.state, store.dispatch);
+        buttons: [],
+      });
       break;
     }
 
     case RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR: {
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Not allowed',
         content: error.message,
         uid: RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR + error.message,
-      })(store.state, store.dispatch);
+        buttons: [],
+      });
       break;
     }
 
@@ -132,7 +138,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
 
       console.error(error);
 
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: 'Bangle.io encountered a problem.',
         uid: `uncaughtExceptionNotification-` + error.name,
@@ -144,7 +150,7 @@ export function handleError(error: Error, store: BangleApplicationStore) {
           },
         ],
         content: error.message,
-      })(store.state, store.dispatch);
+      });
 
       return false;
     }

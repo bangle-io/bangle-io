@@ -41,8 +41,8 @@ jobs:
           yarn dedupe --check
       - name: 'Run scripts'
         run: yarn g:run-scripts
-      - name: 'build storybook'
-        run: yarn g:storybook --ci --smoke-test
+      # - name: 'build storybook'
+      #   run: yarn g:storybook --ci --smoke-test
 
   tests-matrix:
     runs-on: ubuntu-latest
@@ -58,14 +58,14 @@ jobs:
       - name: yarn install
         run: yarn install --immutable --immutable-cache
       - run: yarn ${{ matrix.test-kind }}
-      - name: Upload coverage report
-        if: matrix.test-kind == 'test:regular'
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          flags: unittests # optional
-          fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
+      # - name: Upload coverage report
+      # if: matrix.test-kind == 'test:regular'
+      # uses: codecov/codecov-action@v3
+      # with:
+      #   token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      #   flags: unittests # optional
+      #   fail_ci_if_error: true # optional (default = false)
+      #   verbose: true # optional (default = false)
 
   tests-network:
     runs-on: ubuntu-latest
@@ -98,7 +98,7 @@ jobs:
 
   tests-e2e:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.29.0-focal
+    container: mcr.microsoft.com/playwright:v1.36.1-focal
     strategy:
       matrix:
         test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']

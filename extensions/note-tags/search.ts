@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Node } from '@bangle.dev/pm';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
-import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
+import type { WsPath } from '@bangle.io/shared-types';
 import { isAbortError } from '@bangle.io/utils';
 
 const FZF_SEARCH_LIMIT = 16;
@@ -23,8 +24,8 @@ export function _listTags(doc: Node) {
  * List tags across all wsPaths
  */
 export async function listAllTags(
-  wsPaths: string[],
-  getDoc: (wsPath: string) => Promise<Node | undefined>,
+  wsPaths: readonly WsPath[],
+  getDoc: (wsPath: WsPath) => Promise<Node | undefined>,
   signal?: AbortSignal,
 ): Promise<string[]> {
   let destroyed = false;
@@ -51,7 +52,9 @@ export async function listAllTags(
     }
     if (doc) {
       const tagSet = _listTags(doc);
-      tagSet.forEach((t) => result.add(t));
+      tagSet.forEach((t) => {
+        result.add(t);
+      });
     }
   }
 
@@ -59,29 +62,23 @@ export async function listAllTags(
 }
 
 export function useSearchAllTags(query: string, isVisible: boolean): string[] {
-  const { noteWsPaths = [], bangleStore } = useWorkspaceContext();
+  const { noteWsPaths = [] } = nsmApi2.workspace.useWorkspace();
   const [allTags, setAllTags] = useState<string[]>([]);
-
-  const getNoteForTags = useCallback(
-    (wsPath: string) => {
-      return getNote(wsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      ).catch((error) => {
-        // Ignore errors as this is not a great place to handle errors
-        return undefined;
-      });
-    },
-    [bangleStore],
-  );
 
   useEffect(() => {
     const controller = new AbortController();
 
     if (isVisible) {
+      const getNoteForTags = (wsPath: WsPath) =>
+        nsmApi2.workspace.getNote(wsPath).catch((error) => {
+          // Ignore errors as this is not a great place to handle errors
+          return undefined;
+        });
+
       listAllTags(noteWsPaths, getNoteForTags, controller.signal)
         .then((tags) => {
+          console.log('allTags', tags);
+
           setAllTags(tags);
         })
         .catch((error) => {
@@ -95,7 +92,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
     return () => {
       controller.abort();
     };
-  }, [noteWsPaths, getNoteForTags, isVisible]);
+  }, [noteWsPaths, isVisible]);
 
   const fzfItems = useFzfSearch(allTags, query, {
     limit: FZF_SEARCH_LIMIT,
@@ -105,6 +102,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
 
   return useMemo(() => {
     let r = fzfItems.map((r) => r.item);
+    console.log('search items', r);
 
     return r;
   }, [fzfItems]);

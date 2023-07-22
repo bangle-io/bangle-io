@@ -3,6 +3,8 @@ import './style';
 import type { Story } from '@storybook/react';
 import React from 'react';
 
+import { createWsPath } from '@bangle.io/ws-path';
+
 import { Editorbar } from './Editorbar';
 
 export default {
@@ -22,7 +24,7 @@ const Template: Story<Parameters<typeof Editorbar>[0]> = (args) => {
 export const Vanilla = Template.bind({});
 
 Vanilla.args = {
-  wsPath: 'test-ws:one.md',
+  wsPath: createWsPath('test-ws:one.md'),
   isActive: true,
   showSplitEditor: false,
   onClose: () => {},
@@ -35,7 +37,7 @@ Vanilla.args = {
 export const Branching = Template.bind({});
 
 Branching.args = {
-  wsPath: 'test-ws:one/own.md',
+  wsPath: createWsPath('test-ws:one/own.md'),
   isActive: true,
   showSplitEditor: false,
   onClose: () => {},
@@ -48,7 +50,7 @@ Branching.args = {
 export const ShowingSplitEditor = Template.bind({});
 
 ShowingSplitEditor.args = {
-  wsPath: 'test-ws:one/own.md',
+  wsPath: createWsPath('test-ws:one/own.md'),
   isActive: true,
   showSplitEditor: true,
   onClose: () => {},
@@ -61,7 +63,7 @@ ShowingSplitEditor.args = {
 export const EditingDisabledEditor = Template.bind({});
 
 EditingDisabledEditor.args = {
-  wsPath: 'test-ws:one/own.md',
+  wsPath: createWsPath('test-ws:one/own.md'),
   isActive: true,
   editingDisabled: true,
   onClose: () => {},

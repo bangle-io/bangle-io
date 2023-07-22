@@ -41,8 +41,6 @@ const modalReducer = (
   }
 };
 
-const randomWsName = randomName();
-
 export const NewBrowserWorkspaceDialog: DialogComponentType = ({
   onDismiss: _onDismiss,
   dialogName,
@@ -50,7 +48,7 @@ export const NewBrowserWorkspaceDialog: DialogComponentType = ({
   const [modalState, updateModalState] = useReducer(modalReducer, {
     error: undefined,
     workspace: {
-      name: randomWsName,
+      name: randomName(),
     },
   });
 

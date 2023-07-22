@@ -1,17 +1,19 @@
 import React, { useMemo } from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
-import { togglePaletteType } from '@bangle.io/slice-ui';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
-  Button,
-  CenteredBoxedPage,
-  ChevronDownIcon,
-  Inline,
-  NewNoteIcon,
-} from '@bangle.io/ui-components';
+  useNsmPlainStore,
+  useNsmSlice,
+  useNsmSliceState,
+} from '@bangle.io/bangle-store-context';
+import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
+import {
+  nsmSliceWorkspace,
+  pushOpenedWsPaths,
+} from '@bangle.io/nsm-slice-workspace';
+import type { WsPath } from '@bangle.io/shared-types';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
+import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
@@ -19,7 +21,7 @@ import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 const MAX_ENTRIES = 8;
 
 function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
-  const bangleStore = useBangleStoreContext();
+  const nsmStore = useNsmPlainStore();
 
   const formattedPaths = useMemo(() => {
     return wsPaths.map((wsPath) => {
@@ -41,7 +43,11 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
               <button
                 role="link"
                 onClick={(e) => {
-                  pushWsPath(r.wsPath)(bangleStore.state, bangleStore.dispatch);
+                  nsmStore.dispatch(
+                    pushOpenedWsPaths((openedWsPath) => {
+                      return openedWsPath.updatePrimaryWsPath(r.wsPath);
+                    }),
+                  );
                 }}
                 className="py-1 hover:underline"
               >
@@ -60,21 +66,18 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
   );
 }
 
-const EMPTY_ARRAY: string[] = [];
+const EMPTY_ARRAY: WsPath[] = [];
 export function EmptyEditorPage() {
   const {
     wsName,
-    recentlyUsedWsPaths = EMPTY_ARRAY,
+    recentWsPaths = EMPTY_ARRAY,
     noteWsPaths,
-  } = useWorkspaceContext();
+  } = useNsmSliceState(nsmSliceWorkspace);
   const { dispatchSerialOperation } = useSerialOperationContext();
-  const bangleStore = useBangleStoreContext();
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
   const paths = Array.from(
     new Set(
-      [...recentlyUsedWsPaths, ...(noteWsPaths || EMPTY_ARRAY)].slice(
-        0,
-        MAX_ENTRIES,
-      ),
+      [...recentWsPaths, ...(noteWsPaths || EMPTY_ARRAY)].slice(0, MAX_ENTRIES),
     ),
   );
 
@@ -89,10 +92,7 @@ export function EmptyEditorPage() {
             tooltipPlacement="right"
             text="Switch workspace"
             onPress={() => {
-              togglePaletteType(CorePalette.Workspace)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              uiDispatch(nsmUI.togglePalette(CorePalette.Workspace));
             }}
           />
           <Button

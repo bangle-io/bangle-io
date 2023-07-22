@@ -21,7 +21,7 @@ export function wsPathFromQuery(query: string, wsName: string) {
   return wsPath;
 }
 
-export function getBacklinkPath(wsPath: string, allWsPaths: string[]) {
+export function getBacklinkPath(wsPath: string, allWsPaths: readonly string[]) {
   const { fileName, filePath } = resolvePath(wsPath);
   const matchingFilenames = allWsPaths.filter(
     (w) => resolvePath(w).fileName === fileName,

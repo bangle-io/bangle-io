@@ -1,0 +1,18 @@
+{
+  "name": "@bangle.io/worker-common",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "worker/worker-common"
+  },
+  "dependencies": {
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*",
+    "tslib": "2.4.1",
+    "typescript": "4.9.3"
+  },
+  "license": "AGPL-3.0-or-later"
+}

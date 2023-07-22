@@ -14,7 +14,7 @@ export interface DialogType {
   ReactComponent: DialogComponentType;
 }
 
-export type SerialOperationNameType = `operation::${string}`;
+export type SerialOperationNameType = string;
 export interface SerialOperationType {
   name: SerialOperationNameType;
   value?: any;
@@ -26,6 +26,8 @@ export interface SerialOperationDefinitionType {
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;
+  // when true, will prevent editor focus when executed
+  preventEditorFocusOnExecute?: boolean;
 }
 export type DispatchSerialOperationType = (
   sOperation: SerialOperationType,
@@ -77,7 +79,4 @@ export interface NoteFormatProvider {
   ) => Node | undefined;
 }
 
-export type OnStorageProviderError = (
-  error: Error,
-  store: ApplicationStore,
-) => boolean;
+export type OnStorageProviderError = (error: Error) => boolean;

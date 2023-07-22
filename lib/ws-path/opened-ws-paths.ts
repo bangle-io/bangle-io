@@ -5,10 +5,16 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import type { MaybeWsPath } from './helpers';
-import { resolvePath } from './helpers';
+import {
+  createWsName,
+  createWsPath,
+  resolvePath,
+  validateWsPath,
+} from './helpers';
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -47,10 +53,21 @@ export class OpenedWsPaths {
         `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
       );
     }
+    for (const wsPath of _wsPaths) {
+      if (typeof wsPath === 'string') {
+        validateWsPath(wsPath);
+      }
+    }
   }
 
   get miniEditorWsPath() {
     return this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
+  }
+
+  get miniEditorWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[MINI_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result, false) : undefined;
   }
 
   get openCount() {
@@ -68,12 +85,30 @@ export class OpenedWsPaths {
     return this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
   }
 
+  get popupEditorWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[POPUP_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result, false) : undefined;
+  }
+
   get primaryWsPath() {
     return this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
   }
 
+  get primaryWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result, false) : undefined;
+  }
+
   get secondaryWsPath() {
     return this._wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
+  }
+
+  get secondaryWsPath2(): WsPath | undefined {
+    let result = this._wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
+
+    return result ? createWsPath(result, false) : undefined;
   }
 
   // if no wsName is provided, will match against the internal wsName
@@ -116,7 +151,23 @@ export class OpenedWsPaths {
     return false;
   }
 
-  // runs through wsPath of each opened editor.
+  // find all indices of the wsPath
+  find(wsPath: WsPath): number[] | undefined {
+    let foundIndex: number[] = [];
+
+    this.forEachWsPath((path, index) => {
+      if (path && path === wsPath) {
+        foundIndex.push(index);
+      }
+    });
+
+    if (foundIndex.length === 0) {
+      return undefined;
+    }
+
+    return foundIndex;
+  }
+
   // Note: There might be multiple editor with the same wsPath
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
     this._wsPaths.forEach((p, i) => {
@@ -132,6 +183,22 @@ export class OpenedWsPaths {
     }
 
     return this._wsPaths[index];
+  }
+
+  getByIndex2(index: number): WsPath | undefined {
+    let res = this.getByIndex(index);
+
+    return res != null ? createWsPath(res) : undefined;
+  }
+
+  getOneWsName(): WsName | undefined {
+    const result = this.getWsNames()[0];
+
+    if (result == null) {
+      return result;
+    }
+
+    return createWsName(result);
   }
 
   // Returns the unique wsName (workspace name) of all the paths.
@@ -151,6 +218,10 @@ export class OpenedWsPaths {
     return Array.from(
       new Set(this.toArray().filter((r): r is string => typeof r === 'string')),
     );
+  }
+
+  getWsPaths2(): WsPath[] {
+    return this.getWsPaths().map((r) => createWsPath(r, false));
   }
 
   /**

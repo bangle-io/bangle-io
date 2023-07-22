@@ -34,10 +34,10 @@ export const testWithConfig = withBangle.extend<
           let config = new BangleConfig({
             debug: bangleDebugConfig,
           });
-          body = body.replace(
-            'globalThis.__BANGLE_INJECTED_CONFIG__',
-            JSON.stringify(config.serialize()),
-          );
+
+          const stringMatch = 'globalThis.__BANGLE_INJECTED_CONFIG__';
+
+          body = body.replace(stringMatch, JSON.stringify(config.serialize()));
         }
 
         route.fulfill({

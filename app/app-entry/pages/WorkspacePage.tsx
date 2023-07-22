@@ -1,46 +1,68 @@
 import React, { useEffect } from 'react';
 
-import { notification, workspace } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  useNsmPlainStore,
+  useNsmSliceDispatch,
+  useNsmSliceState,
+  useNsmStore,
+} from '@bangle.io/bangle-store-context';
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
   SEVERITY,
 } from '@bangle.io/constants';
 import { EditorContainer, MiniEditor } from '@bangle.io/editor-container';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import {
+  nsmSliceWorkspace,
+  pushOpenedWsPaths,
+} from '@bangle.io/nsm-slice-workspace';
+import { nsmNotification } from '@bangle.io/slice-notification';
+import { nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmUISlice } from '@bangle.io/slice-ui';
 import { MultiColumnMainContent } from '@bangle.io/ui-dhancha';
+import { createWsPath } from '@bangle.io/ws-path';
 
+import { getEternalVars } from '../eternal-vars';
 import { EmptyEditorPage } from './EmptyEditorPage';
 
 export function WorkspacePage() {
-  const bangleStore = useBangleStoreContext();
-  const { openedWsPaths } = useWorkspaceContext();
-  const { widescreen } = useUIManagerContext();
+  const { widescreen } = useNsmSliceState(nsmUISlice);
 
-  const { primaryWsPath, secondaryWsPath, miniEditorWsPath } = openedWsPaths;
+  const notificationDispatch = useNsmSliceDispatch(
+    nsmNotification.nsmNotificationSlice,
+  );
+  const { miniWsPath, openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
+  const eternalVars = getEternalVars(useNsmPlainStore());
+
+  const store = useNsmStore([nsmSliceWorkspace, nsmPageSlice]);
+  const { primaryWsPath, secondaryWsPath } = openedWsPaths;
 
   let mini = null;
 
-  if (miniEditorWsPath) {
+  if (miniWsPath) {
     if (widescreen) {
-      mini = <MiniEditor wsPath={miniEditorWsPath} />;
+      mini = <MiniEditor wsPath={miniWsPath} eternalVars={eternalVars} />;
     }
   }
 
   useEffect(() => {
-    if (miniEditorWsPath && !widescreen) {
-      notification.showNotification({
-        title: 'Mini Editor is not available in small screens',
-        uid: 'mini-editor-not-available',
-        severity: SEVERITY.WARNING,
-        transient: true,
-      })(bangleStore.state, bangleStore.dispatch);
+    if (miniWsPath && !widescreen) {
+      notificationDispatch(
+        nsmNotification.showNotification({
+          title: 'Mini Editor is not available in small screens',
+          uid: 'mini-editor-not-available',
+          severity: SEVERITY.WARNING,
+          transient: true,
+        }),
+      );
 
-      workspace.closeMiniEditor()(bangleStore.state, bangleStore.dispatch);
+      store.dispatch(
+        pushOpenedWsPaths((openedWsPaths) =>
+          openedWsPaths.updateMiniEditorWsPath(undefined),
+        ),
+      );
     }
-  }, [miniEditorWsPath, bangleStore, widescreen]);
+  }, [store, miniWsPath, notificationDispatch, widescreen]);
 
   return (
     <>
@@ -50,7 +72,8 @@ export function WorkspacePage() {
           <EditorContainer
             widescreen={widescreen}
             editorId={PRIMARY_EDITOR_INDEX}
-            wsPath={primaryWsPath}
+            wsPath={createWsPath(primaryWsPath)}
+            eternalVars={eternalVars}
           />
         )}
         {/* avoid split screen for small screens */}
@@ -58,7 +81,8 @@ export function WorkspacePage() {
           <EditorContainer
             widescreen={widescreen}
             editorId={SECONDARY_EDITOR_INDEX}
-            wsPath={secondaryWsPath}
+            wsPath={createWsPath(secondaryWsPath)}
+            eternalVars={eternalVars}
           />
         )}
       </MultiColumnMainContent>

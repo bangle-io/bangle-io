@@ -1,2 +1,2 @@
-export * from './init-extension-registry';
 export * from './polyfill';
+export * from './setup-eternal-vars';

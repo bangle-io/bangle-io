@@ -4,7 +4,7 @@ import lifecycle from 'page-lifecycle';
 
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { PageLifeCycleState } from '@bangle.io/slice-page';
-import { pageSliceKey, setPageLifeCycleState } from '@bangle.io/slice-page';
+import { oldSetPageLifeCycleState, pageSliceKey } from '@bangle.io/slice-page';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 const pendingSymbol = Symbol('pending');
@@ -26,7 +26,7 @@ export function pageLifeCycleSlice() {
         return {
           deferredOnce(store, abortSignal) {
             const handler = (event: PageLifeCycleEvent) => {
-              setPageLifeCycleState(event.newState, event.oldState)(
+              oldSetPageLifeCycleState(event.newState, event.oldState)(
                 store.state,
                 store.dispatch,
               );

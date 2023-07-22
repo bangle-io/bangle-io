@@ -4,6 +4,7 @@ import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type { Slice } from '@bangle.io/create-store';
+import type { EffectCreator, Slice as NsmSlice } from '@bangle.io/nsm-3';
 import type {
   EditorWatchPluginState,
   SerialOperationDefinitionType,
@@ -11,6 +12,7 @@ import type {
   SerialOperationKeybindingMapping,
   SerialOperationNameType,
 } from '@bangle.io/shared-types';
+import type { BaseStorageProvider } from '@bangle.io/storage';
 
 import type {
   ApplicationConfig,
@@ -99,6 +101,9 @@ export class ExtensionRegistry {
     undefined
   >;
 
+  private _nsmEffects: EffectCreator[];
+  private _nsmSlices: Array<NsmSlice<any, any, any>>;
+
   private _onStorageErrorHandlers: {
     [storageProviderName: string]: Exclude<
       ApplicationConfig['onStorageError'],
@@ -183,6 +188,9 @@ export class ExtensionRegistry {
     assertUniqueName(this._noteSidebarWidgets, 'noteSidebarWidgets');
 
     this._slices = filterFlatMap(applicationConfig, 'slices');
+    this._nsmSlices = filterFlatMap(applicationConfig, 'nsmSlices');
+    this._nsmEffects = filterFlatMap(applicationConfig, 'nsmEffects');
+
     this._operationHandlers = _extensions
       .map((e) => e.application?.operationHandler)
       .filter(
@@ -220,6 +228,10 @@ export class ExtensionRegistry {
     );
   }
 
+  getAllStorageProviders(): BaseStorageProvider[] {
+    return Object.values(this._storageProviders);
+  }
+
   getDialog(name: string) {
     return this._dialogs.find((d) => d.name === name);
   }
@@ -234,6 +246,14 @@ export class ExtensionRegistry {
 
   getNoteSidebarWidgets() {
     return this._noteSidebarWidgets;
+  }
+
+  getNsmEffects() {
+    return this._nsmEffects;
+  }
+
+  getNsmSlices() {
+    return this._nsmSlices;
   }
 
   getOnStorageErrorHandlers(name: string) {

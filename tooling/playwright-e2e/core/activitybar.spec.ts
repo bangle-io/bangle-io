@@ -8,8 +8,11 @@ import { withBangle as test } from '../fixture-with-bangle';
 import {
   getEditorDebugString,
   getPrimaryEditorDebugString,
+  getPrimaryEditorHandler,
   isDarwin,
+  runOperation,
   SELECTOR_TIMEOUT,
+  sleep,
 } from '../helpers';
 
 test.beforeEach(async ({ bangleApp }, testInfo) => {
@@ -121,6 +124,25 @@ test.describe('mobile', () => {
       await edit.click();
       await done.waitFor();
 
+      await expect(done).toContainText(/done/i);
+      expect(
+        await page.evaluate(
+          async ([editorId]) => {
+            return _nsmE2e?.getEditorDetailsById(editorId)?.editor.view
+              .editable;
+          },
+          [PRIMARY_EDITOR_INDEX] as const,
+        ),
+      ).toBe(true);
+
+      await sleep(100);
+
+      await getPrimaryEditorHandler(page, {
+        focus: true,
+      });
+
+      await sleep(50);
+
       // clicking edit should focus editor
       await page.keyboard.type('manthanoy', { delay: 30 });
 
@@ -135,9 +157,32 @@ test.describe('mobile', () => {
       await page.keyboard.type('sugar', { delay: 30 });
 
       let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
-      expect(primaryText.includes('sugar')).toBe(false);
+      expect(primaryText?.includes('sugar')).toBe(false);
     });
   });
+});
+
+test('edit button works in desktop', async ({ page }) => {
+  await runOperation(
+    page,
+    'operation::@bangle.io/core-extension:toggle-editing-mode',
+  );
+
+  const done = await page.getByLabel('enable editing');
+
+  await done.waitFor();
+
+  await expect(done).toContainText(/enable editing/i);
+  await done.click();
+
+  await getPrimaryEditorHandler(page, {
+    focus: true,
+  });
+
+  await page.keyboard.type('sugar', { delay: 30 });
+
+  let primaryText = await getEditorDebugString(page, PRIMARY_EDITOR_INDEX);
+  expect(primaryText?.includes('sugar')).toBe(true);
 });
 
 test('clicking on new workspace', async ({ page }) => {

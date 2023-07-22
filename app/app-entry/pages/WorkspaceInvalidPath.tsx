@@ -1,17 +1,17 @@
 import React from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { useNsmSliceDispatch } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_NEW_WORKSPACE,
   CorePalette,
 } from '@bangle.io/constants';
-import { togglePaletteType } from '@bangle.io/slice-ui';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 
 export function WorkspaceInvalidPath() {
-  const bangleStore = useBangleStoreContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
+  const uiDispatch = useNsmSliceDispatch(nsmUISlice);
 
   return (
     <CenteredBoxedPage
@@ -26,10 +26,7 @@ export function WorkspaceInvalidPath() {
             ariaLabel="open another workspace"
             text="Switch workspace"
             onPress={() => {
-              togglePaletteType(CorePalette.Workspace)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              uiDispatch(nsmUI.togglePalette(CorePalette.Workspace));
             }}
           />
 

@@ -1,21 +1,15 @@
 import React, { useCallback, useState } from 'react';
 
-import { editor } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { nsmApi2 } from '@bangle.io/api';
 import {
   NEW_NOTE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
+  SEVERITY,
 } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  createNote,
-  renameNote,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
-import { randomName, useDestroyRef } from '@bangle.io/utils';
+import { BaseError, randomName, useDestroyRef } from '@bangle.io/utils';
 import {
+  createWsPath,
   filePathToWsPath,
   isValidNoteWsPath,
   PathValidationError,
@@ -23,30 +17,20 @@ import {
 } from '@bangle.io/ws-path';
 
 export function NewNoteInputModal() {
-  const { dispatch, dialogName, dialogMetadata } = useUIManagerContext();
-  const { primaryEditor } = useEditorManagerContext();
+  const { dialogName, dialogMetadata } = nsmApi2.ui.uiState();
 
-  const onDismiss = useCallback(
-    (focusEditor = true) => {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
-        value: {
-          dialogName: [NEW_NOTE_DIALOG_NAME],
-        },
-      });
+  const onDismiss = useCallback((focusEditor = true) => {
+    nsmApi2.ui.dismissDialog(NEW_NOTE_DIALOG_NAME);
 
-      if (focusEditor) {
-        primaryEditor?.focusView();
-      }
-    },
-    [primaryEditor, dispatch],
-  );
+    if (focusEditor) {
+      nsmApi2.editor.getPrimaryEditor()?.focusView();
+    }
+  }, []);
 
   const destroyedRef = useDestroyRef();
-  const bangleStore = useBangleStoreContext();
-  const { wsName } = useWorkspaceContext();
+  const { wsName } = nsmApi2.workspace.useWorkspace();
   const [error, updateError] = useState<Error | undefined>();
-  const { widescreen } = useUIManagerContext();
+  const { widescreen } = nsmApi2.ui.useUi();
 
   const onExecute = useCallback(
     async (inputValue) => {
@@ -70,11 +54,10 @@ export function NewNoteInputModal() {
         newWsPath += '.md';
       }
       try {
-        await createNote(newWsPath)(
-          bangleStore.state,
-          bangleStore.dispatch,
-          bangleStore,
-        );
+        await nsmApi2.workspace.createNote(createWsPath(newWsPath), {
+          open: true,
+        });
+
         onDismiss();
       } catch (error) {
         if (!(error instanceof Error)) {
@@ -90,7 +73,7 @@ export function NewNoteInputModal() {
         }
       }
     },
-    [onDismiss, bangleStore, destroyedRef, wsName],
+    [onDismiss, destroyedRef, wsName],
   );
 
   if (dialogName !== NEW_NOTE_DIALOG_NAME) {
@@ -118,31 +101,19 @@ export function NewNoteInputModal() {
 }
 
 export function RenameNoteInputModal() {
-  const { dispatch } = useUIManagerContext();
-  const { primaryEditor } = useEditorManagerContext();
+  const onDismiss = useCallback((focusEditor = true) => {
+    nsmApi2.ui.dismissDialog(RENAME_NOTE_DIALOG_NAME);
 
-  const onDismiss = useCallback(
-    (focusEditor = true) => {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
-        value: {
-          dialogName: [RENAME_NOTE_DIALOG_NAME],
-        },
-      });
-
-      if (focusEditor) {
-        primaryEditor?.focusView();
-      }
-    },
-    [primaryEditor, dispatch],
-  );
+    if (focusEditor) {
+      nsmApi2.editor.focusEditorIfNotFocused();
+    }
+  }, []);
 
   const destroyedRef = useDestroyRef();
-  const { widescreen } = useUIManagerContext();
+  const { widescreen } = nsmApi2.ui.useUi();
+  const { wsName } = nsmApi2.workspace.useWorkspace();
 
-  const { wsName, bangleStore } = useWorkspaceContext();
-
-  const targetWsPath = editor.getFocusedWsPath()(bangleStore.state);
+  const targetWsPath = nsmApi2.editor.getFocusedWsPath();
 
   const [error, updateError] = useState<Error | undefined>();
   const onExecute = useCallback(
@@ -175,11 +146,9 @@ export function RenameNoteInputModal() {
         newWsPath += '.md';
       }
       try {
-        await renameNote(targetWsPath, newWsPath)(
-          bangleStore.state,
-          bangleStore.dispatch,
-          bangleStore,
-        );
+        const targetWsPathFixed = createWsPath(targetWsPath);
+        const newWsPathFixed = createWsPath(newWsPath);
+        await nsmApi2.workspace.renameNote(targetWsPathFixed, newWsPathFixed);
         onDismiss();
       } catch (error) {
         if (destroyedRef.current) {
@@ -191,11 +160,23 @@ export function RenameNoteInputModal() {
           throw error;
         }
 
-        // pass it to the store to let the storage handler handle it
-        bangleStore.errorHandler(error);
+        if (error instanceof BaseError) {
+          nsmApi2.ui.showNotification({
+            severity: SEVERITY.ERROR,
+            uid: 'error-rename-note-' + targetWsPath,
+            title: 'Unable to rename note',
+            content: error.message,
+          });
+
+          return;
+        }
+
+        // TODO fix this
+        // // pass it to the store to let the storage handler handle it
+        // bangleStore.errorHandler(error);
       }
     },
-    [targetWsPath, onDismiss, bangleStore, destroyedRef, wsName],
+    [targetWsPath, onDismiss, destroyedRef, wsName],
   );
 
   const initialValue = targetWsPath ? resolvePath(targetWsPath).filePath : '';

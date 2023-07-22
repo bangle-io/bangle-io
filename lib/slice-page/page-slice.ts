@@ -1,11 +1,7 @@
 import { Slice } from '@bangle.io/create-store';
 import { assertActionName } from '@bangle.io/utils';
 
-import type {
-  ExtractPageSliceAction,
-  PageSliceAction,
-  PageSliceStateType,
-} from './common';
+import type { PageSliceAction, PageSliceStateType } from './common';
 import { pageSliceKey } from './common';
 
 export const pageSliceInitialState: PageSliceStateType = {

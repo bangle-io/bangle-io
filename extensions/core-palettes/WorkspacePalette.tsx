@@ -6,20 +6,24 @@ import React, {
   useState,
 } from 'react';
 
-import { useSerialOperationContext, workspace } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  internalApi,
+  nsmApi2,
+  useSerialOperationContext,
+} from '@bangle.io/api';
 import {
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CorePalette,
 } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { goToWsNameRoute } from '@bangle.io/slice-workspace';
+import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import {
   AlbumIcon,
   CloseIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
 import { keyDisplayValue } from '@bangle.io/utils';
+import { createWsName } from '@bangle.io/ws-path';
 
 import type { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
@@ -37,16 +41,14 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
     ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
       const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
-      const bangleStore = useBangleStoreContext();
-
       const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
 
       const { dispatchSerialOperation } = useSerialOperationContext();
       useEffect(() => {
-        workspace.readAllWorkspacesInfo().then((wsInfos) => {
+        internalApi.workspace.readAllWorkspacesInfo().then((wsInfos) => {
           updateWorkspaces(wsInfos);
         });
-      }, [bangleStore]);
+      }, []);
 
       const items = useMemo(() => {
         const _items = injectRecency(
@@ -91,21 +93,22 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
 
       const activeItem = getActivePaletteItem(items);
 
-      const onExecuteItem = useCallback(
+      const onExecuteItem = useCallback<PaletteOnExecuteItem>(
         (getUid, sourceInfo) => {
           const uid = getUid(items);
           const item = items.find((item) => item.uid === uid);
 
-          if (item) {
-            goToWsNameRoute(item.data.workspace.name, {
-              newTab: sourceInfo.metaKey,
-              reopenPreviousEditors: false,
-            })(bangleStore.state, bangleStore.dispatch);
+          if (item && uid != null) {
+            const wsName = createWsName(item.data.workspace.name);
+            nsmApi2.workspace.goToWorkspace({
+              wsName,
+              type: sourceInfo.metaKey ? 'newTab' : 'replace',
+            });
 
             updateRecency(uid);
           }
         },
-        [bangleStore, updateRecency, items],
+        [updateRecency, items],
       );
 
       useImperativeHandle(

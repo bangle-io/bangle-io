@@ -1,7 +1,8 @@
 import { matchAllPlus } from '@bangle.dev/utils';
 
+import type { WsPath } from '@bangle.io/shared-types';
 import { getDayJs } from '@bangle.io/utils';
-import { resolvePath, updateFileName } from '@bangle.io/ws-path';
+import { resolvePath2, updateFileName2 } from '@bangle.io/ws-path';
 
 const dayFormat = 'YYYYMMDDHHmmssSSS';
 
@@ -26,9 +27,9 @@ export function calcImageDimensions(blobUrl: string): Promise<Dimension> {
  * example a file named my-pic-343x500.png means width = 343 and height = 500
  */
 export function imageDimensionFromWsPath(
-  imageWsPath: string,
+  imageWsPath: WsPath,
 ): Dimension | undefined {
-  const { fileName } = resolvePath(imageWsPath);
+  const { fileName } = resolvePath2(imageWsPath);
   const dimensionRegex = /.*-(\d+x\d+)\..*/;
   const result = dimensionRegex.exec(fileName);
 
@@ -59,12 +60,12 @@ export function parseFileName(fileName: string) {
 }
 
 export async function setImageMetadataInWsPath(
-  imageWsPath: string,
+  imageWsPath: WsPath,
   dimension: Dimension,
   addTimestamp = false,
 ) {
   const existingDimension = imageDimensionFromWsPath(imageWsPath);
-  let { fileName } = resolvePath(imageWsPath);
+  let { fileName } = resolvePath2(imageWsPath);
 
   if (addTimestamp) {
     const matches = matchAllPlus(/-\d{17}/g, fileName).filter((r) => r.match); // Array.from(fileName.matchAll(/-\d{17}/g));
@@ -97,7 +98,7 @@ export async function setImageMetadataInWsPath(
 
   const newFileName = newName + ext;
 
-  return updateFileName(imageWsPath, newFileName);
+  return updateFileName2(imageWsPath, newFileName);
 }
 
 export function parseTimestamp(timestamp: string) {

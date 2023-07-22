@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { nsmApi2 } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
-import { togglePaletteType } from '@bangle.io/slice-ui';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import type { WorkspaceCreateErrorTypes } from './common';
@@ -23,8 +22,6 @@ export function ShowError({
   errorType: WorkspaceCreateErrorTypes | undefined;
   closeModal: () => void;
 }) {
-  const bangleStore = useBangleStoreContext();
-
   if (!errorType) {
     return null;
   }
@@ -41,10 +38,7 @@ export function ShowError({
             onClick={() => {
               closeModal();
               safeRequestAnimationFrame(() => {
-                togglePaletteType(CorePalette.Workspace)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                nsmApi2.ui.togglePalette(CorePalette.Workspace);
               });
             }}
           >

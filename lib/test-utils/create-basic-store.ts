@@ -10,14 +10,9 @@ import {
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
-import {
-  editorManagerSlice,
-  editorManagerSliceKey,
-} from '@bangle.io/slice-editor-manager';
-import { notificationSlice } from '@bangle.io/slice-notification';
+import {} from '@bangle.io/slice-editor-manager';
 import { pageSlice, pageSliceKey } from '@bangle.io/slice-page';
 import { storageProviderSlice } from '@bangle.io/slice-storage-provider';
-import { uiSlice, uiSliceKey } from '@bangle.io/slice-ui';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import type { BaseStorageProvider } from '@bangle.io/storage';
 import {
@@ -112,9 +107,9 @@ export function createBasicStore<
     storageProviderSlice(),
     pageSlice(),
     workspaceSlice(),
-    useEditorManagerSlice ? editorManagerSlice() : undefined,
-    notificationSlice(),
-    useUISlice ? uiSlice() : undefined,
+    // useEditorManagerSlice ? editorManagerSlice() : undefined,
+    // notificationSlice(),
+    // useUISlice ? uiSlice() : undefined,
     ...extensionRegistry.getSlices(),
     ...slices,
     // keep at last
@@ -149,11 +144,11 @@ export function createBasicStore<
 
 // this object exists to avoid test writers import the keys
 export interface TestInitialSliceStateOverride {
-  uiSlice?: Partial<ReturnType<(typeof uiSliceKey)['getSliceState']>>;
+  // uiSlice?: Partial<ReturnType<(typeof uiSliceKey)['getSliceState']>>;
   pageSlice?: Partial<ReturnType<(typeof pageSliceKey)['getSliceState']>>;
-  editorManagerSlice?: Partial<
-    ReturnType<(typeof editorManagerSliceKey)['getSliceState']>
-  >;
+  // editorManagerSlice?: Partial<
+  //   ReturnType<(typeof editorManagerSliceKey)['getSliceState']>
+  // >;
 }
 
 function overrideSliceStates(
@@ -161,12 +156,12 @@ function overrideSliceStates(
   override?: TestInitialSliceStateOverride,
 ) {
   return slices.map((slice) => {
-    if (override?.uiSlice && slice.key === uiSliceKey.key) {
-      return overrideSliceInit(slice, (s) => ({
-        ...s,
-        ...override.uiSlice,
-      }));
-    }
+    // if (override?.uiSlice && slice.key === uiSliceKey.key) {
+    //   return overrideSliceInit(slice, (s) => ({
+    //     ...s,
+    //     ...override.uiSlice,
+    //   }));
+    // }
 
     if (override?.pageSlice && slice.key === pageSliceKey.key) {
       return overrideSliceInit(slice, (s) => ({
@@ -175,15 +170,15 @@ function overrideSliceStates(
       }));
     }
 
-    if (
-      override?.editorManagerSlice &&
-      slice.key === editorManagerSliceKey.key
-    ) {
-      return overrideSliceInit(slice, (s) => ({
-        ...s,
-        ...override.editorManagerSlice,
-      }));
-    }
+    // if (
+    //   override?.editorManagerSlice &&
+    //   slice.key === editorManagerSliceKey.key
+    // ) {
+    //   return overrideSliceInit(slice, (s) => ({
+    //     ...s,
+    //     ...override.editorManagerSlice,
+    //   }));
+    // }
 
     return slice;
   });

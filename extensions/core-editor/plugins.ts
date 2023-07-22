@@ -31,6 +31,7 @@ import { activeNode } from './active-node';
 import { collabPlugin } from './collab-plugin';
 import { collapsibleHeading } from './collapsible-heading-deco';
 import { editingAllowedPlugin } from './editing-allowed';
+import { searchPlugin } from './search';
 import { watchEditorFocus } from './watch-editor-focus';
 
 export const menuKey = new PluginKey('menuKey');
@@ -121,6 +122,7 @@ export const getPlugins = () => {
     blockKeyPresses(),
     collabPlugin,
     collapsibleHeading(),
+    searchPlugin(),
   ];
 };
 

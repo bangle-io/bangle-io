@@ -2,18 +2,17 @@ import { collabClient } from '@bangle.dev/collab-client';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { uuid } from '@bangle.dev/utils';
 
-import { notification } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
-import { getCollabMessageBus } from '@bangle.io/slice-editor-collab-comms';
-import { getEditorPluginMetadata } from '@bangle.io/utils';
+import { generateUid, getEditorPluginMetadata } from '@bangle.io/utils';
 
 export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
   return [
     collabClient.plugins({
       docName: metadata.wsPath,
       clientID: 'client-' + metadata.editorId + '-' + uuid(4),
-      collabMessageBus: getCollabMessageBus()(metadata.bangleStore.state),
+      collabMessageBus: metadata.collabMessageBus,
       cooldownTime: 550,
       requestTimeout: 1000,
       warmupTime: 20,
@@ -35,23 +34,22 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
             const error = collabClient.commands.queryFatalError()(view.state);
 
             if (error) {
-              const { bangleStore, wsPath } = getEditorPluginMetadata(
-                view.state,
-              );
+              const { wsPath } = getEditorPluginMetadata(view.state);
               console.warn(error);
 
-              if (!notification.getEditorIssue(wsPath)(bangleStore.state)) {
+              if (!nsmApi2.ui.getEditorIssue(wsPath)) {
                 // TODO: this exists because at times when editor is unmounted
                 //       there is an error thrown. So this waits until to avoid
                 ///      setting error if the editor is unmounted.
                 clearTimeoutId = setTimeout(() => {
-                  if (!view.isDestroyed && !bangleStore.destroyed) {
-                    notification.setEditorIssue({
+                  if (!view.isDestroyed) {
+                    nsmApi2.ui.setEditorIssue({
                       wsPath,
                       title: 'Editor crashed!',
                       description: `Please manually save your work and then try reloading the application. Error - ${error.message}`,
                       severity: SEVERITY.ERROR,
-                    })(bangleStore.state, bangleStore.dispatch);
+                      uid: generateUid(),
+                    });
                   }
                 }, 300);
               }

@@ -1,7 +1,9 @@
 import type { BangleEditor } from '@bangle.dev/core';
+import type { EditorView } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import type { EditorIdType } from '@bangle.io/shared-types';
+import { z } from '@bangle.io/nsm-3';
+import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
 import {
   getEditorPluginMetadata,
   getScrollParentElement,
@@ -9,28 +11,52 @@ import {
 
 import type { EditorSliceState } from './types';
 
+// In PM selection.toJSON() is of different types based on the selection type
+// we only care about serializing and this type is good enough.
+export type SelectionJson = z.infer<typeof selectionJsonSchema>;
+// WARNING: before changing this schema, make sure to update the
+//  make sure to update the manual check in `calculateSelection`
+export const selectionJsonSchema = z.record(
+  z.union([z.undefined(), z.string(), z.number(), z.null()]),
+);
 export const calculateSelection = (
   editorId: EditorIdType,
   editor: BangleEditor,
-) => {
+): {
+  wsPath: WsPath;
+  editorId: EditorIdType;
+  selectionJson: SelectionJson;
+} => {
   const selection = editor.view.state.selection;
+
+  const json = selection.toJSON();
+
+  for (const value of Object.values(json)) {
+    if (
+      typeof value !== 'number' &&
+      typeof value !== 'string' &&
+      value != null
+    ) {
+      throw new Error(`Invalid editor selection json value type: ${json}`);
+    }
+  }
 
   return {
     wsPath: getEditorPluginMetadata(editor.view.state).wsPath,
     editorId: editorId,
-    selectionJson: selection.toJSON(),
+    selectionJson: json as SelectionJson,
   };
 };
 
 export const calculateScrollPosition = (
   editorId: EditorIdType,
-  editor: BangleEditor,
+  view: EditorView,
 ) => {
   const top = getScrollParentElement(editorId)?.scrollTop;
 
   if (typeof top === 'number') {
     return {
-      wsPath: getEditorPluginMetadata(editor.view.state).wsPath,
+      wsPath: getEditorPluginMetadata(view.state).wsPath,
       editorId: editorId,
       scrollPosition: top,
     };

@@ -1,14 +1,12 @@
 import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { useNsmSlice, useNsmSliceState } from '@bangle.io/bangle-store-context';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  goToWorkspaceHomeRoute,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
+import { goToWorkspaceHome, nsmPageSlice } from '@bangle.io/slice-page';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { Button, GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
@@ -19,17 +17,17 @@ export function Activitybar() {
   const extensionRegistry = useExtensionRegistryContext();
   const operationKeybindings =
     extensionRegistry.getSerialOperationKeybindingMapping();
-  const { wsName } = useWorkspaceContext();
+  const { wsName } = useNsmSliceState(nsmSliceWorkspace);
+  const [, pageDispatch] = useNsmSlice(nsmPageSlice);
+
   const sidebars = extensionRegistry.getSidebars();
-  const { changelogHasUpdates, sidebar, dispatch, widescreen } =
-    useUIManagerContext();
-  const bangleStore = useBangleStoreContext();
+
+  const [{ changelogHasUpdates, sidebar, widescreen }, uiDispatch] =
+    useNsmSlice(nsmUISlice);
 
   const sideBarComponents = sidebars
     .filter((r) => {
-      return r.activitybarIconShow
-        ? r.activitybarIconShow(wsName, bangleStore.state)
-        : true;
+      return r.activitybarIconShow ? r.activitybarIconShow(wsName) : true;
     })
     .map((r) => {
       const active = sidebar === r.name;
@@ -39,7 +37,7 @@ export function Activitybar() {
           ariaLabel={r.hint}
           key={r.name}
           onPress={() => {
-            changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
+            uiDispatch(nsmUI.toggleSideBar(r.name));
           }}
           style={{
             ...ButtonStyleOBj.normal,
@@ -72,8 +70,14 @@ export function Activitybar() {
         onPressStyle={ButtonStyleOBj.press}
         onHoverStyle={ButtonStyleOBj.hover}
         onPress={() => {
-          changeSidebar(null)(bangleStore.state, bangleStore.dispatch);
-          goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
+          if (wsName) {
+            uiDispatch(nsmUI.closeSidebar());
+            pageDispatch(
+              goToWorkspaceHome({
+                wsName,
+              }),
+            );
+          }
         }}
         variant="transparent"
         tone="secondary"
@@ -91,12 +95,11 @@ export function Activitybar() {
         onPressStyle={ButtonStyleOBj.press}
         onHoverStyle={ButtonStyleOBj.hover}
         onPress={() => {
-          dispatch({
-            name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-            value: {
+          uiDispatch(
+            nsmUI.showDialog({
               dialogName: CHANGELOG_MODAL_NAME,
-            },
-          });
+            }),
+          );
         }}
         variant="transparent"
         tone="secondary"

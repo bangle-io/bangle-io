@@ -1,28 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-  notification,
-  ui,
-  useBangleStoreContext,
-  useSliceState,
-} from '@bangle.io/api';
+import { nsmApi2, useNsmSliceDispatch, useNsmSliceState } from '@bangle.io/api';
 import { Dialog, ErrorBanner, TextField } from '@bangle.io/ui-components';
 import { BaseError } from '@bangle.io/utils';
 
-import { ghSliceKey, UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
+import { UPDATE_GITHUB_TOKEN_DIALOG } from '../common';
 import { getGhToken } from '../database';
 import { ALLOWED_GH_SCOPES, hasValidGithubScope } from '../github-api-helpers';
-import { updateGithubToken } from '../operations';
+import { nsmGhSlice, operations } from '../state';
 
 export function UpdateTokenDialog() {
-  const bangleStore = useBangleStoreContext();
   const [inputToken, updateInputToken] = useState<string | undefined>();
   const [error, updateError] = useState<Error | undefined>(undefined);
   const [isProcessing, updateIsProcessing] = useState(false);
 
-  const {
-    sliceState: { githubWsName },
-  } = useSliceState(ghSliceKey);
+  const { githubWsName } = useNsmSliceState(nsmGhSlice);
+  const nsmDispatch = useNsmSliceDispatch(nsmGhSlice);
 
   useEffect(() => {
     getGhToken().then((token) => {
@@ -30,16 +23,13 @@ export function UpdateTokenDialog() {
         updateInputToken(token);
       }
     });
-  }, [bangleStore]);
+  }, []);
 
   const dismiss = useCallback(() => {
     if (!isProcessing) {
-      ui.dismissDialog(UPDATE_GITHUB_TOKEN_DIALOG)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
+      nsmApi2.ui.dismissDialog(UPDATE_GITHUB_TOKEN_DIALOG);
     }
-  }, [bangleStore, isProcessing]);
+  }, [isProcessing]);
 
   const verifyAndUpdateToken = useCallback(async () => {
     if (isProcessing || !inputToken || !githubWsName) {
@@ -61,15 +51,12 @@ export function UpdateTokenDialog() {
         );
       }
 
-      await ghSliceKey.callAsyncOp(
-        bangleStore,
-        updateGithubToken(githubWsName, inputToken),
-      );
+      nsmDispatch(operations.updateGithubToken(githubWsName, inputToken));
 
-      notification.showNotification({
+      nsmApi2.ui.showNotification({
         title: 'Github token updated',
         uid: 'github-token-updated' + Date.now(),
-      })(bangleStore.state, bangleStore.dispatch);
+      });
 
       dismiss();
     } catch (e) {
@@ -81,7 +68,7 @@ export function UpdateTokenDialog() {
         throw e;
       }
     }
-  }, [isProcessing, dismiss, bangleStore, inputToken, githubWsName]);
+  }, [isProcessing, dismiss, nsmDispatch, inputToken, githubWsName]);
 
   const onKeyDown = useCallback(
     (e) => {

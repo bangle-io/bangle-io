@@ -1,20 +1,20 @@
 import React from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_NEW_WORKSPACE,
   CorePalette,
 } from '@bangle.io/constants';
-import { togglePaletteType } from '@bangle.io/slice-ui';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
 export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
   // wsName can't be read here from the store because it is not found
-  const bangleStore = useBangleStoreContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
 
   wsName = decodeURIComponent(wsName || '');
 
@@ -32,10 +32,7 @@ export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
             ariaLabel="open another workspace"
             text="Switch workspace"
             onPress={() => {
-              togglePaletteType(CorePalette.Workspace)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              uiDispatch(nsmUI.togglePalette(CorePalette.Workspace));
             }}
           />
           <Button

@@ -2,7 +2,7 @@ import type { BangleEditor } from '@bangle.dev/core';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import {
-  pageLifeCycleTransitionedTo,
+  oldPageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
 import { uiSliceKey } from '@bangle.io/slice-ui';
@@ -22,7 +22,6 @@ import {
   getEditor,
   someEditorHasFocus,
   toggleEditing,
-  updateInitialSelection,
   updateScrollPosition,
 } from './operations';
 import { getEachEditorIterable } from './utils';
@@ -37,7 +36,7 @@ export const initialSelectionEffect = editorManagerSliceKey.effect(() => {
         const prevEditor = getEditor(editorId)(prevState);
 
         if (prevEditor && currentEditor !== prevEditor) {
-          updateInitialSelection(editorId)(prevState, store.dispatch);
+          // updateInitialSelection(editorId)(prevState, store.dispatch);
         }
       }
     },
@@ -230,7 +229,7 @@ export const watchEditorScrollEffect = editorManagerSliceKey.effect(() => {
 export const trimWhiteSpaceEffect = editorManagerSliceKey.effect(() => {
   return {
     update: (store, prevState) => {
-      const pageTransitioned = pageLifeCycleTransitionedTo(
+      const pageTransitioned = oldPageLifeCycleTransitionedTo(
         ['passive', 'hidden'],
         prevState,
       )(store.state);

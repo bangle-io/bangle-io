@@ -1,38 +1,37 @@
+import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
-import { showNotification } from '@bangle.io/slice-notification';
 import {
   IndexedDbStorageProvider,
   isIndexedDbException,
 } from '@bangle.io/storage';
-
-import { browserStorageSlice } from './browser-storage-slice';
 
 const extensionName = '@bangle.io/browser-storage';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    slices: [browserStorageSlice()],
     storageProvider: new IndexedDbStorageProvider(),
-    onStorageError: (error, store) => {
+    onStorageError: (error) => {
       if (isIndexedDbException(error)) {
         console.debug(error.code, error.name);
-        showNotification({
+
+        nsmApi2.ui.showNotification({
           severity: SEVERITY.ERROR,
           title: 'Error writing to browser storage',
           content: error.message,
           uid: error.code + '' + Math.random(),
-        })(store.state, store.dispatch);
+        });
 
         return true;
       }
 
-      showNotification({
+      nsmApi2.ui.showNotification({
         severity: SEVERITY.ERROR,
         title: `Browser storage provider encountered an unknown error: ${error.name}`,
         uid: 'unknown-error' + error.code || error.name + Math.random(),
-      })(store.state, store.dispatch);
+        buttons: [],
+      });
 
       return false;
     },

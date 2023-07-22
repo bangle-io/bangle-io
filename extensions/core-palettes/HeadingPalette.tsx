@@ -2,8 +2,9 @@ import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { Selection } from '@bangle.dev/pm';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
@@ -13,10 +14,8 @@ const identifierPrefix = '#';
 
 const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, onSelect, getActivePaletteItem }, ref) => {
-    const editorContext = useEditorManagerContext();
-
     const items = useMemo(() => {
-      const { primaryEditor } = editorContext;
+      const { primaryEditor } = nsmApi2.editor.editorState();
 
       if (!primaryEditor || primaryEditor.destroyed) {
         return [];
@@ -58,11 +57,11 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
             data: r,
           };
         });
-    }, [query, editorContext]);
+    }, [query]);
 
-    const onExecuteItem = useCallback(
+    const onExecuteItem = useCallback<PaletteOnExecuteItem>(
       (getUid, sourceInfo) => {
-        const { primaryEditor } = editorContext;
+        const { primaryEditor } = nsmApi2.editor.editorState();
 
         const uid = getUid(items);
         const item = items.find((item) => item.uid === uid);
@@ -84,7 +83,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
           });
         }
       },
-      [editorContext, items],
+      [items],
     );
 
     // Expose onExecuteItem for the parent to call it

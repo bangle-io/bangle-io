@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { Extension, ui, workspace } from '@bangle.io/api';
+import { Extension, getExtensionStore, nsmApi2 } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
   CONFLICT_DIALOG,
   DISCARD_LOCAL_CHANGES_DIALOG,
-  ghSliceKey,
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
   NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
@@ -24,15 +23,15 @@ import { NewGithubWorkspaceRepoPickerDialog } from './components/NewGithubWorksp
 import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
 import { GithubStorageProvider } from './github-storage-provider';
-import { githubStorageSlice } from './github-storage-slice';
-import { optimizeDatabaseOperation, syncRunner } from './operations';
+import { githubEffects, nsmGhSlice, operations } from './state';
 
 const extensionName = '@bangle.io/github-storage';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    slices: [githubStorageSlice()],
+    nsmSlices: [nsmGhSlice],
+    nsmEffects: githubEffects,
     storageProvider: new GithubStorageProvider(),
     dialogs: [
       {
@@ -63,13 +62,16 @@ const extension = Extension.create({
         ReactComponent: GithubSidebar,
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
-        activitybarIconShow(wsName, state) {
-          return Boolean(ghSliceKey.getSliceState(state)?.githubWsName);
+        activitybarIconShow(wsName) {
+          const store = getExtensionStore(nsmGhSlice).state;
+          const ghWsName = nsmGhSlice.get(store).githubWsName;
+
+          return ghWsName ? ghWsName === wsName : false;
         },
       },
     ],
-    onStorageError: (error, store) => {
-      return handleError(error, store);
+    onStorageError: (error) => {
+      return handleError(error);
     },
     operations: [
       {
@@ -95,53 +97,48 @@ const extension = Extension.create({
     ],
     operationHandler() {
       return {
-        handle(operation, payload, store) {
+        handle(operation, payload) {
           switch (operation.name) {
             case OPERATION_SYNC_GITHUB_CHANGES: {
-              const wsName = workspace.getWsName()(store.state);
+              const { wsName } = nsmApi2.workspace.workspaceState();
 
               if (!wsName) {
                 return false;
               }
 
-              syncRunner(wsName, new AbortController().signal, true)(
-                store.state,
-                store.dispatch,
-                store,
+              getExtensionStore(nsmGhSlice).dispatch(
+                operations.syncRunner(new AbortController().signal, true),
               );
 
               return true;
             }
 
             case OPERATION_DISCARD_LOCAL_CHANGES: {
-              ui.showDialog(DISCARD_LOCAL_CHANGES_DIALOG)(
-                store.state,
-                store.dispatch,
-              );
+              nsmApi2.ui.showDialog({
+                dialogName: DISCARD_LOCAL_CHANGES_DIALOG,
+              });
 
               return true;
             }
 
             case OPERATION_UPDATE_GITHUB_TOKEN: {
-              ui.showDialog(UPDATE_GITHUB_TOKEN_DIALOG)(
-                store.state,
-                store.dispatch,
-              );
+              nsmApi2.ui.showDialog({ dialogName: UPDATE_GITHUB_TOKEN_DIALOG });
 
               return true;
             }
 
             case OPERATION_SHOW_CONFLICT_DIALOG: {
-              ui.showDialog(CONFLICT_DIALOG)(store.state, store.dispatch);
+              nsmApi2.ui.showDialog({ dialogName: CONFLICT_DIALOG });
 
               return true;
             }
 
             case OPERATION_OPTIMIZE_GITHUB_STORAGE: {
-              optimizeDatabaseOperation(true)(
-                store.state,
-                store.dispatch,
-                store,
+              getExtensionStore(nsmGhSlice).dispatch(
+                operations.optimizeDatabaseOperation(
+                  true,
+                  new AbortController().signal,
+                ),
               );
 
               return true;

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  notification,
-  useBangleStoreContext,
+  nsmApi2,
+  useNsmSliceState,
   useSerialOperationContext,
-  useSliceState,
-  workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
@@ -13,9 +11,11 @@ import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import { isEntryUntouched } from '@bangle.io/remote-file-sync';
 import { Button, Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
+import { createWsPath } from '@bangle.io/ws-path';
 
-import { ghSliceKey, OPERATION_SYNC_GITHUB_CHANGES } from '../common';
+import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { fileEntryManager } from '../file-entry-manager';
+import { nsmGhSlice } from '../state/github-storage-slice';
 
 const LOG = false;
 
@@ -24,14 +24,9 @@ const log = LOG ? console.info.bind(console, 'GithubSidebar') : () => {};
 const REFRESH_INTERVAL = 3000;
 
 export function GithubSidebar() {
-  const store = useBangleStoreContext();
-  const { openedWsPaths } = workspace.workspaceSliceKey.getSliceStateAsserted(
-    store.state,
-  );
+  const { openedWsPaths } = nsmApi2.workspace.useWorkspace();
 
-  const {
-    sliceState: { githubWsName },
-  } = useSliceState(ghSliceKey);
+  const { githubWsName } = useNsmSliceState(nsmGhSlice);
 
   return githubWsName ? (
     <ModifiedEntries wsName={githubWsName} openedWsPaths={openedWsPaths} />
@@ -47,16 +42,14 @@ function ModifiedEntries({
   wsName: string;
   openedWsPaths: wsPathHelpers.OpenedWsPaths;
 }) {
-  const store = useBangleStoreContext();
   const [modifiedEntries, updateModifiedEntries] = useState<
     undefined | PlainObjEntry[]
   >(undefined);
 
   const [refreshEntries, updateRefreshEntries] = useState(0);
 
-  const {
-    sliceState: { conflictedWsPaths },
-  } = useSliceState(ghSliceKey);
+  const { conflictedWsPaths } = useNsmSliceState(nsmGhSlice);
+
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   useEffect(() => {
@@ -82,7 +75,7 @@ function ModifiedEntries({
     return () => {
       destroyed = true;
     };
-  }, [refreshEntries, wsName, store]);
+  }, [refreshEntries, wsName]);
 
   useEffect(() => {
     log('modifiedEntries', modifiedEntries);
@@ -105,12 +98,12 @@ function ModifiedEntries({
         <Button
           className="w-full"
           onPress={() => {
-            notification.showNotification({
+            nsmApi2.ui.showNotification({
               title: 'Starting sync',
               severity: SEVERITY.INFO,
               uid: 'starting-sync' + Date.now(),
               transient: true,
-            })(store.state, store.dispatch);
+            });
 
             dispatchSerialOperation({ name: OPERATION_SYNC_GITHUB_CHANGES });
           }}
@@ -121,30 +114,35 @@ function ModifiedEntries({
       </div>
       <div className="px-3 text-sm">Files that need to be synced</div>
       <div className="">
-        {modifiedEntries.map((r) => (
-          <Sidebar.Row2
-            key={r.uid}
-            isActive={openedWsPaths.primaryWsPath === r.uid}
-            className="rounded text-sm truncate py-1 select-none pl-3"
-            extraInfoClassName="ml-1 text-sm"
-            onClick={() => {
-              if (wsPathHelpers.isValidNoteWsPath(r.uid) && !r.deleted) {
-                workspace.pushWsPath(r.uid)(store.state, store.dispatch);
-              }
-            }}
-            item={{
-              uid: r.uid,
-              isDisabled:
-                !wsPathHelpers.isValidNoteWsPath(r.uid) || r.deleted
-                  ? true
-                  : false,
-              showDividerAbove: false,
-              title: `${r.deleted ? '(deleted) ' : ''}${
-                conflictedWsPaths.includes(r.uid) ? '(conflict) ' : ''
-              }${wsPathHelpers.resolvePath(r.uid).filePath}`,
-            }}
-          />
-        ))}
+        {modifiedEntries.map((r) => {
+          const wsPath = wsPathHelpers.isValidNoteWsPath(r.uid)
+            ? createWsPath(r.uid)
+            : undefined;
+
+          return (
+            <Sidebar.Row2
+              key={wsPath}
+              isActive={openedWsPaths.primaryWsPath === wsPath}
+              className="rounded text-sm truncate py-1 select-none pl-3"
+              extraInfoClassName="ml-1 text-sm"
+              onClick={() => {
+                if (wsPath && !r.deleted) {
+                  nsmApi2.workspace.pushPrimaryWsPath(createWsPath(wsPath));
+                }
+              }}
+              item={{
+                uid: wsPath || r.uid,
+                isDisabled: Boolean(!wsPath || r.deleted),
+                showDividerAbove: false,
+                title: `${r.deleted ? '(deleted) ' : ''}${
+                  wsPath && conflictedWsPaths.includes(wsPath)
+                    ? '(conflict) '
+                    : ''
+                }${wsPath ? wsPathHelpers.resolvePath2(wsPath).filePath : ''}`,
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -1,15 +1,20 @@
-import { workspace } from '@bangle.io/api';
+import { internalApi } from '@bangle.io/api';
+import type { WsName } from '@bangle.io/shared-types';
 import { getExtension } from '@bangle.io/ws-path';
 
 import type { GithubWsMetadata } from './common';
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 
 export async function readGhWorkspaceMetadata(
-  wsName: string,
+  wsName: WsName,
 ): Promise<GithubWsMetadata | undefined> {
-  return workspace.readWorkspaceMetadata(wsName, {
-    type: GITHUB_STORAGE_PROVIDER_NAME,
-  }) as Promise<GithubWsMetadata | undefined>;
+  const info = await internalApi.workspace.readWorkspaceInfo(wsName);
+
+  if (!info || info.type !== GITHUB_STORAGE_PROVIDER_NAME) {
+    return undefined;
+  }
+
+  return info.metadata as Promise<GithubWsMetadata | undefined>;
 }
 
 /**

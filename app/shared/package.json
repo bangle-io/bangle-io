@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/shared",
+  "description": "things that are run and shared by both worker (naukar) and main thread",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,12 +20,13 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.31.6",
-    "@bangle.dev/markdown": "0.31.6",
-    "@bangle.dev/markdown-front-matter": "0.31.6",
-    "@bangle.dev/pm": "0.31.6",
-    "@bangle.dev/table": "0.31.6",
-    "@bangle.dev/utils": "0.31.6",
+    "@bangle.dev/collab-comms": "0.32.0",
+    "@bangle.dev/core": "0.32.0",
+    "@bangle.dev/markdown": "0.32.0",
+    "@bangle.dev/markdown-front-matter": "0.32.0",
+    "@bangle.dev/pm": "0.32.0",
+    "@bangle.dev/table": "0.32.0",
+    "@bangle.dev/utils": "0.32.0",
     "@bangle.io/browser-nativefs-storage": "workspace:*",
     "@bangle.io/browser-privatefs-storage": "workspace:*",
     "@bangle.io/browser-storage": "workspace:*",
@@ -34,6 +36,7 @@
     "@bangle.io/core-palettes": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/github-storage": "workspace:*",
+    "@bangle.io/helpfs-storage": "workspace:*",
     "@bangle.io/image-extension": "workspace:*",
     "@bangle.io/inline-backlink": "workspace:*",
     "@bangle.io/inline-command-palette": "workspace:*",
@@ -44,7 +47,8 @@
     "@bangle.io/search-notes": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "tslib": "^2.4.1",
+    "@bangle.io/workspace-info": "workspace:*",
+    "tslib": "2.4.1",
     "typescript": "4.9.3"
   },
   "publishConfig": {

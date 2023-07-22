@@ -88,6 +88,7 @@ const mockHistoryEffect = historySliceKey.effect(() => {
 
     deferredOnce(store, abortSignal) {
       const history = new MemoryHistory('', (location) => {
+        // @ts-expect-error
         syncPageLocation(location)(
           store.state,
           pageSliceKey.getDispatch(store.dispatch),
@@ -99,6 +100,7 @@ const mockHistoryEffect = historySliceKey.effect(() => {
         value: { history: history },
       });
 
+      // @ts-expect-error
       syncPageLocation({
         search: history.search,
         pathname: history.pathname,

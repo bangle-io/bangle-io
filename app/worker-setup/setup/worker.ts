@@ -7,10 +7,11 @@ import { assertWorkerGlobalScope } from '@bangle.io/utils';
 
 import naukar from './naukar-init';
 
+console.log('naukar initialized :) t=', performance.now());
+
 assertWorkerGlobalScope();
 
 workerInitialSetup();
-
 /**
  * Things to initialize when starting a webworker
  */
@@ -20,5 +21,4 @@ async function workerInitialSetup() {
     await Promise.all(polyfills);
   }
 }
-
 Comlink.expose(naukar);

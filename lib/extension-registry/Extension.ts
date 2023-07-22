@@ -5,12 +5,14 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 
 import type { ApplicationStore } from '@bangle.io/create-store';
 import { Slice } from '@bangle.io/create-store';
+import type { AnySlice, EffectCreator } from '@bangle.io/nsm-3';
+import { isSlice } from '@bangle.io/nsm-3';
 import type {
-  BangleApplicationStore,
   DialogType,
   EditorWatchPluginState,
   NoteFormatProvider,
   NoteSidebarWidget,
+  NsmStore,
   OnStorageProviderError,
   SerialOperationDefinitionType,
   SerialOperationHandler,
@@ -52,9 +54,19 @@ export type SerialOperationHandler2<
   handle: (
     serialOperation: { name: OpType['name']; value?: any },
     payload: any,
-    store: ApplicationStore,
   ) => boolean | void;
 };
+
+export type SerialOperationHandlerNsm<
+  OpType extends SerialOperationDefinitionType,
+> = () => {
+  handle: (
+    serialOperation: { name: OpType['name']; value?: any },
+    payload: any,
+    store: NsmStore,
+  ) => boolean | void;
+};
+
 export interface ApplicationConfig<
   OpType extends SerialOperationDefinitionType = any,
 > {
@@ -66,8 +78,11 @@ export interface ApplicationConfig<
   sidebars?: SidebarType[];
   dialogs?: DialogType[];
   operationHandler?: SerialOperationHandler2<OpType>;
+  operationHandlerNsm?: SerialOperationHandler2<OpType>;
   noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Slice[];
+  nsmSlices?: AnySlice[];
+  nsmEffects?: EffectCreator[];
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;
   // Return true if the error was handled by your callback
@@ -87,10 +102,7 @@ export interface SidebarType {
   activitybarIcon: JSX.Element;
   // if provided will be used to decide whether to show the sidebar icon in activitybar
   // or not. If not provided, the icon will always be shown.
-  activitybarIconShow?: (
-    wsName: string | undefined,
-    state: BangleApplicationStore['state'],
-  ) => boolean;
+  activitybarIconShow?: (wsName: string | undefined) => boolean;
   hint: string;
   name: `sidebar::${string}`;
   ReactComponent: React.ComponentType;
@@ -196,6 +208,8 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
       dialogs,
       noteSidebarWidgets,
       slices,
+      nsmSlices,
+      nsmEffects,
       operationHandler,
       storageProvider,
       noteFormatProvider,
@@ -262,6 +276,32 @@ export class Extension<OpType extends SerialOperationDefinitionType = any> {
         throw new Error(
           `Extension "${name}": invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'slice::my-extension-name:xyz\')"`,
         );
+      }
+    }
+
+    if (nsmSlices) {
+      if (
+        !nsmSlices.every(
+          (slice) =>
+            isSlice(slice) &&
+            slice.name.startsWith(`slice::${pkgNameWithoutBangleIo(name)}:`),
+        )
+      ) {
+        throw new Error(
+          `Extension "${name}": invalid slice name. Must start with ${`slice::${pkgNameWithoutBangleIo(
+            name,
+          )}:`}`,
+        );
+      }
+    }
+
+    if (nsmEffects) {
+      if (
+        !nsmEffects.every(
+          (effectCreator) => typeof effectCreator === 'function',
+        )
+      ) {
+        throw new Error(`Extension "${name}": invalid slice effect.`);
       }
     }
 
@@ -355,6 +395,10 @@ function hasCorrectScheme(scheme: string, slug: string) {
 
 function hasCorrectPackageName(pkgName: string, slug: string) {
   return pkgName === resolveSlug(slug).pkgName;
+}
+
+function pkgNameWithoutBangleIo(pkgName: string) {
+  return pkgName.replace('@bangle.io/', '');
 }
 
 function resolveSlug(slug: string) {

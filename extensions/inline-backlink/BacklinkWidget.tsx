@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -19,7 +17,7 @@ import {
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-import { removeExtension, resolvePath } from '@bangle.io/ws-path';
+import { createWsPath, removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 const IconStyle = {
   height: 16,
@@ -33,24 +31,26 @@ interface BacklinkSearchResult {
 
 export function BacklinkWidget() {
   const backlinkSearchResult = useBacklinkSearch();
-  const bangleStore = useBangleStoreContext();
 
-  const makeOnClick = useCallback(
-    (wsPath?: string) => {
-      return (event: React.MouseEvent<any>) => {
-        if (!wsPath) {
-          return;
-        }
-        const clickType = getMouseClickType(event);
-        pushWsPath(
-          wsPath,
-          clickType === MouseClick.NewTab,
-          clickType === MouseClick.ShiftClick,
-        )(bangleStore.state, bangleStore.dispatch);
-      };
-    },
-    [bangleStore],
-  );
+  const makeOnClick = useCallback((_path?: string) => {
+    return (event: React.MouseEvent<any>) => {
+      if (!_path) {
+        return;
+      }
+
+      const wsPath = createWsPath(_path);
+
+      const clickType = getMouseClickType(event);
+
+      if (clickType === MouseClick.NewTab) {
+        nsmApi2.workspace.openWsPathInNewTab(wsPath);
+      } else if (clickType === MouseClick.ShiftClick) {
+        nsmApi2.workspace.pushSecondaryWsPath(wsPath);
+      } else {
+        nsmApi2.workspace.pushPrimaryWsPath(wsPath);
+      }
+    };
+  }, []);
 
   const [openedItems, updateOpenedItems] = useState(() => new Set<string>());
   const isCollapsed = useCallback(
@@ -151,8 +151,9 @@ export function BacklinkWidget() {
 }
 
 function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
-  const { focusedEditorId } = useEditorManagerContext();
-  const { wsName, openedWsPaths } = useWorkspaceContext();
+  const { focusedEditorId } = nsmApi2.editor.useEditor();
+  const { wsName, openedWsPaths } = nsmApi2.workspace.useWorkspace();
+
   const [results, updateResults] = useState<BacklinkSearchResult[] | undefined>(
     undefined,
   );
@@ -162,8 +163,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
       if (!wsName) {
         return;
       }
-
-      naukarProxy
+      naukarProxy.abortable
         .abortableSearchWsForPmNode(controller.signal, wsName, 'backlink:*', [
           {
             nodeName: 'wikiLink',

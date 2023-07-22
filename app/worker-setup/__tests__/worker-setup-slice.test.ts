@@ -159,7 +159,7 @@ test('sends actions correctly', async () => {
 
   // test that naukar-proxy is setup correctly
   let naukarProxyReady = false;
-  naukarProxy.status().then((result) => {
+  naukarProxy.test.status().then((result) => {
     naukarProxyReady = result;
   });
 

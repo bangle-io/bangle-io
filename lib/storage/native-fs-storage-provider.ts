@@ -4,6 +4,7 @@ import {
   NativeBrowserFileSystem,
 } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal, errorParse, errorSerialize } from '@bangle.io/utils';
 import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
@@ -13,18 +14,28 @@ export const allowedFile = (name: string) => {
 };
 
 export abstract class BaseFsStorageProvider implements BaseStorageProvider {
+  onChange: StorageProviderOnChange = () => {};
+
   async createFile(
     wsPath: string,
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
     await this.writeFile(wsPath, file, opts);
+    this.onChange({
+      type: 'create',
+      wsPath,
+    });
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     const { wsName } = resolvePath(wsPath);
 
     await (await this._getFs(wsName, opts)).unlink(toFSPath(wsPath));
+    this.onChange({
+      type: 'delete',
+      wsPath,
+    });
   }
 
   abstract description: string;
@@ -121,6 +132,12 @@ export abstract class BaseFsStorageProvider implements BaseStorageProvider {
     await (
       await this._getFs(wsName, opts)
     ).rename(toFSPath(wsPath), toFSPath(newWsPath));
+
+    this.onChange({
+      type: 'rename',
+      oldWsPath: wsPath,
+      newWsPath,
+    });
   }
 
   serializeError(error: Error) {
@@ -136,6 +153,10 @@ export abstract class BaseFsStorageProvider implements BaseStorageProvider {
     const { wsName } = resolvePath(wsPath);
 
     await (await this._getFs(wsName, opts)).writeFile(path, file);
+    this.onChange({
+      type: 'write',
+      wsPath,
+    });
   }
 
   protected abstract _getFs(
@@ -148,6 +169,7 @@ export class NativeFsStorageProvider extends BaseFsStorageProvider {
   name: string = WorkspaceType.NativeFS;
   displayName = 'File system storage';
   description = 'Saves data in your file system';
+  onChange: StorageProviderOnChange = () => {};
 
   isSupported() {
     // TODO: we donot have a great way to check if native fs is supported

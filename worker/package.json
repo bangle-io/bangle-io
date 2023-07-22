@@ -1,8 +1,10 @@
 {
   "name": "worker",
   "workspaces": [
-    "worker-naukar",
-    "worker-editor"
+    "worker-editor",
+    "worker-entry",
+    "worker-common",
+    "worker-replica-slices"
   ],
   "repository": {
     "directory": "worker",
@@ -12,7 +14,7 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "tslib": "^2.4.1",
+    "tslib": "2.4.1",
     "typescript": "4.9.3"
   },
   "license": "AGPL-3.0-or-later"

@@ -13,7 +13,7 @@ import {
   waitForNotification,
 } from '../helpers';
 
-test('Openning a lot of notes should not leak', async ({ baseURL }) => {
+test('Opening a lot of notes should not leak', async ({ baseURL }) => {
   test.slow();
   test.setTimeout(2 * 60000);
 
@@ -37,7 +37,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     buffer: f,
   });
 
-  await waitForNotification(page, 'Your notes have successfully restored.');
+  await waitForNotification(page, 'Restore success!');
 
   const wsPaths = await getAllWsPaths(page, { lowerBound: 111 });
   // the fixture's asset count
@@ -62,16 +62,15 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     // Make sure the editor instance is for the currently opened editor
     await page.waitForFunction(
       ([w, primaryIndex]: [string, number]) => {
-        const win: any = window;
-        const editor = win._e2eHelpers._getEditors()?.[primaryIndex];
+        const editor = window._nsmE2e?.primaryEditor;
 
         if (!editor) {
           return false;
         }
 
         return (
-          win._e2eHelpers._getEditorPluginMetadata(editor.view.state)
-            ?.wsPath === w
+          window._nsmE2e?.getEditorPluginMetadata(editor.view.state)?.wsPath ===
+          w
         );
       },
       [w, PRIMARY_EDITOR_INDEX] as [string, number],
@@ -81,8 +80,14 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     // if it got GC'd or not.
     await page.evaluate(
       ([w]) => {
-        const win: any = window;
-        win.refs.push(new win.WeakRef(win._e2eHelpers._primaryEditor.view));
+        const win = window;
+        const view = win._nsmE2e?.primaryEditor?.view;
+
+        if (!view) {
+          throw new Error('view not found');
+        }
+
+        (window as any).refs.push(new win.WeakRef(view));
       },
       [w],
     );

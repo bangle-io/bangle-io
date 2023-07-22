@@ -12,14 +12,12 @@ import {
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import type { AppState } from '@bangle.io/create-store';
-import { getScrollParentElement } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import type { EditorDispatchType, EditorIdType } from './types';
 import {
   assertValidEditorId,
   calculateScrollPosition,
-  calculateSelection,
   getEachEditorIterable,
   isValidEditorId,
 } from './utils';
@@ -70,33 +68,15 @@ export function toggleEditing({
   });
 }
 
-export function isEditingAllowed() {
-  return editorManagerSliceKey.queryOp((state) => {
-    return editorManagerSliceKey.getSliceStateAsserted(state).editingAllowed;
-  });
-}
-
 export function getPrimaryEditor() {
   return editorManagerSliceKey.queryOp((state) => {
     return getEditor(PRIMARY_EDITOR_INDEX)(state);
   });
 }
 
-export function focusPrimaryEditor() {
-  return editorManagerSliceKey.queryOp((state) => {
-    return focusEditor(PRIMARY_EDITOR_INDEX)(state);
-  });
-}
-
 export function getSecondaryEditor() {
   return editorManagerSliceKey.queryOp((state) => {
     return getEditor(SECONDARY_EDITOR_INDEX)(state);
-  });
-}
-
-export function focusSecondaryEditor() {
-  return editorManagerSliceKey.queryOp((state) => {
-    return focusEditor(SECONDARY_EDITOR_INDEX)(state);
   });
 }
 
@@ -108,64 +88,6 @@ export function getEditor(editorId: EditorIdType) {
 
     return editorManagerSliceKey.getSliceState(state)?.mainEditors[editorId];
   });
-}
-
-export function focusEditor(editorId: EditorIdType = PRIMARY_EDITOR_INDEX) {
-  return (state: AppState): boolean => {
-    assertValidEditorId(editorId);
-
-    const editor = getEditor(editorId)(state);
-
-    if (editor) {
-      editor.focusView();
-
-      return true;
-    }
-
-    return false;
-  };
-}
-
-export function updateFocusedEditor(
-  editorId: EditorIdType = PRIMARY_EDITOR_INDEX,
-) {
-  return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    assertValidEditorId(editorId);
-
-    dispatch({
-      name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
-      value: {
-        editorId,
-      },
-    });
-
-    return true;
-  };
-}
-
-export function updateInitialSelection(editorId: EditorIdType) {
-  return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    assertValidEditorId(editorId);
-
-    const editor = getEditor(editorId)(state);
-
-    if (!editor) {
-      return false;
-    }
-
-    const value = calculateSelection(editorId, editor);
-
-    if (value) {
-      dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
-        value: value,
-      });
-
-      return true;
-    }
-
-    return false;
-  };
 }
 
 export function forEachEditor(
@@ -184,28 +106,6 @@ export function forEachEditor(
       cb(editor, editorId);
     }
   });
-}
-
-export function getEditorView(editorId: EditorIdType) {
-  return (state: AppState): EditorView | undefined => {
-    assertValidEditorId(editorId);
-
-    let editor = getEditor(editorId)(state);
-
-    if (!editor) {
-      return undefined;
-    }
-
-    return editor.view;
-  };
-}
-
-export function getEditorState(editorId: EditorIdType) {
-  return (state: AppState): EditorState | undefined => {
-    assertValidEditorId(editorId);
-
-    return getEditorView(editorId)(state)?.state;
-  };
 }
 
 export function geEditorScrollPosition(editorId: EditorIdType, wsPath: string) {
@@ -232,7 +132,7 @@ export function updateScrollPosition(editorId: EditorIdType) {
       return false;
     }
 
-    const result = calculateScrollPosition(editorId, editor);
+    const result = calculateScrollPosition(editorId, editor.view);
 
     if (result) {
       dispatch({
@@ -247,62 +147,6 @@ export function updateScrollPosition(editorId: EditorIdType) {
   };
 }
 
-export function setEditorReady(
-  editorId: EditorIdType,
-  wsPath: string,
-  editor: BangleEditor,
-) {
-  return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    assertValidEditorId(editorId);
-
-    const scrollParent = getScrollParentElement(editorId);
-    const pos = geEditorScrollPosition(editorId, wsPath)(state);
-
-    if (typeof pos === 'number' && scrollParent) {
-      scrollParent.scrollTop = pos;
-    }
-
-    dispatch({
-      name: 'action::@bangle.io/slice-editor-manager:set-editor',
-      value: {
-        editor,
-        editorId,
-      },
-    });
-
-    // TODO this is currently used by the integration tests
-    // we need a better way to do this
-    if (typeof window !== 'undefined') {
-      (window as any)[`editor-${editorId}`] = { editor, wsPath };
-    }
-
-    return true;
-  };
-}
-
-export function setEditorUnmounted(
-  editorId: EditorIdType,
-  editor: BangleEditor,
-) {
-  return (state: AppState, dispatch: EditorDispatchType): boolean => {
-    assertValidEditorId(editorId);
-
-    // make sure we are unsetting the correct editor
-    if (getEditor(editorId)(state) === editor) {
-      dispatch({
-        name: 'action::@bangle.io/slice-editor-manager:set-editor',
-        value: {
-          editor: undefined,
-          editorId,
-        },
-      });
-
-      return true;
-    }
-
-    return false;
-  };
-}
 // Gets the editor selection saved in the slice state
 export function getInitialSelection(
   editorId: EditorIdType,
@@ -398,25 +242,6 @@ export function dispatchEditorCommand<T>(
 
     return cmdCallback(view.state, view.dispatch, view);
   };
-}
-
-/**
- *
- * @param editorId skip to blur any editor
- * @returns
- */
-export function blurEditor(editorId?: EditorIdType) {
-  if (editorId !== undefined) {
-    assertValidEditorId(editorId);
-  }
-
-  return editorManagerSliceKey.queryOp((state) => {
-    forEachEditor((editor, currentEditorId) => {
-      if (editorId == null || currentEditorId === editorId) {
-        editor?.view.dom.blur();
-      }
-    })(state);
-  });
 }
 
 export function someEditorHasFocus() {

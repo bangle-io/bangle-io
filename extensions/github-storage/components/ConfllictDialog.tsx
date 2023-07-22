@@ -1,40 +1,33 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { notification, ui, useSliceState } from '@bangle.io/api';
+import { nsmApi2, useNsmSliceDispatch, useNsmSliceState } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { Dialog } from '@bangle.io/ui-components';
 
-import { CONFLICT_DIALOG, ghSliceKey } from '../common';
-import { manuallyResolveConflict } from '../operations';
+import { CONFLICT_DIALOG } from '../common';
+import { nsmGhSlice, operations } from '../state';
 
 export function ConflictDialog() {
-  const { bangleStore } = ui.useUIManagerContext();
-
   const dismiss = useCallback(() => {
-    ui.dismissDialog(CONFLICT_DIALOG)(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore]);
+    nsmApi2.ui.dismissDialog(CONFLICT_DIALOG);
+  }, []);
 
-  const {
-    sliceState: { conflictedWsPaths, githubWsName },
-  } = useSliceState(ghSliceKey);
+  const { conflictedWsPaths, githubWsName } = useNsmSliceState(nsmGhSlice);
+  const nsmDispatch = useNsmSliceDispatch(nsmGhSlice);
 
   useEffect(() => {
     if (conflictedWsPaths.length === 0) {
       dismiss();
 
-      notification.notificationSliceKey.callOp(
-        bangleStore.state,
-        bangleStore.dispatch,
-        notification.showNotification({
-          title: 'No Github conflicts',
-          severity: SEVERITY.INFO,
-          uid: 'gh-conflict' + Date.now(),
-          transient: true,
-        }),
-      );
+      nsmApi2.ui.showNotification({
+        title: 'No Github conflicts',
+        severity: SEVERITY.INFO,
+        uid: 'gh-conflict' + Date.now(),
+        transient: true,
+      });
     }
-  }, [conflictedWsPaths, dismiss, bangleStore]);
+  }, [conflictedWsPaths, dismiss]);
 
   return (
     <Dialog
@@ -45,10 +38,7 @@ export function ConflictDialog() {
         text: 'Resolve Manually',
         onPress: () => {
           if (githubWsName) {
-            ghSliceKey.callAsyncOp(
-              bangleStore,
-              manuallyResolveConflict(githubWsName),
-            );
+            nsmDispatch(operations.manuallyResolveConflict(githubWsName));
           }
           dismiss();
         },

@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 
 import { testWithConfig } from '../fixture-test-with-config';
-import { withBangle as test } from '../fixture-with-bangle';
 
 testWithConfig.use({
   bangleDebugConfig: {
@@ -21,9 +20,7 @@ testWithConfig(
     expect(title).toMatch('getting started.md - bangle.io');
 
     const writeSlowDown = await page.evaluate(() => {
-      const _newE2eHelpers2 = window._newE2eHelpers2;
-
-      return _newE2eHelpers2?.config.debug?.writeSlowDown;
+      return window._nsmE2e?.config.debug?.writeSlowDown;
     }, []);
 
     expect(writeSlowDown).toBe(1211);

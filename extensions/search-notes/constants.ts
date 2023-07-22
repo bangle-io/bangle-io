@@ -1,9 +1,5 @@
-import { PluginKey } from '@bangle.dev/core';
-
-import { SliceKey } from '@bangle.io/api';
 import type { SearchResultItem } from '@bangle.io/search-pm-node';
 
-export const searchPluginKey = new PluginKey('search-plugin');
 export const CONCURRENCY = 10;
 
 export const SHOW_SEARCH_SIDEBAR_OPERATION =
@@ -38,8 +34,3 @@ export type SearchNotesActions =
         query: string;
       };
     };
-
-export const searchNotesSliceKey = new SliceKey<
-  SearchNotesExtensionState,
-  SearchNotesActions
->('slice::' + extensionName + ':slice-key');

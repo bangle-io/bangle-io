@@ -5,6 +5,7 @@ import {
   makeLocalEntryFromRemote,
   makeLocallyCreatedEntry,
 } from '@bangle.io/remote-file-sync';
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
 import type { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError, errorParse, errorSerialize } from '@bangle.io/utils';
 
@@ -25,6 +26,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
   displayName = 'Github storage';
   description = '';
   hidden = true;
+  onChange: StorageProviderOnChange = () => {};
 
   private _getTree = getRepoTree();
   async createFile(
@@ -40,12 +42,22 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
     // TODO we should throw error if file already exists?
     const success = await fileEntryManager.createEntry(entry);
+
+    this.onChange({
+      type: 'create',
+      wsPath,
+    });
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     // TODO: currently if a local entry does not exist
     // we donot mark it for deletion. We should do that.
     await fileEntryManager.softDeleteEntry(wsPath);
+
+    this.onChange({
+      type: 'delete',
+      wsPath,
+    });
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
@@ -175,6 +187,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
     await this.createFile(newWsPath, file, opts);
     await this.deleteFile(wsPath, opts);
+
+    this.onChange({
+      type: 'rename',
+      oldWsPath: wsPath,
+      newWsPath,
+    });
   }
 
   serializeError(error: Error) {
@@ -198,6 +216,11 @@ export class GithubStorageProvider implements BaseStorageProvider {
         code: GITHUB_STORAGE_NOT_ALLOWED,
       });
     }
+
+    this.onChange({
+      type: 'write',
+      wsPath,
+    });
   }
 
   private async _makeGetRemoteFileEntryCb(

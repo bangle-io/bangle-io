@@ -1,8 +1,8 @@
 import type { EditorView } from '@bangle.dev/pm';
 import { Plugin } from '@bangle.dev/pm';
 
+import { nsmApi2 } from '@bangle.io/api';
 import type { EditorPlugin } from '@bangle.io/shared-types';
-import { updateFocusedEditor } from '@bangle.io/slice-editor-manager';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 
 export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
@@ -10,15 +10,14 @@ export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
     props: {
       handleDOMEvents: {
         focus: (view: EditorView, event: Event) => {
-          const { bangleStore, editorId } = getEditorPluginMetadata(view.state);
+          const { editorId } = getEditorPluginMetadata(view.state);
 
-          updateFocusedEditor(editorId)(
-            bangleStore.state,
-            bangleStore.dispatch,
-          );
+          if (editorId != null) {
+            nsmApi2.editor.onFocusUpdate({ editorId });
+          }
 
           // This is important to return false so that
-          // we dont interfere with PM's focus setting.
+          // we don't interfere with PM's focus setting.
           return false;
         },
       },

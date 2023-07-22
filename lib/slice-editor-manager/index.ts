@@ -1,25 +1,15 @@
-export { editorManagerSliceKey } from './constants';
 export {
-  editorManagerSlice,
-  initialEditorSliceState,
-} from './editor-manager-slice';
-export { useEditorManagerContext } from './EditorManagerContext';
-export {
-  blurEditor,
-  didSomeEditorChange,
-  dispatchEditorCommand,
-  focusPrimaryEditor,
-  focusSecondaryEditor,
+  focusEditorIfNotFocused,
   forEachEditor,
   getEditor,
-  getEditorState,
-  getEditorView,
   getInitialSelection,
-  isEditingAllowed,
-  setEditorReady,
-  setEditorUnmounted,
-  someEditorHasFocus,
+  nsmEditorEffects,
+  nsmEditorManagerSlice,
+  onFocusUpdate,
+  persistState,
+  setEditor,
+  setEditorScrollPos,
   toggleEditing,
-  updateFocusedEditor,
-} from './operations';
+  updateSelection,
+} from './nsm-editor-manager-slice';
 export type { EditorIdType, EditorManagerAction } from './types';

@@ -1,16 +1,19 @@
+/* eslint-disable no-loop-func */
 import { expect } from '@playwright/test';
 
 import { withBangle as test } from '../fixture-with-bangle';
 import {
   createNewNote,
   createWorkspace,
+  getPrimaryEditorHandler,
   mobileEnableEditing,
 } from '../helpers';
 
 for (const screenType of ['desktop', 'mobile']) {
+  const isMobile = screenType === 'mobile';
   test.describe(screenType + ' editor issue', () => {
     test.beforeEach(async ({ page, bangleApp }, testInfo) => {
-      if (screenType === 'mobile') {
+      if (isMobile) {
         await page.setViewportSize({ width: 480, height: 960 });
       }
 
@@ -19,19 +22,21 @@ for (const screenType of ['desktop', 'mobile']) {
 
     test('displays editor issue correctly', async ({ page }) => {
       const wsName1 = await createWorkspace(page);
-      const wsPath1 = await createNewNote(page, wsName1, 'file-1');
+      const wsPath1 = await createNewNote(page, wsName1, 'file-1', {
+        // since editor is disabled by default in isMobile, we need to focus it
+        skipWaitForFocus: isMobile,
+      });
 
-      if (screenType === 'mobile') {
+      if (isMobile) {
         await mobileEnableEditing(page);
+        await getPrimaryEditorHandler(page, { focus: true });
       }
 
       // manually trigger an error
       await page.evaluate(
         async ([wsPath1]) => {
-          const e2eHelpers = window._newE2eHelpers2;
-
           // deleting a collab instance will cause current editor to crash
-          e2eHelpers!.naukarProxy.testRequestDeleteCollabInstance(wsPath1);
+          _nsmE2e?.testRequestDeleteCollabInstance(wsPath1);
         },
         [wsPath1] as const,
       );

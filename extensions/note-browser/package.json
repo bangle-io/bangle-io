@@ -23,14 +23,12 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
     "react-virtual": "^2.8.2",
-    "tslib": "^2.4.1",
+    "tslib": "2.4.1",
     "typescript": "4.9.3"
   },
   "devDependencies": {

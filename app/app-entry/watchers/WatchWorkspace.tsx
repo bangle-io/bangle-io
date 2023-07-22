@@ -1,12 +1,18 @@
 import { useEffect, useRef } from 'react';
 
+import { useNsmSliceState, useNsmStore } from '@bangle.io/bangle-store-context';
 import { TAB_ID } from '@bangle.io/config';
 import {
-  refreshWsPaths,
-  updateOpenedWsPaths,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+  nsmSliceWorkspace,
+  pushOpenedWsPaths,
+} from '@bangle.io/nsm-slice-workspace';
+import { nsmPageSlice } from '@bangle.io/slice-page';
+import {
+  refreshWorkspace,
+  sliceRefreshWorkspace,
+} from '@bangle.io/slice-refresh-workspace';
 import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
+import { createWsPath } from '@bangle.io/ws-path';
 
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';
@@ -30,16 +36,17 @@ interface MessageType {
 }
 
 export function WatchWorkspace() {
-  const {
-    wsName,
-    wsPaths: fileWsPaths,
-    bangleStore,
-    openedWsPaths,
-  } = useWorkspaceContext();
+  const { wsName, wsPaths: fileWsPaths } = useNsmSliceState(nsmSliceWorkspace);
   const [lastMessage, broadcastMessage] =
     useBroadcastChannel<MessageType>(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
   const checkCurrentEditors = useRef(false);
+
+  const nsmStore = useNsmStore([
+    nsmSliceWorkspace,
+    nsmPageSlice,
+    sliceRefreshWorkspace,
+  ]);
 
   useEffect(() => {
     if (lastMessage) {
@@ -62,7 +69,8 @@ export function WatchWorkspace() {
             payload.lameHash !== weakComputeLameHash(fileWsPaths)
           ) {
             log('refreshing wsPaths');
-            refreshWsPaths()(bangleStore.state, bangleStore.dispatch);
+
+            nsmStore.dispatch(refreshWorkspace());
             checkCurrentEditors.current = true;
           }
           break;
@@ -72,7 +80,7 @@ export function WatchWorkspace() {
         }
       }
     }
-  }, [lastMessage, bangleStore, wsName, fileWsPaths]);
+  }, [lastMessage, nsmStore, wsName, fileWsPaths]);
 
   // close any tabs that might have been deleted or renamed
   // NOTE: We are doing this rectification here and not
@@ -82,22 +90,24 @@ export function WatchWorkspace() {
   useEffect(() => {
     if (fileWsPaths && checkCurrentEditors.current) {
       checkCurrentEditors.current = false;
-      updateOpenedWsPaths(
-        (openedWsPaths) => {
-          let newOpenedWsPaths = openedWsPaths;
+      nsmStore.dispatch(
+        pushOpenedWsPaths(
+          (openedWsPaths) => {
+            let newOpenedWsPaths = openedWsPaths;
 
-          openedWsPaths.forEachWsPath((wsPath) => {
-            if (wsPath && !fileWsPaths.includes(wsPath)) {
-              newOpenedWsPaths = newOpenedWsPaths.closeIfFound(wsPath);
-            }
-          });
+            openedWsPaths.forEachWsPath((wsPath) => {
+              if (wsPath && !fileWsPaths.includes(createWsPath(wsPath))) {
+                newOpenedWsPaths = newOpenedWsPaths.closeIfFound(wsPath);
+              }
+            });
 
-          return newOpenedWsPaths.optimizeSpace();
-        },
-        { replace: true },
-      )(bangleStore.state, bangleStore.dispatch);
+            return newOpenedWsPaths.optimizeSpace();
+          },
+          { replace: true },
+        ),
+      );
     }
-  }, [fileWsPaths, bangleStore, openedWsPaths]);
+  }, [fileWsPaths, nsmStore]);
 
   useEffect(() => {
     // fileWsPaths is undefined when its loading

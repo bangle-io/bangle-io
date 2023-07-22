@@ -1,24 +1,37 @@
 import React, { useEffect, useState } from 'react';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { WorkspaceType } from '@bangle.io/constants';
+import {
+  useNsmSliceDispatch,
+  useNsmSliceState,
+} from '@bangle.io/bangle-store-context';
+import { SEVERITY, WorkspaceType } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { nsmNotification } from '@bangle.io/slice-notification';
 import {
   goToLandingPage,
-  goToWsNameRoute,
+  goToWorkspaceHome,
   goToWsNameRouteNotFoundRoute,
-} from '@bangle.io/slice-workspace';
+  nsmPageSlice,
+} from '@bangle.io/slice-page';
+import { nsmUISlice } from '@bangle.io/slice-ui';
 import { Button, CenteredBoxedPage } from '@bangle.io/ui-components';
 import { keybindingsHelper } from '@bangle.io/utils';
 import { readWorkspaceInfo } from '@bangle.io/workspace-info';
+import { createWsName } from '@bangle.io/ws-path';
 
-export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
-  wsName = decodeURIComponent(wsName || '');
-
+export function WorkspaceNativefsAuthBlockade({
+  wsName: _wsName,
+}: {
+  wsName: string;
+}) {
+  const wsName = createWsName(decodeURIComponent(_wsName || ''));
   const [permissionDenied, updatePermissionDenied] = useState(false);
-  const bangleStore = useBangleStoreContext();
+  const pageDispatch = useNsmSliceDispatch(nsmPageSlice);
+  const notificationDispatch = useNsmSliceDispatch(
+    nsmNotification.nsmNotificationSlice,
+  );
+
   const [wsInfo, updateWsInfo] = useState<WorkspaceInfo>();
 
   useEffect(() => {
@@ -30,10 +43,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
           return;
         }
         if (!wsInfo) {
-          goToWsNameRouteNotFoundRoute(wsName)(
-            bangleStore.state,
-            bangleStore.dispatch,
-          );
+          pageDispatch(goToWsNameRouteNotFoundRoute({ wsName }));
         } else {
           updateWsInfo(wsInfo);
         }
@@ -42,20 +52,31 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
         if (destroyed) {
           return;
         }
-        bangleStore.errorHandler(error);
+
+        notificationDispatch(
+          nsmNotification.showNotification({
+            content: `Error reading workspace info for ${wsName}. ${error.message}`,
+            title: 'Error',
+            severity: SEVERITY.ERROR,
+            uid: 'workspace-info-read-error' + Date.now(),
+          }),
+        );
+
+        // TODO should we try send to storage error handling?
+        // the problem is that it could cause infinite loop
+        console.error(error);
+
+        return;
       },
     );
 
     return () => {
       destroyed = true;
     };
-  }, [wsName, bangleStore]);
+  }, [wsName, pageDispatch, notificationDispatch]);
 
   const onGranted = () => {
-    goToWsNameRoute(wsName, { replace: true })(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
+    pageDispatch(goToWorkspaceHome({ wsName, replace: true }));
   };
 
   const requestFSPermission = async () => {
@@ -67,6 +88,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
       return true;
     }
+
     const result = await requestNativeBrowserFSPermission(
       wsInfo.metadata.rootDirHandle,
     );
@@ -84,9 +106,9 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
   useEffect(() => {
     if (!wsName) {
-      goToLandingPage()(bangleStore.state, bangleStore.dispatch);
+      pageDispatch(goToLandingPage());
     }
-  }, [bangleStore, wsName]);
+  }, [pageDispatch, wsName]);
 
   if (!wsName || !wsInfo) {
     return null;
@@ -110,7 +132,8 @@ function PermissionModal({
   requestFSPermission: () => Promise<boolean>;
   wsName: string;
 }) {
-  const { paletteType, dialogName } = useUIManagerContext();
+  const { dialogName, paletteType } = useNsmSliceState(nsmUISlice);
+
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {
     let callback = keybindingsHelper({

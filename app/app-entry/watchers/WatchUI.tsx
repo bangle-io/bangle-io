@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import { TAB_ID } from '@bangle.io/config';
 import type { ColorScheme } from '@bangle.io/constants';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { useBroadcastChannel } from '@bangle.io/utils';
 
 const CHANNEL_NAME = 'watch_ui';
@@ -23,7 +24,9 @@ interface MessageType {
 export function WatchUI() {
   const [lastMessage, broadcastMessage] =
     useBroadcastChannel<MessageType>(CHANNEL_NAME);
-  const { colorScheme, dispatch } = useUIManagerContext();
+
+  const [{ colorScheme }, uiDispatch] = useNsmSlice(nsmUISlice);
+
   const isFirstMountRef = useRef(true);
 
   useEffect(() => {
@@ -32,12 +35,9 @@ export function WatchUI() {
 
   useEffect(() => {
     if (lastMessage) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:UPDATE_COLOR_SCHEME',
-        value: { colorScheme: lastMessage.payload.colorScheme },
-      });
+      uiDispatch(nsmUI.updateColorSchema(lastMessage.payload.colorScheme));
     }
-  }, [dispatch, lastMessage]);
+  }, [uiDispatch, lastMessage]);
 
   useEffect(() => {
     if (!isFirstMountRef.current && colorScheme) {

@@ -19,10 +19,10 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.31.6",
-    "@bangle.dev/pm": "0.31.6",
-    "@bangle.dev/react": "0.31.6",
-    "@bangle.dev/utils": "0.31.6",
+    "@bangle.dev/core": "0.32.0",
+    "@bangle.dev/pm": "0.32.0",
+    "@bangle.dev/react": "0.32.0",
+    "@bangle.dev/utils": "0.32.0",
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
@@ -35,7 +35,7 @@
     "debounce-fn": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tslib": "^2.4.1",
+    "tslib": "2.4.1",
     "typescript": "4.9.3",
     "w3c-keyname": "^2.2.6"
   },
@@ -43,8 +43,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.31.6",
-    "@bangle.dev/test-helpers": "0.31.6",
+    "@bangle.dev/all-base-components": "0.32.0",
+    "@bangle.dev/test-helpers": "0.32.0",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.49",

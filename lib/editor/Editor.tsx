@@ -16,26 +16,33 @@ import {
 import { valuePlugin } from '@bangle.dev/utils';
 
 import {
-  useBangleStoreContext,
+  useNsmPlainStore,
+  useNsmStore,
   useSerialOperationContext,
 } from '@bangle.io/api';
 import { EditorDisplayType } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
-  BangleApplicationStore,
   DispatchSerialOperationType,
   EditorPluginMetadata,
-  ExtensionRegistry,
+  EternalVars,
+  NsmStore,
+  WsPath,
 } from '@bangle.io/shared-types';
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
+  getEditor,
   getInitialSelection,
-  setEditorReady,
-  setEditorUnmounted,
+  nsmEditorManagerSlice,
+  setEditor,
+  setEditorScrollPos,
+  updateSelection,
 } from '@bangle.io/slice-editor-manager';
-import { getNote } from '@bangle.io/slice-workspace';
+import { calculateSelection } from '@bangle.io/slice-editor-manager/utils';
 import { cx } from '@bangle.io/utils';
+import { fs } from '@bangle.io/workspace-info';
 
 import { watchPluginHost } from './watch-plugin-host';
 
@@ -46,8 +53,8 @@ export interface EditorProps {
   className?: string;
   editorDisplayType?: EditorDisplayType;
   editorId: EditorIdType;
-  extensionRegistry: ExtensionRegistry;
-  wsPath: string;
+  eternalVars: EternalVars;
+  wsPath: WsPath;
 }
 
 export function Editor(props: EditorProps) {
@@ -60,13 +67,12 @@ function EditorInner({
   className,
   editorDisplayType = EditorDisplayType.Page,
   editorId,
-  extensionRegistry,
+  eternalVars,
   wsPath,
 }: EditorProps) {
-  const bangleStore = useBangleStoreContext();
-
   const { dispatchSerialOperation } = useSerialOperationContext();
-
+  const editorStore = useNsmStore([nsmEditorManagerSlice, nsmSliceWorkspace]);
+  const nsmStore = useNsmPlainStore();
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
@@ -74,38 +80,34 @@ function EditorInner({
 
   useEffect(() => {
     let destroyed = false;
-    getNote(wsPath)(bangleStore.state, bangleStore.dispatch, bangleStore)
-      .then((doc) => {
-        if (!destroyed) {
-          setInitialDoc(doc);
-        }
-      })
-      .catch((err) => {
-        bangleStore.errorHandler(err);
 
-        return undefined;
-      });
+    fs.getNote(wsPath, eternalVars.extensionRegistry).then((doc) => {
+      if (!destroyed) {
+        setInitialDoc(doc);
+      }
+    });
 
     return () => {
       destroyed = true;
     };
-  }, [wsPath, bangleStore]);
+  }, [wsPath, eternalVars.extensionRegistry]);
 
   const editorRef = useRef<ReturnType<typeof Proxy.revocable> | null>(null);
 
   const _onEditorReady = useCallback(
     (editor) => {
-      // See the code below for explaination on why this exist.
       const proxiedEditor = Proxy.revocable(editor, {});
       editorRef.current = proxiedEditor;
 
-      setEditorReady(
-        editorId,
-        wsPath,
-        proxiedEditor.proxy,
-      )(bangleStore.state, bangleStore.dispatch);
+      setEditorScrollPos(editorStore.state, wsPath, editorId);
+      editorStore.dispatch(
+        setEditor({
+          editorId,
+          editor: proxiedEditor.proxy,
+        }),
+      );
     },
-    [bangleStore, wsPath, editorId],
+    [editorStore, wsPath, editorId],
   );
 
   useEffect(() => {
@@ -115,10 +117,20 @@ function EditorInner({
       if (editorProxy) {
         editorRef.current = null;
 
-        setEditorUnmounted(editorId, editorProxy.proxy as any)(
-          bangleStore.state,
-          bangleStore.dispatch,
-        );
+        const currentEditor = getEditor(editorStore.state, editorId);
+
+        // make sure we are unsetting the correct editor
+        if (currentEditor === editorProxy.proxy) {
+          editorStore.dispatch(
+            setEditor({
+              editor: undefined,
+              editorId,
+            }),
+          );
+          // update the last selection before unmounting
+          const value = calculateSelection(editorId, currentEditor);
+          editorStore.dispatch(updateSelection(value));
+        }
 
         // Avoiding MEMORY LEAK
         // Editor object is a pretty massive object and writing idiomatic react
@@ -138,70 +150,70 @@ function EditorInner({
         }, 100);
       }
     };
-  }, [editorId, bangleStore]);
+  }, [editorId, editorStore]);
 
   const initialSelection =
     editorId != null && initialValue
-      ? getInitialSelection(editorId, wsPath, initialValue)(bangleStore.state)
+      ? getInitialSelection(editorStore.state, editorId, wsPath, initialValue)
       : undefined;
 
   return initialValue ? (
     <EditorInner2
+      nsmStore={nsmStore}
       initialSelection={initialSelection}
       dispatchSerialOperation={dispatchSerialOperation}
       className={className}
       editorId={editorId}
-      extensionRegistry={extensionRegistry}
+      eternalVars={eternalVars}
       initialValue={initialValue}
       wsPath={wsPath}
       onEditorReady={_onEditorReady}
       editorDisplayType={editorDisplayType}
-      bangleStore={bangleStore}
     />
   ) : null;
 }
 
 function EditorInner2({
+  nsmStore,
   className,
   dispatchSerialOperation,
   editorDisplayType,
   editorId,
-  extensionRegistry,
+  eternalVars,
   initialValue,
   onEditorReady,
   initialSelection,
   wsPath,
-  bangleStore,
 }: {
+  eternalVars: EternalVars;
+  nsmStore: NsmStore;
   className?: string;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
   editorId?: EditorIdType;
-  extensionRegistry: ExtensionRegistry;
   initialValue: any;
   initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
-  wsPath: string;
-  bangleStore: BangleApplicationStore;
+  wsPath: WsPath;
 }) {
   const editorState = useGetEditorState({
     dispatchSerialOperation,
     editorDisplayType,
     editorId,
-    extensionRegistry,
+    eternalVars,
     initialSelection,
     initialValue,
     wsPath,
-    bangleStore,
+    nsmStore,
   });
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
     (nodeViewRenderArg) => {
-      return extensionRegistry.renderReactNodeViews({
+      return eternalVars.extensionRegistry.renderReactNodeViews({
         nodeViewRenderArg,
       });
     },
-    [extensionRegistry],
+    [eternalVars],
   );
 
   let displayClass = 'B-editor_display-page';
@@ -229,7 +241,7 @@ function EditorInner2({
       renderNodeViews={renderNodeViews}
       state={editorState}
     >
-      {extensionRegistry.renderExtensionEditorComponents()}
+      {eternalVars.extensionRegistry.renderExtensionEditorComponents()}
     </ReactBangleEditor>
   );
 }
@@ -238,20 +250,20 @@ export function useGetEditorState({
   dispatchSerialOperation,
   editorDisplayType,
   editorId,
-  extensionRegistry,
   initialSelection,
   initialValue,
   wsPath,
-  bangleStore,
+  nsmStore,
+  eternalVars,
 }: {
+  nsmStore: NsmStore;
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
   editorId?: EditorIdType;
-  extensionRegistry: ExtensionRegistry;
+  eternalVars: EternalVars;
   initialSelection: Selection | undefined;
   initialValue: any;
-  wsPath: string;
-  bangleStore: BangleApplicationStore;
+  wsPath: WsPath;
 }) {
   // TODO decouple pluginMetadata, this should be provided as a prop
   const pluginMetadata: EditorPluginMetadata = useMemo(
@@ -260,30 +272,40 @@ export function useGetEditorState({
       editorId,
       editorDisplayType,
       dispatchSerialOperation,
-      bangleStore,
+      nsmStore,
+      createdAt: Date.now(),
+      collabMessageBus: eternalVars.editorCollabMessageBus,
     }),
-    [editorId, wsPath, dispatchSerialOperation, bangleStore, editorDisplayType],
+
+    [
+      editorId,
+      nsmStore,
+      wsPath,
+      dispatchSerialOperation,
+      editorDisplayType,
+      eternalVars,
+    ],
   );
 
   const plugins = useCallback(() => {
     return [
       // needs to be at top so that other plugins get depend on this
       valuePlugin(EditorPluginMetadataKey, pluginMetadata),
-      ...extensionRegistry.getPlugins(),
+      ...eternalVars.extensionRegistry.getPlugins(),
 
       // Needs to be at bottom so that it can dispatch
       // operations for any plugin state updates before it
       watchPluginHost(
         pluginMetadata,
-        extensionRegistry.getEditorWatchPluginStates(),
+        eternalVars.extensionRegistry.getEditorWatchPluginStates(),
       ),
     ];
-  }, [extensionRegistry, pluginMetadata]);
+  }, [eternalVars, pluginMetadata]);
 
   const editorState = useEditorState({
     plugins,
     pluginMetadata,
-    specRegistry: extensionRegistry.specRegistry,
+    specRegistry: eternalVars.extensionRegistry.specRegistry,
     initialValue,
     pmStateOpts: {
       selection: initialSelection,

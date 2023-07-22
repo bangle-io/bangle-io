@@ -1,33 +1,29 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  useBangleStoreContext,
-  useSliceState,
-} from '@bangle.io/bangle-store-context';
+import { nsmApi2, useNsmSlice } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
-import { togglePaletteType } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
-import { searchNotesSliceKey } from '../constants';
-import { updateInputSearchQuery } from '../search-notes-slice';
+import { searchSlice, updateSearchQuery } from '../search-notes-slice';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
 export function SearchNotesSidebar() {
-  const bangleStore = useBangleStoreContext();
-  const { wsName } = useWorkspaceContext();
-  const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
-  const {
-    sliceState: {
+  const { wsName } = nsmApi2.workspace.useWorkspace();
+
+  const [
+    {
       pendingSearch,
       searchResults,
       searchQuery,
       externalInputChange: externalChange,
     },
-    store,
-  } = useSliceState(searchNotesSliceKey);
+    searchDispatch,
+  ] = useNsmSlice(searchSlice);
+
+  const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
+
   const [rawSearchQuery, updateRawSearchQuery] = useState(searchQuery || '');
 
   const [lastExternalChange, setLastExternalChange] = useState(externalChange);
@@ -45,15 +41,15 @@ export function SearchNotesSidebar() {
     } else {
       if (localSearchQuery !== searchQuery) {
         // else sync the local state with the global state
-        updateInputSearchQuery(localSearchQuery)(store.state, store.dispatch);
+        searchDispatch(updateSearchQuery({ query: localSearchQuery }));
       }
     }
   }, [
     externalChange,
     searchQuery,
     localSearchQuery,
-    store,
     lastExternalChange,
+    searchDispatch,
   ]);
 
   useEffect(() => {
@@ -66,10 +62,7 @@ export function SearchNotesSidebar() {
         <span
           className="text-sm font-extrabold cursor-pointer text-colorNeutralTextSubdued"
           onClick={() => {
-            togglePaletteType(CorePalette.Workspace)(
-              bangleStore.state,
-              bangleStore.dispatch,
-            );
+            nsmApi2.ui.togglePalette(CorePalette.Workspace);
           }}
         >
           Please open a workspace to search

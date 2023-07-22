@@ -3,7 +3,7 @@ import { sleep } from '@bangle.dev/utils';
 import type { AppState } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
-  goToLocation,
+  oldGoToLocation,
   pageSliceKey,
   wsNameToPathname,
 } from '@bangle.io/slice-page';
@@ -14,7 +14,7 @@ import {
 import {
   compareWorkspaceInfo,
   readWorkspaceInfo,
-  saveWorkspaceInfo,
+  updateWorkspaceInfo,
 } from '@bangle.io/workspace-info';
 import { validWsName } from '@bangle.io/ws-path';
 
@@ -108,18 +108,14 @@ export function createWorkspace(
       metadata: wsMetadata,
     };
 
-    await saveWorkspaceInfo(
-      wsName,
-      (w) => ({
-        ...w,
-        // if there was a previously deleted workspace with the same name,
-        // overwrite it
-        ...workspaceInfo,
-      }),
-      workspaceInfo,
-    );
+    await updateWorkspaceInfo(wsName, (w) => ({
+      ...w,
+      // if there was a previously deleted workspace with the same name,
+      // overwrite it
+      ...workspaceInfo,
+    }));
 
-    goToLocation(wsNameToPathname(wsName))(
+    oldGoToLocation(wsNameToPathname(wsName))(
       store.state,
       pageSliceKey.getDispatch(store.dispatch),
     );
@@ -147,18 +143,15 @@ export function deleteWorkspace(targetWsName: string) {
       await Promise.resolve();
     }
 
-    await saveWorkspaceInfo(
-      targetWsName,
-      (existing) => ({
-        ...existing,
-        deleted: true,
-      }),
-      targetWsInfo,
-    );
+    await updateWorkspaceInfo(targetWsName, (existing) => ({
+      ...existing,
+      deleted: true,
+    }));
 
     return true;
   };
 }
+
 let count = 0;
 
 export function updateCachedWorkspaceInfo(wsName: string) {

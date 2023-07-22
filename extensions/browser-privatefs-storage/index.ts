@@ -1,4 +1,4 @@
-import { Extension, notification, workspace } from '@bangle.io/api';
+import { Extension, nsmApi2 } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   SEVERITY,
@@ -18,18 +18,15 @@ const extension = Extension.create({
   application: {
     slices: [],
     storageProvider: new PrivateFsStorageProvider(),
-    onStorageError: (error, store) => {
+    onStorageError: (error) => {
       if (
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
       ) {
-        const wsName = workspace.getWsName()(store.state);
+        const wsName = nsmApi2.workspace.workspaceState().wsName;
 
         if (wsName) {
-          workspace.goToWorkspaceAuthRoute(wsName, error.code)(
-            store.state,
-            store.dispatch,
-          );
+          nsmApi2.workspace.goToWorkspaceAuthRoute(wsName, error.code);
 
           return true;
         }
@@ -40,7 +37,7 @@ const extension = Extension.create({
         error.name === BaseFileSystemError.name
       ) {
         console.debug(error.code, error.name, error.stack);
-        notification.showNotification({
+        nsmApi2.ui.showNotification({
           severity: SEVERITY.ERROR,
           title: 'File system error',
           content: error.message,
@@ -52,7 +49,7 @@ const extension = Extension.create({
               operation: CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
             },
           ],
-        })(store.state, store.dispatch);
+        });
 
         return true;
       }

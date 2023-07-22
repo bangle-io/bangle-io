@@ -4,13 +4,13 @@ import reactDOM from 'react-dom';
 import type { EditorState, EditorView } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
 import { assertNotUndefined, insertAt } from '@bangle.io/utils';
 import {
@@ -25,7 +25,10 @@ import { getBacklinkPath, wsPathFromQuery } from '../utils';
 const FZF_SEARCH_LIMIT = 12;
 
 // Creating this also closes the palette
-const createBacklinkNode = (wsPath: string, allNoteWsPaths: string[]) => {
+const createBacklinkNode = (
+  wsPath: string,
+  allNoteWsPaths: readonly string[],
+) => {
   return (
     state: EditorState,
     dispatch: EditorView['dispatch'] | undefined,
@@ -82,11 +85,12 @@ function InlineBacklinkPaletteInner({
   counter: number;
 }) {
   const view = useEditorViewContext();
-  const { wsName, noteWsPaths = EMPTY_ARRAY } = useWorkspaceContext();
+  const { wsName, noteWsPaths = EMPTY_ARRAY } =
+    nsmApi2.workspace.useWorkspace();
 
   const match = useFzfSearch(noteWsPaths, query, {
     limit: FZF_SEARCH_LIMIT,
-    selector: (item) => resolvePath(item, true).filePath,
+    selector: (item: any) => resolvePath(item, true).filePath,
     tiebreakers: [byLengthAsc],
   });
 

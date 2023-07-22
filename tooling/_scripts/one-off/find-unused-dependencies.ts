@@ -54,7 +54,12 @@ async function find() {
     );
 
     if (filteredPkgs.length > 0) {
-      console.log(pkg.name, pkg.packagePath, 'unusedPkgs', filteredPkgs);
+      console.log(
+        pkg.name,
+        pkg.packagePath + '/package.json',
+        'unusedPkgs',
+        filteredPkgs,
+      );
 
       // await pkg.runWorkspaceCommand('remove', ...filteredPkgs);
     }

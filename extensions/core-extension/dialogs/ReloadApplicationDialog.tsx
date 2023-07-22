@@ -1,20 +1,13 @@
 import React, { useCallback } from 'react';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { RELOAD_APPLICATION_DIALOG_NAME } from '@bangle.io/constants';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { Dialog } from '@bangle.io/ui-components';
 
 export function ReloadApplicationDialog() {
-  const { dispatch } = useUIManagerContext();
-
   const onDismiss = useCallback(() => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
-      value: {
-        dialogName: RELOAD_APPLICATION_DIALOG_NAME,
-      },
-    });
-  }, [dispatch]);
+    nsmApi2.ui.dismissDialog(RELOAD_APPLICATION_DIALOG_NAME);
+  }, []);
 
   return (
     <Dialog

@@ -1,13 +1,10 @@
 import React from 'react';
 
-import { notification, useSerialOperationContext } from '@bangle.io/api';
-import { useSliceState } from '@bangle.io/bangle-store-context';
+import { useSerialOperationContext } from '@bangle.io/api';
+import { useNsmSlice } from '@bangle.io/bangle-store-context';
 import { SEVERITY } from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
-import {
-  dismissNotification,
-  notificationSliceKey,
-} from '@bangle.io/slice-notification';
+import { nsmNotification } from '@bangle.io/slice-notification';
 import {
   Button,
   BUTTON_VARIANT,
@@ -22,10 +19,9 @@ import { useInterval } from '@bangle.io/utils';
 const CLEAR_INTERVAL = 8000;
 
 export function NotificationArea() {
-  const {
-    store,
-    sliceState: { notifications },
-  } = useSliceState(notificationSliceKey);
+  const [{ notifications }, dispatch] = useNsmSlice(
+    nsmNotification.nsmNotificationSlice,
+  );
 
   useInterval(
     () => {
@@ -43,13 +39,10 @@ export function NotificationArea() {
         });
 
       if (toRemove.length > 0) {
-        notification.dismissNotification({ uid: toRemove })(
-          store.state,
-          store.dispatch,
-        );
+        dispatch(nsmNotification.dismissNotification(toRemove));
       }
     },
-    [notifications, store],
+    [notifications, dispatch],
     2000,
   );
 
@@ -59,7 +52,7 @@ export function NotificationArea() {
         <Notification
           key={n.uid}
           onDismiss={() => {
-            dismissNotification({ uid: n.uid })(store.state, store.dispatch);
+            dispatch(nsmNotification.dismissNotification(n.uid));
           }}
           title={n.title}
           content={n.content?.split('\n').map((r, i) => (

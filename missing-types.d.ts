@@ -43,8 +43,7 @@ interface Navigator {
 declare var _e2eNaukarHelpers:
   | undefined
   | import('@bangle.io/e2e-types').E2ENaukarTypes;
-declare var _newE2eHelpers2:
-  | undefined
-  | import('@bangle.io/e2e-types').E2ETypes;
+
+declare var _nsmE2e: undefined | import('@bangle.io/e2e-types').NSME2eTypes;
 
 declare var __BANGLE_INJECTED_CONFIG__: string | undefined;

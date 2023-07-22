@@ -1,15 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
-import {
-  useBangleStoreContext,
-  useSerialOperationContext,
-  workspace,
-} from '@bangle.io/api';
+import { nsmApi2, useSerialOperationContext } from '@bangle.io/api';
 import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
-import type { BangleApplicationStore } from '@bangle.io/shared-types';
-import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -25,7 +19,7 @@ import {
   useLocalStorage,
 } from '@bangle.io/utils';
 import {
-  filePathToWsPath,
+  filePathToWsPath2,
   removeExtension,
   resolvePath,
 } from '@bangle.io/ws-path';
@@ -46,11 +40,14 @@ const rowHeight = 1.5 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function NotesTree() {
-  const bangleStore = useBangleStoreContext();
-  const { widescreen } = useUIManagerContext();
-  const { wsName, openedWsPaths, noteWsPaths = [] } = useWorkspaceContext();
+  const { widescreen } = nsmApi2.ui.useUi();
 
-  const { dispatch } = bangleStore;
+  const {
+    wsName,
+    openedWsPaths,
+    noteWsPaths = [],
+  } = nsmApi2.workspace.useWorkspace();
+
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   const { primaryWsPath } = openedWsPaths;
@@ -60,12 +57,9 @@ export function NotesTree() {
 
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
-        value: { type: null },
-      });
+      nsmApi2.ui.closeSidebar();
     }
-  }, [dispatch, widescreen]);
+  }, [widescreen]);
 
   const createNewFile = useCallback(
     (path) => {
@@ -85,10 +79,7 @@ export function NotesTree() {
         <span
           className="text-sm font-extrabold cursor-pointer bangle-io_textColorLighter"
           onClick={() => {
-            togglePaletteType(CorePalette.Workspace)(
-              bangleStore.state,
-              bangleStore.dispatch,
-            );
+            nsmApi2.ui.togglePalette(CorePalette.Workspace);
           }}
         >
           Please open a workspace
@@ -111,7 +102,6 @@ export function NotesTree() {
     <GenericFileBrowser
       wsName={wsName}
       files={noteWsPaths}
-      bangleStore={bangleStore}
       activeFilePath={activeFilePath}
       closeSidebar={closeSidebar}
       createNewFile={createNewFile}
@@ -126,14 +116,12 @@ const IconStyle = {
 export function GenericFileBrowser({
   wsName,
   files,
-  bangleStore,
   activeFilePath,
   closeSidebar,
   createNewFile,
 }: {
-  wsName: string;
-  files: string[];
-  bangleStore: BangleApplicationStore;
+  wsName: WsName;
+  files: readonly WsPath[];
   activeFilePath?: string;
   closeSidebar: () => void;
   createNewFile: (path?: string) => void;
@@ -151,7 +139,6 @@ export function GenericFileBrowser({
       wsName={wsName}
       filesAndDirList={filesAndDirList}
       dirSet={dirSet}
-      bangleStore={bangleStore}
       activeFilePath={activeFilePath}
       closeSidebar={closeSidebar}
       createNewFile={createNewFile}
@@ -163,15 +150,13 @@ const RenderItems = ({
   wsName,
   filesAndDirList,
   dirSet,
-  bangleStore,
   activeFilePath,
   closeSidebar,
   createNewFile,
 }: {
-  wsName: string;
+  wsName: WsName;
   filesAndDirList: string[];
   dirSet: Set<string>;
-  bangleStore: BangleApplicationStore;
   activeFilePath?: string;
   closeSidebar: () => void;
   createNewFile: (path?: string) => void;
@@ -239,7 +224,7 @@ const RenderItems = ({
   const result = rowVirtualizer.virtualItems.map((virtualRow) => {
     const path = rows[virtualRow.index]!;
     const isDir = dirSet.has(path);
-    const wsPath = filePathToWsPath(wsName, path);
+    const wsPath = filePathToWsPath2(wsName, path);
     const splittedPath = path.split('/');
     const depth = splittedPath.length;
     const name = removeExtension(splittedPath.pop() || 'Unknown file name');
@@ -257,18 +242,11 @@ const RenderItems = ({
         return;
       }
       if (event.metaKey) {
-        workspace.pushWsPath(wsPath, true)(
-          bangleStore.state,
-          bangleStore.dispatch,
-        );
+        nsmApi2.workspace.openWsPathInNewTab(wsPath);
       } else if (event.shiftKey) {
-        workspace.pushWsPath(
-          wsPath,
-          false,
-          true,
-        )(bangleStore.state, bangleStore.dispatch);
+        nsmApi2.workspace.pushSecondaryWsPath(wsPath);
       } else {
-        workspace.pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
+        nsmApi2.workspace.pushPrimaryWsPath(wsPath);
       }
       closeSidebar();
     };
@@ -285,7 +263,6 @@ const RenderItems = ({
         isActive={activeFilePath === path}
         isCollapsed={collapsed.includes(path)}
         createNewFile={createNewFile}
-        bangleStore={bangleStore}
         onClick={onClick}
       />
     );
@@ -315,19 +292,17 @@ function RenderRow({
   depth,
   isActive,
   isCollapsed,
-  bangleStore,
   onClick,
   createNewFile,
 }: {
   virtualRow: any;
   path: string;
   isDir: boolean;
-  wsPath: string;
+  wsPath: WsPath;
   name: string;
   depth: number;
   isActive: boolean;
   isCollapsed: boolean;
-  bangleStore: BangleApplicationStore;
   onClick: (event: React.MouseEvent<any>) => void;
   createNewFile: (path?: string) => void;
 }) {
@@ -407,15 +382,7 @@ function RenderRow({
                 if (
                   window.confirm(`Are you sure you want to delete "${name}"? `)
                 ) {
-                  workspace
-                    .deleteNote(wsPath)(
-                      bangleStore.state,
-                      bangleStore.dispatch,
-                      bangleStore,
-                    )
-                    .catch((error) => {
-                      bangleStore.errorHandler(error);
-                    });
+                  nsmApi2.workspace.deleteNote(wsPath);
                 }
               }}
             >

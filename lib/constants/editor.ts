@@ -1,5 +1,6 @@
 export const MAX_OPEN_EDITORS = 4;
 
+// TODO can make these nominal types
 // Warning!: Donot change the indices unless you are really sure of what you are doing.
 // This warning exists because a lot of places are directly using the integer values.
 export const PRIMARY_EDITOR_INDEX = 0;

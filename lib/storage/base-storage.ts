@@ -1,5 +1,7 @@
 import type { SpecRegistry } from '@bangle.dev/core';
 
+import type { StorageProviderOnChange } from '@bangle.io/shared-types';
+
 export type WsPath = string;
 export type WsName = string;
 
@@ -15,6 +17,7 @@ export interface FileStat {
 }
 
 export interface StorageOpts {
+  // TODO why do we need spec-registry here?
   specRegistry: SpecRegistry;
   readWorkspaceMetadata: (wsName: string) => Promise<{ [key: string]: any }>;
   updateWorkspaceMetadata: (
@@ -29,6 +32,8 @@ export interface BaseStorageProvider {
   // hide creating a workspace of this type
   readonly hidden?: boolean;
   readonly name: string;
+
+  onChange: StorageProviderOnChange;
 
   isSupported: () => boolean;
 

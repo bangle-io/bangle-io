@@ -173,42 +173,6 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
           return fileContents;
         },
       },
-
-      {
-        type: 'modify',
-        path: 'worker/worker-naukar/store/naukar-slices.ts',
-        transform: (fileContents, data) => {
-          if (data.addToWorkerSlices === 'y') {
-            fileContents = fileContents.replace(
-              '// <-- PLOP INSERT SLICE IMPORT -->',
-              `// <-- PLOP INSERT SLICE IMPORT -->
-import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
-            );
-            fileContents = fileContents.replace(
-              '// <-- PLOP INSERT SLICE -->',
-              `${sliceCamelName(data.name)}Slice(),` +
-                '\n' +
-                `// <-- PLOP INSERT SLICE -->`,
-            );
-          }
-
-          return fileContents;
-        },
-      },
-      {
-        type: 'modify',
-        path: 'worker/worker-naukar/package.json',
-        transform: (fileContents, data) => {
-          if (data.addToWorkerSlices === 'y') {
-            let newData = JSON.parse(fileContents);
-            newData.dependencies[`@bangle.io/${data.name}`] = 'workspace:*';
-
-            return JSON.stringify(newData, null, 2);
-          }
-
-          return fileContents;
-        },
-      },
     ],
   });
 
@@ -330,7 +294,7 @@ import { ${sliceCamelName(data.name)}Slice } from '@bangle.io/${data.name}';`,
 
       {
         type: 'modify',
-        path: 'app/shared/init-extension-registry.ts',
+        path: 'app/shared/on-before-store-load.ts',
         transform: (fileContents, data) => {
           fileContents = fileContents.replace(
             '// <-- PLOP INSERT EXTENSION IMPORT -->',

@@ -1,9 +1,9 @@
 import { heading, listItem } from '@bangle.dev/base-components';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
+import { nsmApi2 } from '@bangle.io/api';
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
-import { dispatchEditorCommand } from '@bangle.io/slice-editor-manager';
 
 import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
@@ -45,40 +45,40 @@ const extension = Extension.create({
       const { moveListItemUp, moveListItemDown } = listItem;
 
       return {
-        handle(operation, payload, bangleStore) {
+        handle(operation) {
           switch (operation.name) {
             case 'operation::@bangle.io/core-editor:collapse-heading': {
-              dispatchEditorCommand(
+              nsmApi2.editor.dispatchEditorCommand(
                 PRIMARY_EDITOR_INDEX,
                 toggleHeadingCollapse(),
-              )(bangleStore.state);
+              );
 
               return true;
             }
 
             case 'operation::@bangle.io/core-editor:uncollapse-all-heading': {
-              dispatchEditorCommand(
+              nsmApi2.editor.dispatchEditorCommand(
                 PRIMARY_EDITOR_INDEX,
                 uncollapseAllHeadings(),
-              )(bangleStore.state);
+              );
 
               return true;
             }
 
             case 'operation::@bangle.io/core-editor:move-list-up': {
-              dispatchEditorCommand(
+              nsmApi2.editor.dispatchEditorCommand(
                 PRIMARY_EDITOR_INDEX,
                 moveListItemUp(),
-              )(bangleStore.state);
+              );
 
               return true;
             }
 
             case 'operation::@bangle.io/core-editor:move-list-down': {
-              dispatchEditorCommand(
+              nsmApi2.editor.dispatchEditorCommand(
                 PRIMARY_EDITOR_INDEX,
                 moveListItemDown(),
-              )(bangleStore.state);
+              );
 
               return true;
             }

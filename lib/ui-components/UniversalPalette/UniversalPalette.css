@@ -95,6 +95,10 @@
   background-color: var(--BV-colorPromoteSolidSubdued);
 }
 
+.B-ui-components_universal-palette-item.BU_active:hover {
+  background-color: var(--BV-colorPromoteSolidSubdued);
+}
+
 .B-ui-components_universal-palette-item.BU_disabled {
   color: var(--BV-colorNeutralTextSubdued);
   cursor: not-allowed;

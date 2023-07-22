@@ -26,9 +26,7 @@ test.describe('worker', () => {
 
     expect(page.workers()).toHaveLength(1);
 
-    const result = await page.evaluate(() =>
-      window._newE2eHelpers2?.e2eHealthCheck(),
-    );
+    const result = await page.evaluate(() => window._nsmE2e?.e2eHealthCheck());
 
     expect(result).toBe(true);
   });
@@ -46,9 +44,9 @@ test.describe('worker', () => {
 
     const pageSliceState = async () =>
       page.evaluate(() => {
-        const state = window._newE2eHelpers2?.store.state!;
+        const { getPageSliceState } = window._nsmE2e!;
 
-        return window._newE2eHelpers2?.pageSliceKey.getSliceState(state);
+        return getPageSliceState();
       });
 
     await sleep(50);

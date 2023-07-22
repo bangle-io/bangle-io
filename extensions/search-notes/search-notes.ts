@@ -1,3 +1,4 @@
+import type { WsName } from '@bangle.io/shared-types';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { CONCURRENCY } from './constants';
@@ -5,7 +6,7 @@ import { CONCURRENCY } from './constants';
 export async function searchNotes(
   signal: AbortSignal,
   query: string,
-  wsName: string,
+  wsName: WsName,
   {
     caseSensitive = false,
     maxChars = 75,
@@ -13,7 +14,7 @@ export async function searchNotes(
     totalMatchMax = 2000,
   } = {},
 ) {
-  return naukarProxy.abortableSearchWsForPmNode(
+  const result = await naukarProxy.abortable.abortableSearchWsForPmNode(
     signal,
     wsName,
     query,
@@ -40,4 +41,6 @@ export async function searchNotes(
       concurrency: CONCURRENCY,
     },
   );
+
+  return result;
 }

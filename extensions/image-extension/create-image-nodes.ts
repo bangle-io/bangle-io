@@ -1,8 +1,8 @@
 import type { EditorView, NodeType } from '@bangle.dev/pm';
 
-import { writeFile } from '@bangle.io/slice-workspace';
+import { nsmApi2 } from '@bangle.io/api';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { calcImageDimensions } from './image-file-helpers';
 import { createImage } from './image-writing';
@@ -12,15 +12,14 @@ export async function createImageNodes(
   imageType: NodeType,
   view: EditorView,
 ) {
-  const { wsPath: currentWsPath, bangleStore } = getEditorPluginMetadata(
-    view.state,
-  );
-  const { wsName } = resolvePath(currentWsPath);
+  const { wsPath: currentWsPath } = getEditorPluginMetadata(view.state);
+  const { wsName } = resolvePath2(currentWsPath);
 
   const sources = await Promise.all(
     files.map(async (file) => {
       const objectUrl = window.URL.createObjectURL(file);
       const dimensions = await calcImageDimensions(objectUrl);
+
       window.URL.revokeObjectURL(objectUrl);
       const { wsPath, srcUrl } = await createImage(
         file.name,
@@ -28,11 +27,12 @@ export async function createImageNodes(
         dimensions,
       );
 
-      await writeFile(wsPath, file)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      );
+      // exit if the workspace has changed
+      if (wsName !== nsmApi2.workspace.workspaceState().wsName) {
+        return undefined;
+      }
+
+      await nsmApi2.workspace.writeFile(wsPath, file);
 
       return srcUrl;
     }),

@@ -4,7 +4,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
-import { ui } from '@bangle.io/api';
 import { EXECUTE_SEARCH_OPERATION } from '@bangle.io/constants';
 import type { SearchResultItem } from '@bangle.io/search-pm-node';
 import {
@@ -16,7 +15,7 @@ import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
-import { SEARCH_SIDEBAR_NAME, searchNotesSliceKey } from '../constants';
+import { SEARCH_SIDEBAR_NAME } from '../constants';
 import searchNotesExtension from '../index';
 import { updateSliceState } from '../search-notes-slice';
 
@@ -29,7 +28,7 @@ jest.mock('@bangle.io/worker-naukar-proxy', () => {
 });
 
 let abortableSearchWsForPmNodeMock = jest.mocked(
-  naukarProxy.abortableSearchWsForPmNode,
+  naukarProxy.abortable.abortableSearchWsForPmNode,
 );
 
 const setup = async (

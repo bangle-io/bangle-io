@@ -1,20 +1,17 @@
 import { useCallback } from 'react';
 
 import type { EditorState } from '@bangle.dev/pm';
-import { EditorView } from '@bangle.dev/pm';
 
-import { notification, useBangleStoreContext } from '@bangle.io/api';
+import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
-import {
-  createNote,
-  pushWsPath,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import type { WsName, WsPath } from '@bangle.io/shared-types';
 import { getMouseClickType, MouseClick } from '@bangle.io/utils';
 import {
-  filePathToWsPath,
+  createWsPath,
+  filePathToWsPath2,
   getExtension,
   parseLocalFilePath,
+  parseLocalFilePath2,
   PathValidationError,
   suffixWithNoteExtension,
   validateNoteWsPath,
@@ -29,11 +26,10 @@ export function useOnClickBacklink({
   editorState,
 }: {
   wikiLink: string;
-  currentWsPath: string;
+  currentWsPath: WsPath;
   editorState: EditorState;
 }) {
-  const bangleStore = useBangleStoreContext();
-  const { wsName, noteWsPaths } = useWorkspaceContext();
+  const { wsName, noteWsPaths } = nsmApi2.workspace.useWorkspace();
 
   return useCallback(
     (event: React.MouseEvent<any>) => {
@@ -48,25 +44,30 @@ export function useOnClickBacklink({
         currentWsPath: currentWsPath,
         wsName,
         noteWsPaths,
-        bangleStore,
         editorState,
       }).then(
-        (matchedWsPath) => {
+        (_matchedWsPath) => {
+          const matchedWsPath = createWsPath(_matchedWsPath);
+
           const clickType = getMouseClickType(event);
-          pushWsPath(
-            matchedWsPath,
-            clickType === MouseClick.NewTab,
-            clickType === MouseClick.ShiftClick,
-          )(bangleStore.state, bangleStore.dispatch);
+
+          if (clickType === MouseClick.NewTab) {
+            nsmApi2.workspace.openWsPathInNewTab(matchedWsPath);
+          } else if (clickType === MouseClick.ShiftClick) {
+            nsmApi2.workspace.pushSecondaryWsPath(matchedWsPath);
+          } else {
+            nsmApi2.workspace.pushPrimaryWsPath(matchedWsPath);
+          }
         },
         (error) => {
           if (error instanceof PathValidationError) {
-            notification.showNotification({
+            nsmApi2.ui.showNotification({
               severity: SEVERITY.ERROR,
               title: 'Invalid backlink path',
               content: error.message,
               uid: Date.now() + '-invalid-backlink-path',
-            })(bangleStore.state, bangleStore.dispatch);
+              buttons: [],
+            });
 
             return;
           }
@@ -74,7 +75,7 @@ export function useOnClickBacklink({
         },
       );
     },
-    [noteWsPaths, currentWsPath, editorState, wikiLink, wsName, bangleStore],
+    [noteWsPaths, currentWsPath, editorState, wikiLink, wsName],
   );
 }
 
@@ -83,14 +84,12 @@ async function handleClick({
   currentWsPath,
   wsName,
   noteWsPaths,
-  bangleStore,
   editorState,
 }: {
   wikiLink: string;
-  currentWsPath: string;
-  wsName: string;
-  noteWsPaths: string[];
-  bangleStore: ReturnType<typeof useWorkspaceContext>['bangleStore'];
+  currentWsPath: WsPath;
+  wsName: WsName;
+  noteWsPaths: readonly WsPath[];
   editorState: EditorState;
 }) {
   const wikiLinkMapping = calcWikiLinkMapping(
@@ -119,7 +118,7 @@ async function handleClick({
   }
 
   // create a new note as no existing wsPaths match
-  let newWsPath = filePathToWsPath(wsName, wikiLinkWithExt);
+  let newWsPath = filePathToWsPath2(wsName, wikiLinkWithExt);
 
   // Check if the user wants to create a new note in the same dir
   if (
@@ -127,16 +126,12 @@ async function handleClick({
     currentWsPath &&
     !wikiLink.includes('/')
   ) {
-    newWsPath = parseLocalFilePath(wikiLinkWithExt, currentWsPath);
+    newWsPath = parseLocalFilePath2(wikiLinkWithExt, currentWsPath);
   }
 
   validateNoteWsPath(newWsPath);
 
-  await createNote(newWsPath, { open: false })(
-    bangleStore.state,
-    bangleStore.dispatch,
-    bangleStore,
-  );
+  await nsmApi2.workspace.createNote(newWsPath, { open: false });
 
   return newWsPath;
 }

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import {
-  ui,
-  useBangleStoreContext,
+  useNsmSlice,
+  useNsmSliceState,
   useSerialOperationContext,
 } from '@bangle.io/api';
+import { useNsmSliceDispatch } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
@@ -13,22 +14,20 @@ import {
 } from '@bangle.io/constants';
 import { vars } from '@bangle.io/css-vars';
 import { Editor } from '@bangle.io/editor';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
-  BangleApplicationStore,
   EditorIdType,
+  EternalVars,
+  WsPath,
 } from '@bangle.io/shared-types';
 import {
+  nsmEditorManagerSlice,
   toggleEditing,
-  useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
-import { getEditorIssue } from '@bangle.io/slice-notification';
-import { togglePaletteType } from '@bangle.io/slice-ui';
-import {
-  checkFileExists,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { nsmNotification } from '@bangle.io/slice-notification';
+import { nsmUI, nsmUISlice } from '@bangle.io/slice-ui';
 import { cx, useDestroyRef } from '@bangle.io/utils';
+import { fs } from '@bangle.io/workspace-info';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { Editorbar } from './Editorbar';
@@ -38,17 +37,23 @@ export function EditorContainer({
   widescreen,
   editorId,
   wsPath: incomingWsPath,
+  eternalVars,
 }: {
   widescreen: boolean;
   editorId: EditorIdType;
-  wsPath: string | undefined;
+  wsPath: WsPath | undefined;
+  eternalVars: EternalVars;
 }) {
-  const bangleStore = useBangleStoreContext();
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { openedWsPaths } = useWorkspaceContext();
-  const { focusedEditorId, editingAllowed } = useEditorManagerContext();
+  const { openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
+  const { editingAllowed, focusedEditorId } = useNsmSliceState(
+    nsmEditorManagerSlice,
+  );
+
   const { dispatchSerialOperation } = useSerialOperationContext();
-  const extensionRegistry = useExtensionRegistryContext();
+  const editorStoreDispatch = useNsmSliceDispatch(nsmEditorManagerSlice);
+
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
 
   const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
 
@@ -66,23 +71,18 @@ export function EditorContainer({
   }, [dispatchSerialOperation, editorId]);
 
   const openNotesPalette = useCallback(() => {
-    togglePaletteType(CorePalette.Notes)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    );
-  }, [bangleStore]);
+    uiDispatch(nsmUI.togglePalette(CorePalette.Notes));
+  }, [uiDispatch]);
 
-  const { editorIssue, onPressEditorIssue } = useEditorIssue(
-    wsPath,
-    bangleStore,
-  );
+  const { editorIssue, onPressEditorIssue } = useEditorIssue(wsPath);
 
   const onEnableEditing = useCallback(() => {
-    toggleEditing({ editingAllowed: true })(
-      bangleStore.state,
-      bangleStore.dispatch,
+    editorStoreDispatch(
+      toggleEditing({
+        editingAllowed: true,
+      }),
     );
-  }, [bangleStore]);
+  }, [editorStoreDispatch]);
 
   let children;
 
@@ -101,7 +101,7 @@ export function EditorContainer({
       <Editor
         editorId={editorId}
         wsPath={wsPath}
-        extensionRegistry={extensionRegistry}
+        eternalVars={eternalVars}
         className={`B-editor-container_editor B-editor-container_editor-${editorId}`}
       />
     );
@@ -157,11 +157,15 @@ export function EditorContainer({
   );
 }
 
-function useEditorIssue(
-  wsPath: string | undefined,
-  bangleStore: BangleApplicationStore,
-) {
-  const editorIssue = wsPath && getEditorIssue(wsPath)(bangleStore.state);
+function useEditorIssue(wsPath: WsPath | undefined) {
+  const [, uiDispatch] = useNsmSlice(nsmUISlice);
+  const { editorIssues } = useNsmSliceState(
+    nsmNotification.nsmNotificationSlice,
+  );
+  const editorIssue = wsPath
+    ? editorIssues.find((e) => e.wsPath === wsPath)
+    : undefined;
+
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   const onPressEditorIssue = useCallback(() => {
@@ -174,12 +178,14 @@ function useEditorIssue(
     if (serialOperation) {
       dispatchSerialOperation({ name: serialOperation });
     } else {
-      ui.showGenericErrorModal({
-        title: editorIssue.title,
-        description: editorIssue.description,
-      })(bangleStore.state, bangleStore.dispatch);
+      uiDispatch(
+        nsmUI.showGenericErrorModal({
+          title: editorIssue.title,
+          description: editorIssue.description,
+        }),
+      );
     }
-  }, [bangleStore, dispatchSerialOperation, editorIssue]);
+  }, [uiDispatch, dispatchSerialOperation, editorIssue]);
 
   return { editorIssue, onPressEditorIssue };
 }
@@ -192,24 +198,18 @@ function useEditorIssue(
  * @param {*} incomingWsPath
  * @returns
  */
-function useHandleWsPath(incomingWsPath?: string) {
-  const [wsPath, updateWsPath] = useState<string | undefined>(undefined);
+function useHandleWsPath(incomingWsPath?: WsPath) {
+  const [wsPath, updateWsPath] = useState<WsPath | undefined>(undefined);
   const [noteExists, updateFileExists] = useState<
     'LOADING' | 'FOUND' | 'NOT_FOUND' | 'NO_WS_PATH'
   >(incomingWsPath ? 'LOADING' : 'NO_WS_PATH');
-
-  const bangleStore = useBangleStoreContext();
 
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {
     if (incomingWsPath) {
       updateFileExists('LOADING');
-      checkFileExists(incomingWsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      ).then(
+      fs.fileExists(incomingWsPath).then(
         (r) => {
           if (!destroyedRef.current) {
             if (r) {
@@ -220,7 +220,7 @@ function useHandleWsPath(incomingWsPath?: string) {
             updateWsPath(incomingWsPath);
           }
         },
-        () => {
+        (error) => {
           // silence any errors here as other part of code will handle them
         },
       );
@@ -229,7 +229,7 @@ function useHandleWsPath(incomingWsPath?: string) {
       updateFileExists('NO_WS_PATH');
       updateWsPath(undefined);
     }
-  }, [incomingWsPath, bangleStore, wsPath, destroyedRef]);
+  }, [incomingWsPath, wsPath, destroyedRef]);
 
   return { noteExists, wsPath };
 }

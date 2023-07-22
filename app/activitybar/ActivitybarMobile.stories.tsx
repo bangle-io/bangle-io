@@ -19,6 +19,7 @@ const Template: Story<Partial<Parameters<typeof ActivitybarMobileDumb>[0]>> = (
     useEditorManagerSlice: true,
     useUISlice: true,
     overrideInitialSliceState: {
+      // @ts-expect-error
       uiSlice: {
         widescreen: false,
       },
@@ -38,6 +39,7 @@ const Template: Story<Partial<Parameters<typeof ActivitybarMobileDumb>[0]>> = (
   return (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       <div style={{ width: 400 }}>
+        {/** @ts-expect-error  */}
         <ActivitybarMobileDumb {...finalArgs} />
       </div>
     </TestStoreProvider>

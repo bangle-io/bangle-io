@@ -1,0 +1,35 @@
+{
+  "name": "@bangle.io/nsm-slice-file-sha",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/nsm-slice-file-sha"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/git-file-sha": "workspace:*",
+    "@bangle.io/nsm-3": "workspace:*",
+    "@bangle.io/nsm-slice-workspace": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/workspace-info": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
+  },
+  "license": "AGPL-3.0-or-later"
+}

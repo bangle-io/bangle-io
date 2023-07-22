@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { nsmApi2 } from '@bangle.io/api';
 import {
   NEW_BROWSER_WORKSPACE_DIALOG_NAME,
   NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME,
@@ -9,15 +9,12 @@ import {
 } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DialogComponentType } from '@bangle.io/shared-types';
-import { showDialog } from '@bangle.io/slice-ui';
 import { TriState } from '@bangle.io/tri-state';
 import { safeNavigatorStorageGetDirectory } from '@bangle.io/utils';
 
 import { PickWorkspaceType } from './PickWorkspaceType';
 
 export const NewWorkspaceModal: DialogComponentType = (props) => {
-  const bangleStore = useBangleStoreContext();
-
   const [isPrivateFsAvailable, setIsPrivateFsAvailable] =
     React.useState<TriState>(TriState.Unknown);
 
@@ -57,34 +54,32 @@ export const NewWorkspaceModal: DialogComponentType = (props) => {
       onSelect={(storage) => {
         switch (storage) {
           case WorkspaceType.Github: {
-            showDialog(
-              'dialog::@bangle.io/github-storage:NEW_GITHUB_WORKSPACE_TOKEN_DIALOG',
-            )(bangleStore.state, bangleStore.dispatch);
+            nsmApi2.ui.showDialog({
+              dialogName:
+                'dialog::@bangle.io/github-storage:NEW_GITHUB_WORKSPACE_TOKEN_DIALOG',
+            });
 
             return;
           }
           case WorkspaceType.Browser: {
-            showDialog(NEW_BROWSER_WORKSPACE_DIALOG_NAME)(
-              bangleStore.state,
-              bangleStore.dispatch,
-            );
+            nsmApi2.ui.showDialog({
+              dialogName: NEW_BROWSER_WORKSPACE_DIALOG_NAME,
+            });
 
             return;
           }
           case WorkspaceType.NativeFS: {
-            showDialog(NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME)(
-              bangleStore.state,
-              bangleStore.dispatch,
-            );
+            nsmApi2.ui.showDialog({
+              dialogName: NEW_NATIVE_FS_WORKSPACE_DIALOG_NAME,
+            });
 
             return;
           }
 
           case WorkspaceType.PrivateFS: {
-            showDialog(NEW_PRIVATE_FS_WORKSPACE_DIALOG_NAME)(
-              bangleStore.state,
-              bangleStore.dispatch,
-            );
+            nsmApi2.ui.showDialog({
+              dialogName: NEW_PRIVATE_FS_WORKSPACE_DIALOG_NAME,
+            });
 
             return;
           }

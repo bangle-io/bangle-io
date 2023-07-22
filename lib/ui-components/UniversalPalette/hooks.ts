@@ -11,7 +11,12 @@ export function useActivePaletteItem(items: ItemType[], counter: number) {
 export type PaletteOnExecuteItem = (
   cb: (items: ItemType[]) => string | undefined,
   info: { source: string; metaKey: boolean; shiftKey: boolean },
-) => void;
+) =>
+  | void
+  | Promise<void>
+  | {
+      shouldPreventFocus?: boolean;
+    };
 
 export function usePaletteDriver(
   onEscape: () => void,

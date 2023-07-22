@@ -1,10 +1,8 @@
-import { WorkspaceType } from '@bangle.io/constants';
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { BaseHistory } from '@bangle.io/history';
 import { BrowserHistory, createTo } from '@bangle.io/history';
 import type { PageSliceStateType } from '@bangle.io/slice-page';
-import { pageSliceKey, syncPageLocation } from '@bangle.io/slice-page';
-import { workspaceSliceKey } from '@bangle.io/slice-workspace';
+import { oldSyncPageLocation, pageSliceKey } from '@bangle.io/slice-page';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
@@ -54,11 +52,7 @@ export function historySlice() {
         }
       },
     },
-    sideEffect: [
-      watchHistoryEffect,
-      applyPendingNavigation,
-      saveWorkspaceInfoEffect,
-    ],
+    sideEffect: [watchHistoryEffect, applyPendingNavigation],
   });
 }
 
@@ -107,7 +101,7 @@ const watchHistoryEffect = historySliceKey.effect(() => {
   return {
     deferredOnce(store, abortSignal) {
       const browserHistory = new BrowserHistory('', (location) => {
-        syncPageLocation(location)(
+        oldSyncPageLocation(location)(
           store.state,
           pageSliceKey.getDispatch(store.dispatch),
         );
@@ -118,7 +112,7 @@ const watchHistoryEffect = historySliceKey.effect(() => {
         value: { history: browserHistory },
       });
 
-      syncPageLocation({
+      oldSyncPageLocation({
         search: browserHistory.search,
         pathname: browserHistory.pathname,
       })(store.state, pageSliceKey.getDispatch(store.dispatch));
@@ -134,33 +128,33 @@ const watchHistoryEffect = historySliceKey.effect(() => {
   };
 });
 
-// Persist rootDirectory handle in the browser history to
-// prevent release of the authorized native browser FS permission on reload
-export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
-  let lastSavedWsName: string | undefined = undefined;
+// // Persist rootDirectory handle in the browser history to
+// // prevent release of the authorized native browser FS permission on reload
+// export const saveWorkspaceInfoEffect = historySliceKey.effect(() => {
+//   let lastSavedWsName: string | undefined = undefined;
 
-  return {
-    deferredUpdate(store) {
-      const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
-        store.state,
-      );
+//   return {
+//     deferredUpdate(store) {
+//       const { cachedWorkspaceInfo } = workspaceSliceKey.getSliceStateAsserted(
+//         store.state,
+//       );
 
-      if (cachedWorkspaceInfo && cachedWorkspaceInfo.name !== lastSavedWsName) {
-        const { history } = historySliceKey.getSliceStateAsserted(store.state);
+//       if (cachedWorkspaceInfo && cachedWorkspaceInfo.name !== lastSavedWsName) {
+//         const { history } = historySliceKey.getSliceStateAsserted(store.state);
 
-        if (!history || !(history instanceof BrowserHistory)) {
-          return;
-        }
+//         if (!history || !(history instanceof BrowserHistory)) {
+//           return;
+//         }
 
-        if (cachedWorkspaceInfo.type === WorkspaceType.NativeFS) {
-          history.updateHistoryState({
-            workspaceRootDir: cachedWorkspaceInfo.metadata.rootDirHandle,
-          });
-        } else {
-          history.updateHistoryState({});
-        }
-        lastSavedWsName = cachedWorkspaceInfo.name;
-      }
-    },
-  };
-});
+//         if (cachedWorkspaceInfo.type === WorkspaceType.NativeFS) {
+//           history.updateHistoryState({
+//             workspaceRootDir: cachedWorkspaceInfo.metadata.rootDirHandle,
+//           });
+//         } else {
+//           history.updateHistoryState({});
+//         }
+//         lastSavedWsName = cachedWorkspaceInfo.name;
+//       }
+//     },
+//   };
+// });
