@@ -22,6 +22,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ampproject/remapping@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@ampproject/remapping@npm:2.2.1"
+  dependencies:
+    "@jridgewell/gen-mapping": ^0.3.0
+    "@jridgewell/trace-mapping": ^0.3.9
+  checksum: 03c04fd526acc64a1f4df22651186f3e5ef0a9d6d6530ce4482ec9841269cf7a11dbb8af79237c282d721c5312024ff17529cd72cc4768c11e999b58e2302079
+  languageName: node
+  linkType: hard
+
 "@antfu/install-pkg@npm:^0.1.1":
   version: 0.1.1
   resolution: "@antfu/install-pkg@npm:0.1.1"
@@ -43,6 +53,13 @@ __metadata:
   version: 0.7.2
   resolution: "@antfu/utils@npm:0.7.2"
   checksum: ada98dde0a06bc10129ad7bc9d0007c1cf7e36eeb9e8ca93ea5173bc1e1d351afee8511c9e8e182b3105b787ce0ce813afc4ab283b511374f1e56a085f60a2c6
+  languageName: node
+  linkType: hard
+
+"@antfu/utils@npm:^0.7.4":
+  version: 0.7.5
+  resolution: "@antfu/utils@npm:0.7.5"
+  checksum: df6451ded84b8ea8ad951434a7e146361f160c4a42904853749e45c214c24aedd9cb2e906c699ca32b4f780f2afb6413f8ca753f017c52f30267ff5064b66e31
   languageName: node
   linkType: hard
 
@@ -2062,7 +2079,7 @@ __metadata:
     "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/object-uid": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2092,7 +2109,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2132,7 +2149,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2212,7 +2229,7 @@ __metadata:
     cross-fetch: ^3.1.5
     idb: ^7.1.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2229,7 +2246,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2272,7 +2289,7 @@ __metadata:
     comlink: ^4.3.1
     page-lifecycle: ^0.1.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2281,7 +2298,7 @@ __metadata:
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2295,7 +2312,7 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2310,7 +2327,7 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2328,7 +2345,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2347,7 +2364,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2358,7 +2375,7 @@ __metadata:
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2377,7 +2394,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2414,7 +2431,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2450,7 +2467,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2478,7 +2495,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2498,7 +2515,7 @@ __metadata:
     tailwindcss: ^3.2.4
     ts-node: ^10.9.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2515,7 +2532,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2525,7 +2542,7 @@ __metadata:
   dependencies:
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2538,7 +2555,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2548,7 +2565,7 @@ __metadata:
   dependencies:
     idb: ^7.1.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2575,7 +2592,7 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2588,7 +2605,7 @@ __metadata:
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2626,7 +2643,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2660,7 +2677,7 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
     react-dom: "*"
@@ -2675,7 +2692,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2687,7 +2704,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2714,7 +2731,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2727,7 +2744,7 @@ __metadata:
     postcss-discard-comments: ^5.1.2
     prettier: ^2.8.8
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2739,7 +2756,7 @@ __metadata:
     fzf: ^0.5.1
     react: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -2752,7 +2769,7 @@ __metadata:
     "@bangle.io/weak-cache": "workspace:*"
     base64-js: ^1.5.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2784,7 +2801,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2798,7 +2815,7 @@ __metadata:
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2807,7 +2824,7 @@ __metadata:
   resolution: "@bangle.io/history@workspace:js-lib/history"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2837,7 +2854,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2847,8 +2864,8 @@ __metadata:
   dependencies:
     "@bangle.io/baby-fs": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
-    vite: ^3.2.1
+    typescript: 4.9.5
+    vite: ^3.2.7
   languageName: unknown
   linkType: soft
 
@@ -2886,7 +2903,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2911,7 +2928,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2942,7 +2959,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2960,7 +2977,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2969,7 +2986,7 @@ __metadata:
   resolution: "@bangle.io/is-abort-error@workspace:js-lib/is-abort-error"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2979,7 +2996,7 @@ __metadata:
   dependencies:
     jest-environment-jsdom: ^29.3.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -2997,7 +3014,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3006,7 +3023,7 @@ __metadata:
   resolution: "@bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3029,7 +3046,7 @@ __metadata:
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3056,7 +3073,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3077,7 +3094,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -3112,7 +3129,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3128,7 +3145,7 @@ __metadata:
     react-dom: ^17.0.2
     superjson: ^1.12.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
     use-sync-external-store: ^1.2.0
     zod: ^3.21.4
   languageName: unknown
@@ -3164,7 +3181,7 @@ __metadata:
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3173,7 +3190,7 @@ __metadata:
   resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3182,7 +3199,7 @@ __metadata:
   resolution: "@bangle.io/p-map@workspace:js-lib/p-map"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3204,7 +3221,7 @@ __metadata:
     http-server: ^0.12.3
     prettier: ^2.8.8
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3214,7 +3231,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.32.0
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3234,7 +3251,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3247,7 +3264,7 @@ __metadata:
     ts-pattern: ^4.0.6
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3274,7 +3291,7 @@ __metadata:
     prettier: ^2.8.8
     ts-node: ^10.9.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3301,7 +3318,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3317,7 +3334,7 @@ __metadata:
     "@bangle.dev/wiki-link": 0.32.0
     "@bangle.io/p-map": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3354,7 +3371,7 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3391,7 +3408,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3419,7 +3436,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3434,7 +3451,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3454,7 +3471,7 @@ __metadata:
     path-to-regexp: ^6.2.1
     react: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
     wouter: ^2.10.0-alpha.1
   languageName: unknown
   linkType: soft
@@ -3465,7 +3482,7 @@ __metadata:
   dependencies:
     "@bangle.io/nsm-3": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3481,7 +3498,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3499,7 +3516,7 @@ __metadata:
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3537,7 +3554,7 @@ __metadata:
     reselect: ^4.1.5
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3559,7 +3576,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3572,7 +3589,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3611,7 +3628,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
     webpack: ^5.75.0
   languageName: unknown
   linkType: soft
@@ -3626,7 +3643,7 @@ __metadata:
     autoprefixer: ^10.4.4
     postcss: ^8.4.21
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3668,7 +3685,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
     wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
@@ -3709,7 +3726,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: 2.4.1
     type-fest: ^3.5.1
-    typescript: 4.9.3
+    typescript: 4.9.5
     wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
@@ -3719,7 +3736,7 @@ __metadata:
   resolution: "@bangle.io/tri-state@workspace:js-lib/tri-state"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3766,7 +3783,7 @@ __metadata:
     react-dom: ^17.0.2
     react-popper: ^2.3.0
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3789,8 +3806,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
-    vite: ^3.2.1
+    typescript: 4.9.5
+    vite: ^3.2.7
   languageName: unknown
   linkType: soft
 
@@ -3805,7 +3822,7 @@ __metadata:
     polished: ^4.2.2
     tailwindcss: ^3.2.4
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3819,7 +3836,7 @@ __metadata:
     "@unocss/preset-uno": ^0.48.2
     "@unocss/preset-wind": ^0.48.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3851,8 +3868,8 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
-    w3c-keyname: ^2.2.6
+    typescript: 4.9.5
+    w3c-keyname: ^2.2.8
   languageName: unknown
   linkType: soft
 
@@ -3861,7 +3878,7 @@ __metadata:
   resolution: "@bangle.io/weak-cache@workspace:js-lib/weak-cache"
   dependencies:
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3875,7 +3892,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3908,7 +3925,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3935,7 +3952,7 @@ __metadata:
     "@sentry/browser": ^6.18.1
     "@zip.js/zip.js": ~2.4.5
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3948,7 +3965,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3961,7 +3978,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -3985,7 +4002,7 @@ __metadata:
     comlink: ^4.3.1
     react: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -4006,7 +4023,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -4025,7 +4042,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   peerDependencies:
     react: "*"
   languageName: unknown
@@ -4044,7 +4061,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
     wouter: ^2.10.0-alpha.1
   languageName: unknown
   linkType: soft
@@ -4056,7 +4073,7 @@ __metadata:
     "@types/node": ^18.11.9
     execa: ^5.1.1
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -4313,17 +4330,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iconify/utils@npm:^2.0.9":
-  version: 2.0.11
-  resolution: "@iconify/utils@npm:2.0.11"
+"@iconify/utils@npm:^2.1.7":
+  version: 2.1.7
+  resolution: "@iconify/utils@npm:2.1.7"
   dependencies:
     "@antfu/install-pkg": ^0.1.1
-    "@antfu/utils": ^0.7.2
+    "@antfu/utils": ^0.7.4
     "@iconify/types": ^2.0.0
     debug: ^4.3.4
-    kolorist: ^1.6.0
-    local-pkg: ^0.4.2
-  checksum: d6e22b7ba866225c988ccef117381c0181053fef0234990ee78eceb21315a92c3aef783925909d5e0614b4ba70189df16995d44c8949b0f3531ecf23fbe75f7b
+    kolorist: ^1.8.0
+    local-pkg: ^0.4.3
+  checksum: 0a0bcae0b7afe77572b02aeb31374733863075b530ae1702a72049e25b84856b788159ea49817689540c4ae1f4d24e08debac6ae3ba7b8d790e74b4f95161919
   languageName: node
   linkType: hard
 
@@ -8317,37 +8334,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/astro@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/astro@npm:0.48.2"
+"@unocss/astro@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/astro@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-    "@unocss/reset": 0.48.2
-    "@unocss/vite": 0.48.2
-  checksum: 01fcb727181acf65fa157c5ed0b8752ee8c58a30e46d57b3b8bf2d8c1ccbc8b594a5c6b335315c7113f6208dfeb2e35c6e299e9b124b7d55290672e46d49100d
+    "@unocss/core": 0.53.6
+    "@unocss/reset": 0.53.6
+    "@unocss/vite": 0.53.6
+  checksum: 2bdd070074da4e6b4d7a96fd0cc6803c053bf4addd0c82a249e0965696bfa000bff2662b6250458559c30cc743a0872041247d6fec2cc31b7e7f0590fef86228
   languageName: node
   linkType: hard
 
-"@unocss/cli@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/cli@npm:0.48.2"
+"@unocss/cli@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/cli@npm:0.53.6"
   dependencies:
-    "@ampproject/remapping": ^2.2.0
+    "@ampproject/remapping": ^2.2.1
     "@rollup/pluginutils": ^5.0.2
-    "@unocss/config": 0.48.2
-    "@unocss/core": 0.48.2
-    "@unocss/preset-uno": 0.48.2
+    "@unocss/config": 0.53.6
+    "@unocss/core": 0.53.6
+    "@unocss/preset-uno": 0.53.6
     cac: ^6.7.14
     chokidar: ^3.5.3
-    colorette: ^2.0.19
-    consola: ^2.15.3
-    fast-glob: ^3.2.12
-    magic-string: ^0.27.0
-    pathe: ^1.0.0
-    perfect-debounce: ^0.1.3
+    colorette: ^2.0.20
+    consola: ^3.2.3
+    fast-glob: ^3.3.0
+    magic-string: ^0.30.1
+    pathe: ^1.1.1
+    perfect-debounce: ^1.0.0
   bin:
     unocss: bin/unocss.mjs
-  checksum: de26f9490322821bf3df4fbde74a4827a35c7eb1c9d1b3aa9e90737616fcc64d7841895e2c04c5f83872a56e9b71e615698eda4f66696d02b949c99d07069b8f
+  checksum: facc92d422d5e8c11787e321450aeb104ef2182f7e39367e36e16f3e93bd443108a076270cab4ccae164d7a5040ae3d46e21269a8cad6f99252bb36492b38b69
   languageName: node
   linkType: hard
 
@@ -8361,10 +8378,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@unocss/config@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/config@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+    unconfig: ^0.3.9
+  checksum: e1be98897b9a33b56376a0f6e42fe9330ac55f8b3af95550f02bc64aa4365cb98930770435f965aaa1eded4dc02e80f364cab42b0f321dae7ffeabadac6b2253
+  languageName: node
+  linkType: hard
+
 "@unocss/core@npm:0.48.2, @unocss/core@npm:^0.48.2":
   version: 0.48.2
   resolution: "@unocss/core@npm:0.48.2"
   checksum: 72adc0b2d20e1b7ea86435a4ec399c3bcc76380d9a7692763fc869910c513cdf241c04905b3dba33111368b146b54d0118eb68ed9d09d28509a0336448c458ce
+  languageName: node
+  linkType: hard
+
+"@unocss/core@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/core@npm:0.53.6"
+  checksum: d73051c33875ad016f9e9bf00b534e863486af7650926bca61723f351bf8e094ff948fcc864920023a686e241d7f2262ad92ea1026ff20811554483bfaa09c26
+  languageName: node
+  linkType: hard
+
+"@unocss/extractor-arbitrary-variants@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/extractor-arbitrary-variants@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+  checksum: f44eb55f39e984ad4902806bebec5a32a79ef2209d312fa8a1653833c066eab8a4e89b4e198c1dcf34efe1f9b95e3d591386306eeb8c829fe954f1c3f49016a7
   languageName: node
   linkType: hard
 
@@ -8378,23 +8421,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-attributify@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/preset-attributify@npm:0.48.2"
+"@unocss/inspector@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/inspector@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-  checksum: 95fe619ffed7c2da137f69c09719176de0d329ec3ef9ae9e3590180db0ab1222ae0a3206dafa613b080cc5dea1f88a9efd236acefe98f3ad5c129ebba75f3f4d
+    gzip-size: ^6.0.0
+    sirv: ^2.0.3
+  checksum: 693975d43882849a31dae97c4d7985dd33b99c85b904ba087dbd3ae9408c380169f21bfb828606be91481899b51f8ef0de0ecf43d6b251e47ba7c66a91dea471
   languageName: node
   linkType: hard
 
-"@unocss/preset-icons@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/preset-icons@npm:0.48.2"
+"@unocss/postcss@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/postcss@npm:0.53.6"
   dependencies:
-    "@iconify/utils": ^2.0.9
-    "@unocss/core": 0.48.2
-    ohmyfetch: ^0.4.21
-  checksum: 7dea45e0ea8be3b51b416bd314c56f5984de838d0daa0eab39d45e6d48856f1b5275267d57dbd622d765d2308cec6afbc04e44dc3d643300bc7f7baf1d5498c4
+    "@unocss/config": 0.53.6
+    "@unocss/core": 0.53.6
+    css-tree: ^2.3.1
+    fast-glob: ^3.3.0
+    magic-string: ^0.30.1
+    postcss: ^8.4.25
+  peerDependencies:
+    postcss: ^8.4.21
+  checksum: 69cce8a6671cae56ef9dfd927ffa402acf845d0ee6ed46cc77e75c52d864077a4a710b48db3e8dad1628bd1be0f009458525c42fdfb918be31c5f3f91659cb60
+  languageName: node
+  linkType: hard
+
+"@unocss/preset-attributify@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-attributify@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+  checksum: c3ecc8635405df75540d2bd11e9b6ffa929a2ee805dd4544705096cda3aaa69e187d485cc85e4c27b9a0879730cadb6cf7fb7cc6c351316b41fd25c84af6bdf3
+  languageName: node
+  linkType: hard
+
+"@unocss/preset-icons@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-icons@npm:0.53.6"
+  dependencies:
+    "@iconify/utils": ^2.1.7
+    "@unocss/core": 0.53.6
+    ofetch: ^1.1.1
+  checksum: a4d8b651e8651d1263707de032c72cd1099a73a19e357b936cff8bdc0ff6f527368419cadd86490ea2460e8e15d8a76d22d099552991d62e0be8ffaf4518d8bc
   languageName: node
   linkType: hard
 
@@ -8407,25 +8476,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-tagify@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/preset-tagify@npm:0.48.2"
+"@unocss/preset-mini@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-mini@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-  checksum: 628a1fc606efe9a22bbde2cbd06a479de714d3242799e0565c4ef74d143ad522978d97b54bf80079093017ff81af552a8d81fc34082faa82eb91c1204161d67a
+    "@unocss/core": 0.53.6
+    "@unocss/extractor-arbitrary-variants": 0.53.6
+  checksum: 173450ae8ca6ef8cdde3295205252eeef2d5d8b141a228a26a610813eb0a6fed112845d1e9972bc0bece0ee0329729bfbc6383d14a84fa1789943974be680fa4
   languageName: node
   linkType: hard
 
-"@unocss/preset-typography@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/preset-typography@npm:0.48.2"
+"@unocss/preset-tagify@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-tagify@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-  checksum: f4c5ad6cfcc041b40220cdb171787f9f5a51151b76048f1570a7e1cb3d5739b628640d5dcfe64bc09fbee96259515d34836e292d59292e65c75ed128c6a8acac
+    "@unocss/core": 0.53.6
+  checksum: ddb1ffaff7fabec406a2b50429060d7bd4f49efbe2364c72dd0e57bd9879f652e8d91a9a8f0406c42b2c47763eafc5ee055eed129f2c65d20dff16f47c719e6c
   languageName: node
   linkType: hard
 
-"@unocss/preset-uno@npm:0.48.2, @unocss/preset-uno@npm:^0.48.2":
+"@unocss/preset-typography@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-typography@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+    "@unocss/preset-mini": 0.53.6
+  checksum: 670ca5cfbd62c778e77dfe8011a15c961813f524b40295c878ab1c16ad99c1c408604a080812d0b55171df12b19c938cccc3d9a2f465c66a28e017492ab0b8a9
+  languageName: node
+  linkType: hard
+
+"@unocss/preset-uno@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-uno@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+    "@unocss/preset-mini": 0.53.6
+    "@unocss/preset-wind": 0.53.6
+  checksum: 1eee21e0a5f80e081dc9c66b399cb94fdc30db36e315d5db80eeec2340bb3ec57e89efe0ba60be3f3ca9383b0cef9616b503714f09046c74b00caa670cd33025
+  languageName: node
+  linkType: hard
+
+"@unocss/preset-uno@npm:^0.48.2":
   version: 0.48.2
   resolution: "@unocss/preset-uno@npm:0.48.2"
   dependencies:
@@ -8436,13 +8527,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-web-fonts@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/preset-web-fonts@npm:0.48.2"
+"@unocss/preset-web-fonts@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-web-fonts@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-    ohmyfetch: ^0.4.21
-  checksum: 605919ae2356e460bdf7c5a361324dc08ae6089916efe5e124300604cc6f9bf6a993ba81caa526acef6ba975da50c99acbb6527d98c606bb3dd871c3eab2afaf
+    "@unocss/core": 0.53.6
+    ofetch: ^1.1.1
+  checksum: 6acce5be6c0cab4a61acfac746ca9418ea39a4d3124e0f05c74559e77a09a81b831d9d2cb57a9c1fe5afe4c4f6af91f1eadf7aae0616801f4f74a316f5aea9ef
   languageName: node
   linkType: hard
 
@@ -8456,7 +8547,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:0.48.2, @unocss/reset@npm:^0.48.2":
+"@unocss/preset-wind@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/preset-wind@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+    "@unocss/preset-mini": 0.53.6
+  checksum: 88d69da912be26ffa472b4e55b458f8cced097b0136a98367d5a724fbc4cfc118698e9eb14927198bc83b01ce9c2e9a363e70e9f18c09d0b949c601d3aa296ff
+  languageName: node
+  linkType: hard
+
+"@unocss/reset@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/reset@npm:0.53.6"
+  checksum: a1cd014ec5baf291715c8281bd7db23aca6e68a614c15d034b522790aadff4dc322e1e409b317238ad79e4b6fc2f98344f97b87717bc10baae933f31a658efc3
+  languageName: node
+  linkType: hard
+
+"@unocss/reset@npm:^0.48.2":
   version: 0.48.2
   resolution: "@unocss/reset@npm:0.48.2"
   checksum: cc024cf5e40466cfd2b72f36e167dfe8d64b25e1099f96781735441269e3953e116b226b501a7e05177592b2c017dfff69601b0325182f05b29f11936f46ee19
@@ -8470,21 +8578,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/transformer-attributify-jsx@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/transformer-attributify-jsx@npm:0.48.2"
-  dependencies:
-    "@unocss/core": 0.48.2
-  checksum: 3f3eaef62dd4e42150279682a5091b812505f6f5346a2bf5bdd25424f11707c7156a0809f5965cbada310a8ed66ab2f06fd40587dcc82a31c75b6525642286b6
+"@unocss/scope@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/scope@npm:0.53.6"
+  checksum: 29dfbe4e006eb03fb7c918b9eb18b53186555b1fdad5216492f6648895a0591ccf021d0d2cc89abd32f20a9253755fe4c46aa9125df0a290e0aaf4229b3f3e54
   languageName: node
   linkType: hard
 
-"@unocss/transformer-compile-class@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/transformer-compile-class@npm:0.48.2"
+"@unocss/transformer-attributify-jsx-babel@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/transformer-attributify-jsx-babel@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-  checksum: c6a723a1fa35d833687d7de01e68618dc2547210df065697ea4ca828b20530da52304ff66c5bd9c391ee7b8d0ae83f67484863d10d1fd41a306ca284a7ca9750
+    "@unocss/core": 0.53.6
+  checksum: 4c7422927dac46f5f6f57496441e81e882eb7aa269d2294ffecb59de4060acdb2c183ac07a5874071bfafe31fa68ebd2b33498eab1884e5a165c922b92c70f80
+  languageName: node
+  linkType: hard
+
+"@unocss/transformer-attributify-jsx@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/transformer-attributify-jsx@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+  checksum: 5a1064c728363a573c69feb89b25e47a4fdc9cfc4af6f7ad0293f08e040f8f6636fa476fc8e9740f434c60655787870d5a4d47e73d55869c5933b4ef14c2020f
+  languageName: node
+  linkType: hard
+
+"@unocss/transformer-compile-class@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/transformer-compile-class@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+  checksum: ebf6663f0d1e12550806755beae4a04244f39263050c89739489d9bcafbd13a22c23b53a381fd74b4560870959652270ebb2925a1ecc20aa44a35c747395d54f
   languageName: node
   linkType: hard
 
@@ -8498,16 +8622,46 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/transformer-variant-group@npm:0.48.2":
-  version: 0.48.2
-  resolution: "@unocss/transformer-variant-group@npm:0.48.2"
+"@unocss/transformer-directives@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/transformer-directives@npm:0.53.6"
   dependencies:
-    "@unocss/core": 0.48.2
-  checksum: 55985fdbf64d197e7bb3652099e2c58bdec8853d6d396eadfc4d8020f5cb5bc1634851b254e24ef27f4e6ff429cbd8cefada646bbdc3c6f494f5d3953ff57b81
+    "@unocss/core": 0.53.6
+    css-tree: ^2.3.1
+  checksum: 53801f07d45fa46ed794cac84285a9914972ad497e5502e975f6f6b4030d49f981c4b2e3e898423482597476954f52d96e20ce645998de440cb832d5b0498344
   languageName: node
   linkType: hard
 
-"@unocss/vite@npm:0.48.2, @unocss/vite@npm:^0.48.2":
+"@unocss/transformer-variant-group@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/transformer-variant-group@npm:0.53.6"
+  dependencies:
+    "@unocss/core": 0.53.6
+  checksum: bf1e376a33a833e7acf9d1699a0bf3db21df8571a21e102c28e609e8257f1fdf7113f3e022d98b09c39ec3db7a25cc32387c04bd5cf9cb85b1803a77f0089298
+  languageName: node
+  linkType: hard
+
+"@unocss/vite@npm:0.53.6":
+  version: 0.53.6
+  resolution: "@unocss/vite@npm:0.53.6"
+  dependencies:
+    "@ampproject/remapping": ^2.2.1
+    "@rollup/pluginutils": ^5.0.2
+    "@unocss/config": 0.53.6
+    "@unocss/core": 0.53.6
+    "@unocss/inspector": 0.53.6
+    "@unocss/scope": 0.53.6
+    "@unocss/transformer-directives": 0.53.6
+    chokidar: ^3.5.3
+    fast-glob: ^3.3.0
+    magic-string: ^0.30.1
+  peerDependencies:
+    vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0
+  checksum: 671fcb34d53be6e44aecf126bbce2918086d7fed3bbe4a8da1dce69d69e9ed1dcb8144f92fbb633dfb859996ea7824c116c50fa428060ba08563c1d6e08dad2f
+  languageName: node
+  linkType: hard
+
+"@unocss/vite@npm:^0.48.2":
   version: 0.48.2
   resolution: "@unocss/vite@npm:0.48.2"
   dependencies:
@@ -9463,7 +9617,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -10272,9 +10426,9 @@ __metadata:
     surge: ^0.23.1
     ts-node: ^10.9.1
     tslib: 2.4.1
-    typescript: 4.9.3
-    unocss: ^0.48.2
-    vite: ^3.2.1
+    typescript: 4.9.5
+    unocss: ^0.53.6
+    vite: ^3.2.7
     vite-plugin-html: ^3.2.0
     vite-plugin-pwa: ^0.16.4
     vite-plugin-windicss: ^1.8.8
@@ -10709,15 +10863,6 @@ __metadata:
   version: 3.0.0
   resolution: "builtin-status-codes@npm:3.0.0"
   checksum: 1119429cf4b0d57bf76b248ad6f529167d343156ebbcc4d4e4ad600484f6bc63002595cbb61b67ad03ce55cd1d3c4711c03bbf198bf24653b8392420482f3773
-  languageName: node
-  linkType: hard
-
-"busboy@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "busboy@npm:1.6.0"
-  dependencies:
-    streamsearch: ^1.1.0
-  checksum: 32801e2c0164e12106bf236291a00795c3c4e4b709ae02132883fe8478ba2ae23743b11c5735a0aae8afe65ac4b6ca4568b91f0d9fed1fdbc32ede824a73746e
   languageName: node
   linkType: hard
 
@@ -11554,6 +11699,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"colorette@npm:^2.0.20":
+  version: 2.0.20
+  resolution: "colorette@npm:2.0.20"
+  checksum: 0c016fea2b91b733eb9f4bcdb580018f52c0bc0979443dad930e5037a968237ac53d9beb98e218d2e9235834f8eebce7f8e080422d6194e957454255bde71d3d
+  languageName: node
+  linkType: hard
+
 "colors@npm:1.4.0, colors@npm:^1.1.2, colors@npm:^1.4.0":
   version: 1.4.0
   resolution: "colors@npm:1.4.0"
@@ -11743,6 +11895,13 @@ __metadata:
   version: 2.15.3
   resolution: "consola@npm:2.15.3"
   checksum: 8ef7a09b703ec67ac5c389a372a33b6dc97eda6c9876443a60d76a3076eea0259e7f67a4e54fd5a52f97df73690822d090cf8b7e102b5761348afef7c6d03e28
+  languageName: node
+  linkType: hard
+
+"consola@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "consola@npm:3.2.3"
+  checksum: 32ec70e177dd2385c42e38078958cc7397be91db21af90c6f9faa0b16168b49b1c61d689338604bbb2d64370b9347a35f42a9197663a913d3a405bb0ce728499
   languageName: node
   linkType: hard
 
@@ -12490,6 +12649,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"defu@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "defu@npm:6.1.2"
+  checksum: 2ec0ff8414d5a1ab2b8c7e9a79bbad6d97d23ea7ebf5dcf80c3c7ffd9715c30f84a3cc47b917379ea756b3db0dc4701ce6400e493a1ae1688dffcd0f884233b2
+  languageName: node
+  linkType: hard
+
 "del@npm:^6.0.0":
   version: 6.1.1
   resolution: "del@npm:6.1.1"
@@ -12544,10 +12710,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"destr@npm:^1.2.0":
-  version: 1.2.1
-  resolution: "destr@npm:1.2.1"
-  checksum: 9fe9054d14faadff509493e8d056ad933159cf690dad9167e88918bef9e2fcc167cd447bacb608d9ce7ecd4b11d8e4c447740da54748e4949f620aa421eafca9
+"destr@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "destr@npm:2.0.0"
+  checksum: 5439cfc8e4b207a4c77cce89b3490dcb68b8cbea1ea5171958b89ae1a814a8f988e54e259d9dae8ebee64cfc9d658497e96d0a8905b2d243cf49bda36e578850
   languageName: node
   linkType: hard
 
@@ -14112,7 +14278,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -14197,6 +14363,19 @@ __metadata:
     merge2: ^1.3.0
     micromatch: ^4.0.4
   checksum: 0b1990f6ce831c7e28c4d505edcdaad8e27e88ab9fa65eedadb730438cfc7cde4910d6c975d6b7b8dc8a73da4773702ebcfcd6e3518e73938bb1383badfe01c2
+  languageName: node
+  linkType: hard
+
+"fast-glob@npm:^3.3.0":
+  version: 3.3.1
+  resolution: "fast-glob@npm:3.3.1"
+  dependencies:
+    "@nodelib/fs.stat": ^2.0.2
+    "@nodelib/fs.walk": ^1.2.3
+    glob-parent: ^5.1.2
+    merge2: ^1.3.0
+    micromatch: ^4.0.4
+  checksum: b6f3add6403e02cf3a798bfbb1183d0f6da2afd368f27456010c0bc1f9640aea308243d4cb2c0ab142f618276e65ecb8be1661d7c62a7b4e5ba774b9ce5432e5
   languageName: node
   linkType: hard
 
@@ -17569,7 +17748,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -17875,7 +18054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kolorist@npm:^1.6.0, kolorist@npm:^1.8.0":
+"kolorist@npm:^1.8.0":
   version: 1.8.0
   resolution: "kolorist@npm:1.8.0"
   checksum: b056de671acc8a17f1e78d6d46c47dae3e06481eabc9fed213dd9079a7454fd3a7ea1226ec718df81c9208877f7475d038ac27a400958fec278d975839e33643
@@ -17945,7 +18124,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -18090,10 +18269,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"local-pkg@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "local-pkg@npm:0.4.2"
-  checksum: 22be451353c25c4411b552bf01880ebc9e995b93574b2facc7757968d888356df59199cacada14162ab53bbc9da055bb692c907b4171f008dbce45a2afc777c1
+"local-pkg@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "local-pkg@npm:0.4.3"
+  checksum: 7825aca531dd6afa3a3712a0208697aa4a5cd009065f32e3fb732aafcc42ed11f277b5ac67229222e96f4def55197171cdf3d5522d0381b489d2e5547b407d55
   languageName: node
   linkType: hard
 
@@ -18314,7 +18493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.30.0":
+"magic-string@npm:^0.30.0, magic-string@npm:^0.30.1":
   version: 0.30.1
   resolution: "magic-string@npm:0.30.1"
   dependencies:
@@ -19133,6 +19312,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^3.3.6":
+  version: 3.3.6
+  resolution: "nanoid@npm:3.3.6"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 7d0eda657002738aa5206107bd0580aead6c95c460ef1bdd0b1a87a9c7ae6277ac2e9b945306aaa5b32c6dcb7feaf462d0f552e7f8b5718abfc6ead5c94a71b3
+  languageName: node
+  linkType: hard
+
 "nanomatch@npm:^1.2.9":
   version: 1.2.13
   resolution: "nanomatch@npm:1.2.13"
@@ -19220,10 +19408,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch-native@npm:^0.1.8":
-  version: 0.1.8
-  resolution: "node-fetch-native@npm:0.1.8"
-  checksum: 1cea29dc30e9b570b5510656f41050e7d2df70acc41937911d4374c404ac35b4592d6b6959a81f336f00f2d74b321d039b80d8a1b62eaaa395747733bc31c799
+"node-fetch-native@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "node-fetch-native@npm:1.2.0"
+  checksum: f18d775523fc25b9fbec05a1da99cbf40214045bcaca82c8fd949b99148890c3cead4ab1764e26a92af600d14884d846481bcebf82d56815210624f836051a10
   languageName: node
   linkType: hard
 
@@ -19665,15 +19853,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ohmyfetch@npm:^0.4.21":
-  version: 0.4.21
-  resolution: "ohmyfetch@npm:0.4.21"
+"ofetch@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "ofetch@npm:1.1.1"
   dependencies:
-    destr: ^1.2.0
-    node-fetch-native: ^0.1.8
-    ufo: ^0.8.6
-    undici: ^5.12.0
-  checksum: 28bc6dc507de37d2e818dc48a768716b24ef0d00830ea810f5d3d19e36f93d49281e91fe6a7b323555097fe0079b47c3bff05d736ea30445c3995dd5db43317b
+    destr: ^2.0.0
+    node-fetch-native: ^1.2.0
+    ufo: ^1.1.2
+  checksum: 93d3e10f1ebcc0f1da69ee9cfd38b2f8818ce849ec3b6bf803351a6175adf6a5565cb130b7dcabd3a639bfe27589f5f84ac0ee4fd294855567d879a0e1f38484
   languageName: node
   linkType: hard
 
@@ -20300,10 +20487,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pathe@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "pathe@npm:1.0.0"
-  checksum: 7b71a4930a5b46111c92149632f74b0e87bade3eabe6c9168dcc4846857a4e124eacc0c2bf044fe0d2a8b7f87ae62b9b2cb11938c61899d485cc36dd1a243a23
+"pathe@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "pathe@npm:1.1.1"
+  checksum: 34ab3da2e5aa832ebc6a330ffe3f73d7ba8aec6e899b53b8ec4f4018de08e40742802deb12cf5add9c73b7bf719b62c0778246bd376ca62b0fb23e0dde44b759
   languageName: node
   linkType: hard
 
@@ -20320,10 +20507,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"perfect-debounce@npm:^0.1.3":
-  version: 0.1.3
-  resolution: "perfect-debounce@npm:0.1.3"
-  checksum: c77465eb23d87669e5ee646d12331507c45278e0f2e6fc20a587104b956c1a53f9afe723915d882f73fa588e42770a2edd2bbd93eb0b958c9ff1eb7b915ccdc1
+"perfect-debounce@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "perfect-debounce@npm:1.0.0"
+  checksum: 220343acf52976947958fef3599849471605316e924fe19c633ae2772576298e9d38f02cefa8db46f06607505ce7b232cbb35c9bfd477bd0329bd0a2ce37c594
   languageName: node
   linkType: hard
 
@@ -20784,6 +20971,17 @@ __metadata:
     picocolors: ^1.0.0
     source-map-js: ^1.0.2
   checksum: e39ac60ccd1542d4f9d93d894048aac0d686b3bb38e927d8386005718e6793dbbb46930f0a523fe382f1bbd843c6d980aaea791252bf5e176180e5a4336d9679
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.25":
+  version: 8.4.27
+  resolution: "postcss@npm:8.4.27"
+  dependencies:
+    nanoid: ^3.3.6
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: 1cdd0c298849df6cd65f7e646a3ba36870a37b65f55fd59d1a165539c263e9b4872a402bf4ed1ca1bc31f58b68b2835545e33ea1a23b161a1f8aa6d5ded81e78
   languageName: node
   linkType: hard
 
@@ -22812,6 +23010,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sirv@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "sirv@npm:2.0.3"
+  dependencies:
+    "@polka/url": ^1.0.0-next.20
+    mrmime: ^1.0.0
+    totalist: ^3.0.0
+  checksum: e2dfd4c97735a6ad6d842d0eec2cd9e3919ff0e46f0d228248c5753ad4b70b832711e77e1259c031c439cdb08303cc54d923685c92b0e890145cc733af7c5568
+  languageName: node
+  linkType: hard
+
 "sisteransi@npm:^1.0.5":
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
@@ -23249,13 +23458,6 @@ __metadata:
   version: 1.0.1
   resolution: "stream-shift@npm:1.0.1"
   checksum: 59b82b44b29ec3699b5519a49b3cedcc6db58c72fb40c04e005525dfdcab1c75c4e0c180b923c380f204bed78211b9bad8faecc7b93dece4d004c3f6ec75737b
-  languageName: node
-  linkType: hard
-
-"streamsearch@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "streamsearch@npm:1.1.0"
-  checksum: 1cce16cea8405d7a233d32ca5e00a00169cc0e19fbc02aa839959985f267335d435c07f96e5e0edd0eadc6d39c98d5435fb5bbbdefc62c41834eadc5622ad942
   languageName: node
   linkType: hard
 
@@ -24166,7 +24368,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
@@ -24543,23 +24745,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.3":
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
+"typescript@npm:4.9.5":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
+  checksum: ee000bc26848147ad423b581bd250075662a354d84f0e06eb76d3b892328d8d4440b7487b5a83e851b12b255f55d71835b008a66cbf8f255a11e4400159237db
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.3#~builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=d73830"
+"typescript@patch:typescript@4.9.5#~builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=d73830"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 67ca21a387c0572f1c04936e638dde7782c5aa520c3754aadc7cc9b7c915da9ebc3e27c601bfff4ccb7d7264e82dce6d277ada82ec09dc75024349e0ef64926d
+  checksum: 2eee5c37cad4390385db5db5a8e81470e42e8f1401b0358d7390095d6f681b410f2c4a0c496c6ff9ebd775423c7785cdace7bcdad76c7bee283df3d9718c0f20
   languageName: node
   linkType: hard
 
@@ -24588,10 +24790,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ufo@npm:^0.8.6":
-  version: 0.8.6
-  resolution: "ufo@npm:0.8.6"
-  checksum: 5d483576230c7bfa2c9c9e5d864995e18d6c08ee3955c2237cc1a0d4b35a52991a0f5d26fe8cbf11952109a925a88dc14d973e0d14159b5b96b0fe7393a52899
+"ufo@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "ufo@npm:1.1.2"
+  checksum: 83c940a6a23b6d4fc0cd116265bb5dcf88ab34a408ad9196e413270ca607a4781c09b547dc518f43caee128a096f20fe80b5a0e62b4bcc0a868619896106d048
   languageName: node
   linkType: hard
 
@@ -24634,12 +24836,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^5.12.0":
-  version: 5.13.0
-  resolution: "undici@npm:5.13.0"
+"unconfig@npm:^0.3.9":
+  version: 0.3.9
+  resolution: "unconfig@npm:0.3.9"
   dependencies:
-    busboy: ^1.6.0
-  checksum: 15b8f7df4bd8c9bf9d777456d16b51eb621f25d3ee60f575a8693192a647b3a8b33671e984386636e8df42085488f86a52d0d47db1b8c22edcc591134892a424
+    "@antfu/utils": ^0.7.2
+    defu: ^6.1.2
+    jiti: ^1.18.2
+  checksum: d76b9a3a4ec9690273615a427703aad68fcb2de9a862f69db7c5b53dbb49c288a8ac00a4aee91b4e048e74c7fc0b9f2c4e214f98f51dfe8c96316f0f0b8d1f28
   languageName: node
   linkType: hard
 
@@ -24861,33 +25065,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unocss@npm:^0.48.2":
-  version: 0.48.2
-  resolution: "unocss@npm:0.48.2"
+"unocss@npm:^0.53.6":
+  version: 0.53.6
+  resolution: "unocss@npm:0.53.6"
   dependencies:
-    "@unocss/astro": 0.48.2
-    "@unocss/cli": 0.48.2
-    "@unocss/core": 0.48.2
-    "@unocss/preset-attributify": 0.48.2
-    "@unocss/preset-icons": 0.48.2
-    "@unocss/preset-mini": 0.48.2
-    "@unocss/preset-tagify": 0.48.2
-    "@unocss/preset-typography": 0.48.2
-    "@unocss/preset-uno": 0.48.2
-    "@unocss/preset-web-fonts": 0.48.2
-    "@unocss/preset-wind": 0.48.2
-    "@unocss/reset": 0.48.2
-    "@unocss/transformer-attributify-jsx": 0.48.2
-    "@unocss/transformer-compile-class": 0.48.2
-    "@unocss/transformer-directives": 0.48.2
-    "@unocss/transformer-variant-group": 0.48.2
-    "@unocss/vite": 0.48.2
+    "@unocss/astro": 0.53.6
+    "@unocss/cli": 0.53.6
+    "@unocss/core": 0.53.6
+    "@unocss/extractor-arbitrary-variants": 0.53.6
+    "@unocss/postcss": 0.53.6
+    "@unocss/preset-attributify": 0.53.6
+    "@unocss/preset-icons": 0.53.6
+    "@unocss/preset-mini": 0.53.6
+    "@unocss/preset-tagify": 0.53.6
+    "@unocss/preset-typography": 0.53.6
+    "@unocss/preset-uno": 0.53.6
+    "@unocss/preset-web-fonts": 0.53.6
+    "@unocss/preset-wind": 0.53.6
+    "@unocss/reset": 0.53.6
+    "@unocss/transformer-attributify-jsx": 0.53.6
+    "@unocss/transformer-attributify-jsx-babel": 0.53.6
+    "@unocss/transformer-compile-class": 0.53.6
+    "@unocss/transformer-directives": 0.53.6
+    "@unocss/transformer-variant-group": 0.53.6
+    "@unocss/vite": 0.53.6
   peerDependencies:
-    "@unocss/webpack": 0.48.2
+    "@unocss/webpack": 0.53.6
   peerDependenciesMeta:
     "@unocss/webpack":
       optional: true
-  checksum: e8e5aa75444a732b8e1685bf437ed39dffd9dadfbb5fb4806898ef5949e2741ebcac58cc7af173375f65180f10bfa0f19f69bf621c48c0a1ea4939e865707503
+  checksum: c5c2023c69c09d9f920e9d8a2fc02b1c80ac3c5c780ab40df1fdf3335a88138b06111678b4de1880a75c0f287deca0a738439f870494b0723f19113957f32c4d
   languageName: node
   linkType: hard
 
@@ -25268,7 +25475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.2.1":
+"vite@npm:^3.2.7":
   version: 3.2.7
   resolution: "vite@npm:3.2.7"
   dependencies:
@@ -25313,10 +25520,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"w3c-keyname@npm:^2.2.0, w3c-keyname@npm:^2.2.6":
+"w3c-keyname@npm:^2.2.0":
   version: 2.2.6
   resolution: "w3c-keyname@npm:2.2.6"
   checksum: 59a31d23ca9953c01c99ed6695fee5b6ea36eb2412d76a21fe4302ab33a3f5cd96c006a763940b6115c3d042c16d3564eeee1156832217d028af0518098b3a42
+  languageName: node
+  linkType: hard
+
+"w3c-keyname@npm:^2.2.8":
+  version: 2.2.8
+  resolution: "w3c-keyname@npm:2.2.8"
+  checksum: 95bafa4c04fa2f685a86ca1000069c1ec43ace1f8776c10f226a73296caeddd83f893db885c2c220ebeb6c52d424e3b54d7c0c1e963bbf204038ff1a944fbb07
   languageName: node
   linkType: hard
 
@@ -26023,7 +26237,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.4.1
-    typescript: 4.9.3
+    typescript: 4.9.5
   languageName: unknown
   linkType: soft
 
