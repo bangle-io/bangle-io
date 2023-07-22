@@ -51,16 +51,11 @@ test.describe('workspace', () => {
       'operation::@bangle.io/core-extension:RENAME_ACTIVE_NOTE',
     );
 
-    await expect(
-      page.locator(
-        '.B-ui-components_universal-palette-container input[aria-label]',
-      ),
-    ).toHaveValue(resolvePath(n1).filePath);
-
-    await page.fill(
-      '.B-ui-components_universal-palette-container input[aria-label]',
-      'file-1-renamed',
+    await expect(page.getByPlaceholder('Enter the new name')).toHaveValue(
+      resolvePath(n1).filePath,
     );
+
+    await page.getByPlaceholder('Enter the new name').fill('file-1-renamed');
 
     await Promise.all([page.waitForNavigation(), page.keyboard.press('Enter')]);
 
