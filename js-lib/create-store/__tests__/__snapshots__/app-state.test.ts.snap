@@ -5,6 +5,7 @@ AppState {
   "config": AppStateConfig {
     "fields": [
       FieldDesc {
+        "apply": undefined,
         "init": [Function],
         "name": "slice$",
       },
@@ -42,10 +43,12 @@ AppState {
   "config": AppStateConfig {
     "fields": [
       FieldDesc {
+        "apply": undefined,
         "init": [Function],
         "name": "one$5",
       },
       FieldDesc {
+        "apply": undefined,
         "init": [Function],
         "name": "two$",
       },
