@@ -40,9 +40,7 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 - Run `yarn dlx @yarnpkg/sdks` to sync typescript for VSCode locally.
 - Follow the guide here to setup VSCode properly https://yarnpkg.com/getting-started/editor-sdks#vscode
 
-### Updating Vite version
 
-Search the code base (excluding `.yarn` and lock files)  for the currently installed version of the Vite and then replace it with the new version. You will also have to update the `@esbuild/linux-x64` to match with what the new version of Vite is using.
 
 
 ## E2E Tests
