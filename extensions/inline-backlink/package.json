@@ -22,6 +22,7 @@
     "@bangle.dev/markdown": "0.32.0",
     "@bangle.dev/test-helpers": "0.32.0",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/test-utils-2": "workspace:*",
     "@storybook/react": "^7.1.0",
     "@testing-library/dom": "^8.11.3",
     "@testing-library/react": "^12.1.3",

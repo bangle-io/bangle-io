@@ -35,6 +35,7 @@
     "@bangle.dev/all-base-components": "0.32.0",
     "@bangle.dev/test-helpers": "0.32.0",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/test-utils-2": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",

@@ -25,6 +25,7 @@
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/test-utils-2": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-entry": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",

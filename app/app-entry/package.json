@@ -52,6 +52,7 @@
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/style": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/test-utils-2": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-dhancha": "workspace:*",
     "@bangle.io/utils": "workspace:*",

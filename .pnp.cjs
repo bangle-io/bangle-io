@@ -4614,6 +4614,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-refresh-workspace", "workspace:lib/slice-refresh-workspace"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
@@ -4666,6 +4667,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/style", "workspace:app/style"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -4735,6 +4737,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/style", "workspace:app/style"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -5051,6 +5054,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/fzf-search", "virtual:8258b7e2ef22016490add75cfb3fb996102c43ceaa7da7437e8ac99add924980580f8c10fa521c0480ec5b698f84c49c7ec61c5cc45d3aa0a636b498f300d035#workspace:js-lib/fzf-search"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
@@ -5079,6 +5083,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/fzf-search", "virtual:8258b7e2ef22016490add75cfb3fb996102c43ceaa7da7437e8ac99add924980580f8c10fa521c0480ec5b698f84c49c7ec61c5cc45d3aa0a636b498f300d035#workspace:js-lib/fzf-search"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
@@ -5220,6 +5225,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.5"],\
@@ -5258,6 +5264,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.5"],\
@@ -5310,6 +5317,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
@@ -5351,6 +5359,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
@@ -5498,6 +5507,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/storage", "workspace:lib/storage"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
@@ -5557,6 +5567,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
             ["@testing-library/dom", "npm:8.20.1"],\
@@ -5607,6 +5618,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
@@ -5769,6 +5781,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
@@ -5798,6 +5811,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
@@ -5881,6 +5895,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
@@ -6061,6 +6076,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
             ["@types/prettier", "npm:2.7.3"],\
             ["concurrently", "npm:7.6.0"],\
@@ -6092,6 +6108,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
@@ -6221,6 +6238,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@testing-library/dom", "npm:8.20.1"],\
             ["@types/react", "npm:17.0.62"],\
@@ -6629,6 +6647,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"],\
             ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],\
             ["@types/react", "npm:17.0.62"],\
@@ -6690,6 +6709,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-common", "workspace:worker/worker-common"],\
             ["@bangle.io/worker-replica-slices", "workspace:worker/worker-replica-slices"],\
@@ -6779,6 +6799,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/worker-entry", "workspace:worker/worker-entry"],\
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
