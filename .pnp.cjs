@@ -6374,6 +6374,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/yarn-workspace-helpers", "workspace:tooling/yarn-workspace-helpers"],\
+            ["@esbuild/linux-x64", "npm:0.18.15"],\
             ["@mdx-js/react", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.6.22"],\
             ["@react-aria/ssr", "virtual:fcd0d182d6ceda1c75041a46189050668dbf85d3ddef6c3320cd988d5561d2a49631a9ae186839a9df4a325f02962ade6d03286be2d259ea7fac83edeef5117e#npm:3.4.1"],\
             ["@storybook/addon-essentials", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:7.1.0"],\
