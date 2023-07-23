@@ -3,6 +3,9 @@
 # Workflow name
 name: 'Chromatic'
 
+concurrency:
+  group: bangle-chromatic-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 # 👇 Workflow event to trigger execution
 on:
   push:
