@@ -74,7 +74,6 @@
     "@bangle.io/scripts": "workspace:*",
     "@bangle.io/uno-preset-bangle": "workspace:*",
     "@bangle.io/yarn-workspace-helpers": "workspace:*",
-    "@esbuild/linux-x64": "0.18.15",
     "@sentry/react": "^6.18.1",
     "@sentry/tracing": "^6.18.1",
     "@sentry/webpack-plugin": "^1.18.8",
@@ -171,9 +170,6 @@
       "yarn prettier --write"
     ],
     "*.json": "yarn prettier --write"
-  },
-  "resolutions": {
-    "@esbuild/linux-x64": "0.18.15"
   },
   "dependenciesMeta": {
     "@unocss/preset-mini@0.46.5": {
