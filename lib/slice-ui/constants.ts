@@ -14,7 +14,6 @@ export interface UISliceState {
   colorScheme: ColorScheme;
   widescreen: boolean;
 }
-
 export const initialUISliceState: UISliceState = {
   // UI
   changelogHasUpdates: false,

@@ -23,6 +23,9 @@ const config: StorybookConfig = {
       require.resolve(path.join('@storybook/addon-onboarding', 'package.json')),
     ),
     path.dirname(
+      require.resolve(path.join('@storybook/addon-viewport', 'package.json')),
+    ),
+    path.dirname(
       require.resolve(
         path.join('@storybook/addon-interactions', 'package.json'),
       ),

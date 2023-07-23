@@ -2112,6 +2112,7 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/test-utils-2": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -3561,6 +3562,7 @@ __metadata:
     "@storybook/addon-interactions": ^7.1.0
     "@storybook/addon-links": ^7.1.0
     "@storybook/addon-onboarding": ^1.0.8
+    "@storybook/addon-viewport": ^7.1.0
     "@storybook/blocks": ^7.1.0
     "@storybook/builder-vite": ^7.1.0
     "@storybook/manager-api": ^7.1.0
@@ -3617,6 +3619,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/setup-store": "workspace:*"
@@ -3624,11 +3627,13 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-refresh-workspace": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-info": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    "@storybook/react": ^7.1.0
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
@@ -6442,7 +6447,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-viewport@npm:7.1.0":
+"@storybook/addon-viewport@npm:7.1.0, @storybook/addon-viewport@npm:^7.1.0":
   version: 7.1.0
   resolution: "@storybook/addon-viewport@npm:7.1.0"
   dependencies:
