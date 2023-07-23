@@ -3,8 +3,9 @@ import * as fs from 'fs';
 import fsProm from 'fs/promises';
 import path from 'path';
 
-// @ts-expect-error
 import { ALL_TOP_LEVEL_DIRS } from './constants';
+
+export { ALL_TOP_LEVEL_DIRS } from './constants';
 
 // The values must match the directory name
 export enum PackageType {

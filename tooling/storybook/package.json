@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git",
     "directory": "tooling/storybook"
   },
   "bugs": {
@@ -37,19 +37,29 @@
     "@storybook/addon-links": "^7.1.0",
     "@storybook/addon-onboarding": "^1.0.8",
     "@storybook/blocks": "^7.1.0",
+    "@storybook/builder-vite": "^7.1.0",
+    "@storybook/manager-api": "^7.1.0",
     "@storybook/react": "^7.1.0",
     "@storybook/react-vite": "^7.1.0",
+    "@storybook/test-runner": "^0.11.0",
     "@storybook/testing-library": "^0.2.0",
+    "@storybook/theming": "^7.1.0",
     "@types/react": "^17.0.49",
     "@types/react-dom": "^17.0.17",
     "@unocss/reset": "^0.53.6",
+    "@unocss/vite": "^0.53.6",
     "babel-loader": "^8.2.5",
+    "chromatic": "^6.20.0",
     "postcss": "^8.4.21",
-    "storybook": "^7.1.0"
+    "storybook": "^7.1.0",
+    "vite": "^4.4.6"
   },
   "scripts": {
     "g:storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "g:test-storybook": "test-storybook",
+    "build-storybook": "storybook build",
+    "g:chromatic": "chromatic",
+    "chromatic": "chromatic"
   },
   "dependencies": {
     "react": "^17.0.2",
