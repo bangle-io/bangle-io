@@ -58,6 +58,7 @@
     "g:storybook": "storybook dev -p 6006 --no-open",
     "g:test-storybook": "test-storybook",
     "build-storybook": "storybook build",
+    "g:build-storybook": "storybook build",
     "g:chromatic": "chromatic",
     "chromatic": "chromatic"
   },
