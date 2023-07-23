@@ -41,6 +41,10 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    // see test-utils where this is used to set the NsmStore
+    nsmContextKey: {
+      nsmContextKey: 'used for getting the store from the context',
+    },
     viewport: {
       viewports: {
         smallscreen: {

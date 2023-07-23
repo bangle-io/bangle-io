@@ -3,7 +3,7 @@ import {
   extensionRegistryEffects,
   nsmExtensionRegistry,
 } from '@bangle.io/extension-registry';
-import type { AnySlice, EffectCreator } from '@bangle.io/nsm-3';
+import type { AnySlice, EffectCreator, SliceId } from '@bangle.io/nsm-3';
 import {
   nsmSliceWorkspace,
   nsmWorkspaceEffects,
@@ -16,19 +16,16 @@ import {
   refreshWorkspace,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
-import type { UISliceState } from '@bangle.io/slice-ui';
 import { nsmUISlice, uiEffects } from '@bangle.io/slice-ui';
-import { initialUISliceState } from '@bangle.io/slice-ui/constants';
 
 import { testEternalVars } from './test-eternal-vars';
 
-type UIOpts = Partial<UISliceState>;
-
 type CoreOpts = {
   editorManager: boolean;
-  ui: boolean | UIOpts;
+  ui: boolean;
   page: boolean;
   workspace: boolean;
+  stateOverride: (base: Record<SliceId, any>) => Record<SliceId, any>;
 };
 
 const DEFAULT_CORE_OPTS: CoreOpts = {
@@ -36,6 +33,7 @@ const DEFAULT_CORE_OPTS: CoreOpts = {
   ui: true,
   page: false,
   workspace: false,
+  stateOverride: (s) => s,
 };
 
 export type TestStoreOpts = {
@@ -101,17 +99,10 @@ export function setupTestStore(_opts: TestStoreOpts) {
     },
   };
 
-  if (typeof coreOpts.ui === 'object') {
-    initStateOverride[nsmUISlice.sliceId] = {
-      ...initialUISliceState,
-      ...coreOpts.ui,
-    } satisfies UISliceState;
-  }
-
   const testStore = setupStore({
     type: 'test',
-    slices: slices,
-    effects: effects,
+    slices: [...slices, ...(_opts.slices ?? [])],
+    effects: [...effects, ...(_opts.effects ?? [])],
     eternalVars,
     onRefreshWorkspace: (store) => {
       store.dispatch(refreshWorkspace(), {
@@ -120,7 +111,7 @@ export function setupTestStore(_opts: TestStoreOpts) {
     },
     otherStoreParams: {
       debug: debugLog,
-      stateOverride: initStateOverride,
+      stateOverride: coreOpts.stateOverride(initStateOverride),
     },
   });
 
