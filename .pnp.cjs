@@ -534,7 +534,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.19.7"],\
             ["@sentry/webpack-plugin", "npm:1.20.0"],\
             ["@swc/core", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.3.70"],\
-            ["@swc/core-linux-x64-gnu", "npm:1.3.20"],\
+            ["@swc/core-linux-x64-gnu", "npm:1.3.70"],\
             ["@swc/jest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.2.27"],\
             ["@testing-library/dom", "npm:8.19.0"],\
             ["@testing-library/jest-dom", "npm:5.16.5"],\
@@ -11300,13 +11300,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@swc/core-linux-x64-gnu", [\
-        ["npm:1.3.20", {\
-          "packageLocation": "./.yarn/unplugged/@swc-core-linux-x64-gnu-npm-1.3.20-affecfb6c3/node_modules/@swc/core-linux-x64-gnu/",\
-          "packageDependencies": [\
-            ["@swc/core-linux-x64-gnu", "npm:1.3.20"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:1.3.70", {\
           "packageLocation": "./.yarn/unplugged/@swc-core-linux-x64-gnu-npm-1.3.70-bf47e21dbc/node_modules/@swc/core-linux-x64-gnu/",\
           "packageDependencies": [\
@@ -14531,7 +14524,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.19.7"],\
             ["@sentry/webpack-plugin", "npm:1.20.0"],\
             ["@swc/core", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.3.70"],\
-            ["@swc/core-linux-x64-gnu", "npm:1.3.20"],\
+            ["@swc/core-linux-x64-gnu", "npm:1.3.70"],\
             ["@swc/jest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.2.27"],\
             ["@testing-library/dom", "npm:8.19.0"],\
             ["@testing-library/jest-dom", "npm:5.16.5"],\

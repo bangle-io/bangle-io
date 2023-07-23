@@ -7119,17 +7119,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.3.20":
-  version: 1.3.20
-  resolution: "@swc/core-linux-x64-gnu@npm:1.3.20"
-  checksum: 0d160373d6604f7ca4cb57cf293999805fa9267c6d18b41907352d007c62e0f813de39e8f935fd895dc1ec546db651bbdba89573d96189ad5dfcfef5b9b883ab
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
 "@swc/core-linux-x64-gnu@npm:1.3.70":
   version: 1.3.70
   resolution: "@swc/core-linux-x64-gnu@npm:1.3.70"
+  checksum: cb61784cf5701cd08cdc0cc31789a9d3b71f44ccafed8ffcaf1515ef4e2d72e8351d50c25d4431dbaca1e82b1f6b639e1d6e3b0735199ac11c6f6db07606ad2c
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -9638,7 +9631,7 @@ __metadata:
     "@sentry/tracing": ^6.18.1
     "@sentry/webpack-plugin": ^1.18.8
     "@swc/core": ^1.3.2
-    "@swc/core-linux-x64-gnu": 1.3.20
+    "@swc/core-linux-x64-gnu": 1.3.70
     "@swc/jest": ^0.2.22
     "@testing-library/dom": ^8.11.3
     "@testing-library/jest-dom": ^5.16.2
