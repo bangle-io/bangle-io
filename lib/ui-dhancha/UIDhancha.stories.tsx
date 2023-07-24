@@ -88,20 +88,18 @@ function NoteSidebar() {
 function WorkspaceSidebar() {
   const [workspaceSidebarOpen, toggleWorkspaceSidebar] = useState(true);
 
-  return (
-    workspaceSidebarOpen && (
-      <div
-        onClick={() => {
-          toggleWorkspaceSidebar((r) => !r);
-        }}
-        style={{
-          backgroundColor: 'lightgreen',
-        }}
-      >
-        <div>{generateText({ lines: 10 })}</div>
-      </div>
-    )
-  );
+  return workspaceSidebarOpen ? (
+    <div
+      onClick={() => {
+        toggleWorkspaceSidebar((r) => !r);
+      }}
+      style={{
+        backgroundColor: 'lightgreen',
+      }}
+    >
+      <div>{generateText({ lines: 10 })}</div>
+    </div>
+  ) : null;
 }
 
 function generateText({ lines = 10 }) {
