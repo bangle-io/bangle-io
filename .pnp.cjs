@@ -414,7 +414,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/abortable-worker", ["workspace:js-lib/abortable-worker"]],\
       ["@bangle.io/activitybar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar", "workspace:app/activitybar"]],\
       ["@bangle.io/api", ["workspace:lib/api"]],\
-      ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "workspace:app/app-entry"]],\
+      ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#workspace:app/app-entry", "workspace:app/app-entry"]],\
       ["@bangle.io/baby-fs", ["workspace:js-lib/baby-fs"]],\
       ["@bangle.io/bangle-store", ["workspace:app/bangle-store"]],\
       ["@bangle.io/bangle-store-context", ["workspace:lib/bangle-store-context"]],\
@@ -4700,6 +4700,76 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#workspace:app/app-entry", {\
+          "packageLocation": "./.yarn/__virtual__/@bangle.io-app-entry-virtual-ed2c81fcc4/1/app/app-entry/",\
+          "packageDependencies": [\
+            ["@bangle.io/app-entry", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#workspace:app/app-entry"],\
+            ["@bangle.dev/base-components", "virtual:6f16cfabf6f63ebc9087597ea979454ca2c281dd5600df1793f9db3a396de393cb473d89bfca3a660ec089e89492fa69406d4adb38e53b80aafd6aa1a40daf83#npm:0.32.0"],\
+            ["@bangle.dev/core", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.32.0"],\
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.32.0"],\
+            ["@bangle.dev/pm", "npm:0.32.0"],\
+            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.32.0"],\
+            ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.32.0"],\
+            ["@bangle.dev/utils", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
+            ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],\
+            ["@bangle.io/api", "workspace:lib/api"],\
+            ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
+            ["@bangle.io/bangle-store", "workspace:app/bangle-store"],\
+            ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
+            ["@bangle.io/config", "workspace:lib/config"],\
+            ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/db-app", "workspace:lib/db-app"],\
+            ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],\
+            ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
+            ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],\
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
+            ["@bangle.io/history", "workspace:js-lib/history"],\
+            ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
+            ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
+            ["@bangle.io/shared", "workspace:app/shared"],\
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
+            ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],\
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],\
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
+            ["@bangle.io/slice-refresh-workspace", "workspace:lib/slice-refresh-workspace"],\
+            ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],\
+            ["@bangle.io/style", "workspace:app/style"],\
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
+            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
+            ["@bangle.io/ui-components", "workspace:lib/ui-components"],\
+            ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],\
+            ["@bangle.io/utils", "workspace:lib/utils"],\
+            ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],\
+            ["@bangle.io/worker-setup", "workspace:app/worker-setup"],\
+            ["@bangle.io/workspace-info", "workspace:lib/workspace-info"],\
+            ["@bangle.io/workspace-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar"],\
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
+            ["@react-aria/overlays", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:3.15.0"],\
+            ["@sentry/tracing", "npm:6.19.7"],\
+            ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.5"],\
+            ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],\
+            ["@types/react", "npm:17.0.62"],\
+            ["@types/react-dom", "npm:17.0.20"],\
+            ["@types/vite", null],\
+            ["comlink", "npm:4.4.1"],\
+            ["prosemirror-dev-tools", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],\
+            ["react", "npm:17.0.2"],\
+            ["react-dom", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:17.0.2"],\
+            ["react-error-boundary", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#npm:4.0.10"],\
+            ["react-test-renderer", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:17.0.2"],\
+            ["safari-14-idb-fix", "npm:3.0.0"],\
+            ["vite", "virtual:a906ece2ffdbf802821423d6b36ccead981c10c33925c54aed01d4a02b3e8996ea157b1a6dac5ee31dffc111ba2ffe8c9d372216ea4f52fda24a0138c3356b14#npm:4.4.6"],\
+            ["vite-plugin-pwa", "virtual:ed2c81fcc46db17595c4a2c3a86c0e86c70f93eec7468ced57bf46e54444834b63dccae18a876c279e7ae6fa69fe6541a1a40791e6b1bfdf875cc7f2f97bf9db#npm:0.16.4"],\
+            ["wouter", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:2.11.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/vite",\
+            "vite"\
+          ],\
+          "linkType": "SOFT"\
+        }],\
         ["workspace:app/app-entry", {\
           "packageLocation": "./app/app-entry/",\
           "packageDependencies": [\
@@ -6370,6 +6440,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.22.9"],\
             ["@babel/preset-env", "virtual:ab8b273753a99ae0501da779e2e636cb9c659204bf3e0b5db6f413d83115f8f31165c98d182214fdc43631c5bacf54ac095c7a6abca0eb54f04590ec1f2d157e#npm:7.22.9"],\
             ["@babel/preset-typescript", "virtual:a9a19b630a588155c92f4ae8a8db8144917ee83e3cd36bb76901eb84a4f5c22dc9e3132b483ed08b52ebbd0b97f69550387746aa970daf04db052b2bb054ab12#npm:7.22.5"],\
+            ["@bangle.io/app-entry", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#workspace:app/app-entry"],\
             ["@bangle.io/core-theme", "workspace:extensions/core-theme"],\
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
@@ -29552,6 +29623,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fast-glob", "npm:3.3.1"],\
             ["pretty-bytes", "npm:6.1.1"],\
             ["vite", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:4.4.6"],\
+            ["workbox-build", "npm:7.0.0"],\
+            ["workbox-window", "npm:7.0.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/vite",\
+            "@types/workbox-build",\
+            "@types/workbox-window",\
+            "vite"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:ed2c81fcc46db17595c4a2c3a86c0e86c70f93eec7468ced57bf46e54444834b63dccae18a876c279e7ae6fa69fe6541a1a40791e6b1bfdf875cc7f2f97bf9db#npm:0.16.4", {\
+          "packageLocation": "./.yarn/__virtual__/vite-plugin-pwa-virtual-3639b286f7/0/cache/vite-plugin-pwa-npm-0.16.4-00aaf407af-16810da98c.zip/node_modules/vite-plugin-pwa/",\
+          "packageDependencies": [\
+            ["vite-plugin-pwa", "virtual:ed2c81fcc46db17595c4a2c3a86c0e86c70f93eec7468ced57bf46e54444834b63dccae18a876c279e7ae6fa69fe6541a1a40791e6b1bfdf875cc7f2f97bf9db#npm:0.16.4"],\
+            ["@types/vite", null],\
+            ["@types/workbox-build", null],\
+            ["@types/workbox-window", null],\
+            ["debug", "virtual:af9e2b97c4f85f1fe450dcb346e8f55ad6d8887d0e51023a956cfdbc66b51d202cb393287bfc7c5f0f1124bb089db0032ec76f0472e9e6dfa00465550f798888#npm:4.3.4"],\
+            ["fast-glob", "npm:3.3.1"],\
+            ["pretty-bytes", "npm:6.1.1"],\
+            ["vite", "virtual:a906ece2ffdbf802821423d6b36ccead981c10c33925c54aed01d4a02b3e8996ea157b1a6dac5ee31dffc111ba2ffe8c9d372216ea4f52fda24a0138c3356b14#npm:4.4.6"],\
             ["workbox-build", "npm:7.0.0"],\
             ["workbox-window", "npm:7.0.0"]\
           ],\

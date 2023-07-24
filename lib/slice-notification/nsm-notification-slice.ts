@@ -15,6 +15,7 @@ export const nsmNotificationSlice = slice([], {
   name: 'notificationSliceKey',
   state: notificationSliceInitState,
 });
+
 export const setEditorIssue = nsmNotificationSlice.action(
   function setEditorIssue(editorIssue: EditorIssue) {
     return nsmNotificationSlice.tx((state) => {
