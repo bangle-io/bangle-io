@@ -11,7 +11,10 @@ export function checkMultipleInstances() {
       r.value.startsWith('react-dom@'),
   );
 
-  const faultyDeps = output.filter((r) => r.children.Instances > 1);
+  const faultyDeps = output
+    .filter((r) => r.children.Instances > 1)
+    // ignore app-entry as some tooling projects use it
+    .filter((r) => !r.value.includes('@bangle.io/app-entry@workspace'));
 
   if (faultyDeps.length > 0) {
     console.log('\nPackages with more than one instances');
