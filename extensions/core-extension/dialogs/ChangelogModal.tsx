@@ -144,7 +144,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
     const hasUpdates = lastSeenHeading !== getTopHeading();
 
     if (hasUpdates !== changelogHasUpdates) {
-      nsmApi2.ui.updateChangelogHasUpdates({ hasUpdates: true });
+      nsmApi2.ui.updateChangelogHasUpdates(true);
     }
   }, [changelogHasUpdates, lastSeenHeading]);
 }

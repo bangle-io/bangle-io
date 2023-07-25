@@ -1,14 +1,8 @@
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { SliceKey } from '@bangle.io/create-store';
 import { checkWidescreen, createEmptyArray } from '@bangle.io/utils';
 
 import { OpenedEditorsConfig } from './opened-editors-config';
-import type { EditorManagerAction, EditorSliceState } from './types';
-
-export const editorManagerSliceKey = new SliceKey<
-  EditorSliceState,
-  EditorManagerAction
->('editor-manager-slice');
+import type { EditorSliceState } from './types';
 
 // The time to wait before auto focusing any newly
 // mounted editor

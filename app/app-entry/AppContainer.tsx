@@ -40,11 +40,11 @@ export function AppContainer() {
   }, [uiDispatch]);
 
   const onDismissNoteSidebar = useCallback(() => {
-    uiDispatch(nsmUI.updateNoteSidebar({ visible: false }));
+    uiDispatch(nsmUI.updateNoteSidebar(false));
   }, [uiDispatch]);
 
   const showNoteSidebar = useCallback(() => {
-    uiDispatch(nsmUI.updateNoteSidebar({ visible: true }));
+    uiDispatch(nsmUI.updateNoteSidebar(true));
   }, [uiDispatch]);
 
   useEffect(() => {
