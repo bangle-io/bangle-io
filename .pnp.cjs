@@ -316,10 +316,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/storage"\
       },\
       {\
-        "name": "@bangle.io/store-sync",\
-        "reference": "workspace:lib/store-sync"\
-      },\
-      {\
         "name": "@bangle.io/test-utils",\
         "reference": "workspace:lib/test-utils"\
       },\
@@ -481,7 +477,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-refresh-workspace", ["workspace:lib/slice-refresh-workspace"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
       ["@bangle.io/storage", ["workspace:lib/storage"]],\
-      ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],\
       ["@bangle.io/storybook", ["workspace:tooling/storybook"]],\
       ["@bangle.io/style", ["workspace:app/style"]],\
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],\
@@ -6411,21 +6406,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
-            ["tslib", "npm:2.6.0"],\
-            ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["@bangle.io/store-sync", [\
-        ["workspace:lib/store-sync", {\
-          "packageLocation": "./lib/store-sync/",\
-          "packageDependencies": [\
-            ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
-            ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
-            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.io/utils", "workspace:lib/utils"],\
             ["tslib", "npm:2.6.0"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
