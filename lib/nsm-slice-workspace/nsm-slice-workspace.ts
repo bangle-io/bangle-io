@@ -235,9 +235,7 @@ export const nsmSliceWorkspace = nsmSliceWorkspaceKey.slice({
 
 const watchWorkspaceRefresh = effect(function watchWorkspaceRefresh(store) {
   const { wsName } = nsmSliceWorkspace.track(store);
-  const { refreshWorkspace } = sliceRefreshWorkspace.track(store);
-
-  console.debug({ refreshWorkspace });
+  void sliceRefreshWorkspace.track(store).refreshWorkspace;
 
   let controller = new AbortController();
 
@@ -247,6 +245,9 @@ const watchWorkspaceRefresh = effect(function watchWorkspaceRefresh(store) {
 
   if (wsName) {
     fs.listFiles(wsName, controller.signal).then((items) => {
+      if (controller.signal.aborted) {
+        return;
+      }
       store.dispatch(setWsPaths({ wsPaths: items, wsName }));
     });
   }

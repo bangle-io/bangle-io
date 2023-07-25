@@ -41,17 +41,7 @@ export const toggleSideBar = nsmUISlice.action(function toggleSideBar(
   });
 });
 
-export const changeSidebar = nsmUISlice.action(function changeSidebar(
-  type: string,
-) {
-  return nsmUISlice.tx((state) => {
-    return nsmUISlice.update(state, (sliceState) => {
-      return {
-        sidebar: type,
-      };
-    });
-  });
-});
+export const changeSidebar = nsmUISlice.simpleAction('sidebar');
 
 export const closeSidebar = nsmUISlice.action(function closeSidebar() {
   return nsmUISlice.tx((state) => {
@@ -77,18 +67,17 @@ export const updatePalette = nsmUISlice.action(function updatePalette(
   });
 });
 
-export const togglePalette = nsmUISlice.action(function togglePalette(
-  type: CorePalette,
-) {
-  return nsmUISlice.tx((state) => {
-    return nsmUISlice.update(state, (sliceState) => {
-      return {
-        paletteType: sliceState.paletteType === type ? undefined : type,
-        paletteInitialQuery: undefined,
-      };
-    });
-  });
-});
+export const togglePalette = nsmUISlice.simpleAction(
+  'paletteType',
+  (val, state) => {
+    const sliceState = nsmUISlice.get(state);
+
+    return {
+      paletteType: sliceState.paletteType === val ? undefined : val,
+      paletteInitialQuery: undefined,
+    };
+  },
+);
 
 export const resetPalette = nsmUISlice.action(function resetPalette() {
   return nsmUISlice.tx((state) => {
@@ -119,29 +108,9 @@ export const toggleColorSchema = nsmUISlice.action(
   },
 );
 
-export const updateColorSchema = nsmUISlice.action(function updateColorSchema(
-  colorScheme: ColorScheme,
-) {
-  return nsmUISlice.tx((state) => {
-    return nsmUISlice.update(state, () => {
-      return {
-        colorScheme,
-      };
-    });
-  });
-});
+export const updateColorSchema = nsmUISlice.simpleAction('colorScheme');
 
-export const updateWidescreen = nsmUISlice.action(function updateWidescreen(
-  widescreen: boolean,
-) {
-  return nsmUISlice.tx((state) => {
-    return nsmUISlice.update(state, () => {
-      return {
-        widescreen,
-      };
-    });
-  });
-});
+export const updateWidescreen = nsmUISlice.simpleAction('widescreen');
 
 export const showDialog = nsmUISlice.action(function showDialog(value: {
   dialogName: string;
@@ -157,56 +126,36 @@ export const showDialog = nsmUISlice.action(function showDialog(value: {
   });
 });
 
-export const dismissDialog = nsmUISlice.action(function dismissDialog(
-  dialogName?: string,
-) {
-  return nsmUISlice.tx((state) => {
-    return nsmUISlice.update(state, (sliceState) => {
-      // if a name is provided only close dialog if it matches the name
-      if (typeof dialogName === 'string') {
-        if (dialogName === sliceState.dialogName) {
-          return {
-            ...sliceState,
-            dialogName: undefined,
-            dialogMetadata: undefined,
-          };
-        } else {
-          return sliceState;
-        }
-      }
+export const dismissDialog = nsmUISlice.simpleAction(
+  'dialogName',
+  (dialogName, state) => {
+    const sliceState = nsmUISlice.get(state);
 
-      // else close any dialog
-
-      return {
-        dialogName: undefined,
-        dialogMetadata: undefined,
-      };
-    });
-  });
-});
-
-export const updateNoteSidebar = nsmUISlice.action(
-  function updateNoteSidebar(value: { visible: boolean }) {
-    return nsmUISlice.tx((state) => {
-      return nsmUISlice.update(state, () => {
+    // if a name is provided only close dialog if it matches the name
+    if (typeof dialogName === 'string') {
+      if (dialogName === sliceState.dialogName) {
         return {
-          noteSidebar: value.visible,
+          dialogName: undefined,
+          dialogMetadata: undefined,
         };
-      });
-    });
+      } else {
+        return sliceState;
+      }
+    }
+
+    // else close any dialog
+
+    return {
+      dialogName: undefined,
+      dialogMetadata: undefined,
+    };
   },
 );
 
-export const updateChangelogHasUpdates = nsmUISlice.action(
-  function updateChangelogHasUpdates(value: { hasUpdates: boolean }) {
-    return nsmUISlice.tx((state) => {
-      return nsmUISlice.update(state, () => {
-        return {
-          changelogHasUpdates: value.hasUpdates,
-        };
-      });
-    });
-  },
+export const updateNoteSidebar = nsmUISlice.simpleAction('noteSidebar');
+
+export const updateChangelogHasUpdates = nsmUISlice.simpleAction(
+  'changelogHasUpdates',
 );
 
 export const toggleNoteSidebar = nsmUISlice.action(

@@ -16,7 +16,19 @@ import {
   searchToWsPath,
   wsNameToPathname,
 } from './location-helpers';
-import { pageSliceInitialState } from './page-slice';
+
+export const pageSliceInitialState: PageSliceStateType = {
+  blockReload: false,
+  pendingNavigation: undefined,
+  location: {
+    pathname: undefined,
+    search: undefined,
+  },
+  lifeCycleState: {
+    current: undefined,
+    previous: undefined,
+  },
+};
 
 type StateType = PageSliceStateType & {};
 const initState: StateType = {

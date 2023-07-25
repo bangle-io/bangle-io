@@ -45,10 +45,6 @@ export function setupStore<T extends string>(opts: {
       msg.type === 'rename'
     ) {
       onRefreshWorkspace(appStore);
-
-      //   appStore.dispatch(refreshWorkspace(), {
-      //     debugInfo: 'storage-provider-change',
-      //   });
     }
   };
 

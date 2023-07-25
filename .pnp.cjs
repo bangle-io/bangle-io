@@ -316,10 +316,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/storage"\
       },\
       {\
-        "name": "@bangle.io/store-sync",\
-        "reference": "workspace:lib/store-sync"\
-      },\
-      {\
         "name": "@bangle.io/test-utils",\
         "reference": "workspace:lib/test-utils"\
       },\
@@ -481,7 +477,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-refresh-workspace", ["workspace:lib/slice-refresh-workspace"]],\
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],\
       ["@bangle.io/storage", ["workspace:lib/storage"]],\
-      ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],\
       ["@bangle.io/storybook", ["workspace:tooling/storybook"]],\
       ["@bangle.io/style", ["workspace:app/style"]],\
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],\
@@ -5989,7 +5984,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.62"],\
             ["@types/react-dom", "npm:17.0.20"],\
             ["@types/use-sync-external-store", "npm:0.0.3"],\
-            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.11"],\
+            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.12"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:17.0.2"],\
             ["superjson", "npm:1.13.1"],\
@@ -6411,21 +6406,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
-            ["tslib", "npm:2.6.0"],\
-            ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["@bangle.io/store-sync", [\
-        ["workspace:lib/store-sync", {\
-          "packageLocation": "./lib/store-sync/",\
-          "packageDependencies": [\
-            ["@bangle.io/store-sync", "workspace:lib/store-sync"],\
-            ["@bangle.io/constants", "workspace:lib/constants"],\
-            ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
-            ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.io/utils", "workspace:lib/utils"],\
             ["tslib", "npm:2.6.0"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
@@ -23457,17 +23437,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["nalanda", [\
-        ["npm:1.3.0-alpha.11", {\
-          "packageLocation": "./.yarn/cache/nalanda-npm-1.3.0-alpha.11-98474c2615-c392188ad2.zip/node_modules/nalanda/",\
+        ["npm:1.3.0-alpha.12", {\
+          "packageLocation": "./.yarn/cache/nalanda-npm-1.3.0-alpha.12-fd0488017f-3752b8037b.zip/node_modules/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "npm:1.3.0-alpha.11"]\
+            ["nalanda", "npm:1.3.0-alpha.12"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.11", {\
-          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-aac712bc21/0/cache/nalanda-npm-1.3.0-alpha.11-98474c2615-c392188ad2.zip/node_modules/nalanda/",\
+        ["virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.12", {\
+          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-abdf3aaf46/0/cache/nalanda-npm-1.3.0-alpha.12-fd0488017f-3752b8037b.zip/node_modules/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.11"],\
+            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.12"],\
             ["@types/react", "npm:17.0.62"],\
             ["@types/zod", null],\
             ["react", "npm:17.0.2"],\

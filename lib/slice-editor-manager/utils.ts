@@ -19,6 +19,7 @@ export type SelectionJson = z.infer<typeof selectionJsonSchema>;
 export const selectionJsonSchema = z.record(
   z.union([z.undefined(), z.string(), z.number(), z.null()]),
 );
+
 export const calculateSelection = (
   editorId: EditorIdType,
   editor: BangleEditor,

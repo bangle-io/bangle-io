@@ -15,7 +15,6 @@ export interface UISliceState {
   widescreen: boolean;
 }
 export const initialUISliceState: UISliceState = {
-  // UI
   changelogHasUpdates: false,
   dialogName: undefined,
   dialogMetadata: undefined,
@@ -28,7 +27,7 @@ export const initialUISliceState: UISliceState = {
   widescreen: checkWidescreen(),
 };
 
-export function getThemePreference() {
+function getThemePreference() {
   if (typeof window === 'undefined' || !window.matchMedia) {
     return COLOR_SCHEMA.LIGHT;
   }

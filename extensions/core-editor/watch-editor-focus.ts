@@ -13,7 +13,7 @@ export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
           const { editorId } = getEditorPluginMetadata(view.state);
 
           if (editorId != null) {
-            nsmApi2.editor.onFocusUpdate({ editorId });
+            nsmApi2.editor.onFocusUpdate(editorId);
           }
 
           // This is important to return false so that

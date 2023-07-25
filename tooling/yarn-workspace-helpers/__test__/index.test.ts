@@ -784,17 +784,6 @@ test('lists packages', async () => {
         },
       ],
       [
-        "@bangle.io/store-sync",
-        {
-          "hasCSSFiles": false,
-          "isToolingWorkspace": false,
-          "isWorktree": false,
-          "location": "lib/store-sync",
-          "name": "@bangle.io/store-sync",
-          "type": "lib",
-        },
-      ],
-      [
         "@bangle.io/storybook",
         {
           "hasCSSFiles": true,
