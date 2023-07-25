@@ -29,8 +29,7 @@ import {
   refreshWorkspace,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
-import { nsmUISlice } from '@bangle.io/slice-ui';
-import { uiEffects } from '@bangle.io/slice-ui/nsm-ui-slice';
+import { nsmUISlice, uiEffects } from '@bangle.io/slice-ui';
 
 import { historyEffects, historySlice } from './history-slice';
 import { miscEffects } from './misc-effects';

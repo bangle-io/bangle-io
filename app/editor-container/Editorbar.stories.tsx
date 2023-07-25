@@ -1,73 +1,77 @@
 import './style';
 
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 
 import { createWsPath } from '@bangle.io/ws-path';
 
 import { Editorbar } from './Editorbar';
 
-export default {
+const meta: Meta<typeof Editorbar> = {
   title: 'editor-container/Editorbar',
   component: Editorbar,
   argTypes: {},
+  decorators: [
+    (Story) => {
+      return (
+        <div style={{ width: 400 }}>
+          <Story />
+        </div>
+      );
+    },
+  ],
+};
+type Story = StoryObj<typeof Editorbar>;
+
+export default meta;
+
+export const Vanilla: Story = {
+  args: {
+    wsPath: createWsPath('test-ws:one.md'),
+    isActive: true,
+    showSplitEditor: false,
+    onClose: () => {},
+    onPressSecondaryEditor: () => {},
+    isSplitEditorOpen: false,
+    openNotesPalette: () => {},
+    onEnableEditing: () => {},
+  },
 };
 
-const Template: Story<Parameters<typeof Editorbar>[0]> = (args) => {
-  return (
-    <div style={{ width: 400 }}>
-      <Editorbar {...args}></Editorbar>
-    </div>
-  );
+export const Branching: Story = {
+  args: {
+    wsPath: createWsPath('test-ws:one/own.md'),
+    isActive: true,
+    showSplitEditor: false,
+    onClose: () => {},
+    onPressSecondaryEditor: () => {},
+    isSplitEditorOpen: false,
+    openNotesPalette: () => {},
+    onEnableEditing: () => {},
+  },
 };
 
-export const Vanilla = Template.bind({});
-
-Vanilla.args = {
-  wsPath: createWsPath('test-ws:one.md'),
-  isActive: true,
-  showSplitEditor: false,
-  onClose: () => {},
-  onPressSecondaryEditor: () => {},
-  isSplitEditorOpen: false,
-  openNotesPalette: () => {},
-  onEnableEditing: () => {},
+export const ShowingSplitEditor: Story = {
+  args: {
+    wsPath: createWsPath('test-ws:one/own.md'),
+    isActive: true,
+    showSplitEditor: true,
+    onClose: () => {},
+    onPressSecondaryEditor: () => {},
+    isSplitEditorOpen: true,
+    openNotesPalette: () => {},
+    onEnableEditing: () => {},
+  },
 };
 
-export const Branching = Template.bind({});
-
-Branching.args = {
-  wsPath: createWsPath('test-ws:one/own.md'),
-  isActive: true,
-  showSplitEditor: false,
-  onClose: () => {},
-  onPressSecondaryEditor: () => {},
-  isSplitEditorOpen: false,
-  openNotesPalette: () => {},
-  onEnableEditing: () => {},
-};
-
-export const ShowingSplitEditor = Template.bind({});
-
-ShowingSplitEditor.args = {
-  wsPath: createWsPath('test-ws:one/own.md'),
-  isActive: true,
-  showSplitEditor: true,
-  onClose: () => {},
-  onPressSecondaryEditor: () => {},
-  isSplitEditorOpen: true,
-  openNotesPalette: () => {},
-  onEnableEditing: () => {},
-};
-
-export const EditingDisabledEditor = Template.bind({});
-
-EditingDisabledEditor.args = {
-  wsPath: createWsPath('test-ws:one/own.md'),
-  isActive: true,
-  editingDisabled: true,
-  onClose: () => {},
-  onPressSecondaryEditor: () => {},
-  openNotesPalette: () => {},
-  onEnableEditing: () => {},
+export const EditingDisabledEditor: Story = {
+  args: {
+    wsPath: createWsPath('test-ws:one/own.md'),
+    isActive: true,
+    editingDisabled: true,
+    onClose: () => {},
+    onPressSecondaryEditor: () => {},
+    openNotesPalette: () => {},
+    onEnableEditing: () => {},
+  },
 };

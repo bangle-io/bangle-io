@@ -38,7 +38,6 @@
     "@bangle.io/pm-manual-paste": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar-proxy": "workspace:*",
     "@bangle.io/workspace-info": "workspace:*",

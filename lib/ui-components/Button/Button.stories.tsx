@@ -1,6 +1,6 @@
 import '../style';
 
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 
 import { TONE } from '@bangle.io/constants';
@@ -10,11 +10,16 @@ import { Button } from './Button';
 import type { ButtonVariant } from './common';
 import { BUTTON_VARIANT } from './common';
 
-export default {
+const meta: Meta<typeof Button> = {
   title: 'ui-components/Button',
   component: Button,
   argTypes: {},
+  decorators: [],
 };
+
+export default meta;
+
+type Story = StoryObj<typeof Button>;
 
 function ButtonGroup({
   variant,
@@ -119,19 +124,20 @@ function ButtonVariantGroup({ variant }: { variant: ButtonVariant }) {
   );
 }
 
-export const ButtonVariants: Story<Parameters<typeof Button>[0]> = (args) => {
-  return (
+// Refactored Stories.
+export const ButtonVariants: Story = {
+  render: () => (
     <>
       <ButtonVariantGroup variant={BUTTON_VARIANT.SOLID} />
       <ButtonVariantGroup variant={BUTTON_VARIANT.GHOST} />
       <ButtonVariantGroup variant={BUTTON_VARIANT.SOFT} />
       <ButtonVariantGroup variant={BUTTON_VARIANT.TRANSPARENT} />
     </>
-  );
+  ),
 };
 
-export const ButtonSizes: Story<Parameters<typeof Button>[0]> = (args) => {
-  return (
+export const ButtonSizes: Story = {
+  render: () => (
     <div>
       <div>
         <div className="flex flex-row gap-2">
@@ -366,11 +372,11 @@ export const ButtonSizes: Story<Parameters<typeof Button>[0]> = (args) => {
         </div>
       </div>
     </div>
-  );
+  ),
 };
 
-export const ButtonIcons: Story<Parameters<typeof Button>[0]> = (args) => {
-  return (
+export const ButtonIcons: Story = {
+  render: () => (
     <div>
       <div>
         <span>No text</span>
@@ -479,5 +485,5 @@ export const ButtonIcons: Story<Parameters<typeof Button>[0]> = (args) => {
         </div>
       </div>
     </div>
-  );
+  ),
 };

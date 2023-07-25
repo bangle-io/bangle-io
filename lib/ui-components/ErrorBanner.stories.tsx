@@ -1,24 +1,25 @@
 import './style';
 
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 
 import { ErrorBanner } from './ErrorBanner';
 
-export default {
+const meta: Meta<typeof ErrorBanner> = {
   title: 'ui-components/ErrorBanner',
   component: ErrorBanner,
   argTypes: {},
+  decorators: [],
 };
 
-const Template: Story<Parameters<typeof ErrorBanner>[0]> = (args) => {
-  return <ErrorBanner {...args}></ErrorBanner>;
-};
+export default meta;
 
-export const Primary = Template.bind({});
+type Story = StoryObj<typeof ErrorBanner>;
 
-Primary.args = {
-  content: 'There was an error',
-  dataTestId: '',
-  title: 'Error',
+export const Primary: Story = {
+  args: {
+    content: 'There was an error',
+    dataTestId: '',
+    title: 'Error',
+  },
 };

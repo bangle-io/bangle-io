@@ -19,4 +19,3 @@ export { TestStoreProvider } from './TestStoreProvider';
 export { waitForExpect };
 export type { TestInitialSliceStateOverride } from './create-basic-store';
 export { StorybookStore } from './StorybookStore';
-export { WorkspaceSliceState } from '@bangle.io/slice-workspace';

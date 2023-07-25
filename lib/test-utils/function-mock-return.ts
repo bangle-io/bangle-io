@@ -9,10 +9,7 @@
 // }
 import type { Writable } from 'type-fest';
 
-import {
-  initialBangleStore,
-  initialNsmStore,
-} from '@bangle.io/bangle-store-context';
+import { initialNsmStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import { initialState } from '@bangle.io/slice-ui';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
@@ -32,11 +29,11 @@ export const getEditorPluginMetadataReturn: ReturnType<
 export const getUseUIManagerContextReturn: Writable<any> = {
   ...initialState,
   dispatch: typeof jest === 'undefined' ? () => {} : jest.fn(() => {}),
-  bangleStore: initialBangleStore,
+  bangleStore: {} as any,
 };
 
 export const getUseWorkspaceContextReturn: Writable<ReturnType<any>> = {
-  bangleStore: initialBangleStore,
+  bangleStore: {} as any,
   cachedWorkspaceInfo: undefined,
   noteWsPaths: [],
   openedWsPaths: OpenedWsPaths.createEmpty(),

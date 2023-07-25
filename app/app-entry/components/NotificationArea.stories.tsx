@@ -1,124 +1,131 @@
-import type { Story } from '@storybook/react';
 import React from 'react';
 
 import { SEVERITY } from '@bangle.io/constants';
-import { nsmNotification } from '@bangle.io/slice-notification';
-import { StorybookStore } from '@bangle.io/test-utils';
+import {
+  nsmNotification,
+  nsmNotificationSlice,
+} from '@bangle.io/slice-notification';
+import type { Meta, StoryObj } from '@bangle.io/test-utils-2';
+import {
+  getStoreFromStorybookContext,
+  setupTestStore,
+  storybookStoreDecorator,
+} from '@bangle.io/test-utils-2';
 import { Button } from '@bangle.io/ui-components';
 
 import { NotificationArea } from './NotificationArea';
 
-export default {
+const meta: Meta<typeof NotificationArea> = {
   title: 'app-entry/NotificationArea',
   component: NotificationArea,
   argTypes: {},
 };
+type Story = StoryObj<typeof NotificationArea>;
 
-export const Main: Story = (args) => {
-  return (
-    <div style={{ width: 400 }}>
-      <StorybookStore
-        onMount={(newStore) => {
-          newStore.dispatch(
+export default meta;
+
+export const Main: Story = {
+  decorators: [
+    (Story, ctx) => {
+      // we setup this store temporarily so we can prefill the main
+      // store with some notifications
+      const dummyStore = setupTestStore({
+        abortSignal: new AbortController().signal,
+        slices: [nsmNotificationSlice],
+      });
+
+      dummyStore.testStore.dispatch(
+        nsmNotification
+          .showNotification({
+            severity: SEVERITY.WARNING,
+            title: 'Test notification',
+            content: 'This is a notification',
+            uid: 'test-uid' + performance.now(),
+            createdAt: Date.now(),
+          })
+          .append(
             nsmNotification.showNotification({
-              buttons: [],
-              severity: SEVERITY.WARNING,
-              title: 'Test notification',
-              content: 'This is the first',
-              uid: 'test-uid-warning',
-              createdAt: 1,
-            }),
-          );
-          newStore.dispatch(
-            nsmNotification.showNotification({
-              buttons: [],
               severity: SEVERITY.SUCCESS,
               title: 'Test notification',
-              content: 'This is the second',
-              uid: 'test-uid-success',
-              createdAt: 1,
+              content: 'This is a notification',
+              uid: 'test-uid' + performance.now(),
+              createdAt: Date.now(),
             }),
-          );
+          ),
+      );
 
-          newStore.dispatch(
-            nsmNotification.showNotification({
-              buttons: [],
-              severity: SEVERITY.INFO,
-              title: 'Test notification',
-              content: 'This is the third',
-              uid: 'test-uid-info',
-              createdAt: 1,
-            }),
-          );
+      return storybookStoreDecorator({
+        core: {
+          page: true,
+          workspace: true,
+          stateOverride(base) {
+            const notificationState = nsmNotificationSlice.get(
+              dummyStore.testStore.state,
+            );
 
-          newStore.dispatch(
-            nsmNotification.showNotification({
-              buttons: [],
-              severity: SEVERITY.ERROR,
-              title: 'Test notification',
-              content: 'This is the fourd',
-              uid: 'test-uid-error',
-              createdAt: 1,
-            }),
-          );
-        }}
-        renderChildren={(newStore) => {
-          return (
-            <>
-              <Button
-                text="Show warning"
-                className="ml-2"
-                onPress={() => {
-                  newStore.dispatch(
-                    nsmNotification.showNotification({
-                      buttons: [],
-                      severity: SEVERITY.WARNING,
-                      title: 'Test notification',
-                      content: 'This is a notification',
-                      uid: 'test-uid' + Date.now(),
-                      createdAt: Date.now(),
-                    }),
-                  );
-                }}
-              />
-              <Button
-                text="Show error"
-                className="ml-2"
-                onPress={() => {
-                  newStore.dispatch(
-                    nsmNotification.showNotification({
-                      buttons: [],
-                      severity: SEVERITY.ERROR,
-                      title: 'Test notification',
-                      content: 'This is a notification',
-                      uid: 'test-uid' + Date.now(),
-                      createdAt: Date.now(),
-                    }),
-                  );
-                }}
-              />
+            return {
+              ...base,
+              [nsmNotificationSlice.sliceId]: notificationState,
+            };
+          },
+        },
+        slices: [nsmNotificationSlice],
+      })(Story, ctx);
+    },
+  ],
+  render: (args, context) => {
+    const store = getStoreFromStorybookContext(context);
 
-              <Button
-                text="Show success"
-                className="ml-2"
-                onPress={() => {
-                  newStore.dispatch(
-                    nsmNotification.showNotification({
-                      buttons: [],
-                      severity: SEVERITY.SUCCESS,
-                      title: 'Test notification',
-                      content: 'This is a notification',
-                      uid: 'test-uid' + Date.now(),
-                      createdAt: Date.now(),
-                    }),
-                  );
-                }}
-              />
-              <NotificationArea></NotificationArea>
-            </>
-          );
-        }}
-      />
-    </div>
-  );
+    return (
+      <>
+        <Button
+          text="Show warning"
+          className="ml-2"
+          onPress={() => {
+            store.dispatch(
+              nsmNotification.showNotification({
+                severity: SEVERITY.WARNING,
+                title: 'Test notification',
+                content: 'This is a notification',
+                uid: 'test-uid' + Date.now(),
+                createdAt: Date.now(),
+              }),
+            );
+          }}
+        />
+        <Button
+          text="Show error"
+          className="ml-2"
+          onPress={() => {
+            store.dispatch(
+              nsmNotification.showNotification({
+                severity: SEVERITY.ERROR,
+                title: 'Test notification',
+                content: 'This is a notification',
+                uid: 'test-uid' + Date.now(),
+                createdAt: Date.now(),
+              }),
+            );
+          }}
+        />
+
+        <Button
+          text="Show success"
+          className="ml-2"
+          onPress={() => {
+            store.dispatch(
+              nsmNotification.showNotification({
+                severity: SEVERITY.SUCCESS,
+                title: 'Test notification',
+                content: 'This is a notification',
+                uid: 'test-uid' + Date.now(),
+                createdAt: Date.now(),
+              }),
+            );
+          }}
+        />
+        <NotificationArea></NotificationArea>
+      </>
+    );
+  },
 };

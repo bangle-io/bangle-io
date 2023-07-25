@@ -50,9 +50,9 @@
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-refresh-workspace": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/style": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/test-utils-2": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-dhancha": "workspace:*",
     "@bangle.io/utils": "workspace:*",
@@ -72,7 +72,6 @@
     "wouter": "^2.10.0-alpha.1"
   },
   "devDependencies": {
-    "@storybook/react": "^6.5.12",
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.49",

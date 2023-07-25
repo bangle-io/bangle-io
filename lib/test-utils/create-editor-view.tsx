@@ -2,7 +2,6 @@ import { BangleEditor, BangleEditorState } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import { valuePlugin } from '@bangle.dev/utils';
 
-import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType, PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
 import type {

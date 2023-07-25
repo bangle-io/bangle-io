@@ -1,6 +1,7 @@
 /* eslint-disable no-process-env */
 import Unocss from '@unocss/vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -8,7 +9,7 @@ import getEnvVars from '@bangle.io/env-vars';
 
 const argv = require('minimist')(process.argv.slice(2));
 
-const config = async ({ command, mode }) => {
+export default defineConfig(async ({ command, mode }) => {
   const isProduction = mode === 'production';
   const envVars = await getEnvVars({
     isProduction: isProduction,
@@ -41,7 +42,7 @@ const config = async ({ command, mode }) => {
   /**
    * @type {import('vite').UserConfig}
    */
-  const c = {
+  const config = {
     build: {
       target: 'es2018',
       sourcemap: sourcemap,
@@ -104,8 +105,8 @@ const config = async ({ command, mode }) => {
     },
   };
 
-  return c;
-};
+  return config;
+});
 
 function generateManifest(appEnv) {
   const isProd = appEnv === 'production';
@@ -200,5 +201,3 @@ function generateManifest(appEnv) {
 
   return manifest;
 }
-
-export default config;

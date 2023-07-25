@@ -1,24 +1,18 @@
 import '../style';
 
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React, { useCallback } from 'react';
 
 import { Button, OverlayProvider } from '@bangle.io/ui-components';
 
 import { PickWorkspaceType } from './PickWorkspaceType';
 
-export default {
-  title: 'core-extension/PickWorkspaceType',
-  component: PickWorkspaceType,
-  argTypes: {},
-};
-
-export const Template: Story<Parameters<typeof PickWorkspaceType>[0]> = (
-  args,
-) => {
+function PickWorkspaceTypeStory(
+  props: Parameters<typeof PickWorkspaceType>[0],
+) {
   const [show, setShow] = React.useState(false);
 
-  args.onDismiss = useCallback(() => setShow(false), []);
+  const onDismiss = useCallback(() => setShow(false), []);
 
   return (
     <div>
@@ -30,15 +24,23 @@ export const Template: Story<Parameters<typeof PickWorkspaceType>[0]> = (
         }}
       />
       <OverlayProvider>
-        {show && <PickWorkspaceType {...args} />}
+        {show && <PickWorkspaceType {...props} onDismiss={onDismiss} />}
       </OverlayProvider>
     </div>
   );
+}
+
+const meta: Meta<typeof PickWorkspaceTypeStory> = {
+  title: 'core-extension/PickWorkspaceType',
+  component: PickWorkspaceTypeStory,
+  argTypes: {},
+  decorators: [],
 };
 
-export const SimpleSubmit = Template.bind({});
+type Story = StoryObj<typeof PickWorkspaceType>;
 
-SimpleSubmit.args = {
-  onSelect: () => {},
-  hasGithub: true,
+export default meta;
+
+export const SimpleSubmit: Story = {
+  args: { onSelect: () => {}, hasGithub: true },
 };

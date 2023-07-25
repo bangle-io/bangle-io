@@ -4,6 +4,7 @@ exports[`store basic tests destroys 1`] = `
 {
   "_actionSerializers": {},
   "_currentRunId": 0,
+  "_deferredRunner": undefined,
   "_destroyController": Any<AbortController>,
   "_destroyed": true,
   "_disableSideEffects": false,
@@ -103,6 +104,7 @@ exports[`store basic tests sets up properly 1`] = `
 {
   "_actionSerializers": {},
   "_currentRunId": 0,
+  "_deferredRunner": undefined,
   "_destroyController": Any<AbortController>,
   "_destroyed": false,
   "_disableSideEffects": false,
@@ -202,6 +204,7 @@ exports[`store deferred side effects does not call deferred update when schedule
 {
   "_actionSerializers": {},
   "_currentRunId": 0,
+  "_deferredRunner": undefined,
   "_destroyController": Any<AbortController>,
   "_destroyed": false,
   "_disableSideEffects": false,
@@ -337,6 +340,7 @@ exports[`store empty store 1`] = `
 {
   "_actionSerializers": {},
   "_currentRunId": 0,
+  "_deferredRunner": undefined,
   "_destroyController": Any<AbortController>,
   "_destroyed": false,
   "_disableSideEffects": false,

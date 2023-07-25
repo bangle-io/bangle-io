@@ -1,25 +1,16 @@
 import '../style';
 
 import { OverlayProvider } from '@react-aria/overlays';
-import type { Story } from '@storybook/react';
-import React, { useCallback } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import React, { useCallback, useState } from 'react';
 
 import { Button } from '../Button';
 import { Dialog } from './Dialog';
 
-export default {
-  title: 'ui-components/Dialog',
-  component: Dialog,
-
-  argTypes: {
-    backgroundColor: { control: 'color' },
-  },
-};
-
-const Template: Story<Parameters<typeof Dialog>[0]> = (args) => {
+function DialogWrapper(props: Parameters<typeof Dialog>[0]) {
   const [show, setShow] = React.useState(false);
 
-  args.onDismiss = useCallback(() => setShow(false), []);
+  const onDismiss = useCallback(() => setShow(false), []);
 
   return (
     <div>
@@ -30,53 +21,66 @@ const Template: Story<Parameters<typeof Dialog>[0]> = (args) => {
         }}
         text="Open modal"
       />
-      <OverlayProvider>{show && <Dialog {...args}></Dialog>}</OverlayProvider>
+      <OverlayProvider>
+        {show && <Dialog {...props} onDismiss={onDismiss} />}
+      </OverlayProvider>
     </div>
   );
+}
+
+const meta: Meta<typeof DialogWrapper> = {
+  title: 'ui-components/Dialog',
+  component: DialogWrapper,
+
+  decorators: [],
 };
 
-export const SimpleSubmit = Template.bind({});
+export default meta;
 
-SimpleSubmit.args = {
-  children: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+type Story = StoryObj<typeof DialogWrapper>;
+
+export const SimpleSubmit: Story = {
+  args: {
+    children: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
   Lorem ipsum`,
-  isDismissable: true,
-  headingTitle: 'This is a heading',
-  primaryButtonConfig: {
-    onPress: () => {},
-    text: 'Submit',
-  },
-  heroImageUrl: 'https://i.imgur.com/Z7AzH2c.png',
-};
-
-export const Destructive = Template.bind({});
-
-Destructive.args = {
-  children: `You want to delete this?`,
-  isDismissable: true,
-  headingTitle: 'Oh no',
-  primaryButtonConfig: {
-    onPress: () => {},
-    isDestructive: true,
-    text: 'Delete',
+    isDismissable: true,
+    headingTitle: 'This is a heading',
+    primaryButtonConfig: {
+      onPress: () => {},
+      text: 'Submit',
+    },
+    heroImageUrl: 'https://i.imgur.com/Z7AzH2c.png',
   },
 };
 
-export const LoadingDialog = Template.bind({});
-
-LoadingDialog.args = {
-  children: `I am loading...`,
-  isDismissable: true,
-  isLoading: true,
-  headingTitle: 'Oh no',
-  primaryButtonConfig: {
-    onPress: () => {},
-    isDestructive: true,
-    text: 'Delete',
+export const Destructive: Story = {
+  args: {
+    children: `You want to delete this?`,
+    isDismissable: true,
+    headingTitle: 'Oh no',
+    primaryButtonConfig: {
+      onPress: () => {},
+      isDestructive: true,
+      text: 'Delete',
+    },
   },
 };
 
-export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
+export const LoadingDialog: Story = {
+  args: {
+    children: `I am loading...`,
+    isDismissable: true,
+    isLoading: true,
+    headingTitle: 'Oh no',
+    primaryButtonConfig: {
+      onPress: () => {},
+      isDestructive: true,
+      text: 'Delete',
+    },
+  },
+};
+
+function ScrollableParentWrapper() {
   const [show, setShow] = React.useState(false);
 
   const onDismiss = useCallback(() => setShow(false), []);
@@ -141,4 +145,8 @@ export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
       </OverlayProvider>
     </div>
   );
+}
+
+export const ScrollableParent: Story = {
+  render: () => <ScrollableParentWrapper />,
 };

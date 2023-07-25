@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "importHelpers": true,
-    "allowJs": false,
-    "checkJs": false,
+    "allowJs": true,
+    "checkJs": true,
     "composite": true,
     "esModuleInterop": true,
     "declaration": true,

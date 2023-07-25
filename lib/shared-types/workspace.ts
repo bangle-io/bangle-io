@@ -11,8 +11,6 @@ export type WorkspaceInfo = {
   };
 };
 
-export type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
-
 export type WsName = Brand<string, 'WsName'>;
 export type WsPath = Brand<string, 'WsPath'>;
 

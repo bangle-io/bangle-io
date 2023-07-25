@@ -110,7 +110,6 @@ export const toggleColorSchema = nsmUISlice.action(
           sliceState.colorScheme === COLOR_SCHEMA.DARK
             ? COLOR_SCHEMA.LIGHT
             : COLOR_SCHEMA.DARK;
-        changeColorScheme(schema);
 
         return {
           colorScheme: schema,
@@ -124,8 +123,6 @@ export const updateColorSchema = nsmUISlice.action(function updateColorSchema(
   colorScheme: ColorScheme,
 ) {
   return nsmUISlice.tx((state) => {
-    changeColorScheme(colorScheme);
-
     return nsmUISlice.update(state, () => {
       return {
         colorScheme,
@@ -134,20 +131,17 @@ export const updateColorSchema = nsmUISlice.action(function updateColorSchema(
   });
 });
 
-export const updateWindowSize = nsmUISlice.action(
-  function updateWindowSize(windowSize: { height: number; width: number }) {
-    return nsmUISlice.tx((state) => {
-      const widescreen = checkWidescreen(windowSize.width);
-      setRootWidescreenClass(widescreen);
-
-      return nsmUISlice.update(state, () => {
-        return {
-          widescreen,
-        };
-      });
+export const updateWidescreen = nsmUISlice.action(function updateWidescreen(
+  widescreen: boolean,
+) {
+  return nsmUISlice.tx((state) => {
+    return nsmUISlice.update(state, () => {
+      return {
+        widescreen,
+      };
     });
-  },
-);
+  });
+});
 
 export const showDialog = nsmUISlice.action(function showDialog(value: {
   dialogName: string;
@@ -239,22 +233,52 @@ export function showGenericErrorModal({
 }
 
 const uiSliceMountEffect = effect((store) => {
-  const state = nsmUISlice.get(store.state);
-  changeColorScheme(state.colorScheme);
-  setRootWidescreenClass(state.widescreen);
+  const syncWidescreen = (dimensions?: { width: number; height: number }) => {
+    const currentWideScreen = checkWidescreen(dimensions?.width);
+
+    const stateWidescreen = nsmUISlice.get(store.state).widescreen;
+
+    if (currentWideScreen !== stateWidescreen) {
+      store.dispatch(updateWidescreen(currentWideScreen));
+    }
+  };
+
+  syncWidescreen();
 
   const controller = new AbortController();
 
-  listenToResize((obj) => {
-    store.dispatch(updateWindowSize(obj));
-  }, controller.signal);
+  listenToResize(syncWidescreen, controller.signal);
 
   cleanup(store, () => {
     controller.abort();
   });
 });
 
-export const uiEffects = [uiSliceMountEffect];
+const setWidescreenEffect = effect(
+  (store) => {
+    const { widescreen } = nsmUISlice.track(store);
+    setRootWidescreenClass(widescreen);
+  },
+  {
+    deferred: false,
+  },
+);
+
+const setColorSchemeEffect = effect(
+  (store) => {
+    const { colorScheme } = nsmUISlice.track(store);
+    changeColorScheme(colorScheme);
+  },
+  {
+    deferred: false,
+  },
+);
+
+export const uiEffects = [
+  uiSliceMountEffect,
+  setWidescreenEffect,
+  setColorSchemeEffect,
+];
 
 const SERIAL_VERSION = 1;
 

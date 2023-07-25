@@ -1,20 +1,21 @@
 import '../style';
 
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 
 import { Input } from './Input';
 
-export default {
+const meta: Meta<typeof Input> = {
   title: 'ui-components/Input',
   component: Input,
   argTypes: {},
+  decorators: [],
 };
 
-const Template: Story<Parameters<typeof Input>[0]> = (args) => {
-  return <Input {...args}></Input>;
+export default meta;
+
+type Story = StoryObj<typeof Input>;
+
+export const Primary: Story = {
+  args: {},
 };
-
-export const Primary = Template.bind({});
-
-Primary.args = {};

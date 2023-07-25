@@ -1,27 +1,28 @@
 import './style';
 
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 
 import { BacklinkNodeButton } from './BacklinkNodeButton';
 
-export default {
+const meta: Meta<typeof BacklinkNodeButton> = {
   title: 'inline-backlink/BacklinkNodeButton',
   component: BacklinkNodeButton,
   argTypes: {},
+  decorators: [],
 };
 
-const Template: Story<Parameters<typeof BacklinkNodeButton>[0]> = (args) => {
-  return <BacklinkNodeButton {...args}></BacklinkNodeButton>;
-};
+export default meta;
 
-export const Primary = Template.bind({});
+type Story = StoryObj<typeof BacklinkNodeButton>;
 
-Primary.args = {
-  linkNotFound: true,
-  onClick: () => {},
-  title: 'Hello',
-  onHoverChange: (state) => {
-    // console.log('hovering');
+export const Primary: Story = {
+  args: {
+    linkNotFound: true,
+    onClick: () => {},
+    title: 'Hello',
+    onHoverChange: (state) => {
+      // console.log('hovering');
+    },
   },
 };

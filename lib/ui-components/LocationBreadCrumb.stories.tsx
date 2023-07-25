@@ -1,25 +1,20 @@
-import type { Story } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-
-import type { FirstParameter } from '@bangle.io/shared-types';
 
 import { LocationBreadCrumb } from './LocationBreadCrumb';
 
-export default {
+const meta: Meta<typeof LocationBreadCrumb> = {
   title: 'ui-components/LocationBreadCrumb',
   component: LocationBreadCrumb,
+  decorators: [],
+};
 
-  argTypes: {
-    backgroundColor: { control: 'color' },
+export default meta;
+
+type Story = StoryObj<typeof LocationBreadCrumb>;
+
+export const Primary: Story = {
+  args: {
+    filePath: 'hi/brothers',
   },
-};
-
-const Template: Story<FirstParameter<typeof LocationBreadCrumb>> = (args) => {
-  return <LocationBreadCrumb {...args} />;
-};
-
-export const Primary = Template.bind({});
-
-Primary.args = {
-  filePath: 'hi/brothers',
 };
