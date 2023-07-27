@@ -1,8 +1,11 @@
-import { IS_STORYBOOK, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import {
+  IS_STORYBOOK,
+  isMobile,
+  SPLIT_SCREEN_MIN_WIDTH,
+} from '@bangle.io/config';
 import type { ColorScheme } from '@bangle.io/constants';
 import { COLOR_SCHEMA } from '@bangle.io/constants';
 
-import { isMobile } from './is-mac';
 import { rafSchedule } from './safe-js';
 
 export function setRootWidescreenClass(
@@ -30,15 +33,15 @@ export function setRootWidescreenClass(
   }
 }
 
-export const checkWidescreen = (
+export function checkWidescreen(
   width = typeof window !== 'undefined' ? window.innerWidth : undefined,
-) => {
+) {
   if (isMobile) {
     return false;
   }
 
   return width ? SPLIT_SCREEN_MIN_WIDTH <= width : false;
-};
+}
 
 export function listenToResize(
   onResize: (obj: { width: number; height: number }) => void,

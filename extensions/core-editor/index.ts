@@ -1,13 +1,15 @@
 import { heading, listItem } from '@bangle.dev/base-components';
-import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
 import { nsmApi2 } from '@bangle.io/api';
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
+import {
+  getPlugins,
+  markdownItPlugins,
+  rawSpecs,
+} from '@bangle.io/editor-common';
 import { Extension } from '@bangle.io/extension-registry';
 
 import { MenuComp } from './FloatingMenu';
-import { getPlugins } from './plugins';
-import { rawSpecs } from './spec-sheet';
 
 const extensionName = '@bangle.io/core-editor';
 
@@ -17,7 +19,7 @@ const extension = Extension.create({
     specs: rawSpecs,
     plugins: [getPlugins],
     ReactComponent: MenuComp,
-    markdownItPlugins: [frontMatterMarkdownItPlugin],
+    markdownItPlugins: markdownItPlugins,
   },
   application: {
     slices: [],

@@ -1,5 +1,13 @@
 import { compileConfig } from './compile-config';
 
+export {
+  browserInfo,
+  isChrome,
+  isFirefox,
+  isMac,
+  isMobile,
+  isSafari,
+} from './browser';
 export const config = compileConfig();
 export type { FinalConfig } from '@bangle.io/config-template';
 

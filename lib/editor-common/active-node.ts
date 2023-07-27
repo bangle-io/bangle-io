@@ -34,7 +34,7 @@ function buildDeco(state: EditorState): DecorationSet {
   const decorations = selection.empty
     ? [
         Decoration.node(resolved.before(), resolved.after(), {
-          class: 'B-core-editor_selected-node',
+          class: 'B-editor-common_selected-node',
         }),
       ]
     : [];

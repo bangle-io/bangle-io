@@ -1,4 +1,4 @@
-import { isMac } from './is-mac';
+import { isMac } from '@bangle.io/config';
 
 // const altInMac = '⌥'; // option
 

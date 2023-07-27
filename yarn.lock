@@ -2143,6 +2143,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
@@ -2415,29 +2416,15 @@ __metadata:
   resolution: "@bangle.io/core-editor@workspace:extensions/core-editor"
   dependencies:
     "@bangle.dev/base-components": 0.32.0
-    "@bangle.dev/collab-client": 0.32.0
     "@bangle.dev/core": 0.32.0
-    "@bangle.dev/emoji": 0.32.0
-    "@bangle.dev/markdown": 0.32.0
-    "@bangle.dev/markdown-front-matter": 0.32.0
     "@bangle.dev/pm": 0.32.0
     "@bangle.dev/react": 0.32.0
-    "@bangle.dev/react-emoji-suggest": 0.32.0
     "@bangle.dev/react-menu": 0.32.0
-    "@bangle.dev/react-stopwatch": 0.32.0
-    "@bangle.dev/search": 0.32.0
-    "@bangle.dev/table": 0.32.0
-    "@bangle.dev/timestamp": 0.32.0
     "@bangle.dev/tooltip": 0.32.0
-    "@bangle.dev/trailing-node": 0.32.0
-    "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/pm-plugins": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     react: ^17.0.2
@@ -2612,10 +2599,35 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/editor-common@workspace:lib/editor-common"
   dependencies:
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/collab-client": 0.32.0
     "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/emoji": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
     "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/react-emoji-suggest": 0.32.0
+    "@bangle.dev/react-menu": 0.32.0
+    "@bangle.dev/react-stopwatch": 0.32.0
+    "@bangle.dev/search": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/timestamp": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/trailing-node": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.io/api": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
+    react: ^17.0.2
+    react-dom: ^17.0.2
     tslib: 2.6.0
     typescript: 5.1.6
   languageName: unknown
@@ -3401,6 +3413,7 @@ __metadata:
     "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/core-extension": "workspace:*"
     "@bangle.io/core-palettes": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/github-storage": "workspace:*"
     "@bangle.io/helpfs-storage": "workspace:*"
@@ -3427,11 +3440,13 @@ __metadata:
     "@bangle.dev/all-base-components": 0.32.0
     "@bangle.dev/core": 0.32.0
     "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/search": 0.32.0
     "@bangle.dev/test-helpers": 0.32.0
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3500,6 +3515,7 @@ __metadata:
   resolution: "@bangle.io/slice-ui@workspace:lib/slice-ui"
   dependencies:
     "@bangle.io/bangle-store-context": "workspace:*"
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"

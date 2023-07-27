@@ -4,8 +4,9 @@ import { keyName } from 'w3c-keyname';
 import type { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
+import { isMac } from '@bangle.io/config';
+
 import { DuoWeakMap } from './duo-weak-map';
-import { isMac } from './is-mac';
 
 export { serialExecuteQueue } from '@bangle.dev/utils';
 export { isAbortError } from '@bangle.io/is-abort-error';

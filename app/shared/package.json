@@ -34,6 +34,7 @@
     "@bangle.io/core-editor": "workspace:*",
     "@bangle.io/core-extension": "workspace:*",
     "@bangle.io/core-palettes": "workspace:*",
+    "@bangle.io/editor-common": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/github-storage": "workspace:*",
     "@bangle.io/helpfs-storage": "workspace:*",

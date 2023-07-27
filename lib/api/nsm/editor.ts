@@ -17,7 +17,7 @@ import * as editorManager from '@bangle.io/slice-editor-manager';
 
 import { _internal_getStore } from './internal/internals';
 
-export { searchPluginKey } from '@bangle.io/slice-editor-manager';
+export { searchPluginKey } from '@bangle.io/editor-common';
 export const editorState = () => {
   const store = _internal_getStore();
 
