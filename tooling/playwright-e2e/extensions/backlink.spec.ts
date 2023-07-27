@@ -10,6 +10,7 @@ import {
   createWorkspace,
   getEditorLocator,
   getTestIdLocator,
+  longSleep,
   runOperation,
   SELECTOR_TIMEOUT,
   sleep,
@@ -35,8 +36,9 @@ test.describe('backlink workflow', () => {
 
     await clearEditor(page, PRIMARY_EDITOR_INDEX);
 
+    await longSleep();
     // create note-1
-    await page.keyboard.type('this is the zeroth note ', { delay: 35 });
+    await page.keyboard.type('this is the zeroth note ', { delay: 50 });
     await page.keyboard.type('[[note-1]]', { delay: 55 });
 
     await sleep();
