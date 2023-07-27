@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import {
-  useNsmPlainStore,
+  getEternalVars,
   useNsmSliceDispatch,
   useNsmSliceState,
   useNsmStore,
@@ -22,7 +22,6 @@ import { nsmUISlice } from '@bangle.io/slice-ui';
 import { MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { createWsPath } from '@bangle.io/ws-path';
 
-import { getEternalVars } from '../eternal-vars';
 import { EmptyEditorPage } from './EmptyEditorPage';
 
 export function WorkspacePage() {
@@ -32,9 +31,10 @@ export function WorkspacePage() {
     nsmNotification.nsmNotificationSlice,
   );
   const { miniWsPath, openedWsPaths } = useNsmSliceState(nsmSliceWorkspace);
-  const eternalVars = getEternalVars(useNsmPlainStore());
 
   const store = useNsmStore([nsmSliceWorkspace, nsmPageSlice]);
+
+  const eternalVars = getEternalVars(store);
   const { primaryWsPath, secondaryWsPath } = openedWsPaths;
 
   let mini = null;

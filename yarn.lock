@@ -2251,8 +2251,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/bangle-store-context@workspace:lib/bangle-store-context"
   dependencies:
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.49
@@ -2270,6 +2270,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.32.0
     "@bangle.io/api": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2283,7 +2284,6 @@ __metadata:
     "@bangle.io/nsm-slice-file-sha": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/pm-manual-paste": "workspace:*"
-    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -3359,17 +3359,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/setup-store@workspace:*, @bangle.io/setup-store@workspace:lib/setup-store":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/setup-store@workspace:lib/setup-store"
-  dependencies:
-    "@bangle.io/config": "workspace:*"
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/nsm-3": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "@bangle.io/shared-types@workspace:*, @bangle.io/shared-types@workspace:lib/shared-types":
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared-types@workspace:lib/shared-types"
@@ -3624,7 +3613,6 @@ __metadata:
     "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
-    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
@@ -3891,6 +3879,7 @@ __metadata:
   resolution: "@bangle.io/worker-entry@workspace:worker/worker-entry"
   dependencies:
     "@bangle.io/abortable-worker": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
@@ -3898,7 +3887,6 @@ __metadata:
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
-    "@bangle.io/setup-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-common": "workspace:*"

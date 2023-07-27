@@ -1,5 +1,3 @@
-
-
 [chromium] › core/layout.spec.ts:33:5 › shows note sidebar correctly ───────────────────────────
 [chromium] › core/scroll-position.spec.ts:134:7 › scroll › reloading preserves scroll & selection 
 [chromium] › core/scroll-position.spec.ts:75:9 › scroll › split-screen scroll state preserve ───

@@ -1,6 +1,6 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
-import { nsmApi2 } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import { config } from '@bangle.io/config';
 import * as constants from '@bangle.io/constants';
 import type { NSME2eTypes } from '@bangle.io/e2e-types';
@@ -18,7 +18,7 @@ import { BaseError, getEditorPluginMetadata } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 const getGlobalNsmStore = (): Store => {
-  return (window as any).globalNsmStore;
+  return internalApi._internal_getStore();
 };
 
 let e2e: NSME2eTypes = {

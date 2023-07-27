@@ -13,7 +13,7 @@ import {
 } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { getStore } from '../../internals';
+import { _internal_getStore } from './internals';
 
 export function readAllWorkspacesInfo(opts?: { allowDeleted?: boolean }) {
   return _readAllWorkspacesInfo({
@@ -37,7 +37,7 @@ export const goToWorkspaceAuthRoute = (
   error: string,
   openedWsPaths?: OpenedWsPaths,
 ) => {
-  const store = getStore();
+  const store = _internal_getStore();
 
   store.dispatch(_goToWorkspaceAuthRoute(wsName, error, openedWsPaths));
 };
@@ -49,7 +49,7 @@ export const createWorkspace = async (
 ) => {
   await _createWorkspace(wsName, type, opts);
 
-  const store = getStore();
+  const store = _internal_getStore();
 
   store.dispatch(_goToWorkspaceHome({ wsName }));
   await Promise.resolve();
@@ -58,7 +58,7 @@ export const createWorkspace = async (
 export const deleteWorkspace = async (wsName: WsName) => {
   await _deleteWorkspace(wsName);
 
-  const store = getStore();
+  const store = _internal_getStore();
 
   if (nsmSliceWorkspace.get(store.state).wsName === wsName) {
     store.dispatch(goToLandingPage({ replace: true }));

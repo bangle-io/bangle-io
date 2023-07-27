@@ -1,11 +1,6 @@
 import { useMemo } from 'react';
 
-import type {
-  EditorState,
-  EditorView,
-  Node,
-  Transaction,
-} from '@bangle.dev/pm';
+import type { EditorState, EditorView, Transaction } from '@bangle.dev/pm';
 import { PluginKey } from '@bangle.dev/pm';
 import { search } from '@bangle.dev/search';
 
@@ -23,7 +18,7 @@ import type {
 import type { EditorIdType } from '@bangle.io/slice-editor-manager';
 import * as editorManager from '@bangle.io/slice-editor-manager';
 
-import { getStore } from '../internals';
+import { _internal_getStore } from './internal/internals';
 
 export const searchPluginKey = new PluginKey('searchPluginKey');
 
@@ -36,7 +31,7 @@ const initState: {
 type EditorProxyState = typeof initState;
 
 export const editorState = () => {
-  const store = getStore();
+  const store = _internal_getStore();
 
   return editorManager.nsmEditorManagerSlice.get(store.state);
 };
@@ -114,23 +109,23 @@ export function useEditor() {
 export const updateEditorSearchQuery = (
   searchQuery: RegExp | undefined,
 ): void => {
-  getStore().dispatch(_updateQueryAction(searchQuery));
+  _internal_getStore().dispatch(_updateQueryAction(searchQuery));
 };
 
 export function getEditor(editorId: EditorIdType) {
-  const store = getStore();
+  const store = _internal_getStore();
 
   return editorManager.getEditor(store.state, editorId);
 }
 
 export function getPrimaryEditor() {
-  const store = getStore();
+  const store = _internal_getStore();
 
   return editorManager.getEditor(store.state, PRIMARY_EDITOR_INDEX);
 }
 
 export function getFocusedWsPath(): WsPath | undefined {
-  const store = getStore();
+  const store = _internal_getStore();
 
   let focused = editorManager.nsmEditorManagerSlice.get(
     store.state,
@@ -148,18 +143,18 @@ export function getFocusedWsPath(): WsPath | undefined {
 export const onFocusUpdate = (
   ...args: Parameters<typeof editorManager.onFocusUpdate>
 ): void => {
-  const store = getStore();
+  const store = _internal_getStore();
   store.dispatch(editorManager.onFocusUpdate(...args));
 };
 
 export function toggleEditing(): void {
-  const store = getStore();
+  const store = _internal_getStore();
 
   store.dispatch(editorManager.toggleEditing());
 }
 
 export function focusEditorIfNotFocused(): void {
-  const store = getStore();
+  const store = _internal_getStore();
 
   editorManager.focusEditorIfNotFocused(store.state);
 }

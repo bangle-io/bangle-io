@@ -1,9 +1,7 @@
 // <-- PLOP INSERT SLICE IMPORT -->
 
-import {
-  editorManagerProxy,
-  editorManagerProxyEffects,
-} from '@bangle.io/api/nsm/editor';
+import { internalApi } from '@bangle.io/api';
+import { setupStore } from '@bangle.io/bangle-store-context';
 import {
   extensionRegistryEffects,
   nsmExtensionRegistry,
@@ -17,7 +15,6 @@ import {
   nsmSliceWorkspace,
   nsmWorkspaceEffects,
 } from '@bangle.io/nsm-slice-workspace';
-import { setupStore } from '@bangle.io/setup-store';
 import type { EternalVars } from '@bangle.io/shared-types';
 import {
   nsmEditorEffects,
@@ -44,7 +41,7 @@ import {
 import { syncNaukarReplicaEffects } from './sync-naukar-replica-slices';
 
 const allEffects: EffectCreator[] = [
-  ...editorManagerProxyEffects,
+  ...internalApi.effects,
   ...extensionRegistryEffects,
   ...historyEffects,
   ...miscEffects,
@@ -72,7 +69,7 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
   console.debug('Overriding with state', initStateOverride);
 
-  const bangleStore = setupStore({
+  return setupStore({
     type: 'window',
     eternalVars,
     otherStoreParams: {
@@ -107,11 +104,9 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
       nsmSliceWorkspace,
       persistStateSlice,
-      editorManagerProxy,
+      ...internalApi.slices,
 
       ...eternalVars.extensionRegistry.getNsmSlices(),
     ],
   });
-
-  return bangleStore;
 };

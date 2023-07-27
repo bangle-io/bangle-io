@@ -6,8 +6,19 @@ import type {
   StorageProviderChangeType,
 } from '@bangle.io/shared-types';
 
-// a common store setup for all environments window, worker, test
+const eternalValMap = new WeakMap<Store, EternalVars>();
 
+export function getEternalVars(store: Store): EternalVars {
+  const eternalVars = eternalValMap.get(store);
+
+  if (!eternalVars) {
+    throw new Error('Eternal vars not set');
+  }
+
+  return eternalVars;
+}
+
+// a common store setup for all environments window, worker, test
 export function setupStore<T extends string>(opts: {
   slices: Array<Slice<T, any, any>>;
   eternalVars: EternalVars;
@@ -32,6 +43,8 @@ export function setupStore<T extends string>(opts: {
     slices,
     ...otherStoreParams,
   });
+
+  eternalValMap.set(appStore, eternalVars);
 
   effects.forEach((effect) => {
     appStore.registerEffect(effect);

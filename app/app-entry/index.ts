@@ -4,7 +4,7 @@ import * as Comlink from 'comlink';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { _internal_setStore } from '@bangle.io/api';
+import { internalApi } from '@bangle.io/api';
 import {
   createNsmStore,
   naukarReplicaSlicesDispatch,
@@ -32,7 +32,6 @@ import {
 } from '@bangle.io/workspace-info';
 
 import { Entry } from './entry';
-import { setEternalVars } from './eternal-vars';
 import { runAfterPolyfills } from './run-after-polyfills';
 
 if (typeof window !== undefined && APP_ENV !== 'local') {
@@ -95,12 +94,7 @@ runAfterPolyfills(async () => {
   });
 
   const nsmStore = createNsmStore(eternalVars);
-
-  setEternalVars(nsmStore, eternalVars);
-
-  (window as any).globalNsmStore = nsmStore;
-
-  _internal_setStore(nsmStore);
+  internalApi._internal_setStore(nsmStore);
 
   // TODO we need a better way to handle storage errors
   window.addEventListener('unhandledrejection', (event) => {

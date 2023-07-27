@@ -1,3 +1,4 @@
+import { getEternalVars } from '@bangle.io/bangle-store-context';
 import type { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import type {
   Dispatch,
@@ -11,7 +12,8 @@ import type { nsmPageSlice } from '@bangle.io/slice-page';
 import type { sliceRefreshWorkspace } from '@bangle.io/slice-refresh-workspace';
 import type { nsmUISlice } from '@bangle.io/slice-ui';
 
-import type { editorManagerProxy } from './nsm/editor';
+import type { editorManagerProxy } from '../editor';
+import { setEternalVars } from './eternal-vars';
 
 export type ApiSliceNames =
   | InferSliceNameFromSlice<typeof nsmUISlice>
@@ -28,9 +30,10 @@ let _store: ApiStore;
 
 export function _internal_setStore(store: ApiStore) {
   _store = store;
+  setEternalVars(getEternalVars(store));
 }
 
-export function getStore(): ApiStore {
+export function _internal_getStore(): ApiStore {
   if (!_store) {
     throw new Error('Store not set');
   }
