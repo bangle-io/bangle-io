@@ -1,15 +1,12 @@
 import { useMemo } from 'react';
 
 import type { EditorState, EditorView, Transaction } from '@bangle.dev/pm';
-import { PluginKey } from '@bangle.dev/pm';
-import { search } from '@bangle.dev/search';
 
 import { useNsmSliceState } from '@bangle.io/bangle-store-context';
 import {
   EXECUTE_SEARCH_OPERATION,
   PRIMARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import { effect, slice } from '@bangle.io/nsm-3';
 import { nsmSliceWorkspace } from '@bangle.io/nsm-slice-workspace';
 import type {
   DispatchSerialOperationType,
@@ -20,67 +17,14 @@ import * as editorManager from '@bangle.io/slice-editor-manager';
 
 import { _internal_getStore } from './internal/internals';
 
-export const searchPluginKey = new PluginKey('searchPluginKey');
-
-const initState: {
-  searchQuery: RegExp | undefined;
-} = {
-  searchQuery: undefined,
-};
-
-type EditorProxyState = typeof initState;
-
+export { searchPluginKey } from '@bangle.io/slice-editor-manager';
 export const editorState = () => {
   const store = _internal_getStore();
 
   return editorManager.nsmEditorManagerSlice.get(store.state);
 };
 
-export const editorManagerProxy = slice([editorManager.nsmEditorManagerSlice], {
-  name: 'api-editor-manager-proxy',
-  state: initState,
-});
-
-const setEditorSearchQueryEffect = effect(function setEditorSearchQueryEffect(
-  store,
-) {
-  const { searchQuery } = editorManagerProxy.track(store);
-
-  editorManager.forEachEditor(store.state, (editor) => {
-    search.updateSearchQuery(searchPluginKey, searchQuery)(
-      editor.view.state,
-      editor.view.dispatch,
-    );
-  });
-});
-
-const clearEditorSearchQueryEffect = effect(
-  function clearEditorSearchQueryEffect(store) {
-    void nsmSliceWorkspace.track(store).wsName;
-
-    editorManager.forEachEditor(store.state, (editor) => {
-      search.updateSearchQuery(searchPluginKey, undefined)(
-        editor.view.state,
-        editor.view.dispatch,
-      );
-    });
-  },
-);
-
-export const editorManagerProxyEffects = [
-  setEditorSearchQueryEffect,
-  clearEditorSearchQueryEffect,
-];
-
-const _updateQueryAction = editorManagerProxy.action(
-  function updateEditorSearchQuery(searchQuery: RegExp | undefined) {
-    return editorManagerProxy.tx((state) => {
-      return editorManagerProxy.update(state, {
-        searchQuery,
-      });
-    });
-  },
-);
+export const editorManagerProxyEffects = [];
 
 export const track = editorManager.nsmEditorManagerSlice.track.bind(
   editorManager.nsmEditorManagerSlice,
@@ -109,7 +53,7 @@ export function useEditor() {
 export const updateEditorSearchQuery = (
   searchQuery: RegExp | undefined,
 ): void => {
-  _internal_getStore().dispatch(_updateQueryAction(searchQuery));
+  _internal_getStore().dispatch(editorManager.updateQueryAction(searchQuery));
 };
 
 export function getEditor(editorId: EditorIdType) {

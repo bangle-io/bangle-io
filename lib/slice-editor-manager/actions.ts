@@ -184,3 +184,6 @@ export const toggleEditing = nsmEditorManagerSlice.action(
     });
   },
 );
+
+export const updateQueryAction =
+  nsmEditorManagerSlice.simpleAction('searchQuery');

@@ -17,4 +17,9 @@ export interface EditorSliceState {
   primaryEditor: BangleEditor | undefined;
   secondaryEditor: BangleEditor | undefined;
   editingAllowed: boolean;
+  // the editor that was last opened
+  // the most recent editor id is the first in array
+  editorOpenOrder: EditorIdType[];
+  disableEditingCounter: number | undefined;
+  searchQuery: RegExp | undefined;
 }

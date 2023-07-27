@@ -22,6 +22,7 @@
   "dependencies": {
     "@bangle.dev/core": "0.32.0",
     "@bangle.dev/pm": "0.32.0",
+    "@bangle.dev/search": "0.32.0",
     "@bangle.dev/utils": "0.32.0",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",

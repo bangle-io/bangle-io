@@ -2,8 +2,10 @@ export {
   onFocusUpdate,
   setEditor,
   toggleEditing,
+  updateQueryAction,
   updateSelection,
 } from './actions';
+export { searchPluginKey } from './constants';
 export { nsmEditorEffects } from './effects';
 export {
   focusEditorIfNotFocused,

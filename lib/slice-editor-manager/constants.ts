@@ -1,3 +1,5 @@
+import { PluginKey } from '@bangle.dev/pm';
+
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { checkWidescreen, createEmptyArray } from '@bangle.io/utils';
 
@@ -21,4 +23,9 @@ export const initialEditorSliceState: EditorSliceState = {
   // We disable editing in mobile devices by default.
   // TODO: move this to a config stating the widescreen status
   editingAllowed: checkWidescreen(),
+  editorOpenOrder: [],
+  disableEditingCounter: undefined,
+  searchQuery: undefined,
 };
+
+export const searchPluginKey = new PluginKey('searchPluginKey');

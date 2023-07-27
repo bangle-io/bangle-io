@@ -1,3 +1,5 @@
+import { search } from '@bangle.dev/search';
+
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
@@ -17,7 +19,8 @@ import {
   updateScrollPosition,
   updateSelection,
 } from './actions';
-import { nsmEditorManagerSlice, someEditor } from './slice';
+import { searchPluginKey } from './constants';
+import { forEachEditor, nsmEditorManagerSlice, someEditor } from './slice';
 import { calculateSelection } from './utils';
 
 const watchScrollPos = effect(function watchScrollPos(store) {
@@ -169,6 +172,32 @@ const trimWhiteSpaceEffect = effect(function trimWhiteSpaceEffect(store) {
   }
 });
 
+const setEditorSearchQueryEffect = effect(function setEditorSearchQueryEffect(
+  store,
+) {
+  const { searchQuery } = nsmEditorManagerSlice.track(store);
+
+  forEachEditor(store.state, (editor) => {
+    search.updateSearchQuery(searchPluginKey, searchQuery)(
+      editor.view.state,
+      editor.view.dispatch,
+    );
+  });
+});
+
+const clearEditorSearchQueryEffect = effect(
+  function clearEditorSearchQueryEffect(store) {
+    void nsmPageSlice.track(store).wsName;
+
+    forEachEditor(store.state, (editor) => {
+      search.updateSearchQuery(searchPluginKey, undefined)(
+        editor.view.state,
+        editor.view.dispatch,
+      );
+    });
+  },
+);
+
 const getFocusedOnMountRef = ref(() => ({
   focusedOnMount: false,
 }));
@@ -231,4 +260,6 @@ export const nsmEditorEffects = [
   initialSelectionEffect,
   trimWhiteSpaceEffect,
   focusEffect,
+  setEditorSearchQueryEffect,
+  clearEditorSearchQueryEffect,
 ];

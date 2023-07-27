@@ -1,6 +1,5 @@
 // <-- PLOP INSERT SLICE IMPORT -->
 
-import { internalApi } from '@bangle.io/api';
 import { setupStore } from '@bangle.io/bangle-store-context';
 import {
   extensionRegistryEffects,
@@ -41,7 +40,6 @@ import {
 import { syncNaukarReplicaEffects } from './sync-naukar-replica-slices';
 
 const allEffects: EffectCreator[] = [
-  ...internalApi.effects,
   ...extensionRegistryEffects,
   ...historyEffects,
   ...miscEffects,
@@ -104,7 +102,6 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
       nsmSliceWorkspace,
       persistStateSlice,
-      ...internalApi.slices,
 
       ...eternalVars.extensionRegistry.getNsmSlices(),
     ],
