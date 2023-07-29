@@ -1,16 +1,15 @@
 import type { NaukarMainAPI } from '@bangle.io/shared-types';
+import { assertNotUndefined } from '@bangle.io/utils';
 
 let _mainApi: NaukarMainAPI | undefined = undefined;
 
 export function mainApi(): NaukarMainAPI {
-  if (!_mainApi) {
-    throw new Error('mainApi not registered');
-  }
+  assertNotUndefined(_mainApi, 'mainApi not registered');
 
   return _mainApi;
 }
 
-export function registerMainApi(api: NaukarMainAPI): void {
+export function registerMainApi(api: NaukarMainAPI, abortSignal: AbortSignal) {
   if (_mainApi) {
     throw new Error('mainApi already registered');
   }
@@ -18,4 +17,14 @@ export function registerMainApi(api: NaukarMainAPI): void {
   console.debug('[naukar] mainApi registered');
 
   _mainApi = api;
+
+  abortSignal.addEventListener(
+    'abort',
+    () => {
+      _mainApi = undefined;
+    },
+    {
+      once: true,
+    },
+  );
 }

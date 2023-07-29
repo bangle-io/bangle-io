@@ -85,7 +85,7 @@ exports[`show search results 1`] = `
       style="overflow-y: auto;"
     >
       <div
-        class="B-ui-components_sidebar-row2 BU_hover B-search-notes_search-result-note-match pl-1 pr-3  select-none  "
+        class="B-ui-components_sidebar-row2 BU_hover B-search-notes_search-result-note-match pl-1 pr-3  select-none BU_active  "
         data-id="search-notes-result-0"
         role="button"
         style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"

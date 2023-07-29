@@ -18,13 +18,7 @@ export const historySlice = slice([], {
   state: historyInitState,
 });
 
-const setHistory = historySlice.action(function setHistory(
-  history: HistoryStateType['history'],
-) {
-  return historySlice.tx((storeState) => {
-    return historySlice.update(storeState, { history });
-  });
-});
+const setHistory = historySlice.simpleAction('history');
 
 const pendingNavEffect = effect(
   function pendingNavEffect(store) {

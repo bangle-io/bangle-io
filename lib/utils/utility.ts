@@ -307,7 +307,7 @@ export function abortableSetInterval(
   );
 }
 
-// Throws an abort error if a signal is already aborted.
+// Throws an abort error if value is undefined.
 export function assertNotUndefined(
   value: unknown,
   message: string,

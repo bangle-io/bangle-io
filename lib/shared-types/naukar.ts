@@ -53,7 +53,7 @@ export interface NaukarWorkerAPI {
     ) => Promise<void>;
 
     // TODO: lets move out of this way of doing things
-    __signalWorkerToAbort: (uid: string) => void;
+    __signalWorkerToAbortMethod: (uid: string) => Promise<void>;
   };
 
   editor: {

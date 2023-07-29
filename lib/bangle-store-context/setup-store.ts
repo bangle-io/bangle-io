@@ -1,10 +1,16 @@
+import * as Comlink from 'comlink';
+
 import { STORAGE_ON_CHANGE_EMITTER_KEY } from '@bangle.io/constants';
+import { wireCollabMessageBus } from '@bangle.io/editor-common';
 import type { EffectCreator, Slice, Store } from '@bangle.io/nsm-3';
 import { store } from '@bangle.io/nsm-3';
 import type {
   EternalVars,
+  NaukarMainAPI,
+  NaukarWorkerAPIInternal,
   StorageProviderChangeType,
 } from '@bangle.io/shared-types';
+import { registerStorageProvider } from '@bangle.io/workspace-info';
 
 const eternalValMap = new WeakMap<Store, EternalVars>();
 
@@ -19,12 +25,20 @@ export function getEternalVars(store: Store): EternalVars {
 }
 
 // a common store setup for all environments window, worker, test
-export function setupStore<T extends string>(opts: {
-  slices: Array<Slice<T, any, any>>;
+export function setupStore<
+  TSliceName extends string,
+  TType extends 'window' | 'worker' | 'test',
+>(opts: {
+  name?: string;
+  slices: Array<Slice<TSliceName, any, any>>;
   eternalVars: EternalVars;
   effects: EffectCreator[];
-  type: 'window' | 'worker' | 'test';
-  onRefreshWorkspace: (store: Store<T>) => void;
+  type: TType;
+  registerWorker?: {
+    setup: (store: Store<TSliceName>) => Promise<NaukarWorkerAPIInternal>;
+    api: (store: Store<TSliceName>, eternalVars: EternalVars) => NaukarMainAPI;
+  };
+  onRefreshWorkspace: (store: Store<TSliceName>) => void;
   otherStoreParams: Omit<Parameters<typeof store>[0], 'slices' | 'storeName'>;
 }) {
   const {
@@ -36,9 +50,20 @@ export function setupStore<T extends string>(opts: {
     type,
   } = opts;
 
-  const storeName = `bangle-store-${type}`;
+  for (const storageProvider of eternalVars.extensionRegistry.getAllStorageProviders()) {
+    storageProvider.onChange = (data) => {
+      eternalVars.storageEmitter.emit(STORAGE_ON_CHANGE_EMITTER_KEY, data);
+    };
 
-  const appStore = store<T>({
+    registerStorageProvider(
+      storageProvider,
+      eternalVars.extensionRegistry.specRegistry,
+    );
+  }
+
+  const storeName = opts.name ?? `bangle-store-${type}`;
+
+  const appStore = store<TSliceName>({
     storeName,
     slices,
     ...otherStoreParams,
@@ -57,7 +82,9 @@ export function setupStore<T extends string>(opts: {
       msg.type === 'create' ||
       msg.type === 'rename'
     ) {
-      onRefreshWorkspace(appStore);
+      if (!appStore.destroyed) {
+        onRefreshWorkspace(appStore);
+      }
     }
   };
 
@@ -78,6 +105,36 @@ export function setupStore<T extends string>(opts: {
       once: true,
     },
   );
+
+  if (opts.registerWorker) {
+    if (type === 'worker') {
+      throw new Error('Worker cannot register worker');
+    }
+
+    opts.registerWorker.setup(appStore).then((naukar) => {
+      if (!opts.registerWorker) {
+        return;
+      }
+
+      const editorCollabMessageChannel = new MessageChannel();
+
+      wireCollabMessageBus(
+        editorCollabMessageChannel.port1,
+        eternalVars.editorCollabMessageBus,
+        appStore.destroySignal,
+      );
+
+      naukar.__internal_register_main_cb(
+        Comlink.proxy(opts.registerWorker.api(appStore, eternalVars)),
+      );
+
+      naukar.editor.registerCollabMessagePort(
+        Comlink.transfer(editorCollabMessageChannel.port2, [
+          editorCollabMessageChannel.port2,
+        ]),
+      );
+    });
+  }
 
   return appStore;
 }

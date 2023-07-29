@@ -1,66 +1,86 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import type { NaukarWorkerAPI } from '@bangle.io/shared-types';
-import { Emitter } from '@bangle.io/utils';
 
-import { READY, waitProxy } from './proxy-wait';
+import { waitForProxy } from './wait-for-proxy';
 
-let naukarRef: { current: undefined | NaukarWorkerAPI } = {
+const naukarRef: { current: undefined | NaukarWorkerAPI } = {
   current: undefined,
 };
 
-const emitter = new Emitter();
+const check: Array<() => void> = [];
+
+let isNaukarReady = {
+  current: false,
+};
+
+const editorProxy = waitForProxy<NaukarWorkerAPI['editor']>(
+  isNaukarReady,
+  () => {
+    return naukarRef.current?.editor!;
+  },
+);
+
+check.push(editorProxy.check);
+
+const testProxy = waitForProxy<NaukarWorkerAPI['test']>(isNaukarReady, () => {
+  return naukarRef.current?.test!;
+});
+
+check.push(testProxy.check);
+
+const workspaceProxy = waitForProxy<NaukarWorkerAPI['workspace']>(
+  isNaukarReady,
+  () => {
+    return naukarRef.current?.workspace!;
+  },
+);
+
+check.push(workspaceProxy.check);
+
+const abortableProxy = waitForProxy<NaukarWorkerAPI['abortable']>(
+  isNaukarReady,
+  () => {
+    return naukarRef.current?.abortable!;
+  },
+);
+
+check.push(abortableProxy.check);
+
+const replicaSlicesProxy = waitForProxy<NaukarWorkerAPI['replicaSlices']>(
+  isNaukarReady,
+  () => {
+    return naukarRef.current?.replicaSlices!;
+  },
+);
+
+check.push(replicaSlicesProxy.check);
+
+if (check.length !== 5) {
+  throw new Error('Incorrect number of checks');
+}
 
 export function _setWorker(incomingNaukar: NaukarWorkerAPI) {
   naukarRef.current = incomingNaukar;
-  emitter.emit(READY, undefined);
+  isNaukarReady.current = true;
+
+  check.forEach((check) => check());
 }
 
 export function _clearWorker() {
   naukarRef.current = undefined;
+  isNaukarReady.current = false;
 }
 
-// a proxy to the worker entry, will stall any methods
+// a proxy will stall any methods
 // until the worker is marked ready.
 export const naukarProxy: NaukarWorkerAPI = {
-  editor: waitProxy<NaukarWorkerAPI['editor']>(() => {
-    if (naukarRef.current) {
-      return naukarRef.current.editor;
-    }
+  editor: editorProxy.proxy,
 
-    return undefined;
-  }, emitter),
+  test: testProxy.proxy,
 
-  test: waitProxy<NaukarWorkerAPI['test']>(() => {
-    if (naukarRef.current) {
-      return naukarRef.current.test;
-    }
+  workspace: workspaceProxy.proxy,
 
-    return undefined;
-  }, emitter),
+  abortable: mainInjectAbortableProxy(abortableProxy.proxy),
 
-  workspace: waitProxy<NaukarWorkerAPI['workspace']>(() => {
-    if (naukarRef.current) {
-      return naukarRef.current.workspace;
-    }
-
-    return undefined;
-  }, emitter),
-
-  abortable: mainInjectAbortableProxy(
-    waitProxy<NaukarWorkerAPI['abortable']>(() => {
-      if (naukarRef.current) {
-        return naukarRef.current.abortable;
-      }
-
-      return undefined;
-    }, emitter),
-  ),
-
-  replicaSlices: waitProxy<NaukarWorkerAPI['replicaSlices']>(() => {
-    if (naukarRef.current) {
-      return naukarRef.current.replicaSlices;
-    }
-
-    return undefined;
-  }, emitter),
+  replicaSlices: replicaSlicesProxy.proxy,
 };

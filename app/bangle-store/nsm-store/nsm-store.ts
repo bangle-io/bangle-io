@@ -26,9 +26,12 @@ import {
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
 import { nsmUISlice, uiEffects } from '@bangle.io/slice-ui';
+import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
+import { workerSetup } from '@bangle.io/worker-setup';
 
 import { historyEffects, historySlice } from './history-slice';
 import { miscEffects } from './misc-effects';
+import { naukarReplicaSlicesDispatch } from './naukar-replica-slices-dispatch';
 import { nsmE2eEffects } from './nsm-e2e';
 import { pageLifeCycleEffects } from './page-lifecycle-slice';
 import {
@@ -53,7 +56,14 @@ const allEffects: EffectCreator[] = [
   ...uiEffects,
 ];
 
-export const createNsmStore = (eternalVars: EternalVars): Store => {
+export const createNsmStore = (
+  eternalVars: EternalVars,
+  handleError: (
+    error: Error,
+    nsmStore: Store,
+    eternalVars: EternalVars,
+  ) => void,
+): Store => {
   const localStorageData = getLocalStorageData();
   const sessionStorageData = getSessionStorageData();
 
@@ -67,9 +77,10 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
   console.debug('Overriding with state', initStateOverride);
 
-  return setupStore({
+  const appStore = setupStore({
     type: 'window',
     eternalVars,
+
     otherStoreParams: {
       dispatchTransaction: (store, updateState, tx) => {
         const newState = store.state.applyTransaction(tx);
@@ -105,5 +116,36 @@ export const createNsmStore = (eternalVars: EternalVars): Store => {
 
       ...eternalVars.extensionRegistry.getNsmSlices(),
     ],
+
+    registerWorker: {
+      setup: async (store) => {
+        const naukar = await workerSetup(store.destroySignal);
+        _setWorker(naukar);
+
+        return naukar;
+      },
+      api: (store, eternalVars) => {
+        return {
+          application: {
+            onError: async (error: Error) => {
+              handleError(error, store, eternalVars);
+            },
+          },
+          replicaSlices: naukarReplicaSlicesDispatch(store),
+        };
+      },
+    },
   });
+
+  appStore.destroySignal.addEventListener(
+    'abort',
+    () => {
+      _clearWorker();
+    },
+    {
+      once: true,
+    },
+  );
+
+  return appStore;
 };
