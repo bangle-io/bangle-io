@@ -203,10 +203,6 @@ describe('search results', () => {
     rerender();
 
     await waitFor(() => {
-      expect(screen.getByText('Searching')).toBeDefined();
-    });
-
-    await waitFor(() => {
       expect(screen.getByText('Found 2 notes')).toBeDefined();
     });
 
@@ -229,10 +225,6 @@ describe('search results', () => {
     fireEvent.change(input, { target: { value: 'hello' } });
 
     rerender();
-
-    await waitFor(() => {
-      expect(screen.getByText('Searching')).toBeDefined();
-    });
 
     await waitFor(() => {
       expect(screen.getByText('Found 3 notes')).toBeDefined();

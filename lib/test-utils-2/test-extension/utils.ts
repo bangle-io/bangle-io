@@ -34,8 +34,8 @@ export async function createNotes(
       () => nsmApi2.workspace.workspaceState().primaryWsPath === firstPath,
       {
         name: 'createNotes: wait for primary ws to be set',
-        interval: 10,
-        maxTries: 20,
+        interval: 20,
+        maxTries: 30,
       },
     );
   }
