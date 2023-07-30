@@ -83,6 +83,65 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
   return wsName;
 }
 
+/**
+ * creates multiple notes from markdown strings
+ */
+export async function createNotesFromMdString(
+  page: Page,
+  wsName: string,
+  notes: Array<[string, string]>,
+) {
+  notes.forEach(([wsPath]) => {
+    if (resolvePath(wsPath).wsName !== wsName) {
+      throw new Error(
+        `Expected wsName to be ${wsName} but got ${resolvePath(wsPath).wsName}`,
+      );
+    }
+  });
+
+  await page.evaluate(
+    async ({ notes }) => {
+      for (const note of notes) {
+        await window._nsmE2e?.nsmApi2.workspace.createNoteFromMd(
+          note[0] as WsPath,
+          note[1],
+        );
+      }
+    },
+    { notes },
+  );
+}
+
+export async function getAllWsPathsHtml(
+  page: Page,
+  opts: {
+    omitWsName?: boolean;
+  } = {},
+): Promise<Array<[string, any]>> {
+  const allPaths = (await getAllWsPaths(page))?.sort();
+
+  if (!allPaths) {
+    return [];
+  }
+
+  let result: Array<[string, string]> = [];
+
+  for (const wsPath of allPaths) {
+    await pushWsPathToPrimary(page, wsPath, { waitForEditorToLoad: true });
+    const editorLocator = await getEditorLocator(page, PRIMARY_EDITOR_INDEX);
+
+    const html = await getEditorHTML(editorLocator);
+
+    if (opts.omitWsName) {
+      result.push([resolvePath(wsPath).filePath, html]);
+    } else {
+      result.push([wsPath, html]);
+    }
+  }
+
+  return result;
+}
+
 export async function createWorkspaceFromBackup(
   page: Page,
   file: {
@@ -157,6 +216,7 @@ export async function pushWsPathToPrimary(
   { waitForEditorToLoad = true } = {},
 ) {
   const wsPath = createWsPath(_wsPath);
+
   await page.evaluate(
     ([wsPath]) => {
       if (wsPath != null) {
@@ -650,4 +710,13 @@ export function createWsPath(wsPath: string): WsPath {
   }
 
   return wsPath as WsPath;
+}
+
+export function assertNotUndefined(
+  value: unknown,
+  message: string,
+): asserts value {
+  if (value === undefined) {
+    throw new Error(`assertion failed: ${message}`);
+  }
 }
