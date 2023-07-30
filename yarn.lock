@@ -3196,7 +3196,7 @@ __metadata:
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     "@types/use-sync-external-store": ^0.0.3
-    nalanda: "portal:/Users/kushanjoshi/code/nalanda"
+    nalanda: v1.3.0-alpha.13
     react: ^17.0.2
     react-dom: ^17.0.2
     superjson: ^1.12.2
@@ -17393,9 +17393,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nalanda@portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3":
-  version: 0.0.0-use.local
-  resolution: "nalanda@portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3"
+"nalanda@npm:v1.3.0-alpha.13":
+  version: 1.3.0-alpha.13
+  resolution: "nalanda@npm:1.3.0-alpha.13"
   dependencies:
     use-sync-external-store: ^1.2.0
   peerDependencies:
@@ -17406,8 +17406,9 @@ __metadata:
       optional: true
     zod:
       optional: true
+  checksum: 25ef038178dff8f3c3afbe998722bb8a34b4c7ff9508e089601339d7b1b37bb4b187146f30ef76e3b40940b09118903f7a8f55ac9b44a47e5d1e1399138494ef
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "nanoid@npm:^3.3.6":
   version: 3.3.6

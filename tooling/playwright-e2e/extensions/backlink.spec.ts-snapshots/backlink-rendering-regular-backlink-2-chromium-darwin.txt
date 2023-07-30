@@ -1,0 +1,46 @@
+note-1.md
+<p
+  class="B-editor-common_selected-node"
+>
+  This a note1 and here is a link to
+  <span
+    style="display: inline-block"
+    class="bangle-nv-container"
+    contenteditable="false"
+    draggable="true"
+    ><button
+      aria-label="note-0"
+      data-testid="inline-backlink-button"
+      class="B-inline-backlink_backlink-node hover:underline inline-flex gap-0_5 flex-row items-center rounded py-0 px-1 mx-1 text-start"
+      draggable="false"
+    >
+      <span
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 18 18"
+          stroke="currentColor"
+          class="h-4 w-4 text-colorPromoteIcon"
+          style="
+            fill: var(
+              --BV-miscEditorBacklinkBg
+            );
+          "
+        >
+          <path
+            d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+          ></path>
+          <path
+            d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+          ></path></svg></span
+      ><span
+        class="inline whitespace-break-spaces"
+        >note-0</span
+      >
+    </button></span
+  ><img
+    class="ProseMirror-separator"
+    alt=""
+  /><br
+    class="ProseMirror-trailingBreak"
+  />
+</p>

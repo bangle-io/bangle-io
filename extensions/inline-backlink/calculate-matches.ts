@@ -141,6 +141,22 @@ export const calcWikiLinkMapping = weakCacheDuo(
           }
         }
 
+        if (wikiLink.startsWith('/')) {
+          const withoutSlash = wikiLink.slice(1);
+          let withoutSlashAndExt = removeExtension(withoutSlash);
+
+          if (processedAllWsPaths.filePathsWithoutExt.has(withoutSlashAndExt)) {
+            let match = processedAllWsPaths.sortedByNesting.find((w) => {
+              const { filePath } = resolvePath(w, true);
+
+              return filePath === withoutSlash;
+            });
+
+            if (match) {
+              result.set(wikiLink, match);
+            }
+          }
+        }
         continue;
       }
 

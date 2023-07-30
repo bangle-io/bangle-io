@@ -215,8 +215,11 @@ test.describe('backlink rendering', () => {
       );
     }
 
+    await sleep(10);
     // push the last note to primary
     await pushWsPathToPrimary(page, finalNotes[finalNotes.length - 1]?.[0]!);
+
+    await sleep(10);
 
     // maintain the order of the notes and omit the wsName (because it is not stable)
     return finalNotes.map(([wsPath]) =>
@@ -445,7 +448,7 @@ test.describe('backlink rendering', () => {
     await expect(page).toHaveURL(regex);
   });
 
-  test.only('if path starts with / and has a directory', async ({ page }) => {
+  test('if path starts with / and has a directory', async ({ page }) => {
     const wsName = await createWorkspace(page);
 
     await setup(
