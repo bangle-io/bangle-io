@@ -431,3 +431,27 @@ export function getMouseClickType<T = Element>(
 
   return MouseClick.Click;
 }
+
+export async function checkConditionUntilTrue(
+  condition: () => boolean,
+  {
+    maxTries = 5,
+    interval = 2,
+    name = 'unknown_condition',
+  }: {
+    name?: string;
+    interval?: number;
+    maxTries?: number;
+  } = {},
+): Promise<void> {
+  for (let tries = 0; tries < maxTries; tries++) {
+    if (condition()) {
+      return;
+    }
+    await sleep(interval);
+  }
+
+  throw new Error(
+    `Condition ${name} did not become true within the specified time`,
+  );
+}

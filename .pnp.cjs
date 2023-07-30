@@ -5997,7 +5997,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.62"],\
             ["@types/react-dom", "npm:17.0.20"],\
             ["@types/use-sync-external-store", "npm:0.0.3"],\
-            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.12"],\
+            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:17.0.2"],\
             ["superjson", "npm:1.13.1"],\
@@ -6534,6 +6534,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
+            ["@bangle.io/editor", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:lib/editor"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
@@ -23462,17 +23463,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["nalanda", [\
-        ["npm:1.3.0-alpha.12", {\
-          "packageLocation": "./.yarn/cache/nalanda-npm-1.3.0-alpha.12-fd0488017f-3752b8037b.zip/node_modules/nalanda/",\
+        ["portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3", {\
+          "packageLocation": "../../nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "npm:1.3.0-alpha.12"]\
+            ["nalanda", "portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.12", {\
-          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-abdf3aaf46/0/cache/nalanda-npm-1.3.0-alpha.12-fd0488017f-3752b8037b.zip/node_modules/nalanda/",\
+        ["virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3", {\
+          "packageLocation": "./.yarn/__virtual__/nalanda-virtual-322c97ad12/3/nalanda/",\
           "packageDependencies": [\
-            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:1.3.0-alpha.12"],\
+            ["nalanda", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#portal:/Users/kushanjoshi/code/nalanda::locator=%40bangle.io%2Fnsm-3%40workspace%3Ajs-lib%2Fnsm-3"],\
             ["@types/react", "npm:17.0.62"],\
             ["@types/zod", null],\
             ["react", "npm:17.0.2"],\
@@ -23485,7 +23486,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "react",\
             "zod"\
           ],\
-          "linkType": "HARD"\
+          "linkType": "SOFT"\
         }]\
       ]],\
       ["nanoid", [\

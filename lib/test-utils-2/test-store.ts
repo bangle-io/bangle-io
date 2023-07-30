@@ -32,7 +32,7 @@ import { memoryHistoryEffects, memoryHistorySlice } from './memory-history';
 import { testEternalVars } from './test-eternal-vars';
 
 type CoreOpts = {
-  editorManager: boolean;
+  editor: boolean;
   ui: boolean;
   page: boolean;
   workspace: boolean;
@@ -41,7 +41,7 @@ type CoreOpts = {
 };
 
 const DEFAULT_CORE_OPTS: CoreOpts = {
-  editorManager: false,
+  editor: false,
   ui: true,
   page: false,
   workspace: false,
@@ -73,7 +73,7 @@ const getStuff = (
     effects.push(...memoryHistoryEffects);
   }
 
-  if (opts.editorManager) {
+  if (opts.editor) {
     slices.push(nsmEditorManagerSlice);
   }
 
@@ -173,6 +173,7 @@ export function setupTestStore(_opts: TestStoreOpts) {
 
   return {
     testStore,
+    eternalVars,
   };
 }
 
@@ -193,7 +194,7 @@ function setupExtensions(opts: TestStoreOpts): Extension[] {
     );
   }
 
-  if (opts.core?.editorManager) {
+  if (opts.core?.editor) {
     extensions.push(
       Extension.create({
         name: 'test-core-editor',

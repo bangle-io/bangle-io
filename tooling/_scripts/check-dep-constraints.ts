@@ -5,7 +5,7 @@ import {
 
 import { ROOT_DIR_PATH } from './config';
 
-const IGNORE_PACKAGES = ['@bangle.io/e2e-types'];
+const IGNORE_PACKAGES = ['@bangle.io/e2e-types', '@bangle.io/test-utils-2'];
 
 export async function checkDepConstraints(
   ws = new YarnWorkspaceHelpers({ rootDir: ROOT_DIR_PATH }),

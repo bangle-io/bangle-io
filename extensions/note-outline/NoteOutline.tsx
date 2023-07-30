@@ -25,7 +25,7 @@ import {
 } from './config';
 
 export function NoteOutline() {
-  const { focusedEditorId } = nsmApi2.editor.useEditor();
+  const { focusedEditorId, primaryEditor } = nsmApi2.editor.useEditor();
   const { wsName } = nsmApi2.workspace.useWorkspace();
   const [headingNodes, updateHeadingsState] = useState<
     HeadingNodes | undefined
@@ -40,9 +40,13 @@ export function NoteOutline() {
   useAutomaticScrollNodeIntoView(firstNodeInViewPort, lastClickedOnHeading);
 
   const updateHeadingNodes = useCallback(() => {
-    const state =
+    let state =
       focusedEditorId != null &&
       nsmApi2.editor.getEditor(focusedEditorId)?.view.state;
+
+    if (!state) {
+      state = primaryEditor?.view.state;
+    }
 
     if (!state) {
       updateHeadingsState(undefined);
@@ -57,7 +61,7 @@ export function NoteOutline() {
     updateHeadingsState(watchHeadingsPluginState.headings);
 
     return;
-  }, [focusedEditorId]);
+  }, [focusedEditorId, primaryEditor]);
 
   useSerialOperationHandler(
     (sOperation) => {

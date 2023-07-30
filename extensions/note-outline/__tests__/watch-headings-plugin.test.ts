@@ -1,13 +1,41 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { createEditorFromMd } from '@bangle.io/test-utils';
+import {
+  setupTestExtension,
+  testEditorMarkdown,
+} from '@bangle.io/test-utils-2';
 
 import { getHeadings } from '../watch-headings-plugin';
+import noteOutline from '../index';
+
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(async () => {
+  abortController.abort();
+});
+
+function setup() {
+  const { eternalVars } = setupTestExtension({
+    extensions: [noteOutline],
+    abortSignal: abortController.signal,
+    editor: true,
+  });
+
+  const { render } = testEditorMarkdown(eternalVars);
+
+  return {
+    render,
+  };
+}
 
 describe('getHeadings', () => {
   describe('three headings', () => {
-    const editor = createEditorFromMd(`
+    const md = `
 # Apex
 
 lab
@@ -19,9 +47,11 @@ ant
 ## Rand
 
 love
-`);
+`;
 
     test('When a heading exists before visible area and a heading exists inside the visible area', () => {
+      const { render } = setup();
+      const { editor } = render(md);
       const result = getHeadings(editor.view.state, {
         minStartPosition: 11, // before `Max`
         maxStartPosition: 16, // before `ant`
@@ -53,6 +83,8 @@ love
     });
 
     test('When only last heading is inside visible area', () => {
+      const { render } = setup();
+      const { editor } = render(md);
       const result = getHeadings(editor.view.state, {
         minStartPosition: 21, // before `Rand`
         maxStartPosition: 27, // before `love`
@@ -84,6 +116,8 @@ love
     });
 
     test('When last two headings are inside visible area', () => {
+      const { render } = setup();
+      const { editor } = render(md);
       const result = getHeadings(editor.view.state, {
         minStartPosition: 11, // before `Max`
         maxStartPosition: 27, // before `love`
@@ -116,13 +150,15 @@ love
   });
 
   describe('one heading', () => {
-    const editor = createEditorFromMd(`
-# Apex
+    const md = `
+  # Apex
 
-lab
-`);
+  lab
+  `;
 
     test('should mark the first heading visible when the only heading is outside of visible area', () => {
+      const { render } = setup();
+      const { editor } = render(md);
       const result = getHeadings(editor.view.state, {
         minStartPosition: 50,
         maxStartPosition: 100,
@@ -140,6 +176,9 @@ lab
     });
 
     test('When inside of visible area', () => {
+      const { render } = setup();
+      const { editor } = render(md);
+
       const result = getHeadings(editor.view.state, {
         minStartPosition: 0,
         maxStartPosition: 6,
@@ -158,15 +197,18 @@ lab
   });
 
   describe('text before heading', () => {
-    const editor = createEditorFromMd(`
-lab
+    const md = `
+  lab
 
-magic
+  magic
 
-# Apex
-`);
+  # Apex
+  `;
 
     test('When no heading inside visible should show the later heading as visible', () => {
+      const { render } = setup();
+      const { editor } = render(md);
+
       const result = getHeadings(editor.view.state, {
         minStartPosition: 0,
         maxStartPosition: 5, // before magic
@@ -184,6 +226,9 @@ magic
     });
 
     test('When heading inside visible', () => {
+      const { render } = setup();
+      const { editor } = render(md);
+
       const result = getHeadings(editor.view.state, {
         minStartPosition: 0,
         maxStartPosition: 12, // before apex
@@ -202,15 +247,17 @@ magic
   });
 
   describe('works when no intersection state', () => {
-    const editor = createEditorFromMd(`
-lab
+    const md = `
+  lab
 
-magic
+  magic
 
-# Apex
-`);
+  # Apex
+  `;
 
     test('works', () => {
+      const { render } = setup();
+      const { editor } = render(md);
       const result = getHeadings(editor.view.state);
 
       expect(result).toEqual([

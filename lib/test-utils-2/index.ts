@@ -9,6 +9,7 @@ export {
   StorybookStore,
   storybookStoreDecorator,
 } from './storybook-store';
+export { testEditor, testEditorMarkdown } from './test-editor';
 export { setupTestExtension } from './test-extension';
 export * from './test-store';
 export type { Meta, StoryObj } from '@storybook/react';

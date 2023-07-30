@@ -27,10 +27,6 @@ afterEach(async () => {
   abortController.abort();
 });
 
-const waitForDebounce = async () => {
-  await sleep(100);
-};
-
 const setup = async (
   wsName: string | null = 'test-ws',
   // Array of [wsPath, MarkdownString]
@@ -39,7 +35,7 @@ const setup = async (
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
 ) => {
-  const testExt = setupTestExtension({
+  const ctx = setupTestExtension({
     abortSignal: abortController.signal,
     extensions: [searchNotesExtension],
     editor: true,
@@ -47,8 +43,8 @@ const setup = async (
   });
 
   if (wsName) {
-    await testExt.createWorkspace(wsName);
-    await testExt.createNotes(noteWsPaths);
+    await ctx.createWorkspace(wsName);
+    await ctx.createNotes(noteWsPaths, { loadFirst: true });
 
     const targetPath = wsPathHelpers.createWsPath(noteWsPaths?.[0]?.[0]);
     nsmApi2.workspace.pushPrimaryWsPath(targetPath);
@@ -61,13 +57,13 @@ const setup = async (
   }
 
   return {
-    store: testExt.testStore,
+    store: ctx.testStore,
     render: async () => {
       let counter = 0;
       let { container, rerender } = render(
-        <testExt.ContextProvider>
+        <ctx.ContextProvider>
           <SearchNotesSidebar />
-        </testExt.ContextProvider>,
+        </ctx.ContextProvider>,
       );
 
       return {
@@ -76,9 +72,9 @@ const setup = async (
           counter++;
 
           return rerender(
-            <testExt.ContextProvider>
+            <ctx.ContextProvider>
               <SearchNotesSidebar />
-            </testExt.ContextProvider>,
+            </ctx.ContextProvider>,
           );
         },
       };

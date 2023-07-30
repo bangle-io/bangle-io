@@ -41,13 +41,13 @@ export function searchByTag(
 }
 // WARNING: Do not expose editor to react, get can use get methods below
 export function useEditor() {
-  const { focusedEditorId } = useNsmSliceState(
+  const { focusedEditorId, primaryEditor } = useNsmSliceState(
     editorManager.nsmEditorManagerSlice,
   );
 
   return useMemo(() => {
-    return { focusedEditorId };
-  }, [focusedEditorId]);
+    return { focusedEditorId, primaryEditor };
+  }, [focusedEditorId, primaryEditor]);
 }
 
 export const updateEditorSearchQuery = (
