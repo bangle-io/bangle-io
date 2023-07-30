@@ -2140,12 +2140,14 @@ __metadata:
     "@bangle.dev/search": 0.32.0
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/bangle-store-context": "workspace:*"
+    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/css-vars": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2195,6 +2197,7 @@ __metadata:
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
     "@bangle.io/nsm-slice-workspace": "workspace:*"
     "@bangle.io/shared": "workspace:*"
@@ -2279,6 +2282,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/e2e-types": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/helpfs-storage": "workspace:*"
     "@bangle.io/history": "workspace:*"
@@ -2484,6 +2488,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/test-utils-2": "workspace:*"
@@ -2546,6 +2551,14 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     tslib: 2.6.0
     typescript: 5.1.6
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/day-js@workspace:*, @bangle.io/day-js@workspace:lib/day-js":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/day-js@workspace:lib/day-js"
+  dependencies:
+    dayjs: ^1.10.7
   languageName: unknown
   linkType: soft
 
@@ -2813,6 +2826,7 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/db-key-val": "workspace:*"
     "@bangle.io/git-file-sha": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/p-map": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
@@ -2870,6 +2884,8 @@ __metadata:
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/day-js": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2914,9 +2930,11 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2948,6 +2966,7 @@ __metadata:
     "@bangle.dev/react": 0.32.0
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/day-js": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -3053,6 +3072,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/mini-js-utils@workspace:js-lib/mini-js-utils"
   dependencies:
+    "@bangle.io/is-abort-error": "workspace:*"
+    "@bangle.io/weak-cache": "workspace:*"
     tslib: 2.6.0
     typescript: 5.1.6
   languageName: unknown
@@ -3150,6 +3171,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/test-utils-2": "workspace:*"
@@ -3207,6 +3229,7 @@ __metadata:
     "@bangle.dev/pm": 0.32.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3340,6 +3363,7 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3450,6 +3474,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/nsm-3": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
@@ -3820,16 +3845,12 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/editor-common": "workspace:*"
-    "@bangle.io/is-abort-error": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/test-utils-2": "workspace:*"
-    "@bangle.io/weak-cache": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
-    dayjs: ^1.10.7
     debounce-fn: ^5.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -4020,9 +4041,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ws-path@workspace:lib/ws-path"
   dependencies:
+    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
     path-to-regexp: ^6.2.1

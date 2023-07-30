@@ -252,6 +252,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/css-vars"\
       },\
       {\
+        "name": "@bangle.io/day-js",\
+        "reference": "workspace:lib/day-js"\
+      },\
+      {\
         "name": "@bangle.io/db-app",\
         "reference": "workspace:lib/db-app"\
       },\
@@ -423,6 +427,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/core-theme", ["workspace:extensions/core-theme"]],\
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],\
       ["@bangle.io/css-vars", ["workspace:lib/css-vars"]],\
+      ["@bangle.io/day-js", ["workspace:lib/day-js"]],\
       ["@bangle.io/db-app", ["workspace:lib/db-app"]],\
       ["@bangle.io/db-key-val", ["workspace:js-lib/db-key-val"]],\
       ["@bangle.io/e2e-types", ["workspace:lib/e2e-types"]],\
@@ -4590,12 +4595,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/search", "virtual:10d39da21a9809039b6bc66301dcac188c98121b82aef1dc7b662ac90b84d6d0f9db715791e2e936e7b08b1942ed213c51a6dd078ea72e5ed04d75e041e0c3ca#npm:0.32.0"],\
             ["@bangle.dev/utils", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],\
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/css-vars", "workspace:lib/css-vars"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -4647,6 +4654,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
@@ -4717,6 +4725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
@@ -4787,6 +4796,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],\
             ["@bangle.io/nsm-slice-workspace", "workspace:lib/nsm-slice-workspace"],\
             ["@bangle.io/shared", "workspace:app/shared"],\
@@ -4853,6 +4863,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/e2e-types", "workspace:lib/e2e-types"],\
+            ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/helpfs-storage", "workspace:extensions/helpfs-storage"],\
             ["@bangle.io/history", "workspace:js-lib/history"],\
@@ -5102,6 +5113,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:js-lib/fzf-search"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
@@ -5131,6 +5143,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:js-lib/fzf-search"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
@@ -5197,6 +5210,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["tslib", "npm:2.6.0"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bangle.io/day-js", [\
+        ["workspace:lib/day-js", {\
+          "packageLocation": "./lib/day-js/",\
+          "packageDependencies": [\
+            ["@bangle.io/day-js", "workspace:lib/day-js"],\
+            ["dayjs", "npm:1.11.9"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -5579,6 +5602,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/db-key-val", "workspace:js-lib/db-key-val"],\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],\
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],\
@@ -5642,6 +5666,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/utils", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/day-js", "workspace:lib/day-js"],\
+            ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -5690,9 +5716,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/editor", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:lib/editor"],\
+            ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:js-lib/fzf-search"],\
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -5726,6 +5754,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:0.32.0"],\
             ["@bangle.dev/utils", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/day-js", "workspace:lib/day-js"],\
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
@@ -5843,6 +5872,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/mini-js-utils/",\
           "packageDependencies": [\
             ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],\
+            ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"],\
             ["tslib", "npm:2.6.0"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
@@ -5971,6 +6002,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
             ["@bangle.io/fzf-search", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:js-lib/fzf-search"],\
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
             ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
@@ -6034,6 +6066,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.32.0"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/markdown", "workspace:lib/markdown"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
@@ -6183,6 +6216,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/api", "workspace:lib/api"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/contextual-ui-components", "workspace:lib/contextual-ui-components"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
@@ -6301,6 +6335,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
             ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/nsm-3", "workspace:js-lib/nsm-3"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],\
@@ -6701,16 +6736,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],\
-            ["@bangle.io/editor-common", "workspace:lib/editor-common"],\
-            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],\
-            ["@bangle.io/test-utils-2", "workspace:lib/test-utils-2"],\
-            ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"],\
             ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],\
             ["@types/react", "npm:17.0.62"],\
             ["@types/react-dom", "npm:17.0.20"],\
-            ["dayjs", "npm:1.11.9"],\
             ["debounce-fn", "npm:5.1.2"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:7efffb02149d604d7f2a096251b6680b5895bed1c9f552da6683c4285a81fc9317ad050f969865bc799dd3579e58cf0d5608ff5461f0aeabda561505ca41f10b#npm:17.0.2"],\
@@ -6942,9 +6973,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/ws-path/",\
           "packageDependencies": [\
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],\
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"],\
             ["@bangle.io/constants", "workspace:lib/constants"],\
+            ["@bangle.io/mini-js-utils", "workspace:js-lib/mini-js-utils"],\
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],\
-            ["@bangle.io/utils", "workspace:lib/utils"],\
             ["@types/react", "npm:17.0.62"],\
             ["@types/react-dom", "npm:17.0.20"],\
             ["path-to-regexp", "npm:6.2.1"],\

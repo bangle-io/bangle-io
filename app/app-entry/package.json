@@ -41,6 +41,7 @@
     "@bangle.io/editor-container": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/history": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/note-sidebar": "workspace:*",
     "@bangle.io/nsm-slice-workspace": "workspace:*",
     "@bangle.io/shared": "workspace:*",
