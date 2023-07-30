@@ -1,5 +1,6 @@
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { checkWidescreen, createEmptyArray } from '@bangle.io/utils';
+import { createEmptyArray } from '@bangle.io/mini-js-utils';
+import { checkWidescreen } from '@bangle.io/utils';
 
 import { OpenedEditorsConfig } from './opened-editors-config';
 import type { EditorSliceState } from './types';

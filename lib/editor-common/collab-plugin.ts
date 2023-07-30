@@ -5,7 +5,9 @@ import { uuid } from '@bangle.dev/utils';
 import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
-import { generateUid, getEditorPluginMetadata } from '@bangle.io/utils';
+import { generateUid } from '@bangle.io/utils';
+
+import { getEditorPluginMetadata } from './helpers';
 
 export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
   return [

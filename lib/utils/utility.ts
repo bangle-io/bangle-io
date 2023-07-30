@@ -6,10 +6,7 @@ import { Emitter } from '@bangle.dev/utils';
 
 import { isMac } from '@bangle.io/config';
 
-import { DuoWeakMap } from './duo-weak-map';
-
 export { serialExecuteQueue } from '@bangle.dev/utils';
-export { isAbortError } from '@bangle.io/is-abort-error';
 
 export { Emitter };
 
@@ -131,32 +128,6 @@ export function sleep(t = 20): Promise<void> {
   return new Promise((res) => setTimeout(res, t));
 }
 
-/**
- * Like weakCache but works on functions that take two arguments
- * @param fn - A function with arity=2 whose parameters are non-primitive,
- * @returns
- */
-export function weakCacheDuo<R, P extends (arg1: any, arg2: any) => R>(
-  fn: P,
-): P {
-  const cache = new DuoWeakMap<any, any, R>();
-
-  const res = (arg1: any, arg2: any): R => {
-    let value = cache.get([arg1, arg2]);
-
-    if (value !== undefined) {
-      return value;
-    }
-
-    value = fn(arg1, arg2);
-    cache.set([arg1, arg2], value);
-
-    return value;
-  };
-
-  return res as P;
-}
-
 export function dedupeArray<T>(array: T[]) {
   return [...new Set(array)];
 }
@@ -196,27 +167,6 @@ export function calcIsTouchDevice(): boolean {
 }
 
 export const isTouchDevice = calcIsTouchDevice();
-
-let dayJs: typeof import('dayjs') | undefined;
-export async function getDayJs(): Promise<typeof import('dayjs')> {
-  if (dayJs) {
-    return dayJs;
-  }
-  let [_dayjs, _localizedFormat]: [any, any] = (await Promise.all([
-    import('dayjs'),
-    import('dayjs/plugin/localizedFormat'),
-  ])) as [any, any];
-
-  dayJs = _dayjs.default || _dayjs;
-  _localizedFormat = _localizedFormat.default || _localizedFormat;
-  dayJs?.extend(_localizedFormat);
-
-  if (!dayJs) {
-    throw new Error('dayJs cannot be undefined');
-  }
-
-  return dayJs;
-}
 
 export function conditionalSuffix(str: string, part: string) {
   if (str.endsWith(part)) {
@@ -319,12 +269,6 @@ export function assertNotUndefined(
 
 export function cloneMap<K, V>(map: Map<K, V>) {
   return new Map(map.entries());
-}
-
-export function createEmptyArray(size: number) {
-  return Array.from({ length: size }, () => {
-    return undefined;
-  });
 }
 
 // Adds 1 or more emptyValue to the array to make it of `size` length.

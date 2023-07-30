@@ -3,7 +3,8 @@ import { Plugin } from '@bangle.dev/pm';
 
 import { nsmApi2 } from '@bangle.io/api';
 import type { EditorPlugin } from '@bangle.io/shared-types';
-import { getEditorPluginMetadata } from '@bangle.io/utils';
+
+import { getEditorPluginMetadata } from './helpers';
 
 export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
   return new Plugin({

@@ -9,7 +9,7 @@ import {
 import { sliceKey, sliceStateSerializer, z } from '@bangle.io/nsm-3';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { nsmPageSlice } from '@bangle.io/slice-page';
-import { getScrollParentElement, shallowEqual } from '@bangle.io/utils';
+import { shallowEqual } from '@bangle.io/utils';
 
 import { initialEditorSliceState } from './constants';
 import {
@@ -21,6 +21,7 @@ import {
   assertValidEditorId,
   calculateScrollPosition,
   calculateSelection,
+  getScrollParentElement,
 } from './utils';
 
 type NsmEditorManagerState = typeof initialEditorSliceState;

@@ -1,21 +1,6 @@
 import type { EditorState, PluginKey } from '@bangle.dev/pm';
 
-import { EditorPluginMetadataKey } from '@bangle.io/editor-common';
-import type { EditorIdType } from '@bangle.io/shared-types';
-
-import { findWrappingScrollable } from './utility';
-
-export function getScrollParentElement(editorId: EditorIdType) {
-  const editor = document.querySelector(
-    '.B-editor-container_editor-' + editorId,
-  );
-
-  if (editor) {
-    return findWrappingScrollable(editor);
-  }
-
-  return undefined;
-}
+import { EditorPluginMetadataKey } from './constants';
 
 export function getEditorPluginMetadata(state: EditorState) {
   const result = EditorPluginMetadataKey.getState(state);

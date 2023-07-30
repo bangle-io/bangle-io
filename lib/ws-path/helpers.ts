@@ -1,5 +1,6 @@
+import { BaseError } from '@bangle.io/base-error';
+import { getLast } from '@bangle.io/mini-js-utils';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
-import { BaseError, getLast } from '@bangle.io/utils';
 
 export const DEFAULT_NOTE_EXTENSION = '.md';
 export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];

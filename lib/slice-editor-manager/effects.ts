@@ -4,16 +4,14 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
-import { searchPluginKey } from '@bangle.io/editor-common';
+import {
+  getEditorPluginMetadata,
+  searchPluginKey,
+} from '@bangle.io/editor-common';
 import { cleanup, effect, ref } from '@bangle.io/nsm-3';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUISlice } from '@bangle.io/slice-ui';
-import {
-  debounceFn,
-  getEditorPluginMetadata,
-  getScrollParentElement,
-  trimEndWhiteSpaceBeforeCursor,
-} from '@bangle.io/utils';
+import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 import {
   incrementDisableEditingCounter,
@@ -21,7 +19,7 @@ import {
   updateSelection,
 } from './actions';
 import { forEachEditor, nsmEditorManagerSlice, someEditor } from './slice';
-import { calculateSelection } from './utils';
+import { calculateSelection, getScrollParentElement } from './utils';
 
 const watchScrollPos = effect(function watchScrollPos(store) {
   const updateScrollPos = () => {

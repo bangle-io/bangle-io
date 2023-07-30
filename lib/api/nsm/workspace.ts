@@ -1,7 +1,9 @@
 import { useNsmSliceState } from '@bangle.io/bangle-store-context';
+import { BaseError } from '@bangle.io/base-error';
 import { nsmExtensionRegistry } from '@bangle.io/extension-registry';
 import { markdownParser } from '@bangle.io/markdown';
-import type { EffectStore, StoreState } from '@bangle.io/nsm-3';
+import { weakCache } from '@bangle.io/mini-js-utils';
+import type { EffectStore } from '@bangle.io/nsm-3';
 import {
   closeIfFound,
   nsmSliceWorkspace,
@@ -23,7 +25,6 @@ import {
   wsNameToPathname,
 } from '@bangle.io/slice-page';
 import { refreshWorkspace } from '@bangle.io/slice-refresh-workspace';
-import { BaseError, weakCache } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { resolvePath2 } from '@bangle.io/ws-path';
@@ -162,6 +163,19 @@ export async function writeNoteFromMd(wsPath: WsPath, mdText: string) {
   )!;
 
   await fs.writeNote(wsPath, extensionRegistry, doc);
+}
+
+export async function createNoteFromMd(wsPath: WsPath, mdText: string) {
+  const store = _internal_getStore();
+  const { extensionRegistry } = nsmExtensionRegistry.get(store.state);
+
+  const doc = markdownParser(
+    mdText,
+    extensionRegistry.specRegistry,
+    extensionRegistry.markdownItPlugins,
+  )!;
+
+  await fs.createNote(wsPath, extensionRegistry, doc);
 }
 
 export const pushWsPath = (

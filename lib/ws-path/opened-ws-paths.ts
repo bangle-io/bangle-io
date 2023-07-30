@@ -5,8 +5,8 @@ import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import { createEmptyArray } from '@bangle.io/mini-js-utils';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
-import { createEmptyArray } from '@bangle.io/utils';
 
 import type { MaybeWsPath } from './helpers';
 import {
