@@ -1,4 +1,4 @@
-import { resolvePath } from '@bangle.io/ws-path';
+import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from '../file-ws-paths-to-flat-dir-tree';
 
@@ -10,7 +10,7 @@ import { fileWsPathsToFlatDirTree } from '../file-ws-paths-to-flat-dir-tree';
  *          object will have `path` which will be the absolute path of the file
  */
 function oldPathToTree(files) {
-  let mainChain = [];
+  let mainChain: { name: string }[] = [];
 
   for (const f of files) {
     const path = f.split('/');
@@ -18,7 +18,7 @@ function oldPathToTree(files) {
     let counter = 0;
     for (const part of path) {
       counter++;
-      let match = chain.find(({ name }) => name === part);
+      let match: any = chain.find(({ name }) => name === part);
 
       if (!match) {
         match = {
@@ -83,7 +83,7 @@ function understandOldFunc(data) {
       if (!endsWithMd) {
         r += '.md';
       }
-      let result = resolvePath(r).filePath;
+      let result = resolvePath2(r).filePath;
 
       if (endsWithMd) {
         return result;

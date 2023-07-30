@@ -1,7 +1,7 @@
 import { matchAllPlus } from '@bangle.dev/utils';
 
+import { getDayJs } from '@bangle.io/day-js';
 import type { WsPath } from '@bangle.io/shared-types';
-import { getDayJs } from '@bangle.io/utils';
 import { resolvePath2, updateFileName2 } from '@bangle.io/ws-path';
 
 const dayFormat = 'YYYYMMDDHHmmssSSS';

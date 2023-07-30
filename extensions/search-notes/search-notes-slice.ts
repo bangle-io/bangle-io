@@ -1,5 +1,5 @@
 import { nsm, nsmApi2 } from '@bangle.io/api';
-import { isAbortError } from '@bangle.io/utils';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 
 import type { SearchNotesExtensionState } from './constants';
 import { searchNotes } from './search-notes';

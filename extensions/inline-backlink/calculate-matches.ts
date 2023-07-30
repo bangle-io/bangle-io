@@ -2,8 +2,8 @@ import type { EditorState } from '@bangle.dev/pm';
 import { findChildrenByType } from '@bangle.dev/utils';
 import { wikiLink } from '@bangle.dev/wiki-link';
 
+import { weakCache, weakCacheDuo } from '@bangle.io/mini-js-utils';
 import type { WsPath } from '@bangle.io/shared-types';
-import { weakCache, weakCacheDuo } from '@bangle.io/utils';
 import {
   createWsPath,
   getExtension,

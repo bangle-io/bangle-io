@@ -1,7 +1,7 @@
 import type { EditorView, NodeType } from '@bangle.dev/pm';
 
 import { nsmApi2 } from '@bangle.io/api';
-import { getEditorPluginMetadata } from '@bangle.io/utils';
+import { getEditorPluginMetadata } from '@bangle.io/editor-common';
 import { resolvePath2 } from '@bangle.io/ws-path';
 
 import { calcImageDimensions } from './image-file-helpers';

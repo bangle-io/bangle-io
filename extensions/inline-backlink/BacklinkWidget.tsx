@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { nsmApi2 } from '@bangle.io/api';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
 import {
   ButtonIcon,
@@ -11,7 +12,6 @@ import {
 import {
   cx,
   getMouseClickType,
-  isAbortError,
   MouseClick,
   safeCancelIdleCallback,
   safeRequestIdleCallback,

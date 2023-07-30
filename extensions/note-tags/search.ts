@@ -4,8 +4,8 @@ import type { Node } from '@bangle.dev/pm';
 
 import { nsmApi2 } from '@bangle.io/api';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import type { WsPath } from '@bangle.io/shared-types';
-import { isAbortError } from '@bangle.io/utils';
 
 const FZF_SEARCH_LIMIT = 16;
 
