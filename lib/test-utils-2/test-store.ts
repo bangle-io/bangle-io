@@ -129,6 +129,13 @@ export function setupTestStore(_opts: TestStoreOpts) {
     otherStoreParams: {
       debug: debugLog,
       stateOverride: coreOpts.stateOverride(initStateOverride),
+      overrideEffectScheduler(cb, opts) {
+        if (opts.deferred) {
+          setTimeout(cb, 0);
+        } else {
+          queueMicrotask(cb);
+        }
+      },
     },
 
     registerWorker: !coreOpts.worker
