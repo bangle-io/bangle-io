@@ -228,13 +228,21 @@ test.describe('backlink rendering', () => {
   };
 
   test('regular backlink', async ({ page }) => {
-    const [result1, result2] = await setup(page, (wsName) => [
-      [`${wsName}:note-0.md`, 'This a note 0 '],
+    const [result0, result1, result2] = await setup(page, (wsName) => [
+      [`${wsName}:note-0.md`, 'This a note 0'],
       [`${wsName}:note-1.md`, 'This a note1 and here is a link to [[note-0]]'],
+      [
+        `${wsName}:note-2.md`,
+        'This a note1 and here is a link to [[note-not-found]]',
+      ],
     ]);
 
-    expect(result1).toMatchSnapshot({});
-    expect(result2).toMatchSnapshot({});
+    expect(result0).toContain('This a note 0');
+    expect(result1).toContain('note-0');
+    expect(result2).toContain('This a note1 and here is a link to');
+
+    expect(result1).not.toContain(BACKLINK_NOT_FOUND_CLASS);
+    expect(result2).toContain(BACKLINK_NOT_FOUND_CLASS);
   });
 
   test('shows the title', async ({ page }) => {
