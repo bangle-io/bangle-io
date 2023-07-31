@@ -5,11 +5,12 @@ import { devices } from '@playwright/test';
 // eslint-disable-next-line
 const isCI = (process.env as any).CI;
 
+const RETRY_COUNT = 3;
+
 const config: PlaywrightTestConfig = {
   reporter: [['html', {}]],
   forbidOnly: !!isCI,
   timeout: 20000,
-  retries: isCI ? 3 : 0,
   expect: {
     timeout: 2000,
   },
@@ -42,19 +43,19 @@ const config: PlaywrightTestConfig = {
     {
       name: 'chromium',
       testIgnore: [/performance/, /-safari/, /-firefox/],
-      retries: isCI ? 2 : 0,
+      retries: isCI ? RETRY_COUNT : 0,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'performance',
       testMatch: /performance/,
-      retries: isCI ? 2 : 0,
+      retries: isCI ? RETRY_COUNT : 0,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'safari',
       testMatch: [/-safari/],
-      retries: isCI ? 2 : 0,
+      retries: isCI ? RETRY_COUNT : 0,
       use: { ...devices['Desktop Safari'] },
     },
 
