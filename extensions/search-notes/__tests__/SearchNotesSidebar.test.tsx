@@ -1,35 +1,31 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
-
-import { EXECUTE_SEARCH_OPERATION } from '@bangle.io/constants';
-import type { SearchResultItem } from '@bangle.io/search-pm-node';
 import {
-  createBasicTestStore,
-  setupMockWorkspaceWithNotes,
-  TestStoreProvider,
-} from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
-import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-
-import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
-import { SEARCH_SIDEBAR_NAME } from '../constants';
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
+import React from 'react';
 import searchNotesExtension from '../index';
-import { updateSliceState } from '../search-notes-slice';
 
-jest.mock('@bangle.io/worker-naukar-proxy', () => {
-  return {
-    naukarProxy: {
-      abortableSearchWsForPmNode: jest.fn(),
-    },
-  };
+import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
+import { nsmApi2, wsPathHelpers } from '@bangle.io/api';
+import { sleep } from '@bangle.io/utils';
+import { SearchResultItem } from '@bangle.io/search-pm-node';
+import { searchSlice, updateSliceState } from '../search-notes-slice';
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
 });
 
-let abortableSearchWsForPmNodeMock = jest.mocked(
-  naukarProxy.abortable.abortableSearchWsForPmNode,
-);
+afterEach(async () => {
+  abortController.abort();
+});
 
 const setup = async (
   wsName: string | null = 'test-ws',
@@ -39,26 +35,35 @@ const setup = async (
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
 ) => {
-  let { store, getActionNames, getAction } = createBasicTestStore({
+  const ctx = setupTestExtension({
+    abortSignal: abortController.signal,
     extensions: [searchNotesExtension],
-    useEditorManagerSlice: true,
-    useUISlice: true,
+    editor: true,
+    storeName: 'store:' + wsName,
   });
 
   if (wsName) {
-    await setupMockWorkspaceWithNotes(store, wsName, noteWsPaths);
+    await ctx.createWorkspace(wsName);
+    await ctx.createNotes(noteWsPaths, { loadFirst: true });
+
+    const targetPath = wsPathHelpers.createWsPath(noteWsPaths?.[0]?.[0]);
+    nsmApi2.workspace.pushPrimaryWsPath(targetPath);
+
+    await waitForExpect(() => {
+      expect(nsmApi2.workspace.workspaceState().primaryWsPath).toEqual(
+        targetPath,
+      );
+    });
   }
 
   return {
-    store,
-    getActionNames,
-    getAction,
+    store: ctx.testStore,
     render: async () => {
       let counter = 0;
       let { container, rerender } = render(
-        <TestStoreProvider bangleStore={store} bangleStoreChanged={counter}>
+        <ctx.ContextProvider>
           <SearchNotesSidebar />
-        </TestStoreProvider>,
+        </ctx.ContextProvider>,
       );
 
       return {
@@ -67,9 +72,9 @@ const setup = async (
           counter++;
 
           return rerender(
-            <TestStoreProvider bangleStore={store} bangleStoreChanged={counter}>
+            <ctx.ContextProvider>
               <SearchNotesSidebar />
-            </TestStoreProvider>,
+            </ctx.ContextProvider>,
           );
         },
       };
@@ -97,26 +102,28 @@ test('renders correctly is no workspace is opened', async () => {
 });
 
 test('renders correctly workspace is opened', async () => {
-  const { render } = await setup();
+  const { render } = await setup('test-ws-2');
   const { container } = await render();
 
   expect(container).toMatchSnapshot();
 });
 
 test('show search results', async () => {
-  const { render, store } = await setup();
+  const { render, store } = await setup('test-ws-3');
 
   const searchResultItem: SearchResultItem = {
-    uid: 'test-ws:one.md',
+    uid: 'test-ws-3:one.md',
     matches: [{ parent: 'para', parentPos: 0, match: ['hello', ' world'] }],
   };
 
   const { container, rerender } = await render();
 
-  updateSliceState({
-    searchResults: [searchResultItem],
-    pendingSearch: false,
-  })(store.state, store.dispatch);
+  store.dispatch(
+    updateSliceState({
+      searchResults: [searchResultItem],
+      pendingSearch: false,
+    }),
+  );
 
   rerender();
 
@@ -136,289 +143,93 @@ test('show search results', async () => {
 });
 
 test('typing in input triggers extension state update', async () => {
-  const { render, store, getAction } = await setup();
+  const { render, store } = await setup('test-ws-4');
 
   render();
+
   const input = screen.getByLabelText('Search', { selector: 'input' });
 
-  await act(async () => {
-    fireEvent.change(input, { target: { value: 'hello' } });
+  fireEvent.change(input, { target: { value: 'hello' } });
 
-    // wait for debounce
-    await sleep(100);
+  await waitForExpect(() => {
+    expect(searchSlice.get(store.state).searchQuery).toEqual('hello');
   });
-
-  expect(
-    searchNotesSliceKey.getSliceStateAsserted(store.state).searchQuery,
-  ).toEqual('hello');
-
-  expect(
-    getAction('action::@bangle.io/search-notes:input-search-query'),
-  ).toEqual([
-    {
-      id: expect.any(String),
-      name: 'action::@bangle.io/search-notes:input-search-query',
-      value: {
-        query: 'hello',
-      },
-    },
-  ]);
-
-  expect(getAction('action::@bangle.io/search-notes:update-state')).toEqual([
-    {
-      id: expect.any(String),
-      name: 'action::@bangle.io/search-notes:update-state',
-      value: {
-        pendingSearch: false,
-        searchResults: null,
-      },
-    },
-    {
-      id: expect.any(String),
-      name: 'action::@bangle.io/search-notes:update-state',
-      value: {
-        pendingSearch: true,
-        searchResults: null,
-      },
-    },
-    {
-      id: expect.any(String),
-      name: 'action::@bangle.io/search-notes:update-state',
-      value: {
-        pendingSearch: false,
-        searchResults: undefined,
-      },
-    },
-  ]);
 });
 
 test('pendingSearch shows a spinner', async () => {
-  const { render, store } = await setup();
+  const { render, store } = await setup('test-ws-5');
 
   const { rerender } = await render();
 
-  updateSliceState({
-    searchResults: [],
-    pendingSearch: true,
-  })(store.state, store.dispatch);
+  store.dispatch(
+    updateSliceState({
+      pendingSearch: true,
+    }),
+  );
 
   rerender();
 
   expect(Boolean(screen.queryByLabelText('search spinner'))).toBe(true);
 
-  updateSliceState({
-    searchResults: [],
-    pendingSearch: false,
-  })(store.state, store.dispatch);
-
+  store.dispatch(
+    updateSliceState({
+      pendingSearch: false,
+    }),
+  );
   rerender();
 
   expect(Boolean(screen.queryByLabelText('search spinner'))).toBe(false);
 });
 
-describe('operations', () => {
-  let originalQuerySelector = document.querySelector;
-  beforeEach(() => {
-    document.querySelector = originalQuerySelector;
-  });
-
-  test('focuses correctly on input if sidebar is already open', async () => {
-    const inputElement = {
-      focus: jest.fn(),
-      select: jest.fn(),
-    };
-    document.querySelector = jest.fn(() => inputElement);
-
-    const { store, render } = await setup();
-
-    ui.setSidebar(SEARCH_SIDEBAR_NAME)(store.state, store.dispatch);
-
-    render();
-
-    searchNotesExtension.application?.operationHandler?.().handle(
-      {
-        name: 'operation::@bangle.io/search-notes:show-search-sidebar',
-      },
-      undefined,
-      store,
-    );
-
-    expect(ui.uiSliceKey.getSliceStateAsserted(store.state).sidebar).toBe(
-      SEARCH_SIDEBAR_NAME,
-    );
-
-    // for the delayed input focus
-    await sleep(0);
-
-    expect(document.querySelector).toBeCalledTimes(1);
-    expect(document.querySelector).nthCalledWith(
-      1,
-      `input[aria-label="Search"]`,
-    );
-    expect(inputElement.focus).toBeCalledTimes(1);
-    expect(inputElement.select).toBeCalledTimes(1);
-  });
-
-  test('execute search operation updates extension state correctly', async () => {
-    const inputElement = {
-      focus: jest.fn(),
-      select: jest.fn(),
-    };
-    document.querySelector = jest.fn(() => inputElement);
-
-    const { store, render } = await setup();
-
-    render();
-
-    searchNotesExtension.application?.operationHandler?.().handle(
-      {
-        name: EXECUTE_SEARCH_OPERATION,
-        value: 'hello world',
-      },
-      'hello world',
-      store,
-    );
-
-    expect(ui.uiSliceKey.getSliceStateAsserted(store.state).sidebar).toBe(
-      SEARCH_SIDEBAR_NAME,
-    );
-
-    expect(searchNotesSliceKey.getSliceStateAsserted(store.state)).toEqual({
-      externalInputChange: 1,
-      pendingSearch: false,
-      searchQuery: 'hello world',
-      searchResults: null,
-    });
-
-    searchNotesExtension.application?.operationHandler?.().handle(
-      {
-        name: EXECUTE_SEARCH_OPERATION,
-        value: 'hello world',
-      },
-      'hello world',
-      store,
-    );
-
-    expect(searchNotesSliceKey.getSliceStateAsserted(store.state)).toEqual({
-      externalInputChange: 2,
-      pendingSearch: false,
-      searchQuery: 'hello world',
-      searchResults: null,
-    });
-  });
-});
-
 describe('search results', () => {
   test('works with search query', async () => {
-    abortableSearchWsForPmNodeMock.mockImplementation(async () => {
-      return [
-        {
-          matches: [
-            {
-              match: ['', 'hello', ' world'],
-              parent: 'listItem',
-              parentPos: 2,
-            },
-          ],
-          uid: 'test-ws:one.md',
-        },
-      ];
-    });
+    const { store, render } = await setup('test-ws-6', [
+      [`test-ws-6:one.md`, `# Hello kjoshi 0`],
+      [`test-ws-6:two.md`, `# Hello World 1`],
+      [
+        `test-ws-6:three.md`,
+        `# Hello World 3 
 
-    const { store, getAction, render } = await setup();
+>       kjoshi`,
+      ],
+    ]);
 
     const { rerender } = await render();
 
     const input = screen.getByLabelText('Search', { selector: 'input' });
 
-    await act(async () => {
-      fireEvent.change(input, { target: { value: 'hello' } });
-      await sleep(100);
-    });
+    fireEvent.change(input, { target: { value: 'kjoshi' } });
 
     rerender();
 
-    // wait for sideeffect to run
-    await sleep(0);
+    await waitFor(() => {
+      expect(screen.getByText('Found 2 notes')).toBeDefined();
+    });
 
-    expect(abortableSearchWsForPmNodeMock).toBeCalledTimes(1);
-    expect(abortableSearchWsForPmNodeMock).nthCalledWith(
-      1,
-      expect.any(AbortSignal),
-      'test-ws',
-      'hello',
+    expect(screen.queryAllByText('kjoshi')).toMatchInlineSnapshot(`
       [
-        {
-          dataAttrName: 'tagValue',
-          nodeName: 'tag',
-          printBefore: '#',
-          queryIdentifier: 'tag:',
-        },
-        {
-          dataAttrName: 'path',
-          nodeName: 'wikiLink',
-          printAfter: ']]',
-          printBefore: '[[',
-          queryIdentifier: 'backlink:',
-        },
-      ],
-      {
-        caseSensitive: false,
-        concurrency: expect.any(Number),
-        maxChars: expect.any(Number),
-        perFileMatchMax: expect.any(Number),
-        totalMatchMax: expect.any(Number),
-      },
-    );
+        <span
+          class="B-search-notes_highlight-text text-sm"
+        >
+          kjoshi
+        </span>,
+        <span
+          class="B-search-notes_highlight-text text-sm"
+        >
+          kjoshi
+        </span>,
+      ]
+    `);
 
-    expect(
-      getAction('action::@bangle.io/search-notes:input-search-query'),
-    ).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/search-notes:input-search-query',
-        value: {
-          query: 'hello',
-        },
-      },
-    ]);
+    // firing another query works
+    fireEvent.change(input, { target: { value: 'hello' } });
 
-    expect(getAction('action::@bangle.io/search-notes:update-state')).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/search-notes:update-state',
-        value: {
-          pendingSearch: false,
-          searchResults: null,
-        },
-      },
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/search-notes:update-state',
-        value: {
-          pendingSearch: true,
-          searchResults: null,
-        },
-      },
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/search-notes:update-state',
-        value: {
-          pendingSearch: false,
-          searchResults: [
-            {
-              matches: [
-                {
-                  match: ['', 'hello', ' world'],
-                  parent: 'listItem',
-                  parentPos: 2,
-                },
-              ],
-              uid: 'test-ws:one.md',
-            },
-          ],
-        },
-      },
-    ]);
+    rerender();
+
+    await waitFor(() => {
+      expect(screen.getByText('Found 3 notes')).toBeDefined();
+    });
+
+    console.log('end test');
   });
 });

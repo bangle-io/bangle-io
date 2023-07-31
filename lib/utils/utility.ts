@@ -4,11 +4,9 @@ import { keyName } from 'w3c-keyname';
 import type { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
-import { DuoWeakMap } from './duo-weak-map';
-import { isMac } from './is-mac';
+import { isMac } from '@bangle.io/config';
 
 export { serialExecuteQueue } from '@bangle.dev/utils';
-export { isAbortError } from '@bangle.io/is-abort-error';
 
 export { Emitter };
 
@@ -130,32 +128,6 @@ export function sleep(t = 20): Promise<void> {
   return new Promise((res) => setTimeout(res, t));
 }
 
-/**
- * Like weakCache but works on functions that take two arguments
- * @param fn - A function with arity=2 whose parameters are non-primitive,
- * @returns
- */
-export function weakCacheDuo<R, P extends (arg1: any, arg2: any) => R>(
-  fn: P,
-): P {
-  const cache = new DuoWeakMap<any, any, R>();
-
-  const res = (arg1: any, arg2: any): R => {
-    let value = cache.get([arg1, arg2]);
-
-    if (value !== undefined) {
-      return value;
-    }
-
-    value = fn(arg1, arg2);
-    cache.set([arg1, arg2], value);
-
-    return value;
-  };
-
-  return res as P;
-}
-
 export function dedupeArray<T>(array: T[]) {
   return [...new Set(array)];
 }
@@ -195,27 +167,6 @@ export function calcIsTouchDevice(): boolean {
 }
 
 export const isTouchDevice = calcIsTouchDevice();
-
-let dayJs: typeof import('dayjs') | undefined;
-export async function getDayJs(): Promise<typeof import('dayjs')> {
-  if (dayJs) {
-    return dayJs;
-  }
-  let [_dayjs, _localizedFormat]: [any, any] = (await Promise.all([
-    import('dayjs'),
-    import('dayjs/plugin/localizedFormat'),
-  ])) as [any, any];
-
-  dayJs = _dayjs.default || _dayjs;
-  _localizedFormat = _localizedFormat.default || _localizedFormat;
-  dayJs?.extend(_localizedFormat);
-
-  if (!dayJs) {
-    throw new Error('dayJs cannot be undefined');
-  }
-
-  return dayJs;
-}
 
 export function conditionalSuffix(str: string, part: string) {
   if (str.endsWith(part)) {
@@ -306,7 +257,7 @@ export function abortableSetInterval(
   );
 }
 
-// Throws an abort error if a signal is already aborted.
+// Throws an abort error if value is undefined.
 export function assertNotUndefined(
   value: unknown,
   message: string,
@@ -318,12 +269,6 @@ export function assertNotUndefined(
 
 export function cloneMap<K, V>(map: Map<K, V>) {
   return new Map(map.entries());
-}
-
-export function createEmptyArray(size: number) {
-  return Array.from({ length: size }, () => {
-    return undefined;
-  });
 }
 
 // Adds 1 or more emptyValue to the array to make it of `size` length.
@@ -429,4 +374,28 @@ export function getMouseClickType<T = Element>(
   }
 
   return MouseClick.Click;
+}
+
+export async function checkConditionUntilTrue(
+  condition: () => boolean,
+  {
+    maxTries = 5,
+    interval = 2,
+    name = 'unknown_condition',
+  }: {
+    name?: string;
+    interval?: number;
+    maxTries?: number;
+  } = {},
+): Promise<void> {
+  for (let tries = 0; tries < maxTries; tries++) {
+    if (condition()) {
+      return;
+    }
+    await sleep(interval);
+  }
+
+  throw new Error(
+    `Condition ${name} did not become true within the specified time`,
+  );
 }

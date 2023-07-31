@@ -16,7 +16,7 @@ import { WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
  * @returns
  */
 export function mainInjectAbortableProxy<
-  T extends { __signalWorkerToAbort: (uid: string) => void },
+  T extends { __signalWorkerToAbortMethod: (uid: string) => void },
 >(
   workerProxiedMethods: T,
   {
@@ -49,7 +49,7 @@ export function mainInjectAbortableProxy<
             'abort',
             () => {
               console.debug('aborting ' + uid);
-              _target.__signalWorkerToAbort(uid);
+              _target.__signalWorkerToAbortMethod(uid);
             },
             { once: true },
           );

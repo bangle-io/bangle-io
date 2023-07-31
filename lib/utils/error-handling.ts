@@ -1,7 +1,5 @@
 import { BaseError } from '@bangle.io/base-error';
 
-export { BaseError } from '@bangle.io/base-error';
-
 // Serialize the two types of errors that can be thrown by Bangle.
 export function errorSerialize(error: Error | BaseError) {
   let e = error as unknown;

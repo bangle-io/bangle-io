@@ -2,12 +2,10 @@ import type { BangleEditor } from '@bangle.dev/core';
 import type { EditorView } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { getEditorPluginMetadata } from '@bangle.io/editor-common';
 import { z } from '@bangle.io/nsm-3';
 import type { EditorIdType, WsPath } from '@bangle.io/shared-types';
-import {
-  getEditorPluginMetadata,
-  getScrollParentElement,
-} from '@bangle.io/utils';
+import { findWrappingScrollable } from '@bangle.io/utils';
 
 import type { EditorSliceState } from './types';
 
@@ -87,4 +85,16 @@ export function assertValidEditorId(
   if (!isValidEditorId(editorId)) {
     throw new Error('editorId is out of range or invalid');
   }
+}
+
+export function getScrollParentElement(editorId: EditorIdType) {
+  const editor = document.querySelector(
+    '.B-editor-container_editor-' + editorId,
+  );
+
+  if (editor) {
+    return findWrappingScrollable(editor);
+  }
+
+  return undefined;
 }

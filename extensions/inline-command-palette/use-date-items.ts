@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { getDayJs } from '@bangle.io/day-js';
 import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';
-import { getDayJs, useDestroyRef } from '@bangle.io/utils';
+import { useDestroyRef } from '@bangle.io/utils';
 
 import { palettePluginKey } from './config';
 import { PALETTE_ITEM_HINT_TYPE, PaletteItem } from './palette-item';

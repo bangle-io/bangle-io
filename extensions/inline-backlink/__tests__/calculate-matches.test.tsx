@@ -5,10 +5,12 @@
 /// <reference path="../../../missing-test-types.d.ts" />
 /// <reference path="./missing-test-types.d.ts" />
 
-import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
+import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 import { wikiLink } from '@bangle.dev/wiki-link';
+
+import { createWsPath } from '@bangle.io/ws-path';
 
 import { calcWikiLinkMapping, getAllWikiLinks } from '../calculate-matches';
 
@@ -31,7 +33,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:hello.md'],
+        ['my-ws:hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([]);
@@ -48,7 +50,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:hello.md'],
+        ['my-ws:hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([]);
@@ -65,7 +67,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:hello.md'],
+        ['my-ws:hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([]);
@@ -82,7 +84,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:hello.md'],
+        ['my-ws:hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['hello', 'my-ws:hello.md']]);
@@ -99,7 +101,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/hello.md'],
+        ['my-ws:test/hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['hello', 'my-ws:test/hello.md']]);
@@ -116,13 +118,15 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'],
+        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['hello', 'my-ws:test/hello.md']]);
   });
 
-  test('works with absolute path with no extension', () => {
+  test('works with relative path without dot prefix and  with no extension', () => {
     const { editorView } = testEditor(
       <doc>
         <para>
@@ -133,13 +137,13 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/hello.md'],
+        ['my-ws:test/hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['test/hello', 'my-ws:test/hello.md']]);
   });
 
-  test('works with absolute path with extension', () => {
+  test('works with relative path without dot prefix and with extension', () => {
     const { editorView } = testEditor(
       <doc>
         <para>
@@ -150,13 +154,13 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/hello.md'],
+        ['my-ws:test/hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['test/hello.md', 'my-ws:test/hello.md']]);
   });
 
-  test('no match with absolute path with different extension', () => {
+  test('no match works with relative path without dot prefix and  with different extension', () => {
     const { editorView } = testEditor(
       <doc>
         <para>
@@ -167,7 +171,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/hello.md'],
+        ['my-ws:test/hello.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([]);
@@ -190,7 +194,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'],
+        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([
@@ -210,7 +216,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'],
+        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['Hello', 'my-ws:test/hello.md']]);
@@ -230,13 +238,36 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'],
+        ['my-ws:test/what/hello.md', 'my-ws:test/hello.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([
       ['Hello', 'my-ws:test/hello.md'],
       ['hello', 'my-ws:test/hello.md'],
     ]);
+  });
+
+  test('works with absolute path', () => {
+    const { editorView } = testEditor(
+      <doc>
+        <para>
+          Hello <wikiLink path="/magic/some/note2.md" />
+        </para>
+      </doc>,
+    );
+
+    expect([
+      ...calcWikiLinkMapping(
+        [
+          'my-ws:magic/some-place/hotel/note1.md',
+          'my-ws:magic/some/note2.md',
+          'my-ws:magic/note2.md',
+        ].map((wsPath) => createWsPath(wsPath)),
+        getAllWikiLinks(editorView.state),
+      ),
+    ]).toEqual([['/magic/some/note2.md', 'my-ws:magic/some/note2.md']]);
   });
 
   test('prefers exact match over case insensitive match', () => {
@@ -253,7 +284,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/Hello.md', 'my-ws:test/hello.md'],
+        ['my-ws:test/what/Hello.md', 'my-ws:test/hello.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([
@@ -276,7 +309,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/Hello.md', 'my-ws:test/hello.md'],
+        ['my-ws:test/what/Hello.md', 'my-ws:test/hello.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['hello.md', 'my-ws:test/hello.md']]);
@@ -296,7 +331,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.md', 'my-ws:test/by.md'],
+        ['my-ws:test/what/hello.md', 'my-ws:test/by.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([
@@ -319,7 +356,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.txt'],
+        ['my-ws:test/what/hello.txt'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([]);
@@ -336,7 +373,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:test/what/hello.txt'],
+        ['my-ws:test/what/hello.txt'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['hello', 'my-ws:test/what/hello.txt']]);
@@ -356,7 +393,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:Hello.io.md'],
+        ['my-ws:Hello.io.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['Hello.io', 'my-ws:Hello.io.md']]);
@@ -376,7 +413,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:hello.io.md'],
+        ['my-ws:hello.io.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['Hello.io', 'my-ws:hello.io.md']]);
@@ -396,7 +433,7 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:Hello.io.md'],
+        ['my-ws:Hello.io.md'].map((wsPath) => createWsPath(wsPath)),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['hello.io', 'my-ws:Hello.io.md']]);
@@ -416,7 +453,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:Hello.io.md', 'my-ws:Hello.xyz.md'],
+        ['my-ws:Hello.io.md', 'my-ws:Hello.xyz.md'].map((wsPath) =>
+          createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([
@@ -439,7 +478,9 @@ describe('calcWikiLinkMapping', () => {
 
     expect([
       ...calcWikiLinkMapping(
-        ['my-ws:task/bugs in bangle.io.md', 'my-ws:task/bugs in bangle.md'],
+        ['my-ws:task/bugs in bangle.io.md', 'my-ws:task/bugs in bangle.md'].map(
+          (wsPath) => createWsPath(wsPath),
+        ),
         getAllWikiLinks(editorView.state),
       ),
     ]).toEqual([['bugs in bangle.io', 'my-ws:task/bugs in bangle.io.md']]);

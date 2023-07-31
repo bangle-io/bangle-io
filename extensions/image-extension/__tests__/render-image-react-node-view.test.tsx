@@ -4,38 +4,14 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { getFile, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { ImageComponent } from '../render-image-react-node-view';
-
-jest.mock('@bangle.io/slice-workspace', () => {
-  const other = jest.requireActual('@bangle.io/slice-workspace');
-
-  return {
-    ...other,
-    useWorkspaceContext: jest.fn(),
-    getFile: jest.fn(() => async () => undefined),
-  };
-});
+import { ImageComponentInner } from '../render-image-react-node-view';
 
 class File {
   constructor(public content: any, public fileName: any, public opts: any) {}
 }
-
-let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
-  typeof useWorkspaceContext
->;
-let getFileMock = getFile as jest.MockedFunction<typeof getFile>;
-
-beforeEach(() => {
-  useWorkspaceContextMock.mockImplementation(() => ({
-    ...getUseWorkspaceContextReturn,
-  }));
-  getFileMock.mockImplementation(() => async () => ({} as any));
-});
 
 describe('ImageComponent', () => {
   const globalImage = window.Image;
@@ -58,7 +34,11 @@ describe('ImageComponent', () => {
   });
   test('first pass renders a 404', async () => {
     const renderResult = render(
-      <ImageComponent nodeAttrs={{ src: './google.png', alt: undefined }} />,
+      <ImageComponentInner
+        nodeAttrs={{ src: './google.png', alt: undefined }}
+        openedWsPaths={OpenedWsPaths.createFromArray([])}
+        readFile={async () => undefined}
+      />,
     );
 
     expect(renderResult.container).toMatchInlineSnapshot(`
@@ -72,19 +52,14 @@ describe('ImageComponent', () => {
   });
 
   test('loads the file blob', async () => {
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:my-file.md']),
-      };
-    });
-
-    getFileMock.mockImplementation(() => async () => {
-      return new File('I am the content of image', 'google.png', {}) as any;
-    });
-
     const renderResult = render(
-      <ImageComponent nodeAttrs={{ src: './google.png', alt: undefined }} />,
+      <ImageComponentInner
+        nodeAttrs={{ src: './google.png', alt: undefined }}
+        openedWsPaths={OpenedWsPaths.createFromArray(['test-ws:my-file.md'])}
+        readFile={async () =>
+          new File('I am the content of image', 'google.png', {}) as any
+        }
+      />,
     );
 
     const prom = sleep(50);
@@ -105,19 +80,14 @@ describe('ImageComponent', () => {
   });
 
   test('handles http urls as image src', async () => {
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:my-file.md']),
-      };
-    });
-
     const renderResult = render(
-      <ImageComponent
+      <ImageComponentInner
         nodeAttrs={{
           src: 'https://abcd.google.png',
           alt: undefined,
         }}
+        readFile={async () => undefined}
+        openedWsPaths={OpenedWsPaths.createFromArray(['test-ws:my-file.md'])}
       />,
     );
 
@@ -132,22 +102,16 @@ describe('ImageComponent', () => {
   });
 
   test('handles image dimensions that are statically set in the name', async () => {
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:my-file.md']),
-      };
-    });
-
-    getFileMock.mockImplementation(() => async () => {
-      return new File('I am the content of image', 'google.png', {}) as any;
-    });
     const renderResult = render(
-      <ImageComponent
+      <ImageComponentInner
         nodeAttrs={{
           src: 'google-4x3.png',
           alt: undefined,
         }}
+        readFile={async () => {
+          return new File('I am the content of image', 'google.png', {}) as any;
+        }}
+        openedWsPaths={OpenedWsPaths.createFromArray(['test-ws:my-file.md'])}
       />,
     );
     const prom = sleep(20);

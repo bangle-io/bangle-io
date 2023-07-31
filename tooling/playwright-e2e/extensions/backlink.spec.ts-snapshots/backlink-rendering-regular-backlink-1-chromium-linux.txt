@@ -1,0 +1,6 @@
+note-0.md
+<p
+  class="B-editor-common_selected-node"
+>
+  This a note 0
+</p>

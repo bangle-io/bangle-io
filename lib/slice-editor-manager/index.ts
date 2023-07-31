@@ -2,6 +2,7 @@ export {
   onFocusUpdate,
   setEditor,
   toggleEditing,
+  updateQueryAction,
   updateSelection,
 } from './actions';
 export { nsmEditorEffects } from './effects';

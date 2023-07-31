@@ -1,7 +1,3 @@
-/**
- * @jest-environment @bangle.io/jsdom-env
- */
-
 import { calculateGitFileSha } from '@bangle.io/git-file-sha';
 
 import { readFileBlob } from './test-helpers';

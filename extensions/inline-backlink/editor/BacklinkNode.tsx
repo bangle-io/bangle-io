@@ -4,10 +4,10 @@ import type { EditorState } from '@bangle.dev/pm';
 
 import { nsmApi2 } from '@bangle.io/api';
 import { EditorDisplayType } from '@bangle.io/constants';
+import { getEditorPluginMetadata } from '@bangle.io/editor-common';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
 import type { WsPath } from '@bangle.io/shared-types';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-components';
-import { getEditorPluginMetadata } from '@bangle.io/utils';
 
 import { BacklinkNodeButton } from '../BacklinkNodeButton';
 import { calcWikiLinkMapping, getAllWikiLinks } from '../calculate-matches';
@@ -22,9 +22,6 @@ export function BacklinkNode({
   nodeAttrs: { path: string; title?: string };
   editorState: EditorState;
 }) {
-  // TODO currently bangle.dev doesn't pass editorview context so we are
-  // unable to use `useEditorPluginMetadata` which itself uses `useEditorViewContext`
-  // which will be undefined for react nodeviews.
   const { wsPath: currentWsPath, editorDisplayType } =
     getEditorPluginMetadata(editorState);
 
@@ -68,11 +65,12 @@ export function BacklinkNode({
 
   useEffect(() => {
     if (noteWsPaths) {
-      updateBacklinksWsPath(
-        calcWikiLinkMapping(noteWsPaths, getAllWikiLinks(editorState)).get(
-          wikiLink,
-        ),
-      );
+      const result = calcWikiLinkMapping(
+        noteWsPaths,
+        getAllWikiLinks(editorState),
+      ).get(wikiLink);
+
+      updateBacklinksWsPath(result);
     }
   }, [wsName, noteWsPaths, wikiLink, editorState]);
 

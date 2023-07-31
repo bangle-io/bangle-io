@@ -1,6 +1,7 @@
+import { IS_STORYBOOK, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 import type { ColorScheme, CorePalette } from '@bangle.io/constants';
 import { COLOR_SCHEMA } from '@bangle.io/constants';
-import { checkWidescreen } from '@bangle.io/utils';
+import { checkWidescreen, isMobile } from '@bangle.io/utils';
 
 export interface UISliceState {
   changelogHasUpdates: boolean;
@@ -14,6 +15,18 @@ export interface UISliceState {
   colorScheme: ColorScheme;
   widescreen: boolean;
 }
+
+// TODO this is duplicated from utils, we were getting error of using it before it was defined
+// const checkWidescreen = (
+//   width = typeof window !== 'undefined' ? window.innerWidth : undefined,
+// ) => {
+//   if (isMobile) {
+//     return false;
+//   }
+
+//   return width ? SPLIT_SCREEN_MIN_WIDTH <= width : false;
+// };
+
 export const initialUISliceState: UISliceState = {
   changelogHasUpdates: false,
   dialogName: undefined,

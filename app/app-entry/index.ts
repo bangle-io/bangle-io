@@ -1,38 +1,27 @@
 /// <reference path="./missing-types.d.ts" />
 
-import * as Comlink from 'comlink';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { _internal_setStore } from '@bangle.io/api';
-import {
-  createNsmStore,
-  naukarReplicaSlicesDispatch,
-} from '@bangle.io/bangle-store';
+import { internalApi } from '@bangle.io/api';
+import { createNsmStore } from '@bangle.io/bangle-store';
 import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import { SEVERITY } from '@bangle.io/constants';
-import { wireCollabMessageBus } from '@bangle.io/editor-common';
 import { setupEternalVars } from '@bangle.io/shared';
-import type {
-  EternalVars,
-  NaukarMainAPI,
-  NsmStore,
-} from '@bangle.io/shared-types';
+import type { EternalVars, NsmStore } from '@bangle.io/shared-types';
 import { nsmNotification } from '@bangle.io/slice-notification';
 import {
   goToWsNameRouteNotFoundRoute,
   nsmPageSlice,
 } from '@bangle.io/slice-page';
 import { BaseError } from '@bangle.io/utils';
-import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
-import { workerSetup } from '@bangle.io/worker-setup';
+import { _clearWorker } from '@bangle.io/worker-naukar-proxy';
 import {
   readWorkspaceInfo,
   WorkspaceInfoError,
 } from '@bangle.io/workspace-info';
 
 import { Entry } from './entry';
-import { setEternalVars } from './eternal-vars';
 import { runAfterPolyfills } from './run-after-polyfills';
 
 if (typeof window !== undefined && APP_ENV !== 'local') {
@@ -62,45 +51,34 @@ runAfterPolyfills(async () => {
   const eternalVars = setupEternalVars();
   const abort = new AbortController();
 
-  const editorCollabMessageChannel = new MessageChannel();
+  const nsmStore = createNsmStore(eternalVars, (error, nsmStore) => {
+    try {
+      if (error instanceof BaseError) {
+        handleErrors(error, nsmStore, eternalVars);
 
-  wireCollabMessageBus(
-    editorCollabMessageChannel.port1,
-    eternalVars.editorCollabMessageBus,
-    abort.signal,
-  );
+        return;
+      }
+      console.error('Unhandled naukar error', error.message);
+      (window as any).Sentry?.captureException(error);
+    } catch (e) {
+      // important to not throw any error, as it can create infinite loop
+      // by sending back to naukar and it sending back to us
+      console.error(e);
+    }
+  });
+
+  internalApi._internal_setStore(nsmStore);
 
   abort.signal.addEventListener(
     'abort',
     () => {
       _clearWorker();
+      nsmStore.destroy();
     },
     {
       once: true,
     },
   );
-
-  workerSetup(abort.signal).then((naukar) => {
-    naukar.__internal_register_main_cb(
-      Comlink.proxy(naukarMainAPI(nsmStore, eternalVars)),
-    );
-
-    naukar.editor.registerCollabMessagePort(
-      Comlink.transfer(editorCollabMessageChannel.port2, [
-        editorCollabMessageChannel.port2,
-      ]),
-    );
-
-    _setWorker(naukar);
-  });
-
-  const nsmStore = createNsmStore(eternalVars);
-
-  setEternalVars(nsmStore, eternalVars);
-
-  (window as any).globalNsmStore = nsmStore;
-
-  _internal_setStore(nsmStore);
 
   // TODO we need a better way to handle storage errors
   window.addEventListener('unhandledrejection', (event) => {
@@ -237,32 +215,4 @@ function handleWorkspaceInfoErrors(
       return false;
     }
   }
-}
-
-export function naukarMainAPI(
-  store: NsmStore,
-  eternalVars: EternalVars,
-): NaukarMainAPI {
-  const api: NaukarMainAPI = {
-    application: {
-      onError: async (error: Error) => {
-        try {
-          if (error instanceof BaseError) {
-            handleErrors(error, store, eternalVars);
-
-            return;
-          }
-          console.error('Unhandled naukar error', error.message);
-          (window as any).Sentry?.captureException(error);
-        } catch (e) {
-          // important to not throw any error, as it can create infinite loop
-          // by sending back to naukar and it sending back to us
-          console.error(e);
-        }
-      },
-    },
-    replicaSlices: naukarReplicaSlicesDispatch(store),
-  };
-
-  return api;
 }

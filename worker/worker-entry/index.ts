@@ -78,7 +78,7 @@ export function createNaukar(
   return {
     ...workerInterface,
     __internal_register_main_cb: async (mainApi) => {
-      registerMainApi(mainApi);
+      registerMainApi(mainApi, abortSignal);
 
       return true;
     },

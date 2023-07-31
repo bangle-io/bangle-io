@@ -1,6 +1,13 @@
 // WARNING !! Should not import any other env oriented library
 // should only focus on Javascript and NO BROWSER or NODEJS specific apis
 
+export { createEmptyArray } from './create-empty-array';
+export { DuoWeakMap } from './duo-weak-map';
+export { getLast } from './get-last';
+export { weakCacheDuo } from './weak-cache-duo';
+export { isAbortError } from '@bangle.io/is-abort-error';
+export { weakCache } from '@bangle.io/weak-cache';
+
 export function isPlainObject(value: any) {
   if (typeof value !== 'object' || value === null) {
     return false;

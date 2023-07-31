@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { useNsmSliceState, useNsmStore } from '@bangle.io/bangle-store-context';
 import { TAB_ID } from '@bangle.io/config';
+import { weakCache } from '@bangle.io/mini-js-utils';
 import {
   nsmSliceWorkspace,
   pushOpenedWsPaths,
@@ -11,7 +12,7 @@ import {
   refreshWorkspace,
   sliceRefreshWorkspace,
 } from '@bangle.io/slice-refresh-workspace';
-import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
+import { useBroadcastChannel } from '@bangle.io/utils';
 import { createWsPath } from '@bangle.io/ws-path';
 
 const CHANNEL_NAME = 'watch_workspace';

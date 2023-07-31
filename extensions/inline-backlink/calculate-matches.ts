@@ -2,8 +2,8 @@ import type { EditorState } from '@bangle.dev/pm';
 import { findChildrenByType } from '@bangle.dev/utils';
 import { wikiLink } from '@bangle.dev/wiki-link';
 
+import { weakCache, weakCacheDuo } from '@bangle.io/mini-js-utils';
 import type { WsPath } from '@bangle.io/shared-types';
-import { weakCache, weakCacheDuo } from '@bangle.io/utils';
 import {
   createWsPath,
   getExtension,
@@ -141,6 +141,22 @@ export const calcWikiLinkMapping = weakCacheDuo(
           }
         }
 
+        if (wikiLink.startsWith('/')) {
+          const withoutSlash = wikiLink.slice(1);
+          let withoutSlashAndExt = removeExtension(withoutSlash);
+
+          if (processedAllWsPaths.filePathsWithoutExt.has(withoutSlashAndExt)) {
+            let match = processedAllWsPaths.sortedByNesting.find((w) => {
+              const { filePath } = resolvePath(w, true);
+
+              return filePath === withoutSlash;
+            });
+
+            if (match) {
+              result.set(wikiLink, match);
+            }
+          }
+        }
         continue;
       }
 

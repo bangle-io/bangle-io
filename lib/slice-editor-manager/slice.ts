@@ -9,7 +9,7 @@ import {
 import { sliceKey, sliceStateSerializer, z } from '@bangle.io/nsm-3';
 import type { EditorIdType } from '@bangle.io/shared-types';
 import { nsmPageSlice } from '@bangle.io/slice-page';
-import { getScrollParentElement, shallowEqual } from '@bangle.io/utils';
+import { shallowEqual } from '@bangle.io/utils';
 
 import { initialEditorSliceState } from './constants';
 import {
@@ -21,24 +21,14 @@ import {
   assertValidEditorId,
   calculateScrollPosition,
   calculateSelection,
+  getScrollParentElement,
 } from './utils';
 
-const initState: EditorSliceState & {
-  // the editor that was last opened
-  // the most recent editor id is the first in array
-  editorOpenOrder: EditorIdType[];
-  disableEditingCounter: number | undefined;
-} = {
-  ...initialEditorSliceState,
-  editorOpenOrder: [],
-  disableEditingCounter: undefined,
-};
-
-type NsmEditorManagerState = typeof initState;
+type NsmEditorManagerState = typeof initialEditorSliceState;
 
 export const nsmEditorManagerSliceKey = sliceKey([nsmPageSlice], {
   name: 'editor-manager-slice',
-  state: initState,
+  state: initialEditorSliceState,
 });
 
 const primaryEditor = nsmEditorManagerSliceKey.selector((storeState) => {
@@ -251,11 +241,11 @@ export const persistState = sliceStateSerializer(nsmEditorManagerSliceKey, {
 
   deserialize: ({ version, data }): NsmEditorManagerState => {
     if (version < SERIAL_VERSION) {
-      return initState;
+      return initialEditorSliceState;
     }
 
     return {
-      ...initState,
+      ...initialEditorSliceState,
       focusedEditorId: data.focusedEditorId,
       editorConfig: OpenedEditorsConfig.fromJsonObj(data.editorConfig),
     };

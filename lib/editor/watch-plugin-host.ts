@@ -1,5 +1,6 @@
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 
+import { hasPluginStateChanged } from '@bangle.io/editor-common/helpers';
 import type {
   EditorPluginMetadata,
   EditorWatchPluginState,
@@ -7,7 +8,6 @@ import type {
 } from '@bangle.io/shared-types';
 import {
   debounceFn,
-  hasPluginStateChanged,
   safeCancelIdleCallback,
   safeRequestIdleCallback,
 } from '@bangle.io/utils';

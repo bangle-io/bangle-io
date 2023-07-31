@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import { nsmApi2 } from '@bangle.io/api';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
+import type { WsPath } from '@bangle.io/shared-types';
 import { useDestroyRef } from '@bangle.io/utils';
+import type { OpenedWsPaths } from '@bangle.io/ws-path';
 import { isValidFileWsPath, parseLocalFilePath } from '@bangle.io/ws-path';
 
 import {
@@ -31,10 +33,17 @@ const isOtherSources = (src?: string) => {
   );
 };
 
-export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
+export function ImageComponentInner({
+  nodeAttrs,
+  openedWsPaths,
+  readFile,
+}: {
+  nodeAttrs: ImageNodeAttrs;
+  openedWsPaths: OpenedWsPaths;
+  readFile: (wsPath: WsPath) => Promise<File | undefined>;
+}) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState<string | null>(null);
-  const { openedWsPaths } = nsmApi2.workspace.useWorkspace();
   const imageWsPath =
     openedWsPaths.primaryWsPath2 && !isOtherSources(inputSrc)
       ? parseLocalFilePath(inputSrc, openedWsPaths.primaryWsPath2)
@@ -66,8 +75,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
         }
 
         if (imageWsPath) {
-          nsmApi2.workspace
-            .readFile(imageWsPath)
+          readFile(imageWsPath)
             .then((file) => {
               if (!file) {
                 return;
@@ -99,7 +107,14 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
         window.URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [inputSrc, openedWsPaths.primaryWsPath2, destroyRef, imageWsPath, width]);
+  }, [
+    inputSrc,
+    openedWsPaths.primaryWsPath2,
+    destroyRef,
+    readFile,
+    imageWsPath,
+    width,
+  ]);
 
   let newWidth = width;
   let newHeight = height;
@@ -125,6 +140,18 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
       alt={alt || inputSrc}
       width={newWidth}
       height={newHeight}
+    />
+  );
+}
+
+export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
+  const { openedWsPaths } = nsmApi2.workspace.useWorkspace();
+
+  return (
+    <ImageComponentInner
+      nodeAttrs={nodeAttrs}
+      openedWsPaths={openedWsPaths}
+      readFile={nsmApi2.workspace.readFile}
     />
   );
 }

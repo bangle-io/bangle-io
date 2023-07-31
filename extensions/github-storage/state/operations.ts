@@ -1,5 +1,6 @@
 import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import type { OperationStore } from '@bangle.io/nsm-3';
 import { operation, ref } from '@bangle.io/nsm-3';
 import { pMap } from '@bangle.io/p-map';
@@ -9,7 +10,6 @@ import {
   isEntryNew,
 } from '@bangle.io/remote-file-sync';
 import type { WsName } from '@bangle.io/storage';
-import { isAbortError } from '@bangle.io/utils';
 import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 import {

@@ -13,7 +13,6 @@ import { getSuggestTooltipKey } from './inline-palette';
 
 export function useInlinePaletteQuery(inlinePaletteKey: PluginKey) {
   const view = useEditorViewContext();
-  // TODO show is a bad name
   const {
     triggerText: query,
     counter,

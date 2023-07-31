@@ -82,7 +82,7 @@ describe('workerAbortable', () => {
 
     let result = methods.abortableMethod(uid as any);
 
-    methods.__signalWorkerToAbort(uid);
+    methods.__signalWorkerToAbortMethod(uid);
 
     await expect(result).rejects.toBe(WORKER_ABORTABLE_SERVICE_ABORTED);
   });
@@ -117,7 +117,7 @@ describe('workerAbortable', () => {
 
     await sleep(10);
 
-    methods.__signalWorkerToAbort(uid);
+    methods.__signalWorkerToAbortMethod(uid);
 
     await expect(result).resolves.toBe(true);
     expect(abortableMethod).toBeCalledTimes(1);
@@ -170,7 +170,7 @@ describe('workerAbortable', () => {
     const result1 = methods.abortableMethod1(uid as any);
     const result2 = methods.abortableMethod2(uid as any);
 
-    methods.__signalWorkerToAbort(uid);
+    methods.__signalWorkerToAbortMethod(uid);
 
     await expect(result1).rejects.toBe(WORKER_ABORTABLE_SERVICE_ABORTED);
     await expect(result2).rejects.toBe(WORKER_ABORTABLE_SERVICE_ABORTED);

@@ -47,16 +47,53 @@ const createBacklinkNode = (
     )(state, dispatch, view);
   };
 };
+
 export function InlineBacklinkPalette() {
+  const view = useEditorViewContext();
+
+  if (!view || view.isDestroyed) {
+    return null;
+  }
+
+  return <InlineBacklinkPalettePortal />;
+}
+
+function InlineBacklinkPalettePortal() {
   const { query, counter, tooltipContentDOM, isVisible } =
     useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
+    <InlineBacklinkPaletteWrapper
+      query={query}
+      counter={counter}
+      isVisible={isVisible}
+      editorView={useEditorViewContext()}
+    />,
+    tooltipContentDOM,
+  );
+}
+
+export function InlineBacklinkPaletteWrapper({
+  query,
+  counter,
+  isVisible,
+  editorView,
+}: {
+  query: string;
+  counter: number;
+  isVisible: boolean;
+  editorView: EditorView;
+}) {
+  return (
     <div className="shadow-2xl B-ui-components_inline-palette-wrapper flex flex-col bg-colorNeutralBgLayerFloat">
       <div className="B-ui-components_inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
         {isVisible && (
-          <InlineBacklinkPaletteInner query={query} counter={counter} />
+          <InlineBacklinkPaletteInner
+            query={query}
+            counter={counter}
+            editorView={editorView}
+          />
         )}
         <UniversalPalette.PaletteInfo>
           <UniversalPalette.PaletteInfoItem>
@@ -70,8 +107,7 @@ export function InlineBacklinkPalette() {
           </UniversalPalette.PaletteInfoItem>
         </UniversalPalette.PaletteInfo>
       </div>
-    </div>,
-    tooltipContentDOM,
+    </div>
   );
 }
 
@@ -79,12 +115,13 @@ const EMPTY_ARRAY: string[] = [];
 
 function InlineBacklinkPaletteInner({
   query,
+  editorView: view,
   counter,
 }: {
   query: string;
   counter: number;
+  editorView: EditorView;
 }) {
-  const view = useEditorViewContext();
   const { wsName, noteWsPaths = EMPTY_ARRAY } =
     nsmApi2.workspace.useWorkspace();
 

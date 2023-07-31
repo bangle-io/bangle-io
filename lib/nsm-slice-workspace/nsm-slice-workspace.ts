@@ -1,3 +1,4 @@
+import { isAbortError, weakCache } from '@bangle.io/mini-js-utils';
 import type { InferSliceNameFromSlice, StoreState } from '@bangle.io/nsm-3';
 import { cleanup, effect, operation, sliceKey } from '@bangle.io/nsm-3';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
@@ -11,7 +12,6 @@ import {
   wsPathToPathname,
 } from '@bangle.io/slice-page';
 import { sliceRefreshWorkspace } from '@bangle.io/slice-refresh-workspace';
-import { weakCache } from '@bangle.io/utils';
 import { fs } from '@bangle.io/workspace-info';
 import {
   createWsName,
@@ -244,12 +244,19 @@ const watchWorkspaceRefresh = effect(function watchWorkspaceRefresh(store) {
   });
 
   if (wsName) {
-    fs.listFiles(wsName, controller.signal).then((items) => {
-      if (controller.signal.aborted) {
-        return;
-      }
-      store.dispatch(setWsPaths({ wsPaths: items, wsName }));
-    });
+    fs.listFiles(wsName, controller.signal)
+      .then((items) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        store.dispatch(setWsPaths({ wsPaths: items, wsName }));
+      })
+      .catch((err) => {
+        if (isAbortError(err)) {
+          return;
+        }
+        throw err;
+      });
   }
 });
 

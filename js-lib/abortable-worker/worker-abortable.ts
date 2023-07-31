@@ -33,7 +33,7 @@ export function workerAbortHandler<T extends { [key: string]: any }>(
 ) {
   return {
     ...workerMethods,
-    __signalWorkerToAbort: (uniqueAbortId: string) => {
+    __signalWorkerToAbortMethod: async (uniqueAbortId: string) => {
       const abort = abortControllers.get(uniqueAbortId);
 
       if (abort) {

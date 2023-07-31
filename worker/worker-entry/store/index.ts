@@ -1,5 +1,5 @@
+import { setupStore } from '@bangle.io/bangle-store-context';
 import type { Slice, Store } from '@bangle.io/nsm-3';
-import { setupStore } from '@bangle.io/setup-store';
 import type { EternalVars } from '@bangle.io/shared-types';
 import { mainApi } from '@bangle.io/worker-common';
 import { workerEditorEffects } from '@bangle.io/worker-editor';

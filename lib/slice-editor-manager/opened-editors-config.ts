@@ -1,6 +1,6 @@
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { createEmptyArray } from '@bangle.io/mini-js-utils';
 import { z } from '@bangle.io/nsm-3';
-import { createEmptyArray } from '@bangle.io/utils';
 
 import type { EditorIdType } from './types';
 import type { SelectionJson } from './utils';

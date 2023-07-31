@@ -1,24 +1,25 @@
+import { search } from '@bangle.dev/search';
+
 import {
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
+import {
+  getEditorPluginMetadata,
+  searchPluginKey,
+} from '@bangle.io/editor-common';
 import { cleanup, effect, ref } from '@bangle.io/nsm-3';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUISlice } from '@bangle.io/slice-ui';
-import {
-  debounceFn,
-  getEditorPluginMetadata,
-  getScrollParentElement,
-  trimEndWhiteSpaceBeforeCursor,
-} from '@bangle.io/utils';
+import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 import {
   incrementDisableEditingCounter,
   updateScrollPosition,
   updateSelection,
 } from './actions';
-import { nsmEditorManagerSlice, someEditor } from './slice';
-import { calculateSelection } from './utils';
+import { forEachEditor, nsmEditorManagerSlice, someEditor } from './slice';
+import { calculateSelection, getScrollParentElement } from './utils';
 
 const watchScrollPos = effect(function watchScrollPos(store) {
   const updateScrollPos = () => {
@@ -169,6 +170,32 @@ const trimWhiteSpaceEffect = effect(function trimWhiteSpaceEffect(store) {
   }
 });
 
+const setEditorSearchQueryEffect = effect(function setEditorSearchQueryEffect(
+  store,
+) {
+  const { searchQuery } = nsmEditorManagerSlice.track(store);
+
+  forEachEditor(store.state, (editor) => {
+    search.updateSearchQuery(searchPluginKey, searchQuery)(
+      editor.view.state,
+      editor.view.dispatch,
+    );
+  });
+});
+
+const clearEditorSearchQueryEffect = effect(
+  function clearEditorSearchQueryEffect(store) {
+    void nsmPageSlice.track(store).wsName;
+
+    forEachEditor(store.state, (editor) => {
+      search.updateSearchQuery(searchPluginKey, undefined)(
+        editor.view.state,
+        editor.view.dispatch,
+      );
+    });
+  },
+);
+
 const getFocusedOnMountRef = ref(() => ({
   focusedOnMount: false,
 }));
@@ -231,4 +258,6 @@ export const nsmEditorEffects = [
   initialSelectionEffect,
   trimWhiteSpaceEffect,
   focusEffect,
+  setEditorSearchQueryEffect,
+  clearEditorSearchQueryEffect,
 ];

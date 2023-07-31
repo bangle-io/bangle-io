@@ -9,6 +9,7 @@ import React, {
 import { nsmApi2 } from '@bangle.io/api';
 import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import type { WsName, WsPath } from '@bangle.io/shared-types';
 import type { PaletteOnExecuteItem } from '@bangle.io/ui-components';
 import {
@@ -17,7 +18,7 @@ import {
   SecondaryEditorIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { isAbortError, keyDisplayValue } from '@bangle.io/utils';
+import { keyDisplayValue } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { removeExtension, resolvePath2 } from '@bangle.io/ws-path';
 

@@ -1,0 +1,28 @@
+{
+  "name": "@bangle.io/day-js",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/day-js"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "dayjs": "^1.10.7"
+  },
+  "license": "AGPL-3.0-or-later"
+}

@@ -127,11 +127,7 @@ module.exports = {
   rules: {
     'curly': 'error',
     'no-process-env': 'error',
-    'import/no-cycle': [
-      2,
-      // eslint-disable-next-line no-process-env
-      { maxDepth: 2 },
-    ],
+    'import/no-cycle': [2, { maxDepth: 2 }],
     'react-hooks/exhaustive-deps': [
       'error',
       {

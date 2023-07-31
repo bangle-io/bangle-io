@@ -4,7 +4,8 @@ import type {
   Store,
 } from '@bangle.io/nsm-3';
 
-export { _internal_setStore } from './internals';
+import { _internal_getStore } from './nsm/internal';
+
 export * as nsmApi2 from './nsm/index';
 export * as internalApi from './nsm/internal';
 export { SerialOperationContextProvider as _SerialOperationContextProvider } from './serial-operation-context';
@@ -28,5 +29,5 @@ export * as wsPathHelpers from '@bangle.io/ws-path';
 export function getExtensionStore<TSlice extends AnySlice>(
   slice: TSlice,
 ): Store<InferSliceNameFromSlice<TSlice>> {
-  return (window as any).globalNsmStore;
+  return _internal_getStore() as Store;
 }

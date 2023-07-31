@@ -15,7 +15,7 @@ import {
   TodoListButton,
 } from '@bangle.dev/react-menu';
 
-import { menuKey } from './plugins';
+import { menuKey } from '@bangle.io/editor-common';
 
 export function MenuComp() {
   const renderMenuType = useCallback(({ type, menuKey }) => {
