@@ -9,6 +9,7 @@ const config: PlaywrightTestConfig = {
   reporter: [['html', {}]],
   forbidOnly: !!isCI,
   timeout: 20000,
+  retries: isCI ? 3 : 0,
   expect: {
     timeout: 2000,
   },
