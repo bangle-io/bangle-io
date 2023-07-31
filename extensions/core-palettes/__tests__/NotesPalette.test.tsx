@@ -2,182 +2,109 @@
  * @jest-environment @bangle.io/jsdom-env
  */
 import { act, renderHook } from '@testing-library/react-hooks';
-
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import React from 'react';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
-import { useSearchWsPaths } from '../NotesPalette';
+import { notesPalette, useSearchWsPaths } from '../NotesPalette';
+import { setupTestExtension } from '@bangle.io/test-utils-2';
+import corePalettes from '../index';
+import { render } from '@testing-library/react';
 
-jest.mock('@bangle.io/worker-naukar-proxy', () => {
-  return {
-    naukarProxy: {
-      abortable: {
-        abortableFzfSearchNoteWsPaths: jest.fn(),
-      },
-    },
-  };
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
 });
 
-jest.mock('@bangle.io/slice-workspace', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
-
-  return {
-    ...workspaceThings,
-    useWorkspaceContext: jest.fn(),
-  };
+afterEach(async () => {
+  abortController.abort();
 });
 
-let abortableFzfSearchNoteWsPathsMock = naukarProxy.abortable
-  .abortableFzfSearchNoteWsPaths as jest.MockedFunction<
-  typeof naukarProxy.abortable.abortableFzfSearchNoteWsPaths
->;
-
-let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
-  typeof useWorkspaceContext
->;
-
-beforeEach(async () => {
-  abortableFzfSearchNoteWsPathsMock.mockImplementation(async () => {
-    return [];
+async function setup() {
+  const ctx = setupTestExtension({
+    extensions: [corePalettes],
+    abortSignal: abortController.signal,
   });
 
-  useWorkspaceContextMock.mockImplementation(() => {
-    return {
-      ...getUseWorkspaceContextReturn,
-    };
-  });
-});
+  return ctx;
+}
 
-describe('useSearchWsPaths', () => {
+describe('NotesPalette', () => {
   test('works correctly', async () => {
-    const EMPTY_ARRAY: string[] = [];
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        recentlyUsedWsPaths: EMPTY_ARRAY,
-      };
-    });
+    const ctx = await setup();
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useSearchWsPaths(''),
+    const wsName = 'test-ws1';
+
+    await ctx.createWorkspace(wsName);
+
+    await ctx.createNotes(
+      [
+        [`${wsName}:note1.md`, 'content1'],
+        [`${wsName}:note2.md`, 'content2'],
+      ],
+      {
+        loadFirst: true,
+      },
     );
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
-    expect(result.current).toEqual({ other: [], recent: [] });
-  });
+    const dismissPalette = jest.fn();
+    const onSelect = jest.fn();
+    const getActivePaletteItem = jest.fn();
 
-  test('renders correctly', async () => {
-    const recentWsPaths = ['test-ws:note2.md'];
-    const noteWsPaths = ['test-ws:note1.md', 'test-ws:note2.md'];
-
-    abortableFzfSearchNoteWsPathsMock.mockImplementation(async () =>
-      noteWsPaths.map((r) => ({ item: r } as any)),
+    const { container, rerender } = render(
+      <ctx.ContextProvider>
+        <notesPalette.ReactComponent
+          query=""
+          paletteType={undefined}
+          paletteMetadata={{}}
+          updatePalette={() => {}}
+          counter={0}
+          updateCounter={() => {}}
+          dismissPalette={dismissPalette}
+          onSelect={onSelect}
+          getActivePaletteItem={getActivePaletteItem}
+          allPalettes={[]}
+        />
+      </ctx.ContextProvider>,
     );
 
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        recentlyUsedWsPaths: recentWsPaths,
-      };
-    });
+    await sleep(150);
 
-    let result: ReturnType<typeof renderHook>['result'] | undefined,
-      waitForNextUpdate: ReturnType<typeof renderHook>['waitForNextUpdate'];
+    let result = container.querySelectorAll(
+      '.B-ui-components_universal-palette-item',
+    );
+    expect([...result]).toHaveLength(2);
 
-    act(() => {
-      ({ result, waitForNextUpdate } = renderHook(() => useSearchWsPaths('')));
-    });
+    expect(result[0].textContent).toContain('note1');
+    expect(result[1].textContent).toContain('note2');
 
-    await act(async () => {
-      await waitForNextUpdate();
-    });
-
-    expect(abortableFzfSearchNoteWsPathsMock).toBeCalledTimes(1);
-
-    expect(result?.current).toEqual({
-      other: ['test-ws:note1.md'],
-      recent: ['test-ws:note2.md'],
-    });
-  });
-
-  test('queries correctly', async () => {
-    const noteWsPaths = ['test-ws:note1.md', 'test-ws:note2.md'];
-    const recentWsPaths = ['test-ws:note2.md'];
-
-    abortableFzfSearchNoteWsPathsMock.mockImplementation(async () =>
-      noteWsPaths.map((r) => ({ item: r } as any)),
+    rerender(
+      <ctx.ContextProvider>
+        <notesPalette.ReactComponent
+          query="2"
+          paletteType={undefined}
+          paletteMetadata={{}}
+          updatePalette={() => {}}
+          counter={0}
+          updateCounter={() => {}}
+          dismissPalette={dismissPalette}
+          onSelect={onSelect}
+          getActivePaletteItem={getActivePaletteItem}
+          allPalettes={[]}
+        />
+      </ctx.ContextProvider>,
     );
 
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        recentlyUsedWsPaths: recentWsPaths,
-      };
-    });
+    await sleep(20);
 
-    let result: ReturnType<typeof renderHook>['result'] | undefined,
-      waitForNextUpdate: ReturnType<typeof renderHook>['waitForNextUpdate'];
-
-    act(() => {
-      ({ result, waitForNextUpdate } = renderHook(() => useSearchWsPaths('2')));
-    });
-
-    await act(async () => {
-      await waitForNextUpdate();
-    });
-
-    expect(abortableFzfSearchNoteWsPathsMock).toBeCalledTimes(1);
-    expect(abortableFzfSearchNoteWsPathsMock).nthCalledWith(
-      1,
-      expect.any(AbortSignal),
-      'test-ws',
-      '2',
-      64,
+    result = container.querySelectorAll(
+      '.B-ui-components_universal-palette-item',
     );
 
-    expect(result?.current).toEqual({
-      other: ['test-ws:note1.md'],
-      recent: ['test-ws:note2.md'],
-    });
-  });
+    expect([...result]).toHaveLength(1);
 
-  test('if empty query returns all recent wspaths', async () => {
-    const noteWsPaths = [
-      'test-ws:note1.md',
-      'test-ws:note2.md',
-      'test-ws:note3.md',
-    ];
-    const recentWsPaths = ['test-ws:note2.md', 'test-ws:note3.md'];
-    abortableFzfSearchNoteWsPathsMock.mockImplementation(async () => {
-      await sleep(100);
-
-      return noteWsPaths.map((r) => ({ item: r } as any));
-    });
-
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        recentlyUsedWsPaths: recentWsPaths,
-      };
-    });
-
-    let result: ReturnType<typeof renderHook>['result'] | undefined,
-      waitForNextUpdate: ReturnType<typeof renderHook>['waitForNextUpdate'];
-
-    act(() => {
-      ({ result, waitForNextUpdate } = renderHook(() => useSearchWsPaths('')));
-    });
-    await act(async () => {
-      await waitForNextUpdate();
-    });
-
-    expect(result?.current).toEqual({
-      other: ['test-ws:note1.md'],
-      recent: ['test-ws:note2.md', 'test-ws:note3.md'],
-    });
+    expect(result[0].textContent).toContain('note2');
   });
 });

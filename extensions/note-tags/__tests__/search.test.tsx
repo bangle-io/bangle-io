@@ -36,6 +36,7 @@ function setup() {
     renderDoc,
   };
 }
+
 describe('search tag in a doc', () => {
   test('works', () => {
     const { renderDoc } = setup();
