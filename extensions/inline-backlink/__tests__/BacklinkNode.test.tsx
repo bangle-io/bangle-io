@@ -32,24 +32,20 @@ async function setup({
   notes,
   fullEditor = false,
 }: { wsName?: string; notes?: [string, string][]; fullEditor?: boolean } = {}) {
-  const { testStore, ContextProvider, createNotes, createWorkspace } =
-    setupTestExtension({
-      extensions: [inlineBackLinkExtension],
-      abortSignal: abortController.signal,
-      editor: true,
-      fullEditor: fullEditor,
-    });
+  const ctx = setupTestExtension({
+    extensions: [inlineBackLinkExtension],
+    abortSignal: abortController.signal,
+    editor: true,
+    fullEditor: fullEditor,
+  });
 
   if (wsName) {
-    await createWorkspace(wsName);
+    await ctx.createWorkspace(wsName);
   }
 
-  await createNotes(notes, { loadFirst: true });
+  await ctx.createNotes(notes, { loadFirst: true });
 
-  return {
-    ContextProvider,
-    testStore,
-  };
+  return ctx;
 }
 
 describe('BacklinkNode', () => {

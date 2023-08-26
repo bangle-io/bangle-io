@@ -20,13 +20,13 @@ afterEach(async () => {
 });
 
 function setup() {
-  const { eternalVars } = setupTestExtension({
+  const ctx = setupTestExtension({
     extensions: [noteOutline],
     abortSignal: abortController.signal,
     editor: true,
   });
 
-  const { render } = testEditorMarkdown(eternalVars);
+  const { render } = testEditorMarkdown(ctx.eternalVars);
 
   return {
     render,
