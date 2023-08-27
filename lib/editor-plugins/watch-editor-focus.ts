@@ -2,9 +2,8 @@ import type { EditorView } from '@bangle.dev/pm';
 import { Plugin } from '@bangle.dev/pm';
 
 import { nsmApi2 } from '@bangle.io/api';
+import { getEditorPluginMetadata } from '@bangle.io/editor-common/helpers';
 import type { EditorPlugin } from '@bangle.io/shared-types';
-
-import { getEditorPluginMetadata } from './helpers';
 
 export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
   return new Plugin({

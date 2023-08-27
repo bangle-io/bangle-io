@@ -23,13 +23,16 @@ import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
 
+import {
+  intersectionObserverPluginKey,
+  menuKey,
+} from '@bangle.io/editor-common';
 import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 import { activeNode } from './active-node';
 import { collabPlugin } from './collab-plugin';
 import { collapsibleHeading } from './collapsible-heading-deco';
-import { intersectionObserverPluginKey, menuKey } from './constants';
 import { editingAllowedPlugin } from './editing-allowed';
 import { searchPlugin } from './search';
 import { watchEditorFocus } from './watch-editor-focus';

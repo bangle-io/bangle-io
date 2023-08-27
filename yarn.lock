@@ -2431,6 +2431,7 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/editor-plugins": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
@@ -2635,10 +2636,11 @@ __metadata:
     "@bangle.dev/utils": 0.32.0
     "@bangle.io/api": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/editor-common": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-notification": "workspace:*"
+    "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.49
     "@types/react-dom": ^17.0.17
@@ -2686,6 +2688,44 @@ __metadata:
     typescript: 5.1.6
   peerDependencies:
     react: "*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/editor-plugins@workspace:*, @bangle.io/editor-plugins@workspace:lib/editor-plugins":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/editor-plugins@workspace:lib/editor-plugins"
+  dependencies:
+    "@bangle.dev/base-components": 0.32.0
+    "@bangle.dev/collab-client": 0.32.0
+    "@bangle.dev/collab-comms": 0.32.0
+    "@bangle.dev/core": 0.32.0
+    "@bangle.dev/emoji": 0.32.0
+    "@bangle.dev/markdown": 0.32.0
+    "@bangle.dev/markdown-front-matter": 0.32.0
+    "@bangle.dev/pm": 0.32.0
+    "@bangle.dev/react": 0.32.0
+    "@bangle.dev/react-emoji-suggest": 0.32.0
+    "@bangle.dev/react-menu": 0.32.0
+    "@bangle.dev/react-stopwatch": 0.32.0
+    "@bangle.dev/search": 0.32.0
+    "@bangle.dev/table": 0.32.0
+    "@bangle.dev/timestamp": 0.32.0
+    "@bangle.dev/tooltip": 0.32.0
+    "@bangle.dev/trailing-node": 0.32.0
+    "@bangle.dev/utils": 0.32.0
+    "@bangle.io/api": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/pm-plugins": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-notification": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@types/react": ^17.0.49
+    "@types/react-dom": ^17.0.17
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    tslib: 2.6.0
+    typescript: 5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3653,6 +3693,7 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/editor-common": "workspace:*"
+    "@bangle.io/editor-plugins": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
     "@bangle.io/markdown": "workspace:*"

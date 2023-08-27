@@ -8,8 +8,10 @@ import {
   Selection,
 } from '@bangle.dev/pm';
 
-import { intersectionObserverPluginKey } from './constants';
-import { hasPluginStateChanged } from './helpers';
+import {
+  hasPluginStateChanged,
+  intersectionObserverPluginKey,
+} from '@bangle.io/editor-common';
 
 const name = 'collapsible_heading_deco';
 // TODO even after optimizations, this is far for perfect

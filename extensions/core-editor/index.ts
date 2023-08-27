@@ -2,11 +2,8 @@ import { heading, listItem } from '@bangle.dev/base-components';
 
 import { nsmApi2 } from '@bangle.io/api';
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
-import {
-  getPlugins,
-  markdownItPlugins,
-  rawSpecs,
-} from '@bangle.io/editor-common';
+import { markdownItPlugins, rawSpecs } from '@bangle.io/editor-common';
+import { getPlugins } from '@bangle.io/editor-plugins';
 import { Extension } from '@bangle.io/extension-registry';
 
 import { MenuComp } from './FloatingMenu';

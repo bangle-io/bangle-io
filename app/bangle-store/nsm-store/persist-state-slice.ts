@@ -1,7 +1,10 @@
 import { safeJSONParse, safeJSONStringify } from '@bangle.io/mini-js-utils';
 import type { SliceId, SliceStateSerialData } from '@bangle.io/nsm-3';
 import { effect, slice } from '@bangle.io/nsm-3';
-import * as editorManager from '@bangle.io/slice-editor-manager';
+import {
+  nsmEditorManagerSlice,
+  persistState,
+} from '@bangle.io/slice-editor-manager';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import { nsmUI } from '@bangle.io/slice-ui';
 
@@ -23,15 +26,14 @@ export const getSessionStorageData = () =>
     const result: Record<SliceId, unknown> = {};
 
     //   Add slices here
-    result[editorManager.nsmEditorManagerSlice.sliceId] =
-      editorManager.persistState.retrieve(data);
+    result[nsmEditorManagerSlice.sliceId] = persistState.retrieve(data);
 
     return result;
   });
 
 export const persistStateSlice = slice(
   // Add slices here
-  [nsmPageSlice, editorManager.nsmEditorManagerSlice, nsmUI.nsmUISlice],
+  [nsmPageSlice, nsmEditorManagerSlice, nsmUI.nsmUISlice],
   {
     name: 'persistStateSlice',
     state: {},
@@ -44,7 +46,7 @@ const persistStateWatch = effect(
 
     persistData(SESSION_STORAGE_KEY, sessionStorage, (data) => {
       //   Add slices here
-      editorManager.persistState.populate(store.state, data);
+      persistState.populate(store.state, data);
     });
 
     persistData(LOCAL_STORAGE_KEY, localStorage, (data) => {

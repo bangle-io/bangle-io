@@ -8,6 +8,7 @@ import {
   pageLifeCycleBlockReload,
   pageLifeCycleEffects,
 } from '../page-lifecycle-slice';
+
 jest.mock('page-lifecycle', () => {
   return {
     state: 'active' as const,

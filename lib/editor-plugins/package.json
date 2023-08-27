@@ -1,7 +1,6 @@
 {
-  "name": "@bangle.io/editor-common",
+  "name": "@bangle.io/editor-plugins",
   "version": "0.0.0",
-  "description": "A place to put common editor things (mostly plugin keys) for bangle.io",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -12,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/editor-common"
+    "directory": "js-lib/editor-plugins"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -41,9 +40,13 @@
     "@bangle.dev/tooltip": "0.32.0",
     "@bangle.dev/trailing-node": "0.32.0",
     "@bangle.dev/utils": "0.32.0",
+    "@bangle.io/api": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/editor-common": "workspace:*",
     "@bangle.io/pm-plugins": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-notification": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "tslib": "2.6.0",

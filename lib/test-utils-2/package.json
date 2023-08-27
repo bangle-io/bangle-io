@@ -35,6 +35,7 @@
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/editor-common": "workspace:*",
+    "@bangle.io/editor-plugins": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/history": "workspace:*",
     "@bangle.io/markdown": "workspace:*",

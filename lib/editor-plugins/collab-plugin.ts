@@ -2,12 +2,11 @@ import { collabClient } from '@bangle.dev/collab-client';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { uuid } from '@bangle.dev/utils';
 
-import { nsmApi2 } from '@bangle.io/api';
 import { SEVERITY } from '@bangle.io/constants';
+import { getEditorPluginMetadata } from '@bangle.io/editor-common';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
+import { nsmNotification } from '@bangle.io/slice-notification';
 import { generateUid } from '@bangle.io/utils';
-
-import { getEditorPluginMetadata } from './helpers';
 
 export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
   return [
@@ -36,22 +35,24 @@ export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
             const error = collabClient.commands.queryFatalError()(view.state);
 
             if (error) {
-              const { wsPath } = getEditorPluginMetadata(view.state);
+              const { wsPath, nsmStore } = getEditorPluginMetadata(view.state);
               console.warn(error);
 
-              if (!nsmApi2.ui.getEditorIssue(wsPath)) {
+              if (!nsmNotification.getEditorIssue(nsmStore.state, wsPath)) {
                 // TODO: this exists because at times when editor is unmounted
                 //       there is an error thrown. So this waits until to avoid
                 ///      setting error if the editor is unmounted.
                 clearTimeoutId = setTimeout(() => {
                   if (!view.isDestroyed) {
-                    nsmApi2.ui.setEditorIssue({
-                      wsPath,
-                      title: 'Editor crashed!',
-                      description: `Please manually save your work and then try reloading the application. Error - ${error.message}`,
-                      severity: SEVERITY.ERROR,
-                      uid: generateUid(),
-                    });
+                    nsmStore.dispatch(
+                      nsmNotification.setEditorIssue({
+                        wsPath,
+                        title: 'Editor crashed!',
+                        description: `Please manually save your work and then try reloading the application. Error - ${error.message}`,
+                        severity: SEVERITY.ERROR,
+                        uid: generateUid(),
+                      }),
+                    );
                   }
                 }, 300);
               }

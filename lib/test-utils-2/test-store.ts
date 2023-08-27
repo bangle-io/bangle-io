@@ -1,11 +1,8 @@
 import { internalApi } from '@bangle.io/api';
 import { naukarReplicaSlicesDispatch } from '@bangle.io/bangle-store';
 import { setupStore } from '@bangle.io/bangle-store-context';
-import {
-  getPlugins,
-  markdownItPlugins,
-  rawSpecs,
-} from '@bangle.io/editor-common';
+import { markdownItPlugins, rawSpecs } from '@bangle.io/editor-common';
+import { getPlugins } from '@bangle.io/editor-plugins';
 import {
   Extension,
   extensionRegistryEffects,
