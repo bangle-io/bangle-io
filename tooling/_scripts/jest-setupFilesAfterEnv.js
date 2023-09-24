@@ -1,18 +1,6 @@
 require('cross-fetch/polyfill');
 require('fake-indexeddb/auto');
 
-globalThis.Blob = require('buffer').Blob;
-
-if (typeof global.self !== 'undefined') {
-  // for some reason JSDOM fucks up the SubtleCrypto, so
-  // we need to override it here with nodejs's webcrypto
-  Object.defineProperty(global.self, 'crypto', {
-    value: require('crypto').webcrypto,
-  });
-} else {
-  globalThis.crypto = require('crypto').webcrypto;
-}
-
 const { IDBFactory } = require('fake-indexeddb');
 
 globalThis.indexedDB = new IDBFactory();
@@ -23,9 +11,9 @@ beforeEach(() => {
 });
 
 let original = structuredClone;
-// structuredClone is used by `fake-indexeddb` to clone various objects
-// We override this function to allow for perserving `File` instance when
-// saving in `fake-indexeddb`.
+// // structuredClone is used by `fake-indexeddb` to clone various objects
+// // We override this function to allow for perserving `File` instance when
+// // saving in `fake-indexeddb`.
 globalThis.structuredClone = newStructuredClone;
 
 globalThis.FileSystemHandle = class FileSystemHandle {

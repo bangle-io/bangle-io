@@ -5625,7 +5625,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@bangle.io/git-file-sha", "workspace:js-lib/git-file-sha"],\
             ["@bangle.io/weak-cache", "workspace:js-lib/weak-cache"],\
-            ["base64-js", "npm:1.5.1"],\
             ["tslib", "npm:2.6.0"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\

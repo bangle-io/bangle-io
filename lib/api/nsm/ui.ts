@@ -97,6 +97,12 @@ export const showNotification = (
   const store = _internal_getStore();
   store.dispatch(nsmNotification.showNotification(...args));
 };
+export const clearAllNotifications = (
+  ...args: Parameters<typeof nsmNotification.clearAllNotifications>
+): void => {
+  const store = _internal_getStore();
+  store.dispatch(nsmNotification.clearAllNotifications(...args));
+};
 
 export const setEditorIssue = (
   ...args: Parameters<typeof nsmNotification.setEditorIssue>

@@ -2843,7 +2843,6 @@ __metadata:
   resolution: "@bangle.io/git-file-sha@workspace:js-lib/git-file-sha"
   dependencies:
     "@bangle.io/weak-cache": "workspace:*"
-    base64-js: ^1.5.1
     tslib: 2.6.0
     typescript: 5.1.6
   languageName: unknown
@@ -9819,7 +9818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
+"base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
