@@ -17,96 +17,111 @@ import {
 } from './github-storage-slice';
 import { checkForConflicts, optimizeDatabaseOperation } from './operations';
 
-const getWsPathToUidMapRef = ref<Map<WsPath, string>>(() => new Map());
+const getWsPathToNotificationIdMapRef = ref<Map<WsPath, string>>(
+  () => new Map(),
+);
 
-const githubWorkspaceEffect = effect(async function githubWorkspaceEffect(
-  store,
-) {
-  const wsName = nsmApi2.workspace.trackWorkspaceName(store);
+export const githubWorkspaceEffect = effect(
+  async (store) => {
+    const wsName = nsmApi2.workspace.trackWorkspaceName(store);
 
-  if (!wsName) {
-    return;
-  }
-
-  let destroyed = false;
-
-  cleanup(store, () => {
-    destroyed = true;
-  });
-
-  const wsInfo = await nsmApi2.workspace.readWorkspaceInfo(wsName);
-
-  if (destroyed) {
-    return;
-  }
-
-  const isGhWorkspace = wsInfo?.type === GITHUB_STORAGE_PROVIDER_NAME;
-
-  const currentWsName = nsmApi2.workspace.workspaceState().wsName;
-
-  const { githubWsName } = nsmGhSlice.get(store.state);
-
-  // while being async check if the wsName is still the same
-  if (currentWsName !== wsName) {
-    return;
-  }
-
-  if (wsName === githubWsName) {
-    return;
-  }
-
-  if (!isGhWorkspace && githubWsName !== undefined) {
-    store.dispatch(resetGithubState());
-
-    return;
-  }
-
-  if (isGhWorkspace && githubWsName === undefined) {
-    store.dispatch(updateGithubDetails({ githubWsName: wsName }));
-
-    return;
-  }
-});
-
-const githubSyncEffect = effect(async function githubSyncEffect(store) {
-  const { githubWsName } = nsmGhSlice.track(store);
-  void nsmApi2.workspace.trackPageLifeCycleState(store);
-
-  if (!githubWsName) {
-    return;
-  }
-  const abort = new AbortController();
-
-  cleanup(store, () => {
-    abort.abort();
-  });
-
-  store.dispatch(optimizeDatabaseOperation(false, abort.signal));
-});
-
-const githubPeriodSyncEffect = effect(function githubPeriodSyncEffect(store) {
-  let abort = new AbortController();
-  const intervalId = setInterval(() => {
-    abort.abort();
-    abort = new AbortController();
-    const { githubWsName } = nsmGhSlice.get(store.state);
-    const { isInactivePage } = nsmApi2.workspace.workspaceState();
-
-    if (!githubWsName || isInactivePage) {
+    if (!wsName) {
       return;
     }
 
-    store.dispatch(optimizeDatabaseOperation(true, abort.signal));
-  }, getSyncInterval());
+    let destroyed = false;
 
-  cleanup(store, () => {
-    abort.abort();
-    clearInterval(intervalId);
-  });
-});
+    cleanup(store, () => {
+      destroyed = true;
+    });
+
+    const wsInfo = await nsmApi2.workspace.readWorkspaceInfo(wsName);
+
+    if (destroyed) {
+      return;
+    }
+
+    const isGhWorkspace = wsInfo?.type === GITHUB_STORAGE_PROVIDER_NAME;
+
+    const currentWsName = nsmApi2.workspace.workspaceState().wsName;
+
+    const { githubWsName } = nsmGhSlice.get(store.state);
+
+    // while being async check if the wsName is still the same
+    if (currentWsName !== wsName) {
+      return;
+    }
+
+    if (wsName === githubWsName) {
+      return;
+    }
+
+    if (!isGhWorkspace && githubWsName !== undefined) {
+      store.dispatch(resetGithubState());
+
+      return;
+    }
+
+    if (isGhWorkspace && githubWsName === undefined) {
+      store.dispatch(updateGithubDetails({ githubWsName: wsName }));
+
+      return;
+    }
+  },
+  {
+    name: 'githubWorkspaceEffect',
+  },
+);
+
+export const githubSyncEffect = effect(
+  (store) => {
+    const { githubWsName } = nsmGhSlice.track(store);
+    void nsmApi2.workspace.trackPageLifeCycleState(store);
+
+    if (!githubWsName) {
+      return;
+    }
+    const abort = new AbortController();
+
+    cleanup(store, () => {
+      abort.abort();
+    });
+
+    store.dispatch(optimizeDatabaseOperation(false, abort.signal));
+  },
+  {
+    name: 'githubSyncEffect',
+  },
+);
+
+const githubPeriodSyncEffect = effect(
+  (store) => {
+    let abort = new AbortController();
+    const intervalId = setInterval(() => {
+      abort.abort();
+      abort = new AbortController();
+      const { githubWsName } = nsmGhSlice.get(store.state);
+      const { isInactivePage } = nsmApi2.workspace.workspaceState();
+
+      if (!githubWsName || isInactivePage) {
+        return;
+      }
+
+      store.dispatch(optimizeDatabaseOperation(true, abort.signal));
+    }, getSyncInterval());
+
+    cleanup(store, () => {
+      abort.abort();
+      clearInterval(intervalId);
+    });
+  },
+  {
+    name: 'githubPeriodSyncEffect',
+  },
+);
 
 const githubConflictIntervalEffect = effect(
-  async function githubConflictIntervalEffect(store) {
+  async (store) => {
     const intervalId = setInterval(() => {
       const { githubWsName } = nsmGhSlice.get(store.state);
 
@@ -121,23 +136,31 @@ const githubConflictIntervalEffect = effect(
       clearInterval(intervalId);
     });
   },
+  {
+    name: 'githubConflictIntervalEffect',
+  },
 );
 
-const githubConflictEffect = effect(async function githubConflictEffect(store) {
-  void nsmApi2.workspace.trackPageLifeCycleState(store);
+const githubConflictEffect = effect(
+  (store) => {
+    void nsmApi2.workspace.trackPageLifeCycleState(store);
 
-  const { githubWsName } = nsmGhSlice.track(store);
+    const { githubWsName } = nsmGhSlice.track(store);
 
-  if (!githubWsName) {
-    return;
-  }
+    if (!githubWsName) {
+      return;
+    }
 
-  store.dispatch(checkForConflicts());
-});
+    store.dispatch(checkForConflicts());
+  },
+  {
+    name: 'githubConflictEffect',
+  },
+);
 
 const githubSetConflictNotification = effect(
-  async function githubSetConflictNotification(store) {
-    const wsPathToUidRef = getWsPathToUidMapRef(store);
+  (store) => {
+    const wsPathToUidRef = getWsPathToNotificationIdMapRef(store);
 
     const { githubWsName, conflictedWsPaths } = nsmGhSlice.track(store);
 
@@ -167,6 +190,9 @@ const githubSetConflictNotification = effect(
         wsPathToUidRef.current.delete(wsPath);
       }
     }
+  },
+  {
+    name: 'githubSetConflictNotification',
   },
 );
 

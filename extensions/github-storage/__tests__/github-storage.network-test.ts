@@ -1,5 +1,7 @@
-import type { BangleApplicationStore } from '@bangle.io/api';
-import { notification, workspace } from '@bangle.io/api';
+/**
+ * @jest-environment @bangle.io/jsdom-env
+ */
+import { nsmApi2 } from '@bangle.io/api';
 import {
   isEntryDeleted,
   isEntryModified,
@@ -14,12 +16,21 @@ import {
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from '../common';
-import { ghSliceKey, GITHUB_STORAGE_PROVIDER_NAME } from '../common';
+import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { updateGhToken } from '../database';
 import { fileEntryManager } from '../file-entry-manager';
 import * as github from '../github-api-helpers';
 import GithubStorageExt from '../index';
-import { discardLocalChanges, syncRunner } from '../operations';
+import { createWsName, createWsPath } from '@bangle.io/ws-path';
+import {
+  discardLocalChanges,
+  getIsSyncingRef,
+  syncRunner,
+} from '../state/operations';
+import { setupTestExtension } from '@bangle.io/test-utils-2';
+import { WsPath } from '@bangle.io/shared-types';
+import { WsName } from '@bangle.io/storage';
+import { nsmGhSlice } from '../state';
 
 jest.setTimeout(30000);
 jest.retryTimes(4);
@@ -47,11 +58,10 @@ if (!githubOwner) {
 }
 
 let githubWsMetadata: GithubWsMetadata;
-let defaultNoteWsPath: string;
-let wsName: string,
-  store: BangleApplicationStore,
-  getAction: (name: string | RegExp) => any[];
+let defaultNoteWsPath: WsPath;
+let wsName: WsName;
 let abortController = new AbortController();
+
 let getTree = github.getRepoTree();
 const getLocalEntry = async (wsPath: string) => {
   const entry = await fileEntryManager.readEntry(wsPath);
@@ -69,16 +79,27 @@ const existsInRemote = async (wsPath: string) => {
   return tree.tree.has(wsPath);
 };
 
-beforeEach(async () => {
+afterAll(async () => {
+  // wait for network requests to finish
+  await sleep(200);
+});
+
+afterEach(async () => {
+  abortController.abort();
+
+  await sleep(100);
+});
+
+const setup = async () => {
+  wsName = createWsName('bangle-test-' + randomStr() + Date.now());
+
   await updateGhToken(githubToken);
 
   githubWsMetadata = {
     owner: githubOwner,
     branch: 'main',
-  };
+  } satisfies GithubWsMetadata;
 
-  abortController = new AbortController();
-  wsName = 'bangle-test-' + randomStr() + Date.now();
   await github.createRepo({
     description: 'Created by Bangle.io tests',
     config: {
@@ -88,10 +109,11 @@ beforeEach(async () => {
     },
   });
 
+  await sleep(1000);
+
   // make sure the repo is ready
   await waitForExpect(
     async () => {
-      await sleep(500);
       expect(
         await github.hasRepo({
           config: {
@@ -103,56 +125,42 @@ beforeEach(async () => {
       ).toBe(true);
     },
     10000,
-    500,
+    1000,
   );
 
-  ({ store, getAction } = createBasicTestStore({
+  const ctx = await setupTestExtension({
+    editor: true,
     extensions: [GithubStorageExt],
-    useEditorManagerSlice: true,
-    useUISlice: true,
-    onError: (err) => {
-      throw err;
-    },
-  }));
+    abortSignal: abortController.signal,
+  });
 
-  await workspace.createWorkspace(
-    wsName,
-    GITHUB_STORAGE_PROVIDER_NAME,
-    githubWsMetadata,
-  )(store.state, store.dispatch, store);
+  await ctx.createWorkspace(wsName, GITHUB_STORAGE_PROVIDER_NAME, {
+    owner: githubOwner,
+    branch: 'main',
+  });
 
-  defaultNoteWsPath = `${wsName}:welcome-to-bangle.md`;
+  defaultNoteWsPath = createWsPath(`${wsName}:welcome-to-bangle.md`);
 
   await getNoteAsString(defaultNoteWsPath);
-});
 
-afterAll(async () => {
-  // wait for network requests to finish
-  await sleep(200);
-});
-
-afterEach(async () => {
-  abortController.abort();
-  store?.destroy();
-
-  await sleep(100);
-});
-
-const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
-  return (
-    await workspace.getNote(wsPath)(store.state, store.dispatch, store)
-  )?.toString();
+  return ctx;
 };
 
-const pullChanges = async () => {
-  notification.clearAllNotifications()(store.state, store.dispatch);
-  const result = await syncRunner(wsName, abortController.signal)(
-    store.state,
-    store.dispatch,
-    store,
-  );
+const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
+  return (await nsmApi2.workspace.getNote(createWsPath(wsPath)))?.toString();
+};
 
-  return result;
+const pullChanges = async (ctx: Awaited<ReturnType<typeof setup>>) => {
+  nsmApi2.ui.clearAllNotifications();
+  await sleep(50);
+
+  ctx.testStore.dispatch(syncRunner(abortController.signal));
+  // to give some time for the sync to start
+  await sleep(100);
+
+  await waitForExpect(() => {
+    expect(getIsSyncingRef(ctx.testStore).current).toBe(false);
+  }, 5000);
 };
 
 /**
@@ -168,6 +176,7 @@ const pullChanges = async () => {
 describe('pull changes', () => {
   describe('T2, T3: remote note modified and/or deleted, local unchanged', () => {
     test('remote note modified, local unchanged', async () => {
+      const ctx = await setup();
       // this note is automatically created when setting up the workspace
       let note = await getNoteAsString(defaultNoteWsPath);
       expect(note?.toString()).toContain('Welcome to Bangle.io');
@@ -221,9 +230,9 @@ describe('pull changes', () => {
         `doc(heading("Welcome to Bangle.io"), paragraph("This is a sample note to get things started."))`,
       );
 
-      await pullChanges();
-      note = await getNoteAsString(defaultNoteWsPath);
+      await pullChanges(ctx);
 
+      note = await getNoteAsString(defaultNoteWsPath);
       // note should now be updated
       expect(note?.toString()).toEqual(
         'doc(paragraph("I am changed content"))',
@@ -248,6 +257,7 @@ describe('pull changes', () => {
     });
 
     test('variety of remote changes: deleted and another is modified', async () => {
+      const ctx = await setup();
       // Make a direct remote change outside the realm of our app
       await github.pushChanges({
         abortSignal: abortController.signal,
@@ -300,7 +310,7 @@ describe('pull changes', () => {
         ],
       });
 
-      await pullChanges();
+      await pullChanges(ctx);
 
       // local copy test-1 should be deleted
       expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
@@ -308,13 +318,12 @@ describe('pull changes', () => {
         await getNoteAsString(wsName + ':test-2.md'),
       ).toMatchInlineSnapshot(`"doc(paragraph("I am test-2 but modified"))"`);
 
-      workspace.refreshWsPaths()(store.state, store.dispatch);
+      nsmApi2.workspace.refresh();
 
       await waitForExpect(async () => {
         // store should only have two files left, the test-2.md and the default note
         expect(
-          await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
-            .wsPaths,
+          [...(nsmApi2.workspace.workspaceState().noteWsPaths ?? [])].sort(),
         ).toEqual([`${wsName}:test-2.md`, defaultNoteWsPath]);
       });
     });
@@ -322,6 +331,7 @@ describe('pull changes', () => {
 
   describe('T3: remote deleted, local unchanged', () => {
     test('last remaining remote note is deleted, repo becomes empty', async () => {
+      const ctx = await setup();
       const sha = await github.getLatestCommitSha({
         abortSignal: abortController.signal,
         config: { ...githubWsMetadata, githubToken, repoName: wsName },
@@ -347,7 +357,7 @@ describe('pull changes', () => {
       // because we have not synced yet.
       expect(note?.toString()).toContain('Welcome to Bangle.io');
 
-      await pullChanges();
+      await pullChanges(ctx);
 
       note = await getNoteAsString(defaultNoteWsPath);
       // note should now be deleted
@@ -361,7 +371,8 @@ describe('pull changes', () => {
 
   describe('T4: remote unchanged, local modified', () => {
     test('basic', async () => {
-      workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
+      const ctx = await setup();
+      nsmApi2.workspace.pushPrimaryWsPath(defaultNoteWsPath);
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
@@ -370,10 +381,7 @@ describe('pull changes', () => {
       });
 
       const modifiedText = `hello I am modified`;
-      await workspace.writeNote(
-        defaultNoteWsPath,
-        createPMNode([], modifiedText),
-      )(store.state, store.dispatch, store);
+      await nsmApi2.workspace.writeNoteFromMd(defaultNoteWsPath, modifiedText);
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(defaultNoteWsPath)).toContain(
@@ -398,7 +406,7 @@ describe('pull changes', () => {
         },
       ]);
 
-      await pullChanges();
+      await pullChanges(ctx);
 
       await waitForExpect(
         async () => {
@@ -416,6 +424,7 @@ describe('pull changes', () => {
 
   describe('T5: remote modified, local modified - conflict', () => {
     test('produces a conflict', async () => {
+      const ctx = await setup();
       // Make a direct remote change outside the realm of our app
       // setup up the two test notes
       await github.pushChanges({
@@ -440,7 +449,7 @@ describe('pull changes', () => {
       });
 
       // open the test2 note
-      workspace.pushWsPath(`${wsName}:test-2.md`)(store.state, store.dispatch);
+      nsmApi2.workspace.pushWsPath(createWsPath(`${wsName}:test-2.md`));
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(wsName + ':test-2.md')).toEqual(
@@ -449,14 +458,14 @@ describe('pull changes', () => {
       });
 
       await sleep(0);
-      await pullChanges();
+      await pullChanges(ctx);
 
       // locally modify test-2 note
       const modifiedText = `test-2 hello I am modified`;
-      await workspace.writeNote(
-        `${wsName}:test-2.md`,
-        createPMNode([], modifiedText),
-      )(store.state, store.dispatch, store);
+      await nsmApi2.workspace.writeNoteFromMd(
+        createWsPath(`${wsName}:test-2.md`),
+        modifiedText,
+      );
 
       expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
         modifiedText,
@@ -484,13 +493,13 @@ describe('pull changes', () => {
         deletions: [],
       });
 
-      await pullChanges();
+      await pullChanges(ctx);
 
       await waitForExpect(() => {
         expect(
-          ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
+          nsmGhSlice.get(ctx.testStore.state).conflictedWsPaths,
         ).toHaveLength(1);
-      });
+      }, 4000);
 
       // file should still be able to read the new changes
 
@@ -508,6 +517,7 @@ describe('pull changes', () => {
 
   describe('T6: local modified, remote deleted', () => {
     test('a note which was locally modified should not be updated if it was deleted upstream', async () => {
+      const ctx = await setup();
       // Make a direct remote change outside the realm of our app
       await github.pushChanges({
         abortSignal: abortController.signal,
@@ -530,13 +540,14 @@ describe('pull changes', () => {
         deletions: [],
       });
 
-      let test2WsPath = `${wsName}:test-2.md`;
+      let test2WsPath = createWsPath(`${wsName}:test-2.md`);
 
-      await pullChanges();
+      await pullChanges(ctx);
 
       await getNoteAsString(wsName + ':test-2.md');
       // open test 2 in our app
-      workspace.pushWsPath(test2WsPath)(store.state, store.dispatch);
+
+      nsmApi2.workspace.pushWsPath(createWsPath(test2WsPath));
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(test2WsPath)).toContain('I am test-2');
@@ -545,11 +556,7 @@ describe('pull changes', () => {
       // locally modify test-2 note
       const modifiedText = `test-2 hello I am modified`;
 
-      await workspace.writeNote(test2WsPath, createPMNode([], modifiedText))(
-        store.state,
-        store.dispatch,
-        store,
-      );
+      await nsmApi2.workspace.writeNoteFromMd(test2WsPath, modifiedText);
 
       expect(await getNoteAsString(test2WsPath)).toContain(modifiedText);
       let test2Entry = await getLocalEntry(test2WsPath);
@@ -575,7 +582,7 @@ describe('pull changes', () => {
       await sleep(50);
       expect(await existsInRemote(test2WsPath)).toBe(false);
 
-      await pullChanges();
+      await pullChanges(ctx);
       expect(await existsInRemote(test2WsPath)).toBe(true);
 
       expect(await getNoteAsString(test2WsPath)).toContain(modifiedText);
@@ -588,7 +595,8 @@ describe('pull changes', () => {
 
   describe('T7: local deleted, remote unchanged', () => {
     test('basic', async () => {
-      workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
+      const ctx = await setup();
+      nsmApi2.workspace.pushWsPath(defaultNoteWsPath);
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
@@ -596,17 +604,13 @@ describe('pull changes', () => {
         );
       });
 
-      await workspace.deleteNote(defaultNoteWsPath)(
-        store.state,
-        store.dispatch,
-        store,
-      );
+      await nsmApi2.workspace.deleteNote(defaultNoteWsPath);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(true);
       // local entry should be soft deleted until the sync
       let defaultEntry = await getLocalEntry(defaultNoteWsPath);
       expect(isEntryDeleted(defaultEntry!)).toBe(true);
-      await pullChanges();
+      await pullChanges(ctx);
       await sleep(50);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(false);
@@ -618,7 +622,8 @@ describe('pull changes', () => {
 
   describe('T8: local is deleted, remote is modified', () => {
     test('basic', async () => {
-      workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
+      const ctx = await setup();
+      nsmApi2.workspace.pushWsPath(defaultNoteWsPath);
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
@@ -626,11 +631,7 @@ describe('pull changes', () => {
         );
       });
 
-      await workspace.deleteNote(defaultNoteWsPath)(
-        store.state,
-        store.dispatch,
-        store,
-      );
+      await nsmApi2.workspace.deleteNote(defaultNoteWsPath);
       // local entry should be soft deleted
       let defaultEntry = await getLocalEntry(defaultNoteWsPath);
       expect(isEntryDeleted(defaultEntry!)).toBe(true);
@@ -651,8 +652,9 @@ describe('pull changes', () => {
         ],
         deletions: [],
       });
+      await sleep(500);
 
-      await pullChanges();
+      await pullChanges(ctx);
       await sleep(50);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(true);
@@ -669,7 +671,8 @@ describe('pull changes', () => {
 
   describe('T9: local is deleted, remote is deleted', () => {
     test('basic', async () => {
-      workspace.pushWsPath(defaultNoteWsPath)(store.state, store.dispatch);
+      const ctx = await setup();
+      nsmApi2.workspace.pushWsPath(defaultNoteWsPath);
 
       await waitForExpect(async () => {
         expect(await getNoteAsString(defaultNoteWsPath)).toEqual(
@@ -677,11 +680,7 @@ describe('pull changes', () => {
         );
       });
 
-      await workspace.deleteNote(defaultNoteWsPath)(
-        store.state,
-        store.dispatch,
-        store,
-      );
+      await nsmApi2.workspace.deleteNote(defaultNoteWsPath);
       // local entry should be soft deleted
       let defaultEntry = await getLocalEntry(defaultNoteWsPath);
       expect(isEntryDeleted(defaultEntry!)).toBe(true);
@@ -698,7 +697,7 @@ describe('pull changes', () => {
         deletions: [{ path: 'welcome-to-bangle.md' }],
       });
 
-      await pullChanges();
+      await pullChanges(ctx);
       await sleep(50);
 
       expect(await existsInRemote(defaultNoteWsPath)).toBe(false);
@@ -711,9 +710,10 @@ describe('pull changes', () => {
 
 describe('new note creation', () => {
   test('a new note is created locally and then deleted should have no effect on syncing', async () => {
-    const wsPath = `${wsName}:test-1.md`;
+    const ctx = await setup();
+    const wsPath = createWsPath(`${wsName}:test-1.md`);
 
-    await workspace.createNote(wsPath)(store.state, store.dispatch, store);
+    await nsmApi2.workspace.createNote(wsPath);
     await sleep(0);
 
     expect(await getNoteAsString(wsPath)).toEqual(
@@ -723,7 +723,7 @@ describe('new note creation', () => {
     let entry = await getLocalEntry(wsPath);
     expect(isEntryNew(entry!)).toBe(true);
 
-    await workspace.deleteNote(wsPath)(store.state, store.dispatch, store);
+    await nsmApi2.workspace.deleteNote(wsPath);
 
     await sleep(0);
     entry = await getLocalEntry(wsPath);
@@ -731,7 +731,7 @@ describe('new note creation', () => {
     expect(isEntryDeleted(entry!)).toBe(true);
 
     await sleep(0);
-    await pullChanges();
+    await pullChanges(ctx);
 
     expect(await getLocalEntry(wsPath)).toBeUndefined();
     expect(await getNoteAsString(wsPath)).toBeUndefined();
@@ -739,9 +739,10 @@ describe('new note creation', () => {
   });
 
   test('a new note is created locally and in remote simultaneously, should cause conflict', async () => {
-    const wsPath = `${wsName}:test-1.md`;
+    const ctx = await setup();
+    const wsPath = createWsPath(`${wsName}:test-1.md`);
 
-    await workspace.createNote(wsPath)(store.state, store.dispatch, store);
+    await nsmApi2.workspace.createNote(wsPath);
 
     await github.pushChanges({
       abortSignal: abortController.signal,
@@ -760,9 +761,11 @@ describe('new note creation', () => {
       deletions: [],
     });
 
-    expect(
-      ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
-    ).toHaveLength(0);
+    await sleep(400);
+
+    expect(nsmGhSlice.get(ctx.testStore.state).conflictedWsPaths).toHaveLength(
+      0,
+    );
 
     await sleep(0);
 
@@ -772,11 +775,11 @@ describe('new note creation', () => {
 
     await sleep(0);
 
-    await pullChanges();
+    await pullChanges(ctx);
 
     await waitForExpect(() => {
       expect(
-        ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
+        nsmGhSlice.get(ctx.testStore.state).conflictedWsPaths,
       ).toHaveLength(1);
     });
 
@@ -789,9 +792,10 @@ describe('new note creation', () => {
 
 describe('discard local changes', () => {
   test('new file that does not exist upstream is removed', async () => {
-    const wsPath = `${wsName}:test-2.md`;
+    const ctx = await setup();
+    const wsPath = createWsPath(`${wsName}:test-2.md`);
 
-    await workspace.createNote(wsPath)(store.state, store.dispatch, store);
+    await nsmApi2.workspace.createNote(wsPath);
 
     expect(await getNoteAsString(wsPath)).toEqual(
       `doc(heading("test-2"), paragraph("Hello world!"))`,
@@ -800,18 +804,21 @@ describe('discard local changes', () => {
     const modifiedText = `test-2 hello I am modified`;
     const doc = createPMNode([], modifiedText);
 
-    await workspace.writeNote(wsPath, doc)(store.state, store.dispatch, store);
+    await nsmApi2.workspace.writeNoteFromMd(wsPath, modifiedText);
 
     expect(await getNoteAsString(wsPath)).toEqual(
       `doc(paragraph("test-2 hello I am modified"))`,
     );
 
-    await discardLocalChanges(wsName)(store.state, store.dispatch, store);
+    ctx.testStore.dispatch(discardLocalChanges(wsName));
+
+    await sleep(100);
 
     expect(await getNoteAsString(wsPath)).toEqual(undefined);
   });
 
   test('locally modified file is reverted', async () => {
+    const ctx = await setup();
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
@@ -830,24 +837,24 @@ describe('discard local changes', () => {
       deletions: [],
     });
 
-    await pullChanges();
+    await pullChanges(ctx);
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1',
     );
 
-    const doc = createPMNode([], 'I am modified');
-    await workspace.writeNote(wsName + ':test-1.md', doc)(
-      store.state,
-      store.dispatch,
-      store,
+    await nsmApi2.workspace.writeNoteFromMd(
+      createWsPath(wsName + ':test-1.md'),
+      'I am modified',
     );
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am modified',
     );
 
-    await discardLocalChanges(wsName)(store.state, store.dispatch, store);
+    ctx.testStore.dispatch(discardLocalChanges(wsName));
+
+    await sleep(50);
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1',
@@ -855,6 +862,7 @@ describe('discard local changes', () => {
   });
 
   test('deleted file locally is placed back', async () => {
+    const ctx = await setup();
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
@@ -873,21 +881,18 @@ describe('discard local changes', () => {
       deletions: [],
     });
 
-    await pullChanges();
+    await pullChanges(ctx);
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1',
     );
 
-    await workspace.deleteNote(wsName + ':test-1.md')(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await nsmApi2.workspace.deleteNote(createWsPath(wsName + ':test-1.md'));
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toBe(undefined);
 
-    await discardLocalChanges(wsName)(store.state, store.dispatch, store);
+    ctx.testStore.dispatch(discardLocalChanges(wsName));
+    await sleep(50);
 
     expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1',

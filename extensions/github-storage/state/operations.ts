@@ -46,7 +46,7 @@ const getGhConfig = async (
   return ghConfig;
 };
 
-const getIsSyncingRef = ref(() => false);
+export const getIsSyncingRef = ref(() => false);
 
 export const syncRunner = operation({
   deferred: false,

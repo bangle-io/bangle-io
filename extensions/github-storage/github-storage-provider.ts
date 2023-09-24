@@ -95,6 +95,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
       });
     }
 
+    if (abortSignal.aborted) {
+      return [];
+    }
+
     // TODO querying files from github sometimes can result in `Git Repository is empty.` base error
     // lets make sure we can retry it.
     const { tree } = await this._getTree({
@@ -104,6 +108,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     });
 
     let allKeys = await fileEntryManager.listAllKeys(wsName);
+
     let softDeletedKeys = new Set(
       await fileEntryManager.listSoftDeletedKeys(wsName),
     );
@@ -117,6 +122,13 @@ export class GithubStorageProvider implements BaseStorageProvider {
     if (!createOpts.owner) {
       throw new BaseError({
         message: 'Github owner is required',
+        code: INVALID_GITHUB_TOKEN,
+      });
+    }
+
+    if (!createOpts.branch) {
+      throw new BaseError({
+        message: 'Github branch is required',
         code: INVALID_GITHUB_TOKEN,
       });
     }

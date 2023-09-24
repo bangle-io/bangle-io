@@ -70,7 +70,7 @@ describe('NotesPalette', () => {
       </ctx.ContextProvider>,
     );
 
-    await sleep(150);
+    await sleep(250);
 
     let result = container.querySelectorAll(
       '.B-ui-components_universal-palette-item',

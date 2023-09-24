@@ -9,6 +9,7 @@ import {
 } from '@bangle.io/utils';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
+import { githubGraphqlFetch, githubRestFetch } from './github-fetch';
 
 export interface GithubTokenConfig {
   githubToken: string;
@@ -94,17 +95,12 @@ async function makeV3GetApi({
   token: string;
   headers?: { [r: string]: string };
 }): Promise<{ data: any; headers: Response['headers'] }> {
-  const url = path.includes('https://')
-    ? path
-    : `https://api.github.com${path}`;
-
-  const res = await fetch(url, {
+  const res = await githubRestFetch({
+    path,
+    token,
+    abortSignal,
+    headers,
     method: 'GET',
-    signal: abortSignal,
-    headers: {
-      Authorization: `token ${token}`,
-      ...(headers || {}),
-    },
   });
 
   if (!res.ok) {
@@ -135,16 +131,10 @@ async function makeGraphql({
   variables: { [r: string]: any };
   token: string;
 }): Promise<any> {
-  const res = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `bearer ${token}`,
-    },
-    body: JSON.stringify({
-      query: query,
-      variables: variables,
-    }),
+  const res = await githubGraphqlFetch({
+    query,
+    variables,
+    token,
   });
 
   const json = await res.json();
@@ -336,7 +326,9 @@ export async function* getRepos({
  *    if the latest commit hash hasn't changed since the last call.
  * 2. it will also make sure to only allow one request at a time to the github api.
  */
-export function getRepoTree() {
+export function getRepoTree(): (
+  arg: Omit<Parameters<typeof _getTree>[0], 'commitSha'>,
+) => Promise<GHTree> {
   let prevResult: undefined | Awaited<ReturnType<typeof _getTree>>;
   let queue = serialExecuteQueue();
 
@@ -456,7 +448,7 @@ async function _getTree({
 
   const list = (tree as any[])
     .filter((t) => {
-      return allowedFilePath(t.path);
+      return t && t.type === 'blob' && allowedFilePath(t.path);
     })
     .map(
       (t: {
@@ -508,7 +500,7 @@ export async function pushChanges({
   additions: Array<{ path: string; base64Content: string }>;
   deletions: Array<{ path: string }>;
   config: GithubConfig;
-}): Promise<Array<[string, string]>> {
+}): Promise<void> {
   let query = `
     mutation ($input: CreateCommitOnBranchInput!) {
       createCommitOnBranch(input: $input) {
@@ -570,7 +562,7 @@ export async function pushChanges({
     abortSignal,
   });
 
-  return result2.files.map((r: any) => {
+  result2.files.forEach((r: any) => {
     const blobUrl = r.blob_url.split('/');
     const blob = blobUrl[blobUrl.indexOf('blob') + 1];
 
@@ -701,22 +693,21 @@ export async function initializeRepo({
 }): Promise<void> {
   const fileContent = `## Welcome to Bangle.io\n This is a sample note to get things started.`;
   const filePath = 'welcome-to-bangle.md';
-  const res = await fetch(
-    `https://api.github.com/repos/${config.owner}/${config.repoName}/contents/` +
+  const res = await githubRestFetch({
+    path:
+      `https://api.github.com/repos/${config.owner}/${config.repoName}/contents/` +
       filePath,
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: `token ${config.githubToken}`,
-        Accept: 'application/vnd.github.v3.raw+json',
-      },
-      body: JSON.stringify({
-        message: 'Bangle.io first commit',
-        content: btoa(fileContent),
-        branch: config.branch,
-      }),
+    method: 'PUT',
+    token: config.githubToken,
+    headers: {
+      Accept: 'application/vnd.github.v3.raw+json',
     },
-  );
+    body: JSON.stringify({
+      message: 'Bangle.io first commit',
+      content: btoa(fileContent),
+      branch: config.branch,
+    }),
+  });
 
   if (!res.ok) {
     const message = await res.json().then((data) => {
@@ -754,7 +745,12 @@ export async function hasRepo({
     abortSignal,
   }).then(
     () => true,
-    () => false,
+    (error) => {
+      console.log(config.owner, config.repoName);
+      console.error(error);
+
+      return false;
+    },
   );
 }
 
@@ -765,10 +761,11 @@ export async function createRepo({
   config: GithubConfig;
   description?: string;
 }): Promise<void> {
-  const res = await fetch(`https://api.github.com/user/repos`, {
+  const res = await githubRestFetch({
+    path: `https://api.github.com/user/repos`,
     method: 'POST',
+    token: config.githubToken,
     headers: {
-      Authorization: `token ${config.githubToken}`,
       Accept: 'application/vnd.github.v3.raw+json',
     },
     body: JSON.stringify({

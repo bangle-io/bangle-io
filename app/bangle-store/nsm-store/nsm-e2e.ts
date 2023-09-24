@@ -76,7 +76,9 @@ let e2e: NSME2eTypes = {
   },
 };
 
-window._nsmE2e = e2e;
+if (typeof window !== 'undefined') {
+  window._nsmE2e = e2e;
+}
 
 const nsmE2eSyncEffect = effect(
   function nsmE2eSyncEffect(store) {

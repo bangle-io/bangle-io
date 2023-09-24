@@ -11,7 +11,9 @@ export function mainApi(): NaukarMainAPI {
 
 export function registerMainApi(api: NaukarMainAPI, abortSignal: AbortSignal) {
   if (_mainApi) {
-    throw new Error('mainApi already registered');
+    console.warn('mainApi already registered');
+
+    return;
   }
 
   console.debug('[naukar] mainApi registered');
