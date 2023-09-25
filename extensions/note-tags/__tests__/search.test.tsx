@@ -24,18 +24,19 @@ afterEach(async () => {
 });
 
 function setup() {
-  const { eternalVars } = setupTestExtension({
+  const ctx = setupTestExtension({
     extensions: [noteTags],
     abortSignal: abortController.signal,
     editor: true,
   });
 
-  const { renderDoc } = testEditor(eternalVars);
+  const { renderDoc } = testEditor(ctx.eternalVars);
 
   return {
     renderDoc,
   };
 }
+
 describe('search tag in a doc', () => {
   test('works', () => {
     const { renderDoc } = setup();

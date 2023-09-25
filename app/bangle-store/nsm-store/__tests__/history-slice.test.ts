@@ -6,17 +6,6 @@ import { goToLocation, nsmPageSlice } from '@bangle.io/slice-page';
 
 import { historyEffects, historySlice } from '../history-slice';
 
-jest.mock('@bangle.io/slice-workspace', () => {
-  const other = jest.requireActual('@bangle.io/slice-workspace');
-  const workspaceSliceKey = other.workspaceSliceKey;
-  workspaceSliceKey.getSliceStateAsserted = jest.fn();
-
-  return {
-    ...other,
-    workspaceSliceKey,
-  };
-});
-
 let historyPushSpy: jest.SpyInstance, historyReplaceSpy: jest.SpyInstance;
 
 beforeAll(() => {

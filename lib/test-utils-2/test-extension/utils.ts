@@ -1,9 +1,7 @@
-import waitForExpect from 'wait-for-expect';
-
 import { internalApi, nsmApi2 } from '@bangle.io/api';
 import { WorkspaceType } from '@bangle.io/constants';
 import type { WsPath } from '@bangle.io/shared-types';
-import { checkConditionUntilTrue, sleep } from '@bangle.io/utils';
+import { checkConditionUntilTrue } from '@bangle.io/utils';
 import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 export async function createNotes(
@@ -20,7 +18,7 @@ export async function createNotes(
   }
 
   for (const [wsPath, content] of noteWsPaths) {
-    await nsmApi2.workspace.writeNoteFromMd(createWsPath(wsPath), content);
+    await nsmApi2.workspace.createNoteFromMd(createWsPath(wsPath), content);
   }
 
   const { loadFirst } = opts;
@@ -41,10 +39,14 @@ export async function createNotes(
   }
 }
 
-export async function createWorkspace(wsName = 'test-ws-1') {
+export async function createWorkspace(
+  wsName = 'test-ws-1',
+  type = WorkspaceType.Browser,
+  opts: Record<string, unknown> = {},
+) {
   return internalApi.workspace.createWorkspace(
     createWsName(wsName),
-    WorkspaceType.Browser,
-    {},
+    type,
+    opts,
   );
 }

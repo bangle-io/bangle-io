@@ -229,7 +229,5 @@ describe('search results', () => {
     await waitFor(() => {
       expect(screen.getByText('Found 3 notes')).toBeDefined();
     });
-
-    console.log('end test');
   });
 });

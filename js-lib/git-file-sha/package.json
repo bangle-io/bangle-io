@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@bangle.io/weak-cache": "workspace:*",
-    "base64-js": "^1.5.1",
     "tslib": "2.6.0",
     "typescript": "5.1.6"
   },

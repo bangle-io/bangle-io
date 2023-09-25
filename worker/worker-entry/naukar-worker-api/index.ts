@@ -4,7 +4,7 @@ import type { NaukarStore } from '../store';
 import { abortableInterface } from './abortable';
 import { editorInterface } from './editor';
 import { replicaSlicesInterface } from './replica-slices';
-import { testInterface } from './test';
+import { testInterface } from './test-interface';
 import { workspaceInterface } from './workspace';
 
 export function naukarWorkerAPI(

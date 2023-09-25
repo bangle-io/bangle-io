@@ -1,11 +1,8 @@
 import { internalApi } from '@bangle.io/api';
 import { naukarReplicaSlicesDispatch } from '@bangle.io/bangle-store';
 import { setupStore } from '@bangle.io/bangle-store-context';
-import {
-  getPlugins,
-  markdownItPlugins,
-  rawSpecs,
-} from '@bangle.io/editor-common';
+import { markdownItPlugins, rawSpecs } from '@bangle.io/editor-common';
+import { getPlugins } from '@bangle.io/editor-plugins';
 import {
   Extension,
   extensionRegistryEffects,
@@ -18,6 +15,7 @@ import {
 } from '@bangle.io/nsm-slice-workspace';
 import type { EternalVars } from '@bangle.io/shared-types';
 import { nsmEditorManagerSlice } from '@bangle.io/slice-editor-manager';
+import { nsmNotificationSlice } from '@bangle.io/slice-notification';
 import { nsmPageSlice } from '@bangle.io/slice-page';
 import {
   refreshWorkspace,
@@ -84,6 +82,7 @@ const getStuff = (
 
   if (opts.ui) {
     slices.push(nsmUISlice);
+    slices.push(nsmNotificationSlice);
     effects.push(...uiEffects);
   }
 

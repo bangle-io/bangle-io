@@ -1,3 +1,6 @@
+/**
+ * @jest-environment @bangle.io/jsdom-env
+ */
 import { setupTestStore } from '@bangle.io/test-utils-2';
 
 import {

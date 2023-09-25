@@ -33,13 +33,7 @@ async function setup({
   wsName,
   notes = [],
 }: { wsName?: string; notes?: [string, string][] } = {}) {
-  const {
-    testStore,
-    eternalVars,
-    ContextProvider,
-    createNotes,
-    createWorkspace,
-  } = setupTestExtension({
+  const ctx = setupTestExtension({
     extensions: [noteOutlineExtension],
     abortSignal: abortController.signal,
     editor: true,
@@ -47,14 +41,11 @@ async function setup({
   });
 
   if (wsName) {
-    await createWorkspace(wsName);
+    await ctx.createWorkspace(wsName);
   }
-  await createNotes(notes, { loadFirst: true });
+  await ctx.createNotes(notes, { loadFirst: true });
 
-  return {
-    ContextProvider,
-    testStore,
-  };
+  return ctx;
 }
 
 test('renders when no headings found', async () => {

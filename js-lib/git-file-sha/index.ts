@@ -1,30 +1,71 @@
-import base64 from 'base64-js';
-
 import { weakCache } from '@bangle.io/weak-cache';
 
-export const fileToBase64 = async <T extends Blob>(file: T) => {
-  const buffer = await file.arrayBuffer();
+export async function calculateGitFileSha(file: Blob) {
+  // Read the file content as ArrayBuffer.
+  const arrayBuffer = await file.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  const encoder = new TextEncoder();
 
-  return base64.fromByteArray(new Uint8Array(buffer));
-};
+  // Prepend the Git header.
+  const header = encoder.encode(`blob ${uint8Array.length}\0`);
+  const data = new Uint8Array(header.length + uint8Array.length);
+  data.set(header);
+  data.set(uint8Array, header.length);
 
-export async function calculateGitFileSha<T extends Blob>(file: T) {
-  const str = await fileToBase64(file);
+  // Check the environment.
+  if (
+    typeof globalThis !== 'undefined' &&
+    globalThis.crypto &&
+    globalThis.crypto.subtle
+  ) {
+    // Running in browser environment
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-1', data);
 
-  const len = base64.byteLength(str);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  } else if (typeof require !== 'undefined') {
+    // Running in Node.js environment
+    const crypto = require('crypto');
+    const hash = crypto.createHash('sha1');
+    hash.update(data);
 
-  const uint8array = base64.toByteArray(btoa(`blob ${len}\0${atob(str)}`));
-
-  const buffer = await crypto.subtle.digest('SHA-1', uint8array.buffer);
-
-  const sha = Array.from(new Uint8Array(buffer))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-
-  // Uncomment to debug what file content corresponds to what sha
-  // console.log(sha, JSON.stringify(atob(str)));
-
-  return sha;
+    return hash.digest('hex');
+  } else {
+    throw new Error('Unsupported environment');
+  }
 }
 
 export const cachedCalculateGitFileSha = weakCache(calculateGitFileSha);
+
+export async function fileToBase64(blob: Blob): Promise<string> {
+  // Check if running in browser environment
+  if (
+    typeof globalThis !== 'undefined' &&
+    'Blob' in globalThis &&
+    blob instanceof Blob
+  ) {
+    // Read the Blob as ArrayBuffer
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    let binary = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+      binary += String.fromCharCode(uint8Array[i]!);
+    }
+
+    return btoa(binary);
+  }
+  // Check if running in Node.js environment
+  else if (typeof Buffer !== 'undefined') {
+    const arrayBuffer = await blob.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Convert to Base64
+    return buffer.toString('base64');
+  } else {
+    throw new Error(
+      'Unsupported environment: Unable to convert blob to base64 string',
+    );
+  }
+}

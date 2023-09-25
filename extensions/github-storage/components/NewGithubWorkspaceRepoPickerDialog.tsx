@@ -13,6 +13,7 @@ import {
 import { useDebouncedValue } from '@bangle.io/utils';
 import { createWsName } from '@bangle.io/ws-path';
 
+import type { GithubWsMetadata } from '../common';
 import {
   GITHUB_STORAGE_PROVIDER_NAME,
   NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
@@ -47,14 +48,16 @@ export function NewGithubWorkspaceRepoPickerDialog() {
     }
     try {
       updateIsLoading(true);
+
+      const metadata = {
+        owner: selectedRepo.owner,
+        branch: selectedRepo.branch,
+      } satisfies GithubWsMetadata;
+
       await internalApi.workspace.createWorkspace(
         createWsName(selectedRepo.name),
         GITHUB_STORAGE_PROVIDER_NAME,
-        {
-          githubToken: githubToken,
-          owner: selectedRepo.owner,
-          branch: selectedRepo.branch,
-        },
+        metadata,
       );
 
       (window as any).fathom?.trackGoal('JSUCQKTL', 0);
@@ -65,7 +68,7 @@ export function NewGithubWorkspaceRepoPickerDialog() {
         updateIsLoading(false);
       }
     }
-  }, [onDismiss, selectedRepo, githubToken]);
+  }, [onDismiss, selectedRepo]);
 
   useEffect(() => {
     if (!githubToken) {

@@ -1,363 +1,257 @@
-import { notification, page, workspace } from '@bangle.io/api';
-import type { SliceSideEffect } from '@bangle.io/create-store';
-import {
-  createBasicTestStore,
-  setupMockWorkspaceWithNotes,
-  waitForExpect,
-} from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
+/**
+ * @jest-environment @bangle.io/jsdom-env
+ */
+import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { Extension, nsmApi2 } from '@bangle.io/api';
+import { githubEffects, nsmGhSlice } from '../state';
+import githubExt from '../index';
+import { githubSyncEffect, githubWorkspaceEffect } from '../state/effects';
+import { GITHUB_STORAGE_PROVIDER_NAME, GithubWsMetadata } from '../common';
+import { updateGhToken } from '../database';
+import { getFileBlobFromTree, getRepoTree } from '../github-api-helpers';
+import { githubGraphqlFetch, githubRestFetch } from '../github-fetch';
+import { EffectCreator } from '@bangle.io/nsm-3';
 
-import {
-  getSyncInterval,
-  ghSliceKey,
-  GITHUB_STORAGE_PROVIDER_NAME,
-} from '../common';
-import {
-  conflictEffect,
-  ghWorkspaceEffect,
-  periodSyncEffect,
-  setConflictNotification,
-  syncEffect,
-} from '../github-storage-slice';
-import GithubStorageExt from '../index';
-import {
-  checkForConflicts,
-  setConflictedWsPaths,
-  syncRunner,
-} from '../operations';
+let abortController = new AbortController();
+const ext = githubExt;
+const originalEffects = [...githubEffects];
 
-jest.mock('@bangle.io/api', () => {
-  const originalModule = jest.requireActual('@bangle.io/api');
+const githubWsMetadata = {
+  owner: 'test-owner',
+  branch: 'test-branch',
+} satisfies GithubWsMetadata;
 
+jest.mock('../github-fetch', () => {
   return {
-    ...originalModule,
-    // page: {
-    //   ...originalModule.page,
-    //   pageLifeCycleTransitionedTo: jest.fn(),
-    //   getCurrentPageLifeCycle: jest.fn(),
-    // },
-    workspace: {
-      ...originalModule.workspace,
-      readWorkspaceInfo: jest.fn(),
-    },
+    githubGraphqlFetch: jest.fn().mockImplementation(async () => {
+      return new Response('{}', { status: 200 });
+    }),
+    githubRestFetch: jest.fn().mockImplementation(async () => {
+      return new Response('{}', { status: 200 });
+    }),
   };
 });
 
-jest.mock('../common', () => {
-  const originalModule = jest.requireActual('../common');
+const githubGraphqlFetchMocked = jest.mocked(githubGraphqlFetch);
 
-  return {
-    ...originalModule,
-    getSyncInterval: jest.fn(),
-  };
-});
+const githubRestFetchMocked = jest.mocked(githubRestFetch);
 
-jest.mock('../operations', () => {
-  const originalModule = jest.requireActual('../operations');
-
-  return {
-    ...originalModule,
-    syncRunner: jest.fn(),
-    checkForConflicts: jest.fn(),
-  };
-});
+function overrideEffects(effects: EffectCreator[]) {
+  const ext = githubExt;
+  if (ext.application) {
+    ext.application.nsmEffects = effects;
+  }
+}
 
 beforeEach(() => {
-  jest.mocked(workspace.readWorkspaceInfo).mockImplementation(async () => {
-    return undefined;
-  });
+  abortController = new AbortController();
+});
 
-  jest.mocked(getSyncInterval).mockImplementation(() => {
-    return 100;
+afterEach(async () => {
+  abortController.abort();
+  overrideEffects(originalEffects);
+
+  githubRestFetchMocked.mockImplementation(async () => {
+    return new Response('{}', { status: 200 });
   });
-  jest.mocked(syncRunner).mockImplementation(() => {
-    return async () => {};
-  });
-  jest.mocked(checkForConflicts).mockImplementation(() => {
-    return async () => false;
+  githubGraphqlFetchMocked.mockImplementation(async () => {
+    return new Response('{}', { status: 200 });
   });
 });
 
-let setup = ({
-  effects,
-  currentPageLifeCycle = 'passive',
-}: {
-  effects: Array<SliceSideEffect<any, any>>;
-  currentPageLifeCycle?: 'passive' | 'active';
-}) => {
-  if (GithubStorageExt.application?.slices?.[0]?.spec.sideEffect) {
-    GithubStorageExt.application.slices[0].spec.sideEffect = effects;
-  }
+test('no effects', async () => {
+  const ext = githubExt;
+  overrideEffects([]);
 
-  const { store, getAction } = createBasicTestStore({
-    extensions: [GithubStorageExt],
-    useEditorManagerSlice: true,
-    useUISlice: true,
-    onError: (err) => {
-      throw err;
-    },
-    overrideInitialSliceState: {
-      pageSlice: {
-        lifeCycleState: {
-          current: currentPageLifeCycle,
-          previous: 'frozen',
-        },
-      },
-    },
+  const ctx = await setupTestExtension({
+    extensions: [ext],
+    abortSignal: abortController.signal,
   });
 
-  return { store: ghSliceKey.getStore(store), getAction };
-};
+  await ctx.createWorkspace('test-w1');
+});
 
-describe('setConflictNotification', () => {
-  test('sets and clears notification', async () => {
-    const { store } = setup({ effects: [setConflictNotification] });
+describe('basic syncing', () => {
+  beforeEach(() => {
+    overrideEffects([githubWorkspaceEffect, githubSyncEffect]);
+  });
 
-    setConflictedWsPaths(['test:one.md'])(store.state, store.dispatch);
+  const setup = async () => {
+    githubRestFetchMocked.mockImplementation(async ({ path }) => {
+      const latestSha = `46f906403dd296361555a5aac696d5d79e2ba4ea`;
 
-    await waitForExpect(() => {
-      expect(
-        ghSliceKey.getSliceStateAsserted(store.state).conflictedWsPaths,
-      ).toEqual(['test:one.md']);
+      if (
+        path.includes(`/git/trees/${githubWsMetadata.branch}`) ||
+        path.includes(`/git/trees/${latestSha}`)
+      ) {
+        return new Response(
+          JSON.stringify({
+            sha: latestSha,
+            url: `https://api.github.com/repos/kepta/awesome-privacy/git/trees/${latestSha}`,
+            tree: [
+              {
+                path: 'dearest-step.md',
+                mode: '100644',
+                type: 'blob',
+                sha: '1944ba972cd5a052c5ca8999fe572341e41009e1',
+                size: 62,
+                url: 'https://api.github.com/repos/kepta/awesome-privacy/git/blobs/1944ba972cd5a052c5ca8999fe572341e41009e1',
+              },
+              {
+                path: 'digital-advantage.md',
+                mode: '100644',
+                type: 'blob',
+                sha: 'b9777d2858a0cbca135d57f24233fdd32a6366a5',
+                size: 47,
+                url: 'https://api.github.com/repos/kepta/awesome-privacy/git/blobs/b9777d2858a0cbca135d57f24233fdd32a6366a5',
+              },
+              {
+                path: 'misc',
+                mode: '040000',
+                type: 'tree',
+                sha: 'dbbbc64b21eccbeb459840a36c9ca3ab4d1d9c42',
+                url: 'https://api.github.com/repos/kepta/awesome-privacy/git/trees/dbbbc64b21eccbeb459840a36c9ca3ab4d1d9c42',
+              },
+              {
+                path: 'misc/ABOUT.md',
+                mode: '100644',
+                type: 'blob',
+                sha: 'ec7bffa7bf87956129779d06007ac9d4ae6b26a8',
+                size: 1725,
+                url: 'https://api.github.com/repos/kepta/awesome-privacy/git/blobs/ec7bffa7bf87956129779d06007ac9d4ae6b26a8',
+              },
+              {
+                path: 'misc/Contributing.md',
+                mode: '100644',
+                type: 'blob',
+                sha: 'b8c7ab677350242d2403d4eb17ad0f5542791043',
+                size: 1365,
+                url: 'https://api.github.com/repos/kepta/awesome-privacy/git/blobs/b8c7ab677350242d2403d4eb17ad0f5542791043',
+              },
+            ],
+            truncated: false,
+          }),
+          {
+            status: 200,
+          },
+        );
+      }
+
+      // gets the latest commit message
+      if (path.includes(`/commits/${githubWsMetadata.branch}`)) {
+        return new Response(
+          JSON.stringify({
+            sha: latestSha,
+          }),
+          {
+            status: 200,
+          },
+        );
+      }
+
+      console.warn('no match', path);
+
+      return new Response('{}', { status: 200 });
     });
 
-    await waitForExpect(() => {
-      expect(
-        notification.notificationSliceKey.getSliceStateAsserted(store.state)
-          .editorIssues,
-      ).toEqual([
+    githubGraphqlFetchMocked.mockImplementation(async () => {
+      return new Response(
+        JSON.stringify({
+          createCommitOnBranch: {
+            commit: {
+              url: 'https://github.com/kepta/awesome-privacy/commit/46f906403dd296361555a5aac696d5d79e2ba4ea',
+              oid: '46f906403dd296361555a5aac696d5d79e2ba4ea',
+            },
+          },
+        }),
         {
-          description:
-            'There is a conflict with test:one.md on Github. Please resolve the conflict on Github and then click on the sync button to resolve the conflict.',
-          serialOperation:
-            'operation::@bangle.io/github-storage:show-conflict-dialog',
-          severity: 'warning',
-          title: 'Encountered Conflict',
-          uid: expect.any(String),
-          wsPath: 'test:one.md',
+          status: 200,
         },
-      ]);
+      );
+    });
+    return {};
+  };
+
+  test('githubWorkspaceEffect', async () => {
+    await setup();
+    const ext = githubExt;
+
+    const ctx = await setupTestExtension({
+      extensions: [ext],
+      abortSignal: abortController.signal,
     });
 
-    setConflictedWsPaths(['test:one.md', 'test:two.md'])(
-      store.state,
-      store.dispatch,
+    await updateGhToken('test-token');
+
+    await ctx.createWorkspace(
+      'test-w1',
+      GITHUB_STORAGE_PROVIDER_NAME,
+      githubWsMetadata,
     );
 
     await waitForExpect(() => {
-      expect(
-        notification.notificationSliceKey.getSliceStateAsserted(store.state)
-          .editorIssues,
-      ).toHaveLength(2);
+      expect(nsmGhSlice.get(ctx.testStore.state).githubWsName).toBe('test-w1');
     });
 
-    setConflictedWsPaths(['test:two.md'])(store.state, store.dispatch);
+    // switching to non github workspace
+    await ctx.createWorkspace('test-w2');
 
     await waitForExpect(() => {
-      expect(
-        notification.notificationSliceKey.getSliceStateAsserted(store.state)
-          .editorIssues?.[0],
-      ).toMatchObject({
-        wsPath: 'test:two.md',
-      });
-    });
-
-    // when there are not conflicts, we should remove the notification
-    setConflictedWsPaths([])(store.state, store.dispatch);
-
-    await waitForExpect(() => {
-      expect(
-        notification.notificationSliceKey.getSliceStateAsserted(store.state)
-          .editorIssues,
-      ).toHaveLength(0);
-    });
-  });
-});
-
-describe('ghWorkspaceEffect', () => {
-  test('sets gh workspace name and unsets', async () => {
-    jest.mocked(workspace.readWorkspaceInfo).mockResolvedValue({
-      name: 'test-ws-1',
-      type: GITHUB_STORAGE_PROVIDER_NAME,
-      lastModified: 123,
-      metadata: {},
-    });
-    const { store } = setup({ effects: [ghWorkspaceEffect] });
-
-    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
-      [`test-ws-1:one.md`, `# Hello World 0`],
-    ]);
-
-    await waitForExpect(() => {
-      expect(
-        ghSliceKey.getSliceStateAsserted(store.state).githubWsName,
-      ).toEqual('test-ws-1');
-    });
-
-    // set to a non gh workspace
-    jest.mocked(workspace.readWorkspaceInfo).mockReset();
-    await setupMockWorkspaceWithNotes(store, 'test-ws-2', [
-      [`test-ws-2:one.md`, `# Hello World 0`],
-    ]);
-
-    await waitForExpect(() => {
-      expect(
-        ghSliceKey.getSliceStateAsserted(store.state).githubWsName,
-      ).toEqual(undefined);
-    });
-  });
-});
-
-describe('syncEffect', () => {
-  beforeEach(() => {
-    jest.mocked(workspace.readWorkspaceInfo).mockResolvedValue({
-      name: 'test-ws-1',
-      type: GITHUB_STORAGE_PROVIDER_NAME,
-      lastModified: 123,
-      metadata: {},
+      expect(nsmGhSlice.get(ctx.testStore.state).githubWsName).toBe(undefined);
     });
   });
 
-  test('runs syncEffect', async () => {
-    const { store } = setup({
-      effects: [ghWorkspaceEffect, syncEffect],
+  test('reads existing notes in github', async () => {
+    await setup();
+    const ext = githubExt;
+
+    const ctx = await setupTestExtension({
+      extensions: [ext],
+      abortSignal: abortController.signal,
+      editor: true,
     });
 
-    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
-      [`test-ws-1:one.md`, `# Hello World 0`],
-    ]);
+    await updateGhToken('test-token');
 
-    await waitForExpect(() => {
-      expect(
-        ghSliceKey.getSliceStateAsserted(store.state).githubWsName,
-      ).toEqual('test-ws-1');
-    });
-
-    await waitForExpect(() => {
-      expect(syncRunner).toHaveBeenCalledTimes(1);
-    });
-
-    store.dispatch({
-      name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME',
-      value: {
-        githubWsName: 'test-ws-2',
-      },
-    });
-
-    await waitForExpect(() => {
-      expect(syncRunner).toHaveBeenCalledTimes(2);
-    });
-  });
-
-  test('runs sync on regular intervals', async () => {
-    jest.mocked(getSyncInterval).mockReturnValue(5);
-
-    const { store } = setup({
-      currentPageLifeCycle: 'active',
-      effects: [ghWorkspaceEffect, periodSyncEffect],
-    });
-
-    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
-      [`test-ws-1:one.md`, `# Hello World 0`],
-    ]);
-
-    await waitForExpect(() => {
-      expect(
-        ghSliceKey.getSliceStateAsserted(store.state).githubWsName,
-      ).toEqual('test-ws-1');
-    });
-
-    await sleep(50);
-    const calledTimes = jest.mocked(syncRunner).mock.calls.length;
-
-    expect(calledTimes).toBeGreaterThan(5);
-
-    // if github wsName becomes undefined, it should stop running
-    store.dispatch({
-      name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME',
-      value: {
-        githubWsName: undefined,
-      },
-    });
-    await sleep(50);
-    expect(jest.mocked(syncRunner).mock.calls.length).toBeLessThanOrEqual(
-      calledTimes + 2,
+    await ctx.createWorkspace(
+      'test-w1',
+      GITHUB_STORAGE_PROVIDER_NAME,
+      githubWsMetadata,
     );
-  });
-});
-
-describe('conflictEffect', () => {
-  beforeEach(() => {
-    jest.mocked(workspace.readWorkspaceInfo).mockResolvedValue({
-      name: 'test-ws-1',
-      type: GITHUB_STORAGE_PROVIDER_NAME,
-      lastModified: 123,
-      metadata: {},
-    });
-    jest.mocked(workspace.readWorkspaceInfo).mockResolvedValue({
-      name: 'test-ws-2',
-      type: GITHUB_STORAGE_PROVIDER_NAME,
-      lastModified: 123,
-      metadata: {},
-    });
-  });
-  test('checks for conflicts', async () => {
-    const { store } = setup({ effects: [ghWorkspaceEffect, conflictEffect] });
-
-    await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
-      [`test-ws-1:one.md`, `# Hello World 0`],
-    ]);
 
     await waitForExpect(() => {
-      expect(
-        ghSliceKey.getSliceStateAsserted(store.state).githubWsName,
-      ).toEqual('test-ws-1');
+      expect(nsmGhSlice.get(ctx.testStore.state).githubWsName).toBe('test-w1');
     });
 
     await waitForExpect(() => {
-      expect(checkForConflicts).toHaveBeenCalledTimes(1);
+      expect(nsmApi2.workspace.workspaceState().noteWsPaths?.length).toBe(4);
     });
 
-    await setupMockWorkspaceWithNotes(store, 'test-ws-2', [
-      [`test-ws-2:one.md`, `# Hello World 0`],
-    ]);
+    expect(nsmApi2.workspace.workspaceState().noteWsPaths)
+      .toMatchInlineSnapshot(`
+      [
+        "test-w1:dearest-step.md",
+        "test-w1:digital-advantage.md",
+        "test-w1:misc/ABOUT.md",
+        "test-w1:misc/Contributing.md",
+      ]
+    `);
+
+    await ctx.createNotes([['test-w1:test-file.md', 'Hello world']]);
 
     await waitForExpect(() => {
-      expect(checkForConflicts).toHaveBeenCalledTimes(2);
+      expect(nsmApi2.workspace.workspaceState().noteWsPaths?.length).toBe(5);
     });
+
+    expect(nsmApi2.workspace.workspaceState().noteWsPaths)
+      .toMatchInlineSnapshot(`
+      [
+        "test-w1:test-file.md",
+        "test-w1:dearest-step.md",
+        "test-w1:digital-advantage.md",
+        "test-w1:misc/ABOUT.md",
+        "test-w1:misc/Contributing.md",
+      ]
+    `);
   });
-
-  // TODO uncomment this test
-  // test('runs check on regular intervals', async () => {
-  //   jest.mocked(getSyncInterval).mockReturnValue(5);
-
-  //   const { store } = setup({ effects: [ghWorkspaceEffect, conflictEffect] });
-
-  //   await setupMockWorkspaceWithNotes(store, 'test-ws-1', [
-  //     [`test-ws-1:one.md`, `# Hello World 0`],
-  //   ]);
-
-  //   await waitForExpect(() => {
-  //     expect(
-  //       ghSliceKey.getSliceStateAsserted(store.state).githubWsName,
-  //     ).toEqual('test-ws-1');
-  //   });
-
-  //   await sleep(50);
-
-  //   const calledTimes = jest.mocked(checkForConflicts).mock.calls.length;
-
-  //   expect(calledTimes).toBeGreaterThanOrEqual(5);
-
-  //   // if github wsName becomes undefined, it should stop checking
-  //   store.dispatch({
-  //     name: 'action::@bangle.io/github-storage:UPDATE_GITHUB_WS_NAME',
-  //     value: {
-  //       githubWsName: undefined,
-  //     },
-  //   });
-
-  //   await sleep(50);
-  //   expect(jest.mocked(checkForConflicts).mock.calls.length).toBe(calledTimes);
-  // });
 });

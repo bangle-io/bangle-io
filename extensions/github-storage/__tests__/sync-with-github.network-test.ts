@@ -1,5 +1,7 @@
-import type { BangleApplicationStore } from '@bangle.io/api';
-import { workspace, wsPathHelpers } from '@bangle.io/api';
+/**
+ * @jest-environment @bangle.io/jsdom-env
+ */
+import { nsm, nsmApi2, wsPathHelpers } from '@bangle.io/api';
 import { calculateGitFileSha } from '@bangle.io/git-file-sha';
 import type { PlainObjEntry } from '@bangle.io/remote-file-sync';
 import {
@@ -9,11 +11,7 @@ import {
   isEntryUntouched,
   makeLocalEntryFromRemote,
 } from '@bangle.io/remote-file-sync';
-import {
-  createBasicTestStore,
-  createPMNode,
-  waitForExpect,
-} from '@bangle.io/test-utils';
+import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from '../common';
@@ -29,8 +27,10 @@ import {
   optimizeDatabase,
 } from '../github-sync';
 import GithubStorageExt from '../index';
+import { createWsPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/shared-types';
 
-let githubWsMetadata: GithubWsMetadata;
+let githubWsMetadata: any;
 
 jest.setTimeout(30000);
 jest.retryTimes(3);
@@ -58,7 +58,7 @@ if (!githubOwner) {
 }
 
 let defaultNoteWsPath: string;
-let wsName: string, store: BangleApplicationStore;
+let wsName: string;
 let abortController = new AbortController();
 
 beforeEach(async () => {
@@ -67,7 +67,7 @@ beforeEach(async () => {
   githubWsMetadata = {
     owner: githubOwner,
     branch: 'main',
-  };
+  } satisfies GithubWsMetadata;
 
   abortController = new AbortController();
   wsName = 'bangle-test-' + randomStr() + Date.now();
@@ -80,27 +80,28 @@ beforeEach(async () => {
     },
   });
 
-  ({ store } = createBasicTestStore({
-    slices: [],
-    extensions: [GithubStorageExt],
-    useEditorManagerSlice: true,
-    useUISlice: true,
-    onError: (err) => {
-      throw err;
-    },
-  }));
+  await sleep(50);
+});
 
-  await workspace.createWorkspace(
+const setup = async () => {
+  const ctx = await setupTestExtension({
+    editor: true,
+    extensions: [GithubStorageExt],
+    abortSignal: abortController.signal,
+  });
+
+  await ctx.createWorkspace(
     wsName,
     GITHUB_STORAGE_PROVIDER_NAME,
     githubWsMetadata,
-  )(store.state, store.dispatch, store);
+  );
 
   defaultNoteWsPath = `${wsName}:welcome-to-bangle.md`;
 
-  await sleep(50);
   await getNoteAsString(defaultNoteWsPath);
-});
+
+  return ctx;
+};
 
 afterAll(async () => {
   // wait for network requests to finish
@@ -109,15 +110,11 @@ afterAll(async () => {
 
 afterEach(async () => {
   abortController.abort();
-  store?.destroy();
-
   await sleep(50);
 });
 
 const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
-  return (
-    await workspace.getNote(wsPath)(store.state, store.dispatch, store)
-  )?.toString();
+  return (await nsmApi2.workspace.getNote(createWsPath(wsPath)))?.toString();
 };
 
 const getLocalFileEntries = async () => {
@@ -130,6 +127,7 @@ const getLocalFileEntries = async () => {
 };
 
 let getTree = github.getRepoTree();
+
 const getRemoteFileEntries = async () => {
   const tree = await getTree({
     abortSignal: abortController.signal,
@@ -208,13 +206,13 @@ const runOptimizeDatabase = async (retainedWsPaths: string[]) => {
     }),
   });
 };
+
 describe('pushLocalChanges', () => {
   test('when a new note is created locally and then modified, remote should be updated correctly', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    const ctx = await setup();
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     let localEntries = await getLocalFileEntries();
     let remoteEntries = await getRemoteFileEntries();
@@ -242,10 +240,11 @@ describe('pushLocalChanges', () => {
     });
 
     // Update the test-1 note with new content
-    await workspace.writeNote(
+
+    await nsmApi2.workspace.writeNoteFromMd(
       test1WsPath,
-      createPMNode([], `hello I am updated test-1`),
-    )(store.state, store.dispatch, store);
+      `hello I am updated test-1`,
+    );
 
     // Get the latest local entries since we updated the note
     localEntries = await getLocalFileEntries();
@@ -259,6 +258,7 @@ describe('pushLocalChanges', () => {
 
     await runGithubSync();
 
+    await sleep(100);
     remoteEntries = await getRemoteFileEntries();
     localEntries = await getLocalFileEntries();
 
@@ -290,11 +290,11 @@ describe('pushLocalChanges', () => {
   });
 
   describe('Tests with two local notes', () => {
-    let test1WsPath: string, test2WsPath: string;
+    let test1WsPath: WsPath, test2WsPath: WsPath;
 
     beforeEach(async () => {
-      test1WsPath = `${wsName}:bunny/test-1.md`;
-      test2WsPath = `${wsName}:bunny/test-2.md`;
+      test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
+      test2WsPath = createWsPath(`${wsName}:bunny/test-2.md`);
 
       // Make a direct remote change outside the realm of our app
       await github.pushChanges({
@@ -317,6 +317,7 @@ describe('pushLocalChanges', () => {
         ],
         deletions: [],
       });
+      await setup();
 
       // syncing with github will create a local entry for test-1.md
       expect(await getNoteAsString(test1WsPath)).toContain(`I am test-1`);
@@ -329,16 +330,8 @@ describe('pushLocalChanges', () => {
       expect(isEntryDeleted(localEntries[test2WsPath]!)).toBe(false);
 
       // delete the note locally and then sync
-      await workspace.deleteNote(test1WsPath)(
-        store.state,
-        store.dispatch,
-        store,
-      );
-      await workspace.deleteNote(test2WsPath)(
-        store.state,
-        store.dispatch,
-        store,
-      );
+      await nsmApi2.workspace.deleteNote(test1WsPath);
+      await nsmApi2.workspace.deleteNote(test2WsPath);
 
       await sleep(0);
 
@@ -378,16 +371,12 @@ describe('pushLocalChanges', () => {
 
       expect(originalSourceSha).toBeDefined();
 
-      await workspace.writeNote(
+      await nsmApi2.workspace.writeNoteFromMd(
         test1WsPath,
-        createPMNode([], `I am updated test-1`),
-      )(store.state, store.dispatch, store);
-
-      await workspace.deleteNote(test2WsPath)(
-        store.state,
-        store.dispatch,
-        store,
+        `I am updated test-1`,
       );
+
+      await nsmApi2.workspace.deleteNote(test2WsPath);
 
       await sleep(0);
 
@@ -429,7 +418,9 @@ describe('pushLocalChanges', () => {
   });
 
   test('ignores files with unsupported characters', async () => {
-    const test2WsPath = `${wsName}:bunny/test-2.md`;
+    const test2WsPath = createWsPath(`${wsName}:bunny/test-2.md`);
+    await setup();
+
     await github.pushChanges({
       abortSignal: abortController.signal,
       headSha: await github.getLatestCommitSha({
@@ -451,24 +442,22 @@ describe('pushLocalChanges', () => {
       deletions: [],
     });
 
-    workspace.refreshWsPaths()(store.state, store.dispatch);
+    await sleep(300);
 
-    await waitForExpect(async () => {
+    nsmApi2.workspace.refresh();
+
+    await waitForExpect(() => {
       expect(
-        (
-          await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
-            .wsPaths
-        )?.sort(),
-      ).toEqual([`${wsName}:bunny`, test2WsPath, defaultNoteWsPath].sort());
+        [...(nsmApi2.workspace.workspaceState().noteWsPaths ?? [])].sort(),
+      ).toEqual([test2WsPath, defaultNoteWsPath].sort());
     });
   });
 
   test('if source gets out of sync it gets fixed in next sync', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    const ctx = await setup();
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -512,6 +501,7 @@ describe('optimizeDatabase', () => {
     let test1WsPath = `${wsName}:bunny/test-1.md`;
     let test2WsPath = `${wsName}:bunny/test-2.md`;
 
+    const ctx = await setup();
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({
       abortSignal: abortController.signal,
@@ -549,6 +539,7 @@ describe('optimizeDatabase', () => {
   });
 
   test('removes local entry for files that are not modified', async () => {
+    const ctx = await setup();
     let localEntries = await getLocalFileEntries();
 
     expect(Object.keys(localEntries).sort()).toEqual([
@@ -561,10 +552,15 @@ describe('optimizeDatabase', () => {
     localEntries = await getLocalFileEntries();
 
     // should remove welcome to bangle
-    expect(Object.keys(localEntries).sort()).toEqual([]);
+
+    await waitForExpect(() => {
+      expect(Object.keys(localEntries).sort()).toEqual([]);
+    });
   });
 
   test('does not remove a file if it is in retained list', async () => {
+    const ctx = await setup();
+
     let localEntries = await getLocalFileEntries();
 
     expect(Object.keys(localEntries)).toEqual([defaultNoteWsPath]);
@@ -579,11 +575,10 @@ describe('optimizeDatabase', () => {
   });
 
   test('removes a local entry that has been synced to github', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const ctx = await setup();
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     let localEntries = await getLocalFileEntries();
 
@@ -611,12 +606,12 @@ describe('optimizeDatabase', () => {
 
 describe('discardLocalEntryChanges', () => {
   test('discards local changes', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const ctx = await setup();
+
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     // Setup the workspace so that we have a file that is in sync with github
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -631,10 +626,7 @@ describe('discardLocalEntryChanges', () => {
     );
 
     // Now make a local change
-    await workspace.writeNote(
-      test1WsPath,
-      createPMNode([], `I am updated test-1`),
-    )(store.state, store.dispatch, store);
+    await nsmApi2.workspace.writeNoteFromMd(test1WsPath, `I am updated test-1`);
 
     expect(isEntryModified((await getLocalFileEntries())[test1WsPath]!)).toBe(
       true,
@@ -655,12 +647,12 @@ describe('discardLocalEntryChanges', () => {
   });
 
   test('if a file is deleted, it is brought back', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const ctx = await setup();
+
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     // Setup the workspace so that we have a file that is in sync with github
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -670,7 +662,7 @@ describe('discardLocalEntryChanges', () => {
 
     expect(remoteEntries[test1WsPath]).toBeDefined();
 
-    await workspace.deleteNote(test1WsPath)(store.state, store.dispatch, store);
+    await nsmApi2.workspace.deleteNote(test1WsPath);
 
     await waitForExpect(async () => {
       expect(
@@ -688,12 +680,12 @@ describe('discardLocalEntryChanges', () => {
   });
 
   test('if file does not exist in remote it gets deleted', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const ctx = await setup();
+
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     // Setup the workspace so that we have a file that is in sync with github
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     expect(isEntryNew((await getLocalFileEntries())[test1WsPath]!)).toBe(true);
 
@@ -706,13 +698,13 @@ describe('discardLocalEntryChanges', () => {
 
 describe('duplicateAndResetToRemote', () => {
   test('duplicates and resets file content', async () => {
-    const test1WsPath = `${wsName}:bunny/test-1.md`;
+    const ctx = await setup();
+
+    const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
     const config = { ...githubWsMetadata, githubToken, repoName: wsName };
 
     // Setup the workspace so that we have a file that is in sync with github
-    await workspace.createNote(test1WsPath, {
-      doc: createPMNode([], `hello I am test-1 note`),
-    })(store.state, store.dispatch, store);
+    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -723,10 +715,10 @@ describe('duplicateAndResetToRemote', () => {
     );
 
     // Now create a conflict
-    await workspace.writeNote(
+    await nsmApi2.workspace.writeNoteFromMd(
       test1WsPath,
-      createPMNode([], `I am now a different local note`),
-    )(store.state, store.dispatch, store);
+      `I am now a different local note`,
+    );
 
     // Make a direct remote change outside the realm of our app
     await github.pushChanges({

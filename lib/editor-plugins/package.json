@@ -1,0 +1,60 @@
+{
+  "name": "@bangle.io/editor-plugins",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/editor-plugins"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@bangle.dev/base-components": "0.32.0",
+    "@bangle.dev/collab-client": "0.32.0",
+    "@bangle.dev/collab-comms": "0.32.0",
+    "@bangle.dev/core": "0.32.0",
+    "@bangle.dev/emoji": "0.32.0",
+    "@bangle.dev/markdown": "0.32.0",
+    "@bangle.dev/markdown-front-matter": "0.32.0",
+    "@bangle.dev/pm": "0.32.0",
+    "@bangle.dev/react": "0.32.0",
+    "@bangle.dev/react-emoji-suggest": "0.32.0",
+    "@bangle.dev/react-menu": "0.32.0",
+    "@bangle.dev/react-stopwatch": "0.32.0",
+    "@bangle.dev/search": "0.32.0",
+    "@bangle.dev/table": "0.32.0",
+    "@bangle.dev/timestamp": "0.32.0",
+    "@bangle.dev/tooltip": "0.32.0",
+    "@bangle.dev/trailing-node": "0.32.0",
+    "@bangle.dev/utils": "0.32.0",
+    "@bangle.io/api": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/editor-common": "workspace:*",
+    "@bangle.io/pm-plugins": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-notification": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.49",
+    "@types/react-dom": "^17.0.17"
+  },
+  "license": "AGPL-3.0-or-later"
+}

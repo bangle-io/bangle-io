@@ -12,6 +12,7 @@
     "e2e-types",
     "editor",
     "editor-common",
+    "editor-plugins",
     "extension-registry",
     "markdown",
     "nsm-slice-file-sha",

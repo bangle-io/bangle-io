@@ -4,74 +4,105 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { workspace } from '@bangle.io/api';
 import { WorkspaceType } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { sleep } from '@bangle.io/utils';
 
 import { workspacePalette } from '../WorkspacePalette';
+import { setupTestExtension } from '@bangle.io/test-utils-2';
+import corePalettes from '../index';
 
-jest.mock('@bangle.io/api', () => {
-  const { workspace, ...otherThing } = jest.requireActual('@bangle.io/api');
+let abortController = new AbortController();
 
-  return {
-    ...otherThing,
-    useSerialOperationContext: jest.fn(() => ({})),
-    workspace: {
-      ...workspace,
-      readAllWorkspacesInfo: jest.fn(async () => undefined),
-    },
-  };
+beforeEach(() => {
+  abortController = new AbortController();
 });
 
-jest.mock('@bangle.io/slice-workspace', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
-
-  return {
-    ...workspaceThings,
-    deleteWorkspace: jest.fn(() => () => {}),
-  };
+afterEach(async () => {
+  abortController.abort();
 });
 
-let workspaces: WorkspaceInfo[] = [
-  {
-    name: 'test-ws1',
-    type: WorkspaceType.NativeFS,
-    lastModified: 0,
-    metadata: {
-      rootDirHandle: {},
-    },
-  },
-];
+async function setup() {
+  const ctx = setupTestExtension({
+    extensions: [corePalettes],
+    abortSignal: abortController.signal,
+  });
 
-jest
-  .mocked(workspace.readAllWorkspacesInfo)
-  .mockImplementation(async () => workspaces);
+  return ctx;
+}
 
-let dismissPalette = jest.fn(),
-  onSelect = jest.fn(),
-  getActivePaletteItem = jest.fn();
+test('Component renders correctly when multiple workspaces', async () => {
+  const ctx = await setup();
 
-test('Component renders correctly', async () => {
+  const wsName = 'test-ws1';
+
+  await ctx.createWorkspace(wsName);
+
+  await ctx.createWorkspace(`test-ws2`);
+
+  const dismissPalette = jest.fn();
+  const onSelect = jest.fn();
+  const getActivePaletteItem = jest.fn();
   const { container } = render(
-    <workspacePalette.ReactComponent
-      query=""
-      paletteType={undefined}
-      paletteMetadata={{}}
-      updatePalette={() => {}}
-      counter={0}
-      updateCounter={() => {}}
-      dismissPalette={dismissPalette}
-      onSelect={onSelect}
-      getActivePaletteItem={getActivePaletteItem}
-      allPalettes={[]}
-    />,
+    <ctx.ContextProvider>
+      <workspacePalette.ReactComponent
+        query=""
+        paletteType={undefined}
+        paletteMetadata={{}}
+        updatePalette={() => {}}
+        counter={0}
+        updateCounter={() => {}}
+        dismissPalette={dismissPalette}
+        onSelect={onSelect}
+        getActivePaletteItem={getActivePaletteItem}
+        allPalettes={[]}
+      />
+    </ctx.ContextProvider>,
   );
 
-  const prom = sleep(5);
+  const prom = sleep(50);
 
   await act(() => prom);
 
-  expect(container).toMatchSnapshot();
   expect(container.innerHTML.includes('test-ws1')).toBe(true);
+  expect(container.innerHTML.includes('test-ws2')).toBe(true);
+
+  expect(
+    container.querySelector('.B-ui-components_universal-palette-item'),
+  ).toMatchSnapshot();
+});
+
+test('Component renders correctly when no workspaces', async () => {
+  const ctx = await setup();
+  await sleep(10);
+
+  const dismissPalette = jest.fn();
+  const onSelect = jest.fn();
+  const getActivePaletteItem = jest.fn();
+  const { container } = render(
+    <ctx.ContextProvider>
+      <workspacePalette.ReactComponent
+        query=""
+        paletteType={undefined}
+        paletteMetadata={{}}
+        updatePalette={() => {}}
+        counter={0}
+        updateCounter={() => {}}
+        dismissPalette={dismissPalette}
+        onSelect={onSelect}
+        getActivePaletteItem={getActivePaletteItem}
+        allPalettes={[]}
+      />
+    </ctx.ContextProvider>,
+  );
+
+  const prom = sleep(50);
+
+  await act(() => prom);
+
+  expect(container.innerHTML.includes('helpfs')).toBe(true);
+
+  expect(
+    container.querySelector('.B-ui-components_universal-palette-item'),
+  ).toMatchSnapshot();
 });
