@@ -18488,16 +18488,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.36.1, playwright-core@npm:>=1.2.0":
-  version: 1.36.1
-  resolution: "playwright-core@npm:1.36.1"
-  bin:
-    playwright-core: cli.js
-  checksum: bbde807294053b50f0dbbc81f0dacc43fe525830ce1526e6ca74012582dd1645eae2391719cfb020051abea90704057cfabcbfe45ca530b37becc491e9459790
-  languageName: node
-  linkType: hard
-
-"playwright-core@npm:1.38.1":
+"playwright-core@npm:1.38.1, playwright-core@npm:>=1.2.0":
   version: 1.38.1
   resolution: "playwright-core@npm:1.38.1"
   bin:
@@ -18506,7 +18497,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.38.1":
+"playwright@npm:1.38.1, playwright@npm:^1.14.0":
   version: 1.38.1
   resolution: "playwright@npm:1.38.1"
   dependencies:
@@ -18518,17 +18509,6 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 4e01d4ee52d9ccf75a80d8492829106802590721d56bff7c5957ff1f21eb3c328ee5bc3c1784a59c4b515df1b98d08ef92e4a35a807f454cd00dc481d30fadc2
-  languageName: node
-  linkType: hard
-
-"playwright@npm:^1.14.0":
-  version: 1.36.1
-  resolution: "playwright@npm:1.36.1"
-  dependencies:
-    playwright-core: 1.36.1
-  bin:
-    playwright: cli.js
-  checksum: 21940ccd174eb03a52b13e26dc7e0e90db05298caeab1dd71d21e996b65d959b82aa133f3c9fafb99b5e0bd37265338802d3fbcee1b567e0f75212ddbde5ebae
   languageName: node
   linkType: hard
 
@@ -18759,18 +18739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.15, postcss@npm:^8.4.19, postcss@npm:^8.4.21, postcss@npm:^8.4.23, postcss@npm:^8.4.25":
-  version: 8.4.27
-  resolution: "postcss@npm:8.4.27"
-  dependencies:
-    nanoid: ^3.3.6
-    picocolors: ^1.0.0
-    source-map-js: ^1.0.2
-  checksum: 1cdd0c298849df6cd65f7e646a3ba36870a37b65f55fd59d1a165539c263e9b4872a402bf4ed1ca1bc31f58b68b2835545e33ea1a23b161a1f8aa6d5ded81e78
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.4.27":
+"postcss@npm:^8.2.15, postcss@npm:^8.4.19, postcss@npm:^8.4.21, postcss@npm:^8.4.23, postcss@npm:^8.4.25, postcss@npm:^8.4.27":
   version: 8.4.30
   resolution: "postcss@npm:8.4.30"
   dependencies:
@@ -20077,9 +20046,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.25.0 || ^3.3.0":
-  version: 3.26.3
-  resolution: "rollup@npm:3.26.3"
+"rollup@npm:^2.25.0 || ^3.3.0, rollup@npm:^3.27.1":
+  version: 3.29.3
+  resolution: "rollup@npm:3.29.3"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -20087,7 +20056,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: e6a765b2b7af709170344cc804392936613e06b6bdab46a04d264368d154bdadaaaf77de39e6e656bf728a060d7b4867d81e2464d791c0f37dd5b21aa9c7a6df
+  checksum: 46dfbfbb57f2a53c79d67482a4a92146def3e5d939ecd914a99745d406dbb77598d4e3cc08057468628ae9fa5d7bfddb605a986b6fe1b6e952eda6db3dcabbe1
   languageName: node
   linkType: hard
 
@@ -20102,20 +20071,6 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 6a2bf167b3587d4df709b37d149ad0300692cc5deb510f89ac7bdc77c8738c9546ae3de9322b0968e1ed2b0e984571f5f55aae28fa7de4cfcb1bc5402a4e2be6
-  languageName: node
-  linkType: hard
-
-"rollup@npm:^3.27.1":
-  version: 3.29.3
-  resolution: "rollup@npm:3.29.3"
-  dependencies:
-    fsevents: ~2.3.2
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    rollup: dist/bin/rollup
-  checksum: 46dfbfbb57f2a53c79d67482a4a92146def3e5d939ecd914a99745d406dbb77598d4e3cc08057468628ae9fa5d7bfddb605a986b6fe1b6e952eda6db3dcabbe1
   languageName: node
   linkType: hard
 
