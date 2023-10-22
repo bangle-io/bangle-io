@@ -31,6 +31,7 @@
     "tslib": "2.6.0",
     "typescript": "5.1.6",
     "use-sync-external-store": "^1.2.0",
+    "wait-for-expect": "^3.0.2",
     "zod": "^3.21.4"
   },
   "license": "AGPL-3.0-or-later"

@@ -3220,6 +3220,7 @@ __metadata:
     tslib: "npm:2.6.0"
     typescript: "npm:5.1.6"
     use-sync-external-store: "npm:^1.2.0"
+    wait-for-expect: "npm:^3.0.2"
     zod: "npm:^3.21.4"
   languageName: unknown
   linkType: soft
