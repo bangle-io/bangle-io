@@ -1,5 +1,5 @@
 import { setupStore } from '@bangle.io/bangle-store-context';
-import { config, IS_TEST_ENV } from '@bangle.io/config';
+import { IS_TEST_ENV } from '@bangle.io/config';
 import type { Slice, Store } from '@bangle.io/nsm-3';
 import type { EternalVars } from '@bangle.io/shared-types';
 import { mainApi } from '@bangle.io/worker-common';

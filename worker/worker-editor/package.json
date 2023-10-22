@@ -38,7 +38,6 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@bangle.io/api": "workspace:*",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
