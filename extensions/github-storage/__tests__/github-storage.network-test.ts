@@ -134,7 +134,7 @@ const setup = async () => {
     abortSignal: abortController.signal,
   });
 
-  await ctx.createWorkspace(wsName, GITHUB_STORAGE_PROVIDER_NAME, {
+  await ctx.utils.createWorkspace(wsName, GITHUB_STORAGE_PROVIDER_NAME, {
     owner: githubOwner,
     branch: 'main',
   });

@@ -37,9 +37,9 @@ describe('NotesPalette', () => {
 
     const wsName = 'test-ws1';
 
-    await ctx.createWorkspace(wsName);
+    await ctx.utils.createWorkspace(wsName);
 
-    await ctx.createNotes(
+    await ctx.utils.createNotes(
       [
         [`${wsName}:note1.md`, 'content1'],
         [`${wsName}:note2.md`, 'content2'],

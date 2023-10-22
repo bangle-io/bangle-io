@@ -68,7 +68,7 @@ test('no effects', async () => {
     abortSignal: abortController.signal,
   });
 
-  await ctx.createWorkspace('test-w1');
+  await ctx.utils.createWorkspace('test-w1');
 });
 
 describe('basic syncing', () => {
@@ -183,7 +183,7 @@ describe('basic syncing', () => {
 
     await updateGhToken('test-token');
 
-    await ctx.createWorkspace(
+    await ctx.utils.createWorkspace(
       'test-w1',
       GITHUB_STORAGE_PROVIDER_NAME,
       githubWsMetadata,
@@ -194,7 +194,7 @@ describe('basic syncing', () => {
     });
 
     // switching to non github workspace
-    await ctx.createWorkspace('test-w2');
+    await ctx.utils.createWorkspace('test-w2');
 
     await waitForExpect(() => {
       expect(nsmGhSlice.get(ctx.testStore.state).githubWsName).toBe(undefined);
@@ -213,7 +213,7 @@ describe('basic syncing', () => {
 
     await updateGhToken('test-token');
 
-    await ctx.createWorkspace(
+    await ctx.utils.createWorkspace(
       'test-w1',
       GITHUB_STORAGE_PROVIDER_NAME,
       githubWsMetadata,
@@ -237,7 +237,7 @@ describe('basic syncing', () => {
       ]
     `);
 
-    await ctx.createNotes([['test-w1:test-file.md', 'Hello world']]);
+    await ctx.utils.createNotes([['test-w1:test-file.md', 'Hello world']]);
 
     await waitForExpect(() => {
       expect(nsmApi2.workspace.workspaceState().noteWsPaths?.length).toBe(5);

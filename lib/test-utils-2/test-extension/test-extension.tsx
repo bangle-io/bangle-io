@@ -8,7 +8,6 @@ import type { EternalVars } from '@bangle.io/shared-types';
 
 import type { TestStoreOpts } from '../test-store';
 import { setupTestStore } from '../test-store';
-import * as utils from './utils';
 
 type TestExtensionOpts = Pick<
   TestStoreOpts,
@@ -38,7 +37,6 @@ export function setupTestExtension(opts: TestExtensionOpts) {
 
   return {
     ...testStore,
-    ...utils,
     ContextProvider: function ContextProvider(props: {
       children: React.ReactNode;
     }) {

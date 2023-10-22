@@ -43,8 +43,8 @@ const setup = async (
   });
 
   if (wsName) {
-    await ctx.createWorkspace(wsName);
-    await ctx.createNotes(noteWsPaths, { loadFirst: true });
+    await ctx.utils.createWorkspace(wsName);
+    await ctx.utils.createNotes(noteWsPaths, { loadFirst: true });
 
     const targetPath = wsPathHelpers.createWsPath(noteWsPaths?.[0]?.[0]);
     nsmApi2.workspace.pushPrimaryWsPath(targetPath);

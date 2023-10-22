@@ -90,7 +90,7 @@ const setup = async () => {
     abortSignal: abortController.signal,
   });
 
-  await ctx.createWorkspace(
+  await ctx.utils.createWorkspace(
     wsName,
     GITHUB_STORAGE_PROVIDER_NAME,
     githubWsMetadata,
@@ -212,7 +212,7 @@ describe('pushLocalChanges', () => {
     const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     const ctx = await setup();
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     let localEntries = await getLocalFileEntries();
     let remoteEntries = await getRemoteFileEntries();
@@ -457,7 +457,7 @@ describe('pushLocalChanges', () => {
     const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     const ctx = await setup();
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -578,7 +578,7 @@ describe('optimizeDatabase', () => {
     const ctx = await setup();
     const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     let localEntries = await getLocalFileEntries();
 
@@ -611,7 +611,7 @@ describe('discardLocalEntryChanges', () => {
     const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     // Setup the workspace so that we have a file that is in sync with github
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -652,7 +652,7 @@ describe('discardLocalEntryChanges', () => {
     const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     // Setup the workspace so that we have a file that is in sync with github
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 
@@ -685,7 +685,7 @@ describe('discardLocalEntryChanges', () => {
     const test1WsPath = createWsPath(`${wsName}:bunny/test-1.md`);
 
     // Setup the workspace so that we have a file that is in sync with github
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     expect(isEntryNew((await getLocalFileEntries())[test1WsPath]!)).toBe(true);
 
@@ -704,7 +704,7 @@ describe('duplicateAndResetToRemote', () => {
     const config = { ...githubWsMetadata, githubToken, repoName: wsName };
 
     // Setup the workspace so that we have a file that is in sync with github
-    await ctx.createNotes([[test1WsPath, `hello I am test-1 note`]]);
+    await ctx.utils.createNotes([[test1WsPath, `hello I am test-1 note`]]);
 
     await runGithubSync();
 

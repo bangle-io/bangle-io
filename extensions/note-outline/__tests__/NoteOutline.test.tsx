@@ -41,9 +41,9 @@ async function setup({
   });
 
   if (wsName) {
-    await ctx.createWorkspace(wsName);
+    await ctx.utils.createWorkspace(wsName);
   }
-  await ctx.createNotes(notes, { loadFirst: true });
+  await ctx.utils.createNotes(notes, { loadFirst: true });
 
   return ctx;
 }

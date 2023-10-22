@@ -36,9 +36,9 @@ test('Component renders correctly when multiple workspaces', async () => {
 
   const wsName = 'test-ws1';
 
-  await ctx.createWorkspace(wsName);
+  await ctx.utils.createWorkspace(wsName);
 
-  await ctx.createWorkspace(`test-ws2`);
+  await ctx.utils.createWorkspace(`test-ws2`);
 
   const dismissPalette = jest.fn();
   const onSelect = jest.fn();

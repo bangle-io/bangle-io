@@ -28,6 +28,7 @@ import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
 
 import { memoryHistoryEffects, memoryHistorySlice } from './memory-history';
 import { testEternalVars } from './test-eternal-vars';
+import * as utils from './utils';
 
 type CoreOpts = {
   editor: boolean;
@@ -178,6 +179,7 @@ export function setupTestStore(_opts: TestStoreOpts) {
   );
 
   return {
+    utils,
     testStore,
     eternalVars,
   };
