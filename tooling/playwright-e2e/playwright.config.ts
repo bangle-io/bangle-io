@@ -14,7 +14,7 @@ const config: PlaywrightTestConfig = {
   expect: {
     timeout: 2000,
   },
-  workers: isCI ? 2 : undefined,
+  workers: isCI ? 1 : undefined,
 
   use: {
     // headless: false,

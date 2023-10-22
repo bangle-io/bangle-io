@@ -113,8 +113,8 @@ jobs:
           node-version: 18.x
       - name: yarn install
         run: yarn install --immutable --immutable-cache
-      - name: Install playwright dependencies
-        run: yarn g:playwright-dep
+      # - name: Install playwright dependencies
+      #   run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
       - uses: actions/upload-artifact@v3
         if: always()
