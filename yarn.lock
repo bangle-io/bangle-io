@@ -3290,7 +3290,7 @@ __metadata:
     "@bangle.io/e2e-types": "workspace:*"
     "@bangle.io/independent-e2e-tests-server": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@playwright/test": "npm:^1.38.1"
+    "@playwright/test": "npm:^1.39.0"
     "@types/node": "npm:^18.11.9"
     "@types/prettier": "npm:^2.7.0"
     http-server: "npm:^0.12.3"
@@ -5227,7 +5227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.38.1":
+"@playwright/test@npm:^1.39.0":
   version: 1.39.0
   resolution: "@playwright/test@npm:1.39.0"
   dependencies:

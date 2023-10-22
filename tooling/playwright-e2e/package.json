@@ -34,7 +34,7 @@
     "@bangle.io/e2e-types": "workspace:*",
     "@bangle.io/independent-e2e-tests-server": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@playwright/test": "^1.38.1",
+    "@playwright/test": "^1.39.0",
     "prettier": "^2.8.8",
     "tslib": "2.6.0",
     "typescript": "5.1.6"
