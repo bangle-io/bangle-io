@@ -3,23 +3,15 @@
  */
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
+import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { calculateGitFileSha } from '@bangle.io/git-file-sha';
-import { getEditor } from '@bangle.io/slice-editor-manager';
-import { getNote, writeNote } from '@bangle.io/slice-workspace';
-import { getOpenedDocInfo } from '@bangle.io/slice-workspace-opened-doc-info';
-import {
-  createPMNode,
-  setupMockMessageChannel,
-  setupMockWorkspaceWithNotes,
-  TestStoreProvider,
-  waitForExpect,
-} from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { setup as commonSetup } from './test-helpers';
+import { createWsName, createWsPath } from '@bangle.io/ws-path';
 
 jest.mock('@bangle.io/constants', () => {
   const actual = jest.requireActual('@bangle.io/constants');
@@ -53,11 +45,12 @@ const setup = async ({
 }: {
   disableStaleDocEffect?: boolean;
 } = {}) => {
-  const wsName = 'my-ws-' + Math.random();
-  const obj = await commonSetup({
-    disableStaleDocEffect,
-  });
-  const wsPath1 = `${wsName}:test-dir/magic.md`;
+  const wsName = createWsName('my-ws-' + Math.random());
+
+  // const obj = await commonSetup({
+  //   disableStaleDocEffect,
+  // });
+  const wsPath1 = createWsPath(`${wsName}:test-dir/magic.md`);
 
   await setupMockWorkspaceWithNotes(obj.store, wsName, [
     [wsPath1, `# hello mars`],

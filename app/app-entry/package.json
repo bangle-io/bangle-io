@@ -65,7 +65,6 @@
     "@react-aria/overlays": "^3.8.2",
     "@sentry/tracing": "^6.18.1",
     "comlink": "^4.3.1",
-    "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-error-boundary": "^4.0.10",
