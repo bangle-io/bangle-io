@@ -30,13 +30,17 @@ afterEach(async () => {
 async function setup({
   wsName,
   notes,
-  fullEditor = false,
-}: { wsName?: string; notes?: [string, string][]; fullEditor?: boolean } = {}) {
+  renderEditorComponent = false,
+}: {
+  wsName?: string;
+  notes?: [string, string][];
+  renderEditorComponent?: boolean;
+} = {}) {
   const ctx = setupTestExtension({
     extensions: [inlineBackLinkExtension],
     abortSignal: abortController.signal,
     editor: true,
-    fullEditor: fullEditor,
+    renderEditorComponent: renderEditorComponent,
   });
 
   if (wsName) {
@@ -94,7 +98,7 @@ describe('BacklinkNode', () => {
     const ctx = await setup({
       wsName: 'test-ws',
       notes: [[wsPath, `hello world [[my/note-path|monako]]`]],
-      fullEditor: true,
+      renderEditorComponent: true,
     });
 
     await render(

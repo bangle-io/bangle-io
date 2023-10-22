@@ -15,13 +15,13 @@ type TestExtensionOpts = Pick<
   'effects' | 'slices' | 'abortSignal' | 'extensions' | 'storeName'
 > & {
   editor?: boolean;
-  fullEditor?: boolean;
+  renderEditorComponent?: boolean;
 };
 
 export function setupTestExtension(opts: TestExtensionOpts) {
-  if (!opts.editor && opts.fullEditor) {
+  if (!opts.editor && opts.renderEditorComponent) {
     throw new Error(
-      'setupTestExtension: fullEditor can only be true if editor is true',
+      'setupTestExtension: renderEditorComponent can only be true if editor is true',
     );
   }
 
@@ -46,7 +46,7 @@ export function setupTestExtension(opts: TestExtensionOpts) {
         <NsmStoreContext.Provider value={testStore.testStore}>
           <_SerialOperationContextProvider>
             {props.children}
-            {opts.fullEditor ? (
+            {opts.renderEditorComponent ? (
               <RenderEditor eternalVars={testStore.eternalVars} />
             ) : null}
           </_SerialOperationContextProvider>

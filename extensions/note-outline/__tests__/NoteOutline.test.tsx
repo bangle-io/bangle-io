@@ -37,7 +37,7 @@ async function setup({
     extensions: [noteOutlineExtension],
     abortSignal: abortController.signal,
     editor: true,
-    fullEditor: true,
+    renderEditorComponent: true,
   });
 
   if (wsName) {
