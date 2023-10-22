@@ -19,12 +19,12 @@ export function usePMDevTools() {
         ).primaryEditor;
 
         if (primaryEditor) {
-          console.log('debugging pm');
-          import(
-            /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-          ).then((args) => {
-            args.applyDevTools(primaryEditor!.view);
-          });
+          // console.log('debugging pm');
+          // import(
+          //   /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+          // ).then((args) => {
+          //   args.applyDevTools(primaryEditor!.view);
+          // });
         }
       }
     });

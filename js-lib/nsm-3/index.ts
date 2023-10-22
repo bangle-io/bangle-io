@@ -4,7 +4,7 @@ export {
   sliceStateSerializer,
 } from './slice-state-serialization';
 export { assertSafeZodSchema } from './zod-helpers';
-export type { AnySlice } from 'nalanda';
+export type { AnySlice } from './old-nalanda/src/index';
 export {
   type Dispatch,
   type Effect,
@@ -28,11 +28,11 @@ export {
   slice,
   sliceKey,
   store,
-} from 'nalanda';
+} from './old-nalanda/src/index';
 export {
   DEFAULT_DISPATCH_OPERATION,
   DEFAULT_DISPATCH_TRANSACTION,
-} from 'nalanda';
-export { createUseTrackSliceHook } from 'nalanda';
+} from './old-nalanda/src/index';
+export { createUseTrackSliceHook } from './old-nalanda/src/index';
 export * as superJson from 'superjson';
 export { z } from 'zod';

@@ -316,7 +316,7 @@ describe('seialization to markdown', () => {
           </para>
         </doc>,
       ),
-    ).toEqual('#hello\\-#world');
+    ).toEqual('#hello-#world');
   });
 
   test('serializes two tags in list', async () => {

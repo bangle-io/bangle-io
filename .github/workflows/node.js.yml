@@ -98,7 +98,7 @@ jobs:
 
   tests-e2e:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.38.1-focal
+    container: mcr.microsoft.com/playwright:v1.39.0-focal
     strategy:
       matrix:
         test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']
@@ -113,8 +113,8 @@ jobs:
           node-version: 18.x
       - name: yarn install
         run: yarn install --immutable --immutable-cache
-      - name: Install playwright dependencies
-        run: yarn g:playwright-dep
+      # - name: Install playwright dependencies
+      #   run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
       - uses: actions/upload-artifact@v3
         if: always()

@@ -1,4 +1,4 @@
-import { slice } from 'nalanda';
+import { slice } from '../old-nalanda/src/index';
 import { z } from 'zod';
 
 import { sliceStateSerializer } from '../slice-state-serialization';
