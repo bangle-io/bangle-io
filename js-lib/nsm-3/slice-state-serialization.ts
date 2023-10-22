@@ -3,7 +3,7 @@ import type {
   InferSliceNameFromSlice,
   StoreState,
   ValidStoreState,
-} from 'nalanda';
+} from './old-nalanda/src/index';
 import * as superjson from 'superjson';
 import type { SuperJSONResult } from 'superjson/dist/types';
 import type { z } from 'zod';
