@@ -38,7 +38,9 @@ const setup = async (
   const ctx = setupTestExtension({
     abortSignal: abortController.signal,
     extensions: [searchNotesExtension],
-    editor: true,
+    core: {
+      editor: true,
+    },
     storeName: 'store:' + wsName,
   });
 

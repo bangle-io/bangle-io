@@ -85,7 +85,9 @@ beforeEach(async () => {
 
 const setup = async () => {
   const ctx = await setupTestExtension({
-    editor: true,
+    core: {
+      editor: true,
+    },
     extensions: [GithubStorageExt],
     abortSignal: abortController.signal,
   });

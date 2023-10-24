@@ -27,7 +27,9 @@ function setup() {
   const ctx = setupTestExtension({
     extensions: [noteTags],
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+    },
   });
 
   const { renderDoc } = testEditor(ctx.eternalVars);

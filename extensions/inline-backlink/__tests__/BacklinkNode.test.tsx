@@ -39,7 +39,9 @@ async function setup({
   const ctx = setupTestExtension({
     extensions: [inlineBackLinkExtension],
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+    },
     renderEditorComponent: renderEditorComponent,
   });
 

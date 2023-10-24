@@ -23,7 +23,9 @@ function setup() {
   const ctx = setupTestExtension({
     extensions: [noteOutline],
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+    },
   });
 
   const { render } = testEditorMarkdown(ctx.eternalVars);

@@ -6,19 +6,27 @@ import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import type { EternalVars } from '@bangle.io/shared-types';
 
-import type { TestStoreOpts } from '../test-store';
-import { setupTestStore } from '../test-store';
+import type { CoreOpts, TestStoreOpts } from '../test-store';
+import { DEFAULT_CORE_OPTS, setupTestStore } from '../test-store';
 
 type TestExtensionOpts = Pick<
   TestStoreOpts,
   'effects' | 'slices' | 'abortSignal' | 'extensions' | 'storeName'
 > & {
-  editor?: boolean;
   renderEditorComponent?: boolean;
+  core?: Partial<CoreOpts>;
 };
 
 export function setupTestExtension(opts: TestExtensionOpts) {
-  if (!opts.editor && opts.renderEditorComponent) {
+  const finalOpts: CoreOpts = {
+    ...DEFAULT_CORE_OPTS,
+    page: true,
+    workspace: true,
+    worker: true,
+    ...(opts.core || {}),
+  };
+
+  if (!finalOpts.editor && opts.renderEditorComponent) {
     throw new Error(
       'setupTestExtension: renderEditorComponent can only be true if editor is true',
     );
@@ -26,13 +34,7 @@ export function setupTestExtension(opts: TestExtensionOpts) {
 
   const testStore = setupTestStore({
     ...opts,
-    core: {
-      editor: opts.editor,
-      page: true,
-      ui: true,
-      workspace: true,
-      worker: true,
-    },
+    core: finalOpts,
   });
 
   return {

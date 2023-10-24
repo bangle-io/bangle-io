@@ -36,7 +36,9 @@ async function setup({
   const ctx = setupTestExtension({
     extensions: [noteOutlineExtension],
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+    },
     renderEditorComponent: true,
   });
 

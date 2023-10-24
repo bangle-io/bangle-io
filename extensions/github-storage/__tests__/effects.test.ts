@@ -208,7 +208,9 @@ describe('basic syncing', () => {
     const ctx = await setupTestExtension({
       extensions: [ext],
       abortSignal: abortController.signal,
-      editor: true,
+      core: {
+        editor: true,
+      },
     });
 
     await updateGhToken('test-token');
