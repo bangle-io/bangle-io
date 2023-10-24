@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import searchNotesExtension from '../index';
 
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { nsmApi2, wsPathHelpers } from '@bangle.io/api';
 import { sleep } from '@bangle.io/utils';
@@ -35,7 +35,7 @@ const setup = async (
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
 ) => {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     abortSignal: abortController.signal,
     extensions: [searchNotesExtension],
     core: {

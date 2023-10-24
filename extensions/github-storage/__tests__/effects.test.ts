@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 import { Extension, nsmApi2 } from '@bangle.io/api';
 import { githubEffects, nsmGhSlice } from '../state';
 import githubExt from '../index';
@@ -63,7 +63,7 @@ test('no effects', async () => {
   const ext = githubExt;
   overrideEffects([]);
 
-  const ctx = await setupTestExtension({
+  const ctx = await setupTestCtx({
     extensions: [ext],
     abortSignal: abortController.signal,
   });
@@ -176,7 +176,7 @@ describe('basic syncing', () => {
     await setup();
     const ext = githubExt;
 
-    const ctx = await setupTestExtension({
+    const ctx = await setupTestCtx({
       extensions: [ext],
       abortSignal: abortController.signal,
     });
@@ -205,7 +205,7 @@ describe('basic syncing', () => {
     await setup();
     const ext = githubExt;
 
-    const ctx = await setupTestExtension({
+    const ctx = await setupTestCtx({
       extensions: [ext],
       abortSignal: abortController.signal,
       core: {

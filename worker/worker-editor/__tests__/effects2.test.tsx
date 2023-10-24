@@ -4,7 +4,7 @@
 import { sleep } from '@bangle.io/utils';
 import { render, waitFor, screen } from '@testing-library/react';
 import React from 'react';
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { calculateGitFileSha } from '@bangle.io/git-file-sha';
 let abortController = new AbortController();
@@ -24,9 +24,12 @@ function mdToSha(md: string) {
 }
 
 async function setup() {
-  const ctx = await setupTestExtension({
+  const ctx = await setupTestCtx({
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+      sliceFileSha: true,
+    },
     renderEditorComponent: true,
   });
 

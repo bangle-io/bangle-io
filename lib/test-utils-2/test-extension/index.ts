@@ -1,1 +1,1 @@
-export { setupTestExtension } from './test-extension';
+export { setupTestCtx } from './test-extension';

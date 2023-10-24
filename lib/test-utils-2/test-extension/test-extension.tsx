@@ -17,7 +17,7 @@ type TestExtensionOpts = Pick<
   core?: Partial<CoreOpts>;
 };
 
-export function setupTestExtension(opts: TestExtensionOpts) {
+export function setupTestCtx(opts: TestExtensionOpts) {
   const finalOpts: CoreOpts = {
     ...DEFAULT_CORE_OPTS,
     page: true,
@@ -28,7 +28,7 @@ export function setupTestExtension(opts: TestExtensionOpts) {
 
   if (!finalOpts.editor && opts.renderEditorComponent) {
     throw new Error(
-      'setupTestExtension: renderEditorComponent can only be true if editor is true',
+      'setupTestCtx: renderEditorComponent can only be true if editor is true',
     );
   }
 

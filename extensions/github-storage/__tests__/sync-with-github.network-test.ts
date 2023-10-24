@@ -11,7 +11,7 @@ import {
   isEntryUntouched,
   makeLocalEntryFromRemote,
 } from '@bangle.io/remote-file-sync';
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 import { randomStr, sleep } from '@bangle.io/utils';
 
 import type { GithubWsMetadata } from '../common';
@@ -84,7 +84,7 @@ beforeEach(async () => {
 });
 
 const setup = async () => {
-  const ctx = await setupTestExtension({
+  const ctx = await setupTestCtx({
     core: {
       editor: true,
     },

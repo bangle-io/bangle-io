@@ -2,7 +2,7 @@
  * @jest-environment @bangle.io/jsdom-env
  */
 
-import { setupTestExtension } from '@bangle.io/test-utils-2';
+import { setupTestCtx } from '@bangle.io/test-utils-2';
 import React from 'react';
 import {
   act,
@@ -36,7 +36,7 @@ async function setup({
   notes?: [string, string][];
   renderEditorComponent?: boolean;
 } = {}) {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     extensions: [inlineBackLinkExtension],
     abortSignal: abortController.signal,
     core: {
