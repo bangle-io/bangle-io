@@ -36,17 +36,5 @@
   ],
   "exclude": [
     ".yarn/__virtual__",
-    "**/__tests__/*",
-    "**/test-utils/*",
   ],
-  "typeAcquisition": {
-    "include": []
-  },
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true,
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
-  },
 }

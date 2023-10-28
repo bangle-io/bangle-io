@@ -1,21 +1,13 @@
 .yarn/*
-!.yarn/cache
-!.yarn/releases
+!.yarn/patches
 !.yarn/plugins
+!.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-!.yarn/patches
-build
-coverage
-dist
-.DS_Store
-node_modules
-# Local Netlify folder
-.netlify
 
-coverage-summary.json
-tsconfig.tsbuildinfo
+# Swap the comments on the following lines if you wish to use zero-installs
+# In that case, don't forget to run `yarn config set enableGlobalCache false`!
+# Documentation here: https://yarnpkg.com/features/zero-installs
 
-# playwright
-playwright-report
-playwright/.cache/
+#!.yarn/cache
+.pnp.*

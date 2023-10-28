@@ -1,1 +1,0 @@
-import './note-tags.css';
