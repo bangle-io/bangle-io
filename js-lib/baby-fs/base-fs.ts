@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 // based on node's stat
 
 import { BaseError } from '@bangle.io/base-error';

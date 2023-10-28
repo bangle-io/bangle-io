@@ -55,7 +55,7 @@ const _deepMerge = (
  */
 export function deepMerge(
   target: Record<string, any>,
-  ...source: Array<Record<string, any>>
+  ...source: Record<string, any>[]
 ) {
   let result = { ...target };
 

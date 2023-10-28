@@ -1,3 +1,4 @@
+/// <reference lib="webworker" />
 // this exists because it is not possible to write to a fileHandle
 // in safari outside of worker context
 import { sendToWorkerForWrite } from './worker-glue-code';
@@ -51,6 +52,7 @@ export async function writeToFile(
   // for Safari 15.2 and later which support private fs
   // and it does not allow writing to fileHandle outside of worker
   if (
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     navigator &&
     navigator.storage &&
     'getDirectory' in navigator.storage &&

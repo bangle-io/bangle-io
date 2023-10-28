@@ -31,13 +31,14 @@ export function htmlManualPaste(editorView: EditorView, htmlStr: string) {
   ) {
     let slice = parseFromClipboard(
       view,
-      text || '',
+      text ?? '',
       html,
       (view as any).shiftKey,
       view.state.selection.$from,
     );
 
     if (
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       view.someProp('handlePaste', (f) => f(view, e, slice || Slice.empty)) ||
       !slice
     ) {

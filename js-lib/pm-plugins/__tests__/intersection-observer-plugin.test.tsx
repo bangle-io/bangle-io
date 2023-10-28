@@ -34,7 +34,7 @@ describe('getDocsChildren', () => {
       plugins,
     });
 
-    const { view } = await testEditor(
+    const { view } = testEditor(
       <doc>
         <para>foohello</para>
         <para>lastpara[]bar</para>

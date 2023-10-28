@@ -1,6 +1,5 @@
-import { match } from 'ts-pattern';
-
 import { handleTriState, TriState } from '@bangle.io/tri-state';
+import { match } from 'ts-pattern';
 
 export interface FileSyncObj {
   readonly uid: string;

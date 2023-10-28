@@ -32,7 +32,7 @@ export class DBKeyVal<V> {
     const tx = db.transaction(this._storeName, 'readwrite');
     const store = tx.objectStore(this._storeName);
 
-    let promises: Array<Promise<unknown>> = [];
+    let promises: Promise<unknown>[] = [];
 
     for (const uid of uids) {
       promises.push(store.delete(uid));
@@ -43,14 +43,14 @@ export class DBKeyVal<V> {
   }
 
   async bulkPutIfNotExists(
-    payload: Array<{ key: string; value: V }>,
+    payload: { key: string; value: V }[],
     opts: IdbOpts = {},
   ): Promise<{ failed: string[] }> {
     const db = await this._openDb();
     const tx = db.transaction(this._storeName, 'readwrite', opts);
     const store = tx.objectStore(this._storeName);
 
-    let promises: Array<Promise<unknown>> = [];
+    let promises: Promise<unknown>[] = [];
     let failed: string[] = [];
 
     for (const { key, value } of payload) {
@@ -80,7 +80,7 @@ export class DBKeyVal<V> {
     const tx = db.transaction(this._storeName, 'readwrite', opts);
     const store = tx.objectStore(this._storeName);
 
-    let promises: Array<Promise<unknown>> = [];
+    let promises: Promise<unknown>[] = [];
     let failed: string[] = [];
 
     for (const key of keys) {
@@ -122,7 +122,7 @@ export class DBKeyVal<V> {
   async getAll(): Promise<V[]> {
     const db = await this._openDb();
 
-    const results = (await db.getAll(this._storeName)) as Array<DbRecord<V>>;
+    const results = (await db.getAll(this._storeName)) as DbRecord<V>[];
 
     return results.map((r) => {
       return r.value;
@@ -194,6 +194,7 @@ export class DBKeyVal<V> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface BangleDbSchema extends DBSchema {
   [s: string]: {
     key: IDBValidKey;
@@ -202,9 +203,7 @@ export interface BangleDbSchema extends DBSchema {
   };
 }
 
-interface IndexKeys {
-  [s: string]: IDBValidKey;
-}
+type IndexKeys = Record<string, IDBValidKey>;
 
 // provides helper abstract to deal with database
 export function getTable<

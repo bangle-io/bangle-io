@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { zodFindUnsafeTypes } from '../zod-helpers';
 describe('zodFindUnsafeTypes', () => {
   test('catches functions', () => {
@@ -62,7 +63,7 @@ describe('zodFindUnsafeTypes', () => {
       Banana: false,
     } as const;
 
-    // @ts-expect-error
+    // @ts-expect-error banana is not string, number or boolean
     expect(zodFindUnsafeTypes(z.nativeEnum(MyObj))).toEqual([
       'ZodNativeEnum: for Banana only supports string, number and boolean',
     ]);

@@ -186,7 +186,7 @@ describe('File states', () => {
         ancestor: undefined,
       });
 
-      await expect(result).toEqual({ action: 'conflict' });
+      expect(result).toEqual({ action: 'conflict' });
     });
 
     test('Case D.1.1 no change', async () => {
@@ -198,7 +198,7 @@ describe('File states', () => {
         ancestor: undefined,
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'noop',
         target: undefined,
       });
@@ -211,7 +211,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'abc' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'set',
         target: 'fileA',
       });
@@ -237,7 +237,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'abc' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'delete',
         target: 'fileA',
       });
@@ -256,7 +256,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'abc' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'set',
 
         target: 'fileB',
@@ -270,7 +270,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'xyz' }),
       });
 
-      await expect(result).toEqual({ action: 'conflict' });
+      expect(result).toEqual({ action: 'conflict' });
     });
 
     test('Case D.1.6 A:modified, B:deleted; should target b', async () => {
@@ -280,7 +280,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'xyz' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'set',
 
         target: 'fileB',
@@ -294,7 +294,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'abc' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'delete',
         target: 'fileB',
       });
@@ -307,7 +307,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'xyz' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'set',
 
         target: 'fileA',
@@ -321,7 +321,7 @@ describe('File states', () => {
         ancestor: createFileEntry({ sha: 'abc' }),
       });
 
-      await expect(result).toEqual({
+      expect(result).toEqual({
         action: 'noop',
         target: undefined,
       });

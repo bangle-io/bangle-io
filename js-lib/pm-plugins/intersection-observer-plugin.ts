@@ -204,7 +204,7 @@ export function intersectionObserverPlugin({
 // needed this over the regular .nodeDOM api for performance reasons
 export function getDocsChildren(view: EditorView): Set<Element> {
   const viewDesc = (view as any).docView;
-  let list1: Set<Element> = new Set();
+  let list1 = new Set<Element>();
   for (let i = 0, offset = 0; i < viewDesc.children.length; i++) {
     let child = viewDesc.children[i];
     while (!child.border && child.children.length) {

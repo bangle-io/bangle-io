@@ -1,12 +1,12 @@
 import { IndexedDBFileSystem } from '../indexed-db-fs';
 
-const toFile = (str) => {
+const toFile = (str: any) => {
   var file = new File([str], 'foo.txt', { type: 'text/plain' });
 
   return file;
 };
 
-const serializeMap = (map) => {
+const serializeMap = (map: any) => {
   return Promise.all(
     [...map.entries()].map(async (r) => [r[0], await r[1]?.text()]),
   );

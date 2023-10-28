@@ -86,6 +86,7 @@ describe('Plain text search', () => {
     }));
 
     const mapper = jest.fn(async (uid) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
       return fileData.find((r) => r.name === uid)?.node!;
     });
 
@@ -138,14 +139,14 @@ describe('Plain text search', () => {
   describe('Works with simple data', () => {
     const getResult = async (
       query: string,
-      fileData: Array<{ name: string; node: any }>,
+      fileData: { name: string; node: any }[],
     ) => {
       return searchPmNode(
         new AbortController().signal,
         query,
         fileData.map((f) => f.name),
         async (uid) => {
-          return fileData.find((r) => r.name === uid)?.node!;
+          return fileData.find((r) => r.name === uid)?.node;
         },
       );
     };
@@ -618,14 +619,14 @@ describe('understands atom node searching', () => {
 
   const getResult = async (
     query: string,
-    fileData: Array<{ name: string; node: any }>,
+    fileData: { name: string; node: any }[],
   ) => {
     return searchPmNode(
       new AbortController().signal,
       query,
       fileData.map((f) => f.name),
       async (uid) => {
-        return fileData.find((r) => r.name === uid)?.node!;
+        return fileData.find((r) => r.name === uid)?.node;
       },
       [
         {

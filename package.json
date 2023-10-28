@@ -2,9 +2,6 @@
   "name": "bangle-io",
   "version": "1.0.0--alpha.0",
   "homepage": "https://bangle.io",
-  "workspaces": [
-    "js-lib"
-  ],
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -34,7 +31,6 @@
     "arrowParens": "always",
     "printWidth": 80
   },
-  "packageManager": "yarn@4.0.1",
   "license": "AGPL-3.0-or-later",
   "lint-staged": {
     "*.md": "yarn prettier --write",
@@ -49,6 +45,25 @@
     "*.json": "yarn prettier --write"
   },
   "devDependencies": {
+    "@eslint/js": "^8.52.0",
+    "@types/eslint": "^8",
+    "@types/eslint__js": "^8",
+    "@types/jest": "^29.5.3",
+    "@types/wicg-file-system-access": "^2020.9.5",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "globals": "^13.23.0",
+    "prettier": "3.0.3",
     "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "tsc-check": "tsc -b",
+    "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint"
   }
 }

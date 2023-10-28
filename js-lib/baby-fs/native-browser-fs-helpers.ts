@@ -85,9 +85,7 @@ export async function hasPermission(
   return (await dirHandle.queryPermission(opts)) === 'granted';
 }
 
-export type RecurseDirResult = Array<
-  [...FileSystemDirectoryHandle[], FileSystemFileHandle]
->;
+export type RecurseDirResult = [...FileSystemDirectoryHandle[], FileSystemFileHandle][];
 
 /**
  *

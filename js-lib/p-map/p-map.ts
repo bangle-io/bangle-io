@@ -70,8 +70,10 @@ export async function pMap<Element, NewElement>(
 
       resolvingCount++;
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       (async () => {
         try {
+          // eslint-disable-next-line @typescript-eslint/await-thenable
           const element = await nextItem.value;
           result[index] = await mapper(element, index);
           resolvingCount--;

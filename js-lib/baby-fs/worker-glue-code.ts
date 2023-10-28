@@ -54,7 +54,7 @@ async function compute(
 
   let timer: ReturnType<typeof setTimeout> | null = null;
 
-  prom.then(() => {
+  void prom.then(() => {
     if (timer) {
       clearTimeout(timer);
     }

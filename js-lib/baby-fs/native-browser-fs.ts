@@ -23,7 +23,7 @@ import { writeToFile } from './universal-write-to-file';
 
 const dirToChildMap = new WeakMap<
   FileSystemDirectoryHandle,
-  Array<FileSystemDirectoryHandle | FileSystemFileHandle>
+  (FileSystemDirectoryHandle | FileSystemFileHandle)[]
 >();
 
 const isNotFoundDOMException = (error: Error) =>

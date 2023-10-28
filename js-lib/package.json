@@ -5,7 +5,6 @@
     "abortable-worker",
     "baby-fs",
     "base-error",
-    "create-store",
     "db-key-val",
     "fzf-search",
     "git-file-sha",

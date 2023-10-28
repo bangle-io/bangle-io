@@ -35,6 +35,7 @@
     "**/*.tsx",
   ],
   "exclude": [
-    ".yarn/__virtual__",
+    ".yarn",
+    "node_modules",
   ],
 }

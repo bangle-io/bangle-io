@@ -28,8 +28,8 @@ export class BrowserHistory implements BaseHistory {
     private _base = '',
     private _onChange: (location: Location) => void,
   ) {
-    historyEvents.forEach((e) =>
-      this._host?.addEventListener(e, this._checkForUpdates),
+    historyEvents.forEach(
+      (e) => this._host?.addEventListener(e, this._checkForUpdates),
     );
     this._currentLoc = calcLocation(this._base);
   }
@@ -44,8 +44,8 @@ export class BrowserHistory implements BaseHistory {
   }
 
   destroy(): void {
-    historyEvents.forEach((e) =>
-      this._host?.removeEventListener(e, this._checkForUpdates),
+    historyEvents.forEach(
+      (e) => this._host?.removeEventListener(e, this._checkForUpdates),
     );
   }
 

@@ -1,5 +1,3 @@
-import { useCallback, useEffect } from 'react';
-
 import type {
   Command,
   EditorState,
@@ -8,6 +6,7 @@ import type {
 } from '@bangle.dev/pm';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { suggestTooltip } from '@bangle.dev/tooltip';
+import React, { useCallback, useEffect } from 'react';
 
 import { getSuggestTooltipKey } from './inline-palette';
 
@@ -51,6 +50,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
   const dismissPalette = useCallback(() => {
     return suggestTooltip.removeSuggestMark(inlinePaletteKey)(
       view.state,
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       view.dispatch,
       view,
     );
@@ -114,6 +114,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
       return {
         isActive: activeIndex === index,
         onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+          // eslint-disable-next-line @typescript-eslint/unbound-method
           if (executeHandler(index)(view.state, view.dispatch, view)) {
             e.preventDefault();
           }

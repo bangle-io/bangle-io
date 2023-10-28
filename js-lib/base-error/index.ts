@@ -2,8 +2,8 @@ export class BaseError extends Error {
   static fromJsonValue(input: ReturnType<BaseError['toJsonValue']>) {
     const error = new BaseError({
       message: input.message,
-      code: input.code || undefined,
-      thrower: input.thrower || undefined,
+      code: input.code ?? undefined,
+      thrower: input.thrower ?? undefined,
     });
 
     error.name = input.name;
@@ -74,7 +74,7 @@ export class BaseError extends Error {
       name,
       message,
       thrower: this.thrower,
-      code: this.code || null,
+      code: this.code ?? null,
       stack: this.stack,
     };
   }

@@ -14,6 +14,7 @@ export async function calculateGitFileSha(file: Blob) {
 
   // Check the environment.
   if (
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     typeof globalThis !== 'undefined' &&
     globalThis.crypto &&
     globalThis.crypto.subtle
@@ -25,7 +26,7 @@ export async function calculateGitFileSha(file: Blob) {
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
   } else if (typeof require !== 'undefined') {
-    // Running in Node.js environment
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
     const crypto = require('crypto');
     const hash = crypto.createHash('sha1');
     hash.update(data);
@@ -50,6 +51,7 @@ export async function fileToBase64(blob: Blob): Promise<string> {
     const uint8Array = new Uint8Array(arrayBuffer);
 
     let binary = '';
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < uint8Array.length; i++) {
       binary += String.fromCharCode(uint8Array[i]!);
     }
@@ -59,6 +61,7 @@ export async function fileToBase64(blob: Blob): Promise<string> {
   // Check if running in Node.js environment
   else if (typeof Buffer !== 'undefined') {
     const arrayBuffer = await blob.arrayBuffer();
+    // eslint-disable-next-line no-undef
     const buffer = Buffer.from(arrayBuffer);
 
     // Convert to Base64

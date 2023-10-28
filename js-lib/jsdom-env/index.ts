@@ -45,6 +45,7 @@ export default class JSDOMEnvironment extends JsdomClass {
     // for some reason structuredClone is removed or not added in the global object
     // during the JSDOM setup
     this.global.structuredClone = originalStructuredClone;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
     this.global.Blob = require('buffer').Blob;
     this.global.TextEncoder = TextEncoder;
   }

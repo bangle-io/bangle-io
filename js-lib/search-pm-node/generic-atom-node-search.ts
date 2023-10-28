@@ -107,7 +107,7 @@ function getCheapTextBefore(doc: Node, pos: number, maxChars: number) {
     )
     .split(UNIQUE_SEPARATOR);
 
-  return (textBeforeArray[textBeforeArray.length - 1] || '').trim();
+  return (textBeforeArray[textBeforeArray.length - 1] ?? '').trim();
 }
 
 function getCheapTextAfter(doc: Node, pos: number, maxChars: number) {
@@ -120,5 +120,5 @@ function getCheapTextAfter(doc: Node, pos: number, maxChars: number) {
     )
     .split(UNIQUE_SEPARATOR);
 
-  return (textAfterArray[0] || '').trim();
+  return (textAfterArray[0] ?? '').trim();
 }

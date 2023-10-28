@@ -1,5 +1,4 @@
-import { calculateGitFileSha } from '@bangle.io/git-file-sha';
-
+import { calculateGitFileSha } from '../index';
 import { readFileBlob } from './test-helpers';
 
 test('hashed file-a', async () => {

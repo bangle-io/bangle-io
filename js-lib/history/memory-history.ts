@@ -23,6 +23,7 @@ export class MemoryHistory implements BaseHistory {
     return this._currentLoc.search;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   destroy(): void {}
 
   navigate(to: string, { replace = false }: { replace?: boolean } = {}): void {
@@ -36,7 +37,7 @@ export class MemoryHistory implements BaseHistory {
 
     if (!isLocationEqual(newLoc, this._currentLoc)) {
       this._currentLoc = newLoc;
-      Promise.resolve().then(() => {
+      void Promise.resolve().then(() => {
         this._onChange(newLoc);
       });
     }

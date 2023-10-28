@@ -19,14 +19,7 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
   "peacock.color": "#6006e5",
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  },
-  "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "eslint.nodePath": ".yarn/sdks",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "cSpell.words": [
     "abortable",
     "backlink",
@@ -44,4 +37,5 @@
     "Worktrees"
   ],
   "javascript.preferences.importModuleSpecifier": "project-relative",
+  "eslint.experimental.useFlatConfig": true
 }
