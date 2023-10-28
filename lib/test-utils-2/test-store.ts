@@ -1,4 +1,4 @@
-import { internalApi } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import { naukarReplicaSlicesDispatch } from '@bangle.io/bangle-store';
 import { setupStore } from '@bangle.io/bangle-store-context';
 import { markdownItPlugins, rawSpecs } from '@bangle.io/editor-common';
@@ -193,6 +193,7 @@ export function setupTestStore(_opts: TestStoreOpts) {
     utils,
     testStore,
     eternalVars,
+    nsmApi2,
   };
 }
 

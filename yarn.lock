@@ -3913,6 +3913,7 @@ __metadata:
     "@bangle.dev/collab-manager": "npm:0.32.0"
     "@bangle.dev/core": "npm:0.32.0"
     "@bangle.dev/pm": "npm:0.32.0"
+    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"

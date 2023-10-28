@@ -6819,6 +6819,7 @@ const RAW_RUNTIME_STATE =
           ["@bangle.dev/collab-manager", "virtual:fc0f9af99148daaff70e47baaad281246848ff49bfd2e0b061d24063a95707a7dcc4b513eaea093d74464ef0e15806684ca13c4aebd4e2e201715fd6a2e5b6ca#npm:0.32.0"],\
           ["@bangle.dev/core", "virtual:97bbbf13d1e82fb50c220506e91d33127288dc74416f783a512e8f0f66110cbcf5e196760aa574414fb44365609ca2d098a32c669f7f987b1f56b25cbacc10dc#npm:0.32.0"],\
           ["@bangle.dev/pm", "npm:0.32.0"],\
+          ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],\
           ["@bangle.io/constants", "workspace:lib/constants"],\
           ["@bangle.io/editor", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:lib/editor"],\
           ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],\
