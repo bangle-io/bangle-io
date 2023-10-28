@@ -1,10 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import {
-  setupTestExtension,
-  testEditorMarkdown,
-} from '@bangle.io/test-utils-2';
+import { setupTestCtx, testEditorMarkdown } from '@bangle.io/test-utils-2';
 
 import { getHeadings } from '../watch-headings-plugin';
 import noteOutline from '../index';
@@ -20,10 +17,12 @@ afterEach(async () => {
 });
 
 function setup() {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     extensions: [noteOutline],
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+    },
   });
 
   const { render } = testEditorMarkdown(ctx.eternalVars);

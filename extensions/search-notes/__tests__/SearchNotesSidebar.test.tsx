@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import searchNotesExtension from '../index';
 
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { nsmApi2, wsPathHelpers } from '@bangle.io/api';
 import { sleep } from '@bangle.io/utils';
@@ -35,16 +35,18 @@ const setup = async (
     [`${wsName}:two.md`, `# Hello World 1`],
   ],
 ) => {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     abortSignal: abortController.signal,
     extensions: [searchNotesExtension],
-    editor: true,
+    core: {
+      editor: true,
+    },
     storeName: 'store:' + wsName,
   });
 
   if (wsName) {
-    await ctx.createWorkspace(wsName);
-    await ctx.createNotes(noteWsPaths, { loadFirst: true });
+    await ctx.utils.createWorkspace(wsName);
+    await ctx.utils.createNotes(noteWsPaths, { loadFirst: true });
 
     const targetPath = wsPathHelpers.createWsPath(noteWsPaths?.[0]?.[0]);
     nsmApi2.workspace.pushPrimaryWsPath(targetPath);

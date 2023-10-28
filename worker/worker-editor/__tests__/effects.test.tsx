@@ -3,7 +3,7 @@
  */
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 
 import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';

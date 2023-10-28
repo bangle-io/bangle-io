@@ -1,4 +1,4 @@
-import { internalApi } from '@bangle.io/api';
+import { internalApi, nsmApi2 } from '@bangle.io/api';
 import { naukarReplicaSlicesDispatch } from '@bangle.io/bangle-store';
 import { setupStore } from '@bangle.io/bangle-store-context';
 import { markdownItPlugins, rawSpecs } from '@bangle.io/editor-common';
@@ -9,6 +9,10 @@ import {
   nsmExtensionRegistry,
 } from '@bangle.io/extension-registry';
 import type { AnySlice, EffectCreator, SliceId } from '@bangle.io/nsm-3';
+import {
+  nsmSliceFileSha,
+  nsmSliceFileShaEffects,
+} from '@bangle.io/nsm-slice-file-sha';
 import {
   nsmSliceWorkspace,
   nsmWorkspaceEffects,
@@ -28,22 +32,25 @@ import { _clearWorker, _setWorker } from '@bangle.io/worker-naukar-proxy';
 
 import { memoryHistoryEffects, memoryHistorySlice } from './memory-history';
 import { testEternalVars } from './test-eternal-vars';
+import * as utils from './utils';
 
-type CoreOpts = {
+export type CoreOpts = {
   editor: boolean;
   ui: boolean;
   page: boolean;
   workspace: boolean;
   worker: boolean;
+  sliceFileSha: boolean;
   stateOverride: (base: Record<SliceId, any>) => Record<SliceId, any>;
 };
 
-const DEFAULT_CORE_OPTS: CoreOpts = {
+export const DEFAULT_CORE_OPTS: CoreOpts = {
   editor: false,
   ui: true,
   page: false,
   workspace: false,
   worker: false,
+  sliceFileSha: false,
   stateOverride: (s) => s,
 };
 
@@ -84,6 +91,11 @@ const getStuff = (
     slices.push(nsmUISlice);
     slices.push(nsmNotificationSlice);
     effects.push(...uiEffects);
+  }
+
+  if (opts.sliceFileSha) {
+    slices.push(nsmSliceFileSha);
+    effects.push(...nsmSliceFileShaEffects);
   }
 
   return {
@@ -178,8 +190,10 @@ export function setupTestStore(_opts: TestStoreOpts) {
   );
 
   return {
+    utils,
     testStore,
     eternalVars,
+    nsmApi2,
   };
 }
 

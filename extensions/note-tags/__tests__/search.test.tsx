@@ -6,7 +6,7 @@
 /// <reference path="./missing-test-types.d.ts" />
 
 import { psx } from '@bangle.dev/test-helpers';
-import { testEditor, setupTestExtension } from '@bangle.io/test-utils-2';
+import { testEditor, setupTestCtx } from '@bangle.io/test-utils-2';
 import type { Node } from '@bangle.dev/pm';
 
 import noteTags from '../index';
@@ -24,10 +24,12 @@ afterEach(async () => {
 });
 
 function setup() {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     extensions: [noteTags],
     abortSignal: abortController.signal,
-    editor: true,
+    core: {
+      editor: true,
+    },
   });
 
   const { renderDoc } = testEditor(ctx.eternalVars);

@@ -1,7 +1,7 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { setupTestExtension, waitForExpect } from '@bangle.io/test-utils-2';
+import { setupTestCtx, waitForExpect } from '@bangle.io/test-utils-2';
 import { Extension, nsmApi2 } from '@bangle.io/api';
 import { githubEffects, nsmGhSlice } from '../state';
 import githubExt from '../index';
@@ -63,12 +63,12 @@ test('no effects', async () => {
   const ext = githubExt;
   overrideEffects([]);
 
-  const ctx = await setupTestExtension({
+  const ctx = await setupTestCtx({
     extensions: [ext],
     abortSignal: abortController.signal,
   });
 
-  await ctx.createWorkspace('test-w1');
+  await ctx.utils.createWorkspace('test-w1');
 });
 
 describe('basic syncing', () => {
@@ -176,14 +176,14 @@ describe('basic syncing', () => {
     await setup();
     const ext = githubExt;
 
-    const ctx = await setupTestExtension({
+    const ctx = await setupTestCtx({
       extensions: [ext],
       abortSignal: abortController.signal,
     });
 
     await updateGhToken('test-token');
 
-    await ctx.createWorkspace(
+    await ctx.utils.createWorkspace(
       'test-w1',
       GITHUB_STORAGE_PROVIDER_NAME,
       githubWsMetadata,
@@ -194,7 +194,7 @@ describe('basic syncing', () => {
     });
 
     // switching to non github workspace
-    await ctx.createWorkspace('test-w2');
+    await ctx.utils.createWorkspace('test-w2');
 
     await waitForExpect(() => {
       expect(nsmGhSlice.get(ctx.testStore.state).githubWsName).toBe(undefined);
@@ -205,15 +205,17 @@ describe('basic syncing', () => {
     await setup();
     const ext = githubExt;
 
-    const ctx = await setupTestExtension({
+    const ctx = await setupTestCtx({
       extensions: [ext],
       abortSignal: abortController.signal,
-      editor: true,
+      core: {
+        editor: true,
+      },
     });
 
     await updateGhToken('test-token');
 
-    await ctx.createWorkspace(
+    await ctx.utils.createWorkspace(
       'test-w1',
       GITHUB_STORAGE_PROVIDER_NAME,
       githubWsMetadata,
@@ -237,7 +239,7 @@ describe('basic syncing', () => {
       ]
     `);
 
-    await ctx.createNotes([['test-w1:test-file.md', 'Hello world']]);
+    await ctx.utils.createNotes([['test-w1:test-file.md', 'Hello world']]);
 
     await waitForExpect(() => {
       expect(nsmApi2.workspace.workspaceState().noteWsPaths?.length).toBe(5);

@@ -9,7 +9,7 @@ import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { sleep } from '@bangle.io/utils';
 
 import { workspacePalette } from '../WorkspacePalette';
-import { setupTestExtension } from '@bangle.io/test-utils-2';
+import { setupTestCtx } from '@bangle.io/test-utils-2';
 import corePalettes from '../index';
 
 let abortController = new AbortController();
@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 async function setup() {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     extensions: [corePalettes],
     abortSignal: abortController.signal,
   });
@@ -36,9 +36,9 @@ test('Component renders correctly when multiple workspaces', async () => {
 
   const wsName = 'test-ws1';
 
-  await ctx.createWorkspace(wsName);
+  await ctx.utils.createWorkspace(wsName);
 
-  await ctx.createWorkspace(`test-ws2`);
+  await ctx.utils.createWorkspace(`test-ws2`);
 
   const dismissPalette = jest.fn();
   const onSelect = jest.fn();

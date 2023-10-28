@@ -6,39 +6,39 @@ import { PRIMARY_EDITOR_INDEX } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import type { EternalVars } from '@bangle.io/shared-types';
 
-import type { TestStoreOpts } from '../test-store';
-import { setupTestStore } from '../test-store';
-import * as utils from './utils';
+import type { CoreOpts, TestStoreOpts } from '../test-store';
+import { DEFAULT_CORE_OPTS, setupTestStore } from '../test-store';
 
 type TestExtensionOpts = Pick<
   TestStoreOpts,
   'effects' | 'slices' | 'abortSignal' | 'extensions' | 'storeName'
 > & {
-  editor?: boolean;
-  fullEditor?: boolean;
+  renderEditorComponent?: boolean;
+  core?: Partial<CoreOpts>;
 };
 
-export function setupTestExtension(opts: TestExtensionOpts) {
-  if (!opts.editor && opts.fullEditor) {
+export function setupTestCtx(opts: TestExtensionOpts) {
+  const finalOpts: CoreOpts = {
+    ...DEFAULT_CORE_OPTS,
+    page: true,
+    workspace: true,
+    worker: true,
+    ...(opts.core || {}),
+  };
+
+  if (!finalOpts.editor && opts.renderEditorComponent) {
     throw new Error(
-      'setupTestExtension: fullEditor can only be true if editor is true',
+      'setupTestCtx: renderEditorComponent can only be true if editor is true',
     );
   }
 
   const testStore = setupTestStore({
     ...opts,
-    core: {
-      editor: opts.editor,
-      page: true,
-      ui: true,
-      workspace: true,
-      worker: true,
-    },
+    core: finalOpts,
   });
 
   return {
     ...testStore,
-    ...utils,
     ContextProvider: function ContextProvider(props: {
       children: React.ReactNode;
     }) {
@@ -46,7 +46,7 @@ export function setupTestExtension(opts: TestExtensionOpts) {
         <NsmStoreContext.Provider value={testStore.testStore}>
           <_SerialOperationContextProvider>
             {props.children}
-            {opts.fullEditor ? (
+            {opts.renderEditorComponent ? (
               <RenderEditor eternalVars={testStore.eternalVars} />
             ) : null}
           </_SerialOperationContextProvider>

@@ -15,7 +15,7 @@ import noteOutlineExtension from '..';
 import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
 import { getEditorIntersectionObserverPluginState } from '../helpers';
 import { NoteOutline } from '../NoteOutline';
-import { setupTestExtension, testEditor } from '@bangle.io/test-utils-2';
+import { setupTestCtx, testEditor } from '@bangle.io/test-utils-2';
 import { createWsName } from '@bangle.io/ws-path';
 import { sleep } from '@bangle.io/utils';
 
@@ -33,17 +33,19 @@ async function setup({
   wsName,
   notes = [],
 }: { wsName?: string; notes?: [string, string][] } = {}) {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     extensions: [noteOutlineExtension],
     abortSignal: abortController.signal,
-    editor: true,
-    fullEditor: true,
+    core: {
+      editor: true,
+    },
+    renderEditorComponent: true,
   });
 
   if (wsName) {
-    await ctx.createWorkspace(wsName);
+    await ctx.utils.createWorkspace(wsName);
   }
-  await ctx.createNotes(notes, { loadFirst: true });
+  await ctx.utils.createNotes(notes, { loadFirst: true });
 
   return ctx;
 }

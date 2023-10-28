@@ -8,7 +8,7 @@ import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { notesPalette, useSearchWsPaths } from '../NotesPalette';
-import { setupTestExtension } from '@bangle.io/test-utils-2';
+import { setupTestCtx } from '@bangle.io/test-utils-2';
 import corePalettes from '../index';
 import { render } from '@testing-library/react';
 
@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 async function setup() {
-  const ctx = setupTestExtension({
+  const ctx = setupTestCtx({
     extensions: [corePalettes],
     abortSignal: abortController.signal,
   });
@@ -37,9 +37,9 @@ describe('NotesPalette', () => {
 
     const wsName = 'test-ws1';
 
-    await ctx.createWorkspace(wsName);
+    await ctx.utils.createWorkspace(wsName);
 
-    await ctx.createNotes(
+    await ctx.utils.createNotes(
       [
         [`${wsName}:note1.md`, 'content1'],
         [`${wsName}:note2.md`, 'content2'],

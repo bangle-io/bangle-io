@@ -2,7 +2,7 @@
  * @jest-environment @bangle.io/jsdom-env
  */
 
-import { setupTestExtension } from '@bangle.io/test-utils-2';
+import { setupTestCtx } from '@bangle.io/test-utils-2';
 import React from 'react';
 import {
   act,
@@ -30,20 +30,26 @@ afterEach(async () => {
 async function setup({
   wsName,
   notes,
-  fullEditor = false,
-}: { wsName?: string; notes?: [string, string][]; fullEditor?: boolean } = {}) {
-  const ctx = setupTestExtension({
+  renderEditorComponent = false,
+}: {
+  wsName?: string;
+  notes?: [string, string][];
+  renderEditorComponent?: boolean;
+} = {}) {
+  const ctx = setupTestCtx({
     extensions: [inlineBackLinkExtension],
     abortSignal: abortController.signal,
-    editor: true,
-    fullEditor: fullEditor,
+    core: {
+      editor: true,
+    },
+    renderEditorComponent: renderEditorComponent,
   });
 
   if (wsName) {
-    await ctx.createWorkspace(wsName);
+    await ctx.utils.createWorkspace(wsName);
   }
 
-  await ctx.createNotes(notes, { loadFirst: true });
+  await ctx.utils.createNotes(notes, { loadFirst: true });
 
   return ctx;
 }
@@ -94,7 +100,7 @@ describe('BacklinkNode', () => {
     const ctx = await setup({
       wsName: 'test-ws',
       notes: [[wsPath, `hello world [[my/note-path|monako]]`]],
-      fullEditor: true,
+      renderEditorComponent: true,
     });
 
     await render(

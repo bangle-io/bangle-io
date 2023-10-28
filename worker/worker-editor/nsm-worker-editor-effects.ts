@@ -112,7 +112,7 @@ const staleDocEffect = effect(function staleDocEffect(store) {
     return;
   }
 
-  // donot reset doc needlessly for Helpfs which is a special workspace and
+  // do not reset doc needlessly for Helpfs which is a special workspace and
   // does not persist any data
   if (HELP_FS_WORKSPACE_NAME === wsName) {
     return;

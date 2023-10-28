@@ -27,7 +27,7 @@ import {
   getIsSyncingRef,
   syncRunner,
 } from '../state/operations';
-import { setupTestExtension } from '@bangle.io/test-utils-2';
+import { setupTestCtx } from '@bangle.io/test-utils-2';
 import { WsPath } from '@bangle.io/shared-types';
 import { WsName } from '@bangle.io/storage';
 import { nsmGhSlice } from '../state';
@@ -128,13 +128,15 @@ const setup = async () => {
     1000,
   );
 
-  const ctx = await setupTestExtension({
-    editor: true,
+  const ctx = await setupTestCtx({
+    core: {
+      editor: true,
+    },
     extensions: [GithubStorageExt],
     abortSignal: abortController.signal,
   });
 
-  await ctx.createWorkspace(wsName, GITHUB_STORAGE_PROVIDER_NAME, {
+  await ctx.utils.createWorkspace(wsName, GITHUB_STORAGE_PROVIDER_NAME, {
     owner: githubOwner,
     branch: 'main',
   });
