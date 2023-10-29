@@ -13,6 +13,7 @@ const globals = require('globals');
 module.exports = [
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['e2e-tests/**'],
     languageOptions: {
       parser: parserTypescript,
       globals: {
