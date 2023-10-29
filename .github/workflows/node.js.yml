@@ -53,6 +53,9 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.39.0-focal
     steps:
       - uses: actions/checkout@v3
+      - name: Set git safe directory
+        # This is added as a fix for https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: pnpm/action-setup@v2
         with:
           version: 8
@@ -66,7 +69,7 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm -r --filter e2e-tests playwright-install
       - name: Run Playwright tests
-        run: pnpm -r --filter e2e-tests e2e
+        run: pnpm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
         with:

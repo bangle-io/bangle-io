@@ -1,0 +1,8 @@
+{
+  "name": "@bangle.io/runtime-type-checking",
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {},
+  "scripts": {}
+}

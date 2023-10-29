@@ -115,3 +115,23 @@ export type IfEquals<T, U, Y = unknown, N = never> = (<G>() => G extends T
 export const expectType = <Expected, Actual>(
   actual: IfEquals<Actual, Expected, Actual>,
 ) => void 0;
+
+/**
+ * from: https://github.com/microsoft/vscode/blob/6697193a79694d59c8e4f586330ee7a95c42b1b1/src/vs/base/common/types.ts#L97
+ */
+export function assertIsDefined<T>(
+  arg: T | null | undefined,
+  hint?: string,
+): asserts arg is T {
+  if (isUndefinedOrNull(arg)) {
+    throw new Error(`Assertion Failed: argument is undefined or null. ` + hint);
+  }
+}
+
+export function isUndefinedOrNull(obj: unknown): obj is undefined | null {
+  return isUndefined(obj) || obj === null;
+}
+
+export function isUndefined(obj: unknown): obj is undefined {
+  return typeof obj === 'undefined';
+}
