@@ -20,7 +20,6 @@ const reactRules = {
 module.exports = [
   {
     files: ['**/*.{ts,tsx}'],
-    ignores: ['e2e-tests/**'],
     languageOptions: {
       parser: parserTypescript,
       globals: {
@@ -98,7 +97,7 @@ module.exports = [
     },
   },
   {
-    files: ['**/vite.config.ts'],
+    files: ['**/vite.config.ts', '**/e2e-tests/**/*.{ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.node,

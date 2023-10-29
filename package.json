@@ -57,11 +57,13 @@
   },
   "scripts": {
     "start": "pnpm -r --filter \"app-root\" run start",
+    "build-prod-serve": "pnpm -r --filter \"app-root\" run build-prod-serve",
     "lint": "pnpm run \"/^lint:.*/\"",
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",
     "test": "pnpm jest",
     "test:ci": "pnpm jest --maxWorkers=2",
-    "test:e2e": "pnpm -r --filter e2e-tests e2e"
+    "test:e2e": "pnpm -r --filter e2e-tests e2e",
+    "test:e2e-ui": "pnpm -r --filter e2e-tests e2e --ui"
   }
 }
