@@ -15,7 +15,7 @@ env:
   GITHUB_OWNER: ${{ secrets.GH_OWNER }}
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,3 +31,19 @@ jobs:
         run: pnpm install
       - name: Lint
         run: pnpm run lint
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: test
+        run: pnpm run test:ci

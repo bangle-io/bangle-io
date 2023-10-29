@@ -13,8 +13,6 @@ const globals = require('globals');
 module.exports = [
   {
     files: ['**/*.{ts,tsx}'],
-  },
-  {
     languageOptions: {
       parser: parserTypescript,
       globals: {
@@ -85,8 +83,5 @@ module.exports = [
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/unbound-method': 'off',
     },
-  },
-  {
-    ignores: ['eslint.config.js'],
   },
 ];
