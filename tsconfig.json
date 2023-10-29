@@ -35,7 +35,6 @@
     "**/*.tsx",
   ],
   "exclude": [
-    ".yarn",
     "node_modules",
   ],
 }
