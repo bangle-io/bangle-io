@@ -1,0 +1,25 @@
+{
+  "name": "app-root",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@bangle.io/mini-js-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
+    "vite": "^4.5.0",
+    "vite-plugin-pwa": "^0.16.6",
+    "@vitejs/plugin-react-swc": "^3.4.0",
+    "@bangle.io/env-vars": "workspace:*",
+    "minimist": "^1.2.8",
+    "vite-plugin-html": "^3.2.0",
+    "@types/minimist": "^1.2.4",
+    "bangle-io-help": "^1.11.0"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}

@@ -13,17 +13,6 @@
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "private": true,
-  "browserslist": {
-    "production": [
-      "last 10 chrome version",
-      "last 10 firefox version",
-      "last 4 safari version",
-      "ios 12"
-    ],
-    "development": [
-      "last 3 chrome version"
-    ]
-  },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all",
@@ -63,13 +52,16 @@
     "jest": "^29.7.0",
     "prettier": "3.0.3",
     "typescript": "^5.2.2",
-    "@bangle.io/jsdom-env": "workspace:*"
+    "@bangle.io/jsdom-env": "workspace:*",
+    "bangle-io-help": "^1.11.0"
   },
   "scripts": {
+    "start": "pnpm -r --filter \"app-root\" run start",
     "lint": "pnpm run \"/^lint:.*/\"",
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",
     "test": "pnpm jest",
-    "test:ci": "pnpm jest --maxWorkers=2"
+    "test:ci": "pnpm jest --maxWorkers=2",
+    "test:e2e": "pnpm -r --filter e2e-tests e2e"
   }
 }

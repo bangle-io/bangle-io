@@ -37,5 +37,8 @@
     "Worktrees"
   ],
   "javascript.preferences.importModuleSpecifier": "project-relative",
-  "eslint.experimental.useFlatConfig": true
+  "eslint.experimental.useFlatConfig": true,
+  "search.exclude": {
+    "**/node_modules/*": true,
+  },
 }

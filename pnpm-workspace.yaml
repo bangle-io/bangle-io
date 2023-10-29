@@ -1,4 +1,6 @@
 packages:
+  - 'app/*'
+  - 'e2e-tests'
   - 'js-lib/*'
   - 'tooling/*'
-  - 'e2e-tests'
+  - 'shared/*'

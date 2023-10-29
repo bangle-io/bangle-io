@@ -9,6 +9,13 @@ const pluginTypescript = require('@typescript-eslint/eslint-plugin');
 const ts = require('@typescript-eslint/eslint-plugin');
 const globals = require('globals');
 
+/** @type {import('eslint').Linter.FlatConfig['rules']} */
+const reactRules = {
+  ...pluginReact.configs.recommended.rules,
+  ...pluginReact.configs['jsx-runtime'].rules,
+  ...pluginReactHooks.configs.recommended.rules,
+};
+
 /** @type {import('eslint').Linter.FlatConfig[]} */
 module.exports = [
   {
@@ -31,6 +38,8 @@ module.exports = [
       '@typescript-eslint': pluginTypescript,
       'simple-import-sort': pluginSimpleImportSort,
       'import': pluginImport,
+      'react': pluginReact,
+      'react-hooks': pluginReactHooks,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -44,6 +53,7 @@ module.exports = [
 
       // General import / export rules
       ...pluginImport.configs.recommended.rules,
+      ...reactRules,
 
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
@@ -67,8 +77,10 @@ module.exports = [
     },
     settings: {
       ...pluginImport.configs.typescript.settings,
+      react: { version: 'detect' },
     },
   },
+
   {
     files: ['**/__tests__/**/*.{ts,tsx}'],
     languageOptions: {
@@ -83,6 +95,14 @@ module.exports = [
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/unbound-method': 'off',
+    },
+  },
+  {
+    files: ['**/vite.config.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
     },
   },
 ];
