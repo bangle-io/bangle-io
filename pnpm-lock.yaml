@@ -432,6 +432,9 @@ importers:
       cross-fetch:
         specifier: ^4.0.0
         version: 4.0.0
+      domexception:
+        specifier: ^4.0.0
+        version: 4.0.0
       fake-indexeddb:
         specifier: ^5.0.1
         version: 5.0.1
