@@ -87,6 +87,6 @@ module.exports = [
     },
   },
   {
-    ignores: ['eslint.config.js'],
+    ignores: ['*.config.js'],
   },
 ];

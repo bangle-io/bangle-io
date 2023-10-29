@@ -1,0 +1,9 @@
+{
+  "name": "jest-utils",
+  "dependencies": {
+    "@bangle.io/config-template": "^0.0.7",
+    "fake-indexeddb": "^5.0.1",
+    "cross-fetch": "^4.0.0"
+  },
+  "devDependencies": {}
+}
