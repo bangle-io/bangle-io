@@ -1,0 +1,112 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [dev, staging, production, v2]
+  pull_request:
+    branches: [dev, staging, production, v2]
+
+concurrency:
+  group: bangle-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  SENTRY_NO_PROGRESS_BAR: 1
+  GITHUB_OWNER: ${{ secrets.GH_OWNER }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Lint
+        run: pnpm run lint
+
+  tests-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-kind: ['lint', 'test:regular', 'build']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run test "${{ matrix.test-kind }}"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
+      - run: yarn ${{ matrix.test-kind }}
+      # - name: Upload coverage report
+      # if: matrix.test-kind == 'test:regular'
+      # uses: codecov/codecov-action@v3
+      # with:
+      #   token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      #   flags: unittests # optional
+      #   fail_ci_if_error: true # optional (default = false)
+      #   verbose: true # optional (default = false)
+
+  # tests-network:
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/dev'
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Run test "${{ matrix.test-kind }}"
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18.x
+  #     - name: yarn install
+  #       run: yarn install --immutable --immutable-cache
+  #     - run: yarn test:network
+
+  build-size:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
+      - uses: preactjs/compressed-size-action@v2
+        with:
+          pattern: '**/build/**/*.{js,css,html,json}'
+          exclude: '{**/*.map,**/node_modules/**}'
+          strip-hash: "\\b\\w{8}\\."
+          minimum-change-threshold: 30
+
+  tests-e2e:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.39.0-focal
+    strategy:
+      matrix:
+        test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set git safe directory
+        # This is added as a fix for https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
+      # - name: Install playwright dependencies
+      #   run: yarn g:playwright-dep
+      - run: yarn ${{ matrix.test-kind }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: tooling/playwright-e2e/
+          retention-days: 7
