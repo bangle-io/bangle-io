@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "NODE_ENV=production vite build",
     "build-prod-serve": "NODE_ENV=production vite build && vite preview --port 1234",
     "preview": "vite preview"
   }
