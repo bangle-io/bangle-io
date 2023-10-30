@@ -1,6 +1,6 @@
 /* eslint-disable no-process-env */
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 const { BangleConfig } = require('@bangle.io/config-template');
 
 const releaseVersion = require('../../package.json').version;

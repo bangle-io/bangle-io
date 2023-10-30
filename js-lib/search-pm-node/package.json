@@ -23,17 +23,14 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.32.0",
-    "@bangle.dev/pm": "0.32.0",
-    "@bangle.io/p-map": "workspace:*",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
-  },
-  "devDependencies": {
     "@bangle.dev/all-base-components": "0.32.0",
     "@bangle.dev/test-helpers": "0.32.0",
     "@bangle.dev/utils": "0.32.0",
-    "@bangle.dev/wiki-link": "0.32.0"
+    "@bangle.dev/wiki-link": "0.32.0",
+    "@bangle.dev/core": "0.32.0",
+    "@bangle.dev/pm": "0.32.0",
+    "@bangle.io/p-map": "workspace:*"
   },
+  "devDependencies": {},
   "license": "AGPL-3.0-or-later"
 }

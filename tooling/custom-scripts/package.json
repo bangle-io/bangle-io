@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/fzf-search",
+  "name": "@bangle.io/custom-scripts",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,27 +11,24 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/fzf-search"
+    "directory": "tooling/custom-scripts"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "main": "index.ts",
-  "module": "index.ts",
   "publishConfig": {
-    "access": "restricted"
-  },
-  "peerDependencies": {
-    "react": "*"
+    "access": "public"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "fzf": "^0.5.1",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "execa": "^5.1.1",
+    "ts-node": "^10.9.1",
+    "@tsconfig/node18": "^18.2.2",
+    "zod": "^3.22.4",
+    "globby": "^13.2.2"
   },
-  "devDependencies": {
-    "@types/react": "^18.2.33"
-  },
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "cscript:deps": "pnpm exec ts-node --project tsconfig.tsnode.json validate/deps.ts"
+  }
 }

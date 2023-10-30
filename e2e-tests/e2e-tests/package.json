@@ -1,0 +1,11 @@
+{
+  "name": "e2e-tests",
+  "dependencies": {
+    "@playwright/test": "^1.39.0",
+    "@types/node": "^20.8.9"
+  },
+  "scripts": {
+    "playwright-install": "pnpm exec playwright install --with-deps",
+    "e2e": "pnpm exec playwright test"
+  }
+}

@@ -97,7 +97,11 @@ module.exports = [
     },
   },
   {
-    files: ['**/vite.config.ts', '**/e2e-tests/**/*.{ts,tsx}'],
+    files: [
+      '**/vite.config.ts',
+      '**/e2e-tests/**/*.{ts,tsx}',
+      'tooling/**/*.{ts,tsx}',
+    ],
     languageOptions: {
       globals: {
         ...globals.node,
