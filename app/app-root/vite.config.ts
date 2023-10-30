@@ -1,3 +1,4 @@
+// @bangle-ignore-checks
 import path from 'node:path';
 
 import getEnvVars from '@bangle.io/env-vars';

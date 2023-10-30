@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 
 export const readFileBlob = async (filename: string): Promise<File> =>
   new Blob(
