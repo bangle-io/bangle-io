@@ -27,11 +27,63 @@ type WorkspaceData = {
   bangleWorkspaceConfig: BangleWorkspaceConfig;
 };
 
+export class Workspace {
+  get name() {
+    return this.data.name;
+  }
+
+  get path() {
+    return this.data.path;
+  }
+
+  private _packagesName: string[] = [];
+
+  get packagesName(): readonly string[] {
+    return this._packagesName;
+  }
+
+  get packageJSON() {
+    return this.data.packageJSON;
+  }
+
+  get bangleWorkspaceConfig() {
+    return this.data.bangleWorkspaceConfig;
+  }
+
+  allowedWsDependency(workspaces: Workspace[], packageName: string): boolean {
+    if (this.bangleWorkspaceConfig.allowedWorkspaces.includes('*')) {
+      return true;
+    }
+
+    for (const wsName of this.bangleWorkspaceConfig.allowedWorkspaces) {
+      const wsMatch = workspaces.find((ws) => ws.name === wsName);
+
+      if (!wsMatch) {
+        throw new Error(
+          `Could not find workspace ${wsName} in workspace ${this.name}`,
+        );
+      }
+
+      if (wsMatch.packagesName.includes(packageName)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  addPackageName(packageName: string) {
+    this._packagesName.push(packageName);
+  }
+
+  constructor(private data: WorkspaceData) {}
+}
+
 interface PackageState {
   location: string;
   packageJSON: PackageJSON;
   files: string[];
-  workspaceData: WorkspaceData;
+  workspace: Workspace;
 }
 
 interface PackageJSON {
@@ -56,10 +108,10 @@ export async function setup() {
     packageJSON: require(p),
   }));
 
-  const workspaces: Record<string, WorkspaceData> = Object.fromEntries(
+  const workspaces: Record<string, Workspace> = Object.fromEntries(
     packagesResolved
       .filter((p) => p.packageJSON.bangleWorkspaceConfig)
-      .map((p): [string, WorkspaceData] => {
+      .map((p): [string, Workspace] => {
         const config = p.packageJSON.bangleWorkspaceConfig;
 
         // validate config
@@ -67,12 +119,12 @@ export async function setup() {
 
         return [
           p.packageJSON.name,
-          {
+          new Workspace({
             name: p.packageJSON.name,
             path: p.path,
             packageJSON: p.packageJSON,
             bangleWorkspaceConfig: p.packageJSON.bangleWorkspaceConfig,
-          },
+          }),
         ];
       }),
   );
@@ -89,17 +141,18 @@ export async function setup() {
           path.dirname(path.resolve(p.path, '..')),
         );
 
-        const workspaceData = workspaces[parentDir];
+        const workspace = workspaces[parentDir];
 
-        if (!workspaceData) {
+        if (!workspace) {
           throw new Error(
             `Could not find workspace for "${p.packageJSON.name}" in "${parentDir}"`,
           );
         }
+        workspace.addPackageName(p.packageJSON.name);
 
         const packageObj: PackageState = {
           location: path.dirname(p.path),
-          workspaceData,
+          workspace: workspace,
           packageJSON: p.packageJSON,
           files: globbySync('**/*', {
             cwd: path.dirname(p.path),
@@ -109,7 +162,6 @@ export async function setup() {
           }),
         };
 
-        console.log(packageObj.packageJSON.name, packageObj.files);
         return [p.packageJSON.name, packageObj];
       }),
   );
@@ -144,6 +196,10 @@ export class Package {
 
   get packageJSONPath() {
     return path.join(this.packagePath, 'package.json');
+  }
+
+  get workspace(): Workspace {
+    return this.packageState.workspace;
   }
 
   constructor(

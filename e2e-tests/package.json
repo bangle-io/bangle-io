@@ -1,4 +1,8 @@
 {
   "name": "e2e-tests",
-  "bangleWorkspaceConfig": {}
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": [
+      "*"
+    ]
+  }
 }
