@@ -2,7 +2,6 @@
   "name": "shared",
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
-      "js-lib",
       "shared"
     ]
   }
