@@ -16,7 +16,11 @@ async function shouldRespectAllowedWorkspace(
   );
 
   for (const [name, pkg] of packageMap.entries()) {
-    const deps = Object.keys(pkg.workspaceDependencies);
+    let deps = Object.keys(pkg.workspaceDependencies);
+    deps.push(...Object.keys(pkg.workspaceDevDependencies));
+
+    deps = [...new Set(deps)];
+
     for (const dep of deps) {
       const result = pkg.workspace.allowedWsDependency(
         [...Object.values(workspaceMap)],
