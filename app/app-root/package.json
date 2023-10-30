@@ -4,7 +4,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@bangle.io/mini-js-utils": "workspace:*",
-    "@bangle.io/main": "workspace:*"
+    "@bangle.io/main": "workspace:*",
+    "@bangle.io/uno-preset-bangle": "workspace:*",
+    "@unocss/reset": "^0.57.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.33",
@@ -16,7 +18,9 @@
     "minimist": "^1.2.8",
     "vite-plugin-html": "^3.2.0",
     "@types/minimist": "^1.2.4",
-    "bangle-io-help": "^1.11.0"
+    "bangle-io-help": "^1.11.0",
+    "unocss": "^0.53.6",
+    "@unocss/vite": "^0.53.6"
   },
   "scripts": {
     "start": "vite",
