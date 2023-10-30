@@ -31,6 +31,8 @@ jobs:
         run: pnpm install
       - name: Lint
         run: pnpm run lint
+      - name: constraints
+        run: pnpm run test:constraints
   test:
     runs-on: ubuntu-latest
     steps:
