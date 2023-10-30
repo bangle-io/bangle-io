@@ -21,9 +21,7 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "devDependencies": {
-
-  },
+  "devDependencies": {},
   "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@types/react": "^17.0.49",
