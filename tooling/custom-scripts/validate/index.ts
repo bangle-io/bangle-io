@@ -30,7 +30,8 @@ async function shouldRespectAllowedWorkspace(
       if (!result) {
         throwValidationError(
           `Package ${name} imports ${dep}  
-          which is not allowed in the workspace`,
+          which is not allowed in the workspace. 
+          Check "allowedWorkspaces" in the package.json of workspace of ${pkg.workspace.path}`,
         );
       }
     }
