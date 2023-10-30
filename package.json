@@ -63,7 +63,8 @@
     "lint": "pnpm run \"/^lint:.*/\"",
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",
-    "test": "pnpm jest && pnpm -r run \"/^cscript:.*/\"",
+    "test": "pnpm jest && pnpm run test:constraints",
+    "test:constraints": "pnpm -r run \"/^cscript:.*/\"",
     "test:ci": "pnpm jest --maxWorkers=2",
     "test:e2e": "pnpm -r --filter e2e-tests e2e",
     "test:e2e-ui": "pnpm -r --filter e2e-tests e2e --ui"

@@ -1,4 +1,8 @@
 {
   "name": "app",
-  "bangleWorkspaceConfig": {}
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": [
+      "*"
+    ]
+  }
 }

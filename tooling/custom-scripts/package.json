@@ -29,6 +29,6 @@
   },
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "cscript:deps": "pnpm exec ts-node --project tsconfig.tsnode.json validate/deps.ts"
+    "cscript:validation": "pnpm exec ts-node --project tsconfig.tsnode.json validate/index.ts"
   }
 }
