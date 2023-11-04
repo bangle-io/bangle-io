@@ -86,9 +86,6 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
-      '@bangle.io/uno-preset-bangle':
-        specifier: workspace:*
-        version: link:../uno-preset-bangle
       '@unocss/reset':
         specifier: ^0.57.1
         version: 0.57.1
@@ -102,6 +99,9 @@ importers:
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../../shared/env-vars
+      '@bangle.io/uno-preset-bangle':
+        specifier: workspace:*
+        version: link:../uno-preset-bangle
       '@types/minimist':
         specifier: ^1.2.4
         version: 1.2.4
