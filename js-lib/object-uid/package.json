@@ -1,7 +1,12 @@
 {
   "name": "@bangle.io/object-uid",
-  "description": "A utility which generates a unique id for an object",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/object-uid"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -9,22 +14,22 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/object-uid"
+  "homepage": "https://bangle.io",
+  "scripts": {},
+  "dependencies": {
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "description": "A utility which generates a unique id for an object",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "license": "AGPL-3.0-or-later",
-  "dependencies": {
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
   }
 }

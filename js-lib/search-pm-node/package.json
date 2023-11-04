@@ -1,7 +1,12 @@
 {
   "name": "@bangle.io/search-pm-node",
-  "description": "A utility function to search inside a prosemirror node using a string",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/search-pm-node"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -9,19 +14,8 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/search-pm-node"
-  },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "restricted"
-  },
+  "homepage": "https://bangle.io",
+  "scripts": {},
   "dependencies": {
     "@bangle.dev/all-base-components": "0.32.0",
     "@bangle.dev/test-helpers": "0.32.0",
@@ -32,5 +26,16 @@
     "@bangle.io/p-map": "workspace:*"
   },
   "devDependencies": {},
-  "license": "AGPL-3.0-or-later"
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "description": "A utility function to search inside a prosemirror node using a string",
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

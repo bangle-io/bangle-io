@@ -1,11 +1,6 @@
 import './style.css';
 
-import {
-  Button,
-  darkTheme,
-  defaultTheme,
-  Provider,
-} from '@adobe/react-spectrum';
+import { Button, defaultTheme, Provider } from '@adobe/react-spectrum';
 import React from 'react';
 
 export function Main() {

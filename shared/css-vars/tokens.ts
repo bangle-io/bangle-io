@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import type { DesignTokens, ToneColors } from '@bangle.io/shared-types';
 
 export { getFromPath, walkObject } from './walk-object';

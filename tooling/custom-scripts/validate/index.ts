@@ -5,6 +5,7 @@ void setup().then(async (item) => {
   void shouldRespectAllowedWorkspace(item.packagesMap, item.workspaces);
   void shouldOnlyUseDependenciesDefinedInPackageJSON(item.packagesMap);
   void shouldOnlyUseDevDependenciesDefinedInPackageJSON(item.packagesMap);
+  void testBrowserPackagesToNotRelyOnNode(item.packagesMap);
 });
 
 async function shouldRespectAllowedWorkspace(
@@ -52,7 +53,10 @@ async function shouldOnlyUseDependenciesDefinedInPackageJSON(
     for (const dep of deps) {
       if (!pkg.dependencies[dep]) {
         throwValidationError(
-          `Package ${name} ${pkg.packageJSONPath}  imports ${dep} which is not in the workspace`,
+          `Error in Package ${name}
+${pkg.packageJSONPath}
+
+imports dependency: ${dep} which is not defined in package.json's "dependencies"`,
         );
       }
     }
@@ -75,6 +79,31 @@ async function shouldOnlyUseDevDependenciesDefinedInPackageJSON(
       if (!pkg.devDependencies?.[dep] && !pkg.dependencies[dep]) {
         throwValidationError(
           `Package ${name} ${pkg.packageJSONPath}  imports ${dep} which is not in the workspace`,
+        );
+      }
+    }
+  }
+}
+
+async function testBrowserPackagesToNotRelyOnNode(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testBrowserPackagesToNotRelyOnNode',
+  );
+
+  for (const [name, pkg] of packageMap.entries()) {
+    if (pkg.type !== 'browser') {
+      continue;
+    }
+
+    const deps = Object.values(pkg.workspaceDependencies);
+
+    for (const dep of deps) {
+      if (dep.type === 'nodejs') {
+        throwValidationError(
+          `Browser Package ${name} ${pkg.packageJSONPath}
+imports ${dep.name} which is a node package. Either move it to devDep or make it a browser package`,
         );
       }
     }
