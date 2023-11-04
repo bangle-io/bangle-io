@@ -2,6 +2,7 @@
 import path from 'node:path';
 
 import getEnvVars from '@bangle.io/env-vars';
+import Unocss from '@unocss/vite';
 import react from '@vitejs/plugin-react-swc';
 import minimist from 'minimist';
 import { defineConfig } from 'vite';
@@ -49,6 +50,7 @@ export default defineConfig(async ({ command, mode }) => {
         },
       }),
       react({}),
+      Unocss(),
       PWA,
     ],
     publicDir: path.join(__dirname, 'public'),

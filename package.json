@@ -54,7 +54,9 @@
     "typescript": "^5.2.2",
     "@bangle.io/jsdom-env": "workspace:*",
     "bangle-io-help": "^1.11.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "unocss": "^0.53.6",
+    "@bangle.io/uno-preset-bangle": "workspace:*"
   },
   "scripts": {
     "start": "pnpm -r --filter \"app-root\" run start",
@@ -64,6 +66,7 @@
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",
     "test": "pnpm jest && pnpm run test:constraints",
+    "generate-all": "pnpm -r --filter \"custom-scripts\" run generate-all",
     "test:constraints": "pnpm -r run \"/^cscript:.*/\"",
     "test:ci": "pnpm jest --maxWorkers=2",
     "test:e2e": "pnpm -r --filter e2e-tests e2e",

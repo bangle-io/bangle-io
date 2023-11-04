@@ -1,24 +1,14 @@
-import * as fs from 'node:fs';
 import fsProm from 'node:fs/promises';
 import path from 'node:path';
 
-import execa from 'execa';
-import { z } from 'zod';
-
 import {
+  BanglePackageConfig,
+  banglePackageConfigSchema,
   BangleWorkspaceConfig,
   bangleWorkspaceConfigSchema,
 } from './constants';
 
 const root = path.resolve(__dirname, '../../..');
-
-const ignoreCallback = ({ path }: { path: string }) =>
-  path.includes('/node_modules/') ||
-  path.includes('/.git/') ||
-  path.includes('/dist/') ||
-  path.includes('/build/') ||
-  path.includes('/coverage/') ||
-  path.includes('/.yarn/');
 
 type WorkspaceData = {
   name: string;
@@ -84,15 +74,20 @@ interface PackageState {
   packageJSON: PackageJSON;
   files: string[];
   workspace: Workspace;
+  banglePackageConfig: BanglePackageConfig;
 }
 
 interface PackageJSON {
   name: string;
   version: string;
-  workspaces?: string[];
+  scripts?: Record<string, string>;
+  repository?: Record<string, any>;
+  author?: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   description?: string;
+  bangleWorkspaceConfig?: BangleWorkspaceConfig;
+  banglePackageConfig?: BanglePackageConfig;
 }
 
 export async function setup() {
@@ -150,10 +145,22 @@ export async function setup() {
         }
         workspace.addPackageName(p.packageJSON.name);
 
+        const banglePackageConfig = p.packageJSON.banglePackageConfig;
+
+        try {
+          banglePackageConfigSchema.parse(banglePackageConfig);
+        } catch (err) {
+          console.error(err);
+          throw new Error(
+            `Validation error in package ${p.packageJSON.name} at ${p.path}`,
+          );
+        }
+
         const packageObj: PackageState = {
           location: path.dirname(p.path),
           workspace: workspace,
           packageJSON: p.packageJSON,
+          banglePackageConfig: banglePackageConfig,
           files: globbySync('**/*', {
             cwd: path.dirname(p.path),
             gitignore: true,
@@ -182,6 +189,10 @@ export class Package {
   packageJSON: PackageJSON;
   name: string;
 
+  get type() {
+    return this.banglePackageConfig.type;
+  }
+
   get workspaceDependencies(): Record<string, Package> {
     return this._getWsDeps('dependencies');
   }
@@ -191,6 +202,10 @@ export class Package {
   }
 
   private fileHelpers: Map<string, FileHelper>;
+
+  get banglePackageConfig() {
+    return this.packageState.banglePackageConfig;
+  }
 
   packagePath: string;
 
@@ -206,6 +221,12 @@ export class Package {
     private packageState: PackageState,
     private packageMapping: Map<string, Package>,
   ) {
+    if (packageState.packageJSON.bangleWorkspaceConfig) {
+      throw new Error(
+        `Not allowed: Package ${packageState.packageJSON.name} is a workspace`,
+      );
+    }
+
     this.name = packageState.packageJSON.name;
 
     packageMapping.set(this.name, this);

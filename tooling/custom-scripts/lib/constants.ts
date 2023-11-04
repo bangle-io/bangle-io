@@ -1,9 +1,15 @@
-import { z } from 'zod';
+import path from 'node:path';
 
-export const ALL_TOP_LEVEL_DIRS = ['app', 'js-lib', 'tooling', 'e2e-tests'];
+import { z } from 'zod';
+export const rootPath = path.resolve(__dirname, '../../..');
 
 export const bangleWorkspaceConfigSchema = z.object({
   allowedWorkspaces: z.array(z.string()),
 });
 
+export const banglePackageConfigSchema = z.object({
+  type: z.enum(['nodejs', 'browser', 'universal']),
+});
+
 export type BangleWorkspaceConfig = z.infer<typeof bangleWorkspaceConfigSchema>;
+export type BanglePackageConfig = z.infer<typeof banglePackageConfigSchema>;

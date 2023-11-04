@@ -1,6 +1,12 @@
 {
   "name": "@bangle.io/pm-plugins",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/pm-plugins"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -8,19 +14,8 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/pm-plugins"
-  },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "restricted"
-  },
+  "homepage": "https://bangle.io",
+  "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.32.0",
     "@bangle.dev/pm": "0.32.0",
@@ -38,5 +33,15 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
-  "license": "AGPL-3.0-or-later"
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

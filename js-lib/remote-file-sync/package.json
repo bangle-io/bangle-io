@@ -1,6 +1,12 @@
 {
   "name": "@bangle.io/remote-file-sync",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/remote-file-sync"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -8,19 +14,8 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/remote-file-sync"
-  },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
-  },
+  "homepage": "https://bangle.io",
+  "scripts": {},
   "dependencies": {
     "@bangle.io/tri-state": "workspace:*",
     "ts-pattern": "^5.0.4",
@@ -31,5 +26,15 @@
     "@bangle.io/db-key-val": "workspace:*",
     "type-fest": "^4.0.0"
   },
-  "license": "AGPL-3.0-or-later"
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  }
 }
