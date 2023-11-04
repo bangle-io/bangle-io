@@ -147,7 +147,14 @@ export async function setup() {
 
         const banglePackageConfig = p.packageJSON.banglePackageConfig;
 
-        banglePackageConfigSchema.parse(banglePackageConfig);
+        try {
+          banglePackageConfigSchema.parse(banglePackageConfig);
+        } catch (err) {
+          console.error(err);
+          throw new Error(
+            `Validation error in package ${p.packageJSON.name} at ${p.path}`,
+          );
+        }
 
         const packageObj: PackageState = {
           location: path.dirname(p.path),

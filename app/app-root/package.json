@@ -1,5 +1,5 @@
 {
-  "name": "app-root",
+  "name": "@bangle.io/app-root",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -47,5 +47,6 @@
   },
   "banglePackageConfig": {
     "type": "browser"
-  }
+  },
+  "main": "index.tsx"
 }

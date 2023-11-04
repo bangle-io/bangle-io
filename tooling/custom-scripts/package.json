@@ -17,14 +17,19 @@
   "homepage": "https://bangle.io",
   "scripts": {
     "cscript:validation": "pnpm exec ts-node --project tsconfig.tsnode.json validate/index.ts",
-    "gen:format-package-json": "pnpm exec ts-node --project tsconfig.tsnode.json generate/format-package-json.ts"
+    "gen:css-vars": "pnpm exec ts-node --project tsconfig.tsnode.json generate/css-vars.ts",
+    "gen:format-package-json": "pnpm exec ts-node --project tsconfig.tsnode.json generate/format-package-json.ts",
+    "generate-all": "pnpm exec ts-node --project tsconfig.tsnode.json generate/index.ts"
   },
   "dependencies": {
     "execa": "^5.1.1",
     "ts-node": "^10.9.1",
     "@tsconfig/node18": "^18.2.2",
     "zod": "^3.22.4",
-    "globby": "^13.2.2"
+    "globby": "^13.2.2",
+    "@bangle.io/ui-theme": "workspace:*",
+    "prettier": "3.0.3",
+    "@bangle.io/app-root": "workspace:*"
   },
   "devDependencies": {
     "tslib": "^2.6.2"

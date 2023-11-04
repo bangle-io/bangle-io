@@ -4,6 +4,16 @@ import { makeThrowValidationError } from '../lib';
 import { rootPath } from '../lib/constants';
 import { Package, setup, Workspace } from '../lib/workspace-helper';
 
+export default function main() {
+  return setup().then(async (item) => {
+    return formatPackageName(item);
+  });
+}
+
+if (require.main === module) {
+  void main();
+}
+
 void setup().then(async (item) => {
   return formatPackageName(item);
 });

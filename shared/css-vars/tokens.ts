@@ -63,7 +63,6 @@ const tokensShape: DesignTokens = {
       textFieldBg: '',
       textFieldText: '',
       textFieldBorder: '',
-
       ...createToneColors(),
     },
     secondary: createToneColors(),
