@@ -85,7 +85,7 @@ export function createStyleSheetObj(
 
     let smOverride = deepMerge(
       defaultSmallScreenOverride2,
-      input.smallscreenOverride || {},
+      input.smallscreenOverride ?? {},
     );
 
     result = {
@@ -115,12 +115,12 @@ export function createStyleSheetObj(
 
     let lightSmOverride = deepMerge(
       defaultSmallScreenOverrideLight,
-      input.lightSmallscreenOverride || {},
+      input.lightSmallscreenOverride ?? {},
     );
 
     let darkSmOverride = deepMerge(
       defaultSmallScreenOverrideDark,
-      input.darkSmallscreenOverride || {},
+      input.darkSmallscreenOverride ?? {},
     );
 
     result = {
