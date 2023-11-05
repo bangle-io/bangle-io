@@ -80,6 +80,7 @@ module.exports = ({
   isVite = false,
   isStorybook = false,
   helpDocsVersion,
+  publicDirPath,
 }) => {
   const appEnv = getAppEnv(isProduction);
 
@@ -111,11 +112,20 @@ module.exports = ({
 
   bangleConfig.print();
 
+  const inlinedScripts = fs.readFileSync(
+    path.join(publicDirPath, 'auto-generated', 'inline-scripts.global.js'),
+    'utf-8',
+  );
+
   return {
     helpDocsVersion,
     appEnv,
     hot,
     htmlInjections: {
+      inlinedScripts: `
+<script>
+${inlinedScripts}
+</script>`.trim(),
       favicon: getFavicon(appEnv),
       sentry: isProduction
         ? `<script

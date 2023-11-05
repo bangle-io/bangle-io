@@ -26,6 +26,7 @@ export default async function main() {
       path.join(
         path.dirname(require.resolve('@bangle.io/app-root')),
         'public',
+        'auto-generated',
         fileName,
       ),
       cssString,

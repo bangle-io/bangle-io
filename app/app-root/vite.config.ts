@@ -19,6 +19,7 @@ export default defineConfig(async ({ command, mode }) => {
     isProduction: isProduction,
     isVite: true,
     helpDocsVersion: HELP_DOCS_VERSION,
+    publicDirPath: path.join(__dirname, 'public'),
   });
 
   const hot = envVars.hot;
