@@ -13,7 +13,7 @@ import { variants as bangleVariants } from './variants';
 
 export type { Theme };
 
-export type PresetUnoOptions = PresetMiniOptions
+export type PresetUnoOptions = PresetMiniOptions;
 
 export const shortcuts: Shortcut<Theme>[] = [
   ['z-popup', 'z-300'],
