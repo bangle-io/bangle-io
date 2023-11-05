@@ -1,12 +1,6 @@
 {
   "name": "@bangle.io/nsm-3",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/nsm-3"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,8 +8,10 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@types/react": "^17.0.49",
     "@types/react-dom": "^17.0.17",
@@ -29,15 +25,17 @@
     "wait-for-expect": "^3.0.2",
     "zod": "^3.21.4"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
-  "banglePackageConfig": {
-    "type": "universal"
-  },
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/nsm-3"
+  },
+  "scripts": {}
 }

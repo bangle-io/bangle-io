@@ -1,12 +1,7 @@
 {
   "name": "@bangle.io/custom-scripts",
+  "description": "A place to put custom scripts that are used in the build process",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/custom-scripts"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,33 +9,36 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {
-    "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
-    "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
+  "banglePackageConfig": {
+    "type": "nodejs"
   },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
-    "execa": "^5.1.1",
-    "ts-node": "^10.9.1",
+    "@bangle.io/app-root": "workspace:*",
     "@tsconfig/node18": "^18.2.2",
-    "zod": "^3.22.4",
+    "execa": "^5.1.1",
     "globby": "^13.2.2",
     "prettier": "3.0.3",
-    "@bangle.io/app-root": "workspace:*"
+    "ts-node": "^10.9.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "tslib": "^2.6.2"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
-  "banglePackageConfig": {
-    "type": "nodejs"
-  },
-  "description": "A place to put custom scripts that are used in the build process",
-  "module": "index.js",
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.ts",
+  "module": "index.js",
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/custom-scripts"
+  },
+  "scripts": {
+    "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
+    "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
   }
 }

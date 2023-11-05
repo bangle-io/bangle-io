@@ -1,11 +1,5 @@
 {
   "name": "e2e-tests",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/e2e-tests/e2e-tests"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -13,19 +7,23 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {
-    "e2e": "pnpm exec playwright test",
-    "playwright-install": "pnpm exec playwright install --with-deps"
+  "banglePackageConfig": {
+    "type": "nodejs"
   },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@playwright/test": "^1.39.0",
     "@types/node": "^20.8.9"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/e2e-tests/e2e-tests"
   },
-  "banglePackageConfig": {
-    "type": "nodejs"
+  "scripts": {
+    "e2e": "pnpm exec playwright test",
+    "playwright-install": "pnpm exec playwright install --with-deps"
   }
 }

@@ -1,11 +1,5 @@
 {
   "name": "@bangle.io/app",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app/app"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -13,22 +7,26 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
+  "banglePackageConfig": {
+    "type": "browser"
+  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@adobe/react-spectrum": "^3.31.1",
     "@bangle.io/ui": "workspace:*",
-    "@adobe/react-spectrum": "^3.31.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/app/app"
   },
-  "banglePackageConfig": {
-    "type": "browser"
-  }
+  "scripts": {}
 }
