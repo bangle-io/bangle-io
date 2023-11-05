@@ -2,13 +2,6 @@
 /* Name="core-theme" type="dual" */
 
 /* stylelint-disable */
-body {
-  background-color: var(--BV-colorNeutralBgLayerBottom);
-  color: var(--BV-colorNeutralText);
-}
-/* stylelint-enable */
-
-/* stylelint-disable */
 :root {
   --BV-theme: core-theme;
   --BV-miscActivitybarWidth: 50px;
