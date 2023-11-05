@@ -1,0 +1,40 @@
+{
+  "name": "@bangle.io/baby-fs",
+  "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/baby-fs"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/is-abort-error": "workspace:*",
+    "idb": "^7.1.1",
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "cross-fetch": "^3.1.5"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

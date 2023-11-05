@@ -10,10 +10,10 @@ importers:
     devDependencies:
       '@bangle.io/jsdom-env':
         specifier: workspace:*
-        version: link:js-lib/jsdom-env
+        version: link:packages/js-lib/jsdom-env
       '@bangle.io/uno-preset-bangle':
         specifier: workspace:*
-        version: link:app-bundler/uno-preset-bangle
+        version: link:packages/app-bundler/uno-preset-bangle
       '@eslint/js':
         specifier: ^8.52.0
         version: 8.52.0
@@ -78,7 +78,7 @@ importers:
         specifier: ^0.53.6
         version: 0.53.6(postcss@8.4.31)(rollup@2.79.1)(vite@4.5.0)
 
-  app-bundler/app-root:
+  packages/app-bundler/app-root:
     dependencies:
       '@bangle.io/app':
         specifier: workspace:*
@@ -136,7 +136,7 @@ importers:
         specifier: ^0.16.6
         version: 0.16.6(vite@4.5.0)(workbox-build@7.0.0)(workbox-window@7.0.0)
 
-  app-bundler/inline-scripts:
+  packages/app-bundler/inline-scripts:
     dependencies:
       '@bangle.io/app-root':
         specifier: workspace:*
@@ -148,7 +148,7 @@ importers:
         specifier: ^7.2.0
         version: 7.2.0(@swc/core@1.3.95)(postcss@8.4.31)(ts-node@10.9.1)(typescript@5.2.2)
 
-  app-bundler/ui-theme:
+  packages/app-bundler/ui-theme:
     dependencies:
       '@bangle.io/app-root':
         specifier: workspace:*
@@ -190,7 +190,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  app-bundler/uno-preset-bangle:
+  packages/app-bundler/uno-preset-bangle:
     dependencies:
       '@bangle.io/css-vars':
         specifier: workspace:*
@@ -208,7 +208,7 @@ importers:
         specifier: ^0.53.6
         version: 0.53.6
 
-  app/app:
+  packages/app/app:
     dependencies:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
@@ -230,7 +230,7 @@ importers:
         specifier: ^18.2.14
         version: 18.2.14
 
-  e2e-tests/e2e-tests:
+  packages/e2e-tests/e2e-tests:
     dependencies:
       '@playwright/test':
         specifier: ^1.39.0
@@ -239,7 +239,7 @@ importers:
         specifier: ^20.8.9
         version: 20.8.9
 
-  js-lib/abortable-worker:
+  packages/js-lib/abortable-worker:
     dependencies:
       '@bangle.io/is-abort-error':
         specifier: workspace:*
@@ -261,7 +261,7 @@ importers:
         specifier: 0.32.0
         version: 0.32.0(@bangle.dev/pm@0.32.0)
 
-  js-lib/baby-fs:
+  packages/js-lib/baby-fs:
     dependencies:
       '@bangle.io/base-error':
         specifier: workspace:*
@@ -283,7 +283,7 @@ importers:
         specifier: ^3.1.5
         version: 3.1.8
 
-  js-lib/base-error:
+  packages/js-lib/base-error:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -292,9 +292,9 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/browser: {}
+  packages/js-lib/browser: {}
 
-  js-lib/db-key-val:
+  packages/js-lib/db-key-val:
     dependencies:
       idb:
         specifier: ^7.1.1
@@ -306,7 +306,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/fzf-search:
+  packages/js-lib/fzf-search:
     dependencies:
       fzf:
         specifier: ^0.5.1
@@ -325,7 +325,7 @@ importers:
         specifier: ^18.2.33
         version: 18.2.33
 
-  js-lib/git-file-sha:
+  packages/js-lib/git-file-sha:
     dependencies:
       '@bangle.io/weak-cache':
         specifier: workspace:*
@@ -337,7 +337,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/history:
+  packages/js-lib/history:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -346,7 +346,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/inline-palette:
+  packages/js-lib/inline-palette:
     dependencies:
       '@bangle.dev/core':
         specifier: 0.32.0
@@ -382,7 +382,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/is-abort-error:
+  packages/js-lib/is-abort-error:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -391,7 +391,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/jsdom-env:
+  packages/js-lib/jsdom-env:
     dependencies:
       jest-environment-jsdom:
         specifier: ^29.7.0
@@ -403,7 +403,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/mini-js-utils:
+  packages/js-lib/mini-js-utils:
     dependencies:
       '@bangle.io/is-abort-error':
         specifier: workspace:*
@@ -418,7 +418,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/nsm-3:
+  packages/js-lib/nsm-3:
     dependencies:
       '@types/react':
         specifier: ^17.0.49
@@ -454,7 +454,7 @@ importers:
         specifier: ^3.21.4
         version: 3.22.4
 
-  js-lib/object-uid:
+  packages/js-lib/object-uid:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -463,7 +463,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/p-map:
+  packages/js-lib/p-map:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -472,7 +472,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/pm-manual-paste:
+  packages/js-lib/pm-manual-paste:
     dependencies:
       '@bangle.dev/pm':
         specifier: 0.32.0
@@ -484,7 +484,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/pm-plugins:
+  packages/js-lib/pm-plugins:
     dependencies:
       '@bangle.dev/core':
         specifier: 0.32.0
@@ -527,7 +527,7 @@ importers:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
 
-  js-lib/remote-file-sync:
+  packages/js-lib/remote-file-sync:
     dependencies:
       '@bangle.io/tri-state':
         specifier: workspace:*
@@ -549,13 +549,13 @@ importers:
         specifier: ^4.0.0
         version: 4.6.0
 
-  js-lib/runtime-type-checking:
+  packages/js-lib/runtime-type-checking:
     dependencies:
       zod:
         specifier: ^3.22.4
         version: 3.22.4
 
-  js-lib/search-pm-node:
+  packages/js-lib/search-pm-node:
     dependencies:
       '@bangle.dev/all-base-components':
         specifier: 0.32.0
@@ -579,7 +579,7 @@ importers:
         specifier: workspace:*
         version: link:../p-map
 
-  js-lib/tri-state:
+  packages/js-lib/tri-state:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -588,7 +588,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  js-lib/weak-cache:
+  packages/js-lib/weak-cache:
     dependencies:
       tslib:
         specifier: 2.6.0
@@ -597,7 +597,7 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
-  lib/ui:
+  packages/lib/ui:
     dependencies:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
@@ -619,27 +619,27 @@ importers:
         specifier: ^18.2.14
         version: 18.2.14
 
-  shared/constants:
+  packages/shared/constants:
     dependencies:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../shared-types
 
-  shared/css-vars:
+  packages/shared/css-vars:
     dependencies:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../shared-types
 
-  shared/env-vars:
+  packages/shared/env-vars:
     dependencies:
       '@bangle.io/config-template':
         specifier: ^0.0.7
         version: 0.0.7
 
-  shared/shared-types: {}
+  packages/shared/shared-types: {}
 
-  tooling/custom-scripts:
+  packages/tooling/custom-scripts:
     dependencies:
       '@bangle.io/app-root':
         specifier: workspace:*
@@ -667,7 +667,7 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
 
-  tooling/jest-utils:
+  packages/tooling/jest-utils:
     dependencies:
       '@bangle.io/config-template':
         specifier: ^0.0.7

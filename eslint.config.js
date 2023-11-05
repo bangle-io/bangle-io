@@ -100,7 +100,7 @@ module.exports = [
     files: [
       '**/vite.config.ts',
       '**/e2e-tests/**/*.{ts,tsx}',
-      'tooling/**/*.{ts,tsx}',
+      'packages/tooling/**/*.{ts,tsx}',
       '**/scripts/**/*.{ts,tsx}',
     ],
     languageOptions: {
