@@ -5,6 +5,7 @@ declare module '@bangle.io/env-vars' {
     bangleHelpPreload: string;
     viteJsEntry: string;
     fathom: string;
+    inlinedScripts: string;
   }
 
   export interface AppEnvs {
@@ -24,6 +25,7 @@ declare module '@bangle.io/env-vars' {
     isVite?: boolean;
     isStorybook?: boolean;
     helpDocsVersion: string;
+    publicDirPath: string;
   }
 
   const _default: (options: DefaultExportOptions) => BangleConfigOutput;

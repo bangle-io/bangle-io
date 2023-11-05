@@ -21,8 +21,7 @@ if (typeof window !== 'undefined') {
 }
 
 export const CSS_ROOT = ':root';
-export const CSS_BODY = 'body';
-export const CSS_SM_BODY = 'body.BU_smallscreen';
+export const CSS_SM_BODY = '.BU_smallscreen';
 export const CSS_LIGHT_SCHEME = `.light-scheme`;
 export const CSS_SM_LIGHT_SCHEME = `.light-scheme.BU_smallscreen`;
 export const CSS_DARK_SCHEME = `.dark-scheme`;
@@ -31,7 +30,7 @@ export const CSS_SM_DARK_SCHEME = `.dark-scheme.BU_smallscreen`;
 type CssBlocks = Record<string, string[]>;
 
 const base = {
-  [CSS_BODY]: [
+  [CSS_ROOT]: [
     `background-color: ${vars.color.neutral.bgLayerBottom};`,
     `color: ${vars.color.neutral.text};`,
   ],

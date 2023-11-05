@@ -9,7 +9,7 @@ export function Main() {
       <Button variant="accent" onPress={() => alert('Hey there!')}>
         Hello React Spectrum!
       </Button>
-      <div className="capitalize truncate text-lg bg-colorCautionSolid">
+      <div className="capitalize truncate text-lg smallscreen:text-3xl bg-colorCautionSolid">
         hello world
       </div>
     </Provider>

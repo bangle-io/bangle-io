@@ -1,7 +1,6 @@
 import {
   createSmallScreenOverride,
   createStyleSheetObj,
-  CSS_BODY,
   CSS_DARK_SCHEME,
   CSS_LIGHT_SCHEME,
   CSS_ROOT,
@@ -35,7 +34,7 @@ describe('default', () => {
       },
     });
 
-    expect(Object.keys(result)).toEqual([CSS_BODY, CSS_ROOT, CSS_SM_BODY]);
+    expect(Object.keys(result)).toEqual([CSS_ROOT, CSS_SM_BODY]);
   });
 
   test('matches with the default', () => {
@@ -65,7 +64,7 @@ describe('default', () => {
       },
     });
 
-    expect(result[CSS_BODY]).toMatchSnapshot();
+    expect(result).toMatchSnapshot();
   });
 
   test('sets root', () => {
@@ -89,7 +88,7 @@ describe('default', () => {
       },
     });
 
-    expect(result[CSS_SM_BODY]).toMatchSnapshot();
+    expect(result).toMatchSnapshot();
   });
 });
 
@@ -103,7 +102,6 @@ describe('default light/dark', () => {
 
   test('sets keys correctly in light/dark', () => {
     expect(Object.keys(result)).toEqual([
-      CSS_BODY,
       CSS_ROOT,
       CSS_LIGHT_SCHEME,
       CSS_DARK_SCHEME,
@@ -330,7 +328,6 @@ describe('smallscreen overrides', () => {
     });
 
     expect(Object.keys(override)).toEqual([
-      CSS_BODY,
       CSS_ROOT,
       CSS_LIGHT_SCHEME,
       CSS_DARK_SCHEME,
@@ -379,7 +376,6 @@ describe('smallscreen overrides', () => {
     });
 
     expect(Object.keys(override)).toEqual([
-      CSS_BODY,
       CSS_ROOT,
       CSS_LIGHT_SCHEME,
       CSS_DARK_SCHEME,
@@ -440,7 +436,6 @@ describe('smallscreen overrides', () => {
     });
 
     expect(Object.keys(override)).toEqual([
-      CSS_BODY,
       CSS_ROOT,
       CSS_LIGHT_SCHEME,
       CSS_DARK_SCHEME,

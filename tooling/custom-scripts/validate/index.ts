@@ -6,6 +6,8 @@ void setup().then(async (item) => {
   void shouldOnlyUseDependenciesDefinedInPackageJSON(item.packagesMap);
   void shouldOnlyUseDevDependenciesDefinedInPackageJSON(item.packagesMap);
   void testBrowserPackagesToNotRelyOnNode(item.packagesMap);
+  void testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap);
+  void testSharedConstantsShouldNotHaveDeps(item.packagesMap);
 });
 
 async function shouldRespectAllowedWorkspace(
@@ -107,5 +109,72 @@ imports ${dep.name} which is a node package. Either move it to devDep or make it
         );
       }
     }
+  }
+}
+
+async function testUniversalPackagesToRelyOnlyOnUniversal(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testUniversalPackagesToRelyOnlyOnUniversal',
+  );
+
+  for (const [name, pkg] of packageMap.entries()) {
+    if (pkg.type !== 'universal') {
+      continue;
+    }
+
+    const deps = Object.values(pkg.workspaceDependencies);
+
+    for (const dep of deps) {
+      if (dep.type !== 'universal') {
+        throwValidationError(
+          `Universal Package ${name} ${pkg.packageJSONPath}
+imports ${dep.name} which is a ${dep.type} package. Universal package can only import other universal packages`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Ensure constants package does not have any dependencies,
+ * having dependencies in constants package will end up causing extra code
+ * to be bundled in the inlined scripts.
+ * Keeping constants lean helps us use it at multiple places.
+ */
+async function testSharedConstantsShouldNotHaveDeps(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testSharedConstantsShouldNotHaveDeps',
+  );
+
+  let visited = false;
+  for (const [name, pkg] of packageMap.entries()) {
+    if (pkg.name !== '@bangle.io/constants') {
+      continue;
+    }
+
+    visited = true;
+    const deps = Object.keys(pkg.dependencies);
+
+    const [firstPackage, ...rest] = deps;
+
+    if (
+      rest.length > 0 ||
+      firstPackage !== '@bangle.io/shared-types' ||
+      Object.keys(pkg.devDependencies ?? {}).length > 0
+    ) {
+      throwValidationError(
+        `Package "${name}" ${pkg.packageJSONPath} can only depend on one package @bangle-io/shared-types.`,
+      );
+    }
+  }
+
+  if (!visited) {
+    throwValidationError(
+      `Package "@bangle.io/constants" is not present in the workspace`,
+    );
   }
 }

@@ -16,10 +16,9 @@
   ],
   "homepage": "https://bangle.io",
   "scripts": {
-    "cscript:validation": "pnpm exec ts-node --project tsconfig.tsnode.json validate/index.ts",
-    "gen:css-vars": "pnpm exec ts-node --project tsconfig.tsnode.json generate/css-vars.ts",
-    "gen:format-package-json": "pnpm exec ts-node --project tsconfig.tsnode.json generate/format-package-json.ts",
-    "generate-all": "pnpm exec ts-node --project tsconfig.tsnode.json generate/index.ts"
+    "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
+    "generate:css-vars": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/css-vars.ts",
+    "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
   },
   "dependencies": {
     "execa": "^5.1.1",
@@ -40,6 +39,7 @@
   "banglePackageConfig": {
     "type": "nodejs"
   },
+  "description": "A place to put custom scripts that are used in the build process",
   "module": "index.js",
   "main": "index.ts",
   "publishConfig": {

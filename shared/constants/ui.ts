@@ -1,4 +1,4 @@
-import { z } from '@bangle.io/runtime-type-checking';
+export const WIDESCREEN_WIDTH = 759;
 
 // See https://seek-oss.github.io/braid-design-system/foundations/tones
 export const TONE = {
@@ -19,15 +19,6 @@ export const SEVERITY = {
 } as const;
 
 export type Severity = (typeof SEVERITY)[keyof typeof SEVERITY];
-
-export const COLOR_SCHEMA = {
-  LIGHT: 'light',
-  DARK: 'dark',
-} as const;
-
-export const colorSchema = z.nativeEnum(COLOR_SCHEMA);
-
-export type ColorScheme = z.infer<typeof colorSchema>;
 
 export type NotificationPayloadType = {
   uid: string;

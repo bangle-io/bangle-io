@@ -5,42 +5,7 @@
     <%- favicon %>
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <meta name="msapplication-TileColor" content="#da532c" />
-    <script>
-      const storageKey = 'theme';
-      const theme = {
-        value: getColorPreference(),
-      };
-      reflectPreference();
-
-      window.addEventListener('onload', () => {
-        reflectPreference();
-      });
-
-      // sync with system changes
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', ({ matches: isDark }) => {
-          theme.value = isDark ? 'dark-scheme' : 'light-scheme';
-          setPreference();
-        });
-
-      function getColorPreference() {
-        if (localStorage.getItem(storageKey))
-          return localStorage.getItem(storageKey);
-        else
-          return window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark-scheme'
-            : 'light-scheme';
-      }
-      function setPreference() {
-        localStorage.setItem(storageKey, theme.value);
-        reflectPreference();
-      }
-      function reflectPreference() {
-        document.firstElementChild.setAttribute('data-theme', theme.value);
-        document.firstElementChild.classList.add(theme.value);
-      }
-    </script>
+    <%- inlinedScripts %>
     <meta
       name="theme-color"
       media="(prefers-color-scheme: light)"
@@ -57,7 +22,7 @@
     />
     <%- sentry %>
     <!--  -->
-    <link rel="stylesheet" href="/core-theme.css" />
+    <link rel="stylesheet" href="/auto-generated/core-theme.css" />
     <title>Bangle App</title>
   </head>
   <body>

@@ -1,3 +1,4 @@
+import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
 import type { DesignTokens, RecursivePartial } from '@bangle.io/shared-types';
 
 import { darkColors, darkNeutralColor } from './dark-colors';
@@ -6,7 +7,8 @@ import { spectrumDarkest, spectrumLight } from './spectrum';
 
 // WARNING: the width is hard coded at multiple places, search for it
 // by value if you want to change it
-const WIDESCREEN_WIDTH: DesignTokens['widescreenWidth'] = '759px';
+const WIDESCREEN_WIDTH_PX: DesignTokens['widescreenWidth'] =
+  WIDESCREEN_WIDTH + 'px';
 
 export const defaultTokensLight: DesignTokens = {
   theme: 'default-tokens',
@@ -74,7 +76,7 @@ export const defaultTokensLight: DesignTokens = {
       xl: '0.5rem',
     },
   },
-  widescreenWidth: WIDESCREEN_WIDTH,
+  widescreenWidth: WIDESCREEN_WIDTH_PX,
   space: {
     '0': '0',
     'px': '1px',
