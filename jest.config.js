@@ -11,11 +11,12 @@ const config = {
     `/node_modules/(?!.pnpm)(?!(prosemirror-utils-bangle))`,
   ],
   clearMocks: true,
-  setupFiles: ['<rootDir>/tooling/jest-utils/jest-setup.js'],
+  setupFiles: ['<rootDir>/packages/tooling/jest-utils/jest-setup.js'],
   setupFilesAfterEnv: [
-    '<rootDir>/tooling/jest-utils/jest-setupFilesAfterEnv.js',
+    '<rootDir>/packages/tooling/jest-utils/jest-setupFilesAfterEnv.js',
   ],
 };
+
 module.exports = {
   ...config,
 };

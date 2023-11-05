@@ -9,7 +9,15 @@ export function App() {
     <Provider theme={defaultTheme}>
       <Dhancha
         widescreen={true}
-        activitybar={<div onClick={() => {}}>Activitybar</div>}
+        activitybar={
+          <div
+            onClick={() => {
+              // empty
+            }}
+          >
+            Activitybar
+          </div>
+        }
         mainContent={<div>Main content</div>}
         noteSidebar={<div>Note</div>}
         workspaceSidebar={<div>Workspace sidebar</div>}

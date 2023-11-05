@@ -3,7 +3,7 @@
  */
 
 /** @jsx psx */
-/// <reference path="../../../missing-test-types.d.ts" />
+/// <reference path="../../../../missing-test-types.d.ts" />
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';

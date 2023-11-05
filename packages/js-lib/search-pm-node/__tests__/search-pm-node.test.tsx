@@ -3,7 +3,7 @@
  */
 
 /** @jsx psx */
-/// <reference path="../../../missing-test-types.d.ts" />
+/// <reference path="../../../../missing-test-types.d.ts" />
 /// <reference path="./missing-test-types.d.ts" />
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
@@ -87,7 +87,7 @@ describe('Plain text search', () => {
 
     const mapper = jest.fn(async (uid) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      return fileData.find((r) => r.name === uid)?.node!;
+      return fileData.find((r) => r.name === uid)?.node;
     });
 
     const res = searchPmNode(
@@ -119,7 +119,7 @@ describe('Plain text search', () => {
     }));
 
     const mapper = jest.fn(async (uid) => {
-      return fileData.find((r) => r.name === uid)?.node!;
+      return fileData.find((r) => r.name === uid)?.node;
     });
 
     const res = searchPmNode(

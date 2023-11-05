@@ -98,9 +98,9 @@ module.exports = [
   },
   {
     files: [
-      '**/vite.config.ts',
-      '**/e2e-tests/**/*.{ts,tsx}',
+      'packages/e2e-tests/**/*.{ts,tsx}',
       'packages/tooling/**/*.{ts,tsx}',
+      'packages/app-bundler/**/*.{ts,tsx}',
       '**/scripts/**/*.{ts,tsx}',
     ],
     languageOptions: {

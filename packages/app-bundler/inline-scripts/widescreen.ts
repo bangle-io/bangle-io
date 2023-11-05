@@ -7,7 +7,8 @@ function testPlatform(re: RegExp) {
       : typeof window !== 'undefined'
       ? window
       : typeof global !== 'undefined'
-      ? global
+      ? // eslint-disable-next-line no-undef
+        global
       : {};
 
   if (target.navigator != null) {

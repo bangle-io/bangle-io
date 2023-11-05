@@ -21,4 +21,4 @@ node_modules/
 /playwright-report/
 /playwright/.cache/
 
-app/app-root/dist
+/dist/
