@@ -620,6 +620,9 @@ importers:
 
   tooling/ui-theme:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/css-vars':
         specifier: workspace:*
         version: link:../../shared/css-vars
