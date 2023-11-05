@@ -1,6 +1,5 @@
-import { TextEncoder } from 'node:util';
-
 import JsdomClass from 'jest-environment-jsdom';
+import { TextEncoder } from 'node:util';
 
 let originalStructuredClone = structuredClone;
 

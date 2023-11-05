@@ -1,8 +1,9 @@
 import './style.css';
 
 import { defaultTheme, Provider } from '@adobe/react-spectrum';
-import { Dhancha } from '@bangle.io/ui';
 import React from 'react';
+
+import { Dhancha } from '@bangle.io/ui';
 
 export function App() {
   const widescreen = true;

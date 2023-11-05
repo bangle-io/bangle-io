@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-
 import prettier from 'prettier';
 
 import { createStyleSheet } from '../index';

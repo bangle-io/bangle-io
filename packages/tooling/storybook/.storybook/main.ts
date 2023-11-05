@@ -1,9 +1,9 @@
-import path from 'node:path';
-
-import getEnvVars from '@bangle.io/env-vars';
 import type { StorybookConfig } from '@storybook/react-vite';
 import Unocss from '@unocss/vite';
+import path from 'node:path';
 import { mergeConfig } from 'vite';
+
+import getEnvVars from '@bangle.io/env-vars';
 
 const publicDir = path.join(
   path.dirname(require.resolve('@bangle.io/app-root')),

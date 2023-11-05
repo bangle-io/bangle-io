@@ -1,13 +1,13 @@
 // @bangle-ignore-checks
-import path from 'node:path';
-
-import getEnvVars from '@bangle.io/env-vars';
 import Unocss from '@unocss/vite';
 import react from '@vitejs/plugin-react-swc';
 import minimist from 'minimist';
+import path from 'node:path';
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { ManifestOptions, VitePWA } from 'vite-plugin-pwa';
+
+import getEnvVars from '@bangle.io/env-vars';
 
 const HELP_DOCS_VERSION = '1.11.0';
 

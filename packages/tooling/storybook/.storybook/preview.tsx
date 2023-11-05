@@ -1,9 +1,10 @@
 import '@bangle.io/app-root/public/auto-generated/inline-scripts.global';
 import '@bangle.io/app-root/style';
 
-import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
 import type { Decorator, Preview } from '@storybook/react';
 import React, { useLayoutEffect } from 'react';
+
+import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
 
 function checkWidescreen(): boolean {
   const currentWidth = window.innerWidth;

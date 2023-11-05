@@ -1,7 +1,8 @@
-import { isPlainObject } from '@bangle.io/mini-js-utils';
 // @ts-expect-error - no types
 import { parse as parseGradient } from 'gradient-parser';
 import { getLuminance } from 'polished';
+
+import { isPlainObject } from '@bangle.io/mini-js-utils';
 
 export function cx(...args: any[]): string {
   let classes = '';

@@ -1,7 +1,8 @@
 // @bangle-ignore-checks
 
-import banglePreset from '@bangle.io/uno-preset-bangle';
 import { defineConfig } from 'unocss';
+
+import banglePreset from '@bangle.io/uno-preset-bangle';
 
 const config: any = defineConfig({
   content: {
