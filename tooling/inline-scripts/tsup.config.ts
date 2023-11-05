@@ -15,6 +15,7 @@ export default defineConfig({
   shims: false,
   clean: false,
   minify: false,
+  target: 'es2015',
   name: 'inline-scripts',
   outDir: path.join(appRoot, 'public', 'auto-generated'),
 });

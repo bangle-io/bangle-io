@@ -35,9 +35,10 @@
 
   // widescreen.ts
   function testPlatform(re) {
+    var _a;
     let target = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {};
     if (target.navigator != null) {
-      const platform = target.navigator.userAgentData?.platform || target.navigator.platform;
+      const platform = ((_a = target.navigator.userAgentData) == null ? void 0 : _a.platform) || target.navigator.platform;
       return re.test(platform);
     }
     return false;
