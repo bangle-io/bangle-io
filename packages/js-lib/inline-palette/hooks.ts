@@ -59,7 +59,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
   const activeIndex = getActiveIndex(counter, items.length);
 
   const executeHandler = useCallback(
-    (itemIndex) => {
+    (itemIndex: number) => {
       const item = items[itemIndex];
 
       if (!item) {

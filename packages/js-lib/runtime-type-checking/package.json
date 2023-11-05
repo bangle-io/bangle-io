@@ -19,9 +19,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {},
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   }

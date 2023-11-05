@@ -19,7 +19,7 @@ const reactRules = {
 /** @type {import('eslint').Linter.FlatConfig[]} */
 module.exports = [
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['packages/**/*.{ts,tsx}'],
     languageOptions: {
       parser: parserTypescript,
       globals: {
@@ -101,7 +101,7 @@ module.exports = [
       'packages/e2e-tests/**/*.{ts,tsx}',
       'packages/tooling/**/*.{ts,tsx}',
       'packages/app-bundler/**/*.{ts,tsx}',
-      '**/scripts/**/*.{ts,tsx}',
+      'packages/**/scripts/**/*.{ts,tsx}',
     ],
     languageOptions: {
       globals: {

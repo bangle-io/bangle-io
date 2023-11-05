@@ -17,26 +17,24 @@
   "homepage": "https://bangle.io",
   "scripts": {},
   "dependencies": {
+    "fzf": "^0.5.2",
     "react": "^18.2.0",
-    "fzf": "^0.5.1",
     "tslib": "2.6.0",
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@types/react": "^18.2.33"
+    "@types/react": "^18.2.35"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
   "main": "index.ts",
   "module": "index.ts",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "peerDependencies": {
     "react": "*"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }

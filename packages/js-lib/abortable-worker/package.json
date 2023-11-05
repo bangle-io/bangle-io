@@ -23,12 +23,10 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@bangle.dev/pm": "0.32.0",
-    "@bangle.dev/utils": "0.32.0"
+    "@bangle.dev/pm": "0.32.1",
+    "@bangle.dev/utils": "0.32.1"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   },

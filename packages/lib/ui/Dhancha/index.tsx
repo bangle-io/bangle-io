@@ -4,7 +4,7 @@ import { vars } from '@bangle.io/css-vars';
 import type { ReactNode } from 'react';
 import React, { useRef } from 'react';
 
-import { useStickyNavigation } from './hooks/use-sticky-navigation';
+import { useStickyNavigation } from './use-sticky-navigation';
 
 /**
  * Provides the base structure of the app.
@@ -31,7 +31,7 @@ export function Dhancha({
   const mainChild = (
     <main
       className={
-        'B-ui-dhancha_main-content' + (widescreen ? ' BU_widescreen' : '')
+        'B-ui-dhancha_main-content ' + (widescreen ? ' BU_widescreen' : '')
       }
     >
       {mainContent}

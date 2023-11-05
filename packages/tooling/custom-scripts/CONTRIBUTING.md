@@ -12,3 +12,8 @@ pnpm run generate-all
 pnpm run gen:css-vars
 ```
 
+# Handy tools
+
+- [syncpack](https://github.com/JamieMason/syncpack)
+  - `npx syncpack format` - format package.json
+  - `npx syncpack update` - interactively update all dependencies

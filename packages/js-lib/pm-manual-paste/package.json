@@ -17,25 +17,23 @@
   "homepage": "https://bangle.dev",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/pm": "0.32.0",
+    "@bangle.dev/pm": "0.32.1",
     "tslib": "2.6.0",
     "typescript": "5.1.6"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle.dev/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle.dev/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
   "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
   "main": "index.ts",
   "module": "index.ts",
-  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public",
     "main": "dist/index.js",
     "module": "dist/index.js",
     "types": "dist/index.d.ts"
   },
-  "type": "module"
+  "type": "module",
+  "types": "dist/index.d.ts"
 }

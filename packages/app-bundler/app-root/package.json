@@ -21,30 +21,28 @@
     "start": "vite"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/app": "workspace:*",
-    "@unocss/reset": "^0.57.1"
+    "@bangle.io/mini-js-utils": "workspace:*",
+    "@unocss/reset": "^0.57.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@bangle.io/uno-preset-bangle": "workspace:*",
-    "@types/react": "^18.2.33",
-    "@types/react-dom": "^18.2.14",
-    "vite": "^4.5.0",
-    "vite-plugin-pwa": "^0.16.6",
-    "@vitejs/plugin-react-swc": "^3.4.0",
     "@bangle.io/env-vars": "workspace:*",
-    "minimist": "^1.2.8",
-    "vite-plugin-html": "^3.2.0",
+    "@bangle.io/uno-preset-bangle": "workspace:*",
     "@types/minimist": "^1.2.4",
+    "@types/react": "^18.2.35",
+    "@types/react-dom": "^18.2.14",
+    "@unocss/vite": "^0.57.2",
+    "@vitejs/plugin-react-swc": "^3.4.1",
     "bangle-io-help": "^1.11.0",
-    "unocss": "^0.53.6",
-    "@unocss/vite": "^0.53.6"
+    "minimist": "^1.2.8",
+    "unocss": "^0.57.2",
+    "vite": "^4.5.0",
+    "vite-plugin-html": "^3.2.0",
+    "vite-plugin-pwa": "^0.16.7"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "browser"
   },

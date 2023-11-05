@@ -18,15 +18,13 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/css-vars": "workspace:*",
-    "@unocss/core": "^0.53.6",
-    "@unocss/preset-mini": "^0.53.6",
-    "@unocss/preset-uno": "^0.53.6",
-    "@unocss/preset-wind": "^0.53.6"
+    "@unocss/core": "^0.57.2",
+    "@unocss/preset-mini": "^0.57.2",
+    "@unocss/preset-uno": "^0.57.2",
+    "@unocss/preset-wind": "^0.57.2"
   },
   "devDependencies": {},
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
   },

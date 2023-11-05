@@ -19,14 +19,12 @@
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
   },
   "main": "index.js",
   "module": "index.js",
-  "types": "index.d.ts",
-  "publishConfig": {}
+  "publishConfig": {},
+  "types": "index.d.ts"
 }

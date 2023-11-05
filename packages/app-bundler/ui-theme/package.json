@@ -19,23 +19,21 @@
     "generate:css-vars": "pnpm exec ts-node --swc --project tsconfig.tsnode.json scripts/generate-css-vars.ts"
   },
   "dependencies": {
+    "@bangle.io/app-root": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@tsconfig/node18": "^18.2.2",
     "gradient-parser": "^1.0.2",
     "polished": "^4.2.2",
-    "tailwindcss": "^3.2.4",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/app-root": "workspace:*",
+    "prettier": "3.0.3",
+    "tailwindcss": "^3.3.5",
     "ts-node": "^10.9.1",
-    "prettier": "3.0.3"
+    "tslib": "2.6.0",
+    "typescript": "5.1.6"
   },
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
   },

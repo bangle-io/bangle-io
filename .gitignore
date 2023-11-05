@@ -22,3 +22,4 @@ node_modules/
 /playwright/.cache/
 
 /dist/
+packages/app-bundler/app-root/dist

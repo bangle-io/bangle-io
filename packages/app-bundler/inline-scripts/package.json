@@ -19,20 +19,18 @@
     "generate:bundle-inline-scripts": "tsup --config tsup.config.ts"
   },
   "dependencies": {
-    "tsup": "^7.2.0",
     "@bangle.io/app-root": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "tsup": "^7.2.0"
   },
   "devDependencies": {},
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
   },
   "description": "inline scripts that are injected to the HTML page",
-  "module": "index.js",
   "main": "index.ts",
+  "module": "index.js",
   "publishConfig": {
     "access": "public"
   }

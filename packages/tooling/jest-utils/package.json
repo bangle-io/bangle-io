@@ -17,14 +17,12 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7",
-    "fake-indexeddb": "^5.0.1",
     "cross-fetch": "^4.0.0",
-    "domexception": "^4.0.0"
+    "domexception": "^4.0.0",
+    "fake-indexeddb": "^5.0.1"
   },
   "devDependencies": {},
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
   }
