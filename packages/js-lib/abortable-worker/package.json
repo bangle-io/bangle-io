@@ -20,8 +20,8 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@bangle.dev/pm": "0.32.0",
-    "@bangle.dev/utils": "0.32.0"
+    "@bangle.dev/pm": "0.32.1",
+    "@bangle.dev/utils": "0.32.1"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",

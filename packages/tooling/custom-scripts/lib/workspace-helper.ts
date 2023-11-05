@@ -404,11 +404,15 @@ class FileHelper {
   }
 
   get isSrcFile() {
-    return !this.isTestFile;
+    return !this.isTestFile && !this.isStoryBookFile;
   }
 
   get isTestFile() {
     return this.filePath.includes('__tests__');
+  }
+
+  get isStoryBookFile() {
+    return this.filePath.includes('.stories.');
   }
 
   get isTSFile() {

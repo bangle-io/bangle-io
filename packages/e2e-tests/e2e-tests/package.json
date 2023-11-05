@@ -13,7 +13,7 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@playwright/test": "^1.39.0",
-    "@types/node": "^20.8.9"
+    "@types/node": "^20.8.10"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",

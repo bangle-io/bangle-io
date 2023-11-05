@@ -15,10 +15,10 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@bangle.io/css-vars": "workspace:*",
-    "@unocss/core": "^0.53.6",
-    "@unocss/preset-mini": "^0.53.6",
-    "@unocss/preset-uno": "^0.53.6",
-    "@unocss/preset-wind": "^0.53.6"
+    "@unocss/core": "^0.57.2",
+    "@unocss/preset-mini": "^0.57.2",
+    "@unocss/preset-uno": "^0.57.2",
+    "@unocss/preset-wind": "^0.57.2"
   },
   "devDependencies": {},
   "homepage": "https://bangle.io",
