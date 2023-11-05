@@ -18,3 +18,4 @@ dist
 *.hbs
 
 tsconfig.json
+packages/app-bundler/app-root/public
