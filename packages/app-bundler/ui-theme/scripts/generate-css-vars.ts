@@ -33,6 +33,15 @@ export default async function main() {
       cssString,
       'utf8',
     );
+
+    fs.writeFileSync(
+      path.join(
+        path.dirname(require.resolve('@bangle.io/storybook')),
+        fileName,
+      ),
+      cssString,
+      'utf8',
+    );
   });
 }
 

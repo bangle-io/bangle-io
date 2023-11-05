@@ -1,6 +1,4 @@
-import '@unocss/reset/tailwind-compat.css';
-// eslint-disable-next-line
-import 'virtual:uno.css';
+import './style';
 
 import { App } from '@bangle.io/app';
 import { assertIsDefined } from '@bangle.io/mini-js-utils';

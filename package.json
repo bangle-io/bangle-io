@@ -59,8 +59,8 @@
     "@bangle.io/uno-preset-bangle": "workspace:*"
   },
   "scripts": {
-    "build-prod-serve": "pnpm -r --filter \"app-root\" run build-prod-serve",
-    "build": "pnpm -r --filter \"app-root\" run build",
+    "build-prod-serve": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build-prod-serve",
+    "build": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build",
     "generate-all": "pnpm -r run \"/^generate:.*/\"",
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",

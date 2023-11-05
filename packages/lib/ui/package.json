@@ -23,7 +23,8 @@
   },
   "devDependencies": {
     "@types/react": "^18.2.33",
-    "@types/react-dom": "^18.2.14"
+    "@types/react-dom": "^18.2.14",
+    "@storybook/react": "^7.1.0"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"

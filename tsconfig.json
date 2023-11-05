@@ -31,9 +31,10 @@
     "useDefineForClassFields": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "uno.config.js",
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "packages/tooling/storybook/.storybook/**/*.ts",
+    "packages/tooling/storybook/.storybook/**/*.tsx",
   ],
   "exclude": [
     "node_modules",
