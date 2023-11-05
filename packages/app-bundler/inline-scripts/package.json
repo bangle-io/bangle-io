@@ -1,7 +1,12 @@
 {
   "name": "@bangle.io/inline-scripts",
-  "description": "inline scripts that are injected to the HTML page",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/app-bundler/inline-scripts"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -9,29 +14,24 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "banglePackageConfig": {
-    "type": "nodejs"
+  "homepage": "https://bangle.io",
+  "scripts": {
+    "generate:bundle-inline-scripts": "tsup --config tsup.config.ts"
   },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@bangle.io/app-root": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "tsup": "^7.2.0"
   },
   "devDependencies": {},
-  "homepage": "https://bangle.io",
-  "license": "AGPL-3.0-or-later",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
+  "description": "inline scripts that are injected to the HTML page",
   "main": "index.ts",
   "module": "index.js",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/inline-scripts"
-  },
-  "scripts": {
-    "generate:bundle-inline-scripts": "tsup --config tsup.config.ts"
   }
 }

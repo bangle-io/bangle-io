@@ -1,7 +1,12 @@
 {
   "name": "@bangle.io/pm-manual-paste",
-  "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
   "version": "0.31.6",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/pm-manual-paste"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -9,17 +14,18 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "bugs": "https://github.com/bangle-io/bangle.dev/issues",
+  "homepage": "https://bangle.dev",
+  "scripts": {},
   "dependencies": {
     "@bangle.dev/pm": "0.32.1",
     "tslib": "2.6.0",
     "typescript": "5.1.6"
   },
-  "homepage": "https://bangle.dev",
-  "license": "AGPL-3.0-or-later",
+  "bugs": "https://github.com/bangle-io/bangle.dev/issues",
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
@@ -28,12 +34,6 @@
     "module": "dist/index.js",
     "types": "dist/index.d.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/pm-manual-paste"
-  },
-  "scripts": {},
   "type": "module",
   "types": "dist/index.d.ts"
 }

@@ -5,10 +5,11 @@ import { Dhancha } from '@bangle.io/ui';
 import React from 'react';
 
 export function App() {
+  const widescreen = true;
   return (
     <Provider theme={defaultTheme}>
       <Dhancha
-        widescreen={true}
+        widescreen={widescreen}
         activitybar={
           <div
             onClick={() => {

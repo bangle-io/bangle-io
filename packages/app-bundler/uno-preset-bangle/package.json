@@ -1,7 +1,12 @@
 {
   "name": "@bangle.io/uno-preset-bangle",
-  "description": "Used for creating themes, does not get bundled with the app",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/app-bundler/uno-preset-bangle"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -9,10 +14,8 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "banglePackageConfig": {
-    "type": "nodejs"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "homepage": "https://bangle.io",
+  "scripts": {},
   "dependencies": {
     "@bangle.io/css-vars": "workspace:*",
     "@unocss/core": "^0.57.2",
@@ -21,17 +24,14 @@
     "@unocss/preset-wind": "^0.57.2"
   },
   "devDependencies": {},
-  "homepage": "https://bangle.io",
-  "license": "AGPL-3.0-or-later",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
+  "description": "Used for creating themes, does not get bundled with the app",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/uno-preset-bangle"
-  },
-  "scripts": {}
+  }
 }
