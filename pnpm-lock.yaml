@@ -13,7 +13,7 @@ importers:
         version: link:js-lib/jsdom-env
       '@bangle.io/uno-preset-bangle':
         specifier: workspace:*
-        version: link:app/uno-preset-bangle
+        version: link:app-bundler/uno-preset-bangle
       '@eslint/js':
         specifier: ^8.52.0
         version: 8.52.0
@@ -78,11 +78,11 @@ importers:
         specifier: ^0.53.6
         version: 0.53.6(postcss@8.4.31)(rollup@2.79.1)(vite@4.5.0)
 
-  app/app-root:
+  app-bundler/app-root:
     dependencies:
-      '@bangle.io/main':
+      '@bangle.io/app':
         specifier: workspace:*
-        version: link:../main
+        version: link:../../app/app
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -136,26 +136,61 @@ importers:
         specifier: ^0.16.6
         version: 0.16.6(vite@4.5.0)(workbox-build@7.0.0)(workbox-window@7.0.0)
 
-  app/main:
+  app-bundler/inline-scripts:
     dependencies:
-      '@adobe/react-spectrum':
-        specifier: ^3.31.1
-        version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.2.33
-        version: 18.2.33
-      '@types/react-dom':
-        specifier: ^18.2.14
-        version: 18.2.14
+      '@bangle.io/app-root':
+        specifier: workspace:*
+        version: link:../app-root
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      tsup:
+        specifier: ^7.2.0
+        version: 7.2.0(@swc/core@1.3.95)(postcss@8.4.31)(ts-node@10.9.1)(typescript@5.2.2)
 
-  app/uno-preset-bangle:
+  app-bundler/ui-theme:
+    dependencies:
+      '@bangle.io/app-root':
+        specifier: workspace:*
+        version: link:../app-root
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/css-vars':
+        specifier: workspace:*
+        version: link:../../shared/css-vars
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@tsconfig/node18':
+        specifier: ^18.2.2
+        version: 18.2.2
+      gradient-parser:
+        specifier: ^1.0.2
+        version: 1.0.2
+      polished:
+        specifier: ^4.2.2
+        version: 4.2.2
+      prettier:
+        specifier: 3.0.3
+        version: 3.0.3
+      tailwindcss:
+        specifier: ^3.2.4
+        version: 3.3.5(ts-node@10.9.1)
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@swc/core@1.3.95)(@types/node@20.8.9)(typescript@5.1.6)
+      tslib:
+        specifier: 2.6.0
+        version: 2.6.0
+      typescript:
+        specifier: 5.1.6
+        version: 5.1.6
+
+  app-bundler/uno-preset-bangle:
     dependencies:
       '@bangle.io/css-vars':
         specifier: workspace:*
@@ -172,6 +207,28 @@ importers:
       '@unocss/preset-wind':
         specifier: ^0.53.6
         version: 0.53.6
+
+  app/app:
+    dependencies:
+      '@adobe/react-spectrum':
+        specifier: ^3.31.1
+        version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/ui':
+        specifier: workspace:*
+        version: link:../../lib/ui
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.33
+        version: 18.2.33
+      '@types/react-dom':
+        specifier: ^18.2.14
+        version: 18.2.14
 
   e2e-tests/e2e-tests:
     dependencies:
@@ -540,6 +597,28 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
+  lib/ui:
+    dependencies:
+      '@adobe/react-spectrum':
+        specifier: ^3.31.1
+        version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/css-vars':
+        specifier: workspace:*
+        version: link:../../shared/css-vars
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.33
+        version: 18.2.33
+      '@types/react-dom':
+        specifier: ^18.2.14
+        version: 18.2.14
+
   shared/constants:
     dependencies:
       '@bangle.io/shared-types':
@@ -564,10 +643,7 @@ importers:
     dependencies:
       '@bangle.io/app-root':
         specifier: workspace:*
-        version: link:../../app/app-root
-      '@bangle.io/ui-theme':
-        specifier: workspace:*
-        version: link:../ui-theme
+        version: link:../../app-bundler/app-root
       '@tsconfig/node18':
         specifier: ^18.2.2
         version: 18.2.2
@@ -591,18 +667,6 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
 
-  tooling/inline-scripts:
-    dependencies:
-      '@bangle.io/app-root':
-        specifier: workspace:*
-        version: link:../../app/app-root
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      tsup:
-        specifier: ^7.2.0
-        version: 7.2.0(@swc/core@1.3.95)(postcss@8.4.31)(ts-node@10.9.1)(typescript@5.2.2)
-
   tooling/jest-utils:
     dependencies:
       '@bangle.io/config-template':
@@ -617,39 +681,6 @@ importers:
       fake-indexeddb:
         specifier: ^5.0.1
         version: 5.0.1
-
-  tooling/ui-theme:
-    dependencies:
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      '@bangle.io/css-vars':
-        specifier: workspace:*
-        version: link:../../shared/css-vars
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../../js-lib/mini-js-utils
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
-      gradient-parser:
-        specifier: ^1.0.2
-        version: 1.0.2
-      polished:
-        specifier: ^4.2.2
-        version: 4.2.2
-      prettier:
-        specifier: 3.0.3
-        version: 3.0.3
-      tailwindcss:
-        specifier: ^3.2.4
-        version: 3.3.5(ts-node@10.9.1)
-      tslib:
-        specifier: 2.6.0
-        version: 2.6.0
-      typescript:
-        specifier: 5.1.6
-        version: 5.1.6
 
 packages:
 
@@ -10394,6 +10425,38 @@ packages:
 
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+    dev: false
+
+  /ts-node@10.9.1(@swc/core@1.3.95)(@types/node@20.8.9)(typescript@5.1.6):
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@swc/core': 1.3.95
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 20.8.9
+      acorn: 8.11.2
+      acorn-walk: 8.3.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.1.6
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
     dev: false
 
   /ts-node@10.9.1(@swc/core@1.3.95)(@types/node@20.8.9)(typescript@5.2.2):

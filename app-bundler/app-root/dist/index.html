@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/favicon-dev.svg" type="image/svg+xml"/><link rel="alternate icon" href="/favicon-dev.ico" type="image/png" sizes="48x48"/><link rel="mask-icon" href="/favicon-dev.svg" color="#FFF0F4"/><link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180"/><meta name="msapplication-TileColor" content="#da532c"/><script>(function () {
+  'use strict';
+
+  // theme.ts
+  if (typeof window !== "undefined") {
+    let getColorPreference = function() {
+      const existing = localStorage.getItem(storageKey);
+      if (existing)
+        return existing;
+      else
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark-scheme" : "light-scheme";
+    }, setPreference = function() {
+      localStorage.setItem(storageKey, theme.value);
+      reflectPreference();
+    }, reflectPreference = function() {
+      document.firstElementChild.setAttribute("data-theme", theme.value);
+      document.firstElementChild.classList.add(theme.value);
+    };
+    const storageKey = "theme";
+    const theme = {
+      value: getColorPreference()
+    };
+    reflectPreference();
+    window.addEventListener("onload", () => {
+      reflectPreference();
+    });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches: isDark }) => {
+      theme.value = isDark ? "dark-scheme" : "light-scheme";
+      setPreference();
+    });
+  }
+
+  // ../../shared/constants/ui.ts
+  var WIDESCREEN_WIDTH = 759;
+
+  // widescreen.ts
+  function testPlatform(re) {
+    var _a;
+    let target = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {};
+    if (target.navigator != null) {
+      const platform = ((_a = target.navigator.userAgentData) == null ? void 0 : _a.platform) || target.navigator.platform;
+      return re.test(platform);
+    }
+    return false;
+  }
+  var isAndroid = typeof navigator != "undefined" ? /Android \d/.test(navigator.userAgent) : false;
+  var isMac = testPlatform(/^Mac/i);
+  var isIPhone = testPlatform(/^iPhone/i);
+  var isIPad = testPlatform(/^iPad/i) || // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
+  isMac && navigator.maxTouchPoints > 1;
+  var isIOS = isIPhone || isIPad;
+  var isMobile = isAndroid || isIOS;
+  function checkWidescreen(width = typeof window !== "undefined" ? window.innerWidth : void 0) {
+    if (isMobile) {
+      return false;
+    }
+    return width ? WIDESCREEN_WIDTH <= width : false;
+  }
+  function setRootWidescreenClass() {
+    if (typeof document === "undefined") {
+      return;
+    }
+    const widescreen = checkWidescreen();
+    setItem(document.firstElementChild);
+    function setItem(element) {
+      if (!element) {
+        return;
+      }
+      if (widescreen) {
+        element.classList.add("BU_widescreen");
+        element.classList.remove("BU_smallscreen");
+      } else {
+        element.classList.remove("BU_widescreen");
+        element.classList.add("BU_smallscreen");
+      }
+    }
+  }
+  setRootWidescreenClass();
+
+})();</script><meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff"/><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000"/><meta name="viewport" content="width=device-width,minimum-scale=1,user-scalable=no"/><script src="https://js.sentry-cdn.com/f1a3d53e530e465e8f74f847370b594b.min.js" crossorigin="anonymous" data-lazy="no"></script><link rel="stylesheet" href="/auto-generated/core-theme.css"/><title>Bangle App</title><script type="module" crossorigin src="/assets/index-ed4e634c.js"></script><link rel="stylesheet" href="/assets/index-52cfc972.css"><link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><div id="tooltip-container" class="z-tooltip isolate fixed z-tooltip"></div><div id="dialog-container" class="fixed z-modal isolate" style="background:0 0"></div></body></html>

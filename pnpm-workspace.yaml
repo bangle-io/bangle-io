@@ -1,6 +1,8 @@
 packages:
+  - 'app-bundler/*'
   - 'app/*'
   - 'e2e-tests/*'
   - 'js-lib/*'
-  - 'tooling/*'
+  - 'lib/*'
   - 'shared/*'
+  - 'tooling/*'

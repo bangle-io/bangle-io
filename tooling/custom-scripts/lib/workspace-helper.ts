@@ -362,7 +362,7 @@ export class Package {
     const newJSON = cb(this.packageJSON, this);
     await fsProm.writeFile(
       path.join(this.packagePath + '/package.json'),
-      JSON.stringify(newJSON, null, 2),
+      JSON.stringify(newJSON, null, 2) + '\n',
       'utf-8',
     );
 

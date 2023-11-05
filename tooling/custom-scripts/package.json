@@ -17,7 +17,6 @@
   "homepage": "https://bangle.io",
   "scripts": {
     "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
-    "generate:css-vars": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/css-vars.ts",
     "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
   },
   "dependencies": {
@@ -26,7 +25,6 @@
     "@tsconfig/node18": "^18.2.2",
     "zod": "^3.22.4",
     "globby": "^13.2.2",
-    "@bangle.io/ui-theme": "workspace:*",
     "prettier": "3.0.3",
     "@bangle.io/app-root": "workspace:*"
   },

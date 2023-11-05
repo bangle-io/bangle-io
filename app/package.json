@@ -2,8 +2,8 @@
   "name": "app",
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
-      "app",
       "js-lib",
+      "lib",
       "shared"
     ]
   }
