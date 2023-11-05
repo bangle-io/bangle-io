@@ -14,6 +14,7 @@ export default defineConfig({
   dts: false,
   shims: false,
   clean: false,
+  minify: false,
   name: 'inline-scripts',
   outDir: path.join(appRoot, 'public', 'auto-generated'),
 });

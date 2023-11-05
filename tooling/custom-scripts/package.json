@@ -39,6 +39,7 @@
   "banglePackageConfig": {
     "type": "nodejs"
   },
+  "description": "A place to put custom scripts that are used in the build process",
   "module": "index.js",
   "main": "index.ts",
   "publishConfig": {

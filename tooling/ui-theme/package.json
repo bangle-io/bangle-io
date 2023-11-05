@@ -33,6 +33,7 @@
   "banglePackageConfig": {
     "type": "nodejs"
   },
+  "description": "A theme generator for bangle.io",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {

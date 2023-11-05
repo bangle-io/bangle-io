@@ -30,6 +30,7 @@
   "banglePackageConfig": {
     "type": "nodejs"
   },
+  "description": "inline scripts that are injected to the HTML page",
   "module": "index.js",
   "main": "index.ts",
   "publishConfig": {
