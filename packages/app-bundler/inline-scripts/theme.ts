@@ -31,8 +31,13 @@ if (typeof window !== 'undefined') {
     localStorage.setItem(storageKey, theme.value);
     reflectPreference();
   }
+
   function reflectPreference() {
     document!.firstElementChild!.setAttribute('data-theme', theme.value);
+    document!.firstElementChild!.classList.remove(
+      'light-scheme',
+      'dark-scheme',
+    );
     document!.firstElementChild!.classList.add(theme.value);
   }
 }

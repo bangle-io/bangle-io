@@ -1,11 +1,5 @@
 {
   "name": "@bangle.io/runtime-type-checking",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/runtime-type-checking"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -13,14 +7,20 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "zod": "^3.22.4"
   },
   "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  }
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/runtime-type-checking"
+  },
+  "scripts": {}
 }

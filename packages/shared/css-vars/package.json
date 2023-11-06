@@ -1,12 +1,6 @@
 {
   "name": "@bangle.io/css-vars",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/css-vars"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,18 +8,24 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {
-    "@bangle.io/shared-types": "workspace:*"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "dependencies": {
+    "@bangle.io/shared-types": "workspace:*"
+  },
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/shared/css-vars"
+  },
+  "scripts": {}
 }

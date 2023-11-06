@@ -1,12 +1,6 @@
 {
   "name": "@bangle.io/env-vars",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/env-vars"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,17 +8,23 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {
-    "@bangle.io/config-template": "^0.0.7"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
   },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "dependencies": {
+    "@bangle.io/config-template": "^0.0.7"
+  },
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.js",
   "module": "index.js",
   "publishConfig": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/shared/env-vars"
+  },
+  "scripts": {},
   "types": "index.d.ts"
 }

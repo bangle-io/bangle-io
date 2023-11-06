@@ -1,12 +1,6 @@
 {
   "name": "@bangle.io/fzf-search",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/fzf-search"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,8 +8,10 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "fzf": "^0.5.2",
     "react": "^18.2.0",
@@ -25,10 +21,8 @@
   "devDependencies": {
     "@types/react": "^18.2.35"
   },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  },
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.ts",
   "module": "index.ts",
   "peerDependencies": {
@@ -36,5 +30,11 @@
   },
   "publishConfig": {
     "access": "restricted"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/fzf-search"
+  },
+  "scripts": {}
 }

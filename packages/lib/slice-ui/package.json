@@ -1,6 +1,5 @@
 {
-  "name": "@bangle.io/weak-cache",
-  "version": "0.0.0",
+  "name": "@bangle.io/slice-ui",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -9,24 +8,20 @@
     }
   ],
   "banglePackageConfig": {
-    "type": "universal"
+    "type": "browser"
   },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "@nalanda/core": "^0.2.0",
+    "@bangle.io/constants": "workspace:*"
   },
+  "devDependencies": {},
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/weak-cache"
+    "directory": "packages/lib/slice-ui"
   },
   "scripts": {}
 }

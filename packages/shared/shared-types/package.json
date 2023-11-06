@@ -1,12 +1,6 @@
 {
   "name": "@bangle.io/shared-types",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/shared-types"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,13 +8,19 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {},
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/shared/shared-types"
+  },
+  "scripts": {},
   "types": "index.d.ts"
 }

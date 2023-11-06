@@ -1,12 +1,7 @@
 {
   "name": "@bangle.io/history",
+  "description": "A package for dealing with browser history",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/history"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,20 +9,25 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "tslib": "2.6.0",
     "typescript": "5.1.6"
   },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "description": "A package for dealing with browser history",
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/history"
+  },
+  "scripts": {}
 }

@@ -1,7 +1,5 @@
 {
-  "name": "@bangle.io/inline-scripts",
-  "description": "inline scripts that are injected to the HTML page",
-  "version": "0.0.0",
+  "name": "@bangle.io/utils",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -10,28 +8,20 @@
     }
   ],
   "banglePackageConfig": {
-    "type": "nodejs"
+    "type": "browser"
   },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
-    "@bangle.io/app-root": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "tsup": "^7.2.0"
+    "@bangle.io/browser": "workspace:*"
   },
   "devDependencies": {},
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
-  "main": "index.ts",
-  "module": "index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/inline-scripts"
+    "directory": "packages/lib/ui"
   },
-  "scripts": {
-    "generate:bundle-inline-scripts": "tsup --config tsup.config.ts"
-  }
+  "scripts": {}
 }

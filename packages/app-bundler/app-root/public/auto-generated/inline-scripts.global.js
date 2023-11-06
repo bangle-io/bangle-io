@@ -14,6 +14,10 @@
       reflectPreference();
     }, reflectPreference = function() {
       document.firstElementChild.setAttribute("data-theme", theme.value);
+      document.firstElementChild.classList.remove(
+        "light-scheme",
+        "dark-scheme"
+      );
       document.firstElementChild.classList.add(theme.value);
     };
     const storageKey = "theme";

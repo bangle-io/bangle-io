@@ -213,9 +213,18 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
         version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/slice-ui':
+        specifier: workspace:*
+        version: link:../../lib/slice-ui
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib/ui
+      '@nalanda/core':
+        specifier: ^0.2.0
+        version: 0.2.0
+      '@nalanda/react':
+        specifier: ^0.2.0
+        version: 0.2.0(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -597,6 +606,15 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
+  packages/lib/slice-ui:
+    dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@nalanda/core':
+        specifier: ^0.2.0
+        version: 0.2.0
+
   packages/lib/ui:
     dependencies:
       '@adobe/react-spectrum':
@@ -621,6 +639,30 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.14
         version: 18.2.14
+
+  packages/lib/utils:
+    dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+
+  packages/shared/config:
+    dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/config-template':
+        specifier: ^0.0.7
+        version: 0.0.7
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
 
   packages/shared/constants:
     dependencies:
@@ -3316,6 +3358,20 @@ packages:
       '@types/react': 18.2.35
       react: 18.2.0
     dev: true
+
+  /@nalanda/core@0.2.0:
+    resolution: {integrity: sha512-x8JQK9QQgOqgUWF4bbwqh4jCNAAAXW9l1kMiTaCiwUI05aTNsDFqIe2XECLD9Sh2mHFZy383BadmkmUTK1NKxw==}
+    dev: false
+
+  /@nalanda/react@0.2.0(react@18.2.0):
+    resolution: {integrity: sha512-ZxEBRGzZ1Vv+M8NChC4JJzV8+/bvadgPSKo6HYzWBlXTDcLDdnIg7MZ0aC9nNfjB4FZvG1X1wwK3EahprVd+kQ==}
+    peerDependencies:
+      react: '>=17.0'
+    dependencies:
+      '@nalanda/core': 0.2.0
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
 
   /@ndelangen/get-tarball@3.0.9:
     resolution: {integrity: sha512-9JKTEik4vq+yGosHYhZ1tiH/3WpUS0Nh0kej4Agndhox8pAdWhEx5knFVRcb/ya9knCRCs1rPxNrSXTDdfVqpA==}

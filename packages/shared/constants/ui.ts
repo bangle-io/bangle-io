@@ -34,3 +34,8 @@ export type NotificationPayloadType = {
     dismissOnClick?: boolean;
   }[];
 };
+
+export const COLOR_SCHEMA = {
+  LIGHT: 'light',
+  DARK: 'dark',
+} as const;

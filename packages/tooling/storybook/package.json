@@ -1,12 +1,6 @@
 {
   "name": "@bangle.io/storybook",
   "version": "0.0.0",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/storybook"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -14,13 +8,10 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {
-    "build-storybook": "storybook build",
-    "chromatic": "chromatic",
-    "storybook": "storybook dev -p 6006 --no-open",
-    "test-storybook": "test-storybook"
+  "banglePackageConfig": {
+    "type": "nodejs"
   },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^17.0.2",
@@ -59,13 +50,22 @@
     "storybook": "^7.5.2",
     "vite": "^4.5.0"
   },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  },
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/storybook"
+  },
+  "scripts": {
+    "build-storybook": "storybook build",
+    "chromatic": "chromatic",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "test-storybook": "test-storybook"
   }
 }

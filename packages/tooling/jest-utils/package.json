@@ -1,11 +1,5 @@
 {
   "name": "jest-utils",
-  "license": "AGPL-3.0-or-later",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/jest-utils"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -13,8 +7,10 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "scripts": {},
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7",
     "cross-fetch": "^4.0.0",
@@ -22,8 +18,12 @@
     "fake-indexeddb": "^5.0.1"
   },
   "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  }
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/jest-utils"
+  },
+  "scripts": {}
 }
