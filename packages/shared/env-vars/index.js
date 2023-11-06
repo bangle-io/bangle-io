@@ -148,10 +148,8 @@ ${inlinedScripts}
           ? `<script defer src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="AOGIPUKY"></script>`
           : '',
     },
-    appEnvs: {
-      'process.env.__BANGLE_BUILD_TIME_CONFIG__': JSON.stringify(
-        bangleConfig.serialize(),
-      ),
+    globalIdentifiers: {
+      __BANGLE_BUILD_TIME_CONFIG__: JSON.stringify(bangleConfig.serialize()),
     },
   };
 };

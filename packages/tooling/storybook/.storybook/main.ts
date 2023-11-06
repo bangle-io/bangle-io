@@ -4,6 +4,8 @@ import path from 'node:path';
 import { mergeConfig } from 'vite';
 
 import getEnvVars from '@bangle.io/env-vars';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const HELP_DOCS_VERSION = require('bangle-io-help/package.json').version;
 
 const publicDir = path.join(
   path.dirname(require.resolve('@bangle.io/app-root')),
@@ -52,13 +54,13 @@ const config: StorybookConfig = {
       isVite: true,
       isStorybook: true,
       publicDirPath: publicDir,
-      helpDocsVersion: 'latest',
+      helpDocsVersion: HELP_DOCS_VERSION,
     });
 
     return mergeConfig(config, {
       plugins: [Unocss()],
       define: {
-        ...envVars.appEnvs,
+        ...envVars.globalIdentifiers,
       },
     });
   },

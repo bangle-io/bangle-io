@@ -1,3 +1,3 @@
+import './global-this';
 import './theme';
 import './widescreen';
-import './global-this';

@@ -8,16 +8,12 @@ declare module '@bangle.io/env-vars' {
     inlinedScripts: string;
   }
 
-  export interface AppEnvs {
-    'process.env.__BANGLE_BUILD_TIME_CONFIG__': string;
-  }
-
   export interface BangleConfigOutput {
     helpDocsVersion: string;
     appEnv: string;
     hot: boolean;
     htmlInjections: HtmlInjections;
-    appEnvs: AppEnvs;
+    globalIdentifiers: Record<string, string>;
   }
 
   interface DefaultExportOptions {

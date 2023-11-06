@@ -1,3 +1,4 @@
+import '@bangle.io/config';
 import './style';
 
 import React from 'react';

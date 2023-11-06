@@ -1,6 +1,6 @@
 const { BangleConfig } = require('@bangle.io/config-template');
+const HELP_DOCS_VERSION = require('bangle-io-help/package.json').version;
 
-/* eslint-disable no-process-env */
 process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
   build: {
     appEnv: 'production',
@@ -16,7 +16,7 @@ process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
   },
   app: {
     changelogText: 'dummy-change-log text',
-    helpDocsVersion: '1.0.0',
+    helpDocsVersion: HELP_DOCS_VERSION,
   },
 }).serialize();
 

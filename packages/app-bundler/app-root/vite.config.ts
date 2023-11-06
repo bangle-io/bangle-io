@@ -9,7 +9,8 @@ import { ManifestOptions, VitePWA } from 'vite-plugin-pwa';
 
 import getEnvVars from '@bangle.io/env-vars';
 
-const HELP_DOCS_VERSION = '1.11.0';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const HELP_DOCS_VERSION = require('bangle-io-help/package.json').version;
 
 const argv = minimist(process.argv.slice(2));
 
@@ -43,6 +44,9 @@ export default defineConfig(async ({ command, mode }) => {
   });
 
   return {
+    define: {
+      ...envVars.globalIdentifiers,
+    },
     plugins: [
       createHtmlPlugin({
         minify: isProduction,

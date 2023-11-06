@@ -1,6 +1,17 @@
 (function () {
   'use strict';
 
+  // global-this.ts
+  if (typeof globalThis === "undefined") {
+    if (typeof self !== "undefined") {
+      self.globalThis = self;
+    } else if (typeof window !== "undefined") {
+      window.globalThis = window;
+    } else if (typeof global !== "undefined") {
+      global.globalThis = global;
+    }
+  }
+
   // theme.ts
   if (typeof window !== "undefined") {
     let getColorPreference = function() {
