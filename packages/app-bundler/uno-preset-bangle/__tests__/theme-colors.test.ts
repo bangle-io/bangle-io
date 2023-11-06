@@ -1,5 +1,4 @@
 import { colors } from '../theme/colors';
-
 describe('theme-colors', () => {
   test('colors', () => {
     expect(colors).toMatchInlineSnapshot(`

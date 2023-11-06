@@ -1,4 +1,5 @@
 import type { Node } from '@bangle.dev/pm';
+
 import { pMap } from '@bangle.io/p-map';
 
 import { DEFAULT_CONCURRENCY } from './config';

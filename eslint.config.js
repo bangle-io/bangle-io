@@ -54,8 +54,19 @@ module.exports = [
       ...pluginImport.configs.recommended.rules,
       ...reactRules,
 
-      'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            ['^\\u0000'],
+            ['^@?(?!bangle)\\w', '^'],
+            ['^@bangle\\.dev?\\w'],
+            ['^@bangle\\.io?\\w'],
+            ['^\\.'],
+          ],
+        },
+      ],
 
       // The following are not necessary with TypeScript.
       'import/named': 'off',

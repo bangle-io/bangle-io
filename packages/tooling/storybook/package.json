@@ -23,9 +23,10 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^17.0.2",
+    "react-dom": "^18.2.0",
     "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "@bangle.io/config": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
@@ -33,6 +34,7 @@
     "@babel/preset-typescript": "^7.23.2",
     "@bangle.io/app-root": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "bangle-io-help": "^1.11.0",
     "@bangle.io/env-vars": "workspace:*",
     "@mdx-js/react": "^3.0.0",
     "@react-aria/ssr": "^3.8.0",
@@ -50,7 +52,7 @@
     "@storybook/testing-library": "^0.2.2",
     "@storybook/theming": "^7.5.2",
     "@types/react": "^18.2.35",
-    "@types/react-dom": "^17.0.17",
+    "@types/react-dom": "^18.2.14",
     "@unocss/reset": "^0.57.2",
     "@unocss/vite": "^0.57.2",
     "babel-loader": "^9.1.3",

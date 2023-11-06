@@ -1,6 +1,17 @@
 (function () {
   'use strict';
 
+  // global-this.ts
+  if (typeof globalThis === "undefined") {
+    if (typeof self !== "undefined") {
+      self.globalThis = self;
+    } else if (typeof window !== "undefined") {
+      window.globalThis = window;
+    } else if (typeof global !== "undefined") {
+      global.globalThis = global;
+    }
+  }
+
   // theme.ts
   if (typeof window !== "undefined") {
     let getColorPreference = function() {
@@ -14,6 +25,10 @@
       reflectPreference();
     }, reflectPreference = function() {
       document.firstElementChild.setAttribute("data-theme", theme.value);
+      document.firstElementChild.classList.remove(
+        "light-scheme",
+        "dark-scheme"
+      );
       document.firstElementChild.classList.add(theme.value);
     };
     const storageKey = "theme";

@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect } from 'react';
+
 import type {
   Command,
   EditorState,
@@ -6,7 +8,6 @@ import type {
 } from '@bangle.dev/pm';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { suggestTooltip } from '@bangle.dev/tooltip';
-import React, { useCallback, useEffect } from 'react';
 
 import { getSuggestTooltipKey } from './inline-palette';
 

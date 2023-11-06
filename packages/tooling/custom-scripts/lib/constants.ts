@@ -1,5 +1,4 @@
 import path from 'node:path';
-
 import { z } from 'zod';
 
 export const rootPath = path.resolve(__dirname, '../../../..');

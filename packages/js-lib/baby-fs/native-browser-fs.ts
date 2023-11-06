@@ -403,9 +403,8 @@ async function asyncIteratorToArray<T>(iter: AsyncIterable<T>): Promise<T[]> {
 
 export async function pickADirectory() {
   try {
-    let dirHandle: FileSystemDirectoryHandle = await (
-      window as any
-    ).showDirectoryPicker();
+    let dirHandle: FileSystemDirectoryHandle =
+      await window.showDirectoryPicker();
     let permission = await requestNativeBrowserFSPermission(dirHandle);
 
     if (!permission) {

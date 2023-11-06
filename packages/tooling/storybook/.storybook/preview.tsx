@@ -1,9 +1,15 @@
 import '@bangle.io/app-root/public/auto-generated/inline-scripts.global';
 import '@bangle.io/app-root/style';
 
-import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
 import type { Decorator, Preview } from '@storybook/react';
 import React, { useLayoutEffect } from 'react';
+
+import { IS_STORYBOOK } from '@bangle.io/config';
+import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
+
+if (!IS_STORYBOOK) {
+  throw new Error('This file should only be used in storybook');
+}
 
 function checkWidescreen(): boolean {
   const currentWidth = window.innerWidth;

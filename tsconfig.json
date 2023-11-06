@@ -35,6 +35,7 @@
     "packages/**/*.tsx",
     "packages/tooling/storybook/.storybook/**/*.ts",
     "packages/tooling/storybook/.storybook/**/*.tsx",
+    "globals.d.ts"
   ],
   "exclude": [
     "node_modules",
