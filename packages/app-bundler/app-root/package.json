@@ -1,5 +1,11 @@
 {
   "name": "@bangle.io/app-root",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/app-bundler/app-root"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -7,12 +13,16 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "banglePackageConfig": {
-    "type": "browser"
+  "homepage": "https://bangle.io",
+  "scripts": {
+    "build": "NODE_ENV=production vite build",
+    "build-prod-serve": "NODE_ENV=production vite build && vite preview --port 1234",
+    "preview": "vite preview",
+    "start": "vite"
   },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@bangle.io/app": "workspace:*",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@unocss/reset": "^0.57.2",
     "react": "^18.2.0",
@@ -33,18 +43,9 @@
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.16.7"
   },
-  "homepage": "https://bangle.io",
-  "license": "AGPL-3.0-or-later",
-  "main": "index.tsx",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/app-root"
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "browser"
   },
-  "scripts": {
-    "build": "NODE_ENV=production vite build",
-    "build-prod-serve": "NODE_ENV=production vite build && vite preview --port 1234",
-    "preview": "vite preview",
-    "start": "vite"
-  }
+  "main": "index.tsx"
 }

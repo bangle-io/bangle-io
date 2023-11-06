@@ -1,10 +1,11 @@
 {
-  "name": "jest-utils",
+  "name": "@bangle.io/config",
+  "version": "0.0.0",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/jest-utils"
+    "directory": "packages/shared/config"
   },
   "authors": [
     {
@@ -16,14 +17,16 @@
   "homepage": "https://bangle.io",
   "scripts": {},
   "dependencies": {
+    "@bangle.io/browser": "workspace:*",
     "@bangle.io/config-template": "^0.0.7",
-    "cross-fetch": "^4.0.0",
-    "domexception": "^4.0.0",
-    "fake-indexeddb": "^5.0.1"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
   },
-  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "nodejs"
+    "type": "universal"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

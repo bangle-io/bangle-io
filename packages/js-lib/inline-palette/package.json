@@ -1,6 +1,12 @@
 {
   "name": "@bangle.io/inline-palette",
   "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/inline-palette"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -8,10 +14,8 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "homepage": "https://bangle.io",
+  "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.32.1",
     "@bangle.dev/pm": "0.32.1",
@@ -26,17 +30,13 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {},
-  "homepage": "https://bangle.io",
-  "license": "AGPL-3.0-or-later",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "universal"
+  },
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "restricted"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/inline-palette"
-  },
-  "scripts": {}
+  }
 }
