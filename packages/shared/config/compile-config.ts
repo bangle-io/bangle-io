@@ -18,7 +18,7 @@ export const compileConfig = (): FinalConfig => {
 
     try {
       // the e2e test runner will replace the following with the injected configuration.
-      // eslint-disable-next-line no-undef
+      // eslint-disable-next-line no-undef, @typescript-eslint/prefer-nullish-coalescing
       let rawInjectedConfig = __BANGLE_INJECTED_CONFIG__ || null;
 
       if (rawInjectedConfig) {

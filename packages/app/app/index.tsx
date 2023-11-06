@@ -28,7 +28,15 @@ function Main() {
   return (
     <Dhancha
       widescreen={widescreen}
-      activitybar={<div onClick={() => {}}>Activitybar</div>}
+      activitybar={
+        <div
+          onClick={() => {
+            //
+          }}
+        >
+          Activitybar
+        </div>
+      }
       mainContent={<div>Main content</div>}
       noteSidebar={<div>Note</div>}
       workspaceSidebar={<div>Workspace sidebar</div>}
