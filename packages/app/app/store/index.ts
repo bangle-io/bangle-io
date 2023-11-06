@@ -1,7 +1,18 @@
 import { createStore } from '@nalanda/core';
 
-import { sliceUI } from '@bangle.io/slice-ui';
+import {
+  sliceUI,
+  sliceUIColorScheme,
+  sliceUIWidescreen,
+} from '@bangle.io/slice-ui';
 
 export const store = createStore({
-  slices: [sliceUI],
+  slices: [
+    // ui
+    sliceUIColorScheme,
+    sliceUIWidescreen,
+    sliceUI,
+
+    //
+  ],
 });

@@ -430,6 +430,15 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
+  packages/js-lib/nalanda:
+    dependencies:
+      '@nalanda/core':
+        specifier: ^0.2.0
+        version: 0.2.0
+      '@nalanda/react':
+        specifier: ^0.2.0
+        version: 0.2.0(react@18.2.0)
+
   packages/js-lib/nsm-3:
     dependencies:
       '@types/react':
@@ -614,6 +623,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/nalanda':
+        specifier: workspace:*
+        version: link:../../js-lib/nalanda
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@nalanda/core':
         specifier: ^0.2.0
         version: 0.2.0
@@ -14362,7 +14377,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.31
-      ts-node: 10.9.1(@swc/core@1.3.96)(@types/node@20.8.10)(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.96)(@types/node@20.8.10)(typescript@5.1.6)
       yaml: 2.3.4
     dev: false
 
