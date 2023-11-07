@@ -9,3 +9,8 @@ body {
   background-color: var(--BV-colorNeutralBgLayerBottom);
   color: var(--BV-colorNeutralText);
 }
+
+#root {
+  background-color: var(--BV-colorNeutralBgLayerBottom);
+  color: var(--BV-colorNeutralText);
+}

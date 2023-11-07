@@ -35,7 +35,7 @@ export type NotificationPayloadType = {
   }[];
 };
 
-export const COLOR_SCHEMA = {
+export const COLOR_SCHEME = {
   LIGHT: 'light',
   DARK: 'dark',
 } as const;

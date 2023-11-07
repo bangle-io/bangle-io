@@ -6,6 +6,21 @@ test.beforeEach(async ({ bangleApp }) => {
   await bangleApp.open();
 });
 
+test.describe('color scheme', () => {
+  test.use({
+    colorScheme: 'dark',
+  });
+
+  test('html element has the correct classes', async ({ page }) => {
+    // Get the class attribute of the html element
+    const classAttribute = await page.evaluate(
+      () => document.documentElement.className,
+    );
+
+    expect(classAttribute.split(' ')).toContain('dark-scheme');
+  });
+});
+
 test('html element has the correct classes', async ({ page }) => {
   // Get the class attribute of the html element
   const classAttribute = await page.evaluate(
