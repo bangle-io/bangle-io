@@ -37,3 +37,25 @@
     'activitybar left-aside titlebar-container titlebar-container'
     'activitybar left-aside main-container right-aside';
 }
+
+.BU_smallscreen .B-ui-dhancha-titlebar {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: var(--BV-miscTitlebarHeight);
+  position: sticky;
+  border-bottom: 1px solid transparent;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* the .up and .down are added in small screens */
+.BU_smallscreen .B-ui-dhancha-titlebar.B-ui-dhancha_up {
+  border-bottom-color: transparent;
+  transition: border-bottom-color 0.3s ease-in;
+}
+
+.BU_smallscreen .B-ui-dhancha-titlebar.B-ui-dhancha_down {
+  border-bottom-color: var(--BV-colorNeutralBorder);
+}

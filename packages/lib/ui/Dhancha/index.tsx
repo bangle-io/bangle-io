@@ -110,7 +110,7 @@ const TitlebarContainer = React.forwardRef<
       role="navigation"
       aria-label="Title Bar"
       ref={ref}
-      className={props.className}
+      className={'B-ui-dhancha-titlebar ' + props.className}
       style={props.style}
     >
       {props.children}

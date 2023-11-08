@@ -26,7 +26,9 @@ function Main() {
     widescreen,
   });
 
-  const titlebar = <div className="bg-colorBgLayerFloat">I am titlebar</div>;
+  const titlebar = (
+    <div className="bg-colorBgLayerFloat w-full">I am titlebar</div>
+  );
 
   const mainContent = (
     <Flex
