@@ -19,7 +19,38 @@ export const sliceUIWidescreen = key.slice({
   widescreen: widescreenField,
 });
 
-key.effect(function watchWidthChange(store) {
+// sets a class when screen is resized
+key.effect(function listToResizeEffect(store) {
+  const targetNode = document.firstElementChild!;
+  const syncWidescreen = (dimensions?: { width: number; height: number }) => {
+    const currentWideScreen = checkWidescreen(dimensions?.width);
+    const stateWidescreen = targetNode.classList.contains('BU_widescreen');
+
+    if (currentWideScreen === stateWidescreen) {
+      return;
+    }
+
+    if (currentWideScreen) {
+      targetNode.classList.remove('BU_smallscreen');
+      targetNode.classList.add('BU_widescreen');
+    } else {
+      targetNode.classList.remove('BU_widescreen');
+      targetNode.classList.add('BU_smallscreen');
+    }
+  };
+
+  const controller = new AbortController();
+
+  listenToResize(syncWidescreen, controller.signal);
+
+  cleanup(store, () => {
+    controller.abort();
+  });
+});
+
+// watches for class change (done by listToResizeEffect) and updates the store value
+// to stay in sync.
+key.effect(function watchWidthChangeEffect(store) {
   const config: MutationObserverInit = {
     attributes: true, // Watch for attribute changes
     attributeFilter: ['class'], // Watch for changes only to the 'class' attribute
@@ -48,33 +79,5 @@ key.effect(function watchWidthChange(store) {
 
   cleanup(store, () => {
     observer.disconnect();
-  });
-});
-
-key.effect((store) => {
-  const targetNode = document.firstElementChild!;
-  const syncWidescreen = (dimensions?: { width: number; height: number }) => {
-    const currentWideScreen = checkWidescreen(dimensions?.width);
-    const stateWidescreen = targetNode.classList.contains('BU_widescreen');
-
-    if (currentWideScreen === stateWidescreen) {
-      return;
-    }
-
-    if (currentWideScreen) {
-      targetNode.classList.remove('BU_smallscreen');
-      targetNode.classList.add('BU_widescreen');
-    } else {
-      targetNode.classList.remove('BU_widescreen');
-      targetNode.classList.add('BU_smallscreen');
-    }
-  };
-
-  const controller = new AbortController();
-
-  listenToResize(syncWidescreen, controller.signal);
-
-  cleanup(store, () => {
-    controller.abort();
   });
 });

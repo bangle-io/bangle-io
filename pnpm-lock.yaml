@@ -216,6 +216,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
         version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/css-vars':
+        specifier: workspace:*
+        version: link:../../shared/css-vars
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
@@ -641,6 +644,9 @@ importers:
       '@bangle.io/css-vars':
         specifier: workspace:*
         version: link:../../shared/css-vars
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../utils
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -14377,7 +14383,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.31
-      ts-node: 10.9.1(@swc/core@1.3.96)(@types/node@20.8.10)(typescript@5.1.6)
+      ts-node: 10.9.1(@swc/core@1.3.96)(@types/node@20.8.10)(typescript@5.2.2)
       yaml: 2.3.4
     dev: false
 

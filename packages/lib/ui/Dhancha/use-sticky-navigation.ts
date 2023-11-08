@@ -2,20 +2,19 @@ import type { MutableRefObject } from 'react';
 import { useEffect } from 'react';
 
 export function useStickyNavigation(
-  widescreen: boolean,
-  activitybarRef: MutableRefObject<HTMLDivElement | null>,
+  ref: MutableRefObject<HTMLDivElement | null>,
 ) {
   useEffect(() => {
     let callback: undefined | (() => void);
 
-    if (!widescreen && activitybarRef.current) {
-      callback = setupStickyNavigation(activitybarRef.current);
+    if (ref.current) {
+      callback = setupStickyNavigation(ref.current);
     }
 
     return () => {
       callback?.();
     };
-  }, [widescreen, activitybarRef]);
+  }, [ref]);
 }
 
 function setupStickyNavigation(element: HTMLElement) {

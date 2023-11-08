@@ -135,10 +135,12 @@ export const defaultTokensLight: DesignTokens = {
     linkText: spectrumLight.blue700,
     searchHighlightBg: spectrumLight.yellow300,
 
-    activitybarWidth: '50px',
-    noteSidebarWidth: '300px',
-    workspaceSidebarWidth: '300px',
     miniEditorWidth: '400px',
+
+    activitybarWidth: '50px',
+    leftAsideWidth: '300px',
+    rightAsideWidth: '300px',
+    titlebarHeight: '50px',
 
     noteTagsBg: lightNeutralColor.solid,
     noteTagsText: lightNeutralColor.textInverted,

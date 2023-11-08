@@ -18,6 +18,7 @@
   "dependencies": {
     "@adobe/react-spectrum": "^3.31.1",
     "@bangle.io/css-vars": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

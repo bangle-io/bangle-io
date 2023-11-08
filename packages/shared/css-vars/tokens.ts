@@ -9,16 +9,18 @@ const tokensShape: DesignTokens = {
   misc: {
     activitybarWidth: '',
     miniEditorWidth: '',
-    noteSidebarWidth: '',
     noteTagsBg: '',
     noteTagsText: '',
     pageMaxWidth: '',
     pagePadding: '',
-    workspaceSidebarWidth: '',
 
     activitybarBg: '',
     activitybarBtnBgPress: '',
     activitybarText: '',
+
+    leftAsideWidth: '',
+    rightAsideWidth: '',
+    titlebarHeight: '',
 
     editorAttentionBg: '',
     editorBacklinkBg: '',

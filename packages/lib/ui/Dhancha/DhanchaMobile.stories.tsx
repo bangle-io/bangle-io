@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 
-import { Dhancha } from './index';
+import { DhanchaSmallscreen } from './index';
 
-const meta: Meta<typeof Dhancha> = {
-  title: 'ui-dhancha/Dhancha',
-  component: Dhancha,
+const meta: Meta<typeof DhanchaSmallscreen> = {
+  title: 'ui-dhancha/DhanchaSmallscreen',
+  component: DhanchaSmallscreen,
   argTypes: {},
   decorators: [],
   parameters: {
@@ -15,25 +15,12 @@ const meta: Meta<typeof Dhancha> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Dhancha>;
+type Story = StoryObj<typeof DhanchaSmallscreen>;
 
-export const Primary: Story = {
+export const Main: Story = {
   args: {
-    widescreen: true,
-    activitybar: [<span key={1}> H</span>, <span key={2}> B</span>],
+    titlebar: <div className="bg-colorBgLayerFloat w-full">I am titlebar</div>,
     mainContent: <MainContent />,
-    noteSidebar: <NoteSidebar />,
-    workspaceSidebar: <WorkspaceSidebar />,
-  },
-};
-
-export const Mobile: Story = {
-  args: {
-    widescreen: false,
-    activitybar: [<span key={1}> Heading</span>, <span key={2}> Bar</span>],
-    mainContent: <MainContent />,
-    noteSidebar: <NoteSidebar />,
-    workspaceSidebar: <WorkspaceSidebar />,
   },
 };
 
@@ -45,7 +32,6 @@ function MainContent() {
     <div
       style={{
         backgroundColor: 'pink',
-        overflowY: 'scroll',
         height: '100%',
       }}
     >
@@ -93,11 +79,13 @@ function WorkspaceSidebar() {
 
   return workspaceSidebarOpen ? (
     <div
-      onClick={() => {
-        toggleWorkspaceSidebar((r) => !r);
-      }}
       style={{
         backgroundColor: 'lightgreen',
+        height: '100vh',
+        overflowY: 'scroll',
+      }}
+      onClick={() => {
+        toggleWorkspaceSidebar((r) => !r);
       }}
     >
       <div>{generateText({ lines: 10 })}</div>
