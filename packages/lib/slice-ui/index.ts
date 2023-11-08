@@ -1,17 +1,19 @@
 import { createKey } from '@nalanda/core';
 
-import { COLOR_SCHEMA } from '@bangle.io/constants';
+import { sliceUIColorScheme } from './slice-ui-color-scheme';
+import { sliceUIWidescreen } from './slice-ui-widescreen';
 
-const key = createKey('slice-ui', []);
+export { sliceUIColorScheme } from './slice-ui-color-scheme';
+export { sliceUIWidescreen } from './slice-ui-widescreen';
 
-const widescreenField = key.field(
-  !document.firstElementChild!.classList.contains('BU_smallscreen'),
-);
+const key = createKey('slice-ui', [sliceUIWidescreen, sliceUIColorScheme]);
 
-const colorSchemeField = key.field(
-  document.firstElementChild!.classList.contains('dark-scheme')
-    ? COLOR_SCHEMA.DARK
-    : COLOR_SCHEMA.LIGHT,
+const widescreenField = key.derive((state) => {
+  return sliceUIWidescreen.getField(state, 'widescreen');
+});
+
+const colorSchemeField = key.derive((state) =>
+  sliceUIColorScheme.getField(state, 'colorScheme'),
 );
 
 export const sliceUI = key.slice({

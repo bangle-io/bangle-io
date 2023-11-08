@@ -1,11 +1,11 @@
 import './style.css';
 
-import { defaultTheme, Provider } from '@adobe/react-spectrum';
+import { defaultTheme, Flex, Provider, View } from '@adobe/react-spectrum';
 import { StoreProvider, useTrack } from '@nalanda/react';
 import React from 'react';
 
 import { sliceUI } from '@bangle.io/slice-ui';
-import { Dhancha } from '@bangle.io/ui';
+import { DhanchaSmallscreen, DhanchaWidescreen } from '@bangle.io/ui';
 
 import { store } from './store';
 
@@ -25,21 +25,106 @@ function Main() {
     colorScheme,
     widescreen,
   });
-  return (
-    <Dhancha
-      widescreen={widescreen}
-      activitybar={
-        <div
-          onClick={() => {
-            //
-          }}
-        >
-          Activitybar
-        </div>
-      }
-      mainContent={<div>Main content</div>}
-      noteSidebar={<div>Note</div>}
-      workspaceSidebar={<div>Workspace sidebar</div>}
-    />
+
+  const titlebar = <div className="bg-colorBgLayerFloat">I am titlebar</div>;
+
+  const mainContent = (
+    <Flex
+      direction="column"
+      height="100%"
+      UNSAFE_style={{
+        overflow: 'scroll',
+      }}
+    >
+      <div
+        style={
+          widescreen
+            ? {
+                // overflow: 'scroll',
+              }
+            : {}
+        }
+      >
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="celery-600" height="size-800" />
+        <View backgroundColor="blue-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+        <View backgroundColor="magenta-600" height="size-800" />
+      </div>
+    </Flex>
   );
+
+  if (widescreen) {
+    return (
+      <DhanchaWidescreen
+        activitybar={
+          <div
+            style={{
+              backgroundColor: 'green',
+              height: '100%',
+            }}
+          >
+            A
+          </div>
+        }
+        mainContent={mainContent}
+        leftAside={<div>Left aside</div>}
+        rightAside={<div>Right aside</div>}
+        titlebar={titlebar}
+      />
+    );
+  }
+
+  return <DhanchaSmallscreen mainContent={mainContent} titlebar={titlebar} />;
 }

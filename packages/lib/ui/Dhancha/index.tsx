@@ -4,100 +4,116 @@ import type { ReactNode } from 'react';
 import React, { useRef } from 'react';
 
 import { vars } from '@bangle.io/css-vars';
+import { cx } from '@bangle.io/utils';
 
 import { useStickyNavigation } from './use-sticky-navigation';
 
 /**
- * Provides the base structure of the app.
- * Does not handle scrolling and setting max height, so it is recommended to set that up in child component.
- * @returns
+ * rightAside is expected to toggleable
  */
-export function Dhancha({
-  widescreen = true,
+export function DhanchaWidescreen({
   activitybar,
-  workspaceSidebar,
+  leftAside,
   mainContent,
-  noteSidebar,
+  rightAside,
+  titlebar,
 }: {
-  widescreen: boolean;
   activitybar: ReactNode;
-  workspaceSidebar?: ReactNode;
-  mainContent?: ReactNode;
-  noteSidebar?: ReactNode;
+  leftAside?: ReactNode;
+  mainContent: ReactNode;
+  rightAside?: ReactNode;
+  titlebar: ReactNode;
 }) {
-  const activitybarRef = useRef<HTMLDivElement>(null);
+  const leftAsideStyle: React.CSSProperties = {
+    gridArea: 'left-aside',
+    // maxWidth: vars.misc.leftAsideWidth,
+  };
 
-  useStickyNavigation(widescreen, activitybarRef);
+  const titlebarContainerStyle: React.CSSProperties = {
+    gridArea: 'titlebar-container',
+  };
 
-  const mainChild = (
-    <main
-      className={
-        'B-ui-dhancha_main-content ' + (widescreen ? ' BU_widescreen' : '')
-      }
-    >
-      {mainContent}
-    </main>
-  );
+  const mainContentStyle: React.CSSProperties = {
+    gridArea: 'main-container',
+  };
 
-  let childContent;
-
-  if (widescreen) {
-    childContent = (
-      <>
-        {workspaceSidebar && (
-          <header
-            style={{
-              width: vars.misc.workspaceSidebarWidth,
-            }}
-            className="z-5 flex-shrink-0 h-screen border-r-1 border-colorNeutralBorder"
-          >
-            {workspaceSidebar}
-          </header>
-        )}
-        {mainChild}
-      </>
-    );
-  }
-  // if mobile either show wSidebar or mainChild
-  else {
-    childContent = <>{workspaceSidebar ? workspaceSidebar : mainChild}</>;
-  }
+  const rightAsideStyle: React.CSSProperties = {
+    gridArea: 'right-aside',
+    // maxWidth: vars.misc.rightAsideWidth,
+  };
 
   return (
     <div
-      className={
-        'B-ui-dhancha_container' + (widescreen ? ' BU_widescreen' : '')
-      }
+      className={cx(
+        'B-ui-dhancha-widescreen',
+        leftAside && 'B-ui-has-left-aside',
+        rightAside && 'B-ui-has-right-aside',
+      )}
     >
       <div
         role="navigation"
-        aria-label="Activity Bar"
-        ref={activitybarRef}
-        className={
-          'B-ui-dhancha_activitybar' + (widescreen ? ' BU_widescreen' : '')
-        }
+        aria-label="Title Bar"
+        style={{
+          gridArea: 'activitybar',
+        }}
       >
         {activitybar}
       </div>
-
-      {childContent}
-
-      {widescreen && noteSidebar && (
-        <aside
-          className="B-ui-dhancha_note-sidebar shrink-0 h-screen z-5 border-l-1 border-colorNeutralBorder"
-          style={{
-            width: vars.misc.noteSidebarWidth,
-          }}
-        >
-          {noteSidebar}
+      {leftAside && (
+        <aside style={leftAsideStyle} className="left-aside">
+          {leftAside}
+        </aside>
+      )}
+      <TitlebarContainer
+        style={titlebarContainerStyle}
+        className="titlebar-container"
+      >
+        {titlebar}
+      </TitlebarContainer>
+      <div style={mainContentStyle} className="main-content">
+        {mainContent}
+      </div>
+      {rightAside && (
+        <aside style={rightAsideStyle} className="right-aside">
+          {rightAside}
         </aside>
       )}
     </div>
   );
 }
 
-export function MultiColumnMainContent({ children }: { children: ReactNode }) {
+export function DhanchaSmallscreen({
+  titlebar,
+  mainContent,
+}: {
+  titlebar: ReactNode;
+  mainContent: ReactNode;
+}) {
+  const titlebarRef = useRef<HTMLDivElement>(null);
+
+  useStickyNavigation(titlebarRef);
+
   return (
-    <div className="B-ui-dhancha_multi-column-main-content">{children}</div>
+    <div>
+      <TitlebarContainer ref={titlebarRef}>{titlebar}</TitlebarContainer>
+      <div>{mainContent}</div>
+    </div>
   );
 }
+
+const TitlebarContainer = React.forwardRef<
+  HTMLDivElement,
+  { children: ReactNode; style?: React.CSSProperties; className?: string }
+>(function TitlebarContainer(props, ref) {
+  return (
+    <div
+      role="navigation"
+      aria-label="Title Bar"
+      ref={ref}
+      className={props.className}
+      style={props.style}
+    >
+      {props.children}
+    </div>
+  );
+});

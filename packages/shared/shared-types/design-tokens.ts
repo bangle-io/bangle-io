@@ -114,6 +114,10 @@ export type DesignTokens = {
     activitybarBtnBgPress: string;
     activitybarText: string;
 
+    leftAsideWidth: string;
+    rightAsideWidth: string;
+    titlebarHeight: string;
+
     editorAttentionBg: string;
     editorBacklinkBg: string;
     editorBacklinkBgHover: string;
@@ -127,8 +131,6 @@ export type DesignTokens = {
 
     activitybarWidth: string;
     miniEditorWidth: string;
-    noteSidebarWidth: string;
-    workspaceSidebarWidth: string;
     noteTagsText: string;
     noteTagsBg: string;
 

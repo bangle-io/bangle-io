@@ -216,6 +216,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
         version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/css-vars':
+        specifier: workspace:*
+        version: link:../../shared/css-vars
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
@@ -430,6 +433,15 @@ importers:
         specifier: 5.1.6
         version: 5.1.6
 
+  packages/js-lib/nalanda:
+    dependencies:
+      '@nalanda/core':
+        specifier: ^0.2.0
+        version: 0.2.0
+      '@nalanda/react':
+        specifier: ^0.2.0
+        version: 0.2.0(react@18.2.0)
+
   packages/js-lib/nsm-3:
     dependencies:
       '@types/react':
@@ -614,6 +626,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/nalanda':
+        specifier: workspace:*
+        version: link:../../js-lib/nalanda
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@nalanda/core':
         specifier: ^0.2.0
         version: 0.2.0
@@ -626,6 +644,9 @@ importers:
       '@bangle.io/css-vars':
         specifier: workspace:*
         version: link:../../shared/css-vars
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../utils
       react:
         specifier: ^18.2.0
         version: 18.2.0

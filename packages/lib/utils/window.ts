@@ -1,12 +1,10 @@
 import { isMobile } from '@bangle.io/browser';
 import { IS_STORYBOOK } from '@bangle.io/config';
-import { COLOR_SCHEMA, WIDESCREEN_WIDTH } from '@bangle.io/constants';
+import { COLOR_SCHEME, WIDESCREEN_WIDTH } from '@bangle.io/constants';
 
 import { rafSchedule } from './safe-js';
 
-type ColorSchema =
-  | (typeof COLOR_SCHEMA)['DARK']
-  | (typeof COLOR_SCHEMA)['LIGHT'];
+type ColorScheme = (typeof COLOR_SCHEME)['DARK'];
 
 export function setRootWidescreenClass(
   widescreen: boolean = checkWidescreen(),
@@ -73,7 +71,7 @@ export function listenToResize(
   );
 }
 
-export function changeColorScheme(colorScheme: ColorSchema) {
+export function changeColorScheme(colorScheme: ColorScheme) {
   if (typeof document === 'undefined') {
     console.debug('applyTheme: document is undefined');
 
@@ -96,10 +94,10 @@ export function changeColorScheme(colorScheme: ColorSchema) {
 
   console.debug('changeColorScheme:', colorScheme);
 
-  if (colorScheme === COLOR_SCHEMA.DARK) {
+  if (colorScheme === COLOR_SCHEME.DARK) {
     document.body.classList.remove('light-scheme');
     document.body.classList.add('dark-scheme');
-  } else if (colorScheme === COLOR_SCHEMA.LIGHT) {
+  } else if (colorScheme === COLOR_SCHEME.LIGHT) {
     document.body.classList.remove('dark-scheme');
     document.body.classList.add('light-scheme');
   } else {

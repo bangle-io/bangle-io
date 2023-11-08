@@ -1,1 +1,1 @@
-export { Dhancha } from './Dhancha';
+export * from './Dhancha';
