@@ -4,7 +4,7 @@
     Content-Type = "application/manifest+json"
 
 [build]
-  publish = "app/app-root/dist"
+  publish = "packages/app-bundler/app-root/dist"
   command = "pnpm build" 
 
 [build.environment]
