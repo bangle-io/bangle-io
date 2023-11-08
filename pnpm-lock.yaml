@@ -101,7 +101,7 @@ importers:
     devDependencies:
       '@bangle.io/env-vars':
         specifier: workspace:*
-        version: link:../../shared/env-vars
+        version: link:../env-vars
       '@bangle.io/uno-preset-bangle':
         specifier: workspace:*
         version: link:../uno-preset-bangle
@@ -138,6 +138,12 @@ importers:
       vite-plugin-pwa:
         specifier: ^0.16.7
         version: 0.16.7(vite@4.5.0)(workbox-build@7.0.0)(workbox-window@7.0.0)
+
+  packages/app-bundler/env-vars:
+    dependencies:
+      '@bangle.io/config-template':
+        specifier: ^0.0.7
+        version: 0.0.7
 
   packages/app-bundler/inline-scripts:
     dependencies:
@@ -703,12 +709,6 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
 
-  packages/shared/env-vars:
-    dependencies:
-      '@bangle.io/config-template':
-        specifier: ^0.0.7
-        version: 0.0.7
-
   packages/shared/shared-types: {}
 
   packages/tooling/custom-scripts:
@@ -786,7 +786,7 @@ importers:
         version: link:../../shared/constants
       '@bangle.io/env-vars':
         specifier: workspace:*
-        version: link:../../shared/env-vars
+        version: link:../../app-bundler/env-vars
       '@mdx-js/react':
         specifier: ^3.0.0
         version: 3.0.0(@types/react@18.2.35)(react@18.2.0)
