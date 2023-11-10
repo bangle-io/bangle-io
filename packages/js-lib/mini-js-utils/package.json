@@ -20,6 +20,7 @@
     "@bangle.io/is-abort-error": "workspace:*",
     "@bangle.io/weak-cache": "workspace:*"
   },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
@@ -28,6 +29,5 @@
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {}
+  }
 }

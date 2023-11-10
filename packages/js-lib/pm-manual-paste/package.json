@@ -19,6 +19,7 @@
   "dependencies": {
     "@bangle.dev/pm": "0.32.1"
   },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle.dev/issues",
   "banglePackageConfig": {
     "type": "universal"
@@ -33,6 +34,5 @@
     "types": "dist/index.d.ts"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "devDependencies": {}
+  "types": "dist/index.d.ts"
 }

@@ -446,6 +446,8 @@ importers:
         specifier: workspace:*
         version: link:../p-map
 
+  packages/js-lib/testy: {}
+
   packages/js-lib/tri-state: {}
 
   packages/js-lib/weak-cache: {}

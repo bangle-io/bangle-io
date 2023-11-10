@@ -107,6 +107,7 @@ module.exports = function main(
   });
 
   generateLib(plop);
+  generateJSLib(plop);
 
   // plop.setGenerator('lib-slice', {
   //   description: 'Create a new slice in lib/ directory',
@@ -360,7 +361,39 @@ function generateLib(plop) {
       ...gens.actions,
       {
         type: 'add',
-        path: path.join(rootDir, workspaceName + '/{{name}}/index.ts'),
+        path: path.join(
+          rootDir,
+          'packages',
+          workspaceName + '/{{name}}/index.ts',
+        ),
+        templateFile: path.join(plopConfigPath, 'templates/index-ts.hbs'),
+      },
+      {
+        type: 'runFormat',
+      },
+      {
+        type: 'runPnpmInstall',
+      },
+    ],
+  });
+}
+
+function generateJSLib(plop) {
+  const workspaceName = 'js-lib';
+  const gens = commonSetup(workspaceName);
+
+  plop.setGenerator(workspaceName, {
+    description: `Create ${workspaceName} package`,
+    prompts: [...gens.prompts],
+    actions: [
+      ...gens.actions,
+      {
+        type: 'add',
+        path: path.join(
+          rootDir,
+          'packages',
+          workspaceName + '/{{name}}/index.ts',
+        ),
         templateFile: path.join(plopConfigPath, 'templates/index-ts.hbs'),
       },
       {
