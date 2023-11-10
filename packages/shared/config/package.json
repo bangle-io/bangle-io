@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/config",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,15 +16,15 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {
-    "@bangle.io/config-template": "^0.0.7"
-  },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@bangle.io/config-template": "^0.0.7"
   }
 }

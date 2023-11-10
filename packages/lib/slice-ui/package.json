@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/slice-ui",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,15 +15,15 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "browser"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@nalanda/core": "^0.2.0"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "browser"
-  }
+  "devDependencies": {}
 }

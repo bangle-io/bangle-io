@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/browser",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,9 +15,9 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "scripts": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
-  }
+  },
+  "scripts": {}
 }

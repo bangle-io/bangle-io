@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/ui",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,18 +15,18 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "browser"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/css-vars": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "react": "^18.2.0",
-    "@types/react": "^18.2.37"
+    "@types/react": "^18.2.37",
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@storybook/react": "^7.1.0"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "browser"
   }
 }

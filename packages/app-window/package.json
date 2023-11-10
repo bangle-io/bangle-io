@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "app-window",
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
       "js-lib",

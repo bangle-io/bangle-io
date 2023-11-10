@@ -1,5 +1,6 @@
 {
   "name": "e2e-tests",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,6 +15,10 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
   "scripts": {
     "e2e": "pnpm exec playwright test",
     "playwright-install": "pnpm exec playwright install --with-deps"
@@ -21,9 +26,5 @@
   "dependencies": {
     "@playwright/test": "^1.39.0",
     "@types/node": "^20.8.10"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
   }
 }

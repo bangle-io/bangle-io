@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/pm-manual-paste",
-  "version": "0.31.6",
+  "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
   "license": "AGPL-3.0-or-later",
+  "version": "0.31.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,16 +16,10 @@
     }
   ],
   "homepage": "https://bangle.dev",
-  "scripts": {},
-  "dependencies": {
-    "@bangle.dev/pm": "0.32.1"
-  },
-  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle.dev/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
-  "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
@@ -34,5 +29,10 @@
     "types": "dist/index.d.ts"
   },
   "type": "module",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.dev/pm": "0.32.1"
+  },
+  "devDependencies": {}
 }

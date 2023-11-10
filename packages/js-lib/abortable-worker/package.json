@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/abortable-worker",
-  "version": "0.0.0",
+  "description": "Provides tool to use methods across workers which accept AbortSignal in parameter",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,20 +16,19 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/is-abort-error": "workspace:*",
     "@bangle.io/object-uid": "workspace:*"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "description": "Provides tool to use methods across workers which accept AbortSignal in parameter",
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
-  }
+  "devDependencies": {}
 }

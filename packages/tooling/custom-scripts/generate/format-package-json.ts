@@ -35,12 +35,15 @@ async function formatPackageName({
           dependencies,
           devDependencies,
           banglePackageConfig,
+          description,
+
           ...otherProps
         } = pkgJSON;
         return {
           name,
-          version,
+          description: description ?? '',
           license: 'AGPL-3.0-or-later',
+          version,
           repository: {
             type: 'git',
             url: 'https://github.com/bangle-io/bangle-io.git',
@@ -54,13 +57,6 @@ async function formatPackageName({
             },
           ],
           homepage: 'https://bangle.io',
-          scripts: Object.fromEntries(
-            Object.entries(scripts ?? {}).sort(([a], [b]) =>
-              a.localeCompare(b),
-            ),
-          ),
-          dependencies,
-          devDependencies,
           bugs: {
             url: 'https://github.com/bangle-io/bangle-io/issues',
           },
@@ -69,6 +65,13 @@ async function formatPackageName({
             ...banglePackageConfig,
           },
           ...otherProps,
+          scripts: Object.fromEntries(
+            Object.entries(scripts ?? {}).sort(([a], [b]) =>
+              a.localeCompare(b),
+            ),
+          ),
+          dependencies,
+          devDependencies,
         };
       });
     },

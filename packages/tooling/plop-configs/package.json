@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/plop-configs",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,14 +15,14 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
   "scripts": {},
   "dependencies": {
     "execa": "5.1.1",
     "plop": "^4.0.0"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  }
+  "devDependencies": {}
 }

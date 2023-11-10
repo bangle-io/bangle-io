@@ -1,5 +1,6 @@
 {
   "name": "jest-utils",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,6 +15,10 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7",
@@ -21,9 +26,5 @@
     "domexception": "^4.0.0",
     "fake-indexeddb": "^5.0.1"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  }
+  "devDependencies": {}
 }

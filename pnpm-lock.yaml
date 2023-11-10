@@ -91,7 +91,7 @@ importers:
     dependencies:
       '@bangle.io/app':
         specifier: workspace:*
-        version: link:../../app/app
+        version: link:../../app-window/app
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
@@ -226,7 +226,7 @@ importers:
         specifier: ^0.57.2
         version: 0.57.2
 
-  packages/app/app:
+  packages/app-window/app:
     dependencies:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
@@ -249,6 +249,8 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
+
+  packages/app-worker/naukar: {}
 
   packages/e2e-tests/e2e-tests:
     dependencies:
@@ -445,8 +447,6 @@ importers:
       '@bangle.io/p-map':
         specifier: workspace:*
         version: link:../p-map
-
-  packages/js-lib/testy: {}
 
   packages/js-lib/tri-state: {}
 

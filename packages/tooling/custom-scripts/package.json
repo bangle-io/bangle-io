@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/custom-scripts",
-  "version": "0.0.0",
+  "description": "A place to put custom scripts that are used in the build process",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,11 +16,21 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
+  "main": "index.ts",
+  "module": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
     "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
   },
   "dependencies": {
+    "@bangle.io/app-root": "workspace:*",
     "@tsconfig/node18": "^18.2.2",
     "execa": "5.1.1",
     "globby": "^13.2.2",
@@ -27,20 +38,9 @@
     "prettier": "3.0.3",
     "syncpack": "^11.2.1",
     "ts-node": "^10.9.1",
-    "zod": "^3.22.4",
-    "@bangle.io/app-root": "workspace:*"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "tslib": "^2.6.2"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  },
-  "description": "A place to put custom scripts that are used in the build process",
-  "main": "index.ts",
-  "module": "index.js",
-  "publishConfig": {
-    "access": "public"
   }
 }

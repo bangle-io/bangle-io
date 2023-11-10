@@ -1,10 +1,11 @@
 {
   "name": "@bangle.io/app",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app/app"
+    "directory": "packages/app-window/app"
   },
   "authors": [
     {
@@ -14,19 +15,19 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "browser"
+  },
   "scripts": {},
   "dependencies": {
     "@adobe/react-spectrum": "^3.31.1",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/ui": "workspace:*",
-    "@types/react": "^18.2.37",
     "@nalanda/core": "^0.2.0",
     "@nalanda/react": "^0.2.0",
+    "@types/react": "^18.2.37",
     "react": "^18.2.0"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "browser"
-  }
+  "devDependencies": {}
 }
