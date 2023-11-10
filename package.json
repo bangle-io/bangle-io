@@ -11,6 +11,7 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "devDependencies": {
     "@bangle.io/jsdom-env": "workspace:*",
+    "@bangle.io/plop-configs": "workspace:*",
     "@bangle.io/uno-preset-bangle": "workspace:*",
     "@eslint/js": "^8.53.0",
     "@swc/jest": "^0.2.29",
@@ -29,6 +30,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "globals": "^13.23.0",
     "jest": "^29.7.0",
+    "plop": "^4.0.0",
     "prettier": "3.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
@@ -59,7 +61,8 @@
   "scripts": {
     "build": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build",
     "build-prod-serve": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build-prod-serve",
-    "generate-all": "pnpm -r run \"/^generate:.*/\"",
+    "generate-all": "pnpm run -r --aggregate-output \"/^generate:.*/\"",
+    "generate-all-verbose": "pnpm run -r --stream \"/^generate:.*/\"",
     "lint": "pnpm run \"/^lint:.*/\"",
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",

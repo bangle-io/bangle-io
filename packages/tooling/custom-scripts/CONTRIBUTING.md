@@ -19,3 +19,11 @@ pnpm run generate:css-vars
 - [syncpack](https://github.com/JamieMason/syncpack)
   - `npx syncpack format` - format package.json
   - `npx syncpack update` - interactively update all dependencies
+
+### Auto generating packages
+
+Use [plopjs](https://plopjs.com/documentation/) to generate new packages.
+
+```sh
+npx plop lib
+```

@@ -90,12 +90,15 @@ interface PackageJSON {
   banglePackageConfig?: BanglePackageConfig;
 }
 
+const globbyIgnore = ['**/node_modules/**', '**/dist/**', '**/build/**'];
+
 export async function setup() {
   const { globbySync } = await import('globby');
   let packages = globbySync('**/package.json', {
-    cwd: root,
+    cwd: path.join(root, 'packages'),
     absolute: true,
     gitignore: true,
+    ignore: globbyIgnore,
   });
 
   let packagesResolved = packages.map((p) => ({
@@ -165,7 +168,7 @@ export async function setup() {
             cwd: path.dirname(p.path),
             gitignore: true,
             absolute: true,
-            ignore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+            ignore: globbyIgnore,
           }),
         };
 
@@ -360,6 +363,11 @@ export class Package {
     cb: (pkgJSON: PackageJSON, pkg: Package) => PackageJSON,
   ): Promise<Package> {
     const newJSON = cb(this.packageJSON, this);
+
+    if (JSON.stringify(newJSON) === JSON.stringify(this.packageJSON)) {
+      return this;
+    }
+
     await fsProm.writeFile(
       path.join(this.packagePath + '/package.json'),
       JSON.stringify(newJSON, null, 2) + '\n',
