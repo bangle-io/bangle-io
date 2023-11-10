@@ -17,18 +17,10 @@
   "homepage": "https://bangle.io",
   "scripts": {},
   "dependencies": {
-    "@types/react": "^18.2.35",
-    "@types/react-dom": "^17.0.17",
-    "@types/use-sync-external-store": "^0.0.5",
-    "react": "^18.2.0",
-    "react-dom": "^17.0.2",
     "superjson": "^2.2.0",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6",
-    "use-sync-external-store": "^1.2.0",
-    "wait-for-expect": "^3.0.2",
     "zod": "^3.21.4"
   },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"

@@ -49,7 +49,7 @@ async function shouldOnlyUseDependenciesDefinedInPackageJSON(
   );
   for (const [name, pkg] of packageMap.entries()) {
     const deps = (
-      await pkg.getImportedPackages((file) => file.isSrcFile)
+      await pkg.getImportedPackages((file) => file.isTsSrcFile)
     ).filter((dep) => !dep.startsWith('node:'));
 
     for (const dep of deps) {

@@ -22,12 +22,8 @@
     "@bangle.dev/react": "0.32.1",
     "@bangle.dev/tooltip": "0.32.1",
     "@bangle.dev/utils": "0.32.1",
-    "@types/react": "^18.2.35",
-    "@types/react-dom": "^17.0.17",
     "react": "^18.2.0",
-    "react-dom": "^17.0.2",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "@types/react": "^18.2.37"
   },
   "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",

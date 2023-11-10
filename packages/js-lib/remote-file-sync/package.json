@@ -18,14 +18,9 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/tri-state": "workspace:*",
-    "ts-pattern": "^5.0.5",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "ts-pattern": "^5.0.5"
   },
-  "devDependencies": {
-    "@bangle.io/db-key-val": "workspace:*",
-    "type-fest": "^4.6.0"
-  },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"

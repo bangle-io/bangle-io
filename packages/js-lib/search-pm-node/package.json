@@ -21,7 +21,6 @@
     "@bangle.dev/core": "0.32.1",
     "@bangle.dev/pm": "0.32.1",
     "@bangle.dev/test-helpers": "0.32.1",
-    "@bangle.dev/utils": "0.32.1",
     "@bangle.dev/wiki-link": "0.32.1",
     "@bangle.io/p-map": "workspace:*"
   },

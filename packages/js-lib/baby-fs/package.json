@@ -19,13 +19,9 @@
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/is-abort-error": "workspace:*",
-    "idb": "^7.1.1",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "idb": "^7.1.1"
   },
-  "devDependencies": {
-    "cross-fetch": "^3.1.5"
-  },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"

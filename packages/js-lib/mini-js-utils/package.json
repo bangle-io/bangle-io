@@ -18,10 +18,9 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/is-abort-error": "workspace:*",
-    "@bangle.io/weak-cache": "workspace:*",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "@bangle.io/weak-cache": "workspace:*"
   },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"

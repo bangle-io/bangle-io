@@ -17,10 +17,9 @@
   "homepage": "https://bangle.io",
   "scripts": {},
   "dependencies": {
-    "jest-environment-jsdom": "^29.7.0",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "jest-environment-jsdom": "^29.7.0"
   },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
