@@ -17,7 +17,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/nalanda": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@nalanda/core": "^0.2.0"
   },

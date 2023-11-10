@@ -17,7 +17,11 @@ const commonSetup = (workspaceName) => {
   /** @type {import('plop').ActionType} */
   const addPackage = {
     type: 'add',
-    path: path.join(rootDir, workspaceName + '/{{name}}/package.json'),
+    path: path.join(
+      rootDir,
+      'packages',
+      workspaceName + '/{{name}}/package.json',
+    ),
     templateFile: path.join(plopConfigPath, 'templates/package-json.hbs'),
   };
 
@@ -26,6 +30,7 @@ const commonSetup = (workspaceName) => {
     type: 'add',
     path: path.join(
       rootDir,
+      'packages',
       workspaceName + '/{{name}}/__tests__/{{name}}.test.ts',
     ),
     templateFile: path.join(plopConfigPath, 'templates/test-ts.hbs'),

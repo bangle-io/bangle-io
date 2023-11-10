@@ -17,9 +17,7 @@
   "homepage": "https://bangle.dev",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/pm": "0.32.1",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "@bangle.dev/pm": "0.32.1"
   },
   "bugs": "https://github.com/bangle-io/bangle.dev/issues",
   "banglePackageConfig": {
@@ -35,5 +33,6 @@
     "types": "dist/index.d.ts"
   },
   "type": "module",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "devDependencies": {}
 }

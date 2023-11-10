@@ -1,27 +1,10 @@
 import execa from 'execa';
 import path from 'node:path';
 
-import { makeThrowValidationError } from '../lib';
+import { makeLogger, makeThrowValidationError } from '../lib';
 import { rootPath } from '../lib/constants';
 import { Package, setup, Workspace } from '../lib/workspace-helper';
-
-export default function main() {
-  // provides some nice formatting
-  execa.sync(
-    'pnpm',
-    ['exec', 'syncpack', 'format', '--source', '../../**/package.json'],
-    {
-      cwd: __dirname,
-      stdio: 'inherit',
-    },
-  );
-
-  return setup().then(async (item) => {
-    return formatPackageName(item);
-  });
-}
-
-void main();
+const logger = makeLogger('formatPackageName');
 
 void setup().then(async (item) => {
   return formatPackageName(item);
@@ -93,4 +76,5 @@ async function formatPackageName({
       concurrency: 8,
     },
   );
+  logger('Done');
 }

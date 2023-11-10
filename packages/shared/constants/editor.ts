@@ -1,3 +1,5 @@
+import type {} from '@bangle.io/shared-types';
+
 export const MAX_OPEN_EDITORS = 4;
 
 // TODO can make these nominal types

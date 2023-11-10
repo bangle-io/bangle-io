@@ -33,7 +33,7 @@
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/uno-preset-bangle": "workspace:*",
     "@types/minimist": "^1.2.4",
-    "@types/react": "^18.2.35",
+    "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.14",
     "@unocss/vite": "^0.57.2",
     "@vitejs/plugin-react-swc": "^3.4.1",
@@ -46,7 +46,7 @@
   },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "nodejs"
   },
   "main": "index.tsx"
 }

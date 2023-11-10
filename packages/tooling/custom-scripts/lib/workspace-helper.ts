@@ -189,8 +189,12 @@ export async function setup() {
 }
 
 export class Package {
-  packageJSON: PackageJSON;
-  name: string;
+  readonly name: string;
+  readonly packagePath: string;
+
+  get packageJSON() {
+    return this.packageState.packageJSON;
+  }
 
   get type() {
     return this.banglePackageConfig.type;
@@ -204,13 +208,11 @@ export class Package {
     return this._getWsDeps('devDependencies');
   }
 
-  private fileHelpers: Map<string, FileHelper>;
+  private fileHelpers!: Map<string, FileHelper>;
 
   get banglePackageConfig() {
     return this.packageState.banglePackageConfig;
   }
-
-  packagePath: string;
 
   get packageJSONPath() {
     return path.join(this.packagePath, 'package.json');
@@ -231,16 +233,20 @@ export class Package {
     }
 
     this.name = packageState.packageJSON.name;
-
-    packageMapping.set(this.name, this);
-
     this.packagePath = packageState.location;
 
-    this.packageJSON = packageState.packageJSON;
+    this._compute();
+  }
 
-    this.fileHelpers = new Map<string, FileHelper>();
+  private _compute() {
+    this.packageMapping.set(this.name, this);
+    if (this.fileHelpers) {
+      this.fileHelpers.clear();
+    } else {
+      this.fileHelpers = new Map<string, FileHelper>();
+    }
 
-    for (const file of packageState.files) {
+    for (const file of this.packageState.files) {
       this.fileHelpers.set(file, new FileHelper(file));
     }
   }
@@ -266,7 +272,7 @@ export class Package {
   }
 
   get devDependencies() {
-    return this.packageJSON.devDependencies;
+    return this.packageJSON.devDependencies ?? {};
   }
 
   async forEachFile(
@@ -333,6 +339,13 @@ export class Package {
     }
   }
 
+  /**
+   * Returns a list of all the packages that this package imports
+   * in the actual code. For example if it seems import x from 'y', it will return 'y'.
+   * It does not look for package.json deps, devDeps etc
+   * @param filter
+   * @returns
+   */
   async getImportedPackages(
     filter: (fileHelper: FileHelper) => Promise<boolean> | boolean = () => true,
   ) {
@@ -345,6 +358,7 @@ export class Package {
             continue;
           }
 
+          // ignore adding full path
           if (importPath.startsWith('@')) {
             const [scope, pkg] = importPath.split('/');
             importedPackages.add([scope, pkg].join('/'));
@@ -361,11 +375,11 @@ export class Package {
 
   async modifyPackageJSON(
     cb: (pkgJSON: PackageJSON, pkg: Package) => PackageJSON,
-  ): Promise<Package> {
+  ): Promise<void> {
     const newJSON = cb(this.packageJSON, this);
 
     if (JSON.stringify(newJSON) === JSON.stringify(this.packageJSON)) {
-      return this;
+      return;
     }
 
     await fsProm.writeFile(
@@ -374,13 +388,46 @@ export class Package {
       'utf-8',
     );
 
-    return new Package(
-      {
-        ...this.packageState,
-        packageJSON: newJSON,
-      },
-      this.packageMapping,
-    );
+    this.packageState.packageJSON = newJSON;
+    this._compute();
+  }
+
+  async removeDependency({
+    name,
+    type,
+  }: {
+    type: 'dependencies' | 'devDependencies';
+    name: string;
+  }) {
+    return this.modifyPackageJSON((pkgJSON) => {
+      const dep = JSON.parse(JSON.stringify(pkgJSON[type] ?? {}));
+      delete dep[name];
+
+      return {
+        ...pkgJSON,
+        [type]: dep,
+      };
+    });
+  }
+
+  async addDependency({
+    name,
+    version,
+    type,
+  }: {
+    type: 'dependencies' | 'devDependencies';
+    name: string;
+    version: string;
+  }) {
+    return this.modifyPackageJSON((pkgJSON) => {
+      return {
+        ...pkgJSON,
+        [type]: {
+          ...pkgJSON[type],
+          [name]: version,
+        },
+      };
+    });
   }
 
   async toJSON() {
@@ -411,8 +458,26 @@ class FileHelper {
     return this.filePath.endsWith('.json');
   }
 
+  /**
+   * The actual source code file that will be run in production (excludes test, storybook files, etc)
+   */
   get isSrcFile() {
     return !this.isTestFile && !this.isStoryBookFile;
+  }
+
+  get isNonSrcFile() {
+    return !this.isSrcFile;
+  }
+
+  get isTsSrcFile() {
+    return this.isSrcFile && this.isTSFile;
+  }
+
+  /**
+   * A TS File but not part of src
+   */
+  get isTsNonSrcFile() {
+    return this.isTSFile && this.isNonSrcFile;
   }
 
   get isTestFile() {
@@ -490,4 +555,9 @@ function extractImportPaths(sourceCode: string): string[] {
   }
 
   return paths;
+}
+
+export function isAValidBanglePackage(name: string, packages: Package[]) {
+  const result = packages.some((pkg) => pkg.name === name);
+  return result;
 }

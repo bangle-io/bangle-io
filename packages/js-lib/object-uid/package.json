@@ -16,10 +16,7 @@
   ],
   "homepage": "https://bangle.io",
   "scripts": {},
-  "dependencies": {
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
-  },
+  "dependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
@@ -29,5 +26,6 @@
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "devDependencies": {}
 }

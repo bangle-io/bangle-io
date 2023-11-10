@@ -19,12 +19,9 @@
   "dependencies": {
     "fzf": "^0.5.2",
     "react": "^18.2.0",
-    "tslib": "2.6.0",
-    "typescript": "5.1.6"
+    "@types/react": "^18.2.37"
   },
-  "devDependencies": {
-    "@types/react": "^18.2.35"
-  },
+  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"

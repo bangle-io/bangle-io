@@ -34,6 +34,7 @@
     "prettier": "3.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
+    "tslib": "^2.6.2",
     "unocss": "^0.57.2"
   },
   "homepage": "https://bangle.io",
@@ -70,7 +71,7 @@
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
     "test": "pnpm jest && pnpm run test:constraints",
     "test:ci": "pnpm jest --maxWorkers=2",
-    "test:constraints": "pnpm -r run \"/^cscript:.*/\"",
+    "test:constraints": "pnpm run -r  --stream \"/^cscript:.*/\"",
     "test:e2e": "pnpm -r --filter e2e-tests e2e",
     "test:e2e-ui": "pnpm -r --filter e2e-tests e2e --ui"
   }
