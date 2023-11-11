@@ -27,7 +27,8 @@
     "@nalanda/core": "^0.2.0",
     "@nalanda/react": "^0.2.0",
     "@types/react": "^18.2.37",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@bangle.io/shared-types": "workspace:*"
   },
   "devDependencies": {}
 }
