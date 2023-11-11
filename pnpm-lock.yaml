@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@bangle.io/e2e-types':
+        specifier: workspace:*
+        version: link:packages/shared/e2e-types
       '@bangle.io/jsdom-env':
         specifier: workspace:*
         version: link:packages/js-lib/jsdom-env
@@ -91,13 +94,25 @@ importers:
     dependencies:
       '@bangle.io/app':
         specifier: workspace:*
-        version: link:../../app/app
+        version: link:../../app-window/app
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@bangle.io/e2e-types':
+        specifier: workspace:*
+        version: link:../../shared/e2e-types
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/setup-eternal-vars':
+        specifier: workspace:*
+        version: link:../setup-eternal-vars
+      '@bangle.io/setup-worker':
+        specifier: workspace:*
+        version: link:../setup-worker
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@unocss/reset':
         specifier: ^0.57.2
         version: 0.57.2
@@ -107,6 +122,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-error-boundary:
+        specifier: ^4.0.11
+        version: 4.0.11(react@18.2.0)
     devDependencies:
       '@bangle.io/env-vars':
         specifier: workspace:*
@@ -165,6 +183,33 @@ importers:
       tsup:
         specifier: ^7.2.0
         version: 7.2.0(@swc/core@1.3.96)(postcss@8.4.31)(ts-node@10.9.1)(typescript@5.2.2)
+
+  packages/app-bundler/setup-eternal-vars:
+    dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+
+  packages/app-bundler/setup-worker:
+    dependencies:
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/global-scope-helpers':
+        specifier: workspace:*
+        version: link:../../js-lib/global-scope-helpers
+      '@bangle.io/naukar':
+        specifier: workspace:*
+        version: link:../../app-worker/naukar
+      '@bangle.io/setup-eternal-vars':
+        specifier: workspace:*
+        version: link:../setup-eternal-vars
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      comlink:
+        specifier: ^4.4.1
+        version: 4.4.1
 
   packages/app-bundler/ui-theme:
     dependencies:
@@ -226,11 +271,14 @@ importers:
         specifier: ^0.57.2
         version: 0.57.2
 
-  packages/app/app:
+  packages/app-window/app:
     dependencies:
       '@adobe/react-spectrum':
         specifier: ^3.31.1
         version: 3.31.1(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
@@ -250,8 +298,20 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
 
+  packages/app-worker/naukar:
+    dependencies:
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+
   packages/e2e-tests/e2e-tests:
     dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@playwright/test':
         specifier: ^1.39.0
         version: 1.39.0
@@ -290,6 +350,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
 
+  packages/js-lib/emitter: {}
+
   packages/js-lib/fzf-search:
     dependencies:
       '@types/react':
@@ -307,6 +369,8 @@ importers:
       '@bangle.io/weak-cache':
         specifier: workspace:*
         version: link:../weak-cache
+
+  packages/js-lib/global-scope-helpers: {}
 
   packages/js-lib/history: {}
 
@@ -446,8 +510,6 @@ importers:
         specifier: workspace:*
         version: link:../p-map
 
-  packages/js-lib/testy: {}
-
   packages/js-lib/tri-state: {}
 
   packages/js-lib/weak-cache: {}
@@ -513,7 +575,20 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
 
-  packages/shared/shared-types: {}
+  packages/shared/e2e-types:
+    dependencies:
+      '@bangle.io/config-template':
+        specifier: ^0.0.7
+        version: 0.0.7
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+
+  packages/shared/shared-types:
+    dependencies:
+      comlink:
+        specifier: ^4.4.1
+        version: 4.4.1
 
   packages/tooling/custom-scripts:
     dependencies:
@@ -9594,6 +9669,10 @@ packages:
     dependencies:
       delayed-stream: 1.0.0
 
+  /comlink@4.4.1:
+    resolution: {integrity: sha512-+1dlx0aY5Jo1vHy/tSsIGpSkN4tS9rZSW8FIhG0JH/crs9wwweswIo/POr451r7bZww3hFbPAKnTpimzL/mm4Q==}
+    dev: false
+
   /commander@11.0.0:
     resolution: {integrity: sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==}
     engines: {node: '>=16'}
@@ -15043,6 +15122,15 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-is: 18.1.0
     dev: true
+
+  /react-error-boundary@4.0.11(react@18.2.0):
+    resolution: {integrity: sha512-U13ul67aP5DOSPNSCWQ/eO0AQEYzEFkVljULQIjMV0KlffTAhxuDoBKdO0pb/JZ8mDhMKFZ9NZi0BmLGUiNphw==}
+    peerDependencies:
+      react: '>=16.13.1'
+    dependencies:
+      '@babel/runtime': 7.23.2
+      react: 18.2.0
+    dev: false
 
   /react-inspector@6.0.2(react@18.2.0):
     resolution: {integrity: sha512-x+b7LxhmHXjHoU/VrFAzw5iutsILRoYyDq97EDYdFpPLcvqtEzk4ZSZSQjnFPbr5T57tLXnHcqFYoN1pI6u8uQ==}

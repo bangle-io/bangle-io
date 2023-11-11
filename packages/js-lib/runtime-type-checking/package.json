@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/runtime-type-checking",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -14,13 +15,13 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "universal"
+  },
   "scripts": {},
   "dependencies": {
     "zod": "^3.22.4"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  }
+  "devDependencies": {}
 }

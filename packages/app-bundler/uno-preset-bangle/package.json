@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/uno-preset-bangle",
-  "version": "0.0.0",
+  "description": "Used for creating themes, does not get bundled with the app",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,6 +16,15 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/css-vars": "workspace:*",
@@ -23,15 +33,5 @@
     "@unocss/preset-uno": "^0.57.2",
     "@unocss/preset-wind": "^0.57.2"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  },
-  "description": "Used for creating themes, does not get bundled with the app",
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
-  }
+  "devDependencies": {}
 }

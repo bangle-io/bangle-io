@@ -4,12 +4,17 @@ import { defaultTheme, Flex, Provider, View } from '@adobe/react-spectrum';
 import { StoreProvider, useTrack } from '@nalanda/react';
 import React from 'react';
 
+import { EternalVarsWindow } from '@bangle.io/shared-types';
 import { sliceUI } from '@bangle.io/slice-ui';
 import { DhanchaSmallscreen, DhanchaWidescreen } from '@bangle.io/ui';
 
 import { store } from './store';
 
-export function App() {
+export function App({ eternalVars }: { eternalVars?: EternalVarsWindow }) {
+  if (eternalVars?.debugFlags.testShowAppRootReactError) {
+    throw new Error('This is debug Test react error!');
+  }
+
   return (
     <StoreProvider store={store}>
       <Provider theme={defaultTheme}>

@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/pm-plugins",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,6 +16,15 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.32.1",
@@ -28,14 +38,5 @@
     "@bangle.dev/utils": "0.32.1",
     "@types/react": "^18.2.35",
     "@types/react-dom": "^17.0.17"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "restricted"
   }
 }

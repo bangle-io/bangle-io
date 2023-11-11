@@ -1,4 +1,7 @@
+import execa from 'execa';
+
 import { makeLogger, makeThrowValidationError } from '../lib';
+import { rootPath } from '../lib/constants';
 import { isAValidBanglePackage, setup } from '../lib/workspace-helper';
 
 const throwValidationError = makeThrowValidationError('addWorkspaceDep');
@@ -67,6 +70,13 @@ async function addWorkspaceDep({
       concurrency: 8,
     },
   );
+
+  await execa('pnpm', ['-w', 'install', '--offline'], {
+    cwd: rootPath,
+    stdio: 'inherit',
+  }).then(() => {
+    return 'runPnpmInstall done';
+  });
 
   logger('Done');
 }

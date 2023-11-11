@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/inline-scripts",
-  "version": "0.0.0",
+  "description": "inline scripts that are injected to the HTML page",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,6 +16,15 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "nodejs"
+  },
+  "main": "index.ts",
+  "module": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "generate:bundle-inline-scripts": "tsup --config tsup.config.ts"
   },
@@ -23,15 +33,5 @@
     "@bangle.io/constants": "workspace:*",
     "tsup": "^7.2.0"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "nodejs"
-  },
-  "description": "inline scripts that are injected to the HTML page",
-  "main": "index.ts",
-  "module": "index.js",
-  "publishConfig": {
-    "access": "public"
-  }
+  "devDependencies": {}
 }

@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/env-vars",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,10 +16,6 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {
-    "@bangle.io/config-template": "^0.0.7"
-  },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs"
@@ -26,5 +23,9 @@
   "main": "index.js",
   "module": "index.js",
   "publishConfig": {},
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.io/config-template": "^0.0.7"
+  }
 }

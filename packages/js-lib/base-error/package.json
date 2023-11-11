@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/base-error",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,9 +16,6 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {},
-  "devDependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
@@ -26,5 +24,8 @@
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
 }

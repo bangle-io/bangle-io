@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/search-pm-node",
-  "version": "0.0.0",
+  "description": "A utility function to search inside a prosemirror node using a string",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,6 +16,15 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.dev/all-base-components": "0.32.1",
@@ -24,15 +34,5 @@
     "@bangle.dev/wiki-link": "0.32.1",
     "@bangle.io/p-map": "workspace:*"
   },
-  "devDependencies": {},
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "description": "A utility function to search inside a prosemirror node using a string",
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "restricted"
-  }
+  "devDependencies": {}
 }

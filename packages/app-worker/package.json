@@ -1,0 +1,10 @@
+{
+  "name": "app-worker",
+  "description": "Packages related to the worker aka naukar",
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": [
+      "js-lib",
+      "shared"
+    ]
+  }
+}
