@@ -1,3 +1,4 @@
+import { config } from '@bangle.io/config';
 import type { EternalVarsWorker, NaukarBare } from '@bangle.io/shared-types';
 
 interface NaukarConfig {
@@ -5,11 +6,15 @@ interface NaukarConfig {
 }
 
 export class Naukar implements NaukarBare {
-  constructor(private config: NaukarConfig) {
+  constructor(private naukarConfig: NaukarConfig) {
     //
   }
 
-  async isReady() {
+  ok() {
     return true;
+  }
+
+  getDebugFlags() {
+    return this.naukarConfig.eternalVars.debugFlags;
   }
 }
