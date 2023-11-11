@@ -34,10 +34,10 @@ async function main() {
   Sentry.init({
     ...sentryConfig,
     integrations: [
-      new Sentry.BrowserTracing({
-        tracePropagationTargets: ['localhost', /^https:\/\/[\w-]+\.bangle\.io/],
-      }),
-      new Sentry.Replay(),
+      // new Sentry.BrowserTracing({
+      //   tracePropagationTargets: ['localhost', /^https:\/\/[\w-]+\.bangle\.io/],
+      // }),
+      // new Sentry.Replay(),
     ],
   });
 
@@ -49,17 +49,17 @@ async function main() {
 
   const { naukarRemote, naukarTerminate } = setupWorker({ debugFlags });
 
+  window._nsmE2e = {
+    config,
+    naukar: naukarRemote,
+  };
+
   _terminateNaukar = naukarTerminate;
 
   const eternalVars = setupEternalVarsWindow({
     naukarRemote,
     debugFlags,
   });
-
-  window._nsmE2e = {
-    config,
-    naukar: naukarRemote,
-  };
 
   root.render(
     <React.StrictMode>
