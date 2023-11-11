@@ -36,7 +36,7 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
     initialize: async (config) => {
       const { debugFlags } = config;
       const eternalVars = setupEternalVarsWorker({
-        debugFlag,
+        debugFlags,
         type: 'worker',
       });
 
