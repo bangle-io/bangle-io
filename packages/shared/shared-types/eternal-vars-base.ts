@@ -1,3 +1,5 @@
+import { DebugFlags } from './debug-flags';
+
 export interface EternalVarsBase {
-  foo: string;
+  debugFlags: DebugFlags;
 }

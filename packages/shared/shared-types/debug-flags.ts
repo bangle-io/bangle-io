@@ -1,3 +1,6 @@
 export type DebugFlags = Partial<{
-  testShowAppRootError?: boolean;
+  testNoOp?: boolean;
+  testDelayWorkerInitialize?: number;
+  testShowAppRootReactError?: boolean;
+  testShowAppRootSetupError?: boolean;
 }>;
