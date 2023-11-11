@@ -306,6 +306,9 @@ importers:
 
   packages/app-worker/naukar:
     dependencies:
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
