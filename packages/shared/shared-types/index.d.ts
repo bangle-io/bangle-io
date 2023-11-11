@@ -4,4 +4,7 @@ export type {
   ThemeBase,
 } from './bangle-theme';
 export type { DesignTokens, NeutralColors, ToneColors } from './design-tokens';
-export type { Naukar } from './naukar';
+export type { EternalVarsBase } from './eternal-vars-base';
+export type { EternalVarsWindow } from './eternal-vars-window';
+export type { EternalVarsWorker } from './eternal-vars-worker';
+export type { NaukarBare, NaukarRemote } from './naukar';

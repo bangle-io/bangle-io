@@ -22,6 +22,8 @@
   },
   "types": "index.d.ts",
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "comlink": "^4.4.1"
+  },
   "devDependencies": {}
 }
