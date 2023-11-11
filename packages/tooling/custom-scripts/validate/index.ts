@@ -1,13 +1,23 @@
-import { makeThrowValidationError } from '../lib';
+import { makeLogger, makeThrowValidationError } from '../lib';
 import { Package, setup, Workspace } from '../lib/workspace-helper';
-
 void setup().then(async (item) => {
-  void shouldRespectAllowedWorkspace(item.packagesMap, item.workspaces);
-  void shouldOnlyUseDependenciesDefinedInPackageJSON(item.packagesMap);
-  void shouldOnlyUseDevDependenciesDefinedInPackageJSON(item.packagesMap);
-  void testBrowserPackagesToNotRelyOnNode(item.packagesMap);
-  void testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap);
-  void testSharedConstantsShouldNotHaveDeps(item.packagesMap);
+  const logger = makeLogger('validate');
+  let promises: Promise<any>[] = [];
+  promises.push(
+    shouldRespectAllowedWorkspace(item.packagesMap, item.workspaces),
+  );
+  promises.push(
+    shouldOnlyUseDependenciesDefinedInPackageJSON(item.packagesMap),
+  );
+  promises.push(
+    shouldOnlyUseDevDependenciesDefinedInPackageJSON(item.packagesMap),
+  );
+  promises.push(testBrowserPackagesToNotRelyOnNode(item.packagesMap));
+  promises.push(testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap));
+  promises.push(testSharedConstantsShouldNotHaveDeps(item.packagesMap));
+
+  await Promise.all(promises);
+  logger('Validation successful');
 });
 
 async function shouldRespectAllowedWorkspace(
