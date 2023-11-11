@@ -11,6 +11,11 @@ import { NaukarInitialize } from './types';
 
 assertNonWorkerGlobalScope();
 
+/**
+ * We need certain input from the main thread to setup the worker.
+ * because of this need, we use `proxy` to hang any calls to the worker (promise is not resolved
+ * until the initialize is complete).
+ */
 export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   naukarRemote: NaukarRemote;
   naukarTerminate: () => Promise<void>;

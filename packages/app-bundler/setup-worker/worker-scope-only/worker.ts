@@ -34,8 +34,9 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
 
   const naukarInitialize: NaukarInitialize = {
     initialize: async (config) => {
+      const { debugFlags } = config;
       const eternalVars = setupEternalVarsWorker({
-        debugFlags: config.debugFlags,
+        debugFlag,
         type: 'worker',
       });
 
@@ -43,14 +44,16 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
         eternalVars,
       });
 
-      if (typeof config.debugFlags.testDelayWorkerInitialize === 'number') {
+      const { testDelayWorkerInitialize } = debugFlags;
+
+      if (typeof testDelayWorkerInitialize === 'number') {
         console.warn(
           'test: delaying worker setup by',
-          config.debugFlags.testDelayWorkerInitialize,
+          testDelayWorkerInitialize,
         );
         setTimeout(() => {
           emitter.emit('ready');
-        }, config.debugFlags.testDelayWorkerInitialize);
+        }, testDelayWorkerInitialize);
       } else {
         emitter.emit('ready');
       }
