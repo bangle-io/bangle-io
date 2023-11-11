@@ -12,14 +12,6 @@ assertWorkerGlobalScope();
 
 Comlink.expose(setupNaukar());
 
-// to ensure that NaukarBare is a subset of Record<string, (...args:any[])=>any>
-() => {
-  let x: NaukarBare = {} as NaukarBare satisfies Record<
-    string,
-    (...args: any[]) => any
-  >;
-};
-
 function setupNaukar(): NaukarInitialize & NaukarBare {
   const emitter = new Emitter<void>();
   let ready = false;

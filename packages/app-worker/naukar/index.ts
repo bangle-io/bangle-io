@@ -1,7 +1,7 @@
 import { config } from '@bangle.io/config';
 import type { EternalVarsWorker, NaukarBare } from '@bangle.io/shared-types';
 
-interface NaukarConfig {
+export interface NaukarConfig {
   eternalVars: EternalVarsWorker;
 }
 
