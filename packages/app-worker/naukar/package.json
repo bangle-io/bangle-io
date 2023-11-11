@@ -24,7 +24,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
     "@bangle.io/config": "workspace:*"
   }
 }

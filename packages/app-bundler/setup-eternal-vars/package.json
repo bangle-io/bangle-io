@@ -24,7 +24,6 @@
   "main": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/global-scope-helpers": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
   }
 }

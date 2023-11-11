@@ -27,7 +27,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/naukar": "workspace:*",
     "comlink": "^4.4.1",
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/global-scope-helpers": "workspace:*",
     "@bangle.io/setup-eternal-vars": "workspace:*",
     "@bangle.io/emitter": "workspace:*"

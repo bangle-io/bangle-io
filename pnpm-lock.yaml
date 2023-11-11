@@ -186,18 +186,12 @@ importers:
 
   packages/app-bundler/setup-eternal-vars:
     dependencies:
-      '@bangle.io/global-scope-helpers':
-        specifier: workspace:*
-        version: link:../../js-lib/global-scope-helpers
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
 
   packages/app-bundler/setup-worker:
     dependencies:
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -309,9 +303,6 @@ importers:
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
-      '@bangle.io/emitter':
-        specifier: workspace:*
-        version: link:../../js-lib/emitter
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
