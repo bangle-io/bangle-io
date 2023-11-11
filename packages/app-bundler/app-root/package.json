@@ -30,14 +30,16 @@
   "dependencies": {
     "@bangle.io/app": "workspace:*",
     "@bangle.io/config": "workspace:*",
+    "@bangle.io/e2e-types": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/setup-eternal-vars": "workspace:*",
+    "@bangle.io/setup-worker": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "@sentry/react": "^7.80.0",
+    "@sentry/vite-plugin": "^2.10.0",
     "@unocss/reset": "^0.57.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@bangle.io/setup-eternal-vars": "workspace:*",
-    "@bangle.io/setup-worker": "workspace:*",
-    "@bangle.io/e2e-types": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
     "react-error-boundary": "^4.0.11"
   },
   "devDependencies": {
