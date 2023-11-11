@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { App } from '@bangle.io/app';
+import { AppDatabaseIndexedDB } from '@bangle.io/app-database-indexeddb';
 import { config, sentryConfig } from '@bangle.io/config';
 import { assertIsDefined } from '@bangle.io/mini-js-utils';
 import { setupEternalVarsWindow } from '@bangle.io/setup-eternal-vars/window';
@@ -59,12 +60,16 @@ async function main() {
   const eternalVars = setupEternalVarsWindow({
     naukarRemote,
     debugFlags,
+    baseDatabase: new AppDatabaseIndexedDB(),
   });
 
   root.render(
     <React.StrictMode>
       <ErrorBoundary
         fallbackRender={({ error }) => <ShowAppRootError error={error} />}
+        onError={(error) => {
+          Sentry.captureException(error);
+        }}
       >
         <App eternalVars={eternalVars} />
       </ErrorBoundary>

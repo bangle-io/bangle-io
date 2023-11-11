@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser';
 import * as Comlink from 'comlink';
 
+import { AppDatabaseIndexedDB } from '@bangle.io/app-database-indexeddb';
 import { sentryConfig } from '@bangle.io/config';
 import { Emitter } from '@bangle.io/emitter';
 import { assertWorkerGlobalScope } from '@bangle.io/global-scope-helpers';
@@ -36,8 +37,9 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
     initialize: async (config) => {
       const { debugFlags } = config;
       const eternalVars = setupEternalVarsWorker({
-        debugFlags,
         type: 'worker',
+        debugFlags,
+        baseDatabase: new AppDatabaseIndexedDB(),
       });
 
       naukarInstance = new Naukar({

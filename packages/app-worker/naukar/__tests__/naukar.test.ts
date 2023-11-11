@@ -1,4 +1,4 @@
-import { NaukarBare } from '@bangle.io/shared-types';
+import { AppDatabase, NaukarBare } from '@bangle.io/shared-types';
 
 import { Naukar, NaukarConfig } from '../index';
 
@@ -7,6 +7,7 @@ describe('Naukar', () => {
     let naukar = new Naukar({
       eternalVars: {
         debugFlags: {},
+        appDatabase: {} as AppDatabase,
       },
       ...config,
     });
@@ -35,6 +36,7 @@ describe('Naukar', () => {
   it('getDebugFlags should return debug flags from eternalVars', () => {
     let { naukar } = setup({
       eternalVars: {
+        appDatabase: {} as any,
         debugFlags: {
           testDelayWorkerInitialize: 1000,
         },

@@ -40,7 +40,8 @@
     "@unocss/reset": "^0.57.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-error-boundary": "^4.0.11"
+    "react-error-boundary": "^4.0.11",
+    "@bangle.io/app-database-indexeddb": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",

@@ -23,7 +23,8 @@
   "types": "index.d.ts",
   "scripts": {},
   "dependencies": {
-    "comlink": "^4.4.1"
+    "comlink": "^4.4.1",
+    "@bangle.io/app-database": "workspace:*"
   },
   "devDependencies": {}
 }

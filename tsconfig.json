@@ -28,7 +28,7 @@
     "strict": true,
     "stripInternal": true,
     "target": "es2021",
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
   },
   "include": [
     "packages/**/*.ts",

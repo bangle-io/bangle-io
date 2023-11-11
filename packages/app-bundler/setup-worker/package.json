@@ -31,6 +31,7 @@
     "@bangle.io/setup-eternal-vars": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
     "@sentry/browser": "^7.80.0",
-    "@bangle.io/config": "workspace:*"
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/app-database-indexeddb": "workspace:*"
   }
 }
