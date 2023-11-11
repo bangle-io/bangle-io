@@ -2,6 +2,7 @@ import './style';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import { App } from '@bangle.io/app';
 import { config } from '@bangle.io/config';
@@ -16,6 +17,8 @@ const rootElement = document.getElementById('root');
 assertIsDefined(rootElement, 'root element is not defined');
 const root = ReactDOM.createRoot(rootElement);
 
+let _terminateNaukar: (() => Promise<void>) | undefined;
+
 main().catch((err) => {
   console.error(err);
   root.render(
@@ -23,19 +26,24 @@ main().catch((err) => {
       <ShowAppRootError error={err} />
     </React.StrictMode>,
   );
+
+  void _terminateNaukar?.();
 });
 
 async function main() {
   const debugFlags = getDebugFlag();
 
-  if (debugFlags?.testShowAppRootError) {
+  if (debugFlags?.testShowAppRootSetupError) {
     throw new Error('This is debug Test error!');
   }
 
-  const { naukarRemote, naukarTerminate } = setupWorker();
+  const { naukarRemote, naukarTerminate } = setupWorker({ debugFlags });
 
-  setupEternalVarsWindow({
+  _terminateNaukar = naukarTerminate;
+
+  const eternalVars = setupEternalVarsWindow({
     naukarRemote,
+    debugFlags,
   });
 
   window._nsmE2e = {
@@ -45,7 +53,11 @@ async function main() {
 
   root.render(
     <React.StrictMode>
-      <App />
+      <ErrorBoundary
+        fallbackRender={({ error }) => <ShowAppRootError error={error} />}
+      >
+        <App eternalVars={eternalVars} />
+      </ErrorBoundary>
     </React.StrictMode>,
   );
 }

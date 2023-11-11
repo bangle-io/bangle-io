@@ -1,2 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EternalVarsSetupBase {}
+import { DebugFlags } from '@bangle.io/shared-types';
+
+export interface EternalVarsSetupBase {
+  debugFlags: DebugFlags;
+}

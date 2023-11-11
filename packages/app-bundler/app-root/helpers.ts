@@ -1,10 +1,8 @@
 import { DebugFlags } from '@bangle.io/shared-types';
 
-export function getDebugFlag(): Partial<DebugFlags> | undefined {
-  // Construct URLSearchParams object from the current window location
+export function getDebugFlag(): DebugFlags {
   const queryParams = new URLSearchParams(window.location.search);
 
-  // Get the debug_flags parameter from the URL
   const debugFlagsJson = queryParams.get('debug_flags');
 
   try {
@@ -16,15 +14,14 @@ export function getDebugFlag(): Partial<DebugFlags> | undefined {
     console.error('Error parsing the debug_flags JSON string: ', error);
   }
 
-  // Return undefined or a default value if the parameter is not found or cannot be parsed
-  return undefined;
+  return {};
 }
 
 /*
 Use following code to set debug_flags in url
 
 searchParams = new URLSearchParams(window.location.search);
-searchParams.set('debug_flags', JSON.stringify({ testShowAppRootError: true }));
+searchParams.set('debug_flags', JSON.stringify({ testShowAppRootSetupError: true , testDelayWorkerInitialize: 5000}));
 console.log(searchParams.toString())
 
 */

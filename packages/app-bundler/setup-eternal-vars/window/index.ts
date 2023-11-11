@@ -1,5 +1,6 @@
 import type { EternalVarsWindow, NaukarRemote } from '@bangle.io/shared-types';
 
+import { setupCommon } from '../common-setup';
 import { EternalVarsSetupBase } from '../types';
 
 export interface EternalVarsSetupWindow extends EternalVarsSetupBase {
@@ -9,9 +10,8 @@ export interface EternalVarsSetupWindow extends EternalVarsSetupBase {
 export function setupEternalVarsWindow(
   config: EternalVarsSetupWindow,
 ): EternalVarsWindow {
-  // TODO proxify naukar on naukar is ready access this
   return {
+    ...setupCommon(config),
     naukar: config.naukarRemote,
-    foo: 'bar',
   };
 }
