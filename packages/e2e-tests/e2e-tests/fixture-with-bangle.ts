@@ -1,11 +1,13 @@
 import type { Page } from '@playwright/test';
 import { test as base } from '@playwright/test';
 
+import { DebugFlags } from '@bangle.io/shared-types';
+
 const PORT = 1234;
 
 export interface Fixture {
   bangleApp: {
-    open: (opts?: unknown) => Promise<Page>;
+    open: (opts?: { debugFlags?: DebugFlags }) => Promise<Page>;
   };
 }
 export const withBangle = base.extend<Fixture>({
@@ -14,7 +16,18 @@ export const withBangle = base.extend<Fixture>({
     async ({ page, baseURL }, use) => {
       await use({
         open: async (opts = {}) => {
-          await page.goto(`localhost:${PORT}`, {
+          let queryParams: string | undefined;
+          if (opts.debugFlags) {
+            const params = new URLSearchParams();
+            params.set('debug_flags', JSON.stringify(opts.debugFlags));
+
+            queryParams = params.toString();
+          }
+
+          const path =
+            `localhost:${PORT}` + (queryParams ? `?${queryParams}` : '');
+
+          await page.goto(path, {
             waitUntil: 'networkidle',
           });
 

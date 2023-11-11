@@ -110,6 +110,9 @@ importers:
       '@bangle.io/setup-worker':
         specifier: workspace:*
         version: link:../setup-worker
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@unocss/reset':
         specifier: ^0.57.2
         version: 0.57.2
@@ -300,6 +303,9 @@ importers:
 
   packages/e2e-tests/e2e-tests:
     dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@playwright/test':
         specifier: ^1.39.0
         version: 1.39.0
