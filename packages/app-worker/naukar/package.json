@@ -21,5 +21,8 @@
   "banglePackageConfig": {
     "type": "browser"
   },
-  "scripts": {}
+  "scripts": {},
+  "dependencies": {
+    "@bangle.io/shared-types": "workspace:*"
+  }
 }
