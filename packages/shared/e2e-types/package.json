@@ -1,0 +1,32 @@
+{
+  "name": "@bangle.io/e2e-types",
+  "description": "",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/shared/e2e-types"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
+  "types": "index.d.ts",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.io/config-template": "^0.0.7",
+    "@bangle.io/shared-types": "workspace:*"
+  },
+  "devDependencies": {}
+}

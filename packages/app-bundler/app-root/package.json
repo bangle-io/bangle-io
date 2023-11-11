@@ -35,7 +35,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@bangle.io/setup-eternal-vars": "workspace:*",
-    "@bangle.io/setup-worker": "workspace:*"
+    "@bangle.io/setup-worker": "workspace:*",
+    "@bangle.io/e2e-types": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",

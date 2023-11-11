@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@bangle.io/e2e-types':
+        specifier: workspace:*
+        version: link:packages/shared/e2e-types
       '@bangle.io/jsdom-env':
         specifier: workspace:*
         version: link:packages/js-lib/jsdom-env
@@ -95,6 +98,9 @@ importers:
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@bangle.io/e2e-types':
+        specifier: workspace:*
+        version: link:../../shared/e2e-types
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -551,6 +557,15 @@ importers:
 
   packages/shared/css-vars:
     dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+
+  packages/shared/e2e-types:
+    dependencies:
+      '@bangle.io/config-template':
+        specifier: ^0.0.7
+        version: 0.0.7
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../shared-types
