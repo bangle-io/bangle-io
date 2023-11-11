@@ -24,11 +24,12 @@ export const IS_TEST_ENV = config.build.nodeEnv === 'test';
 
 export const sentryConfig = {
   environment: APP_ENV,
-  dsn: 'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
-  integrations: [],
+  dsn: 'https://c477171ea90a1b9c9880663eab622aa6@o573373.ingest.sentry.io/4506209099382784',
   release: RELEASE_ID,
   tracesSampleRate:
     APP_ENV === 'production' ? 0.8 : APP_ENV === 'staging' ? 1 : 0,
+  replaysSessionSampleRate: APP_ENV === 'production' ? 0.1 : 1,
+  replaysOnErrorSampleRate: 1.0,
 };
 
 if (config.build.nodeEnv !== 'test') {
