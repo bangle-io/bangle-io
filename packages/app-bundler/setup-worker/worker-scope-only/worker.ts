@@ -80,6 +80,7 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
       }
 
       // we have checks to ensure that naukarInstance has only methods -- (..args:any)=>any
+      //  see the top of this file
       return (...args: any[]) => {
         return onReady.then(() => {
           return Reflect.get(naukarInstance!, prop, receiver)(...args);

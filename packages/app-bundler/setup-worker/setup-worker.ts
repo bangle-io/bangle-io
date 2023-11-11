@@ -52,6 +52,7 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   };
 
   return {
+    // we only expose the remote interface
     naukarRemote: naukarConstructor,
     naukarTerminate,
   };
