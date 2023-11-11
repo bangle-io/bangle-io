@@ -33,7 +33,9 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@unocss/reset": "^0.57.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@bangle.io/setup-eternal-vars": "workspace:*",
+    "@bangle.io/setup-worker": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",
