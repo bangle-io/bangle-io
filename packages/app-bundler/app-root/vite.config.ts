@@ -62,6 +62,7 @@ export default defineConfig(async ({ command, mode }) => {
         authToken: process.env.SENTRY_AUTH_TOKEN,
         org: 'self-zf',
         project: 'bangle-v2',
+        telemetry: false,
       }),
     ],
     publicDir: path.join(__dirname, 'public'),
