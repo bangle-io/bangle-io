@@ -1,5 +1,7 @@
+import * as Sentry from '@sentry/browser';
 import * as Comlink from 'comlink';
 
+import { sentryConfig } from '@bangle.io/config';
 import { Emitter } from '@bangle.io/emitter';
 import { assertWorkerGlobalScope } from '@bangle.io/global-scope-helpers';
 import { Naukar } from '@bangle.io/naukar';
@@ -7,6 +9,12 @@ import { setupEternalVarsWorker } from '@bangle.io/setup-eternal-vars/worker';
 import { NaukarBare } from '@bangle.io/shared-types';
 
 import type { NaukarInitialize } from '../types';
+
+Sentry.init({
+  dsn: sentryConfig.dsn,
+  environment: sentryConfig.environment,
+  release: sentryConfig.release,
+});
 
 assertWorkerGlobalScope();
 

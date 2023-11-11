@@ -198,6 +198,9 @@ importers:
 
   packages/app-bundler/setup-worker:
     dependencies:
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -213,6 +216,9 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@sentry/browser':
+        specifier: ^7.80.0
+        version: 7.80.0
       comlink:
         specifier: ^4.4.1
         version: 4.4.1

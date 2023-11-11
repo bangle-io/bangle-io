@@ -29,6 +29,8 @@
     "comlink": "^4.4.1",
     "@bangle.io/global-scope-helpers": "workspace:*",
     "@bangle.io/setup-eternal-vars": "workspace:*",
-    "@bangle.io/emitter": "workspace:*"
+    "@bangle.io/emitter": "workspace:*",
+    "@sentry/browser": "^7.80.0",
+    "@bangle.io/config": "workspace:*"
   }
 }
