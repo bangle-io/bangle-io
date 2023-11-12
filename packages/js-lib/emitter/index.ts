@@ -6,15 +6,20 @@ type EventPayload<E extends string, P> = {
   event: E;
   payload: P;
 };
+// Utility type function for converting discriminated union to object type
+export type DiscriminatedUnionToObject<U extends EventPayload<any, any>> = {
+  [K in U['event']]: Extract<U, { event: K }>['payload'];
+};
 
 export class Emitter<T extends object = any> {
-  // provides a way to create an emitter with discriminated union types
+  /**
+   * provides a way to create an emitter with discriminated union types
+   */
   static create<U extends EventPayload<string, any>>() {
-    const emitter = new Emitter<{
-      [K in U['event']]: U extends EventPayload<K, infer P> ? P : never;
-    }>();
+    const emitter = new Emitter<DiscriminatedUnionToObject<U>>();
     return emitter;
   }
+
   private _callbacks: Listeners = {};
 
   private destroyed = false;

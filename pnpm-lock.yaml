@@ -198,6 +198,9 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../../lib/app-database
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -371,7 +374,11 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
 
-  packages/js-lib/emitter: {}
+  packages/js-lib/emitter:
+    dependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../mini-js-utils
 
   packages/js-lib/fzf-search:
     dependencies:
@@ -636,6 +643,9 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../../lib/app-database
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
