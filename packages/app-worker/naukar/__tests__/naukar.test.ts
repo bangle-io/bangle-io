@@ -1,14 +1,20 @@
-import { AppDatabase, NaukarBare } from '@bangle.io/shared-types';
+import {
+  AppDatabase,
+  EternalVarsBase,
+  NaukarBare,
+} from '@bangle.io/shared-types';
 
 import { Naukar, NaukarConfig } from '../index';
 
+const mockEternalVars: EternalVarsBase = {
+  debugFlags: {},
+  appDatabase: {} as AppDatabase,
+  emitter: {} as any,
+};
 describe('Naukar', () => {
   const setup = (config: Partial<NaukarConfig> = {}) => {
     let naukar = new Naukar({
-      eternalVars: {
-        debugFlags: {},
-        appDatabase: {} as AppDatabase,
-      },
+      eternalVars: mockEternalVars,
       ...config,
     });
 
@@ -36,7 +42,7 @@ describe('Naukar', () => {
   it('getDebugFlags should return debug flags from eternalVars', () => {
     let { naukar } = setup({
       eternalVars: {
-        appDatabase: {} as any,
+        ...mockEternalVars,
         debugFlags: {
           testDelayWorkerInitialize: 1000,
         },

@@ -24,7 +24,8 @@
   "scripts": {},
   "dependencies": {
     "comlink": "^4.4.1",
-    "@bangle.io/app-database": "workspace:*"
+    "@bangle.io/app-database": "workspace:*",
+    "@bangle.io/emitter": "workspace:*"
   },
   "devDependencies": {}
 }

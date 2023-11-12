@@ -22,7 +22,7 @@ assertWorkerGlobalScope();
 Comlink.expose(setupNaukar());
 
 function setupNaukar(): NaukarInitialize & NaukarBare {
-  const emitter = new Emitter<void>();
+  const emitter = Emitter.create<{ event: 'ready'; payload: undefined }>();
   let ready = false;
   let naukarInstance: Naukar | undefined;
 
@@ -54,10 +54,10 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
           testDelayWorkerInitialize,
         );
         setTimeout(() => {
-          emitter.emit('ready');
+          emitter.emit('ready', undefined);
         }, testDelayWorkerInitialize);
       } else {
-        emitter.emit('ready');
+        emitter.emit('ready', undefined);
       }
     },
     isReady: async () => {

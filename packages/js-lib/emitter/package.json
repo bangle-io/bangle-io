@@ -26,5 +26,7 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*"
+  }
 }
