@@ -1,52 +1,82 @@
-type Listeners<T> = Record<string, Listener<T>[]>;
-type Listener<T = any> = (data: T) => void;
+type Listener<T> = (data: T) => void;
 
-export class Emitter<T = any> {
-  _callbacks: Listeners<T> = {};
+type Listeners = Record<string, Set<Listener<any>>>;
 
-  // If fn is not provided, all event listeners for that event will be removed.
-  destroy() {
+type EventPayload<E extends string, P> = {
+  event: E;
+  payload: P;
+};
+
+export class Emitter<T extends object = any> {
+  // provides a way to create an emitter with discriminated union types
+  static create<U extends EventPayload<string, any>>() {
+    const emitter = new Emitter<{
+      [K in U['event']]: U extends EventPayload<K, infer P> ? P : never;
+    }>();
+    return emitter;
+  }
+  private _callbacks: Listeners = {};
+
+  private destroyed = false;
+
+  destroy(): void {
     this._callbacks = {};
+    this.destroyed = true;
   }
 
-  emit(event: any, data: T) {
-    const callbacks = this._callbacks[event];
+  emit<K extends keyof T>(event: K, data: T[K]): this {
+    if (this.destroyed) {
+      return this;
+    }
 
+    const callbacks = this._callbacks[event as string];
     if (callbacks) {
       callbacks.forEach((callback) => callback(data));
     }
-
     return this;
   }
 
-  // If neither is provided, all event listeners will be removed.
-  off(event?: string, fn?: Listener<T>) {
-    if (!arguments.length) {
-      this._callbacks = {};
-    } else {
-      // event listeners for the given event
-      const callbacks = this._callbacks ? this._callbacks[event!] : null;
-      if (callbacks) {
-        if (fn) {
-          this._callbacks[event!] = callbacks.filter((cb) => cb !== fn);
-        } else {
-          this._callbacks[event!] = []; // remove all handlers
-        }
+  off<K extends keyof T>(event: K, fn?: Listener<T[K]>): this {
+    if (this.destroyed) {
+      return this;
+    }
+
+    const eventKey = event as string;
+    const callbacks = this._callbacks[eventKey];
+    if (callbacks) {
+      if (fn) {
+        callbacks.delete(fn);
+      } else {
+        callbacks.clear();
       }
     }
 
     return this;
   }
 
-  // Add an event listener for given event
-  on(event: any, fn: any) {
-    // Create namespace for this event
-    if (!this._callbacks[event]) {
-      this._callbacks[event] = [];
+  clearListeners(): this {
+    if (this.destroyed) {
+      return this;
     }
-    this._callbacks[event]!.push(fn);
+
+    this._callbacks = {};
     return this;
   }
 
-  // Remove event listener for given event.
+  on<K extends keyof T>(event: K, fn: Listener<T[K]>): this {
+    if (this.destroyed) {
+      return this;
+    }
+
+    const eventKey = event as string;
+    let existing = this._callbacks[eventKey];
+
+    if (!existing) {
+      existing = new Set();
+      this._callbacks[eventKey] = existing;
+    }
+
+    existing.add(fn);
+    return this;
+  }
 }
