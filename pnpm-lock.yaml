@@ -198,9 +198,6 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../../lib/app-database
-      '@bangle.io/app-database-indexeddb':
-        specifier: workspace:*
-        version: link:../../lib/app-database-indexeddb
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -542,9 +539,6 @@ importers:
 
   packages/lib/app-database:
     dependencies:
-      '@bangle.io/base-error':
-        specifier: workspace:*
-        version: link:../../js-lib/base-error
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
