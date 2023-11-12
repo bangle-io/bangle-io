@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/setup-eternal-vars",
+  "name": "@bangle.io/app-database-indexeddb",
   "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/setup-eternal-vars"
+    "directory": "packages/lib/app-database-indexeddb"
   },
   "authors": [
     {
@@ -15,16 +16,21 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "browser"
   },
   "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/app-database": "workspace:*"
+    "@bangle.io/db-key-val": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/app-database": "workspace:*",
+    "@bangle.io/base-error": "workspace:*"
   }
 }

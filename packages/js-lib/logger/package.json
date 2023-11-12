@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/setup-eternal-vars",
+  "name": "@bangle.io/logger",
   "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/setup-eternal-vars"
+    "directory": "packages/js-lib/logger"
   },
   "authors": [
     {
@@ -15,16 +16,15 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
   },
   "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
-  "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/app-database": "workspace:*"
-  }
+  "dependencies": {}
 }

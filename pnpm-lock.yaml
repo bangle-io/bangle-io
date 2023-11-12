@@ -95,6 +95,9 @@ importers:
       '@bangle.io/app':
         specifier: workspace:*
         version: link:../../app-window/app
+      '@bangle.io/app-database-indexeddb':
+        specifier: workspace:*
+        version: link:../../lib/app-database-indexeddb
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
@@ -192,12 +195,18 @@ importers:
 
   packages/app-bundler/setup-eternal-vars:
     dependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../../lib/app-database
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
 
   packages/app-bundler/setup-worker:
     dependencies:
+      '@bangle.io/app-database-indexeddb':
+        specifier: workspace:*
+        version: link:../../lib/app-database-indexeddb
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
@@ -418,6 +427,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
 
+  packages/js-lib/logger: {}
+
   packages/js-lib/mini-js-utils:
     dependencies:
       '@bangle.io/is-abort-error':
@@ -526,6 +537,30 @@ importers:
 
   packages/js-lib/weak-cache: {}
 
+  packages/lib/app-database:
+    dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+
+  packages/lib/app-database-indexeddb:
+    dependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../app-database
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/db-key-val':
+        specifier: workspace:*
+        version: link:../../js-lib/db-key-val
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+
   packages/lib/slice-ui:
     dependencies:
       '@bangle.io/constants':
@@ -598,6 +633,9 @@ importers:
 
   packages/shared/shared-types:
     dependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../../lib/app-database
       comlink:
         specifier: ^4.4.1
         version: 4.4.1

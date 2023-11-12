@@ -29,6 +29,14 @@ async function shouldRespectAllowedWorkspace(
   );
 
   for (const [name, pkg] of packageMap.entries()) {
+    // shared-types is a special package that can be imported anywhere
+    // to allow for circular dependencies, since it is just types.
+    // this makes it convenient to rely on types without explicitly
+    // depending on the corresponding JS code.
+    if (name === '@bangle.io/shared-types') {
+      continue;
+    }
+
     let deps = Object.keys(pkg.workspaceDependencies);
     deps.push(...Object.keys(pkg.workspaceDevDependencies));
 

@@ -2,40 +2,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Src unit Tests",
             "type": "node",
+            "name": "Debug Current Jest Test File",
             "request": "launch",
-            "runtimeArgs": [
-                "--inspect-brk",
-                "${workspaceRoot}/node_modules/.bin/jest",
-                "src",
-                "--runInBand"
-            ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
-            "port": 9229
-        },
-        {
-            "name": "Debug current file",
-            "type": "node",
-            "request": "launch",
-            "runtimeVersion": "18.12.1",
-            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "node",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/jest/bin/jest.js",
+                "--runInBand",
+                "--config",
+                "${workspaceRoot}/jest.config.js",
+            ],
             "skipFiles": [
                 "<node_internals>/**",
-                "node_modules/**"
+                "**/node_modules/**"
             ],
-            "runtimeArgs": [
-                "--inspect-brk",
-                "jest",
+            "args": [
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "--runInBand",
-                "--debug",
-                "--testTimeout=60000"
+                "--testTimeout=600000"
             ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "port": 9229
-        },
+            "env": {},
+            "sourceMaps": true,
+            "smartStep": true,
+            "autoAttachChildProcesses": true,
+        }
     ]
 }
