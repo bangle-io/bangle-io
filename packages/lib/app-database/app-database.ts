@@ -1,14 +1,30 @@
-import { BaseError } from '@bangle.io/base-error';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 
 import { BaseAppDatabase, WorkspaceDatabaseQueryOptions } from './base';
 
-export type AppDatabaseErrorConfig = {
+type ChangeEvent =
+  | {
+      type: 'workspace-create';
+      payload: WorkspaceInfo;
+    }
+  | {
+      type: 'workspace-update';
+      payload: { name: string };
+    }
+  | {
+      type: 'workspace-delete';
+      payload: {
+        name: string;
+      };
+    };
+
+export type AppDatabaseConfig = {
   database: BaseAppDatabase;
+  onChange: (change: ChangeEvent) => void;
 };
 
 export class AppDatabase {
-  constructor(public config: AppDatabaseErrorConfig) {}
+  constructor(public config: AppDatabaseConfig) {}
 
   async getWorkspaceInfo(
     name: string,
@@ -17,16 +33,27 @@ export class AppDatabase {
     return this.config.database.getWorkspaceInfo(name, options);
   }
 
-  async createWorkspaceInfo(info: WorkspaceInfo) {
-    return this.config.database.createWorkspaceInfo(info);
+  async createWorkspaceInfo(info: WorkspaceInfo): Promise<void> {
+    await this.config.database.createWorkspaceInfo(info);
+    this.config.onChange({
+      type: 'workspace-create',
+      payload: info,
+    });
   }
 
   async deleteWorkspaceInfo(name: string) {
-    return this.config.database.updateWorkspaceInfo(name, (wsInfo) => {
+    await this.config.database.updateWorkspaceInfo(name, (wsInfo) => {
       return {
         ...wsInfo,
         deleted: true,
       };
+    });
+
+    this.config.onChange({
+      type: 'workspace-delete',
+      payload: {
+        name,
+      },
     });
   }
 
@@ -34,7 +61,14 @@ export class AppDatabase {
     name: string,
     update: (wsInfo: WorkspaceInfo) => WorkspaceInfo,
   ) {
-    return this.config.database.updateWorkspaceInfo(name, update);
+    await this.config.database.updateWorkspaceInfo(name, update);
+
+    this.config.onChange({
+      type: 'workspace-update',
+      payload: {
+        name,
+      },
+    });
   }
 
   async getWorkspaceMetadata(
@@ -72,6 +106,12 @@ export class AppDatabase {
       },
     }));
 
+    this.config.onChange({
+      type: 'workspace-update',
+      payload: {
+        name,
+      },
+    });
     return true;
   }
 }

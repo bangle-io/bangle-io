@@ -8,6 +8,10 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
 
   const appDatabase = new AppDatabase({
     database: config.baseDatabase,
+    onChange: (change) => {
+      // TODO implement a common emitter that the app can listen to
+      console.debug('onWorkspaceEvent', change);
+    },
   });
 
   return {
