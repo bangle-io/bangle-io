@@ -27,7 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "zod": "^3.22.4",
     "@bangle.io/constants": "workspace:*",

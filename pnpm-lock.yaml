@@ -324,6 +324,9 @@ importers:
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib/ui
+      '@bangle.io/window-store':
+        specifier: workspace:*
+        version: link:../window-store
       '@nalanda/core':
         specifier: ^0.2.1
         version: 0.2.1
@@ -337,11 +340,35 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
 
+  packages/app-window/window-common:
+    dependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+
+  packages/app-window/window-store:
+    dependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@bangle.io/slice-ui':
+        specifier: workspace:*
+        version: link:../../lib/slice-ui
+      '@bangle.io/window-common':
+        specifier: workspace:*
+        version: link:../window-common
+      '@nalanda/core':
+        specifier: ^0.2.1
+        version: 0.2.1
+
   packages/app-worker/naukar:
     dependencies:
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -354,21 +381,12 @@ importers:
 
   packages/app-worker/naukar-common:
     dependencies:
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
 
   packages/app-worker/naukar-store:
     dependencies:
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -667,9 +685,6 @@ importers:
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants

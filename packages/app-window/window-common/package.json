@@ -1,11 +1,11 @@
 {
-  "name": "@bangle.io/naukar-store",
-  "description": "The naukar store",
+  "name": "@bangle.io/window-common",
+  "description": "The window common package",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-worker/naukar-store"
+    "directory": "packages/app-window/window-common"
   },
   "authors": [
     {
@@ -24,8 +24,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/naukar-common": "workspace:*",
-    "@nalanda/core": "^0.2.1"
+    "@bangle.io/logger": "workspace:*"
   }
 }
