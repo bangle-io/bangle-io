@@ -38,4 +38,5 @@ export type NotificationPayloadType = {
 export const COLOR_SCHEME = {
   LIGHT: 'light',
   DARK: 'dark',
+  SYSTEM: 'system',
 } as const;

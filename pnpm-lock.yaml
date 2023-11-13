@@ -204,6 +204,9 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/user-preference':
+        specifier: workspace:*
+        version: link:../../lib/user-preference
 
   packages/app-bundler/setup-worker:
     dependencies:
@@ -375,7 +378,7 @@ importers:
         version: 7.1.1
 
   packages/js-lib/emitter:
-    dependencies:
+    devDependencies:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../mini-js-utils
@@ -460,7 +463,7 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       zod:
-        specifier: ^3.21.4
+        specifier: ^3.22.4
         version: 3.22.4
 
   packages/js-lib/object-uid: {}
@@ -549,6 +552,22 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+    devDependencies:
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../app-database-in-memory
+
+  packages/lib/app-database-in-memory:
+    dependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../app-database
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
 
   packages/lib/app-database-indexeddb:
     dependencies:
@@ -599,6 +618,37 @@ importers:
         specifier: ^7.1.0
         version: 7.5.2(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
 
+  packages/lib/user-preference:
+    dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../app-database
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../app-database-in-memory
+
   packages/lib/utils:
     dependencies:
       '@bangle.io/browser':
@@ -646,6 +696,9 @@ importers:
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
+      '@bangle.io/user-preference':
+        specifier: workspace:*
+        version: link:../../lib/user-preference
       comlink:
         specifier: ^4.4.1
         version: 4.4.1

@@ -10,7 +10,9 @@ const mockEternalVars: EternalVarsBase = {
   debugFlags: {},
   appDatabase: {} as AppDatabase,
   emitter: {} as any,
+  userPreferenceManager: {} as any,
 };
+
 describe('Naukar', () => {
   const setup = (config: Partial<NaukarConfig> = {}) => {
     let naukar = new Naukar({

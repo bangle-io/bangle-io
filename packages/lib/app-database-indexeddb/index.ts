@@ -9,7 +9,9 @@ import type { WorkspaceInfo } from '@bangle.io/shared-types';
 
 import {
   getAppDb,
+  getMiscTable,
   getWorkspaceInfoTable,
+  MISC_TABLE,
   WORKSPACE_INFO_TABLE,
 } from './indexed-db-adaptor';
 import { logger } from './logger';
@@ -17,11 +19,20 @@ import { logger } from './logger';
 export class AppDatabaseIndexedDB implements BaseAppDatabase {
   name = 'AppDatabaseIndexedDB';
 
-  private throwUnknownError(error: any): never {
+  private throwUnknownWorkspaceError(error: any): never {
     logger.error(error);
     throw new BaseError({
       message: `Error creating workspace`,
       code: AppDatabaseErrorCode.WORKSPACE_ERROR,
+      thrower: this.name,
+    });
+  }
+
+  private throwUnknownMiscDataError(error: any): never {
+    logger.error(error);
+    throw new BaseError({
+      message: `Error with misc data operation`,
+      code: AppDatabaseErrorCode.MISC_DATA_ERROR,
       thrower: this.name,
     });
   }
@@ -57,7 +68,7 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
 
       return;
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwUnknownWorkspaceError(error);
     }
   }
 
@@ -85,7 +96,7 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
 
       return match;
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwUnknownWorkspaceError(error);
     }
   }
 
@@ -122,7 +133,7 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
 
       return;
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwUnknownWorkspaceError(error);
     }
   }
 
@@ -147,7 +158,58 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
           return true;
         });
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwUnknownWorkspaceError(error);
+    }
+  }
+
+  async getMiscData(key: string) {
+    try {
+      let match = await getMiscTable()
+        .get(key)
+        .catch((error) => {
+          logger.warn('Error reading workspace info from db', error);
+          // swallow error as there is not much we can do, and treat it as if
+          // workspace was not found
+          return undefined;
+        });
+
+      if (match === undefined) {
+        return undefined;
+      }
+
+      // data is serialized as string in the db
+      return { data: match };
+    } catch (error) {
+      this.throwUnknownMiscDataError(error);
+    }
+  }
+
+  async setMiscData(key: string, serializedData: string) {
+    try {
+      const db = await getAppDb();
+
+      const tx = db.transaction(MISC_TABLE, 'readwrite');
+
+      const objStore = tx.objectStore(MISC_TABLE);
+
+      await Promise.all([
+        objStore.put(makeDbRecord(key, serializedData)),
+        tx.done,
+      ]);
+    } catch (error) {
+      this.throwUnknownMiscDataError(error);
+    }
+  }
+
+  async deleteMiscData(key: string) {
+    try {
+      const db = await getAppDb();
+      const tx = db.transaction(MISC_TABLE, 'readwrite');
+      const objStore = tx.objectStore(MISC_TABLE);
+
+      await Promise.all([objStore.delete(key), tx.done]);
+    } catch (error) {
+      this.throwUnknownMiscDataError(error);
     }
   }
 }
