@@ -114,4 +114,16 @@ export class AppDatabase {
     });
     return true;
   }
+
+  async getMiscData(key: string): Promise<{ data: string } | undefined> {
+    return this.config.database.getMiscData(key);
+  }
+
+  async setMiscData(key: string, data: string): Promise<void> {
+    await this.config.database.setMiscData(key, data);
+  }
+
+  async deleteMiscData(key: string): Promise<void> {
+    await this.config.database.deleteMiscData(key);
+  }
 }

@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/setup-eternal-vars",
-  "description": "",
+  "name": "@bangle.io/app-database-in-memory",
+  "description": "This is an in-memory database that can be used to test the app-database package.",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-bundler/setup-eternal-vars"
+    "directory": "packages/lib/app-database-in-memory"
   },
   "authors": [
     {
@@ -15,18 +16,19 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
   },
   "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/app-database": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/user-preference": "workspace:*"
+    "@bangle.io/base-error": "workspace:*"
   }
 }

@@ -26,4 +26,21 @@ export interface BaseAppDatabase {
   getAllWorkspaces: (
     options?: WorkspaceDatabaseQueryOptions,
   ) => Promise<WorkspaceInfo[]>;
+
+  /**
+   * Gets misc data from the database
+   * @param key
+   * @returns
+   */
+  getMiscData: (key: string) => Promise<{ data: string } | undefined>;
+
+  /**
+   * Data must be JSON.serializable
+   * @param key
+   * @param data
+   * @returns
+   */
+  setMiscData: (key: string, data: string) => Promise<void>;
+
+  deleteMiscData: (key: string) => Promise<void>;
 }

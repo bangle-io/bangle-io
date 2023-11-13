@@ -1,51 +1,36 @@
+import { AppDatabaseInMemory } from '@bangle.io/app-database-in-memory';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 
 import { AppDatabase } from '../app-database';
-import { BaseAppDatabase } from '../base';
 
 function setupMockDatabase({
   workspaces,
 }: {
-  workspaces: Record<string, WorkspaceInfo>;
+  workspaces: Map<string, WorkspaceInfo>;
 }) {
-  const mockDatabase = {
-    name: 'mock',
-    createWorkspaceInfo: jest.fn(async (info) => {
-      workspaces[info.name] = { ...info, deleted: false };
-    }),
-    getWorkspaceInfo: jest.fn(async (wsName, options = {}) => {
-      const workspace = workspaces[wsName];
-      if (workspace && (!workspace.deleted || options.allowDeleted)) {
-        return workspace;
-      }
-      return undefined;
-    }),
-    updateWorkspaceInfo: jest.fn(async (wsName, updateFn) => {
-      let current = workspaces[wsName];
-      if (current) {
-        workspaces[wsName] = {
-          ...current,
-          ...updateFn(current),
-        };
-      }
-    }),
-    getAllWorkspaces: jest.fn(async (options = {}) => {
-      return Object.values(workspaces).filter(
-        (ws) => options.allowDeleted ?? !ws.deleted,
-      );
-    }),
-  } satisfies BaseAppDatabase;
+  const mockDatabase = new AppDatabaseInMemory(workspaces);
 
   return mockDatabase;
 }
 const setup = (config = {}) => {
   const onChange = jest.fn();
-  const workspaces: Record<string, WorkspaceInfo> = {};
+  const workspaces = new Map<string, WorkspaceInfo>();
   const db = setupMockDatabase({ workspaces });
 
   const appDatabase = new AppDatabase({ database: db, onChange });
 
-  return { appDatabase, onChange, mockDatabase: db, workspaces };
+  const mockUpdateWorkspaceInfo = jest.spyOn(db, 'updateWorkspaceInfo');
+  const mockGetAllWorkspaces = jest.spyOn(db, 'getAllWorkspaces');
+  const mockGetWorkspaceInfo = jest.spyOn(db, 'getWorkspaceInfo');
+  const mockCreateWorkspaceInfo = jest.spyOn(db, 'createWorkspaceInfo');
+
+  return {
+    appDatabase,
+    onChange,
+    mockDatabase: db,
+    workspaces,
+    mockUpdateWorkspaceInfo,
+  };
 };
 
 describe('workspace creation', () => {
@@ -109,7 +94,7 @@ describe('workspace deletion', () => {
 
     await appDatabase.deleteWorkspaceInfo(workspaceName);
 
-    expect(Object.values(workspaces)?.[0]?.deleted).toBe(true);
+    expect(Array.from(workspaces.values())?.[0]?.deleted).toBe(true);
     // Check if updateWorkspaceInfo was called correctly
     expect(mockDatabase.updateWorkspaceInfo).toHaveBeenCalledWith(
       workspaceName,
@@ -135,6 +120,15 @@ describe('workspace metadata', () => {
     const { appDatabase, mockDatabase } = setup();
     const workspaceName = 'Test Workspace';
 
+    const workspaceInfo = {
+      name: 'Test Workspace',
+      metadata: {},
+      type: 'local',
+      lastModified: 1,
+    };
+
+    await appDatabase.createWorkspaceInfo(workspaceInfo);
+
     await appDatabase.getWorkspaceInfo(workspaceName);
 
     expect(mockDatabase.getWorkspaceInfo).toHaveBeenCalledWith(
@@ -148,6 +142,15 @@ describe('workspace metadata', () => {
     const workspaceName = 'Test Workspace';
     const updateFunction = jest.fn((info) => ({ ...info, updated: true }));
 
+    const workspaceInfo = {
+      name: 'Test Workspace',
+      metadata: {},
+      type: 'local',
+      lastModified: 1,
+    };
+
+    await appDatabase.createWorkspaceInfo(workspaceInfo);
+
     await appDatabase.updateWorkspaceInfo(workspaceName, updateFunction);
 
     expect(mockDatabase.updateWorkspaceInfo).toHaveBeenCalledWith(
@@ -158,18 +161,6 @@ describe('workspace metadata', () => {
       type: 'workspace-update',
       payload: { name: workspaceName },
     });
-  });
-
-  test('getWorkspaceMetadata calls database with correct parameters', async () => {
-    const { appDatabase, mockDatabase } = setup();
-    const workspaceName = 'Test Workspace';
-
-    await appDatabase.getWorkspaceMetadata(workspaceName);
-
-    expect(mockDatabase.getWorkspaceInfo).toHaveBeenCalledWith(
-      workspaceName,
-      undefined,
-    );
   });
 
   test('getAllWorkspaces calls database with correct parameters', async () => {
@@ -212,16 +203,17 @@ describe('workspace metadata', () => {
   });
 
   test('updateWorkspaceMetadata returns false if workspace does not exist', async () => {
-    const { appDatabase, mockDatabase } = setup();
+    const { appDatabase, mockDatabase, mockUpdateWorkspaceInfo } = setup();
     const workspaceName = 'Test Workspace';
     const metadataUpdateFunction = jest.fn();
 
-    const result = await appDatabase.updateWorkspaceMetadata(
-      workspaceName,
-      metadataUpdateFunction,
-    );
+    await expect(
+      appDatabase.updateWorkspaceMetadata(
+        workspaceName,
+        metadataUpdateFunction,
+      ),
+    ).rejects.toThrow('Workspace not found');
 
-    expect(result).toBe(false);
-    expect(mockDatabase.updateWorkspaceInfo).not.toHaveBeenCalled();
+    expect(mockUpdateWorkspaceInfo).not.toHaveBeenCalled();
   });
 });
