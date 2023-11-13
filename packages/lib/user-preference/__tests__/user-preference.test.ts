@@ -71,7 +71,7 @@ describe('UserPreferenceManager', () => {
 
     it('should return default preferences on parsing failure', async () => {
       const { userPreferenceManager, mockDatabase } = setup();
-      mockDatabase.setMiscData(DB_KEY, 'invalid JSON');
+      await mockDatabase.setMiscData(DB_KEY, 'invalid JSON');
       const prefs = await userPreferenceManager.readUserPreference();
 
       expect(prefs).toEqual({
@@ -86,7 +86,7 @@ describe('UserPreferenceManager', () => {
       const { userPreferenceManager, mockDatabase } = setup();
 
       const invalidPrefs = { themePreference: 'invalid-theme', version: 2 };
-      mockDatabase.setMiscData(DB_KEY, JSON.stringify(invalidPrefs));
+      await mockDatabase.setMiscData(DB_KEY, JSON.stringify(invalidPrefs));
 
       const prefs = await userPreferenceManager.readUserPreference();
 
