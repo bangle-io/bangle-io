@@ -1,5 +1,7 @@
 import { DebugFlags } from '@bangle.io/shared-types';
 
+import { logger } from './logger';
+
 export function getDebugFlag(): DebugFlags {
   const queryParams = new URLSearchParams(window.location.search);
 
@@ -11,7 +13,7 @@ export function getDebugFlag(): DebugFlags {
       return JSON.parse(debugFlagsJson);
     }
   } catch (error) {
-    console.error('Error parsing the debug_flags JSON string: ', error);
+    logger.error('Error parsing the debug_flags JSON string: ', error);
   }
 
   return {};

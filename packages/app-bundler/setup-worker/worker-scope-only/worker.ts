@@ -9,6 +9,7 @@ import { Naukar } from '@bangle.io/naukar';
 import { setupEternalVarsWorker } from '@bangle.io/setup-eternal-vars/worker';
 import { NaukarBare } from '@bangle.io/shared-types';
 
+import { logger } from '../logger';
 import type { NaukarInitialize } from '../types';
 
 Sentry.init({
@@ -49,7 +50,7 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
       const { testDelayWorkerInitialize } = debugFlags;
 
       if (typeof testDelayWorkerInitialize === 'number') {
-        console.warn(
+        logger.warn(
           'test: delaying worker setup by',
           testDelayWorkerInitialize,
         );

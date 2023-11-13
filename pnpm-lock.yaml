@@ -104,6 +104,9 @@ importers:
       '@bangle.io/e2e-types':
         specifier: workspace:*
         version: link:../../shared/e2e-types
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -198,9 +201,15 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../../lib/app-database
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -222,6 +231,9 @@ importers:
       '@bangle.io/global-scope-helpers':
         specifier: workspace:*
         version: link:../../js-lib/global-scope-helpers
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/naukar':
         specifier: workspace:*
         version: link:../../app-worker/naukar
@@ -330,6 +342,9 @@ importers:
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types

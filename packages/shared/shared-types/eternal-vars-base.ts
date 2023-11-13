@@ -5,24 +5,32 @@ import type { UserPreferenceManager } from '@bangle.io/user-preference';
 import { DebugFlags } from './debug-flags';
 import { WorkspaceInfo } from './workspace';
 
+export type EternalVarsEventSourceInfo = {
+  tabId: string;
+  timestamp: number;
+};
+
 export type EternalVarsEvent =
   | {
       event: '@event::database:workspace-create';
-      payload: WorkspaceInfo;
+      payload: { wsInfo: WorkspaceInfo; source: EternalVarsEventSourceInfo };
     }
   | {
       event: '@event::database:workspace-update';
-      payload: { name: string };
+      payload: { wsName: string; source: EternalVarsEventSourceInfo };
     }
   | {
       event: '@event::database:workspace-delete';
       payload: {
-        name: string;
+        wsName: string;
+        source: EternalVarsEventSourceInfo;
       };
     }
   | {
       event: '@event::user-preference:change';
-      payload: undefined;
+      payload: {
+        source: EternalVarsEventSourceInfo;
+      };
     };
 
 export interface EternalVarsBase {

@@ -7,6 +7,7 @@ import type {
   NaukarRemote,
 } from '@bangle.io/shared-types';
 
+import { logger } from './logger';
 import { NaukarInitialize } from './types';
 
 assertNonWorkerGlobalScope();
@@ -41,11 +42,11 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   });
 
   void naukarConstructor.isReady().then((isReady) => {
-    console.debug('naukar worker is ready');
+    logger.debug('naukar worker is ready');
   });
 
   const naukarTerminate = async () => {
-    console.warn('Terminating naukar worker');
+    logger.warn('Terminating naukar worker');
     naukarConstructor[Comlink.releaseProxy]();
     // wait for comlink to release proxy
     // if we terminate immediately proxy is not released
