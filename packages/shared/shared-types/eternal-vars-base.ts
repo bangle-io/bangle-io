@@ -6,7 +6,7 @@ import { DebugFlags } from './debug-flags';
 import { WorkspaceInfo } from './workspace';
 
 export type EternalVarsEventSourceInfo = {
-  tabId: string;
+  browsingContextId: string;
   timestamp: number;
 };
 

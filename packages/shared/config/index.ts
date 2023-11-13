@@ -15,12 +15,18 @@ export const RELEASE_ID: string = config.build.releaseId;
 export const FRIENDLY_ID = IS_PRODUCTION_APP_ENV ? RELEASE_VERSION : RELEASE_ID;
 
 export const HELP_DOCS_VERSION: string = config.app.helpDocsVersion;
-export const TAB_ID: string = 'tab_' + randomStr(4);
 export const BANGLE_HOT = config.build.hot;
 export const CHANGELOG_TEXT: string = config.app.changelogText;
 export const IS_STORYBOOK = Boolean(config.build.storybook);
 export const DEBUG_WRITE_SLOWDOWN = config.debug?.writeSlowDown;
 export const IS_TEST_ENV = config.build.nodeEnv === 'test';
+export const IS_WORKER_CONTEXT =
+  typeof WorkerGlobalScope !== 'undefined' &&
+  // eslint-disable-next-line no-restricted-globals, no-undef
+  self instanceof WorkerGlobalScope;
+
+// a unique id for each browser context like a window,  iframe, worker
+export const BROWSING_CONTEXT_ID: string = 'bCtx_' + randomStr(4);
 
 export const sentryConfig = {
   environment: APP_ENV,
@@ -36,7 +42,7 @@ if (config.build.nodeEnv !== 'test') {
   console.log(config.build.appEnv + ': using ' + RELEASE_ID);
 
   console.table({
-    tabId: TAB_ID,
+    browserContextId: BROWSING_CONTEXT_ID,
     isWorkerContext:
       typeof WorkerGlobalScope !== 'undefined' &&
       // eslint-disable-next-line no-restricted-globals, no-undef

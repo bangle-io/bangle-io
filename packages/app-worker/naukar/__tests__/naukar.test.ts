@@ -1,16 +1,18 @@
 import {
   AppDatabase,
   EternalVarsBase,
+  EternalVarsWorker,
   NaukarBare,
 } from '@bangle.io/shared-types';
 
 import { Naukar, NaukarConfig } from '../index';
 
-const mockEternalVars: EternalVarsBase = {
+const mockEternalVars: EternalVarsWorker = {
   debugFlags: {},
   appDatabase: {} as AppDatabase,
   emitter: {} as any,
   userPreferenceManager: {} as any,
+  parentInfo: {} as any,
 };
 
 describe('Naukar', () => {

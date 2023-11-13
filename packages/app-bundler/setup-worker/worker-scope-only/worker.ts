@@ -36,18 +36,23 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
 
   const naukarInitialize: NaukarInitialize = {
     initialize: async (config) => {
-      const { debugFlags } = config;
+      if (ready) {
+        logger.warn('naukar already initialized');
+        return;
+      }
+
       const eternalVars = setupEternalVarsWorker({
         type: 'worker',
-        debugFlags,
+        debugFlags: config.debugFlags,
         baseDatabase: new AppDatabaseIndexedDB(),
+        parentInfo: config.parentInfo,
       });
 
       naukarInstance = new Naukar({
         eternalVars,
       });
 
-      const { testDelayWorkerInitialize } = debugFlags;
+      const { testDelayWorkerInitialize } = config.debugFlags;
 
       if (typeof testDelayWorkerInitialize === 'number') {
         logger.warn(
@@ -82,7 +87,7 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
         return Reflect.get(naukarInstance!, prop, receiver);
       }
 
-      // we have checks to ensure that naukarInstance that all keys are only method type -- (..args:any)=>any
+      // we have checks to ensure that in naukarInstance all keys are only method type -- (..args:any)=>any
       return (...args: any[]) => {
         return onReady.then(() => {
           return Reflect.get(naukarInstance!, prop, receiver)(...args);

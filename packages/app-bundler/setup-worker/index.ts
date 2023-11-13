@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink';
 
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { assertNonWorkerGlobalScope } from '@bangle.io/global-scope-helpers';
 import type {
   DebugFlags,
@@ -10,6 +11,7 @@ import type {
 import { logger } from './logger';
 import { NaukarInitialize } from './types';
 
+// we are in the main window thread
 assertNonWorkerGlobalScope();
 
 /**
@@ -39,6 +41,9 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   void naukarConstructor.initialize({
     url: window.location.href,
     debugFlags,
+    parentInfo: {
+      browserContextId: BROWSING_CONTEXT_ID,
+    },
   });
 
   void naukarConstructor.isReady().then((isReady) => {

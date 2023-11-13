@@ -1,5 +1,5 @@
 import { AppDatabase } from '@bangle.io/app-database';
-import { TAB_ID } from '@bangle.io/config';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { Emitter } from '@bangle.io/emitter';
 import type {
   EternalVarsBase,
@@ -17,7 +17,7 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
   const emitter = Emitter.create<EternalVarsEvent>();
 
   const getSourceInfo = (): EternalVarsEventSourceInfo => ({
-    tabId: TAB_ID,
+    browsingContextId: BROWSING_CONTEXT_ID,
     timestamp: Date.now(),
   });
 
