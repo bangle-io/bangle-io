@@ -164,7 +164,7 @@ describe('UserPreferenceManager', () => {
         themePreference: COLOR_SCHEME.DARK,
         invalidField: 'invalid',
       };
-      mockDatabase.setMiscData(DB_KEY, JSON.stringify(partialValidPrefs));
+      await mockDatabase.setMiscData(DB_KEY, JSON.stringify(partialValidPrefs));
 
       const prefs = await userPreferenceManager.readUserPreference();
       expect(prefs).toEqual({
