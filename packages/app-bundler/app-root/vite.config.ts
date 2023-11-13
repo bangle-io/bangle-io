@@ -48,6 +48,9 @@ export default defineConfig(async ({ command, mode }) => {
     define: {
       ...envVars.globalIdentifiers,
     },
+    optimizeDeps: {
+      // exclude: ['@nalanda/core'],
+    },
     plugins: [
       createHtmlPlugin({
         minify: isProduction,

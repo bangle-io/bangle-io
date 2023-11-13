@@ -24,8 +24,8 @@
     "@adobe/react-spectrum": "^3.31.1",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/ui": "workspace:*",
-    "@nalanda/core": "^0.2.0",
-    "@nalanda/react": "^0.2.0",
+    "@nalanda/core": "^0.2.1",
+    "@nalanda/react": "^0.2.1",
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
     "@bangle.io/shared-types": "workspace:*"
