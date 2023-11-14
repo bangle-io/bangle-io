@@ -29,7 +29,5 @@
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*"
   },
-  "devDependencies": {
-    "@bangle.io/app-database-in-memory": "workspace:*"
-  }
+  "devDependencies": {}
 }

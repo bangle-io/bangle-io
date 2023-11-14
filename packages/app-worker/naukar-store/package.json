@@ -1,12 +1,11 @@
 {
-  "name": "@bangle.io/nalanda",
-  "description": "",
+  "name": "@bangle.io/naukar-store",
+  "description": "The naukar store",
   "license": "AGPL-3.0-or-later",
-  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/nalanda"
+    "directory": "packages/app-worker/naukar-store"
   },
   "authors": [
     {
@@ -16,18 +15,17 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
   "banglePackageConfig": {
     "type": "universal"
   },
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {},
   "dependencies": {
-    "@nalanda/core": "^0.2.1",
-    "@nalanda/react": "^0.2.1"
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/naukar-common": "workspace:*",
+    "@nalanda/core": "^0.2.1"
   }
 }

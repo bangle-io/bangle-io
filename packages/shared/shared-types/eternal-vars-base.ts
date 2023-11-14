@@ -10,10 +10,11 @@ export type EternalVarsEventSourceInfo = {
   timestamp: number;
 };
 
+// WARNING: only keep JSON serializable data in the payload
 export type EternalVarsEvent =
   | {
       event: '@event::database:workspace-create';
-      payload: { wsInfo: WorkspaceInfo; source: EternalVarsEventSourceInfo };
+      payload: { wsName: string; source: EternalVarsEventSourceInfo };
     }
   | {
       event: '@event::database:workspace-update';

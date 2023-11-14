@@ -29,6 +29,8 @@
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/user-preference": "workspace:*",
     "@bangle.io/config": "workspace:*",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/broadcaster": "workspace:*",
+    "@bangle.io/constants": "workspace:*"
   }
 }

@@ -4,7 +4,8 @@
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
       "js-lib",
-      "shared"
+      "shared",
+      "app-worker"
     ]
   }
 }

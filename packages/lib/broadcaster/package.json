@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/nalanda",
-  "description": "",
+  "name": "@bangle.io/broadcaster",
+  "description": "Helper tool to broadcast things to other browsing contexts",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/nalanda"
+    "directory": "packages/lib/broadcaster"
   },
   "authors": [
     {
@@ -18,7 +18,7 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "universal"
+    "type": "browser"
   },
   "main": "index.ts",
   "module": "index.ts",
@@ -27,7 +27,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "@nalanda/core": "^0.2.1",
-    "@nalanda/react": "^0.2.1"
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/emitter": "workspace:*"
   }
 }

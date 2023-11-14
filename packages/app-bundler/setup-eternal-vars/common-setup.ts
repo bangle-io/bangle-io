@@ -1,4 +1,5 @@
 import { AppDatabase } from '@bangle.io/app-database';
+import { createBroadcaster } from '@bangle.io/broadcaster';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { Emitter } from '@bangle.io/emitter';
 import type {
@@ -21,29 +22,51 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
     timestamp: Date.now(),
   });
 
+  const broadcast = createBroadcaster<EternalVarsEvent>();
+
+  // TODO : it is easy to forget to add a new event here
+  broadcast.on('@event::database:workspace-create', (event) => {
+    emitter.emit('@event::database:workspace-create', event);
+  });
+  broadcast.on('@event::database:workspace-update', (event) => {
+    emitter.emit('@event::database:workspace-update', event);
+  });
+  broadcast.on('@event::database:workspace-delete', (event) => {
+    emitter.emit('@event::database:workspace-delete', event);
+  });
+  broadcast.on('@event::user-preference:change', (event) => {
+    emitter.emit('@event::user-preference:change', event);
+  });
+
   const appDatabase = new AppDatabase({
     database: config.baseDatabase,
     onChange: (change) => {
       switch (change.type) {
         case 'workspace-create': {
-          emitter.emit('@event::database:workspace-create', {
-            wsInfo: change.payload,
-            source: getSourceInfo(),
-          });
+          [emitter, broadcast].forEach((e) =>
+            e.emit('@event::database:workspace-create', {
+              wsName: change.payload.name,
+              source: getSourceInfo(),
+            }),
+          );
           break;
         }
         case 'workspace-update': {
-          emitter.emit('@event::database:workspace-update', {
-            wsName: change.payload.name,
-            source: getSourceInfo(),
-          });
+          [emitter, broadcast].forEach((e) =>
+            e.emit('@event::database:workspace-update', {
+              wsName: change.payload.name,
+              source: getSourceInfo(),
+            }),
+          );
           break;
         }
         case 'workspace-delete': {
-          emitter.emit('@event::database:workspace-delete', {
-            wsName: change.payload.name,
-            source: getSourceInfo(),
-          });
+          [emitter, broadcast].forEach((e) =>
+            e.emit('@event::database:workspace-delete', {
+              wsName: change.payload.name,
+              source: getSourceInfo(),
+            }),
+          );
           break;
         }
         default: {
@@ -57,9 +80,11 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
   const userPreferenceManager = new UserPreferenceManager({
     database: appDatabase,
     onChange: () => {
-      emitter.emit('@event::user-preference:change', {
-        source: getSourceInfo(),
-      });
+      [emitter, broadcast].forEach((e) =>
+        e.emit('@event::user-preference:change', {
+          source: getSourceInfo(),
+        }),
+      );
     },
   });
 
