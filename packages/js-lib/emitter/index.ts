@@ -2,7 +2,7 @@ type Listener<T> = (data: T) => void;
 
 type Listeners = Record<string, Set<Listener<any>>>;
 
-type EventPayload<E extends string, P> = {
+export type EventPayload<E extends string, P> = {
   event: E;
   payload: P;
 };
@@ -12,11 +12,21 @@ export type DiscriminatedUnionToObject<U extends EventPayload<any, any>> = {
 };
 
 export class Emitter<T extends object = any> {
+  constructor(
+    private options: {
+      onDestroy?: () => void;
+      onEmit?: (message: EventPayload<any, any>) => void;
+    } = {},
+  ) {}
+
   /**
    * provides a way to create an emitter with discriminated union types
    */
-  static create<U extends EventPayload<string, any>>() {
-    const emitter = new Emitter<DiscriminatedUnionToObject<U>>();
+  static create<U extends EventPayload<string, any>>(options?: {
+    onEmit?: (message: U) => void;
+    onDestroy?: () => void;
+  }) {
+    const emitter = new Emitter<DiscriminatedUnionToObject<U>>(options as any);
     return emitter;
   }
 
@@ -27,6 +37,8 @@ export class Emitter<T extends object = any> {
   destroy(): void {
     this._callbacks = {};
     this.destroyed = true;
+
+    this.options?.onDestroy?.();
   }
 
   emit<K extends keyof T>(event: K, data: T[K]): this {
@@ -38,6 +50,14 @@ export class Emitter<T extends object = any> {
     if (callbacks) {
       callbacks.forEach((callback) => callback(data));
     }
+
+    const val = {
+      event: event as string,
+      payload: data,
+    } satisfies EventPayload<string, T[K]>;
+
+    this.options?.onEmit?.(val);
+
     return this;
   }
 

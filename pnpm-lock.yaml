@@ -201,9 +201,15 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../../lib/app-database
+      '@bangle.io/broadcaster':
+        specifier: workspace:*
+        version: link:../../lib/broadcaster
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -327,9 +333,6 @@ importers:
       '@bangle.io/window-store':
         specifier: workspace:*
         version: link:../window-store
-      '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
       '@nalanda/react':
         specifier: ^0.2.1
         version: 0.2.1(react@18.2.0)
@@ -648,6 +651,18 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+
+  packages/lib/broadcaster:
+    dependencies:
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
 
   packages/lib/slice-ui:
     dependencies:

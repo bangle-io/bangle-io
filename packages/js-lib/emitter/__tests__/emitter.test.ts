@@ -226,3 +226,32 @@ describe('Emitter with discriminated union', () => {
     expect(1).toBe(1); // Placeholder assertion to ensure the test runs
   });
 });
+
+describe('Emitter with onEmit feature', () => {
+  test('onEmit receives correct EventPayload', () => {
+    const onEmitMock = jest.fn();
+    const emitter = new Emitter({ onEmit: onEmitMock });
+
+    const testData = { key: 'value' };
+    emitter.emit('event', testData);
+    expect(onEmitMock).toHaveBeenCalledWith({
+      event: 'event',
+      payload: testData,
+    });
+
+    emitter.emit('event2', testData);
+    expect(onEmitMock).toHaveBeenCalledWith({
+      event: 'event2',
+      payload: testData,
+    });
+  });
+
+  test('onEmit is not called after emitter is destroyed', () => {
+    const onEmitMock = jest.fn();
+    const emitter = new Emitter({ onEmit: onEmitMock });
+
+    emitter.destroy();
+    emitter.emit('event', 'test-data');
+    expect(onEmitMock).not.toHaveBeenCalled();
+  });
+});
