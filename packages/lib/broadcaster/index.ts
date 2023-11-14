@@ -1,9 +1,9 @@
 import { BROWSING_CONTEXT_ID, RELEASE_ID } from '@bangle.io/config';
-import { Emitter, EventPayload } from '@bangle.io/emitter';
+import { Emitter, EventMessage } from '@bangle.io/emitter';
 
 import { logger } from './logger';
 
-export type BroadcasterConfig<T extends EventPayload<any, any>> = {
+export type BroadcasterConfig<T extends EventMessage<any, any>> = {
   onMessage: (message: T) => void;
 };
 
@@ -19,23 +19,24 @@ type Message<T> = {
   payload: T;
 };
 
-export function createBroadcaster<T extends EventPayload<string, any>>() {
+export function createBroadcaster<T extends EventMessage<string, any>>() {
   const broadcastChannel = new BroadcastChannel(channelName);
 
   const emitter = Emitter.create<T>({
-    onEmit: (message) => {
-      const broadcastMessage: Message<T> = {
-        sender: {
-          id: BROWSING_CONTEXT_ID,
-          timestamp: Date.now(),
-        },
-        payload: message,
-      };
-      broadcastChannel.postMessage(broadcastMessage);
-    },
     onDestroy() {
       broadcastChannel.close();
     },
+  });
+
+  emitter.onAll((message) => {
+    const broadcastMessage: Message<any> = {
+      sender: {
+        id: BROWSING_CONTEXT_ID,
+        timestamp: Date.now(),
+      },
+      payload: message,
+    };
+    broadcastChannel.postMessage(broadcastMessage);
   });
 
   broadcastChannel.onmessage = (messageEvent) => {

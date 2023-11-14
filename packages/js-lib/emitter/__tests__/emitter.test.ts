@@ -1,6 +1,7 @@
 import { expectType } from '@bangle.io/mini-js-utils';
 
 import { Emitter } from '../index';
+
 describe('Emitter', () => {
   let emitter: Emitter;
 
@@ -21,8 +22,8 @@ describe('Emitter', () => {
 
   test('should allow removing specific event listeners', () => {
     const mockCallback = jest.fn();
-    emitter.on('event', mockCallback);
-    emitter.off('event', mockCallback);
+    const off = emitter.on('event', mockCallback);
+    off();
     emitter.emit('event', 'test-data');
     expect(mockCallback).not.toHaveBeenCalled();
   });
@@ -33,17 +34,6 @@ describe('Emitter', () => {
     emitter.clearListeners();
     emitter.emit('event', 'test-data');
     expect(mockCallback).not.toHaveBeenCalled();
-  });
-
-  test('should remove all event listeners for a specific event if off is called with only the event argument', () => {
-    const mockCallback1 = jest.fn();
-    const mockCallback2 = jest.fn();
-    emitter.on('event', mockCallback1);
-    emitter.on('event', mockCallback2);
-    emitter.off('event');
-    emitter.emit('event', 'test-data');
-    expect(mockCallback1).not.toHaveBeenCalled();
-    expect(mockCallback2).not.toHaveBeenCalled();
   });
 
   test('destroy method should remove all event listeners', () => {
@@ -87,13 +77,6 @@ describe('Emitter', () => {
     expect(mockCallback2).toHaveBeenCalledWith('test-data');
   });
 
-  test('removing a non-existent listener should not cause issues', () => {
-    const mockCallback = jest.fn();
-    emitter.off('event', mockCallback); // Listener was never added
-    emitter.emit('event', 'test-data');
-    expect(mockCallback).not.toHaveBeenCalled();
-  });
-
   test('emitting an event with no listeners should not cause errors', () => {
     expect(() => {
       emitter.emit('event', 'test-data');
@@ -121,19 +104,27 @@ describe('types', () => {
     // Create an instance of Emitter
     const emitter = new Emitter<TestEvents>();
 
+    emitter.onAll((data) => {
+      switch (data.event) {
+        case 'event1': {
+          expectType<string, typeof data.payload>(data.payload);
+          break;
+        }
+        case 'event2': {
+          expectType<number, typeof data.payload>(data.payload);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    });
+
     emitter.on('event1', (data) => {
       expectType<string, typeof data>(data);
     });
 
     emitter.emit('event2', 42);
-
-    // Test 'off' method
-    emitter.off('event1', (data) => {
-      expectType<string, typeof data>(data);
-    });
-
-    // Test 'destroy' method
-    emitter.destroy();
 
     emitter.emit('event1', 'hello world'); // Should be correct
     // @ts-expect-error - Should be incorrect
@@ -209,11 +200,6 @@ describe('Emitter with discriminated union', () => {
     // Test 'emit' method with correct types
     emitter.emit('eventB', { bar: 'hello' });
 
-    // Test 'off' method with correct types
-    emitter.off('eventA', (payload) => {
-      // This should be correct, payload should be of type { foo: number }
-      expect(payload.foo).toBeGreaterThan(0);
-    });
     () => {
       // @ts-expect-error - Should be incorrect
       emitter.emit('eventA', { bar: 'this should cause a type error' });
@@ -227,10 +213,11 @@ describe('Emitter with discriminated union', () => {
   });
 });
 
-describe('Emitter with onEmit feature', () => {
+describe('Emitter with onAll feature', () => {
   test('onEmit receives correct EventPayload', () => {
+    const emitter = new Emitter();
     const onEmitMock = jest.fn();
-    const emitter = new Emitter({ onEmit: onEmitMock });
+    emitter.onAll(onEmitMock);
 
     const testData = { key: 'value' };
     emitter.emit('event', testData);
@@ -247,11 +234,127 @@ describe('Emitter with onEmit feature', () => {
   });
 
   test('onEmit is not called after emitter is destroyed', () => {
+    const emitter = new Emitter({});
     const onEmitMock = jest.fn();
-    const emitter = new Emitter({ onEmit: onEmitMock });
+    emitter.onAll(onEmitMock);
 
     emitter.destroy();
     emitter.emit('event', 'test-data');
     expect(onEmitMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('Emitter onAll', () => {
+  let emitter: Emitter;
+
+  beforeEach(() => {
+    emitter = new Emitter();
+  });
+
+  test('should add a listener via onAll', () => {
+    const listener = jest.fn();
+    emitter.onAll(listener);
+    emitter.emit('testEvent', 'testData');
+    expect(listener).toHaveBeenCalledWith({
+      event: 'testEvent',
+      payload: 'testData',
+    });
+  });
+
+  test('should call all listeners added via onAll', () => {
+    const firstListener = jest.fn();
+    const secondListener = jest.fn();
+    emitter.onAll(firstListener);
+    emitter.onAll(secondListener);
+    emitter.emit('testEvent', 'testData');
+    expect(firstListener).toHaveBeenCalledWith({
+      event: 'testEvent',
+      payload: 'testData',
+    });
+    expect(secondListener).toHaveBeenCalledWith({
+      event: 'testEvent',
+      payload: 'testData',
+    });
+  });
+
+  test('should remove a listener when its removal function is called', () => {
+    const listener = jest.fn();
+    const removeListener = emitter.onAll(listener);
+    removeListener();
+    emitter.emit('testEvent', 'testData');
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  test('should not execute callback after listener is removed', () => {
+    const listener = jest.fn();
+    emitter.onAll(listener);
+    const removeListener = emitter.onAll(() => {});
+    removeListener();
+    emitter.emit('testEvent', 'testData');
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  test('should not add listeners after destroy is called', () => {
+    emitter.destroy();
+    const listener = jest.fn();
+    emitter.onAll(listener);
+    emitter.emit('testEvent', 'testData');
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  test('clearListeners should remove all event and global listeners', () => {
+    const eventListener = jest.fn();
+    const allEventListener = jest.fn();
+
+    // Add a specific event listener and a global listener
+    emitter.on('specificEvent', eventListener);
+    emitter.onAll(allEventListener);
+
+    // Emit events to ensure listeners are initially called
+    emitter.emit('specificEvent', 'dataForSpecificEvent');
+    emitter.emit('anotherEvent', 'dataForAnotherEvent');
+
+    expect(eventListener).toHaveBeenCalledTimes(1);
+    expect(allEventListener).toHaveBeenCalledTimes(2);
+
+    // Clear all listeners and emit events again
+    emitter.clearListeners();
+    expect(emitter._eventListeners).toEqual({});
+    expect(emitter._allEventListeners.size).toBe(0);
+
+    emitter.emit('specificEvent', 'dataForSpecificEvent');
+    emitter.emit('anotherEvent', 'dataForAnotherEvent');
+
+    // Listeners should not be called again after clearListeners
+    expect(eventListener).toHaveBeenCalledTimes(1);
+    expect(allEventListener).toHaveBeenCalledTimes(2);
+  });
+
+  test('destroy should remove all event and global listeners', () => {
+    const eventListener = jest.fn();
+    const allEventListener = jest.fn();
+
+    // Add a specific event listener and a global listener
+    emitter.on('specificEvent', eventListener);
+    emitter.onAll(allEventListener);
+
+    // Emit events to ensure listeners are initially called
+    emitter.emit('specificEvent', 'dataForSpecificEvent');
+    emitter.emit('anotherEvent', 'dataForAnotherEvent');
+
+    expect(eventListener).toHaveBeenCalledTimes(1);
+    expect(allEventListener).toHaveBeenCalledTimes(2);
+
+    // Clear all listeners and emit events again
+    emitter.destroy();
+    expect(emitter._eventListeners).toEqual({});
+    expect(emitter._allEventListeners.size).toBe(0);
+
+    emitter.emit('specificEvent', 'dataForSpecificEvent');
+    emitter.emit('anotherEvent', 'dataForAnotherEvent');
+
+    // Listeners should not be called again after clearListeners
+    expect(eventListener).toHaveBeenCalledTimes(1);
+    expect(allEventListener).toHaveBeenCalledTimes(2);
   });
 });
