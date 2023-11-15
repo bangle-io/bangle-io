@@ -42,10 +42,10 @@ function goTo(location: Location, replace: boolean) {
   });
 }
 
-const createBrowserHistoryRef = ref<BaseHistory | undefined>(() => undefined);
+const createHistoryRef = ref<BaseHistory | undefined>(() => undefined);
 
 key.effect(function watchHistoryEffect(store) {
-  const ref = createBrowserHistoryRef(store);
+  const ref = createHistoryRef(store);
 
   if (ref.current) {
     return;
@@ -79,7 +79,7 @@ key.effect(
   function pendingNavEffect(store) {
     const pendingNavigation = pendingNavigationField.track(store);
 
-    const history = createBrowserHistoryRef(store).current;
+    const history = createHistoryRef(store).current;
 
     if (!history || !pendingNavigation) {
       return;
