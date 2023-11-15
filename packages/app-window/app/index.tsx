@@ -19,7 +19,7 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
   // even though react can remount the app, we want to keep the store
   // around as it is a singleton
   if (!store) {
-    store = createWindowStore({ eternalVars });
+    store = createWindowStore(eternalVars, {});
   }
 
   return (

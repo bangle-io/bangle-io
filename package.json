@@ -13,6 +13,7 @@
     "@bangle.io/jsdom-env": "workspace:*",
     "@bangle.io/plop-configs": "workspace:*",
     "@bangle.io/uno-preset-bangle": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@eslint/js": "^8.53.0",
     "@swc/jest": "^0.2.29",
     "@types/eslint": "^8.44.6",

@@ -1,5 +1,6 @@
 {
   "name": "shared",
+  "description": "Shared code that is JSON serializable or is types between the different projects",
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
       "js-lib",
