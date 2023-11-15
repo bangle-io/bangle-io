@@ -17,6 +17,9 @@ importers:
       '@bangle.io/plop-configs':
         specifier: workspace:*
         version: link:packages/tooling/plop-configs
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:packages/shared/shared-types
       '@bangle.io/uno-preset-bangle':
         specifier: workspace:*
         version: link:packages/app-bundler/uno-preset-bangle
@@ -354,12 +357,18 @@ importers:
 
   packages/app-window/window-store:
     dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../../lib/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
@@ -663,6 +672,42 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+
+  packages/lib/lib-common:
+    dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@nalanda/core':
+        specifier: ^0.2.1
+        version: 0.2.1
+
+  packages/lib/slice-page:
+    dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/global-scope-helpers':
+        specifier: workspace:*
+        version: link:../../js-lib/global-scope-helpers
+      '@bangle.io/history':
+        specifier: workspace:*
+        version: link:../../js-lib/history
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../lib-common
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@nalanda/core':
+        specifier: ^0.2.1
+        version: 0.2.1
+      page-lifecycle:
+        specifier: ^0.1.2
+        version: 0.1.2
 
   packages/lib/slice-ui:
     dependencies:
@@ -14770,6 +14815,10 @@ packages:
       lodash.flattendeep: 4.4.0
       release-zalgo: 1.0.0
     dev: true
+
+  /page-lifecycle@0.1.2:
+    resolution: {integrity: sha512-+3uccYgL0CXG0KSXRxZi4uc2E6mqFWV5HqiJJgcnaJCiS0LqiuJ4vB420N21NFuLvuvLB4Jr5drgQ2NXAXF9Iw==}
+    dev: false
 
   /pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}

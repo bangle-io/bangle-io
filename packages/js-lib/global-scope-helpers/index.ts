@@ -17,6 +17,11 @@ export function getSelfType(): 'worker' | 'window' | 'nodejs' | 'unknown' {
     ? 'nodejs'
     : 'unknown';
 }
+
+export function isWindowGlobalScope() {
+  return typeof window !== 'undefined';
+}
+
 /**
  * throws an error in not in a web worker environment
  */
