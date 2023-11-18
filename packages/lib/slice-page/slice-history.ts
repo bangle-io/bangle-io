@@ -27,6 +27,7 @@ const pendingNavigationField = key.field<
       preserve?: boolean;
     }
 >(undefined);
+// Location is a mirror of the history state
 const locationField = key.field<Location | undefined>(undefined);
 
 // ACTIONS
@@ -34,7 +35,7 @@ function syncHistoryStateWithSliceState(location: Location) {
   return locationField.update(location);
 }
 
-function goTo(location: Location, replace: boolean) {
+function goTo(location: Location, replace?: boolean) {
   return pendingNavigationField.update({
     location,
     replaceHistory: replace,
@@ -42,7 +43,7 @@ function goTo(location: Location, replace: boolean) {
   });
 }
 
-const createHistoryRef = ref<BaseHistory | undefined>(() => undefined);
+export const createHistoryRef = ref<BaseHistory | undefined>(() => undefined);
 
 key.effect(function watchHistoryEffect(store) {
   const ref = createHistoryRef(store);
@@ -72,6 +73,7 @@ key.effect(function watchHistoryEffect(store) {
 
   cleanup(store, () => {
     browserHistory.destroy();
+    ref.current = undefined;
   });
 });
 

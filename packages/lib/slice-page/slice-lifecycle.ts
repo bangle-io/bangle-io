@@ -19,7 +19,7 @@ const pageLifeCycleField = key.derive((state) => {
   return lifeCycleStateField.get(state).current;
 });
 
-const blockPageField = key.field<boolean>(false);
+export const blockPageField = key.field<boolean>(false);
 
 // ACTIONS
 function setPageLifeCycleState(state: {
@@ -76,5 +76,5 @@ key.effect(
 export const sliceLifeCycle = key.slice({
   blockPageReload,
   unblockPageReload,
-  pageLifeCycleField,
+  pageLifeCycle: pageLifeCycleField,
 });

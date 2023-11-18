@@ -51,7 +51,9 @@ export const setupSliceTestStore = ({
     store,
     runEffects: async () => {
       await sleep(0);
-      effectsCallbackRegistry.forEach((cb) => cb());
+      effectsCallbackRegistry.forEach((cb) => {
+        void cb();
+      });
       await sleep(0);
     },
   };

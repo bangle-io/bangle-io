@@ -6,7 +6,7 @@ import { sliceLifeCycle } from './slice-lifecycle';
 const key = createKey('slice-page', [sliceLifeCycle, sliceHistory]);
 
 const pageLifeCycleField = key.derive((state) => {
-  return sliceLifeCycle.getField(state, 'pageLifeCycleField');
+  return sliceLifeCycle.getField(state, 'pageLifeCycle');
 });
 
 const locationField = key.derive((state) => {
