@@ -23,7 +23,7 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@nalanda/core": "^0.2.2",
+    "@nalanda/core": "^0.2.3",
     "@bangle.io/history": "workspace:*",
     "@bangle.io/global-scope-helpers": "workspace:*",
     "@bangle.io/lib-common": "workspace:*",

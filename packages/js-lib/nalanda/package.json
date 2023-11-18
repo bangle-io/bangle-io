@@ -27,7 +27,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@nalanda/core": "^0.2.2",
-    "@nalanda/react": "^0.2.2"
+    "@nalanda/core": "^0.2.3",
+    "@nalanda/react": "^0.2.3"
   }
 }

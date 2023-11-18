@@ -26,6 +26,7 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/naukar-common": "workspace:*",
-    "@nalanda/core": "^0.2.2"
+    "@nalanda/core": "^0.2.3",
+    "@bangle.io/naukar-state-sync": "workspace:*"
   }
 }

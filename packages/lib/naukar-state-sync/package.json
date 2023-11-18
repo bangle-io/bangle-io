@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/app",
-  "description": "",
+  "name": "@bangle.io/naukar-state-sync",
+  "description": "A place to store schema like zod schema",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-window/app"
+    "directory": "packages/lib/naukar-state-sync"
   },
   "authors": [
     {
@@ -17,18 +18,17 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "@adobe/react-spectrum": "^3.31.1",
-    "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/ui": "workspace:*",
-    "@nalanda/react": "^0.2.3",
-    "@types/react": "^18.2.37",
-    "react": "^18.2.0",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/window-store": "workspace:*"
+    "zod": "^3.22.4"
   },
   "devDependencies": {}
 }
