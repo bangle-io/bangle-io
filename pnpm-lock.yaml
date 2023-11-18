@@ -337,8 +337,8 @@ importers:
         specifier: workspace:*
         version: link:../window-store
       '@nalanda/react':
-        specifier: ^0.2.1
-        version: 0.2.1(react@18.2.0)
+        specifier: ^0.2.2
+        version: 0.2.2(react@18.2.0)
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
@@ -376,8 +376,8 @@ importers:
         specifier: workspace:*
         version: link:../window-common
       '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
 
   packages/app-worker/naukar:
     dependencies:
@@ -409,8 +409,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared/shared-types
       '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
 
   packages/e2e-tests/e2e-tests:
     dependencies:
@@ -529,14 +529,17 @@ importers:
   packages/js-lib/nalanda:
     dependencies:
       '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
       '@nalanda/react':
-        specifier: ^0.2.1
-        version: 0.2.1(react@18.2.0)
+        specifier: ^0.2.2
+        version: 0.2.2(react@18.2.0)
 
   packages/js-lib/nsm-3:
     dependencies:
+      '@nalanda/core':
+        specifier: ^0.2.2
+        version: 0.2.2
       superjson:
         specifier: ^2.2.0
         version: 2.2.0
@@ -679,8 +682,10 @@ importers:
         specifier: workspace:*
         version: link:../../shared/shared-types
       '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
+
+  packages/lib/routing-helpers: {}
 
   packages/lib/slice-page:
     dependencies:
@@ -703,11 +708,21 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
       page-lifecycle:
         specifier: ^0.1.2
         version: 0.1.2
+    devDependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@bangle.io/test-helpers':
+        specifier: workspace:*
+        version: link:../test-helpers
 
   packages/lib/slice-ui:
     dependencies:
@@ -718,8 +733,26 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@nalanda/core':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
+
+  packages/lib/test-helpers:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@bangle.io/test-helpers':
+        specifier: workspace:*
+        version: 'link:'
+      '@nalanda/core':
+        specifier: ^0.2.2
+        version: 0.2.2
 
   packages/lib/ui:
     dependencies:
@@ -3560,16 +3593,16 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@nalanda/core@0.2.1:
-    resolution: {integrity: sha512-Es89rquR8WpzOs7mOySy470Oep6lXmfcaSkCZhMMVjpYnp4pK8btzU7A+abPn+QVUx3yc5Dh5XPjgiQF7Xanzw==}
+  /@nalanda/core@0.2.2:
+    resolution: {integrity: sha512-i+GOSHgOB83km3WIBVxLm3bZ0/m3NkJaG9/vDl/bbG1tQgMbWLecTn3DEO4TDv7wWcAnO5mcYIb2y1oWtAojvw==}
     dev: false
 
-  /@nalanda/react@0.2.1(react@18.2.0):
-    resolution: {integrity: sha512-qK106M2GzhJ+l1u4KuY7hkOofDyW9kFxftZ1wbuAYvD9WzgT0PVmS+oieoKpviJdXnpfTB6B6+RQk3mLPh9RUw==}
+  /@nalanda/react@0.2.2(react@18.2.0):
+    resolution: {integrity: sha512-6r1uyb36aoZIb1hCSMsAYSaloOgpahGQ0jSiwaoua3uQL/wbffLtSkSf2RRkwV7PxPd609paeJTZ4gGaMV9cMg==}
     peerDependencies:
       react: '>=17.0'
     dependencies:
-      '@nalanda/core': 0.2.1
+      '@nalanda/core': 0.2.2
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false

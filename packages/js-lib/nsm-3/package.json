@@ -28,7 +28,8 @@
   "scripts": {},
   "dependencies": {
     "superjson": "^2.2.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@nalanda/core": "^0.2.2"
   },
   "devDependencies": {}
 }

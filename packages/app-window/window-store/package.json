@@ -25,7 +25,7 @@
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@nalanda/core": "^0.2.1",
+    "@nalanda/core": "^0.2.2",
     "@bangle.io/window-common": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/lib-common": "workspace:*",

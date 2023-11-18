@@ -8,7 +8,7 @@ const config = {
 
   transformIgnorePatterns: [
     // Ignore node_modules except
-    `/node_modules/(?!.pnpm)(?!(prosemirror-utils-bangle))`,
+    `/node_modules/(?!.pnpm)(?!(prosemirror-utils-bangle|superjson))`,
   ],
   clearMocks: true,
   setupFiles: ['<rootDir>/packages/tooling/jest-utils/jest-setup.js'],
