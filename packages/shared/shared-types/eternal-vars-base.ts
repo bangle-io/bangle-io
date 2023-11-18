@@ -32,8 +32,21 @@ export type EternalVarsEvent =
       payload: {
         source: EternalVarsEventSourceInfo;
       };
+    }
+  | {
+      event: '@event::worker-sync:to-worker';
+      payload: {
+        // we use naukar-state-sync to sync the state of the worker
+        data: any;
+      };
+    }
+  | {
+      event: '@event::worker-sync:to-window';
+      payload: {
+        // we use naukar-state-sync to sync the state of the worker
+        data: any;
+      };
     };
-
 export interface EternalVarsBase {
   debugFlags: DebugFlags;
   appDatabase: AppDatabase;

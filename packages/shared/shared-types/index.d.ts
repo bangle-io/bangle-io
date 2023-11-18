@@ -11,5 +11,6 @@ export type * from './eternal-vars-window';
 export type * from './eternal-vars-worker';
 export type * from './naukar';
 export type * from './slice-page';
+export type * from './ui';
 export type * from './workspace';
 export type * from '@bangle.io/app-database';
