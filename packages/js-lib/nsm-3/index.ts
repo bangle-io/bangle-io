@@ -1,6 +1,7 @@
 import type { EffectScheduler } from '@nalanda/core';
 
 export { assertSafeZodSchema } from './zod-helpers';
+export * from '@nalanda/core';
 export * as superJson from 'superjson';
 export { z } from 'zod';
 
@@ -23,3 +24,11 @@ export function createManualEffectScheduler() {
     manualEffectScheduler,
   };
 }
+
+export const zeroTimeoutScheduler: EffectScheduler = (cb, opts) => {
+  let id = setTimeout(() => void cb(), 0);
+
+  return () => {
+    clearTimeout(id);
+  };
+};

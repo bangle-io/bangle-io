@@ -59,6 +59,8 @@
     "unocss": "^0.57.2",
     "vite": "^4.5.0",
     "vite-plugin-html": "^3.2.0",
-    "vite-plugin-pwa": "^0.16.7"
+    "vite-plugin-pwa": "^0.16.7",
+    "@bangle.io/window-store": "workspace:*",
+    "@bangle.io/test-utils-common": "workspace:*"
   }
 }

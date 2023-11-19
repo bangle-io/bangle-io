@@ -72,6 +72,10 @@ export class Naukar implements NaukarBare {
     getWindowActionsRef(this.store).current = this.windowActionProxy.proxy;
   }
 
+  destroy() {
+    this.store.destroy();
+  }
+
   // NOTE: all public interfaces are accessible by the main thread
   ok() {
     return true;

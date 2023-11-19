@@ -150,9 +150,15 @@ importers:
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../env-vars
+      '@bangle.io/test-utils-common':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-common
       '@bangle.io/uno-preset-bangle':
         specifier: workspace:*
         version: link:../uno-preset-bangle
+      '@bangle.io/window-store':
+        specifier: workspace:*
+        version: link:../../app-window/window-store
       '@types/minimist':
         specifier: ^1.2.4
         version: 1.2.4
@@ -439,6 +445,9 @@ importers:
       '@bangle.io/naukar-common':
         specifier: workspace:*
         version: link:../naukar-common
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -883,6 +892,21 @@ importers:
       '@bangle.io/test-utils-slice':
         specifier: workspace:*
         version: link:../test-utils-slice
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+
+  packages/test-utils/test-utils-common:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3

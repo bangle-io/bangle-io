@@ -9,4 +9,5 @@ export const DEFAULT_DEBUG_FLAGS: DebugFlags = {
   testShowAppRootSetupError: false,
   testDisableWorker: false,
   testAppDatabase: 'indexeddb',
+  testZeroTimeoutStoreEffectsScheduler: false,
 };

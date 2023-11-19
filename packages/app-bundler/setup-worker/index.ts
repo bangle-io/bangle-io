@@ -61,7 +61,7 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
     return {
       naukarRemote: naukarRemote,
       naukarTerminate: async () => {
-        //
+        return naukarRemote.destroy();
       },
     };
   }
@@ -94,6 +94,8 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
 
   const naukarTerminate = async () => {
     logger.warn('Terminating naukar worker');
+    await naukarConstructor.destroy();
+
     naukarConstructor[Comlink.releaseProxy]();
     // wait for comlink to release proxy
     // if we terminate immediately proxy is not released

@@ -27,7 +27,8 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/naukar-common": "workspace:*",
     "@nalanda/core": "^0.2.3",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/nsm-3": "workspace:*"
   },
   "devDependencies": {}
 }

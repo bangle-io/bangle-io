@@ -9,13 +9,6 @@ export type BroadcasterConfig<T extends EventMessage<any, any>> = {
 
 const channelName = 'bangle-io-broadcaster:' + RELEASE_ID;
 
-logger.info(
-  'using channelName',
-  channelName,
-  ' BROWSING_CONTEXT_ID',
-  BROWSING_CONTEXT_ID,
-);
-
 type Message<T> = {
   sender: {
     id: string;
@@ -25,6 +18,13 @@ type Message<T> = {
 };
 
 export function createBroadcaster<T extends EventMessage<string, any>>() {
+  logger.info(
+    'using channelName',
+    channelName,
+    ' BROWSING_CONTEXT_ID',
+    BROWSING_CONTEXT_ID,
+  );
+
   const broadcastChannel = new BroadcastChannel(channelName);
 
   const emitter = Emitter.create<T>({

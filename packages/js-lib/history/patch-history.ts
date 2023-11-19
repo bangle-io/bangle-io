@@ -11,7 +11,9 @@ export const historyEvents = [eventPopstate, eventPushState, eventReplaceState];
 // is to monkey-patch these methods.
 //
 // See https://stackoverflow.com/a/4585031
-if (typeof window?.history !== 'undefined') {
+const isWindow = typeof window !== 'undefined';
+
+if (isWindow && typeof window?.history !== 'undefined') {
   const history: any = window.history;
 
   for (const type of [eventPushState, eventReplaceState]) {

@@ -4,7 +4,8 @@ export type DebugFlags = {
   testShowAppRootReactError: boolean;
   testShowAppRootSetupError: boolean;
   testDisableWorker: boolean;
-
+  // effects are run in a setTimeout with 0ms delay
+  testZeroTimeoutStoreEffectsScheduler: boolean;
   // defaults to indexeddb
   testAppDatabase: 'memory' | 'indexeddb';
 };
