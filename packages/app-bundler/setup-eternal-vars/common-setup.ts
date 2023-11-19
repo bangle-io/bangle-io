@@ -68,16 +68,6 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
         break;
       }
 
-      case '@event::worker-sync:to-worker': {
-        emitter.emit(event.event, event.payload);
-        break;
-      }
-
-      case '@event::worker-sync:to-window': {
-        emitter.emit(event.event, event.payload);
-        break;
-      }
-
       default: {
         let x: never = event;
         throw new Error(`Unhandled event`);
