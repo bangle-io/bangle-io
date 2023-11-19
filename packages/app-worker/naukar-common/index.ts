@@ -1,6 +1,6 @@
 import { ref } from '@nalanda/core';
 
-import type { EternalVarsWorker } from '@bangle.io/shared-types';
+import type { EternalVarsWorker, WindowActions } from '@bangle.io/shared-types';
 
 export type NaukarStoreConfig = {
   eternalVars: EternalVarsWorker;
@@ -16,4 +16,8 @@ export const defaultStoreConfig: NaukarStoreConfig = {
  * Please use getWindowStoreConfig instead of this.
  * This should only be used when setting up the store once.
  */
-export const getStoreConfig = ref<NaukarStoreConfig>(() => defaultStoreConfig);
+export const getStoreConfigRef = ref<NaukarStoreConfig>(
+  () => defaultStoreConfig,
+);
+
+export const getWindowActionsRef = ref<WindowActions>(() => undefined);

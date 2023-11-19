@@ -43,7 +43,7 @@ describe('Naukar', () => {
     expect(naukar.ok()).toBe(true);
   });
 
-  it('getDebugFlags should return debug flags from eternalVars', () => {
+  it('readDebugFlags should return debug flags from eternalVars', () => {
     let { naukar } = setup({
       eternalVars: {
         ...mockEternalVars,
@@ -53,7 +53,7 @@ describe('Naukar', () => {
       },
     });
 
-    expect(naukar.getDebugFlags()).toEqual({
+    expect(naukar.readDebugFlags()).toEqual({
       testDelayWorkerInitialize: 1000,
     });
   });

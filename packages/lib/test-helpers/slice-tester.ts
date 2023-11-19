@@ -1,12 +1,4 @@
-import {
-  cleanup,
-  createKey,
-  createStore,
-  DebugLogger,
-  ref,
-  Slice,
-  StoreOptions,
-} from '@nalanda/core';
+import { createStore, DebugLogger, Slice } from '@nalanda/core';
 
 import {
   createWindowStoreConfigRef,

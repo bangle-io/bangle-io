@@ -3,6 +3,7 @@ declare var __BANGLE_INJECTED_CONFIG__: string | undefined;
 
 interface Window {
   _nsmE2e: import('@bangle.io/e2e-types').E2eTypes;
+  _workerE2e: import('@bangle.io/e2e-types').WorkerE2eTypes;
 }
 
 declare module 'page-lifecycle' {

@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/e2e-types",
+  "name": "@bangle.io/safe-json",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/e2e-types"
+    "directory": "packages/js-lib/safe-json"
   },
   "authors": [
     {
@@ -16,18 +16,17 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "universal"
   },
-  "types": "index.d.ts",
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/config-template": "^0.0.7",
-    "@bangle.io/shared-types": "workspace:*",
-    "@nalanda/core": "^0.2.3"
-  },
-  "devDependencies": {}
+    "superjson": "^2.2.1"
+  }
 }

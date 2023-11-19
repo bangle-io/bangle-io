@@ -31,7 +31,8 @@
     "immer": "^10.0.3",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/nsm-3": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*",
+    "comlink": "^4.4.1"
   },
   "devDependencies": {}
 }

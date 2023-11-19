@@ -1,10 +1,14 @@
-import { createKey, EffectStore, ref } from '@nalanda/core';
+import { cleanup, createKey, EffectStore, ref } from '@nalanda/core';
+import * as Comlink from 'comlink';
 import { enablePatches, Patch, produceWithPatches } from 'immer';
 
 import { defaultWorkerWindowStoreReplica } from '@bangle.io/constants';
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
 import { superJson } from '@bangle.io/nsm-3';
-import { WorkerWindowStoreReplica } from '@bangle.io/shared-types';
+import {
+  WindowActions,
+  WorkerWindowStoreReplica,
+} from '@bangle.io/shared-types';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
 
@@ -19,6 +23,30 @@ const getPatchesRef = ref<Patch[]>(() => {
   return [];
 });
 const gtIdCounterRef = ref<number>(() => 0);
+
+key.effect((store) => {
+  const { eternalVars } = getWindowStoreConfig(store);
+  let destroyed = false;
+
+  const actions: WindowActions = {
+    pageBlockPageReload: async ({ block }) => {
+      if (destroyed) {
+        return;
+      }
+      if (block) {
+        store.dispatch(slicePage.actions.blockPageReload());
+      } else {
+        store.dispatch(slicePage.actions.unblockPageReload());
+      }
+    },
+  };
+
+  void eternalVars.naukar.sendWindowActions(Comlink.proxy(actions));
+
+  cleanup(store, () => {
+    destroyed = true;
+  });
+});
 
 function updatePatches(
   store: EffectStore,
@@ -43,7 +71,7 @@ key.effect((store) => {
   const patches = patchesRef.current;
   patchesRef.current = [];
 
-  void eternalVars.naukar.receivePatches({
+  void eternalVars.naukar.sendPatches({
     id: idCounterRef.current++,
     patches: superJson.stringify(patches),
   });

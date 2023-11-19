@@ -28,3 +28,18 @@ Use [plopjs](https://plopjs.com/documentation/) to generate new packages.
 npx plop lib
 ```
 
+
+# Worker / Naukar
+
+> `naukar` and `worker` are used interchangeably to mean the same thing [worker thread](https://developer.mozilla.org/en-US/docs/Web/API/Worker).
+
+
+## Worker architecture
+
+All of the worker code is contained in the `packages/app-worker`, except for the `@bangle.io/setup-worker` which lives in `package/app-bundler` and is a helper function to setup the worker.
+
+1. We use a proxies to do a bi directional communication.
+1. The worker methods are available to all of window via `eternalVars.naukar.<method>`.
+1. Some state of the window is kept in a one way sync (main -> worker) thread using `json-patch` and `immer`.
+1. Worker code can access this by using the slice: `slice-window-state`.
+1. To change a window state, the worker code can take advantage of `WindowActions`.

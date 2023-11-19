@@ -30,9 +30,9 @@
     "@bangle.io/shared-types": "workspace:*",
     "zod": "^3.22.4",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/safe-json": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/app-database-in-memory": "workspace:*",
