@@ -26,7 +26,8 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "@nalanda/core": "^0.2.3"
   },
   "devDependencies": {}
 }
