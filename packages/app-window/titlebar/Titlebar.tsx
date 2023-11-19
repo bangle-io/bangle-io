@@ -2,7 +2,7 @@ import { ToggleButton } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import MarginLeftIcon from '@spectrum-icons/workflow/MarginLeft';
 import MarginRightIcon from '@spectrum-icons/workflow/MarginRight';
-import SearchIcon from '@spectrum-icons/workflow/search';
+import SearchIcon from '@spectrum-icons/workflow/Search';
 import React from 'react';
 
 import { sliceUI } from '@bangle.io/slice-ui';
