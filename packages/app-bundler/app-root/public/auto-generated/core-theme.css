@@ -4,13 +4,13 @@
 /* stylelint-disable */
 :root {
   --BV-theme: core-theme;
-  --BV-miscActivitybarWidth: 50px;
+  --BV-miscActivitybarWidth: 48px;
   --BV-miscMiniEditorWidth: 400px;
   --BV-miscPageMaxWidth: 700px;
   --BV-miscPagePadding: 3rem 30px 3rem 30px;
   --BV-miscLeftAsideWidth: 300px;
   --BV-miscRightAsideWidth: 300px;
-  --BV-miscTitlebarHeight: 50px;
+  --BV-miscTitlebarHeight: 48px;
   --BV-borderRadiusDEFAULT: 0.25rem;
   --BV-borderRadiusNone: 0;
   --BV-borderRadiusSm: 0.125rem;

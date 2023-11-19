@@ -1,14 +1,16 @@
 import './style.css';
 
 import { defaultTheme, Flex, Provider, View } from '@adobe/react-spectrum';
-import { StoreProvider, useTrack } from '@nalanda/react';
+import { StoreProvider, useStore, useTrack } from '@nalanda/react';
 import React from 'react';
 
+import { LeftAside } from '@bangle.io/left-aside';
+import { RightAside } from '@bangle.io/right-aside';
 import { EternalVarsWindow } from '@bangle.io/shared-types';
 import { sliceUI } from '@bangle.io/slice-ui';
+import { Titlebar } from '@bangle.io/titlebar';
 import { DhanchaSmallscreen, DhanchaWidescreen } from '@bangle.io/ui';
 import { createWindowStore } from '@bangle.io/window-store';
-
 let store: ReturnType<typeof createWindowStore>;
 
 export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
@@ -32,15 +34,8 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
 }
 
 function Main() {
-  const { colorScheme, widescreen } = useTrack(sliceUI);
-  console.log({
-    colorScheme,
-    widescreen,
-  });
-
-  const titlebar = (
-    <div className="bg-colorBgLayerFloat w-full">I am titlebar</div>
-  );
+  const { colorScheme, widescreen, showRightAside, showLeftAside } =
+    useTrack(sliceUI);
 
   const mainContent = (
     <Flex
@@ -133,12 +128,14 @@ function Main() {
           </div>
         }
         mainContent={mainContent}
-        leftAside={<div>Left aside</div>}
-        rightAside={<div>Right aside</div>}
-        titlebar={titlebar}
+        leftAside={showLeftAside ? <LeftAside /> : null}
+        rightAside={showRightAside ? <RightAside /> : null}
+        titlebar={<Titlebar />}
       />
     );
   }
 
-  return <DhanchaSmallscreen mainContent={mainContent} titlebar={titlebar} />;
+  return (
+    <DhanchaSmallscreen mainContent={mainContent} titlebar={<Titlebar />} />
+  );
 }
