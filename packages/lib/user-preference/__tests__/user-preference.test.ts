@@ -2,6 +2,7 @@ import { AppDatabase } from '@bangle.io/app-database';
 import { AppDatabaseInMemory } from '@bangle.io/app-database-in-memory';
 import { COLOR_SCHEME } from '@bangle.io/constants';
 
+import { PREFER_SYSTEM_COLOR_SCHEME } from '../constants';
 import { DB_KEY, defaultUserPreference, UserPreferenceManager } from '../index';
 import { logger } from '../logger';
 
@@ -45,7 +46,7 @@ describe('UserPreferenceManager', () => {
       const prefs = await userPreferenceManager.readUserPreference();
 
       expect(prefs).toEqual({
-        themePreference: COLOR_SCHEME.SYSTEM,
+        themePreference: PREFER_SYSTEM_COLOR_SCHEME,
         version: 1,
       });
     });
@@ -75,7 +76,7 @@ describe('UserPreferenceManager', () => {
       const prefs = await userPreferenceManager.readUserPreference();
 
       expect(prefs).toEqual({
-        themePreference: COLOR_SCHEME.SYSTEM,
+        themePreference: PREFER_SYSTEM_COLOR_SCHEME,
         version: 1,
       });
 
@@ -91,7 +92,7 @@ describe('UserPreferenceManager', () => {
       const prefs = await userPreferenceManager.readUserPreference();
 
       expect(prefs).toEqual({
-        themePreference: COLOR_SCHEME.SYSTEM,
+        themePreference: PREFER_SYSTEM_COLOR_SCHEME,
         version: 1,
       });
 
@@ -102,7 +103,10 @@ describe('UserPreferenceManager', () => {
   describe('updatePreferences', () => {
     it('should remove default values when updating preferences', async () => {
       const { userPreferenceManager, mockDatabase } = setup();
-      const newPrefs = { themePreference: COLOR_SCHEME.SYSTEM, version: 1 };
+      const newPrefs = {
+        themePreference: PREFER_SYSTEM_COLOR_SCHEME,
+        version: 1,
+      } as const;
 
       await userPreferenceManager.updatePreferences(newPrefs);
 
@@ -149,7 +153,7 @@ describe('UserPreferenceManager', () => {
     it('should not update with default value', async () => {
       const { userPreferenceManager, mockDatabase } = setup();
       const key = 'themePreference';
-      const value = COLOR_SCHEME.SYSTEM;
+      const value = PREFER_SYSTEM_COLOR_SCHEME;
 
       await userPreferenceManager.updatePreference(key, value);
 

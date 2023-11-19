@@ -26,7 +26,8 @@ export const IS_WORKER_CONTEXT =
   self instanceof WorkerGlobalScope;
 
 // a unique id for each browser context like a window,  iframe, worker
-export const BROWSING_CONTEXT_ID: string = 'bCtx_' + randomStr(4);
+export const BROWSING_CONTEXT_ID: string =
+  'bCtx_' + (IS_WORKER_CONTEXT ? 'worker_' : '') + randomStr(4);
 
 export const sentryConfig = {
   environment: APP_ENV,

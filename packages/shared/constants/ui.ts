@@ -1,3 +1,4 @@
+import type { ColorScheme } from '@bangle.io/shared-types';
 export const WIDESCREEN_WIDTH = 759;
 
 // See https://seek-oss.github.io/braid-design-system/foundations/tones
@@ -35,8 +36,9 @@ export type NotificationPayloadType = {
   }[];
 };
 
+const LIGHT_SCHEME = 'light' satisfies ColorScheme;
+const DARK_SCHEME = 'dark' satisfies ColorScheme;
 export const COLOR_SCHEME = {
-  LIGHT: 'light',
-  DARK: 'dark',
-  SYSTEM: 'system',
+  LIGHT: LIGHT_SCHEME,
+  DARK: DARK_SCHEME,
 } as const;
