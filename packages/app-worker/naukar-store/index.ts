@@ -4,7 +4,7 @@ import { defaultStoreConfig, getStoreConfig } from '@bangle.io/naukar-common';
 import type { EternalVarsWorker } from '@bangle.io/shared-types';
 
 import { windowStoreReplicaSlice } from './slices/slice-sync-with-window-store';
-export { windowStoreReplicaSlice as sliceSyncWithWindowStore } from './slices/slice-sync-with-window-store';
+export { windowStoreReplicaSlice } from './slices/slice-sync-with-window-store';
 
 export function createNaukarStore({
   eternalVars,

@@ -2,7 +2,7 @@ import { applyPatches, enablePatches, produce } from 'immer';
 
 import {
   createNaukarStore,
-  sliceSyncWithWindowStore,
+  windowStoreReplicaSlice,
 } from '@bangle.io/naukar-store';
 import { superJson } from '@bangle.io/nsm-3';
 import type { EternalVarsWorker, NaukarBare } from '@bangle.io/shared-types';
@@ -44,9 +44,9 @@ export class Naukar implements NaukarBare {
     }
     this.lastPatchId++;
 
-    const txn = sliceSyncWithWindowStore.actions.updateWindowReplica(
+    const txn = windowStoreReplicaSlice.actions.updateWindowReplica(
       (currentState) => {
-        const patchesObj = superJson.parse(patches) as any;
+        const patchesObj: any = superJson.parse(patches);
         const nextState = produce(currentState, (draft) => {
           applyPatches(draft, patchesObj);
         });
