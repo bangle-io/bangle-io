@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { BaseError } from '@bangle.io/base-error';
 import { COLOR_SCHEME } from '@bangle.io/constants';
-import { safeJSONParse } from '@bangle.io/mini-js-utils';
+import { safeJSONParse, safeJSONStringify } from '@bangle.io/mini-js-utils';
 import type { AppDatabase } from '@bangle.io/shared-types';
 
 import { PREFER_SYSTEM_COLOR_SCHEME } from './constants';
@@ -110,12 +110,13 @@ export class UserPreferenceManager {
       }
     }
 
-    // Save the updated preferences back to the database
-    // Replace this with your actual database update logic
-    await this.config.database.setMiscData(
-      DB_KEY,
-      JSON.stringify(updatedPrefs),
-    );
-    this.config.onChange?.(updatedPrefs);
+    const result = safeJSONStringify(updatedPrefs);
+
+    if (result.success) {
+      // Save the updated preferences back to the database
+      // Replace this with your actual database update logic
+      await this.config.database.setMiscData(DB_KEY, result.value);
+      this.config.onChange?.(updatedPrefs);
+    }
   }
 }

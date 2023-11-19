@@ -28,7 +28,8 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/is-abort-error": "workspace:*",
-    "@bangle.io/weak-cache": "workspace:*"
+    "@bangle.io/weak-cache": "workspace:*",
+    "superjson": "^2.2.1"
   },
   "devDependencies": {}
 }

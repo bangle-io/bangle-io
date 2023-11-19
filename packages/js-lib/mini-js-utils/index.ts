@@ -1,5 +1,6 @@
 // WARNING !! Should not import any other env oriented library
 // should only focus on Javascript and NO BROWSER or NODEJS specific apis
+import { parse, stringify } from 'superjson';
 
 export { createEmptyArray } from './create-empty-array';
 export { DuoWeakMap } from './duo-weak-map';
@@ -83,7 +84,7 @@ export function safeJSONParse(
   str: string,
 ): { success: true; value: any } | { success: false } {
   try {
-    return { success: true, value: JSON.parse(str) };
+    return { success: true, value: parse(str) };
   } catch (error) {
     return { success: false };
   }
@@ -93,7 +94,7 @@ export function safeJSONStringify(
   value: any,
 ): { success: true; value: string } | { success: false } {
   try {
-    return { success: true, value: JSON.stringify(value) };
+    return { success: true, value: stringify(value) };
   } catch (error) {
     return { success: false };
   }
