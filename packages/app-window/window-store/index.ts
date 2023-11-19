@@ -5,7 +5,7 @@ import {
   defaultWindowStoreConfig,
   WindowStoreConfig,
 } from '@bangle.io/lib-common';
-import { slicePage, slicePageAllSlices } from '@bangle.io/slice-page';
+import { slicePageAllSlices } from '@bangle.io/slice-page';
 import { sliceUIAllSlices } from '@bangle.io/slice-ui';
 
 import { logger } from './logger';
@@ -29,9 +29,6 @@ export function createWindowStore(
     },
     overrides: {},
   });
-
-  // window.store = store;
-  // window.slicePage = slicePage;
 
   // initialize store config right after store is created
   // so that we can use it in the effects
