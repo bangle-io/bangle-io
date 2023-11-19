@@ -23,13 +23,12 @@ export interface NaukarConfig {
 
 function setupWindowAction() {
   const emitter = Emitter.create<{ event: 'ready'; payload: undefined }>();
-  let ready = false;
   let _actual: WindowActions | undefined;
 
   const onReady = new Promise<void>((resolve) => {
     emitter.on('ready', () => {
-      ready = true;
       resolve();
+      emitter.destroy();
     });
   });
 
@@ -50,7 +49,7 @@ function setupWindowAction() {
       },
     }),
     setActual: (windowActions: WindowActions) => {
-      if (ready) {
+      if (_actual) {
         throw new Error(
           `setWindowAction called more than once. This should not happen`,
         );
@@ -61,49 +60,37 @@ function setupWindowAction() {
   };
 }
 
-let privateState = new WeakMap<
-  Naukar,
-  {
-    windowActionProxy: ReturnType<typeof setupWindowAction>;
-    store: ReturnType<typeof createNaukarStore>;
-  }
->();
-
 export class Naukar implements NaukarBare {
   private lastPatchId = -1;
+  private windowActionProxy = setupWindowAction();
+  private store: ReturnType<typeof createNaukarStore>;
 
   constructor(private naukarConfig: NaukarConfig) {
     logger.debug('naukarConfig', naukarConfig);
-    const store = createNaukarStore({ eternalVars: naukarConfig.eternalVars });
-    const windowActionProxy = setupWindowAction();
+    this.store = createNaukarStore({ eternalVars: naukarConfig.eternalVars });
 
-    privateState.set(this, {
-      windowActionProxy,
-      store,
-    });
-
-    const windowActionRef = getWindowActionsRef(store);
-    windowActionRef.current = windowActionProxy.proxy;
+    getWindowActionsRef(this.store).current = this.windowActionProxy.proxy;
   }
 
   // NOTE: all public interfaces are accessible by the main thread
-  // ALL METHODS SHOULD BE Binded to this class using => syntax
-  // this is some weirdness where `this` is lost when calling from main thread
-  ok = () => {
+  ok() {
     return true;
-  };
+  }
 
-  getDebugFlags = () => {
+  readWindowState() {
+    return windowStoreReplicaSlice.get(this.store.state).windowStateReplica;
+  }
+
+  readDebugFlags() {
     return this.naukarConfig.eternalVars.debugFlags;
-  };
+  }
 
-  receiveWindowActions = (windowActions: WindowActions) => {
-    const { windowActionProxy } = privateState.get(this)!;
-    windowActionProxy.setActual(windowActions);
-  };
+  sendWindowActions(windowActions: WindowActions) {
+    this.windowActionProxy.setActual(windowActions);
+  }
 
-  receivePatches = ({ id, patches }: { id: number; patches: string }) => {
-    logger.warn('receivePatches', { id, patches });
+  sendPatches({ id, patches }: { id: number; patches: string }) {
+    logger.warn('sendPatches', { id, patches });
 
     if (id != this.lastPatchId + 1) {
       throw new Error(
@@ -122,7 +109,6 @@ export class Naukar implements NaukarBare {
       },
     );
 
-    const { store } = privateState.get(this)!;
-    store.dispatch(txn);
-  };
+    this.store.dispatch(txn);
+  }
 }

@@ -1,6 +1,7 @@
 import type * as Comlink from 'comlink';
 
 import { DebugFlags } from './debug-flags';
+import { WorkerWindowStoreReplica } from './worker-sync';
 
 export type WindowActions =
   | undefined
@@ -20,11 +21,12 @@ export type WindowActions =
 // should always be a Record<string, AnyFunction>
 export type NaukarBare = {
   //
-  getDebugFlags: () => DebugFlags;
+  readDebugFlags: () => DebugFlags;
   ok: () => boolean;
 
-  receivePatches: (obj: { id: number; patches: string }) => void;
-  receiveWindowActions: (windowActions: WindowActions) => void;
+  readWindowState: () => WorkerWindowStoreReplica;
+  sendPatches: (obj: { id: number; patches: string }) => void;
+  sendWindowActions: (windowActions: WindowActions) => void;
 };
 
 export type NaukarRemote = Comlink.Remote<NaukarBare>;

@@ -1,6 +1,7 @@
 import { AppDatabase } from '@bangle.io/app-database';
 import { AppDatabaseInMemory } from '@bangle.io/app-database-in-memory';
 import { COLOR_SCHEME } from '@bangle.io/constants';
+import { safeJSONParse, safeJSONStringify } from '@bangle.io/safe-json';
 
 import { PREFER_SYSTEM_COLOR_SCHEME } from '../constants';
 import { DB_KEY, defaultUserPreference, UserPreferenceManager } from '../index';
@@ -111,7 +112,7 @@ describe('UserPreferenceManager', () => {
       await userPreferenceManager.updatePreferences(newPrefs);
 
       expect((await mockDatabase.getMiscData(DB_KEY))?.data).toEqual(
-        JSON.stringify({}),
+        safeJSONStringify({}).value,
       );
     });
 
@@ -134,7 +135,7 @@ describe('UserPreferenceManager', () => {
       await userPreferenceManager.updatePreference(key, value);
 
       expect((await mockDatabase.getMiscData(DB_KEY))?.data).toEqual(
-        JSON.stringify({ [key]: value }),
+        safeJSONStringify({ [key]: value }).value,
       );
     });
 
@@ -158,7 +159,7 @@ describe('UserPreferenceManager', () => {
       await userPreferenceManager.updatePreference(key, value);
 
       expect((await mockDatabase.getMiscData(DB_KEY))?.data).toEqual(
-        JSON.stringify({}),
+        safeJSONStringify({}).value,
       );
     });
 
@@ -168,7 +169,10 @@ describe('UserPreferenceManager', () => {
         themePreference: COLOR_SCHEME.DARK,
         invalidField: 'invalid',
       };
-      await mockDatabase.setMiscData(DB_KEY, JSON.stringify(partialValidPrefs));
+      await mockDatabase.setMiscData(
+        DB_KEY,
+        safeJSONStringify(partialValidPrefs).value!,
+      );
 
       const prefs = await userPreferenceManager.readUserPreference();
       expect(prefs).toEqual({
@@ -196,10 +200,14 @@ describe('UserPreferenceManager', () => {
 
       await userPreferenceManager.updatePreferences(partialUpdate);
 
-      const updatedPrefs = JSON.parse(
+      const result = safeJSONParse(
         (await mockDatabase.getMiscData(DB_KEY))?.data!,
       );
-      expect(updatedPrefs).toEqual(partialUpdate);
+      if (!result.success) {
+        throw new Error('Unable to parse data');
+      }
+
+      expect(result.value).toEqual(partialUpdate);
     });
 
     it('should handle empty object updates', async () => {
@@ -208,7 +216,7 @@ describe('UserPreferenceManager', () => {
       await userPreferenceManager.updatePreferences({});
 
       expect((await mockDatabase.getMiscData(DB_KEY))?.data).toEqual(
-        JSON.stringify({}),
+        safeJSONStringify({}).value,
       );
     });
   });

@@ -6,8 +6,8 @@ import {
 } from '@bangle.io/naukar-common';
 import type { EternalVarsWorker } from '@bangle.io/shared-types';
 
-import { windowStoreReplicaSlice } from './slices/slice-sync-with-window-store';
-export { windowStoreReplicaSlice } from './slices/slice-sync-with-window-store';
+import { sliceWindowState } from './slices/slice-window-state';
+export { sliceWindowState as windowStoreReplicaSlice } from './slices/slice-window-state';
 
 export function createNaukarStore({
   eternalVars,
@@ -17,7 +17,7 @@ export function createNaukarStore({
   const store = createStore({
     slices: [
       // keep at end
-      windowStoreReplicaSlice,
+      sliceWindowState,
     ],
     autoStartEffects: true,
     overrides: {},

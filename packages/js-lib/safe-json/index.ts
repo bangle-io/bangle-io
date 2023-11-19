@@ -12,10 +12,10 @@ export function safeJSONParse(
 
 export function safeJSONStringify(
   value: any,
-): { success: true; value: string } | { success: false } {
+): { success: true; value: string } | { success: false; value: undefined } {
   try {
     return { success: true, value: stringify(value) };
   } catch (error) {
-    return { success: false };
+    return { success: false, value: undefined };
   }
 }

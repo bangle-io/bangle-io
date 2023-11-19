@@ -41,7 +41,7 @@ key.effect((store) => {
     },
   };
 
-  void eternalVars.naukar.receiveWindowActions(Comlink.proxy(actions));
+  void eternalVars.naukar.sendWindowActions(Comlink.proxy(actions));
 
   cleanup(store, () => {
     destroyed = true;
@@ -71,7 +71,7 @@ key.effect((store) => {
   const patches = patchesRef.current;
   patchesRef.current = [];
 
-  void eternalVars.naukar.receivePatches({
+  void eternalVars.naukar.sendPatches({
     id: idCounterRef.current++,
     patches: superJson.stringify(patches),
   });

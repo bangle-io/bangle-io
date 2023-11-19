@@ -77,25 +77,24 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
 
   const allowedKeys = new Set(Object.keys(naukarInitialize));
 
-  const result: any = new Proxy(naukarInitialize, {
-    get(target, prop, receiver) {
-      if (allowedKeys.has(prop as string)) {
-        return Reflect.get(target, prop, receiver);
-      }
+  const result: any = new Proxy(
+    {},
+    {
+      get(_, prop, receiver) {
+        if (allowedKeys.has(prop as string)) {
+          return Reflect.get(naukarInitialize, prop, receiver);
+        }
 
-      if (ready) {
-        return Reflect.get(naukarInstance!, prop, receiver);
-      }
-
-      // we have checks to ensure that in naukarInstance all keys are only method type -- (..args:any)=>any
-      return (...args: any[]) => {
-        return onReady.then(() => {
-          const func = Reflect.get(naukarInstance!, prop, receiver);
-          return Reflect.apply(func, naukarInstance!, args);
-        });
-      };
+        // we have checks to ensure that in naukarInstance all keys are only method type -- (..args:any)=>any
+        return (...args: any[]) => {
+          return onReady.then(() => {
+            const func = Reflect.get(naukarInstance!, prop, receiver);
+            return Reflect.apply(func, naukarInstance!, args);
+          });
+        };
+      },
     },
-  });
+  );
 
   return result;
 }
