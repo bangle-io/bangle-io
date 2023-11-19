@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser';
 import * as Comlink from 'comlink';
 
+import { AppDatabaseInMemory } from '@bangle.io/app-database-in-memory';
 import { AppDatabaseIndexedDB } from '@bangle.io/app-database-indexeddb';
 import { sentryConfig } from '@bangle.io/config';
 import { Emitter } from '@bangle.io/emitter';
@@ -40,11 +41,15 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
         logger.warn('naukar already initialized');
         return;
       }
+      const database =
+        config.debugFlags.testAppDatabase === 'memory'
+          ? new AppDatabaseInMemory()
+          : new AppDatabaseIndexedDB();
 
       const eternalVars = setupEternalVarsWorker({
         type: 'worker',
         debugFlags: config.debugFlags,
-        baseDatabase: new AppDatabaseIndexedDB(),
+        baseDatabase: database,
         parentInfo: config.parentInfo,
       });
 

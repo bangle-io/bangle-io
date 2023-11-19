@@ -30,5 +30,8 @@
     "@bangle.io/nsm-3": "workspace:*",
     "@bangle.io/naukar-common": "workspace:*",
     "@bangle.io/emitter": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/constants": "workspace:*"
   }
 }

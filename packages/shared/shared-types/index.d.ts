@@ -4,7 +4,7 @@ export type {
   ThemeBase,
 } from './bangle-theme';
 export type * from './base-app-database';
-export type { DebugFlags } from './debug-flags';
+export type * from './debug-flags';
 export type { DesignTokens, NeutralColors, ToneColors } from './design-tokens';
 export type * from './eternal-vars-base';
 export type * from './eternal-vars-window';

@@ -1,14 +1,29 @@
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
+let GLOBAL_SILENCED = false;
+
+export function silenceAllLoggers() {
+  GLOBAL_SILENCED = true;
+}
+
+export function unSilenceAllLoggers() {
+  GLOBAL_SILENCED = false;
+}
+
 export class Logger {
   private prefix: string;
-  private silenced = false;
+  private localSilenced = false;
+
+  get silenced() {
+    return this.localSilenced || GLOBAL_SILENCED;
+  }
+
   constructor(prefix = '') {
     this.prefix = prefix;
   }
 
   private log(level: LogLevel, ...message: any[]): void {
-    if (!this.silenced) {
+    if (level === 'error' || !this.silenced) {
       console[level](`[${this.prefix}] :`, ...message);
     }
   }
@@ -34,6 +49,6 @@ export class Logger {
   }
 
   public silence(val = true): void {
-    this.silenced = true;
+    this.localSilenced = true;
   }
 }

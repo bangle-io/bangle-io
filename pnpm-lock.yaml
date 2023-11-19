@@ -98,12 +98,18 @@ importers:
       '@bangle.io/app':
         specifier: workspace:*
         version: link:../../app-window/app
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../../lib/app-database-in-memory
       '@bangle.io/app-database-indexeddb':
         specifier: workspace:*
         version: link:../../lib/app-database-indexeddb
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/e2e-types':
         specifier: workspace:*
         version: link:../../shared/e2e-types
@@ -144,9 +150,15 @@ importers:
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../env-vars
+      '@bangle.io/test-utils-common':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-common
       '@bangle.io/uno-preset-bangle':
         specifier: workspace:*
         version: link:../uno-preset-bangle
+      '@bangle.io/window-store':
+        specifier: workspace:*
+        version: link:../../app-window/window-store
       '@types/minimist':
         specifier: ^1.2.4
         version: 1.2.4
@@ -225,6 +237,9 @@ importers:
 
   packages/app-bundler/setup-worker:
     dependencies:
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../../lib/app-database-in-memory
       '@bangle.io/app-database-indexeddb':
         specifier: workspace:*
         version: link:../../lib/app-database-indexeddb
@@ -405,6 +420,10 @@ importers:
       immer:
         specifier: ^10.0.3
         version: 10.0.3
+    devDependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
 
   packages/app-worker/naukar-common:
     dependencies:
@@ -426,6 +445,9 @@ importers:
       '@bangle.io/naukar-common':
         specifier: workspace:*
         version: link:../naukar-common
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -732,9 +754,9 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
     devDependencies:
-      '@bangle.io/test-helpers':
+      '@bangle.io/test-utils-slice':
         specifier: workspace:*
-        version: link:../test-helpers
+        version: link:../../test-utils/test-utils-slice
 
   packages/lib/slice-ui:
     dependencies:
@@ -747,24 +769,10 @@ importers:
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
-
-  packages/lib/test-helpers:
-    dependencies:
-      '@bangle.io/lib-common':
+    devDependencies:
+      '@bangle.io/test-utils-slice':
         specifier: workspace:*
-        version: link:../lib-common
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../../js-lib/mini-js-utils
-      '@bangle.io/nsm-3':
-        specifier: workspace:*
-        version: link:../../js-lib/nsm-3
-      '@bangle.io/test-helpers':
-        specifier: workspace:*
-        version: 'link:'
-      '@nalanda/core':
-        specifier: ^0.2.3
-        version: 0.2.3
+        version: link:../../test-utils/test-utils-slice
 
   packages/lib/ui:
     dependencies:
@@ -869,6 +877,57 @@ importers:
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
+
+  packages/test-utils/test-utils:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@bangle.io/test-utils-slice':
+        specifier: workspace:*
+        version: link:../test-utils-slice
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+
+  packages/test-utils/test-utils-common:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+      wait-for-expect:
+        specifier: ^3.0.2
+        version: 3.0.2
+
+  packages/test-utils/test-utils-slice:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/tooling/custom-scripts:
     dependencies:
@@ -17510,6 +17569,10 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       xml-name-validator: 4.0.0
+    dev: false
+
+  /wait-for-expect@3.0.2:
+    resolution: {integrity: sha512-cfS1+DZxuav1aBYbaO/kE06EOS8yRw7qOFoD3XtjTkYvCvh3zUvNST8DXK/nPaeqIzIv3P3kL3lRJn8iwOiSag==}
     dev: false
 
   /wait-on@5.3.0:

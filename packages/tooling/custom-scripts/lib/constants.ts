@@ -4,6 +4,7 @@ import { z } from 'zod';
 export const rootPath = path.resolve(__dirname, '../../../..');
 
 export const bangleWorkspaceConfigSchema = z.object({
+  // The packages in workspaces (the folders in packages dir) that are allowed to be dependent on
   allowedWorkspaces: z.array(z.string()),
 });
 

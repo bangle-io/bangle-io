@@ -23,6 +23,7 @@ export type NaukarBare = {
   //
   readDebugFlags: () => DebugFlags;
   ok: () => boolean;
+  destroy: () => void;
 
   readWindowState: () => WorkerWindowStoreReplica;
   sendPatches: (obj: { id: number; patches: string }) => void;

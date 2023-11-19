@@ -6,7 +6,7 @@ import {
 } from '@bangle.io/lib-common';
 import { createManualEffectScheduler } from '@bangle.io/nsm-3';
 
-import { sleep } from './sleep';
+const sleep = (ms = 1) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const setupSliceTestStore = ({
   autoStartEffects = true,
