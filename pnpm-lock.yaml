@@ -402,6 +402,9 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/app-worker/naukar-store:
     dependencies:
