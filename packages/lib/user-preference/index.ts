@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { BaseError } from '@bangle.io/base-error';
 import { COLOR_SCHEME } from '@bangle.io/constants';
-import { safeJSONParse, safeJSONStringify } from '@bangle.io/mini-js-utils';
+import { safeJSONParse, safeJSONStringify } from '@bangle.io/safe-json';
 import type { AppDatabase } from '@bangle.io/shared-types';
 
 import { PREFER_SYSTEM_COLOR_SCHEME } from './constants';

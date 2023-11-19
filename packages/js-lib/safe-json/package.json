@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/mini-js-utils",
+  "name": "@bangle.io/safe-json",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/mini-js-utils"
+    "directory": "packages/js-lib/safe-json"
   },
   "authors": [
     {
@@ -27,8 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/is-abort-error": "workspace:*",
-    "@bangle.io/weak-cache": "workspace:*"
-  },
-  "devDependencies": {}
+    "superjson": "^2.2.1"
+  }
 }

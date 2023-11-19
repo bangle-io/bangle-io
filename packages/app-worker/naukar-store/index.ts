@@ -1,6 +1,9 @@
 import { createStore } from '@nalanda/core';
 
-import { defaultStoreConfig, getStoreConfig } from '@bangle.io/naukar-common';
+import {
+  defaultStoreConfig,
+  getStoreConfigRef,
+} from '@bangle.io/naukar-common';
 import type { EternalVarsWorker } from '@bangle.io/shared-types';
 
 import { windowStoreReplicaSlice } from './slices/slice-sync-with-window-store';
@@ -20,7 +23,7 @@ export function createNaukarStore({
     overrides: {},
   });
 
-  getStoreConfig(store).current = {
+  getStoreConfigRef(store).current = {
     ...defaultStoreConfig,
     eternalVars,
   };
