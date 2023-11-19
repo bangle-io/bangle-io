@@ -10,3 +10,8 @@ export type PageLifeCycleState =
   | 'frozen'
   | 'terminated'
   | undefined;
+
+export type Location = {
+  pathname?: string;
+  search?: string;
+};

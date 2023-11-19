@@ -7,8 +7,7 @@ import {
   MemoryHistory,
 } from '@bangle.io/history';
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
-
-import type { Location } from './types';
+import type { Location } from '@bangle.io/shared-types';
 
 /**
  * This slice focuses on initializing the history object

@@ -36,8 +36,9 @@ export type EternalVarsEvent =
   | {
       event: '@event::worker-sync:to-worker';
       payload: {
+        counter: number;
         // we use naukar-state-sync to sync the state of the worker
-        data: any;
+        data: string;
       };
     }
   | {

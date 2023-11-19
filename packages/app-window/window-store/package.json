@@ -30,6 +30,7 @@
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/lib-common": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
-    "@bangle.io/naukar-state-sync": "workspace:*"
+    "@bangle.io/naukar-state-sync": "workspace:*",
+    "immer": "^10.0.3"
   }
 }

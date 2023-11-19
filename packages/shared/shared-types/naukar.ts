@@ -7,6 +7,8 @@ export type NaukarBare = {
   //
   getDebugFlags: () => DebugFlags;
   ok: () => boolean;
+
+  receivePatches: (obj: { id: number; patches: string }) => void;
 };
 
 export type NaukarRemote = Comlink.Remote<NaukarBare>;
