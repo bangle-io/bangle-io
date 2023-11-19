@@ -25,6 +25,8 @@
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/naukar-store": "workspace:*"
+    "immer": "^10.0.3",
+    "@bangle.io/naukar-store": "workspace:*",
+    "@bangle.io/nsm-3": "workspace:*"
   }
 }

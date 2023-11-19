@@ -9,7 +9,7 @@ import { slicePage, slicePageAllSlices } from '@bangle.io/slice-page';
 import { sliceUIAllSlices } from '@bangle.io/slice-ui';
 
 import { logger } from './logger';
-import { sliceEternalVarsEvents } from './slices/slice-eternal-events';
+import { sliceSyncWithWindowStore } from './slices/sync-with-worker';
 
 export function createWindowStore(
   eternalVars: WindowStoreConfig['eternalVars'],
@@ -21,7 +21,7 @@ export function createWindowStore(
       ...sliceUIAllSlices,
 
       // keep at end
-      sliceEternalVarsEvents,
+      sliceSyncWithWindowStore,
     ],
     autoStartEffects: true,
     debug: (log) => {

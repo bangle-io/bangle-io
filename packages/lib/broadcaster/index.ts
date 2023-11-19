@@ -9,7 +9,12 @@ export type BroadcasterConfig<T extends EventMessage<any, any>> = {
 
 const channelName = 'bangle-io-broadcaster:' + RELEASE_ID;
 
-logger.info('using channelName', channelName);
+logger.info(
+  'using channelName',
+  channelName,
+  ' BROWSING_CONTEXT_ID',
+  BROWSING_CONTEXT_ID,
+);
 
 type Message<T> = {
   sender: {

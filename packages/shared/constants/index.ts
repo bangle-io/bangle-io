@@ -9,5 +9,6 @@ export * from './help-fs';
 export * from './search';
 export * from './ui';
 export * from './worker';
+export * from './worker-sync';
 export * from './workspace';
 export * from './write-disk';

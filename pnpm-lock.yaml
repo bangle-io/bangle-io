@@ -210,9 +210,6 @@ importers:
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -337,8 +334,8 @@ importers:
         specifier: workspace:*
         version: link:../window-store
       '@nalanda/react':
-        specifier: ^0.2.2
-        version: 0.2.2(react@18.2.0)
+        specifier: ^0.2.3
+        version: 0.2.3(react@18.2.0)
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
@@ -351,18 +348,21 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
 
   packages/app-window/window-store:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/lib-common':
         specifier: workspace:*
         version: link:../../lib/lib-common
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -372,12 +372,12 @@ importers:
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
-      '@bangle.io/window-common':
-        specifier: workspace:*
-        version: link:../window-common
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
+      immer:
+        specifier: ^10.0.3
+        version: 10.0.3
 
   packages/app-worker/naukar:
     dependencies:
@@ -387,18 +387,30 @@ importers:
       '@bangle.io/naukar-store':
         specifier: workspace:*
         version: link:../naukar-store
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      immer:
+        specifier: ^10.0.3
+        version: 10.0.3
 
   packages/app-worker/naukar-common:
     dependencies:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/app-worker/naukar-store:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -409,8 +421,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared/shared-types
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/e2e-tests/e2e-tests:
     dependencies:
@@ -529,17 +541,17 @@ importers:
   packages/js-lib/nalanda:
     dependencies:
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       '@nalanda/react':
-        specifier: ^0.2.2
-        version: 0.2.2(react@18.2.0)
+        specifier: ^0.2.3
+        version: 0.2.3(react@18.2.0)
 
   packages/js-lib/nsm-3:
     dependencies:
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       superjson:
         specifier: ^2.2.0
         version: 2.2.0
@@ -682,19 +694,13 @@ importers:
         specifier: workspace:*
         version: link:../../shared/shared-types
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/lib/routing-helpers: {}
 
   packages/lib/slice-page:
     dependencies:
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      '@bangle.io/global-scope-helpers':
-        specifier: workspace:*
-        version: link:../../js-lib/global-scope-helpers
       '@bangle.io/history':
         specifier: workspace:*
         version: link:../../js-lib/history
@@ -704,22 +710,13 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       page-lifecycle:
         specifier: ^0.1.2
         version: 0.1.2
     devDependencies:
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../../js-lib/mini-js-utils
-      '@bangle.io/nsm-3':
-        specifier: workspace:*
-        version: link:../../js-lib/nsm-3
       '@bangle.io/test-helpers':
         specifier: workspace:*
         version: link:../test-helpers
@@ -733,8 +730,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/lib/test-helpers:
     dependencies:
@@ -751,8 +748,8 @@ importers:
         specifier: workspace:*
         version: 'link:'
       '@nalanda/core':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/lib/ui:
     dependencies:
@@ -3593,16 +3590,16 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@nalanda/core@0.2.2:
-    resolution: {integrity: sha512-i+GOSHgOB83km3WIBVxLm3bZ0/m3NkJaG9/vDl/bbG1tQgMbWLecTn3DEO4TDv7wWcAnO5mcYIb2y1oWtAojvw==}
+  /@nalanda/core@0.2.3:
+    resolution: {integrity: sha512-ZLCdLNZAuovRQW9S0YsjXJlz7ncxaeJBfqwAKnMtdZM8JjukcgHYREAszl7pjXbUNaLt5ufJsk5d4lyiVGCNxA==}
     dev: false
 
-  /@nalanda/react@0.2.2(react@18.2.0):
-    resolution: {integrity: sha512-6r1uyb36aoZIb1hCSMsAYSaloOgpahGQ0jSiwaoua3uQL/wbffLtSkSf2RRkwV7PxPd609paeJTZ4gGaMV9cMg==}
+  /@nalanda/react@0.2.3(react@18.2.0):
+    resolution: {integrity: sha512-Sv3fFk5S2OKS/aFdRjzh85EgjhEEIuzrpTvvrEwKcmt/RGAz9pU+Z1H7MHNsQefRG+3V50QeZVfH2eEkdZ5SMQ==}
     peerDependencies:
       react: '>=17.0'
     dependencies:
-      '@nalanda/core': 0.2.2
+      '@nalanda/core': 0.2.3
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
@@ -12221,6 +12218,10 @@ packages:
   /ignore@5.2.4:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
+
+  /immer@10.0.3:
+    resolution: {integrity: sha512-pwupu3eWfouuaowscykeckFmVTpqbzW+rXFCX8rQLkZzM9ftBmU/++Ra+o+L27mz03zJTlyV4UUr+fdKNffo4A==}
+    dev: false
 
   /import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}

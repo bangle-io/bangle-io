@@ -12,6 +12,9 @@ import { UserPreferenceManager } from '@bangle.io/user-preference';
 import { logger } from './logger';
 import type { EternalVarsSetupBase } from './types';
 
+const THRESHOLD_MS = 20;
+const THRESHOLD_COUNT = 150;
+
 export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
   logger.debug('debugFlags', config.debugFlags);
 
@@ -24,18 +27,52 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
 
   const broadcast = createBroadcaster<EternalVarsEvent>();
 
-  // TODO : it is easy to forget to add a new event here
-  broadcast.on('@event::database:workspace-create', (event) => {
-    emitter.emit('@event::database:workspace-create', event);
-  });
-  broadcast.on('@event::database:workspace-update', (event) => {
-    emitter.emit('@event::database:workspace-update', event);
-  });
-  broadcast.on('@event::database:workspace-delete', (event) => {
-    emitter.emit('@event::database:workspace-delete', event);
-  });
-  broadcast.on('@event::user-preference:change', (event) => {
-    emitter.emit('@event::user-preference:change', event);
+  let messageCount = 0;
+  let startTime = Date.now();
+
+  broadcast.onAll((event) => {
+    const currentTime = Date.now();
+
+    // Reset the count if the time window has passed
+    if (currentTime - startTime > THRESHOLD_MS) {
+      messageCount = 0;
+      startTime = currentTime;
+    }
+
+    // Check if the threshold is exceeded
+    if (messageCount++ > THRESHOLD_COUNT) {
+      throw new Error('Too many messages received in a short period of time.');
+    }
+
+    logger.debug('received broadcast event from', event.event, event.payload);
+
+    // we re-emit any event from broadcast channel to the main emitter
+    switch (event.event) {
+      case '@event::database:workspace-create': {
+        emitter.emit(event.event, event.payload);
+        break;
+      }
+
+      case '@event::database:workspace-update': {
+        emitter.emit(event.event, event.payload);
+        break;
+      }
+
+      case '@event::database:workspace-delete': {
+        emitter.emit(event.event, event.payload);
+        break;
+      }
+
+      case '@event::user-preference:change': {
+        emitter.emit(event.event, event.payload);
+        break;
+      }
+
+      default: {
+        let x: never = event;
+        throw new Error(`Unhandled event`);
+      }
+    }
   });
 
   const appDatabase = new AppDatabase({

@@ -5,6 +5,7 @@ import { COLOR_SCHEME } from '@bangle.io/constants';
 import { safeJSONParse } from '@bangle.io/mini-js-utils';
 import type { AppDatabase } from '@bangle.io/shared-types';
 
+import { PREFER_SYSTEM_COLOR_SCHEME } from './constants';
 import { logger } from './logger';
 
 export type UserPreferenceConfig = {
@@ -21,7 +22,7 @@ const userPreferenceSchema = z.object({
     z.union([
       z.literal(COLOR_SCHEME.LIGHT),
       z.literal(COLOR_SCHEME.DARK),
-      z.literal(COLOR_SCHEME.SYSTEM),
+      z.literal(PREFER_SYSTEM_COLOR_SCHEME),
     ]),
   ),
 });
@@ -34,7 +35,7 @@ type UserPreferenceOptional = z.infer<typeof userPreferenceSchema>;
 type UserPreference = MakeRequired<UserPreferenceOptional>;
 
 export const defaultUserPreference: UserPreference = {
-  themePreference: COLOR_SCHEME.SYSTEM,
+  themePreference: PREFER_SYSTEM_COLOR_SCHEME,
   version: 1,
 };
 
