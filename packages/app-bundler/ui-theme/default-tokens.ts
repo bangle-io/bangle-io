@@ -137,10 +137,10 @@ export const defaultTokensLight: DesignTokens = {
 
     miniEditorWidth: '400px',
 
-    activitybarWidth: '50px',
+    activitybarWidth: '48px',
     leftAsideWidth: '300px',
     rightAsideWidth: '300px',
-    titlebarHeight: '50px',
+    titlebarHeight: '48px',
 
     noteTagsBg: lightNeutralColor.solid,
     noteTagsText: lightNeutralColor.textInverted,

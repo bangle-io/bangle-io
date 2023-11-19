@@ -5,6 +5,28 @@ import { sliceUIWidescreen } from './slice-ui-widescreen';
 
 const key = createKey('slice-ui', [sliceUIWidescreen, sliceUIColorScheme]);
 
+const showRightAsideField = key.field(false);
+
+function updateShowRightAside(show: boolean | undefined) {
+  return showRightAsideField.update((cur) => {
+    if (typeof show === 'boolean') {
+      return show;
+    }
+    return !cur;
+  });
+}
+
+const showLeftAsideField = key.field(false);
+
+function updateLeftAside(show: boolean | undefined) {
+  return showLeftAsideField.update((cur) => {
+    if (typeof show === 'boolean') {
+      return show;
+    }
+    return !cur;
+  });
+}
+
 const widescreenField = key.derive((state) => {
   return sliceUIWidescreen.getField(state, 'widescreen');
 });
@@ -16,6 +38,10 @@ const colorSchemeField = key.derive((state) =>
 export const sliceUI = key.slice({
   widescreen: widescreenField,
   colorScheme: colorSchemeField,
+  showRightAside: showRightAsideField,
+  showLeftAside: showLeftAsideField,
+  updateShowRightAside,
+  updateLeftAside,
 });
 
 export const sliceUIAllSlices = [
