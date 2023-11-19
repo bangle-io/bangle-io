@@ -910,6 +910,9 @@ importers:
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
+      wait-for-expect:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   packages/test-utils/test-utils-slice:
     dependencies:
@@ -17566,6 +17569,10 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       xml-name-validator: 4.0.0
+    dev: false
+
+  /wait-for-expect@3.0.2:
+    resolution: {integrity: sha512-cfS1+DZxuav1aBYbaO/kE06EOS8yRw7qOFoD3XtjTkYvCvh3zUvNST8DXK/nPaeqIzIv3P3kL3lRJn8iwOiSag==}
     dev: false
 
   /wait-on@5.3.0:

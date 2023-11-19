@@ -30,7 +30,8 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
     "@nalanda/core": "^0.2.3",
-    "@bangle.io/lib-common": "workspace:*"
+    "@bangle.io/lib-common": "workspace:*",
+    "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {}
 }

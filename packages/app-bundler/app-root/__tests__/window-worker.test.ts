@@ -6,7 +6,7 @@ import { silenceAllLoggers, unSilenceAllLoggers } from '@bangle.io/logger';
 import { setupEternalVarsWindow } from '@bangle.io/setup-eternal-vars/window';
 import { setupWorker } from '@bangle.io/setup-worker';
 import { DebugFlags } from '@bangle.io/shared-types';
-import { sleep } from '@bangle.io/test-utils-common';
+import { waitForExpect } from '@bangle.io/test-utils-common';
 import { createWindowStore } from '@bangle.io/window-store';
 
 import { getDebugFlag } from '../helpers';
@@ -56,20 +56,20 @@ describe('createBroadcaster', () => {
       ui: {},
     });
 
-    await sleep();
-
-    expect(await eternalVars.naukar.readWindowState()).toEqual({
-      page: {
-        lifecycle: 'passive',
-        location: {
-          pathname: '',
-          search: '',
+    await waitForExpect(async () => {
+      expect(await eternalVars.naukar.readWindowState()).toEqual({
+        page: {
+          lifecycle: 'passive',
+          location: {
+            pathname: '',
+            search: '',
+          },
         },
-      },
-      ui: {
-        colorScheme: 'light',
-        widescreen: true,
-      },
+        ui: {
+          colorScheme: 'light',
+          widescreen: true,
+        },
+      });
     });
 
     await naukarTerminate();
