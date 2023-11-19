@@ -1,13 +1,13 @@
 import type { Page } from '@playwright/test';
 import { test as base } from '@playwright/test';
 
-import { DebugFlags } from '@bangle.io/shared-types';
+import type { PartialDebugFlags } from '@bangle.io/shared-types';
 
 const PORT = 1234;
 
 export interface Fixture {
   bangleApp: {
-    open: (opts?: { debugFlags?: DebugFlags }) => Promise<Page>;
+    open: (opts?: { debugFlags?: PartialDebugFlags }) => Promise<Page>;
   };
 }
 export const withBangle = base.extend<Fixture>({

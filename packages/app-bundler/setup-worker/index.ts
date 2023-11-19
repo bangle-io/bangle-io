@@ -1,7 +1,11 @@
 import * as Comlink from 'comlink';
 
+import { AppDatabaseInMemory } from '@bangle.io/app-database-in-memory';
+import { AppDatabaseIndexedDB } from '@bangle.io/app-database-indexeddb';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { assertNonWorkerGlobalScope } from '@bangle.io/global-scope-helpers';
+import { Naukar } from '@bangle.io/naukar';
+import { setupEternalVarsWorker } from '@bangle.io/setup-eternal-vars/worker';
 import type {
   DebugFlags,
   NaukarBare,
@@ -23,6 +27,44 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   naukarRemote: NaukarRemote;
   naukarTerminate: () => Promise<void>;
 } {
+  // directly load the worker code in main thread, helpful for testing
+  if (debugFlags.testDisableWorker) {
+    const database =
+      debugFlags.testAppDatabase === 'memory'
+        ? new AppDatabaseInMemory()
+        : new AppDatabaseIndexedDB();
+
+    logger.warn('Worker is disabled');
+    const eternalVars = setupEternalVarsWorker({
+      type: 'worker',
+      debugFlags: debugFlags,
+      baseDatabase: database,
+      parentInfo: {
+        browserContextId: BROWSING_CONTEXT_ID,
+      },
+    });
+    const naukarInstance = new Naukar({
+      eternalVars,
+    });
+
+    // This proxy exists to simulate the async nature of comlink remote
+    const naukarRemote = new Proxy({} as Comlink.Remote<NaukarBare>, {
+      get(target, prop, receiver) {
+        // convert every method into async
+        return async (...args: any[]) => {
+          const func = Reflect.get(naukarInstance, prop, receiver);
+          return Reflect.apply(func, naukarInstance, args);
+        };
+      },
+    });
+
+    return {
+      naukarRemote: naukarRemote,
+      naukarTerminate: async () => {
+        //
+      },
+    };
+  }
   const worker = new Worker(
     new URL('./worker-scope-only/worker.ts', import.meta.url),
     {

@@ -98,12 +98,18 @@ importers:
       '@bangle.io/app':
         specifier: workspace:*
         version: link:../../app-window/app
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../../lib/app-database-in-memory
       '@bangle.io/app-database-indexeddb':
         specifier: workspace:*
         version: link:../../lib/app-database-indexeddb
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/e2e-types':
         specifier: workspace:*
         version: link:../../shared/e2e-types
@@ -225,6 +231,9 @@ importers:
 
   packages/app-bundler/setup-worker:
     dependencies:
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../../lib/app-database-in-memory
       '@bangle.io/app-database-indexeddb':
         specifier: workspace:*
         version: link:../../lib/app-database-indexeddb
@@ -405,6 +414,10 @@ importers:
       immer:
         specifier: ^10.0.3
         version: 10.0.3
+    devDependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
 
   packages/app-worker/naukar-common:
     dependencies:

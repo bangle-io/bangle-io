@@ -1,6 +1,6 @@
+import { DEFAULT_DEBUG_FLAGS } from '@bangle.io/constants';
 import {
   AppDatabase,
-  EternalVarsBase,
   EternalVarsWorker,
   NaukarBare,
 } from '@bangle.io/shared-types';
@@ -8,7 +8,7 @@ import {
 import { Naukar, NaukarConfig } from '../index';
 
 const mockEternalVars: EternalVarsWorker = {
-  debugFlags: {},
+  debugFlags: DEFAULT_DEBUG_FLAGS,
   appDatabase: {} as AppDatabase,
   emitter: {} as any,
   userPreferenceManager: {} as any,
@@ -48,12 +48,13 @@ describe('Naukar', () => {
       eternalVars: {
         ...mockEternalVars,
         debugFlags: {
+          ...DEFAULT_DEBUG_FLAGS,
           testDelayWorkerInitialize: 1000,
         },
       },
     });
 
-    expect(naukar.readDebugFlags()).toEqual({
+    expect(naukar.readDebugFlags()).toMatchObject({
       testDelayWorkerInitialize: 1000,
     });
   });

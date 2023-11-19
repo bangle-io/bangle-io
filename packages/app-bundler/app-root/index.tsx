@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { App } from '@bangle.io/app';
+import { AppDatabaseInMemory } from '@bangle.io/app-database-in-memory';
 import { AppDatabaseIndexedDB } from '@bangle.io/app-database-indexeddb';
 import { config, sentryConfig } from '@bangle.io/config';
 import { assertIsDefined } from '@bangle.io/mini-js-utils';
@@ -57,10 +58,15 @@ async function main() {
 
   _terminateNaukar = naukarTerminate;
 
+  const database =
+    debugFlags.testAppDatabase === 'memory'
+      ? new AppDatabaseInMemory()
+      : new AppDatabaseIndexedDB();
+
   const eternalVars = setupEternalVarsWindow({
     naukarRemote,
     debugFlags,
-    baseDatabase: new AppDatabaseIndexedDB(),
+    baseDatabase: database,
   });
 
   root.render(

@@ -42,7 +42,9 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.11",
     "@bangle.io/app-database-indexeddb": "workspace:*",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/app-database-in-memory": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",
