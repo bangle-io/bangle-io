@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/slice-ui",
-  "description": "",
+  "name": "@bangle.io/test-utils",
+  "description": "A collection of test utilities for bangle.io",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/slice-ui"
+    "directory": "packages/lib/test-helpers"
   },
   "authors": [
     {
@@ -17,15 +18,20 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "nodejs"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/utils": "workspace:*",
-    "@nalanda/core": "^0.2.3"
-  },
-  "devDependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/nsm-3": "workspace:*",
+    "@nalanda/core": "^0.2.3",
+    "@bangle.io/lib-common": "workspace:*",
     "@bangle.io/test-utils-slice": "workspace:*"
-  }
+  },
+  "devDependencies": {}
 }

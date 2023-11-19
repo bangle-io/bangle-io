@@ -732,9 +732,9 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
     devDependencies:
-      '@bangle.io/test-helpers':
+      '@bangle.io/test-utils-slice':
         specifier: workspace:*
-        version: link:../test-helpers
+        version: link:../../test-utils/test-utils-slice
 
   packages/lib/slice-ui:
     dependencies:
@@ -747,24 +747,10 @@ importers:
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
-
-  packages/lib/test-helpers:
-    dependencies:
-      '@bangle.io/lib-common':
+    devDependencies:
+      '@bangle.io/test-utils-slice':
         specifier: workspace:*
-        version: link:../lib-common
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../../js-lib/mini-js-utils
-      '@bangle.io/nsm-3':
-        specifier: workspace:*
-        version: link:../../js-lib/nsm-3
-      '@bangle.io/test-helpers':
-        specifier: workspace:*
-        version: 'link:'
-      '@nalanda/core':
-        specifier: ^0.2.3
-        version: 0.2.3
+        version: link:../../test-utils/test-utils-slice
 
   packages/lib/ui:
     dependencies:
@@ -869,6 +855,39 @@ importers:
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
+
+  packages/test-utils/test-utils:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@bangle.io/test-utils-slice':
+        specifier: workspace:*
+        version: link:../test-utils-slice
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+
+  packages/test-utils/test-utils-slice:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/tooling/custom-scripts:
     dependencies:

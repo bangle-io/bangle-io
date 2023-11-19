@@ -1,9 +1,11 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { setupSliceTestStore, sleep } from '@bangle.io/test-helpers';
+import { setupSliceTestStore } from '@bangle.io/test-utils-slice';
 
 import { createHistoryRef, sliceHistory } from '../slice-history';
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('sliceHistory', () => {
   test('initial empty state', async () => {

@@ -6,4 +6,5 @@ packages:
   - 'packages/js-lib/*'
   - 'packages/lib/*'
   - 'packages/shared/*'
+  - 'packages/test-utils/*'
   - 'packages/tooling/*'

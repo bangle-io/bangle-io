@@ -28,6 +28,6 @@
     "@bangle.io/shared-types": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.io/test-helpers": "workspace:*"
+    "@bangle.io/test-utils-slice": "workspace:*"
   }
 }

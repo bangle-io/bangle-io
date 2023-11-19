@@ -1,6 +1,6 @@
 {
-  "name": "@bangle.io/test-helpers",
-  "description": "",
+  "name": "@bangle.io/test-utils-slice",
+  "description": "A collection of testing slices",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
@@ -30,8 +30,7 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
     "@nalanda/core": "^0.2.3",
-    "@bangle.io/lib-common": "workspace:*",
-    "@bangle.io/test-helpers": "workspace:*"
+    "@bangle.io/lib-common": "workspace:*"
   },
   "devDependencies": {}
 }

@@ -3,9 +3,8 @@
  */
 import lifeCycle from 'page-lifecycle';
 
-import { setupSliceTestStore, sleep } from '@bangle.io/test-helpers';
+import { setupSliceTestStore } from '@bangle.io/test-utils-slice';
 
-import { createHistoryRef, sliceHistory } from '../slice-history';
 import { blockPageField, sliceLifeCycle } from '../slice-lifecycle';
 
 jest.mock('page-lifecycle', () => {

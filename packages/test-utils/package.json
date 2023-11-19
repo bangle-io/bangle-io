@@ -1,0 +1,8 @@
+{
+  "name": "test-utils",
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": [
+      "*"
+    ]
+  }
+}
