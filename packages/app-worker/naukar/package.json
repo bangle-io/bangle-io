@@ -27,6 +27,6 @@
     "@bangle.io/logger": "workspace:*",
     "immer": "^10.0.3",
     "@bangle.io/naukar-store": "workspace:*",
-    "@bangle.io/naukar-state-sync": "workspace:*"
+    "@bangle.io/nsm-3": "workspace:*"
   }
 }

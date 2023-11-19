@@ -21,18 +21,13 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/utils": "workspace:*",
     "@nalanda/core": "^0.2.3",
     "@bangle.io/history": "workspace:*",
-    "@bangle.io/global-scope-helpers": "workspace:*",
     "@bangle.io/lib-common": "workspace:*",
     "page-lifecycle": "^0.1.2",
     "@bangle.io/shared-types": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.io/mini-js-utils": "workspace:*",
-    "@bangle.io/nsm-3": "workspace:*",
     "@bangle.io/test-helpers": "workspace:*"
   }
 }

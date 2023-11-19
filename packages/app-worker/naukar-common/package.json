@@ -23,7 +23,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/naukar-state-sync": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
   }
 }

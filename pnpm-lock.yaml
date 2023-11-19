@@ -210,9 +210,6 @@ importers:
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -351,21 +348,21 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
 
   packages/app-window/window-store:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/lib-common':
         specifier: workspace:*
         version: link:../../lib/lib-common
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/naukar-state-sync':
+      '@bangle.io/nsm-3':
         specifier: workspace:*
-        version: link:../../lib/naukar-state-sync
+        version: link:../../js-lib/nsm-3
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -375,9 +372,6 @@ importers:
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
-      '@bangle.io/window-common':
-        specifier: workspace:*
-        version: link:../window-common
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
@@ -390,12 +384,12 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/naukar-state-sync':
-        specifier: workspace:*
-        version: link:../../lib/naukar-state-sync
       '@bangle.io/naukar-store':
         specifier: workspace:*
         version: link:../naukar-store
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -405,33 +399,27 @@ importers:
 
   packages/app-worker/naukar-common:
     dependencies:
-      '@bangle.io/naukar-state-sync':
-        specifier: workspace:*
-        version: link:../../lib/naukar-state-sync
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
 
   packages/app-worker/naukar-store:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
       '@bangle.io/naukar-common':
         specifier: workspace:*
         version: link:../naukar-common
-      '@bangle.io/naukar-state-sync':
-        specifier: workspace:*
-        version: link:../../lib/naukar-state-sync
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
-      zod:
-        specifier: ^3.22.4
-        version: 3.22.4
 
   packages/e2e-tests/e2e-tests:
     dependencies:
@@ -706,28 +694,10 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
 
-  packages/lib/naukar-state-sync:
-    dependencies:
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
-      immer:
-        specifier: ^10.0.3
-        version: 10.0.3
-      zod:
-        specifier: ^3.22.4
-        version: 3.22.4
-
   packages/lib/routing-helpers: {}
 
   packages/lib/slice-page:
     dependencies:
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      '@bangle.io/global-scope-helpers':
-        specifier: workspace:*
-        version: link:../../js-lib/global-scope-helpers
       '@bangle.io/history':
         specifier: workspace:*
         version: link:../../js-lib/history
@@ -737,9 +707,6 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
@@ -747,12 +714,6 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
     devDependencies:
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../../js-lib/mini-js-utils
-      '@bangle.io/nsm-3':
-        specifier: workspace:*
-        version: link:../../js-lib/nsm-3
       '@bangle.io/test-helpers':
         specifier: workspace:*
         version: link:../test-helpers

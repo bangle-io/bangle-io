@@ -23,7 +23,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/logger": "workspace:*"
   }
 }
