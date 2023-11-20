@@ -6,7 +6,7 @@ import React from 'react';
 import { sliceUI } from '@bangle.io/slice-ui';
 
 export function LeftAside() {
-  const { showRightAside, widescreen } = useTrack(sliceUI);
+  const { widescreen } = useTrack(sliceUI);
   const store = useStore();
 
   return (

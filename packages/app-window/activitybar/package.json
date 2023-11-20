@@ -1,11 +1,11 @@
 {
-  "name": "@bangle.io/app",
+  "name": "@bangle.io/activitybar",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/app-window/app"
+    "directory": "packages/app-window/activitybar"
   },
   "authors": [
     {
@@ -28,13 +28,7 @@
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/window-store": "workspace:*",
-    "@spectrum-icons/workflow": "^4.2.7",
-    "@bangle.io/titlebar": "workspace:*",
-    "@bangle.io/right-aside": "workspace:*",
-    "@bangle.io/left-aside": "workspace:*",
-    "@bangle.io/main-content": "workspace:*",
-    "@bangle.io/activitybar": "workspace:*"
+    "@spectrum-icons/workflow": "^4.2.7"
   },
   "devDependencies": {}
 }

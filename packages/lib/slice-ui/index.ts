@@ -6,8 +6,7 @@ import { sliceUIWidescreen } from './slice-ui-widescreen';
 const key = createKey('slice-ui', [sliceUIWidescreen, sliceUIColorScheme]);
 
 const showRightAsideField = key.field(false);
-
-function updateShowRightAside(show: boolean | undefined) {
+function toggleRightAside(show: boolean | undefined) {
   return showRightAsideField.update((cur) => {
     if (typeof show === 'boolean') {
       return show;
@@ -17,9 +16,18 @@ function updateShowRightAside(show: boolean | undefined) {
 }
 
 const showLeftAsideField = key.field(false);
-
-function updateLeftAside(show: boolean | undefined) {
+function toggleLeftAside(show: boolean | undefined) {
   return showLeftAsideField.update((cur) => {
+    if (typeof show === 'boolean') {
+      return show;
+    }
+    return !cur;
+  });
+}
+
+const showActivitybarField = key.field(false);
+function toggleActivitybar(show: boolean | undefined) {
+  return showActivitybarField.update((cur) => {
     if (typeof show === 'boolean') {
       return show;
     }
@@ -40,8 +48,10 @@ export const sliceUI = key.slice({
   colorScheme: colorSchemeField,
   showRightAside: showRightAsideField,
   showLeftAside: showLeftAsideField,
-  updateShowRightAside,
-  updateLeftAside,
+  showActivitybar: showActivitybarField,
+  toggleRightAside,
+  toggleLeftAside,
+  toggleActivitybar,
 });
 
 export const sliceUIAllSlices = [

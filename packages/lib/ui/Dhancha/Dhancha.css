@@ -1,3 +1,4 @@
+/* no asides */
 .B-ui-dhancha-widescreen {
   height: 100vh;
   display: grid;
@@ -5,13 +6,29 @@
       100vh - var(--BV-miscTitlebarHeight)
     );
 
+  grid-template-columns: auto;
+  grid-template-areas:
+    'titlebar-container'
+    'main-container';
+}
+
+.B-ui-dhancha-widescreen.B-ui-has-activitybar {
   grid-template-columns: var(--BV-miscActivitybarWidth) auto;
   grid-template-areas:
     'activitybar titlebar-container'
     'activitybar main-container';
 }
 
+/* left aside */
 .B-ui-dhancha-widescreen.B-ui-has-left-aside {
+  grid-template-columns:
+    var(--BV-miscLeftAsideWidth)
+    auto;
+  grid-template-areas:
+    'left-aside titlebar-container'
+    'left-aside main-container';
+}
+.B-ui-dhancha-widescreen.B-ui-has-left-aside.B-ui-has-activitybar {
   grid-template-columns:
     var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth)
     auto;
@@ -20,7 +37,14 @@
     'activitybar left-aside main-container';
 }
 
+/* right aside */
 .B-ui-dhancha-widescreen.B-ui-has-right-aside {
+  grid-template-columns: auto var(--BV-miscRightAsideWidth);
+  grid-template-areas:
+    'titlebar-container titlebar-container'
+    'main-container right-aside';
+}
+.B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-activitybar {
   grid-template-columns: var(--BV-miscActivitybarWidth) auto var(
       --BV-miscRightAsideWidth
     );
@@ -29,7 +53,16 @@
     'activitybar main-container right-aside';
 }
 
+/* both left and right */
 .B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-left-aside {
+  grid-template-columns:
+    var(--BV-miscLeftAsideWidth)
+    auto var(--BV-miscRightAsideWidth);
+  grid-template-areas:
+    'left-aside titlebar-container titlebar-container'
+    'left-aside main-container right-aside';
+}
+.B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-left-aside.B-ui-has-activitybar {
   grid-template-columns:
     var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth)
     auto var(--BV-miscRightAsideWidth);

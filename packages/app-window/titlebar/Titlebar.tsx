@@ -8,7 +8,8 @@ import React from 'react';
 import { sliceUI } from '@bangle.io/slice-ui';
 
 export function Titlebar() {
-  const { showRightAside, widescreen, showLeftAside } = useTrack(sliceUI);
+  const { showRightAside, widescreen, showLeftAside, showActivitybar } =
+    useTrack(sliceUI);
   const store = useStore();
 
   return (
@@ -19,9 +20,9 @@ export function Titlebar() {
           <div>
             <ToggleButton
               isQuiet
-              isSelected={showLeftAside}
+              isSelected={showActivitybar}
               onPress={() => {
-                store.dispatch(sliceUI.actions.updateLeftAside(undefined));
+                store.dispatch(sliceUI.actions.toggleActivitybar(undefined));
               }}
             >
               <SearchIcon size="S" />
@@ -34,7 +35,7 @@ export function Titlebar() {
               isQuiet
               isSelected={showLeftAside}
               onPress={() => {
-                store.dispatch(sliceUI.actions.updateLeftAside(undefined));
+                store.dispatch(sliceUI.actions.toggleLeftAside(undefined));
               }}
             >
               <MarginLeftIcon size="S" />
@@ -47,7 +48,7 @@ export function Titlebar() {
               isQuiet
               isSelected={showRightAside}
               onPress={() => {
-                store.dispatch(sliceUI.actions.updateShowRightAside(undefined));
+                store.dispatch(sliceUI.actions.toggleRightAside(undefined));
               }}
             >
               <MarginRightIcon size="S" />

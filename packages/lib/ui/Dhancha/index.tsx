@@ -18,7 +18,7 @@ export function DhanchaWidescreen({
   rightAside,
   titlebar,
 }: {
-  activitybar: ReactNode;
+  activitybar?: ReactNode;
   leftAside?: ReactNode;
   mainContent: ReactNode;
   rightAside?: ReactNode;
@@ -48,17 +48,20 @@ export function DhanchaWidescreen({
         'B-ui-dhancha-widescreen',
         leftAside && 'B-ui-has-left-aside',
         rightAside && 'B-ui-has-right-aside',
+        activitybar && 'B-ui-has-activitybar',
       )}
     >
-      <div
-        role="navigation"
-        aria-label="Title Bar"
-        style={{
-          gridArea: 'activitybar',
-        }}
-      >
-        {activitybar}
-      </div>
+      {activitybar && (
+        <div
+          role="navigation"
+          aria-label="Title Bar"
+          style={{
+            gridArea: 'activitybar',
+          }}
+        >
+          {activitybar}
+        </div>
+      )}
       {leftAside && (
         <aside style={leftAsideStyle} className="left-aside">
           {leftAside}

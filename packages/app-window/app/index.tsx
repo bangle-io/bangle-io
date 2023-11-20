@@ -1,10 +1,12 @@
 import './style.css';
 
-import { defaultTheme, Flex, Provider, View } from '@adobe/react-spectrum';
-import { StoreProvider, useStore, useTrack } from '@nalanda/react';
+import { defaultTheme, Provider } from '@adobe/react-spectrum';
+import { StoreProvider, useTrack } from '@nalanda/react';
 import React from 'react';
 
+import { Activitybar } from '@bangle.io/activitybar';
 import { LeftAside } from '@bangle.io/left-aside';
+import { MainContent } from '@bangle.io/main-content';
 import { RightAside } from '@bangle.io/right-aside';
 import { EternalVarsWindow } from '@bangle.io/shared-types';
 import { sliceUI } from '@bangle.io/slice-ui';
@@ -34,108 +36,22 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
 }
 
 function Main() {
-  const { colorScheme, widescreen, showRightAside, showLeftAside } =
+  const { widescreen, showLeftAside, showRightAside, showActivitybar } =
     useTrack(sliceUI);
-
-  const mainContent = (
-    <Flex
-      direction="column"
-      height="100%"
-      UNSAFE_style={{
-        overflow: 'scroll',
-      }}
-    >
-      <div
-        style={
-          widescreen
-            ? {
-                // overflow: 'scroll',
-              }
-            : {}
-        }
-      >
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-      </div>
-    </Flex>
-  );
 
   if (widescreen) {
     return (
       <DhanchaWidescreen
-        activitybar={
-          <div
-            style={{
-              backgroundColor: 'green',
-              height: '100%',
-            }}
-          >
-            A
-          </div>
-        }
-        mainContent={mainContent}
-        leftAside={showLeftAside ? <LeftAside /> : null}
-        rightAside={showRightAside ? <RightAside /> : null}
+        activitybar={showActivitybar && <Activitybar />}
+        mainContent={<MainContent />}
+        leftAside={showLeftAside && <LeftAside />}
+        rightAside={showRightAside && <RightAside />}
         titlebar={<Titlebar />}
       />
     );
   }
 
   return (
-    <DhanchaSmallscreen mainContent={mainContent} titlebar={<Titlebar />} />
+    <DhanchaSmallscreen mainContent={<MainContent />} titlebar={<Titlebar />} />
   );
 }
