@@ -1,11 +1,7 @@
-import type { Preset, Shortcut } from '@unocss/core';
+import type { Shortcut } from '@unocss/core';
+import { definePreset } from '@unocss/core';
 import type { PresetMiniOptions, Theme } from '@unocss/preset-mini';
-import { preflights } from '@unocss/preset-mini';
-import {
-  rules,
-  shortcuts as windShortcuts,
-  variants,
-} from '@unocss/preset-wind';
+import { presetWind, PresetWindOptions } from '@unocss/preset-wind';
 
 import { rules as bangleRules } from './rules';
 import { theme } from './theme';
@@ -15,7 +11,7 @@ export type { Theme };
 
 export type PresetUnoOptions = PresetMiniOptions;
 
-export const shortcuts: Shortcut<Theme>[] = [
+const shortcuts: Shortcut<Theme>[] = [
   ['z-popup', 'z-300'],
   ['z-dropdown', 'z-400'],
   ['z-modal', 'z-500'],
@@ -33,21 +29,21 @@ export const shortcuts: Shortcut<Theme>[] = [
   ],
 ];
 
-export const presetUno = (options: PresetUnoOptions = {}): Preset<Theme> => {
-  options.dark = options.dark ?? 'class';
-  options.attributifyPseudo = options.attributifyPseudo ?? false;
-  options.preflight = options.preflight ?? true;
+export const presetUno = definePreset((options: PresetWindOptions = {}) => {
+  const wind = presetWind(options);
+  const windShortcuts = wind.shortcuts;
+  if (!Array.isArray(windShortcuts)) {
+    throw new Error('Expected wind.shortcuts to be an array');
+  }
 
   return {
+    ...wind,
     name: '@bangle.io/uno-preset-bangle',
-    theme: theme,
-    rules: [...rules, ...bangleRules],
-    shortcuts: [...shortcuts, ...windShortcuts],
-    variants: [...variants(options), ...bangleVariants],
-    options,
-    preflights: options.preflight ? preflights : [],
-    prefix: options.prefix,
+    theme,
+    rules: [...wind.rules!, ...bangleRules],
+    shortcuts: [...windShortcuts, ...shortcuts],
+    variants: [...wind.variants!, ...bangleVariants],
   };
-};
+});
 
 export default presetUno;

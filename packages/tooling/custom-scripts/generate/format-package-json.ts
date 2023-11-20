@@ -1,4 +1,3 @@
-import execa from 'execa';
 import path from 'node:path';
 
 import { makeLogger, makeThrowValidationError } from '../lib';
