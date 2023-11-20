@@ -28,10 +28,9 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/css-vars": "workspace:*",
-    "@unocss/core": "^0.57.2",
-    "@unocss/preset-mini": "^0.57.2",
-    "@unocss/preset-uno": "^0.57.2",
-    "@unocss/preset-wind": "^0.57.2"
-  },
-  "devDependencies": {}
+    "@unocss/core": "^0.57.6",
+    "@unocss/preset-mini": "^0.57.6",
+    "@unocss/preset-uno": "^0.57.6",
+    "@unocss/preset-wind": "^0.57.6"
+  }
 }

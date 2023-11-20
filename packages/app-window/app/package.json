@@ -21,20 +21,19 @@
   },
   "scripts": {},
   "dependencies": {
-    "@adobe/react-spectrum": "^3.31.1",
-    "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/ui": "workspace:*",
-    "@nalanda/react": "^0.2.3",
-    "@types/react": "^18.2.37",
-    "react": "^18.2.0",
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/window-store": "workspace:*",
-    "@spectrum-icons/workflow": "^4.2.7",
-    "@bangle.io/titlebar": "workspace:*",
-    "@bangle.io/right-aside": "workspace:*",
+    "@adobe/react-spectrum": "^3.32.2",
+    "@bangle.io/activitybar": "workspace:*",
     "@bangle.io/left-aside": "workspace:*",
     "@bangle.io/main-content": "workspace:*",
-    "@bangle.io/activitybar": "workspace:*"
-  },
-  "devDependencies": {}
+    "@bangle.io/right-aside": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-ui": "workspace:*",
+    "@bangle.io/titlebar": "workspace:*",
+    "@bangle.io/ui": "workspace:*",
+    "@bangle.io/window-store": "workspace:*",
+    "@nalanda/react": "^0.2.3",
+    "@spectrum-icons/workflow": "^4.2.7",
+    "@types/react": "^18.2.37",
+    "react": "^18.2.0"
+  }
 }

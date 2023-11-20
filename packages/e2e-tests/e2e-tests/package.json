@@ -24,8 +24,8 @@
     "playwright-install": "pnpm exec playwright install --with-deps"
   },
   "dependencies": {
-    "@playwright/test": "^1.39.0",
-    "@types/node": "^20.8.10",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.9.2"
   }
 }

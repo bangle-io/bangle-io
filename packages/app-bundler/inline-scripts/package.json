@@ -31,7 +31,6 @@
   "dependencies": {
     "@bangle.io/app-root": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "tsup": "^7.2.0"
-  },
-  "devDependencies": {}
+    "tsup": "^8.0.0"
+  }
 }
