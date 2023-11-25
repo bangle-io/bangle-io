@@ -12,8 +12,27 @@ const publicDir = path.join(
   'public',
 );
 
+const globbyIgnore = ['**/node_modules/**', '**/dist/**', '**/build/**'];
+const root = path.resolve(__dirname, '../../../..');
+
+// There is some bug in storybook where it gets stuck in infinite loop
+async function findStories(): Promise<StorybookConfig['stories']> {
+  const { globby } = await import('globby');
+  const stories = await globby('**/*.stories.*', {
+    cwd: path.join(root, 'packages'),
+    absolute: true,
+    gitignore: true,
+    ignore: globbyIgnore,
+  });
+
+  console.debug('Found stories', stories);
+
+  return stories;
+}
+
 const config: StorybookConfig = {
-  stories: [`../../../**/*.stories.@(ts|tsx)`],
+  // @ts-expect-error - TODO: fix this
+  stories: async (list = []) => [...list, ...(await findStories())],
   staticDirs: ['../../../app-bundler/app-root/public'],
   previewHead: (head) => `
   ${head}
