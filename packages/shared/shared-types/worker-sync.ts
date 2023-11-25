@@ -9,6 +9,8 @@ export type WorkerWindowStoreReplica = {
   ui: {
     widescreen?: boolean;
     colorScheme?: ColorScheme;
+    screenWidth?: number;
+    screenHeight?: number;
   };
 };
 

@@ -39,19 +39,29 @@ const widescreenField = key.derive((state) => {
   return sliceUIWidescreen.getField(state, 'widescreen');
 });
 
+const screenWidthField = key.derive((state) => {
+  return sliceUIWidescreen.getField(state, 'screenWidth');
+});
+
+const screenHeightField = key.derive((state) => {
+  return sliceUIWidescreen.getField(state, 'screenHeight');
+});
+
 const colorSchemeField = key.derive((state) =>
   sliceUIColorScheme.getField(state, 'colorScheme'),
 );
 
 export const sliceUI = key.slice({
-  widescreen: widescreenField,
   colorScheme: colorSchemeField,
-  showRightAside: showRightAsideField,
-  showLeftAside: showLeftAsideField,
+  screenHeight: screenHeightField,
+  screenWidth: screenWidthField,
   showActivitybar: showActivitybarField,
-  toggleRightAside,
-  toggleLeftAside,
+  showLeftAside: showLeftAsideField,
+  showRightAside: showRightAsideField,
   toggleActivitybar,
+  toggleLeftAside,
+  toggleRightAside,
+  widescreen: widescreenField,
 });
 
 export const sliceUIAllSlices = [

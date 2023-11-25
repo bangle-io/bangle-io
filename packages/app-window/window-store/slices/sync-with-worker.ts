@@ -79,12 +79,15 @@ key.effect((store) => {
 
 // Following effects are responsible for creating patches
 key.effect((store) => {
-  const { colorScheme, widescreen } = sliceUI.track(store);
+  const { colorScheme, widescreen, screenHeight, screenWidth } =
+    sliceUI.track(store);
   const mirrorState = mirroredStateField.get(store.state);
   updatePatches(
     store,
     produceWithPatches(mirrorState, (draft) => {
       draft.ui.colorScheme = colorScheme;
+      draft.ui.screenHeight = screenHeight;
+      draft.ui.screenWidth = screenWidth;
       draft.ui.widescreen = widescreen;
     }),
   );
