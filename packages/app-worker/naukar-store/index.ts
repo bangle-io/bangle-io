@@ -4,7 +4,7 @@ import {
   defaultStoreConfig,
   getStoreConfigRef,
 } from '@bangle.io/naukar-common';
-import { zeroTimeoutScheduler } from '@bangle.io/nsm-3';
+import { customBangleScheduler, zeroTimeoutScheduler } from '@bangle.io/nsm-3';
 import type { EternalVarsWorker } from '@bangle.io/shared-types';
 
 import { logger } from './logger';
@@ -23,6 +23,8 @@ export function createNaukarStore({
       'Using zeroTimeoutScheduler, this is only for testing and should not be used in production',
     );
     scheduler = zeroTimeoutScheduler;
+  } else {
+    scheduler = customBangleScheduler;
   }
 
   const store = createStore({

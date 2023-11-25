@@ -26,6 +26,18 @@ export function createManualEffectScheduler() {
 }
 
 export const zeroTimeoutScheduler: EffectScheduler = (cb, opts) => {
+  const metadata = opts.metadata;
+  const runImmediately = metadata.runImmediately;
+
+  if (runImmediately) {
+    queueMicrotask(() => {
+      void cb();
+    });
+    return () => {
+      // noop
+    };
+  }
+
   let id = setTimeout(() => void cb(), 0);
 
   return () => {
@@ -33,12 +45,8 @@ export const zeroTimeoutScheduler: EffectScheduler = (cb, opts) => {
   };
 };
 
-// runImmediately
-
 const hasIdleCallback =
   typeof window !== 'undefined' && 'requestIdleCallback' in window;
-
-const verified = new WeakSet<() => void | Promise<void>>();
 
 export const customBangleScheduler: EffectScheduler = (cb, opts) => {
   const metadata = opts.metadata;

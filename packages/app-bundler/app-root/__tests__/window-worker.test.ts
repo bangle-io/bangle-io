@@ -68,6 +68,8 @@ describe('createBroadcaster', () => {
         ui: {
           colorScheme: 'light',
           widescreen: true,
+          screenHeight: 768,
+          screenWidth: 1024,
         },
       });
     });
