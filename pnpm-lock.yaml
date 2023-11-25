@@ -366,6 +366,9 @@ importers:
       '@bangle.io/activitybar':
         specifier: workspace:*
         version: link:../activitybar
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/left-aside':
         specifier: workspace:*
         version: link:../left-aisde

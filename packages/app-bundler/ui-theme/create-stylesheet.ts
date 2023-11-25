@@ -22,10 +22,10 @@ if (typeof window !== 'undefined') {
 
 export const CSS_ROOT = ':root';
 export const CSS_SM_BODY = '.BU_smallscreen';
-export const CSS_LIGHT_SCHEME = `.light-scheme`;
-export const CSS_SM_LIGHT_SCHEME = `.light-scheme.BU_smallscreen`;
-export const CSS_DARK_SCHEME = `.dark-scheme`;
-export const CSS_SM_DARK_SCHEME = `.dark-scheme.BU_smallscreen`;
+export const CSS_LIGHT_SCHEME = `.BU_light-scheme`;
+export const CSS_SM_LIGHT_SCHEME = `.BU_light-scheme.BU_smallscreen`;
+export const CSS_DARK_SCHEME = `.BU_dark-scheme`;
+export const CSS_SM_DARK_SCHEME = `.BU_dark-scheme.BU_smallscreen`;
 
 type CssBlocks = Record<string, string[]>;
 

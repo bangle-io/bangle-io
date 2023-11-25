@@ -3,7 +3,7 @@ import { cleanup, createKey, ref } from '@nalanda/core';
 import { COLOR_SCHEME } from '@bangle.io/constants';
 
 // NOTE part of the code exists in @bangle.io/inline-scripts to ensure
-// the dark-scheme/light-scheme class is added as soon as possible
+// the BU_dark-scheme/BU_light-scheme class is added as soon as possible
 const key = createKey('slice-ui-color-scheme', []);
 
 type ColorScheme =
@@ -11,7 +11,7 @@ type ColorScheme =
   | (typeof COLOR_SCHEME)['DARK'];
 
 const colorSchemeField = key.field(
-  document.firstElementChild!.classList.contains('dark-scheme')
+  document.firstElementChild!.classList.contains('BU_dark-scheme')
     ? COLOR_SCHEME.DARK
     : COLOR_SCHEME.LIGHT,
 );
@@ -39,7 +39,7 @@ key.effect(function watchColorSchemeChange(store) {
         mutation.attributeName === 'class'
       ) {
         const classList = (mutation.target as Element).classList;
-        const isDark = classList.contains('dark-scheme');
+        const isDark = classList.contains('BU_dark-scheme');
         const newVal = isDark ? COLOR_SCHEME.DARK : COLOR_SCHEME.LIGHT;
         const curVal = colorSchemeField.get(store.state);
         if (curVal !== newVal) {

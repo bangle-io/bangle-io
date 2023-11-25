@@ -95,11 +95,11 @@ export function changeColorScheme(colorScheme: ColorScheme) {
   console.debug('changeColorScheme:', colorScheme);
 
   if (colorScheme === COLOR_SCHEME.DARK) {
-    document.body.classList.remove('light-scheme');
-    document.body.classList.add('dark-scheme');
+    document.body.classList.remove('BU_light-scheme');
+    document.body.classList.add('BU_dark-scheme');
   } else if (colorScheme === COLOR_SCHEME.LIGHT) {
-    document.body.classList.remove('dark-scheme');
-    document.body.classList.add('light-scheme');
+    document.body.classList.remove('BU_dark-scheme');
+    document.body.classList.add('BU_light-scheme');
   } else {
     console.warn('changeColorSchemes: unknown theme', colorScheme);
   }

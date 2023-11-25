@@ -1,10 +1,11 @@
 import './style.css';
 
-import { defaultTheme, Provider } from '@adobe/react-spectrum';
+import { darkTheme, lightTheme, Provider } from '@adobe/react-spectrum';
 import { StoreProvider, useTrack } from '@nalanda/react';
 import React from 'react';
 
 import { Activitybar } from '@bangle.io/activitybar';
+import { COLOR_SCHEME } from '@bangle.io/constants';
 import { LeftAside } from '@bangle.io/left-aside';
 import { MainContent } from '@bangle.io/main-content';
 import { RightAside } from '@bangle.io/right-aside';
@@ -26,12 +27,17 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
     store = createWindowStore(eternalVars, {});
   }
 
+  const isDark = sliceUI.get(store.state).colorScheme === COLOR_SCHEME.DARK;
+
   return (
-    <StoreProvider store={store}>
-      <Provider theme={defaultTheme}>
+    <Provider
+      theme={isDark ? darkTheme : lightTheme}
+      defaultColorScheme={isDark ? 'dark' : 'light'}
+    >
+      <StoreProvider store={store}>
         <Main />
-      </Provider>
-    </StoreProvider>
+      </StoreProvider>
+    </Provider>
   );
 }
 

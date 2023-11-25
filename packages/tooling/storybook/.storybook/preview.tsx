@@ -24,11 +24,11 @@ const WithThemeProvider: Decorator = (Story, context) => {
     el.classList.add(checkWidescreen() ? 'BU_widescreen' : 'BU_smallscreen');
 
     if (theme === 'light') {
-      el.classList.remove('dark-scheme');
-      el.classList.add('light-scheme');
+      el.classList.remove('BU_dark-scheme');
+      el.classList.add('BU_light-scheme');
     } else {
-      el.classList.add('dark-scheme');
-      el.classList.remove('light-scheme');
+      el.classList.add('BU_dark-scheme');
+      el.classList.remove('BU_light-scheme');
     }
   }, [theme]);
   return <Story />;

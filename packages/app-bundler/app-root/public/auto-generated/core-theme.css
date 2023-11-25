@@ -88,7 +88,7 @@
 /* stylelint-enable */
 
 /* stylelint-disable */
-.light-scheme {
+.BU_light-scheme {
   --BV-miscNoteTagsBg: rgb(70, 70, 70);
   --BV-miscNoteTagsText: rgb(255, 255, 255);
   --BV-miscActivitybarBg: rgb(26, 32, 44);
@@ -192,7 +192,7 @@
 /* stylelint-enable */
 
 /* stylelint-disable */
-.dark-scheme {
+.BU_dark-scheme {
   --BV-miscNoteTagsBg: rgb(208, 208, 208);
   --BV-miscNoteTagsText: rgb(0, 0, 0);
   --BV-miscActivitybarBg: rgb(31, 30, 30);
@@ -296,7 +296,7 @@
 /* stylelint-enable */
 
 /* stylelint-disable */
-.light-scheme.BU_smallscreen {
+.BU_light-scheme.BU_smallscreen {
   --BV-miscActivitybarBg: rgb(255, 255, 255);
   --BV-miscActivitybarText: rgb(34, 34, 34);
   --BV-miscPagePadding: 1.5rem 10px 2rem 25px;
@@ -304,7 +304,7 @@
 /* stylelint-enable */
 
 /* stylelint-disable */
-.dark-scheme.BU_smallscreen {
+.BU_dark-scheme.BU_smallscreen {
   --BV-miscActivitybarBg: rgb(14, 14, 14);
   --BV-miscActivitybarText: rgb(70, 70, 70);
   --BV-miscPagePadding: 1.5rem 10px 2rem 25px;
