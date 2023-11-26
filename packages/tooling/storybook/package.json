@@ -41,6 +41,7 @@
   "devDependencies": {
     "globby": "^14.0.0",
     "@babel/core": "^7.23.3",
+    "@adobe/react-spectrum": "^3.32.2",
     "@babel/preset-env": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@bangle.io/app-root": "workspace:*",

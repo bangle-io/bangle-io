@@ -17,25 +17,6 @@ export default meta;
 
 type Story = StoryObj<typeof DhanchaWidescreen>;
 
-export const WithAll: Story = {
-  args: {
-    leftAside: (
-      <div
-        style={{
-          height: '100%',
-          overflowY: 'scroll',
-        }}
-      >
-        <div>Activity bar</div>
-        <WorkspaceSidebar />
-      </div>
-    ),
-    mainContent: <MainContent />,
-    rightAside: <NoteSidebar />,
-    titlebar: <div className="bg-colorBgLayerFloat">I am titlebar</div>,
-  },
-};
-
 export const OnlyRight: Story = {
   args: {
     mainContent: <MainContent />,

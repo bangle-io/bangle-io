@@ -77,7 +77,7 @@ const config: StorybookConfig = {
     });
 
     return mergeConfig(config, {
-      plugins: [Unocss()],
+      plugins: [Unocss({})],
       define: {
         ...envVars.globalIdentifiers,
       },
