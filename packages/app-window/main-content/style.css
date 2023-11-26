@@ -1,47 +1,59 @@
-.BU_widescreen .B-main-content {
+:root {
+  --BV-app-layout-borderWidth: var(--BV-borderWidthDEFAULT);
+  /* we use twice the border size to improve dragging */
+  /* NOTE: if you are going to change the factor, update it at other places too */
+  --BV-app-totalBorderWidth: calc(2 * var(--BV-app-layout-borderWidth));
+  --BV-app-activitybarWidth: var(--BV-miscActivitybarWidth);
+  --BV-app-leftAsideWidth: var(--BV-miscLeftAsideWidth);
+  --BV-app-rightAsideWidth: var(--BV-miscRightAsideWidth);
+}
+
+.BU_widescreen .B-app-main-content {
   width: 100vw;
 }
 
-.BU_show-left-aside .B-main-content {
+.BU_show-left-aside .B-app-main-content {
   width: calc(
-    100vw - (2 * var(--BV-borderWidthDEFAULT)) - var(--BV-miscLeftAsideWidth)
+    100vw - var(--BV-app-leftAsideWidth) - var(--BV-app-totalBorderWidth)
   );
 }
 
-.BU_show-right-aside .B-main-content {
+.BU_show-right-aside .B-app-main-content {
   width: calc(
-    100vw - (2 * var(--BV-borderWidthDEFAULT)) - var(--BV-miscRightAsideWidth)
+    100vw - var(--BV-app-rightAsideWidth) - var(--BV-app-totalBorderWidth)
   );
 }
 
-.BU_show-activitybar .B-main-content {
-  width: calc(100vw - var(--BV-miscActivitybarWidth));
+.BU_show-activitybar .B-app-main-content {
+  width: calc(100vw - var(--BV-app-activitybarWidth));
 }
 
-.BU_show-left-aside.BU_show-right-aside .B-main-content {
+.BU_show-left-aside.BU_show-right-aside .B-app-main-content {
   width: calc(
-    100vw - (4 * var(--BV-borderWidthDEFAULT)) - var(--BV-miscLeftAsideWidth) -
-      var(--BV-miscRightAsideWidth)
+    100vw - var(--BV-app-leftAsideWidth) - var(--BV-app-rightAsideWidth) -
+      var(--BV-app-totalBorderWidth) - var(--BV-app-totalBorderWidth)
   );
 }
 
-.BU_show-activitybar.BU_show-left-aside .B-main-content {
+.BU_show-activitybar.BU_show-left-aside .B-app-main-content {
   width: calc(
-    100vw - var(--BV-miscActivitybarWidth) - (2 * var(--BV-borderWidthDEFAULT)) -
-      var(--BV-miscLeftAsideWidth)
+    100vw - var(--BV-app-activitybarWidth) - var(--BV-app-leftAsideWidth) -
+      var(--BV-app-totalBorderWidth)
   );
 }
 
-.BU_show-activitybar.BU_show-right-aside .B-main-content {
+.BU_show-activitybar.BU_show-right-aside .B-app-main-content {
   width: calc(
-    100vw - var(--BV-miscActivitybarWidth) - (2 * var(--BV-borderWidthDEFAULT)) -
-      var(--BV-miscRightAsideWidth)
+    100vw - var(--BV-app-activitybarWidth) - var(--BV-app-rightAsideWidth) -
+      var(--BV-app-totalBorderWidth)
   );
 }
 
-.BU_show-activitybar.BU_show-left-aside.BU_show-right-aside .B-main-content {
+.BU_show-activitybar.BU_show-left-aside.BU_show-right-aside
+  .B-app-main-content {
   width: calc(
-    100vw - var(--BV-miscActivitybarWidth) - (4 * var(--BV-borderWidthDEFAULT)) -
-      var(--BV-miscLeftAsideWidth) - var(--BV-miscRightAsideWidth)
+    100vw - var(--BV-app-activitybarWidth) - var(--BV-app-leftAsideWidth) -
+      var(--BV-app-rightAsideWidth) - var(--BV-app-totalBorderWidth) -
+      var(--BV-app-totalBorderWidth)
   );
 }

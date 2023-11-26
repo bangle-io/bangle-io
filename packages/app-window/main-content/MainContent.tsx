@@ -14,39 +14,19 @@ import {
   View,
 } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
-import MarginRightIcon from '@spectrum-icons/workflow/MarginRight';
 import React from 'react';
 
 import { sliceUI } from '@bangle.io/slice-ui';
 
 export function MainContent() {
-  const { widescreen, showLeftAside, showRightAside, showActivitybar } =
-    useTrack(sliceUI);
+  const {} = useTrack(sliceUI);
   const store = useStore();
-
-  // let width = '100vw';
-
-  // if (widescreen) {
-  //   if (showLeftAside && showRightAside) {
-  //     width =
-  //       'calc(100vw - var(--BV-miscLeftAsideWidth) - var(--BV-miscRightAsideWidth) - (4 * var(--BV-borderWidthDEFAULT)))';
-  //   } else if (showLeftAside && !showRightAside) {
-  //     width =
-  //       'calc(100vw - var(--BV-miscLeftAsideWidth) - (2 * var(--BV-borderWidthDEFAULT)))';
-  //   } else if (!showLeftAside && showRightAside) {
-  //     width =
-  //       'calc(100vw - var(--BV-miscRightAsideWidth) - (2 * var(--BV-borderWidthDEFAULT)))';
-  //   }
-  // }
 
   return (
     <Flex
       direction="column"
       height="100%"
-      // UNSAFE_style={{
-      //   width,
-      // }}
-      UNSAFE_className="overflow-y-scroll B-main-content"
+      UNSAFE_className="overflow-y-scroll B-app-main-content px-4 pt-4"
     >
       <TableView
         aria-label="Example table with static contents"
