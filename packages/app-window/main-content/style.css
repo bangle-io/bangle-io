@@ -1,0 +1,47 @@
+.BU_widescreen .B-main-content {
+  width: 100vw;
+}
+
+.BU_show-left-aside .B-main-content {
+  width: calc(
+    100vw - (2 * var(--BV-borderWidthDEFAULT)) - var(--BV-miscLeftAsideWidth)
+  );
+}
+
+.BU_show-right-aside .B-main-content {
+  width: calc(
+    100vw - (2 * var(--BV-borderWidthDEFAULT)) - var(--BV-miscRightAsideWidth)
+  );
+}
+
+.BU_show-activitybar .B-main-content {
+  width: calc(100vw - var(--BV-miscActivitybarWidth));
+}
+
+.BU_show-left-aside.BU_show-right-aside .B-main-content {
+  width: calc(
+    100vw - (4 * var(--BV-borderWidthDEFAULT)) - var(--BV-miscLeftAsideWidth) -
+      var(--BV-miscRightAsideWidth)
+  );
+}
+
+.BU_show-activitybar.BU_show-left-aside .B-main-content {
+  width: calc(
+    100vw - var(--BV-miscActivitybarWidth) - (2 * var(--BV-borderWidthDEFAULT)) -
+      var(--BV-miscLeftAsideWidth)
+  );
+}
+
+.BU_show-activitybar.BU_show-right-aside .B-main-content {
+  width: calc(
+    100vw - var(--BV-miscActivitybarWidth) - (2 * var(--BV-borderWidthDEFAULT)) -
+      var(--BV-miscRightAsideWidth)
+  );
+}
+
+.BU_show-activitybar.BU_show-left-aside.BU_show-right-aside .B-main-content {
+  width: calc(
+    100vw - var(--BV-miscActivitybarWidth) - (4 * var(--BV-borderWidthDEFAULT)) -
+      var(--BV-miscLeftAsideWidth) - var(--BV-miscRightAsideWidth)
+  );
+}

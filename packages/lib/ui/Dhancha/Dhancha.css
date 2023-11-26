@@ -11,6 +11,7 @@
     'titlebar-container'
     'main-container';
 
+  /* make sure to update corresponding JS code before changing this */
   --BV-dhancha-separator-width: calc(2 * var(--BV-borderWidthDEFAULT));
 }
 
@@ -82,8 +83,8 @@
     var(--BV-dhancha-separator-width)
     var(--BV-miscRightAsideWidth);
   grid-template-areas:
-    'activitybar left-aside titlebar-container titlebar-container titlebar-container   titlebar-container'
-    'activitybar left-aside titlebar-container main-container     right-aside-separator  right-aside';
+    'activitybar left-aside left-aside-separator titlebar-container titlebar-container   titlebar-container'
+    'activitybar left-aside left-aside-separator main-container     right-aside-separator  right-aside';
 }
 
 .B-ui-aside-separator {
@@ -100,7 +101,7 @@
 
 .B-ui-aside-separator > :last-child {
   flex-grow: 1;
-  background-color: var(--BV-colorNeutralBorderSubdued);
+  background-color: var(--BV-colorNeutralBorder);
 }
 
 .B-ui-aside-separator.BU_is-active > * {

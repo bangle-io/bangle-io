@@ -23,6 +23,65 @@ type ResizeOptions = {
   type: 'left' | 'right';
 };
 
+function disableUserSelect(elements: (HTMLElement | null)[]): void {
+  elements.forEach((element) => {
+    if (element) {
+      element.style.userSelect = 'none';
+      element.style.pointerEvents = 'none';
+    }
+  });
+}
+
+function enableUserSelect(elements: (HTMLElement | null)[]): void {
+  elements.forEach((element) => {
+    if (element) {
+      element.style.removeProperty('user-select');
+      element.style.removeProperty('pointer-events');
+    }
+  });
+}
+
+function setCSSVariable(propertyName: string, value: number): void {
+  document.documentElement.style.setProperty(propertyName, `${value}px`);
+}
+
+function parseRootCSSVariable(variable: string): number {
+  return parseInt(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue(variable)
+      .trim(),
+    10,
+  );
+}
+
+export function calcMainContentWidth(opts: {
+  leftWidth: number;
+  rightWidth: number;
+  hasLeftAside: boolean;
+  hasRightAside: boolean;
+  activitybarWidth: number;
+  hasActivitybar: boolean;
+  borderWidth: number;
+}) {
+  const leftWidth = opts.hasLeftAside ? opts.leftWidth : 0;
+  const rightWidth = opts.hasRightAside ? opts.rightWidth : 0;
+  const activitybarWidth = opts.hasActivitybar ? opts.activitybarWidth : 0;
+  // we use a thicker separator to help with picking the dragbar
+  // NOTE: if we change the separator width, we need to change it in CSS aswell
+  const separatorWidth = 2 * opts.borderWidth;
+
+  const totalSeparatorWidth =
+    (opts.hasLeftAside ? separatorWidth : 0) +
+    (opts.hasRightAside ? separatorWidth : 0);
+
+  const totalWidth = window.innerWidth;
+
+  const summedUp =
+    leftWidth + rightWidth + totalSeparatorWidth + activitybarWidth;
+
+  return Math.max(0, totalWidth - summedUp);
+}
+
 export function useSeparator({
   onChange,
   type,
@@ -51,6 +110,7 @@ export function useSeparator({
 
   const onMouseMove = useCallback(
     (event: MouseEvent) => {
+      event.preventDefault();
       if (!rafIdRef.current) {
         rafIdRef.current = requestAnimationFrame(() => {
           updateWidth(event.clientX - lastXRef.current);
@@ -63,6 +123,7 @@ export function useSeparator({
 
   const onMouseDown = useCallback(
     (event: React.MouseEvent) => {
+      event.preventDefault();
       setIsDragging(true);
       document.body.style.cursor = 'col-resize';
       lastXRef.current = event.clientX;
@@ -124,11 +185,17 @@ export function DhanchaWidescreen({
   mainContent,
   rightAside,
   titlebar,
+  onChangeWidth,
 }: {
   activitybar?: ReactNode;
   leftAside?: ReactNode;
   mainContent: ReactNode;
   rightAside?: ReactNode;
+  onChangeWidth?: (val: {
+    leftAsideWidth: number | undefined;
+    rightAsideWidth: number | undefined;
+    mainContentWidth: number;
+  }) => void;
   titlebar: ReactNode;
 }) {
   const titleBarRef = useRef<HTMLDivElement>(null);
@@ -137,61 +204,50 @@ export function DhanchaWidescreen({
   const mainContentRef = useRef<HTMLDivElement>(null);
 
   const [defaultLeftWidth] = useState(() =>
-    parseInt(
-      getComputedStyle(document.documentElement)
-        .getPropertyValue('--BV-miscLeftAsideWidth')
-        .trim(),
-      10,
-    ),
+    parseRootCSSVariable('--BV-miscLeftAsideWidth'),
+  );
+  const [defaultRightWidth] = useState(() =>
+    parseRootCSSVariable('--BV-miscRightAsideWidth'),
+  );
+  const [defaultBorderWidth] = useState(() =>
+    parseRootCSSVariable('--BV-borderWidthDEFAULT'),
   );
 
-  const [defaultRightWidth] = useState(() =>
-    parseInt(
-      getComputedStyle(document.documentElement)
-        .getPropertyValue('--BV-miscRightAsideWidth')
-        .trim(),
-      10,
-    ),
-  );
+  const defaultMainContentWidth = useMemo(() => {
+    return calcMainContentWidth({
+      leftWidth: defaultLeftWidth,
+      rightWidth: defaultRightWidth,
+      hasLeftAside: !!leftAside,
+      hasRightAside: !!rightAside,
+      activitybarWidth: 0,
+      hasActivitybar: !!activitybar,
+      borderWidth: defaultBorderWidth,
+    });
+  }, [
+    leftAside,
+    defaultBorderWidth,
+    defaultLeftWidth,
+    rightAside,
+    defaultRightWidth,
+    activitybar,
+  ]);
 
   const onStart = useCallback(() => {
-    if (leftAsideRef.current) {
-      leftAsideRef.current.style.userSelect = 'none';
-      leftAsideRef.current.style.pointerEvents = 'none';
-    }
-    if (rightAsideRef.current) {
-      rightAsideRef.current.style.userSelect = 'none';
-      rightAsideRef.current.style.pointerEvents = 'none';
-    }
-    if (titleBarRef.current) {
-      titleBarRef.current.style.userSelect = 'none';
-      titleBarRef.current.style.pointerEvents = 'none';
-    }
-    if (mainContentRef.current) {
-      mainContentRef.current.style.userSelect = 'none';
-      mainContentRef.current.style.pointerEvents = 'none';
-    }
+    disableUserSelect([
+      leftAsideRef.current,
+      rightAsideRef.current,
+      titleBarRef.current,
+      mainContentRef.current,
+    ]);
   }, []);
+
   const onFinish = useCallback(() => {
-    if (leftAsideRef.current) {
-      leftAsideRef.current.style.removeProperty('user-select');
-      leftAsideRef.current.style.removeProperty('pointer-events');
-    }
-
-    if (rightAsideRef.current) {
-      rightAsideRef.current.style.removeProperty('user-select');
-      rightAsideRef.current.style.removeProperty('pointer-events');
-    }
-
-    if (titleBarRef.current) {
-      titleBarRef.current.style.removeProperty('user-select');
-      titleBarRef.current.style.removeProperty('pointer-events');
-    }
-
-    if (mainContentRef.current) {
-      mainContentRef.current.style.removeProperty('user-select');
-      mainContentRef.current.style.removeProperty('pointer-events');
-    }
+    enableUserSelect([
+      leftAsideRef.current,
+      rightAsideRef.current,
+      titleBarRef.current,
+      mainContentRef.current,
+    ]);
   }, []);
 
   const leftSeparatorProps = useSeparator({
@@ -200,10 +256,7 @@ export function DhanchaWidescreen({
     minWidth: 200,
     maxWidth: 500,
     onChange: (width) => {
-      document.documentElement.style.setProperty(
-        '--BV-miscLeftAsideWidth',
-        `${width}px`,
-      );
+      setCSSVariable('--BV-miscLeftAsideWidth', width);
     },
     onStart,
     onFinish,
@@ -217,28 +270,9 @@ export function DhanchaWidescreen({
     onStart,
     onFinish,
     onChange: (width) => {
-      document.documentElement.style.setProperty(
-        '--BV-miscRightAsideWidth',
-        `${width}px`,
-      );
+      setCSSVariable('--BV-miscRightAsideWidth', width);
     },
   });
-
-  const leftAsideStyle: React.CSSProperties = {
-    gridArea: 'left-aside',
-  };
-
-  const titlebarContainerStyle: React.CSSProperties = {
-    gridArea: 'titlebar-container',
-  };
-
-  const mainContentStyle: React.CSSProperties = {
-    gridArea: 'main-container',
-  };
-
-  const rightAsideStyle: React.CSSProperties = {
-    gridArea: 'right-aside',
-  };
 
   return (
     <div
@@ -264,7 +298,9 @@ export function DhanchaWidescreen({
       {leftAside && (
         <aside
           ref={leftAsideRef}
-          style={leftAsideStyle}
+          style={{
+            gridArea: 'left-aside',
+          }}
           className="B-ui-left-aside"
         >
           {leftAside}
@@ -279,14 +315,16 @@ export function DhanchaWidescreen({
       )}
       <TitlebarContainer
         ref={titleBarRef}
-        style={titlebarContainerStyle}
+        style={{ gridArea: 'titlebar-container' }}
         className="titlebar-container"
       >
         {titlebar}
       </TitlebarContainer>
       <div
         ref={mainContentRef}
-        style={mainContentStyle}
+        style={{
+          gridArea: 'main-container',
+        }}
         className="B-ui-main-content"
       >
         {mainContent}
@@ -301,7 +339,7 @@ export function DhanchaWidescreen({
       {rightAside && (
         <aside
           ref={rightAsideRef}
-          style={rightAsideStyle}
+          style={{ gridArea: 'right-aside' }}
           className="B-ui-right-aside"
         >
           {rightAside}

@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DhanchaWidescreen component renders correctly and handles resizing 1`] = `
+<div>
+  <div
+    class="B-ui-dhancha-widescreen B-ui-has-left-aside B-ui-has-right-aside B-ui-has-activitybar "
+  >
+    <div
+      aria-label="Title Bar"
+      class="B-ui-activitybar"
+      role="navigation"
+      style="grid-area: activitybar;"
+    >
+      <div>
+        Activity Bar
+      </div>
+    </div>
+    <aside
+      class="B-ui-left-aside"
+      style="grid-area: left-aside;"
+    >
+      <div>
+        Left Aside
+      </div>
+    </aside>
+    <div
+      class="B-ui-aside-separator "
+      style="grid-area: left-aside-separator;"
+    >
+      <div />
+      <div />
+    </div>
+    <div
+      aria-label="Title Bar"
+      class="B-ui-dhancha-titlebar titlebar-container"
+      role="navigation"
+      style="grid-area: titlebar-container;"
+    >
+      <div>
+        Title Bar
+      </div>
+    </div>
+    <div
+      class="B-ui-main-content"
+      style="grid-area: main-container;"
+    >
+      <div>
+        Main Content
+      </div>
+    </div>
+    <div
+      class="B-ui-aside-separator "
+      style="grid-area: right-aside-separator;"
+    >
+      <div />
+      <div />
+    </div>
+    <aside
+      class="B-ui-right-aside"
+      style="grid-area: right-aside;"
+    >
+      <div>
+        Right Aside
+      </div>
+    </aside>
+  </div>
+</div>
+`;

@@ -2,7 +2,7 @@ import './style.css';
 
 import { darkTheme, lightTheme, Provider } from '@adobe/react-spectrum';
 import { StoreProvider, useTrack } from '@nalanda/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Activitybar } from '@bangle.io/activitybar';
 import { COLOR_SCHEME } from '@bangle.io/constants';
@@ -31,8 +31,8 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
 
   return (
     <Provider
+      colorScheme={isDark ? 'dark' : 'light'}
       theme={isDark ? darkTheme : lightTheme}
-      defaultColorScheme={isDark ? 'dark' : 'light'}
     >
       <StoreProvider store={store}>
         <Main />
@@ -44,6 +44,21 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
 function Main() {
   const { widescreen, showLeftAside, showRightAside, showActivitybar } =
     useTrack(sliceUI);
+
+  useEffect(() => {
+    document.body.classList.toggle(
+      'BU_show-left-aside',
+      widescreen && showLeftAside,
+    );
+    document.body.classList.toggle(
+      'BU_show-right-aside',
+      widescreen && showRightAside,
+    );
+    document.body.classList.toggle(
+      'BU_show-activitybar',
+      widescreen && showActivitybar,
+    );
+  }, [showLeftAside, showRightAside, showActivitybar, widescreen]);
 
   if (widescreen) {
     return (
