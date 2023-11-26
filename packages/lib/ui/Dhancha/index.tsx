@@ -23,7 +23,7 @@ type ResizeOptions = {
   type: 'left' | 'right';
 };
 
-function useSeparator({
+export function useSeparator({
   onChange,
   type,
   defaultWidth,
@@ -63,7 +63,6 @@ function useSeparator({
 
   const onMouseDown = useCallback(
     (event: React.MouseEvent) => {
-      console.log('onMouseDown');
       setIsDragging(true);
       document.body.style.cursor = 'col-resize';
       lastXRef.current = event.clientX;
@@ -195,7 +194,7 @@ export function DhanchaWidescreen({
     }
   }, []);
 
-  const leftAsideResizerProps = useSeparator({
+  const leftSeparatorProps = useSeparator({
     type: 'left',
     defaultWidth: defaultLeftWidth,
     minWidth: 200,
@@ -272,12 +271,8 @@ export function DhanchaWidescreen({
         </aside>
       )}
       {leftAside && (
-        <div
-          {...leftAsideResizerProps}
-          style={{
-            gridArea: 'left-aside-separator',
-          }}
-        >
+        <div {...leftSeparatorProps}>
+          {/* two diffs to improve picking of the drag since its too thin otherwise*/}
           <div></div>
           <div></div>
         </div>
@@ -298,6 +293,7 @@ export function DhanchaWidescreen({
       </div>
       {rightAside && (
         <div {...rightSeparatorProps}>
+          {/* two diffs to improve picking of the drag since its too thin otherwise*/}
           <div></div>
           <div></div>
         </div>
