@@ -1,8 +1,8 @@
 import { createStore } from '@nalanda/core';
 
 import {
-  createWindowStoreConfigRef,
   defaultWindowStoreConfig,
+  getWindowStoreConfigRef,
   WindowStoreConfig,
 } from '@bangle.io/lib-common';
 import {
@@ -54,7 +54,7 @@ export function createWindowStore(
 
   // initialize store config right after store is created
   // so that we can use it in the effects
-  createWindowStoreConfigRef(store).current = storeConfig;
+  getWindowStoreConfigRef(store).current = storeConfig;
 
   return store;
 }

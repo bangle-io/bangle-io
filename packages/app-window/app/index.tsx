@@ -14,6 +14,9 @@ import { sliceUI } from '@bangle.io/slice-ui';
 import { Titlebar } from '@bangle.io/titlebar';
 import { DhanchaSmallscreen, DhanchaWidescreen } from '@bangle.io/ui';
 import { createWindowStore } from '@bangle.io/window-store';
+
+import { Router } from './Router';
+
 let store: ReturnType<typeof createWindowStore>;
 
 export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
@@ -35,7 +38,9 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
       theme={isDark ? darkTheme : lightTheme}
     >
       <StoreProvider store={store}>
-        <Main />
+        <Router>
+          <Main />
+        </Router>
       </StoreProvider>
     </Provider>
   );

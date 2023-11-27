@@ -90,16 +90,16 @@ test.describe('worker window state', () => {
     expect(workerWindowState.ui.widescreen).toEqual(true);
 
     expect(workerWindowState.page.lifecycle).toEqual('active');
-    expect(workerWindowState.page.location?.pathname).toEqual('/');
+    expect(workerWindowState.page.location?.pathname).toEqual('/ws-homepage');
   });
 
   test('worker gets updated location', async ({ page }) => {
     let workerWindowState = await page.evaluate(() => {
       return window._nsmE2e.naukar.readWindowState();
     });
-    expect(workerWindowState.page.location?.pathname).toEqual('/');
+    expect(workerWindowState.page.location?.pathname).toEqual('/ws-homepage');
 
-    await page.goto('/test');
+    await page.goto('/ws/foo');
 
     await page.waitForTimeout(50);
 
@@ -109,9 +109,9 @@ test.describe('worker window state', () => {
 
         return state.page.location?.pathname;
       }),
-    ).toBe('/test');
+    ).toBe('/ws/foo');
 
-    await page.goto('/test2?foo=bar');
+    await page.goto('/ws/xoo?foo=bar');
     await page.waitForTimeout(50);
 
     expect(
@@ -121,7 +121,7 @@ test.describe('worker window state', () => {
         return state.page.location;
       }),
     ).toStrictEqual({
-      pathname: '/test2',
+      pathname: '/ws/xoo',
       search: 'foo=bar',
     });
   });

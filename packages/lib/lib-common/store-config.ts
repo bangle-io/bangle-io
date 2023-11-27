@@ -18,10 +18,10 @@ export const defaultWindowStoreConfig: WindowStoreConfig = {
  * Please use getWindowStoreConfig instead of this.
  * This should only be used when setting up the store once.
  */
-export const createWindowStoreConfigRef = ref<WindowStoreConfig>(
+export const getWindowStoreConfigRef = ref<WindowStoreConfig>(
   () => defaultWindowStoreConfig,
 );
 
 export const getWindowStoreConfig = (
-  store: Parameters<typeof createWindowStoreConfigRef>[0],
-) => createWindowStoreConfigRef(store).current;
+  store: Parameters<typeof getWindowStoreConfigRef>[0],
+) => getWindowStoreConfigRef(store).current;
