@@ -438,6 +438,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib/lib-common
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -450,6 +453,9 @@ importers:
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
+      '@spectrum-icons/illustrations':
+        specifier: ^3.6.8
+        version: 3.6.8(@react-spectrum/provider@3.9.2)(react@18.2.0)
       '@spectrum-icons/workflow':
         specifier: ^4.2.7
         version: 4.2.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
@@ -7074,6 +7080,19 @@ packages:
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
     dependencies:
       '@sinonjs/commons': 3.0.0
+
+  /@spectrum-icons/illustrations@3.6.8(@react-spectrum/provider@3.9.2)(react@18.2.0):
+    resolution: {integrity: sha512-hKbDNAqV1Y4/4xk4FNTxKWEa4ILBNNLoTnoarBQAWZrbgjrzb2e6X49EO8orh1Z93tQ739EAJRjllZMpLTri8Q==}
+    peerDependencies:
+      '@react-spectrum/provider': ^3.0.0
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    dependencies:
+      '@react-aria/utils': 3.22.0(react@18.2.0)
+      '@react-spectrum/icon': 3.7.8(@react-spectrum/provider@3.9.2)(react@18.2.0)
+      '@react-spectrum/provider': 3.9.2(react-dom@18.2.0)(react@18.2.0)
+      '@swc/helpers': 0.5.3
+      react: 18.2.0
+    dev: false
 
   /@spectrum-icons/ui@3.6.2(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-X13fgmi3h0fzolZF+cVJ6NvA91VCb055eBGkhhkQ+vjvUZrHZ8ACD2YUfaDt44BX+fsGUBOZ4fwOrdXnAaVhDQ==}

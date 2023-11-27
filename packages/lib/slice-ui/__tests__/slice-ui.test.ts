@@ -91,7 +91,7 @@ describe('sliceUI', () => {
     expect(state.widescreen).toBe(true);
     expect(state.screenWidth).toBe(1024);
     expect(state.showActivitybar).toBe(false);
-    expect(state.showLeftAside).toBe(false);
+    expect(state.showLeftAside).toBe(true);
     expect(state.showRightAside).toBe(false);
   });
 

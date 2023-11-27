@@ -16,21 +16,20 @@
   if (typeof window !== "undefined") {
     let getColorPreference = function() {
       const existing = localStorage.getItem(storageKey);
-      if (existing)
+      if (existing && (existing === DARK_THEME || existing === LIGHT_THEME))
         return existing;
       else
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "BU_dark-scheme" : "BU_light-scheme";
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? DARK_THEME : LIGHT_THEME;
     }, setPreference = function() {
       localStorage.setItem(storageKey, theme.value);
       reflectPreference();
     }, reflectPreference = function() {
       document.firstElementChild.setAttribute("data-theme", theme.value);
-      document.firstElementChild.classList.remove(
-        "BU_light-scheme",
-        "BU_dark-scheme"
-      );
+      document.firstElementChild.classList.remove(LIGHT_THEME, DARK_THEME);
       document.firstElementChild.classList.add(theme.value);
     };
+    const LIGHT_THEME = "BU_light-scheme";
+    const DARK_THEME = "BU_dark-scheme";
     const storageKey = "theme";
     const theme = {
       value: getColorPreference()
@@ -40,7 +39,7 @@
       reflectPreference();
     });
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches: isDark }) => {
-      theme.value = isDark ? "BU_dark-scheme" : "BU_light-scheme";
+      theme.value = isDark ? DARK_THEME : LIGHT_THEME;
       setPreference();
     });
   }
