@@ -58,7 +58,6 @@ export function listenToResize(
 
   // Add event listener
   window.addEventListener('resize', () => {
-    debugger;
     handleResize();
   });
 
