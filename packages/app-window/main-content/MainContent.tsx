@@ -1,6 +1,6 @@
 import './style.css';
 
-import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
+import { ActionGroup, Flex, Item, Text, Well } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import FolderAdd from '@spectrum-icons/workflow/FolderAdd';
 import React from 'react';
@@ -41,10 +41,17 @@ export function MainContent() {
     <Flex
       direction="column"
       height="100%"
+      gap="size-400"
       UNSAFE_className="overflow-y-scroll B-app-main-content mx-1 widescreen:px-4 py-4"
     >
-      <Flex direction="row" justifyContent="space-between" marginX="size-150">
-        <Text UNSAFE_className="text-2xl my-2">Workspaces</Text>
+      {/* <Well role="region" aria-labelledby="Welcome" marginTop="size-300">
+        <Text UNSAFE_className="text-2xl">Welcome Back!</Text>
+        <div>
+          <Text UNSAFE_className="text-sm">Learn more about Bangle.io</Text>
+        </div>
+      </Well> */}
+      <Flex direction="row" justifyContent="space-between" gap="size-100">
+        <Text UNSAFE_className="text-2xl">Workspaces</Text>
         <ActionGroup alignSelf="center">
           <Item key="new-workspace">
             <FolderAdd />
