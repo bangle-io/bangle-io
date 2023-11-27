@@ -5,7 +5,11 @@ import {
   defaultWindowStoreConfig,
   WindowStoreConfig,
 } from '@bangle.io/lib-common';
-import { EffectScheduler, zeroTimeoutScheduler } from '@bangle.io/nsm-3';
+import {
+  customBangleScheduler,
+  EffectScheduler,
+  zeroTimeoutScheduler,
+} from '@bangle.io/nsm-3';
 import { slicePageAllSlices } from '@bangle.io/slice-page';
 import { sliceUIAllSlices } from '@bangle.io/slice-ui';
 
@@ -22,6 +26,8 @@ export function createWindowStore(
       'Using zeroTimeoutScheduler, this is only for testing and should not be used in production',
     );
     scheduler = zeroTimeoutScheduler;
+  } else {
+    scheduler = customBangleScheduler;
   }
 
   const store = createStore({

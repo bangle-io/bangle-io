@@ -1,6 +1,7 @@
 import '@bangle.io/app-root/public/auto-generated/inline-scripts.global';
 import '@bangle.io/app-root/style';
 
+import { darkTheme, lightTheme, Provider } from '@adobe/react-spectrum';
 import type { Decorator, Preview } from '@storybook/react';
 import React, { useLayoutEffect } from 'react';
 
@@ -18,20 +19,30 @@ function checkWidescreen(): boolean {
 
 const WithThemeProvider: Decorator = (Story, context) => {
   const theme = context.globals.themeSwitcher;
+
   useLayoutEffect(() => {
     const el = document.firstElementChild!;
     el.classList.remove('BU_widescreen', 'BU_smallscreen');
     el.classList.add(checkWidescreen() ? 'BU_widescreen' : 'BU_smallscreen');
-
     if (theme === 'light') {
-      el.classList.remove('dark-scheme');
-      el.classList.add('light-scheme');
+      el.classList.remove('BU_dark-scheme');
+      el.classList.add('BU_light-scheme');
     } else {
-      el.classList.add('dark-scheme');
-      el.classList.remove('light-scheme');
+      el.classList.add('BU_dark-scheme');
+      el.classList.remove('BU_light-scheme');
     }
   }, [theme]);
-  return <Story />;
+
+  const isDark = theme === 'dark';
+
+  return (
+    <Provider
+      colorScheme={isDark ? 'dark' : 'light'}
+      theme={isDark ? darkTheme : lightTheme}
+    >
+      <Story />
+    </Provider>
+  );
 };
 
 const preview: Preview = {

@@ -19,15 +19,15 @@
       if (existing)
         return existing;
       else
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark-scheme" : "light-scheme";
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "BU_dark-scheme" : "BU_light-scheme";
     }, setPreference = function() {
       localStorage.setItem(storageKey, theme.value);
       reflectPreference();
     }, reflectPreference = function() {
       document.firstElementChild.setAttribute("data-theme", theme.value);
       document.firstElementChild.classList.remove(
-        "light-scheme",
-        "dark-scheme"
+        "BU_light-scheme",
+        "BU_dark-scheme"
       );
       document.firstElementChild.classList.add(theme.value);
     };
@@ -40,7 +40,7 @@
       reflectPreference();
     });
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches: isDark }) => {
-      theme.value = isDark ? "dark-scheme" : "light-scheme";
+      theme.value = isDark ? "BU_dark-scheme" : "BU_light-scheme";
       setPreference();
     });
   }

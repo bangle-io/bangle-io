@@ -11,18 +11,47 @@ const widescreenField = key.field(
   !document.firstElementChild!.classList.contains('BU_smallscreen'),
 );
 
+const screenWidthField = key.field(
+  typeof window !== 'undefined' ? window.innerWidth : 0,
+);
+
+const screenHeightField = key.field(
+  typeof window !== 'undefined' ? window.innerHeight : 0,
+);
+
+function updateScreenDimensions({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
+  return key.transaction().step((state) => {
+    state = state.apply(screenHeightField.update(height));
+    state = state.apply(screenWidthField.update(width));
+
+    return state;
+  });
+}
+
 function reactToScreenChange(widescreen: boolean) {
   return widescreenField.update(widescreen);
 }
 
 export const sliceUIWidescreen = key.slice({
   widescreen: widescreenField,
+  screenWidth: screenWidthField,
+  screenHeight: screenHeightField,
 });
 
 // sets a class when screen is resized
 key.effect(function listToResizeEffect(store) {
   const targetNode = document.firstElementChild!;
+
   const syncWidescreen = (dimensions?: { width: number; height: number }) => {
+    if (dimensions) {
+      store.dispatch(updateScreenDimensions(dimensions));
+    }
     const currentWideScreen = checkWidescreen(dimensions?.width);
     const stateWidescreen = targetNode.classList.contains('BU_widescreen');
 

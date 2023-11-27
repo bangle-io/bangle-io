@@ -17,7 +17,7 @@ test.describe('color scheme', () => {
       () => document.documentElement.className,
     );
 
-    expect(classAttribute.split(' ')).toContain('dark-scheme');
+    expect(classAttribute.split(' ')).toContain('BU_dark-scheme');
   });
 });
 
@@ -28,7 +28,7 @@ test('html element has the correct classes', async ({ page }) => {
   );
 
   expect(classAttribute.split(' ')).toContain('BU_widescreen');
-  expect(classAttribute.split(' ')).toContain('light-scheme');
+  expect(classAttribute.split(' ')).toContain('BU_light-scheme');
 });
 
 test('has smallscreen on smaller viewport', async ({ page, bangleApp }) => {

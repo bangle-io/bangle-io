@@ -27,6 +27,8 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@storybook/react": "^7.5.3"
+    "@storybook/react": "^7.5.3",
+    "@testing-library/react": "^14.1.2",
+    "@bangle.io/test-utils-common": "workspace:*"
   }
 }

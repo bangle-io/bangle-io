@@ -6,14 +6,17 @@
       100vh - var(--BV-miscTitlebarHeight)
     );
 
-  grid-template-columns: auto;
+  grid-template-columns: 1fr;
   grid-template-areas:
     'titlebar-container'
     'main-container';
+
+  /* make sure to update corresponding JS code before changing this */
+  --BV-dhancha-separator-width: calc(2 * var(--BV-borderWidthDEFAULT));
 }
 
 .B-ui-dhancha-widescreen.B-ui-has-activitybar {
-  grid-template-columns: var(--BV-miscActivitybarWidth) auto;
+  grid-template-columns: var(--BV-miscActivitybarWidth) 1fr;
   grid-template-areas:
     'activitybar titlebar-container'
     'activitybar main-container';
@@ -23,52 +26,86 @@
 .B-ui-dhancha-widescreen.B-ui-has-left-aside {
   grid-template-columns:
     var(--BV-miscLeftAsideWidth)
-    auto;
+    var(--BV-dhancha-separator-width)
+    1fr;
   grid-template-areas:
-    'left-aside titlebar-container'
-    'left-aside main-container';
+    'left-aside left-aside-separator titlebar-container'
+    'left-aside left-aside-separator main-container';
 }
 .B-ui-dhancha-widescreen.B-ui-has-left-aside.B-ui-has-activitybar {
   grid-template-columns:
-    var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth)
-    auto;
+    var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth) var(
+      --BV-dhancha-separator-width
+    )
+    1fr;
   grid-template-areas:
-    'activitybar left-aside titlebar-container'
-    'activitybar left-aside main-container';
+    'activitybar left-aside left-aside-separator titlebar-container'
+    'activitybar left-aside left-aside-separator main-container';
 }
 
 /* right aside */
 .B-ui-dhancha-widescreen.B-ui-has-right-aside {
-  grid-template-columns: auto var(--BV-miscRightAsideWidth);
+  grid-template-columns:
+    1fr var(--BV-dhancha-separator-width)
+    var(--BV-miscRightAsideWidth);
   grid-template-areas:
-    'titlebar-container titlebar-container'
-    'main-container right-aside';
+    'titlebar-container titlebar-container  titlebar-container'
+    'main-container     right-aside-separator right-aside';
 }
 .B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-activitybar {
-  grid-template-columns: var(--BV-miscActivitybarWidth) auto var(
-      --BV-miscRightAsideWidth
-    );
+  grid-template-columns:
+    var(--BV-miscActivitybarWidth) 1fr
+    var(--BV-dhancha-separator-width)
+    var(--BV-miscRightAsideWidth);
   grid-template-areas:
-    'activitybar titlebar-container titlebar-container'
-    'activitybar main-container right-aside';
+    'activitybar titlebar-container titlebar-container  titlebar-container'
+    'activitybar main-container     right-aside-separator right-aside';
 }
 
 /* both left and right */
 .B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-left-aside {
   grid-template-columns:
     var(--BV-miscLeftAsideWidth)
-    auto var(--BV-miscRightAsideWidth);
+    var(--BV-dhancha-separator-width)
+    1fr
+    var(--BV-dhancha-separator-width)
+    var(--BV-miscRightAsideWidth);
   grid-template-areas:
-    'left-aside titlebar-container titlebar-container'
-    'left-aside main-container right-aside';
+    'left-aside left-aside-separator titlebar-container titlebar-container   titlebar-container'
+    'left-aside left-aside-separator main-container     right-aside-separator  right-aside';
 }
 .B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-left-aside.B-ui-has-activitybar {
   grid-template-columns:
-    var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth)
-    auto var(--BV-miscRightAsideWidth);
+    var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth) var(
+      --BV-dhancha-separator-width
+    )
+    1fr
+    var(--BV-dhancha-separator-width)
+    var(--BV-miscRightAsideWidth);
   grid-template-areas:
-    'activitybar left-aside titlebar-container titlebar-container'
-    'activitybar left-aside main-container right-aside';
+    'activitybar left-aside left-aside-separator titlebar-container titlebar-container   titlebar-container'
+    'activitybar left-aside left-aside-separator main-container     right-aside-separator  right-aside';
+}
+
+.B-ui-aside-separator {
+  cursor: col-resize;
+  display: flex;
+  flex-direction: row;
+  width: var(--BV-dhancha-separator-width);
+}
+
+/* We have two children to make it easy to resize without painting both to avoid thick borders */
+.B-ui-aside-separator > :first-child {
+  flex-grow: 1;
+}
+
+.B-ui-aside-separator > :last-child {
+  flex-grow: 1;
+  background-color: var(--BV-colorNeutralBorder);
+}
+
+.B-ui-aside-separator.BU_is-active > * {
+  background-color: var(--BV-colorPromoteBorder);
 }
 
 .BU_smallscreen .B-ui-dhancha-titlebar {

@@ -1,10 +1,11 @@
 import './style.css';
 
-import { defaultTheme, Provider } from '@adobe/react-spectrum';
+import { darkTheme, lightTheme, Provider } from '@adobe/react-spectrum';
 import { StoreProvider, useTrack } from '@nalanda/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Activitybar } from '@bangle.io/activitybar';
+import { COLOR_SCHEME } from '@bangle.io/constants';
 import { LeftAside } from '@bangle.io/left-aside';
 import { MainContent } from '@bangle.io/main-content';
 import { RightAside } from '@bangle.io/right-aside';
@@ -26,18 +27,38 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
     store = createWindowStore(eternalVars, {});
   }
 
+  const isDark = sliceUI.get(store.state).colorScheme === COLOR_SCHEME.DARK;
+
   return (
-    <StoreProvider store={store}>
-      <Provider theme={defaultTheme}>
+    <Provider
+      colorScheme={isDark ? 'dark' : 'light'}
+      theme={isDark ? darkTheme : lightTheme}
+    >
+      <StoreProvider store={store}>
         <Main />
-      </Provider>
-    </StoreProvider>
+      </StoreProvider>
+    </Provider>
   );
 }
 
 function Main() {
   const { widescreen, showLeftAside, showRightAside, showActivitybar } =
     useTrack(sliceUI);
+
+  useEffect(() => {
+    document.body.classList.toggle(
+      'BU_show-left-aside',
+      widescreen && showLeftAside,
+    );
+    document.body.classList.toggle(
+      'BU_show-right-aside',
+      widescreen && showRightAside,
+    );
+    document.body.classList.toggle(
+      'BU_show-activitybar',
+      widescreen && showActivitybar,
+    );
+  }, [showLeftAside, showRightAside, showActivitybar, widescreen]);
 
   if (widescreen) {
     return (

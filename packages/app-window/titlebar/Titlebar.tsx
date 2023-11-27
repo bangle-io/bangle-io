@@ -13,7 +13,7 @@ export function Titlebar() {
   const store = useStore();
 
   return (
-    <div className="bg-colorBgLayerFloat px-2 h-full w-full flex flex-row flex-justify-between flex-items-center">
+    <div className="bg-colorBgLayerFloat px-2 h-full w-full flex flex-row flex-justify-between flex-items-center border-b-1 border-colorNeutralBorder">
       <div>I am titlebar</div>
       <div className="flex gap-1">
         {widescreen && (
