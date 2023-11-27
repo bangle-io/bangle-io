@@ -10,7 +10,7 @@ export function LeftAside() {
   const store = useStore();
 
   return (
-    <div className="bg-colorBgLayerFloat px-2 h-full w-full flex flex-row flex-justify-between flex-items-center">
+    <div className="bg-colorBgLayerMiddle px-2 h-full w-full flex flex-row flex-justify-between flex-items-center">
       left
     </div>
   );

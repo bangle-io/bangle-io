@@ -1,7 +1,7 @@
 import { createKey } from '@nalanda/core';
 
 import { sliceUIColorScheme } from './slice-ui-color-scheme';
-import { sliceUIWidescreen } from './slice-ui-widescreen';
+import { initiallyWidescreen, sliceUIWidescreen } from './slice-ui-widescreen';
 
 const ONLY_ONE_ASIDE_THRESHOLD = 1024;
 
@@ -31,7 +31,7 @@ function toggleRightAside(show: boolean | undefined) {
   });
 }
 
-const showLeftAsideField = key.field(false);
+const showLeftAsideField = key.field(initiallyWidescreen ? true : false);
 
 function toggleLeftAside(show: boolean | undefined) {
   const tx = key.transaction();

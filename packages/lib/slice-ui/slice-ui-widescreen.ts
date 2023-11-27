@@ -3,13 +3,14 @@ import { cleanup, createKey } from '@nalanda/core';
 import { checkWidescreen, listenToResize } from '@bangle.io/utils';
 const key = createKey('slice-ui-widescreen', []);
 
+export const initiallyWidescreen =
+  !document.firstElementChild!.classList.contains('BU_smallscreen');
+
 // NOTE: part of the code exists in @bangle.io/inline-scripts to ensure
 // the BU_widescreen/BU_smallscreen class is added as soon as possible
 
 // This is just a mirror of what is in the  document.firstElementChild
-const widescreenField = key.field(
-  !document.firstElementChild!.classList.contains('BU_smallscreen'),
-);
+const widescreenField = key.field(initiallyWidescreen);
 
 const screenWidthField = key.field(
   typeof window !== 'undefined' ? window.innerWidth : 0,

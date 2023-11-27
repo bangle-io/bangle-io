@@ -1,6 +1,9 @@
 /* eslint-disable no-inner-declarations */
 
 if (typeof window !== 'undefined') {
+  const LIGHT_THEME = 'BU_light-scheme';
+  const DARK_THEME = 'BU_dark-scheme';
+
   const storageKey = 'theme';
   const theme = {
     value: getColorPreference(),
@@ -15,17 +18,19 @@ if (typeof window !== 'undefined') {
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', ({ matches: isDark }) => {
-      theme.value = isDark ? 'BU_dark-scheme' : 'BU_light-scheme';
+      theme.value = isDark ? DARK_THEME : LIGHT_THEME;
       setPreference();
     });
 
   function getColorPreference(): string {
     const existing = localStorage.getItem(storageKey);
-    if (existing) return existing;
+
+    if (existing && (existing === DARK_THEME || existing === LIGHT_THEME))
+      return existing;
     else
       return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'BU_dark-scheme'
-        : 'BU_light-scheme';
+        ? DARK_THEME
+        : LIGHT_THEME;
   }
   function setPreference() {
     localStorage.setItem(storageKey, theme.value);
@@ -34,10 +39,7 @@ if (typeof window !== 'undefined') {
 
   function reflectPreference() {
     document!.firstElementChild!.setAttribute('data-theme', theme.value);
-    document!.firstElementChild!.classList.remove(
-      'BU_light-scheme',
-      'BU_dark-scheme',
-    );
+    document!.firstElementChild!.classList.remove(LIGHT_THEME, DARK_THEME);
     document!.firstElementChild!.classList.add(theme.value);
   }
 }
