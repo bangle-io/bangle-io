@@ -3,7 +3,7 @@
  */
 import { setupSliceTestStore } from '@bangle.io/test-utils-slice';
 
-import { createHistoryRef, sliceHistory } from '../slice-history';
+import { getHistoryRef, sliceHistory } from '../slice-history';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -13,9 +13,16 @@ describe('sliceHistory', () => {
       slices: [sliceHistory],
     });
 
+    expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: false,
+      location: undefined,
+      pendingNavigation: undefined,
+    });
+
     await ctx.runEffects();
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '',
         search: '',
@@ -40,6 +47,7 @@ describe('sliceHistory', () => {
     );
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '',
         search: '',
@@ -56,6 +64,7 @@ describe('sliceHistory', () => {
     await ctx.runEffects();
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/foo',
         search: '',
@@ -87,6 +96,7 @@ describe('sliceHistory', () => {
     );
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/',
         search: '',
@@ -103,6 +113,7 @@ describe('sliceHistory', () => {
     await ctx.runEffects();
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/foo',
         search: '',
@@ -131,6 +142,7 @@ describe('sliceHistory', () => {
     await ctx.runEffects();
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/replace',
         search: '',
@@ -159,6 +171,7 @@ describe('sliceHistory', () => {
     await ctx.runEffects();
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/search',
         search: 'query=test',
@@ -179,7 +192,7 @@ describe('sliceHistory', () => {
       slices: [sliceHistory],
     });
     await ctx.runEffects();
-    const history = createHistoryRef(ctx.store);
+    const history = getHistoryRef(ctx.store);
 
     ctx.store.destroy();
 
@@ -209,6 +222,7 @@ describe('sliceHistory with browser', () => {
     await ctx.runEffects();
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/',
         search: '',
@@ -233,6 +247,7 @@ describe('sliceHistory with browser', () => {
     await sleep(10);
 
     expect(sliceHistory.get(ctx.store.state)).toEqual({
+      historyLoaded: true,
       location: {
         pathname: '/foo',
         search: '',

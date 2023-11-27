@@ -1,8 +1,8 @@
 import { createStore, DebugLogger, Slice } from '@nalanda/core';
 
 import {
-  createWindowStoreConfigRef,
   defaultWindowStoreConfig,
+  getWindowStoreConfigRef,
 } from '@bangle.io/lib-common';
 import { createManualEffectScheduler } from '@bangle.io/nsm-3';
 
@@ -32,7 +32,7 @@ export const setupSliceTestStore = ({
     },
   });
 
-  createWindowStoreConfigRef(store).current = {
+  getWindowStoreConfigRef(store).current = {
     ...defaultWindowStoreConfig,
     historyType: useMemoryHistory ? 'memory' : 'browser',
     // TODO remove any

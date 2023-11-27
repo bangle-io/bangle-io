@@ -28,6 +28,7 @@ const pendingNavigationField = key.field<
 >(undefined);
 // Location is a mirror of the history state
 const locationField = key.field<Location | undefined>(undefined);
+const historyLoadedField = key.field<boolean>(false);
 
 // ACTIONS
 function syncHistoryStateWithSliceState(location: Location) {
@@ -42,45 +43,55 @@ function goTo(location: Location, replace?: boolean) {
   });
 }
 
-export const createHistoryRef = ref<BaseHistory | undefined>(() => undefined);
+export const getHistoryRef = ref<BaseHistory | undefined>(() => undefined);
 
-key.effect(function watchHistoryEffect(store) {
-  const ref = createHistoryRef(store);
+key.effect(
+  function watchHistoryEffect(store) {
+    const ref = getHistoryRef(store);
 
-  if (ref.current) {
-    return;
-  }
-  const storeConfig = getWindowStoreConfig(store);
+    if (ref.current) {
+      return;
+    }
+    const storeConfig = getWindowStoreConfig(store);
 
-  const onHistoryChange = (location: Location) => {
-    store.dispatch(syncHistoryStateWithSliceState(location));
-  };
-  const browserHistory =
-    storeConfig.historyType === 'browser'
-      ? new BrowserHistory('', onHistoryChange)
-      : new MemoryHistory('', onHistoryChange);
+    const onHistoryChange = (location: Location) => {
+      store.dispatch(syncHistoryStateWithSliceState(location));
+    };
+    const browserHistory =
+      storeConfig.historyType === 'browser'
+        ? new BrowserHistory('', onHistoryChange)
+        : new MemoryHistory('', onHistoryChange);
 
-  ref.current = browserHistory;
+    ref.current = browserHistory;
 
-  // initialize the location with current values
-  store.dispatch(
-    syncHistoryStateWithSliceState({
-      search: browserHistory.search,
-      pathname: browserHistory.pathname,
-    }),
-  );
+    store.dispatch(historyLoadedField.update(true));
 
-  cleanup(store, () => {
-    browserHistory.destroy();
-    ref.current = undefined;
-  });
-});
+    // initialize the location with current values
+    store.dispatch(
+      syncHistoryStateWithSliceState({
+        search: browserHistory.search,
+        pathname: browserHistory.pathname,
+      }),
+    );
+
+    cleanup(store, () => {
+      store.dispatch(historyLoadedField.update(false));
+      browserHistory.destroy();
+      ref.current = undefined;
+    });
+  },
+  {
+    metadata: {
+      runImmediately: true,
+    },
+  },
+);
 
 key.effect(
   function pendingNavEffect(store) {
     const pendingNavigation = pendingNavigationField.track(store);
 
-    const history = createHistoryRef(store).current;
+    const history = getHistoryRef(store).current;
 
     if (!history || !pendingNavigation) {
       return;
@@ -114,4 +125,5 @@ export const sliceHistory = key.slice({
   location: locationField,
   syncPageLocation: syncHistoryStateWithSliceState,
   goTo,
+  historyLoaded: historyLoadedField,
 });

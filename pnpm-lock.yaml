@@ -369,6 +369,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/history':
+        specifier: workspace:*
+        version: link:../../js-lib/history
       '@bangle.io/left-aside':
         specifier: workspace:*
         version: link:../left-aisde
@@ -381,6 +384,9 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../../lib/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
@@ -402,9 +408,15 @@ importers:
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
+      path-to-regexp:
+        specifier: ^6.2.1
+        version: 6.2.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      wouter:
+        specifier: ^2.12.1
+        version: 2.12.1(react@18.2.0)
 
   packages/app-window/left-aisde:
     dependencies:
@@ -444,6 +456,9 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../../lib/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
@@ -465,6 +480,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      wouter:
+        specifier: ^2.12.1
+        version: 2.12.1(react@18.2.0)
 
   packages/app-window/right-aside:
     dependencies:
@@ -14662,6 +14680,10 @@ packages:
     resolution: {integrity: sha512-5DFkuoqlv1uYQKxy8omFBeJPQcdoE07Kv2sferDCrAq1ohOU+MSDswDIbnx3YAM60qIOnYa53wBhXW0EbMonrQ==}
     dev: true
 
+  /path-to-regexp@6.2.1:
+    resolution: {integrity: sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==}
+    dev: false
+
   /path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
@@ -17533,6 +17555,15 @@ packages:
       '@types/trusted-types': 2.0.6
       workbox-core: 7.0.0
     dev: true
+
+  /wouter@2.12.1(react@18.2.0):
+    resolution: {integrity: sha512-G7a6JMSLSNcu6o8gdOfIzqxuo8Qx1qs+9rpVnlurH69angsSFPZP5gESNuVNeJct/MGpQg191pDo4HUjTx7IIQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
 
   /wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}

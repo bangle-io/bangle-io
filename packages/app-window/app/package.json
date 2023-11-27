@@ -35,6 +35,10 @@
     "@spectrum-icons/workflow": "^4.2.7",
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "wouter": "^2.12.1",
+    "@bangle.io/history": "workspace:*",
+    "@bangle.io/slice-page": "workspace:*",
+    "path-to-regexp": "^6.2.1"
   }
 }
