@@ -57,7 +57,10 @@ export function listenToResize(
   });
 
   // Add event listener
-  window.addEventListener('resize', handleResize);
+  window.addEventListener('resize', () => {
+    debugger;
+    handleResize();
+  });
 
   abortSignal.addEventListener(
     'abort',

@@ -3,25 +3,58 @@ import { createKey } from '@nalanda/core';
 import { sliceUIColorScheme } from './slice-ui-color-scheme';
 import { sliceUIWidescreen } from './slice-ui-widescreen';
 
+const ONLY_ONE_ASIDE_THRESHOLD = 1024;
+
 const key = createKey('slice-ui', [sliceUIWidescreen, sliceUIColorScheme]);
 
 const showRightAsideField = key.field(false);
+
 function toggleRightAside(show: boolean | undefined) {
-  return showRightAsideField.update((cur) => {
-    if (typeof show === 'boolean') {
-      return show;
+  const tx = key.transaction();
+
+  return tx.step((state) => {
+    const { widescreen, screenWidth } = sliceUIWidescreen.get(state);
+    const cur = showRightAsideField.get(state);
+
+    if (!widescreen) {
+      return state.apply(showRightAsideField.update(false));
     }
-    return !cur;
+
+    // minimize the left aside when cramped
+    if (screenWidth < ONLY_ONE_ASIDE_THRESHOLD) {
+      state = state.apply(showLeftAsideField.update(false));
+    }
+
+    return state.apply(
+      showRightAsideField.update(typeof show === 'boolean' ? show : !cur),
+    );
   });
 }
 
 const showLeftAsideField = key.field(false);
+
 function toggleLeftAside(show: boolean | undefined) {
-  return showLeftAsideField.update((cur) => {
-    if (typeof show === 'boolean') {
-      return show;
+  const tx = key.transaction();
+
+  return tx.step((state) => {
+    const { widescreen, screenWidth } = sliceUIWidescreen.get(state);
+    const currentShowLeftAside = showLeftAsideField.get(state);
+
+    if (!widescreen) {
+      return state.apply(showLeftAsideField.update(false));
     }
-    return !cur;
+
+    // if we are showing the right aside, then we should hide it
+    // since the screen is not wide enough
+    if (screenWidth < ONLY_ONE_ASIDE_THRESHOLD) {
+      state = state.apply(showRightAsideField.update(false));
+    }
+
+    return state.apply(
+      showLeftAsideField.update(
+        typeof show === 'boolean' ? show : !currentShowLeftAside,
+      ),
+    );
   });
 }
 

@@ -26,6 +26,8 @@
     "@nalanda/core": "^0.2.3"
   },
   "devDependencies": {
-    "@bangle.io/test-utils-slice": "workspace:*"
+    "@bangle.io/test-utils-slice": "workspace:*",
+    "@bangle.io/test-utils-common": "workspace:*",
+    "@bangle.io/emitter": "workspace:*"
   }
 }

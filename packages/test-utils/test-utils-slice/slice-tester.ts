@@ -43,10 +43,14 @@ export const setupSliceTestStore = ({
     store,
     runEffects: async () => {
       await sleep(0);
+      let runCount = 0;
       effectsCallbackRegistry.forEach((cb) => {
         void cb();
+        runCount++;
       });
       await sleep(0);
+
+      return runCount;
     },
   };
 };

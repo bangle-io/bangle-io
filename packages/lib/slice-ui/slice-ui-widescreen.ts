@@ -27,8 +27,9 @@ function updateScreenDimensions({
   height: number;
 }) {
   return key.transaction().step((state) => {
-    state = state.apply(screenHeightField.update(width));
-    state = state.apply(screenWidthField.update(height));
+    state = state.apply(screenHeightField.update(height));
+    state = state.apply(screenWidthField.update(width));
+
     return state;
   });
 }

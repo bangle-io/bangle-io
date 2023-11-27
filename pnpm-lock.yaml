@@ -926,6 +926,12 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
     devDependencies:
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/test-utils-common':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-common
       '@bangle.io/test-utils-slice':
         specifier: workspace:*
         version: link:../../test-utils/test-utils-slice

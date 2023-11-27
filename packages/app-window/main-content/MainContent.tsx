@@ -16,8 +16,6 @@ import {
 import { useStore, useTrack } from '@nalanda/react';
 import React from 'react';
 
-import { sliceUI } from '@bangle.io/slice-ui';
-
 export function MainContent() {
   const store = useStore();
 
