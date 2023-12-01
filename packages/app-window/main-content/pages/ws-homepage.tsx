@@ -54,7 +54,7 @@ export default function PageWsHomePage() {
       direction="column"
       height="100%"
       gap="size-200"
-      UNSAFE_className="overflow-y-scroll B-app-main-content px-2 widescreen:px-4 py-4"
+      UNSAFE_className="overflow-y-auto B-app-main-content px-2 widescreen:px-4 py-4"
     >
       {/* <Well role="region" aria-labelledby="Welcome" marginTop="size-300">
   <Text UNSAFE_className="text-2xl">Welcome Back!</Text>

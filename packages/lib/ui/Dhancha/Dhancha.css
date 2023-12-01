@@ -15,7 +15,7 @@
   --BV-dhancha-separator-width: calc(2 * var(--BV-borderWidthDEFAULT));
 }
 
-.B-ui-dhancha-widescreen.B-ui-has-activitybar {
+.BU_show-activitybar .B-ui-dhancha-widescreen {
   grid-template-columns: var(--BV-miscActivitybarWidth) 1fr;
   grid-template-areas:
     'activitybar titlebar-container'
@@ -23,7 +23,7 @@
 }
 
 /* left aside */
-.B-ui-dhancha-widescreen.B-ui-has-left-aside {
+.BU_show-left-aside .B-ui-dhancha-widescreen {
   grid-template-columns:
     var(--BV-miscLeftAsideWidth)
     var(--BV-dhancha-separator-width)
@@ -32,7 +32,7 @@
     'left-aside left-aside-separator titlebar-container'
     'left-aside left-aside-separator main-container';
 }
-.B-ui-dhancha-widescreen.B-ui-has-left-aside.B-ui-has-activitybar {
+.BU_show-left-aside.BU_show-activitybar .B-ui-dhancha-widescreen {
   grid-template-columns:
     var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth) var(
       --BV-dhancha-separator-width
@@ -44,7 +44,7 @@
 }
 
 /* right aside */
-.B-ui-dhancha-widescreen.B-ui-has-right-aside {
+.BU_show-right-aside .B-ui-dhancha-widescreen {
   grid-template-columns:
     1fr var(--BV-dhancha-separator-width)
     var(--BV-miscRightAsideWidth);
@@ -52,7 +52,7 @@
     'titlebar-container titlebar-container  titlebar-container'
     'main-container     right-aside-separator right-aside';
 }
-.B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-activitybar {
+.BU_show-right-aside.BU_show-activitybar .B-ui-dhancha-widescreen {
   grid-template-columns:
     var(--BV-miscActivitybarWidth) 1fr
     var(--BV-dhancha-separator-width)
@@ -63,7 +63,7 @@
 }
 
 /* both left and right */
-.B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-left-aside {
+.BU_show-right-aside.BU_show-left-aside .B-ui-dhancha-widescreen {
   grid-template-columns:
     var(--BV-miscLeftAsideWidth)
     var(--BV-dhancha-separator-width)
@@ -74,7 +74,8 @@
     'left-aside left-aside-separator titlebar-container titlebar-container   titlebar-container'
     'left-aside left-aside-separator main-container     right-aside-separator  right-aside';
 }
-.B-ui-dhancha-widescreen.B-ui-has-right-aside.B-ui-has-left-aside.B-ui-has-activitybar {
+.BU_show-right-aside.BU_show-left-aside.BU_show-activitybar
+  .B-ui-dhancha-widescreen {
   grid-template-columns:
     var(--BV-miscActivitybarWidth) var(--BV-miscLeftAsideWidth) var(
       --BV-dhancha-separator-width
