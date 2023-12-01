@@ -4,6 +4,7 @@ import { pathToRegexp } from 'path-to-regexp';
 // eslint-disable-next-line import/default
 import makeMatcher from 'wouter/matcher';
 
+import { weakCache } from '@bangle.io/mini-js-utils';
 import type { Location } from '@bangle.io/shared-types';
 
 import { isValidNoteWsPath, resolvePath } from './helpers';
@@ -60,6 +61,10 @@ export function wsNameToPathname(wsName: string) {
   return `/ws/${encodeURIComponent(wsName)}`;
 }
 
+export function getWsName(location: Location) {
+  return pathnameToWsName(location.pathname);
+}
+
 export function pathnameToWsName(pathname?: string): string | undefined {
   if (!pathname) {
     return undefined;
@@ -99,7 +104,7 @@ export function searchToWsPath(search?: string) {
   return undefined;
 }
 
-export function getPrimaryWsPath(location: Location) {
+export const getPrimaryWsPath = weakCache((location: Location) => {
   const primary = pathnameToWsPath(location.pathname);
 
   if (!isValidNoteWsPath(primary)) {
@@ -107,9 +112,9 @@ export function getPrimaryWsPath(location: Location) {
   }
 
   return primary;
-}
+});
 
-export function getSecondaryWsPath(location: Location) {
+export const getSecondaryWsPath = weakCache((location: Location) => {
   const secondary = searchToWsPath(location.search);
 
   if (!isValidNoteWsPath(secondary)) {
@@ -117,7 +122,7 @@ export function getSecondaryWsPath(location: Location) {
   }
 
   return secondary;
-}
+});
 
 /**
  * sets a set of wsPaths to the location.

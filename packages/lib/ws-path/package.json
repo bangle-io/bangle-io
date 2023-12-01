@@ -1,6 +1,13 @@
 {
   "name": "@bangle.io/ws-path",
+  "description": "",
+  "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/lib/ws-path"
+  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -8,16 +15,16 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/ws-path"
-  },
+  "homepage": "https://bangle.io",
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
+  "banglePackageConfig": {
+    "type": "universal"
+  },
   "main": "index.ts",
   "module": "index.ts",
+  "scripts": {},
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
@@ -27,9 +34,5 @@
   "devDependencies": {
     "path-to-regexp": "^6.2.1",
     "wouter": "^2.12.1"
-  },
-  "banglePackageConfig": {
-    "type": "universal"
-  },
-  "license": "AGPL-3.0-or-later"
+  }
 }

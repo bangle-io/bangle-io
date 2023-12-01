@@ -519,12 +519,18 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../../lib/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib/ui
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -927,6 +933,9 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../ws-path
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3

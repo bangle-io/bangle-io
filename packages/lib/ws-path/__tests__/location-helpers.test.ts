@@ -1,5 +1,6 @@
 import {
   convertPathToRegexp,
+  getPrimaryWsPath,
   locationSetWsPath,
   pathMatcher,
   pathnameToWsName,
@@ -353,5 +354,17 @@ describe('locationSetWsPath', () => {
       pathname: '/ws/hello/primary.md',
       search: 'param=value&secondary=hello%253Asecondary.md',
     });
+  });
+});
+
+describe('getPrimaryWsPath', () => {
+  test('returns primary wsPath for valid pathname', () => {
+    const location = { pathname: '/ws/hello/world.md', search: '' };
+    expect(getPrimaryWsPath(location)).toEqual('hello:world.md');
+  });
+
+  test('returns primary wsPath for valid pathname', () => {
+    const location = { pathname: '/ws/hello/world.xyz', search: '' };
+    expect(getPrimaryWsPath(location)).toEqual(undefined);
   });
 });
