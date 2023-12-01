@@ -29,10 +29,9 @@
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
-  },
-  "devDependencies": {
+    "@bangle.io/constants": "workspace:*",
     "path-to-regexp": "^6.2.1",
     "wouter": "^2.12.1"
-  }
+  },
+  "devDependencies": {}
 }
