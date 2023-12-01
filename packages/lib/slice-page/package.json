@@ -25,7 +25,8 @@
     "@bangle.io/history": "workspace:*",
     "@bangle.io/lib-common": "workspace:*",
     "page-lifecycle": "^0.1.2",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/test-utils-slice": "workspace:*"

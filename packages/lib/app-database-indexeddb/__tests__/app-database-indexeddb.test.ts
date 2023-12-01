@@ -1,7 +1,7 @@
+import { silenceAllLoggers, unSilenceAllLoggers } from '@bangle.io/logger';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 
 import { AppDatabaseIndexedDB } from '../index';
-import { logger } from '../logger';
 
 function setup() {
   const db = new AppDatabaseIndexedDB();
@@ -9,7 +9,11 @@ function setup() {
 }
 
 beforeEach(() => {
-  logger.silence();
+  silenceAllLoggers();
+});
+
+afterEach(() => {
+  unSilenceAllLoggers();
 });
 
 describe('createWorkspaceInfo', () => {
