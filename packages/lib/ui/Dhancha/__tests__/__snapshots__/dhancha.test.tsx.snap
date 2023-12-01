@@ -3,7 +3,7 @@
 exports[`DhanchaWidescreen component renders correctly and handles resizing 1`] = `
 <div>
   <div
-    class=""
+    class="B-ui-dhancha-widescreen"
   >
     <div
       aria-label="Title Bar"
