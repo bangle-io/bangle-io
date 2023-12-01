@@ -304,3 +304,100 @@ describe('OpenedWsPaths', () => {
     });
   });
 });
+
+describe('Edge Cases', () => {
+  test('constructor with invalid array length', () => {
+    expect(() => new OpenedWsPaths(['test-a:a.md'])).toThrow(Error);
+  });
+
+  test('constructor with invalid wsPath', () => {
+    expect(() => new OpenedWsPaths(['invalid path'])).toThrow(Error);
+  });
+
+  test('updateByIndex with invalid index', () => {
+    let result = OpenedWsPaths.createEmpty();
+    expect(() => result.updateByIndex(5, 'test-a:a.md')).toThrow(Error);
+  });
+
+  test('getByIndex with invalid index', () => {
+    let result = OpenedWsPaths.createEmpty();
+    expect(() => result.getByIndex(5)).toThrow(Error);
+  });
+
+  test('updateAllWsPaths with smaller array length', () => {
+    let result = OpenedWsPaths.createEmpty();
+    expect(result.updateAllWsPaths(['test-a:a.md']).toArray()).toEqual([
+      'test-a:a.md',
+      null,
+      null,
+      null,
+    ]);
+  });
+
+  test('updateAllWsPaths with invalid wsPath', () => {
+    let result = OpenedWsPaths.createEmpty();
+    expect(() => result.updateAllWsPaths(['invalid path'])).toThrow(Error);
+  });
+
+  test('empty updateMiniEditorWsPath with null value', () => {
+    let result = OpenedWsPaths.createEmpty();
+    // @ts-expect-error - testing invalid values
+    expect(result.updateMiniEditorWsPath(null)).toBe(result);
+  });
+
+  test('empty updatePopupEditorWsPath with undefined value', () => {
+    let result = OpenedWsPaths.createEmpty();
+    expect(result.updatePopupEditorWsPath(undefined)).toBe(result);
+  });
+
+  test('has with null and undefined values', () => {
+    let result = OpenedWsPaths.createEmpty();
+    // @ts-expect-error - testing invalid values
+    expect(result.has(null)).toBe(false);
+    expect(result.has(undefined)).toBe(false);
+  });
+
+  test('closeIfFound with non-existing wsPath', () => {
+    let result = OpenedWsPaths.createFromArray(['test-a:a.md']);
+    expect(result.closeIfFound('non-existing')).toBe(result);
+  });
+
+  test('find with non-existing wsPath', () => {
+    let result = OpenedWsPaths.createFromArray(['test-a:a.md']);
+    expect(result.find('non-existing')).toBe(undefined);
+  });
+
+  test('equal with different wsPaths', () => {
+    let result1 = OpenedWsPaths.createFromArray(['test-a:a.md']);
+    let result2 = OpenedWsPaths.createFromArray(['test-b:b.md']);
+    expect(result1.equal(result2)).toBe(false);
+  });
+
+  test('allBelongToSameWsName with mixed wsNames', () => {
+    let result = OpenedWsPaths.createFromArray([
+      'hello:one.md',
+      'bye:two/two.md',
+    ]);
+    expect(result.allBelongToSameWsName()).toBe(false);
+  });
+
+  test('getOneWsName with no wsPaths', () => {
+    let result = OpenedWsPaths.createEmpty();
+    expect(result.getOneWsName()).toBe(undefined);
+  });
+
+  test('optimizeSpace with no optimization needed', () => {
+    let result = OpenedWsPaths.createFromArray(['test-a:a.md', 'test-b:b.md']);
+    expect(result.optimizeSpace()).toBe(result);
+  });
+
+  test('updatePrimaryWsPath with existing primary path', () => {
+    let result = OpenedWsPaths.createFromArray(['test-a:a.md', 'test-b:b.md']);
+    expect(result.updatePrimaryWsPath('test-c:c.md')).not.toBe(result);
+  });
+
+  test('updateSecondaryWsPath with existing secondary path', () => {
+    let result = OpenedWsPaths.createFromArray(['test-a:a.md', 'test-b:b.md']);
+    expect(result.updateSecondaryWsPath('test-c:c.md')).not.toBe(result);
+  });
+});

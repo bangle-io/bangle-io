@@ -1,6 +1,6 @@
 import { BaseError } from '@bangle.io/base-error';
 import { getLast } from '@bangle.io/mini-js-utils';
-
+import type { Location } from '@bangle.io/shared-types';
 type WsPath = string;
 type WsName = string;
 
