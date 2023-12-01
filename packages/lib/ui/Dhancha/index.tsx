@@ -282,7 +282,7 @@ export function DhanchaWidescreen({
   });
 
   return (
-    <div className={cx()}>
+    <div className="B-ui-dhancha-widescreen">
       {activitybar && (
         <div
           role="navigation"
