@@ -274,15 +274,15 @@ export function DhanchaWidescreen({
     },
   });
 
+  useAddUtilClasses({
+    widescreen: true,
+    showActivitybar: Boolean(activitybar),
+    showLeftAside: Boolean(leftAside),
+    showRightAside: Boolean(rightAside),
+  });
+
   return (
-    <div
-      className={cx(
-        'B-ui-dhancha-widescreen',
-        leftAside && 'B-ui-has-left-aside',
-        rightAside && 'B-ui-has-right-aside',
-        activitybar && 'B-ui-has-activitybar',
-      )}
-    >
+    <div className={cx()}>
       {activitybar && (
         <div
           role="navigation"
@@ -358,6 +358,13 @@ export function DhanchaSmallscreen({
 }) {
   const titlebarRef = useRef<HTMLDivElement>(null);
 
+  useAddUtilClasses({
+    widescreen: false,
+    showActivitybar: false,
+    showLeftAside: false,
+    showRightAside: false,
+  });
+
   useStickyNavigation(titlebarRef);
 
   return (
@@ -384,3 +391,30 @@ const TitlebarContainer = React.forwardRef<
     </div>
   );
 });
+
+function useAddUtilClasses({
+  widescreen,
+  showLeftAside,
+  showRightAside,
+  showActivitybar,
+}: {
+  widescreen: boolean;
+  showLeftAside: boolean;
+  showRightAside: boolean;
+  showActivitybar: boolean;
+}) {
+  useEffect(() => {
+    document.body.classList.toggle(
+      'BU_show-left-aside',
+      widescreen && showLeftAside,
+    );
+    document.body.classList.toggle(
+      'BU_show-right-aside',
+      widescreen && showRightAside,
+    );
+    document.body.classList.toggle(
+      'BU_show-activitybar',
+      widescreen && showActivitybar,
+    );
+  }, [showLeftAside, showRightAside, showActivitybar, widescreen]);
+}
