@@ -1,6 +1,16 @@
-import { WorkspaceInfo } from '@bangle.io/shared-types';
+import { BaseError } from '@bangle.io/base-error';
+import { isPlainObject } from '@bangle.io/mini-js-utils';
+import type {
+  BaseAppDatabase,
+  DatabaseQueryOptions,
+  WorkspaceDatabaseQueryOptions,
+  WorkspaceInfo,
+} from '@bangle.io/shared-types';
 
-import { BaseAppDatabase, WorkspaceDatabaseQueryOptions } from './base';
+import { AppDatabaseErrorCode } from './error-codes';
+const WORKSPACE_INFO_TABLE =
+  'workspace-info' satisfies DatabaseQueryOptions['tableName'];
+const MISC_TABLE = 'misc' satisfies DatabaseQueryOptions['tableName'];
 
 type ChangeEvent =
   | {
@@ -27,32 +37,91 @@ export class AppDatabase {
   constructor(public config: AppDatabaseConfig) {}
 
   async getWorkspaceInfo(
-    name: string,
+    wsName: string,
     options?: WorkspaceDatabaseQueryOptions,
   ) {
-    return this.config.database.getWorkspaceInfo(name, options);
+    const result = await this.config.database.getEntry(wsName, {
+      tableName: WORKSPACE_INFO_TABLE,
+    });
+
+    if (!result.found) {
+      return undefined;
+    }
+
+    const wsInfo = result.value as WorkspaceInfo;
+
+    if (!options?.allowDeleted && wsInfo?.deleted) {
+      return undefined;
+    }
+
+    if (options?.type) {
+      return wsInfo && wsInfo.type === options.type ? wsInfo : undefined;
+    }
+
+    return wsInfo;
   }
 
   async createWorkspaceInfo(info: WorkspaceInfo): Promise<void> {
-    await this.config.database.createWorkspaceInfo(info);
+    const wsName = info.name;
+
+    await this.config.database.updateEntry(
+      wsName,
+      (existing) => {
+        if (existing.found) {
+          throw new BaseError({
+            message: `Workspace with name ${wsName} already exists`,
+            code: AppDatabaseErrorCode.WORKSPACE_EXISTS,
+            thrower: 'AppDatabase',
+          });
+        }
+
+        const value: WorkspaceInfo = {
+          ...info,
+          lastModified: Date.now(),
+        };
+
+        return {
+          value,
+        };
+      },
+      { tableName: WORKSPACE_INFO_TABLE },
+    );
+
     this.config.onChange({
       type: 'workspace-create',
       payload: info,
     });
   }
 
-  async deleteWorkspaceInfo(name: string) {
-    await this.config.database.updateWorkspaceInfo(name, (wsInfo) => {
-      return {
-        ...wsInfo,
-        deleted: true,
-      };
-    });
+  async deleteWorkspaceInfo(wsName: string) {
+    await this.config.database.updateEntry(
+      wsName,
+      (existing) => {
+        if (!existing.found) {
+          throw new BaseError({
+            message: `Workspace with name ${wsName} does not exist`,
+            code: AppDatabaseErrorCode.WORKSPACE_NOT_FOUND,
+            thrower: 'AppDatabase',
+          });
+        }
+
+        const value: WorkspaceInfo = {
+          ...(existing.value as WorkspaceInfo),
+          lastModified: Date.now(),
+          deleted: true,
+        };
+
+        return {
+          value,
+        };
+      },
+      { tableName: WORKSPACE_INFO_TABLE },
+    );
 
     this.config.onChange({
       type: 'workspace-delete',
       payload: {
-        name,
+        name: wsName,
       },
     });
   }
@@ -61,7 +130,32 @@ export class AppDatabase {
     name: string,
     update: (wsInfo: WorkspaceInfo) => WorkspaceInfo,
   ) {
-    await this.config.database.updateWorkspaceInfo(name, update);
+    await this.config.database.updateEntry(
+      name,
+      (existing) => {
+        if (!existing.found) {
+          throw new BaseError({
+            message: `Workspace with name ${name} does not exist`,
+            code: AppDatabaseErrorCode.WORKSPACE_NOT_FOUND,
+            thrower: 'AppDatabase',
+          });
+        }
+
+        const existingValue = existing.value as WorkspaceInfo;
+        const value = {
+          ...existingValue,
+          ...update(existingValue),
+          lastModified: Date.now(),
+        };
+
+        return {
+          value,
+        };
+      },
+      {
+        tableName: WORKSPACE_INFO_TABLE,
+      },
+    );
 
     this.config.onChange({
       type: 'workspace-update',
@@ -71,15 +165,36 @@ export class AppDatabase {
     });
   }
 
-  async getWorkspaceMetadata(
-    name: string,
-    options?: WorkspaceDatabaseQueryOptions,
-  ) {
-    return this.config.database.getWorkspaceInfo(name, options);
+  async getAllWorkspaces(options?: {
+    type?: WorkspaceInfo['type'];
+    allowDeleted?: boolean;
+  }) {
+    const result = (await this.config.database.getAllEntries({
+      tableName: WORKSPACE_INFO_TABLE,
+    })) as WorkspaceInfo[];
+
+    return result.filter((wsInfo) => {
+      if (options) {
+        if (!options.allowDeleted && wsInfo?.deleted) {
+          return false;
+        }
+
+        if (options.type) {
+          return wsInfo.type === options.type;
+        }
+      }
+
+      return true;
+    });
   }
 
-  async getAllWorkspaces(options?: WorkspaceDatabaseQueryOptions) {
-    return this.config.database.getAllWorkspaces(options);
+  async getWorkspaceMetadata(name: string) {
+    const result = (await this.getWorkspaceInfo(name))?.metadata;
+
+    if (!isPlainObject(result)) {
+      return {};
+    }
+    return result;
   }
 
   /**
@@ -92,38 +207,71 @@ export class AppDatabase {
       existingMetadata: WorkspaceInfo['metadata'],
     ) => WorkspaceInfo['metadata'],
   ) {
-    const currentWsInfo = await this.getWorkspaceInfo(name);
+    await this.updateWorkspaceInfo(name, (wsInfo) => {
+      const finalMetadata = metadata(wsInfo.metadata ?? {});
 
-    if (!currentWsInfo) {
-      return false;
-    }
+      if (!isPlainObject(finalMetadata)) {
+        throw new BaseError({
+          message: `Invalid metadata for workspace ${name}`,
+          code: AppDatabaseErrorCode.UNKNOWN_ERROR,
+          thrower: 'AppDatabase',
+        });
+      }
 
-    await this.config.database.updateWorkspaceInfo(name, (existing) => ({
-      ...currentWsInfo,
-      ...existing,
-      metadata: {
-        ...metadata((existing || currentWsInfo).metadata),
-      },
-    }));
-
-    this.config.onChange({
-      type: 'workspace-update',
-      payload: {
-        name,
-      },
+      return {
+        ...wsInfo,
+        metadata: finalMetadata,
+      };
     });
+
     return true;
   }
 
   async getMiscData(key: string): Promise<{ data: string } | undefined> {
-    return this.config.database.getMiscData(key);
+    const data = await this.config.database.getEntry(key, {
+      tableName: MISC_TABLE,
+    });
+
+    if (!data.found) {
+      return undefined;
+    }
+
+    if (typeof data.value !== 'string') {
+      throw new BaseError({
+        message: `Invalid misc data for workspace ${key}`,
+        code: AppDatabaseErrorCode.UNKNOWN_ERROR,
+        thrower: 'AppDatabase',
+      });
+    }
+
+    return {
+      data: data.value,
+    };
   }
 
   async setMiscData(key: string, data: string): Promise<void> {
-    await this.config.database.setMiscData(key, data);
+    if (typeof data !== 'string') {
+      throw new BaseError({
+        message: `Invalid data for workspace ${key}`,
+        code: AppDatabaseErrorCode.UNKNOWN_ERROR,
+        thrower: 'AppDatabase',
+      });
+    }
+
+    await this.config.database.updateEntry(
+      key,
+      () => {
+        return {
+          value: data,
+        };
+      },
+      { tableName: MISC_TABLE },
+    );
   }
 
   async deleteMiscData(key: string): Promise<void> {
-    await this.config.database.deleteMiscData(key);
+    await this.config.database.deleteEntry(key, {
+      tableName: MISC_TABLE,
+    });
   }
 }

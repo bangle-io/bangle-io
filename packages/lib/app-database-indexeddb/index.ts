@@ -1,11 +1,10 @@
-import {
-  AppDatabaseErrorCode,
-  BaseAppDatabase,
-  WorkspaceDatabaseQueryOptions,
-} from '@bangle.io/app-database';
+import { AppDatabaseErrorCode } from '@bangle.io/app-database';
 import { BaseError } from '@bangle.io/base-error';
 import { makeDbRecord } from '@bangle.io/db-key-val';
-import type { WorkspaceInfo } from '@bangle.io/shared-types';
+import type {
+  BaseAppDatabase,
+  DatabaseQueryOptions,
+} from '@bangle.io/shared-types';
 
 import {
   getAppDb,
@@ -28,12 +27,8 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
     });
   }
 
-  async getAllEntries(options?: {
-    isWorkspaceInfo?: boolean;
-  }): Promise<unknown[]> {
-    const isWorkspaceInfo = options?.isWorkspaceInfo;
-
-    if (isWorkspaceInfo) {
+  async getAllEntries({ tableName }: DatabaseQueryOptions): Promise<unknown[]> {
+    if (tableName === 'workspace-info') {
       try {
         return await getWorkspaceInfoTable().getAll();
       } catch (error) {
@@ -50,12 +45,13 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
 
   async getEntry(
     key: string,
-    options?: { isWorkspaceInfo?: boolean },
+    options: DatabaseQueryOptions,
   ): Promise<{
     found: boolean;
     value: unknown;
   }> {
-    const isWorkspaceInfo = options?.isWorkspaceInfo;
+    const isWorkspaceInfo = options.tableName === 'workspace-info';
+
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
     try {
       const db = await getAppDb();
@@ -78,9 +74,9 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
     updateCallback: (options: { value: unknown; found: boolean }) => {
       value: unknown;
     } | null,
-    options?: { isWorkspaceInfo?: boolean },
+    options: DatabaseQueryOptions,
   ): Promise<void> {
-    const isWorkspaceInfo = options?.isWorkspaceInfo;
+    const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
 
     try {
@@ -112,11 +108,8 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
     }
   }
 
-  async deleteEntry(
-    key: string,
-    options?: { isWorkspaceInfo?: boolean },
-  ): Promise<void> {
-    const isWorkspaceInfo = options?.isWorkspaceInfo;
+  async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {
+    const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
 
     try {

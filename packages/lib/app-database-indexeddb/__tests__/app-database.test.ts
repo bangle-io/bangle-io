@@ -10,11 +10,11 @@ describe('AppDatabaseIndexedDB', () => {
   describe('getEntry', () => {
     it('should find an existing entry', async () => {
       await database.updateEntry('testKey', () => ({ value: 'testValue' }), {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
 
       const result = await database.getEntry('testKey', {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
 
       expect(result.found).toBeTruthy();
@@ -23,7 +23,7 @@ describe('AppDatabaseIndexedDB', () => {
 
     it('should not find a non-existing entry', async () => {
       const result = await database.getEntry('nonExistingKey', {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.found).toBeFalsy();
     });
@@ -31,23 +31,25 @@ describe('AppDatabaseIndexedDB', () => {
 
   describe('getAllEntries', () => {
     it('should return an empty array for no entries', async () => {
-      const entries = await database.getAllEntries({ isWorkspaceInfo: true });
+      const entries = await database.getAllEntries({
+        tableName: 'workspace-info',
+      });
       expect(entries).toEqual([]);
     });
 
     it('should return all entries', async () => {
       await database.updateEntry('testKey1', () => ({ value: 'testValue1' }), {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       await database.updateEntry('testKey2', () => ({ value: 'testValue2' }), {
-        isWorkspaceInfo: false,
+        tableName: 'misc',
       });
 
       const workspaceEntries = await database.getAllEntries({
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       const miscEntries = await database.getAllEntries({
-        isWorkspaceInfo: false,
+        tableName: 'misc',
       });
 
       expect(workspaceEntries).toEqual(['testValue1']);
@@ -60,27 +62,27 @@ describe('AppDatabaseIndexedDB', () => {
       await database.updateEntry(
         'existingKey',
         () => ({ value: 'initialValue' }),
-        { isWorkspaceInfo: true },
+        { tableName: 'workspace-info' },
       );
       await database.updateEntry(
         'existingKey',
         () => ({ value: 'updatedValue' }),
-        { isWorkspaceInfo: true },
+        { tableName: 'workspace-info' },
       );
 
       const result = await database.getEntry('existingKey', {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.value).toEqual('updatedValue');
     });
 
     it('should create a new entry if not existing', async () => {
       await database.updateEntry('newKey', () => ({ value: 'newValue' }), {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
 
       const result = await database.getEntry('newKey', {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.found).toBeTruthy();
       expect(result.value).toEqual('newValue');
@@ -95,7 +97,7 @@ describe('AppDatabaseIndexedDB', () => {
     it('should provide existing value to update callback if entry exists', async () => {
       expect.assertions(2);
       await database.updateEntry(testKey, () => ({ value: initialValue }), {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
 
       await database.updateEntry(
@@ -104,11 +106,11 @@ describe('AppDatabaseIndexedDB', () => {
           expect(existing.value).toEqual(initialValue);
           return { value: updatedValue };
         },
-        { isWorkspaceInfo: true },
+        { tableName: 'workspace-info' },
       );
 
       const result = await database.getEntry(testKey, {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.value).toEqual(updatedValue);
     });
@@ -122,18 +124,18 @@ describe('AppDatabaseIndexedDB', () => {
           expect(existing.found).toBe(false);
           return { value: 'newValue' };
         },
-        { isWorkspaceInfo: true },
+        { tableName: 'workspace-info' },
       );
 
       const result = await database.getEntry('nonExistingKey', {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.value).toEqual('newValue');
     });
 
     it('should not update entry if callback returns null', async () => {
       await database.updateEntry(testKey, () => ({ value: initialValue }), {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       await database.updateEntry(
         testKey,
@@ -141,12 +143,12 @@ describe('AppDatabaseIndexedDB', () => {
           return null;
         },
         {
-          isWorkspaceInfo: true,
+          tableName: 'workspace-info',
         },
       );
 
       const result = await database.getEntry(testKey, {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.value).toEqual(initialValue);
     });
@@ -157,19 +159,21 @@ describe('AppDatabaseIndexedDB', () => {
       await database.updateEntry(
         'deleteKey',
         () => ({ value: 'valueToDelete' }),
-        { isWorkspaceInfo: true },
+        { tableName: 'workspace-info' },
       );
-      await database.deleteEntry('deleteKey', { isWorkspaceInfo: true });
+      await database.deleteEntry('deleteKey', { tableName: 'workspace-info' });
 
       const result = await database.getEntry('deleteKey', {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       expect(result.found).toBeFalsy();
     });
 
     it('should handle deletion of a non-existing entry gracefully', async () => {
       await expect(
-        database.deleteEntry('nonExistingDeleteKey', { isWorkspaceInfo: true }),
+        database.deleteEntry('nonExistingDeleteKey', {
+          tableName: 'workspace-info',
+        }),
       ).resolves.not.toThrow();
     });
   });
@@ -180,18 +184,18 @@ describe('AppDatabaseIndexedDB', () => {
     const miscValue = 'miscValue';
 
     await database.updateEntry(testKey, () => ({ value: workspaceValue }), {
-      isWorkspaceInfo: true,
+      tableName: 'workspace-info',
     });
     await database.updateEntry(testKey, () => ({ value: miscValue }), {
-      isWorkspaceInfo: false,
+      tableName: 'misc',
     });
 
     // Retrieve entries from both tables
     const workspaceResult = await database.getEntry(testKey, {
-      isWorkspaceInfo: true,
+      tableName: 'workspace-info',
     });
     const miscResult = await database.getEntry(testKey, {
-      isWorkspaceInfo: false,
+      tableName: 'misc',
     });
 
     expect(workspaceResult.value).toEqual(workspaceValue);
@@ -205,23 +209,23 @@ describe('AppDatabaseIndexedDB', () => {
 
     // Initially set the same key in both tables
     await database.updateEntry(testKey, () => ({ value: initialValue }), {
-      isWorkspaceInfo: true,
+      tableName: 'workspace-info',
     });
     await database.updateEntry(testKey, () => ({ value: initialValue }), {
-      isWorkspaceInfo: false,
+      tableName: 'misc',
     });
 
     // Update only in the workspace table
     await database.updateEntry(testKey, () => ({ value: updatedValue }), {
-      isWorkspaceInfo: true,
+      tableName: 'workspace-info',
     });
 
     // Retrieve entries from both tables
     const workspaceResult = await database.getEntry(testKey, {
-      isWorkspaceInfo: true,
+      tableName: 'workspace-info',
     });
     const miscResult = await database.getEntry(testKey, {
-      isWorkspaceInfo: false,
+      tableName: 'misc',
     });
 
     // Verify that only the workspace table entry was updated
@@ -237,20 +241,20 @@ describe('AppDatabaseIndexedDB', () => {
     beforeEach(async () => {
       // Set up entries in both tables
       await database.updateEntry(testKey, () => ({ value: workspaceValue }), {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       await database.updateEntry(testKey, () => ({ value: miscValue }), {
-        isWorkspaceInfo: false,
+        tableName: 'misc',
       });
     });
 
     it('should read from the correct table based on isWorkspaceInfo flag', async () => {
       // Retrieve entries from both tables
       const workspaceResult = await database.getEntry(testKey, {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
       const miscResult = await database.getEntry(testKey, {
-        isWorkspaceInfo: false,
+        tableName: 'misc',
       });
 
       // Verify that the values are read from separate tables
@@ -260,16 +264,16 @@ describe('AppDatabaseIndexedDB', () => {
 
     it('should delete from the correct table without affecting the other', async () => {
       // Delete entry from the workspace table
-      await database.deleteEntry(testKey, { isWorkspaceInfo: true });
+      await database.deleteEntry(testKey, { tableName: 'workspace-info' });
 
       // Try retrieving the deleted entry from the workspace table
       const deletedWorkspaceResult = await database.getEntry(testKey, {
-        isWorkspaceInfo: true,
+        tableName: 'workspace-info',
       });
 
       // Try retrieving the same key from the misc table
       const existingMiscResult = await database.getEntry(testKey, {
-        isWorkspaceInfo: false,
+        tableName: 'misc',
       });
 
       // Verify that the entry was deleted only from the workspace table
