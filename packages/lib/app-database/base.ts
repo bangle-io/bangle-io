@@ -11,36 +11,29 @@ export type WorkspaceDatabaseQueryOptions = {
 export interface BaseAppDatabase {
   name: string;
 
-  createWorkspaceInfo: (info: WorkspaceInfo) => Promise<void>;
+  getEntry(
+    key: string,
+    options?: {
+      isWorkspaceInfo?: boolean;
+    },
+  ): Promise<{ found: boolean; value: unknown }>;
 
-  getWorkspaceInfo: (
-    wsName: string,
-    options?: WorkspaceDatabaseQueryOptions,
-  ) => Promise<WorkspaceInfo | undefined>;
+  updateEntry(
+    key: string,
+    updateCallback: (options: { value: unknown; found: boolean }) => {
+      value: unknown;
+    } | null,
+    options?: {
+      isWorkspaceInfo?: boolean;
+    },
+  ): Promise<void>;
 
-  updateWorkspaceInfo: (
-    wsName: string,
-    info: (workspaceInfo: WorkspaceInfo) => Partial<WorkspaceInfo>,
-  ) => Promise<void>;
+  deleteEntry(
+    key: string,
+    options?: {
+      isWorkspaceInfo?: boolean;
+    },
+  ): Promise<void>;
 
-  getAllWorkspaces: (
-    options?: WorkspaceDatabaseQueryOptions,
-  ) => Promise<WorkspaceInfo[]>;
-
-  /**
-   * Gets misc data from the database
-   * @param key
-   * @returns
-   */
-  getMiscData: (key: string) => Promise<{ data: string } | undefined>;
-
-  /**
-   * Data must be JSON.serializable
-   * @param key
-   * @param data
-   * @returns
-   */
-  setMiscData: (key: string, data: string) => Promise<void>;
-
-  deleteMiscData: (key: string) => Promise<void>;
+  getAllEntries(options?: { isWorkspaceInfo?: boolean }): Promise<unknown[]>;
 }
