@@ -130,4 +130,29 @@ describe('Workspace ', () => {
       'test-ws:path/to/fileB.md',
     ]);
   });
+
+  it('should properly rename a file', async () => {
+    const { workspace } = await setup();
+    const file = new File(['content'], 'originalFile.md', {
+      type: 'text/markdown',
+    });
+    await workspace.writeFile('test-ws:path/to/originalFile.md', file);
+
+    await workspace.renameFile({
+      oldWsPath: 'test-ws:path/to/originalFile.md',
+      newWsPath: 'test-ws:path/to/renamedFile.md',
+    });
+
+    const fileContent = await workspace.readFileAsText(
+      'test-ws:path/to/renamedFile.md',
+    );
+    expect(fileContent).toEqual('content');
+
+    expect(
+      await workspace.readFileAsText('test-ws:path/to/originalFile.md'),
+    ).toBeUndefined();
+
+    const files = await workspace.listFiles();
+    expect(files).toEqual(['test-ws:path/to/renamedFile.md']);
+  });
 });

@@ -107,7 +107,14 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
     return this._idb.readFile(toFSPath(wsPath));
   }
 
-  async renameFile(wsPath: string, newWsPath: string): Promise<void> {
+  async renameFile(
+    wsPath: string,
+    {
+      newWsPath,
+    }: {
+      newWsPath: string;
+    },
+  ): Promise<void> {
     await this._idb.rename(toFSPath(wsPath), toFSPath(newWsPath));
 
     this.options.onChange({

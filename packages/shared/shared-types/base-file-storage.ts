@@ -83,8 +83,9 @@ export interface BaseFileStorageProvider {
 
   renameFile: (
     wsPath: WsPath,
-    newWsPath: WsPath,
-    options: EmptyObject,
+    options: {
+      newWsPath: WsPath;
+    },
   ) => Promise<void>;
 
   /**

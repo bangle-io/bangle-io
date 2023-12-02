@@ -6,6 +6,7 @@ import {
   getExtension,
   isValidFileWsPath,
   isValidNoteWsPath,
+  resolvePath,
   VALID_NOTE_EXTENSIONS_SET,
   validateFileWsPath,
   validateNoteWsPath,
@@ -159,5 +160,29 @@ export class Workspace {
     validateFileWsPath(wsPath);
 
     await this.provider.deleteFile(wsPath, {});
+  }
+
+  async renameFile({
+    oldWsPath,
+    newWsPath,
+  }: {
+    oldWsPath: string;
+    newWsPath: string;
+  }): Promise<void> {
+    validateFileWsPath(oldWsPath);
+    validateFileWsPath(newWsPath);
+
+    const { wsName: currentWsName } = resolvePath(oldWsPath);
+    const { wsName: newWsName } = resolvePath(newWsPath);
+
+    if (currentWsName !== newWsName) {
+      throw new Error(
+        `Cannot rename file ${oldWsPath} to ${newWsPath} as they are in different workspaces`,
+      );
+    }
+
+    await this.provider.renameFile(oldWsPath, {
+      newWsPath,
+    });
   }
 }
