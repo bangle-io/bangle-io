@@ -13,11 +13,13 @@ interface FileStat {
 }
 
 export interface FileStorageOpts {
+  wsName: WsName;
   isFileTypeSupported: (options: { extension: string }) => boolean;
-  getWorkspaceMetadata: (wsName: string) => Promise<Record<string, any>>;
+  getWorkspaceMetadata: () => Promise<Record<string, any>>;
   updateWorkspaceMetadata: (
-    wsName: string,
-    metadata: Record<string, any>,
+    metadata:
+      | Record<string, any>
+      | ((existingMetadata: Record<string, any>) => Record<string, any>),
   ) => Promise<void>;
   onChange: (event: FileStorageChangeEvent) => void;
 }
@@ -70,7 +72,6 @@ export interface BaseFileStorageProvider {
 
   listAllFiles: (
     abortSignal: AbortSignal,
-    wsName: WsName,
     options: EmptyObject,
   ) => Promise<WsPath[]>;
 

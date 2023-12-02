@@ -465,6 +465,9 @@ importers:
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib/ui
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../../lib/workspace
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -1072,6 +1075,9 @@ importers:
       '@bangle.io/file-storage-indexeddb':
         specifier: workspace:*
         version: link:../file-storage-indexeddb
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types

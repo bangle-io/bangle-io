@@ -30,6 +30,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/file-storage-indexeddb": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "@bangle.io/logger": "workspace:*"
   }
 }

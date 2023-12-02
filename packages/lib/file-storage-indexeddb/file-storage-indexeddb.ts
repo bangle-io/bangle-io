@@ -73,13 +73,12 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
     return globalThis.indexedDB != null;
   }
 
-  async listAllFiles(
-    abortSignal: AbortSignal,
-    wsName: string,
-  ): Promise<string[]> {
+  async listAllFiles(abortSignal: AbortSignal): Promise<string[]> {
     let files: string[] = [];
 
-    const rawPaths: string[] = await this._idb.opendirRecursive(wsName);
+    const rawPaths: string[] = await this._idb.opendirRecursive(
+      this.options.wsName,
+    );
 
     abortSignal.throwIfAborted();
 

@@ -6,6 +6,7 @@ type WsName = string;
 
 export const DEFAULT_NOTE_EXTENSION = '.md';
 export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
+export const VALID_NOTE_EXTENSIONS_SET = new Set(VALID_NOTE_EXTENSIONS);
 
 // works on any string
 export function hasValidNoteExtension(str: string) {
@@ -63,7 +64,7 @@ export type MaybeWsPath = string | undefined;
  * fsPath - /<wsName>/<filePath> - this is what is used internally by the fs module
  */
 // TODO add test where wsPath has `//`
-export function resolvePath(wsPath: string, skipValidation = false) {
+export function resolvePath(wsPath: string, skipValidation = true) {
   if (!skipValidation) {
     validateWsPath(wsPath);
     // TODO currently this only works for fileWsPaths
