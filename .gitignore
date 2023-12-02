@@ -16,6 +16,8 @@ tsconfig.tsbuildinfo
 playwright-report
 playwright/.cache/
 
+coverage
+
 node_modules/
 /test-results/
 /playwright-report/
