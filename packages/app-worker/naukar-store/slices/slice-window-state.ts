@@ -2,6 +2,7 @@ import { createKey } from '@nalanda/core';
 
 import { defaultWorkerWindowStoreReplica } from '@bangle.io/constants';
 import { WorkerWindowStoreReplica } from '@bangle.io/shared-types';
+import { locationHelpers } from '@bangle.io/ws-path';
 
 const key = createKey('naukar/slice-window-state', []);
 
@@ -35,9 +36,17 @@ const uiScreenHeightField = key.derive((state) => {
   return windowStateReplicaField.get(state).ui?.screenHeight;
 });
 
+const wsNameField = key.derive((state) => {
+  const location = pageLocationField.get(state);
+
+  return location ? locationHelpers.getWsName(location) : undefined;
+});
+
 export const sliceWindowState = key.slice({
   pageLifecycle: pageLifecycleField,
   pageLocation: pageLocationField,
+
+  wsName: wsNameField,
 
   uiScreenHeight: uiScreenHeightField,
   uiScreenWidth: uiScreenWidthField,

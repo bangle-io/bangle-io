@@ -9,6 +9,7 @@ import type { EternalVarsWorker } from '@bangle.io/shared-types';
 
 import { logger } from './logger';
 import { sliceWindowState } from './slices/slice-window-state';
+import { sliceWorkspaceNaukar } from './slices/slice-workspace-naukar';
 export { sliceWindowState as windowStoreReplicaSlice } from './slices/slice-window-state';
 
 export function createNaukarStore({
@@ -31,6 +32,7 @@ export function createNaukarStore({
     slices: [
       // keep at end
       sliceWindowState,
+      sliceWorkspaceNaukar,
     ],
     autoStartEffects: true,
     overrides: {

@@ -9,7 +9,6 @@ import {
   resolvePath,
   VALID_NOTE_EXTENSIONS_SET,
   validateFileWsPath,
-  validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
 import { logger } from './logger';

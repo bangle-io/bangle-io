@@ -646,6 +646,12 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../../lib/workspace
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3

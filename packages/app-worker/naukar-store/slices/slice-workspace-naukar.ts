@@ -1,16 +1,18 @@
 import { cleanup, createKey } from '@nalanda/core';
 
-import { getEternalVarsWindow } from '@bangle.io/lib-common';
-import { slicePage } from '@bangle.io/slice-page';
+import { getStoreConfigRef } from '@bangle.io/naukar-common';
 import { Workspace } from '@bangle.io/workspace';
 
-// WARNING: If changing also make changes to slice-workspace-naukar
-const key = createKey('slice-workspace', [slicePage]);
+import { logger } from '../logger';
+import { sliceWindowState } from './slice-window-state';
+
+// WARNING: If changing also make changes to slice-workspace
+const key = createKey('slice-workspace-naukar', [sliceWindowState]);
 
 const rawWorkspaceField = key.field<Workspace | undefined>(undefined);
 
 const currentWorkspace = key.derive((state) => {
-  const wsName = slicePage.getField(state, 'wsName');
+  const wsName = sliceWindowState.getField(state, 'wsName');
   const rawWorkspace = rawWorkspaceField.get(state);
 
   if (!wsName || !rawWorkspace) {
@@ -21,13 +23,13 @@ const currentWorkspace = key.derive((state) => {
 });
 
 key.effect(async function workspaceInit(store) {
-  const { wsName } = slicePage.track(store);
+  const { wsName } = sliceWindowState.track(store);
 
   if (!wsName) {
     return;
   }
 
-  const eternalVars = getEternalVarsWindow(store);
+  const eternalVars = getStoreConfigRef(store).current.eternalVars;
 
   const workspace = await Workspace.create({
     wsName,
@@ -41,6 +43,6 @@ key.effect(async function workspaceInit(store) {
   });
 });
 
-export const sliceWorkspace = key.slice({
+export const sliceWorkspaceNaukar = key.slice({
   currentWorkspace,
 });
