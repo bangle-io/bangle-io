@@ -75,7 +75,7 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
       value: unknown;
     } | null,
     options: DatabaseQueryOptions,
-  ): Promise<void> {
+  ) {
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
 
@@ -94,7 +94,10 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
       });
 
       if (!updated) {
-        return;
+        return {
+          found: false,
+          value: undefined,
+        };
       }
 
       await Promise.all([
@@ -102,7 +105,10 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
         tx.done,
       ]);
 
-      return;
+      return {
+        found: true,
+        value: updated.value,
+      };
     } catch (error) {
       this.throwUnknownError(error);
     }

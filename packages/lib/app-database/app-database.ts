@@ -61,10 +61,12 @@ export class AppDatabase {
     return wsInfo;
   }
 
-  async createWorkspaceInfo(info: WorkspaceInfo): Promise<void> {
+  async createWorkspaceInfo(
+    info: Omit<WorkspaceInfo, 'lastModified' | 'deleted'>,
+  ): Promise<WorkspaceInfo | undefined> {
     const wsName = info.name;
 
-    await this.config.database.updateEntry(
+    const result = await this.config.database.updateEntry(
       wsName,
       (existing) => {
         if (existing.found) {
@@ -87,10 +89,17 @@ export class AppDatabase {
       { tableName: WORKSPACE_INFO_TABLE },
     );
 
-    this.config.onChange({
-      type: 'workspace-create',
-      payload: info,
-    });
+    const updated = result.found ? (result.value as WorkspaceInfo) : undefined;
+    if (updated) {
+      this.config.onChange({
+        type: 'workspace-create',
+        payload: updated,
+      });
+
+      return updated;
+    }
+
+    return undefined;
   }
 
   async deleteWorkspaceInfo(wsName: string) {
@@ -129,8 +138,8 @@ export class AppDatabase {
   async updateWorkspaceInfo(
     name: string,
     update: (wsInfo: WorkspaceInfo) => WorkspaceInfo,
-  ) {
-    await this.config.database.updateEntry(
+  ): Promise<WorkspaceInfo | undefined> {
+    const result = await this.config.database.updateEntry(
       name,
       (existing) => {
         if (!existing.found) {
@@ -157,12 +166,18 @@ export class AppDatabase {
       },
     );
 
-    this.config.onChange({
-      type: 'workspace-update',
-      payload: {
-        name,
-      },
-    });
+    if (result.found) {
+      this.config.onChange({
+        type: 'workspace-update',
+        payload: {
+          name,
+        },
+      });
+
+      return result.value as WorkspaceInfo;
+    }
+
+    return undefined;
   }
 
   async getAllWorkspaces(options?: {

@@ -49,7 +49,13 @@ describe('workspace creation', () => {
       lastModified: 1,
     };
 
-    await appDatabase.createWorkspaceInfo(workspaceInfo);
+    const wsInfo = await appDatabase.createWorkspaceInfo(workspaceInfo);
+
+    expect(wsInfo).toEqual({
+      ...workspaceInfo,
+      lastModified: expect.any(Number),
+    });
+
     expect(mockDatabase.updateEntry).toHaveBeenCalledTimes(1);
     expect(mockDatabase.updateEntry).toHaveBeenCalledWith(
       'Test Workspace',
@@ -59,7 +65,10 @@ describe('workspace creation', () => {
 
     expect(onChange).toHaveBeenCalledWith({
       type: 'workspace-create',
-      payload: workspaceInfo,
+      payload: {
+        ...workspaceInfo,
+        lastModified: expect.any(Number),
+      },
     });
 
     expect(mockDatabase.workspaces.get('Test Workspace')).toEqual({
@@ -193,7 +202,10 @@ describe('workspace metadata', () => {
   test('updateWorkspaceInfo updates workspace and triggers onChange', async () => {
     const { appDatabase, onChange, mockDatabase } = setup();
     const workspaceName = 'Test Workspace';
-    const updateFunction = jest.fn((info) => ({ ...info, updated: true }));
+    const updateFunction = jest.fn((info) => ({
+      ...info,
+      metadata: { updated: true },
+    }));
 
     const workspaceInfo = {
       name: workspaceName,
@@ -204,7 +216,18 @@ describe('workspace metadata', () => {
 
     await appDatabase.createWorkspaceInfo(workspaceInfo);
 
-    await appDatabase.updateWorkspaceInfo(workspaceName, updateFunction);
+    const result = await appDatabase.updateWorkspaceInfo(
+      workspaceName,
+      updateFunction,
+    );
+
+    expect(result).toEqual({
+      ...workspaceInfo,
+      lastModified: expect.any(Number),
+      metadata: {
+        updated: true,
+      },
+    });
 
     expect(mockDatabase.updateEntry).toHaveBeenCalledWith(
       workspaceName,

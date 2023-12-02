@@ -25,7 +25,7 @@ export interface BaseAppDatabase {
       value: unknown;
     } | null,
     options: DatabaseQueryOptions,
-  ): Promise<void>;
+  ): Promise<{ value: unknown; found: boolean }>;
 
   deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void>;
 

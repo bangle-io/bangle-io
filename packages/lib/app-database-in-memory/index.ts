@@ -32,7 +32,7 @@ export class AppDatabaseInMemory implements BaseAppDatabase {
       found: boolean;
     }) => { value: unknown } | null,
     options: DatabaseQueryOptions,
-  ): Promise<void> {
+  ) {
     const isWorkspaceInfo = options.tableName === WORKSPACE_INFO_TABLE;
     const dataMap = isWorkspaceInfo ? this.workspaces : this.miscData;
     const existing = dataMap.get(key);
@@ -43,7 +43,17 @@ export class AppDatabaseInMemory implements BaseAppDatabase {
 
     if (updated) {
       dataMap.set(key, updated.value);
+
+      return {
+        found: true,
+        value: updated.value,
+      };
     }
+
+    return {
+      found: false,
+      value: undefined,
+    };
   }
 
   async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {

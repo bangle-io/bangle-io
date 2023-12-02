@@ -31,6 +31,11 @@
     "@bangle.io/file-storage-indexeddb": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/baby-fs": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/app-database": "workspace:*",
+    "@bangle.io/app-database-indexeddb": "workspace:*"
   }
 }

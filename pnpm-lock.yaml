@@ -1069,6 +1069,9 @@ importers:
 
   packages/lib/workspace:
     dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -1084,6 +1087,13 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../ws-path
+    devDependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../app-database
+      '@bangle.io/app-database-indexeddb':
+        specifier: workspace:*
+        version: link:../app-database-indexeddb
 
   packages/lib/ws-path:
     dependencies:

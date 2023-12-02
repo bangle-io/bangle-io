@@ -1,16 +1,19 @@
+import { readFileAsText } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
 import { FileStorageIndexedDB } from '@bangle.io/file-storage-indexeddb';
 import { AppDatabase, BaseFileStorageProvider } from '@bangle.io/shared-types';
 import {
   getExtension,
   isValidFileWsPath,
+  isValidNoteWsPath,
   VALID_NOTE_EXTENSIONS_SET,
   validateFileWsPath,
+  validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
 import { logger } from './logger';
 
-type Config = {
+export type Config = {
   readonly wsName: string;
   readonly database: AppDatabase;
 };
@@ -122,6 +125,22 @@ export class Workspace {
     const file = await this.provider.readFile(wsPath, {});
 
     return file;
+  }
+
+  async readFileAsText(wsPath: string): Promise<string | undefined> {
+    if (!isValidNoteWsPath(wsPath)) {
+      throw new Error(
+        `readFileAsText: ${wsPath} is not a valid note file path`,
+      );
+    }
+
+    const file = await this.readFile(wsPath);
+
+    if (!file) {
+      return undefined;
+    }
+
+    return readFileAsText(file);
   }
 
   async writeFile(
