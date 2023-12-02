@@ -107,4 +107,6 @@ export interface BaseFileStorageProvider {
   ) => Promise<WsPath[]>;
 
   searchText?: () => Promise<void>;
+
+  destroy: () => void;
 }

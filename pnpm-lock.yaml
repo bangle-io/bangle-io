@@ -462,6 +462,9 @@ importers:
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
+      '@bangle.io/slice-workspace':
+        specifier: workspace:*
+        version: link:../../lib/slice-workspace
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib/ui
@@ -576,6 +579,9 @@ importers:
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
+      '@bangle.io/slice-workspace':
+        specifier: workspace:*
+        version: link:../../lib/slice-workspace
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
@@ -924,8 +930,6 @@ importers:
         specifier: workspace:*
         version: link:../../js-lib/logger
 
-  packages/lib/file-storage: {}
-
   packages/lib/file-storage-indexeddb:
     dependencies:
       '@bangle.io/baby-fs':
@@ -1001,6 +1005,21 @@ importers:
       '@bangle.io/test-utils-slice':
         specifier: workspace:*
         version: link:../../test-utils/test-utils-slice
+
+  packages/lib/slice-workspace:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../lib-common
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../slice-page
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../workspace
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/lib/ui:
     dependencies:

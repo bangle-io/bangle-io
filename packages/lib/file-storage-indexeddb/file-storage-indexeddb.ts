@@ -26,6 +26,10 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
 
   private _idb = new IndexedDBFileSystem();
 
+  destroy() {
+    // no-op
+  }
+
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.writeFile(wsPath, file);
 

@@ -22,6 +22,14 @@ export type Config = {
 export class Workspace {
   private provider!: BaseFileStorageProvider;
 
+  get wsName() {
+    return this.config.wsName;
+  }
+
+  destroy() {
+    this.provider.destroy();
+  }
+
   static async create(config: Config): Promise<Workspace> {
     const ws = new Workspace(config);
 
@@ -33,12 +41,10 @@ export class Workspace {
   private constructor(private config: Config) {}
 
   async init() {
-    const info = await this.config.database.getWorkspaceInfo(
-      this.config.wsName,
-    );
+    const info = await this.config.database.getWorkspaceInfo(this.wsName);
 
     if (!info) {
-      throw new Error(`Workspace ${this.config.wsName} not found`);
+      throw new Error(`Workspace ${this.wsName} not found`);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
@@ -49,7 +55,7 @@ export class Workspace {
     }
 
     await this.provider.onInit({
-      wsName: this.config.wsName,
+      wsName: this.wsName,
 
       onChange: (event) => {
         // TODO cross tab sync
@@ -75,7 +81,7 @@ export class Workspace {
 
   async getWorkspaceMetadata(): Promise<Record<string, any>> {
     const metadata = await this.config.database.getWorkspaceMetadata(
-      this.config.wsName,
+      this.wsName,
     );
     return metadata ?? {};
   }
@@ -86,7 +92,7 @@ export class Workspace {
       | ((existingMetadata: Record<string, any>) => Record<string, any>),
   ): Promise<void> {
     await this.config.database.updateWorkspaceMetadata(
-      this.config.wsName,
+      this.wsName,
       (existing) => {
         const result =
           typeof metadata === 'function' ? metadata(existing) : metadata;
