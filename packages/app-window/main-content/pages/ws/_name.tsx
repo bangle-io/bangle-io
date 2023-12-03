@@ -42,8 +42,12 @@ export default function PageWsName() {
       <Text UNSAFE_className="text-2xl">Files</Text>
       <FilesTable
         wsName={wsName}
-        createNote={() => {}}
-        goToWsPath={() => {}}
+        createNote={() => {
+          //
+        }}
+        goToWsPath={() => {
+          //
+        }}
         selectedKey={selectedWsKey}
         updateSelectedKey={updateSelectedWsKey}
         widescreen={widescreen}

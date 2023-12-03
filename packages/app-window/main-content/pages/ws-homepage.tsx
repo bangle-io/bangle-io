@@ -110,7 +110,9 @@ export default function PageWsHomePage() {
               }),
             );
           }}
-          createWorkspace={() => {}}
+          createWorkspace={() => {
+            //
+          }}
         />
       )}
     </MainContentWrapper>
