@@ -12,8 +12,8 @@ import { UserPreferenceManager } from '@bangle.io/user-preference';
 import { logger } from './logger';
 import type { EternalVarsSetupBase } from './types';
 
-const THRESHOLD_MS = 20;
-const THRESHOLD_COUNT = 150;
+const THRESHOLD_MS = 150;
+const THRESHOLD_COUNT = 100;
 
 export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
   logger.debug('debugFlags', config.debugFlags);
@@ -43,6 +43,9 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
 
     // Check if the threshold is exceeded
     if (messageCount++ > THRESHOLD_COUNT) {
+      // TODO error handling
+      broadcast.destroy();
+      emitter.destroy();
       throw new Error('Too many messages received in a short period of time.');
     }
 

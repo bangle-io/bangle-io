@@ -1,19 +1,29 @@
-import { ActionGroup, Flex, Item, Text, Well } from '@adobe/react-spectrum';
+import {
+  ActionGroup,
+  DialogContainer,
+  DialogTrigger,
+  Flex,
+  Item,
+  Text,
+} from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import FolderAdd from '@spectrum-icons/workflow/FolderAdd';
 import FolderDelete from '@spectrum-icons/workflow/FolderDelete';
 import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React from 'react';
-import { Redirect, Route, Switch } from 'wouter';
 
+import { WorkspaceType } from '@bangle.io/constants';
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
+import {
+  CreateWorkspaceDialog,
+  MainContentWrapper,
+  WorkspaceTable,
+} from '@bangle.io/ui';
 
-import { WorkspaceTable } from '../components/WorkspaceTable';
-
-export default function PageWsHomePage() {
+export default function PageWorkspaceSelectionPage() {
   const store = useStore();
 
   const { widescreen } = useTrack(sliceUI);
@@ -23,6 +33,8 @@ export default function PageWsHomePage() {
   >(undefined);
 
   const { eternalVars } = getWindowStoreConfig(store);
+
+  const [refresh, updateRefresh] = React.useState(0);
 
   const [workspaces, updateWorkspaces] = React.useState<
     WorkspaceInfo[] | undefined
@@ -43,19 +55,39 @@ export default function PageWsHomePage() {
     return () => {
       destroyed = true;
     };
-  }, [eternalVars]);
+  }, [eternalVars, refresh]);
 
   const disabledKeys = selectedWsKey
     ? []
     : ['open-workspace', 'delete-workspace'];
 
+  const [showCreateWsDialog, updateShowCreateWsDialog] = React.useState(false);
+
   return (
-    <Flex
-      direction="column"
-      height="100%"
-      gap="size-200"
-      UNSAFE_className="overflow-y-auto B-app-main-content px-2 widescreen:px-4 py-4"
-    >
+    <MainContentWrapper>
+      <DialogContainer
+        type={widescreen ? 'modal' : 'fullscreen'}
+        onDismiss={() => {
+          updateShowCreateWsDialog(false);
+        }}
+      >
+        {showCreateWsDialog && (
+          <CreateWorkspaceDialog
+            onConfirm={(val) => {
+              void eternalVars.appDatabase
+                .createWorkspaceInfo({
+                  metadata: {},
+                  name: val.wsName,
+                  type: WorkspaceType.Browser,
+                })
+                .then(() => {
+                  updateRefresh((prev) => prev + 1);
+                });
+              updateShowCreateWsDialog(false);
+            }}
+          />
+        )}
+      </DialogContainer>
       {/* <Well role="region" aria-labelledby="Welcome" marginTop="size-300">
   <Text UNSAFE_className="text-2xl">Welcome Back!</Text>
   <div>
@@ -92,6 +124,9 @@ export default function PageWsHomePage() {
                 }),
               );
             }
+            if (key === 'new-workspace') {
+              updateShowCreateWsDialog(true);
+            }
           }}
         >
           {(item) => {
@@ -110,8 +145,18 @@ export default function PageWsHomePage() {
           workspaces={workspaces}
           selectedKey={selectedWsKey}
           updateSelectedKey={updateSelectedWsKey}
+          goToWorkspace={(wsName) => {
+            store.dispatch(
+              slicePage.actions.goTo({
+                pathname: '/ws/' + wsName,
+              }),
+            );
+          }}
+          createWorkspace={() => {
+            //
+          }}
         />
       )}
-    </Flex>
+    </MainContentWrapper>
   );
 }

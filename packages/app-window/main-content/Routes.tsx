@@ -3,20 +3,22 @@ import './style.css';
 import React from 'react';
 import { Redirect, Route, Switch } from 'wouter';
 
+import { WS_PAGES_ROOT } from '@bangle.io/constants';
+
 import PageWsName from './pages/ws/_name';
-import PageWsHomePage from './pages/ws-homepage';
+import PageWorkspaceSelectionPage from './pages/ws-select';
 
 export function MainContent() {
   return (
     <Switch>
-      <Route path="/ws/:wsName">
+      <Route path={`/${WS_PAGES_ROOT.WorkspaceHome}/:wsName`}>
         <PageWsName />
       </Route>
-      <Route path="/ws-homepage">
-        <PageWsHomePage />
+      <Route path={`/${WS_PAGES_ROOT.workspacesSelection}`}>
+        <PageWorkspaceSelectionPage />
       </Route>
       <Route path="/">
-        <Redirect to="/ws-homepage" />
+        <Redirect to={`/${WS_PAGES_ROOT.workspacesSelection}`} />
       </Route>
     </Switch>
   );

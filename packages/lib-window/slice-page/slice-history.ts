@@ -35,11 +35,19 @@ function syncHistoryStateWithSliceState(location: Location) {
   return locationField.update(location);
 }
 
-function goTo(location: Location, replace?: boolean) {
-  return pendingNavigationField.update({
-    location,
-    replaceHistory: replace,
-    preserve: true,
+function goTo(
+  location: Location | ((location: Location) => Location),
+  replace?: boolean,
+) {
+  return pendingNavigationField.update((l) => {
+    const newLocation =
+      typeof location === 'function' ? location(l?.location ?? {}) : location;
+
+    return {
+      location: newLocation,
+      replaceHistory: replace,
+      preserve: true,
+    };
   });
 }
 

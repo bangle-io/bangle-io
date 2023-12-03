@@ -13,3 +13,4 @@ export * from './worker';
 export * from './worker-sync';
 export * from './workspace';
 export * from './write-disk';
+export * from './ws-pages-root';

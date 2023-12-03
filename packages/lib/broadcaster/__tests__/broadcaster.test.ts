@@ -25,14 +25,14 @@ describe('createBroadcaster', () => {
   test('posts messages to broadcast channel on emit', () => {
     const emitter =
       createBroadcaster<EventMessage<string, any>>('test-broadcaster');
-    emitter.emit('testEvent', 'testData');
+    emitter.emit('testEvent', { data: 'testData' });
 
     expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith({
       sender: {
         id: BROWSING_CONTEXT_ID,
         timestamp: expect.any(Number),
       },
-      payload: { event: 'testEvent', payload: 'testData' },
+      payload: { event: 'testEvent', payload: { data: 'testData' } },
     });
   });
 
@@ -45,13 +45,13 @@ describe('createBroadcaster', () => {
     const mockMessage = {
       data: {
         sender: { id: 'different-context', timestamp: Date.now() },
-        payload: { event: 'testEvent', payload: 'testData' },
+        payload: { event: 'testEvent', payload: { data: 'testData' } },
       },
     };
 
     mockBroadcastChannel.onmessage(mockMessage);
 
-    expect(onMessageMock).toHaveBeenCalledWith('testData');
+    expect(onMessageMock).toHaveBeenCalledWith({ data: 'testData' });
   });
 
   test('ignores messages from the same browsing context', () => {
@@ -63,7 +63,7 @@ describe('createBroadcaster', () => {
     const mockMessage = {
       data: {
         sender: { id: BROWSING_CONTEXT_ID, timestamp: Date.now() },
-        payload: { event: 'testEvent', payload: 'testData' },
+        payload: { event: 'testEvent', payload: { payload: 'testData' } },
       },
     };
 
@@ -79,4 +79,28 @@ describe('createBroadcaster', () => {
 
     expect(mockBroadcastChannel.close).toHaveBeenCalled();
   });
+
+  // test('ignores duplicate messages received from broadcast channel', () => {
+  //   const onMessageMock = jest.fn();
+  //   const emitter =
+  //     createBroadcaster<EventMessage<string, any>>('test-broadcaster');
+  //   emitter.on('testEvent', onMessageMock);
+
+  //   // Simulating the reception of a message for the first time
+  //   const mockMessage = {
+  //     data: {
+  //       sender: { id: 'different-context', timestamp: Date.now() },
+  //       payload: { event: 'testEvent', payload: 'testData' },
+  //     },
+  //   };
+
+  //   mockBroadcastChannel.onmessage(mockMessage);
+
+  //   // Simulating the reception of the same message again
+  //   mockBroadcastChannel.onmessage(mockMessage);
+
+  //   // The onMessageMock should only have been called once, since the second message is a duplicate
+  //   expect(onMessageMock).toHaveBeenCalledTimes(1);
+  //   expect(onMessageMock).toHaveBeenCalledWith('testData');
+  // });
 });
