@@ -29,10 +29,12 @@
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
     "@bangle.io/lib-common": "workspace:*",
-    "@spectrum-icons/illustrations": "^3.6.8",
     "wouter": "^2.12.1",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/workspace": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*"
-  }
+    "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/ui": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
+  },
+  "devDependencies": {}
 }

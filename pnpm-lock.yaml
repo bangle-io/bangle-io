@@ -336,15 +336,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
-      '@bangle.io/ui':
-        specifier: workspace:*
-        version: link:../../lib-window/ui
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -402,9 +396,6 @@ importers:
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
-      '@spectrum-icons/workflow':
-        specifier: ^4.2.7
-        version: 4.2.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
@@ -423,15 +414,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
-      '@bangle.io/ui':
-        specifier: workspace:*
-        version: link:../../lib-window/ui
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -471,12 +456,12 @@ importers:
       '@bangle.io/workspace':
         specifier: workspace:*
         version: link:../../lib/workspace
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
-      '@spectrum-icons/illustrations':
-        specifier: ^3.6.8
-        version: 3.6.8(@react-spectrum/provider@3.9.2)(react@18.2.0)
       '@spectrum-icons/workflow':
         specifier: ^4.2.7
         version: 4.2.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
@@ -495,15 +480,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
-      '@bangle.io/ui':
-        specifier: workspace:*
-        version: link:../../lib-window/ui
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -522,18 +501,12 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
-      '@bangle.io/ui':
-        specifier: workspace:*
-        version: link:../../lib-window/ui
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../lib/ws-path
@@ -917,9 +890,6 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../../lib/utils
       '@bangle.io/window-utils':
         specifier: workspace:*
         version: link:../window-utils
@@ -954,15 +924,24 @@ importers:
 
   packages/lib-window/ui:
     dependencies:
-      '@bangle.io/css-vars':
+      '@adobe/react-spectrum':
+        specifier: ^3.32.2
+        version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/shared-types':
         specifier: workspace:*
-        version: link:../../shared/css-vars
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../../lib/utils
+        version: link:../../shared/shared-types
       '@bangle.io/window-utils':
         specifier: workspace:*
         version: link:../window-utils
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
+      '@react-types/shared':
+        specifier: ^3.22.0
+        version: 3.22.0(react@18.2.0)
+      '@spectrum-icons/illustrations':
+        specifier: ^3.6.8
+        version: 3.6.8(@react-spectrum/provider@3.9.2)(react@18.2.0)
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
@@ -979,18 +958,6 @@ importers:
       '@testing-library/react':
         specifier: ^14.1.2
         version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
-
-  packages/lib-window/utils:
-    dependencies:
-      '@bangle.io/browser':
-        specifier: workspace:*
-        version: link:../../js-lib/browser
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
 
   packages/lib-window/window-utils:
     dependencies:
@@ -1022,12 +989,6 @@ importers:
 
   packages/lib/app-database-in-memory:
     dependencies:
-      '@bangle.io/app-database':
-        specifier: workspace:*
-        version: link:../app-database
-      '@bangle.io/base-error':
-        specifier: workspace:*
-        version: link:../../js-lib/base-error
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -1073,9 +1034,6 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../ws-path
@@ -1108,19 +1066,7 @@ importers:
         specifier: workspace:*
         version: link:../app-database-in-memory
 
-  packages/lib/utils:
-    dependencies:
-      '@bangle.io/browser':
-        specifier: workspace:*
-        version: link:../../js-lib/browser
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-
-  packages/lib/window-utils: {}
+  packages/lib/utils: {}
 
   packages/lib/workspace:
     dependencies:

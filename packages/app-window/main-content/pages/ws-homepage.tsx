@@ -1,17 +1,15 @@
-import { ActionGroup, Flex, Item, Text, Well } from '@adobe/react-spectrum';
+import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import FolderAdd from '@spectrum-icons/workflow/FolderAdd';
 import FolderDelete from '@spectrum-icons/workflow/FolderDelete';
 import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React from 'react';
-import { Redirect, Route, Switch } from 'wouter';
 
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
-
-import { WorkspaceTable } from '../components/WorkspaceTable';
+import { MainContentWrapper, WorkspaceTable } from '@bangle.io/ui';
 
 export default function PageWsHomePage() {
   const store = useStore();
@@ -50,12 +48,7 @@ export default function PageWsHomePage() {
     : ['open-workspace', 'delete-workspace'];
 
   return (
-    <Flex
-      direction="column"
-      height="100%"
-      gap="size-200"
-      UNSAFE_className="overflow-y-auto B-app-main-content px-2 widescreen:px-4 py-4"
-    >
+    <MainContentWrapper>
       {/* <Well role="region" aria-labelledby="Welcome" marginTop="size-300">
   <Text UNSAFE_className="text-2xl">Welcome Back!</Text>
   <div>
@@ -110,8 +103,16 @@ export default function PageWsHomePage() {
           workspaces={workspaces}
           selectedKey={selectedWsKey}
           updateSelectedKey={updateSelectedWsKey}
+          goToWorkspace={(wsName) => {
+            store.dispatch(
+              slicePage.actions.goTo({
+                pathname: '/ws/' + wsName,
+              }),
+            );
+          }}
+          createWorkspace={() => {}}
         />
       )}
-    </Flex>
+    </MainContentWrapper>
   );
 }
