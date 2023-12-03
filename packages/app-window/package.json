@@ -6,7 +6,8 @@
       "js-lib",
       "lib-window",
       "lib",
-      "shared"
+      "shared",
+      "test-utils"
     ]
   }
 }

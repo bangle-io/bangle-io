@@ -13,6 +13,7 @@ export type * from './eternal-vars-window';
 export type * from './eternal-vars-worker';
 export type * from './naukar';
 export type * from './slice-page';
+export type * from './toast';
 export type * from './ui';
 export type * from './worker-sync';
 export type * from './workspace';

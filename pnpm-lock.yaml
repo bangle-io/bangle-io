@@ -360,15 +360,21 @@ importers:
       '@bangle.io/activitybar':
         specifier: workspace:*
         version: link:../activitybar
+      '@bangle.io/app-routing':
+        specifier: workspace:*
+        version: link:../../lib-window/app-routing
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/history':
-        specifier: workspace:*
-        version: link:../../js-lib/history
       '@bangle.io/left-aside':
         specifier: workspace:*
         version: link:../left-aisde
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/main-content':
         specifier: workspace:*
         version: link:../main-content
@@ -378,9 +384,6 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
-      '@bangle.io/slice-page':
-        specifier: workspace:*
-        version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
@@ -396,18 +399,28 @@ importers:
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
+      '@react-spectrum/toast':
+        specifier: ^3.0.0-beta.7
+        version: 3.0.0-beta.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
-      path-to-regexp:
-        specifier: ^6.2.1
-        version: 6.2.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      wouter:
-        specifier: ^2.12.1
-        version: 2.12.1(react@18.2.0)
+    devDependencies:
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils
+      '@bangle.io/test-utils-react':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-react
+      '@bangle.io/test-utils-slice':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-slice
+      '@testing-library/react':
+        specifier: ^14.1.2
+        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
 
   packages/app-window/left-aisde:
     dependencies:
@@ -456,9 +469,6 @@ importers:
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib-window/ui
-      '@bangle.io/workspace':
-        specifier: workspace:*
-        version: link:../../lib/workspace
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../lib/ws-path
@@ -573,6 +583,9 @@ importers:
 
   packages/app-worker/naukar:
     dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -857,6 +870,30 @@ importers:
 
   packages/js-lib/weak-cache: {}
 
+  packages/lib-window/app-routing:
+    dependencies:
+      '@bangle.io/history':
+        specifier: workspace:*
+        version: link:../../js-lib/history
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../slice-page
+      '@nalanda/react':
+        specifier: ^0.2.3
+        version: 0.2.3(react@18.2.0)
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.37
+      path-to-regexp:
+        specifier: ^6.2.1
+        version: 6.2.1
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      wouter:
+        specifier: ^2.12.1
+        version: 2.12.1(react@18.2.0)
+
   packages/lib-window/lib-common:
     dependencies:
       '@bangle.io/shared-types':
@@ -896,6 +933,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@bangle.io/window-utils':
         specifier: workspace:*
         version: link:../window-utils
@@ -903,9 +946,6 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
     devDependencies:
-      '@bangle.io/emitter':
-        specifier: workspace:*
-        version: link:../../js-lib/emitter
       '@bangle.io/test-utils-common':
         specifier: workspace:*
         version: link:../../test-utils/test-utils-common
@@ -1200,6 +1240,42 @@ importers:
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
+      wait-for-expect:
+        specifier: ^3.0.2
+        version: 3.0.2
+
+  packages/test-utils/test-utils-react:
+    dependencies:
+      '@adobe/react-spectrum':
+        specifier: ^3.32.2
+        version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/app-routing':
+        specifier: workspace:*
+        version: link:../../lib-window/app-routing
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib-window/lib-common
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/nsm-3':
+        specifier: workspace:*
+        version: link:../../js-lib/nsm-3
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../../lib-window/slice-page
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+      '@nalanda/react':
+        specifier: ^0.2.3
+        version: 0.2.3(react@18.2.0)
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.37
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
       wait-for-expect:
         specifier: ^3.0.2
         version: 3.0.2
@@ -4834,6 +4910,18 @@ packages:
       '@swc/helpers': 0.5.3
       react: 18.2.0
 
+  /@react-aria/landmark@3.0.0-beta.7(react@18.2.0):
+    resolution: {integrity: sha512-zLFoC3o7x5jiY/JEExl4qra2kFW8dvwek9m17YBUTNpYBxIm7VqV4QDj38Px8I3Ko3wWBnlM/fF7tDX03QD/Pg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    dependencies:
+      '@react-aria/utils': 3.22.0(react@18.2.0)
+      '@react-types/shared': 3.22.0(react@18.2.0)
+      '@swc/helpers': 0.5.3
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
   /@react-aria/link@3.6.2(react@18.2.0):
     resolution: {integrity: sha512-v9gXgQ3Gev0JOlg2MAXcubDMgX+0BlJ+hTyFYFMuN/4jVBlAe426WKbjg+6MMzxwukWg9C3Q08JzqdFTi4cBng==}
     peerDependencies:
@@ -5164,6 +5252,22 @@ packages:
       '@react-types/textfield': 3.9.0(react@18.2.0)
       '@swc/helpers': 0.5.3
       react: 18.2.0
+
+  /@react-aria/toast@3.0.0-beta.7(react@18.2.0):
+    resolution: {integrity: sha512-6baX0VuAlf/sXArTrnkKGjAQjv65uvXuT0ekeLuxlFCW8kJKUk0750+dPXcThngRZJZ6KfqKmwn43JOHnUSptA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    dependencies:
+      '@react-aria/i18n': 3.9.0(react@18.2.0)
+      '@react-aria/interactions': 3.20.0(react@18.2.0)
+      '@react-aria/landmark': 3.0.0-beta.7(react@18.2.0)
+      '@react-aria/utils': 3.22.0(react@18.2.0)
+      '@react-stately/toast': 3.0.0-beta.1(react@18.2.0)
+      '@react-types/button': 3.9.1(react@18.2.0)
+      '@react-types/shared': 3.22.0(react@18.2.0)
+      '@swc/helpers': 0.5.3
+      react: 18.2.0
+    dev: false
 
   /@react-aria/toggle@3.9.0(react@18.2.0):
     resolution: {integrity: sha512-2YMWYQUEmcoAXtrAE86QXBS9XlmJyV6IFRlMTBNaeLTdH3AmACExgsyU66Tt0sKl6LMDMI376ItMFqAz27BBdQ==}
@@ -6175,6 +6279,29 @@ packages:
       '@swc/helpers': 0.5.3
       react: 18.2.0
 
+  /@react-spectrum/toast@3.0.0-beta.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-wasLh9L/JTUPvoEbVO5XwT6nVAPNWsn90dmHVclPnyOMcr31y+1YYvATa87pjR2Ye5MduTlorhs1EHR6IZFZPQ==}
+    peerDependencies:
+      '@react-spectrum/provider': ^3.0.0
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    dependencies:
+      '@react-aria/focus': 3.15.0(react@18.2.0)
+      '@react-aria/i18n': 3.9.0(react@18.2.0)
+      '@react-aria/toast': 3.0.0-beta.7(react@18.2.0)
+      '@react-aria/utils': 3.22.0(react@18.2.0)
+      '@react-spectrum/button': 3.15.0(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
+      '@react-spectrum/provider': 3.9.2(react-dom@18.2.0)(react@18.2.0)
+      '@react-spectrum/utils': 3.11.2(react@18.2.0)
+      '@react-stately/toast': 3.0.0-beta.1(react@18.2.0)
+      '@react-types/shared': 3.22.0(react@18.2.0)
+      '@spectrum-icons/ui': 3.6.2(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
+      '@swc/helpers': 0.5.3
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
   /@react-spectrum/tooltip@3.6.2(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-aZ0CSlWOGgRQe/u41PgCgiXdO7+GowGE8CA46BCA8DEoqrw3JjSOX2JYClrPUra1VxHXId8AeQGU5bRw3abb2g==}
     peerDependencies:
@@ -6488,6 +6615,16 @@ packages:
       '@react-types/tabs': 3.3.4(react@18.2.0)
       '@swc/helpers': 0.5.3
       react: 18.2.0
+
+  /@react-stately/toast@3.0.0-beta.1(react@18.2.0):
+    resolution: {integrity: sha512-NeWdLXpHfXu8UXjmn+6iZv39Xvan/D0uNWzIyCxkDOeNNOHt1N4kSwdvQ56ScQ3f7KBVPqKz32t7K466Zpa8Jg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    dependencies:
+      '@swc/helpers': 0.5.3
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
 
   /@react-stately/toggle@3.7.0(react@18.2.0):
     resolution: {integrity: sha512-TRksHkCJk/Xogq4181g3CYgJf+EfsJCqX5UZDSw1Z1Kgpvonjmdf6FAfQfCh9QR2OuXUL6hOLUDVLte5OPI+5g==}

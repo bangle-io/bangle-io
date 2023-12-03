@@ -4,12 +4,16 @@ type EventListeners = Record<string, Set<EventListener<any>>>;
 
 type AllEventListener<E extends EventMessage<any, any>> = (message: E) => void;
 
+export type DiscriminatedEmitter<U extends EventMessage<any, any>> = Emitter<
+  DiscriminatedUnionToObject<U>
+>;
+
 export type EventMessage<E extends string, P> = {
   event: E;
   payload: P;
 };
 // Utility type function for converting discriminated union to object type
-export type DiscriminatedUnionToObject<U extends EventMessage<any, any>> = {
+type DiscriminatedUnionToObject<U extends EventMessage<any, any>> = {
   [K in U['event']]: Extract<U, { event: K }>['payload'];
 };
 

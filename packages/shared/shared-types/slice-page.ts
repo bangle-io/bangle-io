@@ -11,7 +11,7 @@ export type PageLifeCycleState =
   | 'terminated'
   | undefined;
 
-export type Location = {
+export type AppLocation = {
   pathname?: string;
   search?: string;
 };

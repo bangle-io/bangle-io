@@ -35,10 +35,15 @@
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
     "@bangle.io/constants": "workspace:*",
-    "wouter": "^2.12.1",
-    "@bangle.io/history": "workspace:*",
-    "@bangle.io/slice-page": "workspace:*",
-    "path-to-regexp": "^6.2.1"
+    "@react-spectrum/toast": "^3.0.0-beta.7",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/app-routing": "workspace:*",
+    "@bangle.io/base-error": "workspace:*"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@testing-library/react": "^14.1.2",
+    "@bangle.io/test-utils-slice": "workspace:*",
+    "@bangle.io/test-utils-react": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*"
+  }
 }
