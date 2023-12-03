@@ -1,10 +1,10 @@
-import { Location, PageLifeCycleState } from './slice-page';
+import { AppLocation, PageLifeCycleState } from './slice-page';
 import { ColorScheme } from './ui';
 
 export type WorkerWindowStoreReplica = {
   page: {
     lifecycle?: PageLifeCycleState;
-    location?: Location;
+    location?: AppLocation;
   };
   ui: {
     widescreen?: boolean;

@@ -1,12 +1,14 @@
 import type * as Comlink from 'comlink';
 
 import { DebugFlags } from './debug-flags';
+import { ToastRequest } from './toast';
 import { WorkerWindowStoreReplica } from './worker-sync';
 
 export type WindowActions =
   | undefined
   | {
       pageBlockPageReload: (options: { block: boolean }) => Promise<void>;
+      queueToast: (options: { toastRequest: ToastRequest }) => Promise<void>;
     };
 
 () => {

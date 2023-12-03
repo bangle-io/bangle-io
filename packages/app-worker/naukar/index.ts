@@ -1,5 +1,6 @@
 import { applyPatches, enablePatches, produce } from 'immer';
 
+import { BaseError } from '@bangle.io/base-error';
 import { Emitter } from '@bangle.io/emitter';
 import { getWindowActionsRef } from '@bangle.io/naukar-common';
 import {
@@ -70,6 +71,25 @@ export class Naukar implements NaukarBare {
     this.store = createNaukarStore({ eternalVars: naukarConfig.eternalVars });
 
     getWindowActionsRef(this.store).current = this.windowActionProxy.proxy;
+
+    const handleRejection = (error: PromiseRejectionEvent) => {
+      let label = 'Worker error';
+
+      if (error.reason instanceof BaseError) {
+        label = error.reason.message;
+      } else if (error.reason instanceof Error) {
+        label = error.reason.name;
+      }
+
+      void getWindowActionsRef(this.store).current?.queueToast({
+        toastRequest: {
+          label,
+          type: 'negative',
+        },
+      });
+    };
+
+    globalThis.addEventListener?.('unhandledrejection', handleRejection);
   }
 
   destroy() {

@@ -7,7 +7,7 @@ import {
   MemoryHistory,
 } from '@bangle.io/history';
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
-import type { Location } from '@bangle.io/shared-types';
+import type { AppLocation } from '@bangle.io/shared-types';
 
 /**
  * This slice focuses on initializing the history object
@@ -21,22 +21,22 @@ const key = createKey('slice-history', []);
 const pendingNavigationField = key.field<
   | undefined
   | {
-      location: Location;
+      location: AppLocation;
       replaceHistory?: boolean;
       preserve?: boolean;
     }
 >(undefined);
 // Location is a mirror of the history state
-const locationField = key.field<Location | undefined>(undefined);
+const locationField = key.field<AppLocation | undefined>(undefined);
 const historyLoadedField = key.field<boolean>(false);
 
 // ACTIONS
-function syncHistoryStateWithSliceState(location: Location) {
+function syncHistoryStateWithSliceState(location: AppLocation) {
   return locationField.update(location);
 }
 
 function goTo(
-  location: Location | ((location: Location) => Location),
+  location: AppLocation | ((location: AppLocation) => AppLocation),
   replace?: boolean,
 ) {
   return pendingNavigationField.update((l) => {
@@ -62,7 +62,7 @@ key.effect(
     }
     const storeConfig = getWindowStoreConfig(store);
 
-    const onHistoryChange = (location: Location) => {
+    const onHistoryChange = (location: AppLocation) => {
       store.dispatch(syncHistoryStateWithSliceState(location));
     };
     const browserHistory =

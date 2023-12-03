@@ -1,7 +1,15 @@
 import { createKey } from '@nalanda/core';
 
 import { sliceUIColorScheme } from './slice-ui-color-scheme';
+import { sliceUIToast } from './slice-ui-toast';
 import { initiallyWidescreen, sliceUIWidescreen } from './slice-ui-widescreen';
+
+export {
+  clearAllToast,
+  clearToast,
+  getToastEmitter,
+  queueToast,
+} from './slice-ui-toast';
 
 const ONLY_ONE_ASIDE_THRESHOLD = 1024;
 
@@ -101,4 +109,5 @@ export const sliceUIAllSlices = [
   sliceUIWidescreen,
   sliceUIColorScheme,
   sliceUI,
+  sliceUIToast,
 ];

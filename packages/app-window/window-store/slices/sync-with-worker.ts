@@ -10,7 +10,7 @@ import {
   WorkerWindowStoreReplica,
 } from '@bangle.io/shared-types';
 import { slicePage } from '@bangle.io/slice-page';
-import { sliceUI } from '@bangle.io/slice-ui';
+import { queueToast, sliceUI } from '@bangle.io/slice-ui';
 
 enablePatches();
 
@@ -29,6 +29,12 @@ key.effect((store) => {
   let destroyed = false;
 
   const actions: WindowActions = {
+    queueToast: async (options) => {
+      if (destroyed) {
+        return;
+      }
+      queueToast(store, options.toastRequest);
+    },
     pageBlockPageReload: async ({ block }) => {
       if (destroyed) {
         return;

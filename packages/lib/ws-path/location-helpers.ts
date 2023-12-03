@@ -6,14 +6,14 @@ import makeMatcher from 'wouter/matcher';
 
 import { WS_PAGES_ROOT } from '@bangle.io/constants';
 import { weakCache } from '@bangle.io/mini-js-utils';
-import type { Location } from '@bangle.io/shared-types';
+import type { AppLocation } from '@bangle.io/shared-types';
 
 import { isValidNoteWsPath, resolvePath } from './helpers';
 import type { OpenedWsPaths } from './opened-ws-paths';
 
 type WsPath = string;
 
-export function goToWorkspaceSelection(location: Location): Location {
+export function goToWorkspaceSelection(location: AppLocation): AppLocation {
   const newSearch = new URLSearchParams(location.search);
   newSearch.delete('secondary');
   const search = newSearch.toString();
@@ -70,7 +70,7 @@ export function wsNameToPathname(wsName: string) {
   return `/ws/${encodeURIComponent(wsName)}`;
 }
 
-export function getWsName(location: Location) {
+export function getWsName(location: AppLocation) {
   return pathnameToWsName(location.pathname);
 }
 
@@ -113,7 +113,7 @@ export function searchToWsPath(search?: string) {
   return undefined;
 }
 
-export const getPrimaryWsPath = weakCache((location: Location) => {
+export const getPrimaryWsPath = weakCache((location: AppLocation) => {
   const primary = pathnameToWsPath(location.pathname);
 
   if (!isValidNoteWsPath(primary)) {
@@ -123,7 +123,7 @@ export const getPrimaryWsPath = weakCache((location: Location) => {
   return primary;
 });
 
-export const getSecondaryWsPath = weakCache((location: Location) => {
+export const getSecondaryWsPath = weakCache((location: AppLocation) => {
   const secondary = searchToWsPath(location.search);
 
   if (!isValidNoteWsPath(secondary)) {
@@ -137,7 +137,7 @@ export const getSecondaryWsPath = weakCache((location: Location) => {
  * sets a set of wsPaths to the location.
  */
 export function locationSetWsPath(
-  location: Location,
+  location: AppLocation,
   wsName: string,
   openedWsPaths: OpenedWsPaths,
 ) {

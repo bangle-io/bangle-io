@@ -1,5 +1,5 @@
 import { AppDatabase } from '@bangle.io/app-database';
-import type { DiscriminatedUnionToObject, Emitter } from '@bangle.io/emitter';
+import type { DiscriminatedEmitter } from '@bangle.io/emitter';
 import type { UserPreferenceManager } from '@bangle.io/user-preference';
 
 import { DebugFlags } from './debug-flags';
@@ -37,6 +37,6 @@ export type EternalVarsEvent =
 export interface EternalVarsBase {
   debugFlags: DebugFlags;
   appDatabase: AppDatabase;
-  emitter: Emitter<DiscriminatedUnionToObject<EternalVarsEvent>>;
+  emitter: DiscriminatedEmitter<EternalVarsEvent>;
   userPreferenceManager: UserPreferenceManager;
 }
