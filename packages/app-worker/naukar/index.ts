@@ -72,15 +72,18 @@ export class Naukar implements NaukarBare {
 
     getWindowActionsRef(this.store).current = this.windowActionProxy.proxy;
 
-    const handleRejection = (error: PromiseRejectionEvent) => {
+    const handleRejection = (error: PromiseRejectionEvent | ErrorEvent) => {
       let label = 'Worker error';
 
-      if (error.reason instanceof BaseError) {
-        label = error.reason.message;
-      } else if (error.reason instanceof Error) {
-        label = error.reason.name;
+      if ('reason' in error) {
+        if (error.reason instanceof BaseError) {
+          label = error.reason.message;
+        } else if (error.reason instanceof Error) {
+          label = error.reason.message;
+        }
+      } else {
+        label = error.error.message;
       }
-
       getWindowActionsRef(this.store)
         .current?.queueToast({
           toastRequest: {
@@ -96,6 +99,7 @@ export class Naukar implements NaukarBare {
     };
 
     globalThis.addEventListener?.('unhandledrejection', handleRejection);
+    globalThis.addEventListener?.('error', handleRejection);
   }
 
   destroy() {

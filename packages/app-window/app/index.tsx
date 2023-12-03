@@ -56,13 +56,17 @@ function Main() {
   const store = useStore();
 
   useEffect(() => {
-    const handleRejection = (error: PromiseRejectionEvent) => {
+    const handleRejection = (error: PromiseRejectionEvent | ErrorEvent) => {
       let label = 'Encountered an error';
 
-      if (error.reason instanceof BaseError) {
-        label = error.reason.message;
-      } else if (error.reason instanceof Error) {
-        label = error.reason.name;
+      if ('reason' in error) {
+        if (error.reason instanceof BaseError) {
+          label = error.reason.message;
+        } else if (error.reason instanceof Error) {
+          label = error.reason.message;
+        }
+      } else {
+        label = error.error.message;
       }
 
       try {
@@ -75,9 +79,11 @@ function Main() {
       }
     };
 
+    window.addEventListener('error', handleRejection);
     window.addEventListener('unhandledrejection', handleRejection);
     return () => {
       window.removeEventListener('unhandledrejection', handleRejection);
+      window.removeEventListener('error', handleRejection);
     };
   }, [store]);
 
