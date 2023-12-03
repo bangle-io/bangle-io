@@ -65,10 +65,14 @@ function Main() {
         label = error.reason.name;
       }
 
-      queueToast(store, {
-        label,
-        type: 'negative',
-      });
+      try {
+        queueToast(store, {
+          label,
+          type: 'negative',
+        });
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     window.addEventListener('unhandledrejection', handleRejection);

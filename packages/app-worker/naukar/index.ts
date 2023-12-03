@@ -81,12 +81,18 @@ export class Naukar implements NaukarBare {
         label = error.reason.name;
       }
 
-      void getWindowActionsRef(this.store).current?.queueToast({
-        toastRequest: {
-          label,
-          type: 'negative',
-        },
-      });
+      getWindowActionsRef(this.store)
+        .current?.queueToast({
+          toastRequest: {
+            label,
+            type: 'negative',
+          },
+        })
+        .catch((error) => {
+          // we swallow this error as we don't want to throw from here
+          // as it can cause infinite loop
+          logger.error('queueToast error', error);
+        });
     };
 
     globalThis.addEventListener?.('unhandledrejection', handleRejection);
