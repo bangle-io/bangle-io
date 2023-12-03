@@ -14,7 +14,7 @@ export const tables = [WORKSPACE_INFO_TABLE, DUMMY_TABLE, MISC_TABLE] as const;
 export interface AppDatabase extends BangleDbSchema {
   [WORKSPACE_INFO_TABLE]: {
     key: string;
-    value: DbRecord<WorkspaceInfo>;
+    value: DbRecord<unknown>;
   };
   [DUMMY_TABLE]: {
     key: string;
@@ -24,7 +24,7 @@ export interface AppDatabase extends BangleDbSchema {
   };
   [MISC_TABLE]: {
     key: string;
-    value: DbRecord<string>;
+    value: DbRecord<unknown>;
   };
 }
 

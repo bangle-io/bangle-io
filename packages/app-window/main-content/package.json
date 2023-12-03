@@ -32,6 +32,8 @@
     "@bangle.io/lib-common": "workspace:*",
     "@spectrum-icons/illustrations": "^3.6.8",
     "wouter": "^2.12.1",
-    "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/workspace": "workspace:*",
+    "@bangle.io/slice-workspace": "workspace:*"
   }
 }

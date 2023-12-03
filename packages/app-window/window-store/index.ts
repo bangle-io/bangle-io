@@ -12,6 +12,7 @@ import {
 } from '@bangle.io/nsm-3';
 import { slicePageAllSlices } from '@bangle.io/slice-page';
 import { sliceUIAllSlices } from '@bangle.io/slice-ui';
+import { sliceWorkspace } from '@bangle.io/slice-workspace';
 
 import { logger } from './logger';
 import { sliceSyncWithWindowStore } from './slices/sync-with-worker';
@@ -34,6 +35,8 @@ export function createWindowStore(
     slices: [
       ...slicePageAllSlices,
       ...sliceUIAllSlices,
+
+      sliceWorkspace,
 
       // keep at end
       sliceSyncWithWindowStore,

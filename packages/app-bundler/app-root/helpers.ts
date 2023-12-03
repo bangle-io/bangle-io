@@ -26,12 +26,3 @@ export function getDebugFlag(): DebugFlags {
     ...DEFAULT_DEBUG_FLAGS,
   };
 }
-
-/*
-Use following code to set debug_flags in url
-
-searchParams = new URLSearchParams(window.location.search);
-searchParams.set('debug_flags', JSON.stringify({ testShowAppRootSetupError: true , testDelayWorkerInitialize: 5000}));
-console.log(searchParams.toString())
-
-*/

@@ -24,6 +24,7 @@ const primaryWsPathField = key.derive((state) => {
   return location ? locationHelpers.getPrimaryWsPath(location) : undefined;
 });
 
+// WARNING: If changing also make changes to slice-workspace-naukar
 const wsNameField = key.derive((state) => {
   const location = sliceHistory.getField(state, 'location');
 

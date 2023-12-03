@@ -25,3 +25,9 @@ export const getWindowStoreConfigRef = ref<WindowStoreConfig>(
 export const getWindowStoreConfig = (
   store: Parameters<typeof getWindowStoreConfigRef>[0],
 ) => getWindowStoreConfigRef(store).current;
+
+export function getEternalVarsWindow(
+  store: Parameters<typeof getWindowStoreConfigRef>[0],
+): EternalVarsWindow {
+  return getWindowStoreConfig(store).eternalVars;
+}

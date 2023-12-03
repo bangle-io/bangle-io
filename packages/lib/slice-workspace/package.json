@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/app-database",
+  "name": "@bangle.io/slice-workspace",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/app-database"
+    "directory": "packages/lib/slice-workspace"
   },
   "authors": [
     {
@@ -18,7 +18,7 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "universal"
+    "type": "browser"
   },
   "main": "index.ts",
   "module": "index.ts",
@@ -27,11 +27,9 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/mini-js-utils": "workspace:*"
-  },
-  "devDependencies": {
-    "@bangle.io/app-database-in-memory": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/workspace": "workspace:*",
+    "@nalanda/core": "^0.2.3",
+    "@bangle.io/lib-common": "workspace:*"
   }
 }

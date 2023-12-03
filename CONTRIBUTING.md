@@ -1,130 +1,149 @@
-# Contributing Guide
+# Bangle.io Contributing Guide
 
-Welcome to Bangle.io's contributing guide!
 
-## Setup
+## Initial Setup
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/) (v18.15.0 or higher)
-- [pnpm](https://pnpm.io/) (v6.14.0 or higher)
+- Ensure you have [Node.js](https://nodejs.org/en/) (version 18.15.0 or later).
+- Install [pnpm](https://pnpm.io/) (version 6.14.0 or above).
 
-### Installation
+### Installation Steps
 
-1. Clone the repository:
+1. **Repository Cloning**:
 
 ```sh
 git clone git@github.com:bangle-io/bangle-io.git
-```
+   ```
 
-1. Install dependencies:
+2. **Dependencies Installation**:
 
 ```sh
 pnpm install
 ```
 
-1. Start the development server:
+3. **Starting the Development Server**:
 
 ```sh
 pnpm run start
 ```
 
-1. Run tests:
-
+4. **Running Tests**:
 ```sh
 pnpm run test
 ```
 
-1. Run linting:
-
+5. **Executing Linting**:
 ```sh
 pnpm run lint
 ```
 
-1. Run e2e tests (ensure you have [playwright](https://playwright.dev/) installed):
-  
+6. **Running End-to-End Tests** (Requires [playwright](https://playwright.dev/)):
 ```sh
 pnpm run test:e2e
 ```
 
-
 ## Inline Scripts
 
-Location: `packages/app-bundler/inline-scripts`.
+### Location
+
+Scripts are located at: `packages/app-bundler/inline-scripts`.
 
 ### Overview
 
-Scripts are bundled using tsup and placed in the `public` directory of `app-root` for Vite to inline into the `index.html` file.
+Scripts are bundled with tsup and positioned in the `public` folder of `app-root` for Vite to embed into `index.html`.
 
 ### Best Practices
 
-- Keep scripts lean to avoid inlining entire libraries.
-- Limit inline scripts to critical elements that benefit from early loading, such as theme type and widescreen settings.
-- Avoid adding non-essential code to inline scripts as they are challenging to debug.
+- Focus on minimal script size to avoid inlining entire libraries.
+- Restrict inline scripts to crucial elements that benefit from early loading.
+- Refrain from adding non-essential code for easier debugging.
 
 ## Styling
 
 ### CSS Variables Generation
 
-To generate CSS variables, run the following commands:
+Generate CSS variables using the commands:
+
+- For the entire project:
 
 ```sh
-# at the root of the project
 pnpm run generate-all
+```
 
-# Or in @bangle.io/ui-theme
+- Specifically for @bangle.io/ui-theme:
+
+```sh
 pnpm run generate:css-vars
 ```
 
-The generated file will be located in app/app-root/public.
+Generated files are located in `app/app-root/public`.
 
 ## Useful Development Tools
 
-This section outlines some essential tools that can enhance your development workflow in this project.
-
 ### Syncpack
 
-[Syncpack](https://github.com/JamieMason/syncpack) provides utilities to manage and standardize `package.json` files in your project. Key commands include:
+[Syncpack](https://github.com/JamieMason/syncpack) assists in managing `package.json` files.
 
-- **Format Package Files**: Run `npx syncpack format` to format `package.json` files consistently.
-- **Update Dependencies**: Use `npx syncpack update` for an interactive update of all dependencies.
+- **Format Package Files**: 
+
+```sh
+npx syncpack format
+```
+
+- **Update Dependencies**: 
+
+```sh
+npx syncpack update
+```
 
 ### Package Generation with PlopJS
 
-For streamlined package creation, we use [PlopJS](https://plopjs.com/documentation/), a tool that provides a simple way to generate files and components. To create a new library package, execute:
+[PlopJS](https://plopjs.com/documentation/) simplifies file and component generation.
+
+- To create a new library package:
 
 ```sh
 npx plop lib
 ```
 
-
 ## Worker / Naukar
 
-> Note: In our documentation and code, `naukar` and `worker` are used interchangeably to refer to [worker threads](https://developer.mozilla.org/en-US/docs/Web/API/Worker).
-
+> Note: 'naukar' and 'worker' are synonymous in our context, referring to [worker threads](https://developer.mozilla.org/en-US/docs/Web/API/Worker).
 
 ### Worker Architecture
 
-The architecture for worker threads in our project is organized as follows:
+1. **Worker Code Location**: Main code in `packages/app-worker`, setup in `package/app-bundler` under `@bangle.io/setup-worker`.
+2. **Communication**: Bi-directional communication through proxies.
+3. **Global Accessibility**: Access worker methods globally via `eternalVars.naukar.<method>`.
+4. **State Synchronization**: One-way synchronization from main to worker using `json-patch` and `immer`.
+5. **State Access**: Access synchronized state in worker through `slice-window-state`.
+6. **Modifying Window State**: Use `WindowActions` for state alterations.
 
-1. **Location of Worker Code**: The main worker code resides in `packages/app-worker`. The code for setting up the worker, is located in `package/app-bundler` in package `@bangle.io/setup-worker`.
+### Exposing New Store Fields to Worker
 
-2. **Communication**: We use proxies for bi-directional communication between the main thread and worker threads.
+1. **Update Store Replica**: Modify `WorkerWindowStoreReplica` in `@bangle.io/shared-types` for new fields.
+2. **Field Inclusion in Effects**: Add fields in `packages/app-window/window-store/slices/sync-with-worker.ts` for sync.
+3. **Expose to Worker**: Include new state in `packages/app-worker/naukar-store/slices/slice-window-state.ts`.
 
-3. **Global Accessibility**: Worker methods are globally accessible in **window** through `eternalVars.naukar.<method>`.
+## Debug Flags
 
-4. **State Synchronization**: The state of the window is synchronized in a one-way flow (main -> worker) using `json-patch` and `immer`. This synchronization allows for consistent state management across threads.
+Debug flags are used to enable/disable certain features in the app for testing purposes only. You can set them by adding url search params.
 
-5. **State Access in Worker**: Worker code can access this synchronized state through the `slice-window-state`.
+```js
+searchParams = new URLSearchParams(window.location.search);
+searchParams.set('debug_flags', JSON.stringify({ 
+    testShowAppRootSetupError: true 
+}));
 
-6. **Modifying Window State**: To change the state of the window, worker code can utilize `WindowActions`.
+// copy this and use it in the url
+console.log(searchParams.toString())
 
-### Exposing a new Store Fields to Worker
+```
 
-To sync new fields in the store with the worker, follow these steps:
+## Database
 
-1. **Update Store Replica**: Modify the `WorkerWindowStoreReplica` in `@bangle.io/shared-types` to reflect the new fields.
+By default bangle uses indexeddb (`@bangle.io/app-database-indexeddb`) as the database for core application database needs. 
 
-1. **Add Field to Effects**: In `packages/app-window/window-store/slices/sync-with-worker.ts`, add the new field to the effects for synchronization.
+It is however pluggable and you can write your own database adapter. See `@bangle.io/app-database-in-memory` for example of a in-memory database adapter. You can force the app to use this by setting `debugFlags.testAppDatabase = 'in-memory'`.
 
-1. **Expose New State to Worker**: In `packages/app-worker/naukar-store/slices/slice-window-state.ts`, include the new field to make the updated state available to the worker.

@@ -462,9 +462,15 @@ importers:
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
+      '@bangle.io/slice-workspace':
+        specifier: workspace:*
+        version: link:../../lib/slice-workspace
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib/ui
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../../lib/workspace
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -573,6 +579,9 @@ importers:
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib/slice-ui
+      '@bangle.io/slice-workspace':
+        specifier: workspace:*
+        version: link:../../lib/slice-workspace
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
@@ -637,6 +646,12 @@ importers:
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../../lib/workspace
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
@@ -865,9 +880,19 @@ importers:
 
   packages/lib/app-database:
     dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
+    devDependencies:
+      '@bangle.io/app-database-in-memory':
+        specifier: workspace:*
+        version: link:../app-database-in-memory
 
   packages/lib/app-database-in-memory:
     dependencies:
@@ -910,6 +935,24 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+
+  packages/lib/file-storage-indexeddb:
+    dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../ws-path
 
   packages/lib/lib-common:
     dependencies:
@@ -968,6 +1011,21 @@ importers:
       '@bangle.io/test-utils-slice':
         specifier: workspace:*
         version: link:../../test-utils/test-utils-slice
+
+  packages/lib/slice-workspace:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../lib-common
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../slice-page
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../workspace
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/lib/ui:
     dependencies:
@@ -1033,6 +1091,34 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+
+  packages/lib/workspace:
+    dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/file-storage-indexeddb':
+        specifier: workspace:*
+        version: link:../file-storage-indexeddb
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../ws-path
+    devDependencies:
+      '@bangle.io/app-database':
+        specifier: workspace:*
+        version: link:../app-database
+      '@bangle.io/app-database-indexeddb':
+        specifier: workspace:*
+        version: link:../app-database-indexeddb
 
   packages/lib/ws-path:
     dependencies:
