@@ -4,7 +4,7 @@ import { pathToRegexp } from 'path-to-regexp';
 // eslint-disable-next-line import/default
 import makeMatcher from 'wouter/matcher';
 
-import { WsPagesRoot } from '@bangle.io/constants';
+import { WS_PAGES_ROOT } from '@bangle.io/constants';
 import { weakCache } from '@bangle.io/mini-js-utils';
 import type { Location } from '@bangle.io/shared-types';
 
@@ -18,7 +18,7 @@ export function goToWorkspaceSelection(location: Location): Location {
   newSearch.delete('secondary');
   const search = newSearch.toString();
 
-  return { pathname: '/' + WsPagesRoot.WorkspacesSelection, search };
+  return { pathname: '/' + WS_PAGES_ROOT.workspacesSelection, search };
 }
 
 export const convertPathToRegexp = (path: string) => {

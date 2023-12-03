@@ -12,7 +12,7 @@ import MarginRightIcon from '@spectrum-icons/workflow/MarginRight';
 import SearchIcon from '@spectrum-icons/workflow/Search';
 import React, { JSX } from 'react';
 
-import { WsPagesRoot } from '@bangle.io/constants';
+import { WS_PAGES_ROOT } from '@bangle.io/constants';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
 import { locationHelpers, resolvePath } from '@bangle.io/ws-path';
@@ -89,7 +89,7 @@ function BreadcrumbView({
       size="S"
       showRoot
       onAction={(key) => {
-        if (key === WsPagesRoot.WorkspaceHome) {
+        if (key === WS_PAGES_ROOT.WorkspaceHome) {
           store.dispatch(
             slicePage.actions.goTo((location) =>
               locationHelpers.goToWorkspaceSelection(location),
@@ -99,16 +99,18 @@ function BreadcrumbView({
       }}
     >
       {pathParts.map((part, i): any => {
-        if (i === 0 && part === WsPagesRoot.WorkspaceHome) {
+        if (i === 0 && part === WS_PAGES_ROOT.WorkspaceHome) {
           return (
-            <Item key={WsPagesRoot.WorkspaceHome}>
+            <Item key={WS_PAGES_ROOT.WorkspaceHome}>
               <HomeIcon size="S" />
             </Item>
           );
         }
-        if (i === 0 && part === WsPagesRoot.WorkspacesSelection) {
+        if (i === 0 && part === WS_PAGES_ROOT.workspacesSelection) {
           return (
-            <Item key={WsPagesRoot.WorkspacesSelection}>Select Workspace</Item>
+            <Item key={WS_PAGES_ROOT.workspacesSelection}>
+              Select Workspace
+            </Item>
           );
         }
         return <Item key={i}>{part}</Item>;
