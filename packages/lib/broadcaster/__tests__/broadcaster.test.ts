@@ -1,7 +1,7 @@
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { Emitter, EventMessage } from '@bangle.io/emitter';
 
-import { createBroadcaster } from '..';
+import { createBroadcaster } from '../index';
 
 describe('createBroadcaster', () => {
   // Mock for BroadcastChannel
@@ -23,7 +23,8 @@ describe('createBroadcaster', () => {
   });
 
   test('posts messages to broadcast channel on emit', () => {
-    const emitter = createBroadcaster<EventMessage<string, any>>();
+    const emitter =
+      createBroadcaster<EventMessage<string, any>>('test-broadcaster');
     emitter.emit('testEvent', 'testData');
 
     expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith({
@@ -37,7 +38,8 @@ describe('createBroadcaster', () => {
 
   test('emits messages received from broadcast channel', () => {
     const onMessageMock = jest.fn();
-    const emitter = createBroadcaster<EventMessage<string, any>>();
+    const emitter =
+      createBroadcaster<EventMessage<string, any>>('test-broadcaster');
     emitter.on('testEvent', onMessageMock);
 
     const mockMessage = {
@@ -54,7 +56,8 @@ describe('createBroadcaster', () => {
 
   test('ignores messages from the same browsing context', () => {
     const onMessageMock = jest.fn();
-    const emitter = createBroadcaster<EventMessage<string, any>>();
+    const emitter =
+      createBroadcaster<EventMessage<string, any>>('test-broadcaster');
     emitter.on('testEvent', onMessageMock);
 
     const mockMessage = {
@@ -70,7 +73,8 @@ describe('createBroadcaster', () => {
   });
 
   test('closes broadcast channel on destroy', () => {
-    const emitter = createBroadcaster<EventMessage<string, any>>();
+    const emitter =
+      createBroadcaster<EventMessage<string, any>>('test-broadcaster');
     emitter.destroy();
 
     expect(mockBroadcastChannel.close).toHaveBeenCalled();

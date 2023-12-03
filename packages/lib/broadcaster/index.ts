@@ -17,7 +17,9 @@ type Message<T> = {
   payload: T;
 };
 
-export function createBroadcaster<T extends EventMessage<string, any>>() {
+export function createBroadcaster<T extends EventMessage<string, any>>(
+  name: string,
+) {
   logger.info(
     'using channelName',
     channelName,
@@ -25,7 +27,7 @@ export function createBroadcaster<T extends EventMessage<string, any>>() {
     BROWSING_CONTEXT_ID,
   );
 
-  const broadcastChannel = new BroadcastChannel(channelName);
+  const broadcastChannel = new BroadcastChannel(channelName + ':' + name);
 
   const emitter = Emitter.create<T>({
     onDestroy() {

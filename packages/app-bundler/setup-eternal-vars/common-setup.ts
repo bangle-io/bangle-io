@@ -25,7 +25,9 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
     timestamp: Date.now(),
   });
 
-  const broadcast = createBroadcaster<EternalVarsEvent>();
+  const broadcast = createBroadcaster<EternalVarsEvent>(
+    'app-bundler-setup-common',
+  );
 
   let messageCount = 0;
   let startTime = Date.now();
