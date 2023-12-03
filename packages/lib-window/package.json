@@ -1,12 +1,11 @@
 {
-  "name": "app-window",
+  "name": "lib-window",
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
-      "app-window",
       "js-lib",
       "lib-window",
-      "lib",
-      "shared"
+      "shared",
+      "test-utils"
     ]
   }
 }

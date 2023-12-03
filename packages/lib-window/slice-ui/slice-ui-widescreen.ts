@@ -1,6 +1,6 @@
 import { cleanup, createKey } from '@nalanda/core';
 
-import { checkWidescreen, listenToResize } from '@bangle.io/utils';
+import { checkWidescreen, listenToResize } from '@bangle.io/window-utils';
 const key = createKey('slice-ui-widescreen', []);
 
 export const initiallyWidescreen =

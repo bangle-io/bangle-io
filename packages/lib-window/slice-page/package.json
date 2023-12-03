@@ -1,12 +1,11 @@
 {
-  "name": "@bangle.io/lib-common",
-  "description": "A common pack for all lib packages",
+  "name": "@bangle.io/slice-page",
+  "description": "",
   "license": "AGPL-3.0-or-later",
-  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/lib-common"
+    "directory": "packages/lib-window/slice-page"
   },
   "authors": [
     {
@@ -18,16 +17,18 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "universal"
-  },
-  "main": "index.ts",
-  "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
+    "type": "browser"
   },
   "scripts": {},
   "dependencies": {
     "@nalanda/core": "^0.2.3",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/history": "workspace:*",
+    "@bangle.io/lib-common": "workspace:*",
+    "page-lifecycle": "^0.1.2",
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils-slice": "workspace:*"
   }
 }
