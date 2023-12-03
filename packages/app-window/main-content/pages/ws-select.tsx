@@ -1,15 +1,27 @@
-import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
+import {
+  ActionGroup,
+  DialogContainer,
+  DialogTrigger,
+  Flex,
+  Item,
+  Text,
+} from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import FolderAdd from '@spectrum-icons/workflow/FolderAdd';
 import FolderDelete from '@spectrum-icons/workflow/FolderDelete';
 import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React from 'react';
 
+import { WorkspaceType } from '@bangle.io/constants';
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
-import { MainContentWrapper, WorkspaceTable } from '@bangle.io/ui';
+import {
+  CreateWorkspaceDialog,
+  MainContentWrapper,
+  WorkspaceTable,
+} from '@bangle.io/ui';
 
 export default function PageWorkspaceSelectionPage() {
   const store = useStore();
@@ -21,6 +33,8 @@ export default function PageWorkspaceSelectionPage() {
   >(undefined);
 
   const { eternalVars } = getWindowStoreConfig(store);
+
+  const [refresh, updateRefresh] = React.useState(0);
 
   const [workspaces, updateWorkspaces] = React.useState<
     WorkspaceInfo[] | undefined
@@ -41,14 +55,39 @@ export default function PageWorkspaceSelectionPage() {
     return () => {
       destroyed = true;
     };
-  }, [eternalVars]);
+  }, [eternalVars, refresh]);
 
   const disabledKeys = selectedWsKey
     ? []
     : ['open-workspace', 'delete-workspace'];
 
+  const [showCreateWsDialog, updateShowCreateWsDialog] = React.useState(false);
+
   return (
     <MainContentWrapper>
+      <DialogContainer
+        type={widescreen ? 'modal' : 'fullscreen'}
+        onDismiss={() => {
+          updateShowCreateWsDialog(false);
+        }}
+      >
+        {showCreateWsDialog && (
+          <CreateWorkspaceDialog
+            onConfirm={(val) => {
+              void eternalVars.appDatabase
+                .createWorkspaceInfo({
+                  metadata: {},
+                  name: val.wsName,
+                  type: WorkspaceType.Browser,
+                })
+                .then(() => {
+                  updateRefresh((prev) => prev + 1);
+                });
+              updateShowCreateWsDialog(false);
+            }}
+          />
+        )}
+      </DialogContainer>
       {/* <Well role="region" aria-labelledby="Welcome" marginTop="size-300">
   <Text UNSAFE_className="text-2xl">Welcome Back!</Text>
   <div>
@@ -84,6 +123,9 @@ export default function PageWorkspaceSelectionPage() {
                   pathname: '/ws/' + selectedWsKey,
                 }),
               );
+            }
+            if (key === 'new-workspace') {
+              updateShowCreateWsDialog(true);
             }
           }}
         >

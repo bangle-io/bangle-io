@@ -29,6 +29,7 @@ export function createBroadcaster<T extends EventMessage<string, any>>(
 
   const broadcastChannel = new BroadcastChannel(channelName + ':' + name);
 
+  const seenMessages = new WeakSet<Message<T>['payload']['payload']>();
   const emitter = Emitter.create<T>({
     onDestroy() {
       broadcastChannel.close();
@@ -36,6 +37,14 @@ export function createBroadcaster<T extends EventMessage<string, any>>(
   });
 
   emitter.onAll((message) => {
+    if (typeof message.payload !== 'object') {
+      throw new Error('Invalid message received. Must be an object.');
+    }
+
+    if (seenMessages.has(message.payload)) {
+      return;
+    }
+
     const broadcastMessage: Message<any> = {
       sender: {
         id: BROWSING_CONTEXT_ID,
@@ -51,6 +60,12 @@ export function createBroadcaster<T extends EventMessage<string, any>>(
     if (message.sender.id === BROWSING_CONTEXT_ID) {
       return;
     }
+
+    if (typeof message.payload.payload !== 'object') {
+      throw new Error('Invalid message received. Must be an object.');
+    }
+    //
+    seenMessages.add(message.payload.payload);
     emitter.emit(message.payload.event, message.payload.payload);
   };
 
