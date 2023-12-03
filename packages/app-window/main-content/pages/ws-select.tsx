@@ -11,7 +11,7 @@ import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
 import { MainContentWrapper, WorkspaceTable } from '@bangle.io/ui';
 
-export default function PageWsHomePage() {
+export default function PageWorkspaceSelectionPage() {
   const store = useStore();
 
   const { widescreen } = useTrack(sliceUI);

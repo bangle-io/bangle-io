@@ -6,14 +6,16 @@ import {
   View,
 } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
+import HomeIcon from '@spectrum-icons/workflow/Home';
 import MarginLeftIcon from '@spectrum-icons/workflow/MarginLeft';
 import MarginRightIcon from '@spectrum-icons/workflow/MarginRight';
 import SearchIcon from '@spectrum-icons/workflow/Search';
 import React, { JSX } from 'react';
 
+import { WsPagesRoot } from '@bangle.io/constants';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
-import { resolvePath } from '@bangle.io/ws-path';
+import { locationHelpers, resolvePath } from '@bangle.io/ws-path';
 
 export function Titlebar() {
   const { showRightAside, widescreen, showLeftAside, showActivitybar } =
@@ -80,12 +82,37 @@ function BreadcrumbView({
   pathname: string;
 }) {
   const pathParts = pathname.split('/').filter((x) => x);
+  const store = useStore();
 
   return (
-    <Breadcrumbs size="S" showRoot>
-      {pathParts.map((part, i): any => (
-        <Item key={i}>{part}</Item>
-      ))}
+    <Breadcrumbs
+      size="S"
+      showRoot
+      onAction={(key) => {
+        if (key === WsPagesRoot.WorkspaceHome) {
+          store.dispatch(
+            slicePage.actions.goTo((location) =>
+              locationHelpers.goToWorkspaceSelection(location),
+            ),
+          );
+        }
+      }}
+    >
+      {pathParts.map((part, i): any => {
+        if (i === 0 && part === WsPagesRoot.WorkspaceHome) {
+          return (
+            <Item key={WsPagesRoot.WorkspaceHome}>
+              <HomeIcon size="S" />
+            </Item>
+          );
+        }
+        if (i === 0 && part === WsPagesRoot.WorkspacesSelection) {
+          return (
+            <Item key={WsPagesRoot.WorkspacesSelection}>Select Workspace</Item>
+          );
+        }
+        return <Item key={i}>{part}</Item>;
+      })}
     </Breadcrumbs>
   );
 }

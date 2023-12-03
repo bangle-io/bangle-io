@@ -64,6 +64,10 @@ export function FilesTable({
     });
   }, [wsPathsInfo, sortDescriptor]);
 
+  if (!sortedWsPathsInfo) {
+    return null;
+  }
+
   return (
     <TableView
       isQuiet
@@ -86,9 +90,6 @@ export function FilesTable({
       maxHeight={widescreen ? '50vh' : undefined}
       minHeight="size-4600"
       renderEmptyState={() => {
-        if (!wsPathsInfo) {
-          return <></>;
-        }
         return (
           <IllustratedMessage>
             <NotFound />
@@ -113,7 +114,7 @@ export function FilesTable({
           Last Modified
         </Column>
       </TableHeader>
-      <TableBody items={sortedWsPathsInfo ?? []}>
+      <TableBody items={sortedWsPathsInfo}>
         {(wsPathInfo) => {
           return (
             <Row key={wsPathInfo.wsPath}>

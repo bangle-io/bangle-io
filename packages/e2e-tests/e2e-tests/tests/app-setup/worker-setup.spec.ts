@@ -90,14 +90,14 @@ test.describe('worker window state', () => {
     expect(workerWindowState.ui.widescreen).toEqual(true);
 
     expect(workerWindowState.page.lifecycle).toEqual('active');
-    expect(workerWindowState.page.location?.pathname).toEqual('/ws-homepage');
+    expect(workerWindowState.page.location?.pathname).toEqual('/ws-select');
   });
 
   test('worker gets updated location', async ({ page }) => {
     let workerWindowState = await page.evaluate(() => {
       return window._nsmE2e.naukar.readWindowState();
     });
-    expect(workerWindowState.page.location?.pathname).toEqual('/ws-homepage');
+    expect(workerWindowState.page.location?.pathname).toEqual('/ws-select');
 
     await page.goto('/ws/foo');
 

@@ -435,6 +435,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/lib-common':
         specifier: workspace:*
         version: link:../../lib-window/lib-common
@@ -501,6 +504,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../../lib-window/slice-page
