@@ -4,12 +4,12 @@
 import { Emitter } from '@bangle.io/emitter';
 import { waitForExpect } from '@bangle.io/test-utils-common';
 import { setupSliceTestStore } from '@bangle.io/test-utils-slice';
-import { checkWidescreen, listenToResize } from '@bangle.io/utils';
+import { checkWidescreen, listenToResize } from '@bangle.io/window-utils';
 
 import { sliceUI, sliceUIAllSlices } from '../index';
 
-jest.mock('@bangle.io/utils', () => {
-  const actualUtils = jest.requireActual('@bangle.io/utils');
+jest.mock('@bangle.io/window-utils', () => {
+  const actualUtils = jest.requireActual('@bangle.io/window-utils');
   return {
     ...actualUtils,
     checkWidescreen: jest.fn(() => true),

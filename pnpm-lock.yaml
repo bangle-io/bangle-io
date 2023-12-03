@@ -341,10 +341,10 @@ importers:
         version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/ui':
         specifier: workspace:*
-        version: link:../../lib/ui
+        version: link:../../lib-window/ui
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -386,16 +386,16 @@ importers:
         version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
-        version: link:../../lib/slice-page
+        version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/titlebar':
         specifier: workspace:*
         version: link:../titlebar
       '@bangle.io/ui':
         specifier: workspace:*
-        version: link:../../lib/ui
+        version: link:../../lib-window/ui
       '@bangle.io/window-store':
         specifier: workspace:*
         version: link:../window-store
@@ -428,10 +428,10 @@ importers:
         version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/ui':
         specifier: workspace:*
-        version: link:../../lib/ui
+        version: link:../../lib-window/ui
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -452,22 +452,22 @@ importers:
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
       '@bangle.io/lib-common':
         specifier: workspace:*
-        version: link:../../lib/lib-common
+        version: link:../../lib-window/lib-common
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
-        version: link:../../lib/slice-page
+        version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/slice-workspace':
         specifier: workspace:*
-        version: link:../../lib/slice-workspace
+        version: link:../../lib-window/slice-workspace
       '@bangle.io/ui':
         specifier: workspace:*
-        version: link:../../lib/ui
+        version: link:../../lib-window/ui
       '@bangle.io/workspace':
         specifier: workspace:*
         version: link:../../lib/workspace
@@ -500,10 +500,10 @@ importers:
         version: link:../../shared/shared-types
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/ui':
         specifier: workspace:*
-        version: link:../../lib/ui
+        version: link:../../lib-window/ui
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -527,13 +527,13 @@ importers:
         version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
-        version: link:../../lib/slice-page
+        version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/ui':
         specifier: workspace:*
-        version: link:../../lib/ui
+        version: link:../../lib-window/ui
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../lib/ws-path
@@ -563,7 +563,7 @@ importers:
         version: link:../../shared/constants
       '@bangle.io/lib-common':
         specifier: workspace:*
-        version: link:../../lib/lib-common
+        version: link:../../lib-window/lib-common
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -575,13 +575,13 @@ importers:
         version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
-        version: link:../../lib/slice-page
+        version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
-        version: link:../../lib/slice-ui
+        version: link:../../lib-window/slice-ui
       '@bangle.io/slice-workspace':
         specifier: workspace:*
-        version: link:../../lib/slice-workspace
+        version: link:../../lib-window/slice-workspace
       '@nalanda/core':
         specifier: ^0.2.3
         version: 0.2.3
@@ -878,6 +878,132 @@ importers:
 
   packages/js-lib/weak-cache: {}
 
+  packages/lib-window/lib-common:
+    dependencies:
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+
+  packages/lib-window/slice-page:
+    dependencies:
+      '@bangle.io/history':
+        specifier: workspace:*
+        version: link:../../js-lib/history
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../lib-common
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+      page-lifecycle:
+        specifier: ^0.1.2
+        version: 0.1.2
+    devDependencies:
+      '@bangle.io/test-utils-slice':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-slice
+
+  packages/lib-window/slice-ui:
+    dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../../lib/utils
+      '@bangle.io/window-utils':
+        specifier: workspace:*
+        version: link:../window-utils
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+    devDependencies:
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/test-utils-common':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-common
+      '@bangle.io/test-utils-slice':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-slice
+
+  packages/lib-window/slice-workspace:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../lib-common
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../slice-page
+      '@bangle.io/workspace':
+        specifier: workspace:*
+        version: link:../../lib/workspace
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
+
+  packages/lib-window/ui:
+    dependencies:
+      '@bangle.io/css-vars':
+        specifier: workspace:*
+        version: link:../../shared/css-vars
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../../lib/utils
+      '@bangle.io/window-utils':
+        specifier: workspace:*
+        version: link:../window-utils
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.37
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+    devDependencies:
+      '@bangle.io/test-utils-common':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-common
+      '@storybook/react':
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+      '@testing-library/react':
+        specifier: ^14.1.2
+        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
+
+  packages/lib-window/utils:
+    dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+
+  packages/lib-window/window-utils:
+    dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+
   packages/lib/app-database:
     dependencies:
       '@bangle.io/base-error':
@@ -954,104 +1080,6 @@ importers:
         specifier: workspace:*
         version: link:../ws-path
 
-  packages/lib/lib-common:
-    dependencies:
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
-      '@nalanda/core':
-        specifier: ^0.2.3
-        version: 0.2.3
-
-  packages/lib/routing-helpers: {}
-
-  packages/lib/slice-page:
-    dependencies:
-      '@bangle.io/history':
-        specifier: workspace:*
-        version: link:../../js-lib/history
-      '@bangle.io/lib-common':
-        specifier: workspace:*
-        version: link:../lib-common
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
-      '@bangle.io/ws-path':
-        specifier: workspace:*
-        version: link:../ws-path
-      '@nalanda/core':
-        specifier: ^0.2.3
-        version: 0.2.3
-      page-lifecycle:
-        specifier: ^0.1.2
-        version: 0.1.2
-    devDependencies:
-      '@bangle.io/test-utils-slice':
-        specifier: workspace:*
-        version: link:../../test-utils/test-utils-slice
-
-  packages/lib/slice-ui:
-    dependencies:
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../utils
-      '@nalanda/core':
-        specifier: ^0.2.3
-        version: 0.2.3
-    devDependencies:
-      '@bangle.io/emitter':
-        specifier: workspace:*
-        version: link:../../js-lib/emitter
-      '@bangle.io/test-utils-common':
-        specifier: workspace:*
-        version: link:../../test-utils/test-utils-common
-      '@bangle.io/test-utils-slice':
-        specifier: workspace:*
-        version: link:../../test-utils/test-utils-slice
-
-  packages/lib/slice-workspace:
-    dependencies:
-      '@bangle.io/lib-common':
-        specifier: workspace:*
-        version: link:../lib-common
-      '@bangle.io/slice-page':
-        specifier: workspace:*
-        version: link:../slice-page
-      '@bangle.io/workspace':
-        specifier: workspace:*
-        version: link:../workspace
-      '@nalanda/core':
-        specifier: ^0.2.3
-        version: 0.2.3
-
-  packages/lib/ui:
-    dependencies:
-      '@bangle.io/css-vars':
-        specifier: workspace:*
-        version: link:../../shared/css-vars
-      '@bangle.io/utils':
-        specifier: workspace:*
-        version: link:../utils
-      '@types/react':
-        specifier: ^18.2.37
-        version: 18.2.37
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-    devDependencies:
-      '@bangle.io/test-utils-common':
-        specifier: workspace:*
-        version: link:../../test-utils/test-utils-common
-      '@storybook/react':
-        specifier: ^7.5.3
-        version: 7.5.3(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
-      '@testing-library/react':
-        specifier: ^14.1.2
-        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
-
   packages/lib/user-preference:
     dependencies:
       '@bangle.io/base-error':
@@ -1091,6 +1119,8 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+
+  packages/lib/window-utils: {}
 
   packages/lib/workspace:
     dependencies:
@@ -1190,7 +1220,7 @@ importers:
     dependencies:
       '@bangle.io/lib-common':
         specifier: workspace:*
-        version: link:../../lib/lib-common
+        version: link:../../lib-window/lib-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -1208,7 +1238,7 @@ importers:
     dependencies:
       '@bangle.io/lib-common':
         specifier: workspace:*
-        version: link:../../lib/lib-common
+        version: link:../../lib-window/lib-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -1226,7 +1256,7 @@ importers:
     dependencies:
       '@bangle.io/lib-common':
         specifier: workspace:*
-        version: link:../../lib/lib-common
+        version: link:../../lib-window/lib-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -8456,13 +8486,13 @@ packages:
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 18.18.10
+      '@types/node': 20.9.2
     dev: true
 
   /@types/connect@3.4.38:
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
     dependencies:
-      '@types/node': 18.18.10
+      '@types/node': 20.9.2
     dev: true
 
   /@types/cross-spawn@6.0.5:
@@ -8535,7 +8565,7 @@ packages:
   /@types/express-serve-static-core@4.17.41:
     resolution: {integrity: sha512-OaJ7XLaelTgrvlZD8/aa0vvvxZdUmlCn6MtWeB7TkiKW70BQLc9XEPpDLPdbo52ZhXUCrznlWdCHWxJWtdyajA==}
     dependencies:
-      '@types/node': 18.18.10
+      '@types/node': 20.9.2
       '@types/qs': 6.9.10
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -8732,7 +8762,7 @@ packages:
     resolution: {integrity: sha512-x2EM6TJOybec7c52BX0ZspPodMsQUd5L6PRwOunVyVUhXiBSKf3AezDL8Dgvgt5o0UfKNfuA0eMLr2wLT4AiBA==}
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 18.18.10
+      '@types/node': 20.9.2
     dev: true
 
   /@types/serve-static@1.15.5:
@@ -8740,7 +8770,7 @@ packages:
     dependencies:
       '@types/http-errors': 2.0.4
       '@types/mime': 3.0.4
-      '@types/node': 18.18.10
+      '@types/node': 20.9.2
     dev: true
 
   /@types/stack-utils@2.0.3:

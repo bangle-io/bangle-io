@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/routing-helpers",
+  "name": "@bangle.io/window-utils",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/routing-helpers"
+    "directory": "packages/lib-window/window-utils"
   },
   "authors": [
     {
@@ -26,5 +26,9 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "@bangle.io/browser": "workspace:*",
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/constants": "workspace:*"
+  }
 }

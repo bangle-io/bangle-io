@@ -5,6 +5,7 @@ packages:
   - 'packages/e2e-tests/*'
   - 'packages/js-lib/*'
   - 'packages/lib/*'
+  - 'packages/lib-window/*'
   - 'packages/shared/*'
   - 'packages/test-utils/*'
   - 'packages/tooling/*'

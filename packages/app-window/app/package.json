@@ -32,7 +32,6 @@
     "@bangle.io/ui": "workspace:*",
     "@bangle.io/window-store": "workspace:*",
     "@nalanda/react": "^0.2.3",
-    "@spectrum-icons/workflow": "^4.2.7",
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
     "@bangle.io/constants": "workspace:*",
@@ -40,5 +39,6 @@
     "@bangle.io/history": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "path-to-regexp": "^6.2.1"
-  }
+  },
+  "devDependencies": {}
 }

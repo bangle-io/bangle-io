@@ -27,8 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/app-database": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
   }
 }
