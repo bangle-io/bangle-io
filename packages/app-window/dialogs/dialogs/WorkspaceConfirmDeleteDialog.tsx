@@ -48,11 +48,8 @@ export function WorkspaceConfirmDeleteDialogComponent({
         <Button
           variant="negative"
           onPress={() => {
-            void eternalVars.appDatabase
-              .deleteWorkspaceInfo(workspaceName)
-              .then(() => {
-                store.dispatch(sliceWorkspaces.refreshWorkspaces());
-              });
+            void eternalVars.appDatabase.deleteWorkspaceInfo(workspaceName);
+
             dismiss();
           }}
         >

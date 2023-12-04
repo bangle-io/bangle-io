@@ -23,15 +23,12 @@ export function WorkspaceCreateDialog({ name }: DialogProps) {
   return (
     <CreateWorkspaceDialog
       onConfirm={(val) => {
-        void eternalVars.appDatabase
-          .createWorkspaceInfo({
-            metadata: {},
-            name: val.wsName,
-            type: WorkspaceType.Browser,
-          })
-          .then(() => {
-            store.dispatch(sliceWorkspaces.refreshWorkspaces());
-          });
+        void eternalVars.appDatabase.createWorkspaceInfo({
+          metadata: {},
+          name: val.wsName,
+          type: WorkspaceType.Browser,
+        });
+
         dismiss();
       }}
     />
