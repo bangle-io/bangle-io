@@ -1,6 +1,7 @@
 import { createKey } from '@nalanda/core';
 
 import { sliceUIColorScheme } from './slice-ui-color-scheme';
+import { sliceUiDialog } from './slice-ui-dialog';
 import { sliceUIToast } from './slice-ui-toast';
 import { initiallyWidescreen, sliceUIWidescreen } from './slice-ui-widescreen';
 
@@ -10,10 +11,15 @@ export {
   getToastEmitter,
   queueToast,
 } from './slice-ui-toast';
+export { APP_DIALOG_NAME } from '@bangle.io/dialog-maker';
 
 const ONLY_ONE_ASIDE_THRESHOLD = 1024;
 
-const key = createKey('slice-ui', [sliceUIWidescreen, sliceUIColorScheme]);
+const key = createKey('slice-ui', [
+  sliceUIWidescreen,
+  sliceUIColorScheme,
+  sliceUiDialog,
+]);
 
 const showRightAsideField = key.field(false);
 
@@ -92,6 +98,11 @@ const colorSchemeField = key.derive((state) =>
   sliceUIColorScheme.getField(state, 'colorScheme'),
 );
 
+// dialog
+const activeDialogField = key.derive((state) => {
+  return sliceUiDialog.getField(state, 'activeDialog');
+});
+
 export const sliceUI = key.slice({
   colorScheme: colorSchemeField,
   screenHeight: screenHeightField,
@@ -103,11 +114,17 @@ export const sliceUI = key.slice({
   toggleLeftAside,
   toggleRightAside,
   widescreen: widescreenField,
+
+  // dialog
+  dialog: activeDialogField,
+  clearDialog: sliceUiDialog.clearDialog,
+  showDialog: sliceUiDialog.showDialog,
 });
 
 export const sliceUIAllSlices = [
   sliceUIWidescreen,
   sliceUIColorScheme,
+  sliceUiDialog,
   sliceUI,
   sliceUIToast,
 ];

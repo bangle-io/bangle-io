@@ -369,6 +369,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/dialog-maker':
+        specifier: workspace:*
+        version: link:../../lib/dialog-maker
+      '@bangle.io/dialogs':
+        specifier: workspace:*
+        version: link:../dialogs
       '@bangle.io/left-aside':
         specifier: workspace:*
         version: link:../left-aisde
@@ -422,6 +428,36 @@ importers:
         specifier: ^14.1.2
         version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
 
+  packages/app-window/dialogs:
+    dependencies:
+      '@adobe/react-spectrum':
+        specifier: ^3.32.2
+        version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/dialog-maker':
+        specifier: workspace:*
+        version: link:../../lib/dialog-maker
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib-window/lib-common
+      '@bangle.io/slice-ui':
+        specifier: workspace:*
+        version: link:../../lib-window/slice-ui
+      '@bangle.io/ui':
+        specifier: workspace:*
+        version: link:../../lib-window/ui
+      '@nalanda/react':
+        specifier: ^0.2.3
+        version: 0.2.3(react@18.2.0)
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.37
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+
   packages/app-window/left-aisde:
     dependencies:
       '@adobe/react-spectrum':
@@ -451,6 +487,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/dialog-maker':
+        specifier: workspace:*
+        version: link:../../lib/dialog-maker
       '@bangle.io/lib-common':
         specifier: workspace:*
         version: link:../../lib-window/lib-common
@@ -933,6 +972,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/dialog-maker':
+        specifier: workspace:*
+        version: link:../../lib/dialog-maker
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
@@ -1068,6 +1110,8 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+
+  packages/lib/dialog-maker: {}
 
   packages/lib/file-storage-indexeddb:
     dependencies:

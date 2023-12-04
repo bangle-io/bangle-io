@@ -1,8 +1,5 @@
 // This package should not import any other package and should be
 // primitives or POJOs only.
-export * from './core/core-dialogs';
-export * from './core/core-operations';
-export * from './core/core-palettes';
 export * from './debug-flags';
 export * from './editor';
 export * from './eternal-vars';

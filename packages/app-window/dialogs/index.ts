@@ -1,0 +1,1 @@
+export { DialogArea } from './DialogArea';
