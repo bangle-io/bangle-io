@@ -33,10 +33,7 @@ interface WorkspaceActionsProps {
   onAction: (key: React.Key) => void;
 }
 
-const WorkspaceActions: React.FC<WorkspaceActionsProps> = ({
-  disabledKeys,
-  onAction,
-}) => {
+function WorkspaceActions({ disabledKeys, onAction }: WorkspaceActionsProps) {
   return (
     <ActionGroup
       alignSelf="center"
@@ -56,7 +53,7 @@ const WorkspaceActions: React.FC<WorkspaceActionsProps> = ({
       )}
     </ActionGroup>
   );
-};
+}
 
 // CreateWorkspaceDialogComponent
 interface CreateWorkspaceDialogProps {
@@ -83,37 +80,38 @@ interface DeleteWorkspaceDialogProps {
   onCancel: () => void;
 }
 
-const DeleteWorkspaceDialogComponent: React.FC<DeleteWorkspaceDialogProps> = ({
+function DeleteWorkspaceDialogComponent({
   selectedWsKey,
   onConfirm,
   onCancel,
-}) => (
-  <Dialog>
-    <Heading>Are you sure?</Heading>
-    <Divider />
-    <Content>
-      <Text>
-        You are about to delete the workspace {'"'}
-        <b>{selectedWsKey}</b>
-        {'"'}. This action is irreversible.
-      </Text>
-    </Content>
-    <ButtonGroup>
-      <Button variant="secondary" onPress={onCancel} autoFocus>
-        Cancel
-      </Button>
-      <Button variant="negative" onPress={onConfirm}>
-        Delete
-      </Button>
-    </ButtonGroup>
-  </Dialog>
-);
+}: DeleteWorkspaceDialogProps) {
+  return (
+    <Dialog>
+      <Heading>Are you sure?</Heading>
+      <Divider />
+      <Content>
+        <Text>
+          You are about to delete the workspace {'"'}
+          <b>{selectedWsKey}</b>
+          {'"'}. This action is irreversible.
+        </Text>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={onCancel} autoFocus>
+          Cancel
+        </Button>
+        <Button variant="negative" onPress={onConfirm}>
+          Delete
+        </Button>
+      </ButtonGroup>
+    </Dialog>
+  );
+}
 
 export default function PageWorkspaceSelectionPage() {
   const store = useStore();
 
   const { widescreen } = useTrack(sliceUI);
-
   const [selectedWsKey, updateSelectedWsKey] = React.useState<
     string | undefined
   >(undefined);
