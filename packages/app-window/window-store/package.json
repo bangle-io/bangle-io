@@ -33,7 +33,8 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
     "comlink": "^4.4.1",
-    "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/misc-slices": "workspace:*"
   },
   "devDependencies": {}
 }

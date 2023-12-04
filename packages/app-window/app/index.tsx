@@ -8,6 +8,7 @@ import { Activitybar } from '@bangle.io/activitybar';
 import { Router } from '@bangle.io/app-routing';
 import { BaseError } from '@bangle.io/base-error';
 import { COLOR_SCHEME } from '@bangle.io/constants';
+import { DialogArea } from '@bangle.io/dialogs';
 import { LeftAside } from '@bangle.io/left-aside';
 import { MainContent } from '@bangle.io/main-content';
 import { RightAside } from '@bangle.io/right-aside';
@@ -42,6 +43,7 @@ export function App({ eternalVars }: { eternalVars: EternalVarsWindow }) {
       <StoreProvider store={store}>
         <Router>
           <ToastArea />
+          <DialogArea />
           <Main />
         </Router>
       </StoreProvider>

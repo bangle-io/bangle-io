@@ -38,7 +38,8 @@
     "@react-spectrum/toast": "^3.0.0-beta.7",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/app-routing": "workspace:*",
-    "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/dialogs": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^14.1.2",

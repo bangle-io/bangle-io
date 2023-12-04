@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/slice-ui",
+  "name": "@bangle.io/misc-slices",
   "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib-window/slice-ui"
+    "directory": "packages/app-window/misc-slices"
   },
   "authors": [
     {
@@ -17,19 +18,17 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/constants": "workspace:*",
-    "@nalanda/core": "^0.2.3",
-    "@bangle.io/window-utils": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
+    "@bangle.io/lib-common": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/dialog-maker": "workspace:*"
-  },
-  "devDependencies": {
-    "@bangle.io/test-utils-slice": "workspace:*",
-    "@bangle.io/test-utils-common": "workspace:*"
+    "@nalanda/core": "^0.2.3"
   }
 }
