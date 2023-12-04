@@ -1,19 +1,11 @@
-import {
-  Button,
-  ButtonGroup,
-  Content,
-  Dialog,
-  Divider,
-  Heading,
-  Text,
-  useDialogContainer,
-} from '@adobe/react-spectrum';
+import { useDialogContainer } from '@adobe/react-spectrum';
 import { useStore } from '@nalanda/react';
 import React from 'react';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { AppDialog } from '@bangle.io/dialog-maker';
 import { getWindowStoreConfig } from '@bangle.io/lib-common';
+import { sliceWorkspaces } from '@bangle.io/misc-slices';
 import { APP_DIALOG_NAME } from '@bangle.io/slice-ui';
 import { CreateWorkspaceDialog } from '@bangle.io/ui';
 
@@ -38,7 +30,7 @@ export function WorkspaceCreateDialog({ name }: DialogProps) {
             type: WorkspaceType.Browser,
           })
           .then(() => {
-            // updateRefresh((prev) => prev + 1);
+            store.dispatch(sliceWorkspaces.refreshWorkspaces());
           });
         dismiss();
       }}

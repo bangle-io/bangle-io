@@ -369,9 +369,6 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/dialog-maker':
-        specifier: workspace:*
-        version: link:../../lib/dialog-maker
       '@bangle.io/dialogs':
         specifier: workspace:*
         version: link:../dialogs
@@ -442,6 +439,9 @@ importers:
       '@bangle.io/lib-common':
         specifier: workspace:*
         version: link:../../lib-window/lib-common
+      '@bangle.io/misc-slices':
+        specifier: workspace:*
+        version: link:../misc-slices
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
@@ -487,12 +487,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/dialog-maker':
-        specifier: workspace:*
-        version: link:../../lib/dialog-maker
       '@bangle.io/lib-common':
         specifier: workspace:*
         version: link:../../lib-window/lib-common
+      '@bangle.io/misc-slices':
+        specifier: workspace:*
+        version: link:../misc-slices
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -526,6 +526,18 @@ importers:
       wouter:
         specifier: ^2.12.1
         version: 2.12.1(react@18.2.0)
+
+  packages/app-window/misc-slices:
+    dependencies:
+      '@bangle.io/lib-common':
+        specifier: workspace:*
+        version: link:../../lib-window/lib-common
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+      '@nalanda/core':
+        specifier: ^0.2.3
+        version: 0.2.3
 
   packages/app-window/right-aside:
     dependencies:
@@ -595,6 +607,9 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/misc-slices':
+        specifier: workspace:*
+        version: link:../misc-slices
       '@bangle.io/nsm-3':
         specifier: workspace:*
         version: link:../../js-lib/nsm-3
@@ -1127,6 +1142,8 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../ws-path
+
+  packages/lib/misc-slices: {}
 
   packages/lib/user-preference:
     dependencies:

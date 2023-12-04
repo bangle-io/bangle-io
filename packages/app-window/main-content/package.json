@@ -22,19 +22,18 @@
   "scripts": {},
   "dependencies": {
     "@adobe/react-spectrum": "^3.32.2",
-    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@nalanda/react": "^0.2.3",
     "@spectrum-icons/workflow": "^4.2.7",
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
-    "@bangle.io/lib-common": "workspace:*",
     "wouter": "^2.12.1",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/ui": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/misc-slices": "workspace:*"
   },
   "devDependencies": {}
 }

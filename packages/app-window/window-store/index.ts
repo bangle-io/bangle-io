@@ -5,6 +5,7 @@ import {
   getWindowStoreConfigRef,
   WindowStoreConfig,
 } from '@bangle.io/lib-common';
+import { allMiscSlices } from '@bangle.io/misc-slices';
 import {
   customBangleScheduler,
   EffectScheduler,
@@ -15,7 +16,7 @@ import { sliceUIAllSlices } from '@bangle.io/slice-ui';
 import { sliceWorkspace } from '@bangle.io/slice-workspace';
 
 import { logger } from './logger';
-import { sliceSyncWithWindowStore } from './slices/sync-with-worker';
+import { sliceSyncWithWindowStore } from './sync-with-worker';
 
 export function createWindowStore(
   eternalVars: WindowStoreConfig['eternalVars'],
@@ -38,6 +39,7 @@ export function createWindowStore(
 
       sliceWorkspace,
 
+      ...allMiscSlices,
       // keep at end
       sliceSyncWithWindowStore,
     ],

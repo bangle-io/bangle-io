@@ -5,8 +5,7 @@ import FolderDelete from '@spectrum-icons/workflow/FolderDelete';
 import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React from 'react';
 
-import { getWindowStoreConfig } from '@bangle.io/lib-common';
-import { WorkspaceInfo } from '@bangle.io/shared-types';
+import { sliceWorkspaces } from '@bangle.io/misc-slices';
 import { slicePage } from '@bangle.io/slice-page';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { MainContentWrapper, WorkspaceTable } from '@bangle.io/ui';
@@ -45,28 +44,8 @@ export default function PageWorkspaceSelectionPage() {
   const [selectedWsKey, updateSelectedWsKey] = React.useState<
     string | undefined
   >(undefined);
-  const { eternalVars } = getWindowStoreConfig(store);
 
-  const [workspaces, updateWorkspaces] = React.useState<
-    WorkspaceInfo[] | undefined
-  >(undefined);
-
-  React.useEffect(() => {
-    const workspacesProm = eternalVars.appDatabase.getAllWorkspaces();
-    let destroyed = true;
-
-    void workspacesProm.then((workspaces) => {
-      if (destroyed) {
-        updateWorkspaces(
-          [...workspaces].sort((a, b) => b.lastModified - a.lastModified),
-        );
-      }
-    });
-
-    return () => {
-      destroyed = false;
-    };
-  }, [eternalVars]);
+  const { workspaces } = useTrack(sliceWorkspaces);
 
   React.useEffect(() => {
     if (!workspaces) {
