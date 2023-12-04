@@ -53,6 +53,7 @@ describe('workspace creation', () => {
 
     expect(wsInfo).toEqual({
       ...workspaceInfo,
+      deleted: false,
       lastModified: expect.any(Number),
     });
 
@@ -67,12 +68,14 @@ describe('workspace creation', () => {
       type: 'workspace-create',
       payload: {
         ...workspaceInfo,
+        deleted: false,
         lastModified: expect.any(Number),
       },
     });
 
     expect(mockDatabase.workspaces.get('Test Workspace')).toEqual({
       ...workspaceInfo,
+      deleted: false,
       lastModified: expect.any(Number),
     });
     expect(
@@ -223,6 +226,7 @@ describe('workspace metadata', () => {
 
     expect(result).toEqual({
       ...workspaceInfo,
+      deleted: false,
       lastModified: expect.any(Number),
       metadata: {
         updated: true,

@@ -69,7 +69,7 @@ export class AppDatabase {
     const result = await this.config.database.updateEntry(
       wsName,
       (existing) => {
-        if (existing.found) {
+        if (existing.found && !(existing.value as WorkspaceInfo)?.deleted) {
           throw new BaseError({
             message: `Workspace with name ${wsName} already exists`,
             code: AppDatabaseErrorCode.WORKSPACE_EXISTS,
@@ -79,6 +79,7 @@ export class AppDatabase {
 
         const value: WorkspaceInfo = {
           ...info,
+          deleted: false,
           lastModified: Date.now(),
         };
 
@@ -189,14 +190,12 @@ export class AppDatabase {
     })) as WorkspaceInfo[];
 
     return result.filter((wsInfo) => {
-      if (options) {
-        if (!options.allowDeleted && wsInfo?.deleted) {
-          return false;
-        }
+      if (!options?.allowDeleted && wsInfo?.deleted) {
+        return false;
+      }
 
-        if (options.type) {
-          return wsInfo.type === options.type;
-        }
+      if (options?.type) {
+        return wsInfo.type === options.type;
       }
 
       return true;

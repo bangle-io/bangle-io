@@ -1,8 +1,13 @@
 import {
   ActionGroup,
+  Button,
+  ButtonGroup,
+  Content,
+  Dialog,
   DialogContainer,
-  DialogTrigger,
+  Divider,
   Flex,
+  Heading,
   Item,
   Text,
 } from '@adobe/react-spectrum';
@@ -23,6 +28,87 @@ import {
   WorkspaceTable,
 } from '@bangle.io/ui';
 
+interface WorkspaceActionsProps {
+  disabledKeys: string[];
+  onAction: (key: React.Key) => void;
+}
+
+const WorkspaceActions: React.FC<WorkspaceActionsProps> = ({
+  disabledKeys,
+  onAction,
+}) => {
+  return (
+    <ActionGroup
+      alignSelf="center"
+      items={[
+        { key: 'open-workspace', icon: <FolderOpen />, label: 'Open' },
+        { key: 'delete-workspace', icon: <FolderDelete />, label: 'Delete' },
+        { key: 'new-workspace', icon: <FolderAdd />, label: 'New' },
+      ]}
+      disabledKeys={disabledKeys}
+      onAction={onAction}
+    >
+      {(item) => (
+        <Item key={item.key}>
+          {item.icon}
+          <Text>{item.label}</Text>
+        </Item>
+      )}
+    </ActionGroup>
+  );
+};
+
+// CreateWorkspaceDialogComponent
+interface CreateWorkspaceDialogProps {
+  onConfirm: (wsName: string) => void;
+  onCancel: () => void;
+}
+
+const CreateWorkspaceDialogComponent: React.FC<CreateWorkspaceDialogProps> = ({
+  onConfirm,
+  onCancel,
+}) => (
+  <CreateWorkspaceDialog
+    onConfirm={(val) => {
+      onConfirm(val.wsName);
+      onCancel();
+    }}
+  />
+);
+
+// DeleteWorkspaceDialogComponent
+interface DeleteWorkspaceDialogProps {
+  selectedWsKey: string | undefined;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+const DeleteWorkspaceDialogComponent: React.FC<DeleteWorkspaceDialogProps> = ({
+  selectedWsKey,
+  onConfirm,
+  onCancel,
+}) => (
+  <Dialog>
+    <Heading>Are you sure?</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        You are about to delete the workspace {'"'}
+        <b>{selectedWsKey}</b>
+        {'"'}. This action is irreversible.
+      </Text>
+    </Content>
+    <ButtonGroup>
+      <Button variant="secondary" onPress={onCancel} autoFocus>
+        Cancel
+      </Button>
+      <Button variant="negative" onPress={onConfirm}>
+        Delete
+      </Button>
+    </ButtonGroup>
+  </Dialog>
+);
+
 export default function PageWorkspaceSelectionPage() {
   const store = useStore();
 
@@ -31,132 +117,124 @@ export default function PageWorkspaceSelectionPage() {
   const [selectedWsKey, updateSelectedWsKey] = React.useState<
     string | undefined
   >(undefined);
-
   const { eternalVars } = getWindowStoreConfig(store);
-
   const [refresh, updateRefresh] = React.useState(0);
 
+  const [showCreateWsDialog, updateShowCreateWsDialog] = React.useState(false);
+  const [showConfirmDeleteDialog, updateConfirmDeleteDialog] =
+    React.useState(false);
   const [workspaces, updateWorkspaces] = React.useState<
     WorkspaceInfo[] | undefined
   >(undefined);
 
   React.useEffect(() => {
-    let destroyed = false;
     const workspacesProm = eternalVars.appDatabase.getAllWorkspaces();
+    let destroyed = true;
 
     void workspacesProm.then((workspaces) => {
       if (destroyed) {
-        return;
+        updateWorkspaces(
+          [...workspaces].sort((a, b) => b.lastModified - a.lastModified),
+        );
       }
-      updateWorkspaces(
-        [...workspaces].sort((a, b) => b.lastModified - a.lastModified),
-      );
     });
+
     return () => {
-      destroyed = true;
+      destroyed = false;
     };
   }, [eternalVars, refresh]);
+
+  React.useEffect(() => {
+    if (!workspaces) {
+      return;
+    }
+    if (selectedWsKey && !workspaces.find((ws) => ws.name === selectedWsKey)) {
+      updateSelectedWsKey(workspaces[0]?.name);
+    }
+  }, [workspaces, selectedWsKey]);
 
   const disabledKeys = selectedWsKey
     ? []
     : ['open-workspace', 'delete-workspace'];
 
-  const [showCreateWsDialog, updateShowCreateWsDialog] = React.useState(false);
+  const handleAction = (key: React.Key) => {
+    switch (key) {
+      case 'open-workspace':
+        store.dispatch(
+          slicePage.actions.goTo({ pathname: '/ws/' + selectedWsKey }),
+        );
+        break;
+      case 'new-workspace':
+        updateShowCreateWsDialog(true);
+        break;
+      case 'delete-workspace':
+        updateConfirmDeleteDialog(true);
+        break;
+    }
+  };
+
+  const handleConfirmCreate = (wsName: string) => {
+    void eternalVars.appDatabase
+      .createWorkspaceInfo({
+        metadata: {},
+        name: wsName,
+        type: WorkspaceType.Browser,
+      })
+      .then(() => {
+        updateRefresh((prev) => prev + 1);
+      });
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedWsKey) {
+      void eternalVars.appDatabase
+        .deleteWorkspaceInfo(selectedWsKey)
+        .then(() => {
+          updateRefresh((prev) => prev + 1);
+        });
+    }
+    updateConfirmDeleteDialog(false);
+  };
+
+  const handleCancel = () => {
+    updateShowCreateWsDialog(false);
+    updateConfirmDeleteDialog(false);
+  };
 
   return (
     <MainContentWrapper>
       <DialogContainer
         type={widescreen ? 'modal' : 'fullscreen'}
-        onDismiss={() => {
-          updateShowCreateWsDialog(false);
-        }}
+        onDismiss={handleCancel}
       >
         {showCreateWsDialog && (
-          <CreateWorkspaceDialog
-            onConfirm={(val) => {
-              void eternalVars.appDatabase
-                .createWorkspaceInfo({
-                  metadata: {},
-                  name: val.wsName,
-                  type: WorkspaceType.Browser,
-                })
-                .then(() => {
-                  updateRefresh((prev) => prev + 1);
-                });
-              updateShowCreateWsDialog(false);
-            }}
+          <CreateWorkspaceDialogComponent
+            onConfirm={handleConfirmCreate}
+            onCancel={handleCancel}
+          />
+        )}
+        {showConfirmDeleteDialog && selectedWsKey && (
+          <DeleteWorkspaceDialogComponent
+            selectedWsKey={selectedWsKey}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancel}
           />
         )}
       </DialogContainer>
-      {/* <Well role="region" aria-labelledby="Welcome" marginTop="size-300">
-  <Text UNSAFE_className="text-2xl">Welcome Back!</Text>
-  <div>
-    <Text UNSAFE_className="text-sm">Learn more about Bangle.io</Text>
-  </div>
-</Well> */}
       <Flex direction="row" justifyContent="space-between" gap="size-100">
         <Text UNSAFE_className="text-2xl">Workspaces</Text>
-        <ActionGroup
-          alignSelf="center"
-          items={[
-            {
-              key: 'open-workspace',
-              icon: <FolderOpen />,
-              label: 'Open',
-            },
-            {
-              key: 'delete-workspace',
-              icon: <FolderDelete />,
-              label: 'Delete',
-            },
-            {
-              key: 'new-workspace',
-              icon: <FolderAdd />,
-              label: 'New',
-            },
-          ].filter((item) => !disabledKeys.includes(item.key))}
-          disabledKeys={disabledKeys}
-          onAction={(key) => {
-            if (key === 'open-workspace') {
-              store.dispatch(
-                slicePage.actions.goTo({
-                  pathname: '/ws/' + selectedWsKey,
-                }),
-              );
-            }
-            if (key === 'new-workspace') {
-              updateShowCreateWsDialog(true);
-            }
-          }}
-        >
-          {(item) => {
-            return (
-              <Item key={item.key}>
-                {item.icon}
-                <Text>{item.label}</Text>
-              </Item>
-            );
-          }}
-        </ActionGroup>
+        <WorkspaceActions disabledKeys={disabledKeys} onAction={handleAction} />
       </Flex>
-      {workspaces && (
-        <WorkspaceTable
-          widescreen={widescreen}
-          workspaces={workspaces}
-          selectedKey={selectedWsKey}
-          updateSelectedKey={updateSelectedWsKey}
-          goToWorkspace={(wsName) => {
-            store.dispatch(
-              slicePage.actions.goTo({
-                pathname: '/ws/' + wsName,
-              }),
-            );
-          }}
-          createWorkspace={() => {
-            //
-          }}
-        />
-      )}
+      <WorkspaceTable
+        widescreen={widescreen}
+        workspaces={workspaces}
+        selectedKey={selectedWsKey}
+        updateSelectedKey={updateSelectedWsKey}
+        goToWorkspace={(wsName) => {
+          store.dispatch(slicePage.actions.goTo({ pathname: '/ws/' + wsName }));
+        }}
+        createWorkspace={() => updateShowCreateWsDialog(true)}
+      />
     </MainContentWrapper>
   );
 }

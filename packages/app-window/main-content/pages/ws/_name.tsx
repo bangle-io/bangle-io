@@ -12,26 +12,19 @@ export default function PageWsName() {
   const params = useParams();
 
   const wsName = params.wsName;
-  const { currentWorkspace } = useTrack(sliceWorkspace);
+  const { allFiles } = useTrack(sliceWorkspace);
   const { widescreen } = useTrack(sliceUI);
 
-  const [wsPaths, setWsPaths] = React.useState<string[]>();
   const [selectedWsKey, updateSelectedWsKey] = React.useState<
     string | undefined
   >(undefined);
 
-  useEffect(() => {
-    void currentWorkspace?.listFiles().then((items) => {
-      setWsPaths(items);
-    });
-  }, [currentWorkspace]);
-
   const items = React.useMemo(() => {
-    return wsPaths?.map((wsPath) => {
+    return allFiles?.map((wsPath) => {
       const res = resolvePath(wsPath);
       return res;
     });
-  }, [wsPaths]);
+  }, [allFiles]);
 
   if (!wsName) {
     return null;

@@ -29,7 +29,7 @@ export function WorkspaceTable({
   createWorkspace,
 }: {
   widescreen: boolean;
-  workspaces: WorkspaceInfo[];
+  workspaces?: WorkspaceInfo[];
   selectedKey: string | undefined;
   updateSelectedKey: (key: string) => void;
   goToWorkspace: (wsName: string) => void;
@@ -59,6 +59,10 @@ export function WorkspaceTable({
         : -compareValue;
     });
   }, [workspaces, sortDescriptor]);
+
+  if (!workspaces) {
+    return null;
+  }
 
   return (
     <TableView

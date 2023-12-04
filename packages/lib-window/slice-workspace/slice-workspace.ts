@@ -9,7 +9,15 @@ const key = createKey('slice-workspace', [slicePage]);
 
 const rawWorkspaceField = key.field<Workspace | undefined>(undefined);
 
-const currentWorkspace = key.derive((state) => {
+const rawAllFilesField = key.field<
+  | undefined
+  | {
+      wsName: string;
+      files: string[];
+    }
+>(undefined);
+
+const currentWorkspaceField = key.derive((state) => {
   const wsName = slicePage.getField(state, 'wsName');
   const rawWorkspace = rawWorkspaceField.get(state);
 
@@ -18,6 +26,20 @@ const currentWorkspace = key.derive((state) => {
   }
 
   return rawWorkspace.wsName === wsName ? rawWorkspace : undefined;
+});
+
+const currentAllFilesField = key.derive((state) => {
+  const rawAllFiles = rawAllFilesField.get(state);
+
+  if (!rawAllFiles) {
+    return undefined;
+  }
+
+  if (rawAllFiles.wsName !== slicePage.getField(state, 'wsName')) {
+    return undefined;
+  }
+
+  return rawAllFiles.files;
 });
 
 key.effect(async function workspaceInit(store) {
@@ -41,6 +63,36 @@ key.effect(async function workspaceInit(store) {
   });
 });
 
+key.effect(async function allFilesInit(store) {
+  const workspace = currentWorkspaceField.track(store);
+
+  if (!workspace) {
+    const hasData = currentAllFilesField.get(store.state);
+    if (hasData) {
+      store.dispatch(rawAllFilesField.update(undefined));
+    }
+    return;
+  }
+
+  const controller = new AbortController();
+
+  const files = await workspace.listFiles(controller.signal);
+
+  cleanup(store, () => {
+    controller.abort();
+  });
+
+  if (workspace.wsName === slicePage.getField(store.state, 'wsName')) {
+    store.dispatch(
+      rawAllFilesField.update({
+        wsName: workspace.wsName,
+        files,
+      }),
+    );
+  }
+});
+
 export const sliceWorkspace = key.slice({
-  currentWorkspace,
+  workspace: currentWorkspaceField,
+  allFiles: currentAllFilesField,
 });

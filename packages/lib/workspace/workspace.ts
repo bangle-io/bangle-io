@@ -53,6 +53,10 @@ export class Workspace {
       throw new Error(`Workspace type ${info?.type} not supported`);
     }
 
+    if (!this.provider.isSupported()) {
+      throw new Error(`Workspace type ${info?.type} not supported`);
+    }
+
     await this.provider.onInit({
       wsName: this.wsName,
 
