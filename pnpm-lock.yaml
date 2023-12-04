@@ -487,15 +487,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/lib-common':
-        specifier: workspace:*
-        version: link:../../lib-window/lib-common
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices
-      '@bangle.io/shared-types':
-        specifier: workspace:*
-        version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../../lib-window/slice-page
@@ -1142,8 +1136,6 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../ws-path
-
-  packages/lib/misc-slices: {}
 
   packages/lib/user-preference:
     dependencies:
