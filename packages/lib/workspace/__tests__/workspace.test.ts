@@ -11,6 +11,7 @@ beforeAll(() => {
 describe('Workspace ', () => {
   const setup = async ({ wsName = 'test-ws' }: { wsName?: string } = {}) => {
     const onDbChange = jest.fn();
+    const onFileChange = jest.fn();
 
     const database = new AppDatabase({
       database: new AppDatabaseIndexedDB(),
@@ -30,10 +31,12 @@ describe('Workspace ', () => {
     const workspace = await Workspace.create({
       database,
       wsName,
+      onChange: onFileChange,
     });
 
     return {
       workspace,
+      onFileChange,
     };
   };
 
@@ -77,18 +80,31 @@ describe('Workspace ', () => {
     expect(workspace.isFileTypeSupported({ extension: '.svg' })).toBeFalsy();
   });
 
-  it('should write a file', async () => {
+  it('should create a file', async () => {
     const wsName = 'test-ws';
     const { workspace } = await setup({
       wsName,
     });
     const file = new File(['content'], 'file.md', { type: 'text/markdown' });
-    await workspace.writeFile('test-ws:path/to/file.md', file);
+    await workspace.createFile('test-ws:path/to/file.md', file);
 
     const fileContent = await workspace.readFileAsText(
       'test-ws:path/to/file.md',
     );
     expect(fileContent).toEqual('content');
+  });
+
+  it('writing to a file not created should error', async () => {
+    const wsName = 'test-ws';
+    const { workspace } = await setup({
+      wsName,
+    });
+    const file = new File(['content'], 'file.md', { type: 'text/markdown' });
+    await expect(
+      workspace.writeFile('test-ws:path/to/file.md', file),
+    ).rejects.toThrow(
+      'Cannot write! File test-ws:path/to/file.md does not exist',
+    );
   });
 
   it('should delete a file', async () => {
@@ -98,7 +114,7 @@ describe('Workspace ', () => {
     });
 
     const file = new File(['content'], 'file.md', { type: 'text/markdown' });
-    await workspace.writeFile('test-ws:path/to/file.md', file);
+    await workspace.createFile('test-ws:path/to/file.md', file);
 
     expect(
       await workspace.readFileAsText('test-ws:path/to/file.md'),
@@ -120,9 +136,9 @@ describe('Workspace ', () => {
     const fileA = new File(['contentA'], 'fileA.md', { type: 'text/markdown' });
     const fileB = new File(['contentB'], 'fileB.md', { type: 'text/markdown' });
     const fileC = new File(['contentC'], 'fileB.xyz', { type: 'text/unknown' });
-    await workspace.writeFile('test-ws:path/to/fileA.md', fileA);
-    await workspace.writeFile('test-ws:path/to/fileB.md', fileB);
-    await workspace.writeFile('test-ws:path/to/fileC.xyz', fileC);
+    await workspace.createFile('test-ws:path/to/fileA.md', fileA);
+    await workspace.createFile('test-ws:path/to/fileB.md', fileB);
+    await workspace.createFile('test-ws:path/to/fileC.xyz', fileC);
 
     const files = await workspace.listFiles();
     expect(files).toEqual([
@@ -131,12 +147,20 @@ describe('Workspace ', () => {
     ]);
   });
 
+  it('should handle reading non-existent files', async () => {
+    const { workspace } = await setup();
+
+    expect(
+      await workspace.readFileAsText('test-ws:path/to/nonexistent.md'),
+    ).toBe(undefined);
+  });
+
   it('should properly rename a file', async () => {
     const { workspace } = await setup();
     const file = new File(['content'], 'originalFile.md', {
       type: 'text/markdown',
     });
-    await workspace.writeFile('test-ws:path/to/originalFile.md', file);
+    await workspace.createFile('test-ws:path/to/originalFile.md', file);
 
     await workspace.renameFile({
       oldWsPath: 'test-ws:path/to/originalFile.md',
@@ -154,5 +178,73 @@ describe('Workspace ', () => {
 
     const files = await workspace.listFiles();
     expect(files).toEqual(['test-ws:path/to/renamedFile.md']);
+  });
+
+  describe('Workspace - File Storage Change Events', () => {
+    it('should call onFileChange when a file is created', async () => {
+      const { workspace, onFileChange } = await setup();
+      const file = new File(['content'], 'file.md', { type: 'text/markdown' });
+
+      await workspace.createFile('test-ws:path/to/file.md', file);
+
+      expect(onFileChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'create',
+          wsPath: 'test-ws:path/to/file.md',
+        }),
+      );
+    });
+
+    it('should call onFileChange when a file is deleted', async () => {
+      const { workspace, onFileChange } = await setup();
+      const file = new File(['content'], 'file.md', { type: 'text/markdown' });
+
+      await workspace.createFile('test-ws:path/to/file.md', file);
+      await workspace.deleteFile('test-ws:path/to/file.md');
+
+      expect(onFileChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'delete',
+          wsPath: 'test-ws:path/to/file.md',
+        }),
+      );
+    });
+
+    it('should call onFileChange when a file is renamed', async () => {
+      const { workspace, onFileChange } = await setup();
+      const file = new File(['content'], 'file.md', { type: 'text/markdown' });
+
+      await workspace.createFile('test-ws:path/to/file.md', file);
+      await workspace.renameFile({
+        oldWsPath: 'test-ws:path/to/file.md',
+        newWsPath: 'test-ws:path/to/renamedFile.md',
+      });
+
+      expect(onFileChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'rename',
+          oldWsPath: 'test-ws:path/to/file.md',
+          newWsPath: 'test-ws:path/to/renamedFile.md',
+        }),
+      );
+    });
+
+    it('should call onFileChange when a file is updated', async () => {
+      const { workspace, onFileChange } = await setup();
+      const file = new File(['content'], 'file.md', { type: 'text/markdown' });
+
+      await workspace.createFile('test-ws:path/to/file.md', file);
+      const updatedFile = new File(['new content'], 'file.md', {
+        type: 'text/markdown',
+      });
+      await workspace.writeFile('test-ws:path/to/file.md', updatedFile);
+
+      expect(onFileChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'update',
+          wsPath: 'test-ws:path/to/file.md',
+        }),
+      );
+    });
   });
 });

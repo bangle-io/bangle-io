@@ -8,6 +8,11 @@ export type DiscriminatedEmitter<U extends EventMessage<any, any>> = Emitter<
   DiscriminatedUnionToObject<U>
 >;
 
+export type ReadonlyEmitter<U extends EventMessage<any, any>> = Pick<
+  DiscriminatedEmitter<U>,
+  'on'
+>;
+
 export type EventMessage<E extends string, P> = {
   event: E;
   payload: P;

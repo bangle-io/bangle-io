@@ -442,12 +442,21 @@ importers:
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices
+      '@bangle.io/slice-page':
+        specifier: workspace:*
+        version: link:../../lib-window/slice-page
       '@bangle.io/slice-ui':
         specifier: workspace:*
         version: link:../../lib-window/slice-ui
+      '@bangle.io/slice-workspace':
+        specifier: workspace:*
+        version: link:../../lib-window/slice-workspace
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib-window/ui
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -502,6 +511,9 @@ importers:
       '@bangle.io/ui':
         specifier: workspace:*
         version: link:../../lib-window/ui
+      '@bangle.io/utils':
+        specifier: workspace:*
+        version: link:../../lib/utils
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../lib/ws-path

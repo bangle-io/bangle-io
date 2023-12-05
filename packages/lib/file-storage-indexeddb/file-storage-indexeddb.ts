@@ -31,7 +31,8 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
-    await this.writeFile(wsPath, file);
+    const path = toFSPath(wsPath);
+    await this._idb.writeFile(path, file);
 
     this.options.onChange({
       type: 'create',
@@ -129,6 +130,10 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
   }
 
   async writeFile(wsPath: string, file: File): Promise<void> {
+    if (!(await this.fileExists(wsPath))) {
+      throw new Error(`Cannot write! File ${wsPath} does not exist`);
+    }
+
     const path = toFSPath(wsPath);
     await this._idb.writeFile(path, file);
     this.options.onChange({

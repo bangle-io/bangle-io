@@ -9,6 +9,7 @@ import {
 } from '@bangle.io/dialog-maker';
 import { sliceUI } from '@bangle.io/slice-ui';
 
+import { FileConfirmDeleteDialog } from './dialogs/FileConfirmDeleteDialog';
 import { WorkspaceConfirmDeleteDialogComponent } from './dialogs/WorkspaceConfirmDeleteDialog';
 import { WorkspaceCreateDialog } from './dialogs/WorkspaceCreateDialog';
 import { registerDialogComponent } from './register-dialogs';
@@ -26,6 +27,12 @@ registerDialogComponent(
   dialogRegistry,
   APP_DIALOG_NAME.workspaceCreate,
   WorkspaceCreateDialog,
+);
+
+registerDialogComponent(
+  dialogRegistry,
+  APP_DIALOG_NAME.fileConfirmDelete,
+  FileConfirmDeleteDialog,
 );
 
 export function DialogArea() {

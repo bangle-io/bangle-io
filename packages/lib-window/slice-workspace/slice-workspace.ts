@@ -7,6 +7,7 @@ import { Workspace } from '@bangle.io/workspace';
 // WARNING: If changing also make changes to slice-workspace-naukar
 const key = createKey('slice-workspace', [slicePage]);
 
+const refreshAllFilesCounterField = key.field(0);
 const rawWorkspaceField = key.field<Workspace | undefined>(undefined);
 
 const rawAllFilesField = key.field<
@@ -42,6 +43,10 @@ const currentAllFilesField = key.derive((state) => {
   return rawAllFiles.files;
 });
 
+function refreshAllFiles() {
+  return refreshAllFilesCounterField.update((c) => c + 1);
+}
+
 key.effect(async function workspaceInit(store) {
   const { wsName } = slicePage.track(store);
 
@@ -54,6 +59,9 @@ key.effect(async function workspaceInit(store) {
   const workspace = await Workspace.create({
     wsName,
     database: eternalVars.appDatabase,
+    onChange(event) {
+      store.dispatch(refreshAllFiles());
+    },
   });
 
   store.dispatch(rawWorkspaceField.update(workspace));
@@ -65,6 +73,8 @@ key.effect(async function workspaceInit(store) {
 
 key.effect(async function allFilesInit(store) {
   const workspace = currentWorkspaceField.track(store);
+  // to refresh the allFiles list
+  const refreshAllFilesCounter = refreshAllFilesCounterField.track(store);
 
   if (!workspace) {
     const hasData = currentAllFilesField.get(store.state);

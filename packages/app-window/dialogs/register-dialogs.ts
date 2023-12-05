@@ -7,5 +7,9 @@ export function registerDialogComponent<T extends AppDialogName>(
   name: T,
   component: (props: Extract<AppDialog, { name: T }>) => React.ReactNode,
 ): void {
+  if (dialogRegistry[name]) {
+    throw new Error(`Dialog ${name} already registered`);
+  }
+
   (dialogRegistry as any)[name] = component;
 }

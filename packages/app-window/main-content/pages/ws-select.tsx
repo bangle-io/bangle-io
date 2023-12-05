@@ -15,14 +15,24 @@ interface WorkspaceActionsProps {
   onAction: (key: React.Key) => void;
 }
 
+enum ACTION_KEY {
+  newWorkspace = 'new-workspace',
+  deleteWorkspace = 'delete-workspace',
+  openWorkspace = 'open-workspace',
+}
+
 function WorkspaceActions({ disabledKeys, onAction }: WorkspaceActionsProps) {
   return (
     <ActionGroup
       alignSelf="center"
       items={[
-        { key: 'open-workspace', icon: <FolderOpen />, label: 'Open' },
-        { key: 'delete-workspace', icon: <FolderDelete />, label: 'Delete' },
-        { key: 'new-workspace', icon: <FolderAdd />, label: 'New' },
+        { key: ACTION_KEY.openWorkspace, icon: <FolderOpen />, label: 'Open' },
+        {
+          key: ACTION_KEY.deleteWorkspace,
+          icon: <FolderDelete />,
+          label: 'Delete',
+        },
+        { key: ACTION_KEY.newWorkspace, icon: <FolderAdd />, label: 'New' },
       ]}
       disabledKeys={disabledKeys}
       onAction={onAction}
@@ -58,21 +68,21 @@ export default function PageWorkspaceSelectionPage() {
 
   const disabledKeys = selectedWsKey
     ? []
-    : ['open-workspace', 'delete-workspace'];
+    : [ACTION_KEY.openWorkspace, ACTION_KEY.deleteWorkspace];
 
   const handleAction = (key: React.Key) => {
     switch (key) {
-      case 'open-workspace':
+      case ACTION_KEY.openWorkspace:
         store.dispatch(
           slicePage.actions.goTo({ pathname: '/ws/' + selectedWsKey }),
         );
         break;
-      case 'new-workspace':
+      case ACTION_KEY.newWorkspace:
         store.dispatch(
           sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceCreate, {}),
         );
         break;
-      case 'delete-workspace': {
+      case ACTION_KEY.deleteWorkspace: {
         if (selectedWsKey) {
           store.dispatch(
             sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceConfirmDelete, {

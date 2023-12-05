@@ -1,6 +1,7 @@
 export const APP_DIALOG_NAME = {
   workspaceCreate: 'dialog::workspace:create',
   workspaceConfirmDelete: 'dialog::workspace:confirm-delete',
+  fileConfirmDelete: 'dialog::file:confirm-delete',
 } as const;
 
 export type AppDialogName =
@@ -15,6 +16,12 @@ export type AppDialog =
       name: (typeof APP_DIALOG_NAME)['workspaceConfirmDelete'];
       payload: {
         workspaceName: string;
+      };
+    }
+  | {
+      name: (typeof APP_DIALOG_NAME)['fileConfirmDelete'];
+      payload: {
+        wsPath: string;
       };
     };
 
