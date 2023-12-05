@@ -14,19 +14,28 @@ import React, { JSX } from 'react';
 
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
-import { locationHelpers, resolvePath } from '@bangle.io/ws-path';
+import {
+  locationHelpers,
+  OpenedWsPaths,
+  resolvePath,
+  toFSPath,
+} from '@bangle.io/ws-path';
 
 export function Titlebar() {
   const { showRightAside, widescreen, showLeftAside, showActivitybar } =
     useTrack(sliceUI);
 
-  const { wsName = 'INVALID', location } = useTrack(slicePage);
+  const { wsName = 'INVALID', openedWsPaths, location } = useTrack(slicePage);
   const store = useStore();
 
   return (
     <div className="bg-colorBgLayerMiddle px-2 h-full w-full flex flex-row flex-justify-between flex-items-center border-b-1 border-colorNeutralBorder">
       <View overflow="hidden" flexGrow={2}>
-        <BreadcrumbView wsName={wsName} pathname={location?.pathname ?? ''} />
+        <BreadcrumbView
+          wsName={wsName}
+          openedWsPaths={openedWsPaths}
+          pathname={location?.pathname}
+        />
       </View>
       <Flex direction="row">
         {widescreen && (
@@ -75,13 +84,41 @@ export function Titlebar() {
 
 function BreadcrumbView({
   wsName,
+  openedWsPaths,
   pathname,
 }: {
   wsName: string;
-  pathname: string;
+  openedWsPaths: OpenedWsPaths;
+  pathname: string | undefined;
 }) {
-  const pathParts = pathname.split('/').filter((x) => x);
   const store = useStore();
+
+  if (!pathname) {
+    return null;
+  }
+
+  if (pathname === '/ws-select') {
+    return (
+      <Breadcrumbs size="S">
+        <Item key={'welcome'}>Welcome</Item>
+      </Breadcrumbs>
+    );
+  }
+
+  const primaryWsPath = openedWsPaths.primaryWsPath;
+
+  if (primaryWsPath === undefined) {
+    return (
+      <Breadcrumbs size="S">
+        <Item key={'ws'}>
+          <HomeIcon size="S" />
+        </Item>
+        <Item key={wsName}>{wsName}</Item>
+      </Breadcrumbs>
+    );
+  }
+
+  const pathParts = toFSPath(primaryWsPath).split('/').filter(Boolean);
 
   return (
     <Breadcrumbs
@@ -91,22 +128,19 @@ function BreadcrumbView({
         if (key === 'ws') {
           store.dispatch(
             slicePage.actions.goTo((location) =>
-              locationHelpers.goToWorkspaceSelection(location),
+              locationHelpers.goToWorkspaceHome(location, wsName),
             ),
           );
         }
       }}
     >
       {pathParts.map((part, i): any => {
-        if (i === 0 && part === 'ws') {
+        if (i === 0) {
           return (
             <Item key={'ws'}>
               <HomeIcon size="S" />
             </Item>
           );
-        }
-        if (i === 0 && part === 'ws-select') {
-          return <Item key={'ws-select'}>Select Workspace</Item>;
         }
         return <Item key={i}>{part}</Item>;
       })}

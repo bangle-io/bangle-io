@@ -31,12 +31,12 @@ const wsNameField = key.derive((state) => {
   return location ? locationHelpers.getWsName(location) : undefined;
 });
 
-const openedWsPathField = key.derive(
+const openedWsPathsField = key.derive(
   (state) => {
     const location = sliceHistory.getField(state, 'location');
     const primaryWsPath = primaryWsPathField.get(state);
 
-    return location
+    return !primaryWsPath
       ? OpenedWsPaths.createEmpty()
       : OpenedWsPaths.createEmpty().updatePrimaryWsPath(primaryWsPath);
   },
@@ -51,7 +51,7 @@ export const slicePage = key.slice({
   pageLifeCycle: pageLifeCycleField,
   historyLoaded: historyLoadedField,
   primaryWsPath: primaryWsPathField,
-  openedWsPath: openedWsPathField,
+  openedWsPaths: openedWsPathsField,
   wsName: wsNameField,
 
   blockPageReload: sliceLifeCycle.actions.blockPageReload,

@@ -4,12 +4,17 @@ import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import FolderAddIcon from '@spectrum-icons/workflow/FolderAdd';
 import React, { useEffect, useMemo } from 'react';
 
+import { EditorComp } from '@bangle.io/editor';
 import { slicePage } from '@bangle.io/slice-page';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { sliceWorkspace } from '@bangle.io/slice-workspace';
 import { FilesTable, MainContentWrapper } from '@bangle.io/ui';
 import { randomName } from '@bangle.io/utils';
-import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
+import {
+  locationHelpers,
+  resolvePath,
+  validateNoteWsPath,
+} from '@bangle.io/ws-path';
 interface FileActionsProps {
   disabledKeys: string[];
   onAction: (key: React.Key) => void;
@@ -40,8 +45,27 @@ function FileActions({ disabledKeys, onAction }: FileActionsProps) {
     </ActionGroup>
   );
 }
-
 export default function PageWsName() {
+  const store = useStore();
+
+  const { wsName, primaryWsPath } = useTrack(slicePage);
+
+  if (wsName && primaryWsPath) {
+    return <PageEditor wsPath={primaryWsPath} />;
+  }
+
+  return <PageWsAllFiles />;
+}
+
+function PageEditor(props: { wsPath: string }) {
+  return (
+    <MainContentWrapper>
+      <EditorComp wsPath={props.wsPath} />
+    </MainContentWrapper>
+  );
+}
+
+function PageWsAllFiles() {
   const store = useStore();
 
   const { wsName } = useTrack(slicePage);
@@ -112,8 +136,12 @@ export default function PageWsName() {
         createNote={() => {
           createNote();
         }}
-        goToWsPath={() => {
-          //
+        goToWsPath={(wsPath) => {
+          store.dispatch(
+            slicePage.actions.goTo((location) =>
+              locationHelpers.goToWsPath(location, wsPath),
+            ),
+          );
         }}
         selectedKey={selectedWsKey}
         updateSelectedKey={updateSelectedWsKey}

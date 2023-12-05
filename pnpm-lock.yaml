@@ -467,6 +467,24 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
 
+  packages/app-window/editor:
+    dependencies:
+      '@bangle.dev/base-components':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/core':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/markdown':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1)
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.37
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+
   packages/app-window/left-aisde:
     dependencies:
       '@adobe/react-spectrum':
@@ -496,6 +514,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/editor':
+        specifier: workspace:*
+        version: link:../editor
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices

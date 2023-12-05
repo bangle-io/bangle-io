@@ -9,6 +9,7 @@ import { sliceWorkspaces } from '@bangle.io/misc-slices';
 import { slicePage } from '@bangle.io/slice-page';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { MainContentWrapper, WorkspaceTable } from '@bangle.io/ui';
+import { locationHelpers } from '@bangle.io/ws-path';
 
 interface WorkspaceActionsProps {
   disabledKeys: string[];
@@ -107,7 +108,11 @@ export default function PageWorkspaceSelectionPage() {
         selectedKey={selectedWsKey}
         updateSelectedKey={updateSelectedWsKey}
         goToWorkspace={(wsName) => {
-          store.dispatch(slicePage.actions.goTo({ pathname: '/ws/' + wsName }));
+          store.dispatch(
+            slicePage.actions.goTo((location) =>
+              locationHelpers.goToWorkspaceHome(location, wsName),
+            ),
+          );
         }}
         createWorkspace={() => {
           store.dispatch(
