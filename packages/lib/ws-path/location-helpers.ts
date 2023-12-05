@@ -26,7 +26,7 @@ export function goToWorkspaceHome(wsName: string): AppLocation {
   const search = newSearch.toString();
 
   return {
-    pathname: '/ws/' + encodeURIComponent(wsName),
+    pathname: '/ws/' + wsName,
     search,
   };
 }
