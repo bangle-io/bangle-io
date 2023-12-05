@@ -107,12 +107,10 @@ export function FilesTable({
         <Column key={COLUMN_NAME} allowsSorting>
           Name
         </Column>
-        <Column key={COLUMN_PATH} width={'20%'} allowsSorting>
+        <Column key={COLUMN_PATH} allowsSorting>
           Path
         </Column>
-        <Column width={'20%'} align="end">
-          Last Modified
-        </Column>
+        <Column align="end">Last Modified</Column>
       </TableHeader>
       <TableBody items={sortedWsPathsInfo}>
         {(wsPathInfo) => {
