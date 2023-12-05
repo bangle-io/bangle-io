@@ -1,6 +1,6 @@
 import { createKey } from '@nalanda/core';
 
-import { locationHelpers } from '@bangle.io/ws-path';
+import { locationHelpers, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { sliceHistory } from './slice-history';
 import { sliceLifeCycle } from './slice-lifecycle';
@@ -31,10 +31,27 @@ const wsNameField = key.derive((state) => {
   return location ? locationHelpers.getWsName(location) : undefined;
 });
 
+const openedWsPathField = key.derive(
+  (state) => {
+    const location = sliceHistory.getField(state, 'location');
+    const primaryWsPath = primaryWsPathField.get(state);
+
+    return location
+      ? OpenedWsPaths.createEmpty()
+      : OpenedWsPaths.createEmpty().updatePrimaryWsPath(primaryWsPath);
+  },
+  {
+    equal: (a, b) => {
+      return a.equal(b);
+    },
+  },
+);
+
 export const slicePage = key.slice({
   pageLifeCycle: pageLifeCycleField,
   historyLoaded: historyLoadedField,
   primaryWsPath: primaryWsPathField,
+  openedWsPath: openedWsPathField,
   wsName: wsNameField,
 
   blockPageReload: sliceLifeCycle.actions.blockPageReload,

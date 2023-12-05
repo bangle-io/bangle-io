@@ -1,18 +1,52 @@
-import { Text } from '@adobe/react-spectrum';
-import { useTrack } from '@nalanda/react';
+import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
+import { useStore, useTrack } from '@nalanda/react';
+import DeleteIcon from '@spectrum-icons/workflow/Delete';
+import FolderAddIcon from '@spectrum-icons/workflow/FolderAdd';
 import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'wouter';
 
-import { sliceUI } from '@bangle.io/slice-ui';
+import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { sliceWorkspace } from '@bangle.io/slice-workspace';
 import { FilesTable, MainContentWrapper } from '@bangle.io/ui';
-import { resolvePath } from '@bangle.io/ws-path';
+import { randomName } from '@bangle.io/utils';
+import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
+interface FileActionsProps {
+  disabledKeys: string[];
+  onAction: (key: React.Key) => void;
+}
+
+enum ACTION_KEY {
+  newFile = 'new-file',
+  deleteFile = 'delete-file',
+}
+
+function FileActions({ disabledKeys, onAction }: FileActionsProps) {
+  return (
+    <ActionGroup
+      alignSelf="center"
+      items={[
+        { key: ACTION_KEY.deleteFile, icon: <DeleteIcon />, label: 'Delete' },
+        { key: ACTION_KEY.newFile, icon: <FolderAddIcon />, label: 'New' },
+      ]}
+      disabledKeys={disabledKeys}
+      onAction={onAction}
+    >
+      {(item) => (
+        <Item key={item.key}>
+          {item.icon}
+          <Text>{item.label}</Text>
+        </Item>
+      )}
+    </ActionGroup>
+  );
+}
 
 export default function PageWsName() {
   const params = useParams();
+  const store = useStore();
 
   const wsName = params.wsName;
-  const { allFiles } = useTrack(sliceWorkspace);
+  const { allFiles, workspace } = useTrack(sliceWorkspace);
   const { widescreen } = useTrack(sliceUI);
 
   const [selectedWsKey, updateSelectedWsKey] = React.useState<
@@ -30,13 +64,53 @@ export default function PageWsName() {
     return null;
   }
 
+  const createNote = () => {
+    const name = randomName();
+    const wsPath = wsName + ':' + name + '.md';
+
+    validateNoteWsPath(wsPath);
+
+    void workspace?.createFile(
+      wsPath,
+      new File(['I am content of ' + name], name, {
+        type: 'text/plain',
+      }),
+    );
+  };
+
+  const handleAction = (key: React.Key | ACTION_KEY) => {
+    switch (key) {
+      case ACTION_KEY.newFile: {
+        createNote();
+        break;
+      }
+      case ACTION_KEY.deleteFile: {
+        if (!selectedWsKey) {
+          return;
+        }
+
+        store.dispatch(
+          sliceUI.actions.showDialog(APP_DIALOG_NAME.fileConfirmDelete, {
+            wsPath: selectedWsKey,
+          }),
+        );
+        break;
+      }
+    }
+  };
+
+  const disabledKeys = selectedWsKey ? [] : [ACTION_KEY.deleteFile];
+
   return (
     <MainContentWrapper>
-      <Text UNSAFE_className="text-2xl">Files</Text>
+      <Flex direction="row" justifyContent="space-between" gap="size-100">
+        <Text UNSAFE_className="text-2xl">Notes</Text>
+        <FileActions disabledKeys={disabledKeys} onAction={handleAction} />
+      </Flex>
       <FilesTable
         wsName={wsName}
         createNote={() => {
-          //
+          createNote();
         }}
         goToWsPath={() => {
           //

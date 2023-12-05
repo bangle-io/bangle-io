@@ -33,7 +33,8 @@
     "@bangle.io/ui": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/misc-slices": "workspace:*"
+    "@bangle.io/misc-slices": "workspace:*",
+    "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {}
 }

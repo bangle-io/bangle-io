@@ -153,6 +153,16 @@ export class Workspace {
     return readFileAsText(file);
   }
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    options: { sha?: string } = {},
+  ): Promise<void> {
+    validateFileWsPath(wsPath);
+
+    await this.provider.createFile(wsPath, file, {});
+  }
+
   async writeFile(
     wsPath: string,
     file: File,
