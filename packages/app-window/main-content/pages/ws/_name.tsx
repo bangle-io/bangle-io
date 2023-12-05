@@ -3,8 +3,8 @@ import { useStore, useTrack } from '@nalanda/react';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import FolderAddIcon from '@spectrum-icons/workflow/FolderAdd';
 import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'wouter';
 
+import { slicePage } from '@bangle.io/slice-page';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { sliceWorkspace } from '@bangle.io/slice-workspace';
 import { FilesTable, MainContentWrapper } from '@bangle.io/ui';
@@ -42,10 +42,10 @@ function FileActions({ disabledKeys, onAction }: FileActionsProps) {
 }
 
 export default function PageWsName() {
-  const params = useParams();
   const store = useStore();
 
-  const wsName = params.wsName;
+  const { wsName } = useTrack(slicePage);
+
   const { allFiles, workspace } = useTrack(sliceWorkspace);
   const { widescreen } = useTrack(sliceUI);
 

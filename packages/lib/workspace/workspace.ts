@@ -1,7 +1,11 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
 import { FileStorageIndexedDB } from '@bangle.io/file-storage-indexeddb';
-import { AppDatabase, BaseFileStorageProvider } from '@bangle.io/shared-types';
+import {
+  AppDatabase,
+  BaseFileStorageProvider,
+  FileStorageChangeEvent,
+} from '@bangle.io/shared-types';
 import {
   getExtension,
   isValidFileWsPath,
@@ -16,16 +20,19 @@ import { logger } from './logger';
 export type Config = {
   readonly wsName: string;
   readonly database: AppDatabase;
+  readonly onChange?: (event: FileStorageChangeEvent) => void;
 };
 
 export class Workspace {
   private provider!: BaseFileStorageProvider;
+  destroyed = false;
 
   get wsName() {
     return this.config.wsName;
   }
 
   destroy() {
+    this.destroyed = true;
     this.provider.destroy();
   }
 
@@ -50,7 +57,7 @@ export class Workspace {
     if (info?.type === WorkspaceType.Browser) {
       this.provider = new FileStorageIndexedDB();
     } else {
-      throw new Error(`Workspace type ${info?.type} not supported`);
+      throw new Error(`Workspace type ${info?.type} not implemented`);
     }
 
     if (!this.provider.isSupported()) {
@@ -61,7 +68,12 @@ export class Workspace {
       wsName: this.wsName,
 
       onChange: (event) => {
-        // TODO cross tab sync
+        if (this.destroyed) {
+          return;
+        }
+
+        this.config.onChange?.(event);
+
         switch (event.type) {
           case 'create': {
             break;
