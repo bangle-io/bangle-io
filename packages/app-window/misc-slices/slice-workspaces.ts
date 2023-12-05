@@ -31,7 +31,6 @@ key.effect((store) => {
       refresh();
     }),
   ];
-
   cleanup(store, () => {
     cleanups.forEach((c) => c());
   });
