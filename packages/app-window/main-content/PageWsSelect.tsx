@@ -80,7 +80,10 @@ export function PageWorkspaceSelect() {
         break;
       case ACTION_KEY.newWorkspace:
         store.dispatch(
-          sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceCreate, {}),
+          sliceUI.actions.showDialog(
+            APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+            {},
+          ),
         );
         break;
       case ACTION_KEY.deleteWorkspace: {

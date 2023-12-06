@@ -113,11 +113,7 @@ function BreadcrumbView({
   }
 
   if (pageRoute === PAGE_ROUTE.unknown) {
-    return (
-      <Breadcrumbs size="S">
-        <Item key={'welcome'}>Unknown</Item>
-      </Breadcrumbs>
-    );
+    return null;
   }
 
   if (pageRoute === PAGE_ROUTE.workspaceHome) {
@@ -128,45 +124,57 @@ function BreadcrumbView({
     );
   }
 
-  const primaryWsPath = openedWsPaths.primaryWsPath;
-
-  if (primaryWsPath === undefined) {
+  if (pageRoute === PAGE_ROUTE.workspaceNativeFsAuth) {
     return (
       <Breadcrumbs size="S">
-        <Item key={'ws'}>
-          <HomeIcon size="S" />
-        </Item>
-        <Item key={wsName}>{wsName}</Item>
+        <Item key={'auth'}>Authorization</Item>
       </Breadcrumbs>
     );
   }
 
-  const pathParts = toFSPath(primaryWsPath).split('/').filter(Boolean);
+  if (pageRoute === PAGE_ROUTE.editor) {
+    const primaryWsPath = openedWsPaths.primaryWsPath;
 
-  return (
-    <Breadcrumbs
-      size="S"
-      showRoot
-      onAction={(key) => {
-        if (key === 'ws') {
-          store.dispatch(
-            slicePage.actions.goTo((location) =>
-              locationHelpers.goToWorkspaceHome(location, wsName),
-            ),
-          );
-        }
-      }}
-    >
-      {pathParts.map((part, i): any => {
-        if (i === 0) {
-          return (
-            <Item key={'ws'}>
-              <HomeIcon size="S" />
-            </Item>
-          );
-        }
-        return <Item key={i}>{part}</Item>;
-      })}
-    </Breadcrumbs>
-  );
+    if (primaryWsPath === undefined) {
+      return (
+        <Breadcrumbs size="S">
+          <Item key={'ws'}>
+            <HomeIcon size="S" />
+          </Item>
+          <Item key={wsName}>{wsName}</Item>
+        </Breadcrumbs>
+      );
+    }
+
+    const pathParts = toFSPath(primaryWsPath).split('/').filter(Boolean);
+
+    return (
+      <Breadcrumbs
+        size="S"
+        showRoot
+        onAction={(key) => {
+          if (key === 'ws') {
+            store.dispatch(
+              slicePage.actions.goTo((location) =>
+                locationHelpers.goToWorkspaceHome(location, wsName),
+              ),
+            );
+          }
+        }}
+      >
+        {pathParts.map((part, i): any => {
+          if (i === 0) {
+            return (
+              <Item key={'ws'}>
+                <HomeIcon size="S" />
+              </Item>
+            );
+          }
+          return <Item key={i}>{part}</Item>;
+        })}
+      </Breadcrumbs>
+    );
+  }
+
+  return null;
 }

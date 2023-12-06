@@ -10,6 +10,7 @@ import { locationHelpers } from '@bangle.io/ws-path';
 
 import { PageEditor } from './PageEditor';
 import { PageNotFound } from './PageNotFound';
+import { PageWorkspaceNativeFsAuth } from './PageWorkspaceNativeFsAuth';
 import { PageWsName } from './PageWsHome';
 import { PageWorkspaceSelect } from './PageWsSelect';
 
@@ -53,6 +54,10 @@ export function MainContent() {
 
     case PAGE_ROUTE.unknown: {
       return <PageNotFound />;
+    }
+
+    case PAGE_ROUTE.workspaceNativeFsAuth: {
+      return <PageWorkspaceNativeFsAuth />;
     }
 
     default: {

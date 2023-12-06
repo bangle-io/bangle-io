@@ -1,6 +1,8 @@
 export const PAGE_ROUTE = {
   workspaceSelect: 'WorkspaceSelect',
   workspaceHome: 'WorkspaceHome',
+  workspaceNativeFsAuth: 'WorkspaceNativeFsAuth',
+
   editor: 'Editor',
   notFound: 'NotFound',
   unknown: 'Unknown',

@@ -18,8 +18,6 @@ export function PageEditor() {
     [workspace],
   );
 
-  console.log({ wsName, primaryWsPath });
-
   if (!wsName || !primaryWsPath) {
     return null;
   }

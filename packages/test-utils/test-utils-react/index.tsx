@@ -6,6 +6,17 @@ import React from 'react';
 import { Router } from '@bangle.io/app-routing';
 import { slicePage } from '@bangle.io/slice-page';
 
+export function ReactSpectrumProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Provider theme={darkTheme} colorScheme="dark">
+      {children}
+    </Provider>
+  );
+}
 export function TestProvider({
   store,
   children,
