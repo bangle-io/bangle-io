@@ -45,41 +45,8 @@ function FileActions({ disabledKeys, onAction }: FileActionsProps) {
     </ActionGroup>
   );
 }
-export default function PageWsName() {
-  const { wsName, primaryWsPath } = useTrack(slicePage);
-  const { workspace } = useTrack(sliceWorkspace);
 
-  const readNote = useCallback(
-    async (wsPath: string) => {
-      return workspace?.readFileAsText(wsPath);
-    },
-    [workspace],
-  );
-  // if the path points to a file, then we show the editor
-  if (wsName && primaryWsPath) {
-    return (
-      <MainContentWrapper>
-        <EditorComp
-          wsPath={primaryWsPath}
-          readNote={readNote}
-          writeNote={async (wsPath, content) => {
-            const { fileName } = resolvePath(wsPath);
-            void workspace?.createFile(
-              wsPath,
-              new File([content], fileName, {
-                type: 'text/plain',
-              }),
-            );
-          }}
-        />
-      </MainContentWrapper>
-    );
-  }
-
-  return <PageWsAllFiles />;
-}
-
-function PageWsAllFiles() {
+export function PageWsName() {
   const store = useStore();
 
   const { wsName } = useTrack(slicePage);

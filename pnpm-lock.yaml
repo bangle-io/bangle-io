@@ -968,6 +968,9 @@ importers:
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../slice-page
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../lib/ws-path
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
@@ -995,6 +998,9 @@ importers:
 
   packages/lib-window/slice-page:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/history':
         specifier: workspace:*
         version: link:../../js-lib/history
@@ -1013,6 +1019,12 @@ importers:
       page-lifecycle:
         specifier: ^0.1.2
         version: 0.1.2
+      path-to-regexp:
+        specifier: ^6.2.1
+        version: 6.2.1
+      wouter:
+        specifier: ^2.12.1
+        version: 2.12.1(react@18.2.0)
     devDependencies:
       '@bangle.io/test-utils-slice':
         specifier: workspace:*

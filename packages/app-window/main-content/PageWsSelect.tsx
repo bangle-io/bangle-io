@@ -48,7 +48,7 @@ function WorkspaceActions({ disabledKeys, onAction }: WorkspaceActionsProps) {
   );
 }
 
-export default function PageWorkspaceSelectionPage() {
+export function PageWorkspaceSelect() {
   const store = useStore();
 
   const { widescreen } = useTrack(sliceUI);

@@ -4,6 +4,7 @@ export * from './debug-flags';
 export * from './editor';
 export * from './eternal-vars';
 export * from './help-fs';
+export * from './page-route';
 export * from './search';
 export * from './ui';
 export * from './worker';
