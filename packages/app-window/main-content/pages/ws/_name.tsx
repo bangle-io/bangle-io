@@ -2,7 +2,7 @@ import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import FolderAddIcon from '@spectrum-icons/workflow/FolderAdd';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { EditorComp } from '@bangle.io/editor';
 import { slicePage } from '@bangle.io/slice-page';
@@ -46,23 +46,37 @@ function FileActions({ disabledKeys, onAction }: FileActionsProps) {
   );
 }
 export default function PageWsName() {
-  const store = useStore();
-
   const { wsName, primaryWsPath } = useTrack(slicePage);
+  const { workspace } = useTrack(sliceWorkspace);
 
+  const readNote = useCallback(
+    async (wsPath: string) => {
+      return workspace?.readFileAsText(wsPath);
+    },
+    [workspace],
+  );
+  // if the path points to a file, then we show the editor
   if (wsName && primaryWsPath) {
-    return <PageEditor wsPath={primaryWsPath} />;
+    return (
+      <MainContentWrapper>
+        <EditorComp
+          wsPath={primaryWsPath}
+          readNote={readNote}
+          writeNote={async (wsPath, content) => {
+            const { fileName } = resolvePath(wsPath);
+            void workspace?.createFile(
+              wsPath,
+              new File([content], fileName, {
+                type: 'text/plain',
+              }),
+            );
+          }}
+        />
+      </MainContentWrapper>
+    );
   }
 
   return <PageWsAllFiles />;
-}
-
-function PageEditor(props: { wsPath: string }) {
-  return (
-    <MainContentWrapper>
-      <EditorComp wsPath={props.wsPath} />
-    </MainContentWrapper>
-  );
 }
 
 function PageWsAllFiles() {

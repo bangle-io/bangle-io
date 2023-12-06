@@ -27,6 +27,9 @@
   },
   "scripts": {},
   "dependencies": {
+    "prosemirror-markdown": "^1.11.2",
+    "@bangle.dev/markdown-front-matter": "^0.32.1",
+    "@bangle.dev/pm": "0.32.1",
     "@bangle.dev/base-components": "^0.32.1",
     "@bangle.dev/core": "^0.32.1",
     "@bangle.dev/markdown": "^0.32.1",

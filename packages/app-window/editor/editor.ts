@@ -1,4 +1,5 @@
 import '@bangle.dev/core/style.css';
+import './style.css';
 
 import {
   blockquote,
@@ -6,6 +7,7 @@ import {
   bulletList,
   code,
   codeBlock,
+  doc,
   hardBreak,
   heading,
   horizontalRule,
@@ -16,16 +18,25 @@ import {
   orderedList,
   paragraph,
   strike,
+  text,
   underline,
 } from '@bangle.dev/base-components';
 import {
   BangleEditor,
   BangleEditorState,
+  Plugin,
   SpecRegistry,
 } from '@bangle.dev/core';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
+import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
+
+import { getMarkdownTokenizer } from './markdown-it-plugins';
+import { activeNode } from './plugins/active-node';
 
 const specRegistry = new SpecRegistry([
+  doc.spec({ content: 'frontMatter? block+' }),
+  text.spec(),
+  paragraph.spec(),
   blockquote.spec(),
   bold.spec(),
   bulletList.spec(),
@@ -39,14 +50,19 @@ const specRegistry = new SpecRegistry([
   link.spec(),
   listItem.spec(),
   orderedList.spec(),
-  paragraph.spec(),
   strike.spec(),
   underline.spec(),
+  markdownFrontMatter.spec(),
 ]);
-const parser = markdownParser(specRegistry);
+
+const parser = getMarkdownTokenizer(specRegistry);
 const serializer = markdownSerializer(specRegistry);
 
-export default function Editor(domNode: HTMLElement) {
+export function createEditor(
+  domNode: HTMLElement,
+  markdown: string,
+  onChange: (markdown: string) => void,
+) {
   const state = new BangleEditorState({
     specRegistry,
     plugins: () => [
@@ -66,81 +82,20 @@ export default function Editor(domNode: HTMLElement) {
       paragraph.plugins(),
       strike.plugins(),
       underline.plugins(),
+      activeNode(),
+      new Plugin({
+        view: () => ({
+          update: (view, prevState) => {
+            if (!view.state.doc.eq(prevState.doc)) {
+              onChange(serializer.serialize(view.state.doc));
+            }
+          },
+        }),
+      }),
     ],
-    initialValue: parser.parse(getMarkdown())!,
+    initialValue: parser.parse(markdown)!,
   });
 
   const editor = new BangleEditor(domNode, { state });
   return editor;
-}
-
-export function serializeMarkdown(editor: BangleEditor) {
-  return serializer.serialize(editor.view.state.doc);
-}
-
-function getMarkdown() {
-  return `
-## H2 Heading 
-
-### H3 Heading
-
-## Marks
-
-_italic_, **Bold**, _underlined_, ~~striked~~, \`code\`, [link](https://en.wikipedia.org/wiki/Main_Page)
-
-## GFM Todo Lists
-
-- [x] Check out BangleJS
-
-- [ ] Walk the cat
-
-- [ ] Drag these lists by dragging the square up or down.
-
-- [ ] Move these lists with shortcut \`Option-ArrowUp\`. You can move any node (yes headings too) with this shortcut.
-
-## Unordered Lists
-
-- This is an ordered list
-
-  - I am a nested ordered list
-
-  - I am another nested one
-
-    - Bunch of nesting right?
-
-## Ordered Lists
-
-1. Bringing order to the world.
-
-2. Nobody remembers who came second.
-
-   1. We can cheat to become first by nesting.
-
-      - Oh an you can mix and match ordered unordered.
-
-## Image
-You can also directly paste images.
-![](https://user-images.githubusercontent.com/6966254/101979122-f4405e80-3c0e-11eb-9bf8-9af9b1ddc94f.png)
-
-
-## Blockquote
-
-> I am a blockquote, trigger me by typing > on a new line
-
-## Code Block
-
-\`\`\`
-// This is a code block
-function foo() {
-  console.log('Hello world!')
-}
-\`\`\`
-
-## Paragraph
-
-I am a boring paragraph
-
-## Horizontal Break
----
-`;
 }
