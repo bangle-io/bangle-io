@@ -467,6 +467,33 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
 
+  packages/app-window/editor:
+    dependencies:
+      '@bangle.dev/base-components':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/core':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/markdown':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/markdown-front-matter':
+        specifier: ^0.32.1
+        version: 0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/pm':
+        specifier: 0.32.1
+        version: 0.32.1
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.37
+      prosemirror-markdown:
+        specifier: ^1.11.2
+        version: 1.11.2
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+
   packages/app-window/left-aisde:
     dependencies:
       '@adobe/react-spectrum':
@@ -496,6 +523,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/editor':
+        specifier: workspace:*
+        version: link:../editor
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices
@@ -3018,6 +3048,18 @@ packages:
       '@bangle.dev/pm-commands': 0.32.1(@bangle.dev/pm@0.32.1)
       '@bangle.dev/shared-types': 0.32.1
       '@bangle.dev/utils': 0.32.1(@bangle.dev/pm@0.32.1)
+
+  /@bangle.dev/markdown-front-matter@0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1):
+    resolution: {integrity: sha512-GDudPyiN/6qfFSgA2r2omG9qrZUCUkmlbbS5ou/iyc+ZwhHC8GTdClkWJDqdwvokL7NICymGuZZTwjrj+52Dyg==}
+    peerDependencies:
+      '@bangle.dev/core': '*'
+      '@bangle.dev/pm': '*'
+    dependencies:
+      '@bangle.dev/core': 0.32.1(@bangle.dev/pm@0.32.1)
+      '@bangle.dev/pm': 0.32.1
+      '@bangle.dev/utils': 0.32.1(@bangle.dev/pm@0.32.1)
+      '@types/jest': 29.5.8
+    dev: false
 
   /@bangle.dev/markdown@0.32.1(@bangle.dev/core@0.32.1)(@bangle.dev/pm@0.32.1):
     resolution: {integrity: sha512-2Ot3IH1yJ5TitgeP56nSbeJLQZtoAGCXimYJLvN6CJ8XHxcU9fXj3IZMf9Mt3heeGpsZuyf3utJ468Qw5UUj8Q==}

@@ -28,7 +28,7 @@ export function FileConfirmDeleteDialog({ payload, name }: DialogProps) {
   const store = useStore();
   const { wsPath } = payload;
   const { workspace } = useTrack(sliceWorkspace);
-  const { openedWsPath } = useTrack(slicePage);
+  const { openedWsPaths } = useTrack(slicePage);
 
   return (
     <Dialog>
@@ -48,10 +48,10 @@ export function FileConfirmDeleteDialog({ payload, name }: DialogProps) {
         <Button
           variant="negative"
           onPress={() => {
-            if (openedWsPath.has(wsPath)) {
+            if (openedWsPaths.has(wsPath)) {
               store.dispatch(
-                slicePage.actions.goTo(
-                  locationHelpers.goToWorkspaceHome(wsPath),
+                slicePage.actions.goTo((location) =>
+                  locationHelpers.goToWorkspaceHome(location, wsPath),
                 ),
               );
             }

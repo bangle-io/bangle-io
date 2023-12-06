@@ -2,14 +2,19 @@ import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import FolderAddIcon from '@spectrum-icons/workflow/FolderAdd';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { EditorComp } from '@bangle.io/editor';
 import { slicePage } from '@bangle.io/slice-page';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { sliceWorkspace } from '@bangle.io/slice-workspace';
 import { FilesTable, MainContentWrapper } from '@bangle.io/ui';
 import { randomName } from '@bangle.io/utils';
-import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
+import {
+  locationHelpers,
+  resolvePath,
+  validateNoteWsPath,
+} from '@bangle.io/ws-path';
 interface FileActionsProps {
   disabledKeys: string[];
   onAction: (key: React.Key) => void;
@@ -40,8 +45,41 @@ function FileActions({ disabledKeys, onAction }: FileActionsProps) {
     </ActionGroup>
   );
 }
-
 export default function PageWsName() {
+  const { wsName, primaryWsPath } = useTrack(slicePage);
+  const { workspace } = useTrack(sliceWorkspace);
+
+  const readNote = useCallback(
+    async (wsPath: string) => {
+      return workspace?.readFileAsText(wsPath);
+    },
+    [workspace],
+  );
+  // if the path points to a file, then we show the editor
+  if (wsName && primaryWsPath) {
+    return (
+      <MainContentWrapper>
+        <EditorComp
+          wsPath={primaryWsPath}
+          readNote={readNote}
+          writeNote={async (wsPath, content) => {
+            const { fileName } = resolvePath(wsPath);
+            void workspace?.createFile(
+              wsPath,
+              new File([content], fileName, {
+                type: 'text/plain',
+              }),
+            );
+          }}
+        />
+      </MainContentWrapper>
+    );
+  }
+
+  return <PageWsAllFiles />;
+}
+
+function PageWsAllFiles() {
   const store = useStore();
 
   const { wsName } = useTrack(slicePage);
@@ -112,8 +150,12 @@ export default function PageWsName() {
         createNote={() => {
           createNote();
         }}
-        goToWsPath={() => {
-          //
+        goToWsPath={(wsPath) => {
+          store.dispatch(
+            slicePage.actions.goTo((location) =>
+              locationHelpers.goToWsPath(location, wsPath),
+            ),
+          );
         }}
         selectedKey={selectedWsKey}
         updateSelectedKey={updateSelectedWsKey}

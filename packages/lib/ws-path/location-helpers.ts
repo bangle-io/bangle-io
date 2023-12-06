@@ -20,13 +20,26 @@ export function goToWorkspaceSelection(location: AppLocation): AppLocation {
   return { pathname: '/ws-select', search };
 }
 
-export function goToWorkspaceHome(wsName: string): AppLocation {
+export function goToWorkspaceHome(
+  location: AppLocation,
+  wsName: string,
+): AppLocation {
   const newSearch = new URLSearchParams(location.search);
   newSearch.delete('secondary');
   const search = newSearch.toString();
 
   return {
     pathname: '/ws/' + wsName,
+    search,
+  };
+}
+
+export function goToWsPath(location: AppLocation, wsPath: WsPath): AppLocation {
+  const newSearch = new URLSearchParams(location.search);
+  const search = newSearch.toString();
+
+  return {
+    pathname: wsPathToPathname(wsPath),
     search,
   };
 }

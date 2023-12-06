@@ -1,0 +1,1 @@
+export { EditorComp } from './EditorComp';

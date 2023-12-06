@@ -66,7 +66,7 @@ export function CreateWorkspaceDialog({
           }}
         >
           <TextField
-            label="Name"
+            label="Workspace Name"
             autoFocus
             isRequired
             onChange={updateWsName}
