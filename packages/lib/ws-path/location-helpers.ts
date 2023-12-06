@@ -206,9 +206,7 @@ export function getPageRoute(locationPathname?: string): PageRoute {
     return PAGE_ROUTE.workspaceSelect;
   }
 
-  [result] = pathMatcher('/', locationPathname);
-
-  if (result) {
+  if (locationPathname === '/') {
     return PAGE_ROUTE.root;
   }
 

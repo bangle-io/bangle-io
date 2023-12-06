@@ -10,8 +10,9 @@ import HomeIcon from '@spectrum-icons/workflow/Home';
 import MarginLeftIcon from '@spectrum-icons/workflow/MarginLeft';
 import MarginRightIcon from '@spectrum-icons/workflow/MarginRight';
 import SearchIcon from '@spectrum-icons/workflow/Search';
-import React, { JSX } from 'react';
+import React from 'react';
 
+import { PAGE_ROUTE } from '@bangle.io/constants';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
 import {
@@ -93,14 +94,36 @@ function BreadcrumbView({
 }) {
   const store = useStore();
 
-  if (!pathname) {
-    return null;
-  }
+  const pageRoute = locationHelpers.getPageRoute(pathname);
 
-  if (pathname === '/ws-select') {
+  if (pageRoute === PAGE_ROUTE.workspaceSelect) {
     return (
       <Breadcrumbs size="S">
         <Item key={'welcome'}>Welcome</Item>
+      </Breadcrumbs>
+    );
+  }
+
+  if (pageRoute === PAGE_ROUTE.notFound) {
+    return (
+      <Breadcrumbs size="S">
+        <Item key={'welcome'}>Not Found</Item>
+      </Breadcrumbs>
+    );
+  }
+
+  if (pageRoute === PAGE_ROUTE.unknown) {
+    return (
+      <Breadcrumbs size="S">
+        <Item key={'welcome'}>Unknown</Item>
+      </Breadcrumbs>
+    );
+  }
+
+  if (pageRoute === PAGE_ROUTE.workspaceHome) {
+    return (
+      <Breadcrumbs size="S">
+        <Item key={'welcome'}>{wsName}</Item>
       </Breadcrumbs>
     );
   }

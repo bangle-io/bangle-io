@@ -9,6 +9,7 @@ import { slicePage } from '@bangle.io/slice-page';
 import { locationHelpers } from '@bangle.io/ws-path';
 
 import { PageEditor } from './PageEditor';
+import { PageNotFound } from './PageNotFound';
 import { PageWsName } from './PageWsHome';
 import { PageWorkspaceSelect } from './PageWsSelect';
 
@@ -29,16 +30,29 @@ export function MainContent() {
   }, [pageRoute, setLocation]);
 
   switch (pageRoute) {
-    case PAGE_ROUTE.workspaceHome:
+    case PAGE_ROUTE.workspaceHome: {
       return <PageWsName />;
-    case PAGE_ROUTE.workspaceSelect:
-      return <PageWorkspaceSelect />;
+    }
 
-    case PAGE_ROUTE.editor:
+    case PAGE_ROUTE.workspaceSelect: {
+      return <PageWorkspaceSelect />;
+    }
+
+    case PAGE_ROUTE.editor: {
       return <PageEditor />;
+    }
 
     case PAGE_ROUTE.root: {
+      // see the effect hook above
       return null;
+    }
+
+    case PAGE_ROUTE.notFound: {
+      return <PageNotFound />;
+    }
+
+    case PAGE_ROUTE.unknown: {
+      return <PageNotFound />;
     }
 
     default: {
