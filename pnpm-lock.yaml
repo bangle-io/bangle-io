@@ -436,9 +436,9 @@ importers:
       '@bangle.io/dialog-maker':
         specifier: workspace:*
         version: link:../../lib/dialog-maker
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices
@@ -565,9 +565,9 @@ importers:
 
   packages/app-window/misc-slices:
     dependencies:
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -637,9 +637,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -984,7 +984,7 @@ importers:
         specifier: ^2.12.1
         version: 2.12.1(react@18.2.0)
 
-  packages/lib-window/lib-common:
+  packages/lib-window/lib-window-common:
     dependencies:
       '@bangle.io/shared-types':
         specifier: workspace:*
@@ -998,9 +998,9 @@ importers:
       '@bangle.io/history':
         specifier: workspace:*
         version: link:../../js-lib/history
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../lib-common
+        version: link:../lib-window-common
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types
@@ -1048,9 +1048,9 @@ importers:
 
   packages/lib-window/slice-workspace:
     dependencies:
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../lib-common
+        version: link:../lib-window-common
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../slice-page
@@ -1305,9 +1305,9 @@ importers:
 
   packages/test-utils/test-utils:
     dependencies:
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -1323,9 +1323,9 @@ importers:
 
   packages/test-utils/test-utils-common:
     dependencies:
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -1347,9 +1347,9 @@ importers:
       '@bangle.io/app-routing':
         specifier: workspace:*
         version: link:../../lib-window/app-routing
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
@@ -1377,9 +1377,9 @@ importers:
 
   packages/test-utils/test-utils-slice:
     dependencies:
-      '@bangle.io/lib-common':
+      '@bangle.io/lib-window-common':
         specifier: workspace:*
-        version: link:../../lib-window/lib-common
+        version: link:../../lib-window/lib-window-common
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils

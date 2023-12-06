@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/lib-common",
+  "name": "@bangle.io/lib-window-common",
   "description": "A common pack for all lib packages",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",

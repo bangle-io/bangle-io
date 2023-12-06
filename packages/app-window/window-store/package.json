@@ -26,7 +26,7 @@
     "@bangle.io/logger": "workspace:*",
     "@nalanda/core": "^0.2.3",
     "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/lib-common": "workspace:*",
+    "@bangle.io/lib-window-common": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "immer": "^10.0.3",
     "@bangle.io/constants": "workspace:*",

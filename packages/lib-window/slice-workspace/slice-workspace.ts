@@ -1,6 +1,6 @@
 import { cleanup, createKey } from '@nalanda/core';
 
-import { getEternalVarsWindow } from '@bangle.io/lib-common';
+import { getEternalVarsWindow } from '@bangle.io/lib-window-common';
 import { slicePage } from '@bangle.io/slice-page';
 import { Workspace } from '@bangle.io/workspace';
 

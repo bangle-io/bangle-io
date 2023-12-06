@@ -30,6 +30,6 @@
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/workspace": "workspace:*",
     "@nalanda/core": "^0.2.3",
-    "@bangle.io/lib-common": "workspace:*"
+    "@bangle.io/lib-window-common": "workspace:*"
   }
 }
