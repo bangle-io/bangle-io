@@ -43,7 +43,6 @@ export function setupCommon(config: EternalVarsSetupBase): EternalVarsBase {
 
     // Check if the threshold is exceeded
     if (messageCount++ > THRESHOLD_COUNT) {
-      // TODO error handling
       broadcast.destroy();
       emitter.destroy();
       throw new Error('Too many messages received in a short period of time.');
