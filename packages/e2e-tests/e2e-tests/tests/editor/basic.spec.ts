@@ -10,6 +10,9 @@ test.beforeEach(async ({ bangleApp }) => {
 test('test', async ({ page }) => {
   const workspaceName = 'test-ws-1';
   await page.getByRole('button', { name: 'New' }).click();
+  await page.getByText('Browser Storage', { exact: true }).click();
+  await page.getByRole('button', { name: 'Next' }).click();
+
   await page.getByLabel(/Workspace Name/).fill(workspaceName);
   await page.getByLabel(/Workspace Name/).press('Enter');
   await page.getByText(workspaceName).click();
