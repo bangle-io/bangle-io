@@ -30,9 +30,10 @@
     "wouter": "^2.12.1",
     "@bangle.io/history": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
-    "path-to-regexp": "^6.2.1",
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
-    "@nalanda/react": "^0.2.3"
-  }
+    "@nalanda/react": "^0.2.3",
+    "@bangle.io/ws-path": "workspace:*"
+  },
+  "devDependencies": {}
 }

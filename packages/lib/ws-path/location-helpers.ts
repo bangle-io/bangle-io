@@ -4,6 +4,7 @@ import { pathToRegexp } from 'path-to-regexp';
 // eslint-disable-next-line import/default
 import makeMatcher from 'wouter/matcher';
 
+import { PAGE_ROUTE, PageRoute } from '@bangle.io/constants';
 import { weakCache } from '@bangle.io/mini-js-utils';
 import type { AppLocation } from '@bangle.io/shared-types';
 
@@ -182,4 +183,38 @@ export function locationSetWsPath(
   }
 
   return { pathname, search };
+}
+
+export function getPageRoute(locationPathname?: string): PageRoute {
+  if (!locationPathname) {
+    return PAGE_ROUTE.unknown;
+  }
+
+  let [result] = pathMatcher('/ws/:wsName', locationPathname);
+
+  if (result) {
+    if (isValidNoteWsPath(pathnameToWsPath(locationPathname))) {
+      return PAGE_ROUTE.editor;
+    }
+
+    return PAGE_ROUTE.workspaceHome;
+  }
+
+  [result] = pathMatcher('/ws-select', locationPathname);
+
+  if (result) {
+    return PAGE_ROUTE.workspaceSelect;
+  }
+
+  [result] = pathMatcher('/ws-native-fs-auth', locationPathname);
+
+  if (result) {
+    return PAGE_ROUTE.workspaceNativeFsAuth;
+  }
+
+  if (locationPathname === '/') {
+    return PAGE_ROUTE.root;
+  }
+
+  return PAGE_ROUTE.notFound;
 }

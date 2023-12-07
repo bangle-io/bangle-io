@@ -1,5 +1,8 @@
 export const APP_DIALOG_NAME = {
-  workspaceCreate: 'dialog::workspace:create',
+  workspaceCreateBrowser: 'dialog::workspace:create-browser',
+  workspaceCreateNativeFS: 'dialog::workspace:create-native-fs',
+  workspaceCreateSelectTypeDialog: 'dialog::workspace:create:select-type',
+
   workspaceConfirmDelete: 'dialog::workspace:confirm-delete',
   fileConfirmDelete: 'dialog::file:confirm-delete',
 } as const;
@@ -9,7 +12,15 @@ export type AppDialogName =
 
 export type AppDialog =
   | {
-      name: (typeof APP_DIALOG_NAME)['workspaceCreate'];
+      name: (typeof APP_DIALOG_NAME)['workspaceCreateBrowser'];
+      payload: Record<string, never>;
+    }
+  | {
+      name: (typeof APP_DIALOG_NAME)['workspaceCreateNativeFS'];
+      payload: Record<string, never>;
+    }
+  | {
+      name: (typeof APP_DIALOG_NAME)['workspaceCreateSelectTypeDialog'];
       payload: Record<string, never>;
     }
   | {

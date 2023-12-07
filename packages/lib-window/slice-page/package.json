@@ -23,10 +23,11 @@
   "dependencies": {
     "@nalanda/core": "^0.2.3",
     "@bangle.io/history": "workspace:*",
-    "@bangle.io/lib-common": "workspace:*",
+    "@bangle.io/lib-window-common": "workspace:*",
     "page-lifecycle": "^0.1.2",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "@bangle.io/constants": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/test-utils-slice": "workspace:*"

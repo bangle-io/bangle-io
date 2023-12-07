@@ -1,14 +1,11 @@
 import { useStore, useTrackField } from '@nalanda/react';
-import type { Key } from 'path-to-regexp';
-import { pathToRegexp } from 'path-to-regexp';
-import React, { useEffect } from 'react';
+import React from 'react';
 import type { BaseLocationHook } from 'wouter';
 import { Router as WouterRouter } from 'wouter';
-// eslint-disable-next-line import/default
-import makeMatcher from 'wouter/matcher';
 
 import { BaseHistory, createTo } from '@bangle.io/history';
 import { getHistoryRef, slicePage } from '@bangle.io/slice-page';
+import { locationHelpers } from '@bangle.io/ws-path';
 
 const useRouterHook: BaseLocationHook = function useRouterHook() {
   const store = useStore();
@@ -44,20 +41,10 @@ const useRouterHook: BaseLocationHook = function useRouterHook() {
   return [to, navigate];
 };
 
-export const pathMatcher = makeMatcher(convertPathToRegexp);
-
 export function Router({ children }: { children: React.ReactNode }) {
   return (
-    <WouterRouter hook={useRouterHook} matcher={pathMatcher as any}>
+    <WouterRouter hook={useRouterHook} matcher={locationHelpers.pathMatcher}>
       {children}
     </WouterRouter>
   );
-}
-
-function convertPathToRegexp(path: string) {
-  let keys: Key[] = [];
-  // we use original pathToRegexp package here with keys
-  const regexp = pathToRegexp(path, keys, { strict: true, end: false });
-
-  return { keys, regexp };
 }

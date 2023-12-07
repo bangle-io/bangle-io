@@ -3,7 +3,7 @@ import { createStore, DebugLogger, Slice } from '@nalanda/core';
 import {
   defaultWindowStoreConfig,
   getWindowStoreConfigRef,
-} from '@bangle.io/lib-common';
+} from '@bangle.io/lib-window-common';
 import { createManualEffectScheduler } from '@bangle.io/nsm-3';
 
 const sleep = (ms = 1) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -3,7 +3,7 @@ import * as Comlink from 'comlink';
 import { enablePatches, Patch, produceWithPatches } from 'immer';
 
 import { defaultWorkerWindowStoreReplica } from '@bangle.io/constants';
-import { getWindowStoreConfig } from '@bangle.io/lib-common';
+import { getWindowStoreConfig } from '@bangle.io/lib-window-common';
 import { superJson } from '@bangle.io/nsm-3';
 import {
   WindowActions,

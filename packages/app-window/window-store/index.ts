@@ -4,7 +4,7 @@ import {
   defaultWindowStoreConfig,
   getWindowStoreConfigRef,
   WindowStoreConfig,
-} from '@bangle.io/lib-common';
+} from '@bangle.io/lib-window-common';
 import { allMiscSlices } from '@bangle.io/misc-slices';
 import {
   customBangleScheduler,

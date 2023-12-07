@@ -1,6 +1,6 @@
 import { cleanup, createKey } from '@nalanda/core';
 
-import { getWindowStoreConfig } from '@bangle.io/lib-common';
+import { getWindowStoreConfig } from '@bangle.io/lib-window-common';
 import { WorkspaceInfo } from '@bangle.io/shared-types';
 
 const key = createKey('slice-workspaces', []);

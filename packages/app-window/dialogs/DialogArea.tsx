@@ -11,7 +11,10 @@ import { sliceUI } from '@bangle.io/slice-ui';
 
 import { FileConfirmDeleteDialog } from './dialogs/FileConfirmDeleteDialog';
 import { WorkspaceConfirmDeleteDialogComponent } from './dialogs/WorkspaceConfirmDeleteDialog';
-import { WorkspaceCreateDialog } from './dialogs/WorkspaceCreateDialog';
+import { WorkspaceCreateBrowserDialog } from './dialogs/WorkspaceCreateBrowserDialog';
+import { WorkspaceCreateNativeFSDialog } from './dialogs/WorkspaceCreateNativeFSDialog';
+import { WorkspaceCreateSelectTypeDialog } from './dialogs/WorkspaceCreateSelectTypeDialog';
+import { logger } from './logger';
 import { registerDialogComponent } from './register-dialogs';
 
 const dialogRegistry: Record<string, (props: AppDialog) => React.ReactNode> =
@@ -25,8 +28,20 @@ registerDialogComponent(
 
 registerDialogComponent(
   dialogRegistry,
-  APP_DIALOG_NAME.workspaceCreate,
-  WorkspaceCreateDialog,
+  APP_DIALOG_NAME.workspaceCreateBrowser,
+  WorkspaceCreateBrowserDialog,
+);
+
+registerDialogComponent(
+  dialogRegistry,
+  APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+  WorkspaceCreateSelectTypeDialog,
+);
+
+registerDialogComponent(
+  dialogRegistry,
+  APP_DIALOG_NAME.workspaceCreateNativeFS,
+  WorkspaceCreateNativeFSDialog,
 );
 
 registerDialogComponent(
@@ -47,6 +62,7 @@ export function DialogArea() {
     const DialogComponent = dialogRegistry[dialog.name];
 
     if (!DialogComponent) {
+      logger.warn('Dialog not found', dialog.name);
       return null;
     }
 

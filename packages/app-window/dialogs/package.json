@@ -29,16 +29,25 @@
   "dependencies": {
     "@types/react": "^18.2.37",
     "react": "^18.2.0",
+    "@testing-library/react": "^14.1.2",
     "@nalanda/react": "^0.2.3",
     "@adobe/react-spectrum": "^3.32.2",
     "@bangle.io/dialog-maker": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
-    "@bangle.io/ui": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/lib-common": "workspace:*",
+    "@bangle.io/lib-window-common": "workspace:*",
     "@bangle.io/misc-slices": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-page": "workspace:*",
+    "@bangle.io/baby-fs": "workspace:*",
+    "@spectrum-icons/workflow": "^4.2.7",
+    "@spectrum-icons/ui": "^3.6.2",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/css-vars": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils-react": "workspace:*",
+    "@bangle.io/test-utils-slice": "workspace:*"
   }
 }

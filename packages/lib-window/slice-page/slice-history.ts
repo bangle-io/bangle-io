@@ -6,7 +6,7 @@ import {
   createTo,
   MemoryHistory,
 } from '@bangle.io/history';
-import { getWindowStoreConfig } from '@bangle.io/lib-common';
+import { getWindowStoreConfig } from '@bangle.io/lib-window-common';
 import type { AppLocation } from '@bangle.io/shared-types';
 
 /**

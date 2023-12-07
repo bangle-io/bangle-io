@@ -48,7 +48,7 @@ function WorkspaceActions({ disabledKeys, onAction }: WorkspaceActionsProps) {
   );
 }
 
-export default function PageWorkspaceSelectionPage() {
+export function PageWorkspaceSelect() {
   const store = useStore();
 
   const { widescreen } = useTrack(sliceUI);
@@ -80,7 +80,10 @@ export default function PageWorkspaceSelectionPage() {
         break;
       case ACTION_KEY.newWorkspace:
         store.dispatch(
-          sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceCreate, {}),
+          sliceUI.actions.showDialog(
+            APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+            {},
+          ),
         );
         break;
       case ACTION_KEY.deleteWorkspace: {
@@ -116,7 +119,10 @@ export default function PageWorkspaceSelectionPage() {
         }}
         createWorkspace={() => {
           store.dispatch(
-            sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceCreate, {}),
+            sliceUI.actions.showDialog(
+              APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+              {},
+            ),
           );
         }}
       />

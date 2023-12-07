@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/lib-common",
+  "name": "@bangle.io/lib-window-common",
   "description": "A common pack for all lib packages",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib-window/lib-common"
+    "directory": "packages/lib-window/lib-window-common"
   },
   "authors": [
     {
