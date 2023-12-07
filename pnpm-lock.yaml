@@ -460,9 +460,6 @@ importers:
       '@bangle.io/slice-workspace':
         specifier: workspace:*
         version: link:../../lib-window/slice-workspace
-      '@bangle.io/ui':
-        specifier: workspace:*
-        version: link:../../lib-window/ui
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../lib/ws-path
@@ -1005,9 +1002,6 @@ importers:
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.37
-      path-to-regexp:
-        specifier: ^6.2.1
-        version: 6.2.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1047,12 +1041,6 @@ importers:
       page-lifecycle:
         specifier: ^0.1.2
         version: 0.1.2
-      path-to-regexp:
-        specifier: ^6.2.1
-        version: 6.2.1
-      wouter:
-        specifier: ^2.12.1
-        version: 2.12.1(react@18.2.0)
     devDependencies:
       '@bangle.io/test-utils-slice':
         specifier: workspace:*
