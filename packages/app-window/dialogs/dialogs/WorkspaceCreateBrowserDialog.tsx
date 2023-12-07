@@ -1,31 +1,47 @@
 import {
-  ActionButton,
   Button,
   ButtonGroup,
-  Checkbox,
   Content,
   Dialog,
-  DialogTrigger,
   Divider,
+  Footer,
   Form,
   Header,
   Heading,
+  Link,
   Text,
   TextField,
   useDialogContainer,
 } from '@adobe/react-spectrum';
+import { useStore } from '@nalanda/react';
 import React from 'react';
 
-type CreateWorkspaceDialogProps = {
-  onConfirm: (options: { wsName: string }) => void;
-};
+import { WorkspaceType } from '@bangle.io/constants';
+import { AppDialog } from '@bangle.io/dialog-maker';
+import { getWindowStoreConfig } from '@bangle.io/lib-window-common';
+import { sliceWorkspaces } from '@bangle.io/misc-slices';
+import { APP_DIALOG_NAME } from '@bangle.io/slice-ui';
 
-export function CreateWorkspaceDialog({
-  onConfirm,
-}: CreateWorkspaceDialogProps) {
-  let dialog = useDialogContainer();
+type DialogProps = Extract<
+  AppDialog,
+  { name: (typeof APP_DIALOG_NAME)['workspaceCreateBrowser'] }
+>;
+
+export function WorkspaceCreateBrowserDialog({ name }: DialogProps) {
+  const dialog = useDialogContainer();
+  const store = useStore();
+  const { eternalVars } = getWindowStoreConfig(store);
 
   const [wsName, updateWsName] = React.useState<string>('');
+
+  const onConfirm = () => {
+    void eternalVars.appDatabase.createWorkspaceInfo({
+      metadata: {},
+      name: wsName,
+      type: WorkspaceType.Browser,
+    });
+    dialog.dismiss();
+  };
 
   return (
     <Dialog>
@@ -43,9 +59,7 @@ export function CreateWorkspaceDialog({
             if (!wsName) {
               return;
             }
-            onConfirm({
-              wsName,
-            });
+            onConfirm();
           }}
         >
           Create
@@ -60,9 +74,7 @@ export function CreateWorkspaceDialog({
             if (!wsName) {
               return;
             }
-            onConfirm({
-              wsName,
-            });
+            onConfirm();
           }}
         >
           <TextField
@@ -74,6 +86,11 @@ export function CreateWorkspaceDialog({
           />
         </Form>
       </Content>
+      <Footer>
+        <Link target="_blank" href="https://bangle.io/privacy">
+          Your data stays with you
+        </Link>
+      </Footer>
     </Dialog>
   );
 }

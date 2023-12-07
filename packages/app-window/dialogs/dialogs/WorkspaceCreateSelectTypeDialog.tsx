@@ -10,11 +10,15 @@ import {
   Link,
   ListBox,
   Text,
+  useDialogContainer,
 } from '@adobe/react-spectrum';
+import { useStore } from '@nalanda/react';
 import React from 'react';
 
 import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
+import { AppDialogName } from '@bangle.io/dialog-maker';
+import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 
 let nativeFsSupport = supportsNativeBrowserFs();
 
@@ -23,10 +27,27 @@ const disabledStorageType: WorkspaceType[] = [
 ].filter((r): r is WorkspaceType => Boolean(r));
 
 export function WorkspaceCreateSelectTypeDialog() {
-  const [selectedKeys, setSelectedKeys] = React.useState<string>(
+  const [selectedKey, setSelectedKey] = React.useState<WorkspaceType>(
     nativeFsSupport ? WorkspaceType.NativeFS : WorkspaceType.Browser,
   );
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { dismiss } = useDialogContainer();
 
+  const store = useStore();
+
+  const onNext = () => {
+    let dialogType: AppDialogName = APP_DIALOG_NAME.workspaceCreateBrowser;
+    switch (selectedKey) {
+      case WorkspaceType.NativeFS:
+        dialogType = APP_DIALOG_NAME.workspaceCreateNativeFS;
+        break;
+      case WorkspaceType.Browser:
+        dialogType = APP_DIALOG_NAME.workspaceCreateBrowser;
+        break;
+    }
+
+    store.dispatch(sliceUI.actions.showDialog(dialogType, {}));
+  };
   return (
     <Dialog>
       <Heading>Select a workspace type</Heading>
@@ -37,10 +58,10 @@ export function WorkspaceCreateSelectTypeDialog() {
           aria-label="Options"
           selectionMode="single"
           disabledKeys={disabledStorageType}
-          selectedKeys={[selectedKeys]}
+          selectedKeys={[selectedKey]}
           onSelectionChange={(selection) => {
             if (selection !== 'all' && selection.size === 1) {
-              setSelectedKeys(selection.values().next().value);
+              setSelectedKey(selection.values().next().value);
             }
           }}
         >
@@ -68,10 +89,10 @@ export function WorkspaceCreateSelectTypeDialog() {
         </Link>
       </Footer>
       <ButtonGroup>
-        <Button variant="secondary" onPress={close}>
+        <Button variant="secondary" onPress={dismiss}>
           Cancel
         </Button>
-        <Button variant="accent" onPress={close} autoFocus>
+        <Button variant="accent" onPress={onNext} autoFocus>
           Next
         </Button>
       </ButtonGroup>

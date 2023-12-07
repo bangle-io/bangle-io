@@ -119,7 +119,10 @@ export function PageWorkspaceSelect() {
         }}
         createWorkspace={() => {
           store.dispatch(
-            sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceCreate, {}),
+            sliceUI.actions.showDialog(
+              APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+              {},
+            ),
           );
         }}
       />

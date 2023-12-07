@@ -436,12 +436,18 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/css-vars':
+        specifier: workspace:*
+        version: link:../../shared/css-vars
       '@bangle.io/dialog-maker':
         specifier: workspace:*
         version: link:../../lib/dialog-maker
       '@bangle.io/lib-window-common':
         specifier: workspace:*
         version: link:../../lib-window/lib-window-common
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices
@@ -463,6 +469,12 @@ importers:
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
+      '@spectrum-icons/ui':
+        specifier: ^3.6.2
+        version: 3.6.2(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
+      '@spectrum-icons/workflow':
+        specifier: ^4.2.7
+        version: 4.2.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
       '@testing-library/react':
         specifier: ^14.1.2
         version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
@@ -476,6 +488,9 @@ importers:
       '@bangle.io/test-utils-react':
         specifier: workspace:*
         version: link:../../test-utils/test-utils-react
+      '@bangle.io/test-utils-slice':
+        specifier: workspace:*
+        version: link:../../test-utils/test-utils-slice
 
   packages/app-window/editor:
     dependencies:

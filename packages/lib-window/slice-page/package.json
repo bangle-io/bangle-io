@@ -27,8 +27,6 @@
     "page-lifecycle": "^0.1.2",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "wouter": "^2.12.1",
-    "path-to-regexp": "^6.2.1",
     "@bangle.io/constants": "workspace:*"
   },
   "devDependencies": {
