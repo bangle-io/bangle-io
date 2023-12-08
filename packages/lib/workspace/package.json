@@ -33,7 +33,8 @@
     "@bangle.io/ws-path": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/file-storage-nativefs": "workspace:*"
+    "@bangle.io/file-storage-nativefs": "workspace:*",
+    "@bangle.io/app-errors": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/app-database": "workspace:*",

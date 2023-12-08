@@ -1,3 +1,4 @@
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import { readFileAsText } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
 import { FileStorageIndexedDB } from '@bangle.io/file-storage-indexeddb';
@@ -51,7 +52,13 @@ export class Workspace {
     const info = await this.config.database.getWorkspaceInfo(this.wsName);
 
     if (!info) {
-      throw new Error(`Workspace ${this.wsName} not found`);
+      throwAppError(
+        APP_ERROR_NAME.workspaceNotFound,
+        `Workspace ${this.wsName} not found`,
+        {
+          wsName: this.wsName,
+        },
+      );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison

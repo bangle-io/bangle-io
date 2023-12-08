@@ -6,7 +6,7 @@ test('throwAppError throws an error with correct structure', () => {
 
   try {
     throwAppError(
-      APP_ERROR_NAME.workspaceNativeFSAuthError,
+      APP_ERROR_NAME.workspaceNativeFSAuth,
       'My Error message',
       testPayload,
     );
@@ -20,7 +20,7 @@ test('throwAppError throws an error with correct structure', () => {
 
     expect(error.cause).toMatchObject({
       isBangleError: true,
-      name: APP_ERROR_NAME.workspaceNativeFSAuthError,
+      name: APP_ERROR_NAME.workspaceNativeFSAuth,
       payload: testPayload,
     });
   }
@@ -32,7 +32,7 @@ test('handleAppError correctly processes a Bangle error', () => {
 
   try {
     throwAppError(
-      APP_ERROR_NAME.workspaceNativeFSAuthError,
+      APP_ERROR_NAME.workspaceNativeFSAuth,
       'My Error message',
       testPayload,
     );
@@ -43,7 +43,7 @@ test('handleAppError correctly processes a Bangle error', () => {
 
     const result = handleAppError(error, (info, providedError) => {
       expect(info).toMatchObject({
-        name: APP_ERROR_NAME.workspaceNativeFSAuthError,
+        name: APP_ERROR_NAME.workspaceNativeFSAuth,
         payload: testPayload,
       });
 

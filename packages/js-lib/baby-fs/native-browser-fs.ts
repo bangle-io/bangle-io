@@ -129,7 +129,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   async readFile(filePath: string): Promise<File> {
     this._verifyFilePath(filePath);
 
-    await verifyPermission(this._rootDirHandle, filePath);
+    await verifyPermission(this._rootDirHandle);
     const { fileHandle } = await this._resolveFileHandle(
       this._rootDirHandle,
       filePath,
@@ -177,7 +177,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async stat(filePath: string) {
-    await verifyPermission(this._rootDirHandle, filePath);
+    await verifyPermission(this._rootDirHandle);
     const { fileHandle } = await this._resolveFileHandle(
       this._rootDirHandle,
       filePath,
@@ -191,7 +191,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   async unlink(filePath: string) {
     this._verifyFilePath(filePath);
 
-    await verifyPermission(this._rootDirHandle, filePath);
+    await verifyPermission(this._rootDirHandle);
 
     const { fileHandle, parentHandles } = await this._resolveFileHandle(
       this._rootDirHandle,
@@ -205,7 +205,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   async writeFile(filePath: string, data: File) {
     this._verifyFilePath(filePath);
     this._verifyFileType(data);
-    await verifyPermission(this._rootDirHandle, filePath);
+    await verifyPermission(this._rootDirHandle);
 
     let fileHandle: FileSystemFileHandle | undefined;
     let shouldCreateFile = false;
@@ -244,10 +244,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
 export class NativeBrowserFileSystemError extends BaseFileSystemError {}
 
-async function verifyPermission(
-  rootDirHandle: FileSystemDirectoryHandle,
-  filePath = '',
-) {
+async function verifyPermission(rootDirHandle: FileSystemDirectoryHandle) {
   let permission = await hasPermission(rootDirHandle);
 
   if (!permission) {

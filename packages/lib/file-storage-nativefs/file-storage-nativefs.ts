@@ -1,3 +1,4 @@
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -60,8 +61,12 @@ export class FileStorageNativeFS implements BaseFileStorageProvider {
     assertRootDirHandle(rootDirHandle);
 
     if (!(await hasPermission(rootDirHandle))) {
-      throw new Error(
-        `Cannot create workspace with rootDirHandle ${rootDirHandle.name} without permission`,
+      throwAppError(
+        APP_ERROR_NAME.workspaceNativeFSAuth,
+        `Need permission for ${rootDirHandle.name}`,
+        {
+          wsName: options.wsName,
+        },
       );
     }
 

@@ -2,8 +2,9 @@ export const APP_DIALOG_NAME = {
   workspaceCreateBrowser: 'dialog::workspace:create-browser',
   workspaceCreateNativeFS: 'dialog::workspace:create-native-fs',
   workspaceCreateSelectTypeDialog: 'dialog::workspace:create:select-type',
-
   workspaceConfirmDelete: 'dialog::workspace:confirm-delete',
+  workspaceAuthNativeFS: 'dialog::workspace:auth-native-fs',
+
   fileConfirmDelete: 'dialog::file:confirm-delete',
 } as const;
 
@@ -34,15 +35,10 @@ export type AppDialog =
       payload: {
         wsPath: string;
       };
+    }
+  | {
+      name: (typeof APP_DIALOG_NAME)['workspaceAuthNativeFS'];
+      payload: {
+        workspaceName: string;
+      };
     };
-
-export function dialogMaker<T extends AppDialogName>(
-  name: T,
-  payload: Extract<AppDialog, { name: T }>['payload'],
-): AppDialog {
-  const result = {
-    name,
-    payload,
-  };
-  return result as any;
-}

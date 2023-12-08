@@ -32,7 +32,7 @@ export function WorkspaceTable({
   workspaces?: WorkspaceInfo[];
   selectedKey: string | undefined;
   updateSelectedKey: (key: string) => void;
-  goToWorkspace: (wsName: string) => void;
+  goToWorkspace: (wsInfo: WorkspaceInfo) => void;
   createWorkspace: () => void;
 }) {
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
@@ -79,7 +79,13 @@ export function WorkspaceTable({
         }
       }}
       onAction={(selection) => {
-        goToWorkspace(selection.toString());
+        const wsInfo = sortedWorkspaces.find(
+          (wsInfo) => wsInfo.name === selection.toString(),
+        );
+        if (!wsInfo) {
+          return;
+        }
+        goToWorkspace(wsInfo);
       }}
       maxHeight={widescreen ? '50vh' : undefined}
       minHeight="size-4600"

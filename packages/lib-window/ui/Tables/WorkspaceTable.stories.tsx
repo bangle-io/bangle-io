@@ -42,8 +42,7 @@ export const Default: Story = {
     workspaces: mockWorkspaces,
     selectedKey: undefined,
     updateSelectedKey: (key: string) => console.log(`Selected key: ${key}`),
-    goToWorkspace: (wsName: string) =>
-      console.log(`Go to workspace: ${wsName}`),
+    goToWorkspace: (ws) => console.log(`Go to workspace: ${ws.name}`),
     createWorkspace: () => console.log('Create new workspace'),
   },
 };

@@ -430,6 +430,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../../lib/app-errors
       '@bangle.io/baby-fs':
         specifier: workspace:*
         version: link:../../js-lib/baby-fs
@@ -542,6 +545,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -1222,6 +1228,9 @@ importers:
 
   packages/lib/file-storage-nativefs:
     dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/baby-fs':
         specifier: workspace:*
         version: link:../../js-lib/baby-fs
@@ -1267,6 +1276,9 @@ importers:
 
   packages/lib/workspace:
     dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/baby-fs':
         specifier: workspace:*
         version: link:../../js-lib/baby-fs

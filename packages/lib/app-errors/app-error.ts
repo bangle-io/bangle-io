@@ -1,17 +1,32 @@
 import { isPlainObject } from '@bangle.io/mini-js-utils';
 
 export const APP_ERROR_NAME = {
-  workspaceNativeFSAuthError: 'error::workspace:native-fs-auth',
+  workspaceNativeFSAuth: 'error::workspace:native-fs-auth',
+  workspaceNotFound: 'error::workspace:not-found',
+  workspaceCorrupted: 'error::workspace:corrupted',
 } as const;
 
 export type AppErrorName = (typeof APP_ERROR_NAME)[keyof typeof APP_ERROR_NAME];
 
-export type AppError = {
-  name: (typeof APP_ERROR_NAME)['workspaceNativeFSAuthError'];
-  payload: {
-    wsName: string;
-  };
-};
+export type AppError =
+  | {
+      name: (typeof APP_ERROR_NAME)['workspaceNativeFSAuth'];
+      payload: {
+        wsName: string;
+      };
+    }
+  | {
+      name: (typeof APP_ERROR_NAME)['workspaceNotFound'];
+      payload: {
+        wsName: string;
+      };
+    }
+  | {
+      name: (typeof APP_ERROR_NAME)['workspaceCorrupted'];
+      payload: {
+        wsName: string;
+      };
+    };
 
 type CauseObject = {
   isBangleError: boolean;
