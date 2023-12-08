@@ -10,6 +10,7 @@ import {
 import { sliceUI } from '@bangle.io/slice-ui';
 
 import { FileConfirmDeleteDialog } from './dialogs/FileConfirmDeleteDialog';
+import { WorkspaceAuthNativeFSDialog } from './dialogs/WorkspaceAuthNativeFSDialog';
 import { WorkspaceConfirmDeleteDialogComponent } from './dialogs/WorkspaceConfirmDeleteDialog';
 import { WorkspaceCreateBrowserDialog } from './dialogs/WorkspaceCreateBrowserDialog';
 import { WorkspaceCreateNativeFSDialog } from './dialogs/WorkspaceCreateNativeFSDialog';
@@ -42,6 +43,12 @@ registerDialogComponent(
   dialogRegistry,
   APP_DIALOG_NAME.workspaceCreateNativeFS,
   WorkspaceCreateNativeFSDialog,
+);
+
+registerDialogComponent(
+  dialogRegistry,
+  APP_DIALOG_NAME.workspaceAuthNativeFS,
+  WorkspaceAuthNativeFSDialog,
 );
 
 registerDialogComponent(

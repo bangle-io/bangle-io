@@ -451,9 +451,6 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/misc-slices':
-        specifier: workspace:*
-        version: link:../misc-slices
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../../lib-window/slice-page
@@ -545,6 +542,9 @@ importers:
       '@adobe/react-spectrum':
         specifier: ^3.32.2
         version: 3.32.2(react-dom@18.2.0)(react@18.2.0)
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../../lib/app-errors
       '@bangle.io/baby-fs':
         specifier: workspace:*
         version: link:../../js-lib/baby-fs
@@ -557,6 +557,9 @@ importers:
       '@bangle.io/misc-slices':
         specifier: workspace:*
         version: link:../misc-slices
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
       '@bangle.io/slice-page':
         specifier: workspace:*
         version: link:../../lib-window/slice-page

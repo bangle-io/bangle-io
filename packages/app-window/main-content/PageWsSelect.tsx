@@ -5,7 +5,11 @@ import FolderDelete from '@spectrum-icons/workflow/FolderDelete';
 import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React from 'react';
 
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
+import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
+import { WorkspaceType } from '@bangle.io/constants';
 import { sliceWorkspaces } from '@bangle.io/misc-slices';
+import { WorkspaceInfo } from '@bangle.io/shared-types';
 import { slicePage } from '@bangle.io/slice-page';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import { MainContentWrapper, WorkspaceTable } from '@bangle.io/ui';
@@ -71,13 +75,50 @@ export function PageWorkspaceSelect() {
     ? []
     : [ACTION_KEY.openWorkspace, ACTION_KEY.deleteWorkspace];
 
+  const goToWorkspace = (wsInfo: WorkspaceInfo) => {
+    const goTo = () => {
+      store.dispatch(
+        slicePage.actions.goTo((location) =>
+          locationHelpers.goToWorkspaceHome(location, wsInfo.name),
+        ),
+      );
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    if (wsInfo.type !== WorkspaceType.NativeFS) {
+      goTo();
+      return;
+    }
+
+    const rootDirHandle = wsInfo.metadata.rootDirHandle;
+    if (!rootDirHandle) {
+      throwAppError(
+        APP_ERROR_NAME.workspaceCorrupted,
+        'Workspace has no rootDirHandle',
+        {
+          wsName: wsInfo.name,
+        },
+      );
+    }
+
+    void requestNativeBrowserFSPermission(rootDirHandle).then((granted) => {
+      if (granted) {
+        goTo();
+      } else {
+        // TODO: show error
+      }
+    });
+  };
   const handleAction = (key: React.Key) => {
     switch (key) {
-      case ACTION_KEY.openWorkspace:
-        store.dispatch(
-          slicePage.actions.goTo({ pathname: '/ws/' + selectedWsKey }),
-        );
+      case ACTION_KEY.openWorkspace: {
+        const match = workspaces?.find((ws) => ws.name === selectedWsKey);
+        if (!match) {
+          return;
+        }
+        goToWorkspace(match);
         break;
+      }
       case ACTION_KEY.newWorkspace:
         store.dispatch(
           sliceUI.actions.showDialog(
@@ -110,13 +151,7 @@ export function PageWorkspaceSelect() {
         workspaces={workspaces}
         selectedKey={selectedWsKey}
         updateSelectedKey={updateSelectedWsKey}
-        goToWorkspace={(wsName) => {
-          store.dispatch(
-            slicePage.actions.goTo((location) =>
-              locationHelpers.goToWorkspaceHome(location, wsName),
-            ),
-          );
-        }}
+        goToWorkspace={goToWorkspace}
         createWorkspace={() => {
           store.dispatch(
             sliceUI.actions.showDialog(
