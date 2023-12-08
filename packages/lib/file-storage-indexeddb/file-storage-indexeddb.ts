@@ -100,10 +100,6 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
     return result;
   }
 
-  onNewWorkspace(wsName: string, createOpts: any) {
-    // no-op
-  }
-
   async readFile(wsPath: string): Promise<File | undefined> {
     if (!(await this.fileExists(wsPath))) {
       return undefined;

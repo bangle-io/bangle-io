@@ -175,7 +175,7 @@ export function WorkspaceForm({
     >
       <Header UNSAFE_className="font-bold">Choose Location</Header>
       <Text>
-        Please select a directory to store your Bangle.io notes. This can be an
+        Please select a folder to store your Bangle.io notes. This can be an
         existing folder or a new one.
       </Text>
       <div>
@@ -204,14 +204,14 @@ function SelectedDirectory({
 }) {
   return (
     <Flex direction="row" gap="size-200" alignItems="center">
-      <Text UNSAFE_className="font-italic">Directory:</Text>
+      <Text UNSAFE_className="font-italic">Folder:</Text>
       <div>
         <TooltipTrigger placement="bottom">
           <ActionButton isQuiet onPress={resetSelection}>
             <Text UNSAFE_className="font-bold">{wsName}</Text>
             <CrossMediumIcon />
           </ActionButton>
-          <Tooltip>This is the directory you selected</Tooltip>
+          <Tooltip>This is the folder you selected</Tooltip>
         </TooltipTrigger>
       </div>
     </Flex>
@@ -255,7 +255,7 @@ function PickStorageDirectory({
         error instanceof Error &&
         error.message
           .toLocaleLowerCase()
-          .includes('permission to edit directory was denied')
+          .includes('permission to edit folder was denied')
       ) {
         setError(ERROR_TYPES.WORKSPACE_AUTH_REJECTED);
         return;

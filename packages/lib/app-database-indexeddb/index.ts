@@ -23,7 +23,7 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
     throw new BaseError({
       message: `Error writing to Indexeddb`,
       code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-      thrower: this.name,
+      cause: this.name,
     });
   }
 

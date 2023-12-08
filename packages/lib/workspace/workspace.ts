@@ -1,6 +1,7 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
 import { FileStorageIndexedDB } from '@bangle.io/file-storage-indexeddb';
+import { FileStorageNativeFS } from '@bangle.io/file-storage-nativefs';
 import {
   AppDatabase,
   BaseFileStorageProvider,
@@ -56,6 +57,10 @@ export class Workspace {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (info?.type === WorkspaceType.Browser) {
       this.provider = new FileStorageIndexedDB();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    else if (info?.type === WorkspaceType.NativeFS) {
+      this.provider = new FileStorageNativeFS();
     } else {
       throw new Error(`Workspace type ${info?.type} not implemented`);
     }
@@ -66,7 +71,7 @@ export class Workspace {
 
     await this.provider.onInit({
       wsName: this.wsName,
-
+      initialMetadata: info.metadata,
       onChange: (event) => {
         if (this.destroyed) {
           return;

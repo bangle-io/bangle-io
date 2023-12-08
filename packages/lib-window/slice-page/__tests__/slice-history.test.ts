@@ -7,9 +7,20 @@ import { getHistoryRef, sliceHistory } from '../slice-history';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 describe('sliceHistory', () => {
   test('initial empty state', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
     });
 
@@ -33,6 +44,7 @@ describe('sliceHistory', () => {
 
   test('goTo', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
     });
 
@@ -81,6 +93,7 @@ describe('sliceHistory', () => {
 
   test('goTo with browser', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
       useMemoryHistory: false,
     });
@@ -130,6 +143,7 @@ describe('sliceHistory', () => {
 
   test('navigation with replace history', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
     });
 
@@ -159,6 +173,7 @@ describe('sliceHistory', () => {
 
   test('navigation with search parameter', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
     });
 
@@ -189,6 +204,7 @@ describe('sliceHistory', () => {
 
   test('cleanup function destroys history', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
     });
     await ctx.runEffects();
@@ -214,6 +230,7 @@ describe('sliceHistory with browser', () => {
   test('initial empty state with browser', async () => {
     const debugCalls = jest.fn();
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
       useMemoryHistory: false,
       debugCalls: debugCalls,
@@ -234,6 +251,7 @@ describe('sliceHistory with browser', () => {
   test('reacts to external changes to history', async () => {
     const debugCalls = jest.fn();
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceHistory],
       useMemoryHistory: false,
       debugCalls: debugCalls,

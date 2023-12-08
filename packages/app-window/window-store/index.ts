@@ -18,6 +18,8 @@ import { sliceWorkspace } from '@bangle.io/slice-workspace';
 import { logger } from './logger';
 import { sliceSyncWithWindowStore } from './sync-with-worker';
 
+// NOTE: be careful when updating this, also make sure test-utils-slice
+// is in sync with this
 export function createWindowStore(
   eternalVars: WindowStoreConfig['eternalVars'],
   optionalConfig: Partial<Omit<WindowStoreConfig, 'eternalVars'>> = {},

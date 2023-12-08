@@ -73,7 +73,7 @@ export class AppDatabase {
           throw new BaseError({
             message: `Workspace with name ${wsName} already exists`,
             code: AppDatabaseErrorCode.WORKSPACE_EXISTS,
-            thrower: 'AppDatabase',
+            cause: 'AppDatabase',
           });
         }
 
@@ -111,7 +111,7 @@ export class AppDatabase {
           throw new BaseError({
             message: `Workspace with name ${wsName} does not exist`,
             code: AppDatabaseErrorCode.WORKSPACE_NOT_FOUND,
-            thrower: 'AppDatabase',
+            cause: 'AppDatabase',
           });
         }
 
@@ -147,7 +147,7 @@ export class AppDatabase {
           throw new BaseError({
             message: `Workspace with name ${name} does not exist`,
             code: AppDatabaseErrorCode.WORKSPACE_NOT_FOUND,
-            thrower: 'AppDatabase',
+            cause: 'AppDatabase',
           });
         }
 
@@ -228,7 +228,7 @@ export class AppDatabase {
         throw new BaseError({
           message: `Invalid metadata for workspace ${name}`,
           code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-          thrower: 'AppDatabase',
+          cause: 'AppDatabase',
         });
       }
 
@@ -254,7 +254,7 @@ export class AppDatabase {
       throw new BaseError({
         message: `Invalid misc data for workspace ${key}`,
         code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-        thrower: 'AppDatabase',
+        cause: 'AppDatabase',
       });
     }
 
@@ -268,7 +268,7 @@ export class AppDatabase {
       throw new BaseError({
         message: `Invalid data for workspace ${key}`,
         code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-        thrower: 'AppDatabase',
+        cause: 'AppDatabase',
       });
     }
 

@@ -1,14 +1,8 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
-import { Dialog, DialogContainer } from '@adobe/react-spectrum';
-import {
-  fireEvent,
-  getByText,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { DialogContainer } from '@adobe/react-spectrum';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { TestProvider } from '@bangle.io/test-utils-react';
@@ -23,7 +17,16 @@ import {
   WorkspaceCreateErrorTypes,
   WorkspaceCreateNativeFSDialog,
 } from '../WorkspaceCreateNativeFSDialog';
-import { WorkspaceCreateSelectTypeDialog } from '../WorkspaceCreateSelectTypeDialog';
+
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(() => {
+  abortController.abort();
+});
 
 jest.mock('@bangle.io/baby-fs', () => {
   const original = jest.requireActual('@bangle.io/baby-fs');
@@ -84,7 +87,9 @@ errorTypes.forEach((errorType) => {
 
 describe('dialog', () => {
   it('renders correctly', () => {
-    const ctx = setupSliceTestStore({});
+    const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
+    });
 
     render(
       <TestProvider store={ctx.store}>
@@ -99,7 +104,9 @@ describe('dialog', () => {
   });
 
   it('picks correctly', async () => {
-    const ctx = setupSliceTestStore({});
+    const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
+    });
 
     render(
       <TestProvider store={ctx.store}>
@@ -116,6 +123,22 @@ describe('dialog', () => {
     });
 
     // TODO: Implement this by using the store and eternal vars
-    // fireEvent.click(screen.getByText('Create Workspace'));
+    fireEvent.click(screen.getByText('Create Workspace'));
+
+    const newWorkspaces = await ctx.appDatabase.getAllWorkspaces();
+
+    expect(newWorkspaces.length).toEqual(1);
+    expect(newWorkspaces?.[0]?.name).toEqual('test-dir');
+    expect(newWorkspaces?.[0]).toEqual({
+      name: 'test-dir',
+      type: 'nativefs',
+      deleted: false,
+      lastModified: expect.any(Number),
+      metadata: {
+        rootDirHandle: {
+          name: 'test-dir',
+        },
+      },
+    });
   });
 });

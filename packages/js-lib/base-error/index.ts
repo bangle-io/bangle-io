@@ -1,40 +1,24 @@
+import 'error-cause/auto';
+
 export class BaseError extends Error {
-  static fromJsonValue(input: ReturnType<BaseError['toJsonValue']>) {
-    const error = new BaseError({
-      message: input.message,
-      code: input.code ?? undefined,
-      thrower: input.thrower ?? undefined,
-    });
-
-    error.name = input.name;
-
-    if (input.stack) {
-      error.stack = input.stack;
-    }
-
-    return error;
-  }
-
   code?: string;
-  thrower?: string;
   /**
    *
    * @param {*} message
    * @param {*} code - error code
-   * @param {*} thrower - the name of the function that threw the error,
-   *                       useful for enforcing boundaries for extensions.
+   * @param {*} cause - the cause of the error
    */
   constructor({
     message,
     code,
-    thrower,
+    cause,
   }: {
     message: string;
     code?: string;
-    thrower?: string;
+    cause?: unknown;
   }) {
     // 'Error' breaks prototype chain here
-    super(message);
+    super(message, { cause });
 
     // Error.captureStackTrace is a v8-specific method so not avilable on
     // Firefox or Safari
@@ -62,20 +46,5 @@ export class BaseError extends Error {
     if (code) {
       this.code = code;
     }
-    this.thrower = thrower;
-  }
-
-  toJsonValue() {
-    let message = this.message;
-
-    let name = this.name;
-
-    return {
-      name,
-      message,
-      thrower: this.thrower,
-      code: this.code ?? null,
-      stack: this.stack,
-    };
   }
 }

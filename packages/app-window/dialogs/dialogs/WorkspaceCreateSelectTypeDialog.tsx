@@ -20,7 +20,7 @@ import { WorkspaceType } from '@bangle.io/constants';
 import { AppDialogName } from '@bangle.io/dialog-maker';
 import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 
-let nativeFsSupport = supportsNativeBrowserFs();
+const nativeFsSupport = supportsNativeBrowserFs();
 
 const disabledStorageType: WorkspaceType[] = [
   !nativeFsSupport && WorkspaceType.NativeFS,
@@ -66,7 +66,10 @@ export function WorkspaceCreateSelectTypeDialog() {
           }}
         >
           <Item key={WorkspaceType.NativeFS} textValue="local-file-storage">
-            <Text UNSAFE_className="font-bold">Local File Storage</Text>
+            <Text UNSAFE_className="font-bold">
+              Local File Storage
+              {nativeFsSupport ? '' : ' (Not supported by your browser)'}
+            </Text>
             <Text slot="description">
               This option allows you to save notes directly to a folder of your
               choice. We recommend it as it provides complete data ownership to

@@ -32,10 +32,7 @@ describe('ToastArea', () => {
   const setup = () => {
     const ctx = setupSliceTestStore({
       slices: [...sliceUIAllSlices],
-    });
-
-    abortController.signal.addEventListener('abort', () => {
-      ctx.store.destroy();
+      abortSignal: abortController.signal,
     });
 
     const onToastReq = jest.fn();

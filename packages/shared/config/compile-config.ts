@@ -30,7 +30,7 @@ export const compileConfig = (): FinalConfig => {
         );
       }
     } catch (error) {
-      console.log('No injected config found');
+      console.debug('No injected config found');
     }
 
     !isTest && transientConfig.print();

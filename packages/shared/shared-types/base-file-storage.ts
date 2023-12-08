@@ -15,6 +15,7 @@ interface FileStat {
 export interface FileStorageOpts {
   wsName: WsName;
   isFileTypeSupported: (options: { extension: string }) => boolean;
+  initialMetadata: Record<string, any>;
   getWorkspaceMetadata: () => Promise<Record<string, any>>;
   updateWorkspaceMetadata: (
     metadata:
@@ -74,12 +75,6 @@ export interface BaseFileStorageProvider {
     abortSignal: AbortSignal,
     options: EmptyObject,
   ) => Promise<WsPath[]>;
-
-  // return any metadata associated with this newly created workspace
-  onNewWorkspace: (
-    wsName: string,
-    options: Record<string, unknown>,
-  ) => void | Promise<void>;
 
   renameFile: (
     wsPath: WsPath,

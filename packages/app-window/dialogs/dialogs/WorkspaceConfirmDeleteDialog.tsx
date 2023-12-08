@@ -13,7 +13,6 @@ import React from 'react';
 
 import { AppDialog } from '@bangle.io/dialog-maker';
 import { getWindowStoreConfig } from '@bangle.io/lib-window-common';
-import { sliceWorkspaces } from '@bangle.io/misc-slices';
 import { APP_DIALOG_NAME } from '@bangle.io/slice-ui';
 
 type DialogProps = Extract<

@@ -17,6 +17,16 @@ jest.mock('page-lifecycle', () => {
   };
 });
 
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 let lifeCycleMock = lifeCycle;
 
 beforeEach(() => {
@@ -29,6 +39,7 @@ beforeEach(() => {
 describe('sliceLifecycle', () => {
   test('sets up correctly', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceLifeCycle],
     });
 
@@ -49,6 +60,7 @@ describe('sliceLifecycle', () => {
 
     beforeEach(async () => {
       ctx = setupSliceTestStore({
+        abortSignal: abortController.signal,
         slices: [sliceLifeCycle],
       });
     });

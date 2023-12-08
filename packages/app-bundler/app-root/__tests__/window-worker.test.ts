@@ -11,6 +11,16 @@ import { createWindowStore } from '@bangle.io/window-store';
 
 import { getDebugFlag } from '../helpers';
 
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 describe('createBroadcaster', () => {
   // Mock for BroadcastChannel
   const mockBroadcastChannel = {
@@ -45,6 +55,7 @@ describe('createBroadcaster', () => {
       naukarRemote,
       debugFlags,
       baseDatabase: database,
+      abortSignal: abortController.signal,
     });
 
     const windowStore = createWindowStore(eternalVars, {

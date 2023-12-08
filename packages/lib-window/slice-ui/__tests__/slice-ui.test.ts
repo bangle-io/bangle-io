@@ -17,6 +17,16 @@ jest.mock('@bangle.io/window-utils', () => {
   };
 });
 
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 let createResizeEmitter = () =>
   Emitter.create<{
     event: 'resize';
@@ -77,6 +87,7 @@ describe('sliceUI', () => {
     document.documentElement.classList.add('BU_widescreen');
 
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
 
@@ -85,6 +96,7 @@ describe('sliceUI', () => {
 
   test('default state is correct', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     const state = sliceUI.get(ctx.store.state);
@@ -97,6 +109,7 @@ describe('sliceUI', () => {
 
   test('toggleActivitybar works with explicit true and false', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
 
@@ -110,6 +123,7 @@ describe('sliceUI', () => {
 
   test('toggleActivitybar toggles state when undefined', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     let state = ctx.store.state;
@@ -120,6 +134,7 @@ describe('sliceUI', () => {
 
   test('resizing works', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     expect(await ctx.runEffects()).toBeGreaterThan(0);
@@ -138,6 +153,7 @@ describe('sliceUI', () => {
 
   test('toggling left aside if right is open in tight screen should close right', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     expect(await ctx.runEffects()).toBeGreaterThan(0);
@@ -156,6 +172,7 @@ describe('sliceUI', () => {
 
   test('toggling left aside if right is open in wide screen should not close right', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     expect(await ctx.runEffects()).toBeGreaterThan(0);
@@ -172,6 +189,7 @@ describe('sliceUI', () => {
 
   test('toggling right aside if left is open in wide screen should not close left', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     expect(await ctx.runEffects()).toBeGreaterThan(0);
@@ -188,6 +206,7 @@ describe('sliceUI', () => {
 
   test('toggling right aside if left is open in tight screen should close left', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: sliceUIAllSlices,
     });
     expect(await ctx.runEffects()).toBeGreaterThan(0);

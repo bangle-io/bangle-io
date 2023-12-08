@@ -27,6 +27,7 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   naukarRemote: NaukarRemote;
   naukarTerminate: () => Promise<void>;
 } {
+  const abortController = new AbortController();
   // directly load the worker code in main thread, helpful for testing
   if (debugFlags.testDisableWorker) {
     const database =
@@ -42,6 +43,7 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
       parentInfo: {
         browserContextId: BROWSING_CONTEXT_ID,
       },
+      abortSignal: abortController.signal,
     });
     const naukarInstance = new Naukar({
       eternalVars,
@@ -61,10 +63,12 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
     return {
       naukarRemote: naukarRemote,
       naukarTerminate: async () => {
+        abortController.abort();
         return naukarRemote.destroy();
       },
     };
   }
+
   const worker = new Worker(
     new URL('./worker-scope-only/worker.ts', import.meta.url),
     {
@@ -93,6 +97,7 @@ export function setupWorker({ debugFlags }: { debugFlags: DebugFlags }): {
   });
 
   const naukarTerminate = async () => {
+    abortController.abort();
     logger.warn('Terminating naukar worker');
     await naukarConstructor.destroy();
 

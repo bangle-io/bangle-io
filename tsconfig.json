@@ -27,7 +27,12 @@
     "skipLibCheck": true,
     "strict": true,
     "stripInternal": true,
-    "target": "es2021",
+    "target": "es2022",
+    "lib": [
+      "dom",
+      "es2022",
+      "dom.iterable"
+    ],
     "useDefineForClassFields": true,
   },
   "include": [

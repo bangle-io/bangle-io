@@ -51,6 +51,10 @@ function setupNaukar(): NaukarInitialize & NaukarBare {
         debugFlags: config.debugFlags,
         baseDatabase: database,
         parentInfo: config.parentInfo,
+        // this is not actually ever used as we directly terminate the worker
+        // this exists so that we can have some way to abort it in tests.
+        // For more context see the code that sets up eternalVars for the testDebugFlag debugFlags.testDisableWorker
+        abortSignal: new AbortController().signal,
       });
 
       naukarInstance = new Naukar({

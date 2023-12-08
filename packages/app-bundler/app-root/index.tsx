@@ -20,7 +20,7 @@ const rootElement = document.getElementById('root');
 assertIsDefined(rootElement, 'root element is not defined');
 const root = ReactDOM.createRoot(rootElement);
 
-let _terminateNaukar: (() => Promise<void>) | undefined;
+const abortController = new AbortController();
 
 main().catch((error) => {
   root.render(
@@ -28,7 +28,7 @@ main().catch((error) => {
       <ShowAppRootError error={error} />
     </React.StrictMode>,
   );
-  void _terminateNaukar?.();
+  abortController.abort();
   throw error;
 });
 
@@ -55,8 +55,13 @@ async function main() {
     config,
     naukar: naukarRemote,
   };
-
-  _terminateNaukar = naukarTerminate;
+  abortController.signal.addEventListener(
+    'abort',
+    () => {
+      void naukarTerminate();
+    },
+    { once: true },
+  );
 
   const database =
     debugFlags.testAppDatabase === 'memory'
@@ -67,6 +72,8 @@ async function main() {
     naukarRemote,
     debugFlags,
     baseDatabase: database,
+    // not used but useful for tests
+    abortSignal: abortController.signal,
   });
 
   root.render(

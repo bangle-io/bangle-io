@@ -11,9 +11,20 @@ import {
   sliceUIToast,
 } from '../slice-ui-toast';
 
+let abortController = new AbortController();
+
+beforeEach(() => {
+  abortController = new AbortController();
+});
+
+afterEach(() => {
+  abortController.abort();
+});
+
 describe('sliceUIToast', () => {
   test('init', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceUIToast],
     });
 
@@ -30,6 +41,7 @@ describe('sliceUIToast', () => {
 
   test('queue multiple toasts', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceUIToast],
     });
 
@@ -53,6 +65,7 @@ describe('sliceUIToast', () => {
 
   test('queue toast with duration', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceUIToast],
     });
 
@@ -75,6 +88,7 @@ describe('sliceUIToast', () => {
 
   test('clear specific toast', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceUIToast],
     });
 
@@ -91,6 +105,7 @@ describe('sliceUIToast', () => {
 
   test('clear all toasts', () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceUIToast],
     });
 
@@ -105,6 +120,7 @@ describe('sliceUIToast', () => {
 
   test('store destroyed', async () => {
     const ctx = setupSliceTestStore({
+      abortSignal: abortController.signal,
       slices: [sliceUIToast],
     });
     const onClearAll = jest.fn();
