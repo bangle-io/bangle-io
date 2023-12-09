@@ -360,6 +360,9 @@ importers:
       '@bangle.io/activitybar':
         specifier: workspace:*
         version: link:../activitybar
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../../lib/app-errors
       '@bangle.io/app-routing':
         specifier: workspace:*
         version: link:../../lib-window/app-routing
@@ -369,6 +372,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/dialog-maker':
+        specifier: workspace:*
+        version: link:../../lib/dialog-maker
       '@bangle.io/dialogs':
         specifier: workspace:*
         version: link:../dialogs
@@ -1153,6 +1159,9 @@ importers:
 
   packages/lib/app-database:
     dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error
@@ -1178,6 +1187,9 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../app-database
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error
@@ -1216,6 +1228,9 @@ importers:
 
   packages/lib/file-storage-indexeddb:
     dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/baby-fs':
         specifier: workspace:*
         version: link:../../js-lib/baby-fs
@@ -1249,6 +1264,9 @@ importers:
 
   packages/lib/user-preference:
     dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error

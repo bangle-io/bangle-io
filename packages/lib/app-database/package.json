@@ -29,7 +29,8 @@
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/mini-js-utils": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/app-errors": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/app-database-in-memory": "workspace:*"

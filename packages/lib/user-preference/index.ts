@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import { BaseError } from '@bangle.io/base-error';
 import { COLOR_SCHEME } from '@bangle.io/constants';
 import { safeJSONParse, safeJSONStringify } from '@bangle.io/safe-json';
@@ -84,10 +85,14 @@ export class UserPreferenceManager {
     const validated = userPreferenceSchema.safeParse(partialPrefs);
 
     if (!validated.success) {
-      throw new BaseError({
-        message: 'Unable to update user preferences, invalid data',
-        code: 'USER_PREFERENCE_INVALID_DATA',
-      });
+      validated.error.toString();
+      throwAppError(
+        APP_ERROR_NAME.userPreferenceInvalidData,
+        'Unable to update user preferences, invalid data',
+        {
+          stringError: validated.error.toString(),
+        },
+      );
     }
 
     const currentPrefs = await this.readUserPreference();

@@ -1,4 +1,4 @@
-import { BaseError } from '@bangle.io/base-error';
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import { isPlainObject } from '@bangle.io/mini-js-utils';
 import type {
   BaseAppDatabase,
@@ -7,7 +7,6 @@ import type {
   WorkspaceInfo,
 } from '@bangle.io/shared-types';
 
-import { AppDatabaseErrorCode } from './error-codes';
 const WORKSPACE_INFO_TABLE =
   'workspace-info' satisfies DatabaseQueryOptions['tableName'];
 const MISC_TABLE = 'misc' satisfies DatabaseQueryOptions['tableName'];
@@ -70,11 +69,13 @@ export class AppDatabase {
       wsName,
       (existing) => {
         if (existing.found && !(existing.value as WorkspaceInfo)?.deleted) {
-          throw new BaseError({
-            message: `Workspace with name ${wsName} already exists`,
-            code: AppDatabaseErrorCode.WORKSPACE_EXISTS,
-            cause: 'AppDatabase',
-          });
+          throwAppError(
+            APP_ERROR_NAME.workspaceExists,
+            `Cannot create workspace as it already exists`,
+            {
+              wsName,
+            },
+          );
         }
 
         const value: WorkspaceInfo = {
@@ -108,11 +109,13 @@ export class AppDatabase {
       wsName,
       (existing) => {
         if (!existing.found) {
-          throw new BaseError({
-            message: `Workspace with name ${wsName} does not exist`,
-            code: AppDatabaseErrorCode.WORKSPACE_NOT_FOUND,
-            cause: 'AppDatabase',
-          });
+          throwAppError(
+            APP_ERROR_NAME.workspaceNotFound,
+            `Cannot delete workspace as it does not exist`,
+            {
+              wsName,
+            },
+          );
         }
 
         const value: WorkspaceInfo = {
@@ -144,11 +147,13 @@ export class AppDatabase {
       name,
       (existing) => {
         if (!existing.found) {
-          throw new BaseError({
-            message: `Workspace with name ${name} does not exist`,
-            code: AppDatabaseErrorCode.WORKSPACE_NOT_FOUND,
-            cause: 'AppDatabase',
-          });
+          throwAppError(
+            APP_ERROR_NAME.workspaceNotFound,
+            `Cannot update workspace as it does not exist`,
+            {
+              wsName: name,
+            },
+          );
         }
 
         const existingValue = existing.value as WorkspaceInfo;
@@ -225,11 +230,13 @@ export class AppDatabase {
       const finalMetadata = metadata(wsInfo.metadata ?? {});
 
       if (!isPlainObject(finalMetadata)) {
-        throw new BaseError({
-          message: `Invalid metadata for workspace ${name}`,
-          code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-          cause: 'AppDatabase',
-        });
+        throwAppError(
+          APP_ERROR_NAME.workspaceCorrupted,
+          `Invalid metadata for workspace ${name}`,
+          {
+            wsName: name,
+          },
+        );
       }
 
       return {
@@ -251,10 +258,8 @@ export class AppDatabase {
     }
 
     if (typeof data.value !== 'string') {
-      throw new BaseError({
-        message: `Invalid misc data for workspace ${key}`,
-        code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-        cause: 'AppDatabase',
+      throwAppError(APP_ERROR_NAME.appDatabaseMiscData, `Invalid misc data`, {
+        key,
       });
     }
 
@@ -265,11 +270,13 @@ export class AppDatabase {
 
   async setMiscData(key: string, data: string): Promise<void> {
     if (typeof data !== 'string') {
-      throw new BaseError({
-        message: `Invalid data for workspace ${key}`,
-        code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-        cause: 'AppDatabase',
-      });
+      throwAppError(
+        APP_ERROR_NAME.appDatabaseMiscData,
+        `Invalid data for workspace ${key}`,
+        {
+          key,
+        },
+      );
     }
 
     await this.config.database.updateEntry(

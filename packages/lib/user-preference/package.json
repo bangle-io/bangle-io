@@ -32,7 +32,8 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/safe-json": "workspace:*"
+    "@bangle.io/safe-json": "workspace:*",
+    "@bangle.io/app-errors": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/app-database-in-memory": "workspace:*",
