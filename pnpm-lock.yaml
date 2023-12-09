@@ -137,6 +137,9 @@ importers:
       '@unocss/reset':
         specifier: ^0.57.6
         version: 0.57.6
+      error-cause:
+        specifier: ^1.0.6
+        version: 1.0.6
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -270,6 +273,9 @@ importers:
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
+      error-cause:
+        specifier: ^1.0.6
+        version: 1.0.6
 
   packages/app-bundler/ui-theme:
     dependencies:
@@ -808,11 +814,7 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
 
-  packages/js-lib/base-error:
-    dependencies:
-      error-cause:
-        specifier: ^1.0.6
-        version: 1.0.6
+  packages/js-lib/base-error: {}
 
   packages/js-lib/browser: {}
 
@@ -1332,6 +1334,9 @@ importers:
 
   packages/lib/ws-path:
     dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error

@@ -10,6 +10,7 @@ export const bangleWorkspaceConfigSchema = z.object({
 
 export const banglePackageConfigSchema = z.object({
   type: z.enum(['nodejs', 'browser', 'universal']),
+  skipValidation: z.boolean().optional(),
 });
 
 export type BangleWorkspaceConfig = z.infer<typeof bangleWorkspaceConfigSchema>;

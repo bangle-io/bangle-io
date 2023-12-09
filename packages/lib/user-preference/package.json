@@ -31,7 +31,6 @@
     "zod": "^3.22.4",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/safe-json": "workspace:*",
     "@bangle.io/app-errors": "workspace:*"
   },

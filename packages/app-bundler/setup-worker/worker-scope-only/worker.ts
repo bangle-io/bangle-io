@@ -1,3 +1,5 @@
+import 'error-cause/auto';
+
 import * as Sentry from '@sentry/browser';
 import * as Comlink from 'comlink';
 

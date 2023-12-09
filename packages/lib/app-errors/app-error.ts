@@ -16,6 +16,8 @@ export const APP_ERROR_NAME = {
   fileOpsNotAllowed: 'error::file-ops:not-allowed',
 
   userPreferenceInvalidData: 'error::user-preference:invalid-data',
+
+  wsPathValidation: 'error::ws-path:validation',
 } as const;
 
 export type AppErrorName = (typeof APP_ERROR_NAME)[keyof typeof APP_ERROR_NAME];
@@ -86,6 +88,12 @@ export type AppError =
       name: (typeof APP_ERROR_NAME)['fileOpsNotAllowed'];
       payload: {
         operation: string;
+      };
+    }
+  | {
+      name: (typeof APP_ERROR_NAME)['wsPathValidation'];
+      payload: {
+        invalidPath: string;
       };
     };
 

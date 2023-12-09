@@ -1,5 +1,6 @@
 import { makeLogger, makeThrowValidationError } from '../lib';
 import { Package, setup, Workspace } from '../lib/workspace-helper';
+
 void setup().then(async (item) => {
   const logger = makeLogger('validate');
   let promises: Promise<any>[] = [];
@@ -68,7 +69,7 @@ async function shouldOnlyUseDependenciesDefinedInPackageJSON(
   for (const [name, pkg] of packageMap.entries()) {
     const deps = (
       await pkg.getImportedPackages((file) => file.isTsSrcFile)
-    ).filter((dep) => !dep.startsWith('node:'));
+    ).filter((dep) => !dep.startsWith('node:') && !dep.startsWith('virtual:'));
 
     for (const dep of deps) {
       if (!pkg.dependencies[dep]) {

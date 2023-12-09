@@ -28,6 +28,7 @@
     "start-expose": "vite --host 0.0.0.0"
   },
   "dependencies": {
+    "error-cause": "^1.0.6",
     "@bangle.io/app": "workspace:*",
     "@bangle.io/app-database-in-memory": "workspace:*",
     "@bangle.io/app-database-indexeddb": "workspace:*",

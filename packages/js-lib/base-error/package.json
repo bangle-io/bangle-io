@@ -26,8 +26,6 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "error-cause": "^1.0.6"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }

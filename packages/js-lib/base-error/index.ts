@@ -1,5 +1,3 @@
-import 'error-cause/auto';
-
 export class BaseError extends Error {
   code?: string;
   /**

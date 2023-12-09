@@ -7,6 +7,8 @@ import {
   BangleWorkspaceConfig,
   bangleWorkspaceConfigSchema,
 } from './constants';
+import { findAllExportedPaths } from './find-all-exported-paths';
+import { findAllImportedPackages } from './find-all-imported-paths';
 
 const root = path.resolve(__dirname, '../../../..');
 
@@ -129,11 +131,20 @@ export async function setup() {
 
   const packageStateMap = Object.fromEntries(
     packagesResolved
-      .filter(
-        (p) =>
+      .filter((p) => {
+        const banglePackageConfig = p.packageJSON.banglePackageConfig as
+          | BanglePackageConfig
+          | undefined;
+
+        if (banglePackageConfig?.skipValidation) {
+          return false;
+        }
+
+        return (
           !p.packageJSON.bangleWorkspaceConfig &&
-          p.packageJSON.name !== 'bangle-io',
-      )
+          p.packageJSON.name !== 'bangle-io'
+        );
+      })
       .map((p): [string, PackageState] => {
         const parentDir = path.basename(
           path.dirname(path.resolve(p.path, '..')),
@@ -353,17 +364,20 @@ export class Package {
 
     await this.forEachFile(
       async ({ content }) => {
-        for (const importPath of extractImportPaths(content)) {
-          if (importPath.startsWith('.')) {
+        for (const forwardedPath of [
+          ...findAllImportedPackages(content),
+          ...findAllExportedPaths(content),
+        ]) {
+          if (forwardedPath.startsWith('.')) {
             continue;
           }
 
           // ignore adding full path
-          if (importPath.startsWith('@')) {
-            const [scope, pkg] = importPath.split('/');
+          if (forwardedPath.startsWith('@')) {
+            const [scope, pkg] = forwardedPath.split('/');
             importedPackages.add([scope, pkg].join('/'));
           } else {
-            importedPackages.add(importPath.split('/')[0]!);
+            importedPackages.add(forwardedPath.split('/')[0]!);
           }
         }
       },
@@ -538,23 +552,6 @@ class FileHelper {
 
     return this.contentCache;
   }
-}
-
-function extractImportPaths(sourceCode: string): string[] {
-  // Regular expression with named capturing group 'path' to match only the paths from ESM import statements
-  const importRegex = /from\s*["'](?<path>[^"']+)["'];/gi;
-
-  let match;
-  const paths: string[] = [];
-
-  // While we find matches in the source code, extract the path using the named group and add it to the paths array
-  while ((match = importRegex.exec(sourceCode)) !== null) {
-    if (match.groups?.path) {
-      paths.push(match.groups.path);
-    }
-  }
-
-  return paths;
 }
 
 export function isAValidBanglePackage(name: string, packages: Package[]) {

@@ -68,6 +68,13 @@ export function appErrorHandler(
         });
         break;
       }
+      case APP_ERROR_NAME.wsPathValidation: {
+        showToast({
+          label: `${error.message}`,
+          type: 'negative',
+        });
+        break;
+      }
       default: {
         let x: never = info;
         return false;

@@ -1,4 +1,5 @@
 import './style';
+import 'error-cause/auto';
 
 import * as Sentry from '@sentry/react';
 import React from 'react';

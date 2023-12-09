@@ -24,6 +24,7 @@
   "main": "index.ts",
   "scripts": {},
   "dependencies": {
+    "error-cause": "^1.0.6",
     "@bangle.io/app-database-in-memory": "workspace:*",
     "@bangle.io/app-database-indexeddb": "workspace:*",
     "@bangle.io/config": "workspace:*",

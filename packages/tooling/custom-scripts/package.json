@@ -18,7 +18,8 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "nodejs"
+    "type": "nodejs",
+    "skipValidation": true
   },
   "main": "index.ts",
   "module": "index.js",

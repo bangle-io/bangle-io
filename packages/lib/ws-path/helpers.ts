@@ -1,4 +1,4 @@
-import { BaseError } from '@bangle.io/base-error';
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import { getLast } from '@bangle.io/mini-js-utils';
 type WsPath = string;
 type WsName = string;
@@ -14,7 +14,6 @@ export function hasValidNoteExtension(str: string) {
 
 export function createWsName(wsName: string): WsName {
   validWsName(wsName);
-
   return wsName;
 }
 
@@ -22,7 +21,6 @@ export function createWsPath(wsPath: string, validate = true): WsPath {
   if (validate) {
     validateWsPath(wsPath);
   }
-
   return wsPath;
 }
 
@@ -30,9 +28,7 @@ export function getExtension(str: string) {
   if (str.includes('/')) {
     str = str.slice(str.lastIndexOf('/') + 1);
   }
-
   const dotIndex = str.lastIndexOf('.');
-
   return dotIndex === -1 ? undefined : str.slice(dotIndex);
 }
 
@@ -50,7 +46,6 @@ export function suffixWithNoteExtension(str: string) {
 
 export function removeExtension(str: string) {
   const dotIndex = str.lastIndexOf('.');
-
   return dotIndex === -1 ? str : str.slice(0, dotIndex);
 }
 
@@ -66,7 +61,6 @@ export type MaybeWsPath = string | undefined;
 export function resolvePath(wsPath: string, skipValidation = true) {
   if (!skipValidation) {
     validateWsPath(wsPath);
-    // TODO currently this only works for fileWsPaths
     validateFileWsPath(wsPath);
   }
   const [wsName, filePath] = splitWsPath(wsPath);
@@ -74,12 +68,12 @@ export function resolvePath(wsPath: string, skipValidation = true) {
   const fileName: string | undefined = getLast(filePathSplitted);
 
   if (typeof fileName !== 'string') {
-    throw new Error('fileName undefined');
+    throwAppError(APP_ERROR_NAME.wsPathValidation, 'fileName undefined', {
+      invalidPath: '',
+    });
   }
-  const dirPath = filePathSplitted
-    .slice(0, filePathSplitted.length - 1)
-    .filter(Boolean)
-    .join('/');
+
+  const dirPath = filePathSplitted.slice(0, -1).filter(Boolean).join('/');
 
   return {
     wsPath,
@@ -90,8 +84,6 @@ export function resolvePath(wsPath: string, skipValidation = true) {
     fileNameWithoutExt: removeExtension(fileName),
   };
 }
-
-export class PathValidationError extends BaseError {}
 
 export function isValidWsName(wsName: string | undefined): boolean {
   if (!wsName) {
@@ -106,14 +98,22 @@ export function isValidWsName(wsName: string | undefined): boolean {
 
 export function validWsName(wsName: string) {
   if (wsName === '') {
-    throw new PathValidationError({
-      message: 'Invalid wsName "' + wsName + '" .',
-    });
+    throwAppError(
+      APP_ERROR_NAME.wsPathValidation,
+      'Invalid wsName "' + wsName + '" .',
+      {
+        invalidPath: wsName,
+      },
+    );
   }
   if (wsName.includes(':')) {
-    throw new PathValidationError({
-      message: 'Invalid characters in  "' + wsName + '" .',
-    });
+    throwAppError(
+      APP_ERROR_NAME.wsPathValidation,
+      'Invalid characters in "' + wsName + '" .',
+      {
+        invalidPath: wsName,
+      },
+    );
   }
 }
 
@@ -155,41 +155,48 @@ export function isValidFileWsPath(wsPath: string) {
 
 export function validateWsPath(wsPath: string) {
   if (wsPath.split('/').some((r) => r.length === 0)) {
-    throw new PathValidationError({ message: 'Invalid path ' + wsPath });
-  }
-
-  const [wsName, filePath, ...others] = wsPath.split(':');
-
-  if (others.length > 0) {
-    throw new PathValidationError({
-      message: 'Semicolon not allowed file path',
+    throwAppError(APP_ERROR_NAME.wsPathValidation, 'Invalid path ' + wsPath, {
+      invalidPath: wsPath,
     });
   }
-
+  const [wsName, filePath, ...others] = wsPath.split(':');
+  if (others.length > 0) {
+    throwAppError(
+      APP_ERROR_NAME.wsPathValidation,
+      'Semicolon not allowed in file path',
+      {
+        invalidPath: wsPath,
+      },
+    );
+  }
   if (!isWsPath(wsPath)) {
-    throw new PathValidationError({ message: 'Invalid wsPath ' + wsPath });
+    throwAppError(APP_ERROR_NAME.wsPathValidation, 'Invalid wsPath ' + wsPath, {
+      invalidPath: wsPath,
+    });
   }
 }
 
-// a file wsPath is workspace path to a file
 export function validateFileWsPath(wsPath: string) {
   if (!isValidFileWsPath(wsPath)) {
-    throw new PathValidationError({ message: 'Invalid wsPath ' + wsPath });
+    throwAppError(APP_ERROR_NAME.wsPathValidation, 'Invalid wsPath ' + wsPath, {
+      invalidPath: wsPath,
+    });
   }
-
   validateWsPath(wsPath);
 }
 
-// a note wsPath is any wsPath that is a note i.e. ends with VALID_NOTE_EXTENSIONS
 export function validateNoteWsPath(wsPath: string) {
   validateFileWsPath(wsPath);
-
   if (!isValidNoteWsPath(wsPath)) {
-    throw new PathValidationError({
-      message: `Bangle.io support the following file extensions for notes: ${VALID_NOTE_EXTENSIONS.join(
+    throwAppError(
+      APP_ERROR_NAME.wsPathValidation,
+      `Bangle.io supports the following file extensions for notes: ${VALID_NOTE_EXTENSIONS.join(
         ', ',
       )}`,
-    });
+      {
+        invalidPath: wsPath,
+      },
+    );
   }
 }
 
@@ -211,17 +218,21 @@ export function sanitizeFilePath(filePath: string) {
  */
 export function parseLocalFilePath(filePath: string, wsPath: WsPath): WsPath {
   if (filePath.includes(':')) {
-    throw new PathValidationError({
-      message: 'Invalid character ":" in  "' + filePath + '" .',
-    });
+    throwAppError(
+      APP_ERROR_NAME.wsPathValidation,
+      'Invalid character ":" in "' + filePath + '" .',
+      {
+        invalidPath: filePath,
+      },
+    );
   }
 
   if (filePath.startsWith('./')) {
     filePath = filePath.slice(2);
   }
+
   const { wsName, dirPath } = resolvePath(wsPath);
   let sampleDomain = 'https://bangle.io';
-
   if (dirPath) {
     sampleDomain += '/' + dirPath + '/';
   }
@@ -241,31 +252,29 @@ export function parseLocalFilePath2(filePath: string, wsPath: WsPath): WsPath {
 
 export const toFSPath = (wsPath: string) => {
   const { wsName, filePath } = resolvePath(wsPath);
-
   return [wsName, filePath].join('/');
 };
 
 export function fromFsPath(fsPath: string) {
   const [_wsName, ...f] = fsPath.split('/');
-
   if (!_wsName || _wsName.includes(':')) {
     return undefined;
   }
-
   return filePathToWsPath(_wsName, f.join('/'));
 }
 
 export function splitWsPath(wsPath: string): [string, string] {
   const [wsName, filePath] = wsPath.split(':');
-
   if (!wsName) {
-    throw new PathValidationError({ message: 'Invalid wsName' });
+    throwAppError(APP_ERROR_NAME.wsPathValidation, 'Invalid wsName', {
+      invalidPath: wsPath,
+    });
   }
-
   if (!filePath) {
-    throw new PathValidationError({ message: 'Invalid filePath' });
+    throwAppError(APP_ERROR_NAME.wsPathValidation, 'Invalid filePath', {
+      invalidPath: wsPath,
+    });
   }
-
   return [wsName, filePath];
 }
 
@@ -273,6 +282,5 @@ export function filePathToWsPath(wsName: string, filePath: string) {
   if (filePath.startsWith('/')) {
     filePath = filePath.slice(1);
   }
-
   return wsName + ':' + filePath;
 }

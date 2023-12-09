@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
-import { BaseError } from '@bangle.io/base-error';
 import { COLOR_SCHEME } from '@bangle.io/constants';
 import { safeJSONParse, safeJSONStringify } from '@bangle.io/safe-json';
 import type { AppDatabase } from '@bangle.io/shared-types';

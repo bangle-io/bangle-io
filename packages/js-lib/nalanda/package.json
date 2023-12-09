@@ -29,5 +29,6 @@
   "dependencies": {
     "@nalanda/core": "^0.2.3",
     "@nalanda/react": "^0.2.3"
-  }
+  },
+  "devDependencies": {}
 }
