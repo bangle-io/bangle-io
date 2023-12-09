@@ -30,8 +30,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/db-key-val": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/app-database": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/app-errors": "workspace:*"
   }
 }

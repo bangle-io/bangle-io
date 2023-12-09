@@ -28,7 +28,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/app-errors": "workspace:*"
   },
