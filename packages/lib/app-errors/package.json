@@ -27,7 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*"
   }
 }

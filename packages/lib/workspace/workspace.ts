@@ -163,8 +163,12 @@ export class Workspace {
 
   async readFileAsText(wsPath: string): Promise<string | undefined> {
     if (!isValidNoteWsPath(wsPath)) {
-      throw new Error(
-        `readFileAsText: ${wsPath} is not a valid note file path`,
+      throwAppError(
+        APP_ERROR_NAME.fileStorageInvalidNotePath,
+        `${wsPath} is not a valid note file path`,
+        {
+          invalidWsPath: wsPath,
+        },
       );
     }
 
@@ -219,8 +223,12 @@ export class Workspace {
     const { wsName: newWsName } = resolvePath(newWsPath);
 
     if (currentWsName !== newWsName) {
-      throw new Error(
+      throwAppError(
+        APP_ERROR_NAME.fileOpsNotAllowed,
         `Cannot rename file ${oldWsPath} to ${newWsPath} as they are in different workspaces`,
+        {
+          operation: 'rename',
+        },
       );
     }
 

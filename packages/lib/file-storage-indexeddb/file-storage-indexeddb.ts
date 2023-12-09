@@ -1,3 +1,4 @@
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -9,7 +10,6 @@ import type {
   FileStorageOpts,
 } from '@bangle.io/shared-types';
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
-
 // TODO: watch for changes in the indexeddb by other tabs and emit events
 
 export class FileStorageIndexedDB implements BaseFileStorageProvider {
@@ -127,7 +127,14 @@ export class FileStorageIndexedDB implements BaseFileStorageProvider {
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     if (!(await this.fileExists(wsPath))) {
-      throw new Error(`Cannot write! File ${wsPath} does not exist`);
+      throwAppError(
+        APP_ERROR_NAME.fileStorageFileNotFound,
+        `Cannot write file as it does not exist`,
+        {
+          wsPath,
+          fileStorageName: this.name,
+        },
+      );
     }
 
     const path = toFSPath(wsPath);

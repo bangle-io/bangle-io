@@ -9,7 +9,7 @@ import {
   useDialogContainer,
 } from '@adobe/react-spectrum';
 import { useStore } from '@nalanda/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
@@ -28,6 +28,7 @@ export function WorkspaceAuthNativeFSDialog({ payload, name }: DialogProps) {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { dismiss } = useDialogContainer();
   const store = useStore();
+
   const { eternalVars } = getWindowStoreConfig(store);
   const { workspaceName } = payload;
   const getPermission = async () => {
@@ -61,14 +62,23 @@ export function WorkspaceAuthNativeFSDialog({ payload, name }: DialogProps) {
     );
 
     if (granted) {
-      dismiss();
       store.dispatch(
         slicePage.actions.goTo((location) =>
           locationHelpers.goToWorkspaceHome(location, wsInfo.name),
         ),
       );
+      dismiss();
     }
   };
+
+  useEffect(() => {
+    // this exists so we can rerender workspace home  page after grant
+    store.dispatch(
+      slicePage.actions.goTo((location) =>
+        locationHelpers.goToWorkspaceSelection(location),
+      ),
+    );
+  }, [store]);
 
   return (
     <Dialog>

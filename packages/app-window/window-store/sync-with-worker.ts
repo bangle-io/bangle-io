@@ -35,6 +35,19 @@ key.effect((store) => {
       }
       queueToast(store, options.toastRequest);
     },
+
+    queueDialog: async (options) => {
+      if (destroyed) {
+        return;
+      }
+      store.dispatch(
+        sliceUI.actions.showDialog(
+          options.dialogRequest.name,
+          options.dialogRequest.payload,
+        ),
+      );
+    },
+
     pageBlockPageReload: async ({ block }) => {
       if (destroyed) {
         return;

@@ -98,7 +98,7 @@ describe('workspace creation', () => {
     // Attempt to create the same workspace again
     await expect(
       appDatabase.createWorkspaceInfo(workspaceInfo),
-    ).rejects.toThrow('Workspace with name Existing Workspace already exists');
+    ).rejects.toThrow('Cannot create workspace as it already exists');
 
     expect(mockDatabase.updateEntry).toHaveBeenCalledTimes(2);
     expect(mockDatabase.updateEntry).toHaveBeenNthCalledWith(
@@ -292,7 +292,7 @@ describe('workspace metadata', () => {
 
     await expect(
       appDatabase.updateWorkspaceInfo(workspaceName, metadataUpdateFunction),
-    ).rejects.toThrow('Workspace with name Test Workspace does not exist');
+    ).rejects.toThrow('Cannot update workspace as it does not exist');
 
     expect(workspaceTable.size).toBe(0);
   });

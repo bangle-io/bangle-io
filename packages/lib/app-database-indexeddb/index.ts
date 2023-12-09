@@ -1,5 +1,4 @@
-import { AppDatabaseErrorCode } from '@bangle.io/app-database';
-import { BaseError } from '@bangle.io/base-error';
+import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
 import { makeDbRecord } from '@bangle.io/db-key-val';
 import type {
   BaseAppDatabase,
@@ -19,12 +18,16 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
   name = 'AppDatabaseIndexedDB';
 
   private throwUnknownError(error: any): never {
-    logger.error(error);
-    throw new BaseError({
-      message: `Error writing to Indexeddb`,
-      code: AppDatabaseErrorCode.UNKNOWN_ERROR,
-      cause: this.name,
-    });
+    if (error instanceof Error) {
+      throwAppError(
+        APP_ERROR_NAME.appDatabaseIndexedDB,
+        `Error writing to IndexedDB`,
+        {
+          error,
+        },
+      );
+    }
+    throw error;
   }
 
   async getAllEntries({ tableName }: DatabaseQueryOptions): Promise<unknown[]> {

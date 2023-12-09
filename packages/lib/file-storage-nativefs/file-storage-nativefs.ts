@@ -180,7 +180,14 @@ export class FileStorageNativeFS implements BaseFileStorageProvider {
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     if (!(await this.fileExists(wsPath))) {
-      throw new Error(`Cannot write! File ${wsPath} does not exist`);
+      throwAppError(
+        APP_ERROR_NAME.fileStorageFileNotFound,
+        `Cannot write file as it does not exist`,
+        {
+          wsPath,
+          fileStorageName: this.name,
+        },
+      );
     }
 
     const path = toFSPath(wsPath);

@@ -30,6 +30,7 @@
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "@bangle.io/app-errors": "workspace:*"
   }
 }

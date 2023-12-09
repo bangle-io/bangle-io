@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/app-database-indexeddb",
+  "name": "@bangle.io/app-error-handler",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/app-database-indexeddb"
+    "directory": "packages/lib/app-error-handler"
   },
   "authors": [
     {
@@ -18,7 +18,7 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
   },
   "main": "index.ts",
   "module": "index.ts",
@@ -27,9 +27,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/db-key-val": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/app-errors": "workspace:*"
+    "@bangle.io/app-errors": "workspace:*",
+    "@bangle.io/dialog-maker": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
   }
 }
