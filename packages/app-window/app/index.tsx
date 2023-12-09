@@ -60,7 +60,7 @@ function Main() {
 
   useEffect(() => {
     const handleRejection = (event: PromiseRejectionEvent | ErrorEvent) => {
-      const handle = (error: unknown) => {
+      const handle = (error: Error) => {
         return appErrorHandler(
           error,
           (dialog) => {
@@ -77,12 +77,14 @@ function Main() {
       if ('reason' in event) {
         let error = event.reason;
         if (handle(error)) {
+          logger.debug(error.cause);
           logger.debug('Handled rejection', error);
           event.preventDefault();
         }
       } else {
         let error = event.error;
         if (handle(error)) {
+          logger.debug(error.cause);
           logger.debug('Handled error', error);
           event.preventDefault();
         }

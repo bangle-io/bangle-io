@@ -139,3 +139,17 @@ export function handleAppError(
 
   return true;
 }
+
+export function isAppError(error: unknown): boolean {
+  if (!(error instanceof Error) || !isPlainObject(error.cause)) {
+    return false;
+  }
+
+  const cause = error.cause as CauseObject;
+
+  if (cause.isBangleError !== true) {
+    return false;
+  }
+
+  return true;
+}

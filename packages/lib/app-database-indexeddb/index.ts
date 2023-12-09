@@ -1,4 +1,8 @@
-import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
+import {
+  APP_ERROR_NAME,
+  isAppError,
+  throwAppError,
+} from '@bangle.io/app-errors';
 import { makeDbRecord } from '@bangle.io/db-key-val';
 import type {
   BaseAppDatabase,
@@ -18,6 +22,10 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
   name = 'AppDatabaseIndexedDB';
 
   private throwUnknownError(error: any): never {
+    if (isAppError(error)) {
+      throw error;
+    }
+
     if (error instanceof Error) {
       throwAppError(
         APP_ERROR_NAME.appDatabaseIndexedDB,
@@ -81,7 +89,6 @@ export class AppDatabaseIndexedDB implements BaseAppDatabase {
   ) {
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
-
     try {
       const db = await getAppDb();
 
