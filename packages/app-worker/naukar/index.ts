@@ -1,5 +1,6 @@
 import { applyPatches, enablePatches, produce } from 'immer';
 
+import { appErrorHandler } from '@bangle.io/app-error-handler';
 import { BaseError } from '@bangle.io/base-error';
 import { Emitter } from '@bangle.io/emitter';
 import { getWindowActionsRef } from '@bangle.io/naukar-common';
@@ -13,7 +14,6 @@ import type {
   NaukarBare,
   WindowActions,
 } from '@bangle.io/shared-types';
-
 enablePatches();
 
 import { logger } from './logger';
@@ -72,30 +72,48 @@ export class Naukar implements NaukarBare {
 
     getWindowActionsRef(this.store).current = this.windowActionProxy.proxy;
 
-    const handleRejection = (error: PromiseRejectionEvent | ErrorEvent) => {
-      let label = 'Worker error';
+    const handleRejection = (event: PromiseRejectionEvent | ErrorEvent) => {
+      const handle = (error: unknown) => {
+        return appErrorHandler(
+          error,
+          (dialog) => {
+            void getWindowActionsRef(this.store)
+              .current?.queueDialog({
+                dialogRequest: dialog,
+              })
+              .catch((error) => {
+                // we swallow this error as we don't want to throw from here
+                // as it can cause infinite loop
+                logger.error('queueToast error', error);
+              });
+          },
+          (toast) => {
+            void getWindowActionsRef(this.store)
+              .current?.queueToast({
+                toastRequest: toast,
+              })
+              .catch((error) => {
+                // we swallow this error as we don't want to throw from here
+                // as it can cause infinite loop
+                logger.error('queueToast error', error);
+              });
+          },
+        );
+      };
 
-      if ('reason' in error) {
-        if (error.reason instanceof BaseError) {
-          label = error.reason.message;
-        } else if (error.reason instanceof Error) {
-          label = error.reason.message;
+      if ('reason' in event) {
+        let error = event.reason;
+        if (handle(error)) {
+          logger.debug('Handled rejection', error);
+          event.preventDefault();
         }
       } else {
-        label = error.error.message;
+        let error = event.error;
+        if (handle(error)) {
+          logger.debug('Handled error', error);
+          event.preventDefault();
+        }
       }
-      getWindowActionsRef(this.store)
-        .current?.queueToast({
-          toastRequest: {
-            label,
-            type: 'negative',
-          },
-        })
-        .catch((error) => {
-          // we swallow this error as we don't want to throw from here
-          // as it can cause infinite loop
-          logger.error('queueToast error', error);
-        });
     };
 
     globalThis.addEventListener?.('unhandledrejection', handleRejection);

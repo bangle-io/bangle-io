@@ -6,8 +6,6 @@ import {
 import { APP_DIALOG_NAME, AppDialog } from '@bangle.io/dialog-maker';
 import { ToastRequest } from '@bangle.io/shared-types';
 
-const DISMISS_TIMEOUT = 8000;
-
 export function appErrorHandler(
   error: unknown,
   showDialog: (dialog: AppDialog) => void,

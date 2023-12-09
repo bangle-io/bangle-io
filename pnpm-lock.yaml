@@ -707,6 +707,9 @@ importers:
 
   packages/app-worker/naukar:
     dependencies:
+      '@bangle.io/app-error-handler':
+        specifier: workspace:*
+        version: link:../../lib/app-error-handler
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error
@@ -1218,7 +1221,11 @@ importers:
         specifier: workspace:*
         version: link:../../js-lib/logger
 
-  packages/lib/dialog-maker: {}
+  packages/lib/dialog-maker:
+    dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
 
   packages/lib/file-storage-indexeddb:
     dependencies:
@@ -1379,6 +1386,9 @@ importers:
       '@bangle.io/app-database':
         specifier: workspace:*
         version: link:../../lib/app-database
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter

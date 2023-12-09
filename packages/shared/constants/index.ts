@@ -1,6 +1,7 @@
 // This package should not import any other package and should be
 // primitives or POJOs only.
 export * from './debug-flags';
+export * from './dialog';
 export * from './editor';
 export * from './eternal-vars';
 export * from './help-fs';
