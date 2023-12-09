@@ -5,6 +5,8 @@ export const APP_DIALOG_NAME = {
   workspaceConfirmDelete: 'dialog::workspace:confirm-delete',
   workspaceAuthNativeFS: 'dialog::workspace:auth-native-fs',
 
+  genericDismissableAction: 'dialog::generic:dismissable-action',
+
   fileConfirmDelete: 'dialog::file:confirm-delete',
 } as const;
 
@@ -40,5 +42,12 @@ export type AppDialog =
       name: (typeof APP_DIALOG_NAME)['workspaceAuthNativeFS'];
       payload: {
         workspaceName: string;
+      };
+    }
+  | {
+      name: (typeof APP_DIALOG_NAME)['genericDismissableAction'];
+      payload: {
+        title: string;
+        message: string;
       };
     };

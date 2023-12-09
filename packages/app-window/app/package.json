@@ -39,7 +39,8 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/app-routing": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/dialogs": "workspace:*"
+    "@bangle.io/dialogs": "workspace:*",
+    "@bangle.io/app-error-handler": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^14.1.2",

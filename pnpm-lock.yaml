@@ -360,9 +360,9 @@ importers:
       '@bangle.io/activitybar':
         specifier: workspace:*
         version: link:../activitybar
-      '@bangle.io/app-errors':
+      '@bangle.io/app-error-handler':
         specifier: workspace:*
-        version: link:../../lib/app-errors
+        version: link:../../lib/app-error-handler
       '@bangle.io/app-routing':
         specifier: workspace:*
         version: link:../../lib-window/app-routing
@@ -372,9 +372,6 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/dialog-maker':
-        specifier: workspace:*
-        version: link:../../lib/dialog-maker
       '@bangle.io/dialogs':
         specifier: workspace:*
         version: link:../dialogs
@@ -1199,6 +1196,18 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/shared-types':
+        specifier: workspace:*
+        version: link:../../shared/shared-types
+
+  packages/lib/app-error-handler:
+    dependencies:
+      '@bangle.io/app-errors':
+        specifier: workspace:*
+        version: link:../app-errors
+      '@bangle.io/dialog-maker':
+        specifier: workspace:*
+        version: link:../dialog-maker
       '@bangle.io/shared-types':
         specifier: workspace:*
         version: link:../../shared/shared-types

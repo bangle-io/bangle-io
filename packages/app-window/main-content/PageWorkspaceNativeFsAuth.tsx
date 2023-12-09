@@ -14,7 +14,6 @@ import { locationHelpers } from '@bangle.io/ws-path';
 
 export function PageWorkspaceNativeFsAuth() {
   const store = useStore();
-  const { wsName } = useTrack(slicePage);
 
   return (
     <IllustratedMessage>
@@ -23,7 +22,6 @@ export function PageWorkspaceNativeFsAuth() {
       <Content>
         <Flex direction="column" gap="size-100">
           Bangle.io needs access to {'"'}
-          {wsName}
           <Flex direction="row" gap="size-100">
             <Button
               style="fill"

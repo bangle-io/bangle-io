@@ -102,9 +102,7 @@ describe('Workspace ', () => {
     const file = new File(['content'], 'file.md', { type: 'text/markdown' });
     await expect(
       workspace.writeFile('test-ws:path/to/file.md', file),
-    ).rejects.toThrow(
-      'Cannot write! File test-ws:path/to/file.md does not exist',
-    );
+    ).rejects.toThrow('Cannot write file as it does not exist');
   });
 
   it('should delete a file', async () => {

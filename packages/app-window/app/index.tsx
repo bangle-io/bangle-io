@@ -5,8 +5,8 @@ import { StoreProvider, useStore, useTrack } from '@nalanda/react';
 import React, { useEffect } from 'react';
 
 import { Activitybar } from '@bangle.io/activitybar';
+import { appErrorHandler } from '@bangle.io/app-error-handler';
 import { Router } from '@bangle.io/app-routing';
-import { BaseError } from '@bangle.io/base-error';
 import { COLOR_SCHEME } from '@bangle.io/constants';
 import { DialogArea } from '@bangle.io/dialogs';
 import { LeftAside } from '@bangle.io/left-aside';
@@ -19,6 +19,7 @@ import { DhanchaSmallscreen, DhanchaWidescreen } from '@bangle.io/ui';
 import { createWindowStore } from '@bangle.io/window-store';
 
 import { ToastArea } from './components/ToastArea';
+import { logger } from './logger';
 
 let store: ReturnType<typeof createWindowStore>;
 
@@ -58,26 +59,33 @@ function Main() {
   const store = useStore();
 
   useEffect(() => {
-    const handleRejection = (error: PromiseRejectionEvent | ErrorEvent) => {
-      let label = 'Encountered an error';
+    const handleRejection = (event: PromiseRejectionEvent | ErrorEvent) => {
+      const handle = (error: unknown) => {
+        return appErrorHandler(
+          error,
+          (dialog) => {
+            store.dispatch(
+              sliceUI.actions.showDialog(dialog.name, dialog.payload),
+            );
+          },
+          (toast) => {
+            queueToast(store, toast);
+          },
+        );
+      };
 
-      if ('reason' in error) {
-        if (error.reason instanceof BaseError) {
-          label = error.reason.message;
-        } else if (error.reason instanceof Error) {
-          label = error.reason.message;
+      if ('reason' in event) {
+        let error = event.reason;
+        if (handle(error)) {
+          logger.debug('Handled rejection', error);
+          event.preventDefault();
         }
       } else {
-        label = error.error.message;
-      }
-
-      try {
-        queueToast(store, {
-          label,
-          type: 'negative',
-        });
-      } catch (error) {
-        console.error(error);
+        let error = event.error;
+        if (handle(error)) {
+          logger.debug('Handled error', error);
+          event.preventDefault();
+        }
       }
     };
 
