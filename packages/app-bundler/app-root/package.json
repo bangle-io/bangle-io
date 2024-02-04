@@ -61,7 +61,7 @@
     "minimist": "^1.2.8",
     "unocss": "^0.58.5",
     "vite": "^5.0.12",
-    "vite-plugin-html": "^3.2.0",
-    "vite-plugin-pwa": "^0.17.0"
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-pwa": "^0.17.5"
   }
 }
