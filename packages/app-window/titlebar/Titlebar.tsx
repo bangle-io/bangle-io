@@ -65,7 +65,7 @@ export function Titlebar() {
             </ToggleButton>
           </div>
         )}
-        {widescreen && (
+        {/* {widescreen && (
           <div>
             <ToggleButton
               isQuiet
@@ -77,7 +77,7 @@ export function Titlebar() {
               <MarginRightIcon size="S" />
             </ToggleButton>
           </div>
-        )}
+        )} */}
       </Flex>
     </div>
   );

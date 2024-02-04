@@ -533,6 +533,9 @@ importers:
       '@nalanda/react':
         specifier: ^0.2.3
         version: 0.2.3(react@18.2.0)
+      '@spectrum-icons/illustrations':
+        specifier: ^3.6.8
+        version: 3.6.8(@react-spectrum/provider@3.9.2)(react@18.2.0)
       '@spectrum-icons/workflow':
         specifier: ^4.2.7
         version: 4.2.7(@react-spectrum/provider@3.9.2)(react-dom@18.2.0)(react@18.2.0)
