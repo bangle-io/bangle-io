@@ -28,7 +28,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/tri-state": "workspace:*",
-    "ts-pattern": "^5.0.5"
-  },
-  "devDependencies": {}
+    "ts-pattern": "^5.0.6"
+  }
 }

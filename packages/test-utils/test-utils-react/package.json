@@ -27,17 +27,16 @@
   },
   "scripts": {},
   "dependencies": {
-    "@adobe/react-spectrum": "^3.32.2",
+    "@adobe/react-spectrum": "^3.33.1",
+    "@bangle.io/app-routing": "workspace:*",
+    "@bangle.io/lib-window-common": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
+    "@bangle.io/slice-page": "workspace:*",
     "@nalanda/core": "^0.2.3",
     "@nalanda/react": "^0.2.3",
-    "@bangle.io/lib-window-common": "workspace:*",
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/slice-page": "workspace:*",
-    "@bangle.io/app-routing": "workspace:*",
     "@types/react": "^18.2.37",
-    "react": "^18.2.0"
-  },
-  "devDependencies": {}
+    "react": "^18.2.0",
+    "wait-for-expect": "^3.0.2"
+  }
 }

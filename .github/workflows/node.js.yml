@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [dev, staging, production, v2]
+    branches: [main, dev, staging, production, v2]
   pull_request:
-    branches: [dev, staging, production, v2]
+    branches: [main, dev, staging, production, v2]
 
 concurrency:
   group: bangle-${{ github.event.pull_request.number || github.ref }}

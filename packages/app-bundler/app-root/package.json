@@ -28,7 +28,6 @@
     "start-expose": "vite --host 0.0.0.0"
   },
   "dependencies": {
-    "error-cause": "^1.0.6",
     "@bangle.io/app": "workspace:*",
     "@bangle.io/app-database-in-memory": "workspace:*",
     "@bangle.io/app-database-indexeddb": "workspace:*",
@@ -42,10 +41,11 @@
     "@bangle.io/shared-types": "workspace:*",
     "@sentry/react": "^7.80.1",
     "@sentry/vite-plugin": "^2.10.1",
-    "@unocss/reset": "^0.57.6",
+    "@unocss/reset": "^0.58.5",
+    "error-cause": "^1.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-error-boundary": "^4.0.11"
+    "react-error-boundary": "^4.0.12"
   },
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",
@@ -55,12 +55,12 @@
     "@types/minimist": "^1.2.5",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
-    "@unocss/vite": "^0.57.6",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@unocss/vite": "^0.58.5",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "bangle-io-help": "^1.11.0",
     "minimist": "^1.2.8",
-    "unocss": "^0.57.6",
-    "vite": "^5.0.0",
+    "unocss": "^0.58.5",
+    "vite": "^5.0.12",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.17.0"
   }

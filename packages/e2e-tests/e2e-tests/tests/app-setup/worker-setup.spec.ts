@@ -112,17 +112,14 @@ test.describe('worker window state', () => {
     ).toBe('/ws/foo');
 
     await page.goto('/ws/xoo?foo=bar');
-    await page.waitForTimeout(50);
 
-    expect(
-      await page.evaluate(async () => {
-        const state = await window._nsmE2e.naukar.readWindowState();
+    await page.waitForFunction(async () => {
+      const state = await window._nsmE2e.naukar.readWindowState();
 
-        return state.page.location;
-      }),
-    ).toStrictEqual({
-      pathname: '/ws/xoo',
-      search: 'foo=bar',
+      return (
+        state.page.location?.pathname === '/ws/xoo' &&
+        state.page.location?.search === 'foo=bar'
+      );
     });
   });
 
@@ -135,14 +132,10 @@ test.describe('worker window state', () => {
 
     await page.emulateMedia({ colorScheme: 'dark' });
 
-    await page.waitForTimeout(50);
-
-    expect(
-      await page.evaluate(async () => {
-        const state = await window._nsmE2e.naukar.readWindowState();
-        return state.ui.colorScheme;
-      }),
-    ).toBe('dark');
+    await page.waitForFunction(async () => {
+      const state = await window._nsmE2e.naukar.readWindowState();
+      return state.ui.colorScheme === 'dark';
+    });
   });
 
   test('updates when worker disabled', async ({ bangleApp, page: oldPage }) => {
@@ -151,6 +144,7 @@ test.describe('worker window state', () => {
         testDisableWorker: true,
       },
     });
+
     expect(
       await page.evaluate(async () => {
         return (await window._nsmE2e.naukar.readWindowState()).ui.colorScheme;
@@ -159,14 +153,10 @@ test.describe('worker window state', () => {
 
     await page.emulateMedia({ colorScheme: 'dark' });
 
-    await page.waitForTimeout(50);
-
-    expect(
-      await page.evaluate(async () => {
-        const state = await window._nsmE2e.naukar.readWindowState();
-        return state.ui.colorScheme;
-      }),
-    ).toBe('dark');
+    await page.waitForFunction(async () => {
+      const state = await window._nsmE2e.naukar.readWindowState();
+      return state.ui.colorScheme === 'dark';
+    });
 
     await oldPage.close();
     await page.close();

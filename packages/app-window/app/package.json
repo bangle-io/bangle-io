@@ -21,9 +21,14 @@
   },
   "scripts": {},
   "dependencies": {
-    "@adobe/react-spectrum": "^3.32.2",
+    "@adobe/react-spectrum": "^3.33.1",
     "@bangle.io/activitybar": "workspace:*",
+    "@bangle.io/app-error-handler": "workspace:*",
+    "@bangle.io/app-routing": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/dialogs": "workspace:*",
     "@bangle.io/left-aside": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
     "@bangle.io/main-content": "workspace:*",
     "@bangle.io/right-aside": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
@@ -32,19 +37,14 @@
     "@bangle.io/ui": "workspace:*",
     "@bangle.io/window-store": "workspace:*",
     "@nalanda/react": "^0.2.3",
+    "@react-spectrum/toast": "3.0.0-beta.8",
     "@types/react": "^18.2.37",
-    "react": "^18.2.0",
-    "@bangle.io/constants": "workspace:*",
-    "@react-spectrum/toast": "^3.0.0-beta.7",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/app-routing": "workspace:*",
-    "@bangle.io/dialogs": "workspace:*",
-    "@bangle.io/app-error-handler": "workspace:*"
+    "react": "^18.2.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.1.2",
-    "@bangle.io/test-utils-slice": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/test-utils-react": "workspace:*",
-    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/test-utils-slice": "workspace:*",
+    "@testing-library/react": "^14.1.2"
   }
 }
