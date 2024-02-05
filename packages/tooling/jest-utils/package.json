@@ -24,7 +24,6 @@
     "@bangle.io/config-template": "^0.0.7",
     "cross-fetch": "^4.0.0",
     "domexception": "^4.0.0",
-    "fake-indexeddb": "^5.0.1"
-  },
-  "devDependencies": {}
+    "fake-indexeddb": "^5.0.2"
+  }
 }

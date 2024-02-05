@@ -22,6 +22,6 @@
   "scripts": {},
   "dependencies": {
     "execa": "5.1.1",
-    "plop": "^4.0.0"
+    "plop": "^4.0.1"
   }
 }

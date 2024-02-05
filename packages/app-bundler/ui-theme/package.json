@@ -36,10 +36,11 @@
     "@bangle.io/shared-types": "workspace:*",
     "@tsconfig/node18": "^18.2.2",
     "gradient-parser": "^1.0.2",
-    "polished": "^4.2.2",
-    "prettier": "3.1.0",
+    "polished": "^4.3.1",
+    "prettier": "3.2.5",
     "tailwindcss": "^3.4.1",
-    "ts-node": "^10.9.1",
-    "tslib": "2.6.2"
+    "ts-node": "^10.9.2",
+    "tslib": "2.6.2",
+    "typescript": "^5.3.3"
   }
 }

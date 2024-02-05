@@ -29,7 +29,6 @@
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/is-abort-error": "workspace:*",
-    "idb": "^7.1.1"
-  },
-  "devDependencies": {}
+    "idb": "^8.0.0"
+  }
 }

@@ -38,13 +38,13 @@
     "@bangle.io/window-store": "workspace:*",
     "@nalanda/react": "^0.2.3",
     "@react-spectrum/toast": "3.0.0-beta.8",
-    "@types/react": "^18.2.37",
+    "@types/react": "^18.2.54",
     "react": "^18.2.0"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/test-utils-react": "workspace:*",
     "@bangle.io/test-utils-slice": "workspace:*",
-    "@testing-library/react": "^14.1.2"
+    "@testing-library/react": "^14.2.1"
   }
 }

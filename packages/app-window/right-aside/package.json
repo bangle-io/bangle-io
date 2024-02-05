@@ -25,7 +25,7 @@
     "@bangle.io/slice-ui": "workspace:*",
     "@nalanda/react": "^0.2.3",
     "@spectrum-icons/workflow": "^4.2.8",
-    "@types/react": "^18.2.37",
+    "@types/react": "^18.2.54",
     "react": "^18.2.0"
   }
 }

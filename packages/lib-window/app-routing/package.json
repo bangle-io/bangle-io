@@ -27,13 +27,12 @@
   },
   "scripts": {},
   "dependencies": {
-    "wouter": "^2.12.1",
     "@bangle.io/history": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
-    "@types/react": "^18.2.37",
-    "react": "^18.2.0",
+    "@bangle.io/ws-path": "workspace:*",
     "@nalanda/react": "^0.2.3",
-    "@bangle.io/ws-path": "workspace:*"
-  },
-  "devDependencies": {}
+    "@types/react": "^18.2.54",
+    "react": "^18.2.0",
+    "wouter": "^2.12.1"
+  }
 }

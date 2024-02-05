@@ -32,8 +32,7 @@
     "@bangle.dev/react": "0.32.1",
     "@bangle.dev/tooltip": "0.32.1",
     "@bangle.dev/utils": "0.32.1",
-    "@types/react": "^18.2.37",
+    "@types/react": "^18.2.54",
     "react": "^18.2.0"
-  },
-  "devDependencies": {}
+  }
 }

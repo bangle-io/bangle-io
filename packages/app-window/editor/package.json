@@ -27,13 +27,13 @@
   },
   "scripts": {},
   "dependencies": {
-    "prosemirror-markdown": "^1.11.2",
-    "@bangle.dev/markdown-front-matter": "^0.32.1",
-    "@bangle.dev/pm": "0.32.1",
     "@bangle.dev/base-components": "^0.32.1",
     "@bangle.dev/core": "^0.32.1",
     "@bangle.dev/markdown": "^0.32.1",
-    "@types/react": "^18.2.37",
+    "@bangle.dev/markdown-front-matter": "^0.32.1",
+    "@bangle.dev/pm": "0.32.1",
+    "@types/react": "^18.2.54",
+    "prosemirror-markdown": "^1.12.0",
     "react": "^18.2.0"
   }
 }

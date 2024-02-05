@@ -65,6 +65,7 @@ export function createEditor(
 ) {
   const state = new BangleEditorState({
     specRegistry,
+    // @ts-expect-error - TODO: fix this
     plugins: () => [
       blockquote.plugins(),
       bold.plugins(),

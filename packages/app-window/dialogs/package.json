@@ -42,8 +42,8 @@
     "@nalanda/react": "^0.2.3",
     "@spectrum-icons/ui": "^3.6.3",
     "@spectrum-icons/workflow": "^4.2.8",
-    "@testing-library/react": "^14.1.2",
-    "@types/react": "^18.2.37",
+    "@testing-library/react": "^14.2.1",
+    "@types/react": "^18.2.54",
     "react": "^18.2.0"
   },
   "devDependencies": {

@@ -24,7 +24,6 @@
   "main": "index.ts",
   "scripts": {},
   "dependencies": {
-    "error-cause": "^1.0.6",
     "@bangle.io/app-database-in-memory": "workspace:*",
     "@bangle.io/app-database-indexeddb": "workspace:*",
     "@bangle.io/config": "workspace:*",
@@ -34,7 +33,8 @@
     "@bangle.io/naukar": "workspace:*",
     "@bangle.io/setup-eternal-vars": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@sentry/browser": "^7.80.1",
-    "comlink": "^4.4.1"
+    "@sentry/browser": "^7.99.0",
+    "comlink": "^4.4.1",
+    "error-cause": "^1.0.6"
   }
 }

@@ -115,6 +115,7 @@ module.exports = [
       'packages/**/scripts/**/*.{ts,tsx}',
     ],
     languageOptions: {
+      parser: parserTypescript,
       globals: {
         ...globals.node,
       },

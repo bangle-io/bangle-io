@@ -26,13 +26,13 @@
     "@bangle.io/window-utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@react-types/shared": "^3.22.0",
-    "@spectrum-icons/illustrations": "^3.6.8",
-    "@types/react": "^18.2.37",
+    "@spectrum-icons/illustrations": "^3.6.9",
+    "@types/react": "^18.2.54",
     "react": "^18.2.0"
   },
   "devDependencies": {
     "@bangle.io/test-utils-common": "workspace:*",
-    "@storybook/react": "^7.5.3",
-    "@testing-library/react": "^14.1.2"
+    "@storybook/react": "^7.6.12",
+    "@testing-library/react": "^14.2.1"
   }
 }
