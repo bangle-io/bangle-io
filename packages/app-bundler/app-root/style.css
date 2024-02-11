@@ -21,6 +21,41 @@
   --BV-miscPagePadding: 1.5rem 10px 2rem 25px;
 }
 
+.BU_light-scheme {
+  /* COLORS */
+
+  /* Theme spectrum light https://spectrum.adobe.com/page/color-palette/ */
+  /* gray */
+  --BV-gray-50: rgb(255, 255, 255);
+  --BV-gray-75: rgb(253, 253, 253);
+  --BV-gray-100: rgb(248, 248, 248);
+  --BV-gray-200: rgb(230, 230, 230);
+  --BV-gray-300: rgb(213, 213, 213);
+  --BV-gray-400: rgb(177, 177, 177);
+  --BV-gray-500: rgb(144, 144, 144);
+  --BV-gray-600: rgb(109, 109, 109);
+  --BV-gray-700: rgb(70, 70, 70);
+  --BV-gray-800: rgb(34, 34, 34);
+  --BV-gray-900: rgb(0, 0, 0);
+}
+
+.BU_dark-scheme {
+  /* Colors */
+
+  /* Theme spectrum darkest https://spectrum.adobe.com/page/color-palette/ */
+  --BV-gray-50: rgb(255, 255, 255);
+  --BV-gray-75: rgb(253, 253, 253);
+  --BV-gray-100: rgb(248, 248, 248);
+  --BV-gray-200: rgb(230, 230, 230);
+  --BV-gray-300: rgb(213, 213, 213);
+  --BV-gray-400: rgb(177, 177, 177);
+  --BV-gray-500: rgb(144, 144, 144);
+  --BV-gray-600: rgb(109, 109, 109);
+  --BV-gray-700: rgb(70, 70, 70);
+  --BV-gray-800: rgb(34, 34, 34);
+  --BV-gray-900: rgb(0, 0, 0);
+}
+
 html,
 body {
   height: 100%;
@@ -29,11 +64,6 @@ body {
 }
 
 body {
-  /* background-color: var(--BV-colorNeutralBgLayerBottom);
-  color: var(--BV-colorNeutralText); */
-}
-
-#root {
-  /* background-color: var(--BV-colorNeutralBgLayerBottom);
-  color: var(--BV-colorNeutralText); */
+  background-color: var(--BV-gray-50);
+  color: var(--BV-gray-900);
 }
