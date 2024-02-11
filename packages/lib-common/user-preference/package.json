@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/app-error-handler",
+  "name": "@bangle.io/user-preference",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/app-error-handler"
+    "directory": "packages/lib-common/user-preference"
   },
   "authors": [
     {
@@ -28,7 +28,14 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/app-errors": "workspace:*",
-    "@bangle.io/dialog-maker": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/safe-json": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@bangle.io/app-database": "workspace:*",
+    "@bangle.io/app-database-in-memory": "workspace:*"
   }
 }

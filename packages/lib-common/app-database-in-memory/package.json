@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/file-storage-indexeddb",
-  "description": "",
+  "name": "@bangle.io/app-database-in-memory",
+  "description": "This is an in-memory database that can be used to test the app-database package.",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/file-storage-indexeddb"
+    "directory": "packages/lib-common/app-database-in-memory"
   },
   "authors": [
     {
@@ -18,7 +18,7 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
   },
   "main": "index.ts",
   "module": "index.ts",
@@ -27,10 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/app-errors": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
   }
 }

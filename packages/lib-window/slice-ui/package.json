@@ -22,14 +22,14 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "@nalanda/core": "^0.2.3",
-    "@bangle.io/window-utils": "workspace:*",
+    "@bangle.io/dialog-maker": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/dialog-maker": "workspace:*"
+    "@bangle.io/window-utils": "workspace:*",
+    "@nalanda/core": "^0.2.3"
   },
   "devDependencies": {
-    "@bangle.io/test-utils-slice": "workspace:*",
-    "@bangle.io/test-utils-common": "workspace:*"
+    "@bangle.io/test-utils-common": "workspace:*",
+    "@bangle.io/test-utils-slice": "workspace:*"
   }
 }

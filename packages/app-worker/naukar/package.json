@@ -15,23 +15,21 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "browser"
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/app-error-handler": "workspace:*",
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/emitter": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "immer": "^10.0.3",
+    "@bangle.io/naukar-common": "workspace:*",
     "@bangle.io/naukar-store": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
-    "@bangle.io/naukar-common": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/app-error-handler": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "immer": "^10.0.3"
   },
   "devDependencies": {
     "@bangle.io/constants": "workspace:*"

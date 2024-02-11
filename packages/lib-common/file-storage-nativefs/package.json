@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/ws-path",
+  "name": "@bangle.io/file-storage-nativefs",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/ws-path"
+    "directory": "packages/lib-common/file-storage-nativefs"
   },
   "authors": [
     {
@@ -16,21 +16,21 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "universal"
+    "type": "browser"
   },
   "main": "index.ts",
   "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
     "@bangle.io/app-errors": "workspace:*",
+    "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "path-to-regexp": "^6.2.1",
-    "wouter": "^2.12.1"
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

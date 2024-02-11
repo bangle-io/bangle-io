@@ -27,10 +27,10 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/lib-window-common": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
     "@nalanda/core": "^0.2.3",
-    "@bangle.io/lib-window-common": "workspace:*",
     "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {}

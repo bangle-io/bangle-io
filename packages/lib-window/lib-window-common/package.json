@@ -27,7 +27,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@nalanda/core": "^0.2.3",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "@nalanda/core": "^0.2.3"
   }
 }

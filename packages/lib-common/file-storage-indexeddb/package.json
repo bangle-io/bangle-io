@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/file-storage-nativefs",
+  "name": "@bangle.io/file-storage-indexeddb",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/file-storage-nativefs"
+    "directory": "packages/lib-common/file-storage-indexeddb"
   },
   "authors": [
     {
@@ -27,10 +27,10 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/app-errors": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/app-errors": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

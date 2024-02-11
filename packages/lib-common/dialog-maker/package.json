@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/app-database-in-memory",
-  "description": "This is an in-memory database that can be used to test the app-database package.",
+  "name": "@bangle.io/dialog-maker",
+  "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/app-database-in-memory"
+    "directory": "packages/lib-common/dialog-maker"
   },
   "authors": [
     {
@@ -27,6 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
   }
 }

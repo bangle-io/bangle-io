@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/workspace",
+  "name": "@bangle.io/ws-path",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/workspace"
+    "directory": "packages/lib-common/ws-path"
   },
   "authors": [
     {
@@ -18,26 +18,17 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "browser"
+    "type": "universal"
   },
   "main": "index.ts",
   "module": "index.ts",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/app-errors": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/file-storage-indexeddb": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/file-storage-nativefs": "workspace:*",
-    "@bangle.io/app-errors": "workspace:*"
-  },
-  "devDependencies": {
-    "@bangle.io/app-database": "workspace:*",
-    "@bangle.io/app-database-indexeddb": "workspace:*"
+    "path-to-regexp": "^6.2.1",
+    "wouter": "^2.12.1"
   }
 }

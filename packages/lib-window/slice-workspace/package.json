@@ -27,9 +27,9 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/lib-window-common": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/workspace": "workspace:*",
-    "@nalanda/core": "^0.2.3",
-    "@bangle.io/lib-window-common": "workspace:*"
+    "@nalanda/core": "^0.2.3"
   }
 }

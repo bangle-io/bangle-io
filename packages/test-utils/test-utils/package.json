@@ -27,11 +27,11 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/lib-window-common": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/nsm-3": "workspace:*",
-    "@nalanda/core": "^0.2.3",
-    "@bangle.io/lib-window-common": "workspace:*",
-    "@bangle.io/test-utils-slice": "workspace:*"
+    "@bangle.io/test-utils-slice": "workspace:*",
+    "@nalanda/core": "^0.2.3"
   },
   "devDependencies": {}
 }

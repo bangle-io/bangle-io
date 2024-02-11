@@ -5,7 +5,7 @@
     "allowedWorkspaces": [
       "app-worker",
       "js-lib",
-      "lib",
+      "lib-common",
       "shared"
     ]
   }

@@ -39,6 +39,9 @@
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
+  "pnpm": {
+    "overrides": {}
+  },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all",
@@ -48,22 +51,19 @@
   },
   "private": true,
   "scripts": {
-    "build-prod-serve": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build-prod-serve",
     "build": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build",
-    "generate-all-verbose": "pnpm run -r --stream \"/^generate:.*/\"",
+    "build-prod-serve": "pnpm run generate-all && pnpm -r --filter \"app-root\" run build-prod-serve",
     "generate-all": "pnpm run -r --aggregate-output \"/^generate:.*/\"",
+    "generate-all-verbose": "pnpm run -r --stream \"/^generate:.*/\"",
+    "lint": "pnpm run \"/^lint:.*/\"",
     "lint:js": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:type": "tsc -b",
-    "lint": "pnpm run \"/^lint:.*/\"",
     "start": "pnpm run generate-all && pnpm -r --filter \"app-root\" run start",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
+    "test": "pnpm jest && pnpm run test:constraints",
     "test:ci": "pnpm jest --maxWorkers=2",
     "test:constraints": "pnpm run -r  --stream \"/^cscript:.*/\"",
-    "test:e2e-ui": "pnpm -r --filter e2e-tests e2e --ui",
     "test:e2e": "pnpm -r --filter e2e-tests e2e",
-    "test": "pnpm jest && pnpm run test:constraints"
-  },
-  "pnpm": {
-    "overrides": {}
+    "test:e2e-ui": "pnpm -r --filter e2e-tests e2e --ui"
   }
 }

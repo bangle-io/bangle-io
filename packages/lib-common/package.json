@@ -1,9 +1,9 @@
 {
-  "name": "lib",
+  "name": "lib-common",
   "bangleWorkspaceConfig": {
     "allowedWorkspaces": [
       "js-lib",
-      "lib",
+      "lib-common",
       "shared",
       "test-utils"
     ]

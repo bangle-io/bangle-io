@@ -4,7 +4,7 @@ packages:
   - 'packages/app-worker/*'
   - 'packages/e2e-tests/*'
   - 'packages/js-lib/*'
-  - 'packages/lib/*'
+  - 'packages/lib-common/*'
   - 'packages/lib-window/*'
   - 'packages/shared/*'
   - 'packages/test-utils/*'

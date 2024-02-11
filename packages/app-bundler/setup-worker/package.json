@@ -15,9 +15,7 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "bugs": {
-    "url": "https://github.com/bangle-io/bangle-io/issues"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "browser"
   },

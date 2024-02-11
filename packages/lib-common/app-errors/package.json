@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/dialog-maker",
+  "name": "@bangle.io/app-errors",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/dialog-maker"
+    "directory": "packages/lib-common/app-errors"
   },
   "authors": [
     {
@@ -27,6 +27,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*"
   }
 }

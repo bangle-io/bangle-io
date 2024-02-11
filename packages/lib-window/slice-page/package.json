@@ -21,13 +21,13 @@
   },
   "scripts": {},
   "dependencies": {
-    "@nalanda/core": "^0.2.3",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/history": "workspace:*",
     "@bangle.io/lib-window-common": "workspace:*",
-    "page-lifecycle": "^0.1.2",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
+    "@nalanda/core": "^0.2.3",
+    "page-lifecycle": "^0.1.2"
   },
   "devDependencies": {
     "@bangle.io/test-utils-slice": "workspace:*"

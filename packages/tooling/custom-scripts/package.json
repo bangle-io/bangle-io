@@ -1,13 +1,7 @@
 {
   "name": "@bangle.io/custom-scripts",
   "description": "A place to put custom scripts that are used in the build process",
-  "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/custom-scripts"
-  },
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -15,21 +9,11 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "homepage": "https://bangle.io",
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "type": "nodejs",
     "skipValidation": true
   },
-  "main": "index.ts",
-  "module": "index.js",
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
-    "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
-  },
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
     "@bangle.io/app-root": "workspace:*",
     "@tsconfig/node18": "^18.2.2",
@@ -43,5 +27,21 @@
   },
   "devDependencies": {
     "tslib": "^2.6.2"
+  },
+  "homepage": "https://bangle.io",
+  "license": "AGPL-3.0-or-later",
+  "main": "index.ts",
+  "module": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/custom-scripts"
+  },
+  "scripts": {
+    "cscript:validation": "pnpm exec ts-node --swc --project tsconfig.tsnode.json validate/index.ts",
+    "generate:format-package-json": "pnpm exec ts-node --swc --project tsconfig.tsnode.json generate/format-package-json.ts"
   }
 }

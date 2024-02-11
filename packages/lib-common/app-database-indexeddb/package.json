@@ -1,11 +1,12 @@
 {
-  "name": "@bangle.io/utils",
+  "name": "@bangle.io/app-database-indexeddb",
   "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/lib/utils"
+    "directory": "packages/lib-common/app-database-indexeddb"
   },
   "authors": [
     {
@@ -19,7 +20,16 @@
   "banglePackageConfig": {
     "type": "browser"
   },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@bangle.io/app-errors": "workspace:*",
+    "@bangle.io/db-key-val": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
+  }
 }
