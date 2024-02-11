@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "packages/app-bundler/app-root/tailwind.config.js",
+    "css": "packages/app-bundler/app-root/style.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@bangle.io/ui",
+    "utils": "@bangle.io/ui"
+  }
+}

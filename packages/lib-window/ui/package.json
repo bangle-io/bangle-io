@@ -28,7 +28,13 @@
     "@react-types/shared": "^3.22.0",
     "@spectrum-icons/illustrations": "^3.6.9",
     "@types/react": "^18.2.54",
-    "react": "^18.2.0"
+    "react-aria-components": "^1.0.1",
+    "class-variance-authority": "^0.7.0",
+    "tailwind-merge": "^2.2.1",
+    "clsx": "^2.1.0",
+    "@radix-ui/react-slot": "^1.0.2",
+    "react": "^18.2.0",
+    "lucide-react": "^0.324.0"
   },
   "devDependencies": {
     "@bangle.io/test-utils-common": "workspace:*",
