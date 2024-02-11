@@ -41,7 +41,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "@sentry/react": "^7.99.0",
     "@sentry/vite-plugin": "^2.14.0",
-    "@unocss/reset": "^0.58.5",
     "error-cause": "^1.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -50,18 +49,19 @@
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/test-utils-common": "workspace:*",
-    "@bangle.io/uno-preset-bangle": "workspace:*",
     "@bangle.io/window-store": "workspace:*",
     "@types/minimist": "^1.2.5",
     "@types/react": "^18.2.54",
     "@types/react-dom": "^18.2.18",
-    "@unocss/vite": "^0.58.5",
     "@vitejs/plugin-react-swc": "^3.6.0",
+    "autoprefixer": "^10.4.17",
     "bangle-io-help": "^1.11.0",
     "minimist": "^1.2.8",
-    "unocss": "^0.58.5",
+    "postcss": "^8.4.34",
+    "tailwindcss": "^3.4.1",
     "vite": "^5.0.12",
     "vite-plugin-html": "^3.2.2",
-    "vite-plugin-pwa": "^0.17.5"
+    "vite-plugin-pwa": "^0.17.5",
+    "tailwindcss-react-aria-components": "^1.0.0"
   }
 }

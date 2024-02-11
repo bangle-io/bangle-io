@@ -101,15 +101,11 @@ test.describe('worker window state', () => {
 
     await page.goto('/ws/foo');
 
-    await page.waitForTimeout(50);
+    await page.waitForFunction(async () => {
+      const state = await window._nsmE2e.naukar.readWindowState();
 
-    expect(
-      await page.evaluate(async () => {
-        const state = await window._nsmE2e.naukar.readWindowState();
-
-        return state.page.location?.pathname;
-      }),
-    ).toBe('/ws/foo');
+      return state.page.location?.pathname === '/ws/foo';
+    });
 
     await page.goto('/ws/xoo?foo=bar');
 

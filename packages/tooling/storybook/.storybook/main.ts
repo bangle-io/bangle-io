@@ -1,5 +1,4 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-import Unocss from '@unocss/vite';
 import path from 'node:path';
 import { mergeConfig } from 'vite';
 
@@ -36,7 +35,6 @@ const config: StorybookConfig = {
   staticDirs: ['../../../app-bundler/app-root/public'],
   previewHead: (head) => `
   ${head}
-  <link rel="stylesheet" href="/auto-generated/core-theme.css" />
 `,
   addons: [
     path.dirname(
@@ -77,7 +75,7 @@ const config: StorybookConfig = {
     });
 
     return mergeConfig(config, {
-      plugins: [Unocss({})],
+      plugins: [],
       define: {
         ...envVars.globalIdentifiers,
       },

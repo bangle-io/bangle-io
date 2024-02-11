@@ -71,11 +71,6 @@ Generate CSS variables using the commands:
 pnpm run generate-all
 ```
 
-- Specifically for @bangle.io/ui-theme:
-
-```sh
-pnpm run generate:css-vars
-```
 
 Generated files are located in `app/app-root/public`.
 

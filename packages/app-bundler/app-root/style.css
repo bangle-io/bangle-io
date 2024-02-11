@@ -1,3 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --BV-miscActivitybarWidth: 48px;
+  --BV-miscMiniEditorWidth: 400px;
+  --BV-miscPageMaxWidth: 700px;
+  --BV-miscPagePadding: 3rem 30px 3rem 30px;
+  --BV-miscLeftAsideWidth: 300px;
+  --BV-miscRightAsideWidth: 300px;
+  --BV-miscTitlebarHeight: 48px;
+  --BV-borderWidthDEFAULT: 1px;
+}
+
+.BU_light-scheme.BU_smallscreen {
+  --BV-miscPagePadding: 1.5rem 10px 2rem 25px;
+}
+
+.BU_dark-scheme.BU_smallscreen {
+  --BV-miscPagePadding: 1.5rem 10px 2rem 25px;
+}
+
 html,
 body {
   height: 100%;
@@ -6,11 +29,11 @@ body {
 }
 
 body {
-  background-color: var(--BV-colorNeutralBgLayerBottom);
-  color: var(--BV-colorNeutralText);
+  /* background-color: var(--BV-colorNeutralBgLayerBottom);
+  color: var(--BV-colorNeutralText); */
 }
 
 #root {
-  background-color: var(--BV-colorNeutralBgLayerBottom);
-  color: var(--BV-colorNeutralText);
+  /* background-color: var(--BV-colorNeutralBgLayerBottom);
+  color: var(--BV-colorNeutralText); */
 }

@@ -1,6 +1,5 @@
 // @bangle-ignore-checks
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import Unocss from '@unocss/vite';
 import react from '@vitejs/plugin-react-swc';
 import minimist from 'minimist';
 import path from 'node:path';
@@ -59,7 +58,6 @@ export default defineConfig(async ({ command, mode }) => {
         },
       }),
       react({}),
-      Unocss(),
       PWA,
       sentryVitePlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,

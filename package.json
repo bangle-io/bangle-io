@@ -14,7 +14,6 @@
     "@bangle.io/jsdom-env": "workspace:*",
     "@bangle.io/plop-configs": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/uno-preset-bangle": "workspace:*",
     "@eslint/js": "^8.56.0",
     "@swc/jest": "^0.2.36",
     "@types/eslint": "^8.56.2",
@@ -36,23 +35,10 @@
     "prettier": "3.2.5",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
-    "unocss": "^0.58.5"
+    "typescript": "^5.3.3"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
-  "lint-staged": {
-    "*.md": "yarn prettier --write",
-    "{app,extensions,js-lib,lib,tooling,worker}/**/*.{js,ts,jsx,tsx}": [
-      "yarn prettier --write"
-    ],
-    "*.css": [
-      "yarn g:css:stylelint-update-regex",
-      "yarn stylelint --fix --allow-empty-input",
-      "yarn prettier --write"
-    ],
-    "*.json": "yarn prettier --write"
-  },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all",

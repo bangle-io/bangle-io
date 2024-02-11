@@ -28,7 +28,6 @@ import {
   pickADirectory,
 } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
-import { vars } from '@bangle.io/css-vars';
 import { AppDialog } from '@bangle.io/dialog-maker';
 import { getWindowStoreConfig } from '@bangle.io/lib-window-common';
 import { APP_DIALOG_NAME } from '@bangle.io/slice-ui';
@@ -341,10 +340,6 @@ export function ShowError({
     <div
       className="w-full m-1 px-5 py-3 text-center rounded"
       data-testid={errorType}
-      style={{
-        backgroundColor: vars.color.critical.solidFaint,
-        color: vars.color.critical.solidText,
-      }}
     >
       <div className="font-semibold text-left">{title}</div>
       <div className="text-left">{content}</div>

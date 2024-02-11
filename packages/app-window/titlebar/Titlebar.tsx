@@ -30,7 +30,7 @@ export function Titlebar() {
   const store = useStore();
 
   return (
-    <div className="bg-colorBgLayerMiddle px-2 h-full w-full flex flex-row flex-justify-between flex-items-center border-b-1 border-colorNeutralBorder">
+    <div className="px-2 h-full w-full flex flex-row flex-justify-between flex-items-center ">
       <View overflow="hidden" flexGrow={2}>
         <BreadcrumbView
           wsName={wsName}
