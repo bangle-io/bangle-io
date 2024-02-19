@@ -1,20 +1,27 @@
-import {
-  Breadcrumbs,
-  Flex,
-  Item,
-  ToggleButton,
-  View,
-} from '@adobe/react-spectrum';
+import { Breadcrumbs, Item } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import HomeIcon from '@spectrum-icons/workflow/Home';
-import MarginLeftIcon from '@spectrum-icons/workflow/MarginLeft';
-import MarginRightIcon from '@spectrum-icons/workflow/MarginRight';
-import SearchIcon from '@spectrum-icons/workflow/Search';
 import React from 'react';
 
-import { PAGE_ROUTE } from '@bangle.io/constants';
+import { COLOR_SCHEME, PAGE_ROUTE, PageRoute } from '@bangle.io/constants';
 import { slicePage } from '@bangle.io/slice-page';
 import { sliceUI } from '@bangle.io/slice-ui';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+  IconBug,
+} from '@bangle.io/ui';
+import { changeColorScheme } from '@bangle.io/window-utils';
 import {
   locationHelpers,
   OpenedWsPaths,
@@ -23,62 +30,18 @@ import {
 } from '@bangle.io/ws-path';
 
 export function Titlebar() {
-  const { showRightAside, widescreen, showLeftAside, showActivitybar } =
-    useTrack(sliceUI);
-
   const { wsName = 'INVALID', openedWsPaths, location } = useTrack(slicePage);
-  const store = useStore();
+  const pageRoute = locationHelpers.getPageRoute(location?.pathname);
 
   return (
-    <div className="px-2 h-full w-full flex flex-row flex-justify-between flex-items-center ">
-      <View overflow="hidden" flexGrow={2}>
-        <BreadcrumbView
-          wsName={wsName}
-          openedWsPaths={openedWsPaths}
-          pathname={location?.pathname}
-        />
-      </View>
-      <Flex direction="row">
-        {widescreen && (
-          <div>
-            <ToggleButton
-              isQuiet
-              isSelected={showActivitybar}
-              onPress={() => {
-                store.dispatch(sliceUI.actions.toggleActivitybar(undefined));
-              }}
-            >
-              <SearchIcon size="S" />
-            </ToggleButton>
-          </div>
-        )}
-        {widescreen && (
-          <div>
-            <ToggleButton
-              isQuiet
-              isSelected={showLeftAside}
-              onPress={() => {
-                store.dispatch(sliceUI.actions.toggleLeftAside(undefined));
-              }}
-            >
-              <MarginLeftIcon size="S" />
-            </ToggleButton>
-          </div>
-        )}
-        {/* {widescreen && (
-          <div>
-            <ToggleButton
-              isQuiet
-              isSelected={showRightAside}
-              onPress={() => {
-                store.dispatch(sliceUI.actions.toggleRightAside(undefined));
-              }}
-            >
-              <MarginRightIcon size="S" />
-            </ToggleButton>
-          </div>
-        )} */}
-      </Flex>
+    <div className="border-b px-1 md:px-2 h-full w-full flex items-center bg-background">
+      <BreadcrumbView
+        wsName={wsName}
+        openedWsPaths={openedWsPaths}
+        pageRoute={pageRoute}
+      />
+      <div className="flex-1" />
+      <UserNav />
     </div>
   );
 }
@@ -86,15 +49,13 @@ export function Titlebar() {
 function BreadcrumbView({
   wsName,
   openedWsPaths,
-  pathname,
+  pageRoute,
 }: {
   wsName: string;
   openedWsPaths: OpenedWsPaths;
-  pathname: string | undefined;
+  pageRoute: PageRoute | undefined;
 }) {
   const store = useStore();
-
-  const pageRoute = locationHelpers.getPageRoute(pathname);
 
   if (pageRoute === PAGE_ROUTE.workspaceSelect) {
     return (
@@ -177,4 +138,75 @@ function BreadcrumbView({
   }
 
   return null;
+}
+
+function UserNav() {
+  const { colorScheme } = useTrack(sliceUI);
+  const store = useStore();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8 select-none border-2">
+            <AvatarImage src="maskable_icon_x192.png" alt="bangle" />
+            <AvatarFallback>BG</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">Bangle.io</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              Note Taking App
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            New Workspace
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              store.dispatch(
+                slicePage.actions.goTo((location) =>
+                  locationHelpers.goToWorkspaceSelection(location),
+                ),
+              );
+            }}
+          >
+            Switch Workspace
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              changeColorScheme(
+                colorScheme === COLOR_SCHEME.DARK
+                  ? COLOR_SCHEME.LIGHT
+                  : COLOR_SCHEME.DARK,
+              );
+            }}
+          >
+            Switch Dark/Light Mode
+            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={() => {
+            window.open(
+              'https://github.com/bangle-io/bangle-io/issues',
+              '_blank',
+            );
+          }}
+        >
+          <span>Report Issue</span>
+          <IconBug className="h-4 w-4 ml-1  text-muted-foreground" />
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }

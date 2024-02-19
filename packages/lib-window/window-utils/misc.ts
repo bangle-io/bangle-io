@@ -4,7 +4,9 @@ import { COLOR_SCHEME, WIDESCREEN_WIDTH } from '@bangle.io/constants';
 
 import { rafSchedule } from './safe-js';
 
-type ColorScheme = (typeof COLOR_SCHEME)['DARK'];
+type ColorScheme =
+  | (typeof COLOR_SCHEME)['DARK']
+  | (typeof COLOR_SCHEME)['LIGHT'];
 
 export function setRootWidescreenClass(
   widescreen: boolean = checkWidescreen(),
@@ -94,15 +96,12 @@ export function changeColorScheme(colorScheme: ColorScheme) {
     return;
   }
 
+  const LIGHT_THEME = 'BU_light-scheme';
+  const DARK_THEME = 'BU_dark-scheme';
+  const newValue = colorScheme === COLOR_SCHEME.DARK ? DARK_THEME : LIGHT_THEME;
   console.debug('changeColorScheme:', colorScheme);
 
-  if (colorScheme === COLOR_SCHEME.DARK) {
-    document.body.classList.remove('BU_light-scheme');
-    document.body.classList.add('BU_dark-scheme');
-  } else if (colorScheme === COLOR_SCHEME.LIGHT) {
-    document.body.classList.remove('BU_dark-scheme');
-    document.body.classList.add('BU_light-scheme');
-  } else {
-    console.warn('changeColorSchemes: unknown theme', colorScheme);
-  }
+  document!.firstElementChild!.setAttribute('data-theme', newValue);
+  document!.firstElementChild!.classList.remove(LIGHT_THEME, DARK_THEME);
+  document!.firstElementChild!.classList.add(newValue);
 }

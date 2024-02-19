@@ -45,7 +45,8 @@ function toggleRightAside(show: boolean | undefined) {
   });
 }
 
-const showLeftAsideField = key.field(initiallyWidescreen ? true : false);
+// TODO bring it back
+const showLeftAsideField = key.field(initiallyWidescreen ? false : false);
 
 function toggleLeftAside(show: boolean | undefined) {
   const tx = key.transaction();

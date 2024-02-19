@@ -1,7 +1,6 @@
 import { cleanup, createKey, ref } from '@nalanda/core';
 
 import { COLOR_SCHEME } from '@bangle.io/constants';
-
 // NOTE part of the code exists in @bangle.io/inline-scripts to ensure
 // the BU_dark-scheme/BU_light-scheme class is added as soon as possible
 const key = createKey('slice-ui-color-scheme', []);

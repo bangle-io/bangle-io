@@ -30,6 +30,7 @@
     "@spectrum-icons/workflow": "^4.2.8",
     "@types/react": "^18.2.54",
     "react": "^18.2.0",
-    "@bangle.io/ui": "workspace:*"
+    "@bangle.io/ui": "workspace:*",
+    "@bangle.io/window-utils": "workspace:*"
   }
 }

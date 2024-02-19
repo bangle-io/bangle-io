@@ -32,7 +32,9 @@
     "class-variance-authority": "^0.7.0",
     "tailwind-merge": "^2.2.1",
     "clsx": "^2.1.0",
+    "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
     "react": "^18.2.0",
     "lucide-react": "^0.324.0"
   },

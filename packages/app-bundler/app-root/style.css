@@ -33,17 +33,17 @@
     --BV-gray900: 0 0 0;
 
     /* accent */
-    --BV-accent50: 237 252 254;
-    --BV-accent100: 209 246 252;
-    --BV-accent200: 168 236 249;
-    --BV-accent300: 108 220 244;
-    --BV-accent400: 51 197 232;
-    --BV-accent500: 13 165 205;
-    --BV-accent600: 14 131 172;
-    --BV-accent700: 19 106 139;
-    --BV-accent800: 24 87 114;
-    --BV-accent900: 25 73 96;
-    --BV-accent950: 10 47 66;
+    --BV-accent50: 240 249 255;
+    --BV-accent100: 224 242 254;
+    --BV-accent200: 186 226 253;
+    --BV-accent300: 125 201 252;
+    --BV-accent400: 56 171 248;
+    --BV-accent500: 94 217 254;
+    --BV-accent600: 70 206 252;
+    --BV-accent700: 49 196 250;
+    --BV-accent800: 33 184 247;
+    --BV-accent900: 12 71 110;
+    --BV-accent950: 8 47 73;
   }
 
   .BU_dark-scheme {
@@ -110,9 +110,9 @@
     --BV-secondary-foreground: var(--BV-gray700);
 
     --BV-muted: var(--BV-gray300);
-    --BV-muted-foreground: var(--BV-gray700);
+    --BV-muted-foreground: var(--BV-gray600);
 
-    --BV-accent: var(--BV-accent600);
+    --BV-accent: var(--BV-accent500);
     --BV-accent-foreground: var(--BV-gray800);
 
     --BV-destructive: 234 56 41;
