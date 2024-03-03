@@ -1,7 +1,5 @@
 import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
-import FolderAdd from '@spectrum-icons/workflow/FolderAdd';
-import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React, { useCallback, useMemo } from 'react';
 
 import { APP_ERROR_NAME, throwAppError } from '@bangle.io/app-errors';
@@ -24,8 +22,10 @@ import {
   DropdownMenuTrigger,
   IconLink,
   IconMoreVertical,
+  Illustration,
   Input,
   MainContentWrapper,
+  NoSearchResultsIllustration,
   WorkspaceTable,
 } from '@bangle.io/ui';
 import { locationHelpers } from '@bangle.io/ws-path';
@@ -41,6 +41,15 @@ export function PageWorkspaceSelect() {
     },
     [],
   );
+
+  const newWorkspace = useCallback(() => {
+    store.dispatch(
+      sliceUI.actions.showDialog(
+        APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+        {},
+      ),
+    );
+  }, [store]);
 
   const filteredWorkspaces = useMemo(() => {
     return workspaces
@@ -60,25 +69,23 @@ export function PageWorkspaceSelect() {
 
   return (
     <MainContentWrapper>
-      <div className="flex flex-row gap-8 items-center">
+      <div className="flex flex-row gap-2 md:gap-4 items-center">
         <Input
           aria-label="Search"
           placeholder="Search"
           onChange={handleSearchChange}
         />
-        <Button
-          onClick={() =>
-            store.dispatch(
-              sliceUI.actions.showDialog(
-                APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
-                {},
-              ),
-            )
-          }
-        >
-          New Workspace
-        </Button>
+        <Button onClick={() => newWorkspace()}>New Workspace</Button>
       </div>
+      {filteredWorkspaces?.length === 0 ? (
+        <Illustration.Container>
+          <NoSearchResultsIllustration />
+          <Illustration.Title>No Workspaces Found</Illustration.Title>
+          <Illustration.Body>
+            We couldn{"'"}t find any workspaces. Start by creating a new one!
+          </Illustration.Body>
+        </Illustration.Container>
+      ) : null}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
         {filteredWorkspaces?.map((wsInfo) => (
           <WorkspaceCard key={wsInfo.name} wsInfo={wsInfo} />

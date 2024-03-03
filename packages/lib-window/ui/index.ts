@@ -3,6 +3,7 @@ export * from './Button';
 export * from './Card';
 export * from './Dhancha';
 export * from './DropdownMenu';
+export * from './Illustration';
 export * from './Input';
 export * from './Tables';
 export * from './utils';
