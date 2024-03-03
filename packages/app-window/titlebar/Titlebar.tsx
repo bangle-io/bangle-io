@@ -20,6 +20,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
   IconBug,
+  IconChevronDown,
+  IconTwitter,
 } from '@bangle.io/ui';
 import { changeColorScheme } from '@bangle.io/window-utils';
 import {
@@ -60,7 +62,7 @@ function BreadcrumbView({
   if (pageRoute === PAGE_ROUTE.workspaceSelect) {
     return (
       <Breadcrumbs size="S">
-        <Item key={'welcome'}>Welcome</Item>
+        <Item key={'welcome'}>Workspaces</Item>
       </Breadcrumbs>
     );
   }
@@ -147,11 +149,14 @@ function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8 select-none border-2">
+        <Button variant="ghost" className="px-1" size="sm">
+          <Avatar className="h-6 w-6 select-none ">
             <AvatarImage src="maskable_icon_x192.png" alt="bangle" />
             <AvatarFallback>BG</AvatarFallback>
           </Avatar>
+          <span>
+            <IconChevronDown className="pl-1" />
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -195,6 +200,17 @@ function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onSelect={() => {
+            window.open('https://twitter.com/bangle_io', '_blank');
+          }}
+        >
+          <span>Twitter</span>
+          <DropdownMenuShortcut>
+            <IconTwitter className="h-4 w-4 ml-1  text-muted-foreground" />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={() => {
             window.open(
@@ -204,7 +220,9 @@ function UserNav() {
           }}
         >
           <span>Report Issue</span>
-          <IconBug className="h-4 w-4 ml-1  text-muted-foreground" />
+          <DropdownMenuShortcut>
+            <IconBug className="h-4 w-4 ml-1  text-muted-foreground" />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

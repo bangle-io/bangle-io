@@ -1,7 +1,6 @@
 import { ActionGroup, Flex, Item, Text } from '@adobe/react-spectrum';
 import { useStore, useTrack } from '@nalanda/react';
 import FolderAdd from '@spectrum-icons/workflow/FolderAdd';
-import FolderDelete from '@spectrum-icons/workflow/FolderDelete';
 import FolderOpen from '@spectrum-icons/workflow/FolderOpen';
 import React, { useCallback, useMemo } from 'react';
 
@@ -15,173 +14,76 @@ import { APP_DIALOG_NAME, sliceUI } from '@bangle.io/slice-ui';
 import {
   Button,
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  IconLink,
+  IconMoreVertical,
+  Input,
   MainContentWrapper,
   WorkspaceTable,
 } from '@bangle.io/ui';
 import { locationHelpers } from '@bangle.io/ws-path';
 
-interface WorkspaceActionsProps {
-  disabledKeys: string[];
-  onAction: (key: React.Key) => void;
-}
-
-enum ACTION_KEY {
-  newWorkspace = 'new-workspace',
-  deleteWorkspace = 'delete-workspace',
-  openWorkspace = 'open-workspace',
-}
-
-function WorkspaceActions({ disabledKeys, onAction }: WorkspaceActionsProps) {
-  return (
-    <ActionGroup
-      alignSelf="center"
-      items={[
-        { key: ACTION_KEY.openWorkspace, icon: <FolderOpen />, label: 'Open' },
-        {
-          key: ACTION_KEY.deleteWorkspace,
-          icon: <FolderDelete />,
-          label: 'Delete',
-        },
-        { key: ACTION_KEY.newWorkspace, icon: <FolderAdd />, label: 'New' },
-      ]}
-      disabledKeys={disabledKeys}
-      onAction={onAction}
-    >
-      {(item) => (
-        <Item key={item.key}>
-          {item.icon}
-          <Text>{item.label}</Text>
-        </Item>
-      )}
-    </ActionGroup>
-  );
-}
-
 export function PageWorkspaceSelect() {
   const store = useStore();
-
-  const { widescreen } = useTrack(sliceUI);
-  const [selectedWsKey, updateSelectedWsKey] = React.useState<
-    string | undefined
-  >(undefined);
-
   const { workspaces } = useTrack(sliceWorkspaces);
+  const [searchTerm, setSearchTerm] = React.useState('');
 
-  React.useEffect(() => {
-    if (!workspaces) {
-      return;
-    }
-    if (selectedWsKey && !workspaces.find((ws) => ws.name === selectedWsKey)) {
-      updateSelectedWsKey(workspaces[0]?.name);
-    }
-  }, [workspaces, selectedWsKey]);
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value.toLowerCase());
+    },
+    [],
+  );
 
-  const disabledKeys = selectedWsKey
-    ? []
-    : [ACTION_KEY.openWorkspace, ACTION_KEY.deleteWorkspace];
-
-  const goToWorkspace = (wsInfo: WorkspaceInfo) => {
-    const goTo = () => {
-      store.dispatch(
-        slicePage.actions.goTo((location) =>
-          locationHelpers.goToWorkspaceHome(location, wsInfo.name),
-        ),
-      );
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-    if (wsInfo.type !== WorkspaceType.NativeFS) {
-      goTo();
-      return;
-    }
-
-    const rootDirHandle = wsInfo.metadata.rootDirHandle;
-    if (!rootDirHandle) {
-      throwAppError(
-        APP_ERROR_NAME.workspaceCorrupted,
-        'Workspace has no rootDirHandle',
-        {
-          wsName: wsInfo.name,
-        },
-      );
-    }
-
-    void requestNativeBrowserFSPermission(rootDirHandle).then((granted) => {
-      if (granted) {
-        goTo();
-      } else {
-        // TODO: show error
-      }
-    });
-  };
-  const handleAction = (key: React.Key) => {
-    switch (key) {
-      case ACTION_KEY.openWorkspace: {
-        const match = workspaces?.find((ws) => ws.name === selectedWsKey);
-        if (!match) {
-          return;
+  const filteredWorkspaces = useMemo(() => {
+    return workspaces
+      ?.filter((ws) => {
+        if (!searchTerm) {
+          return true;
         }
-        goToWorkspace(match);
-        break;
-      }
-      case ACTION_KEY.newWorkspace:
-        store.dispatch(
-          sliceUI.actions.showDialog(
-            APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
-            {},
-          ),
+        return (
+          ws.name.toLowerCase().includes(searchTerm) ||
+          ws.type.toLowerCase().includes(searchTerm)
         );
-        break;
-      case ACTION_KEY.deleteWorkspace: {
-        if (selectedWsKey) {
-          store.dispatch(
-            sliceUI.actions.showDialog(APP_DIALOG_NAME.workspaceConfirmDelete, {
-              workspaceName: selectedWsKey,
-            }),
-          );
-        }
-        break;
-      }
-    }
-  };
-
-  const sortedWorkspaces = useMemo(() => {
-    return workspaces?.sort((a, b) => {
-      return b.lastModified - a.lastModified;
-    });
-  }, [workspaces]);
+      })
+      .sort((a, b) => {
+        return b.lastModified - a.lastModified;
+      });
+  }, [workspaces, searchTerm]);
 
   return (
     <MainContentWrapper>
-      <Flex direction="row" justifyContent="space-between" gap="size-100">
-        <h2 className="text-3xl font-bold tracking-tight">Workspaces</h2>
-        <WorkspaceActions disabledKeys={disabledKeys} onAction={handleAction} />
-      </Flex>
+      <div className="flex flex-row gap-8 items-center">
+        <Input
+          aria-label="Search"
+          placeholder="Search"
+          onChange={handleSearchChange}
+        />
+        <Button
+          onClick={() =>
+            store.dispatch(
+              sliceUI.actions.showDialog(
+                APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
+                {},
+              ),
+            )
+          }
+        >
+          New Workspace
+        </Button>
+      </div>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-        {workspaces?.map((wsInfo) => (
+        {filteredWorkspaces?.map((wsInfo) => (
           <WorkspaceCard key={wsInfo.name} wsInfo={wsInfo} />
         ))}
       </div>
-      {/* <WorkspaceTable
-        widescreen={widescreen}
-        workspaces={workspaces}
-        selectedKey={selectedWsKey}
-        updateSelectedKey={updateSelectedWsKey}
-        goToWorkspace={goToWorkspace}
-        createWorkspace={() => {
-          store.dispatch(
-            sliceUI.actions.showDialog(
-              APP_DIALOG_NAME.workspaceCreateSelectTypeDialog,
-              {},
-            ),
-          );
-        }}
-      /> */}
     </MainContentWrapper>
   );
 }
@@ -237,22 +139,44 @@ function WorkspaceCard({ wsInfo }: { wsInfo: WorkspaceInfo }) {
   return (
     <Card>
       <CardHeader>
-        <div className="w-full">
+        <div className="flex flex-row w-full">
           <Button
             size="sm"
             variant="link"
-            className="px-0 text-ellipsis text-nowrap "
-            onClick={(e) => {
-              goToWorkspace({
-                metaKey: e.metaKey,
-              });
-            }}
+            className="px-0 text-ellipsis text-nowrap"
+            onClick={(e) => goToWorkspace({ metaKey: e.metaKey })}
           >
-            <CardTitle className=" ">
-              {truncateString(wsInfo.name, 35)}
-            </CardTitle>
-            <div></div>
+            <CardTitle>{truncateString(wsInfo.name, 22)}</CardTitle>
+            <IconLink className="pl-1 h-5 w-5" />
           </Button>
+          <div className="flex-grow"></div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Workspace Options"
+              >
+                <IconMoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onSelect={() =>
+                    store.dispatch(
+                      sliceUI.actions.showDialog(
+                        APP_DIALOG_NAME.workspaceConfirmDelete,
+                        { workspaceName: wsInfo.name },
+                      ),
+                    )
+                  }
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <CardDescription>
           {prettyPrintRelativeDate(wsInfo.lastModified)} ({wsInfo.type})

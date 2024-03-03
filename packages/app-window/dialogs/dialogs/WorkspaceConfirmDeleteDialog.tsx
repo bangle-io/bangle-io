@@ -46,13 +46,13 @@ export function WorkspaceConfirmDeleteDialogComponent({
         </Button>
         <Button
           variant="negative"
+          aria-label="Confirm Delete"
           onPress={() => {
             void eternalVars.appDatabase.deleteWorkspaceInfo(workspaceName);
 
             dismiss();
           }}
         >
-          {/*  */}
           Delete
         </Button>
       </ButtonGroup>

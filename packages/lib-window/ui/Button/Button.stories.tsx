@@ -21,16 +21,18 @@ export const ButtonDefault: Story = {
         <Button variant={'default'} size={'lg'}>
           Click
         </Button>
-        <Button variant={'ghost'} size={'sm'}>
-          Click
-        </Button>
-        <Button variant={'secondary'} size={'sm'}>
+        <Button variant={'destructive'} size={'sm'}>
           Click
         </Button>
         <Button variant={'outline'} size={'sm'}>
           Click
         </Button>
-
+        <Button variant={'secondary'} size={'sm'}>
+          Click
+        </Button>
+        <Button variant={'ghost'} size={'sm'}>
+          Click
+        </Button>
         <Button variant={'link'} size={'sm'}>
           Click
         </Button>
