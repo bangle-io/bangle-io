@@ -3,10 +3,11 @@ export function findAllImportedPackages(sourceCode: string): string[] {
   const importRegex =
     /import\s+(?:[^'"]+\s+from\s+)?['"]([^'"]+)['"]|import\(['"]([^'"]+)['"]\)/g;
 
-  let match;
+  let match: RegExpExecArray | null;
   const allPkg = new Set<string>();
 
   // Using a Set to avoid duplicate entries
+  // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
   while ((match = importRegex.exec(sourceCode)) !== null) {
     // Adding the captured group which is not null to the set
     if (match[1]) {

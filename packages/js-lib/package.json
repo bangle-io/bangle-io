@@ -1,9 +1,0 @@
-{
-  "name": "js-lib",
-  "description": "A library of self contained JavaScript utils that are oblivious of bangle-io",
-  "bangleWorkspaceConfig": {
-    "allowedWorkspaces": [
-      "js-lib"
-    ]
-  }
-}

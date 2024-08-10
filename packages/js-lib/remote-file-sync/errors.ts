@@ -1,3 +1,0 @@
-export const REMOTE_SYNC_NOT_ALLOWED_ERROR = 'REMOTE_SYNC_NOT_ALLOWED_ERROR';
-
-export type ErrorCodeType = typeof REMOTE_SYNC_NOT_ALLOWED_ERROR;

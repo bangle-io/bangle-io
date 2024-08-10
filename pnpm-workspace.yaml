@@ -1,11 +1,3 @@
 packages:
-  - 'packages/app-bundler/*'
-  - 'packages/app-window/*'
-  - 'packages/app-worker/*'
-  - 'packages/e2e-tests/*'
-  - 'packages/js-lib/*'
-  - 'packages/lib-common/*'
-  - 'packages/lib-window/*'
-  - 'packages/shared/*'
-  - 'packages/test-utils/*'
+  - 'packages/base/*'
   - 'packages/tooling/*'

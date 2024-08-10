@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { findAllExportedPaths } from '../find-all-exported-paths';
 
 describe('findAllExportedPaths', () => {
@@ -33,7 +34,7 @@ describe('findAllExportedPaths', () => {
   });
 
   it('should return an empty array for no exports', () => {
-    const sourceCode = `const a = 10;`;
+    const sourceCode = 'const a = 10;';
     expect(findAllExportedPaths(sourceCode)).toEqual([]);
   });
 
@@ -66,7 +67,7 @@ describe('findAllExportedPaths', () => {
   });
 
   it('should handle interface exports', () => {
-    const sourceCode = `export interface InterfaceName {}`;
+    const sourceCode = 'export interface InterfaceName {}';
     expect(findAllExportedPaths(sourceCode)).toEqual([]);
   });
 
@@ -114,7 +115,7 @@ describe('findAllExportedPaths', () => {
   });
 
   it('should handle type exports without from clause', () => {
-    const sourceCode = `export type TypeName = { key: string };`;
+    const sourceCode = 'export type TypeName = { key: string };';
     expect(findAllExportedPaths(sourceCode)).toEqual([]);
   });
 });
@@ -126,7 +127,7 @@ describe('findAllExportedPaths type exports', () => {
   });
 
   it('should handle interface exports', () => {
-    const sourceCode = `export interface InterfaceName {}`;
+    const sourceCode = 'export interface InterfaceName {}';
     expect(findAllExportedPaths(sourceCode)).toEqual([]);
   });
 
@@ -158,7 +159,7 @@ describe('findAllExportedPaths type exports', () => {
   });
 
   it('should handle type exports without from clause', () => {
-    const sourceCode = `export type TypeName = { key: string };`;
+    const sourceCode = 'export type TypeName = { key: string };';
     expect(findAllExportedPaths(sourceCode)).toEqual([]);
   });
 

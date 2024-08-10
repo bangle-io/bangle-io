@@ -1,5 +1,4 @@
 const { BangleConfig } = require('@bangle.io/config-template');
-const HELP_DOCS_VERSION = require('bangle-io-help/package.json').version;
 
 process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
   build: {
@@ -16,7 +15,7 @@ process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
   },
   app: {
     changelogText: 'dummy-change-log text',
-    helpDocsVersion: HELP_DOCS_VERSION,
+    helpDocsVersion: '1.0.0-test',
   },
 }).serialize();
 

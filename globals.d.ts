@@ -1,5 +1,5 @@
-declare var __BANGLE_BUILD_TIME_CONFIG__: string | undefined;
-declare var __BANGLE_INJECTED_CONFIG__: string | undefined;
+declare let __BANGLE_BUILD_TIME_CONFIG__: string | undefined;
+declare let __BANGLE_INJECTED_CONFIG__: string | undefined;
 
 interface Window {
   _nsmE2e: import('@bangle.io/e2e-types').E2eTypes;
@@ -14,8 +14,8 @@ declare module 'page-lifecycle' {
 
   interface Lifecyle {
     state: PageLifeCycleState;
-    addUnsavedChanges: (s: Symbol) => void;
-    removeUnsavedChanges: (s: Symbol) => void;
+    addUnsavedChanges: (s: symbol) => void;
+    removeUnsavedChanges: (s: symbol) => void;
     addEventListener: (
       type: string,
       cb: (event: PageLifeCycleEvent) => void,

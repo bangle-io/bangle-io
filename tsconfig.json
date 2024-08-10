@@ -1,39 +1,47 @@
 {
   "compilerOptions": {
-    "importHelpers": true,
-    "allowJs": true,
-    "checkJs": true,
+    // General Options
     "composite": true,
-    "esModuleInterop": true,
-    "declaration": true,
-    "declarationMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "module": "ES2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
-    "noEmit": true,
-    "noEmitOnError": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
     "pretty": true,
     "removeComments": false,
-    "resolveJsonModule": false,
     "skipLibCheck": true,
-    "strict": true,
     "stripInternal": true,
+    // JavaScript Support
+    "allowJs": true,
+    "checkJs": true,
+    // Module Resolution
+    "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "resolveJsonModule": false,
+    // Emit Options
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "noEmitOnError": false,
+    "importHelpers": true,
+    // Strict Type-Checking Options
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": false,
+    // JSX
+    "jsx": "react",
+    // Target and Libraries
     "target": "es2022",
     "lib": [
       "dom",
       "es2022",
       "dom.iterable"
     ],
-    "useDefineForClassFields": true,
+    // Miscellaneous
+    "newLine": "lf",
+    "useDefineForClassFields": true
   },
   "include": [
     "packages/**/*.ts",
@@ -43,6 +51,6 @@
     "globals.d.ts"
   ],
   "exclude": [
-    "node_modules",
-  ],
+    "node_modules"
+  ]
 }

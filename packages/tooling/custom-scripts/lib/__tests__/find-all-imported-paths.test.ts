@@ -1,3 +1,5 @@
+import { describe, expect, it } from '@jest/globals';
+
 import { findAllImportedPackages } from '../find-all-imported-paths';
 
 describe('findAllImportedPackages', () => {
@@ -72,7 +74,7 @@ describe('findAllImportedPackages', () => {
   });
 
   it('should return an empty array for no imports', () => {
-    const sourceCode = `const a = 10;`;
+    const sourceCode = 'const a = 10;';
     expect(findAllImportedPackages(sourceCode)).toEqual([]);
   });
 

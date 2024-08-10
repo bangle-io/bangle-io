@@ -10,7 +10,7 @@ beforeEach(() => {
   globalThis.indexedDB = new IDBFactory();
 });
 
-let original = structuredClone;
+const original = structuredClone;
 // // structuredClone is used by `fake-indexeddb` to clone various objects
 // // We override this function to allow for perserving `File` instance when
 // // saving in `fake-indexeddb`.
@@ -72,7 +72,7 @@ globalThis.File = class File {
 };
 
 function deepMap(obj, mapFn) {
-  let object = mapFn(obj);
+  const object = mapFn(obj);
 
   if (Array.isArray(object)) {
     return object.map((item) => deepMap(item, mapFn));

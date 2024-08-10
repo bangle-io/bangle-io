@@ -1,33 +1,30 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "name": "Debug Current Jest Test File",
-            "request": "launch",
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "node",
-            "runtimeArgs": [
-                "--inspect-brk",
-                "${workspaceRoot}/node_modules/jest/bin/jest.js",
-                "--runInBand",
-                "--config",
-                "${workspaceRoot}/jest.config.js",
-            ],
-            "skipFiles": [
-                "<node_internals>/**",
-                "**/node_modules/**"
-            ],
-            "args": [
-                "${fileDirname}/${fileBasenameNoExtension}",
-                "--testTimeout=600000"
-            ],
-            "env": {},
-            "sourceMaps": true,
-            "smartStep": true,
-            "autoAttachChildProcesses": true,
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "name": "Debug Current Jest Test File",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--config",
+        "${workspaceRoot}/jest.config.js"
+      ],
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "args": [
+        "${fileDirname}/${fileBasenameNoExtension}",
+        "--testTimeout=600000"
+      ],
+      "env": {},
+      "sourceMaps": true,
+      "smartStep": true,
+      "autoAttachChildProcesses": true
+    }
+  ]
 }

@@ -1,3 +1,7 @@
+import url from 'node:url';
+
+export * from './workspace-helper';
+
 export function makeThrowValidationError(
   prefix: string,
 ): (message: string) => never {
@@ -21,4 +25,8 @@ export function setDifference<T>(
     _difference.delete(elem);
   }
   return _difference;
+}
+
+export function isMainModule(importUrl: string) {
+  return importUrl === url.pathToFileURL(process.argv[1] || '').href;
 }

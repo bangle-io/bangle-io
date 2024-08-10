@@ -1,9 +1,0 @@
-{
-  "name": "app-bundler",
-  "description": "Build related things for the app",
-  "bangleWorkspaceConfig": {
-    "allowedWorkspaces": [
-      "*"
-    ]
-  }
-}

@@ -18,30 +18,36 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        id: pnpm-install
+        run: |
+          corepack enable
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
       - name: Install dependencies
         run: pnpm install
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
       - name: Lint
-        run: pnpm run lint
-      - name: constraints
-        run: pnpm run test:constraints
+        run: pnpm run lint:ci
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        id: pnpm-install
+        run: |
+          corepack enable
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -49,32 +55,32 @@ jobs:
         run: pnpm install
       - name: test
         run: pnpm run test:ci
-  e2e-tests:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.39.0-focal
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set git safe directory
-        # This is added as a fix for https://github.com/actions/checkout/issues/766
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Install Playwright Browsers
-        run: pnpm -r --filter e2e-tests playwright-install
-      - name: Run Playwright tests
-        run: pnpm run test:e2e
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: packages/e2e-tests/playwright-report/
-          retention-days: 7
+  # e2e-tests:
+  #   timeout-minutes: 10
+  #   runs-on: ubuntu-latest
+  #   container: mcr.microsoft.com/playwright:v1.39.0-focal
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set git safe directory
+  #       # This is added as a fix for https://github.com/actions/checkout/issues/766
+  #       run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+  #     - uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 8
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: 'pnpm'
+  #     - name: Install dependencies
+  #       run: pnpm install
+  #     - name: Install Playwright Browsers
+  #       run: pnpm -r --filter e2e-tests playwright-install
+  #     - name: Run Playwright tests
+  #       run: pnpm run test:e2e
+  #     - uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: playwright-report
+  #         path: packages/e2e-tests/playwright-report/
+  #         retention-days: 7

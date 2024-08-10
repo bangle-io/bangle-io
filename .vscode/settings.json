@@ -1,24 +1,24 @@
 {
   "workbench.colorCustomizations": {
-    "activityBar.activeBackground": "#7a25f9",
-    "activityBar.background": "#7a25f9",
-    "activityBar.foreground": "#e7e7e7",
-    "activityBar.inactiveForeground": "#e7e7e799",
-    "activityBarBadge.background": "#f86807",
+    "activityBar.activeBackground": "#e78061",
+    "activityBar.background": "#e78061",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#acf2bc",
     "activityBarBadge.foreground": "#15202b",
     "commandCenter.border": "#e7e7e799",
-    "sash.hoverBorder": "#7a25f9",
-    "statusBar.background": "#6006e5",
+    "sash.hoverBorder": "#e78061",
+    "statusBar.background": "#e05d35",
     "statusBar.foreground": "#e7e7e7",
-    "statusBarItem.hoverBackground": "#7a25f9",
-    "statusBarItem.remoteBackground": "#6006e5",
+    "statusBarItem.hoverBackground": "#e78061",
+    "statusBarItem.remoteBackground": "#e05d35",
     "statusBarItem.remoteForeground": "#e7e7e7",
-    "titleBar.activeBackground": "#6006e5",
+    "titleBar.activeBackground": "#e05d35",
     "titleBar.activeForeground": "#e7e7e7",
-    "titleBar.inactiveBackground": "#6006e599",
+    "titleBar.inactiveBackground": "#e05d3599",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#6006e5",
+  "peacock.color": "#e05d35",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "cSpell.words": [
     "abortable",
@@ -37,11 +37,18 @@
     "Worktrees"
   ],
   "javascript.preferences.importModuleSpecifier": "project-relative",
-  "eslint.experimental.useFlatConfig": true,
+  "git.postCommitCommand": "sync",
   "search.exclude": {
-    "**/node_modules/*": true,
+    "**/node_modules/*": true
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "quickfix.biome": "explicit"
   },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

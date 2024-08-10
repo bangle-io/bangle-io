@@ -1,8 +1,0 @@
-{
-  "name": "e2e-tests",
-  "bangleWorkspaceConfig": {
-    "allowedWorkspaces": [
-      "*"
-    ]
-  }
-}

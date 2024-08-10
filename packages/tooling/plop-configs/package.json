@@ -17,7 +17,8 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "type": "nodejs"
+    "env": "nodejs",
+    "kind": "build"
   },
   "scripts": {},
   "dependencies": {

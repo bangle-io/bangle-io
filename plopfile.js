@@ -1,1 +1,1 @@
-module.exports = require('@bangle.io/plop-configs');
+export { default } from '@bangle.io/plop-configs';

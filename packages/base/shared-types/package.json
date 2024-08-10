@@ -1,11 +1,12 @@
 {
-  "name": "jest-utils",
+  "name": "@bangle.io/shared-types",
   "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/jest-utils"
+    "directory": "packages/base/shared-types"
   },
   "authors": [
     {
@@ -17,14 +18,13 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "nodejs",
-    "kind": "build"
+    "env": "universal",
+    "kind": "types"
   },
+  "types": "index.d.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.io/config-template": "^0.0.7",
-    "cross-fetch": "^4.0.0",
-    "domexception": "^4.0.0",
-    "fake-indexeddb": "^5.0.2"
-  }
+    "comlink": "^4.4.1"
+  },
+  "devDependencies": {}
 }

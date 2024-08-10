@@ -1,0 +1,7 @@
+{
+  "name": "base",
+  "description": "",
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": ["base"]
+  }
+}

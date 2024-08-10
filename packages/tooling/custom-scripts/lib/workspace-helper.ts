@@ -2,11 +2,12 @@ import fsProm from 'node:fs/promises';
 import path from 'node:path';
 
 import {
-  BanglePackageConfig,
+  type BanglePackageConfig,
+  type BangleWorkspaceConfig,
+  ROOT_PKG_NAME,
   banglePackageConfigSchema,
-  BangleWorkspaceConfig,
   bangleWorkspaceConfigSchema,
-} from './constants';
+} from '../config';
 import { findAllExportedPaths } from './find-all-exported-paths';
 import { findAllImportedPackages } from './find-all-imported-paths';
 
@@ -18,6 +19,8 @@ type WorkspaceData = {
   packageJSON: Record<string, any>;
   bangleWorkspaceConfig: BangleWorkspaceConfig;
 };
+
+const globbyIgnore = ['**/node_modules/**', '**/dist/**', '**/build/**'];
 
 export class Workspace {
   get name() {
@@ -92,25 +95,29 @@ interface PackageJSON {
   banglePackageConfig?: BanglePackageConfig;
 }
 
-const globbyIgnore = ['**/node_modules/**', '**/dist/**', '**/build/**'];
+export type SetupResult = {
+  packagesMap: Map<string, Package>;
+  workspaces: Record<string, Workspace>;
+};
 
-export async function setup() {
+export async function setup(): Promise<SetupResult> {
   const { globbySync } = await import('globby');
-  let packages = globbySync('**/package.json', {
+  const packages = globbySync('**/package.json', {
     cwd: path.join(root, 'packages'),
     absolute: true,
     gitignore: true,
     ignore: globbyIgnore,
   });
 
-  let packagesResolved = packages.map((p) => ({
+  const packagesResolved = packages.map((p) => ({
     path: p,
     packageJSON: require(p),
   }));
-
   const workspaces: Record<string, Workspace> = Object.fromEntries(
     packagesResolved
-      .filter((p) => p.packageJSON.bangleWorkspaceConfig)
+      .filter((p) => {
+        return p.packageJSON.bangleWorkspaceConfig;
+      })
       .map((p): [string, Workspace] => {
         const config = p.packageJSON.bangleWorkspaceConfig;
 
@@ -135,14 +142,13 @@ export async function setup() {
         const banglePackageConfig = p.packageJSON.banglePackageConfig as
           | BanglePackageConfig
           | undefined;
-
         if (banglePackageConfig?.skipValidation) {
           return false;
         }
 
         return (
           !p.packageJSON.bangleWorkspaceConfig &&
-          p.packageJSON.name !== 'bangle-io'
+          p.packageJSON.name !== ROOT_PKG_NAME
         );
       })
       .map((p): [string, PackageState] => {
@@ -189,7 +195,7 @@ export async function setup() {
 
   const packagesMap = new Map<string, Package>();
 
-  for (const [name, pkg] of Object.entries(packageStateMap)) {
+  for (const [, pkg] of Object.entries(packageStateMap)) {
     new Package(pkg, packagesMap);
   }
 
@@ -207,8 +213,8 @@ export class Package {
     return this.packageState.packageJSON;
   }
 
-  get type() {
-    return this.banglePackageConfig.type;
+  get env() {
+    return this.banglePackageConfig.env;
   }
 
   get workspaceDependencies(): Record<string, Package> {
@@ -265,7 +271,7 @@ export class Package {
   private _getWsDeps(type: 'dependencies' | 'devDependencies') {
     return Object.fromEntries(
       Object.entries(this.packageJSON[type] ?? {})
-        .filter(([name, value]) => value === 'workspace:*')
+        .filter(([, value]) => value === 'workspace:*')
         .map(([name]): [string, Package] => {
           const pkg = this.packageMapping.get(name);
 
@@ -377,6 +383,7 @@ export class Package {
             const [scope, pkg] = forwardedPath.split('/');
             importedPackages.add([scope, pkg].join('/'));
           } else {
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             importedPackages.add(forwardedPath.split('/')[0]!);
           }
         }
@@ -397,8 +404,8 @@ export class Package {
     }
 
     await fsProm.writeFile(
-      path.join(this.packagePath + '/package.json'),
-      JSON.stringify(newJSON, null, 2) + '\n',
+      path.join(`${this.packagePath}/package.json`),
+      `${JSON.stringify(newJSON, null, 2)}\n`,
       'utf-8',
     );
 
