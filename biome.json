@@ -3,6 +3,11 @@
   "files": {
     "ignore": ["missing-test-types.d.ts"]
   },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,

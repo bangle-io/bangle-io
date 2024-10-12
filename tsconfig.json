@@ -1,56 +1,53 @@
 {
-  "compilerOptions": {
-    // General Options
-    "composite": true,
-    "pretty": true,
-    "removeComments": false,
-    "skipLibCheck": true,
-    "stripInternal": true,
-    // JavaScript Support
-    "allowJs": true,
-    "checkJs": true,
-    // Module Resolution
-    "esModuleInterop": true,
-    "module": "ES2020",
-    "moduleResolution": "node",
-    "resolveJsonModule": false,
-    // Emit Options
-    "declaration": true,
-    "declarationMap": true,
-    "noEmit": true,
-    "noEmitOnError": false,
-    "importHelpers": true,
-    // Strict Type-Checking Options
-    "strict": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": false,
-    // JSX
-    "jsx": "react",
-    // Target and Libraries
-    "target": "es2022",
-    "lib": [
-      "dom",
-      "es2022",
-      "dom.iterable"
-    ],
-    // Miscellaneous
-    "newLine": "lf",
-    "useDefineForClassFields": true
-  },
-  "include": [
-    "packages/**/*.ts",
-    "packages/**/*.tsx",
-    "packages/tooling/storybook/.storybook/**/*.ts",
-    "packages/tooling/storybook/.storybook/**/*.tsx",
-    "globals.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+	"compilerOptions": {
+		// General Options
+		"composite": true,
+		"pretty": true,
+		"removeComments": false,
+		"skipLibCheck": true,
+		"stripInternal": true,
+		// JavaScript Support
+		"allowJs": true,
+		"checkJs": true,
+		// Module Resolution
+		"esModuleInterop": true,
+		"allowImportingTsExtensions": true,
+		"module": "ES2020",
+		"moduleResolution": "node",
+		"moduleDetection": "force",
+		"resolveJsonModule": false,
+		"isolatedModules": true,
+		"jsx": "react",
+		// Emit Options
+		"declaration": true,
+		"declarationMap": true,
+		"noEmit": true,
+		"noEmitOnError": false,
+		"importHelpers": true,
+		// Strict Type-Checking Options
+		"strict": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"noPropertyAccessFromIndexSignature": false,
+		// JSX
+		// Target and Libraries
+		"target": "ES2020",
+		"lib": ["dom", "ES2020", "dom.iterable"],
+		// Miscellaneous
+		"newLine": "lf",
+		"useDefineForClassFields": true
+	},
+	"include": [
+		"packages/**/*.ts",
+		"packages/**/*.tsx",
+		"packages/tooling/storybook/.storybook/**/*.ts",
+		"packages/tooling/storybook/.storybook/**/*.tsx",
+		"globals.d.ts"
+	],
+	"exclude": ["node_modules"]
 }

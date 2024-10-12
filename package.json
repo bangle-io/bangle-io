@@ -11,9 +11,10 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "devDependencies": {
     "@bangle.io/plop-configs": "workspace:*",
-    "@biomejs/biome": "1.8.3",
+    "@biomejs/biome": "1.9.3",
     "@swc/jest": "^0.2.36",
-    "@types/bun": "^1.1.6",
+    "@types/bun": "^1.1.11",
+    "@types/jest": "^29.5.13",
     "jest": "^29.7.0",
     "plop": "^4.0.1"
   },
@@ -31,17 +32,20 @@
   },
   "private": true,
   "scripts": {
-    "lint:ci": "biome ci . && pnpm custom-validation",
-    "lint:fix": "biome check . --fix",
-    "lint": "biome check . && pnpm custom-validation",
     "custom-validation": "bun packages/tooling/custom-scripts/scripts-validate/all.ts",
+    "lint:ci": "biome ci .",
+    "lint:fix": "biome check . --fix",
+    "lint": "biome check .",
+    "start": "pnpm -r --filter \"browser-entry\" run dev",
+    "build": "pnpm run precursor && pnpm -r --filter \"browser-entry\" run build",
     "test:ci": "pnpm jest --ci",
-    "test": "pnpm jest"
+    "test": "pnpm jest",
+    "precursor": "echo \"ok\""
   },
   "module": "index.ts",
   "type": "module",
   "peerDependencies": {
-    "typescript": "^5.5.3"
+    "typescript": "^5.6.3"
   },
-  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
+  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4"
 }

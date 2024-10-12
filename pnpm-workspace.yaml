@@ -1,3 +1,6 @@
 packages:
+  # s
+  - 'packages/js-lib/*'
   - 'packages/base/*'
+  - 'packages/entry/*'
   - 'packages/tooling/*'

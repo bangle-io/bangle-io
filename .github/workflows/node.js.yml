@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main, dev, staging, production, v2]
+    branches: [main, dev, staging, production, v2, v3]
   pull_request:
-    branches: [main, dev, staging, production, v2]
+    branches: [main, dev, staging, production, v2, v3]
 
 concurrency:
   group: bangle-${{ github.event.pull_request.number || github.ref }}
@@ -29,13 +29,13 @@ jobs:
           node-version: 20
           cache: 'pnpm'
       - name: Install bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
       - name: Install dependencies
         run: pnpm install
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
-        with:
-          version: latest
       - name: Lint
         run: pnpm run lint:ci
   test:

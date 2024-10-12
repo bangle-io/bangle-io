@@ -95,14 +95,14 @@ module.exports = function main(
   });
 
   // or do async things inside of an action
-  plop.setActionType('runFormat', (answers, config, plop) =>
-    execa('pnpm', ['-w', 'run', GENERATE_ALL], {
-      cwd: rootDir,
-      stdio: 'inherit',
-    }).then(() => {
-      return 'runFormat done';
-    }),
-  );
+  plop.setActionType('runFormat', (answers, config, plop) => {
+    // execa('pnpm', ['-w', 'run', GENERATE_ALL], {
+    //   cwd: rootDir,
+    //   stdio: 'inherit',
+    // }).then(() => {
+    //   return 'runFormat done';
+    // });
+  });
   plop.setActionType('runPnpmInstall', (answers, config, plop) =>
     execa('pnpm', ['-w', 'install'], {
       cwd: rootDir,

@@ -12,6 +12,7 @@ node_modules
 coverage-summary.json
 tsconfig.tsbuildinfo
 
+
 # playwright
 playwright-report
 playwright/.cache/
@@ -24,4 +25,4 @@ node_modules/
 /playwright/.cache/
 
 /dist/
-packages/app-bundler/app-root/dist
+packages/entry/browser-entry/dist
