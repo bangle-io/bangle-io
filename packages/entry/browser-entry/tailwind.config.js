@@ -1,3 +1,5 @@
+import { fontFamily } from 'tailwindcss/defaultTheme';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ['class', '.BU_dark-scheme'],
@@ -7,7 +9,7 @@ export default {
   },
   theme: {
     container: {
-      center: true,
+      center: 'true',
       padding: '2rem',
       screens: {
         '2xl': '1400px',
@@ -61,20 +63,38 @@ export default {
           DEFAULT: 'rgb(var(--BV-card) / <alpha-value>)',
           foreground: 'rgb(var(--BV-card-foreground) / <alpha-value>)',
         },
+        chart: {
+          1: 'hsl(var(--BV-chart-1))',
+          2: 'hsl(var(--BV-chart-2))',
+          3: 'hsl(var(--BV-chart-3))',
+          4: 'hsl(var(--BV-chart-4))',
+          5: 'hsl(var(--BV-chart-5))',
+        },
       },
       borderRadius: {
         lg: 'var(--BV-radius)',
         md: 'calc(var(--BV-radius) - 2px)',
         sm: 'calc(var(--BV-radius) - 4px)',
       },
+      fontFamily: {
+        sans: ['var(--BV-font-sans)', ...fontFamily.sans],
+      },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          from: {
+            height: '0',
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)',
+          },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+          to: {
+            height: '0',
+          },
         },
       },
       animation: {
@@ -83,8 +103,5 @@ export default {
       },
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-    require('tailwindcss-react-aria-components'),
-  ],
+  plugins: [require('tailwindcss-animate')],
 };
