@@ -22,7 +22,8 @@
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@bangle.io/ui-utils": "workspace:*",
-    "@radix-ui/react-dropdown-menu": "^2.1.2"
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-menubar": "^1.1.2"
   },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
