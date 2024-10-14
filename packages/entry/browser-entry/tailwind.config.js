@@ -5,7 +5,7 @@ export default {
   darkMode: ['class', '.BU_dark-scheme'],
   content: {
     relative: true,
-    files: ['!../../**/node_modules', '../../**/*.{ts,tsx,html}'],
+    files: ['!../../**/node_modules', '../../**/*.{jsx,ts,tsx,html}'],
   },
   theme: {
     container: {

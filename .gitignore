@@ -26,3 +26,4 @@ node_modules/
 
 /dist/
 packages/entry/browser-entry/dist
+*storybook.log
