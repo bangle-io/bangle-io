@@ -18,7 +18,9 @@
     "@types/jest": "^29.5.13",
     "jest": "^29.7.0",
     "plop": "^4.0.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/jsdom-env": "workspace:*"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
@@ -35,7 +37,7 @@
   "private": true,
   "scripts": {
     "custom-validation": "bun packages/tooling/custom-scripts/scripts/validate-all.ts",
-    "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .",
+    "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
     "lint:fix": "biome check . --fix",
     "typecheck": "tsc -b",
     "lint": "biome check .",
@@ -43,6 +45,7 @@
     "build": "pnpm run precursor && pnpm -r --filter \"browser-entry\" run build",
     "test:ci": "pnpm jest --ci",
     "test": "pnpm jest",
+    "storybook": "pnpm -r --filter \"storybook\" run storybook",
     "precursor": "echo \"ok\""
   },
   "module": "index.ts",

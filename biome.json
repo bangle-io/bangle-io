@@ -48,11 +48,15 @@
       },
       "nursery": {
         "useSortedClasses": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn"
       }
     }
   },
 
   "javascript": {
+    "jsxRuntime": "reactClassic",
     "formatter": {
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",

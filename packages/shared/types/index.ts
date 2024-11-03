@@ -1,1 +1,1 @@
-export const hello = 'world';
+export type ColorScheme = 'light' | 'dark';

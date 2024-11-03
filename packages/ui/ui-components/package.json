@@ -34,6 +34,12 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@bangle.io/ui-utils": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
-    "@radix-ui/react-menubar": "^1.1.2"
+    "@radix-ui/react-menubar": "^1.1.2",
+    "@bangle.io/window-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.1",
+    "@bangle.io/test-utils": "workspace:*",
+    "@storybook/react": "^8.3.5"
   }
 }

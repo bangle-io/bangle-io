@@ -22,6 +22,8 @@
     "p-map": "^7.0.1",
     "prettier": "3.2.5",
     "syncpack": "^12.3.0",
+    "fs-extra": "^11.2.0",
+    "@types/fs-extra": "^11.0.4",
     "ts-node": "^10.9.2",
     "zod": "^3.22.4",
     "@jest/globals": "^29.7.0"

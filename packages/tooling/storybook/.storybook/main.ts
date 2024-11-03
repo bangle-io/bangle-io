@@ -1,4 +1,5 @@
 import path from 'node:path';
+import getEnvVars from '@bangle.io/env-vars';
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { StoriesEntry } from '@storybook/types';
 import { globby } from 'globby';
@@ -66,6 +67,22 @@ const config: StorybookConfig = {
   framework: {
     name: '@storybook/react-vite',
     options: {},
+  },
+  async viteFinal(config, { configType }) {
+    const { mergeConfig } = await import('vite');
+
+    const envVars = getEnvVars({
+      isProduction: configType === 'PRODUCTION',
+      isVite: true,
+      isStorybook: true,
+      helpDocsVersion: '0.0.0',
+    });
+
+    return mergeConfig(config, {
+      define: {
+        ...envVars.globalIdentifiers,
+      },
+    });
   },
 };
 export default config;

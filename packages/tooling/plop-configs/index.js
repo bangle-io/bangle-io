@@ -5,7 +5,7 @@ const workspaceNames = {
   jsLib: 'js-lib',
 };
 
-const GENERATE_ALL = 'generate-all';
+const _GENERATE_ALL = 'generate-all';
 
 const rootDir = path.resolve(__dirname, '../../../');
 
@@ -65,7 +65,7 @@ module.exports = function main(
   /** @type {import('plop').NodePlopAPI} */
   plop,
 ) {
-  const camelCase = (name) => {
+  const _camelCase = (name) => {
     const [first, ...rest] = name.split('-');
 
     return [
@@ -95,7 +95,7 @@ module.exports = function main(
   });
 
   // or do async things inside of an action
-  plop.setActionType('runFormat', (answers, config, plop) => {
+  plop.setActionType('runFormat', (_answers, _config, _plop) => {
     // execa('pnpm', ['-w', 'run', GENERATE_ALL], {
     //   cwd: rootDir,
     //   stdio: 'inherit',
@@ -103,7 +103,7 @@ module.exports = function main(
     //   return 'runFormat done';
     // });
   });
-  plop.setActionType('runPnpmInstall', (answers, config, plop) =>
+  plop.setActionType('runPnpmInstall', (_answers, _config, _plop) =>
     execa('pnpm', ['-w', 'install'], {
       cwd: rootDir,
       stdio: 'inherit',

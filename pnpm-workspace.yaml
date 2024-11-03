@@ -4,3 +4,4 @@ packages:
   - 'packages/js-lib/*'
   - 'packages/tooling/*'
   - 'packages/ui/*'
+  - 'packages/shared/*'
