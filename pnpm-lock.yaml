@@ -44,6 +44,9 @@ importers:
 
   packages/entry/browser-entry:
     dependencies:
+      '@bangle.io/env-vars':
+        specifier: workspace:*
+        version: link:../../tooling/env-vars
       '@bangle.io/ui-components':
         specifier: workspace:*
         version: link:../../ui/ui-components

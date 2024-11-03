@@ -20,7 +20,7 @@
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "banglePackageConfig": {
-    "env": "universal",
+    "env": "nodejs",
     "kind": "app"
   },
   "private": true,
@@ -36,7 +36,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.2",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "@bangle.io/env-vars": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",

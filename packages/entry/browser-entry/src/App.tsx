@@ -1,6 +1,7 @@
 import {
   Accordion,
   Breadcrumb,
+  Dhancha,
   DropdownMenu,
   Menubar,
 } from '@bangle.io/ui-components';
@@ -195,11 +196,18 @@ export function AccordionDemo() {
 
 function App() {
   return (
-    <div className="w-8/12 p-12">
-      <AccordionDemo />
-      <BreadcrumbDemo />
-      <MenubarDemo />
-    </div>
+    <Dhancha.DhanchaWidescreen
+      titlebar={<div className="bg-colorBgLayerFloat">I am titlebar</div>}
+      leftAside={'hi'}
+      rightAside={'hi'}
+      mainContent={
+        <div className="w-8/12 p-12">
+          <AccordionDemo />
+          <BreadcrumbDemo />
+          <MenubarDemo />
+        </div>
+      }
+    />
   );
 }
 
