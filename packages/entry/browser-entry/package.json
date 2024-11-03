@@ -1,30 +1,52 @@
 {
   "name": "@bangle.io/browser-entry",
-  "private": true,
+  "description": "",
+  "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/entry/browser-entry"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "env": "universal",
+    "kind": "app"
+  },
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@bangle.io/ui-components": "workspace:*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.2",
+    "vite": "^5.4.8"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.11.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^1.0.0",
-    "vite": "^5.4.8"
+    "tailwindcss-react-aria-components": "^1.0.0"
   }
 }

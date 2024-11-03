@@ -1,0 +1,6 @@
+{
+  "name": "ui",
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": ["js-lib", "ui"]
+  }
+}

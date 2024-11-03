@@ -34,8 +34,8 @@
   },
   "private": true,
   "scripts": {
-    "custom-validation": "bun packages/tooling/custom-scripts/scripts-validate/all.ts",
-    "lint:ci": "pnpm run typecheck && biome ci .",
+    "custom-validation": "bun packages/tooling/custom-scripts/scripts/validate-all.ts",
+    "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .",
     "lint:fix": "biome check . --fix",
     "typecheck": "tsc -b",
     "lint": "biome check .",

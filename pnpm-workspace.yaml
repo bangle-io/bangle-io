@@ -1,5 +1,4 @@
 packages:
-  # s
   - 'packages/base/*'
   - 'packages/entry/*'
   - 'packages/js-lib/*'

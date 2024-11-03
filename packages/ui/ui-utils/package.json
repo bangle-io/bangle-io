@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/ui-utils",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,18 +16,19 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "scripts": {},
-  "dependencies": {
-    "tailwind-merge": "^2.5.3",
-    "clsx": "^2.1.1"
-  },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "universal"
+    "env": "universal",
+    "kind": "library"
   },
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {},
+  "dependencies": {
+    "tailwind-merge": "^2.5.3",
+    "clsx": "^2.1.1"
   }
 }

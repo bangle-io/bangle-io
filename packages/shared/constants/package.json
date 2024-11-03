@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/ui-hooks",
+  "name": "@bangle.io/constants",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/ui/ui-hooks"
+    "directory": "packages/shared/constants"
   },
   "authors": [
     {
@@ -18,8 +18,8 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "browser",
-    "kind": "library"
+    "env": "universal",
+    "kind": "static"
   },
   "main": "index.ts",
   "module": "index.ts",
@@ -27,5 +27,7 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "@bangle.io/types": "workspace:*"
+  }
 }

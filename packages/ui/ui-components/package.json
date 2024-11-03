@@ -1,7 +1,8 @@
 {
   "name": "@bangle.io/ui-components",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
@@ -15,6 +16,16 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "env": "universal",
+    "kind": "library"
+  },
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "dependencies": {
     "lucide-react": "^0.452.0",
@@ -24,14 +35,5 @@
     "@bangle.io/ui-utils": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@radix-ui/react-menubar": "^1.1.2"
-  },
-  "bugs": "https://github.com/bangle-io/bangle-io/issues",
-  "banglePackageConfig": {
-    "env": "universal"
-  },
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "publishConfig": {
-    "access": "public"
   }
 }

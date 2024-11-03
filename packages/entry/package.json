@@ -1,0 +1,6 @@
+{
+  "name": "entry",
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": ["entry", "shared", "js-lib", "ui", "tooling"]
+  }
+}

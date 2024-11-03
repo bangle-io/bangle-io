@@ -1,11 +1,12 @@
 {
   "name": "@bangle.io/storybook",
-  "version": "0.0.0",
+  "description": "",
   "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/sample-workspace/storybook"
+    "directory": "packages/tooling/storybook"
   },
   "authors": [
     {
@@ -15,18 +16,23 @@
     }
   ],
   "homepage": "https://bangle.io",
-  "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
-  },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "nodejs"
+    "env": "nodejs",
+    "kind": "build"
   },
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "build-storybook": "storybook build",
+    "storybook": "storybook dev -p 6006"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.2"
   },
   "devDependencies": {
     "@bangle.io/browser-entry": "workspace:*",
