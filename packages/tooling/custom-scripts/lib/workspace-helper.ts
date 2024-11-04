@@ -100,7 +100,9 @@ export type SetupResult = {
   workspaces: Record<string, Workspace>;
 };
 
-export async function setup(): Promise<SetupResult> {
+export async function setup({
+  validatePackageConfig = true,
+}: { validatePackageConfig?: boolean } = {}): Promise<SetupResult> {
   const { globbySync } = await import('globby');
   const packages = globbySync('**/package.json', {
     cwd: path.join(root, 'packages'),
@@ -167,13 +169,15 @@ export async function setup(): Promise<SetupResult> {
 
         const banglePackageConfig = p.packageJSON.banglePackageConfig;
 
-        try {
-          banglePackageConfigSchema.parse(banglePackageConfig);
-        } catch (err) {
-          console.error(err);
-          throw new Error(
-            `Validation error in package ${p.packageJSON.name} at ${p.path}`,
-          );
+        if (validatePackageConfig) {
+          try {
+            banglePackageConfigSchema.parse(banglePackageConfig);
+          } catch (err) {
+            console.error(err);
+            throw new Error(
+              `Validation error in package ${p.packageJSON.name} at ${p.path}`,
+            );
+          }
         }
 
         const packageObj: PackageState = {

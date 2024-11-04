@@ -27,3 +27,6 @@ node_modules/
 /dist/
 packages/entry/browser-entry/dist
 *storybook.log
+/blob-report/
+
+packages/entry/e2e-tests/test-results

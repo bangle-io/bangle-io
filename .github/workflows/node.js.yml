@@ -55,32 +55,38 @@ jobs:
         run: pnpm install
       - name: test
         run: pnpm run test:ci
-  # e2e-tests:
-  #   timeout-minutes: 10
-  #   runs-on: ubuntu-latest
-  #   container: mcr.microsoft.com/playwright:v1.39.0-focal
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set git safe directory
-  #       # This is added as a fix for https://github.com/actions/checkout/issues/766
-  #       run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-  #     - uses: pnpm/action-setup@v4
-  #       with:
-  #         version: 8
-  #     - name: Use Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #         cache: 'pnpm'
-  #     - name: Install dependencies
-  #       run: pnpm install
-  #     - name: Install Playwright Browsers
-  #       run: pnpm -r --filter e2e-tests playwright-install
-  #     - name: Run Playwright tests
-  #       run: pnpm run test:e2e
-  #     - uses: actions/upload-artifact@v3
-  #       if: always()
-  #       with:
-  #         name: playwright-report
-  #         path: packages/e2e-tests/playwright-report/
-  #         retention-days: 7
+  e2e-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.2-focal
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        id: pnpm-install
+        run: |
+          corepack enable
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install Playwright Browsers
+        run: pnpm -w run e2e-install
+      - name: Run Playwright tests
+        run: pnpm -w run e2e:ci
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      

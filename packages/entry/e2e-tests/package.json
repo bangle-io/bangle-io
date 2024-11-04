@@ -1,0 +1,38 @@
+{
+  "name": "@bangle.io/e2e-tests",
+  "description": "",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/entry/e2e-tests"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "env": "nodejs",
+    "kind": "app"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test  -c ./playwright.config.ts"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.48.2",
+    "@types/node": "^22.8.7",
+    "@types/react": "^18.3.11",
+    "@bangle.io/types": "workspace:*"
+  },
+  "devDependencies": {}
+}

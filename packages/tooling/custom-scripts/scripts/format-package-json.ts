@@ -8,7 +8,7 @@ import { type Package, setup } from '../lib';
 const logger = makeLogger('formatPackageJSON');
 
 if (isMainModule(import.meta.url)) {
-  void setup().then(async (item) => {
+  void setup({ validatePackageConfig: false }).then(async (item) => {
     return formatPackageJSON(item);
   });
 }
