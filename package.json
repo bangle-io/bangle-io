@@ -13,12 +13,12 @@
     "@bangle.io/jsdom-env": "workspace:*",
     "@bangle.io/plop-configs": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "@biomejs/biome": "1.9.3",
-    "@swc/jest": "^0.2.36",
-    "@types/bun": "^1.1.11",
-    "@types/jest": "^29.5.13",
-    "@types/node": "^22.8.7",
-    "@types/react": "^18.3.11",
+    "@biomejs/biome": "1.9.4",
+    "@swc/jest": "^0.2.37",
+    "@types/bun": "^1.1.13",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
     "jest": "^29.7.0",
     "plop": "^4.0.1",
     "typescript": "^5.6.3"
@@ -26,7 +26,11 @@
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
   "pnpm": {
-    "overrides": {}
+    "overrides": {},
+    "supportedArchitectures": {
+      "os": ["darwin", "linux"],
+      "cpu": ["x64", "arm64"]
+    }
   },
   "prettier": {
     "singleQuote": true,
@@ -40,7 +44,8 @@
     "build": "pnpm run precursor && pnpm -r --filter \"browser-entry\" run build",
     "custom-validation": "bun packages/tooling/custom-scripts/scripts/validate-all.ts",
     "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps",
-    "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright test",
+    "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" run test && pnpm --filter \"@bangle.io/e2e-tests\" run test-ct",
+    "e2e-ct-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ct --update-snapshots",
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
     "lint:fix": "biome check . --fix",
     "lint": "biome check .",

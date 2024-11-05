@@ -50,7 +50,7 @@ export const OnlyMain: Story = {
   },
 };
 
-function MainContent() {
+export function MainContent() {
   const [, toggleNoteSidebar] = useState(true);
   const [, toggleWorkspaceSidebar] = useState(true);
 

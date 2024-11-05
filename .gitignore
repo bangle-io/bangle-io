@@ -30,3 +30,5 @@ packages/entry/browser-entry/dist
 /blob-report/
 
 packages/entry/e2e-tests/test-results
+packages/entry/e2e-tests/playwright/.cache
+packages/entry/e2e-tests/playwright/playwright-report

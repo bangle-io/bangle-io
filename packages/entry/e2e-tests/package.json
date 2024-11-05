@@ -26,13 +26,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "playwright test  -c ./playwright.config.ts"
+    "test": "playwright test  -c ./playwright.config.ts",
+    "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/env-vars": "workspace:*",
     "@playwright/test": "^1.48.2",
-    "@types/node": "^22.8.7",
-    "@types/react": "^18.3.11",
-    "@bangle.io/types": "workspace:*"
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@bangle.io/ui-components": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@playwright/experimental-ct-react": "^1.48.2"
   },
   "devDependencies": {}
 }

@@ -32,24 +32,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
+    "@vitejs/plugin-react": "^4.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.2",
-    "vite": "^5.4.8",
-    "@bangle.io/env-vars": "workspace:*"
+    "vite": "^5.4.10"
   },
   "devDependencies": {
-    "@types/react": "^18.3.11",
+    "@storybook/react": "^8.4.1",
+    "@storybook/test": "^8.4.1",
+    "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
-    "eslint-plugin-react-refresh": "^0.4.12",
-    "@storybook/test": "^8.3.5",
-    "@storybook/react": "^8.3.5",
-    "globals": "^15.11.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.12.0",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
+    "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^1.0.0"
+    "tailwindcss-react-aria-components": "^1.1.6"
   }
 }

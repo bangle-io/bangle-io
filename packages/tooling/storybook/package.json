@@ -28,34 +28,36 @@
   },
   "scripts": {
     "build-storybook": "storybook build",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006",
+    "test-storybook": "test-storybook"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.2"
+    "@vitejs/plugin-react": "^4.3.3",
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@bangle.io/browser-entry": "workspace:*",
-    "@chromatic-com/storybook": "^1.9.0",
-    "@storybook/addon-essentials": "^8.3.5",
-    "@storybook/addon-interactions": "^8.3.5",
-    "@storybook/addon-links": "^8.3.5",
-    "@storybook/addon-onboarding": "^8.3.5",
-    "@storybook/blocks": "^8.3.5",
-    "@storybook/manager-api": "^8.3.5",
-    "@storybook/types": "^8.3.5",
-    "@storybook/react": "^8.3.5",
-    "@storybook/react-vite": "^8.3.5",
-    "@storybook/test": "^8.3.5",
-    "@storybook/theming": "^8.3.5",
-    "autoprefixer": "^10.4.20",
-    "globby": "^14.0.0",
-    "prop-types": "^15.8.1",
-    "storybook": "^8.3.5",
-    "tailwindcss": "^3.4.13",
-    "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^1.0.0",
     "@bangle.io/env-vars": "workspace:*",
-    "vite": "^5.4.8"
+    "@chromatic-com/storybook": "^3.2.2",
+    "@storybook/addon-essentials": "^8.4.1",
+    "@storybook/addon-interactions": "^8.4.1",
+    "@storybook/addon-links": "^8.4.1",
+    "@storybook/addon-onboarding": "^8.4.1",
+    "@storybook/blocks": "^8.4.1",
+    "@storybook/manager-api": "^8.4.1",
+    "@storybook/react": "^8.4.1",
+    "@storybook/react-vite": "^8.4.1",
+    "@storybook/test": "^8.4.1",
+    "@storybook/theming": "^8.4.1",
+    "@storybook/types": "^8.4.1",
+    "autoprefixer": "^10.4.20",
+    "globby": "^14.0.2",
+    "prop-types": "^15.8.1",
+    "storybook": "^8.4.1",
+    "tailwindcss": "^3.4.14",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-react-aria-components": "^1.1.6",
+    "vite": "^5.4.10",
+    "@storybook/test-runner": "^0.19.1"
   }
 }

@@ -28,18 +28,18 @@
   },
   "scripts": {},
   "dependencies": {
-    "lucide-react": "^0.452.0",
-    "react": "^18.3.1",
-    "@radix-ui/react-accordion": "^1.2.1",
-    "@radix-ui/react-slot": "^1.1.0",
     "@bangle.io/ui-utils": "workspace:*",
+    "@bangle.io/window-utils": "workspace:*",
+    "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@radix-ui/react-menubar": "^1.1.2",
-    "@bangle.io/window-utils": "workspace:*"
+    "@radix-ui/react-slot": "^1.1.0",
+    "lucide-react": "^0.454.0",
+    "react": "^18.3.1"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.0.1",
     "@bangle.io/test-utils": "workspace:*",
-    "@storybook/react": "^8.3.5"
+    "@storybook/react": "^8.4.1",
+    "@testing-library/react": "^16.0.1"
   }
 }

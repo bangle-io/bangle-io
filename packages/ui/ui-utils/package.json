@@ -28,7 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "tailwind-merge": "^2.5.3",
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.4"
   }
 }

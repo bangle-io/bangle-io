@@ -1,5 +1,5 @@
 import path from 'node:path';
-import execa from 'execa';
+import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra';
 import { rootPath } from '../config';
 import { type Package, makeLogger } from '../lib';

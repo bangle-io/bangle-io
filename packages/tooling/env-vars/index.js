@@ -39,7 +39,7 @@ function getAppEnv(isProd) {
         return 'staging';
       }
 
-      return 'dev/' + branch;
+      return `dev/${branch}`;
     }
 
     default: {
@@ -49,10 +49,10 @@ function getAppEnv(isProd) {
 }
 function getReleaseId(isProduction) {
   if (!isProduction) {
-    return releaseVersion + '#local';
+    return `${releaseVersion}#local`;
   }
 
-  return releaseVersion + '#' + process.env.BUILD_ID;
+  return `${releaseVersion}#${process.env.BUILD_ID}`;
 }
 
 function getFavicon(appEnv) {
@@ -90,6 +90,7 @@ module.exports = ({
       appEnv: appEnv,
       buildTime: new Date().toISOString(),
       commitHash: (
+        process.env.GITHUB_SHA ||
         process.env.COMMIT_REF ||
         require('node:child_process')
           .execSync('git rev-parse --short HEAD')
