@@ -12,6 +12,7 @@ import {
   Search,
 } from 'lucide-react';
 import React from 'react';
+import { AppSidebar } from './app-sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -70,8 +71,17 @@ export default meta;
 
 type Story = StoryObj<typeof Sidebar>;
 
+type NavItem = {
+  title: string;
+  url: string;
+  isActive?: boolean; // Optional property to indicate if the item is active
+  items?: NavItem[]; // Recursive type to allow nested navigation
+};
+
 export const SidebarExample: Story = {
   render: () => {
+    const [input, updateInput] = React.useState<string | undefined>();
+    console.log({ input });
     return (
       <SidebarProvider
         style={
@@ -80,7 +90,13 @@ export const SidebarExample: Story = {
           } as React.CSSProperties
         }
       >
-        <AppSidebar />
+        <AppSidebar
+          workspaces={data.teams}
+          tree={data.tree}
+          navItems={data.navMain}
+          searchValue={input}
+          onSearchValueChange={updateInput}
+        />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
@@ -250,7 +266,7 @@ const data = {
         },
       ],
     },
-  ],
+  ] satisfies NavItem[],
   tree: [
     [
       'app',
@@ -268,7 +284,7 @@ const data = {
       'header.tsx',
       'footer.tsx',
     ],
-    ['lib', ['util.ts']],
+    ['lib', ['util.ts', ['public', 'favicon.ico', 'vercel.svg']]],
     ['public', 'favicon.ico', 'vercel.svg'],
     '.eslintrc.json',
     '.gitignore',
@@ -276,59 +292,46 @@ const data = {
     'tailwind.config.js',
     'package.json',
     'README.md',
-  ],
+  ] satisfies TreeItem[],
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   teams: [
     {
       name: 'Acme Inc',
       logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
+      misc: 'Enterprise',
     },
     {
       name: 'Acme Corp.',
       logo: AudioWaveform,
-      plan: 'Startup',
+      misc: 'Startup',
     },
     {
       name: 'Evil Corp.',
       logo: CommandIcon,
-      plan: 'Free',
+      misc: 'Free',
     },
   ],
 };
 
-function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // {/* <SidebarHeader>
-  // <SidebarMenu>
-  //   <SidebarMenuItem>
-  //     <SidebarMenuButton size="lg" asChild>
-  //       {/* biome-ignore lint/a11y/useValidAnchor: <explanation> */}
-  //       <a href="#">
-  //         <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-  //           <GalleryVerticalEnd className="size-4" />
-  //         </div>
-  //         <div className="flex flex-col gap-0.5 leading-none">
-  //           <span className="font-semibold">Documentation</span>
-  //           <span className="">v1.0.0</span>
-  //         </div>
-  //       </a>
-  //     </SidebarMenuButton>
-  //   </SidebarMenuItem>
-  // </SidebarMenu>
-  // <VersionSwitcher
-  //   versions=data.versions
-  //   defaultVersion={data.versions[0]}
-  // /> */}
+function AppSidebar2({
+  workspaces,
+  tree,
+  navItems,
+}: {
+  workspaces: { name: string; logo?: React.ElementType; misc: string }[];
+  tree: TreeItem[];
+  navItems: NavItem[];
+}) {
   return (
-    <Sidebar variant="floating" {...props}>
+    <Sidebar variant="floating">
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={workspaces} />
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="gap-2">
-            {data.navMain.map((item) => (
+            {navItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <a href={item.url} className="font-medium">
@@ -354,7 +357,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Files</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {data.tree.map((item, index) => (
+              {tree.map((item, index) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 <Tree key={index} item={item} />
               ))}
@@ -365,7 +368,10 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-function Tree({ item }: { item: string | any[] }) {
+
+type TreeItem = string | [string, ...TreeItem[]];
+
+function Tree({ item }: { item: TreeItem }) {
   const [name, ...items] = Array.isArray(item) ? item : [item];
   if (!items.length) {
     return (
@@ -476,8 +482,8 @@ function TeamSwitcher({
 }: {
   teams: {
     name: string;
-    logo: React.ElementType;
-    plan: string;
+    logo?: React.ElementType;
+    misc: string;
   }[];
 }) {
   const { isMobile } = useSidebar();
@@ -485,6 +491,8 @@ function TeamSwitcher({
   if (!activeTeam) {
     return null;
   }
+
+  const Logo = activeTeam.logo ? activeTeam.logo : GalleryVerticalEnd;
 
   return (
     <SidebarMenu>
@@ -496,13 +504,13 @@ function TeamSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <activeTeam.logo className="size-4" />
+                <Logo className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
                   {activeTeam.name}
                 </span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate text-xs">{activeTeam.misc}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -516,19 +524,23 @@ function TeamSwitcher({
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Teams
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
+            {teams.map((team, index) => {
+              const Logo = team.logo ? team.logo : GalleryVerticalEnd;
+
+              return (
+                <DropdownMenuItem
+                  key={team.name}
+                  onClick={() => setActiveTeam(team)}
+                  className="gap-2 p-2"
+                >
+                  <div className="flex size-6 items-center justify-center rounded-sm border">
+                    <Logo className="size-4 shrink-0" />
+                  </div>
+                  {team.name}
+                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              );
+            })}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2">
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
