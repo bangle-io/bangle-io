@@ -21,11 +21,14 @@
     "env": "browser",
     "kind": "library"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "react": "^18.3.1",
+    "@bangle.io/constants": "workspace:*"
+  }
 }

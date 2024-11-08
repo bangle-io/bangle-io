@@ -13,8 +13,16 @@
     --BV-miscTitlebarHeight: 48px;
     --BV-borderWidthDEFAULT: 1px;
     --BV-radius: 0.5rem;
-    --BV-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans";
+    --BV-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+      'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans';
+    --BV-sidebar-background: 0 0% 98%;
+    --BV-sidebar-foreground: 240 5.3% 26.1%;
+    --BV-sidebar-primary: 240 5.9% 10%;
+    --BV-sidebar-primary-foreground: 0 0% 98%;
+    --BV-sidebar-accent: 240 4.8% 95.9%;
+    --BV-sidebar-accent-foreground: 240 5.9% 10%;
+    --BV-sidebar-border: 220 13% 91%;
+    --BV-sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .BU_light-scheme {
@@ -89,6 +97,15 @@
     --BV-chart-3: 30 80% 55%;
     --BV-chart-4: 280 65% 60%;
     --BV-chart-5: 340 75% 55%;
+
+    --BV-sidebar-background: 240 5.9% 10%;
+    --BV-sidebar-foreground: 240 4.8% 95.9%;
+    --BV-sidebar-primary: 224.3 76.3% 48%;
+    --BV-sidebar-primary-foreground: 0 0% 100%;
+    --BV-sidebar-accent: 240 3.7% 15.9%;
+    --BV-sidebar-accent-foreground: 240 4.8% 95.9%;
+    --BV-sidebar-border: 240 3.7% 15.9%;
+    --BV-sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -98,7 +115,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 
   .BU_light-scheme.BU_smallscreen {

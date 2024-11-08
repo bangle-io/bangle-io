@@ -1,7 +1,7 @@
 import type { MenubarMenuProps } from '@radix-ui/react-menubar';
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { Check, ChevronRight, Circle } from 'lucide-react';
-import * as React from 'react';
+import React from 'react';
 
 import { cn } from '@bangle.io/ui-utils';
 

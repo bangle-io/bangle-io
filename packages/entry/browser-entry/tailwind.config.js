@@ -70,6 +70,16 @@ export default {
           4: 'hsl(var(--BV-chart-4))',
           5: 'hsl(var(--BV-chart-5))',
         },
+        sidebar: {
+          DEFAULT: 'hsl(var(--BV-sidebar-background))',
+          foreground: 'hsl(var(--BV-sidebar-foreground))',
+          primary: 'hsl(var(--BV-sidebar-primary))',
+          'primary-foreground': 'hsl(var(--BV-sidebar-primary-foreground))',
+          accent: 'hsl(var(--BV-sidebar-accent))',
+          'accent-foreground': 'hsl(var(--BV-sidebar-accent-foreground))',
+          border: 'hsl(var(--BV-sidebar-border))',
+          ring: 'hsl(var(--BV-sidebar-ring))',
+        },
       },
       borderRadius: {
         lg: 'var(--BV-radius)',
