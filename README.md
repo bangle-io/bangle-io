@@ -1,3 +1,11 @@
+## Frequent commands
+
+```bash
+# update all packages
+pnpm -r update --latest
+
+```
+
 # Architecture Proposal
 
 **Date: 2024-07-01**
