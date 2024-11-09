@@ -34,11 +34,17 @@
     "@bangle.io/env-vars": "workspace:*",
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.9.0",
+    "autoprefixer": "^10.4.20",
     "@types/react": "^18.3.12",
     "@bangle.io/ui-components": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "@playwright/experimental-ct-react": "^1.48.2"
+    "@playwright/experimental-ct-react": "^1.48.2",
+    "@bangle.io/browser-entry": "workspace:*",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-react-aria-components": "^1.1.6"
   },
   "devDependencies": {}
 }
