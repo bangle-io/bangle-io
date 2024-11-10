@@ -51,7 +51,7 @@ export function WorkspaceDialogName({
           Back
         </Button>
         <Button type="submit" onClick={onSubmit}>
-          Submit
+          Create Workspace
         </Button>
       </DialogFooter>
     </DialogContent>
