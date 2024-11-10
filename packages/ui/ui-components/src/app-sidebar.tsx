@@ -59,23 +59,30 @@ type TreeItem = string | [string, ...TreeItem[]];
 
 type Workspace = { name: string; logo?: React.ElementType; misc: string };
 
-export function AppSidebar({
-  workspaces,
-  tree,
-  navItems,
-  searchValue = '',
-  onSearchValueChange = () => {},
-}: {
+interface AppSidebarProps {
+  onOpenWorkspace: () => void;
   workspaces: Workspace[];
   tree: TreeItem[];
   navItems: NavItem[];
   searchValue?: string;
   onSearchValueChange?: (value: string) => void;
-}) {
+}
+
+export function AppSidebar({
+  onOpenWorkspace,
+  workspaces,
+  tree,
+  navItems,
+  searchValue = '',
+  onSearchValueChange = () => {},
+}: AppSidebarProps) {
   return (
     <Sidebar variant="floating">
       <SidebarHeader>
-        <TeamSwitcher teams={workspaces} />
+        <WorkspaceSwitcher
+          workspace={workspaces}
+          onOpenWorkspace={onOpenWorkspace}
+        />
         <SearchForm value={searchValue} onChange={onSearchValueChange} />
       </SidebarHeader>
       <SidebarContent>
@@ -196,14 +203,20 @@ function SearchForm({
   );
 }
 
-function TeamSwitcher({ teams }: { teams: Workspace[] }) {
+function WorkspaceSwitcher({
+  workspace,
+  onOpenWorkspace,
+}: {
+  workspace: Workspace[];
+  onOpenWorkspace: () => void;
+}) {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
-  if (!activeTeam) {
+  const [activeWs, setActiveWs] = React.useState(workspace[0]);
+  if (!activeWs) {
     return null;
   }
 
-  const Logo = activeTeam.logo ? activeTeam.logo : GalleryVerticalEnd;
+  const Logo = activeWs.logo ? activeWs.logo : GalleryVerticalEnd;
 
   return (
     <SidebarMenu>
@@ -218,10 +231,8 @@ function TeamSwitcher({ teams }: { teams: Workspace[] }) {
                 <Logo className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeTeam.name}
-                </span>
-                <span className="truncate text-xs">{activeTeam.misc}</span>
+                <span className="truncate font-semibold">{activeWs.name}</span>
+                <span className="truncate text-xs">{activeWs.misc}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -233,31 +244,33 @@ function TeamSwitcher({ teams }: { teams: Workspace[] }) {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Teams
+              Workspaces
             </DropdownMenuLabel>
-            {teams.map((team, index) => {
-              const Logo = team.logo ? team.logo : GalleryVerticalEnd;
+            {workspace.map((workspace, index) => {
+              const Logo = workspace.logo ? workspace.logo : GalleryVerticalEnd;
 
               return (
                 <DropdownMenuItem
-                  key={team.name}
-                  onClick={() => setActiveTeam(team)}
+                  key={workspace.name}
+                  onClick={() => setActiveWs(workspace)}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
                     <Logo className="size-4 shrink-0" />
                   </div>
-                  {team.name}
+                  {workspace.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               );
             })}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
+            <DropdownMenuItem className="gap-2 p-2" onClick={onOpenWorkspace}>
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
+              <div className="font-medium text-muted-foreground">
+                Open Workspace
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
