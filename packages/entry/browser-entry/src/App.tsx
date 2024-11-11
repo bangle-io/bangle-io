@@ -1,214 +1,113 @@
+import type { StorageType } from '@bangle.io/types';
 import {
-  Accordion,
+  AppSidebar,
   Breadcrumb,
-  Dhancha,
-  DropdownMenu,
-  Menubar,
+  Dialog,
+  Sidebar,
+  type TreeItem,
 } from '@bangle.io/ui-components';
+import { Separator } from '@bangle.io/ui-components';
+import { WorkspaceDialogRoot } from '@bangle.io/ui-components';
+import React, { useEffect } from 'react';
 
-import React from 'react';
-const {
-  MenubarRoot,
-  MenubarCheckboxItem,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger,
-} = Menubar;
+export function App() {
+  const [input, setInput] = React.useState('');
 
-export function MenubarDemo() {
+  const updateInput = (value: string) => {
+    setInput(value);
+  };
+
+  const data = {
+    navMain: [
+      {
+        title: 'Getting Started',
+        url: '#',
+        items: [
+          { title: 'Installation', url: '#' },
+          { title: 'Project Structure', url: '#' },
+        ],
+      },
+      {
+        title: 'Building Your Application',
+        url: '#',
+        items: [
+          { title: 'Routing', url: '#' },
+          { title: 'Data Fetching', url: '#', isActive: true },
+          // Other items...
+        ],
+      },
+      // Other nav items...
+    ],
+    teams: [
+      { name: 'Acme Inc', misc: 'Enterprise' },
+      { name: 'Acme Corp.', misc: 'Startup' },
+      { name: 'Evil Corp.', misc: 'Free' },
+    ],
+  };
+
+  const tree: TreeItem[] = [
+    'app',
+    [
+      'api',
+      ['hello', ['route.ts']],
+      'page.tsx',
+      'layout.tsx',
+      ['blog', ['page.tsx']],
+    ],
+  ];
+
+  const [openWsDialog, setOpenWsDialog] = React.useState(false);
+
   return (
-    <MenubarRoot>
-      <MenubarMenu>
-        <MenubarTrigger>File</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            New Window <MenubarShortcut>⌘N</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>New Incognito Window</MenubarItem>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Share</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Email link</MenubarItem>
-              <MenubarItem>Messages</MenubarItem>
-              <MenubarItem>Notes</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>
-            Print... <MenubarShortcut>⌘P</MenubarShortcut>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>Edit</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Find</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Search the web</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem>Find...</MenubarItem>
-              <MenubarItem>Find Next</MenubarItem>
-              <MenubarItem>Find Previous</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>Cut</MenubarItem>
-          <MenubarItem>Copy</MenubarItem>
-          <MenubarItem>Paste</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>View</MenubarTrigger>
-        <MenubarContent>
-          <MenubarCheckboxItem>Always Show Bookmarks Bar</MenubarCheckboxItem>
-          <MenubarCheckboxItem checked>
-            Always Show Full URLs
-          </MenubarCheckboxItem>
-          <MenubarSeparator />
-          <MenubarItem inset>
-            Reload <MenubarShortcut>⌘R</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled inset>
-            Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Toggle Fullscreen</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Hide Sidebar</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>Profiles</MenubarTrigger>
-        <MenubarContent>
-          <MenubarRadioGroup value="benoit">
-            <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
-            <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
-            <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
-          </MenubarRadioGroup>
-          <MenubarSeparator />
-          <MenubarItem inset>Edit...</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Add Profile...</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-    </MenubarRoot>
+    <>
+      <WorkspaceDialogRoot
+        open={openWsDialog}
+        onOpenChange={setOpenWsDialog}
+        onDone={({ wsName }) => {
+          setOpenWsDialog(false);
+          console.log('Workspace name:', wsName);
+        }}
+      />
+      <Sidebar.SidebarProvider>
+        <AppSidebar
+          workspaces={data.teams}
+          tree={tree}
+          navItems={data.navMain}
+          searchValue={input}
+          onSearchValueChange={updateInput}
+          onOpenWorkspace={() => setOpenWsDialog(true)}
+        />
+
+        <Sidebar.SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+            <Sidebar.SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb.Breadcrumb>
+              <Breadcrumb.BreadcrumbList>
+                <Breadcrumb.BreadcrumbItem className="hidden md:block">
+                  <Breadcrumb.BreadcrumbLink href="#">
+                    Building Your Application
+                  </Breadcrumb.BreadcrumbLink>
+                </Breadcrumb.BreadcrumbItem>
+                <Breadcrumb.BreadcrumbSeparator className="hidden md:block" />
+                <Breadcrumb.BreadcrumbItem>
+                  <Breadcrumb.BreadcrumbPage>
+                    Data Fetching
+                  </Breadcrumb.BreadcrumbPage>
+                </Breadcrumb.BreadcrumbItem>
+              </Breadcrumb.BreadcrumbList>
+            </Breadcrumb.Breadcrumb>
+          </header>
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+              <div className="aspect-video rounded-xl bg-muted/50" />
+              <div className="aspect-video rounded-xl bg-muted/50" />
+              <div className="aspect-video rounded-xl bg-muted/50" />
+            </div>
+            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          </div>
+        </Sidebar.SidebarInset>
+      </Sidebar.SidebarProvider>
+    </>
   );
 }
-
-const { AccordionContent, AccordionItem, AccordionTrigger } = Accordion;
-
-const {
-  Breadcrumb: BreadcrumbRoot,
-  BreadcrumbEllipsis,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} = Breadcrumb;
-
-const {
-  DropdownMenu: DropdownMenuRoot,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} = DropdownMenu;
-
-export function BreadcrumbDemo() {
-  return (
-    <BreadcrumbRoot>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <DropdownMenuRoot>
-            <DropdownMenuTrigger className="flex items-center gap-1">
-              <BreadcrumbEllipsis className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>Documentation</DropdownMenuItem>
-              <DropdownMenuItem>Themes</DropdownMenuItem>
-              <DropdownMenuItem>GitHub</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenuRoot>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/docs/components">Components</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </BreadcrumbRoot>
-  );
-}
-export function AccordionDemo() {
-  return (
-    <Accordion.Accordion type="single" collapsible className="w-full">
-      <AccordionItem value="item-1">
-        <AccordionTrigger>Is it accessible?</AccordionTrigger>
-        <AccordionContent>
-          Yes. It adheres to the WAI-ARIA design pattern.
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-2">
-        <AccordionTrigger>Is it styled?</AccordionTrigger>
-        <AccordionContent>
-          Yes. It comes with default styles that matches the other
-          components&apos; aesthetic.
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-3">
-        <AccordionTrigger>Is it animated?</AccordionTrigger>
-        <AccordionContent>
-          Yes. It&apos;s animated by default, but you can disable it if you
-          prefer.
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion.Accordion>
-  );
-}
-
-function App() {
-  return (
-    <Dhancha.DhanchaWidescreen
-      titlebar={<div className="bg-colorBgLayerFloat">I am titlebar</div>}
-      leftAside={'hi'}
-      rightAside={'hi'}
-      mainContent={
-        <div className="w-8/12 p-12">
-          <AccordionDemo />
-          <BreadcrumbDemo />
-          <MenubarDemo />
-        </div>
-      }
-    />
-  );
-}
-
-export default App;

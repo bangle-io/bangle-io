@@ -4,3 +4,7 @@ export * as DropdownMenu from './dropdown-menu';
 export * as Menubar from './menubar';
 export * as Dhancha from './Dhancha';
 export * as Sidebar from './sidebar';
+export * from './app-sidebar';
+export * from './separator';
+export * from './dialog';
+export * from './workspace-dialog';

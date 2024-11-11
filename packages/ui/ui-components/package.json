@@ -28,6 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-hooks": "workspace:*",
     "@bangle.io/ui-utils": "workspace:*",
     "@bangle.io/window-utils": "workspace:*",
@@ -41,6 +42,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.3",
     "class-variance-authority": "^0.7.0",
+    "@mantine/hooks": "^7.13.5",
     "lucide-react": "^0.456.0",
     "react": "^18.3.1"
   },

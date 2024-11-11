@@ -55,18 +55,18 @@ type NavItem = {
   items?: NavItem[];
 };
 
-type TreeItem = string | [string, ...TreeItem[]];
+export type TreeItem = string | [string, ...TreeItem[]];
 
 type Workspace = { name: string; logo?: React.ElementType; misc: string };
 
-interface AppSidebarProps {
+export type AppSidebarProps = {
   onOpenWorkspace: () => void;
   workspaces: Workspace[];
   tree: TreeItem[];
   navItems: NavItem[];
   searchValue?: string;
   onSearchValueChange?: (value: string) => void;
-}
+};
 
 export function AppSidebar({
   onOpenWorkspace,
@@ -269,7 +269,7 @@ function WorkspaceSwitcher({
                 <Plus className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">
-                Open Workspace
+                New Workspace
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
