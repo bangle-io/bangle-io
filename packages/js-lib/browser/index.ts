@@ -129,3 +129,5 @@ const isIPad =
 const isIOS = isIPhone || isIPad;
 
 export const isMobile = isAndroid || isIOS;
+
+export const isDarwin = isMac || isIOS;

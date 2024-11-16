@@ -9,3 +9,8 @@ export const COLOR_SCHEME = {
 } as const;
 
 export const WIDESCREEN_WIDTH = 759;
+
+export const KEYBOARD_SHORTCUTS = {
+  toggleSidebar: { id: 'toggleSidebar', keys: 'meta-\\' },
+  toggleOmniSearch: { id: 'toggleOmniSearch', keys: 'meta-k' },
+} as const;

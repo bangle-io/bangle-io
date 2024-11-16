@@ -1,10 +1,11 @@
 export * as Accordion from './accordion';
 export * as Breadcrumb from './breadcrumb';
+export * as Dhancha from './Dhancha';
 export * as DropdownMenu from './dropdown-menu';
 export * as Menubar from './menubar';
-export * as Dhancha from './Dhancha';
 export * as Sidebar from './sidebar';
 export * from './app-sidebar';
-export * from './separator';
+export * from './command';
 export * from './dialog';
+export * from './separator';
 export * from './workspace-dialog';

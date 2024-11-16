@@ -4,7 +4,7 @@ import { Decoration, DecorationSet, Plugin, PluginKey } from '@bangle.dev/pm';
 const extName = 'bangle-io';
 
 export function activeNode() {
-  const key = new PluginKey(extName + ':active_node');
+  const key = new PluginKey(`${extName}:active_node`);
 
   return new Plugin({
     key,

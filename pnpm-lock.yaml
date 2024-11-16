@@ -47,12 +47,24 @@ importers:
 
   packages/entry/browser-entry:
     dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../../tooling/env-vars
+      '@bangle.io/keyboard-shortcuts':
+        specifier: workspace:*
+        version: link:../../js-lib/keyboard-shortcuts
+      '@bangle.io/omni-search':
+        specifier: workspace:*
+        version: link:../omni-search
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -199,6 +211,18 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
 
+  packages/entry/omni-search:
+    dependencies:
+      '@bangle.io/ui-components':
+        specifier: workspace:*
+        version: link:../../ui/ui-components
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+
   packages/js-lib/browser: {}
 
   packages/js-lib/js-weak-cache: {}
@@ -209,17 +233,15 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
 
+  packages/js-lib/keyboard-shortcuts: {}
+
   packages/shared/config:
     dependencies:
       '@bangle.io/config-template':
         specifier: ^0.0.7
         version: 0.0.7
 
-  packages/shared/constants:
-    dependencies:
-      '@bangle.io/types':
-        specifier: workspace:*
-        version: link:../types
+  packages/shared/constants: {}
 
   packages/shared/test-utils:
     dependencies:
@@ -395,6 +417,9 @@ importers:
 
   packages/ui/ui-components:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -440,6 +465,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
+      cmdk:
+        specifier: ^1.0.4
+        version: 1.0.4(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lucide-react:
         specifier: ^0.460.0
         version: 0.460.0(react@18.3.1)
@@ -2637,6 +2665,12 @@ packages:
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
+
+  cmdk@1.0.4:
+    resolution: {integrity: sha512-AnsjfHyHpQ/EFeAnG216WY7A5LiYCoZzCSygiLvfXC3H3LFGCprErteUcszaVluGOhuOTbJS3jWHrSDYPBBygg==}
+    peerDependencies:
+      react: ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^18 || ^19 || ^19.0.0-rc
 
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
@@ -5175,6 +5209,11 @@ packages:
       '@types/react':
         optional: true
 
+  use-sync-external-store@1.2.2:
+    resolution: {integrity: sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -7671,6 +7710,18 @@ snapshots:
   clsx@2.0.0: {}
 
   clsx@2.1.1: {}
+
+  cmdk@1.0.4(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-id': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      use-sync-external-store: 1.2.2(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
 
   co@4.6.0: {}
 
@@ -10592,6 +10643,10 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.12
+
+  use-sync-external-store@1.2.2(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   util-deprecate@1.0.2: {}
 

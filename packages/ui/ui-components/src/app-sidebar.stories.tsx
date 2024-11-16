@@ -77,7 +77,6 @@ type NavItem = {
 };
 
 export function AppSidebarExample() {
-  const [input, updateInput] = React.useState<string | undefined>();
   return (
     <SidebarProvider
       style={
@@ -90,8 +89,8 @@ export function AppSidebarExample() {
         workspaces={data.teams}
         tree={data.tree}
         navItems={data.navMain}
-        searchValue={input}
-        onSearchValueChange={updateInput}
+        // searchValue={input}
+        // onSearchValueChange={updateInput}
         onOpenWorkspace={() => {}}
       />
       <SidebarInset>

@@ -223,11 +223,11 @@ async function testSharedConstantsShouldNotHaveDeps(
 
     if (
       rest.length > 0 ||
-      firstPackage !== BANGLE_IO_SHARED_TYPES_PKG_NAME ||
+      (firstPackage && firstPackage !== BANGLE_IO_SHARED_TYPES_PKG_NAME) ||
       Object.keys(pkg.devDependencies ?? {}).length > 0
     ) {
       throwValidationError(
-        `Package "${name}" ${pkg.packageJSONPath} can only depend on one package ${BANGLE_IO_SHARED_TYPES_PKG_NAME}.`,
+        `Package "${name}" $pkg.packageJSONPathcan only depend on one package $BANGLE_IO_SHARED_TYPES_PKG_NAME.`,
       );
     }
   }

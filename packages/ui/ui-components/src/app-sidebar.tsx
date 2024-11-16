@@ -31,6 +31,8 @@ import {
 
 import { Label } from './label';
 
+import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
+import { KbdShortcut } from './kdb';
 import {
   Sidebar,
   SidebarContent,
@@ -64,8 +66,9 @@ export type AppSidebarProps = {
   workspaces: Workspace[];
   tree: TreeItem[];
   navItems: NavItem[];
-  searchValue?: string;
-  onSearchValueChange?: (value: string) => void;
+  // searchValue?: string;
+  // onSearchValueChange?: (value: string) => void;
+  onSearchClick?: () => void;
 };
 
 export function AppSidebar({
@@ -73,8 +76,9 @@ export function AppSidebar({
   workspaces,
   tree,
   navItems,
-  searchValue = '',
-  onSearchValueChange = () => {},
+  // searchValue = '',
+  // onSearchValueChange = () => {},
+  onSearchClick = () => {},
 }: AppSidebarProps) {
   return (
     <Sidebar variant="floating">
@@ -83,7 +87,12 @@ export function AppSidebar({
           workspace={workspaces}
           onOpenWorkspace={onOpenWorkspace}
         />
-        <SearchForm value={searchValue} onChange={onSearchValueChange} />
+        {/* <SearchForm
+          value={searchValue}
+          onChange={onSearchValueChange}
+          onSearchClick={onSearchClick}
+        /> */}
+        <CommandButton onClick={() => onSearchClick?.()} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -168,12 +177,18 @@ function Tree({ item }: { item: TreeItem }) {
 function SearchForm({
   value,
   onChange,
+  onSearchClick,
 }: {
   value: string;
   onChange: (value: string) => void;
+  onSearchClick?: () => void;
 }) {
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+    >
       <SidebarGroup className="py-0">
         <SidebarGroupContent className="relative">
           <Label htmlFor="search" className="sr-only">
@@ -181,9 +196,10 @@ function SearchForm({
           </Label>
           <SidebarInput
             id="search"
-            placeholder="Search the docs..."
+            placeholder="Search..."
             className="pl-8"
             value={value}
+            onClick={onSearchClick}
             onChange={(e) => onChange(e.target.value)}
           />
           <Search className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 size-4 select-none opacity-50" />
@@ -200,6 +216,34 @@ function SearchForm({
         </SidebarGroupContent>
       </SidebarGroup>
     </form>
+  );
+}
+
+function CommandButton({ onClick }: { onClick: () => void }) {
+  return (
+    <div
+      onClick={onClick}
+      onKeyUp={(e) => e.key === 'Enter' && onClick()}
+      className="w-full cursor-pointer"
+    >
+      <SidebarGroup className="py-0">
+        <SidebarGroupContent className="relative">
+          <Label htmlFor="command-button" className="sr-only">
+            Search
+          </Label>
+          <SidebarInput
+            id="command-button"
+            placeholder="Search..."
+            className="pointer-events-none pr-8 pl-8"
+            readOnly
+          />
+          <Search className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 size-4 select-none opacity-50" />
+          <div className="-translate-y-1/2 absolute top-1/2 right-2 rounded-sm opacity-70">
+            <KbdShortcut keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys} />
+          </div>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </div>
   );
 }
 

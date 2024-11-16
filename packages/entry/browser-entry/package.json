@@ -32,6 +32,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bangle.io/editor": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
@@ -45,7 +46,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite": "^5.4.11",
-    "@bangle.io/editor": "workspace:*"
+    "@bangle.io/omni-search": "workspace:*",
+    "@bangle.io/keyboard-shortcuts": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/browser": "workspace:*"
   },
   "devDependencies": {
     "@storybook/react": "^8.4.4",

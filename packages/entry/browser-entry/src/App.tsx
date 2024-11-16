@@ -1,6 +1,10 @@
 import '@bangle.io/editor/src/style.css';
 
+import { isDarwin } from '@bangle.io/browser';
+import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { EditorComp } from '@bangle.io/editor';
+import { ShortcutManager } from '@bangle.io/keyboard-shortcuts';
+import { OmniSearch } from '@bangle.io/omni-search';
 import {
   AppSidebar,
   Breadcrumb,
@@ -11,12 +15,22 @@ import { Separator } from '@bangle.io/ui-components';
 import { WorkspaceDialogRoot } from '@bangle.io/ui-components';
 import React, { useEffect } from 'react';
 
-export function App() {
-  const [input, setInput] = React.useState('');
+const shortcutManager = new ShortcutManager({
+  isDarwin: isDarwin,
+});
 
-  const updateInput = (value: string) => {
-    setInput(value);
-  };
+export function App() {
+  useEffect(() => {
+    const eventHandler = (event: KeyboardEvent) =>
+      shortcutManager.handleEvent(event);
+
+    document.addEventListener('keydown', eventHandler);
+
+    return () => {
+      document.removeEventListener('keydown', eventHandler);
+      shortcutManager.deregisterAll();
+    };
+  }, []);
 
   const data = {
     navMain: [
@@ -58,6 +72,23 @@ export function App() {
   ];
 
   const [openWsDialog, setOpenWsDialog] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const deregister = shortcutManager.register(
+      {
+        ...KEYBOARD_SHORTCUTS.toggleOmniSearch,
+      },
+      () => {
+        setOpen((open) => !open);
+      },
+      { unique: true },
+    );
+
+    return () => {
+      deregister();
+    };
+  }, []);
 
   return (
     <>
@@ -69,16 +100,17 @@ export function App() {
           console.log('Workspace name:', wsName);
         }}
       />
+      <OmniSearch open={open} setOpen={setOpen} />
       <Sidebar.SidebarProvider>
         <AppSidebar
           workspaces={data.teams}
           tree={tree}
           navItems={data.navMain}
-          searchValue={input}
-          onSearchValueChange={updateInput}
           onOpenWorkspace={() => setOpenWsDialog(true)}
+          onSearchClick={() => {
+            setOpen(true);
+          }}
         />
-
         <Sidebar.SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 px-4">
             <Sidebar.SidebarTrigger className="-ml-1" />

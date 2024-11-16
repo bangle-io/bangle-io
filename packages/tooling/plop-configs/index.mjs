@@ -67,12 +67,17 @@ export default function main(plop) {
         },
         {
           type: 'add',
-          path: path.join(packagePath, '__tests__', `${data.name}.test.ts`),
+          path: path.join(
+            packagePath,
+            'src',
+            '__tests__',
+            `${data.name}.test.ts`,
+          ),
           templateFile: path.join(templatePath, 'test-ts.hbs'),
         },
         {
           type: 'add',
-          path: path.join(packagePath, 'index.ts'),
+          path: path.join(packagePath, 'src', 'index.ts'),
           templateFile: path.join(templatePath, 'index-ts.hbs'),
         },
         {
