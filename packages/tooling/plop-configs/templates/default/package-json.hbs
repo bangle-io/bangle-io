@@ -1,11 +1,11 @@
 {
-  "name": "@bangle.io/plop-configs",
-  "description": "",
+  "name": "@bangle.io/{{name}}",
+  "version": "0.0.0",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/tooling/plop-configs"
+    "directory": "packages/{{workspace}}/{{name}}"
   },
   "authors": [
     {
@@ -15,15 +15,16 @@
     }
   ],
   "homepage": "https://bangle.io",
+  "scripts": {},
+  "dependencies": {},
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "nodejs",
-    "kind": "build"
+    "env": "{{packageEnv}}",
+    "kind": "{{kind}}"
   },
-  "scripts": {},
-  "dependencies": {
-    "execa": "9.5.1",
-    "plop": "^4.0.1",
-    "fs-extra": "^11.2.0"
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
   }
 }
