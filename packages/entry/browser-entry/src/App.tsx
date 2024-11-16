@@ -1,8 +1,9 @@
-import type { StorageType } from '@bangle.io/types';
+import '@bangle.io/editor/src/style.css';
+
+import { EditorComp } from '@bangle.io/editor';
 import {
   AppSidebar,
   Breadcrumb,
-  Dialog,
   Sidebar,
   type TreeItem,
 } from '@bangle.io/ui-components';
@@ -98,13 +99,31 @@ export function App() {
               </Breadcrumb.BreadcrumbList>
             </Breadcrumb.Breadcrumb>
           </header>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0">
+            <div>
+              {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3"> */}
+              <EditorComp
+                wsPath={'ws:test.md'}
+                readNote={async (_wsPath) => {
+                  return Array.from({ length: 100 }, () => [
+                    '## hello world',
+                    'test',
+                  ])
+
+                    .flat()
+                    .join('\n');
+                }}
+                writeNote={async (_wsPath, _content) => {
+                  // const { fileName } = resolvePath(wsPath);
+                  // void workspace?.createFile(
+                  //   wsPath,
+                  //   new File([content], fileName, {
+                  //     type: 'text/plain',
+                  //   }),
+                  // );
+                }}
+              />
             </div>
-            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
           </div>
         </Sidebar.SidebarInset>
       </Sidebar.SidebarProvider>
