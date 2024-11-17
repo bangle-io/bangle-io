@@ -45,7 +45,7 @@ importers:
         specifier: ^5.6.3
         version: 5.6.3
 
-  packages/entry/browser-entry:
+  packages/entry/app:
     dependencies:
       '@bangle.io/browser':
         specifier: workspace:*
@@ -53,6 +53,39 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../context
+      '@bangle.io/editor':
+        specifier: workspace:*
+        version: link:../editor
+      '@bangle.io/keyboard-shortcuts':
+        specifier: workspace:*
+        version: link:../../js-lib/keyboard-shortcuts
+      '@bangle.io/omni-search':
+        specifier: workspace:*
+        version: link:../omni-search
+      '@bangle.io/ui-components':
+        specifier: workspace:*
+        version: link:../../ui/ui-components
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+
+  packages/entry/browser-entry:
+    dependencies:
+      '@bangle.io/app':
+        specifier: workspace:*
+        version: link:../app
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../context
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
@@ -135,6 +168,15 @@ importers:
       tailwindcss-react-aria-components:
         specifier: ^1.1.6
         version: 1.1.6(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
+
+  packages/entry/context:
+    dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/keyboard-shortcuts':
+        specifier: workspace:*
+        version: link:../../js-lib/keyboard-shortcuts
 
   packages/entry/e2e-tests:
     dependencies:

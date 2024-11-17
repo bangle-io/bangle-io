@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/keyboard-shortcuts",
+  "name": "@bangle.io/context",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/keyboard-shortcuts"
+    "directory": "packages/entry/context"
   },
   "authors": [
     {
@@ -19,7 +19,7 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "universal",
-    "kind": "js-util"
+    "kind": "app"
   },
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -27,5 +27,8 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "@bangle.io/browser": "workspace:*",
+    "@bangle.io/keyboard-shortcuts": "workspace:*"
+  }
 }
