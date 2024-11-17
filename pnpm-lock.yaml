@@ -177,6 +177,9 @@ importers:
       '@bangle.io/keyboard-shortcuts':
         specifier: workspace:*
         version: link:../../js-lib/keyboard-shortcuts
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
 
   packages/entry/e2e-tests:
     dependencies:
@@ -267,8 +270,6 @@ importers:
 
   packages/js-lib/browser: {}
 
-  packages/js-lib/js-weak-cache: {}
-
   packages/js-lib/jsdom-env:
     dependencies:
       jest-environment-jsdom:
@@ -276,6 +277,16 @@ importers:
         version: 29.7.0
 
   packages/js-lib/keyboard-shortcuts: {}
+
+  packages/js-lib/logger: {}
+
+  packages/js-lib/mini-js-utils:
+    dependencies:
+      '@bangle.io/weak-cache':
+        specifier: workspace:*
+        version: link:../weak-cache
+
+  packages/js-lib/weak-cache: {}
 
   packages/shared/config:
     dependencies:

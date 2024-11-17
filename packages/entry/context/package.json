@@ -28,6 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "react": "^18.3.1",
     "@bangle.io/browser": "workspace:*",
     "@bangle.io/keyboard-shortcuts": "workspace:*"
   }

@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/jsdom-env",
+  "name": "@bangle.io/logger",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/jsdom-env"
+    "directory": "packages/js-lib/logger"
   },
   "authors": [
     {
@@ -27,8 +27,5 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "jest-environment-jsdom": "^29.7.0"
-  },
-  "devDependencies": {}
+  "dependencies": {}
 }
