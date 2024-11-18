@@ -44,9 +44,21 @@ export const banglePackageConfigSchema = z.object({
     'types',
     'build',
     'app',
+    'service-platform',
+    'service-core',
+    'service-ui',
   ]),
   skipValidation: z.boolean().optional(),
 });
+
+// defines the order in which the services should be depended on
+// for example. first service-platform cannot anything after it.
+// service-core can depend on itself and service-platform
+export const serviceKindOrders = [
+  'service-platform',
+  'service-core',
+  'service-ui',
+];
 
 export type BangleWorkspaceConfig = z.infer<typeof bangleWorkspaceConfigSchema>;
 export type BanglePackageConfig = z.infer<typeof banglePackageConfigSchema>;

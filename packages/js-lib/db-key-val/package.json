@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/context",
+  "name": "@bangle.io/db-key-val",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/entry/context"
+    "directory": "packages/js-lib/db-key-val"
   },
   "authors": [
     {
@@ -18,22 +18,16 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "browser",
-    "kind": "app"
+    "env": "universal",
+    "kind": "js-util"
   },
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "index.ts",
+  "module": "index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "react": "^18.3.1",
-    "@bangle.io/browser": "workspace:*",
-    "@bangle.io/keyboard-shortcuts": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/service-core": "workspace:*"
+    "idb": "^8.0.0"
   }
 }

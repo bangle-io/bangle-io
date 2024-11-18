@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/window-utils",
+  "name": "@bangle.io/base-utils",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/window-utils"
+    "directory": "packages/shared/base-utils"
   },
   "authors": [
     {
@@ -27,6 +27,9 @@
   "dependencies": {
     "@bangle.io/browser": "workspace:*",
     "@bangle.io/config": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/logger": "workspace:*"
   }
 }

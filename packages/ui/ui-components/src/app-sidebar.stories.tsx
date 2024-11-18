@@ -91,7 +91,8 @@ export function AppSidebarExample() {
         navItems={data.navMain}
         // searchValue={input}
         // onSearchValueChange={updateInput}
-        onOpenWorkspace={() => {}}
+        onNewWorkspaceClick={() => {}}
+        setActiveWorkspace={() => {}}
       />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
@@ -294,6 +295,7 @@ const data = {
       name: 'Acme Inc',
       logo: GalleryVerticalEnd,
       misc: 'Enterprise',
+      isActive: true,
     },
     {
       name: 'Acme Corp.',

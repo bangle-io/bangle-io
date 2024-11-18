@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/app",
+  "name": "@bangle.io/service-platform",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/entry/app"
+    "directory": "packages/entry/service-platform"
   },
   "authors": [
     {
@@ -19,24 +19,19 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "browser",
-    "kind": "app"
+    "kind": "service-platform"
   },
-  "main": "src/index.tsx",
-  "module": "src/index.tsx",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "react": "^18.3.1",
-    "@bangle.io/editor": "workspace:*",
-    "@bangle.io/context": "workspace:*",
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/omni-search": "workspace:*",
-    "@bangle.io/ui-components": "workspace:*",
-    "@bangle.io/service-platform": "workspace:*",
-    "@bangle.io/service-core": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/types": "workspace:*"
+    "@bangle.io/db-key-val": "workspace:*"
   }
 }

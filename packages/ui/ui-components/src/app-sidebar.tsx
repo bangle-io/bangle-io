@@ -59,39 +59,38 @@ type NavItem = {
 
 export type TreeItem = string | [string, ...TreeItem[]];
 
-type Workspace = { name: string; logo?: React.ElementType; misc: string };
+type Workspace = {
+  name: string;
+  logo?: React.ElementType;
+  misc: string;
+  isActive?: boolean;
+};
 
 export type AppSidebarProps = {
-  onOpenWorkspace: () => void;
+  onNewWorkspaceClick: () => void;
   workspaces: Workspace[];
   tree: TreeItem[];
   navItems: NavItem[];
-  // searchValue?: string;
-  // onSearchValueChange?: (value: string) => void;
+  setActiveWorkspace: (name: string) => void;
   onSearchClick?: () => void;
 };
 
 export function AppSidebar({
-  onOpenWorkspace,
+  onNewWorkspaceClick,
   workspaces,
   tree,
   navItems,
-  // searchValue = '',
-  // onSearchValueChange = () => {},
+  setActiveWorkspace,
   onSearchClick = () => {},
 }: AppSidebarProps) {
   return (
     <Sidebar variant="floating">
       <SidebarHeader>
         <WorkspaceSwitcher
-          workspace={workspaces}
-          onOpenWorkspace={onOpenWorkspace}
+          workspaces={workspaces}
+          setActiveWorkspace={setActiveWorkspace}
+          onNewWorkspaceClick={onNewWorkspaceClick}
         />
-        {/* <SearchForm
-          value={searchValue}
-          onChange={onSearchValueChange}
-          onSearchClick={onSearchClick}
-        /> */}
         <CommandButton onClick={() => onSearchClick?.()} />
       </SidebarHeader>
       <SidebarContent>
@@ -248,16 +247,23 @@ function CommandButton({ onClick }: { onClick: () => void }) {
 }
 
 function WorkspaceSwitcher({
-  workspace,
-  onOpenWorkspace,
+  workspaces,
+  setActiveWorkspace,
+  onNewWorkspaceClick,
 }: {
-  workspace: Workspace[];
-  onOpenWorkspace: () => void;
+  workspaces: Workspace[];
+  setActiveWorkspace: (name: string) => void;
+  onNewWorkspaceClick: () => void;
 }) {
   const { isMobile } = useSidebar();
-  const [activeWs, setActiveWs] = React.useState(workspace[0]);
+  let activeWs = workspaces.find((ws) => ws.isActive);
+
   if (!activeWs) {
-    return null;
+    activeWs = {
+      name: 'Acme Inc Enterprise',
+      isActive: true,
+      misc: 'Enterprise',
+    };
   }
 
   const Logo = activeWs.logo ? activeWs.logo : GalleryVerticalEnd;
@@ -290,17 +296,19 @@ function WorkspaceSwitcher({
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Workspaces
             </DropdownMenuLabel>
-            {workspace.map((workspace, index) => {
-              const Logo = workspace.logo ? workspace.logo : GalleryVerticalEnd;
+            {workspaces.map((workspace, index) => {
+              const LogoComponent = workspace.logo
+                ? workspace.logo
+                : GalleryVerticalEnd;
 
               return (
                 <DropdownMenuItem
                   key={workspace.name}
-                  onClick={() => setActiveWs(workspace)}
+                  onClick={() => setActiveWorkspace(workspace.name)}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
-                    <Logo className="size-4 shrink-0" />
+                    <LogoComponent className="size-4 shrink-0" />
                   </div>
                   {workspace.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
@@ -308,7 +316,10 @@ function WorkspaceSwitcher({
               );
             })}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2" onClick={onOpenWorkspace}>
+            <DropdownMenuItem
+              className="gap-2 p-2"
+              onClick={onNewWorkspaceClick}
+            >
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>

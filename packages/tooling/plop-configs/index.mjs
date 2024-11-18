@@ -3,6 +3,18 @@ import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import fs from 'fs-extra';
 const topLevelWorkspaces = ['entry', 'js-lib', 'shared', 'tooling', 'ui'];
+const kind = [
+  'library',
+  'js-util',
+  // all things that are static and have limited dep: configs, constants
+  'static',
+  'types',
+  'build',
+  'app',
+  'service-platform',
+  'service-core',
+  'service-ui',
+];
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../../../');
@@ -31,10 +43,11 @@ export default function main(plop) {
         default: 'universal',
       },
       {
-        type: 'input',
+        type: 'list',
         name: 'kind',
         message: 'Package kind',
         default: 'library',
+        choices: kind,
       },
     ],
     actions: (data) => {

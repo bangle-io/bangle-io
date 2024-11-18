@@ -19,11 +19,6 @@ process.env.__BANGLE_BUILD_TIME_CONFIG__ = new BangleConfig({
   },
 }).serialize();
 
-process.on('unhandledRejection', (reason) => {
-  console.log(reason); // log the reason including the stack trace
-  throw new Error('unhandled error');
-});
-
 if (typeof DOMException === 'undefined') {
   // eslint-disable-next-line no-native-reassign
   global.DOMException = require('domexception');

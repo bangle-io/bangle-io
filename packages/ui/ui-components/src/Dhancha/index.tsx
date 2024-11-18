@@ -9,7 +9,7 @@ import React, {
   useState,
 } from 'react';
 
-import { cx } from '@bangle.io/window-utils';
+import { cx } from '@bangle.io/base-utils';
 
 import { useStickyNavigation } from './use-sticky-navigation';
 

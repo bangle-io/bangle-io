@@ -1,30 +1,48 @@
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevelName = 'debug' | 'info' | 'warn' | 'error';
 
-let GLOBAL_SILENCED = false;
+const LogLevelPriority: { [key in LogLevelName]: number } = {
+  debug: 10,
+  info: 20,
+  warn: 30,
+  error: 40,
+};
 
-export function silenceAllLoggers() {
-  GLOBAL_SILENCED = true;
-}
+let GLOBAL_LOG_LEVEL: LogLevelName = 'info';
 
-export function unSilenceAllLoggers() {
-  GLOBAL_SILENCED = false;
+export function setGlobalLogLevel(level: LogLevelName) {
+  GLOBAL_LOG_LEVEL = level;
 }
 
 export class Logger {
-  private prefix: string;
-  private localSilenced = false;
+  constructor(
+    private prefix = '',
+    private localLogLevel: LogLevelName | null = null,
+    private loggerConsole = console,
+  ) {}
 
-  get silenced() {
-    return this.localSilenced || GLOBAL_SILENCED;
+  /**
+   * Creates a child logger with an extended prefix.
+   * @param additionalPrefix The prefix to append.
+   * @returns A new Logger instance with the combined prefix and optional log level.
+   */
+  public child(additionalPrefix: string): Logger {
+    const newPrefix = this.prefix
+      ? `${this.prefix}:${additionalPrefix}`
+      : additionalPrefix;
+    return new Logger(newPrefix, this.localLogLevel, this.loggerConsole);
   }
 
-  constructor(prefix = '') {
-    this.prefix = prefix;
+  private get effectiveLogLevel(): LogLevelName {
+    return this.localLogLevel || GLOBAL_LOG_LEVEL;
   }
 
-  private log(level: LogLevel, ...message: any[]): void {
-    if (level === 'error' || !this.silenced) {
-      console[level](`[${this.prefix}] :`, ...message);
+  private shouldLog(level: LogLevelName): boolean {
+    return LogLevelPriority[level] >= LogLevelPriority[this.effectiveLogLevel];
+  }
+
+  private log(level: LogLevelName, ...message: any[]): void {
+    if (this.shouldLog(level)) {
+      this.loggerConsole[level](`[${this.prefix}]`, ...message);
     }
   }
 
@@ -44,11 +62,11 @@ export class Logger {
     this.log('error', ...message);
   }
 
-  public setPrefix(newPrefix: string): void {
-    this.prefix = newPrefix;
-  }
-
-  public silence(_val = true): void {
-    this.localSilenced = true;
+  /**
+   * Sets the local log level for this logger.
+   * @param level The log level to set.
+   */
+  public setLogLevel(level: LogLevelName): void {
+    this.localLogLevel = level;
   }
 }

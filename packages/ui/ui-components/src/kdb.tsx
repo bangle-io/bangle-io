@@ -1,5 +1,5 @@
+import { isDarwin } from '@bangle.io/base-utils';
 import { cn } from '@bangle.io/ui-utils';
-import { isDarwin } from '@bangle.io/window-utils';
 import React from 'react';
 
 export function Kbd({ keys }: { keys: string }) {

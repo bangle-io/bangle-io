@@ -47,9 +47,6 @@ importers:
 
   packages/entry/app:
     dependencies:
-      '@bangle.io/browser':
-        specifier: workspace:*
-        version: link:../../js-lib/browser
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -59,12 +56,21 @@ importers:
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
-      '@bangle.io/keyboard-shortcuts':
+      '@bangle.io/logger':
         specifier: workspace:*
-        version: link:../../js-lib/keyboard-shortcuts
+        version: link:../../js-lib/logger
       '@bangle.io/omni-search':
         specifier: workspace:*
         version: link:../omni-search
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
+      '@bangle.io/service-platform':
+        specifier: workspace:*
+        version: link:../service-platform
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
       '@bangle.io/ui-components':
         specifier: workspace:*
         version: link:../../ui/ui-components
@@ -171,15 +177,29 @@ importers:
 
   packages/entry/context:
     dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
       '@bangle.io/browser':
         specifier: workspace:*
         version: link:../../js-lib/browser
       '@bangle.io/keyboard-shortcuts':
         specifier: workspace:*
         version: link:../../js-lib/keyboard-shortcuts
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
       react:
         specifier: ^18.3.1
         version: 18.3.1
+
+  packages/entry/database: {}
 
   packages/entry/e2e-tests:
     dependencies:
@@ -268,7 +288,49 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
 
+  packages/entry/service-core:
+    dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/service-platform':
+        specifier: workspace:*
+        version: link:../service-platform
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+
+  packages/entry/service-platform:
+    dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/db-key-val':
+        specifier: workspace:*
+        version: link:../../js-lib/db-key-val
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+
   packages/js-lib/browser: {}
+
+  packages/js-lib/db-key-val:
+    dependencies:
+      idb:
+        specifier: ^8.0.0
+        version: 8.0.0
 
   packages/js-lib/jsdom-env:
     dependencies:
@@ -288,6 +350,27 @@ importers:
 
   packages/js-lib/weak-cache: {}
 
+  packages/shared/base-utils:
+    dependencies:
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../types
+
   packages/shared/config:
     dependencies:
       '@bangle.io/config-template':
@@ -303,18 +386,6 @@ importers:
         version: 3.0.2
 
   packages/shared/types: {}
-
-  packages/shared/window-utils:
-    dependencies:
-      '@bangle.io/browser':
-        specifier: workspace:*
-        version: link:../../js-lib/browser
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../constants
 
   packages/tooling/custom-scripts:
     dependencies:
@@ -470,6 +541,9 @@ importers:
 
   packages/ui/ui-components:
     dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -482,9 +556,6 @@ importers:
       '@bangle.io/ui-utils':
         specifier: workspace:*
         version: link:../ui-utils
-      '@bangle.io/window-utils':
-        specifier: workspace:*
-        version: link:../../shared/window-utils
       '@mantine/hooks':
         specifier: ^7.14.1
         version: 7.14.1(react@18.3.1)
@@ -3498,6 +3569,9 @@ packages:
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
+
+  idb@8.0.0:
+    resolution: {integrity: sha512-l//qvlAKGmQO31Qn7xdzagVPPaHTxXx199MhrAFuVBTPqydcPYBWjkrbv4Y0ktB+GmWOiwHl237UUOrLmQxLvw==}
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -8623,6 +8697,8 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
+
+  idb@8.0.0: {}
 
   ieee754@1.2.1: {}
 

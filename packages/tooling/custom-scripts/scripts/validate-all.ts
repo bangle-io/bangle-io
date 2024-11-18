@@ -1,6 +1,9 @@
+import { z } from 'zod';
 import {
   BANGLE_IO_CONSTANTS_PKG_NAME,
   BANGLE_IO_SHARED_TYPES_PKG_NAME,
+  banglePackageConfigSchema,
+  serviceKindOrders,
 } from '../config';
 import {
   type SetupResult,
@@ -28,11 +31,13 @@ export async function validate(item: SetupResult) {
     testJsUtilPackagesToOnlyRelyOnJsUtils(item.packagesMap),
     testSharedConstantsShouldNotHaveDeps(item.packagesMap),
     testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap),
+    testServicePackagesDependencies(item.packagesMap),
   ];
 
   await Promise.all(promises);
   logger('Validation successful');
 }
+
 async function shouldRespectAllowedWorkspace(
   packageMap: Map<string, Package>,
   workspaceMap: Record<string, Workspace>,
@@ -191,6 +196,49 @@ async function testUniversalPackagesToRelyOnlyOnUniversal(
           `Universal Package ${name} ${pkg.packageJSONPath}
 imports ${dep.name} which is a ${dep.env} package. Universal package can only import other universal packages`,
         );
+      }
+    }
+  }
+}
+
+async function testServicePackagesDependencies(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testServicePackagesDependencies',
+  );
+
+  for (const [name, pkg] of packageMap.entries()) {
+    if (!pkg.banglePackageConfig.kind.startsWith('service-')) {
+      continue;
+    }
+
+    const pkgKind = pkg.banglePackageConfig.kind;
+    const pkgKindIndex = serviceKindOrders.indexOf(pkgKind);
+
+    if (pkgKindIndex === -1) {
+      throwValidationError(
+        `Package ${name} has unknown service kind ${pkgKind}`,
+      );
+      continue;
+    }
+
+    const allowedKinds = serviceKindOrders.slice(0, pkgKindIndex + 1);
+
+    const deps = [
+      ...Object.values(pkg.workspaceDependencies),
+      ...Object.values(pkg.workspaceDevDependencies),
+    ];
+
+    for (const dep of deps) {
+      if (dep.banglePackageConfig.kind.startsWith('service-')) {
+        const depKind = dep.banglePackageConfig.kind;
+
+        if (!allowedKinds.includes(depKind)) {
+          throwValidationError(
+            `Package ${name} of kind ${pkgKind} cannot depend on ${dep.name} of kind ${depKind}`,
+          );
+        }
       }
     }
   }
