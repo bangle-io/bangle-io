@@ -87,8 +87,9 @@ export function AppSidebarExample() {
     >
       <AppSidebar
         workspaces={data.teams}
-        tree={data.tree}
+        wsPaths={data.tree}
         navItems={data.navMain}
+        onTreeItemClick={() => {}}
         // searchValue={input}
         // onSearchValueChange={updateInput}
         onNewWorkspaceClick={() => {}}
@@ -264,31 +265,24 @@ const data = {
     },
   ] satisfies NavItem[],
   tree: [
-    [
-      'app',
-      [
-        'api',
-        ['hello', ['route.ts']],
-        'page.tsx',
-        'layout.tsx',
-        ['blog', ['page.tsx']],
-      ],
-    ],
-    [
-      'components',
-      ['ui', 'button.tsx', 'card.tsx'],
-      'header.tsx',
-      'footer.tsx',
-    ],
-    ['lib', ['util.ts', ['public', 'favicon.ico', 'vercel.svg']]],
-    ['public', 'favicon.ico', 'vercel.svg'],
-    '.eslintrc.json',
-    '.gitignore',
-    'next.config.js',
-    'tailwind.config.js',
-    'package.json',
-    'README.md',
-  ] satisfies TreeItem[],
+    'test:app/api/page.tsx',
+    'test:app/api/layout.tsx',
+    'test:components/ui/button.tsx',
+    'test:components/ui/card.tsx',
+    'test:components/header.tsx',
+    'test:components/footer.tsx',
+    'test:lib/util.ts',
+    'test:lib/public/favicon.ico',
+    'test:lib/public/vercel.svg',
+    'test:public/favicon.ico',
+    'test:public/vercel.svg',
+    'test:.eslintrc.json',
+    'test:.gitignore',
+    'test:next.config.js',
+    'test:tailwind.config.js',
+    'test:package.json',
+    'test:README.md',
+  ],
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   teams: [
     {

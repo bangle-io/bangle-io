@@ -37,6 +37,7 @@
     "@bangle.io/service-platform": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/types": "workspace:*"
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

@@ -77,6 +77,9 @@ importers:
       '@bangle.io/ui-components':
         specifier: workspace:*
         version: link:../../ui/ui-components
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -608,6 +611,9 @@ importers:
       '@bangle.io/ui-utils':
         specifier: workspace:*
         version: link:../ui-utils
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
       '@mantine/hooks':
         specifier: ^7.14.1
         version: 7.14.1(react@18.3.1)
@@ -672,6 +678,12 @@ importers:
 
   packages/ui/ui-utils:
     dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
       clsx:
         specifier: ^2.1.1
         version: 2.1.1

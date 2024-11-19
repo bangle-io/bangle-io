@@ -15,7 +15,7 @@ export const CoreServiceContext = createContext<CoreServices>(
   {} as CoreServices,
 );
 
-export function useCoreService() {
+export function useCoreServices() {
   return React.useContext(CoreServiceContext);
 }
 

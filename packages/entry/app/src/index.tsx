@@ -20,6 +20,7 @@ import type { WorkspaceInfo } from '@bangle.io/types';
 import { WorkspaceDialogRoot } from '@bangle.io/ui-components';
 import { Sidebar } from '@bangle.io/ui-components';
 import { Breadcrumb, Separator } from '@bangle.io/ui-components';
+import { resolvePath } from '@bangle.io/ws-path';
 import React, { useCallback } from 'react';
 import { SidebarComponent } from './sidebar';
 
@@ -77,6 +78,8 @@ export function App() {
   const [activeWsName, setActiveWsName] = React.useState(
     workspaces?.[0]?.name || undefined,
   );
+  const [activeWsPaths, setActiveWsPaths] = React.useState<string[]>([]);
+  const openedWsPath = activeWsPaths[0];
 
   const refreshWorkspaces = useCallback(() => {
     coreServices.workspace.getAllWorkspaces().then((ws) => {
@@ -87,15 +90,6 @@ export function App() {
   React.useEffect(() => {
     refreshWorkspaces();
   }, [refreshWorkspaces]);
-
-  React.useEffect(() => {
-    if (activeWsName) {
-      console.log({ activeWsName });
-      coreServices.fileSystem.listFiles(activeWsName).then((files) => {
-        logger.info('Files:', files);
-      });
-    }
-  }, [activeWsName]);
 
   logger.info('Workspaces:', workspaces);
 
@@ -121,11 +115,13 @@ export function App() {
           />
           <OmniSearch open={open} setOpen={setOpen} />
           <SidebarComponent
-            setOpenWsDialog={setOpenWsDialog}
-            setOpen={setOpen}
-            workspaces={workspaces}
             activeWsName={activeWsName}
+            activeWsPaths={activeWsPaths}
             setActiveWsName={setActiveWsName}
+            setActiveWsPaths={setActiveWsPaths}
+            setOpen={setOpen}
+            setOpenWsDialog={setOpenWsDialog}
+            workspaces={workspaces}
           >
             <header className="flex h-16 shrink-0 items-center gap-2 px-4">
               <Sidebar.SidebarTrigger className="-ml-1" />
@@ -149,27 +145,30 @@ export function App() {
             <div className="B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0">
               <div>
                 {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3"> */}
-                <EditorComp
-                  wsPath={'ws:test.md'}
-                  readNote={async (_wsPath) => {
-                    return Array.from({ length: 100 }, () => [
-                      '## hello world',
-                      'test',
-                    ])
+                {openedWsPath && (
+                  <EditorComp
+                    wsPath={openedWsPath}
+                    readNote={async (wsPath) => {
+                      return coreServices.fileSystem.readFileAsText(wsPath);
+                      // return Array.from({ length: 100 }, () => [
+                      //   '## hello world',
+                      //   'test',
+                      // ])
 
-                      .flat()
-                      .join('\n');
-                  }}
-                  writeNote={async (_wsPath, _content) => {
-                    // const { fileName } = resolvePath(wsPath);
-                    // void workspace?.createFile(
-                    //   wsPath,
-                    //   new File([content], fileName, {
-                    //     type: 'text/plain',
-                    //   }),
-                    // );
-                  }}
-                />
+                      //   .flat()
+                      //   .join('\n');
+                    }}
+                    writeNote={async (wsPath, content) => {
+                      const { fileName } = resolvePath(wsPath);
+                      void coreServices.fileSystem.createFile(
+                        wsPath,
+                        new File([content], fileName, {
+                          type: 'text/plain',
+                        }),
+                      );
+                    }}
+                  />
+                )}
               </div>
             </div>
           </SidebarComponent>

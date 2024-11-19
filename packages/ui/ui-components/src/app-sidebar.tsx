@@ -11,7 +11,7 @@ import {
   Search,
   X as XIcon,
 } from 'lucide-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   Collapsible,
@@ -32,6 +32,7 @@ import {
 import { Label } from './label';
 
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
+import { type TreeItem, buildTree } from '@bangle.io/ui-utils';
 import { KbdShortcut } from './kdb';
 import {
   Sidebar,
@@ -50,14 +51,12 @@ import {
   useSidebar,
 } from './sidebar';
 
-type NavItem = {
+export type NavItem = {
   title: string;
   url: string;
   isActive?: boolean;
   items?: NavItem[];
 };
-
-export type TreeItem = string | [string, ...TreeItem[]];
 
 type Workspace = {
   name: string;
@@ -69,20 +68,29 @@ type Workspace = {
 export type AppSidebarProps = {
   onNewWorkspaceClick: () => void;
   workspaces: Workspace[];
-  tree: TreeItem[];
+  wsPaths: string[];
   navItems: NavItem[];
   setActiveWorkspace: (name: string) => void;
   onSearchClick?: () => void;
+  onTreeItemClick: (item: TreeItem) => void;
+  activeWsPaths?: string[];
 };
 
 export function AppSidebar({
   onNewWorkspaceClick,
   workspaces,
-  tree,
+  wsPaths,
   navItems,
   setActiveWorkspace,
   onSearchClick = () => {},
+  activeWsPaths,
+  onTreeItemClick,
 }: AppSidebarProps) {
+  const tree = useMemo(
+    () => buildTree(wsPaths, activeWsPaths, undefined, true),
+    [wsPaths, activeWsPaths],
+  );
+
   return (
     <Sidebar variant="floating">
       <SidebarHeader>
@@ -123,8 +131,12 @@ export function AppSidebar({
           <SidebarGroupContent>
             <SidebarMenu>
               {tree.map((item, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                <Tree key={index} item={item} />
+                <Tree
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  key={index}
+                  item={item}
+                  onTreeItemClick={onTreeItemClick}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -134,37 +146,44 @@ export function AppSidebar({
   );
 }
 
-function Tree({ item }: { item: TreeItem }) {
-  const [name, ...items] = Array.isArray(item) ? item : [item];
-  if (!items.length) {
+function Tree({
+  item,
+  onTreeItemClick,
+}: { item: TreeItem; onTreeItemClick: (item: TreeItem) => void }) {
+  if (!item.isDir) {
     return (
       <SidebarMenuButton
-        isActive={name === 'button.tsx'}
         className="data-[active=true]:bg-transparent"
+        onClick={() => onTreeItemClick(item)}
       >
         <FileIcon />
-        {name}
+        {item.name}
       </SidebarMenuButton>
     );
   }
+
   return (
     <SidebarMenuItem>
       <Collapsible
         className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-        defaultOpen={name === 'components' || name === 'ui'}
+        defaultOpen={item.isOpen ?? false}
       >
         <CollapsibleTrigger asChild>
           <SidebarMenuButton>
             <ChevronRight className="transition-transform" />
             <Folder />
-            {name}
+            {item.name}
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
-            {items.map((subItem, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              <Tree key={index} item={subItem} />
+            {item.children?.map((subItem, index) => (
+              <Tree
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                key={index}
+                item={subItem}
+                onTreeItemClick={onTreeItemClick}
+              />
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>

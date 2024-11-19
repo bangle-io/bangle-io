@@ -7,4 +7,5 @@ export {
   validateFileWsPath,
   fromFsPath,
   toFSPath,
+  filePathToWsPath,
 } from './helpers';
