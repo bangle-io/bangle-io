@@ -49,6 +49,8 @@ interface SidebarProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
   workspaces: WorkspaceInfo[];
+  activeWsName: string | undefined;
+  setActiveWsName: (name: string) => void;
 }
 
 export const SidebarComponent = ({
@@ -56,11 +58,10 @@ export const SidebarComponent = ({
   children,
   setOpen,
   workspaces,
+  activeWsName,
+  setActiveWsName,
 }: SidebarProps) => {
   const shortcutManager = useShortcutManager();
-  const [activeWs, setActiveWs] = React.useState(
-    workspaces?.[0]?.name || undefined,
-  );
 
   useEffect(() => {
     const deregister = shortcutManager.register(
@@ -84,7 +85,7 @@ export const SidebarComponent = ({
         workspaces={workspaces.map((ws, i) => ({
           name: ws.name,
           misc: ws.type,
-          isActive: activeWs == null ? i === 0 : activeWs === ws.name,
+          isActive: activeWsName == null ? i === 0 : activeWsName === ws.name,
         }))}
         tree={tree}
         navItems={data.navMain}
@@ -92,7 +93,7 @@ export const SidebarComponent = ({
         onSearchClick={() => {
           setOpen(true);
         }}
-        setActiveWorkspace={(name) => setActiveWs(name)}
+        setActiveWorkspace={(name) => setActiveWsName(name)}
       />
       <Sidebar.SidebarInset>{children}</Sidebar.SidebarInset>
     </Sidebar.SidebarProvider>

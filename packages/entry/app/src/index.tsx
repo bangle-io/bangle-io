@@ -3,14 +3,16 @@ import '@bangle.io/editor/src/style.css';
 import { WorkspaceType } from '@bangle.io/constants';
 import {
   CoreServiceProvider,
+  type CoreServices,
   PlatformServiceProvider,
   ShortcutProvider,
 } from '@bangle.io/context';
 import { EditorComp } from '@bangle.io/editor';
 import { Logger } from '@bangle.io/logger';
 import { OmniSearch } from '@bangle.io/omni-search';
-import { WorkspaceService } from '@bangle.io/service-core';
+import { FileSystemService, WorkspaceService } from '@bangle.io/service-core';
 import {
+  FileStorageIndexedDB,
   IdbDatabaseService,
   MemoryDatabaseService,
 } from '@bangle.io/service-platform';
@@ -44,22 +46,40 @@ const workspaceService = new WorkspaceService(
   },
 );
 
+const fileStorageService = new FileStorageIndexedDB(logger, (change) => {
+  logger.info('File storage change:', change);
+});
+
+const fileSystemService = new FileSystemService(
+  logger,
+  {
+    fileStorageService,
+  },
+  (change) => {
+    logger.info('File change:', change);
+  },
+);
+
 const platformServices = {
   database,
   logger,
 };
-const coreServices = {
+const coreServices: CoreServices = {
   workspace: workspaceService,
   logger,
+  fileSystem: fileSystemService,
 };
 
 export function App() {
   const [openWsDialog, setOpenWsDialog] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [workspaces, setWorkspaces] = React.useState<WorkspaceInfo[]>([]);
+  const [activeWsName, setActiveWsName] = React.useState(
+    workspaces?.[0]?.name || undefined,
+  );
 
   const refreshWorkspaces = useCallback(() => {
-    workspaceService.getAllWorkspaces().then((ws) => {
+    coreServices.workspace.getAllWorkspaces().then((ws) => {
       setWorkspaces(ws);
     });
   }, []);
@@ -67,6 +87,15 @@ export function App() {
   React.useEffect(() => {
     refreshWorkspaces();
   }, [refreshWorkspaces]);
+
+  React.useEffect(() => {
+    if (activeWsName) {
+      console.log({ activeWsName });
+      coreServices.fileSystem.listFiles(activeWsName).then((files) => {
+        logger.info('Files:', files);
+      });
+    }
+  }, [activeWsName]);
 
   logger.info('Workspaces:', workspaces);
 
@@ -79,7 +108,7 @@ export function App() {
             onOpenChange={setOpenWsDialog}
             onDone={({ wsName }) => {
               setOpenWsDialog(false);
-              workspaceService
+              coreServices.workspace
                 .createWorkspaceInfo({
                   metadata: {},
                   name: wsName,
@@ -95,6 +124,8 @@ export function App() {
             setOpenWsDialog={setOpenWsDialog}
             setOpen={setOpen}
             workspaces={workspaces}
+            activeWsName={activeWsName}
+            setActiveWsName={setActiveWsName}
           >
             <header className="flex h-16 shrink-0 items-center gap-2 px-4">
               <Sidebar.SidebarTrigger className="-ml-1" />

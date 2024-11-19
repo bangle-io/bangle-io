@@ -1,7 +1,12 @@
 import type { Logger } from '@bangle.io/logger';
-import type { BaseAppDatabase, ServiceKind } from '@bangle.io/types';
+import type {
+  BaseAppDatabase,
+  BaseFileStorageProvider,
+  ServiceKind,
+} from '@bangle.io/types';
 
 export type DatabaseService = BaseAppDatabase & BaseService;
+export type FileStorageService = BaseFileStorageProvider & BaseService;
 
 /**
  * This is the base class for all the services.

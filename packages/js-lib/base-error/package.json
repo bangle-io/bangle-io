@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/service-core",
+  "name": "@bangle.io/base-error",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/entry/service-core"
+    "directory": "packages/js-lib/base-error"
   },
   "authors": [
     {
@@ -18,22 +18,15 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "browser",
-    "kind": "service-core"
+    "env": "universal",
+    "kind": "js-util"
   },
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "index.ts",
+  "module": "index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/config": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/service-platform": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }

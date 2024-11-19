@@ -32,7 +32,9 @@ export class WorkspaceService extends BaseService {
 
   constructor(
     logger: Logger,
-    dependencies: { database: DatabaseService },
+    dependencies: {
+      database: DatabaseService;
+    },
     private onChange: (change: ChangeEvent) => void,
   ) {
     super('workspace', 'core', logger, dependencies);
@@ -225,7 +227,6 @@ export class WorkspaceService extends BaseService {
     }
     return result;
   }
-
   /**
    * The callback is called with the existing metadata and the
    *  return value is used to replace all of the metadata.
@@ -242,7 +243,7 @@ export class WorkspaceService extends BaseService {
 
       if (!isPlainObject(finalMetadata)) {
         throwAppError(
-          'error::workspace:corrupted',
+          'error::workspace:invalid-metadata',
           `Invalid metadata for workspace ${name}`,
           {
             wsName: name,
@@ -270,7 +271,7 @@ export class WorkspaceService extends BaseService {
     }
 
     if (typeof data.value !== 'string') {
-      throwAppError('error::workspace:misc-table', 'Invalid misc data', {
+      throwAppError('error::workspace:invalid-misc-data', 'Invalid misc data', {
         info: key,
       });
     }
@@ -284,7 +285,7 @@ export class WorkspaceService extends BaseService {
     await this.initialized;
     if (typeof data !== 'string') {
       throwAppError(
-        'error::workspace:misc-table',
+        'error::workspace:invalid-misc-data',
         `Invalid data for key ${key}`,
         {
           info: key,

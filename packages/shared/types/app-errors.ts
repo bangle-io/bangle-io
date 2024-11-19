@@ -1,4 +1,5 @@
 export type AppError =
+  // General main errors
   | {
       name: `error::main:unknown`;
       payload: {
@@ -11,6 +12,7 @@ export type AppError =
         details?: string;
       };
     }
+  // Database errors
   | {
       name: `error::database:unknown-error`;
       payload: {
@@ -18,8 +20,7 @@ export type AppError =
         databaseName: string;
       };
     }
-
-  // workspace
+  // Workspace errors
   | {
       name: `error::workspace:already-exists`;
       payload: {
@@ -33,21 +34,54 @@ export type AppError =
       };
     }
   | {
-      name: `error::workspace:unknown-error`;
-      payload: {
-        wsName: string;
-        error: Error;
-      };
-    }
-  | {
-      name: `error::workspace:corrupted`;
+      name: `error::workspace:invalid-metadata`;
       payload: {
         wsName: string;
       };
     }
   | {
-      name: `error::workspace:misc-table`;
+      name: `error::workspace:invalid-misc-data`;
       payload: {
         info: string;
+      };
+    }
+  | {
+      name: `error::workspace:not-allowed`;
+      payload: {
+        wsName?: string;
+        operation: string;
+        oldWsPath?: string;
+        newWsPath?: string;
+      };
+    }
+  // File errors
+  | {
+      name: `error::file:invalid-note-path`;
+      payload: {
+        invalidWsPath: string;
+      };
+    }
+  | {
+      name: `error::file:invalid-operation`;
+      payload: {
+        operation: string;
+        oldWsPath: string;
+        newWsPath: string;
+      };
+    }
+
+  // File storage
+  | {
+      name: `error::file-storage:file-does-not-exist`;
+      payload: {
+        wsPath: string;
+        storage: string;
+      };
+    }
+  // WS Path errors
+  | {
+      name: `error::ws-path:invalid-ws-path`;
+      payload: {
+        invalidPath: string;
       };
     };

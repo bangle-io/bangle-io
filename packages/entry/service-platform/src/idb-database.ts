@@ -14,7 +14,7 @@ import {
 import type { BaseAppDatabase, DatabaseQueryOptions } from '@bangle.io/types';
 
 export const DB_NAME = 'bangle-io-db';
-export const DB_VERSION = 3;
+export const DB_VERSION = 2;
 export const MISC_TABLE = 'MiscTable';
 export const WORKSPACE_INFO_TABLE = 'WorkspaceInfo';
 
@@ -59,15 +59,15 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
           // Version 2 upgrade: Additional setup for version 2
           // ... (add any version 2 specific upgrades here)
         }
-        if (oldVersion < 3) {
-          // Version 3 upgrade: Delete DUMMY_TABLE if it exists
-          const DUMMY_TABLE = 'DummyTable';
-          //   @ts-expect-error
-          if (db.objectStoreNames.contains(DUMMY_TABLE)) {
-            //   @ts-expect-error
-            db.deleteObjectStore(DUMMY_TABLE);
-          }
-        }
+        // if (oldVersion < 3) {
+        //   // Version 3 upgrade: Delete DUMMY_TABLE if it exists
+        //   const DUMMY_TABLE = 'DummyTable';
+        //   //   @ts-expect-error
+        //   if (db.objectStoreNames.contains(DUMMY_TABLE)) {
+        //     //   @ts-expect-error
+        //     db.deleteObjectStore(DUMMY_TABLE);
+        //   }
+        // }
       },
     });
     this.logger.info('IndexedDB initialized');

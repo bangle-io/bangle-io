@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/service-platform",
+  "name": "@bangle.io/baby-fs",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/entry/service-platform"
+    "directory": "packages/js-lib/baby-fs"
   },
   "authors": [
     {
@@ -18,22 +18,18 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "browser",
-    "kind": "service-platform"
+    "env": "universal",
+    "kind": "js-util"
   },
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "index.ts",
+  "module": "index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/config": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/db-key-val": "workspace:*",
-    "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/is-abort-error": "workspace:*",
+    "idb": "^8.0.0"
   }
 }

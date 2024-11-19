@@ -1,4 +1,4 @@
-import type { BaseService, DatabaseService } from '@bangle.io/base-utils';
+import { BaseService, type DatabaseService } from '@bangle.io/base-utils';
 import type { Logger } from '@bangle.io/logger';
 import React, { useEffect, createContext } from 'react';
 
@@ -21,8 +21,12 @@ export function PlatformServiceProvider({
   services: PlatformServices;
 }) {
   useEffect(() => {
-    services.database.initialize();
-  }, [services.database]);
+    for (const service of Object.values(services)) {
+      if (service instanceof BaseService) {
+        service.initialize();
+      }
+    }
+  }, [services]);
 
   return (
     <ServiceContext.Provider value={services}>
