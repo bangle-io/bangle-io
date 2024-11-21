@@ -4,6 +4,7 @@ import type {
   BaseFileStorageProvider,
   ServiceKind,
 } from '@bangle.io/types';
+import { getAppErrorCause } from './throw-app-error';
 
 export type DatabaseService = BaseAppDatabase & BaseService;
 export type FileStorageService = BaseFileStorageProvider & BaseService;

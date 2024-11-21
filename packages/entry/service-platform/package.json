@@ -34,6 +34,8 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/db-key-val": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "@bangle.io/emitter": "workspace:*",
+    "@bangle.io/base-error": "workspace:*"
   }
 }

@@ -42,7 +42,7 @@ export class FileSystemService extends BaseService {
     },
     private onChange: (change: ChangeEvent) => void,
   ) {
-    super('file', 'core', logger, dependencies);
+    super('file-system-service', 'core', logger, dependencies);
     this.fileStorageService = dependencies.fileStorageService;
   }
 

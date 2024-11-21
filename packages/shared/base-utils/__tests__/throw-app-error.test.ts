@@ -12,11 +12,11 @@ test('throwAppError throws an error with correct structure', () => {
       throw error;
     }
 
-    expect(error.name).toBe('Error');
+    expect(error.name).toBe('BaseError');
     expect(error.message).toBe('My Error message');
 
     expect(error.cause).toMatchObject({
-      isBangleError: true,
+      isBangleAppError: true,
       name: 'error::main:unknown',
       payload: {
         details: 'xyz',

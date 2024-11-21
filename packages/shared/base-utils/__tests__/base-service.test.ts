@@ -1,4 +1,5 @@
-import { Logger } from '@bangle.io/logger';
+import type { Logger } from '@bangle.io/logger';
+import { makeTestLogger } from '@bangle.io/test-utils';
 import { BaseService } from '../base-service';
 
 describe('BaseService', () => {
@@ -24,13 +25,7 @@ describe('BaseService', () => {
   };
 
   beforeEach(() => {
-    baseLogger = {
-      debug: jest.fn(),
-      info: jest.fn(),
-      error: jest.fn(),
-      warn: jest.fn(),
-    };
-    logger = new Logger('', null, baseLogger as any);
+    ({ log: baseLogger, logger } = makeTestLogger());
 
     service = new TestService('TestService', 'platform', logger, dependencies);
   });

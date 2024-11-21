@@ -1,5 +1,6 @@
 import '@bangle.io/editor/src/style.css';
 
+import { getAppErrorCause, getGithubUrl } from '@bangle.io/base-utils';
 import { WorkspaceType } from '@bangle.io/constants';
 import {
   CoreServiceProvider,
@@ -8,20 +9,22 @@ import {
   ShortcutProvider,
 } from '@bangle.io/context';
 import { EditorComp } from '@bangle.io/editor';
+import { Emitter } from '@bangle.io/emitter';
 import { Logger } from '@bangle.io/logger';
 import { OmniSearch } from '@bangle.io/omni-search';
 import { FileSystemService, WorkspaceService } from '@bangle.io/service-core';
 import {
+  BrowserErrorHandlerService,
   FileStorageIndexedDB,
   IdbDatabaseService,
   MemoryDatabaseService,
 } from '@bangle.io/service-platform';
-import type { WorkspaceInfo } from '@bangle.io/types';
-import { WorkspaceDialogRoot } from '@bangle.io/ui-components';
+import type { ErrorEmitter, WorkspaceInfo } from '@bangle.io/types';
+import { Toaster, WorkspaceDialogRoot, toast } from '@bangle.io/ui-components';
 import { Sidebar } from '@bangle.io/ui-components';
 import { Breadcrumb, Separator } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { SidebarComponent } from './sidebar';
 
 const logger = new Logger(
@@ -31,6 +34,11 @@ const logger = new Logger(
     ? 'debug'
     : 'info',
 );
+
+const errorEmitter: ErrorEmitter = new Emitter();
+const errorService = new BrowserErrorHandlerService(logger, errorEmitter);
+// initialize the error service so that it can start listening to errors
+errorService.initialize();
 
 const idbDatabase = new IdbDatabaseService(logger);
 const memoryDatabase = new MemoryDatabaseService(logger);
@@ -91,7 +99,38 @@ export function App() {
     refreshWorkspaces();
   }, [refreshWorkspaces]);
 
-  logger.info('Workspaces:', workspaces);
+  useEffect(() => {
+    const rem2 = errorEmitter.on(
+      'event::browser-error-handler-service:app-error',
+      (event) => {
+        toast.error(`x:${event.error.message}`, {
+          duration: Number.POSITIVE_INFINITY,
+        });
+      },
+    );
+    const rem1 = errorEmitter.on(
+      'event::browser-error-handler-service:error',
+      (event) => {
+        toast.error(event.error.message, {
+          duration: Number.POSITIVE_INFINITY,
+          cancel: {
+            label: 'Dismiss',
+            onClick: () => {},
+          },
+          action: {
+            label: 'Report',
+            onClick: () => {
+              window.open(getGithubUrl(event.error, logger), '_blank');
+            },
+          },
+        });
+      },
+    );
+    return () => {
+      rem2();
+      rem1();
+    };
+  }, []);
 
   return (
     <PlatformServiceProvider services={platformServices}>
@@ -114,6 +153,7 @@ export function App() {
             }}
           />
           <OmniSearch open={open} setOpen={setOpen} />
+          <Toaster />
           <SidebarComponent
             activeWsName={activeWsName}
             activeWsPaths={activeWsPaths}

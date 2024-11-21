@@ -14,7 +14,7 @@ export class MemoryDatabaseService
 
   protected async onInitialize(): Promise<void> {}
 
-  async onDispose(): Promise<void> {
+  protected async onDispose(): Promise<void> {
     this.workspaces.clear();
     this.miscData.clear();
   }

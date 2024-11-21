@@ -1,10 +1,11 @@
+import { BaseError } from '@bangle.io/base-error';
 import { isPlainObject } from '@bangle.io/mini-js-utils';
 import type { AppError } from '@bangle.io/types';
 
 export type AppErrorName = AppError['name'];
 
 type CauseObject = {
-  isBangleError: boolean;
+  isBangleAppError: boolean;
   name: AppErrorName;
   payload: Record<string, Error | number | boolean | string | undefined>;
 };
@@ -14,26 +15,41 @@ export function throwAppError<TError extends AppErrorName>(
   message: string,
   payload: Extract<AppError, { name: TError }>['payload'],
 ): never {
-  throw new Error(message, {
+  throw new BaseError({
+    message,
     cause: {
-      isBangleError: true,
+      isBangleAppError: true,
       name,
       payload,
     } satisfies CauseObject,
   });
 }
 
+export function getAppErrorCause(error: BaseError): AppError | null {
+  if (!(error instanceof BaseError) || !isPlainObject(error.cause)) {
+    return null;
+  }
+
+  const cause = error.cause as CauseObject;
+
+  if (cause.isBangleAppError !== true) {
+    return null;
+  }
+
+  return { name: cause.name, payload: cause.payload } as AppError;
+}
+
 export function handleAppError(
   error: Error,
   handler?: (info: AppError, error: Error) => void,
 ): boolean {
-  if (!(error instanceof Error) || !isPlainObject(error.cause)) {
+  if (!(error instanceof BaseError) || !isPlainObject(error.cause)) {
     return false;
   }
 
   const cause = error.cause as CauseObject;
 
-  if (cause.isBangleError !== true) {
+  if (cause.isBangleAppError !== true) {
     return false;
   }
 
@@ -46,14 +62,14 @@ export function handleAppError(
   return true;
 }
 
-export function isAppError(error: unknown): boolean {
-  if (!(error instanceof Error) || !isPlainObject(error.cause)) {
+export function isAppError(error: unknown): error is BaseError {
+  if (!(error instanceof BaseError) || !isPlainObject(error.cause)) {
     return false;
   }
 
   const cause = error.cause as CauseObject;
 
-  if (cause.isBangleError !== true) {
+  if (cause.isBangleAppError !== true) {
     return false;
   }
 

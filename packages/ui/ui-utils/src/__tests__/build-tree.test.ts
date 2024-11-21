@@ -606,6 +606,5 @@ test('buildTree with mixed openPaths including files and directories', () => {
   ];
 
   const tree = buildTree(wsPaths, openPaths);
-  console.log(JSON.stringify(tree, null, 2));
   expect(tree).toEqual(expectedTree);
 });

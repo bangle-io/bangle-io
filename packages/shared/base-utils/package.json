@@ -30,6 +30,10 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/base-error": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*"
   }
 }

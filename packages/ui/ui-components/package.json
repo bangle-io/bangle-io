@@ -28,6 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "sonner": "^1.7.0",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-hooks": "workspace:*",
     "@bangle.io/ui-utils": "workspace:*",

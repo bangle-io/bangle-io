@@ -50,6 +50,12 @@ importers:
 
   packages/entry/app:
     dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -59,6 +65,9 @@ importers:
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -323,6 +332,9 @@ importers:
       '@bangle.io/baby-fs':
         specifier: workspace:*
         version: link:../../js-lib/baby-fs
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
@@ -335,6 +347,9 @@ importers:
       '@bangle.io/db-key-val':
         specifier: workspace:*
         version: link:../../js-lib/db-key-val
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -364,6 +379,12 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
 
+  packages/js-lib/emitter:
+    devDependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../mini-js-utils
+
   packages/js-lib/is-abort-error: {}
 
   packages/js-lib/jsdom-env:
@@ -386,6 +407,9 @@ importers:
 
   packages/shared/base-utils:
     dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
       '@bangle.io/browser':
         specifier: workspace:*
         version: link:../../js-lib/browser
@@ -404,6 +428,10 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
+    devDependencies:
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../test-utils
 
   packages/shared/config:
     dependencies:
@@ -415,11 +443,21 @@ importers:
 
   packages/shared/test-utils:
     dependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       wait-for-expect:
         specifier: ^3.0.2
         version: 3.0.2
 
-  packages/shared/types: {}
+  packages/shared/types:
+    dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
 
   packages/shared/ws-path:
     dependencies:
@@ -656,6 +694,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      sonner:
+        specifier: ^1.7.0
+        version: 1.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@bangle.io/test-utils':
         specifier: workspace:*
@@ -5029,6 +5070,12 @@ packages:
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
+
+  sonner@1.7.0:
+    resolution: {integrity: sha512-W6dH7m5MujEPyug3lpI2l3TC3Pp1+LTgK0Efg+IHDrBbtEjyCmCHHo6yfNBOsf1tFZ6zf+jceWwB38baC8yO9g==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -10457,6 +10504,11 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.8.1
+
+  sonner@1.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   source-map-js@1.2.1: {}
 

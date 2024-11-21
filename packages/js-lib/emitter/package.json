@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/types",
+  "name": "@bangle.io/emitter",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/types"
+    "directory": "packages/js-lib/emitter"
   },
   "authors": [
     {
@@ -19,7 +19,7 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "universal",
-    "kind": "types"
+    "kind": "js-util"
   },
   "main": "index.ts",
   "module": "index.ts",
@@ -27,8 +27,8 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/base-error": "workspace:*"
+  "dependencies": {},
+  "devDependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*"
   }
 }
