@@ -79,7 +79,7 @@ export abstract class BaseService<Config = void> {
     public readonly kind: ServiceKind,
     logger: Logger,
     protected readonly dependencies: Record<string, BaseService<any>> = {},
-    protected readonly options: {
+    protected readonly baseOptions: {
       needsConfig?: boolean;
     } = {},
   ) {
@@ -130,7 +130,7 @@ export abstract class BaseService<Config = void> {
 
   // Allows setting the config before initialization
   public setInitConfig(config: Config) {
-    if (!this.options.needsConfig) {
+    if (!this.baseOptions.needsConfig) {
       throw new Error(
         `Config is not needed for service: ${this.name}. Remove the config from the service.`,
       );
@@ -149,7 +149,7 @@ export abstract class BaseService<Config = void> {
 
   // The initialization task passed to the Lifecycle
   private async initTask() {
-    if (!this.isConfigSet && this.options.needsConfig) {
+    if (!this.isConfigSet && this.baseOptions.needsConfig) {
       throw new Error(
         `Config is not set for service: ${this.name}. Call setInitConfig before initialize.`,
       );

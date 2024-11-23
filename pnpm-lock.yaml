@@ -98,6 +98,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      wouter:
+        specifier: ^3.3.5
+        version: 3.3.5(react@18.3.1)
 
   packages/entry/browser-entry:
     dependencies:
@@ -390,6 +393,9 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+      wouter:
+        specifier: ^3.3.5
+        version: 3.3.5(react@18.3.1)
 
   packages/js-lib/baby-fs:
     dependencies:
@@ -4420,6 +4426,9 @@ packages:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
+
   mkdirp@1.0.4:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
@@ -4998,6 +5007,10 @@ packages:
 
   regenerator-runtime@0.14.1:
     resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
+
+  regexparam@3.0.0:
+    resolution: {integrity: sha512-RSYAtP31mvYLkAHrOlh25pCNQ5hWnT106VukGaaFfuJrZFkGRX5GhUAdPqpSDXxOhA2c4akmRuplv1mRqnBn6Q==}
+    engines: {node: '>=8'}
 
   release-zalgo@1.0.0:
     resolution: {integrity: sha512-gUAyHVHPPC5wdqX/LG4LWtRYtgjxyX78oanFNTMMyFEfOqdC54s3eE82imuWKbOeqYht2CrNf64Qb8vgmmtZGA==}
@@ -5675,6 +5688,11 @@ packages:
 
   wouter@2.12.1:
     resolution: {integrity: sha512-G7a6JMSLSNcu6o8gdOfIzqxuo8Qx1qs+9rpVnlurH69angsSFPZP5gESNuVNeJct/MGpQg191pDo4HUjTx7IIQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  wouter@3.3.5:
+    resolution: {integrity: sha512-bx3fLQAMn+EhYbBdY3W1gw9ZfO/uchudxYMwOIBzF3HVgqNEEIT199vEoh7FLTC0Vz5+rpMO6NdFsOkGX1QQCw==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -9776,6 +9794,8 @@ snapshots:
 
   minipass@7.1.2: {}
 
+  mitt@3.0.1: {}
+
   mkdirp@1.0.4: {}
 
   mkdirp@3.0.1: {}
@@ -10431,6 +10451,8 @@ snapshots:
       strip-indent: 3.0.0
 
   regenerator-runtime@0.14.1: {}
+
+  regexparam@3.0.0: {}
 
   release-zalgo@1.0.0:
     dependencies:
@@ -11107,6 +11129,13 @@ snapshots:
   wouter@2.12.1(react@18.3.1):
     dependencies:
       react: 18.3.1
+      use-sync-external-store: 1.2.2(react@18.3.1)
+
+  wouter@3.3.5(react@18.3.1):
+    dependencies:
+      mitt: 3.0.1
+      react: 18.3.1
+      regexparam: 3.0.0
       use-sync-external-store: 1.2.2(react@18.3.1)
 
   wrap-ansi@6.2.0:

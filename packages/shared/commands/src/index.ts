@@ -10,10 +10,6 @@ export function getEnabledCommands(): Command[] {
   return commands.filter((command) => !command.disabled);
 }
 
-export function getOmniSearchCommands(): Command[] {
-  return getEnabledCommands().filter((command) => command.omniSearch);
-}
-
 export type BangleAppCommand = (typeof bangleAppCommands)[number];
 
 function validate(commands: Command[]) {

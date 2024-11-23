@@ -13,3 +13,4 @@ export type * from './platform-services';
 export type * from '@bangle.io/base-error';
 export type * from './services';
 export type * from './commands';
+export type * from './base-router';

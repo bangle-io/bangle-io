@@ -36,6 +36,7 @@
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/base-error": "workspace:*",
+    "wouter": "^3.3.5"
   }
 }

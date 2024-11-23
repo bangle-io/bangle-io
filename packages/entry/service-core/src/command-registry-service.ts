@@ -75,4 +75,8 @@ export class CommandRegistryService extends BaseService<{
     }
     return command;
   }
+
+  getOmniSearchCommands(): Command[] {
+    return this.getCommands().filter((cmd) => cmd.omniSearch);
+  }
 }
