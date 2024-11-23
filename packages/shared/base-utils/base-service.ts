@@ -1,101 +1,63 @@
 import type { Logger } from '@bangle.io/logger';
-import type {
-  BaseAppDatabase,
-  BaseFileStorageProvider,
-  ServiceKind,
-} from '@bangle.io/types';
-import { getAppErrorCause } from './throw-app-error';
+import type { ServiceKind } from '@bangle.io/types';
 
-export type DatabaseService = BaseAppDatabase & BaseService;
-export type FileStorageService = BaseFileStorageProvider & BaseService;
-
-/**
- * This is the base class for all the services.
- */
-export abstract class BaseService {
+class Lifecycle {
+  readonly initializedPromise: Promise<void>;
   public readonly controller = new AbortController();
-  public readonly initialized: Promise<void>;
-  public initializationStatus:
-    | 'not-started'
-    | 'pending'
-    | 'initialized'
-    | 'errored' = 'not-started';
+
+  get state() {
+    return this._state;
+  }
+
+  private _state: 'not-started' | 'pending' | 'initialized' | 'errored' =
+    'not-started';
+
+  get isInitialized() {
+    return this.state === 'initialized';
+  }
+
+  get aborted() {
+    return this.controller.signal.aborted;
+  }
 
   private resolveInitialized!: () => void;
   private rejectInitialized: undefined | ((reason?: any) => void);
-  protected readonly logger: Logger;
 
   constructor(
-    public readonly name: string,
-    public readonly kind: ServiceKind,
-    logger: Logger,
-    protected readonly dependencies: Record<string, BaseService> = {},
+    private logger: Logger,
+    private serviceName: string,
+    private initTask: () => Promise<void>,
   ) {
-    this.logger = logger.child(name);
-
-    this.logger.debug(`Initializing service: ${this.name}`);
-
-    this.initialized = new Promise<void>((resolve, reject) => {
+    this.initializedPromise = new Promise<void>((resolve, reject) => {
       this.resolveInitialized = resolve;
       this.rejectInitialized = reject;
     });
   }
 
-  protected getAbortSignal(): AbortSignal {
-    return this.controller.signal;
-  }
-
-  async initialize(): Promise<void> {
-    if (
-      this.initializationStatus !== 'not-started' ||
-      this.getAbortSignal().aborted
-    ) {
+  async initialize() {
+    if (this.state !== 'not-started' || this.aborted) {
       this.logger.debug(
-        `Service initialization skipped for service: ${this.name}, status: ${this.initializationStatus}`,
+        `Service initialization skipped for service, status: ${this.state}`,
       );
       return;
     }
 
-    this.initializationStatus = 'pending';
-    this.logger.info(`Initializing service: ${this.name}`);
     try {
-      const depArray = Object.values(this.dependencies);
-      if (depArray.length > 0) {
-        for (const dep of depArray) {
-          if (dep.initializationStatus === 'not-started') {
-            this.logger.debug(`Triggering init dependency: for ${dep.name}`);
-            dep.initialize();
-          }
-        }
-
-        await Promise.all(depArray.map((dep) => dep.initialized));
-
-        if (this.getAbortSignal().aborted) {
-          return;
-        }
-
-        this.logger.debug(
-          `All dependencies '${depArray
-            .map((d) => d.name)
-            .join(',')}' initialized for service: ${this.name}`,
-        );
+      this._state = 'pending';
+      this.logger.debug('Initializing service');
+      await this.initTask();
+      this._state = 'initialized';
+      if (!this.aborted) {
+        this.resolveInitialized();
       }
-      await this.onInitialize();
-
-      if (this.getAbortSignal().aborted) {
-        return;
-      }
-
-      this.initializationStatus = 'initialized';
-      this.logger.info(`Service initialized: ${this.name}`);
-      this.resolveInitialized();
     } catch (error) {
-      this.initializationStatus = 'errored';
+      this._state = 'errored';
+      this.controller.abort();
+      // to keep initialize always successful
+      // we reject promise so that folks downstream can handle the error
       if (error instanceof Error) {
-        // prevent initialization from throwing error
-        // reject the promise instead
         this.rejectInitialized?.(
-          new Error(`Initialization failed for service: ${this.name}`, {
+          new Error(`Initialization failed for service: ${this.serviceName}`, {
             cause: error,
           }),
         );
@@ -104,36 +66,123 @@ export abstract class BaseService {
       throw error;
     }
   }
+}
 
-  async dispose(): Promise<void> {
-    if (this.getAbortSignal().aborted) {
-      return;
-    }
+export abstract class BaseService<Config = void> {
+  protected config!: Config;
+  private isConfigSet = false;
+  protected readonly logger: Logger;
+  private lifecycle: Lifecycle;
 
-    // if not started prevent onDispose and other operations from running
-    // kill immediately
-    if (this.initializationStatus === 'not-started') {
-      this.controller.abort();
-      return;
-    }
+  constructor(
+    public readonly name: string,
+    public readonly kind: ServiceKind,
+    logger: Logger,
+    protected readonly dependencies: Record<string, BaseService<any>> = {},
+    protected readonly options: {
+      needsConfig?: boolean;
+    } = {},
+  ) {
+    this.logger = logger.child(name);
+    this.logger.debug('Creating service');
 
-    await this.initialized;
+    // Instantiate the Lifecycle class
+    this.lifecycle = new Lifecycle(
+      this.logger,
+      this.name,
+      this.initTask.bind(this),
+    );
 
-    if (this.getAbortSignal().aborted) {
-      return;
-    }
-
-    this.logger.info(`Disposing service: ${this.name}`);
-    await this.onDispose();
-    this.controller.abort();
-    this.logger.info(`Service disposed: ${this.name}`);
+    this.lifecycle.controller.signal.addEventListener(
+      'abort',
+      () => {
+        this.onDispose();
+      },
+      {
+        once: true,
+      },
+    );
   }
 
-  protected async onInitialize(): Promise<void> {
-    // Hook for derived classes
+  public initialize(): Promise<void> {
+    return this.lifecycle.initialize();
   }
 
-  protected async onDispose(): Promise<void> {
-    // Hook for derived classes
+  public dispose() {
+    this.logger.debug('Service disposed');
+    this.lifecycle.controller.abort();
   }
+
+  public get initializedPromise(): Promise<void> {
+    return this.lifecycle.initializedPromise;
+  }
+
+  public get isOk(): boolean {
+    return this.lifecycle.state === 'initialized' && !this.lifecycle.aborted;
+  }
+
+  public get isDisposed(): boolean {
+    return this.lifecycle.aborted;
+  }
+
+  // called after the config is set
+  protected hookPostConfigSet(): void {}
+
+  // Allows setting the config before initialization
+  public setInitConfig(config: Config) {
+    if (!this.options.needsConfig) {
+      throw new Error(
+        `Config is not needed for service: ${this.name}. Remove the config from the service.`,
+      );
+    }
+    if (this.isOk) {
+      throw new Error(
+        `Config can only be set before initialization for service: ${this.name}`,
+      );
+    }
+    this.logger.debug(`Setting config for service: ${this.name}`);
+    this.config = config;
+    this.isConfigSet = true;
+
+    this.hookPostConfigSet();
+  }
+
+  // The initialization task passed to the Lifecycle
+  private async initTask() {
+    if (!this.isConfigSet && this.options.needsConfig) {
+      throw new Error(
+        `Config is not set for service: ${this.name}. Call setInitConfig before initialize.`,
+      );
+    }
+
+    const depArray = Object.values(this.dependencies);
+    if (depArray.length > 0) {
+      for (const dep of depArray) {
+        if (dep.isDisposed) {
+          throw new Error(
+            `Dependency ${dep.name} disposed before initializing service: ${this.name}`,
+          );
+        }
+
+        if (!dep.isOk) {
+          this.logger.debug(`Triggering init dependency: for ${dep.name}`);
+          dep.initialize();
+        }
+      }
+
+      await Promise.all(depArray.map((dep) => dep.initializedPromise));
+
+      this.logger.debug(
+        `All dependencies '${depArray
+          .map((d) => d.name)
+          .join(',')}' initialized for service`,
+      );
+    }
+
+    await this.onInitialize();
+  }
+
+  // hooks that can be implemented by the service
+  protected async onInitialize(): Promise<void> {}
+  protected async onDispose(): Promise<void> {}
 }

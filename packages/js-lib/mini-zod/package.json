@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/types",
+  "name": "@bangle.io/mini-zod",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/types"
+    "directory": "packages/js-lib/mini-zod"
   },
   "authors": [
     {
@@ -19,22 +19,16 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "universal",
-    "kind": "types"
+    "kind": "js-util"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/service-core": "workspace:*",
-    "@bangle.io/service-platform": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/mini-zod": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*"
+  "dependencies": {},
+  "devDependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*"
   }
 }

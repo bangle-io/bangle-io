@@ -188,6 +188,11 @@ async function testUniversalPackagesToRelyOnlyOnUniversal(
       continue;
     }
 
+    // shared-types is a special package that can be imported anywhere
+    if (pkg.name === BANGLE_IO_SHARED_TYPES_PKG_NAME) {
+      continue;
+    }
+
     const deps = Object.values(pkg.workspaceDependencies);
 
     for (const dep of deps) {

@@ -41,6 +41,8 @@
     "@bangle.io/ws-path": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*"
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/commands": "workspace:*",
+    "@bangle.io/command-handlers": "workspace:*"
   }
 }

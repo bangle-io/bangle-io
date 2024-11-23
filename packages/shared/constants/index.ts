@@ -25,3 +25,5 @@ export enum WorkspaceType {
   PrivateFS = 'privatefs',
   Github = 'github-storage',
 }
+
+export * from './command-excluded-services';

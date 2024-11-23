@@ -56,6 +56,12 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/command-handlers':
+        specifier: workspace:*
+        version: link:../command-handlers
+      '@bangle.io/commands':
+        specifier: workspace:*
+        version: link:../../shared/commands
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -190,6 +196,18 @@ importers:
         specifier: ^1.1.6
         version: 1.1.6(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
 
+  packages/entry/command-handlers:
+    dependencies:
+      '@bangle.io/commands':
+        specifier: workspace:*
+        version: link:../../shared/commands
+      '@bangle.io/mini-zod':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-zod
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+
   packages/entry/context:
     dependencies:
       '@bangle.io/base-utils':
@@ -204,9 +222,6 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/service-core':
-        specifier: workspace:*
-        version: link:../service-core
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -311,12 +326,24 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/commands':
+        specifier: workspace:*
+        version: link:../../shared/commands
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/keyboard-shortcuts':
+        specifier: workspace:*
+        version: link:../../js-lib/keyboard-shortcuts
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/mini-zod':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-zod
       '@bangle.io/service-platform':
         specifier: workspace:*
         version: link:../service-platform
@@ -326,6 +353,10 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+    devDependencies:
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../shared/test-utils
 
   packages/entry/service-platform:
     dependencies:
@@ -393,7 +424,11 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
 
-  packages/js-lib/keyboard-shortcuts: {}
+  packages/js-lib/keyboard-shortcuts:
+    dependencies:
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../base-error
 
   packages/js-lib/logger: {}
 
@@ -402,6 +437,12 @@ importers:
       '@bangle.io/weak-cache':
         specifier: workspace:*
         version: link:../weak-cache
+
+  packages/js-lib/mini-zod:
+    devDependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../mini-js-utils
 
   packages/js-lib/weak-cache: {}
 
@@ -433,13 +474,29 @@ importers:
         specifier: workspace:*
         version: link:../test-utils
 
+  packages/shared/commands:
+    dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@bangle.io/mini-zod':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-zod
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../types
+
   packages/shared/config:
     dependencies:
       '@bangle.io/config-template':
         specifier: ^0.0.7
         version: 0.0.7
 
-  packages/shared/constants: {}
+  packages/shared/constants:
+    dependencies:
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../types
 
   packages/shared/test-utils:
     dependencies:
@@ -455,9 +512,27 @@ importers:
       '@bangle.io/base-error':
         specifier: workspace:*
         version: link:../../js-lib/base-error
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../base-utils
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/mini-zod':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-zod
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../../entry/service-core
+      '@bangle.io/service-platform':
+        specifier: workspace:*
+        version: link:../../entry/service-platform
 
   packages/shared/ws-path:
     dependencies:

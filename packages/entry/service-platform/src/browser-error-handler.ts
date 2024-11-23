@@ -2,18 +2,39 @@ import { BaseService, type Logger, isAppError } from '@bangle.io/base-utils';
 import type { ErrorEmitter } from '@bangle.io/types';
 
 export class BrowserErrorHandlerService extends BaseService {
+  private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
+
   constructor(
     logger: Logger,
     private emitter: ErrorEmitter,
   ) {
     super('browser-error-handler', 'platform', logger);
+    window.addEventListener('error', this.handleError);
+    window.addEventListener('unhandledrejection', this.handleError);
+
+    // we want to emit queued events after initialization
+    this.initializedPromise.then(() => {
+      while (this.eventQueue.length > 0) {
+        const event = this.eventQueue.shift();
+        if (event) {
+          this.handleError(event);
+        }
+      }
+    });
   }
 
   handleError = (event: PromiseRejectionEvent | ErrorEvent) => {
+    if (!this.isOk) {
+      this.logger.warn('Received an error event during not ok');
+      this.logger.error(event);
+      this.eventQueue.push(event);
+      return;
+    }
+
     let error: Error | undefined;
     const isPromiseRejection = 'reason' in event;
-    // promise rejection
-    if ('reason' in event) {
+
+    if (isPromiseRejection) {
       if (event.reason instanceof Error) {
         error = event.reason;
       }
@@ -43,12 +64,15 @@ export class BrowserErrorHandlerService extends BaseService {
     }
   };
 
-  protected async onInitialize(): Promise<void> {
-    window.addEventListener('error', this.handleError);
-    window.addEventListener('unhandledrejection', this.handleError);
-  }
+  protected async onInitialize(): Promise<void> {}
 
   async onDispose(): Promise<void> {
+    while (this.eventQueue.length > 0) {
+      const event = this.eventQueue.shift();
+      if (event) {
+        this.handleError(event);
+      }
+    }
     window.removeEventListener('error', this.handleError);
     window.removeEventListener('unhandledrejection', this.handleError);
   }

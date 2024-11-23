@@ -77,8 +77,11 @@ type NavItem = {
 };
 
 export function AppSidebarExample() {
+  const [open, setOpen] = React.useState(true);
   return (
     <SidebarProvider
+      open={open}
+      setOpen={setOpen}
       style={
         {
           '--BV-sidebar-width': '19rem',

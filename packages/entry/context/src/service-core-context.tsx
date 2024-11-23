@@ -1,16 +1,8 @@
-import type { DatabaseService, Logger } from '@bangle.io/base-utils';
 import { BaseService } from '@bangle.io/base-utils';
-import type {
-  FileSystemService,
-  WorkspaceService,
-} from '@bangle.io/service-core';
-import React, { useEffect, createContext, useState } from 'react';
 
-export type CoreServices = {
-  workspace: WorkspaceService;
-  fileSystem: FileSystemService;
-  logger: Logger;
-};
+import type { CoreServices } from '@bangle.io/types';
+import React, { useEffect, createContext } from 'react';
+
 export const CoreServiceContext = createContext<CoreServices>(
   {} as CoreServices,
 );

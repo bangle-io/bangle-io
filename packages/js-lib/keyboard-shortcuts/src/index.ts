@@ -1,14 +1,33 @@
-// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
-type ShortcutHandler = () => boolean | void;
+import { BaseError } from '@bangle.io/base-error';
+
+type ShortcutHandler = (opts: {
+  keyBinding: KeyBinding;
+  metadata: RegisterOptions['metadata'];
+  // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
+}) => boolean | void;
 
 interface RegisterOptions {
+  /**
+   * If true, only one handler can be registered for the shortcut.
+   * will throw an error if a handler is already registered.
+   */
   unique?: boolean;
+  /**
+   * Metadata to be associated with the shortcut.
+   */
+  metadata?: Record<string, string>;
 }
 
 export interface KeyBinding {
   id: string;
   keys: string;
 }
+
+type HandlerData = {
+  keyBinding: KeyBinding;
+  handler: ShortcutHandler;
+  metadata?: Record<string, string>;
+};
 
 export class ShortcutManager {
   constructor(
@@ -17,7 +36,7 @@ export class ShortcutManager {
     },
   ) {}
 
-  private handlers: Map<string, ShortcutHandler[]> = new Map();
+  private handlers: Map<string, HandlerData[]> = new Map();
 
   register(
     keyBinding: KeyBinding,
@@ -29,7 +48,9 @@ export class ShortcutManager {
     const unique = options.unique ?? false;
 
     if (unique && this.handlers.has(key)) {
-      throw new Error(`Shortcut "${keys}" is already registered as unique.`);
+      throw new BaseError({
+        message: `Shortcut "${keys}" is already registered as unique.`,
+      });
     }
 
     let handlersList = this.handlers.get(key);
@@ -37,16 +58,24 @@ export class ShortcutManager {
       handlersList = [];
       this.handlers.set(key, handlersList);
     } else if (unique) {
-      throw new Error(`Shortcut "${keys}" is already registered.`);
+      throw new BaseError({
+        message: `Shortcut "${keys}" is already registered.`,
+      });
     }
 
-    handlersList.push(handler);
+    const handlerData = {
+      keyBinding,
+      handler,
+      metadata: options.metadata,
+    };
+
+    handlersList.push(handlerData);
 
     // Return deregister function
     return () => {
       const handlersList = this.handlers.get(key);
       if (handlersList) {
-        const index = handlersList.indexOf(handler);
+        const index = handlersList.indexOf(handlerData);
         if (index !== -1) {
           handlersList.splice(index, 1);
           if (handlersList.length === 0) {
@@ -80,8 +109,11 @@ export class ShortcutManager {
     const handlersList = this.handlers.get(shortcut);
 
     if (handlersList) {
-      for (const handler of handlersList) {
-        const result = handler();
+      for (const { handler, keyBinding, metadata } of handlersList) {
+        const result = handler({
+          keyBinding,
+          metadata,
+        });
         if (result !== false) {
           event.preventDefault();
           break;

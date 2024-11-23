@@ -33,7 +33,6 @@
     "@bangle.io/keyboard-shortcuts": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/service-core": "workspace:*"
+    "@bangle.io/base-utils": "workspace:*"
   }
 }

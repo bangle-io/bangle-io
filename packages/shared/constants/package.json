@@ -27,5 +27,7 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {
+    "@bangle.io/types": "workspace:*"
+  }
 }

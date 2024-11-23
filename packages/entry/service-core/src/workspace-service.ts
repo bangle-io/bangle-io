@@ -1,11 +1,11 @@
 import {
   BaseService,
-  type DatabaseService,
   type Logger,
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type {
+  DatabaseService,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';
@@ -49,7 +49,7 @@ export class WorkspaceService extends BaseService {
     wsName: string,
     options?: WorkspaceDatabaseQueryOptions,
   ): Promise<WorkspaceInfo | undefined> {
-    await this.initialized;
+    await this.initializedPromise;
     const result = await this.database.getEntry(wsName, {
       tableName: WORKSPACE_INFO_TABLE,
     });
@@ -74,7 +74,7 @@ export class WorkspaceService extends BaseService {
   async createWorkspaceInfo(
     info: Omit<WorkspaceInfo, 'lastModified' | 'deleted'>,
   ): Promise<WorkspaceInfo | undefined> {
-    await this.initialized;
+    await this.initializedPromise;
     const wsName = info.name;
 
     const result = await this.database.updateEntry(
@@ -117,7 +117,7 @@ export class WorkspaceService extends BaseService {
   }
 
   async deleteWorkspaceInfo(wsName: string): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     await this.database.updateEntry(
       wsName,
       (existing) => {
@@ -154,7 +154,7 @@ export class WorkspaceService extends BaseService {
     name: string,
     update: (wsInfo: WorkspaceInfo) => WorkspaceInfo,
   ): Promise<WorkspaceInfo | undefined> {
-    await this.initialized;
+    await this.initializedPromise;
     const result = await this.database.updateEntry(
       name,
       (existing) => {
@@ -200,7 +200,7 @@ export class WorkspaceService extends BaseService {
     type?: WorkspaceInfo['type'];
     allowDeleted?: boolean;
   }): Promise<WorkspaceInfo[]> {
-    await this.initialized;
+    await this.initializedPromise;
     const result = (await this.database.getAllEntries({
       tableName: WORKSPACE_INFO_TABLE,
     })) as WorkspaceInfo[];
@@ -219,7 +219,7 @@ export class WorkspaceService extends BaseService {
   }
 
   async getWorkspaceMetadata(name: string): Promise<Record<string, any>> {
-    await this.initialized;
+    await this.initializedPromise;
     const result = (await this.getWorkspaceInfo(name))?.metadata;
 
     if (!result || !isPlainObject(result)) {
@@ -237,7 +237,7 @@ export class WorkspaceService extends BaseService {
       existingMetadata: WorkspaceInfo['metadata'],
     ) => WorkspaceInfo['metadata'],
   ): Promise<boolean> {
-    await this.initialized;
+    await this.initializedPromise;
     await this.updateWorkspaceInfo(name, (wsInfo) => {
       const finalMetadata = metadata(wsInfo.metadata ?? {});
 
@@ -261,7 +261,7 @@ export class WorkspaceService extends BaseService {
   }
 
   async getMiscData(key: string): Promise<{ data: string } | undefined> {
-    await this.initialized;
+    await this.initializedPromise;
     const data = await this.database.getEntry(key, {
       tableName: MISC_TABLE,
     });
@@ -282,7 +282,7 @@ export class WorkspaceService extends BaseService {
   }
 
   async setMiscData(key: string, data: string): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     if (typeof data !== 'string') {
       throwAppError(
         'error::workspace:invalid-misc-data',
@@ -305,7 +305,7 @@ export class WorkspaceService extends BaseService {
   }
 
   async deleteMiscData(key: string): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     await this.database.deleteEntry(key, {
       tableName: MISC_TABLE,
     });

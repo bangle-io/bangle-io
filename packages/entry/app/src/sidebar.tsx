@@ -1,38 +1,10 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import { useShortcutManager } from '@bangle.io/context';
 import { useCoreServices } from '@bangle.io/context';
+import type { Logger } from '@bangle.io/logger';
 import type { WorkspaceInfo } from '@bangle.io/types';
 import { AppSidebar, Sidebar } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 import React, { useEffect, useMemo } from 'react';
-
-const data = {
-  navMain: [
-    {
-      title: 'Getting Started',
-      url: '#',
-      items: [
-        { title: 'Installation', url: '#' },
-        { title: 'Project Structure', url: '#' },
-      ],
-    },
-    {
-      title: 'Building Your Application',
-      url: '#',
-      items: [
-        { title: 'Routing', url: '#' },
-        { title: 'Data Fetching', url: '#', isActive: true },
-        // Other items...
-      ],
-    },
-    // Other nav items...
-  ],
-  teams: [
-    { name: 'Acme Inc', misc: 'Enterprise' },
-    { name: 'Acme Corp.', misc: 'Startup' },
-    { name: 'Evil Corp.', misc: 'Free' },
-  ],
-};
 
 interface SidebarProps {
   setOpenWsDialog: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,6 +15,7 @@ interface SidebarProps {
   setActiveWsName: (name: string) => void;
   activeWsPaths: string[];
   setActiveWsPaths: (cb: (existing: string[]) => string[]) => void;
+  logger: Logger;
 }
 
 export const SidebarComponent = ({
@@ -54,13 +27,12 @@ export const SidebarComponent = ({
   setActiveWsName,
   activeWsPaths,
   setActiveWsPaths,
+  logger,
 }: SidebarProps) => {
-  const shortcutManager = useShortcutManager();
-
   const coreServices = useCoreServices();
-  const logger = coreServices.logger;
 
   const [wsPaths, setWsPaths] = React.useState<string[]>([]);
+  const [sideBarOpen, setSideBarOpen] = React.useState(true);
 
   React.useEffect(() => {
     if (activeWsName) {
@@ -71,7 +43,7 @@ export const SidebarComponent = ({
   }, [activeWsName, coreServices]);
 
   useEffect(() => {
-    const deregister = shortcutManager.register(
+    const deregisterOmni = coreServices.shortcut.register(
       {
         ...KEYBOARD_SHORTCUTS.toggleOmniSearch,
       },
@@ -80,16 +52,27 @@ export const SidebarComponent = ({
       },
       { unique: true },
     );
+    const deregisterSidebar = coreServices.shortcut.register(
+      {
+        ...KEYBOARD_SHORTCUTS.toggleSidebar,
+      },
+      () => {
+        setSideBarOpen((open) => !open);
+      },
+      { unique: true },
+    );
 
     return () => {
-      deregister();
+      deregisterOmni();
+      deregisterSidebar();
     };
-  }, [shortcutManager, setOpen]);
-
-  logger.debug({ activeWsPaths });
+  }, [coreServices, setOpen]);
 
   return (
-    <Sidebar.SidebarProvider>
+    <Sidebar.SidebarProvider
+      open={sideBarOpen}
+      setOpen={(open) => setSideBarOpen(open)}
+    >
       <AppSidebar
         onTreeItemClick={(item) => {
           logger.debug('Tree item clicked', item);

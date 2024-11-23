@@ -6,4 +6,5 @@ export * from './throw-app-error';
 export * from '@bangle.io/browser';
 export * from '@bangle.io/mini-js-utils';
 export * from '@bangle.io/logger';
+export * from '@bangle.io/base-error';
 export * from './github-bug-url';

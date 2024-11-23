@@ -1,10 +1,6 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
-import {
-  BaseService,
-  type FileStorageService,
-  type Logger,
-  throwAppError,
-} from '@bangle.io/base-utils';
+import { BaseService, type Logger, throwAppError } from '@bangle.io/base-utils';
+import type { FileStorageService } from '@bangle.io/types';
 import {
   VALID_NOTE_EXTENSIONS_SET,
   getExtension,
@@ -59,7 +55,7 @@ export class FileSystemService extends BaseService {
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
-    await this.initialized;
+    await this.initializedPromise;
     let wsPaths = await this.fileStorageService.listAllFiles(
       wsName,
       abortSignal,
@@ -85,7 +81,7 @@ export class FileSystemService extends BaseService {
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
-    await this.initialized;
+    await this.initializedPromise;
     validateFileWsPath(wsPath);
 
     const file = await this.fileStorageService.readFile(wsPath, {});
@@ -94,7 +90,7 @@ export class FileSystemService extends BaseService {
   }
 
   async readFileAsText(wsPath: string): Promise<string | undefined> {
-    await this.initialized;
+    await this.initializedPromise;
     if (!isValidNoteWsPath(wsPath)) {
       throwAppError('error::file:invalid-note-path', 'Invalid note file path', {
         invalidWsPath: wsPath,
@@ -115,7 +111,7 @@ export class FileSystemService extends BaseService {
     file: File,
     _options: { sha?: string } = {},
   ): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     validateFileWsPath(wsPath);
 
     await this.fileStorageService.createFile(wsPath, file, {});
@@ -130,7 +126,7 @@ export class FileSystemService extends BaseService {
     file: File,
     options: { sha?: string } = {},
   ): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     validateFileWsPath(wsPath);
 
     await this.fileStorageService.writeFile(wsPath, file, {
@@ -143,7 +139,7 @@ export class FileSystemService extends BaseService {
   }
 
   async deleteFile(wsPath: string): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     validateFileWsPath(wsPath);
 
     await this.fileStorageService.deleteFile(wsPath, {});
@@ -160,7 +156,7 @@ export class FileSystemService extends BaseService {
     oldWsPath: string;
     newWsPath: string;
   }): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     validateFileWsPath(oldWsPath);
     validateFileWsPath(newWsPath);
 

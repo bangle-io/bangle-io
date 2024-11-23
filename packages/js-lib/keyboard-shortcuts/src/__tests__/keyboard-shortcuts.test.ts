@@ -249,4 +249,27 @@ describe('ShortcutManager', () => {
       shortcutManager.register(keyBinding, handler, { unique: true });
     }).not.toThrow();
   });
+
+  test('should pass keyBinding and metadata to the handler', () => {
+    const handler = jest.fn();
+    const keyBinding: KeyBinding = {
+      id: 'metaShortcut',
+      keys: 'ctrl-m',
+    };
+    const metadata = { description: 'Meta shortcut for testing' };
+
+    shortcutManager.register(keyBinding, handler, { metadata });
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'm',
+      ctrlKey: true,
+    });
+
+    shortcutManager.handleEvent(event);
+
+    expect(handler).toHaveBeenCalledWith({
+      keyBinding,
+      metadata,
+    });
+  });
 });

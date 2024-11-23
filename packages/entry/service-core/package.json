@@ -34,6 +34,14 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/service-platform": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "@bangle.io/keyboard-shortcuts": "workspace:*",
+    "@bangle.io/commands": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/mini-zod": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*"
   }
 }

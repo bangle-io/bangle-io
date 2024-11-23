@@ -115,7 +115,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     found: boolean;
     value: unknown;
   }> {
-    await this.initialized;
+    await this.initializedPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
 
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
@@ -141,7 +141,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     } | null,
     options: DatabaseQueryOptions,
   ) {
-    await this.initialized;
+    await this.initializedPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
     try {
@@ -178,7 +178,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   }
 
   async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {
-    await this.initialized;
+    await this.initializedPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
 
@@ -196,7 +196,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   }
 
   async getAllEntries({ tableName }: DatabaseQueryOptions): Promise<unknown[]> {
-    await this.initialized;
+    await this.initializedPromise;
     if (tableName === 'workspace-info') {
       try {
         return await this.getWorkspaceInfoTable().getAll();

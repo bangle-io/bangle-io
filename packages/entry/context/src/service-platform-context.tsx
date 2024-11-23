@@ -1,11 +1,6 @@
-import { BaseService, type DatabaseService } from '@bangle.io/base-utils';
-import type { Logger } from '@bangle.io/logger';
+import { BaseService } from '@bangle.io/base-utils';
+import type { PlatformServices } from '@bangle.io/types';
 import React, { useEffect, createContext } from 'react';
-
-type PlatformServices = {
-  database: DatabaseService;
-  logger: Logger;
-};
 
 export const ServiceContext = createContext({} as PlatformServices);
 

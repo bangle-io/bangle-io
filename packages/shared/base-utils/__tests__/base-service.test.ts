@@ -15,9 +15,10 @@ describe('BaseService', () => {
     protected async onDispose(): Promise<void> {
       // Simulate disposal
     }
+    protected hookPostConfigSet(): void {}
   }
 
-  let baseLogger = {
+  let mockLog = {
     debug: jest.fn(),
     info: jest.fn(),
     error: jest.fn(),
@@ -25,7 +26,7 @@ describe('BaseService', () => {
   };
 
   beforeEach(() => {
-    ({ log: baseLogger, logger } = makeTestLogger());
+    ({ mockLog: mockLog, logger } = makeTestLogger());
 
     service = new TestService('TestService', 'platform', logger, dependencies);
   });
@@ -36,15 +37,15 @@ describe('BaseService', () => {
 
   test('should initialize successfully without dependencies', async () => {
     await service.initialize();
-    expect(baseLogger.info).toHaveBeenNthCalledWith(
+    expect(mockLog.debug).toHaveBeenNthCalledWith(
       1,
       '[TestService]',
-      'Initializing service: TestService',
+      'Creating service',
     );
-    expect(baseLogger.info).toHaveBeenNthCalledWith(
+    expect(mockLog.debug).toHaveBeenNthCalledWith(
       2,
       '[TestService]',
-      'Service initialized: TestService',
+      'Initializing service',
     );
   });
 
@@ -58,9 +59,9 @@ describe('BaseService', () => {
 
     await service.initialize();
     await service.dispose();
-    expect(baseLogger.info).toHaveBeenCalledWith(
+    expect(mockLog.debug).toHaveBeenCalledWith(
       '[TestService1]',
-      'Disposing service: TestService1',
+      'Service disposed',
     );
   });
 
@@ -72,6 +73,60 @@ describe('BaseService', () => {
       dependencies,
     );
     await service.dispose();
-    expect(baseLogger.info).not.toHaveBeenCalled;
+    expect(mockLog.info).not.toHaveBeenCalled;
+  });
+
+  test('should initialize with dependencies', async () => {
+    const depService = new TestService('DepService', 'platform', logger);
+    dependencies = { dep: depService };
+    service = new TestService('TestService', 'platform', logger, dependencies);
+
+    const initializeSpy = jest.spyOn(service, 'initialize');
+    const depInitializeSpy = jest.spyOn(depService, 'initialize');
+    const hookPostConfigSetSpy = jest.spyOn(
+      service,
+      // @ts-expect-error - hookPostConfigSet
+      'hookPostConfigSet',
+    );
+
+    await service.initialize();
+
+    expect(hookPostConfigSetSpy).not.toHaveBeenCalled();
+
+    expect(depInitializeSpy).toHaveBeenCalled();
+    expect(initializeSpy).toHaveBeenCalled();
+    expect(mockLog.debug).toHaveBeenCalledWith(
+      '[TestService]',
+      "All dependencies 'DepService' initialized for service",
+    );
+  });
+
+  test('should set initialization config when needed', () => {
+    service = new TestService('TestService', 'platform', logger, dependencies, {
+      needsConfig: true,
+    });
+    const hookPostConfigSetSpy = jest.spyOn(
+      service,
+      // @ts-expect-error - hookPostConfigSet
+      'hookPostConfigSet',
+    );
+
+    const config = { key: 'value' };
+
+    // @ts-expect-error - config
+    service.setInitConfig(config);
+
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    expect(service['config']).toEqual(config);
+    expect(hookPostConfigSetSpy).toHaveBeenCalled();
+  });
+
+  test('should throw error when setting config if not needed', () => {
+    service = new TestService('TestService', 'platform', logger, dependencies);
+
+    // @ts-expect-error - config
+    expect(() => service.setInitConfig({})).toThrow(
+      'Config is not needed for service: TestService. Remove the config from the service.',
+    );
   });
 });
