@@ -1,11 +1,13 @@
+import { assertIsDefined } from '@bangle.io/base-utils';
 import { commandHandlers } from '@bangle.io/command-handlers';
-import { bangleAppCommands } from '@bangle.io/commands';
+import { getEnabledCommands } from '@bangle.io/commands';
 import type { Logger } from '@bangle.io/logger';
 import {
   CommandDispatchService,
   CommandRegistryService,
   FileSystemService,
   ShortcutService,
+  type ShortcutServiceConfig,
   WorkspaceService,
 } from '@bangle.io/service-core';
 import {
@@ -14,11 +16,14 @@ import {
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
 import type {
+  Command,
   CoreServices,
   ErrorEmitter,
   PlatformServices,
   Services,
 } from '@bangle.io/types';
+
+const commands = getEnabledCommands();
 
 function initPlatformServices(
   logger: Logger,
@@ -86,6 +91,10 @@ export function initializeServices(
   };
 
   // init config
+  coreServices.commandRegistry.setInitConfig({
+    commands,
+    commandHandlers: commandHandlers,
+  });
   coreServices.commandDispatcher.setInitConfig({
     exposedServices: {
       ...coreServices,
@@ -93,9 +102,30 @@ export function initializeServices(
     },
   });
 
-  coreServices.commandRegistry.setInitConfig({
-    commands: bangleAppCommands,
-    commandHandlers: commandHandlers,
+  coreServices.shortcut.setInitConfig({
+    shortcuts: commands
+      .filter((command) => command.keybindings)
+      .map((command): ShortcutServiceConfig => {
+        assertIsDefined(command.keybindings);
+        const keys = command.keybindings.join('-');
+        return {
+          keyBinding: {
+            id: command.id,
+            keys,
+          },
+          handler: (event) => {
+            coreServices.commandDispatcher.dispatch(
+              // @ts-ignore - we know this is defined and typed
+              command.id,
+              event,
+              `keyboard(${keys})`,
+            );
+          },
+          options: {
+            unique: true,
+          },
+        };
+      }),
   });
 
   // init services

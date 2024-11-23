@@ -3,12 +3,6 @@ import { makeTestLogger } from '@bangle.io/test-utils';
 import type { Command } from '@bangle.io/types';
 import { CommandRegistryService } from '../command-registry-service';
 
-class TestService extends BaseService {
-  constructor(logger: Logger) {
-    super('test-service', 'core', logger);
-  }
-}
-
 describe('CommandRegistryService', () => {
   let logger: Logger;
   let service: CommandRegistryService;
@@ -76,7 +70,7 @@ describe('CommandRegistryService', () => {
 
   test('should register a handler successfully', () => {
     const handler = jest.fn();
-    service.registerHandler('testCommand', handler);
+    service.registerHandler({ id: 'testCommand', handler });
 
     const registeredHandler = service.findHandler('testCommand');
     expect(registeredHandler).toBe(handler);
@@ -84,11 +78,11 @@ describe('CommandRegistryService', () => {
 
   test('should throw error when registering a duplicate handler', () => {
     const handler = jest.fn();
-    service.registerHandler('testCommand', handler);
+    service.registerHandler({ id: 'testCommand', handler });
 
-    expect(() => service.registerHandler('testCommand', handler)).toThrow(
-      /Handler for command "testCommand" is already registered/,
-    );
+    expect(() =>
+      service.registerHandler({ id: 'testCommand', handler }),
+    ).toThrow(/Handler for command "testCommand" is already registered/);
   });
 
   test('should return undefined when finding a handler that does not exist', () => {
@@ -106,7 +100,7 @@ describe('CommandRegistryService', () => {
     } as const satisfies Command;
     const handler = jest.fn();
     service.register(command);
-    service.registerHandler('testCommand', handler);
+    service.registerHandler({ id: 'testCommand', handler });
 
     await service.dispose();
     expect(service.getCommands().length).toBe(0);

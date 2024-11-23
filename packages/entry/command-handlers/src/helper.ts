@@ -1,11 +1,10 @@
-import { type BangleAppCommand, bangleAppCommands } from '@bangle.io/commands';
+import type { BangleAppCommand } from '@bangle.io/commands';
 import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type {
   Command,
   CommandExposedServices,
   CommandHandler,
 } from '@bangle.io/types';
-import { commandHandlers } from './handlers';
 
 type CommandArgs<C extends Command> = C['args'] extends null
   ? null
@@ -15,7 +14,7 @@ type CommandArgs<C extends Command> = C['args'] extends null
         : never;
     };
 
-export function C<T extends BangleAppCommand['id']>(
+export function c<T extends BangleAppCommand['id']>(
   id: T,
   handler: (
     services: Pick<

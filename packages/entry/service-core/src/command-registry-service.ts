@@ -1,9 +1,11 @@
 import { BaseError, BaseService, type Logger } from '@bangle.io/base-utils';
 import type { Command, CommandHandler } from '@bangle.io/types';
 
+type CommandHandlerConfig = { id: string; handler: CommandHandler };
+
 export class CommandRegistryService extends BaseService<{
   commands: Command[];
-  commandHandlers: { id: string; handler: CommandHandler }[];
+  commandHandlers: CommandHandlerConfig[];
 }> {
   private commands: Map<string, Command> = new Map();
   private handlers: Map<string, CommandHandler> = new Map();
@@ -28,8 +30,8 @@ export class CommandRegistryService extends BaseService<{
       this.register(command);
     }
 
-    for (const { id, handler } of this.config.commandHandlers) {
-      this.registerHandler(id, handler);
+    for (const obj of this.config.commandHandlers) {
+      this.registerHandler(obj);
     }
 
     this.logger.info(
@@ -46,13 +48,17 @@ export class CommandRegistryService extends BaseService<{
     this.commands.set(command.id, command);
   }
 
-  registerHandler(id: string, handler: CommandHandler) {
+  registerHandler({ id, handler }: CommandHandlerConfig) {
     if (this.handlers.has(id)) {
       throw new BaseError({
         message: `Handler for command "${id}" is already registered.`,
       });
     }
     this.handlers.set(id, handler);
+
+    return () => {
+      this.handlers.delete(id);
+    };
   }
 
   findHandler(id: string) {

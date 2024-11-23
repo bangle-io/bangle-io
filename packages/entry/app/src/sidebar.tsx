@@ -1,3 +1,4 @@
+import { c } from '@bangle.io/command-handlers';
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
@@ -43,30 +44,25 @@ export const SidebarComponent = ({
   }, [activeWsName, coreServices]);
 
   useEffect(() => {
-    const deregisterOmni = coreServices.shortcut.register(
-      {
-        ...KEYBOARD_SHORTCUTS.toggleOmniSearch,
-      },
-      () => {
-        setOpen((open) => !open);
-      },
-      { unique: true },
-    );
-    const deregisterSidebar = coreServices.shortcut.register(
-      {
-        ...KEYBOARD_SHORTCUTS.toggleSidebar,
-      },
-      () => {
-        setSideBarOpen((open) => !open);
-      },
-      { unique: true },
-    );
+    const unregister = [
+      coreServices.commandRegistry.registerHandler(
+        c('command::ui:toggle-sidebar', () => {
+          setSideBarOpen((open) => !open);
+        }),
+      ),
+      coreServices.commandRegistry.registerHandler(
+        c('command::ui:new-workspace-dialog', () => {
+          setOpenWsDialog(true);
+        }),
+      ),
+    ];
 
     return () => {
-      deregisterOmni();
-      deregisterSidebar();
+      for (const cb of unregister) {
+        cb();
+      }
     };
-  }, [coreServices, setOpen]);
+  }, [coreServices, setOpenWsDialog]);
 
   return (
     <Sidebar.SidebarProvider

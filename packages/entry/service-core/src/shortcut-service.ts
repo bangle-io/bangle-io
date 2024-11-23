@@ -1,7 +1,20 @@
 import { BaseService, type Logger, isDarwin } from '@bangle.io/base-utils';
+import type {
+  KeyBinding,
+  RegisterOptions,
+  ShortcutHandler,
+} from '@bangle.io/keyboard-shortcuts';
 import { ShortcutManager } from '@bangle.io/keyboard-shortcuts';
 
-export class ShortcutService extends BaseService {
+export type ShortcutServiceConfig = {
+  keyBinding: KeyBinding;
+  handler: ShortcutHandler;
+  options: RegisterOptions;
+};
+
+export class ShortcutService extends BaseService<{
+  shortcuts: ShortcutServiceConfig[];
+}> {
   private shortcutManager = new ShortcutManager({
     isDarwin: isDarwin,
   });
@@ -18,9 +31,15 @@ export class ShortcutService extends BaseService {
     logger: Logger,
     private readonly target: Document,
   ) {
-    super('shortcut', 'core', logger);
+    super('shortcut', 'core', logger, {}, { needsConfig: true });
 
     target.addEventListener('keydown', this.eventHandler);
+  }
+
+  protected hookPostConfigSet(): void {
+    for (const shortcut of this.config.shortcuts) {
+      this.register(shortcut);
+    }
   }
 
   protected async onInitialize(): Promise<void> {}
@@ -30,7 +49,11 @@ export class ShortcutService extends BaseService {
     this.shortcutManager.deregisterAll();
   }
 
-  register: ShortcutManager['register'] = (...args) => {
-    return this.shortcutManager.register(...args);
-  };
+  register(shortcut: ShortcutServiceConfig) {
+    return this.shortcutManager.register(
+      shortcut.keyBinding,
+      shortcut.handler,
+      shortcut.options,
+    );
+  }
 }

@@ -11,6 +11,10 @@ export type AllowedValidator =
 
 export type Command = {
   id: string;
+  title?: string;
+  description?: string;
+  icon?: string;
+  disabled?: boolean;
   keywords?: string[];
   keybindings?: string[];
   services: (keyof CommandExposedServices)[];

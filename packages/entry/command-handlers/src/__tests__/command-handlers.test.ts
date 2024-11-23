@@ -21,12 +21,4 @@ describe('Command Validation', () => {
       expect(commandIds.has(id)).toBe(true);
     }
   });
-
-  test('each command id should have a corresponding handler id', () => {
-    const handlerIds = new Set(commandHandlers.map((c) => c.id));
-    const commandIds = new Set(bangleAppCommands.map((c) => c.id));
-    for (const id of commandIds) {
-      expect(handlerIds.has(id)).toBe(true);
-    }
-  });
 });

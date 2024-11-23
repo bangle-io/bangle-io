@@ -2,25 +2,27 @@ import { isDarwin } from '@bangle.io/base-utils';
 import { cn } from '@bangle.io/ui-utils';
 import React from 'react';
 
-export function Kbd({ keys }: { keys: string }) {
+export function Kbd({ keys }: { keys: string | string[] | readonly string[] }) {
   const isMac = isDarwin;
 
-  const keySymbols = keys.split('-').map((key) => {
-    switch (key.toLowerCase()) {
-      case 'meta':
-        return '⌘';
-      case 'alt':
-        return isMac ? '⌥' : 'Alt';
-      case 'shift':
-        return '⇧';
-      case 'ctrl':
-        return isMac ? '⌃' : 'Ctrl';
-      case 'enter':
-        return '⏎';
-      default:
-        return key.charAt(0).toUpperCase();
-    }
-  });
+  const keySymbols = (typeof keys === 'string' ? keys.split('-') : keys).map(
+    (key) => {
+      switch (key.toLowerCase()) {
+        case 'meta':
+          return '⌘';
+        case 'alt':
+          return isMac ? '⌥' : 'Alt';
+        case 'shift':
+          return '⇧';
+        case 'ctrl':
+          return isMac ? '⌃' : 'Ctrl';
+        case 'enter':
+          return '⏎';
+        default:
+          return key.charAt(0).toUpperCase();
+      }
+    },
+  );
 
   return <kbd className="kbd">{keySymbols.join('')}</kbd>;
 }
@@ -31,7 +33,7 @@ const KbdShortcut = ({
   ...props
 }: Omit<
   React.HTMLAttributes<HTMLSpanElement> & {
-    keys: string;
+    keys: string | string[] | readonly string[];
   },
   'children'
 >) => {

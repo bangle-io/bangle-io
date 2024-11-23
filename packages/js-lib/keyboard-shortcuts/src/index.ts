@@ -1,12 +1,12 @@
 import { BaseError } from '@bangle.io/base-error';
 
-type ShortcutHandler = (opts: {
+export type ShortcutHandler = (opts: {
   keyBinding: KeyBinding;
   metadata: RegisterOptions['metadata'];
   // biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 }) => boolean | void;
 
-interface RegisterOptions {
+export interface RegisterOptions {
   /**
    * If true, only one handler can be registered for the shortcut.
    * will throw an error if a handler is already registered.

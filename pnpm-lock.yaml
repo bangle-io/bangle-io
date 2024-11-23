@@ -308,6 +308,9 @@ importers:
 
   packages/entry/omni-search:
     dependencies:
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
       '@bangle.io/ui-components':
         specifier: workspace:*
         version: link:../../ui/ui-components

@@ -36,7 +36,7 @@ export class CommandDispatchService extends BaseService<{
     args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
     from: string,
   ): void {
-    this.logger.debug(`Dispatching command from ${from}:`, { id, args });
+    this.logger.debug(`Dispatching ${id} from ${from}:`, args);
 
     if (!this.isOk) {
       throw new BaseError({

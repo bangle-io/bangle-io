@@ -1,6 +1,8 @@
 import '@bangle.io/editor/src/style.css';
 
 import { getGithubUrl } from '@bangle.io/base-utils';
+import { c } from '@bangle.io/command-handlers';
+import { getOmniSearchCommands } from '@bangle.io/commands';
 import { WorkspaceType } from '@bangle.io/constants';
 import {
   CoreServiceProvider,
@@ -18,6 +20,8 @@ import { resolvePath } from '@bangle.io/ws-path';
 import React, { useCallback, useEffect } from 'react';
 import { initializeServices } from './service-setup';
 import { SidebarComponent } from './sidebar';
+
+const omniSearchCommands = getOmniSearchCommands();
 
 const logger = new Logger(
   '',
@@ -50,6 +54,17 @@ export function App() {
   React.useEffect(() => {
     refreshWorkspaces();
   }, [refreshWorkspaces]);
+
+  useEffect(() => {
+    const unregister = services.core.commandRegistry.registerHandler(
+      c('command::ui:toggle-omni-search', () => {
+        setOpen((open) => !open);
+      }),
+    );
+    return () => {
+      unregister();
+    };
+  }, []);
 
   useEffect(() => {
     const rem2 = errorEmitter.on(
@@ -91,15 +106,6 @@ export function App() {
           open={openWsDialog}
           onOpenChange={setOpenWsDialog}
           onDone={({ wsName }) => {
-            services.core.commandDispatcher.dispatch(
-              'command::ui:create-new-workspace',
-              {
-                workspaceType: WorkspaceType.Browser,
-                wsName,
-              },
-              'app',
-            );
-
             setOpenWsDialog(false);
             services.core.workspace
               .createWorkspaceInfo({
@@ -112,7 +118,19 @@ export function App() {
               });
           }}
         />
-        <OmniSearch open={open} setOpen={setOpen} />
+        <OmniSearch
+          open={open}
+          setOpen={setOpen}
+          commands={omniSearchCommands}
+          onCommand={(cmd) => {
+            services.core.commandDispatcher.dispatch(
+              // @ts-expect-error - we know id is correct
+              cmd.id,
+              {},
+              'omni-search',
+            );
+          }}
+        />
         <Toaster />
         <SidebarComponent
           logger={logger}

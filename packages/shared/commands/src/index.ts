@@ -4,13 +4,20 @@ import type { Command } from '@bangle.io/types';
 import { uiCommands } from './ui-commands';
 
 export const bangleAppCommands = [...uiCommands];
+
+export function getEnabledCommands(): Command[] {
+  const commands: Command[] = bangleAppCommands;
+  return commands.filter((command) => !command.disabled);
+}
+
+export function getOmniSearchCommands(): Command[] {
+  return getEnabledCommands().filter((command) => command.omniSearch);
+}
+
 export type BangleAppCommand = (typeof bangleAppCommands)[number];
+
 function validate(commands: Command[]) {
   for (const command of commands) {
-    if (!command.id.startsWith('command::')) {
-      throw new Error(`Invalid command id: ${command.id}`);
-    }
-
     const excludedServices: string[] = commandExcludedServices;
 
     if (
@@ -19,6 +26,24 @@ function validate(commands: Command[]) {
       )
     ) {
       throw new Error(`Command "${command.id}" uses an excluded service.`);
+    }
+
+    if (command.omniSearch && !command.keywords) {
+      throw new Error(
+        `Command "${command.id}" has omniSearch enabled but no keywords.`,
+      );
+    }
+
+    if (command.omniSearch && command.args !== null) {
+      throw new Error(
+        `Command "${command.id}" has omniSearch enabled but has non-null args.`,
+      );
+    }
+
+    if (Array.isArray(command.keybindings) && command.args !== null) {
+      throw new Error(
+        `Command "${command.id}" has keybindings but has non-null args.`,
+      );
     }
   }
 }

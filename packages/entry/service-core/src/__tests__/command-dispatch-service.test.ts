@@ -54,7 +54,10 @@ describe('CommandDispatchService', () => {
     const handler = jest.fn();
 
     commandRegistry.register(command);
-    commandRegistry.registerHandler('command::ui:toggle-sidebar', handler);
+    commandRegistry.registerHandler({
+      id: 'command::ui:toggle-sidebar',
+      handler,
+    });
 
     dispatchService.dispatch('command::ui:toggle-sidebar', null, 'testSource');
 
@@ -77,15 +80,15 @@ describe('CommandDispatchService', () => {
 
     expect(mockLog.debug).toHaveBeenCalledWith(
       '[command-dispatch]',
-      'Dispatching command from testSource:',
-      { args: null, id: 'command::ui:toggle-sidebar' },
+      'Dispatching command::ui:toggle-sidebar from testSource:',
+      null,
     );
   });
 
   test('should dispatch a command with args successfully', async () => {
     const { mockLog, commandRegistry, dispatchService } = await setup();
     const command = {
-      id: 'command::ui:create-new-workspace',
+      id: 'command::ui:test-no-use',
       keywords: ['new', 'create', 'workspace'],
       services: ['fileSystem'],
       omniSearch: true,
@@ -97,13 +100,13 @@ describe('CommandDispatchService', () => {
     const handler = jest.fn();
 
     commandRegistry.register(command);
-    commandRegistry.registerHandler(
-      'command::ui:create-new-workspace',
+    commandRegistry.registerHandler({
+      id: 'command::ui:test-no-use',
       handler,
-    );
+    });
 
     dispatchService.dispatch(
-      'command::ui:create-new-workspace',
+      'command::ui:test-no-use',
       {
         workspaceType: 'browser',
         wsName: 'test-ws',
@@ -124,41 +127,38 @@ describe('CommandDispatchService', () => {
     expect(mockLog.debug).nthCalledWith(
       10,
       '[command-dispatch]',
-      'Dispatching command from testSource:',
+      'Dispatching command::ui:test-no-use from testSource:',
       {
-        args: {
-          workspaceType: 'browser',
-          wsName: 'test-ws',
-        },
-        id: 'command::ui:create-new-workspace',
+        workspaceType: 'browser',
+        wsName: 'test-ws',
       },
     );
 
     () => {
       // type checks
       dispatchService.dispatch(
-        'command::ui:create-new-workspace',
+        'command::ui:test-no-use',
         // @ts-expect-error missing required arg
         null,
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:create-new-workspace',
+        'command::ui:test-no-use',
         // @ts-expect-error empty arg
         {},
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:create-new-workspace',
+        'command::ui:test-no-use',
         // @ts-expect-error incorrect arg type
         { workspaceType: 3 },
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:create-new-workspace',
+        'command::ui:test-no-use',
         {
           workspaceType: 'test-ws',
           // @ts-expect-error extra arg that is not specified in the command
@@ -208,7 +208,10 @@ describe('CommandDispatchService', () => {
     const handler = jest.fn();
 
     commandRegistry.register(command);
-    commandRegistry.registerHandler('command::ui:toggle-sidebar', handler);
+    commandRegistry.registerHandler({
+      id: 'command::ui:toggle-sidebar',
+      handler,
+    });
 
     dispatchService.dispatch('command::ui:toggle-sidebar', null, 'testSource');
 
@@ -241,7 +244,10 @@ describe('CommandDispatchService', () => {
     const handler = jest.fn();
 
     commandRegistry.register(command);
-    commandRegistry.registerHandler('command::ui:toggle-sidebar', handler);
+    commandRegistry.registerHandler({
+      id: 'command::ui:toggle-sidebar',
+      handler,
+    });
 
     expect(() =>
       dispatchService.dispatch(
@@ -266,7 +272,10 @@ describe('CommandDispatchService', () => {
     const handler = jest.fn();
 
     commandRegistry.register(command);
-    commandRegistry.registerHandler('command::ui:toggle-sidebar', handler);
+    commandRegistry.registerHandler({
+      id: 'command::ui:toggle-sidebar',
+      handler,
+    });
 
     expect(() =>
       dispatchService.dispatch(
