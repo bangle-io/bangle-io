@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/test-utils-jest",
+  "name": "@bangle.io/initialize-services",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/test-utils-jest"
+    "directory": "packages/core/initialize-services"
   },
   "authors": [
     {
@@ -18,17 +18,21 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "nodejs",
-    "kind": "build"
+    "env": "browser",
+    "kind": "app"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/command-handlers": "workspace:*",
+    "@bangle.io/commands": "workspace:*",
+    "@bangle.io/service-core": "workspace:*",
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/service-platform": "workspace:*"
   }
 }

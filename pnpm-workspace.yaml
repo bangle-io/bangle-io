@@ -1,7 +1,7 @@
 packages:
-  - 'packages/base/*'
-  - 'packages/entry/*'
+  - 'packages/core/*'
+  - 'packages/platform/*'
   - 'packages/js-lib/*'
+  - 'packages/shared/*'
   - 'packages/tooling/*'
   - 'packages/ui/*'
-  - 'packages/shared/*'

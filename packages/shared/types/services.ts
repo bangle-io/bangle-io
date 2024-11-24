@@ -1,18 +1,18 @@
 import type { BaseService, Logger } from '@bangle.io/base-utils';
 import type { commandExcludedServices } from '@bangle.io/constants';
+import type { createStore } from 'jotai';
 import type {
   CommandRegistryService,
   FileSystemService,
   NavigationService,
   ShortcutService,
   WorkspaceService,
-} from '@bangle.io/service-core';
-import type { CommandDispatchService } from '@bangle.io/service-core';
+} from '../../core/service-core/src';
+import type { CommandDispatchService } from '../../core/service-core/src';
 import type {
   BrowserErrorHandlerService,
   IdbDatabaseService,
-} from '@bangle.io/service-platform';
-import type { createStore } from 'jotai';
+} from '../../platform/service-platform/src';
 import type { BaseAppDatabase } from './base-database';
 import type { BaseFileStorageProvider } from './base-file-storage';
 import type { BaseRouter } from './base-router';

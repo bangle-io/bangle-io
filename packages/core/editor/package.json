@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/test-utils-jest",
+  "name": "@bangle.io/editor",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/test-utils-jest"
+    "directory": "packages/core/editor"
   },
   "authors": [
     {
@@ -18,17 +18,24 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "nodejs",
-    "kind": "build"
+    "env": "universal",
+    "kind": "app",
+    "type": "browser"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.dev/base-components": "^0.32.1",
+    "@bangle.dev/core": "^0.32.1",
+    "@bangle.dev/markdown": "^0.32.1",
+    "@bangle.dev/markdown-front-matter": "^0.32.1",
+    "@bangle.dev/pm": "0.32.1",
+    "@types/react": "^18.3.12",
+    "prosemirror-markdown": "^1.13.1",
+    "react": "^18.3.1"
   }
 }

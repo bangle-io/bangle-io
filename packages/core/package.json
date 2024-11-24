@@ -1,0 +1,13 @@
+{
+  "name": "core",
+  "bangleWorkspaceConfig": {
+    "allowedWorkspaces": [
+      "core",
+      "shared",
+      "platform",
+      "js-lib",
+      "ui",
+      "tooling"
+    ]
+  }
+}

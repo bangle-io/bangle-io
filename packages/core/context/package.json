@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/test-utils-jest",
+  "name": "@bangle.io/context",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/test-utils-jest"
+    "directory": "packages/core/context"
   },
   "authors": [
     {
@@ -18,17 +18,24 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "nodejs",
-    "kind": "build"
+    "env": "browser",
+    "kind": "app"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/logger": "workspace:*"
+    "react": "^18.3.1",
+    "@bangle.io/browser": "workspace:*",
+    "@bangle.io/keyboard-shortcuts": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/base-utils": "workspace:*",
+    "wouter": "^3.3.5",
+    "@bangle.io/ws-path": "workspace:*",
+    "jotai": "^2.10.3"
   }
 }

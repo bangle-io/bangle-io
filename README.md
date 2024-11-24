@@ -41,89 +41,41 @@ Non-goals for the short term are:
 
 I have been working on this project for at least 4 years, often starting over and chasing the wrong things.
 
-## High-Level Architecture
 
-The application is divided into the following modules:
+## Architecture
 
-- **Base:** Utilities and generic stuff.
-- **Platform:** Defines services and base code.
-- **Editor:** The editor component.
-- **Workbench:** Contains the main application features and contribs .
-- **Entry-Browser:** The entry point for the browser.
+Bangle has multiple workspaces (dirs directly under `/packages`), and each workspace has a specific purpose and dependency tree. The field `bangleWorkspaceConfig.allowedWorkspaces` in the `package.json` file defines the allowed workspace a package in a workspace can depend on. 
 
-### Base
+For example  if the `allowedWorkspace` for `core` workspace is `['core', 'ui', 'tooling']`, then a packages within the `core` workspace add dependencies from packages in the `core`, `ui`, and `tooling` workspaces.
 
-All the generic utilities and support code.
+Here is a brief overview in order of dependency (top most can depend on any workspace below it, and so on):
 
-### Platform
+### tooling
 
-- **App Level Events:** Manages workspace-related events such as `workspace-create`, `workspace-update`, and `workspace-delete`.
-- **Database:** Placeholder for future database implementation.
-- **Routing:** Handles application routing.
-- **State Management:** Uses the library 'Nalanda' for state management.
-- **Worker:** Manages web worker processes.
+All the tooling/build related code is here. This is where we also define vite config to start the app. This also contains build related and other miscellaneous scripts.
 
-### Workbench
+Can freely import from any workspace any workspace.
 
-- **Workbench API:** Core APIs for the workbench.
-- **Workbench Contribs:** Modules that register themselves in a \*.contrib.ts file.
+### core
 
-### UI
+This is the core of the app. It contains the core logic of the app.
 
-- **Styling:** Manage the visual appearance.
-- **Libraries:** External libraries used.
-- **Notifications:** System for user notifications.
-- **Modals:** Dialog and modal management.
-- **Forms:** Form management and validation.
-- **Layout:** UI layout management.
-- **Icons:** Icon management and integration.
+Like tooling it also has a liberal `allowedWorkspaces` config and can import from any workspace listed below.
 
-### Editor
+### platform 
 
-The core text editor component.
+This is where we define the platform specific code. For example, routing related logic specific to the web platform.
 
-### App Core
 
-### Build
+### ui
 
-#### tooling
+This is where we define all the dumb UI components, that are mostly agnostic of the app logic.
 
-- [x] plop
-- [x] scripts
-- [x] eslint / prettier -biome
-- [x] jest
-- [x] bangle config
-- [] TSC
-- [] verify
 
-#### Styling
+### shared
 
-- color scheme
+This is where we define shared types, config and constants that can be used across multiple workspaces. For example, shared utility functions.
 
-- **Scripting:** Build and deployment scripts.
-- **index.html:** The main HTML entry point.
-- **CSS:** Stylesheets.
-- **Assets:** Static assets.
-- **Deployment:** Deployment processes and configurations.
-- **Linting:** Code linting.
-- **Types:** TypeScript type definitions.
-- **Formatting:** Code formatting rules.
-- **Package Management:** Dependency management.
-- **Testing:** Testing framework and tests.
-- **Infra Management:** Infrastructure management.
+### js-lib
 
-## Project Management
-
-Handling the project's management and coordination.
-
-## Marketing
-
-Strategies for promoting the tool.
-
-# Appendix
-
-## Note on VSCode
-
-- **Browser Entry Point:** code/browser - [VSCode GitHub](https://github.com/microsoft/vscode/blob/42b3bac02e37836393b4c4b46fcc91aa03e02aa8/src/vs/code/browser/workbench/workbench.ts)
-- **Registration:** Everything registers themselves in workspace/contrib.
-- **Platform:** Contains services.
+This is where we define all the utility code that is agnostic of the app. For example, a markdown parser. It should not have any dependencies on any other workspace. Think if it as general purpose utility library.

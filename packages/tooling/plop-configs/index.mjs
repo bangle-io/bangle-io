@@ -2,7 +2,17 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import fs from 'fs-extra';
-const topLevelWorkspaces = ['entry', 'js-lib', 'shared', 'tooling', 'ui'];
+const topLevelWorkspaces = [
+  'js-lib',
+  //
+  'ui',
+  'shared',
+  //
+  'platform',
+  'core',
+  //
+  'tooling',
+];
 const kind = [
   'library',
   'js-util',

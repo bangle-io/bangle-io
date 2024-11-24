@@ -1,0 +1,50 @@
+{
+  "name": "@bangle.io/app",
+  "description": "",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/core/app"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "env": "browser",
+    "kind": "app"
+  },
+  "main": "src/index.tsx",
+  "module": "src/index.tsx",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {},
+  "dependencies": {
+    "react": "^18.3.1",
+    "@bangle.io/editor": "workspace:*",
+    "@bangle.io/context": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/omni-search": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/service-platform": "workspace:*",
+    "@bangle.io/service-core": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*",
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/emitter": "workspace:*",
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/commands": "workspace:*",
+    "@bangle.io/command-handlers": "workspace:*",
+    "wouter": "^3.3.5",
+    "jotai": "^2.10.3"
+  }
+}

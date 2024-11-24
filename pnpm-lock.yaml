@@ -63,7 +63,7 @@ importers:
         specifier: ^2.1.5
         version: 2.1.5(@types/node@22.9.0)(happy-dom@15.11.6)(jsdom@25.0.1)
 
-  packages/entry/app:
+  packages/core/app:
     dependencies:
       '@bangle.io/base-error':
         specifier: workspace:*
@@ -100,7 +100,7 @@ importers:
         version: link:../service-core
       '@bangle.io/service-platform':
         specifier: workspace:*
-        version: link:../service-platform
+        version: link:../../platform/service-platform
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -120,104 +120,7 @@ importers:
         specifier: ^3.3.5
         version: 3.3.5(react@18.3.1)
 
-  packages/entry/browser-entry:
-    dependencies:
-      '@bangle.io/app':
-        specifier: workspace:*
-        version: link:../app
-      '@bangle.io/browser':
-        specifier: workspace:*
-        version: link:../../js-lib/browser
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      '@bangle.io/context':
-        specifier: workspace:*
-        version: link:../context
-      '@bangle.io/editor':
-        specifier: workspace:*
-        version: link:../editor
-      '@bangle.io/env-vars':
-        specifier: workspace:*
-        version: link:../../tooling/env-vars
-      '@bangle.io/keyboard-shortcuts':
-        specifier: workspace:*
-        version: link:../../js-lib/keyboard-shortcuts
-      '@bangle.io/omni-search':
-        specifier: workspace:*
-        version: link:../omni-search
-      '@bangle.io/types':
-        specifier: workspace:*
-        version: link:../../shared/types
-      '@bangle.io/ui-components':
-        specifier: workspace:*
-        version: link:../../ui/ui-components
-      '@radix-ui/react-dialog':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-separator':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-slot':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-tooltip':
-        specifier: ^1.1.4
-        version: 1.1.4(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@vitejs/plugin-react':
-        specifier: ^4.3.3
-        version: 4.3.3(vite@5.4.11(@types/node@22.9.0))
-      class-variance-authority:
-        specifier: ^0.7.0
-        version: 0.7.0
-      lucide-react:
-        specifier: ^0.460.0
-        version: 0.460.0(react@18.3.1)
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      vite:
-        specifier: ^5.4.11
-        version: 5.4.11(@types/node@22.9.0)
-    devDependencies:
-      '@storybook/react':
-        specifier: ^8.4.4
-        version: 8.4.4(@storybook/test@8.4.4(storybook@8.4.4(prettier@3.3.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(prettier@3.3.3))(typescript@5.6.3)
-      '@storybook/test':
-        specifier: ^8.4.4
-        version: 8.4.4(storybook@8.4.4(prettier@3.3.3))
-      '@types/react':
-        specifier: ^18.3.12
-        version: 18.3.12
-      '@types/react-dom':
-        specifier: ^18.3.1
-        version: 18.3.1
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.20(postcss@8.4.49)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.14
-        version: 0.4.14(eslint@9.12.0(jiti@1.21.6))
-      globals:
-        specifier: ^15.12.0
-        version: 15.12.0
-      postcss:
-        specifier: ^8.4.49
-        version: 8.4.49
-      tailwindcss:
-        specifier: ^3.4.15
-        version: 3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3))
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
-      tailwindcss-react-aria-components:
-        specifier: ^1.1.6
-        version: 1.1.6(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
-
-  packages/entry/command-handlers:
+  packages/core/command-handlers:
     dependencies:
       '@bangle.io/base-utils':
         specifier: workspace:*
@@ -241,7 +144,7 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
 
-  packages/entry/context:
+  packages/core/context:
     dependencies:
       '@bangle.io/base-utils':
         specifier: workspace:*
@@ -271,57 +174,9 @@ importers:
         specifier: ^3.3.5
         version: 3.3.5(react@18.3.1)
 
-  packages/entry/database: {}
+  packages/core/database: {}
 
-  packages/entry/e2e-tests:
-    dependencies:
-      '@bangle.io/browser-entry':
-        specifier: workspace:*
-        version: link:../browser-entry
-      '@bangle.io/env-vars':
-        specifier: workspace:*
-        version: link:../../tooling/env-vars
-      '@bangle.io/types':
-        specifier: workspace:*
-        version: link:../../shared/types
-      '@bangle.io/ui-components':
-        specifier: workspace:*
-        version: link:../../ui/ui-components
-      '@playwright/experimental-ct-react':
-        specifier: ^1.48.2
-        version: 1.48.2(@types/node@22.9.0)(vite@5.4.11(@types/node@22.9.0))
-      '@playwright/test':
-        specifier: ^1.48.2
-        version: 1.48.2
-      '@types/node':
-        specifier: ^22.9.0
-        version: 22.9.0
-      '@types/react':
-        specifier: ^18.3.12
-        version: 18.3.12
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.20(postcss@8.4.49)
-      postcss:
-        specifier: ^8.4.49
-        version: 8.4.49
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      tailwindcss:
-        specifier: ^3.4.15
-        version: 3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3))
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
-      tailwindcss-react-aria-components:
-        specifier: ^1.1.6
-        version: 1.1.6(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
-
-  packages/entry/editor:
+  packages/core/editor:
     dependencies:
       '@bangle.dev/base-components':
         specifier: ^0.32.1
@@ -348,7 +203,28 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
 
-  packages/entry/omni-search:
+  packages/core/initialize-services:
+    dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/command-handlers':
+        specifier: workspace:*
+        version: link:../command-handlers
+      '@bangle.io/commands':
+        specifier: workspace:*
+        version: link:../../shared/commands
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
+      '@bangle.io/service-platform':
+        specifier: workspace:*
+        version: link:../../platform/service-platform
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+
+  packages/core/omni-search:
     dependencies:
       '@bangle.io/types':
         specifier: workspace:*
@@ -363,7 +239,7 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
 
-  packages/entry/service-core:
+  packages/core/service-core:
     dependencies:
       '@bangle.io/baby-fs':
         specifier: workspace:*
@@ -394,7 +270,7 @@ importers:
         version: link:../../js-lib/mini-zod
       '@bangle.io/service-platform':
         specifier: workspace:*
-        version: link:../service-platform
+        version: link:../../platform/service-platform
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -408,39 +284,6 @@ importers:
       '@bangle.io/test-utils':
         specifier: workspace:*
         version: link:../../shared/test-utils
-
-  packages/entry/service-platform:
-    dependencies:
-      '@bangle.io/baby-fs':
-        specifier: workspace:*
-        version: link:../../js-lib/baby-fs
-      '@bangle.io/base-error':
-        specifier: workspace:*
-        version: link:../../js-lib/base-error
-      '@bangle.io/base-utils':
-        specifier: workspace:*
-        version: link:../../shared/base-utils
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../../shared/config
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      '@bangle.io/db-key-val':
-        specifier: workspace:*
-        version: link:../../js-lib/db-key-val
-      '@bangle.io/emitter':
-        specifier: workspace:*
-        version: link:../../js-lib/emitter
-      '@bangle.io/types':
-        specifier: workspace:*
-        version: link:../../shared/types
-      '@bangle.io/ws-path':
-        specifier: workspace:*
-        version: link:../../shared/ws-path
-      wouter:
-        specifier: ^3.3.5
-        version: 3.3.5(react@18.3.1)
 
   packages/js-lib/baby-fs:
     dependencies:
@@ -499,6 +342,39 @@ importers:
         version: link:../mini-js-utils
 
   packages/js-lib/weak-cache: {}
+
+  packages/platform/service-platform:
+    dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
+      '@bangle.io/base-error':
+        specifier: workspace:*
+        version: link:../../js-lib/base-error
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/db-key-val':
+        specifier: workspace:*
+        version: link:../../js-lib/db-key-val
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
+      wouter:
+        specifier: ^3.3.5
+        version: 3.3.5(react@18.3.1)
 
   packages/shared/base-utils:
     dependencies:
@@ -601,10 +477,10 @@ importers:
         version: link:../../js-lib/mini-zod
       '@bangle.io/service-core':
         specifier: workspace:*
-        version: link:../../entry/service-core
+        version: link:../../core/service-core
       '@bangle.io/service-platform':
         specifier: workspace:*
-        version: link:../../entry/service-platform
+        version: link:../../platform/service-platform
       jotai:
         specifier: ^2.10.3
         version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
@@ -629,6 +505,115 @@ importers:
       wouter:
         specifier: ^3.3.5
         version: 3.3.5(react@18.3.1)
+
+  packages/tooling/browser-entry:
+    dependencies:
+      '@bangle.io/app':
+        specifier: workspace:*
+        version: link:../../core/app
+      '@bangle.io/browser':
+        specifier: workspace:*
+        version: link:../../js-lib/browser
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../../core/context
+      '@bangle.io/editor':
+        specifier: workspace:*
+        version: link:../../core/editor
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/env-vars':
+        specifier: workspace:*
+        version: link:../env-vars
+      '@bangle.io/initialize-services':
+        specifier: workspace:*
+        version: link:../../core/initialize-services
+      '@bangle.io/keyboard-shortcuts':
+        specifier: workspace:*
+        version: link:../../js-lib/keyboard-shortcuts
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/omni-search':
+        specifier: workspace:*
+        version: link:../../core/omni-search
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+      '@bangle.io/ui-components':
+        specifier: workspace:*
+        version: link:../../ui/ui-components
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-separator':
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-slot':
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-tooltip':
+        specifier: ^1.1.4
+        version: 1.1.4(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@vitejs/plugin-react':
+        specifier: ^4.3.3
+        version: 4.3.3(vite@5.4.11(@types/node@22.9.0))
+      class-variance-authority:
+        specifier: ^0.7.0
+        version: 0.7.0
+      jotai:
+        specifier: ^2.10.3
+        version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
+      lucide-react:
+        specifier: ^0.460.0
+        version: 0.460.0(react@18.3.1)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      vite:
+        specifier: ^5.4.11
+        version: 5.4.11(@types/node@22.9.0)
+    devDependencies:
+      '@storybook/react':
+        specifier: ^8.4.4
+        version: 8.4.4(@storybook/test@8.4.4(storybook@8.4.4(prettier@3.3.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.4(prettier@3.3.3))(typescript@5.6.3)
+      '@storybook/test':
+        specifier: ^8.4.4
+        version: 8.4.4(storybook@8.4.4(prettier@3.3.3))
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
+      '@types/react-dom':
+        specifier: ^18.3.1
+        version: 18.3.1
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.4.49)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.14
+        version: 0.4.14(eslint@9.12.0(jiti@1.21.6))
+      globals:
+        specifier: ^15.12.0
+        version: 15.12.0
+      postcss:
+        specifier: ^8.4.49
+        version: 8.4.49
+      tailwindcss:
+        specifier: ^3.4.15
+        version: 3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3))
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
+      tailwindcss-react-aria-components:
+        specifier: ^1.1.6
+        version: 1.1.6(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
 
   packages/tooling/custom-scripts:
     dependencies:
@@ -669,6 +654,54 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
+
+  packages/tooling/e2e-tests:
+    dependencies:
+      '@bangle.io/browser-entry':
+        specifier: workspace:*
+        version: link:../browser-entry
+      '@bangle.io/env-vars':
+        specifier: workspace:*
+        version: link:../env-vars
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+      '@bangle.io/ui-components':
+        specifier: workspace:*
+        version: link:../../ui/ui-components
+      '@playwright/experimental-ct-react':
+        specifier: ^1.48.2
+        version: 1.48.2(@types/node@22.9.0)(vite@5.4.11(@types/node@22.9.0))
+      '@playwright/test':
+        specifier: ^1.48.2
+        version: 1.48.2
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.9.0
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.4.49)
+      postcss:
+        specifier: ^8.4.49
+        version: 8.4.49
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      tailwindcss:
+        specifier: ^3.4.15
+        version: 3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3))
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
+      tailwindcss-react-aria-components:
+        specifier: ^1.1.6
+        version: 1.1.6(tailwindcss@3.4.15(ts-node@10.9.2(@swc/core@1.9.2)(@types/node@22.9.0)(typescript@5.6.3)))
 
   packages/tooling/env-vars:
     dependencies:
@@ -714,7 +747,7 @@ importers:
     devDependencies:
       '@bangle.io/browser-entry':
         specifier: workspace:*
-        version: link:../../entry/browser-entry
+        version: link:../browser-entry
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../env-vars

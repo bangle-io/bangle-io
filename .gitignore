@@ -25,10 +25,10 @@ node_modules/
 /playwright/.cache/
 
 /dist/
-packages/entry/browser-entry/dist
+packages/tooling/browser-entry/dist
 *storybook.log
 /blob-report/
 
-packages/entry/e2e-tests/test-results
-packages/entry/e2e-tests/playwright/.cache
-packages/entry/e2e-tests/playwright/playwright-report
+packages/tooling/e2e-tests/test-results
+packages/tooling/e2e-tests/playwright/.cache
+packages/tooling/e2e-tests/playwright/playwright-report
