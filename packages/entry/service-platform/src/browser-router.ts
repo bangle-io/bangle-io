@@ -1,4 +1,8 @@
-import { BaseService, type Logger } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  type Logger,
+} from '@bangle.io/base-utils';
 import { browserHistoryStateEvents } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type { BaseRouter, RouterState } from '@bangle.io/types';
@@ -37,11 +41,16 @@ export class BrowserRouterService
   };
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
+    _dependencies: undefined,
     private constructorOptions: { basePath?: string; isStatic?: boolean } = {},
   ) {
-    super('browser-router', 'platform', logger);
-
+    super({
+      ...baseOptions,
+      name: 'browser-router',
+      kind: 'platform',
+      dependencies: {},
+    });
     for (const event of browserHistoryStateEvents) {
       window.addEventListener(event, this.onBrowserHistoryEvent);
     }

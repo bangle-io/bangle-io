@@ -1,7 +1,7 @@
 import type { Logger } from '@bangle.io/logger';
 import { makeTestLogger } from '@bangle.io/test-utils';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { BaseService } from '../base-service';
+import { BaseService, type BaseServiceCommonOptions } from '../base-service';
 
 describe('BaseService', () => {
   let logger: Logger;
@@ -9,6 +9,18 @@ describe('BaseService', () => {
   let dependencies: Record<string, BaseService>;
 
   class TestService extends BaseService {
+    constructor(
+      baseOptions: BaseServiceCommonOptions & { needsConfig?: boolean },
+      dependencies?: Record<string, BaseService>,
+      name = 'TestService',
+    ) {
+      super({
+        ...baseOptions,
+        name: name,
+        kind: 'platform',
+        dependencies,
+      });
+    }
     protected async onInitialize(): Promise<void> {
       // Simulate initialization
     }
@@ -28,7 +40,7 @@ describe('BaseService', () => {
   beforeEach(() => {
     ({ mockLog: mockLog, logger } = makeTestLogger());
 
-    service = new TestService('TestService', 'platform', logger, dependencies);
+    service = new TestService({ logger }, dependencies);
   });
 
   afterEach(() => {
@@ -50,13 +62,7 @@ describe('BaseService', () => {
   });
 
   test('should dispose the service correctly', async () => {
-    const service = new TestService(
-      'TestService1',
-      'platform',
-      logger,
-      dependencies,
-    );
-
+    const service = new TestService({ logger }, dependencies, 'TestService1');
     await service.initialize();
     await service.dispose();
     expect(mockLog.debug).toHaveBeenCalledWith(
@@ -66,20 +72,15 @@ describe('BaseService', () => {
   });
 
   test('should abort disposal if not initialized', async () => {
-    const service = new TestService(
-      'TestService2',
-      'platform',
-      logger,
-      dependencies,
-    );
+    const service = new TestService({ logger }, dependencies, 'TestService2');
     await service.dispose();
     expect(mockLog.info).not.toHaveBeenCalled();
   });
 
   test('should initialize with dependencies', async () => {
-    const depService = new TestService('DepService', 'platform', logger);
+    const depService = new TestService({ logger }, dependencies, 'DepService');
     dependencies = { dep: depService };
-    service = new TestService('TestService', 'platform', logger, dependencies);
+    service = new TestService({ logger }, dependencies);
 
     const initializeSpy = vi.spyOn(service, 'initialize');
     const depInitializeSpy = vi.spyOn(depService, 'initialize');
@@ -102,9 +103,7 @@ describe('BaseService', () => {
   });
 
   test('should set initialization config when needed', () => {
-    service = new TestService('TestService', 'platform', logger, dependencies, {
-      needsConfig: true,
-    });
+    service = new TestService({ logger, needsConfig: true }, dependencies);
     const hookPostConfigSetSpy = vi.spyOn(
       service,
       // @ts-expect-error - hookPostConfigSet
@@ -122,7 +121,7 @@ describe('BaseService', () => {
   });
 
   test('should throw error when setting config if not needed', () => {
-    service = new TestService('TestService', 'platform', logger, dependencies);
+    service = new TestService({ logger }, dependencies, 'TestService');
 
     // @ts-expect-error - config
     expect(() => service.setInitConfig({})).toThrow(

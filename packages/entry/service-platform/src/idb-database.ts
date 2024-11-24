@@ -1,6 +1,6 @@
 import {
   BaseService,
-  type Logger,
+  type BaseServiceCommonOptions,
   isAppError,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -35,8 +35,13 @@ export interface AppDatabase extends BangleDbSchema {
 export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   db!: idb.IDBPDatabase<AppDatabase>;
 
-  constructor(logger: Logger) {
-    super('idb-database', 'platform', logger);
+  constructor(baseOptions: BaseServiceCommonOptions) {
+    super({
+      ...baseOptions,
+      name: 'idb-database',
+      kind: 'platform',
+      dependencies: {},
+    });
   }
 
   protected async onInitialize(): Promise<void> {

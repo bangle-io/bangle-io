@@ -1,4 +1,9 @@
-import { BaseService, type Logger, isDarwin } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  type Logger,
+  isDarwin,
+} from '@bangle.io/base-utils';
 import type {
   KeyBinding,
   RegisterOptions,
@@ -28,10 +33,16 @@ export class ShortcutService extends BaseService<{
   };
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
+    _dependencies: undefined,
     private readonly target: Document,
   ) {
-    super('shortcut', 'core', logger, {}, { needsConfig: true });
+    super({
+      ...baseOptions,
+      name: 'shortcut',
+      kind: 'core',
+      needsConfig: true,
+    });
 
     target.addEventListener('keydown', this.eventHandler);
   }

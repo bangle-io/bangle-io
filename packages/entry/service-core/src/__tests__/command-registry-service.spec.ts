@@ -11,7 +11,7 @@ describe('CommandRegistryService', () => {
   beforeEach(() => {
     const testLogger = makeTestLogger();
     logger = testLogger.logger;
-    service = new CommandRegistryService(logger);
+    service = new CommandRegistryService({ logger });
     service.setInitConfig({ commands: [], commandHandlers: [] });
   });
 

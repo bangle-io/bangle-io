@@ -3,7 +3,11 @@ import {
   FILE_NOT_FOUND_ERROR,
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
-import { BaseService, type Logger, throwAppError } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { WorkspaceType } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
@@ -22,10 +26,16 @@ export class FileStorageIndexedDB
   private _idb = new IndexedDBFileSystem();
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
+    _dependencies: undefined,
     private readonly onChange: (event: FileStorageChangeEvent) => void,
   ) {
-    super('file-storage-indexeddb', 'platform', logger);
+    super({
+      ...baseOptions,
+      name: 'file-storage-indexeddb',
+      kind: 'platform',
+      dependencies: {},
+    });
   }
 
   protected async onInitialize(): Promise<void> {}

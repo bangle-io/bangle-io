@@ -1,6 +1,6 @@
 import {
   BaseService,
-  type Logger,
+  type BaseServiceCommonOptions,
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -31,13 +31,18 @@ export class WorkspaceService extends BaseService {
   private database: BaseDatabaseService;
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
     dependencies: {
       database: BaseDatabaseService;
     },
     private onChange: (change: ChangeEvent) => void,
   ) {
-    super('workspace', 'core', logger, dependencies);
+    super({
+      ...baseOptions,
+      name: 'workspace',
+      kind: 'core',
+      dependencies,
+    });
     this.database = dependencies.database;
   }
 

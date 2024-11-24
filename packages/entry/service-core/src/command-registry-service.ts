@@ -1,4 +1,8 @@
-import { BaseError, BaseService, type Logger } from '@bangle.io/base-utils';
+import {
+  BaseError,
+  BaseService,
+  type BaseServiceCommonOptions,
+} from '@bangle.io/base-utils';
 import type { Command, CommandHandler } from '@bangle.io/types';
 
 type CommandHandlerConfig = { id: string; handler: CommandHandler };
@@ -14,8 +18,14 @@ export class CommandRegistryService extends BaseService<{
     return Array.from(this.commands.values());
   }
 
-  constructor(logger: Logger) {
-    super('commandRegistry', 'core', logger, {}, { needsConfig: true });
+  constructor(baseOptions: BaseServiceCommonOptions) {
+    super({
+      ...baseOptions,
+      name: 'command-registry',
+      kind: 'core',
+      dependencies: {},
+      needsConfig: true,
+    });
   }
 
   protected async onInitialize(): Promise<void> {}

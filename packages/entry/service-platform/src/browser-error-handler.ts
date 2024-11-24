@@ -1,14 +1,24 @@
-import { BaseService, type Logger, isAppError } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  type Logger,
+  isAppError,
+} from '@bangle.io/base-utils';
 import type { ErrorEmitter } from '@bangle.io/types';
 
 export class BrowserErrorHandlerService extends BaseService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
+    _dependencies: undefined,
     private emitter: ErrorEmitter,
   ) {
-    super('browser-error-handler', 'platform', logger);
+    super({
+      ...baseOptions,
+      name: 'browser-error-handler',
+      kind: 'platform',
+    });
     window.addEventListener('error', this.handleError);
     window.addEventListener('unhandledrejection', this.handleError);
 

@@ -1,4 +1,7 @@
-import { BaseService, type Logger } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+} from '@bangle.io/base-utils';
 import { T } from '@bangle.io/mini-zod';
 import { makeTestLogger } from '@bangle.io/test-utils';
 import type { Command, CommandExposedServices } from '@bangle.io/types';
@@ -7,25 +10,33 @@ import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';
 
 class TestService extends BaseService {
-  constructor(logger: Logger) {
-    super('fileSystemTest', 'core', logger);
+  constructor(baseOptions: BaseServiceCommonOptions) {
+    super({
+      ...baseOptions,
+      name: 'file-system-test',
+      kind: 'core',
+      dependencies: {},
+    });
   }
 }
 
 async function setup() {
   const testLogger = makeTestLogger();
   const logger = testLogger.logger;
-  const commandRegistry = new CommandRegistryService(logger);
+  const commandRegistry = new CommandRegistryService({ logger });
 
-  const dispatchService = new CommandDispatchService(logger, {
-    commandRegistry,
-  });
+  const dispatchService = new CommandDispatchService(
+    { logger },
+    {
+      commandRegistry,
+    },
+  );
 
   commandRegistry.setInitConfig({ commands: [], commandHandlers: [] });
 
   dispatchService.setInitConfig({
     exposedServices: {
-      fileSystem: new TestService(logger),
+      fileSystem: new TestService({ logger }),
     } as CommandExposedServices,
   });
   await dispatchService.initialize();

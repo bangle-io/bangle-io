@@ -1,4 +1,8 @@
-import { BaseError, BaseService } from '@bangle.io/base-utils';
+import {
+  BaseError,
+  BaseService,
+  type BaseServiceCommonOptions,
+} from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
 import { commandExcludedServices } from '@bangle.io/constants';
 import type { Logger } from '@bangle.io/logger';
@@ -20,12 +24,16 @@ export class CommandDispatchService extends BaseService<{
   private commandRegistry: CommandRegistryService;
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
     dependencies: {
       commandRegistry: CommandRegistryService;
     },
   ) {
-    super('command-dispatch', 'core', logger, dependencies, {
+    super({
+      ...baseOptions,
+      name: 'command-dispatch',
+      kind: 'core',
+      dependencies,
       needsConfig: true,
     });
     this.commandRegistry = dependencies.commandRegistry;

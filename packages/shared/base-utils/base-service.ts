@@ -1,6 +1,17 @@
 import type { Logger } from '@bangle.io/logger';
 import type { ServiceKind } from '@bangle.io/types';
 
+export type BaseServiceOptions = {
+  name: string;
+  kind: ServiceKind;
+  dependencies?: Record<string, BaseService<any>>;
+  needsConfig?: boolean;
+} & BaseServiceCommonOptions;
+
+export type BaseServiceCommonOptions = {
+  logger: Logger;
+};
+
 class Lifecycle {
   readonly initializedPromise: Promise<void>;
   public readonly controller = new AbortController();
@@ -71,19 +82,20 @@ class Lifecycle {
 export abstract class BaseService<Config = void> {
   protected config!: Config;
   private isConfigSet = false;
-  protected readonly logger: Logger;
   private lifecycle: Lifecycle;
+  protected readonly logger: Logger;
 
-  constructor(
-    public readonly name: string,
-    public readonly kind: ServiceKind,
-    logger: Logger,
-    protected readonly dependencies: Record<string, BaseService<any>> = {},
-    protected readonly baseOptions: {
-      needsConfig?: boolean;
-    } = {},
-  ) {
-    this.logger = logger.child(name);
+  get name() {
+    return this._baseOptions.name;
+  }
+
+  get dependencies() {
+    return this._baseOptions.dependencies || {};
+  }
+
+  constructor(private readonly _baseOptions: BaseServiceOptions) {
+    this.logger = this._baseOptions.logger.child(this.name);
+
     this.logger.debug('Creating service');
 
     // Instantiate the Lifecycle class
@@ -130,7 +142,7 @@ export abstract class BaseService<Config = void> {
 
   // Allows setting the config before initialization
   public setInitConfig(config: Config) {
-    if (!this.baseOptions.needsConfig) {
+    if (!this._baseOptions.needsConfig) {
       throw new Error(
         `Config is not needed for service: ${this.name}. Remove the config from the service.`,
       );
@@ -149,7 +161,7 @@ export abstract class BaseService<Config = void> {
 
   // The initialization task passed to the Lifecycle
   private async initTask() {
-    if (!this.isConfigSet && this.baseOptions.needsConfig) {
+    if (!this.isConfigSet && this._baseOptions.needsConfig) {
       throw new Error(
         `Config is not set for service: ${this.name}. Call setInitConfig before initialize.`,
       );

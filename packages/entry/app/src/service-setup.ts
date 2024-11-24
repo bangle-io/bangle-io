@@ -1,7 +1,10 @@
-import { assertIsDefined } from '@bangle.io/base-utils';
+import {
+  type BaseServiceCommonOptions,
+  type Logger,
+  assertIsDefined,
+} from '@bangle.io/base-utils';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
-import type { Logger } from '@bangle.io/logger';
 import {
   CommandDispatchService,
   CommandRegistryService,
@@ -30,9 +33,13 @@ export function initializeServices(
   logger: Logger,
   errorEmitter: ErrorEmitter,
 ): Services {
-  const platformServices = initPlatformServices(logger, errorEmitter);
+  const commonOpts: BaseServiceCommonOptions = {
+    logger,
+  };
 
-  const coreServices = initCoreServices(logger, platformServices);
+  const platformServices = initPlatformServices(commonOpts, errorEmitter);
+
+  const coreServices = initCoreServices(commonOpts, platformServices);
 
   const services: Services = {
     core: coreServices,
@@ -84,18 +91,26 @@ export function initializeServices(
 }
 
 function initPlatformServices(
-  logger: Logger,
+  commonOpts: BaseServiceCommonOptions,
   errorEmitter: ErrorEmitter,
 ): PlatformServices {
-  const errorService = new BrowserErrorHandlerService(logger, errorEmitter);
+  const errorService = new BrowserErrorHandlerService(
+    commonOpts,
+    undefined,
+    errorEmitter,
+  );
   // error service should be initialized asap to catch any errors
   errorService.initialize();
-  const idbDatabase = new IdbDatabaseService(logger);
-  const fileStorageServiceIdb = new FileStorageIndexedDB(logger, (change) => {
-    logger.info('File storage change:', change);
-  });
+  const idbDatabase = new IdbDatabaseService(commonOpts);
+  const fileStorageServiceIdb = new FileStorageIndexedDB(
+    commonOpts,
+    undefined,
+    (change) => {
+      commonOpts.logger.info('File storage change:', change);
+    },
+  );
 
-  const browserRouterService = new BrowserRouterService(logger);
+  const browserRouterService = new BrowserRouterService(commonOpts, undefined);
 
   return {
     errorService,
@@ -106,29 +121,29 @@ function initPlatformServices(
 }
 
 function initCoreServices(
-  logger: Logger,
+  commonOpts: BaseServiceCommonOptions,
   platformServices: PlatformServices,
 ): CoreServices {
-  const commandRegistryService = new CommandRegistryService(logger);
-  const commandDispatcherService = new CommandDispatchService(logger, {
+  const commandRegistryService = new CommandRegistryService(commonOpts);
+  const commandDispatcherService = new CommandDispatchService(commonOpts, {
     commandRegistry: commandRegistryService,
   });
   const fileSystemService = new FileSystemService(
-    logger,
+    commonOpts,
     { fileStorageService: platformServices.fileStorage },
     (change) => {
-      logger.info('File change:', change);
+      commonOpts.logger.info('File change:', change);
     },
   );
-  const navigationService = new NavigationService(logger, {
+  const navigationService = new NavigationService(commonOpts, {
     routerService: platformServices.router,
   });
-  const shortcutService = new ShortcutService(logger, document);
+  const shortcutService = new ShortcutService(commonOpts, undefined, document);
   const workspaceService = new WorkspaceService(
-    logger,
+    commonOpts,
     { database: platformServices.database },
     (change) => {
-      logger.info('Workspace change:', change);
+      commonOpts.logger.info('Workspace change:', change);
     },
   );
 

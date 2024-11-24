@@ -1,5 +1,10 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
-import { BaseService, type Logger, throwAppError } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  type Logger,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
 import {
   VALID_NOTE_EXTENSIONS_SET,
@@ -32,13 +37,18 @@ export class FileSystemService extends BaseService {
   private fileStorageService: BaseFileStorageService;
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
     dependencies: {
       fileStorageService: BaseFileStorageService;
     },
     private onChange: (change: ChangeEvent) => void,
   ) {
-    super('file-system-service', 'core', logger, dependencies);
+    super({
+      ...baseOptions,
+      name: 'file-system-service',
+      kind: 'core',
+      dependencies,
+    });
     this.fileStorageService = dependencies.fileStorageService;
   }
 

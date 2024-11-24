@@ -1,4 +1,7 @@
-import { BaseService, type Logger } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+} from '@bangle.io/base-utils';
 import { Emitter } from '@bangle.io/emitter';
 import type { BaseRouter, RouterState } from '@bangle.io/types';
 
@@ -23,12 +26,16 @@ export class MemoryRouterService
   get basePath() {
     return this.constructorOptions.basePath ?? '';
   }
-
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
     private constructorOptions: { basePath?: string } = {},
   ) {
-    super('memory-router', 'platform', logger);
+    super({
+      ...baseOptions,
+      name: 'memory-router',
+      kind: 'platform',
+      dependencies: {},
+    });
   }
 
   protected async onInitialize(): Promise<void> {}

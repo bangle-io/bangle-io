@@ -1,4 +1,8 @@
-import { BaseService, type Logger } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  type Logger,
+} from '@bangle.io/base-utils';
 import type { BaseAppDatabase, DatabaseQueryOptions } from '@bangle.io/types';
 
 export class MemoryDatabaseService
@@ -8,8 +12,13 @@ export class MemoryDatabaseService
   private workspaces = new Map<string, unknown>();
   private miscData = new Map<string, unknown>();
 
-  constructor(logger: Logger) {
-    super('memory-database', 'platform', logger);
+  constructor(baseOptions: BaseServiceCommonOptions) {
+    super({
+      ...baseOptions,
+      name: 'memory-database',
+      kind: 'platform',
+      dependencies: {},
+    });
   }
 
   protected async onInitialize(): Promise<void> {}

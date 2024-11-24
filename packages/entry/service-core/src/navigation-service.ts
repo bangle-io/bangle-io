@@ -1,4 +1,8 @@
-import { BaseService, type Logger } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceCommonOptions,
+  type Logger,
+} from '@bangle.io/base-utils';
 import type { BaseRouterService, RouterState } from '@bangle.io/types';
 import { pathnameToWsPath, wsPathToPathname } from '@bangle.io/ws-path';
 
@@ -44,15 +48,19 @@ export class NavigationService extends BaseService {
   }
 
   constructor(
-    logger: Logger,
+    baseOptions: BaseServiceCommonOptions,
     dependencies: {
       routerService: BaseRouterService;
     },
   ) {
-    super('navigation-service', 'core', logger, dependencies);
+    super({
+      ...baseOptions,
+      name: 'navigation-service',
+      kind: 'core',
+      dependencies,
+    });
     this.routerService = dependencies.routerService;
   }
-
   protected async onInitialize(): Promise<void> {
     this.setupRouterListener();
   }
