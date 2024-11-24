@@ -1,9 +1,10 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-} from '@bangle.io/base-utils';
+import { BaseService } from '@bangle.io/base-utils';
 import { Emitter } from '@bangle.io/emitter';
-import type { BaseRouter, RouterState } from '@bangle.io/types';
+import type {
+  BaseRouter,
+  BaseServiceCommonOptions,
+  RouterState,
+} from '@bangle.io/types';
 
 export class MemoryRouterService
   extends BaseService

@@ -1,3 +1,4 @@
+import type { BaseService, Logger } from '@bangle.io/base-utils';
 import type { commandExcludedServices } from '@bangle.io/constants';
 import type {
   CommandRegistryService,
@@ -11,10 +12,21 @@ import type {
   BrowserErrorHandlerService,
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
-import type { BaseService } from '../base-utils';
 import type { BaseAppDatabase } from './base-database';
 import type { BaseFileStorageProvider } from './base-file-storage';
 import type { BaseRouter } from './base-router';
+export type ServiceKind = 'platform' | 'core' | 'ui';
+
+export type BaseServiceOptions = {
+  name: string;
+  kind: ServiceKind;
+  dependencies?: Record<string, BaseService<any>>;
+  needsConfig?: boolean;
+} & BaseServiceCommonOptions;
+
+export type BaseServiceCommonOptions = {
+  logger: Logger;
+};
 
 export type RouterState = {
   [key: string]: unknown;

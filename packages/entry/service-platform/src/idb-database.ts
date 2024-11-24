@@ -1,9 +1,4 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  isAppError,
-  throwAppError,
-} from '@bangle.io/base-utils';
+import { BaseService, isAppError, throwAppError } from '@bangle.io/base-utils';
 import {
   type BangleDbSchema,
   type DbRecord,
@@ -11,7 +6,11 @@ import {
   idb,
   makeDbRecord,
 } from '@bangle.io/db-key-val';
-import type { BaseAppDatabase, DatabaseQueryOptions } from '@bangle.io/types';
+import type {
+  BaseAppDatabase,
+  BaseServiceCommonOptions,
+  DatabaseQueryOptions,
+} from '@bangle.io/types';
 
 export const DB_NAME = 'bangle-io-db';
 export const DB_VERSION = 2;

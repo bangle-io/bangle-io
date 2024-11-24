@@ -3,14 +3,11 @@ import {
   FILE_NOT_FOUND_ERROR,
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  throwAppError,
-} from '@bangle.io/base-utils';
+import { BaseService, throwAppError } from '@bangle.io/base-utils';
 import { WorkspaceType } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
+  BaseServiceCommonOptions,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';

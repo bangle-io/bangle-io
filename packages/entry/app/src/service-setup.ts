@@ -1,8 +1,4 @@
-import {
-  type BaseServiceCommonOptions,
-  type Logger,
-  assertIsDefined,
-} from '@bangle.io/base-utils';
+import { type Logger, assertIsDefined } from '@bangle.io/base-utils';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
 import {
@@ -21,6 +17,7 @@ import {
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
 import type {
+  BaseServiceCommonOptions,
   CoreServices,
   ErrorEmitter,
   PlatformServices,

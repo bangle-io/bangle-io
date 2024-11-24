@@ -1,7 +1,8 @@
 import type { Logger } from '@bangle.io/logger';
 import { makeTestLogger } from '@bangle.io/test-utils';
+import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { BaseService, type BaseServiceCommonOptions } from '../base-service';
+import { BaseService } from '../base-service';
 
 describe('BaseService', () => {
   let logger: Logger;

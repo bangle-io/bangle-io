@@ -1,9 +1,9 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  type Logger,
-} from '@bangle.io/base-utils';
-import type { BaseRouterService, RouterState } from '@bangle.io/types';
+import { BaseService } from '@bangle.io/base-utils';
+import type {
+  BaseRouterService,
+  BaseServiceCommonOptions,
+  RouterState,
+} from '@bangle.io/types';
 import { pathnameToWsPath, wsPathToPathname } from '@bangle.io/ws-path';
 
 type NavigationEvent = {

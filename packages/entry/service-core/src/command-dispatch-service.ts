@@ -1,13 +1,12 @@
-import {
-  BaseError,
-  BaseService,
-  type BaseServiceCommonOptions,
-} from '@bangle.io/base-utils';
+import { BaseError, BaseService } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
 import { commandExcludedServices } from '@bangle.io/constants';
-import type { Logger } from '@bangle.io/logger';
 import type { InferType, Validator } from '@bangle.io/mini-zod';
-import type { Command, CommandExposedServices } from '@bangle.io/types';
+import type {
+  BaseServiceCommonOptions,
+  Command,
+  CommandExposedServices,
+} from '@bangle.io/types';
 import type { CommandRegistryService } from './command-registry-service';
 
 type CommandArgs<C extends Command> = C['args'] extends null

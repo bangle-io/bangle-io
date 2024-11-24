@@ -1,15 +1,11 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  type Logger,
-  isDarwin,
-} from '@bangle.io/base-utils';
+import { BaseService, isDarwin } from '@bangle.io/base-utils';
 import type {
   KeyBinding,
   RegisterOptions,
   ShortcutHandler,
 } from '@bangle.io/keyboard-shortcuts';
 import { ShortcutManager } from '@bangle.io/keyboard-shortcuts';
+import type { BaseServiceCommonOptions } from '@bangle.io/types';
 
 export type ShortcutServiceConfig = {
   keyBinding: KeyBinding;

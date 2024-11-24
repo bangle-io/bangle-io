@@ -1,10 +1,5 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  type Logger,
-  isAppError,
-} from '@bangle.io/base-utils';
-import type { ErrorEmitter } from '@bangle.io/types';
+import { BaseService, isAppError } from '@bangle.io/base-utils';
+import type { BaseServiceCommonOptions, ErrorEmitter } from '@bangle.io/types';
 
 export class BrowserErrorHandlerService extends BaseService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];

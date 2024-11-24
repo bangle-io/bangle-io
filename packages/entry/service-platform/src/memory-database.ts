@@ -1,9 +1,9 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  type Logger,
-} from '@bangle.io/base-utils';
-import type { BaseAppDatabase, DatabaseQueryOptions } from '@bangle.io/types';
+import { BaseService } from '@bangle.io/base-utils';
+import type {
+  BaseAppDatabase,
+  BaseServiceCommonOptions,
+  DatabaseQueryOptions,
+} from '@bangle.io/types';
 
 export class MemoryDatabaseService
   extends BaseService

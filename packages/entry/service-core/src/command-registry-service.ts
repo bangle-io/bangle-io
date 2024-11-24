@@ -1,9 +1,9 @@
-import {
-  BaseError,
-  BaseService,
-  type BaseServiceCommonOptions,
-} from '@bangle.io/base-utils';
-import type { Command, CommandHandler } from '@bangle.io/types';
+import { BaseError, BaseService } from '@bangle.io/base-utils';
+import type {
+  BaseServiceCommonOptions,
+  Command,
+  CommandHandler,
+} from '@bangle.io/types';
 
 type CommandHandlerConfig = { id: string; handler: CommandHandler };
 

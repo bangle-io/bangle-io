@@ -1,11 +1,11 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  type Logger,
-} from '@bangle.io/base-utils';
+import { BaseService } from '@bangle.io/base-utils';
 import { browserHistoryStateEvents } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
-import type { BaseRouter, RouterState } from '@bangle.io/types';
+import type {
+  BaseRouter,
+  BaseServiceCommonOptions,
+  RouterState,
+} from '@bangle.io/types';
 import { navigate } from 'wouter/use-browser-location';
 
 export class BrowserRouterService

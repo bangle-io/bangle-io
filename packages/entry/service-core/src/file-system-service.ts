@@ -1,11 +1,9 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-  type Logger,
-  throwAppError,
-} from '@bangle.io/base-utils';
-import type { BaseFileStorageService } from '@bangle.io/types';
+import { BaseService, throwAppError } from '@bangle.io/base-utils';
+import type {
+  BaseFileStorageService,
+  BaseServiceCommonOptions,
+} from '@bangle.io/types';
 import {
   VALID_NOTE_EXTENSIONS_SET,
   getExtension,

@@ -1,11 +1,11 @@
 import {
   BaseService,
-  type BaseServiceCommonOptions,
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type {
   BaseDatabaseService,
+  BaseServiceCommonOptions,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';

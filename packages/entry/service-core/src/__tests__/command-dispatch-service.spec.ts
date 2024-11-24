@@ -1,10 +1,11 @@
-import {
-  BaseService,
-  type BaseServiceCommonOptions,
-} from '@bangle.io/base-utils';
+import { BaseService } from '@bangle.io/base-utils';
 import { T } from '@bangle.io/mini-zod';
 import { makeTestLogger } from '@bangle.io/test-utils';
-import type { Command, CommandExposedServices } from '@bangle.io/types';
+import type {
+  BaseServiceCommonOptions,
+  Command,
+  CommandExposedServices,
+} from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';

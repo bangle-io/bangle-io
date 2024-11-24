@@ -1,16 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
-import type { ServiceKind } from '@bangle.io/types';
-
-export type BaseServiceOptions = {
-  name: string;
-  kind: ServiceKind;
-  dependencies?: Record<string, BaseService<any>>;
-  needsConfig?: boolean;
-} & BaseServiceCommonOptions;
-
-export type BaseServiceCommonOptions = {
-  logger: Logger;
-};
+import type { BaseServiceOptions } from '@bangle.io/types';
 
 class Lifecycle {
   readonly initializedPromise: Promise<void>;
