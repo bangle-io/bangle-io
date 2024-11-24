@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DhanchaWidescreen component > renders correctly and handles resizing 1`] = `
+<div>
+  <div
+    class="B-ui-dhancha-widescreen"
+  >
+    <nav
+      aria-label="Title Bar"
+      class="B-ui-activitybar"
+      style="grid-area: activitybar;"
+    >
+      <div>
+        Activity Bar
+      </div>
+    </nav>
+    <aside
+      class="B-ui-left-aside"
+      style="grid-area: left-aside;"
+    >
+      <div>
+        Left Aside
+      </div>
+    </aside>
+    <div
+      class="B-ui-aside-separator "
+      style="grid-area: left-aside-separator;"
+    >
+      <div />
+      <div />
+    </div>
+    <nav
+      aria-label="Title Bar"
+      class="B-ui-dhancha-titlebar titlebar-container"
+      style="grid-area: titlebar-container;"
+    >
+      <div>
+        Title Bar
+      </div>
+    </nav>
+    <div
+      class="B-ui-main-content"
+      style="grid-area: main-container;"
+    >
+      <div>
+        Main Content
+      </div>
+    </div>
+    <div
+      class="B-ui-aside-separator "
+      style="grid-area: right-aside-separator;"
+    >
+      <div />
+      <div />
+    </div>
+    <aside
+      class="B-ui-right-aside"
+      style="grid-area: right-aside;"
+    >
+      <div>
+        Right Aside
+      </div>
+    </aside>
+  </div>
+</div>
+`;

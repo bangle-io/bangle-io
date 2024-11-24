@@ -53,6 +53,7 @@
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",
     "@storybook/react": "^8.4.4",
-    "@testing-library/react": "^16.0.1"
+    "@testing-library/react": "^16.0.1",
+    "@bangle.io/test-utils-jest": "workspace:*"
   }
 }

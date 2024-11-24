@@ -84,7 +84,7 @@ export default function main(plop) {
             packagePath,
             'src',
             '__tests__',
-            `${data.name}.test.ts`,
+            `${data.name}.spec.ts`,
           ),
           templateFile: path.join(templatePath, 'test-ts.hbs'),
         },

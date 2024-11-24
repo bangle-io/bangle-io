@@ -5,6 +5,7 @@ export const rootPath = path.resolve(__dirname, '../../..');
 export const ROOT_PKG_NAME = 'bangle-io';
 export const BANGLE_IO_CONSTANTS_PKG_NAME = '@bangle.io/constants';
 export const BANGLE_IO_SHARED_TYPES_PKG_NAME = '@bangle.io/types';
+export const VITEST_PKG_NAME = 'vitest';
 
 export const PACKAGE_JSON_DEFAULTS = {
   license: 'AGPL-3.0-or-later',

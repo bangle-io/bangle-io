@@ -1,10 +1,11 @@
 /**
  * @jest-environment @bangle.io/jsdom-env
  */
+
 import { fireEvent, render, renderHook } from '@testing-library/react';
 import React from 'react';
 
-import { waitForExpect } from '@bangle.io/test-utils';
+import { waitForExpect } from '@bangle.io/test-utils-jest';
 
 import { useSeparator } from '../index';
 
