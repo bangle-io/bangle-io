@@ -22,6 +22,7 @@ import type {
   ErrorEmitter,
   PlatformServices,
   Services,
+  Store,
 } from '@bangle.io/types';
 
 const commands = getEnabledCommands();
@@ -29,9 +30,11 @@ const commands = getEnabledCommands();
 export function initializeServices(
   logger: Logger,
   errorEmitter: ErrorEmitter,
+  store: Store,
 ): Services {
   const commonOpts: BaseServiceCommonOptions = {
     logger,
+    store,
   };
 
   const platformServices = initPlatformServices(commonOpts, errorEmitter);

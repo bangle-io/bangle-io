@@ -31,7 +31,8 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/base-error": "workspace:*",
+    "jotai": "^2.10.3"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

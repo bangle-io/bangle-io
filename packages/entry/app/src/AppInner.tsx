@@ -4,8 +4,6 @@ import { getGithubUrl } from '@bangle.io/base-utils';
 import { c } from '@bangle.io/command-handlers';
 import { WorkspaceType } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
-import { EditorComp } from '@bangle.io/editor';
-
 import { useLogger } from '@bangle.io/context/src/logger-context';
 import { OmniSearch } from '@bangle.io/omni-search';
 import type { ErrorEmitter, WorkspaceInfo } from '@bangle.io/types';
@@ -18,7 +16,6 @@ import {
   toast,
 } from '@bangle.io/ui-components';
 import React, { useCallback, useEffect } from 'react';
-import { useLocation } from 'wouter';
 import { AppRoutes } from './Routes';
 import { SidebarComponent } from './sidebar';
 
@@ -29,19 +26,10 @@ export function AppInner({
 }) {
   const coreServices = useCoreServices();
   const logger = useLogger();
-  useLocation();
   const [openWsDialog, setOpenWsDialog] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [workspaces, setWorkspaces] = React.useState<WorkspaceInfo[]>([]);
-  // const [activeWsName, setActiveWsName] = React.useState(
-  //   workspaces?.[0]?.name || undefined,
-  // );
   const [activeWsPaths, setActiveWsPaths] = React.useState<string[]>([]);
-
-  const activeWsName = coreServices.navigation.wsName;
-  const setActiveWsName = (wsName: string) => {
-    coreServices.navigation.goWorkspace(wsName);
-  };
 
   const refreshWorkspaces = useCallback(() => {
     coreServices.workspace.getAllWorkspaces().then((ws) => {
@@ -131,9 +119,7 @@ export function AppInner({
       <Toaster />
       <SidebarComponent
         logger={logger}
-        activeWsName={activeWsName}
         activeWsPaths={activeWsPaths}
-        setActiveWsName={setActiveWsName}
         setActiveWsPaths={setActiveWsPaths}
         setOpen={setOpen}
         setOpenWsDialog={setOpenWsDialog}

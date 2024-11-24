@@ -1,10 +1,10 @@
-import { c } from '@bangle.io/command-handlers';
-import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
+import { c, useC } from '@bangle.io/command-handlers';
 import { useCoreServices } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
 import type { WorkspaceInfo } from '@bangle.io/types';
 import { AppSidebar, Sidebar } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
+import { useAtomValue } from 'jotai';
 import React, { useEffect, useMemo } from 'react';
 
 interface SidebarProps {
@@ -12,8 +12,6 @@ interface SidebarProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
   workspaces: WorkspaceInfo[];
-  activeWsName: string | undefined;
-  setActiveWsName: (name: string) => void;
   activeWsPaths: string[];
   setActiveWsPaths: (cb: (existing: string[]) => string[]) => void;
   logger: Logger;
@@ -24,14 +22,12 @@ export const SidebarComponent = ({
   children,
   setOpen,
   workspaces,
-  activeWsName,
-  setActiveWsName,
   activeWsPaths,
 }: SidebarProps) => {
   const coreServices = useCoreServices();
-
   const [wsPaths, setWsPaths] = React.useState<string[]>([]);
   const [sideBarOpen, setSideBarOpen] = React.useState(true);
+  const activeWsName = useAtomValue(coreServices.navigation.atom.wsName);
 
   React.useEffect(() => {
     if (activeWsName) {
@@ -41,26 +37,13 @@ export const SidebarComponent = ({
     }
   }, [activeWsName, coreServices]);
 
-  useEffect(() => {
-    const unregister = [
-      coreServices.commandRegistry.registerHandler(
-        c('command::ui:toggle-sidebar', () => {
-          setSideBarOpen((open) => !open);
-        }),
-      ),
-      coreServices.commandRegistry.registerHandler(
-        c('command::ui:new-workspace-dialog', () => {
-          setOpenWsDialog(true);
-        }),
-      ),
-    ];
+  useC('command::ui:toggle-sidebar', () => {
+    setSideBarOpen((open) => !open);
+  });
 
-    return () => {
-      for (const cb of unregister) {
-        cb();
-      }
-    };
-  }, [coreServices, setOpenWsDialog]);
+  useC('command::ui:new-workspace-dialog', () => {
+    setOpenWsDialog(true);
+  });
 
   return (
     <Sidebar.SidebarProvider
@@ -94,7 +77,9 @@ export const SidebarComponent = ({
         onSearchClick={() => {
           setOpen(true);
         }}
-        setActiveWorkspace={(name) => setActiveWsName(name)}
+        setActiveWorkspace={(name) => {
+          coreServices.navigation.goWorkspace(name);
+        }}
       />
       <Sidebar.SidebarInset>{children}</Sidebar.SidebarInset>
     </Sidebar.SidebarProvider>

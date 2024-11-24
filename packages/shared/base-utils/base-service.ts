@@ -1,5 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
-import type { BaseServiceOptions } from '@bangle.io/types';
+import type { BaseServiceOptions, Store } from '@bangle.io/types';
 
 class Lifecycle {
   readonly initializedPromise: Promise<void>;
@@ -80,6 +80,10 @@ export abstract class BaseService<Config = void> {
 
   get dependencies() {
     return this._baseOptions.dependencies || {};
+  }
+
+  protected get store(): Store {
+    return this._baseOptions.store;
   }
 
   constructor(private readonly _baseOptions: BaseServiceOptions) {

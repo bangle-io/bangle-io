@@ -30,6 +30,8 @@
   "dependencies": {
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
-    "@bangle.io/types": "workspace:*"
+    "@bangle.io/types": "workspace:*",
+    "react": "^18.3.1",
+    "@bangle.io/context": "workspace:*"
   }
 }

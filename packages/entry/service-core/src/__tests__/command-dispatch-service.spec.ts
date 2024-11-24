@@ -1,6 +1,6 @@
 import { BaseService } from '@bangle.io/base-utils';
 import { T } from '@bangle.io/mini-zod';
-import { makeTestLogger } from '@bangle.io/test-utils';
+import { makeTestLogger, makeTestService } from '@bangle.io/test-utils';
 import type {
   BaseServiceCommonOptions,
   Command,
@@ -22,22 +22,19 @@ class TestService extends BaseService {
 }
 
 async function setup() {
-  const testLogger = makeTestLogger();
-  const logger = testLogger.logger;
-  const commandRegistry = new CommandRegistryService({ logger });
+  const { commonOpts, mockLog } = makeTestService();
+  const logger = commonOpts.logger;
+  const commandRegistry = new CommandRegistryService(commonOpts);
 
-  const dispatchService = new CommandDispatchService(
-    { logger },
-    {
-      commandRegistry,
-    },
-  );
+  const dispatchService = new CommandDispatchService(commonOpts, {
+    commandRegistry,
+  });
 
   commandRegistry.setInitConfig({ commands: [], commandHandlers: [] });
 
   dispatchService.setInitConfig({
     exposedServices: {
-      fileSystem: new TestService({ logger }),
+      fileSystem: new TestService(commonOpts),
     } as CommandExposedServices,
   });
   await dispatchService.initialize();
@@ -45,7 +42,7 @@ async function setup() {
     logger,
     commandRegistry,
     dispatchService,
-    mockLog: testLogger.mockLog,
+    mockLog: mockLog,
   };
 }
 

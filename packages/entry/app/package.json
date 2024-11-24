@@ -44,6 +44,7 @@
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/command-handlers": "workspace:*",
-    "wouter": "^3.3.5"
+    "wouter": "^3.3.5",
+    "jotai": "^2.10.3"
   }
 }

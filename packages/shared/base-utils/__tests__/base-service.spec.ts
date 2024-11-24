@@ -1,11 +1,10 @@
 import type { Logger } from '@bangle.io/logger';
-import { makeTestLogger } from '@bangle.io/test-utils';
+import { makeTestLogger, makeTestService } from '@bangle.io/test-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { BaseService } from '../base-service';
 
 describe('BaseService', () => {
-  let logger: Logger;
   let service: BaseService;
   let dependencies: Record<string, BaseService>;
 
@@ -39,9 +38,9 @@ describe('BaseService', () => {
   };
 
   beforeEach(() => {
-    ({ mockLog: mockLog, logger } = makeTestLogger());
-
-    service = new TestService({ logger }, dependencies);
+    const { commonOpts, mockLog: _mockLog } = makeTestService();
+    mockLog = _mockLog;
+    service = new TestService(commonOpts, dependencies);
   });
 
   afterEach(() => {
@@ -63,7 +62,8 @@ describe('BaseService', () => {
   });
 
   test('should dispose the service correctly', async () => {
-    const service = new TestService({ logger }, dependencies, 'TestService1');
+    const { commonOpts, mockLog } = makeTestService();
+    const service = new TestService(commonOpts, dependencies, 'TestService1');
     await service.initialize();
     await service.dispose();
     expect(mockLog.debug).toHaveBeenCalledWith(
@@ -73,15 +73,20 @@ describe('BaseService', () => {
   });
 
   test('should abort disposal if not initialized', async () => {
-    const service = new TestService({ logger }, dependencies, 'TestService2');
+    const service = new TestService(
+      makeTestService().commonOpts,
+      dependencies,
+      'TestService2',
+    );
     await service.dispose();
     expect(mockLog.info).not.toHaveBeenCalled();
   });
 
   test('should initialize with dependencies', async () => {
-    const depService = new TestService({ logger }, dependencies, 'DepService');
+    const { commonOpts, mockLog } = makeTestService();
+    const depService = new TestService(commonOpts, dependencies, 'DepService');
     dependencies = { dep: depService };
-    service = new TestService({ logger }, dependencies);
+    service = new TestService(commonOpts, dependencies);
 
     const initializeSpy = vi.spyOn(service, 'initialize');
     const depInitializeSpy = vi.spyOn(depService, 'initialize');
@@ -104,7 +109,10 @@ describe('BaseService', () => {
   });
 
   test('should set initialization config when needed', () => {
-    service = new TestService({ logger, needsConfig: true }, dependencies);
+    service = new TestService(
+      { ...makeTestService().commonOpts, needsConfig: true },
+      dependencies,
+    );
     const hookPostConfigSetSpy = vi.spyOn(
       service,
       // @ts-expect-error - hookPostConfigSet
@@ -122,7 +130,11 @@ describe('BaseService', () => {
   });
 
   test('should throw error when setting config if not needed', () => {
-    service = new TestService({ logger }, dependencies, 'TestService');
+    service = new TestService(
+      makeTestService().commonOpts,
+      dependencies,
+      'TestService',
+    );
 
     // @ts-expect-error - config
     expect(() => service.setInitConfig({})).toThrow(

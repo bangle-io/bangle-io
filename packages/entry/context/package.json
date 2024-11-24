@@ -35,6 +35,7 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "wouter": "^3.3.5",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "jotai": "^2.10.3"
   }
 }

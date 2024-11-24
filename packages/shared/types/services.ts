@@ -12,10 +12,14 @@ import type {
   BrowserErrorHandlerService,
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
+import type { createStore } from 'jotai';
 import type { BaseAppDatabase } from './base-database';
 import type { BaseFileStorageProvider } from './base-file-storage';
 import type { BaseRouter } from './base-router';
+
 export type ServiceKind = 'platform' | 'core' | 'ui';
+
+export type Store = ReturnType<typeof createStore>;
 
 export type BaseServiceOptions = {
   name: string;
@@ -26,6 +30,7 @@ export type BaseServiceOptions = {
 
 export type BaseServiceCommonOptions = {
   logger: Logger;
+  store: Store;
 };
 
 export type RouterState = {

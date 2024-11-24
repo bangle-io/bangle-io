@@ -1,10 +1,12 @@
 import type { BangleAppCommand } from '@bangle.io/commands';
+import { useCoreServices } from '@bangle.io/context';
 import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type {
   Command,
   CommandExposedServices,
   CommandHandler,
 } from '@bangle.io/types';
+import { useEffect } from 'react';
 
 type CommandArgs<C extends Command> = C['args'] extends null
   ? null
@@ -31,4 +33,25 @@ export function c<T extends BangleAppCommand['id']>(
     id,
     handler: handler as CommandHandler,
   };
+}
+
+export function useC<T extends BangleAppCommand['id']>(
+  id: T,
+  handler: (
+    services: Pick<
+      CommandExposedServices,
+      Extract<BangleAppCommand, { id: T }>['services'][number]
+    >,
+    args: CommandArgs<Extract<BangleAppCommand, { id: T }>>,
+  ) => void | Promise<void>,
+) {
+  const coreServices = useCoreServices();
+
+  useEffect(() => {
+    const unregister = coreServices.commandRegistry.registerHandler({
+      id,
+      handler: handler as CommandHandler,
+    });
+    return unregister;
+  }, [id, coreServices, handler]);
 }

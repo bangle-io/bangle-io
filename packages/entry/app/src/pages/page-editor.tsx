@@ -1,11 +1,12 @@
 import { useCoreServices } from '@bangle.io/context';
 import { EditorComp } from '@bangle.io/editor';
 import { pathnameToWsPath, resolvePath } from '@bangle.io/ws-path';
+import { useAtomValue } from 'jotai';
 import React from 'react';
 
 export function PageEditor() {
   const coreServices = useCoreServices();
-  const { wsPath, wsName } = pathnameToWsPath(coreServices.navigation.pathname);
+  const wsPath = useAtomValue(coreServices.navigation.atom.wsPath);
 
   if (!wsPath) {
     return <div>Invalid path</div>;
@@ -13,7 +14,7 @@ export function PageEditor() {
 
   return (
     <div>
-      {wsName && (
+      {wsPath && (
         <EditorComp
           wsPath={wsPath}
           readNote={async (wsPath) => {

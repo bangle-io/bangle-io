@@ -5,6 +5,7 @@ import type {
   RouterState,
 } from '@bangle.io/types';
 import { pathnameToWsPath, wsPathToPathname } from '@bangle.io/ws-path';
+import { atom } from 'jotai';
 
 type NavigationEvent = {
   pathname: string;
@@ -16,19 +17,16 @@ type NavigationEvent = {
 export class NavigationService extends BaseService {
   private routerService: BaseRouterService;
 
-  private _activeWsData: {
-    wsName: string | undefined;
-    wsPath: string | undefined;
-  } = {
-    wsName: undefined,
-    wsPath: undefined,
+  readonly atom = {
+    wsName: atom<string | undefined>(undefined),
+    wsPath: atom<string | undefined>(undefined),
   };
-  get wsName(): string | undefined {
-    return this._activeWsData.wsName;
-  }
 
-  get wsPath(): string | undefined {
-    return this._activeWsData.wsPath;
+  resolveAtoms() {
+    return {
+      wsName: this.store.get(this.atom.wsName),
+      wsPath: this.store.get(this.atom.wsPath),
+    };
   }
 
   get pathname(): string {
@@ -66,18 +64,17 @@ export class NavigationService extends BaseService {
   }
 
   private setupRouterListener() {
-    this.routerService.emitter.on('event::router:update', (event) => {
-      const { wsName, wsPath } = pathnameToWsPath(event.pathname);
-      this._activeWsData.wsName = wsName;
-      this._activeWsData.wsPath = wsPath;
-      this.logger.debug(`Route changed to ${wsName} & ${wsPath}`);
-
-      this.handleRouteChange(event);
+    this.syncAtoms();
+    this.routerService.emitter.on('event::router:update', (_event) => {
+      this.syncAtoms();
     });
   }
 
-  private handleRouteChange(event: NavigationEvent) {
-    this.logger.info(`Route changed to ${event.pathname}`);
+  private syncAtoms() {
+    const { wsName, wsPath } = pathnameToWsPath(this.routerService.pathname);
+    this.logger.debug(`Route changed to ${wsName} - ${wsPath}`);
+    this.store.set(this.atom.wsName, wsName);
+    this.store.set(this.atom.wsPath, wsPath);
   }
 
   go(to: string | URL, options?: { replace?: boolean; state?: RouterState }) {

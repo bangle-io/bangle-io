@@ -35,6 +35,7 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*"
+    "@bangle.io/base-utils": "workspace:*",
+    "jotai": "^2.10.3"
   }
 }
