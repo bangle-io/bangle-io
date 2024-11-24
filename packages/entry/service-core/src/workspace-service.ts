@@ -5,7 +5,7 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import type {
-  DatabaseService,
+  BaseDatabaseService,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';
@@ -28,12 +28,12 @@ type ChangeEvent =
     };
 
 export class WorkspaceService extends BaseService {
-  private database: DatabaseService;
+  private database: BaseDatabaseService;
 
   constructor(
     logger: Logger,
     dependencies: {
-      database: DatabaseService;
+      database: BaseDatabaseService;
     },
     private onChange: (change: ChangeEvent) => void,
   ) {

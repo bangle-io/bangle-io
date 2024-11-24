@@ -243,9 +243,15 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      wouter:
+        specifier: ^3.3.5
+        version: 3.3.5(react@18.3.1)
 
   packages/entry/database: {}
 
@@ -356,6 +362,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
       '@bangle.io/keyboard-shortcuts':
         specifier: workspace:*
         version: link:../../js-lib/keyboard-shortcuts
@@ -581,12 +590,12 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
-      path-to-regexp:
-        specifier: ^6.2.1
-        version: 6.3.0
+      regexparam:
+        specifier: ^3.0.0
+        version: 3.0.0
       wouter:
-        specifier: ^2.12.1
-        version: 2.12.1(react@18.3.1)
+        specifier: ^3.3.5
+        version: 3.3.5(react@18.3.1)
 
   packages/tooling/custom-scripts:
     dependencies:
@@ -4783,9 +4792,6 @@ packages:
     resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
     engines: {node: '>=16 || 14 >=14.18'}
 
-  path-to-regexp@6.3.0:
-    resolution: {integrity: sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==}
-
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
@@ -5874,11 +5880,6 @@ packages:
 
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
-
-  wouter@2.12.1:
-    resolution: {integrity: sha512-G7a6JMSLSNcu6o8gdOfIzqxuo8Qx1qs+9rpVnlurH69angsSFPZP5gESNuVNeJct/MGpQg191pDo4HUjTx7IIQ==}
-    peerDependencies:
-      react: '>=16.8.0'
 
   wouter@3.3.5:
     resolution: {integrity: sha512-bx3fLQAMn+EhYbBdY3W1gw9ZfO/uchudxYMwOIBzF3HVgqNEEIT199vEoh7FLTC0Vz5+rpMO6NdFsOkGX1QQCw==}
@@ -10400,8 +10401,6 @@ snapshots:
       lru-cache: 10.4.3
       minipass: 7.1.2
 
-  path-to-regexp@6.3.0: {}
-
   path-type@4.0.0: {}
 
   path-type@5.0.0: {}
@@ -11526,11 +11525,6 @@ snapshots:
   word-wrap@1.2.5: {}
 
   wordwrap@1.0.0: {}
-
-  wouter@2.12.1(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      use-sync-external-store: 1.2.2(react@18.3.1)
 
   wouter@3.3.5(react@18.3.1):
     dependencies:

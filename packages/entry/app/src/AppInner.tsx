@@ -17,8 +17,9 @@ import {
   WorkspaceDialogRoot,
   toast,
 } from '@bangle.io/ui-components';
-import { resolvePath } from '@bangle.io/ws-path';
 import React, { useCallback, useEffect } from 'react';
+import { useLocation } from 'wouter';
+import { AppRoutes } from './Routes';
 import { SidebarComponent } from './sidebar';
 
 export function AppInner({
@@ -28,14 +29,19 @@ export function AppInner({
 }) {
   const coreServices = useCoreServices();
   const logger = useLogger();
+  useLocation();
   const [openWsDialog, setOpenWsDialog] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [workspaces, setWorkspaces] = React.useState<WorkspaceInfo[]>([]);
-  const [activeWsName, setActiveWsName] = React.useState(
-    workspaces?.[0]?.name || undefined,
-  );
+  // const [activeWsName, setActiveWsName] = React.useState(
+  //   workspaces?.[0]?.name || undefined,
+  // );
   const [activeWsPaths, setActiveWsPaths] = React.useState<string[]>([]);
-  const openedWsPath = activeWsPaths[0];
+
+  const activeWsName = coreServices.navigation.wsName;
+  const setActiveWsName = (wsName: string) => {
+    coreServices.navigation.goWorkspace(wsName);
+  };
 
   const refreshWorkspaces = useCallback(() => {
     coreServices.workspace.getAllWorkspaces().then((ws) => {
@@ -153,25 +159,7 @@ export function AppInner({
           </Breadcrumb.Breadcrumb>
         </header>
         <div className="B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div>
-            {openedWsPath && (
-              <EditorComp
-                wsPath={openedWsPath}
-                readNote={async (wsPath) => {
-                  return coreServices.fileSystem.readFileAsText(wsPath);
-                }}
-                writeNote={async (wsPath, content) => {
-                  const { fileName } = resolvePath(wsPath);
-                  void coreServices.fileSystem.createFile(
-                    wsPath,
-                    new File([content], fileName, {
-                      type: 'text/plain',
-                    }),
-                  );
-                }}
-              />
-            )}
-          </div>
+          <AppRoutes />
         </div>
       </SidebarComponent>
     </>

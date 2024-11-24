@@ -9,3 +9,4 @@ export {
   toFSPath,
   filePathToWsPath,
 } from './helpers';
+export * from './routing';

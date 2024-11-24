@@ -33,6 +33,8 @@
     "@bangle.io/keyboard-shortcuts": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*"
+    "@bangle.io/base-utils": "workspace:*",
+    "wouter": "^3.3.5",
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

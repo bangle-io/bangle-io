@@ -1,6 +1,7 @@
 import {
   CoreServiceProvider,
   PlatformServiceProvider,
+  RouterContext,
 } from '@bangle.io/context';
 import { LoggerProvider } from '@bangle.io/context/src/logger-context';
 import type { Logger } from '@bangle.io/logger';
@@ -16,7 +17,7 @@ export function AppContextProvider({
     <LoggerProvider logger={logger}>
       <PlatformServiceProvider services={services.platform}>
         <CoreServiceProvider services={services.core}>
-          {children}
+          <RouterContext>{children}</RouterContext>
         </CoreServiceProvider>
       </PlatformServiceProvider>
     </LoggerProvider>

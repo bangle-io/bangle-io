@@ -2,6 +2,7 @@ import type { commandExcludedServices } from '@bangle.io/constants';
 import type {
   CommandRegistryService,
   FileSystemService,
+  NavigationService,
   ShortcutService,
   WorkspaceService,
 } from '@bangle.io/service-core';
@@ -25,7 +26,7 @@ export type Services = {
   platform: PlatformServices;
 };
 
-export type RouterService = BaseRouter<RouterState> & BaseService;
+export type BaseRouterService = BaseRouter<RouterState> & BaseService;
 
 export type CommandExcludedServices = (typeof commandExcludedServices)[number];
 
@@ -39,16 +40,17 @@ export type CoreServices = {
   // ensure this name stays in sync with the name in the CommandExposedServices
   commandRegistry: CommandRegistryService;
   commandDispatcher: CommandDispatchService;
+  navigation: NavigationService;
 };
 
 export type PlatformServices = {
   database: IdbDatabaseService;
   errorService: BrowserErrorHandlerService;
-  fileStorage: FileStorageService;
-  router: RouterService;
+  fileStorage: BaseFileStorageService;
+  router: BaseRouterService;
 };
 
 export type AllServiceName = (keyof CoreServices | keyof PlatformServices) & {};
 
-export type DatabaseService = BaseAppDatabase & BaseService;
-export type FileStorageService = BaseFileStorageProvider & BaseService;
+export type BaseDatabaseService = BaseAppDatabase & BaseService;
+export type BaseFileStorageService = BaseFileStorageProvider & BaseService;

@@ -1,9 +1,8 @@
-import type { BaseService } from '@bangle.io/base-utils';
 import type { browserHistoryStateEvents } from '@bangle.io/constants';
 import type { DiscriminatedEmitter } from '@bangle.io/emitter';
 
 export interface BaseRouter<RouterState = any> {
-  readonly pathname: string | undefined;
+  readonly pathname: string;
   readonly search: string | undefined;
   readonly basePath: string;
   navigate: (

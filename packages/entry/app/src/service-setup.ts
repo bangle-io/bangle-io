@@ -6,6 +6,7 @@ import {
   CommandDispatchService,
   CommandRegistryService,
   FileSystemService,
+  NavigationService,
   ShortcutService,
   type ShortcutServiceConfig,
   WorkspaceService,
@@ -119,6 +120,9 @@ function initCoreServices(
       logger.info('File change:', change);
     },
   );
+  const navigationService = new NavigationService(logger, {
+    routerService: platformServices.router,
+  });
   const shortcutService = new ShortcutService(logger, document);
   const workspaceService = new WorkspaceService(
     logger,
@@ -132,6 +136,7 @@ function initCoreServices(
     commandDispatcher: commandDispatcherService,
     commandRegistry: commandRegistryService,
     fileSystem: fileSystemService,
+    navigation: navigationService,
     shortcut: shortcutService,
     workspace: workspaceService,
   };

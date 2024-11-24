@@ -38,7 +38,8 @@
     "@bangle.io/keyboard-shortcuts": "workspace:*",
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/logger": "workspace:*",
-    "@bangle.io/mini-zod": "workspace:*"
+    "@bangle.io/mini-zod": "workspace:*",
+    "@bangle.io/emitter": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/logger": "workspace:*",

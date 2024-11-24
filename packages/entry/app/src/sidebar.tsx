@@ -27,8 +27,6 @@ export const SidebarComponent = ({
   activeWsName,
   setActiveWsName,
   activeWsPaths,
-  setActiveWsPaths,
-  logger,
 }: SidebarProps) => {
   const coreServices = useCoreServices();
 
@@ -71,15 +69,14 @@ export const SidebarComponent = ({
     >
       <AppSidebar
         onTreeItemClick={(item) => {
-          logger.debug('Tree item clicked', item);
-
           const wsPath = item.wsPath;
           if (!item.isDir && wsPath) {
-            setActiveWsPaths((existingIn) => {
-              let existing = existingIn;
-              existing = existing.filter((path) => path !== wsPath);
-              return [wsPath, ...existing].slice(0, 5);
-            });
+            coreServices.navigation.goWsPath(wsPath);
+            // setActiveWsPaths((existingIn) => {
+            //   let existing = existingIn;
+            //   existing = existing.filter((path) => path !== wsPath);
+            //   return [wsPath, ...existing].slice(0, 5);
+            // });
           }
         }}
         workspaces={workspaces.map((ws, i) => ({
