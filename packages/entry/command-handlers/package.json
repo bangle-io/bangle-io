@@ -32,6 +32,8 @@
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "react": "^18.3.1",
-    "@bangle.io/context": "workspace:*"
+    "@bangle.io/context": "workspace:*",
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

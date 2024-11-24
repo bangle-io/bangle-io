@@ -38,4 +38,21 @@ export const uiCommands = [
     omniSearch: true,
     args: null,
   },
+  {
+    id: 'command::ui:new-note-dialog',
+    title: 'New Note',
+    keywords: ['new', 'create', 'note'],
+    services: [],
+    omniSearch: true,
+    args: null,
+  },
+  {
+    id: 'command::ws:new-note',
+    title: 'New Note',
+    omniSearch: false,
+    services: ['workspace'],
+    args: {
+      wsPath: T.String,
+    },
+  },
 ] as const satisfies Command[];

@@ -94,6 +94,10 @@ export class ShortcutManager {
   }
 
   handleEvent(event: KeyboardEvent) {
+    // safari doesn't have event.key
+    if (!event.key) {
+      return;
+    }
     const keys: string[] = [];
     if (event.metaKey) keys.push('meta');
     if (event.ctrlKey) keys.push('ctrl');

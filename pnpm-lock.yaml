@@ -219,6 +219,9 @@ importers:
 
   packages/entry/command-handlers:
     dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
@@ -231,6 +234,9 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
       react:
         specifier: ^18.3.1
         version: 18.3.1

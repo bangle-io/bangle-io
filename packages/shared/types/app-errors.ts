@@ -84,4 +84,10 @@ export type AppError =
       payload: {
         invalidPath: string;
       };
+    }
+  | {
+      name: `error::ws-path:create-new-note`;
+      payload: {
+        invalidWsPath: string;
+      };
     };

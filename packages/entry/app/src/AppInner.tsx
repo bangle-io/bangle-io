@@ -1,7 +1,7 @@
 import '@bangle.io/editor/src/style.css';
 
 import { getGithubUrl } from '@bangle.io/base-utils';
-import { c } from '@bangle.io/command-handlers';
+import { c, useC } from '@bangle.io/command-handlers';
 import { WorkspaceType } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { useLogger } from '@bangle.io/context/src/logger-context';
@@ -9,6 +9,7 @@ import { OmniSearch } from '@bangle.io/omni-search';
 import type { ErrorEmitter, WorkspaceInfo } from '@bangle.io/types';
 import {
   Breadcrumb,
+  DialogSingleInput,
   Separator,
   Sidebar,
   Toaster,
@@ -30,6 +31,7 @@ export function AppInner({
   const [open, setOpen] = React.useState(false);
   const [workspaces, setWorkspaces] = React.useState<WorkspaceInfo[]>([]);
   const [activeWsPaths, setActiveWsPaths] = React.useState<string[]>([]);
+  const [newNoteDialog, setNewNoteDialog] = React.useState(false);
 
   const refreshWorkspaces = useCallback(() => {
     coreServices.workspace.getAllWorkspaces().then((ws) => {
@@ -85,6 +87,10 @@ export function AppInner({
     };
   }, [errorEmitter, logger]);
 
+  useC('command::ui:new-note-dialog', () => {
+    setNewNoteDialog(true);
+  });
+
   return (
     <>
       <WorkspaceDialogRoot
@@ -101,6 +107,21 @@ export function AppInner({
             .then(() => {
               refreshWorkspaces();
             });
+        }}
+      />
+
+      <DialogSingleInput
+        open={newNoteDialog}
+        placeholder="Enter note name"
+        command={{ id: 'new-note-dialog', title: 'Create a new note' }}
+        setOpen={setNewNoteDialog}
+        onRun={(input) => {
+          setNewNoteDialog(false);
+          coreServices.commandDispatcher.dispatch(
+            'command::ws:new-note-from-input',
+            { inputPath: input },
+            'ui',
+          );
         }}
       />
       <OmniSearch

@@ -8,5 +8,5 @@ export function PageWsHome() {
   const coreServices = useCoreServices();
   const { wsName } = pathnameToWsPath(coreServices.navigation.pathname);
 
-  return <div>{wsName && <div>hello {wsName}</div>}</div>;
+  return <div>{wsName && <div>hello workspace = {wsName}</div>}</div>;
 }

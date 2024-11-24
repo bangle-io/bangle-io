@@ -2,8 +2,9 @@ import { commandExcludedServices } from '@bangle.io/constants';
 import type { Command } from '@bangle.io/types';
 
 import { uiCommands } from './ui-commands';
+import { wsCommands } from './ws-commands';
 
-export const bangleAppCommands = [...uiCommands];
+export const bangleAppCommands = [...uiCommands, ...wsCommands];
 
 export function getEnabledCommands(): Command[] {
   const commands: Command[] = bangleAppCommands;

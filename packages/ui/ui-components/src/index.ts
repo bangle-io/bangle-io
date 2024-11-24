@@ -10,3 +10,4 @@ export * from './dialog';
 export * from './separator';
 export * from './workspace-dialog';
 export * from './toaster';
+export * from './dialog-single-input';
