@@ -28,9 +28,9 @@
   },
   "scripts": {},
   "dependencies": {
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.5.4",
+    "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*"
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
   }
 }

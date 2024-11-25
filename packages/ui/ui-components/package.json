@@ -28,12 +28,13 @@
   },
   "scripts": {},
   "dependencies": {
-    "sonner": "^1.7.0",
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-hooks": "workspace:*",
     "@bangle.io/ui-utils": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*",
-    "@mantine/hooks": "^7.14.1",
+    "@bangle.io/ws-path": "workspace:*",
+    "@mantine/hooks": "^7.14.2",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-collapsible": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -47,13 +48,12 @@
     "cmdk": "^1.0.4",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "sonner": "^1.7.0"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",
-    "@storybook/react": "^8.4.4",
-    "@testing-library/react": "^16.0.1",
-    "@bangle.io/test-utils-jest": "workspace:*"
+    "@bangle.io/test-utils-jest": "workspace:*",
+    "@storybook/react": "^8.4.5",
+    "@testing-library/react": "^16.0.1"
   }
 }

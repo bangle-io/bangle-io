@@ -34,11 +34,15 @@
   "dependencies": {
     "@bangle.io/app": "workspace:*",
     "@bangle.io/browser": "workspace:*",
+    "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/context": "workspace:*",
     "@bangle.io/editor": "workspace:*",
+    "@bangle.io/emitter": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
+    "@bangle.io/initialize-services": "workspace:*",
     "@bangle.io/keyboard-shortcuts": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
     "@bangle.io/omni-search": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
@@ -48,20 +52,16 @@
     "@radix-ui/react-tooltip": "^1.1.4",
     "@vitejs/plugin-react": "^4.3.3",
     "class-variance-authority": "^0.7.0",
+    "jotai": "^2.10.3",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite": "^5.4.11",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/initialize-services": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
-    "jotai": "^2.10.3",
-    "@bangle.io/color-scheme-manager": "workspace:*",
     "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
-    "@storybook/react": "^8.4.4",
-    "@storybook/test": "^8.4.4",
+    "@storybook/react": "^8.4.5",
+    "@storybook/test": "^8.4.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
@@ -70,6 +70,6 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^1.1.6"
+    "tailwindcss-react-aria-components": "^1.2.0"
   }
 }
