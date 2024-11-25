@@ -6,7 +6,7 @@ import React from 'react';
 
 export function PageEditor() {
   const coreServices = useCoreServices();
-  const wsPath = useAtomValue(coreServices.navigation.atom.wsPath);
+  const wsPath = useAtomValue(coreServices.navigation.$wsPath);
 
   if (!wsPath) {
     return <div>Invalid path</div>;

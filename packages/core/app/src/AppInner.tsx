@@ -1,7 +1,6 @@
 import '@bangle.io/editor/src/style.css';
 
 import { getGithubUrl } from '@bangle.io/base-utils';
-import { c, useC } from '@bangle.io/command-handlers';
 import { WorkspaceType } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { useLogger } from '@bangle.io/context/src/logger-context';
@@ -16,7 +15,8 @@ import {
   WorkspaceDialogRoot,
   toast,
 } from '@bangle.io/ui-components';
-import React, { useCallback, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import React, { useEffect } from 'react';
 import { AppRoutes } from './Routes';
 import { SidebarComponent } from './sidebar';
 
@@ -27,38 +27,19 @@ export function AppInner({
 }) {
   const coreServices = useCoreServices();
   const logger = useLogger();
-  const [openWsDialog, setOpenWsDialog] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-  const [workspaces, setWorkspaces] = React.useState<WorkspaceInfo[]>([]);
-  const [activeWsPaths, setActiveWsPaths] = React.useState<string[]>([]);
-  const [newNoteDialog, setNewNoteDialog] = React.useState(false);
-
-  const refreshWorkspaces = useCallback(() => {
-    coreServices.workspace.getAllWorkspaces().then((ws) => {
-      setWorkspaces(ws);
-    });
-  }, [coreServices.workspace]);
-
-  React.useEffect(() => {
-    refreshWorkspaces();
-  }, [refreshWorkspaces]);
-
-  useEffect(() => {
-    const unregister = coreServices.commandRegistry.registerHandler(
-      c('command::ui:toggle-omni-search', () => {
-        setOpen((open) => !open);
-      }),
-    );
-    return () => {
-      unregister();
-    };
-  }, [coreServices.commandRegistry]);
+  const [openWsDialog, setOpenWsDialog] = useAtom(
+    coreServices.workbenchState.$openWsDialog,
+  );
+  const [open, setOpen] = useAtom(coreServices.workbenchState.$openOmniSearch);
+  const [newNoteDialog, setNewNoteDialog] = useAtom(
+    coreServices.workbenchState.$newNoteDialog,
+  );
 
   useEffect(() => {
     const rem2 = errorEmitter.on(
       'event::browser-error-handler-service:app-error',
       (event) => {
-        toast.error(`x:${event.error.message}`, {
+        toast.error(`${event.error.message}`, {
           duration: Number.POSITIVE_INFINITY,
         });
       },
@@ -87,10 +68,6 @@ export function AppInner({
     };
   }, [errorEmitter, logger]);
 
-  useC('command::ui:new-note-dialog', () => {
-    setNewNoteDialog(true);
-  });
-
   return (
     <>
       <WorkspaceDialogRoot
@@ -98,15 +75,11 @@ export function AppInner({
         onOpenChange={setOpenWsDialog}
         onDone={({ wsName }) => {
           setOpenWsDialog(false);
-          coreServices.workspace
-            .createWorkspaceInfo({
-              metadata: {},
-              name: wsName,
-              type: WorkspaceType.Browser,
-            })
-            .then(() => {
-              refreshWorkspaces();
-            });
+          coreServices.workspaceOps.createWorkspaceInfo({
+            metadata: {},
+            name: wsName,
+            type: WorkspaceType.Browser,
+          });
         }}
       />
 
@@ -138,14 +111,7 @@ export function AppInner({
         }}
       />
       <Toaster />
-      <SidebarComponent
-        logger={logger}
-        activeWsPaths={activeWsPaths}
-        setActiveWsPaths={setActiveWsPaths}
-        setOpen={setOpen}
-        setOpenWsDialog={setOpenWsDialog}
-        workspaces={workspaces}
-      >
+      <SidebarComponent>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
           <Sidebar.SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />

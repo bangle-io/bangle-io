@@ -24,7 +24,7 @@ class TestService extends BaseService {
 async function setup() {
   const { commonOpts, mockLog } = makeTestService();
   const logger = commonOpts.logger;
-  const commandRegistry = new CommandRegistryService(commonOpts);
+  const commandRegistry = new CommandRegistryService(commonOpts, undefined);
 
   const dispatchService = new CommandDispatchService(commonOpts, {
     commandRegistry,
@@ -76,6 +76,9 @@ describe('CommandDispatchService', () => {
         fileSystem: expect.any(TestService),
       },
       null,
+      {
+        store: expect.any(Object),
+      },
     );
 
     () => {
@@ -131,6 +134,9 @@ describe('CommandDispatchService', () => {
       {
         workspaceType: 'browser',
         wsName: 'test-ws',
+      },
+      {
+        store: expect.any(Object),
       },
     );
 
@@ -226,7 +232,9 @@ describe('CommandDispatchService', () => {
     dispatchService.dispatch('command::ui:toggle-sidebar', null, 'testSource');
 
     // handler should be called with an empty object
-    expect(handler).toHaveBeenCalledWith({}, null);
+    expect(handler).toHaveBeenCalledWith({}, null, {
+      store: expect.any(Object),
+    });
   });
 
   test('should throw error when dispatch service is not ready', async () => {

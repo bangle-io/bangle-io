@@ -55,6 +55,7 @@
 		"globals.d.ts"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"packages/js-lib/color-scheme-manager/src/**/*"
 	]
 }

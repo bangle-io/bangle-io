@@ -6,13 +6,14 @@ export class BrowserErrorHandlerService extends BaseService {
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    _dependencies: undefined,
+    dependencies: undefined,
     private emitter: ErrorEmitter,
   ) {
     super({
       ...baseOptions,
       name: 'browser-error-handler',
       kind: 'platform',
+      dependencies,
     });
     window.addEventListener('error', this.handleError);
     window.addEventListener('unhandledrejection', this.handleError);

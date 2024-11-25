@@ -8,7 +8,11 @@ import {
   NavigationService,
   ShortcutService,
   type ShortcutServiceConfig,
+  WorkbenchService,
+  WorkbenchStateService,
+  WorkspaceOpsService,
   WorkspaceService,
+  WorkspaceStateService,
 } from '@bangle.io/service-core';
 import {
   BrowserErrorHandlerService,
@@ -24,6 +28,7 @@ import type {
   Services,
   Store,
 } from '@bangle.io/types';
+import { atom } from 'jotai';
 
 export function initializeServices(
   logger: Logger,
@@ -101,7 +106,7 @@ function initPlatformServices(
   );
   // error service should be initialized asap to catch any errors
   errorService.initialize();
-  const idbDatabase = new IdbDatabaseService(commonOpts);
+  const idbDatabase = new IdbDatabaseService(commonOpts, undefined);
   const fileStorageServiceIdb = new FileStorageIndexedDB(
     commonOpts,
     undefined,
@@ -124,7 +129,12 @@ function initCoreServices(
   commonOpts: BaseServiceCommonOptions,
   platformServices: PlatformServices,
 ): CoreServices {
-  const commandRegistryService = new CommandRegistryService(commonOpts);
+  const $workspaceChanged = atom(0);
+
+  const commandRegistryService = new CommandRegistryService(
+    commonOpts,
+    undefined,
+  );
   const commandDispatcherService = new CommandDispatchService(commonOpts, {
     commandRegistry: commandRegistryService,
   });
@@ -135,24 +145,48 @@ function initCoreServices(
       commonOpts.logger.info('File change:', change);
     },
   );
-  const navigationService = new NavigationService(commonOpts, {
+  const navigation = new NavigationService(commonOpts, {
     routerService: platformServices.router,
   });
-  const shortcutService = new ShortcutService(commonOpts, undefined, document);
-  const workspaceService = new WorkspaceService(
+
+  const shortcut = new ShortcutService(commonOpts, undefined, document);
+  const workbenchState = new WorkbenchStateService(commonOpts, undefined);
+
+  const workbench = new WorkbenchService(commonOpts, {
+    workbenchState,
+  });
+
+  const workspaceOps = new WorkspaceOpsService(
     commonOpts,
     { database: platformServices.database },
     (change) => {
       commonOpts.logger.info('Workspace change:', change);
+      commonOpts.store.set($workspaceChanged, (prev) => prev + 1);
     },
   );
+
+  const workspaceState = new WorkspaceStateService(commonOpts, {
+    navigation,
+    fileSystem: fileSystemService,
+    workspaceOps,
+  });
+  const workspace = new WorkspaceService(commonOpts, {
+    workspaceOps,
+    workspaceState,
+    navigation,
+    fileSystem: fileSystemService,
+  });
 
   return {
     commandDispatcher: commandDispatcherService,
     commandRegistry: commandRegistryService,
     fileSystem: fileSystemService,
-    navigation: navigationService,
-    shortcut: shortcutService,
-    workspace: workspaceService,
+    navigation,
+    shortcut,
+    workbenchState,
+    workspaceOps,
+    workbench,
+    workspace,
+    workspaceState,
   };
 }

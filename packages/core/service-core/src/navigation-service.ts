@@ -4,21 +4,24 @@ import type {
   BaseServiceCommonOptions,
   RouterState,
 } from '@bangle.io/types';
-import { pathnameToWsPath, wsPathToPathname } from '@bangle.io/ws-path';
+import {
+  isValidFileWsPath,
+  pathnameToWsPath,
+  resolvePath,
+  wsPathToPathname,
+} from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 
 export class NavigationService extends BaseService {
   private routerService: BaseRouterService;
 
-  readonly atom = {
-    wsName: atom<string | undefined>(undefined),
-    wsPath: atom<string | undefined>(undefined),
-  };
+  $wsName = atom<string | undefined>(undefined);
+  $wsPath = atom<string | undefined>(undefined);
 
   resolveAtoms() {
     return {
-      wsName: this.store.get(this.atom.wsName),
-      wsPath: this.store.get(this.atom.wsPath),
+      wsName: this.store.get(this.$wsName),
+      wsPath: this.store.get(this.$wsPath),
     };
   }
 
@@ -73,9 +76,15 @@ export class NavigationService extends BaseService {
 
   private syncAtoms() {
     const { wsName, wsPath } = pathnameToWsPath(this.routerService.pathname);
+    if (wsPath) {
+      if (!isValidFileWsPath(wsPath)) {
+        this.goNotFound(this.routerService.pathname);
+        return;
+      }
+    }
     this.logger.debug(`Route changed to ${wsName} - ${wsPath}`);
-    this.store.set(this.atom.wsName, wsName);
-    this.store.set(this.atom.wsPath, wsPath);
+    this.store.set(this.$wsName, wsName);
+    this.store.set(this.$wsPath, wsPath);
   }
 
   go(to: string | URL, options?: { replace?: boolean; state?: RouterState }) {
@@ -94,5 +103,14 @@ export class NavigationService extends BaseService {
     this.go(`/ws/${wsName}`);
   }
 
-  // goNotFound(message?: string) {}
+  goNotFound(originalPath?: string) {
+    this.logger.error(`goNotFound ${originalPath}`);
+
+    let suffix = '';
+    suffix += originalPath
+      ? `?originalPath=${encodeURIComponent(originalPath)}`
+      : '';
+
+    this.go(`/ws-not-found${suffix}`);
+  }
 }

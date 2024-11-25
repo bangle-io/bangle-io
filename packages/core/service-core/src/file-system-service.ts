@@ -12,6 +12,7 @@ import {
   resolvePath,
   validateFileWsPath,
 } from '@bangle.io/ws-path';
+import { atom } from 'jotai';
 
 type ChangeEvent =
   | {
@@ -34,12 +35,14 @@ type ChangeEvent =
 export class FileSystemService extends BaseService {
   private fileStorageService: BaseFileStorageService;
 
+  $fileChanged = atom(0);
+
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: {
       fileStorageService: BaseFileStorageService;
     },
-    private onChange: (change: ChangeEvent) => void,
+    private onChangeExternal: (change: ChangeEvent) => void,
   ) {
     super({
       ...baseOptions,
@@ -50,17 +53,18 @@ export class FileSystemService extends BaseService {
     this.fileStorageService = dependencies.fileStorageService;
   }
 
-  protected async onInitialize(): Promise<void> {
-    this.logger.info('Initializing file service');
-  }
+  protected async onInitialize(): Promise<void> {}
 
-  protected async onDispose(): Promise<void> {
-    this.logger.info('Disposing file service');
-  }
+  protected async onDispose(): Promise<void> {}
 
   isFileTypeSupported({ extension }: { extension: string }) {
     // TODO: we are only doing notes for now, need to expand
     return VALID_NOTE_EXTENSIONS_SET.has(extension);
+  }
+
+  private onChange(change: ChangeEvent) {
+    this.store.set(this.$fileChanged, (v) => v + 1);
+    this.onChangeExternal(change);
   }
 
   async listFiles(
@@ -68,6 +72,7 @@ export class FileSystemService extends BaseService {
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
     await this.initializedPromise;
+
     let wsPaths = await this.fileStorageService.listAllFiles(
       wsName,
       abortSignal,

@@ -24,14 +24,14 @@ export class FileStorageIndexedDB
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    _dependencies: undefined,
+    dependencies: undefined,
     private readonly onChange: (event: FileStorageChangeEvent) => void,
   ) {
     super({
       ...baseOptions,
       name: 'file-storage-indexeddb',
       kind: 'platform',
-      dependencies: {},
+      dependencies,
     });
   }
 

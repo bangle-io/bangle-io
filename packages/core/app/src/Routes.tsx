@@ -14,6 +14,11 @@ export function AppRoutes() {
       <Route path="/ws/:wsName">
         <PageWsHome />
       </Route>
+
+      <Route path="/ws-not-found">
+        <PageNotFound />
+      </Route>
+
       <Route>404, Not Found!</Route>
     </Switch>
   );

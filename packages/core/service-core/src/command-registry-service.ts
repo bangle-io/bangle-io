@@ -18,12 +18,12 @@ export class CommandRegistryService extends BaseService<{
     return Array.from(this.commands.values());
   }
 
-  constructor(baseOptions: BaseServiceCommonOptions) {
+  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
     super({
       ...baseOptions,
       name: 'command-registry',
       kind: 'core',
-      dependencies: {},
+      dependencies,
       needsConfig: true,
     });
   }

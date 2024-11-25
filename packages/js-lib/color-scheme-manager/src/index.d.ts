@@ -1,5 +1,6 @@
 /**
  * This file needs to be compiled with TSC because vite config needs to import it for script injection
+ * Please run pnpm build-color-scheme-manager after any change
  */
 type ThemePreference = 'light' | 'dark' | 'system';
 export declare const THEME_MANAGER_DEFAULT_CONFIG: {

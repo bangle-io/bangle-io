@@ -29,13 +29,14 @@ export class MemoryRouterService
   }
   constructor(
     baseOptions: BaseServiceCommonOptions,
+    dependencies: undefined,
     private constructorOptions: { basePath?: string } = {},
   ) {
     super({
       ...baseOptions,
       name: 'memory-router',
       kind: 'platform',
-      dependencies: {},
+      dependencies,
     });
   }
 

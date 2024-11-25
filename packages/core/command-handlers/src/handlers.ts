@@ -91,4 +91,24 @@ export const commandHandlers = [
       );
     },
   ),
+
+  c('command::ws:go-workspace', ({ navigation }, { wsName }) => {
+    navigation.goWorkspace(wsName);
+  }),
+
+  c('command::ui:toggle-sidebar', ({ workbenchState }, _, { store }) => {
+    store.set(workbenchState.$sidebarOpen, (prev) => !prev);
+  }),
+
+  c('command::ui:new-workspace-dialog', ({ workbenchState }, _, { store }) => {
+    store.set(workbenchState.$openWsDialog, (prev) => !prev);
+  }),
+
+  c('command::ui:new-note-dialog', ({ workbenchState }, __, { store }) => {
+    store.set(workbenchState.$newNoteDialog, (prev) => !prev);
+  }),
+
+  c('command::ui:toggle-omni-search', ({ workbenchState }, _, { store }) => {
+    store.set(workbenchState.$openOmniSearch, (prev) => !prev);
+  }),
 ];

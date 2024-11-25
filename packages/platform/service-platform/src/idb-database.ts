@@ -34,17 +34,16 @@ export interface AppDatabase extends BangleDbSchema {
 export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   db!: idb.IDBPDatabase<AppDatabase>;
 
-  constructor(baseOptions: BaseServiceCommonOptions) {
+  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
     super({
       ...baseOptions,
       name: 'idb-database',
       kind: 'platform',
-      dependencies: {},
+      dependencies,
     });
   }
 
   protected async onInitialize(): Promise<void> {
-    this.logger.info('Initializing IndexedDB');
     const logger = this.logger;
     this.db = await idb.openDB(DB_NAME, DB_VERSION, {
       upgrade(db, oldVersion) {
@@ -79,7 +78,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
 
   protected async onDispose(): Promise<void> {
     this.logger.info('Disposing IndexedDB');
-    this.db.close();
+    this.db?.close();
     this.logger.info('IndexedDB disposed');
   }
 

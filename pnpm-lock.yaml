@@ -226,6 +226,16 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
+      jotai:
+        specifier: ^2.10.3
+        version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
+    devDependencies:
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../shared/test-utils
 
   packages/core/omni-search:
     dependencies:

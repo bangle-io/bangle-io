@@ -1,3 +1,4 @@
+// Avoid changing the default config, as it is implicitly in rest of the app.
 export const THEME_MANAGER_DEFAULT_CONFIG = {
     darkThemeClass: 'BU_dark-scheme',
     lightThemeClass: 'BU_light-scheme',

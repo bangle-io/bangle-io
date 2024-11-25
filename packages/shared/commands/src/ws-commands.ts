@@ -7,9 +7,19 @@ export const wsCommands = [
     id: 'command::ws:new-note-from-input',
     title: 'New Note',
     omniSearch: false,
-    services: ['workspace', 'fileSystem', 'navigation'],
+    services: ['workspaceOps', 'fileSystem', 'navigation'],
     args: {
       inputPath: T.String,
+    },
+  },
+
+  {
+    id: 'command::ws:go-workspace',
+    title: 'Go to Workspace',
+    omniSearch: false,
+    services: ['navigation'],
+    args: {
+      wsName: T.String,
     },
   },
 ] as const satisfies Command[];

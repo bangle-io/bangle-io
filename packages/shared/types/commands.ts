@@ -1,6 +1,6 @@
 import type { BaseService } from '@bangle.io/base-utils';
 import type { Validator } from '@bangle.io/mini-zod';
-import type { CommandExposedServices } from './services';
+import type { CommandExposedServices, Store } from './services';
 
 // To keep things simple we are only allowing a select few types
 export type AllowedValidator =
@@ -29,4 +29,7 @@ export type Command = {
 export type CommandHandler = (
   services: Record<string, BaseService>,
   args: any,
+  context: {
+    store: Store;
+  },
 ) => void | Promise<void>;

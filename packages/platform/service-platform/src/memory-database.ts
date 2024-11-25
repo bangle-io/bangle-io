@@ -12,12 +12,12 @@ export class MemoryDatabaseService
   private workspaces = new Map<string, unknown>();
   private miscData = new Map<string, unknown>();
 
-  constructor(baseOptions: BaseServiceCommonOptions) {
+  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
     super({
       ...baseOptions,
       name: 'memory-database',
       kind: 'platform',
-      dependencies: {},
+      dependencies,
     });
   }
 

@@ -75,3 +75,20 @@ export function isAppError(error: unknown): error is BaseError {
 
   return true;
 }
+
+export async function handleAsyncAppError<T>(
+  promise: Promise<T>,
+  fallbackValue: (appError: AppError) => NoInfer<T>,
+) {
+  try {
+    return await promise;
+  } catch (error) {
+    if (error instanceof BaseError) {
+      const appError = getAppErrorCause(error);
+      if (appError) {
+        return fallbackValue(appError);
+      }
+    }
+    throw error;
+  }
+}

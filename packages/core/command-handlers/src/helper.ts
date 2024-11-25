@@ -5,6 +5,7 @@ import type {
   Command,
   CommandExposedServices,
   CommandHandler,
+  Store,
 } from '@bangle.io/types';
 import { useEffect } from 'react';
 
@@ -24,6 +25,9 @@ export function c<T extends BangleAppCommand['id']>(
       Extract<BangleAppCommand, { id: T }>['services'][number]
     >,
     args: CommandArgs<Extract<BangleAppCommand, { id: T }>>,
+    context: {
+      store: Store;
+    },
   ) => void | Promise<void>,
 ): {
   id: T;
@@ -43,6 +47,9 @@ export function useC<T extends BangleAppCommand['id']>(
       Extract<BangleAppCommand, { id: T }>['services'][number]
     >,
     args: CommandArgs<Extract<BangleAppCommand, { id: T }>>,
+    context: {
+      store: Store;
+    },
   ) => void | Promise<void>,
 ) {
   const coreServices = useCoreServices();

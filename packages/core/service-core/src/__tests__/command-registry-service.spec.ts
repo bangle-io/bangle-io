@@ -12,7 +12,7 @@ describe('CommandRegistryService', () => {
     const { commonOpts } = makeTestService();
 
     _logger = commonOpts.logger;
-    service = new CommandRegistryService(commonOpts);
+    service = new CommandRegistryService(commonOpts, undefined);
     service.setInitConfig({ commands: [], commandHandlers: [] });
   });
 

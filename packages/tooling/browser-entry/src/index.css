@@ -1,4 +1,5 @@
 @tailwind base;
+
 @tailwind components;
 @tailwind utilities;
 
@@ -23,6 +24,26 @@
     --BV-sidebar-accent-foreground: 240 5.9% 10%;
     --BV-sidebar-border: 220 13% 91%;
     --BV-sidebar-ring: 217.2 91.2% 59.8%;
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgb(var(--BV-secondary)) rgb(var(--BV-background));
+    }
+
+    *::-webkit-scrollbar {
+      width: 15px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: rgb(var(--BV-secondary) / 50);
+      border-radius: 5px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: rgb(var(--BV-secondary) / 50);
+      border-radius: 14px;
+      border: 3px solid rgb(var(--BV-primary) / 50);
+    }
   }
 
   .BU_light-scheme {

@@ -42,14 +42,14 @@ export class BrowserRouterService
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    _dependencies: undefined,
+    dependencies: undefined,
     private constructorOptions: { basePath?: string; isStatic?: boolean } = {},
   ) {
     super({
       ...baseOptions,
       name: 'browser-router',
       kind: 'platform',
-      dependencies: {},
+      dependencies,
     });
     for (const event of browserHistoryStateEvents) {
       window.addEventListener(event, this.onBrowserHistoryEvent);

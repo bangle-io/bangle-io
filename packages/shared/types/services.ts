@@ -1,23 +1,28 @@
 import type { BaseService, Logger } from '@bangle.io/base-utils';
 import type { commandExcludedServices } from '@bangle.io/constants';
-import type { createStore } from 'jotai';
 import type {
+  CommandDispatchService,
   CommandRegistryService,
   FileSystemService,
   NavigationService,
   ShortcutService,
+  WorkbenchService,
+  WorkbenchStateService,
+  WorkspaceOpsService,
   WorkspaceService,
-} from '../../core/service-core/src';
-import type { CommandDispatchService } from '../../core/service-core/src';
+  WorkspaceStateService,
+} from '@bangle.io/service-core';
 import type {
   BrowserErrorHandlerService,
   IdbDatabaseService,
-} from '../../platform/service-platform/src';
+} from '@bangle.io/service-platform';
+import type { createStore } from 'jotai';
+
 import type { BaseAppDatabase } from './base-database';
 import type { BaseFileStorageProvider } from './base-file-storage';
 import type { BaseRouter } from './base-router';
 
-export type ServiceKind = 'platform' | 'core' | 'ui';
+export type ServiceKind = 'platform' | 'core';
 
 export type Store = ReturnType<typeof createStore>;
 
@@ -51,13 +56,17 @@ export type CommandExcludedServices = (typeof commandExcludedServices)[number];
 export type CommandExposedServices = Omit<AllServices, CommandExcludedServices>;
 
 export type CoreServices = {
-  workspace: WorkspaceService;
-  fileSystem: FileSystemService;
-  shortcut: ShortcutService;
   // ensure this name stays in sync with the name in the CommandExposedServices
-  commandRegistry: CommandRegistryService;
   commandDispatcher: CommandDispatchService;
+  commandRegistry: CommandRegistryService;
+  fileSystem: FileSystemService;
   navigation: NavigationService;
+  shortcut: ShortcutService;
+  workbench: WorkbenchService;
+  workbenchState: WorkbenchStateService;
+  workspace: WorkspaceService;
+  workspaceOps: WorkspaceOpsService;
+  workspaceState: WorkspaceStateService;
 };
 
 export type PlatformServices = {

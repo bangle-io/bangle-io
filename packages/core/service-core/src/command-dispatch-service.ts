@@ -84,6 +84,6 @@ export class CommandDispatchService extends BaseService<{
       this.logger.warn(`Handler for command "${id}" not found.`);
     }
 
-    void handler?.(result, args);
+    void handler?.(result, args, { store: this.store });
   }
 }

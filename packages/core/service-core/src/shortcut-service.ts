@@ -30,7 +30,7 @@ export class ShortcutService extends BaseService<{
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    _dependencies: undefined,
+    dependencies: undefined,
     private readonly target: Document,
   ) {
     super({
@@ -38,6 +38,7 @@ export class ShortcutService extends BaseService<{
       name: 'shortcut',
       kind: 'core',
       needsConfig: true,
+      dependencies,
     });
 
     target.addEventListener('keydown', this.eventHandler);
