@@ -31,7 +31,7 @@ export function getGithubUrl(error: Error, logger: Logger): string {
     );
     const excess = encodedBody.length - MAX_URL_LENGTH;
     const maxBodyLength = joinedBody.length - excess - 3;
-    const truncatedBody = joinedBody.substring(0, maxBodyLength) + '...';
+    const truncatedBody = `${joinedBody.substring(0, maxBodyLength)}...`;
     encodedBody = encodeURIComponent(truncatedBody);
   }
 
@@ -86,7 +86,7 @@ function formatErrorCauses(error: Error): string[] {
   let level = 1;
 
   while (currentError instanceof Error && level <= 2) {
-    const title = 'Cause ' + level;
+    const title = `Cause ${level}`;
     sections.push(formatErrorSection(title, currentError));
     currentError = currentError.cause;
     level++;

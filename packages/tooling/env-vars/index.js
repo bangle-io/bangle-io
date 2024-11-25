@@ -80,7 +80,7 @@ module.exports = ({
   isVite = false,
   isStorybook = false,
   helpDocsVersion,
-  publicDirPath,
+  inlinedScripts = '',
 }) => {
   const appEnv = getAppEnv(isProduction);
 
@@ -113,8 +113,6 @@ module.exports = ({
 
   bangleConfig.print();
 
-  const inlinedScripts = '';
-
   return {
     helpDocsVersion,
     appEnv,
@@ -132,19 +130,17 @@ ${inlinedScripts}
       data-lazy="no"
     ></script>`
         : '',
-      bangleHelpPreload: `<link
-        rel="preload"
-        href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/getting%20started.md"
-        as="fetch"
-        crossorigin
-      />`,
-      viteJsEntry: isVite
-        ? '<script type="module" src="index.tsx"></script>'
-        : '',
-      fathom:
-        appEnv === 'production'
-          ? `<script defer src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="AOGIPUKY"></script>`
-          : '',
+      // bangleHelpPreload: `<link
+      //   rel="preload"
+      //   href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/getting%20started.md"
+      //   as="fetch"
+      //   crossorigin
+      // />`,
+
+      // fathom:
+      //   appEnv === 'production'
+      //     ? `<script defer src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="AOGIPUKY"></script>`
+      //     : '',
     },
     globalIdentifiers: {
       __BANGLE_BUILD_TIME_CONFIG__: JSON.stringify(bangleConfig.serialize()),

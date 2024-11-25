@@ -55,6 +55,7 @@
     "e2e-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test --update-snapshots",
     "e2e-ct-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ct --update-snapshots",
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
+    "build-color-scheme-manager": "pnpm -r --filter \"@bangle.io/color-scheme-manager\" run build",
     "lint:fix": "biome check . --fix",
     "lint": "biome check .",
     "local-ci-check": "bash local-ci-check.sh",

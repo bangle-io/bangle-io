@@ -1,7 +1,11 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
   "files": {
-    "ignore": ["missing-test-types.d.ts"]
+    "ignore": [
+      "missing-test-types.d.ts",
+      "packages/js-lib/color-scheme-manager/src/index.d.ts",
+      "packages/js-lib/color-scheme-manager/src/index.js"
+    ]
   },
   "vcs": {
     "enabled": true,

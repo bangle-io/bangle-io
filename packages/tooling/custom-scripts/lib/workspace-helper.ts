@@ -4,7 +4,7 @@ import path from 'node:path';
 import {
   type BanglePackageConfig,
   type BangleWorkspaceConfig,
-  ROOT_PKG_NAME,
+  KNOWN_PACKAGES,
   banglePackageConfigSchema,
   bangleWorkspaceConfigSchema,
 } from '../config';
@@ -150,7 +150,7 @@ export async function setup({
 
         return (
           !p.packageJSON.bangleWorkspaceConfig &&
-          p.packageJSON.name !== ROOT_PKG_NAME
+          p.packageJSON.name !== KNOWN_PACKAGES.rootPkg
         );
       })
       .map((p): [string, PackageState] => {

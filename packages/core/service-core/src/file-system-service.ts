@@ -54,6 +54,10 @@ export class FileSystemService extends BaseService {
     this.logger.info('Initializing file service');
   }
 
+  protected async onDispose(): Promise<void> {
+    this.logger.info('Disposing file service');
+  }
+
   isFileTypeSupported({ extension }: { extension: string }) {
     // TODO: we are only doing notes for now, need to expand
     return VALID_NOTE_EXTENSIONS_SET.has(extension);

@@ -276,7 +276,7 @@ function resolveFileHandle({
         if (entry.kind === 'file') {
           return allowedFile(entry);
         }
-        throw new Error('Unknown kind of entry: ' + (entry as any).kind);
+        throw new Error(`Unknown kind of entry: ${(entry as any).kind}`);
       });
       dirToChildMap.set(dirHandle, children);
     };

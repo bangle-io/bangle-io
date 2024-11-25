@@ -50,6 +50,10 @@ export class WorkspaceService extends BaseService {
     this.logger.info('Initializing workspace service');
   }
 
+  protected async onDispose(): Promise<void> {
+    this.logger.info('Disposing workspace service');
+  }
+
   async getWorkspaceInfo(
     wsName: string,
     options?: WorkspaceDatabaseQueryOptions,

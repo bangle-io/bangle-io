@@ -7,13 +7,6 @@ import type {
 import { pathnameToWsPath, wsPathToPathname } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 
-type NavigationEvent = {
-  pathname: string;
-  search: string;
-  state: RouterState;
-  kind: string;
-};
-
 export class NavigationService extends BaseService {
   private routerService: BaseRouterService;
 
@@ -63,10 +56,18 @@ export class NavigationService extends BaseService {
     this.setupRouterListener();
   }
 
+  protected async onDispose(): Promise<void> {}
+
   private setupRouterListener() {
     this.syncAtoms();
-    this.routerService.emitter.on('event::router:update', (_event) => {
-      this.syncAtoms();
+    const cleanup = this.routerService.emitter.on(
+      'event::router:update',
+      (_event) => {
+        this.syncAtoms();
+      },
+    );
+    this.abortSignal.addEventListener('abort', () => {
+      cleanup();
     });
   }
 

@@ -1,6 +1,8 @@
 import './index.css';
 
 import { App } from '@bangle.io/app';
+import { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import { initializeServices } from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
@@ -21,6 +23,8 @@ const errorEmitter: ErrorEmitter = new Emitter();
 const store = createStore();
 const services = initializeServices(logger, errorEmitter, store);
 
+const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
+
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -29,6 +33,7 @@ createRoot(document.getElementById('root')!).render(
       services={services}
       store={store}
       errorEmitter={errorEmitter}
+      themeManager={themeManager}
     />
   </StrictMode>,
 );

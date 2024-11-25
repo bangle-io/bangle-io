@@ -55,7 +55,9 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/initialize-services": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
-    "jotai": "^2.10.3"
+    "jotai": "^2.10.3",
+    "@bangle.io/color-scheme-manager": "workspace:*",
+    "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
     "@storybook/react": "^8.4.4",

@@ -1,4 +1,4 @@
-// @vitest-environment happy-dom
+// @vitest-environment jsdom
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { type KeyBinding, ShortcutManager } from '../index';

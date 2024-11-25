@@ -29,3 +29,4 @@ export enum WorkspaceType {
 
 export * from './command-excluded-services';
 export * from './browser-history-events';
+export * from './theme';

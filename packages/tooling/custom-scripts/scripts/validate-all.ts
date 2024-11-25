@@ -1,9 +1,4 @@
-import {
-  BANGLE_IO_CONSTANTS_PKG_NAME,
-  BANGLE_IO_SHARED_TYPES_PKG_NAME,
-  VITEST_PKG_NAME,
-  serviceKindOrders,
-} from '../config';
+import { KNOWN_PACKAGES, VITEST_PKG_NAME, serviceKindOrders } from '../config';
 import {
   type SetupResult,
   isMainModule,
@@ -23,6 +18,7 @@ if (isMainModule(import.meta.url)) {
 export async function validate(item: SetupResult) {
   const logger = makeLogger('validate');
   const promises: Promise<any>[] = [
+    testKnownPackagesExistInWorkspace(item.packagesMap),
     shouldOnlyUseDependenciesDefinedInPackageJSON(item.packagesMap),
     shouldOnlyUseDevDependenciesDefinedInPackageJSON(item.packagesMap),
     shouldRespectAllowedWorkspace(item.packagesMap, item.workspaces),
@@ -35,6 +31,34 @@ export async function validate(item: SetupResult) {
 
   await Promise.all(promises);
   logger('Validation successful');
+}
+
+async function testKnownPackagesExistInWorkspace(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testKnownPackagesExistInWorkspace',
+  );
+
+  const missingPackages: string[] = [];
+
+  for (const pkgName of Object.values(KNOWN_PACKAGES)) {
+    if (pkgName === KNOWN_PACKAGES.rootPkg) {
+      continue;
+    }
+
+    if (!packageMap.has(pkgName)) {
+      missingPackages.push(pkgName);
+    }
+  }
+
+  if (missingPackages.length > 0) {
+    throwValidationError(
+      `The following known packages are missing from the workspace: ${missingPackages.join(
+        ', ',
+      )}`,
+    );
+  }
 }
 
 async function shouldRespectAllowedWorkspace(
@@ -50,7 +74,7 @@ async function shouldRespectAllowedWorkspace(
     // to allow for circular dependencies, since it is just types.
     // this makes it convenient to rely on types without explicitly
     // depending on the corresponding JS code.
-    if (name === BANGLE_IO_SHARED_TYPES_PKG_NAME) {
+    if (name === KNOWN_PACKAGES.sharedTypedPkg) {
       continue;
     }
 
@@ -193,7 +217,7 @@ async function testUniversalPackagesToRelyOnlyOnUniversal(
     }
 
     // shared-types is a special package that can be imported anywhere
-    if (pkg.name === BANGLE_IO_SHARED_TYPES_PKG_NAME) {
+    if (pkg.name === KNOWN_PACKAGES.sharedTypedPkg) {
       continue;
     }
 
@@ -266,32 +290,38 @@ async function testSharedConstantsShouldNotHaveDeps(
     'testSharedConstantsShouldNotHaveDeps',
   );
 
+  const allowedDependencies = [
+    KNOWN_PACKAGES.sharedTypedPkg,
+    KNOWN_PACKAGES.colorSchemeManagerPkg,
+  ];
+
   let visited = false;
 
   for (const [name, pkg] of packageMap.entries()) {
-    if (pkg.name !== BANGLE_IO_CONSTANTS_PKG_NAME) {
+    if (pkg.name !== KNOWN_PACKAGES.constantsPkg) {
       continue;
     }
 
     visited = true;
     const deps = Object.keys(pkg.dependencies);
 
-    const [firstPackage, ...rest] = deps;
+    const invalidDeps = deps.filter(
+      (dep) => !allowedDependencies.includes(dep),
+    );
 
-    if (
-      rest.length > 0 ||
-      (firstPackage && firstPackage !== BANGLE_IO_SHARED_TYPES_PKG_NAME) ||
-      Object.keys(pkg.devDependencies ?? {}).length > 0
-    ) {
+    const hasDevDependencies =
+      Object.keys(pkg.devDependencies ?? {}).length > 0;
+
+    if (invalidDeps.length > 0 || hasDevDependencies) {
       throwValidationError(
-        `Package "${name}" $pkg.packageJSONPathcan only depend on one package $BANGLE_IO_SHARED_TYPES_PKG_NAME.`,
+        `Package "${name}" ${pkg.packageJSONPath} can only depend on the following packages: ${allowedDependencies.join(', ')}.`,
       );
     }
   }
 
   if (!visited) {
     throwValidationError(
-      `Package "${BANGLE_IO_CONSTANTS_PKG_NAME}" is not present in the workspace`,
+      `Package "${KNOWN_PACKAGES.constantsPkg}" is not present in the workspace`,
     );
   }
 }

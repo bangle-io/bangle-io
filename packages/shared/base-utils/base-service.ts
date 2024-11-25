@@ -118,6 +118,10 @@ export abstract class BaseService<Config = void> {
     this.lifecycle.controller.abort();
   }
 
+  public get abortSignal() {
+    return this.lifecycle.controller.signal;
+  }
+
   public get initializedPromise(): Promise<void> {
     return this.lifecycle.initializedPromise;
   }

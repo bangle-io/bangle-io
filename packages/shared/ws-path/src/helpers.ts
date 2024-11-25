@@ -26,7 +26,7 @@ export function filePathToWsPath(wsName: string, filePathInput: string) {
   if (filePath.startsWith('/')) {
     filePath = filePath.slice(1);
   }
-  return wsName + ':' + filePath;
+  return `${wsName}:${filePath}`;
 }
 
 export const toFSPath = (wsPath: string) => {
@@ -67,7 +67,7 @@ export function validateWsPath(wsPath: string) {
       invalidPath: wsPath,
     });
   }
-  const [wsName, filePath, ...others] = wsPath.split(':');
+  const [_wsName, _filePath, ...others] = wsPath.split(':');
   if (others.length > 0) {
     throwAppError(
       'error::ws-path:invalid-ws-path',

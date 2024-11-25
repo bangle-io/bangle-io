@@ -6,7 +6,7 @@ describe('Validators', () => {
   test('StringValidator should validate strings', () => {
     expect(T.String.validate('hello')).toBe(true);
     expect(T.String.validate(123)).toBe(false);
-    const result: InferType<typeof T.String> = 'hello';
+    const _result: InferType<typeof T.String> = 'hello';
   });
 
   test('NumberValidator should validate numbers', () => {
@@ -41,9 +41,9 @@ describe('Validators', () => {
     expect(stringArrayValidator.validate('not an array')).toBe(false);
 
     const numberArrayValidator = T.Array(T.Number);
-    const result: InferType<typeof numberArrayValidator> = [1, 4, 3];
+    const _result: InferType<typeof numberArrayValidator> = [1, 4, 3];
     // @ts-expect-error
-    const result2: InferType<typeof numberArrayValidator> = [1, '4', 3];
+    const _result2: InferType<typeof numberArrayValidator> = [1, '4', 3];
 
     expectType<string[], InferType<typeof stringArrayValidator>>(null as any);
   });
@@ -68,7 +68,7 @@ describe('Validators', () => {
       friends: T.Array(personValidator),
     });
 
-    const result: InferType<typeof nestedObjectValidator> = {
+    const _result: InferType<typeof nestedObjectValidator> = {
       person: { name: 'Alice', age: 30 },
       friends: [
         { name: 'Bob', age: 31 },
@@ -76,7 +76,7 @@ describe('Validators', () => {
       ],
     };
 
-    const result2: InferType<typeof nestedObjectValidator> = {
+    const _result2: InferType<typeof nestedObjectValidator> = {
       person: { name: 'Alice', age: 30 },
       friends: [
         { name: 'Bob', age: 31 },

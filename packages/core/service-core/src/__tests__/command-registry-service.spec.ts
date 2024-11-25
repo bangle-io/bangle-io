@@ -5,13 +5,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CommandRegistryService } from '../command-registry-service';
 
 describe('CommandRegistryService', () => {
-  let logger: Logger;
+  let _logger: Logger;
   let service: CommandRegistryService;
 
   beforeEach(() => {
     const { commonOpts } = makeTestService();
 
-    logger = commonOpts.logger;
+    _logger = commonOpts.logger;
     service = new CommandRegistryService(commonOpts);
     service.setInitConfig({ commands: [], commandHandlers: [] });
   });

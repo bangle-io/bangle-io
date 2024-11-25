@@ -17,7 +17,7 @@ describe('wsPathToPathname', () => {
 
   it('should handle empty file path', () => {
     const wsPath = 'my-test-ws:';
-    const expected = '/ws/my-test-ws/';
+    const _expected = '/ws/my-test-ws/';
 
     expect(() => wsPathToPathname(wsPath)).toThrowError(/Invalid filePath/);
   });

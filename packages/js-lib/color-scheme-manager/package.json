@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/constants",
+  "name": "@bangle.io/color-scheme-manager",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/constants"
+    "directory": "packages/js-lib/color-scheme-manager"
   },
   "authors": [
     {
@@ -19,16 +19,17 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "universal",
-    "kind": "static"
+    "kind": "js-util"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "types": "src/index.d.ts",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {},
-  "dependencies": {
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/color-scheme-manager": "workspace:*"
-  }
+  "scripts": {
+    "build": "pnpm tsc src/index.ts --outDir ./src --target ES6 --module es2015 --strict --noEmitOnError false --skipLibCheck --declaration"
+  },
+  "dependencies": {}
 }

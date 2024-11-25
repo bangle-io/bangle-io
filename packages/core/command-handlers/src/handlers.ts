@@ -73,7 +73,7 @@ export const commandHandlers = [
         });
       }
       if (!inputPath.endsWith('.md')) {
-        inputPath = inputPath + '.md';
+        inputPath = `${inputPath}.md`;
       }
       const newWsPath = filePathToWsPath(wsName, inputPath);
 
@@ -82,7 +82,7 @@ export const commandHandlers = [
       void fileSystem.createFile(
         newWsPath,
         new File(
-          ['I am content of ' + fileNameWithoutExt],
+          [`I am content of ${fileNameWithoutExt}`],
           fileNameWithoutExt,
           {
             type: 'text/plain',

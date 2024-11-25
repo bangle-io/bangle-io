@@ -2,9 +2,13 @@ import path from 'node:path';
 import { z } from 'zod';
 
 export const rootPath = path.resolve(__dirname, '../../..');
-export const ROOT_PKG_NAME = 'bangle-io';
-export const BANGLE_IO_CONSTANTS_PKG_NAME = '@bangle.io/constants';
-export const BANGLE_IO_SHARED_TYPES_PKG_NAME = '@bangle.io/types';
+
+export const KNOWN_PACKAGES = {
+  rootPkg: 'bangle-io',
+  constantsPkg: '@bangle.io/constants',
+  sharedTypedPkg: '@bangle.io/types',
+  colorSchemeManagerPkg: '@bangle.io/color-scheme-manager',
+};
 export const VITEST_PKG_NAME = 'vitest';
 
 export const PACKAGE_JSON_DEFAULTS = {

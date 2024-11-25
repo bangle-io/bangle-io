@@ -7,7 +7,7 @@ const toFile = (str: any) => {
   return file;
 };
 
-const serializeMap = (map: any) => {
+const _serializeMap = (map: any) => {
   return Promise.all(
     [...map.entries()].map(async (r) => [r[0], await r[1]?.text()]),
   );

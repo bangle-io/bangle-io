@@ -2,9 +2,7 @@ declare module '@bangle.io/env-vars' {
   export interface HtmlInjections {
     favicon: string;
     sentry: string;
-    bangleHelpPreload: string;
-    viteJsEntry: string;
-    fathom: string;
+    // bangleHelpPreload: string;
     inlinedScripts: string;
   }
 
@@ -21,6 +19,7 @@ declare module '@bangle.io/env-vars' {
     isVite?: boolean;
     isStorybook?: boolean;
     helpDocsVersion: string;
+    inlinedScripts?: string;
   }
 
   const _default: (options: DefaultExportOptions) => BangleConfigOutput;
