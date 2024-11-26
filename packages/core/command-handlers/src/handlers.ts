@@ -2,6 +2,8 @@ import { throwAppError } from '@bangle.io/base-utils';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 import { c } from './helper';
 
+import { Trash2 } from 'lucide-react';
+
 export const commandHandlers = [
   c('command::ui:test-no-use', (_) => {}),
 
@@ -95,6 +97,9 @@ export const commandHandlers = [
   c('command::ws:go-workspace', ({ navigation }, { wsName }) => {
     navigation.goWorkspace(wsName);
   }),
+  c('command::ws:go-ws-path', ({ navigation }, { wsPath }) => {
+    navigation.goWsPath(wsPath);
+  }),
 
   c('command::ui:toggle-sidebar', ({ workbenchState }, _, { store }) => {
     store.set(workbenchState.$sidebarOpen, (prev) => !prev);
@@ -131,12 +136,16 @@ export const commandHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'delete-ws-path-dialog',
-          placeholder: 'Select a note to delete',
-
+          placeholder: 'Select or type a note to delete',
+          badgeText: 'Delete Note',
+          badgeTone: 'destructive',
+          groupHeading: 'Notes',
+          emptyMessage: 'No notes found',
           options: wsPaths.map((path) => ({
             title: resolvePath(path).fileName,
             id: path,
           })),
+          Icon: Trash2,
           onSelect: (option) => {
             const fileName = resolvePath(option.id).fileNameWithoutExt;
             if (confirm(`Are you sure you want to delete "${fileName}"?`)) {

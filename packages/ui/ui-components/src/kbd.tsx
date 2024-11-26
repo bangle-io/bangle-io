@@ -39,7 +39,7 @@ const KbdShortcut = ({
 >) => {
   return (
     <span
-      className={cn('ml-auto text-xs tracking-widest opacity-60', className)}
+      className={cn('ml-auto text-xs tracking-widest opacity-60 ', className)}
       {...props}
     >
       <Kbd keys={keys} />

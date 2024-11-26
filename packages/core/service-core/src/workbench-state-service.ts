@@ -1,6 +1,7 @@
 import { BaseService } from '@bangle.io/base-utils';
 import { throwAppError } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
+import type { DialogSingleSelectProps } from '@bangle.io/ui-components';
 import { atom } from 'jotai';
 
 /**
@@ -14,12 +15,9 @@ export class WorkbenchStateService extends BaseService {
 
   $singleSelectDialog = atom<
     | undefined
-    | {
+    | ({
         dialogId: string;
-        options: { id: string; title?: string }[];
-        onSelect: (option: { id: string; title?: string }) => void;
-        placeholder?: string;
-      }
+      } & Omit<DialogSingleSelectProps, 'open' | 'setOpen'>)
   >(undefined);
 
   constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {

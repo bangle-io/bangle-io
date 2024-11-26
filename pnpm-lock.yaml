@@ -116,6 +116,9 @@ importers:
       jotai:
         specifier: ^2.10.3
         version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
+      lucide-react:
+        specifier: ^0.461.0
+        version: 0.461.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -143,6 +146,9 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+      lucide-react:
+        specifier: ^0.461.0
+        version: 0.461.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -239,15 +245,24 @@ importers:
 
   packages/core/omni-search:
     dependencies:
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../context
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
       '@bangle.io/ui-components':
         specifier: workspace:*
         version: link:../../ui/ui-components
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
+      jotai:
+        specifier: ^2.10.3
+        version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
       lucide-react:
         specifier: ^0.460.0
         version: 0.460.0(react@18.3.1)
@@ -290,6 +305,9 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
+      '@bangle.io/ui-components':
+        specifier: workspace:*
+        version: link:../../ui/ui-components
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
@@ -4610,6 +4628,11 @@ packages:
 
   lucide-react@0.460.0:
     resolution: {integrity: sha512-BVtq/DykVeIvRTJvRAgCsOwaGL8Un3Bxh8MbDxMhEWlZay3T4IpEKDEpwt5KZ0KJMHzgm6jrltxlT5eXOWXDHg==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
+
+  lucide-react@0.461.0:
+    resolution: {integrity: sha512-Scpw3D/dV1bgVRC5Kh774RCm99z0iZpPv75M6kg7QL1lLvkQ1rmI1Sjjic1aGp1ULBwd7FokV6ry0g+d6pMB+w==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
@@ -10293,6 +10316,10 @@ snapshots:
       yallist: 4.0.0
 
   lucide-react@0.460.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
+  lucide-react@0.461.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 

@@ -10,7 +10,7 @@ import {
   CommandList,
 } from './command';
 
-type DialogSingleSelectProps = {
+export type DialogSingleSelectProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   options: { id: string; title?: string }[];
@@ -19,6 +19,8 @@ type DialogSingleSelectProps = {
   groupHeading?: string;
   badgeTone?: 'destructive' | 'default';
   badgeText?: string;
+  emptyMessage?: string;
+  Icon?: React.ElementType;
 };
 
 export function DialogSingleSelect({
@@ -30,6 +32,8 @@ export function DialogSingleSelect({
   groupHeading = '',
   badgeText,
   badgeTone = 'default',
+  emptyMessage = 'No options available.',
+  Icon,
 }: DialogSingleSelectProps) {
   const [search, setSearch] = React.useState('');
   const filteredOptions = React.useMemo(() => {
@@ -58,8 +62,10 @@ export function DialogSingleSelect({
         placeholder={placeholder}
         value={search}
         onValueChange={setSearch}
+        Icon={Icon}
       />
       <CommandList>
+        {emptyMessage && <CommandEmpty>{emptyMessage}</CommandEmpty>}
         <CommandGroup heading={groupHeading}>
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (

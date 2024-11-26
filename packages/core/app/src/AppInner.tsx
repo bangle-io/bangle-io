@@ -17,6 +17,7 @@ import {
   toast,
 } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
+import { FilePlus } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { AppRoutes } from './Routes';
 import { SidebarComponent } from './sidebar';
@@ -93,6 +94,8 @@ export function AppInner({
         placeholder="Enter note name"
         command={{ id: 'new-note-dialog', title: 'Create a new note' }}
         setOpen={setNewNoteDialog}
+        badgeText="New Note"
+        Icon={FilePlus}
         onRun={(input) => {
           setNewNoteDialog(false);
           coreServices.commandDispatcher.dispatch(
@@ -112,6 +115,11 @@ export function AppInner({
         options={singleSelectDialog?.options || []}
         onSelect={singleSelectDialog?.onSelect || (() => {})}
         placeholder={singleSelectDialog?.placeholder}
+        badgeText={singleSelectDialog?.badgeText}
+        badgeTone={singleSelectDialog?.badgeTone}
+        groupHeading={singleSelectDialog?.groupHeading}
+        emptyMessage={singleSelectDialog?.emptyMessage}
+        Icon={singleSelectDialog?.Icon}
       />
       <OmniSearch
         open={open}

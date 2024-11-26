@@ -46,6 +46,7 @@
     "@bangle.io/command-handlers": "workspace:*",
     "wouter": "^3.3.5",
     "jotai": "^2.10.3",
-    "@bangle.io/color-scheme-manager": "workspace:*"
+    "@bangle.io/color-scheme-manager": "workspace:*",
+    "lucide-react": "^0.461.0"
   }
 }

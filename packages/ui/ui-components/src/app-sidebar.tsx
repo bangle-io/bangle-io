@@ -33,7 +33,7 @@ import { Label } from './label';
 
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { type TreeItem, buildTree } from '@bangle.io/ui-utils';
-import { KbdShortcut } from './kdb';
+import { KbdShortcut } from './kbd';
 import {
   Sidebar,
   SidebarContent,

@@ -32,6 +32,9 @@
     "@types/react": "^18.3.12",
     "react": "^18.3.1",
     "@bangle.io/types": "workspace:*",
-    "lucide-react": "^0.460.0"
+    "lucide-react": "^0.460.0",
+    "@bangle.io/context": "workspace:*",
+    "jotai": "^2.10.3",
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

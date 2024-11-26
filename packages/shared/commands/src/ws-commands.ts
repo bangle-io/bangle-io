@@ -21,4 +21,13 @@ export const wsCommands = [
       wsName: T.String,
     },
   },
+  {
+    id: 'command::ws:go-ws-path',
+    title: 'Go to wsPath',
+    omniSearch: false,
+    services: ['navigation'],
+    args: {
+      wsPath: T.String,
+    },
+  },
 ] as const satisfies Command[];

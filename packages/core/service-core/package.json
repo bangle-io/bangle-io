@@ -40,7 +40,8 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
-    "jotai": "^2.10.3"
+    "jotai": "^2.10.3",
+    "@bangle.io/ui-components": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/logger": "workspace:*",

@@ -1,3 +1,4 @@
+import { useCoreServices } from '@bangle.io/context';
 import type { Command } from '@bangle.io/types';
 import {
   CommandBadge,
@@ -9,16 +10,11 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
+  KbdShortcut,
 } from '@bangle.io/ui-components';
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from 'lucide-react';
+import { useAtomValue } from 'jotai';
 
+import { resolvePath } from '@bangle.io/ws-path';
 import React, {} from 'react';
 export function OmniSearch({
   open,
@@ -31,6 +27,9 @@ export function OmniSearch({
   commands: Command[];
   onCommand: (cmd: Command) => void;
 }) {
+  const { workspaceState, commandDispatcher } = useCoreServices();
+  const wsPaths = useAtomValue(workspaceState.$wsPaths);
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput placeholder="Type a command or search..." />
@@ -45,7 +44,26 @@ export function OmniSearch({
                 setOpen(false);
               }}
             >
-              {cmd.title || cmd.id}
+              <span>{cmd.title || cmd.id}</span>
+              {cmd.keybindings && <KbdShortcut keys={cmd.keybindings} />}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Notes">
+          {wsPaths.map((wsPath) => (
+            <CommandItem
+              key={wsPath}
+              onSelect={() => {
+                setOpen(false);
+                commandDispatcher.dispatch(
+                  'command::ws:go-ws-path',
+                  { wsPath: wsPath },
+                  'ui',
+                );
+              }}
+            >
+              <span>{resolvePath(wsPath).filePath}</span>
             </CommandItem>
           ))}
         </CommandGroup>
