@@ -1,4 +1,5 @@
 import { BaseService } from '@bangle.io/base-utils';
+import { throwAppError } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { atom } from 'jotai';
 
@@ -10,6 +11,16 @@ export class WorkbenchStateService extends BaseService {
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
   $newNoteDialog = atom(false);
+
+  $singleSelectDialog = atom<
+    | undefined
+    | {
+        dialogId: string;
+        options: { id: string; title?: string }[];
+        onSelect: (option: { id: string; title?: string }) => void;
+        placeholder?: string;
+      }
+  >(undefined);
 
   constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
     super({

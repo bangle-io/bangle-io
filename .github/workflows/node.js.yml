@@ -58,7 +58,7 @@ jobs:
   e2e-tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.49.0-focal
+    container: mcr.microsoft.com/playwright:v1.48.2-focal
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm

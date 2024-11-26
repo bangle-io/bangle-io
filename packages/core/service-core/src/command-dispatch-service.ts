@@ -60,6 +60,7 @@ export class CommandDispatchService extends BaseService<{
     const result: Record<string, any> = {};
     const services = this.config.exposedServices;
 
+    this.logger.warn(id, command.services);
     for (const serviceName of command.services) {
       const service = services[serviceName];
 

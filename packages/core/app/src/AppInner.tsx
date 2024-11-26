@@ -9,6 +9,7 @@ import type { ErrorEmitter, WorkspaceInfo } from '@bangle.io/types';
 import {
   Breadcrumb,
   DialogSingleInput,
+  DialogSingleSelect,
   Separator,
   Sidebar,
   Toaster,
@@ -33,6 +34,10 @@ export function AppInner({
   const [open, setOpen] = useAtom(coreServices.workbenchState.$openOmniSearch);
   const [newNoteDialog, setNewNoteDialog] = useAtom(
     coreServices.workbenchState.$newNoteDialog,
+  );
+
+  const [singleSelectDialog, setSingleSelectDialog] = useAtom(
+    coreServices.workbenchState.$singleSelectDialog,
   );
 
   useEffect(() => {
@@ -97,17 +102,31 @@ export function AppInner({
           );
         }}
       />
+      <DialogSingleSelect
+        open={Boolean(singleSelectDialog)}
+        setOpen={(open) => {
+          setSingleSelectDialog(
+            open && singleSelectDialog ? singleSelectDialog : undefined,
+          );
+        }}
+        options={singleSelectDialog?.options || []}
+        onSelect={singleSelectDialog?.onSelect || (() => {})}
+        placeholder={singleSelectDialog?.placeholder}
+      />
       <OmniSearch
         open={open}
         setOpen={setOpen}
         commands={coreServices.commandRegistry.getOmniSearchCommands()}
         onCommand={(cmd) => {
-          coreServices.commandDispatcher.dispatch(
-            // @ts-expect-error - command id will be correct
-            cmd.id,
-            {},
-            'omni-search',
-          );
+          setOpen(false);
+          Promise.resolve().then(() => {
+            coreServices.commandDispatcher.dispatch(
+              // @ts-expect-error - command id will be correct
+              cmd.id,
+              {},
+              'omni-search',
+            );
+          });
         }}
       />
       <Toaster />

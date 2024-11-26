@@ -1,6 +1,7 @@
 export type Validator<T> = {
   validate: (value: any) => value is T;
   typeName: string;
+  isOptional?: boolean;
 };
 
 const StringValidator: Validator<string> = {
@@ -67,6 +68,7 @@ function OptionalValidator<T>(
     validate: (value: any): value is T | undefined =>
       value === undefined || validator.validate(value),
     typeName: `${validator.typeName}-or-undefined`,
+    isOptional: true,
   };
 }
 

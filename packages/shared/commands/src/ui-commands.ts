@@ -13,7 +13,6 @@ export const uiCommands = [
       wsName: T.String,
     },
   },
-
   // UI Commands
   {
     id: 'command::ui:toggle-sidebar',
@@ -53,6 +52,16 @@ export const uiCommands = [
     services: ['workspaceOps'],
     args: {
       wsPath: T.String,
+    },
+  },
+  {
+    id: 'command::ui:delete-ws-path-dialog',
+    title: 'Delete Note',
+    omniSearch: true,
+    keywords: ['delete', 'note'],
+    services: ['workbenchState', 'workspaceState', 'fileSystem'],
+    args: {
+      wsPath: T.Optional(T.String),
     },
   },
 ] as const satisfies Command[];

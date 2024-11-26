@@ -248,6 +248,9 @@ importers:
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
+      lucide-react:
+        specifier: ^0.460.0
+        version: 0.460.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -433,6 +436,10 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
+    devDependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../base-utils
 
   packages/shared/config:
     dependencies:
@@ -694,10 +701,10 @@ importers:
         specifier: workspace:*
         version: link:../../ui/ui-components
       '@playwright/experimental-ct-react':
-        specifier: ^1.49.0
+        specifier: ^1.48.2
         version: 1.49.0(@types/node@22.9.3)(terser@5.36.0)(vite@5.4.11(@types/node@22.9.3)(terser@5.36.0))
       '@playwright/test':
-        specifier: ^1.49.0
+        specifier: ^1.48.2
         version: 1.49.0
       '@types/node':
         specifier: ^22.9.3

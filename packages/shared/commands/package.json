@@ -31,5 +31,8 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/constants": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/base-utils": "workspace:*"
   }
 }

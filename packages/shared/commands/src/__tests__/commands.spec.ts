@@ -3,9 +3,11 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { assertIsDefined } from '@bangle.io/base-utils';
 import { commandExcludedServices } from '@bangle.io/constants';
+import { T } from '@bangle.io/mini-zod';
 import type { Command } from '@bangle.io/types';
-import { bangleAppCommands } from '../index';
+import { areAllValuesOptional, bangleAppCommands } from '../index';
 
 const allCommands: Command[] = bangleAppCommands;
 
@@ -37,6 +39,9 @@ describe('Bangle App Commands Validation', () => {
   it('should have args as null when omniSearch is enabled', () => {
     for (const command of allCommands) {
       if (command.omniSearch) {
+        if (command.args !== null && areAllValuesOptional(command.args)) {
+          continue;
+        }
         expect(command.args).toBeNull();
       }
     }
@@ -52,5 +57,39 @@ describe('Bangle App Commands Validation', () => {
       }
     }
     expect(assertionCount).toBeGreaterThan(0);
+  });
+
+  it('should return false when some args are not optional', () => {
+    const commandWithMixedArgs: Command = {
+      id: 'command::test:mixed-args',
+      title: 'Test Mixed Args',
+      omniSearch: true,
+      services: ['database'],
+      args: {
+        param1: T.String,
+        param2: T.Optional(T.String),
+      },
+    };
+
+    assertIsDefined(commandWithMixedArgs.args);
+
+    expect(areAllValuesOptional(commandWithMixedArgs.args)).toBe(false);
+  });
+
+  it('should confirm all args values are optional', () => {
+    const commandWithMixedArgs: Command = {
+      id: 'command::test:mixed-args',
+      title: 'Test Mixed Args',
+      omniSearch: true,
+      services: ['database'],
+      args: {
+        param1: T.Optional(T.String),
+        param2: T.Optional(T.String),
+      },
+    };
+
+    assertIsDefined(commandWithMixedArgs.args);
+
+    expect(areAllValuesOptional(commandWithMixedArgs.args)).toBe(true);
   });
 });

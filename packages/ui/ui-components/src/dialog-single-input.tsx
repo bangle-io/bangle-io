@@ -1,3 +1,4 @@
+import { CommandGroup } from 'cmdk';
 import React from 'react';
 import {
   CommandDialog,
@@ -16,16 +17,18 @@ type DialogSingleInputProps = {
   };
   onRun: (input: string) => void;
   placeholder?: string;
+  groupHeading?: string;
 };
 
 /**
- * A simple dialog with a single input field a
+ * A simple dialog with a single option.
  */
 export function DialogSingleInput({
   open,
   setOpen,
   command,
   onRun: onCommand,
+  groupHeading = '',
   placeholder = 'Input..',
 }: DialogSingleInputProps) {
   const [search, setSearch] = React.useState('');
@@ -37,17 +40,19 @@ export function DialogSingleInput({
         onValueChange={setSearch}
       />
       <CommandList>
-        <CommandItem
-          key={command.id}
-          onSelect={() => {
-            if (search) {
-              onCommand(search);
-            }
-            setOpen(false);
-          }}
-        >
-          {command.title || command.id}
-        </CommandItem>
+        <CommandGroup heading={groupHeading}>
+          <CommandItem
+            key={command.id}
+            onSelect={() => {
+              if (search) {
+                onCommand(search);
+              }
+              setOpen(false);
+            }}
+          >
+            {command.title || command.id}
+          </CommandItem>
+        </CommandGroup>
       </CommandList>
     </CommandDialog>
   );

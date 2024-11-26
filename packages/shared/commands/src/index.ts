@@ -1,6 +1,7 @@
 import { commandExcludedServices } from '@bangle.io/constants';
 import type { Command } from '@bangle.io/types';
 
+import type { Validator } from '@bangle.io/mini-zod';
 import { uiCommands } from './ui-commands';
 import { wsCommands } from './ws-commands';
 
@@ -25,16 +26,17 @@ function validate(commands: Command[]) {
       throw new Error(`Command "${command.id}" uses an excluded service.`);
     }
 
-    if (command.omniSearch && !command.keywords) {
-      throw new Error(
-        `Command "${command.id}" has omniSearch enabled but no keywords.`,
-      );
-    }
-
-    if (command.omniSearch && command.args !== null) {
-      throw new Error(
-        `Command "${command.id}" has omniSearch enabled but has non-null args.`,
-      );
+    if (command.omniSearch) {
+      if (command.args !== null && !areAllValuesOptional(command.args)) {
+        throw new Error(
+          `Command "${command.id}" has omniSearch enabled but args contain non-optional parameters.`,
+        );
+      }
+      if (!command.keywords) {
+        throw new Error(
+          `Command "${command.id}" has omniSearch enabled but no keywords.`,
+        );
+      }
     }
 
     if (Array.isArray(command.keybindings) && command.args !== null) {
@@ -46,3 +48,11 @@ function validate(commands: Command[]) {
 }
 
 validate(bangleAppCommands);
+
+export function areAllValuesOptional(args: {
+  [key: string]: Validator<any>;
+}): boolean {
+  return Object.values(args).every(
+    (validator) => validator.isOptional === true,
+  );
+}

@@ -111,4 +111,40 @@ export const commandHandlers = [
   c('command::ui:toggle-omni-search', ({ workbenchState }, _, { store }) => {
     store.set(workbenchState.$openOmniSearch, (prev) => !prev);
   }),
+
+  c(
+    'command::ui:delete-ws-path-dialog',
+    ({ workbenchState, workspaceState, fileSystem }, _, { store }) => {
+      const wsPaths = store.get(workspaceState.$wsPaths);
+      const wsName = store.get(workspaceState.$wsName);
+
+      if (!wsName || wsPaths?.length === 0) {
+        throwAppError(
+          'error::workspace:not-allowed',
+          'No notes provided or available to delete',
+          {
+            wsName,
+          },
+        );
+      }
+
+      store.set(workbenchState.$singleSelectDialog, () => {
+        return {
+          dialogId: 'delete-ws-path-dialog',
+          placeholder: 'Select a note to delete',
+
+          options: wsPaths.map((path) => ({
+            title: resolvePath(path).fileName,
+            id: path,
+          })),
+          onSelect: (option) => {
+            const fileName = resolvePath(option.id).fileNameWithoutExt;
+            if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+              fileSystem.deleteFile(option.id);
+            }
+          },
+        };
+      });
+    },
+  ),
 ];

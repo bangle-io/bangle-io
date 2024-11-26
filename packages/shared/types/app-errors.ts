@@ -49,9 +49,6 @@ export type AppError =
       name: `error::workspace:not-allowed`;
       payload: {
         wsName?: string;
-        operation: string;
-        oldWsPath?: string;
-        newWsPath?: string;
       };
     }
   // File errors

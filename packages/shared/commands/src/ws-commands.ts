@@ -12,7 +12,6 @@ export const wsCommands = [
       inputPath: T.String,
     },
   },
-
   {
     id: 'command::ws:go-workspace',
     title: 'Go to Workspace',
