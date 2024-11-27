@@ -1,4 +1,4 @@
-import { BaseService, handleAsyncAppError } from '@bangle.io/base-utils';
+import { BaseService } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions, WorkspaceInfo } from '@bangle.io/types';
 import { atom } from 'jotai';
 import { unwrap } from 'jotai/utils';
@@ -18,13 +18,7 @@ export class WorkspaceStateService extends BaseService {
     atom<Promise<WorkspaceInfo[]>>(async (get) => {
       // to subscribe to workspace changes
       get(this.workspaceOps.$workspaceChanged);
-      return await handleAsyncAppError(
-        this.workspaceOps.getAllWorkspaces(),
-        (appErr) => {
-          this.logger.error('Failed to get workspaces', appErr);
-          return [];
-        },
-      );
+      return this.atomHandleAppError(this.workspaceOps.getAllWorkspaces(), []);
     }),
     (): WorkspaceInfo[] => [],
   );
@@ -38,12 +32,9 @@ export class WorkspaceStateService extends BaseService {
       if (!wsName) {
         return [];
       }
-      return await handleAsyncAppError(
+      return this.atomHandleAppError(
         this.fileSystem.listFiles(wsName, signal),
-        (appErr) => {
-          this.logger.error('Failed get wsPath', appErr);
-          return [];
-        },
+        [],
       );
     }),
     () => [],

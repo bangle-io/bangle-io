@@ -43,6 +43,13 @@ export function initializeServices(
   const commonOpts: BaseServiceCommonOptions = {
     logger,
     store,
+    emitAppError(error) {
+      errorEmitter.emit('event::browser-error-handler-service:app-error', {
+        error,
+        rejection: false,
+        isFakeThrow: true,
+      });
+    },
   };
 
   const platformServices = initPlatformServices(commonOpts, errorEmitter);

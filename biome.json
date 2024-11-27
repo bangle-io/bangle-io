@@ -55,6 +55,9 @@
       },
       "correctness": {
         "noUnusedVariables": "warn"
+      },
+      "complexity": {
+        "noForEach": "off"
       }
     }
   },

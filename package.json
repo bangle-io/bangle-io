@@ -50,7 +50,7 @@
     "build": "pnpm run precursor && pnpm -r --filter \"browser-entry\" run build",
     "custom-validation": "bun packages/tooling/custom-scripts/scripts/validate-all.ts",
     "custom-format": "bun packages/tooling/custom-scripts/scripts/format-all.ts",
-    "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps",
+    "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps chromium",
     "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" run test && pnpm --filter \"@bangle.io/e2e-tests\" run test-ct",
     "e2e-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test --update-snapshots",
     "e2e-ct-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ct --update-snapshots",

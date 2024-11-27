@@ -89,7 +89,11 @@ export class Emitter<T extends object = any> {
     return this;
   }
 
-  on<K extends keyof T>(event: K, fn: EventListener<T[K]>): () => void {
+  on<K extends keyof T>(
+    event: K,
+    fn: EventListener<T[K]>,
+    signal?: AbortSignal,
+  ): () => void {
     if (this.destroyed) {
       return () => undefined;
     }
@@ -103,9 +107,14 @@ export class Emitter<T extends object = any> {
     }
 
     existing.add(fn);
-    return () => {
+
+    const cleanup = () => {
       existing?.delete(fn);
     };
+
+    signal?.addEventListener('abort', cleanup, { once: true });
+
+    return cleanup;
   }
 
   onAll(fn: AllEventListener<ObjectToDiscriminatedUnion<T>>): () => void {

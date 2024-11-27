@@ -1,5 +1,6 @@
 import type { Logger } from '@bangle.io/logger';
-import type { BaseServiceOptions, Store } from '@bangle.io/types';
+import type { BaseError, BaseServiceOptions, Store } from '@bangle.io/types';
+import { getAppErrorCause } from './throw-app-error';
 
 class Lifecycle {
   readonly initializedPromise: Promise<void>;
@@ -86,6 +87,12 @@ export abstract class BaseService<Config = void> {
     return this._baseOptions.store;
   }
 
+  public addCleanup(callback: () => void): void {
+    this.abortSignal.addEventListener('abort', callback, {
+      once: true,
+    });
+  }
+
   constructor(private readonly _baseOptions: BaseServiceOptions) {
     this.logger = this._baseOptions.logger.child(this.name);
 
@@ -132,6 +139,32 @@ export abstract class BaseService<Config = void> {
 
   public get isDisposed(): boolean {
     return this.lifecycle.aborted;
+  }
+
+  protected emitAppError(error: BaseError): void {
+    this.logger.debug('Emitting app error');
+    queueMicrotask(() => {
+      this._baseOptions.emitAppError(error);
+    });
+  }
+
+  // handle app errors without throwing and return a fallback value
+  protected async atomHandleAppError<T>(
+    promise: Promise<T>,
+    fallbackValue: NoInfer<T>,
+  ): Promise<T> {
+    try {
+      return await promise;
+    } catch (error) {
+      if (error instanceof Error) {
+        const appError = getAppErrorCause(error as BaseError);
+        if (appError) {
+          this.emitAppError(error);
+          return fallbackValue;
+        }
+      }
+      throw error;
+    }
   }
 
   // called after the config is set

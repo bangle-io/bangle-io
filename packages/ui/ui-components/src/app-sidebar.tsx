@@ -8,6 +8,7 @@ import {
   Folder,
   GalleryVerticalEnd,
   Plus,
+  PlusIcon,
   Search,
   X as XIcon,
 } from 'lucide-react';
@@ -33,6 +34,7 @@ import { Label } from './label';
 
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { type TreeItem, buildTree } from '@bangle.io/ui-utils';
+import { Button } from './button';
 import { KbdShortcut } from './kbd';
 import {
   Sidebar,
@@ -74,6 +76,7 @@ export type AppSidebarProps = {
   onSearchClick?: () => void;
   onTreeItemClick: (item: TreeItem) => void;
   activeWsPaths?: string[];
+  onNewFileClick: () => void;
 };
 
 export function AppSidebar({
@@ -85,6 +88,7 @@ export function AppSidebar({
   onSearchClick = () => {},
   activeWsPaths,
   onTreeItemClick,
+  onNewFileClick,
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined, true),
@@ -127,7 +131,19 @@ export function AppSidebar({
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Files</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <span>Files</span>
+            <div className="flex gap-1">
+              <SidebarMenuButton
+                size="sm"
+                onClick={() => {
+                  onNewFileClick();
+                }}
+              >
+                <PlusIcon className="h-4 w-4" />
+              </SidebarMenuButton>
+            </div>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {tree.map((item, index) => (

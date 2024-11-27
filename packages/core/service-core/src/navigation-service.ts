@@ -63,15 +63,13 @@ export class NavigationService extends BaseService {
 
   private setupRouterListener() {
     this.syncAtoms();
-    const cleanup = this.routerService.emitter.on(
+    this.routerService.emitter.on(
       'event::router:update',
       (_event) => {
         this.syncAtoms();
       },
+      this.abortSignal,
     );
-    this.abortSignal.addEventListener('abort', () => {
-      cleanup();
-    });
   }
 
   private syncAtoms() {

@@ -23,6 +23,7 @@ export const makeTestService = () => {
   const commonOpts: BaseServiceCommonOptions = {
     logger,
     store: createStore(),
+    emitAppError: vi.fn(),
   };
   return { commonOpts, mockLog };
 };

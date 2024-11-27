@@ -4,6 +4,7 @@ import { c } from './helper';
 
 import type { ThemePreference } from '@bangle.io/types';
 import { Sun, Trash2 } from 'lucide-react';
+import { validateInputPath } from './utils';
 
 export const commandHandlers = [
   c('command::ui:test-no-use', (_) => {}),
@@ -144,48 +145,3 @@ export const commandHandlers = [
     },
   ),
 ];
-
-function validateInputPath(inputPath: unknown): void {
-  if (typeof inputPath !== 'string') {
-    throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-      invalidWsPath: inputPath + '',
-    });
-  }
-  const invalidEndings = ['/', '/.md', ''];
-
-  if (invalidEndings.some((ending) => inputPath.endsWith(ending))) {
-    throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-      invalidWsPath: inputPath,
-    });
-  }
-  if (/^(\/|[A-Za-z]:[\\/])/.test(inputPath)) {
-    throwAppError(
-      'error::ws-path:create-new-note',
-      'Absolute paths are not allowed',
-      { invalidWsPath: inputPath },
-    );
-  }
-  if (/(\.\.\/|\.\.\\)/.test(inputPath)) {
-    throwAppError(
-      'error::ws-path:create-new-note',
-      'Directory traversal is not allowed',
-      { invalidWsPath: inputPath },
-    );
-  }
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
-  const invalidChars = /[<>:"\/\\|?*\x00-\x1F]/g;
-  if (invalidChars.test(inputPath)) {
-    throwAppError(
-      'error::ws-path:create-new-note',
-      'Invalid characters in path',
-      { invalidWsPath: inputPath },
-    );
-  }
-  if (inputPath.length > 255) {
-    throwAppError(
-      'error::ws-path:create-new-note',
-      'Path exceeds maximum length',
-      { invalidWsPath: inputPath },
-    );
-  }
-}

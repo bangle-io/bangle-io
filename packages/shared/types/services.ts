@@ -1,4 +1,4 @@
-import type { BaseService, Logger } from '@bangle.io/base-utils';
+import type { BaseError, BaseService, Logger } from '@bangle.io/base-utils';
 import type { commandExcludedServices } from '@bangle.io/constants';
 import type {
   CommandDispatchService,
@@ -36,6 +36,8 @@ export type BaseServiceOptions = {
 export type BaseServiceCommonOptions = {
   logger: Logger;
   store: Store;
+  // for cases where throwing an error is not possible
+  emitAppError: (error: BaseError) => void;
 };
 
 export type RouterState = {

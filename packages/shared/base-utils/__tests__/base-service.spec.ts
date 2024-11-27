@@ -3,6 +3,7 @@ import { makeTestLogger, makeTestService } from '@bangle.io/test-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { BaseService } from '../base-service';
+import { createAppError } from '../throw-app-error';
 
 describe('BaseService', () => {
   let service: BaseService;
@@ -28,6 +29,10 @@ describe('BaseService', () => {
       // Simulate disposal
     }
     protected hookPostConfigSet(): void {}
+
+    public triggerError(error: Error): void {
+      this.emitAppError(error);
+    }
   }
 
   let mockLog = {
@@ -45,6 +50,26 @@ describe('BaseService', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  test('should emit an app error when emitAppError is called', async () => {
+    const { commonOpts } = makeTestService();
+    const service = new TestService(commonOpts, dependencies);
+    const error = createAppError(
+      'error::workspace:not-found',
+      'Unknown error',
+      {
+        wsName: 'Unknown error',
+      },
+    );
+    service.triggerError(error);
+
+    expect(commonOpts.emitAppError).not.toHaveBeenCalledWith(error);
+
+    // since we are using queueMicrotask, we need to wait for the next tick
+    await Promise.resolve();
+
+    expect(commonOpts.emitAppError).toHaveBeenCalledWith(error);
   });
 
   test('should initialize successfully without dependencies', async () => {

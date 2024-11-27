@@ -59,6 +59,9 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
+        onNewFileClick={() => {
+          commandDispatcher.dispatch('command::ui:new-note-dialog', null, 'ui');
+        }}
       />
       <Sidebar.SidebarInset>{children}</Sidebar.SidebarInset>
     </Sidebar.SidebarProvider>

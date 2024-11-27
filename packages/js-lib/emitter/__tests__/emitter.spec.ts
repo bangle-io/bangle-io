@@ -93,6 +93,21 @@ describe('Emitter', () => {
 
     expect(mockCallback).toHaveBeenCalledTimes(1);
   });
+
+  test('should remove listener when signal is aborted', () => {
+    const mockCallback = vi.fn();
+    const controller = new AbortController();
+
+    emitter.on('event', mockCallback, controller.signal);
+
+    emitter.emit('event', 'test-data');
+    expect(mockCallback).toHaveBeenCalledWith('test-data');
+
+    controller.abort();
+
+    emitter.emit('event', 'test-data');
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('types', () => {

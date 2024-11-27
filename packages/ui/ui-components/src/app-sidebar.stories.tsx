@@ -89,6 +89,7 @@ export function AppSidebarExample() {
       }
     >
       <AppSidebar
+        onNewFileClick={() => {}}
         workspaces={data.teams}
         wsPaths={data.tree}
         navItems={data.navMain}

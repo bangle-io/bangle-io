@@ -39,13 +39,11 @@ export class WorkbenchStateService extends BaseService {
 
   protected async onInitialize(): Promise<void> {
     this.store.set(this.$themePref, this.themeManager.currentPreference);
-    const cleanup = this.themeManager.onThemeChange(({ preference }) => {
-      this.store.set(this.$themePref, preference);
-    });
-
-    this.abortSignal.addEventListener('abort', () => {
-      cleanup();
-    });
+    this.addCleanup(
+      this.themeManager.onThemeChange(({ preference }) => {
+        this.store.set(this.$themePref, preference);
+      }),
+    );
   }
 
   changeThemePreference(preference: ThemeConfig['defaultPreference']) {

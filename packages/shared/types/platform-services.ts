@@ -14,6 +14,10 @@ export type ErrorEmitter = DiscriminatedEmitter<
       payload: {
         rejection: boolean;
         error: BaseError;
+        // if true, it means the error wasn't thrown but emitted
+        // this can happen in cases where we cannot throw error and stop
+        // everything in the middle of the operation.
+        isFakeThrow: boolean;
       };
     }
 >;

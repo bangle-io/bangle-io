@@ -39,6 +39,7 @@ export function OmniSearch({
           {commands.map((cmd) => (
             <CommandItem
               key={cmd.id}
+              data-command-id={cmd.id}
               onSelect={() => {
                 onCommand(cmd);
                 setOpen(false);

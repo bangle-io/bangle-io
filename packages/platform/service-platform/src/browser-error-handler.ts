@@ -61,6 +61,7 @@ export class BrowserErrorHandlerService extends BaseService {
       this.emitter.emit('event::browser-error-handler-service:app-error', {
         rejection: isPromiseRejection,
         error,
+        isFakeThrow: false,
       });
     } else {
       this.emitter.emit('event::browser-error-handler-service:error', {
