@@ -16,9 +16,9 @@
     "@bangle.io/types": "workspace:*",
     "@biomejs/biome": "1.9.4",
     "@swc/jest": "^0.2.37",
-    "@types/bun": "^1.1.13",
+    "@types/bun": "^1.1.14",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.9.3",
+    "@types/node": "^22.10.0",
     "@types/react": "^18.3.12",
     "@types/wicg-file-system-access": "^2023.10.5",
     "fake-indexeddb": "^6.0.0",
@@ -27,7 +27,7 @@
     "jsdom": "^25.0.1",
     "plop": "^4.0.1",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.5"
+    "vitest": "^2.1.6"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
@@ -67,5 +67,5 @@
   },
   "module": "index.ts",
   "type": "module",
-  "packageManager": "pnpm@9.12.1+sha512.e5a7e52a4183a02d5931057f7a0dbff9d5e9ce3161e33fa68ae392125b79282a8a8a470a51dfc8a0ed86221442eb2fb57019b0990ed24fab519bf0e1bc5ccfc4"
+  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
 }

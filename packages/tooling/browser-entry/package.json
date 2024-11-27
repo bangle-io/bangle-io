@@ -50,13 +50,13 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@vitejs/plugin-react": "^4.3.3",
-    "class-variance-authority": "^0.7.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "class-variance-authority": "^0.7.1",
     "jotai": "^2.10.3",
-    "lucide-react": "^0.460.0",
+    "lucide-react": "^0.461.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "vite": "^5.4.11",
+    "vite": "^6.0.0",
     "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
