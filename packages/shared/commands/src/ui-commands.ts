@@ -64,4 +64,13 @@ export const uiCommands = [
       wsPath: T.Optional(T.String),
     },
   },
+
+  {
+    id: 'command::ui:change-theme-pref-dialog',
+    title: 'Switch theme',
+    omniSearch: true,
+    keywords: ['theme'],
+    services: ['workbenchState'],
+    args: {},
+  },
 ] as const satisfies Command[];

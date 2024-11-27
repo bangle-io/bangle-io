@@ -1,8 +1,9 @@
-import { throwAppError } from '@bangle.io/base-utils';
+import { BaseError, throwAppError } from '@bangle.io/base-utils';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 import { c } from './helper';
 
-import { Trash2 } from 'lucide-react';
+import type { ThemePreference } from '@bangle.io/types';
+import { Sun, Trash2 } from 'lucide-react';
 
 export const commandHandlers = [
   c('command::ui:test-no-use', (_) => {}),
@@ -10,62 +11,7 @@ export const commandHandlers = [
   c(
     'command::ws:new-note-from-input',
     ({ fileSystem, navigation }, { inputPath }) => {
-      if (typeof inputPath !== 'string') {
-        throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-          invalidWsPath: inputPath,
-        });
-      }
-      if (
-        inputPath.endsWith('/') ||
-        inputPath.endsWith('/.md') ||
-        inputPath.trim() === ''
-      ) {
-        throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-          invalidWsPath: inputPath,
-        });
-      }
-      if (inputPath.startsWith('/') || /^[A-Za-z]:[\\/]/.test(inputPath)) {
-        throwAppError(
-          'error::ws-path:create-new-note',
-          'Absolute paths are not allowed',
-          {
-            invalidWsPath: inputPath,
-          },
-        );
-      }
-
-      if (inputPath.includes('../') || inputPath.includes('..\\')) {
-        throwAppError(
-          'error::ws-path:create-new-note',
-          'Directory traversal is not allowed',
-          {
-            invalidWsPath: inputPath,
-          },
-        );
-      }
-
-      // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
-      const invalidChars = /[<>:"\/\\|?*\x00-\x1F]/g;
-      if (invalidChars.test(inputPath)) {
-        throwAppError(
-          'error::ws-path:create-new-note',
-          'Invalid characters in path',
-          {
-            invalidWsPath: inputPath,
-          },
-        );
-      }
-
-      const maxPathLength = 255;
-      if (inputPath.length > maxPathLength) {
-        throwAppError(
-          'error::ws-path:create-new-note',
-          'Path exceeds maximum length',
-          {
-            invalidWsPath: inputPath,
-          },
-        );
-      }
+      validateInputPath(inputPath);
 
       const { wsName } = navigation.resolveAtoms();
 
@@ -118,6 +64,47 @@ export const commandHandlers = [
   }),
 
   c(
+    'command::ui:change-theme-pref-dialog',
+    ({ workbenchState }, _, { store }) => {
+      const currentPref = store.get(workbenchState.$themePref);
+      const system = 'system' satisfies ThemePreference;
+      const light = 'light' satisfies ThemePreference;
+      const dark = 'dark' satisfies ThemePreference;
+
+      store.set(workbenchState.$singleSelectDialog, () => {
+        return {
+          dialogId: 'change-theme-pref-dialog',
+          placeholder: 'Select a theme preference',
+          badgeText: 'Change Theme',
+          groupHeading: 'Themes',
+          emptyMessage: 'No themes available',
+          options: [
+            {
+              title: 'System',
+              id: 'system',
+              active: currentPref === system,
+            },
+            { title: 'Light', id: 'light', active: currentPref === light },
+            { title: 'Dark', id: 'dark', active: currentPref === dark },
+          ],
+          Icon: Sun,
+          onSelect: (option) => {
+            if (
+              option.id === system ||
+              option.id === light ||
+              option.id === dark
+            ) {
+              workbenchState.changeThemePreference(option.id);
+            } else {
+              throw new BaseError({ message: 'Invalid theme preference' });
+            }
+          },
+        };
+      });
+    },
+  ),
+
+  c(
     'command::ui:delete-ws-path-dialog',
     ({ workbenchState, workspaceState, fileSystem }, _, { store }) => {
       const wsPaths = store.get(workspaceState.$wsPaths);
@@ -157,3 +144,48 @@ export const commandHandlers = [
     },
   ),
 ];
+
+function validateInputPath(inputPath: unknown): void {
+  if (typeof inputPath !== 'string') {
+    throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
+      invalidWsPath: inputPath + '',
+    });
+  }
+  const invalidEndings = ['/', '/.md', ''];
+
+  if (invalidEndings.some((ending) => inputPath.endsWith(ending))) {
+    throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
+      invalidWsPath: inputPath,
+    });
+  }
+  if (/^(\/|[A-Za-z]:[\\/])/.test(inputPath)) {
+    throwAppError(
+      'error::ws-path:create-new-note',
+      'Absolute paths are not allowed',
+      { invalidWsPath: inputPath },
+    );
+  }
+  if (/(\.\.\/|\.\.\\)/.test(inputPath)) {
+    throwAppError(
+      'error::ws-path:create-new-note',
+      'Directory traversal is not allowed',
+      { invalidWsPath: inputPath },
+    );
+  }
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
+  const invalidChars = /[<>:"\/\\|?*\x00-\x1F]/g;
+  if (invalidChars.test(inputPath)) {
+    throwAppError(
+      'error::ws-path:create-new-note',
+      'Invalid characters in path',
+      { invalidWsPath: inputPath },
+    );
+  }
+  if (inputPath.length > 255) {
+    throwAppError(
+      'error::ws-path:create-new-note',
+      'Path exceeds maximum length',
+      { invalidWsPath: inputPath },
+    );
+  }
+}

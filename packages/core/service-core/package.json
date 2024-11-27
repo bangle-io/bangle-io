@@ -41,7 +41,8 @@
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
     "jotai": "^2.10.3",
-    "@bangle.io/ui-components": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/color-scheme-manager": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/logger": "workspace:*",

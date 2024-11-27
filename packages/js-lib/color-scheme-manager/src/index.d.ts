@@ -25,6 +25,7 @@ export declare class ThemeManager {
     currentPreference: ThemePreference;
     private callbacks;
     constructor(config?: ThemeConfig);
+    private getPrefersDarkScheme;
     private safeGetItem;
     private safeSetItem;
     private safeRemoveItem;

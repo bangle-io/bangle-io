@@ -1,6 +1,8 @@
 import { type Logger, assertIsDefined } from '@bangle.io/base-utils';
+import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
+
 import {
   CommandDispatchService,
   CommandRegistryService,
@@ -34,6 +36,7 @@ export function initializeServices(
   logger: Logger,
   errorEmitter: ErrorEmitter,
   store: Store,
+  theme: ThemeManager,
 ): Services {
   const commands = getEnabledCommands();
 
@@ -44,7 +47,7 @@ export function initializeServices(
 
   const platformServices = initPlatformServices(commonOpts, errorEmitter);
 
-  const coreServices = initCoreServices(commonOpts, platformServices);
+  const coreServices = initCoreServices(commonOpts, platformServices, theme);
 
   const services: Services = {
     core: coreServices,
@@ -128,6 +131,7 @@ function initPlatformServices(
 function initCoreServices(
   commonOpts: BaseServiceCommonOptions,
   platformServices: PlatformServices,
+  theme: ThemeManager,
 ): CoreServices {
   const $workspaceChanged = atom(0);
 
@@ -150,7 +154,11 @@ function initCoreServices(
   });
 
   const shortcut = new ShortcutService(commonOpts, undefined, document);
-  const workbenchState = new WorkbenchStateService(commonOpts, undefined);
+  const workbenchState = new WorkbenchStateService(
+    commonOpts,
+    undefined,
+    theme,
+  );
 
   const workbench = new WorkbenchService(commonOpts, {
     workbenchState,

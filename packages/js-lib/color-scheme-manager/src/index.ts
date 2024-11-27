@@ -44,6 +44,16 @@ export class ThemeManager {
     this.setupSystemPreferenceListener();
   }
 
+  private getPrefersDarkScheme(): MediaQueryList | null {
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function'
+    ) {
+      return window.matchMedia('(prefers-color-scheme: dark)');
+    }
+    return null;
+  }
+
   private safeGetItem(key: string): string | null {
     try {
       return localStorage.getItem(key);
@@ -87,7 +97,7 @@ export class ThemeManager {
   getTheme(): string {
     if (this.currentPreference === 'light') return this.config.lightThemeClass;
     if (this.currentPreference === 'dark') return this.config.darkThemeClass;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
+    return this.getPrefersDarkScheme()?.matches
       ? this.config.darkThemeClass
       : this.config.lightThemeClass;
   }
@@ -103,15 +113,13 @@ export class ThemeManager {
   }
 
   private setupSystemPreferenceListener() {
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', () => {
-        if (this.currentPreference === 'system') {
-          this.currentTheme = this.getTheme();
-          this.reflectTheme();
-          this.triggerCallbacks();
-        }
-      });
+    this.getPrefersDarkScheme()?.addEventListener('change', () => {
+      if (this.currentPreference === 'system') {
+        this.currentTheme = this.getTheme();
+        this.reflectTheme();
+        this.triggerCallbacks();
+      }
+    });
   }
 
   public setPreference(preference: ThemePreference) {

@@ -1,4 +1,7 @@
+import type { ThemeConfig } from '@bangle.io/color-scheme-manager';
+
 export type ColorScheme = 'light' | 'dark';
+export type ThemePreference = ThemeConfig['defaultPreference'];
 
 export type StorageType = 'native-fs' | 'browser';
 

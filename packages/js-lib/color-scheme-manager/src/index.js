@@ -18,6 +18,13 @@ export class ThemeManager {
         this.reflectTheme();
         this.setupSystemPreferenceListener();
     }
+    getPrefersDarkScheme() {
+        if (typeof window !== 'undefined' &&
+            typeof window.matchMedia === 'function') {
+            return window.matchMedia('(prefers-color-scheme: dark)');
+        }
+        return null;
+    }
     safeGetItem(key) {
         try {
             return localStorage.getItem(key);
@@ -57,11 +64,12 @@ export class ThemeManager {
         this.safeSetItem(this.config.storageKey, preference);
     }
     getTheme() {
+        var _a;
         if (this.currentPreference === 'light')
             return this.config.lightThemeClass;
         if (this.currentPreference === 'dark')
             return this.config.darkThemeClass;
-        return window.matchMedia('(prefers-color-scheme: dark)').matches
+        return ((_a = this.getPrefersDarkScheme()) === null || _a === void 0 ? void 0 : _a.matches)
             ? this.config.darkThemeClass
             : this.config.lightThemeClass;
     }
@@ -72,9 +80,8 @@ export class ThemeManager {
         root.classList.add(this.currentTheme);
     }
     setupSystemPreferenceListener() {
-        window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', () => {
+        var _a;
+        (_a = this.getPrefersDarkScheme()) === null || _a === void 0 ? void 0 : _a.addEventListener('change', () => {
             if (this.currentPreference === 'system') {
                 this.currentTheme = this.getTheme();
                 this.reflectTheme();

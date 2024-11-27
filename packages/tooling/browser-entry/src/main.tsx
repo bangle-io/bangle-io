@@ -21,9 +21,8 @@ const logger = new Logger(
 
 const errorEmitter: ErrorEmitter = new Emitter();
 const store = createStore();
-const services = initializeServices(logger, errorEmitter, store);
-
 const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
+const services = initializeServices(logger, errorEmitter, store, themeManager);
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(

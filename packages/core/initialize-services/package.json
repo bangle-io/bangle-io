@@ -34,7 +34,8 @@
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/service-platform": "workspace:*",
-    "jotai": "^2.10.3"
+    "jotai": "^2.10.3",
+    "@bangle.io/color-scheme-manager": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",
