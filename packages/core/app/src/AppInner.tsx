@@ -33,12 +33,13 @@ export function AppInner({
     coreServices.workbenchState.$openWsDialog,
   );
   const [open, setOpen] = useAtom(coreServices.workbenchState.$openOmniSearch);
-  const [newNoteDialog, setNewNoteDialog] = useAtom(
-    coreServices.workbenchState.$newNoteDialog,
-  );
 
   const [singleSelectDialog, setSingleSelectDialog] = useAtom(
     coreServices.workbenchState.$singleSelectDialog,
+  );
+
+  const [singleInputDialog, setSingleInputDialog] = useAtom(
+    coreServices.workbenchState.$singleInputDialog,
   );
 
   useEffect(() => {
@@ -90,21 +91,23 @@ export function AppInner({
       />
 
       <DialogSingleInput
-        open={newNoteDialog}
-        placeholder="Enter note name"
-        command={{ id: 'new-note-dialog', title: 'Create a new note' }}
-        setOpen={setNewNoteDialog}
-        badgeText="New Note"
-        Icon={FilePlus}
-        onRun={(input) => {
-          setNewNoteDialog(false);
-          coreServices.commandDispatcher.dispatch(
-            'command::ws:new-note-from-input',
-            { inputPath: input },
-            'ui',
+        key={singleInputDialog?.dialogId}
+        open={Boolean(singleInputDialog)}
+        setOpen={(open) => {
+          setSingleInputDialog(
+            open && singleInputDialog ? singleInputDialog : undefined,
           );
         }}
+        onSelect={singleInputDialog?.onSelect || (() => {})}
+        placeholder={singleInputDialog?.placeholder}
+        badgeText={singleInputDialog?.badgeText}
+        badgeTone={singleInputDialog?.badgeTone}
+        groupHeading={singleInputDialog?.groupHeading}
+        Icon={singleInputDialog?.Icon}
+        option={singleInputDialog?.option || { id: '' }}
+        initialSearch={singleInputDialog?.initialSearch}
       />
+
       <DialogSingleSelect
         // reset component based on id otherwise it persists previous state
         key={singleSelectDialog?.dialogId}

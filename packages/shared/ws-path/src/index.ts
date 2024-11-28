@@ -1,12 +1,16 @@
 export {
   VALID_NOTE_EXTENSIONS_SET,
+  filePathToWsPath,
+  fromFsPath,
   getExtension,
   isValidFileWsPath,
   isValidNoteWsPath,
+  pathJoin,
+  removeExtension,
   resolvePath,
-  validateFileWsPath,
-  fromFsPath,
   toFSPath,
-  filePathToWsPath,
+  validateFileWsPath,
+  appendNoteExtension,
 } from './helpers';
+
 export * from './routing';

@@ -1,9 +1,15 @@
 import { BaseError, expectType, throwAppError } from '@bangle.io/base-utils';
-import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+import {
+  appendNoteExtension,
+  filePathToWsPath,
+  pathJoin,
+  removeExtension,
+  resolvePath,
+} from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
 import type { ThemePreference } from '@bangle.io/types';
-import { Briefcase, Sun, Trash2 } from 'lucide-react';
+import { Briefcase, FilePlus, Sun, Trash2 } from 'lucide-react';
 import { validateInputPath } from './utils';
 
 export const commandHandlers = [
@@ -22,7 +28,7 @@ export const commandHandlers = [
       });
 
       dispatch('command::ws:new-note', {
-        wsPath: filePathToWsPath(workspaceType, wsName),
+        wsPath: 'test:note.md',
       });
     },
   ),
@@ -37,10 +43,30 @@ export const commandHandlers = [
     store.set(workbenchState.$openWsDialog, (prev) => !prev);
   }),
 
-  c('command::ui:new-note-dialog', ({ workbenchState }, __, key) => {
-    const { store } = getCtx(key);
-    store.set(workbenchState.$newNoteDialog, (prev) => !prev);
-  }),
+  c(
+    'command::ui:new-note-dialog',
+    ({ workbenchState }, { prefillName }, key) => {
+      const { store, dispatch } = getCtx(key);
+      store.set(workbenchState.$singleInputDialog, () => {
+        return {
+          dialogId: 'new-note-dialog',
+          placeholder: 'Input a note name',
+          badgeText: 'Create Note',
+          option: {
+            id: 'new-note-dialog',
+            title: 'Create',
+          },
+          onSelect: (input) => {
+            dispatch('command::ws:new-note-from-input', {
+              inputPath: input.trim(),
+            });
+          },
+          Icon: FilePlus,
+          initialSearch: prefillName,
+        };
+      });
+    },
+  ),
 
   c('command::ui:toggle-omni-search', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
@@ -129,6 +155,64 @@ export const commandHandlers = [
   ),
 
   c(
+    'command::ui:rename-note-dialog',
+    ({ workspaceState, workbenchState }, { wsPath }, key) => {
+      const { store, dispatch } = getCtx(key);
+      const oldWsPath = wsPath || store.get(workspaceState.$wsPath);
+
+      if (!oldWsPath) {
+        throwAppError('error::workspace:not-opened', 'No workspace is opened', {
+          wsPath,
+        });
+      }
+
+      const { wsName, fileNameWithoutExt, dirPath } = resolvePath(oldWsPath);
+
+      store.set(workbenchState.$singleInputDialog, () => {
+        return {
+          dialogId: 'rename-note-dialog',
+          placeholder: 'Provide a new name',
+          badgeText: `Renaming "${fileNameWithoutExt}"`,
+          initialSearch: fileNameWithoutExt,
+          Icon: FilePlus,
+          option: {
+            id: 'rename-note-dialog',
+            title: 'Confirm name change',
+          },
+          onSelect: (input) => {
+            if (!input) {
+              throwAppError(
+                'error::file:invalid-operation',
+                'Invalid note name provided',
+                {
+                  oldWsPath: oldWsPath,
+                  newWsPath: input,
+                  operation: 'rename',
+                },
+              );
+            }
+
+            const newName = appendNoteExtension(removeExtension(input.trim()));
+
+            validateInputPath(newName);
+
+            const newWsPath = filePathToWsPath({
+              wsName,
+              inputPath: pathJoin(dirPath, newName),
+            });
+            resolvePath(newWsPath, false);
+
+            dispatch('command::ws:rename-ws-path', {
+              newWsPath,
+              wsPath: oldWsPath,
+            });
+          },
+        };
+      });
+    },
+  ),
+
+  c(
     'command::ui:switch-workspace-dialog',
     ({ workbenchState, workspaceState, navigation }, _, key) => {
       const { store } = getCtx(key);
@@ -207,11 +291,86 @@ export const commandHandlers = [
     },
   ),
 
+  c(
+    'command::ui:move-note-dialog',
+    ({ workspaceState, workbenchState }, { wsPath }, key) => {
+      const { store, dispatch } = getCtx(key);
+      const oldWsPath = wsPath || store.get(workspaceState.$wsPath);
+      const existingWsPaths = store.get(workspaceState.$wsPaths);
+
+      const dirPaths = [
+        ...new Set(
+          existingWsPaths.map((path) => {
+            const { dirPath } = resolvePath(path);
+            return dirPath;
+          }),
+        ),
+      ];
+
+      if (!oldWsPath) {
+        throwAppError('error::workspace:not-opened', 'No workspace is opened', {
+          wsPath,
+        });
+      }
+      const { wsName, fileName, fileNameWithoutExt, dirPath } =
+        resolvePath(oldWsPath);
+
+      const isAtRoot = dirPath === '';
+
+      const options = dirPaths.map((dirPath) => ({
+        title: dirPath,
+        id: dirPath,
+      }));
+
+      const ROOT_ID = '<{bangle_root}>';
+
+      if (!isAtRoot) {
+        options.push({
+          title: '/ Root',
+          id: ROOT_ID,
+        });
+      }
+
+      store.set(workbenchState.$singleSelectDialog, () => {
+        return {
+          dialogId: 'move-note-dialog',
+          placeholder: 'Select a path to move the note',
+          badgeText: `Move "${fileNameWithoutExt}"`,
+          emptyMessage: 'No directories found',
+          options,
+          Icon: Briefcase,
+          groupHeading: 'Directories',
+          onSelect: (selectedDir) => {
+            const newDirPath = selectedDir.id;
+
+            const newPath =
+              newDirPath === ROOT_ID
+                ? fileName
+                : pathJoin(newDirPath, fileName);
+
+            validateInputPath(newPath);
+
+            const newWsPath = filePathToWsPath({
+              wsName,
+              inputPath: newPath,
+            });
+            resolvePath(newWsPath, false);
+
+            dispatch('command::ws:rename-ws-path', {
+              newWsPath,
+              wsPath: oldWsPath,
+            });
+          },
+        };
+      });
+    },
+  ),
   // workspace handlers
   c(
     'command::ws:new-note-from-input',
-    ({ fileSystem, navigation }, { inputPath }) => {
+    ({ fileSystem, navigation, workspaceState }, { inputPath }, key) => {
       validateInputPath(inputPath);
+      const { store } = getCtx(key);
 
       const { wsName } = navigation.resolveAtoms();
 
@@ -223,7 +382,18 @@ export const commandHandlers = [
       if (!inputPath.endsWith('.md')) {
         inputPath = `${inputPath}.md`;
       }
-      const newWsPath = filePathToWsPath(wsName, inputPath);
+      const newWsPath = filePathToWsPath({ wsName, inputPath });
+
+      const existingWsPaths = store.get(workspaceState.$wsPaths);
+      if (existingWsPaths.includes(newWsPath)) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          'Note with the given name already already exists',
+          {
+            invalidWsPath: newWsPath,
+          },
+        );
+      }
 
       const { fileNameWithoutExt } = resolvePath(newWsPath);
 
@@ -267,4 +437,40 @@ export const commandHandlers = [
     }
     fileSystem.deleteFile(wsPath);
   }),
+
+  c(
+    'command::ws:rename-ws-path',
+    ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+      const { wsName } = resolvePath(wsPath, false);
+      const { wsName: wsNameNew } = resolvePath(newWsPath, false);
+
+      if (wsName !== wsNameNew) {
+        throwAppError(
+          'error::file:invalid-operation',
+          'Cannot rename note to a different workspace',
+          {
+            operation: 'rename',
+            oldWsPath: wsPath,
+            newWsPath,
+          },
+        );
+      }
+
+      const needsRedirect = navigation.resolveAtoms().wsPath === wsPath;
+      if (needsRedirect) {
+        navigation.goWorkspace();
+      }
+
+      void fileSystem
+        .renameFile({
+          oldWsPath: wsPath,
+          newWsPath,
+        })
+        .then(() => {
+          if (needsRedirect) {
+            navigation.goWsPath(newWsPath);
+          }
+        });
+    },
+  ),
 ];

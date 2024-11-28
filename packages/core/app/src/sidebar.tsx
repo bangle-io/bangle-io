@@ -60,11 +60,31 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
           );
         }}
         onNewFileClick={() => {
-          commandDispatcher.dispatch('command::ui:new-note-dialog', null, 'ui');
+          commandDispatcher.dispatch(
+            'command::ui:new-note-dialog',
+            {
+              prefillName: undefined,
+            },
+            'ui',
+          );
         }}
         onDeleteFileClick={(item) => {
           commandDispatcher.dispatch(
             'command::ui:delete-ws-path-dialog',
+            { wsPath: item.wsPath },
+            'ui',
+          );
+        }}
+        onRenameFileClick={(item) => {
+          commandDispatcher.dispatch(
+            'command::ui:rename-note-dialog',
+            { wsPath: item.wsPath },
+            'ui',
+          );
+        }}
+        onMoveFileClick={(item) => {
+          commandDispatcher.dispatch(
+            'command::ui:move-note-dialog',
             { wsPath: item.wsPath },
             'ui',
           );

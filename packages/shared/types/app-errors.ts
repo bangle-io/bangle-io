@@ -34,6 +34,12 @@ export type AppError =
       };
     }
   | {
+      name: `error::workspace:not-opened`;
+      payload: {
+        wsPath?: string;
+      };
+    }
+  | {
       name: `error::workspace:invalid-metadata`;
       payload: {
         wsName: string;

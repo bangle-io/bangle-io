@@ -4,25 +4,25 @@ import React from 'react';
 import {
   CommandBadge,
   CommandDialog,
-  CommandEmpty,
   CommandInput,
   CommandItem,
   CommandList,
 } from './command';
 
-type DialogSingleInputProps = {
+export type DialogSingleInputProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
-  command: {
+  option: {
     id: string;
     title?: string;
   };
-  onRun: (input: string) => void;
+  onSelect: (input: string) => void;
   placeholder?: string;
   groupHeading?: string;
   Icon?: React.ElementType;
   badgeTone?: 'destructive' | 'default';
   badgeText?: string;
+  initialSearch?: string;
 };
 
 /**
@@ -31,15 +31,16 @@ type DialogSingleInputProps = {
 export function DialogSingleInput({
   open,
   setOpen,
-  command,
-  onRun: onCommand,
+  option,
+  onSelect,
   groupHeading = '',
   placeholder = 'Input..',
   badgeText,
   badgeTone = 'default',
   Icon,
+  initialSearch = '',
 }: DialogSingleInputProps) {
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = React.useState(initialSearch);
   return (
     <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
       {badgeText && (
@@ -64,15 +65,15 @@ export function DialogSingleInput({
       <CommandList>
         <CommandGroup heading={groupHeading}>
           <CommandItem
-            key={command.id}
+            key={option.id}
             onSelect={() => {
               if (search) {
-                onCommand(search);
+                onSelect(search);
               }
               setOpen(false);
             }}
           >
-            {command.title || command.id}
+            {option.title || option.id}
           </CommandItem>
         </CommandGroup>
       </CommandList>

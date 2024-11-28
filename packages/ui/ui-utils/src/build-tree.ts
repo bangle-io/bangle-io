@@ -1,5 +1,5 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+import { filePathToWsPath, pathJoin, resolvePath } from '@bangle.io/ws-path';
 
 export interface TreeItem {
   name: string;
@@ -115,7 +115,10 @@ export function buildTree(
         items.push({
           name,
           isDir: false,
-          wsPath: filePathToWsPath(wsName, newPathParts.join('/')),
+          wsPath: filePathToWsPath({
+            wsName,
+            inputPath: pathJoin(...newPathParts),
+          }),
         });
       }
     }

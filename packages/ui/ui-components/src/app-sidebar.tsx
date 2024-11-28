@@ -31,6 +31,7 @@ import {
 
 import { Label } from './label';
 
+import { cx } from '@bangle.io/base-utils';
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { type TreeItem, buildTree } from '@bangle.io/ui-utils';
 import { Button } from './button';
@@ -79,6 +80,8 @@ export type AppSidebarProps = {
   activeWsPaths?: string[];
   onNewFileClick: () => void;
   onDeleteFileClick?: (item: TreeItem) => void;
+  onRenameFileClick?: (item: TreeItem) => void;
+  onMoveFileClick?: (item: TreeItem) => void;
 };
 
 export function AppSidebar({
@@ -88,10 +91,12 @@ export function AppSidebar({
   navItems,
   setActiveWorkspace,
   onSearchClick = () => {},
-  activeWsPaths,
+  activeWsPaths = [],
   onTreeItemClick,
   onNewFileClick,
   onDeleteFileClick = () => {},
+  onRenameFileClick = () => {},
+  onMoveFileClick = () => {},
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined, true),
@@ -109,30 +114,33 @@ export function AppSidebar({
         <CommandButton onClick={() => onSearchClick?.()} />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu className="gap-2">
-            {navItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
-                    {item.title}
-                  </a>
-                </SidebarMenuButton>
-                {item.items?.length ? (
-                  <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                ) : null}
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {navItems.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Opened</SidebarGroupLabel>
+            <SidebarMenu className="gap-2">
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url} className="font-medium">
+                      {item.title}
+                    </a>
+                  </SidebarMenuButton>
+                  {item.items?.length ? (
+                    <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
+                      {item.items.map((item) => (
+                        <SidebarMenuSubItem key={item.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a href={item.url}>{item.title}</a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  ) : null}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
         <SidebarGroup>
           <SidebarGroupLabel>Files</SidebarGroupLabel>
           <SidebarGroupAction
@@ -151,8 +159,11 @@ export function AppSidebar({
                   // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                   key={index}
                   item={item}
+                  activeWsPaths={activeWsPaths}
                   onTreeItemClick={onTreeItemClick}
                   onTreeItemDelete={onDeleteFileClick}
+                  onTreeItemRename={onRenameFileClick}
+                  onTreeItemMove={onMoveFileClick}
                 />
               ))}
             </SidebarMenu>
@@ -167,22 +178,36 @@ function Tree({
   item,
   onTreeItemClick,
   onTreeItemDelete,
+  onTreeItemRename,
+  onTreeItemMove,
+  activeWsPaths,
 }: {
+  activeWsPaths: string[];
   item: TreeItem;
   onTreeItemClick: (item: TreeItem) => void;
   onTreeItemDelete: (item: TreeItem) => void;
+  onTreeItemRename: (item: TreeItem) => void;
+  onTreeItemMove: (item: TreeItem) => void;
 }) {
   if (!item.isDir) {
+    const isActive = item.wsPath && activeWsPaths.includes(item.wsPath);
     return (
-      <SidebarMenuItem>
+      <SidebarMenuItem className={cx(isActive && 'bg-sidebar-accent')}>
         <SidebarMenuButton
           className="data-[active=true]:bg-transparent"
           onClick={() => onTreeItemClick(item)}
           isActive={item.isOpen}
         >
-          <FileIcon />
-          {item.name}
+          <FileIcon
+            className={cx(
+              isActive ? 'fill-current text-accent' : 'text-inherit',
+            )}
+          />
+          <span className={cx(isActive ? 'font-semibold' : '')}>
+            {item.name}
+          </span>
         </SidebarMenuButton>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuAction showOnHover>
@@ -192,10 +217,24 @@ function Tree({
           <DropdownMenuContent side="right" align="start">
             <DropdownMenuItem
               onClick={() => {
+                onTreeItemRename(item);
+              }}
+            >
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
                 onTreeItemDelete(item);
               }}
             >
               Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                onTreeItemMove(item);
+              }}
+            >
+              Move
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -225,57 +264,15 @@ function Tree({
                 item={subItem}
                 onTreeItemClick={onTreeItemClick}
                 onTreeItemDelete={onTreeItemDelete}
+                onTreeItemRename={onTreeItemRename}
+                onTreeItemMove={onTreeItemMove}
+                activeWsPaths={activeWsPaths}
               />
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
       </Collapsible>
     </SidebarMenuItem>
-  );
-}
-
-function SearchForm({
-  value,
-  onChange,
-  onSearchClick,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  onSearchClick?: () => void;
-}) {
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-      }}
-    >
-      <SidebarGroup className="py-0">
-        <SidebarGroupContent className="relative">
-          <Label htmlFor="search" className="sr-only">
-            Search
-          </Label>
-          <SidebarInput
-            id="search"
-            placeholder="Search..."
-            className="pl-8"
-            value={value}
-            onClick={onSearchClick}
-            onChange={(e) => onChange(e.target.value)}
-          />
-          <Search className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 size-4 select-none opacity-50" />
-          {value && (
-            <button
-              type="button"
-              onClick={() => onChange('')}
-              className="-translate-y-1/2 absolute top-1/2 right-2 rounded-sm opacity-70 hover:opacity-100 focus:outline-none focus:ring-2"
-            >
-              <XIcon className="size-4" />
-              <span className="sr-only">Clear search</span>
-            </button>
-          )}
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </form>
   );
 }
 

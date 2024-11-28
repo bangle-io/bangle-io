@@ -1,6 +1,9 @@
 import { BaseService } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
-import type { DialogSingleSelectProps } from '@bangle.io/ui-components';
+import type {
+  DialogSingleInputProps,
+  DialogSingleSelectProps,
+} from '@bangle.io/ui-components';
 import { atom } from 'jotai';
 
 import type {
@@ -14,9 +17,13 @@ export class WorkbenchStateService extends BaseService {
   $sidebarOpen = atom(true);
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
-  $newNoteDialog = atom(false);
   $themePref = atom<ThemeConfig['defaultPreference']>('system');
-
+  $singleInputDialog = atom<
+    | undefined
+    | ({
+        dialogId: string;
+      } & Omit<DialogSingleInputProps, 'open' | 'setOpen'>)
+  >(undefined);
   $singleSelectDialog = atom<
     | undefined
     | ({

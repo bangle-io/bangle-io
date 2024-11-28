@@ -47,9 +47,27 @@ export const uiCommands = narrow([
     id: 'command::ui:new-note-dialog',
     title: 'New Note',
     keywords: ['new', 'create', 'note'],
-    dependencies: { services: ['workbenchState'] },
+    dependencies: {
+      services: ['workbenchState'],
+      commands: ['command::ws:new-note-from-input'],
+    },
     omniSearch: true,
-    args: null,
+    args: {
+      prefillName: T.Optional(T.String),
+    },
+  },
+  {
+    id: 'command::ui:move-note-dialog',
+    title: 'Move Note',
+    keywords: ['move', 'note'],
+    dependencies: {
+      services: ['workbenchState', 'workspaceState'],
+      commands: ['command::ws:rename-ws-path'],
+    },
+    omniSearch: true,
+    args: {
+      wsPath: T.Optional(T.String),
+    },
   },
   {
     id: 'command::ws:new-note',
@@ -101,5 +119,18 @@ export const uiCommands = narrow([
     },
     omniSearch: true,
     args: null,
+  },
+  {
+    id: 'command::ui:rename-note-dialog',
+    title: 'Rename Note',
+    keywords: ['rename', 'note', 'file'],
+    dependencies: {
+      services: ['workspaceState', 'workbenchState'],
+      commands: ['command::ws:rename-ws-path'],
+    },
+    omniSearch: true,
+    args: {
+      wsPath: T.Optional(T.String),
+    },
   },
 ]);

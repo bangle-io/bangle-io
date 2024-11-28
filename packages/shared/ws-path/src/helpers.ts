@@ -4,6 +4,10 @@ export const DEFAULT_NOTE_EXTENSION = '.md';
 export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
 export const VALID_NOTE_EXTENSIONS_SET = new Set(VALID_NOTE_EXTENSIONS);
 
+export function pathJoin(...args: string[]) {
+  return args.join('/');
+}
+
 export function getExtension(strInput: string) {
   let str = strInput;
   if (str.includes('/')) {
@@ -18,11 +22,14 @@ export function fromFsPath(fsPath: string) {
   if (!_wsName || _wsName.includes(':')) {
     return undefined;
   }
-  return filePathToWsPath(_wsName, f.join('/'));
+  return filePathToWsPath({ wsName: _wsName, inputPath: pathJoin(...f) });
 }
 
-export function filePathToWsPath(wsName: string, filePathInput: string) {
-  let filePath = filePathInput;
+export function filePathToWsPath({
+  wsName,
+  inputPath,
+}: { wsName: string; inputPath: string }) {
+  let filePath = inputPath;
   if (filePath.startsWith('/')) {
     filePath = filePath.slice(1);
   }
@@ -159,4 +166,8 @@ export function removeExtension(str: string) {
 
 function getLast<T>(arr: T[]): T | undefined {
   return arr.length > 0 ? arr[arr.length - 1] : undefined;
+}
+
+export function appendNoteExtension(str: string) {
+  return removeExtension(str) + DEFAULT_NOTE_EXTENSION;
 }

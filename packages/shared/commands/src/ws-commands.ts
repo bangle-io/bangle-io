@@ -8,7 +8,9 @@ export const wsCommands = narrow([
     id: 'command::ws:new-note-from-input',
     title: 'New Note',
     omniSearch: false,
-    dependencies: { services: ['workspaceOps', 'fileSystem', 'navigation'] },
+    dependencies: {
+      services: ['workspaceState', 'fileSystem', 'navigation'],
+    },
     args: {
       inputPath: T.String,
     },
@@ -49,6 +51,16 @@ export const wsCommands = narrow([
     dependencies: { services: ['fileSystem', 'navigation'] },
     args: {
       wsPath: T.String,
+    },
+  },
+  {
+    id: 'command::ws:rename-ws-path',
+    title: 'Rename Note',
+    omniSearch: false,
+    dependencies: { services: ['fileSystem', 'navigation'] },
+    args: {
+      wsPath: T.String,
+      newWsPath: T.String,
     },
   },
 ]);
