@@ -3,6 +3,7 @@ import { Emitter } from '@bangle.io/emitter';
 import type {
   BaseRouter,
   BaseServiceCommonOptions,
+  PageLifeCycleState,
   RouterState,
 } from '@bangle.io/types';
 
@@ -46,6 +47,18 @@ export class MemoryRouterService
     this.emitter.destroy();
   }
 
+  get lifeCycle(): {
+    current: PageLifeCycleState;
+    previous: PageLifeCycleState;
+  } {
+    return {
+      current: 'active',
+      previous: undefined,
+    };
+  }
+
+  setUnsavedChanges(_: boolean): void {}
+
   navigate(
     to: string | URL,
     options?: { replace?: boolean; state?: RouterState },
@@ -56,7 +69,7 @@ export class MemoryRouterService
     this._search = url.search;
     this._state = options?.state ?? null;
 
-    this.emitter.emit('event::router:update', {
+    this.emitter.emit('event::router:route-update', {
       pathname: this._pathname,
       search: this._search,
       state: this._state ?? {},

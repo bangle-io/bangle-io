@@ -421,6 +421,9 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+      page-lifecycle:
+        specifier: ^0.1.2
+        version: 0.1.2
       wouter:
         specifier: ^3.3.5
         version: 3.3.5(react@18.3.1)
@@ -4965,6 +4968,9 @@ packages:
 
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
+
+  page-lifecycle@0.1.2:
+    resolution: {integrity: sha512-+3uccYgL0CXG0KSXRxZi4uc2E6mqFWV5HqiJJgcnaJCiS0LqiuJ4vB420N21NFuLvuvLB4Jr5drgQ2NXAXF9Iw==}
 
   param-case@3.0.4:
     resolution: {integrity: sha512-RXlj7zCYokReqWpOPH9oYivUzLYZ5vAPIfEmCTNViosC78F8F0H9y7T7gG2M39ymgutxF5gcFEsyZQSph9Bp3A==}
@@ -10743,6 +10749,8 @@ snapshots:
       release-zalgo: 1.0.0
 
   package-json-from-dist@1.0.1: {}
+
+  page-lifecycle@0.1.2: {}
 
   param-case@3.0.4:
     dependencies:

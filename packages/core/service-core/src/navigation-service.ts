@@ -2,12 +2,12 @@ import { BaseService } from '@bangle.io/base-utils';
 import type {
   BaseRouterService,
   BaseServiceCommonOptions,
+  PageLifeCycleState,
   RouterState,
 } from '@bangle.io/types';
 import {
   isValidFileWsPath,
   pathnameToWsPath,
-  resolvePath,
   wsPathToPathname,
 } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
@@ -17,11 +17,19 @@ export class NavigationService extends BaseService {
 
   $wsName = atom<string | undefined>(undefined);
   $wsPath = atom<string | undefined>(undefined);
+  $lifeCycle = atom<{
+    current: PageLifeCycleState;
+    previous: PageLifeCycleState;
+  }>({
+    current: undefined,
+    previous: undefined,
+  });
 
   resolveAtoms() {
     return {
       wsName: this.store.get(this.$wsName),
       wsPath: this.store.get(this.$wsPath),
+      lifeCycle: this.store.get(this.$lifeCycle),
     };
   }
 
@@ -56,23 +64,31 @@ export class NavigationService extends BaseService {
     this.routerService = dependencies.routerService;
   }
   protected async onInitialize(): Promise<void> {
-    this.setupRouterListener();
-  }
-
-  protected async onDispose(): Promise<void> {}
-
-  private setupRouterListener() {
-    this.syncAtoms();
+    this.syncLocationAtoms();
+    this.syncPageLifeCycleAtom();
     this.routerService.emitter.on(
-      'event::router:update',
+      'event::router:route-update',
       (_event) => {
-        this.syncAtoms();
+        this.syncLocationAtoms();
+      },
+      this.abortSignal,
+    );
+    this.routerService.emitter.on(
+      'event::router:page-lifecycle-state',
+      (_event) => {
+        this.syncPageLifeCycleAtom();
       },
       this.abortSignal,
     );
   }
 
-  private syncAtoms() {
+  private syncPageLifeCycleAtom() {
+    const { current, previous } = this.routerService.lifeCycle;
+    this.logger.debug(`page lifecycle changed from ${previous} to ${current}`);
+    this.store.set(this.$lifeCycle, { current, previous });
+  }
+
+  private syncLocationAtoms() {
     const { wsName, wsPath } = pathnameToWsPath(this.routerService.pathname);
     if (wsPath) {
       if (!isValidFileWsPath(wsPath)) {

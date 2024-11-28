@@ -26,6 +26,12 @@ export type ObjectToDiscriminatedUnion<T extends object> = {
   [K in keyof T]: K extends string ? EventMessage<K, T[K]> : never;
 }[keyof T];
 
+interface EmitterOptions {
+  paused?: boolean;
+  onDestroy?: () => void;
+  onEmit?: (message: EventMessage<any, any>) => void;
+}
+
 export class Emitter<T extends object = any> {
   /**
    * provides a way to create an emitter with discriminated union types
@@ -41,13 +47,14 @@ export class Emitter<T extends object = any> {
   public _eventListeners: EventListeners = {};
   public _allEventListeners = new Set<AllEventListener<any>>();
   private destroyed = false;
+  private paused = false;
+  private buffer: Array<{ event: keyof T; data: any }> = [];
 
-  constructor(
-    private options: {
-      onDestroy?: () => void;
-      onEmit?: (message: EventMessage<any, any>) => void;
-    } = {},
-  ) {}
+  constructor(private options: EmitterOptions = {}) {
+    if (options?.paused) {
+      this.paused = true;
+    }
+  }
 
   destroy(): void {
     this.clearListeners();
@@ -57,6 +64,11 @@ export class Emitter<T extends object = any> {
 
   emit<K extends keyof T>(event: K, data: T[K]): this {
     if (this.destroyed) {
+      return this;
+    }
+
+    if (this.paused) {
+      this.buffer.push({ event, data });
       return this;
     }
 
@@ -76,6 +88,28 @@ export class Emitter<T extends object = any> {
       callback(val);
     }
 
+    return this;
+  }
+
+  pause(): this {
+    if (!this.destroyed) {
+      this.paused = true;
+    }
+    return this;
+  }
+
+  unpause(): this {
+    if (!this.destroyed) {
+      this.paused = false;
+
+      // Flush buffered events using emit
+      for (const { event, data } of this.buffer) {
+        this.emit(event, data);
+      }
+
+      // Clear the buffer
+      this.buffer = [];
+    }
     return this;
   }
 

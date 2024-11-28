@@ -374,3 +374,87 @@ describe('Emitter onAll', () => {
     expect(allEventListener).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('Emitter with pause functionality', () => {
+  let emitter: Emitter;
+
+  beforeEach(() => {
+    emitter = new Emitter({ paused: true });
+  });
+
+  afterEach(() => {
+    emitter.destroy();
+  });
+
+  test('should buffer events when paused', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event', mockCallback);
+    emitter.emit('event', 'data1');
+    emitter.emit('event', 'data2');
+    expect(mockCallback).not.toHaveBeenCalled();
+  });
+
+  test('should release buffered events in order when unpaused', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event', mockCallback);
+    emitter.emit('event', 'data1');
+    emitter.emit('event', 'data2');
+
+    emitter.unpause();
+
+    expect(mockCallback).toHaveBeenCalledTimes(2);
+    expect(mockCallback?.mock?.calls?.[0]?.[0]).toBe('data1');
+    expect(mockCallback.mock.calls?.[1]?.[0]).toBe('data2');
+  });
+
+  test('should handle events emitted after unpausing immediately', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event', mockCallback);
+
+    emitter.emit('event', 'data1');
+    emitter.unpause();
+    emitter.emit('event', 'data2');
+
+    expect(mockCallback).toHaveBeenCalledTimes(2);
+    expect(mockCallback?.mock?.calls?.[0]?.[0]).toBe('data1');
+    expect(mockCallback.mock.calls?.[1]?.[0]).toBe('data2');
+  });
+
+  test('should support pausing and unpausing multiple times', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event', mockCallback);
+
+    emitter.emit('event', 'data1');
+    emitter.unpause();
+
+    emitter.pause();
+    emitter.emit('event', 'data2');
+    emitter.unpause();
+
+    expect(mockCallback).toHaveBeenCalledTimes(2);
+    expect(mockCallback?.mock?.calls?.[0]?.[0]).toBe('data1');
+    expect(mockCallback.mock.calls?.[1]?.[0]).toBe('data2');
+  });
+
+  test('should not call removed listeners when unpaused', () => {
+    const mockCallback = vi.fn();
+    const off = emitter.on('event', mockCallback);
+
+    emitter.emit('event', 'data1');
+    off();
+    emitter.unpause();
+
+    expect(mockCallback).not.toHaveBeenCalled();
+  });
+
+  test('should not emit buffered events after destroy is called', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event', mockCallback);
+
+    emitter.emit('event', 'data1');
+    emitter.destroy();
+    emitter.unpause();
+
+    expect(mockCallback).not.toHaveBeenCalled();
+  });
+});

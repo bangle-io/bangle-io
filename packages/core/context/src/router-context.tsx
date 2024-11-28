@@ -10,7 +10,7 @@ const useRouterHook: BaseLocationHook = function useRouterHook() {
   const subscribe = useCallback(
     (callback: () => void) => {
       const unregister = coreServices.navigation.emitter.on(
-        'event::router:update',
+        'event::router:route-update',
         callback,
       );
       return unregister;
