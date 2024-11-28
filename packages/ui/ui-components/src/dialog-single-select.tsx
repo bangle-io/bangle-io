@@ -27,6 +27,7 @@ export type DialogSingleSelectProps = {
   badgeText?: string;
   emptyMessage?: string;
   Icon?: React.ElementType;
+  initialSearch?: string;
 };
 
 function SingleSelectItem({
@@ -71,9 +72,11 @@ export function DialogSingleSelect({
   badgeText,
   badgeTone = 'default',
   emptyMessage = 'No options available.',
+  initialSearch = '',
   Icon,
 }: DialogSingleSelectProps) {
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = React.useState(initialSearch);
+
   const filteredOptions = React.useMemo(() => {
     if (!search) return options;
     return options.filter((option) =>
@@ -101,7 +104,9 @@ export function DialogSingleSelect({
       <CommandInput
         placeholder={placeholder}
         value={search}
-        onValueChange={setSearch}
+        onValueChange={(val) => {
+          setSearch(val);
+        }}
         Icon={Icon}
       />
       <CommandList>

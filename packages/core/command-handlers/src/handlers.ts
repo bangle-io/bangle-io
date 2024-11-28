@@ -88,8 +88,8 @@ export const commandHandlers = [
 
   c(
     'command::ui:delete-ws-path-dialog',
-    ({ workbenchState, workspaceState, fileSystem }, _, key) => {
-      const { store } = getCtx(key);
+    ({ workbenchState, workspaceState }, { wsPath }, key) => {
+      const { store, dispatch } = getCtx(key);
       const wsPaths = store.get(workspaceState.$wsPaths);
       const wsName = store.get(workspaceState.$wsName);
 
@@ -112,14 +112,15 @@ export const commandHandlers = [
           groupHeading: 'Notes',
           emptyMessage: 'No notes found',
           options: wsPaths.map((path) => ({
-            title: resolvePath(path).fileName,
+            title: resolvePath(path).filePath,
             id: path,
           })),
           Icon: Trash2,
+          initialSearch: wsPath ? resolvePath(wsPath).filePath : undefined,
           onSelect: (option) => {
             const fileName = resolvePath(option.id).fileNameWithoutExt;
             if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
-              fileSystem.deleteFile(option.id);
+              dispatch('command::ws:delete-ws-path', { wsPath: option.id });
             }
           },
         };
@@ -226,16 +227,20 @@ export const commandHandlers = [
 
       const { fileNameWithoutExt } = resolvePath(newWsPath);
 
-      void fileSystem.createFile(
-        newWsPath,
-        new File(
-          [`I am content of ${fileNameWithoutExt}`],
-          fileNameWithoutExt,
-          {
-            type: 'text/plain',
-          },
-        ),
-      );
+      void fileSystem
+        .createFile(
+          newWsPath,
+          new File(
+            [`I am content of ${fileNameWithoutExt}`],
+            fileNameWithoutExt,
+            {
+              type: 'text/plain',
+            },
+          ),
+        )
+        .then(() => {
+          navigation.goWsPath(newWsPath);
+        });
     },
   ),
 
@@ -255,4 +260,11 @@ export const commandHandlers = [
       workspaceOps.deleteWorkspaceInfo(wsName);
     },
   ),
+
+  c('command::ws:delete-ws-path', ({ fileSystem, navigation }, { wsPath }) => {
+    if (navigation.resolveAtoms().wsPath === wsPath) {
+      navigation.goWorkspace();
+    }
+    fileSystem.deleteFile(wsPath);
+  }),
 ];

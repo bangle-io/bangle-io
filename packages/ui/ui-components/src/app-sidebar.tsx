@@ -1,12 +1,11 @@
 import {
-  AudioWaveform,
-  Check,
   ChevronRight,
   ChevronsUpDown,
   Command as CommandIcon,
   File as FileIcon,
   Folder,
   GalleryVerticalEnd,
+  MoreHorizontal,
   Plus,
   PlusIcon,
   Search,
@@ -40,11 +39,13 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInput,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -77,6 +78,7 @@ export type AppSidebarProps = {
   onTreeItemClick: (item: TreeItem) => void;
   activeWsPaths?: string[];
   onNewFileClick: () => void;
+  onDeleteFileClick?: (item: TreeItem) => void;
 };
 
 export function AppSidebar({
@@ -89,6 +91,7 @@ export function AppSidebar({
   activeWsPaths,
   onTreeItemClick,
   onNewFileClick,
+  onDeleteFileClick = () => {},
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined, true),
@@ -131,19 +134,16 @@ export function AppSidebar({
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>
-            <span>Files</span>
-            <div className="flex gap-1">
-              <SidebarMenuButton
-                size="sm"
-                onClick={() => {
-                  onNewFileClick();
-                }}
-              >
-                <PlusIcon className="h-4 w-4" />
-              </SidebarMenuButton>
-            </div>
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Files</SidebarGroupLabel>
+          <SidebarGroupAction
+            title="New File"
+            onClick={() => {
+              onNewFileClick();
+            }}
+          >
+            <PlusIcon />
+            <span className="sr-only">Create File</span>
+          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {tree.map((item, index) => (
@@ -152,6 +152,7 @@ export function AppSidebar({
                   key={index}
                   item={item}
                   onTreeItemClick={onTreeItemClick}
+                  onTreeItemDelete={onDeleteFileClick}
                 />
               ))}
             </SidebarMenu>
@@ -165,16 +166,40 @@ export function AppSidebar({
 function Tree({
   item,
   onTreeItemClick,
-}: { item: TreeItem; onTreeItemClick: (item: TreeItem) => void }) {
+  onTreeItemDelete,
+}: {
+  item: TreeItem;
+  onTreeItemClick: (item: TreeItem) => void;
+  onTreeItemDelete: (item: TreeItem) => void;
+}) {
   if (!item.isDir) {
     return (
-      <SidebarMenuButton
-        className="data-[active=true]:bg-transparent"
-        onClick={() => onTreeItemClick(item)}
-      >
-        <FileIcon />
-        {item.name}
-      </SidebarMenuButton>
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          className="data-[active=true]:bg-transparent"
+          onClick={() => onTreeItemClick(item)}
+          isActive={item.isOpen}
+        >
+          <FileIcon />
+          {item.name}
+        </SidebarMenuButton>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuAction showOnHover>
+              <MoreHorizontal />
+            </SidebarMenuAction>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="right" align="start">
+            <DropdownMenuItem
+              onClick={() => {
+                onTreeItemDelete(item);
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
     );
   }
 
@@ -199,6 +224,7 @@ function Tree({
                 key={index}
                 item={subItem}
                 onTreeItemClick={onTreeItemClick}
+                onTreeItemDelete={onTreeItemDelete}
               />
             ))}
           </SidebarMenuSub>

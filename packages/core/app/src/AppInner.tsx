@@ -106,6 +106,8 @@ export function AppInner({
         }}
       />
       <DialogSingleSelect
+        // reset component based on id otherwise it persists previous state
+        key={singleSelectDialog?.dialogId}
         open={Boolean(singleSelectDialog)}
         setOpen={(open) => {
           setSingleSelectDialog(
@@ -120,6 +122,7 @@ export function AppInner({
         groupHeading={singleSelectDialog?.groupHeading}
         emptyMessage={singleSelectDialog?.emptyMessage}
         Icon={singleSelectDialog?.Icon}
+        initialSearch={singleSelectDialog?.initialSearch}
       />
       <OmniSearch
         open={open}

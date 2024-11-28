@@ -66,7 +66,8 @@ export const uiCommands = narrow([
     omniSearch: true,
     keywords: ['delete', 'note'],
     dependencies: {
-      services: ['workbenchState', 'workspaceState', 'fileSystem'],
+      services: ['workbenchState', 'workspaceState'],
+      commands: ['command::ws:delete-ws-path'],
     },
     args: {
       wsPath: T.Optional(T.String),

@@ -42,4 +42,13 @@ export const wsCommands = narrow([
       wsName: T.String,
     },
   },
+  {
+    id: 'command::ws:delete-ws-path',
+    title: 'Delete Note',
+    omniSearch: false,
+    dependencies: { services: ['fileSystem', 'navigation'] },
+    args: {
+      wsPath: T.String,
+    },
+  },
 ]);
