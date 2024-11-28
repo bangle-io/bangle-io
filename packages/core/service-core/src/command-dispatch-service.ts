@@ -133,7 +133,12 @@ export class CommandDispatchService extends BaseService<{
     const key: CommandKey<string> = { key: id };
     this.setCommandContext(command, key);
     this.fromChain.push(from);
-    void handler?.(result, args, key);
-    this.fromChain.pop();
+    try {
+      void handler?.(result, args, key);
+    } finally {
+      // even if the handler throws, we should remove the command from the chain
+      // to clean up the state
+      this.fromChain.pop();
+    }
   }
 }
