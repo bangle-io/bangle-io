@@ -33,6 +33,10 @@ export class NavigationService extends BaseService {
     };
   }
 
+  setUnsavedChanges(bool: boolean) {
+    return this.routerService.setUnsavedChanges(bool);
+  }
+
   get pathname(): string {
     return this.routerService.pathname ?? '';
   }

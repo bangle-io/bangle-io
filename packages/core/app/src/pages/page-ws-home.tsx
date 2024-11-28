@@ -3,7 +3,6 @@ import { EditorComp } from '@bangle.io/editor';
 import { pathnameToWsPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { useParams } from 'wouter';
 
 export function PageWsHome() {
   const coreServices = useCoreServices();

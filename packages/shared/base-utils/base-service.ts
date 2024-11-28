@@ -141,6 +141,7 @@ export abstract class BaseService<Config = void> {
     return this.lifecycle.aborted;
   }
 
+  // only use this when you cannot throw an app error
   protected emitAppError(error: BaseError): void {
     this.logger.debug('Emitting app error');
     queueMicrotask(() => {
