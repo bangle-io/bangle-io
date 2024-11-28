@@ -1,12 +1,16 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseError, BaseService } from '@bangle.io/base-utils';
+import { commandKeyToContext } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-zod';
 import { makeTestLogger, makeTestService } from '@bangle.io/test-utils';
 import type {
   BaseServiceCommonOptions,
   Command,
   CommandExposedServices,
+  CommandHandler,
+  CommandHandlerContext,
+  CommandKey,
 } from '@bangle.io/types';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';
 
@@ -19,6 +23,19 @@ class TestService extends BaseService {
       dependencies: {},
     });
   }
+}
+
+function getCtx(key: CommandKey<string>) {
+  const result = commandKeyToContext.get(key);
+  if (!result) {
+    throw new BaseError({
+      message: `Command "${key.key}" is not registered.`,
+    });
+  }
+  return {
+    dispatch: result.context.dispatch,
+    store: result.context.store,
+  } satisfies CommandHandlerContext;
 }
 
 async function setup() {
@@ -56,7 +73,7 @@ describe('CommandDispatchService', () => {
     const command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
-      services: ['fileSystem'],
+      dependencies: { services: ['fileSystem'] },
       omniSearch: true,
       args: null,
     } as const satisfies Command;
@@ -77,7 +94,7 @@ describe('CommandDispatchService', () => {
       },
       null,
       {
-        store: expect.any(Object),
+        key: expect.any(String),
       },
     );
 
@@ -103,7 +120,7 @@ describe('CommandDispatchService', () => {
     const command = {
       id: 'command::ui:test-no-use',
       keywords: ['new', 'create', 'workspace'],
-      services: ['fileSystem'],
+      dependencies: { services: ['fileSystem'] },
       omniSearch: true,
       args: {
         workspaceType: T.String,
@@ -136,7 +153,7 @@ describe('CommandDispatchService', () => {
         wsName: 'test-ws',
       },
       {
-        store: expect.any(Object),
+        key: expect.any(String),
       },
     );
 
@@ -198,7 +215,7 @@ describe('CommandDispatchService', () => {
     const command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
-      services: ['fileSystem'],
+      dependencies: { services: ['fileSystem'] },
       omniSearch: true,
       args: null,
     } as const satisfies Command;
@@ -217,7 +234,7 @@ describe('CommandDispatchService', () => {
     const command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
-      services: [],
+      dependencies: { services: [] },
       omniSearch: true,
       args: null,
     } as const satisfies Command;
@@ -233,7 +250,7 @@ describe('CommandDispatchService', () => {
 
     // handler should be called with an empty object
     expect(handler).toHaveBeenCalledWith({}, null, {
-      store: expect.any(Object),
+      key: expect.any(String),
     });
   });
 
@@ -255,7 +272,7 @@ describe('CommandDispatchService', () => {
     const command: Command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
-      services: ['unknown-service'] as any[],
+      dependencies: { services: ['unknown-service'] as any[] },
       omniSearch: true,
       args: null,
     } as const satisfies Command;
@@ -283,7 +300,7 @@ describe('CommandDispatchService', () => {
     const command: Command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
-      services: ['commandRegistry'] as any[],
+      dependencies: { services: ['commandRegistry'] as any[] },
       omniSearch: true,
       args: null,
     } as const satisfies Command;
@@ -304,5 +321,179 @@ describe('CommandDispatchService', () => {
     ).toThrow(
       /Command "command::ui:toggle-sidebar" uses an excluded service "commandRegistry"./,
     );
+  });
+
+  test('should allow a command to dispatch another command using the', async () => {
+    const { commandRegistry, dispatchService } = await setup();
+
+    const parentCommand = {
+      id: 'command::parent',
+      dependencies: {
+        commands: ['command::child'],
+      },
+      args: null,
+    } as const satisfies Command;
+
+    const childCommand = {
+      id: 'command::child',
+      dependencies: {},
+      args: null,
+    } as const satisfies Command;
+
+    const childHandler = vi.fn<CommandHandler>();
+    const parentHandler = vi.fn<CommandHandler>((_services, _args, key) => {
+      const { dispatch } = getCtx(key);
+      dispatch('command::child', null);
+    });
+
+    commandRegistry.register(parentCommand);
+    commandRegistry.registerHandler({
+      id: 'command::parent',
+      handler: parentHandler,
+    });
+
+    commandRegistry.register(childCommand);
+    commandRegistry.registerHandler({
+      id: 'command::child',
+      handler: childHandler,
+    });
+
+    dispatchService.dispatch(
+      // @ts-expect-error custom command
+      'command::parent',
+      null,
+      'testSource',
+    );
+
+    expect(parentHandler).toHaveBeenCalled();
+    expect(childHandler).toHaveBeenCalled();
+  });
+
+  test('should prevent cyclic command dispatch using getCtx', async () => {
+    const { commandRegistry, dispatchService } = await setup();
+
+    const command = {
+      id: 'command::cyclic',
+      dependencies: {
+        commands: ['command::cyclic'],
+      },
+      args: null,
+    } as const satisfies Command;
+
+    const handler = vi.fn<CommandHandler>((_services, _args, key) => {
+      const { dispatch } = getCtx(key);
+      dispatch('command::cyclic', null);
+    });
+
+    commandRegistry.register(command);
+    commandRegistry.registerHandler({
+      id: 'command::cyclic',
+      handler,
+    });
+
+    expect(() => {
+      dispatchService.dispatch(
+        // @ts-expect-error custom command
+        'command::cyclic',
+        null,
+        'testSource',
+      );
+    }).toThrowError(`Command "command::cyclic" is trying to dispatch itself.`);
+
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  test('should detect cyclic dependency in a deeper dispatch chain', async () => {
+    const { commandRegistry, dispatchService } = await setup();
+
+    const commandA = {
+      id: 'command::A',
+      dependencies: {
+        commands: ['command::B'],
+      },
+      args: null,
+    } as const satisfies Command;
+
+    const commandB = {
+      id: 'command::B',
+      dependencies: {
+        commands: ['command::C'],
+      },
+      args: null,
+    } as const satisfies Command;
+
+    const commandC = {
+      id: 'command::C',
+      dependencies: {
+        commands: ['command::D'],
+      },
+      args: null,
+    } as const satisfies Command;
+
+    const commandD = {
+      id: 'command::D',
+      dependencies: {
+        commands: ['command::B'],
+      },
+      args: null,
+    } as const satisfies Command;
+
+    const handlerA = vi.fn<CommandHandler>((_services, _args, key) => {
+      const { dispatch } = getCtx(key);
+      dispatch('command::B', null);
+    });
+
+    const handlerB = vi.fn<CommandHandler>((_services, _args, key) => {
+      const { dispatch } = getCtx(key);
+      dispatch('command::C', null);
+    });
+
+    const handlerC = vi.fn<CommandHandler>((_services, _args, key) => {
+      const { dispatch } = getCtx(key);
+      dispatch('command::D', null);
+    });
+
+    const handlerD = vi.fn<CommandHandler>((_services, _args, key) => {
+      const { dispatch } = getCtx(key);
+      dispatch('command::B', null); // This will cause cyclic dependency
+    });
+
+    commandRegistry.register(commandA);
+    commandRegistry.registerHandler({
+      id: 'command::A',
+      handler: handlerA,
+    });
+
+    commandRegistry.register(commandB);
+    commandRegistry.registerHandler({
+      id: 'command::B',
+      handler: handlerB,
+    });
+
+    commandRegistry.register(commandC);
+    commandRegistry.registerHandler({
+      id: 'command::C',
+      handler: handlerC,
+    });
+
+    commandRegistry.register(commandD);
+    commandRegistry.registerHandler({
+      id: 'command::D',
+      handler: handlerD,
+    });
+
+    expect(() => {
+      dispatchService.dispatch(
+        // @ts-expect-error custom command
+        'command::A',
+        null,
+        'testSource',
+      );
+    }).toThrowError('Command "command::B" dispatch has cyclic dependency.');
+
+    expect(handlerA).toHaveBeenCalledTimes(1);
+    expect(handlerB).toHaveBeenCalledTimes(1);
+    expect(handlerC).toHaveBeenCalledTimes(1);
+    expect(handlerD).toHaveBeenCalledTimes(1);
   });
 });

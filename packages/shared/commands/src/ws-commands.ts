@@ -1,13 +1,14 @@
 import { T } from '@bangle.io/mini-zod';
 import type { Command } from '@bangle.io/types';
+import { narrow } from './common';
 
 // Workspace Commands
-export const wsCommands = [
+export const wsCommands = narrow([
   {
     id: 'command::ws:new-note-from-input',
     title: 'New Note',
     omniSearch: false,
-    services: ['workspaceOps', 'fileSystem', 'navigation'],
+    dependencies: { services: ['workspaceOps', 'fileSystem', 'navigation'] },
     args: {
       inputPath: T.String,
     },
@@ -16,7 +17,7 @@ export const wsCommands = [
     id: 'command::ws:go-workspace',
     title: 'Go to Workspace',
     omniSearch: false,
-    services: ['navigation'],
+    dependencies: { services: ['navigation'] },
     args: {
       wsName: T.String,
     },
@@ -25,9 +26,20 @@ export const wsCommands = [
     id: 'command::ws:go-ws-path',
     title: 'Go to wsPath',
     omniSearch: false,
-    services: ['navigation'],
+    dependencies: {
+      services: ['navigation'],
+    },
     args: {
       wsPath: T.String,
     },
   },
-] as const satisfies Command[];
+  {
+    id: 'command::ws:delete-workspace',
+    title: 'Delete Workspace',
+    omniSearch: false,
+    dependencies: { services: ['workspaceOps', 'navigation'] },
+    args: {
+      wsName: T.String,
+    },
+  },
+]);

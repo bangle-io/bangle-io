@@ -18,19 +18,33 @@ export type Command = {
   disabled?: boolean;
   keywords?: string[];
   keybindings?: string[];
-  services: (keyof CommandExposedServices)[];
-  //   whether the command is available in the omni search
+  dependencies?: {
+    /**
+     * The services that are required to be available in the command handler ctx
+     */
+    services?: (keyof CommandExposedServices)[];
+    /**
+     * The commands that the handler is allowed to dispatch
+     */
+    commands?: string[];
+  };
+  // whether the command is available in the omni search
   // default is false
   omniSearch?: boolean;
+  //   the args type info when dispatching this command
   args: {
     [key: string]: AllowedValidator;
   } | null;
 };
 
+export type CommandHandlerContext = {
+  store: Store;
+  dispatch: (commandId: string, args: any) => void;
+};
 export type CommandHandler = (
   services: Record<string, BaseService>,
   args: any,
-  context: {
-    store: Store;
-  },
+  key: CommandKey<string>,
 ) => void | Promise<void>;
+
+export type CommandKey<T extends string> = { key: T };

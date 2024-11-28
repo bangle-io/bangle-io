@@ -21,7 +21,7 @@ describe('Bangle App Commands Validation', () => {
 
   it('should not use any excluded services', () => {
     for (const command of allCommands) {
-      for (const service of command.services) {
+      for (const service of command.dependencies?.services ?? []) {
         expect(commandExcludedServices).not.toContain(service);
       }
     }
@@ -64,7 +64,7 @@ describe('Bangle App Commands Validation', () => {
       id: 'command::test:mixed-args',
       title: 'Test Mixed Args',
       omniSearch: true,
-      services: ['database'],
+      dependencies: { services: ['database'] },
       args: {
         param1: T.String,
         param2: T.Optional(T.String),
@@ -81,7 +81,7 @@ describe('Bangle App Commands Validation', () => {
       id: 'command::test:mixed-args',
       title: 'Test Mixed Args',
       omniSearch: true,
-      services: ['database'],
+      dependencies: { services: ['database'] },
       args: {
         param1: T.Optional(T.String),
         param2: T.Optional(T.String),
@@ -91,5 +91,14 @@ describe('Bangle App Commands Validation', () => {
     assertIsDefined(commandWithMixedArgs.args);
 
     expect(areAllValuesOptional(commandWithMixedArgs.args)).toBe(true);
+  });
+
+  it('should ensure if commands are provided they exist', () => {
+    const commandIds = allCommands.map((command) => command.id);
+    for (const command of allCommands) {
+      for (const depCommand of command.dependencies?.commands ?? []) {
+        expect(commandIds).toContain(depCommand);
+      }
+    }
   });
 });

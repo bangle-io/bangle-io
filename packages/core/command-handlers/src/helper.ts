@@ -1,10 +1,15 @@
+import { BaseError } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
+import { commandKeyToContext } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
+
 import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type {
   Command,
   CommandExposedServices,
   CommandHandler,
+  CommandHandlerContext,
+  CommandKey,
   Store,
 } from '@bangle.io/types';
 import { useEffect } from 'react';
@@ -17,17 +22,15 @@ type CommandArgs<C extends Command> = C['args'] extends null
         : never;
     };
 
-export function c<T extends BangleAppCommand['id']>(
+export function c<const T extends BangleAppCommand['id']>(
   id: T,
   handler: (
     services: Pick<
       CommandExposedServices,
-      Extract<BangleAppCommand, { id: T }>['services'][number]
+      Extract<BangleAppCommand, { id: T }>['dependencies']['services'][number]
     >,
     args: CommandArgs<Extract<BangleAppCommand, { id: T }>>,
-    context: {
-      store: Store;
-    },
+    commandKey: CommandKey<NoInfer<T>>,
   ) => void | Promise<void>,
 ): {
   id: T;
@@ -44,12 +47,10 @@ export function useC<T extends BangleAppCommand['id']>(
   handler: (
     services: Pick<
       CommandExposedServices,
-      Extract<BangleAppCommand, { id: T }>['services'][number]
+      Extract<BangleAppCommand, { id: T }>['dependencies']['services'][number]
     >,
     args: CommandArgs<Extract<BangleAppCommand, { id: T }>>,
-    context: {
-      store: Store;
-    },
+    commandKey: CommandKey<NoInfer<T>>,
   ) => void | Promise<void>,
 ) {
   const coreServices = useCoreServices();
@@ -61,4 +62,35 @@ export function useC<T extends BangleAppCommand['id']>(
     });
     return unregister;
   }, [id, coreServices, handler]);
+}
+
+type ChildDispatcher<TId extends string> = (
+  id: TId,
+  args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
+) => void;
+
+export function getCtx<T extends string>(
+  key: CommandKey<T>,
+): {
+  store: Store;
+  dispatch: ChildDispatcher<
+    Extract<BangleAppCommand, { id: T }>['dependencies'] extends {
+      commands?: Array<infer C>;
+    }
+      ? C extends string
+        ? C
+        : never
+      : never
+  >;
+} {
+  const result = commandKeyToContext.get(key);
+  if (!result) {
+    throw new BaseError({
+      message: `Command "${key.key}" is not registered.`,
+    });
+  }
+  return {
+    dispatch: result.context.dispatch,
+    store: result.context.store,
+  } satisfies CommandHandlerContext;
 }

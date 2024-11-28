@@ -1,11 +1,16 @@
 import { BaseError, BaseService } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
-import { commandExcludedServices } from '@bangle.io/constants';
+import {
+  commandExcludedServices,
+  commandKeyToContext,
+} from '@bangle.io/constants';
 import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type {
   BaseServiceCommonOptions,
   Command,
   CommandExposedServices,
+  CommandHandlerContext,
+  CommandKey,
 } from '@bangle.io/types';
 import type { CommandRegistryService } from './command-registry-service';
 
@@ -22,6 +27,8 @@ export class CommandDispatchService extends BaseService<{
 }> {
   private commandRegistry: CommandRegistryService;
 
+  private fromChain: string[] = [];
+
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: {
@@ -36,6 +43,32 @@ export class CommandDispatchService extends BaseService<{
       needsConfig: true,
     });
     this.commandRegistry = dependencies.commandRegistry;
+
+    this.addCleanup(() => {
+      this.fromChain = [];
+    });
+  }
+
+  private setCommandContext(command: Command, key: CommandKey<string>): void {
+    const context: CommandHandlerContext = {
+      store: this.store,
+      dispatch: (childId: string, args: any) => {
+        if (childId === command.id) {
+          throw new BaseError({
+            message: `Command "${command.id}" is trying to dispatch itself.`,
+          });
+        }
+
+        if (!command.dependencies?.commands?.includes(childId)) {
+          throw new BaseError({
+            message: `Command "${command.id}" is trying to dispatch "${childId}" which is not allowed.`,
+          });
+        }
+
+        this.dispatch(childId as BangleAppCommand['id'], args, command.id);
+      },
+    };
+    commandKeyToContext.set(key, { context });
   }
 
   dispatch<TId extends BangleAppCommand['id']>(
@@ -51,6 +84,13 @@ export class CommandDispatchService extends BaseService<{
       });
     }
 
+    if (this.fromChain.includes(from) || this.fromChain.includes(id)) {
+      this.logger.error('fromChain', this.fromChain);
+      throw new BaseError({
+        message: `Command "${id}" dispatch has cyclic dependency.`,
+      });
+    }
+
     const command = this.commandRegistry.getCommand(id);
 
     if (!command) {
@@ -60,8 +100,13 @@ export class CommandDispatchService extends BaseService<{
     const result: Record<string, any> = {};
     const services = this.config.exposedServices;
 
-    this.logger.warn(id, command.services);
-    for (const serviceName of command.services) {
+    this.logger.debug(
+      'dispatching',
+      id,
+      'services=',
+      command.dependencies?.services,
+    );
+    for (const serviceName of command.dependencies?.services || []) {
       const service = services[serviceName];
 
       const excludedServices: string[] = commandExcludedServices;
@@ -85,6 +130,10 @@ export class CommandDispatchService extends BaseService<{
       this.logger.warn(`Handler for command "${id}" not found.`);
     }
 
-    void handler?.(result, args, { store: this.store });
+    const key: CommandKey<string> = { key: id };
+    this.setCommandContext(command, key);
+    this.fromChain.push(from);
+    void handler?.(result, args, key);
+    this.fromChain.pop();
   }
 }

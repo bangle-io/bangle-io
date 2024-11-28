@@ -24,7 +24,7 @@ describe('CommandRegistryService', () => {
     const command = {
       id: 'testCommand',
       keywords: ['test', 'command'],
-      services: [],
+      dependencies: { services: [] },
       omniSearch: false,
       args: null,
     } as const satisfies Command;
@@ -39,7 +39,7 @@ describe('CommandRegistryService', () => {
     const command = {
       id: 'testCommand',
       keywords: ['test', 'command'],
-      services: [],
+      dependencies: { services: [] },
       omniSearch: false,
       args: null,
     } as const satisfies Command;
@@ -53,7 +53,7 @@ describe('CommandRegistryService', () => {
     const command = {
       id: 'duplicateCommand',
       keywords: ['duplicate'],
-      services: [],
+      dependencies: { services: [] },
       omniSearch: false,
       args: null,
     } as const satisfies Command;
@@ -96,7 +96,7 @@ describe('CommandRegistryService', () => {
     const command = {
       id: 'testCommand',
       keywords: ['duplicate'],
-      services: [],
+      dependencies: { services: [] },
       omniSearch: false,
       args: null,
     } as const satisfies Command;

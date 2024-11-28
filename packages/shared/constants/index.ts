@@ -27,6 +27,6 @@ export enum WorkspaceType {
   Github = 'github-storage',
 }
 
-export * from './command-excluded-services';
+export * from './command';
 export * from './browser-history-events';
 export * from './theme';

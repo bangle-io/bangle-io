@@ -134,6 +134,9 @@ importers:
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/context':
         specifier: workspace:*
         version: link:../context
@@ -152,6 +155,10 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+    devDependencies:
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
 
   packages/core/context:
     dependencies:

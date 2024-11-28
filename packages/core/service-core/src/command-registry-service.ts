@@ -3,6 +3,7 @@ import type {
   BaseServiceCommonOptions,
   Command,
   CommandHandler,
+  CommandKey,
 } from '@bangle.io/types';
 
 type CommandHandlerConfig = { id: string; handler: CommandHandler };
@@ -13,9 +14,22 @@ export class CommandRegistryService extends BaseService<{
 }> {
   private commands: Map<string, Command> = new Map();
   private handlers: Map<string, CommandHandler> = new Map();
+  private commandKeyMap: WeakMap<Command, CommandKey<string>> = new WeakMap();
 
   public getCommands(): Command[] {
     return Array.from(this.commands.values());
+  }
+
+  getCommandKey(command: Command): CommandKey<string> {
+    const key = this.commandKeyMap.get(command);
+
+    if (!key) {
+      throw new BaseError({
+        message: `Command "${command.id}" does not have a key.`,
+      });
+    }
+
+    return key;
   }
 
   constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
@@ -55,6 +69,11 @@ export class CommandRegistryService extends BaseService<{
         message: `Command "${command.id}" is already registered.`,
       });
     }
+
+    if (!this.commandKeyMap.has(command)) {
+      this.commandKeyMap.set(command, { key: command.id });
+    }
+
     this.commands.set(command.id, command);
   }
 

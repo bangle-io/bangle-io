@@ -15,11 +15,13 @@ export function getEnabledCommands(): Command[] {
 export type BangleAppCommand = (typeof bangleAppCommands)[number];
 
 function validate(commands: Command[]) {
+  const commandIds = new Set(commands.map((command) => command.id));
+
   for (const command of commands) {
     const excludedServices: string[] = commandExcludedServices;
 
     if (
-      command.services.some((service: string) =>
+      command.dependencies?.services?.some((service: string) =>
         excludedServices.includes(service),
       )
     ) {
@@ -43,6 +45,16 @@ function validate(commands: Command[]) {
       throw new Error(
         `Command "${command.id}" has keybindings but has non-null args.`,
       );
+    }
+
+    if (command.dependencies?.commands) {
+      for (const depCommand of command.dependencies.commands) {
+        if (!commandIds.has(depCommand)) {
+          throw new Error(
+            `Command "${command.id}" has an invalid dependency command "${depCommand}".`,
+          );
+        }
+      }
     }
   }
 }

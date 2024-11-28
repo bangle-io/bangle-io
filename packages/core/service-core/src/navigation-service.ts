@@ -98,7 +98,12 @@ export class NavigationService extends BaseService {
    * if wsName is not provided, it will take you to the current workspace home
    */
   goWorkspace(wsName?: string) {
-    this.go(`/ws/${wsName}`);
+    const targetWsName = wsName || this.store.get(this.$wsName);
+    if (!targetWsName) {
+      this.goNotFound();
+    } else {
+      this.go(`/ws/${targetWsName}`);
+    }
   }
 
   goNotFound(originalPath?: string) {
@@ -110,5 +115,9 @@ export class NavigationService extends BaseService {
       : '';
 
     this.go(`/ws-not-found${suffix}`);
+  }
+
+  goHome() {
+    this.go('/');
   }
 }
