@@ -37,6 +37,14 @@ export class WorkspaceOpsService extends BaseService {
 
   $workspaceChanged = atom(0);
 
+  // Add a cache variable
+  private workspaceInfoCache = new Map<string, WorkspaceInfo>();
+
+  // Add a method to invalidate the cache externally
+  invalidateCache(): void {
+    this.workspaceInfoCache.clear();
+  }
+
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: {
@@ -66,11 +74,19 @@ export class WorkspaceOpsService extends BaseService {
 
   protected async onDispose(): Promise<void> {}
 
+  // Update the getWorkspaceInfo method to use the cache
   async getWorkspaceInfo(
     wsName: string,
     options?: WorkspaceDatabaseQueryOptions,
   ): Promise<WorkspaceInfo | undefined> {
     await this.initializedPromise;
+
+    const cacheKey = wsName + options?.type + options?.allowDeleted;
+
+    if (this.workspaceInfoCache.has(cacheKey)) {
+      return this.workspaceInfoCache.get(cacheKey);
+    }
+
     const result = await this.database.getEntry(wsName, {
       tableName: WORKSPACE_INFO_TABLE,
     });
@@ -85,10 +101,11 @@ export class WorkspaceOpsService extends BaseService {
       return undefined;
     }
 
-    if (options?.type) {
-      return wsInfo.type === options.type ? wsInfo : undefined;
+    if (options?.type && wsInfo.type !== options.type) {
+      return undefined;
     }
 
+    this.workspaceInfoCache.set(cacheKey, wsInfo);
     return wsInfo;
   }
 
@@ -126,6 +143,9 @@ export class WorkspaceOpsService extends BaseService {
 
     const updated = result.found ? (result.value as WorkspaceInfo) : undefined;
     if (updated) {
+      // Invalidate cache when workspace info changes
+      this.invalidateCache();
+
       this.onChange({
         type: 'workspace-create',
         payload: { wsName },
@@ -164,6 +184,9 @@ export class WorkspaceOpsService extends BaseService {
       },
       { tableName: WORKSPACE_INFO_TABLE },
     );
+
+    // Invalidate cache when workspace info changes
+    this.invalidateCache();
 
     this.onChange({
       type: 'workspace-delete',
@@ -206,6 +229,9 @@ export class WorkspaceOpsService extends BaseService {
     );
 
     if (result.found) {
+      // Invalidate cache when workspace info changes
+      this.invalidateCache();
+
       this.onChange({
         type: 'workspace-update',
         payload: { wsName: name },

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { Logger } from '@bangle.io/base-utils';
+import { BaseService, type Logger } from '@bangle.io/base-utils';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { Emitter } from '@bangle.io/emitter';
 import { makeTestService } from '@bangle.io/test-utils';
@@ -36,6 +36,12 @@ test('initializeServices returns unique service names', () => {
   expect(uniqueServiceNames.size).toBe(serviceNames.length);
 
   for (const service of serviceValues) {
-    service.dispose();
+    if (service instanceof BaseService) {
+      service.dispose();
+    } else {
+      for (const s of Object.values(service)) {
+        s?.dispose();
+      }
+    }
   }
 });

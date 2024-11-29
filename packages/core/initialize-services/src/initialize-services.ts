@@ -2,6 +2,7 @@ import {
   type Logger,
   assertIsDefined,
   getEventSenderMetadata,
+  throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
@@ -24,6 +25,7 @@ import {
   BrowserErrorHandlerService,
   BrowserRouterService,
   FileStorageIndexedDB,
+  FileStorageNativeFs,
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
 import type {
@@ -75,6 +77,27 @@ export function initializeServices(
   };
 
   // init config
+  if (platformServices.fileStorage.nativefs instanceof FileStorageNativeFs) {
+    platformServices.fileStorage.nativefs.setInitConfig({
+      getRootDirHandle: async (wsName: string) => {
+        const { rootDirHandle } =
+          await coreServices.workspaceOps.getWorkspaceMetadata(wsName);
+
+        if (!rootDirHandle) {
+          throwAppError(
+            'error::workspace:invalid-metadata',
+            `Invalid workspace metadata for ${wsName}. Missing root dir handle`,
+            {
+              wsName,
+            },
+          );
+        }
+
+        return { handle: rootDirHandle };
+      },
+    });
+  }
+
   coreServices.commandRegistry.setInitConfig({
     commands,
     commandHandlers: commandHandlers,
@@ -146,17 +169,28 @@ function initPlatformServices(
   const fileStorageServiceIdb = new FileStorageIndexedDB(
     commonOpts,
     undefined,
-    (change) => {
-      commonOpts.logger.info('File storage change:', change);
+    {
+      onChange: (change) => {
+        commonOpts.logger.info('File storage change:', change);
+      },
     },
   );
+
+  const nativeFsFileStorage = new FileStorageNativeFs(commonOpts, undefined, {
+    onChange: (change) => {
+      commonOpts.logger.info('File storage change:', change);
+    },
+  });
 
   const browserRouterService = new BrowserRouterService(commonOpts, undefined);
 
   return {
     errorService,
     database: idbDatabase,
-    fileStorage: fileStorageServiceIdb,
+    fileStorage: {
+      [fileStorageServiceIdb.workspaceType]: fileStorageServiceIdb,
+      [nativeFsFileStorage.workspaceType]: nativeFsFileStorage,
+    },
     router: browserRouterService,
   };
 }
@@ -187,8 +221,8 @@ function initCoreServices(
 
   const fileSystemService = new FileSystemService(
     commonOpts,
-    { fileStorageService: platformServices.fileStorage },
-    rootEmitter,
+    { ...platformServices.fileStorage },
+    { rootEmitter },
   );
   const navigation = new NavigationService(commonOpts, {
     routerService: platformServices.router,

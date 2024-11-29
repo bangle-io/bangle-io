@@ -115,6 +115,11 @@ export function splitWsPath(wsPath: string): [string, string] {
   return [wsName, filePath];
 }
 
+// works for both wsPath and wsName
+export function getWsName(wsPathOrWsName: string) {
+  return wsPathOrWsName.split(':')[0];
+}
+
 export function isValidFileWsPath(wsPath: string) {
   if (!isWsPath(wsPath)) {
     return false;

@@ -3,3 +3,4 @@ export * from './memory-database';
 export * from './file-storage-indexeddb';
 export * from './browser-error-handler';
 export * from './browser-router';
+export * from './file-storage-nativefs';

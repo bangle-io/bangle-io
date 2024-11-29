@@ -1,5 +1,8 @@
 import type { BaseError, BaseService, Logger } from '@bangle.io/base-utils';
-import type { commandExcludedServices } from '@bangle.io/constants';
+import type {
+  WorkspaceStorageType,
+  commandExcludedServices,
+} from '@bangle.io/constants';
 import type {
   CommandDispatchService,
   CommandRegistryService,
@@ -74,11 +77,11 @@ export type CoreServices = {
 export type PlatformServices = {
   database: IdbDatabaseService;
   errorService: BrowserErrorHandlerService;
-  fileStorage: BaseFileStorageService;
+  fileStorage: Partial<Record<WorkspaceStorageType, BaseFileStorageService>>;
   router: BaseRouterService;
 };
 
 export type AllServiceName = (keyof CoreServices | keyof PlatformServices) & {};
 
 export type BaseDatabaseService = BaseAppDatabase & BaseService;
-export type BaseFileStorageService = BaseFileStorageProvider & BaseService;
+export type BaseFileStorageService = BaseFileStorageProvider & BaseService<any>;

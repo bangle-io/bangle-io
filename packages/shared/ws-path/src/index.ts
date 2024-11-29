@@ -10,6 +10,7 @@ export {
   resolvePath,
   toFSPath,
   validateFileWsPath,
+  getWsName,
   appendNoteExtension,
 } from './helpers';
 

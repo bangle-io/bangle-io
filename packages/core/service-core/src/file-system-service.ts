@@ -4,6 +4,7 @@ import {
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
+import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageService,
   BaseServiceCommonOptions,
@@ -44,10 +45,8 @@ export class FileSystemService extends BaseService {
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    dependencies: {
-      fileStorageService: BaseFileStorageService;
-    },
-    private rootEmitter: RootEmitter,
+    dependencies: Record<string, BaseFileStorageService>,
+    private options: { rootEmitter: RootEmitter },
   ) {
     super({
       ...baseOptions,
@@ -55,7 +54,9 @@ export class FileSystemService extends BaseService {
       kind: 'core',
       dependencies,
     });
-    this.fileStorageService = dependencies.fileStorageService;
+
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    this.fileStorageService = dependencies[WORKSPACE_STORAGE_TYPE.NativeFS]!;
   }
 
   protected async onInitialize(): Promise<void> {}
@@ -69,7 +70,7 @@ export class FileSystemService extends BaseService {
 
   private onChange(change: ChangeEvent) {
     this.store.set(this.$fileChanged, (v) => v + 1);
-    this.rootEmitter.emit('event::file:update', {
+    this.options.rootEmitter.emit('event::file:update', {
       type: change.type,
       wsPath: change.payload.wsPath,
       oldWsPath:

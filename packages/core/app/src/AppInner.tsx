@@ -1,7 +1,7 @@
 import '@bangle.io/editor/src/style.css';
 
 import { getGithubUrl } from '@bangle.io/base-utils';
-import { WorkspaceType } from '@bangle.io/constants';
+import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { useLogger } from '@bangle.io/context/src/logger-context';
 import { OmniSearch } from '@bangle.io/omni-search';
@@ -84,7 +84,7 @@ export function AppInner({
           coreServices.workspaceOps.createWorkspaceInfo({
             metadata: {},
             name: wsName,
-            type: WorkspaceType.Browser,
+            type: WORKSPACE_STORAGE_TYPE.Browser,
           });
         }}
       />

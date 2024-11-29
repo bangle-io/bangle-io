@@ -4,7 +4,7 @@ import {
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
 import { BaseService, throwAppError } from '@bangle.io/base-utils';
-import { WorkspaceType } from '@bangle.io/constants';
+import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
   BaseServiceCommonOptions,
@@ -16,7 +16,7 @@ export class FileStorageIndexedDB
   extends BaseService
   implements BaseFileStorageProvider
 {
-  public readonly workspaceType = WorkspaceType.Browser;
+  public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Browser;
   public readonly displayName = 'Browser Storage';
   public readonly description = "Saves data in your browser's local storage";
 
@@ -25,7 +25,7 @@ export class FileStorageIndexedDB
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: undefined,
-    private readonly onChange: (event: FileStorageChangeEvent) => void,
+    private options: { onChange: (event: FileStorageChangeEvent) => void },
   ) {
     super({
       ...baseOptions,
@@ -38,13 +38,17 @@ export class FileStorageIndexedDB
   protected async onInitialize(): Promise<void> {}
   protected async onDispose(): Promise<void> {}
 
+  private internalOnChange(event: FileStorageChangeEvent) {
+    this.options.onChange(event);
+  }
+
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.initialize;
 
     const path = toFSPath(wsPath);
     await this._idb.writeFile(path, file);
 
-    this.onChange({
+    this.internalOnChange({
       type: 'create',
       wsPath,
     });
@@ -54,7 +58,7 @@ export class FileStorageIndexedDB
     await this.initialize;
 
     await this._idb.unlink(toFSPath(wsPath));
-    this.onChange({
+    this.internalOnChange({
       type: 'delete',
       wsPath,
     });
@@ -100,23 +104,13 @@ export class FileStorageIndexedDB
   ): Promise<string[]> {
     await this.initialize;
 
-    let files: string[] = [];
-
     const rawPaths: string[] = await this._idb.opendirRecursive(wsName);
 
     abortSignal.throwIfAborted();
-
-    files = rawPaths
-      .map((r) => {
-        const wsPath = fromFsPath(r);
-
-        return wsPath;
-      })
+    const files = rawPaths
+      .map((r) => fromFsPath(r))
       .filter((r): r is string => Boolean(r));
-
-    const result = files.sort((a, b) => a.localeCompare(b));
-
-    return result;
+    return files.sort((a, b) => a.localeCompare(b));
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
@@ -141,7 +135,7 @@ export class FileStorageIndexedDB
 
     await this._idb.rename(toFSPath(wsPath), toFSPath(newWsPath));
 
-    this.onChange({
+    this.internalOnChange({
       type: 'rename',
       oldWsPath: wsPath,
       newWsPath,
@@ -164,7 +158,7 @@ export class FileStorageIndexedDB
 
     const path = toFSPath(wsPath);
     await this._idb.writeFile(path, file);
-    this.onChange({
+    this.internalOnChange({
       type: 'update',
       wsPath,
     });
