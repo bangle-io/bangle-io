@@ -1,8 +1,13 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
-import { BaseService, throwAppError } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  getEventSenderMetadata,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import type {
   BaseFileStorageService,
   BaseServiceCommonOptions,
+  RootEmitter,
 } from '@bangle.io/types';
 import {
   VALID_NOTE_EXTENSIONS_SET,
@@ -29,7 +34,7 @@ type ChangeEvent =
     }
   | {
       type: 'file-rename';
-      payload: { oldWsPath: string; newWsPath: string };
+      payload: { oldWsPath?: string; wsPath: string };
     };
 
 export class FileSystemService extends BaseService {
@@ -42,7 +47,7 @@ export class FileSystemService extends BaseService {
     dependencies: {
       fileStorageService: BaseFileStorageService;
     },
-    private onChangeExternal: (change: ChangeEvent) => void,
+    private rootEmitter: RootEmitter,
   ) {
     super({
       ...baseOptions,
@@ -64,7 +69,13 @@ export class FileSystemService extends BaseService {
 
   private onChange(change: ChangeEvent) {
     this.store.set(this.$fileChanged, (v) => v + 1);
-    this.onChangeExternal(change);
+    this.rootEmitter.emit('event::file:update', {
+      type: change.type,
+      wsPath: change.payload.wsPath,
+      oldWsPath:
+        change.type === 'file-rename' ? change.payload.oldWsPath : undefined,
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
   }
 
   async listFiles(
@@ -197,7 +208,7 @@ export class FileSystemService extends BaseService {
     });
     this.onChange({
       type: 'file-rename',
-      payload: { oldWsPath, newWsPath },
+      payload: { oldWsPath, wsPath: newWsPath },
     });
   }
 }

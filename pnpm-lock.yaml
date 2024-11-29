@@ -490,11 +490,20 @@ importers:
         specifier: workspace:*
         version: link:../types
 
+  packages/shared/root-emitter:
+    dependencies:
+      '@bangle.io/emitter':
+        specifier: workspace:*
+        version: link:../../js-lib/emitter
+
   packages/shared/test-utils:
     dependencies:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/root-emitter':
+        specifier: workspace:*
+        version: link:../root-emitter
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
@@ -537,6 +546,9 @@ importers:
       '@bangle.io/mini-zod':
         specifier: workspace:*
         version: link:../../js-lib/mini-zod
+      '@bangle.io/root-emitter':
+        specifier: workspace:*
+        version: link:../root-emitter
       '@bangle.io/service-core':
         specifier: workspace:*
         version: link:../../core/service-core
@@ -606,6 +618,9 @@ importers:
       '@bangle.io/omni-search':
         specifier: workspace:*
         version: link:../../core/omni-search
+      '@bangle.io/root-emitter':
+        specifier: workspace:*
+        version: link:../../shared/root-emitter
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types

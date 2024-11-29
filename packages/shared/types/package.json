@@ -37,6 +37,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "jotai": "^2.10.3",
-    "@bangle.io/color-scheme-manager": "workspace:*"
+    "@bangle.io/color-scheme-manager": "workspace:*",
+    "@bangle.io/root-emitter": "workspace:*"
   }
 }

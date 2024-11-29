@@ -1,4 +1,4 @@
-type EventListener<T> = (data: T) => void;
+export type EventListener<T> = (data: T) => void;
 
 type EventListeners = Record<string, Set<EventListener<any>>>;
 
@@ -6,11 +6,6 @@ type AllEventListener<E extends EventMessage<any, any>> = (message: E) => void;
 
 export type DiscriminatedEmitter<U extends EventMessage<any, any>> = Emitter<
   DiscriminatedUnionToObject<U>
->;
-
-export type ReadonlyEmitter<U extends EventMessage<any, any>> = Pick<
-  DiscriminatedEmitter<U>,
-  'on'
 >;
 
 export type EventMessage<E extends string, P> = {
@@ -62,14 +57,14 @@ export class Emitter<T extends object = any> {
     this.options?.onDestroy?.();
   }
 
-  emit<K extends keyof T>(event: K, data: T[K]): this {
+  emit<K extends keyof T>(event: K, data: T[K]) {
     if (this.destroyed) {
-      return this;
+      return;
     }
 
     if (this.paused) {
       this.buffer.push({ event, data });
-      return this;
+      return;
     }
 
     const callbacks = this._eventListeners[event as string];
@@ -88,7 +83,7 @@ export class Emitter<T extends object = any> {
       callback(val);
     }
 
-    return this;
+    return;
   }
 
   pause(): this {
@@ -100,15 +95,15 @@ export class Emitter<T extends object = any> {
 
   unpause(): this {
     if (!this.destroyed) {
+      // Unpause before processing the buffer
       this.paused = false;
-
-      // Flush buffered events using emit
-      for (const { event, data } of this.buffer) {
+      while (this.buffer.length > 0) {
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        const { event, data } = this.buffer.shift()!;
         this.emit(event, data);
       }
 
-      // Clear the buffer
-      this.buffer = [];
+      this.paused = false;
     }
     return this;
   }
@@ -161,4 +156,26 @@ export class Emitter<T extends object = any> {
       this._allEventListeners.delete(fn);
     };
   }
+
+  readOnly<const K extends keyof T>(_events: K[]): ReadOnlyEmitter<Pick<T, K>> {
+    return this as unknown as ReadOnlyEmitter<T>;
+  }
+
+  writeOnly<const K extends keyof T>(
+    _events: K[],
+  ): WriteOnlyEmitter<Pick<T, K>> {
+    return this as unknown as WriteOnlyEmitter<T>;
+  }
 }
+
+export type ReadOnlyEmitter<T extends object = any> = {
+  on<K extends keyof T>(
+    event: K,
+    fn: EventListener<T[K]>,
+    signal?: AbortSignal,
+  ): void;
+};
+
+export type WriteOnlyEmitter<T extends object = any> = {
+  emit<K extends keyof T>(event: K, data: T[K]): void;
+};

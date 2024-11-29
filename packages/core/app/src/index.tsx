@@ -8,7 +8,7 @@ import {
   RouterContext,
 } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
-import type { ErrorEmitter, Services, Store } from '@bangle.io/types';
+import type { RootEmitter, Services, Store } from '@bangle.io/types';
 import { Provider } from 'jotai/react';
 import React, { useEffect } from 'react';
 import { AppInner } from './AppInner';
@@ -16,13 +16,13 @@ import { AppInner } from './AppInner';
 export function App({
   logger,
   store,
-  errorEmitter,
+  rootEmitter,
   services,
   themeManager,
 }: {
   logger: Logger;
   store: Store;
-  errorEmitter: ErrorEmitter;
+  rootEmitter: RootEmitter;
   services: Services;
   themeManager: ThemeManager;
 }) {
@@ -42,7 +42,7 @@ export function App({
         <PlatformServiceProvider services={services.platform}>
           <CoreServiceProvider services={services.core}>
             <RouterContext>
-              <AppInner errorEmitter={errorEmitter} />
+              <AppInner rootEmitter={rootEmitter} />
             </RouterContext>
           </CoreServiceProvider>
         </PlatformServiceProvider>

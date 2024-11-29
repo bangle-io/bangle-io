@@ -1,11 +1,13 @@
 import {
   BaseService,
+  getEventSenderMetadata,
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type {
   BaseDatabaseService,
   BaseServiceCommonOptions,
+  RootEmitter,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';
@@ -17,15 +19,15 @@ const MISC_TABLE = 'misc';
 type ChangeEvent =
   | {
       type: 'workspace-create';
-      payload: WorkspaceInfo;
+      payload: { wsName: string };
     }
   | {
       type: 'workspace-update';
-      payload: { name: string };
+      payload: { wsName: string };
     }
   | {
       type: 'workspace-delete';
-      payload: { name: string };
+      payload: { wsName: string };
     };
 
 // a service mostly acting as the API for workspace related operations
@@ -40,7 +42,7 @@ export class WorkspaceOpsService extends BaseService {
     dependencies: {
       database: BaseDatabaseService;
     },
-    private onChangeExternal: (change: ChangeEvent) => void,
+    private rootEmitter: RootEmitter,
   ) {
     super({
       ...baseOptions,
@@ -53,7 +55,11 @@ export class WorkspaceOpsService extends BaseService {
 
   private onChange(change: ChangeEvent) {
     this.store.set(this.$workspaceChanged, (v) => v + 1);
-    this.onChangeExternal(change);
+    this.rootEmitter.emit('event::workspace-info:update', {
+      type: change.type,
+      wsName: change.payload.wsName,
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
   }
 
   protected async onInitialize(): Promise<void> {}
@@ -122,7 +128,7 @@ export class WorkspaceOpsService extends BaseService {
     if (updated) {
       this.onChange({
         type: 'workspace-create',
-        payload: updated,
+        payload: { wsName },
       });
 
       return updated;
@@ -161,7 +167,7 @@ export class WorkspaceOpsService extends BaseService {
 
     this.onChange({
       type: 'workspace-delete',
-      payload: { name: wsName },
+      payload: { wsName: wsName },
     });
   }
 
@@ -202,7 +208,7 @@ export class WorkspaceOpsService extends BaseService {
     if (result.found) {
       this.onChange({
         type: 'workspace-update',
-        payload: { name },
+        payload: { wsName: name },
       });
 
       return result.value as WorkspaceInfo;

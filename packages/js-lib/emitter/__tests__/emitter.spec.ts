@@ -1,7 +1,7 @@
 import { expectType } from '@bangle.io/mini-js-utils';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { Emitter } from '../index';
+import { Emitter, type ReadOnlyEmitter, type WriteOnlyEmitter } from '../index';
 
 describe('Emitter', () => {
   let emitter: Emitter;
@@ -456,5 +456,173 @@ describe('Emitter with pause functionality', () => {
     emitter.unpause();
 
     expect(mockCallback).not.toHaveBeenCalled();
+  });
+});
+
+describe('ReadOnlyEmitter', () => {
+  interface ReadOnlyTestEvents {
+    event1: string;
+    event2: number;
+    event3: boolean;
+  }
+
+  let emitter: Emitter<ReadOnlyTestEvents>;
+  let readOnlyEmitter: ReadOnlyEmitter<
+    Pick<ReadOnlyTestEvents, 'event1' | 'event2'>
+  >;
+
+  beforeEach(() => {
+    emitter = new Emitter();
+    const _readOnlyEmitter = emitter.readOnly(['event1', 'event2']);
+    readOnlyEmitter = _readOnlyEmitter;
+  });
+
+  afterEach(() => {
+    emitter.destroy();
+  });
+
+  test('should allow adding listeners for allowed events', () => {
+    const mockCallback = vi.fn();
+    readOnlyEmitter.on('event1', mockCallback);
+    emitter.emit('event1', 'test-data');
+
+    // emitter.on('event1', (x) => {
+
+    // });
+    expect(mockCallback).toHaveBeenCalledWith('test-data');
+  });
+
+  test('should not allow adding listeners for disallowed events', () => {
+    readOnlyEmitter.on(
+      // @ts-expect-error - 'event3' is not allowed
+      'event3',
+      () => {},
+    );
+    expect(1).toBe(1);
+  });
+
+  test('should not allow emitting events', () => {
+    readOnlyEmitter
+      // @ts-expect-error - 'emit' should not be available
+      .emit('event1', 'test-data');
+
+    expect(1).toBe(1); // Placeholder to ensure test passes
+  });
+
+  test('listeners receive events emitted by parent emitter', () => {
+    const mockCallback = vi.fn();
+    readOnlyEmitter.on('event2', mockCallback);
+    emitter.emit('event2', 42);
+    expect(mockCallback).toHaveBeenCalledWith(42);
+  });
+
+  test('listeners can be removed via returned off function', () => {
+    const mockCallback = vi.fn();
+    const controller = new AbortController();
+    readOnlyEmitter.on('event1', mockCallback, controller.signal);
+    controller.abort();
+    emitter.emit('event1', 'test-data');
+    expect(mockCallback).not.toHaveBeenCalled();
+  });
+
+  test('parent emitter functions independently of read-only emitter', () => {
+    const parentCallback = vi.fn();
+    emitter.on('event1', parentCallback);
+    emitter.emit('event1', 'parent-data');
+    expect(parentCallback).toHaveBeenCalledWith('parent-data');
+  });
+
+  test('type safety is enforced for event data', () => {
+    readOnlyEmitter.on('event1', (data) => {
+      expectType<string, typeof data>(data);
+    });
+
+    readOnlyEmitter.on('event2', (data) => {
+      expectType<number, typeof data>(data);
+    });
+    expect(1).toBe(1);
+  });
+
+  test('read-only emitter does not expose destroy method', () => {
+    // @ts-expect-error - 'destroy' should not be available
+    readOnlyEmitter.destroy();
+    expect(1).toBe(1);
+  });
+});
+
+describe('WriteOnlyEmitter', () => {
+  interface WriteOnlyTestEvents {
+    event1: string;
+    event2: number;
+    event3: boolean;
+  }
+
+  let emitter: Emitter<WriteOnlyTestEvents>;
+  let writeOnlyEmitter: WriteOnlyEmitter<
+    Pick<WriteOnlyTestEvents, 'event1' | 'event2'>
+  >;
+
+  beforeEach(() => {
+    emitter = new Emitter<WriteOnlyTestEvents>();
+    const _writeOnlyEmitter = emitter.writeOnly(['event1', 'event2']);
+    writeOnlyEmitter = _writeOnlyEmitter;
+  });
+
+  afterEach(() => {
+    emitter.destroy();
+  });
+
+  test('should allow emitting allowed events', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event1', mockCallback);
+    writeOnlyEmitter.emit('event1', 'test-data');
+    expect(mockCallback).toHaveBeenCalledWith('test-data');
+  });
+
+  test('should not allow emitting disallowed events', () => {
+    writeOnlyEmitter.emit(
+      // @ts-expect-error - 'event3' is not allowed
+      'event3',
+      false,
+    );
+    expect(1).toBe(1); // Placeholder to ensure test passes
+  });
+
+  test('should not allow adding listeners', () => {
+    // @ts-expect-error - 'on' should not be available
+    writeOnlyEmitter.on('event1', () => {});
+    expect(1).toBe(1); // Placeholder to ensure test passes
+  });
+
+  test('parent emitter receives events emitted by write-only emitter', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event2', mockCallback);
+    writeOnlyEmitter.emit('event2', 42);
+    expect(mockCallback).toHaveBeenCalledWith(42);
+  });
+
+  test('parent emitter functions independently of write-only emitter', () => {
+    const mockCallback = vi.fn();
+    emitter.on('event1', mockCallback);
+    emitter.emit('event1', 'parent-data');
+    expect(mockCallback).toHaveBeenCalledWith('parent-data');
+  });
+
+  test('type safety is enforced when emitting events', () => {
+    writeOnlyEmitter.emit(
+      'event2',
+      // @ts-expect-error - 'not-a-number' is not a number
+      'not-a-number',
+    );
+
+    writeOnlyEmitter.emit('event1', 'hello world');
+
+    expect(1).toBe(1); // Placeholder to ensure test passes
+  });
+
+  test('write-only emitter does not expose destroy method', () => {
+    // @ts-expect-error - 'destroy' should not be available
+    writeOnlyEmitter.destroy();
+    expect(1).toBe(1); // Placeholder to ensure test passes
   });
 });

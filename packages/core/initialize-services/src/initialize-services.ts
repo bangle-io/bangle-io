@@ -1,4 +1,8 @@
-import { type Logger, assertIsDefined } from '@bangle.io/base-utils';
+import {
+  type Logger,
+  assertIsDefined,
+  getEventSenderMetadata,
+} from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
@@ -25,8 +29,8 @@ import {
 import type {
   BaseServiceCommonOptions,
   CoreServices,
-  ErrorEmitter,
   PlatformServices,
+  RootEmitter,
   Services,
   Store,
 } from '@bangle.io/types';
@@ -34,9 +38,10 @@ import { atom } from 'jotai';
 
 export function initializeServices(
   logger: Logger,
-  errorEmitter: ErrorEmitter,
+  rootEmitter: RootEmitter,
   store: Store,
   theme: ThemeManager,
+  abortSignal: AbortSignal,
 ): Services {
   const commands = getEnabledCommands();
 
@@ -44,17 +49,25 @@ export function initializeServices(
     logger,
     store,
     emitAppError(error) {
-      errorEmitter.emit('event::browser-error-handler-service:app-error', {
+      rootEmitter.emit('event::error:uncaught-error', {
         error,
+        appLikeError: true,
         rejection: false,
         isFakeThrow: true,
+        sender: getEventSenderMetadata({ tag: 'initialize-service' }),
       });
     },
   };
 
-  const platformServices = initPlatformServices(commonOpts, errorEmitter);
+  const platformServices = initPlatformServices(commonOpts, rootEmitter);
 
-  const coreServices = initCoreServices(commonOpts, platformServices, theme);
+  const coreServices = initCoreServices(
+    commonOpts,
+    platformServices,
+    rootEmitter,
+    theme,
+    abortSignal,
+  );
 
   const services: Services = {
     core: coreServices,
@@ -101,18 +114,31 @@ export function initializeServices(
 
   // init services
 
+  // dispose services on abort
+  abortSignal.addEventListener(
+    'abort',
+    () => {
+      for (const childServices of Object.values(services)) {
+        for (const service of Object.values(childServices)) {
+          service.dispose();
+        }
+      }
+    },
+    { once: true },
+  );
+
   // any other setup
   return services;
 }
 
 function initPlatformServices(
   commonOpts: BaseServiceCommonOptions,
-  errorEmitter: ErrorEmitter,
+  rootEmitter: RootEmitter,
 ): PlatformServices {
   const errorService = new BrowserErrorHandlerService(
     commonOpts,
     undefined,
-    errorEmitter,
+    rootEmitter,
   );
   // error service should be initialized asap to catch any errors
   errorService.initialize();
@@ -138,9 +164,18 @@ function initPlatformServices(
 function initCoreServices(
   commonOpts: BaseServiceCommonOptions,
   platformServices: PlatformServices,
+  rootEmitter: RootEmitter,
   theme: ThemeManager,
+  abortSignal: AbortSignal,
 ): CoreServices {
   const $workspaceChanged = atom(0);
+  rootEmitter.on(
+    'event::workspace-info:update',
+    () => {
+      commonOpts.store.set($workspaceChanged, (prev) => prev + 1);
+    },
+    abortSignal,
+  );
 
   const commandRegistryService = new CommandRegistryService(
     commonOpts,
@@ -149,12 +184,11 @@ function initCoreServices(
   const commandDispatcherService = new CommandDispatchService(commonOpts, {
     commandRegistry: commandRegistryService,
   });
+
   const fileSystemService = new FileSystemService(
     commonOpts,
     { fileStorageService: platformServices.fileStorage },
-    (change) => {
-      commonOpts.logger.info('File change:', change);
-    },
+    rootEmitter,
   );
   const navigation = new NavigationService(commonOpts, {
     routerService: platformServices.router,
@@ -174,10 +208,7 @@ function initCoreServices(
   const workspaceOps = new WorkspaceOpsService(
     commonOpts,
     { database: platformServices.database },
-    (change) => {
-      commonOpts.logger.info('Workspace change:', change);
-      commonOpts.store.set($workspaceChanged, (prev) => prev + 1);
-    },
+    rootEmitter,
   );
 
   const workspaceState = new WorkspaceStateService(commonOpts, {

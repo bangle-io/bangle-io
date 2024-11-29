@@ -5,7 +5,7 @@
   "version": "0.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
     "directory": "packages/tooling/storybook"
   },
   "authors": [
@@ -29,10 +29,10 @@
     "access": "public"
   },
   "scripts": {
+    "build-chromatic": "pnpm chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
     "build-storybook": "storybook build",
     "storybook": "storybook dev -p 6006",
-    "test-storybook": "test-storybook",
-    "build-chromatic": "pnpm chromatic --project-token $CHROMATIC_PROJECT_TOKEN"
+    "test-storybook": "test-storybook"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

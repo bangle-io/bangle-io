@@ -1,5 +1,9 @@
-import { BaseService, isAppError } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions, ErrorEmitter } from '@bangle.io/types';
+import {
+  BaseService,
+  getEventSenderMetadata,
+  isAppError,
+} from '@bangle.io/base-utils';
+import type { BaseServiceCommonOptions, RootEmitter } from '@bangle.io/types';
 
 export class BrowserErrorHandlerService extends BaseService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
@@ -7,7 +11,7 @@ export class BrowserErrorHandlerService extends BaseService {
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: undefined,
-    private emitter: ErrorEmitter,
+    private emitter: RootEmitter,
   ) {
     super({
       ...baseOptions,
@@ -55,22 +59,21 @@ export class BrowserErrorHandlerService extends BaseService {
 
     this.logger.debug(`Error event received: "${error.message}"`);
 
-    // app errors should be handled by the app and not logged
-    if (isAppError(error)) {
-      event.preventDefault();
-      this.emitter.emit('event::browser-error-handler-service:app-error', {
-        rejection: isPromiseRejection,
-        error,
-        isFakeThrow: false,
-      });
-    } else {
-      this.emitter.emit('event::browser-error-handler-service:error', {
-        rejection: isPromiseRejection,
-        error,
-      });
-    }
-  };
+    const appLikeError = isAppError(error);
 
+    // app errors should be handled by the app and not logged
+    if (appLikeError) {
+      event.preventDefault();
+    }
+
+    this.emitter.emit('event::error:uncaught-error', {
+      appLikeError,
+      error,
+      isFakeThrow: false,
+      rejection: isPromiseRejection,
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
+  };
   protected async onInitialize(): Promise<void> {}
 
   async onDispose(): Promise<void> {

@@ -5,7 +5,7 @@ import { WorkspaceType } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { useLogger } from '@bangle.io/context/src/logger-context';
 import { OmniSearch } from '@bangle.io/omni-search';
-import type { ErrorEmitter, WorkspaceInfo } from '@bangle.io/types';
+import type { RootEmitter } from '@bangle.io/types';
 import {
   Breadcrumb,
   DialogSingleInput,
@@ -17,15 +17,14 @@ import {
   toast,
 } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
-import { FilePlus } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { AppRoutes } from './Routes';
 import { SidebarComponent } from './sidebar';
 
 export function AppInner({
-  errorEmitter,
+  rootEmitter,
 }: {
-  errorEmitter: ErrorEmitter;
+  rootEmitter: RootEmitter;
 }) {
   const coreServices = useCoreServices();
   const logger = useLogger();
@@ -43,17 +42,17 @@ export function AppInner({
   );
 
   useEffect(() => {
-    const rem2 = errorEmitter.on(
-      'event::browser-error-handler-service:app-error',
+    const controller = new AbortController();
+    rootEmitter.on(
+      'event::error:uncaught-error',
       (event) => {
-        toast.error(`${event.error.message}`, {
-          duration: Number.POSITIVE_INFINITY,
-        });
-      },
-    );
-    const rem1 = errorEmitter.on(
-      'event::browser-error-handler-service:error',
-      (event) => {
+        if (event.appLikeError) {
+          toast.error(`${event.error.message}`, {
+            duration: 5000,
+          });
+          return;
+        }
+
         toast.error(event.error.message, {
           duration: Number.POSITIVE_INFINITY,
           cancel: {
@@ -68,12 +67,12 @@ export function AppInner({
           },
         });
       },
+      controller.signal,
     );
     return () => {
-      rem2();
-      rem1();
+      controller.abort();
     };
-  }, [errorEmitter, logger]);
+  }, [rootEmitter, logger]);
 
   return (
     <>

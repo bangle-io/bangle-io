@@ -3,7 +3,7 @@ import type { Logger } from '@bangle.io/base-utils';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { Emitter } from '@bangle.io/emitter';
 import { makeTestService } from '@bangle.io/test-utils';
-import type { ErrorEmitter, Store } from '@bangle.io/types';
+import type { RootEmitter, Store } from '@bangle.io/types';
 import { expect, test } from 'vitest';
 import { initializeServices } from '../initialize-services';
 
@@ -11,14 +11,14 @@ test('works', () => {
   expect(true).toBe(true);
 });
 test('initializeServices returns unique service names', () => {
-  const { commonOpts } = makeTestService();
-  const errorEmitter: ErrorEmitter = new Emitter();
+  const { commonOpts, rootEmitter, controller } = makeTestService();
 
   const services = initializeServices(
     commonOpts.logger,
-    errorEmitter,
+    rootEmitter,
     commonOpts.store,
     new ThemeManager(),
+    controller.signal,
   );
 
   const serviceNames = [
