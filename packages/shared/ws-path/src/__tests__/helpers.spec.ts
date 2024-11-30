@@ -10,7 +10,7 @@ describe('getWsName', () => {
   test('works with extension', () => {
     expect(getWsName('wsName:filePath.md')).toBe('wsName');
   });
-  test('works with wsNAme', () => {
+  test('works with wsName', () => {
     expect(getWsName('wsName')).toBe('wsName');
   });
 });

@@ -57,6 +57,13 @@ export type AppError =
         wsName?: string;
       };
     }
+  | {
+      name: `error::workspace:native-fs-auth-needed`;
+      payload: {
+        wsName: string;
+      };
+    }
+
   // File errors
   | {
       name: `error::file:invalid-note-path`;

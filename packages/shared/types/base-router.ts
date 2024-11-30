@@ -14,12 +14,18 @@ export type PageLifeCycleState =
   | 'terminated'
   | undefined;
 
+export type RouterLocation = {
+  pathname: string;
+  search: Record<string, string>;
+};
 export interface BaseRouter<RouterState = any> {
   readonly pathname: string;
-  readonly search: string | undefined;
+  readonly search: Record<string, string>;
+
   readonly basePath: string;
+  // should merge with the location
   navigate: (
-    to: string | URL,
+    to: Partial<RouterLocation>,
     options?: { replace?: boolean; state?: RouterState },
   ) => void;
   // page lifecycle - https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
@@ -34,8 +40,7 @@ export interface BaseRouter<RouterState = any> {
     | {
         event: 'event::router:route-update';
         payload: {
-          pathname: string;
-          search: string;
+          location: RouterLocation;
           state: RouterState;
           kind: (typeof browserHistoryStateEvents)[number];
         };

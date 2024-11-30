@@ -101,23 +101,20 @@ export function validateFileWsPath(wsPath: string) {
 }
 
 export function splitWsPath(wsPath: string): [string, string] {
-  const [wsName, filePath] = wsPath.split(':');
-  if (!wsName) {
-    throwAppError('error::ws-path:invalid-ws-path', 'Invalid wsName', {
-      invalidPath: wsPath,
-    });
+  const index = wsPath.indexOf(':');
+  if (index === -1) {
+    return [wsPath, ''];
   }
-  if (!filePath) {
-    throwAppError('error::ws-path:invalid-ws-path', 'Invalid filePath', {
-      invalidPath: wsPath,
-    });
-  }
+
+  const wsName = wsPath.slice(0, index);
+  const filePath = wsPath.slice(index + 1);
+
   return [wsName, filePath];
 }
 
 // works for both wsPath and wsName
 export function getWsName(wsPathOrWsName: string) {
-  return wsPathOrWsName.split(':')[0];
+  return splitWsPath(wsPathOrWsName)[0];
 }
 
 export function isValidFileWsPath(wsPath: string) {

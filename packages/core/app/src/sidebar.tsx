@@ -1,7 +1,7 @@
 import { useCoreServices } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
 import { AppSidebar, Sidebar } from '@bangle.io/ui-components';
-import { resolvePath, wsPathToPathname } from '@bangle.io/ws-path';
+import { buildUrlPath, resolvePath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React from 'react';
 
@@ -39,7 +39,7 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
         wsPaths={wsPaths}
         navItems={activeWsPaths.map((wsPath) => ({
           title: resolvePath(wsPath).fileName,
-          url: wsPathToPathname(wsPath),
+          wsPath,
         }))}
         onNewWorkspaceClick={() => {
           commandDispatcher.dispatch(

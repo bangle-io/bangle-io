@@ -87,7 +87,11 @@ export function DialogSingleSelect({
   const hasAnyIcon = options.some((option) => option.icon);
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      screenReaderTitle="dialog select"
+    >
       {badgeText && (
         <CommandBadge
           className={cx(badgeTone === 'destructive' && 'bg-destructive')}

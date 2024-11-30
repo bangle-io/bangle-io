@@ -55,8 +55,9 @@ export class FileSystemService extends BaseService {
       dependencies,
     });
 
+    // TODO switch
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    this.fileStorageService = dependencies[WORKSPACE_STORAGE_TYPE.NativeFS]!;
+    this.fileStorageService = dependencies[WORKSPACE_STORAGE_TYPE.Browser]!;
   }
 
   protected async onInitialize(): Promise<void> {}

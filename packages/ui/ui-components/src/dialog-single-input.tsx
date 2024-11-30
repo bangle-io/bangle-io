@@ -1,4 +1,5 @@
 import { cx } from '@bangle.io/base-utils';
+import { DialogTitle } from '@radix-ui/react-dialog';
 import { CommandGroup } from 'cmdk';
 import React from 'react';
 import {
@@ -42,7 +43,12 @@ export function DialogSingleInput({
 }: DialogSingleInputProps) {
   const [search, setSearch] = React.useState(initialSearch);
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      shouldFilter={false}
+      screenReaderTitle="dialog input"
+    >
       {badgeText && (
         <CommandBadge
           className={cx(badgeTone === 'destructive' && 'bg-destructive')}

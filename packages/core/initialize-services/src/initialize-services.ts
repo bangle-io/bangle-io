@@ -93,6 +93,16 @@ export function initializeServices(
           );
         }
 
+        if (!(await FileStorageNativeFs.hasPermission(rootDirHandle))) {
+          throwAppError(
+            'error::workspace:native-fs-auth-needed',
+            `Need permission for ${rootDirHandle.name}`,
+            {
+              wsName,
+            },
+          );
+        }
+
         return { handle: rootDirHandle };
       },
     });

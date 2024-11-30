@@ -1,14 +1,14 @@
 import { useCoreServices } from '@bangle.io/context';
 import { EditorComp } from '@bangle.io/editor';
-import { pathnameToWsPath } from '@bangle.io/ws-path';
+import { parseUrlPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
 export function PageWsHome() {
   const coreServices = useCoreServices();
-  const { wsName } = pathnameToWsPath(coreServices.navigation.pathname);
+  const wsName = useAtomValue(coreServices.navigation.$wsName);
   const { current } = useAtomValue(coreServices.navigation.$lifeCycle);
-
+  console.log({ wsName });
   return (
     <div>
       {wsName && (

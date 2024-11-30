@@ -3,7 +3,7 @@ import { throwAppError } from '@bangle.io/base-utils';
 export function validateInputPath(inputPath: unknown): void {
   if (typeof inputPath !== 'string') {
     throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-      invalidWsPath: inputPath + '',
+      invalidWsPath: `${inputPath}`,
     });
   }
   if (

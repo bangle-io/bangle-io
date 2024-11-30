@@ -31,7 +31,11 @@ export function OmniSearch({
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      screenReaderTitle="omni command bar"
+    >
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

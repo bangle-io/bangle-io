@@ -28,6 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.1.2",
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/types": "workspace:*",

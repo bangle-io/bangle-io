@@ -44,8 +44,10 @@
     "@bangle.io/keyboard-shortcuts": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/omni-search": "workspace:*",
+    "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
+    "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -57,8 +59,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite": "^6.0.0",
-    "vite-plugin-html": "^3.2.2",
-    "@bangle.io/root-emitter": "workspace:*"
+    "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
     "@storybook/react": "^8.4.5",

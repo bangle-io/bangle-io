@@ -13,3 +13,4 @@ export * from './toaster';
 export * from './dialog-single-input';
 export * from './dialog-single-select';
 export * from './kbd';
+export * from './app-alert-dialog';

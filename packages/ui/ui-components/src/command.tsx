@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { cn } from '@bangle.io/ui-utils';
 import type { DialogProps } from '@radix-ui/react-dialog';
-import { Dialog, DialogContent } from './dialog';
+import { Dialog, DialogContent, DialogTitle } from './dialog';
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -24,10 +24,12 @@ Command.displayName = CommandPrimitive.displayName;
 const CommandDialog = ({
   children,
   shouldFilter = true,
+  screenReaderTitle,
   ...props
-}: DialogProps & { shouldFilter?: boolean }) => {
+}: DialogProps & { shouldFilter?: boolean; screenReaderTitle: string }) => {
   return (
     <Dialog {...props}>
+      <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
       <DialogContent className="overflow-hidden p-0 shadow-lg">
         <Command
           shouldFilter={shouldFilter}

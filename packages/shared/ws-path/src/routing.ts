@@ -1,53 +1,181 @@
+import { throwAppError } from '@bangle.io/base-utils';
+import { ROUTES } from '@bangle.io/constants';
 // wouter uses this regexparam
 import { parse as parsePattern } from 'regexparam';
 import { matchRoute } from 'wouter';
-import { resolvePath } from './helpers';
+import { splitWsPath } from './helpers';
 
-export function pathnameToWsPath(pathname?: string): {
-  wsName: string | undefined;
-  wsPath: string | undefined;
-} {
-  if (!pathname) {
-    return { wsName: undefined, wsPath: undefined };
-  }
-  const [isMatched, match] = matchRoute(
-    parsePattern,
-    '/ws/:wsName/*?',
+export const buildUrlPath = {
+  pageFatalError: () => ({
+    pathname: ROUTES.pageFatalError,
+  }),
+  pageWsHome: ({ wsName }: { wsName: string }) => {
+    return { pathname: '/ws/' + wsName };
+  },
+  pageEditor: ({ wsPath }: { wsPath: string }) => {
+    const [wsName, filePath] = splitWsPath(wsPath);
+
+    if (!wsName || !filePath) {
+      throwAppError('error::ws-path:invalid-ws-path', 'Invalid file wsPath', {
+        invalidPath: wsPath,
+      });
+    }
+
+    return { pathname: `/ws/${wsName}/editor`, search: { p: filePath } };
+  },
+  pageNativeFsAuthFailed: ({ wsName }: { wsName: string }) => {
+    return { pathname: '/ws-auth/failed/native-fs/' + wsName };
+  },
+  pageNativeFsAuthReq: ({ wsName }: { wsName: string }) => {
+    return { pathname: '/ws-auth/req/native-fs/' + wsName };
+  },
+  pageNotFound: ({ path }: { path?: string }) => ({
+    pathname: ROUTES.pageNotFound,
+    search: path ? { p: path } : undefined,
+  }),
+  pageWorkspaceNotFound: ({ wsName }: { wsName: string }) => {
+    return { pathname: '/ws-error/no-ws/' + wsName };
+  },
+  pageWsPathNotFound: ({ wsPath }: { wsPath: string }) => {
+    return { pathname: '/ws-error/no-path/' + wsPath };
+  },
+  pageWelcome: () => ({
+    pathname: ROUTES.pageWelcome,
+  }),
+} satisfies Record<
+  string,
+  (args: any) => { pathname: string; search?: Record<string, string> }
+>;
+
+type ParseResult<T> = T | null;
+
+export const parseUrlPath = {
+  pageEditor({
     pathname,
-  );
+    search = {},
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+    wsPath: string;
+  }> {
+    const isMatch = matchRoute(parsePattern, ROUTES.pageEditor, pathname)[0];
+    const match = matchRoute(parsePattern, ROUTES.pageEditor, pathname)[1];
+    if (!isMatch || !match?.wsName) {
+      return null;
+    }
 
-  if (!isMatched) {
-    return { wsName: undefined, wsPath: undefined };
-  }
+    const filePath = search.p;
+    if (!filePath) {
+      return null;
+    }
 
-  const rawWsName = match?.wsName || undefined;
+    return {
+      wsPath: `${match.wsName}:${filePath}`,
+    };
+  },
 
-  if (typeof rawWsName !== 'string' || !rawWsName) {
-    return { wsName: undefined, wsPath: undefined };
-  }
+  pageWsHome({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+    wsName: string;
+  }> {
+    const [isMatch, match] = matchRoute(
+      parsePattern,
+      ROUTES.pageWsHome,
+      pathname,
+    );
+    if (!isMatch || !match?.wsName) {
+      return null;
+    }
+    return { wsName: match.wsName };
+  },
 
-  const rest = match?.['*'] || undefined;
+  pageNativeFsAuthFailed({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+    wsName: string;
+  }> {
+    const [isMatch, match] = matchRoute(
+      parsePattern,
+      ROUTES.pageNativeFsAuthFailed,
+      pathname,
+    );
+    if (!isMatch || !match?.wsName) {
+      return null;
+    }
+    return { wsName: match.wsName };
+  },
 
-  const wsName = decodeURIComponent(rawWsName);
+  pageNativeFsAuthReq({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+    wsName: string;
+  }> {
+    const [isMatch, match] = matchRoute(
+      parsePattern,
+      ROUTES.pageNativeFsAuthReq,
+      pathname,
+    );
+    if (!isMatch || !match?.wsName) {
+      return null;
+    }
+    return { wsName: match.wsName };
+  },
 
-  const result = rest
-    ?.split('/')
-    .map((r) => decodeURIComponent(r))
-    .join('/');
+  pageNotFound({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<
+    Record<string, never>
+  > {
+    const [isMatch] = matchRoute(parsePattern, ROUTES.pageNotFound, pathname);
+    return isMatch ? {} : null;
+  },
 
-  const wsPath = result ? `${wsName}:${result}` : undefined;
+  pageWorkspaceNotFound({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+    wsName: string;
+  }> {
+    const [isMatch, match] = matchRoute(
+      parsePattern,
+      ROUTES.pageWorkspaceNotFound,
+      pathname,
+    );
+    if (!isMatch || !match?.wsName) {
+      return null;
+    }
+    return { wsName: match.wsName };
+  },
 
-  return { wsName, wsPath };
-}
+  pageWsPathNotFound({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+    wsPath: string;
+  }> {
+    const [isMatch, match] = matchRoute(
+      parsePattern,
+      ROUTES.pageWsPathNotFound,
+      pathname,
+    );
+    if (!isMatch || !match?.wsPath) {
+      return null;
+    }
+    return { wsPath: match.wsPath };
+  },
 
-export function wsPathToPathname(wsPath: string) {
-  let { wsName, filePath } = resolvePath(wsPath);
+  pageFatalError({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<
+    Record<string, never>
+  > {
+    const [isMatch] = matchRoute(parsePattern, ROUTES.pageFatalError, pathname);
+    return isMatch ? {} : null;
+  },
 
-  wsName = encodeURIComponent(wsName);
-  filePath = filePath
-    .split('/')
-    .map((f) => encodeURIComponent(f))
-    .join('/');
-
-  return `/ws/${wsName}/${filePath}`;
-}
+  pageWelcome({
+    pathname,
+  }: { pathname: string; search?: Record<string, string> }): ParseResult<
+    Record<string, never>
+  > {
+    const [isMatch] = matchRoute(parsePattern, ROUTES.pageWelcome, pathname);
+    return isMatch ? {} : null;
+  },
+};

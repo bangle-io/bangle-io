@@ -2,6 +2,8 @@ import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
   NativeBrowserFileSystem,
+  hasPermission,
+  requestNativeBrowserFSPermission,
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
@@ -27,6 +29,16 @@ export class FileStorageNativeFs
   }>
   implements BaseFileStorageProvider
 {
+  static async hasPermission(handle: FileSystemDirectoryHandle) {
+    return hasPermission(handle);
+  }
+
+  static async requestNativeBrowserFSPermission(
+    handle: FileSystemDirectoryHandle,
+  ) {
+    return requestNativeBrowserFSPermission(handle);
+  }
+
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
   public readonly displayName = 'Native Storage';
   public readonly description = 'Saves data in your hard drive';

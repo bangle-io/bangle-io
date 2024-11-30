@@ -57,7 +57,7 @@ import {
 
 export type NavItem = {
   title: string;
-  url: string;
+  wsPath: string;
   isActive?: boolean;
   items?: NavItem[];
 };
@@ -121,7 +121,7 @@ export function AppSidebar({
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className="font-medium">
+                    <a href="#dead" className="font-medium">
                       {item.title}
                     </a>
                   </SidebarMenuButton>
@@ -130,7 +130,7 @@ export function AppSidebar({
                       {item.items.map((item) => (
                         <SidebarMenuSubItem key={item.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={item.url}>{item.title}</a>
+                            <a href="#dead">{item.title}</a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}

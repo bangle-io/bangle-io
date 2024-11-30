@@ -4,6 +4,7 @@ import type {
   BaseRouter,
   BaseServiceCommonOptions,
   PageLifeCycleState,
+  RouterLocation,
   RouterState,
 } from '@bangle.io/types';
 
@@ -11,8 +12,8 @@ export class MemoryRouterService
   extends BaseService
   implements BaseRouter<RouterState>
 {
-  private _pathname = '/';
-  private _search = '';
+  private _pathname: RouterLocation['pathname'] = '/';
+  private _search: RouterLocation['search'] = {};
   private _state: RouterState | null = null;
 
   emitter: BaseRouter<RouterState>['emitter'] = new Emitter();
@@ -60,18 +61,19 @@ export class MemoryRouterService
   setUnsavedChanges(_: boolean): void {}
 
   navigate(
-    to: string | URL,
+    to: Partial<RouterLocation>,
     options?: { replace?: boolean; state?: RouterState },
   ): void {
-    const url =
-      typeof to === 'string' ? new URL(to, 'http://app.bangle.io') : to;
-    this._pathname = url.pathname;
-    this._search = url.search;
+    this._pathname = to.pathname || this._pathname;
+    this._search = {
+      ...this._search,
+      ...to.search,
+    };
+
     this._state = options?.state ?? null;
 
     this.emitter.emit('event::router:route-update', {
-      pathname: this._pathname,
-      search: this._search,
+      location: { pathname: this._pathname, search: this._search },
       state: this._state ?? {},
       kind: 'pushState',
     });

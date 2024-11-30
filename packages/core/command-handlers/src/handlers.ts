@@ -49,7 +49,7 @@ export const commandHandlers = [
       const { store, dispatch } = getCtx(key);
       store.set(workbenchState.$singleInputDialog, () => {
         return {
-          dialogId: 'new-note-dialog',
+          dialogId: 'dialog::new-note-dialog',
           placeholder: 'Input a note name',
           badgeText: 'Create Note',
           option: {
@@ -82,7 +82,7 @@ export const commandHandlers = [
 
     store.set(workbenchState.$singleSelectDialog, () => {
       return {
-        dialogId: 'change-theme-pref-dialog',
+        dialogId: 'dialog::change-theme-pref-dialog',
         placeholder: 'Select a theme preference',
         badgeText: 'Change Theme',
         groupHeading: 'Themes',
@@ -131,7 +131,7 @@ export const commandHandlers = [
 
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
-          dialogId: 'delete-ws-path-dialog',
+          dialogId: 'dialog::delete-ws-path-dialog',
           placeholder: 'Select or type a note to delete',
           badgeText: 'Delete Note',
           badgeTone: 'destructive',
@@ -170,7 +170,7 @@ export const commandHandlers = [
 
       store.set(workbenchState.$singleInputDialog, () => {
         return {
-          dialogId: 'rename-note-dialog',
+          dialogId: 'dialog::rename-note-dialog',
           placeholder: 'Provide a new name',
           badgeText: `Renaming "${fileNameWithoutExt}"`,
           initialSearch: fileNameWithoutExt,
@@ -223,7 +223,7 @@ export const commandHandlers = [
 
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
-          dialogId: 'switch-workspace-dialog',
+          dialogId: 'dialog::switch-workspace-dialog',
           placeholder: 'Select a workspace to switch',
           badgeText: 'Switch Workspace',
           groupHeading: 'Workspaces',
@@ -264,7 +264,7 @@ export const commandHandlers = [
 
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
-          dialogId: 'delete-workspace-dialog',
+          dialogId: 'dialog::delete-workspace-dialog',
           placeholder: 'Select a workspace to delete',
           badgeText: 'Delete Workspace',
           badgeTone: 'destructive',
@@ -333,7 +333,7 @@ export const commandHandlers = [
 
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
-          dialogId: 'move-note-dialog',
+          dialogId: 'dialog::move-note-dialog',
           placeholder: 'Select a path to move the note',
           badgeText: `Move "${fileNameWithoutExt}"`,
           emptyMessage: 'No directories found',

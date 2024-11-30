@@ -1,148 +1,416 @@
-import { describe, expect, it, test } from 'vitest';
+// locationUtilities.test.ts
 
-import { pathnameToWsPath, wsPathToPathname } from '../routing';
+import { describe, expect, it } from 'vitest';
+import { buildUrlPath, parseUrlPath } from '../routing';
 
-describe('wsPathToPathname', () => {
-  it('should convert wsPath to pathname correctly', () => {
-    const wsPath = 'my-test-ws:my/file/path.md';
-    const expected = '/ws/my-test-ws/my/file/path.md';
-    expect(wsPathToPathname(wsPath)).toBe(expected);
+describe('buildUrlPath', () => {
+  describe('pageFatalError', () => {
+    it('should return the correct pathname', () => {
+      const result = buildUrlPath.pageFatalError();
+      expect(result).toEqual({ pathname: '/ws-error/fatal-error' });
+    });
   });
 
-  it('should encode URI components', () => {
-    const wsPath = 'my test ws:my/file path.md';
-    const expected = '/ws/my%20test%20ws/my/file%20path.md';
-    expect(wsPathToPathname(wsPath)).toBe(expected);
+  describe('pageWsHome', () => {
+    it('should return the correct pathname with wsName', () => {
+      const wsName = 'myWorkspace';
+      const result = buildUrlPath.pageWsHome({ wsName });
+      expect(result).toEqual({ pathname: `/ws/${wsName}` });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const wsName = 'my Work space!';
+      const result = buildUrlPath.pageWsHome({ wsName });
+      expect(result).toEqual({ pathname: `/ws/${wsName}` });
+    });
+
+    it('should handle empty wsName', () => {
+      const wsName = '';
+      const result = buildUrlPath.pageWsHome({ wsName });
+      expect(result).toEqual({ pathname: '/ws/' });
+    });
   });
 
-  it('should handle empty file path', () => {
-    const wsPath = 'my-test-ws:';
-    const _expected = '/ws/my-test-ws/';
+  describe('pageEditor', () => {
+    it('should throw when wsPath does not contain ":"', () => {
+      const wsPath = 'myWorkspace';
+      expect(() =>
+        buildUrlPath.pageEditor({ wsPath }),
+      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Invalid file wsPath]');
+    });
 
-    expect(() => wsPathToPathname(wsPath)).toThrowError(/Invalid filePath/);
+    it('should return the correct pathname and search when wsPath contains ":"', () => {
+      const wsPath = 'myWorkspace:file/path.md';
+      const result = buildUrlPath.pageEditor({ wsPath });
+      expect(result).toEqual({
+        pathname: '/ws/myWorkspace/editor',
+        search: { p: 'file/path.md' },
+      });
+    });
+
+    it('should handle special characters in wsName and filePath', () => {
+      const wsPath = 'my Workspace:file path with spaces.md';
+      const result = buildUrlPath.pageEditor({ wsPath });
+      expect(result).toEqual({
+        pathname: '/ws/my Workspace/editor',
+        search: { p: 'file path with spaces.md' },
+      });
+    });
+
+    it('should handle multiple colons in wsPath', () => {
+      const wsPath = 'myWorkspace:folder:subfolder:file.md';
+      const result = buildUrlPath.pageEditor({ wsPath });
+      expect(result).toEqual({
+        pathname: '/ws/myWorkspace/editor',
+        search: { p: 'folder:subfolder:file.md' },
+      });
+    });
+
+    it('should handle empty filePath when wsPath contains ":"', () => {
+      const wsPath = 'myWorkspace:';
+      expect(() =>
+        buildUrlPath.pageEditor({ wsPath }),
+      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Invalid file wsPath]');
+    });
+
+    it('should handle empty wsName when wsPath contains ":"', () => {
+      const wsPath = ':file.md';
+      expect(() =>
+        buildUrlPath.pageEditor({ wsPath }),
+      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Invalid file wsPath]');
+    });
+
+    it('should throw an error when wsPath is undefined', () => {
+      expect(() =>
+        buildUrlPath.pageEditor({
+          // @ts-expect-error - intentionally passing undefined
+          wsPath: undefined,
+        }),
+      ).toThrow();
+    });
+  });
+
+  describe('pageNativeFsAuthFailed', () => {
+    it('should return the correct pathname with wsName', () => {
+      const wsName = 'myWorkspace';
+      const result = buildUrlPath.pageNativeFsAuthFailed({ wsName });
+      expect(result).toEqual({
+        pathname: `/ws-auth/failed/native-fs/${wsName}`,
+      });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const wsName = 'my Workspace';
+      const result = buildUrlPath.pageNativeFsAuthFailed({ wsName });
+      expect(result).toEqual({
+        pathname: `/ws-auth/failed/native-fs/${wsName}`,
+      });
+    });
+
+    it('should handle empty wsName', () => {
+      const wsName = '';
+      const result = buildUrlPath.pageNativeFsAuthFailed({ wsName });
+      expect(result).toEqual({ pathname: '/ws-auth/failed/native-fs/' });
+    });
+  });
+
+  describe('pageNativeFsAuthReq', () => {
+    it('should return the correct pathname with wsName', () => {
+      const wsName = 'myWorkspace';
+      const result = buildUrlPath.pageNativeFsAuthReq({ wsName });
+      expect(result).toEqual({ pathname: `/ws-auth/req/native-fs/${wsName}` });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const wsName = 'my Workspace';
+      const result = buildUrlPath.pageNativeFsAuthReq({ wsName });
+      expect(result).toEqual({ pathname: `/ws-auth/req/native-fs/${wsName}` });
+    });
+
+    it('should handle empty wsName', () => {
+      const wsName = '';
+      const result = buildUrlPath.pageNativeFsAuthReq({ wsName });
+      expect(result).toEqual({ pathname: '/ws-auth/req/native-fs/' });
+    });
+  });
+
+  describe('pageNotFound', () => {
+    it('should return the correct pathname', () => {
+      const result = buildUrlPath.pageNotFound({ path: '/some-path' });
+      expect(result).toEqual({
+        pathname: '/ws-error/404',
+        search: { p: '/some-path' },
+      });
+    });
+  });
+
+  describe('pageWorkspaceNotFound', () => {
+    it('should return the correct pathname with wsName', () => {
+      const wsName = 'myWorkspace';
+      const result = buildUrlPath.pageWorkspaceNotFound({ wsName });
+      expect(result).toEqual({ pathname: `/ws-error/no-ws/${wsName}` });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const wsName = 'my Workspace';
+      const result = buildUrlPath.pageWorkspaceNotFound({ wsName });
+      expect(result).toEqual({ pathname: `/ws-error/no-ws/${wsName}` });
+    });
+
+    it('should handle empty wsName', () => {
+      const wsName = '';
+      const result = buildUrlPath.pageWorkspaceNotFound({ wsName });
+      expect(result).toEqual({ pathname: '/ws-error/no-ws/' });
+    });
+  });
+
+  describe('pageWsPathNotFound', () => {
+    it('should return the correct pathname with wsPath', () => {
+      const wsPath = 'myWorkspace:file.md';
+      const result = buildUrlPath.pageWsPathNotFound({ wsPath });
+      expect(result).toEqual({ pathname: `/ws-error/no-path/${wsPath}` });
+    });
+
+    it('should handle special characters in wsPath', () => {
+      const wsPath = 'my Workspace:file path with spaces.md';
+      const result = buildUrlPath.pageWsPathNotFound({ wsPath });
+      expect(result).toEqual({ pathname: `/ws-error/no-path/${wsPath}` });
+    });
+
+    it('should handle empty wsPath', () => {
+      const wsPath = '';
+      const result = buildUrlPath.pageWsPathNotFound({ wsPath });
+      expect(result).toEqual({ pathname: '/ws-error/no-path/' });
+    });
+  });
+
+  describe('pageWelcome', () => {
+    it('should return the correct pathname', () => {
+      const result = buildUrlPath.pageWelcome();
+      expect(result).toEqual({ pathname: '/' });
+    });
   });
 });
 
-describe('pathnameToWsPath', () => {
-  it('should convert pathname to wsPath correctly', () => {
-    const pathname = '/ws/my-test-ws/my/file/path.md';
-    const expected = {
-      wsName: 'my-test-ws',
-      wsPath: 'my-test-ws:my/file/path.md',
-    };
-    expect(pathnameToWsPath(pathname)).toEqual(expected);
-  });
+describe('parseUrlPath', () => {
+  describe('pageEditor', () => {
+    it('should parse pathname and search into wsPath when search.p is present', () => {
+      const pathname = '/ws/myWorkspace/editor';
+      const search = { p: 'file/path.md' };
+      const result = parseUrlPath.pageEditor({ pathname, search });
+      expect(result).toEqual({ wsPath: 'myWorkspace:file/path.md' });
+    });
 
-  it('should decode URI components', () => {
-    const pathname = '/ws/my%20test%20ws/my/file%20path.md';
-    const expected = {
-      wsName: 'my test ws',
-      wsPath: 'my test ws:my/file path.md',
-    };
-    expect(pathnameToWsPath(pathname)).toEqual(expected);
-  });
+    it('should return null when search.p is missing', () => {
+      const pathname = '/ws/myWorkspace/editor';
+      const result = parseUrlPath.pageEditor({ pathname });
+      expect(result).toBeNull();
+    });
 
-  it('should handle invalid pathname', () => {
-    const pathname = '/invalid/path';
-    const expected = { wsName: undefined, wsPath: undefined };
-    expect(pathnameToWsPath(pathname)).toEqual(expected);
-  });
+    it('should handle special characters in wsName and filePath', () => {
+      const pathname = '/ws/my Workspace/editor';
+      const search = { p: 'file path with spaces.md' };
+      const result = parseUrlPath.pageEditor({ pathname, search });
+      expect(result).toEqual({
+        wsPath: 'my Workspace:file path with spaces.md',
+      });
+    });
 
-  it('should handle empty pathname', () => {
-    const pathname = '';
-    const expected = { wsName: undefined, wsPath: undefined };
-    expect(pathnameToWsPath(pathname)).toEqual(expected);
-  });
-});
+    it('should return null when pathname does not match', () => {
+      const pathname = '/invalid/path';
+      const result = parseUrlPath.pageEditor({ pathname });
+      expect(result).toBeNull();
+    });
 
-describe('wsPathToPathname', () => {
-  test('converts wsPath with special characters', () => {
-    expect(wsPathToPathname('test:test/path@123.md')).toEqual(
-      '/ws/test/test/path%40123.md',
-    );
-  });
+    it('should handle empty wsName', () => {
+      const pathname = '/ws//editor';
+      const search = { p: 'file.md' };
+      const result = parseUrlPath.pageEditor({ pathname, search });
+      expect(result).toEqual(null);
+    });
 
-  test('throws error for empty wsPath', () => {
-    expect(() => wsPathToPathname('')).toThrow();
-  });
-
-  test('throws error for wsPath with no filePath', () => {
-    expect(() => wsPathToPathname('test:')).toThrow();
-  });
-
-  test('handles wsPath with nested paths', () => {
-    expect(wsPathToPathname('test:dir/subdir/file.md')).toEqual(
-      '/ws/test/dir/subdir/file.md',
-    );
-  });
-
-  test('encodes wsName and filePath correctly', () => {
-    expect(wsPathToPathname('my test ws:my/file path.md')).toEqual(
-      '/ws/my%20test%20ws/my/file%20path.md',
-    );
-  });
-
-  test('handles wsPath with encoded slashes', () => {
-    expect(wsPathToPathname('test:some%2Fpath%2Ffile.md')).toEqual(
-      '/ws/test/some%252Fpath%252Ffile.md',
-    );
-  });
-});
-
-describe('pathnameToWsPath', () => {
-  test('decodes encoded pathname', () => {
-    expect(pathnameToWsPath('/ws/test/test%2Fpath%40123.md')).toEqual({
-      wsName: 'test',
-      wsPath: 'test:test/path@123.md',
+    it('should return null when wsName and search.p are missing', () => {
+      const pathname = '/ws//editor';
+      const result = parseUrlPath.pageEditor({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('handles pathname with extra slashes', () => {
-    expect(pathnameToWsPath('/ws/test/some/path/')).toEqual({
-      wsName: 'test',
-      wsPath: 'test:some/path/',
+  describe('pageWsHome', () => {
+    it('should parse pathname into wsName', () => {
+      const pathname = '/ws/myWorkspace';
+      const result = parseUrlPath.pageWsHome({ pathname });
+      expect(result).toEqual({ wsName: 'myWorkspace' });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const pathname = '/ws/my Workspace';
+      const result = parseUrlPath.pageWsHome({ pathname });
+      expect(result).toEqual({ wsName: 'my Workspace' });
+    });
+
+    it('doesnt handle a full path ', () => {
+      const pathname = '/ws/test/xyz';
+      const result = parseUrlPath.pageWsHome({ pathname });
+      expect(result).toEqual(null);
+    });
+
+    it('should return null when wsName is missing', () => {
+      const pathname = '/ws/';
+      const result = parseUrlPath.pageWsHome({ pathname });
+      expect(result).toBeNull();
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/invalid/path';
+      const result = parseUrlPath.pageWsHome({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('returns undefined for invalid pathname', () => {
-    expect(pathnameToWsPath('/hi/world')).toEqual({
-      wsName: undefined,
-      wsPath: undefined,
+  describe('pageNativeFsAuthFailed', () => {
+    it('should parse pathname into wsName', () => {
+      const pathname = '/ws-auth/failed/native-fs/myWorkspace';
+      const result = parseUrlPath.pageNativeFsAuthFailed({ pathname });
+      expect(result).toEqual({ wsName: 'myWorkspace' });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const pathname = '/ws-auth/failed/native-fs/my Workspace';
+      const result = parseUrlPath.pageNativeFsAuthFailed({ pathname });
+      expect(result).toEqual({ wsName: 'my Workspace' });
+    });
+
+    it('should return null when wsName is missing', () => {
+      const pathname = '/ws-auth/failed/native-fs/';
+      const result = parseUrlPath.pageNativeFsAuthFailed({ pathname });
+      expect(result).toBeNull();
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/invalid/path';
+      const result = parseUrlPath.pageNativeFsAuthFailed({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('returns undefined for empty pathname', () => {
-    expect(pathnameToWsPath()).toEqual({
-      wsName: undefined,
-      wsPath: undefined,
+  describe('pageNativeFsAuthReq', () => {
+    it('should parse pathname into wsName', () => {
+      const pathname = '/ws-auth/req/native-fs/myWorkspace';
+      const result = parseUrlPath.pageNativeFsAuthReq({ pathname });
+      expect(result).toEqual({ wsName: 'myWorkspace' });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const pathname = '/ws-auth/req/native-fs/my Workspace';
+      const result = parseUrlPath.pageNativeFsAuthReq({ pathname });
+      expect(result).toEqual({ wsName: 'my Workspace' });
+    });
+
+    it('should return null when wsName is missing', () => {
+      const pathname = '/ws-auth/req/native-fs/';
+      const result = parseUrlPath.pageNativeFsAuthReq({ pathname });
+      expect(result).toBeNull();
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/invalid/path';
+      const result = parseUrlPath.pageNativeFsAuthReq({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('handles pathname with only wsName', () => {
-    expect(pathnameToWsPath('/ws/world')).toEqual({
-      wsName: 'world',
-      wsPath: undefined,
+  describe('pageNotFound', () => {
+    it('should return an empty object when pathname matches', () => {
+      const pathname = '/ws-error/404';
+      const result = parseUrlPath.pageNotFound({ pathname });
+      expect(result).toEqual({});
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/ws-error/other';
+      const result = parseUrlPath.pageNotFound({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('decodes encoded wsName and filePath', () => {
-    expect(pathnameToWsPath('/ws/my%20test%20ws/my%20file.md')).toEqual({
-      wsName: 'my test ws',
-      wsPath: 'my test ws:my file.md',
+  describe('pageWorkspaceNotFound', () => {
+    it('should parse pathname into wsName', () => {
+      const pathname = '/ws-error/no-ws/myWorkspace';
+      const result = parseUrlPath.pageWorkspaceNotFound({ pathname });
+      expect(result).toEqual({ wsName: 'myWorkspace' });
+    });
+
+    it('should handle special characters in wsName', () => {
+      const pathname = '/ws-error/no-ws/my Workspace';
+      const result = parseUrlPath.pageWorkspaceNotFound({ pathname });
+      expect(result).toEqual({ wsName: 'my Workspace' });
+    });
+
+    it('should return null when wsName is missing', () => {
+      const pathname = '/ws-error/no-ws/';
+      const result = parseUrlPath.pageWorkspaceNotFound({ pathname });
+      expect(result).toBeNull();
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/ws-error/other';
+      const result = parseUrlPath.pageWorkspaceNotFound({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('handles pathname with encoded slashes in filePath', () => {
-    expect(pathnameToWsPath('/ws/test/some%2Fpath%2Ffile.md')).toEqual({
-      wsName: 'test',
-      wsPath: 'test:some/path/file.md',
+  describe('pageWsPathNotFound', () => {
+    it('should parse pathname into wsPath', () => {
+      const pathname = '/ws-error/no-path/myWorkspace:file.md';
+      const result = parseUrlPath.pageWsPathNotFound({ pathname });
+      expect(result).toEqual({ wsPath: 'myWorkspace:file.md' });
+    });
+
+    it('should handle special characters in wsPath', () => {
+      const pathname = '/ws-error/no-path/my Workspace:file path.md';
+      const result = parseUrlPath.pageWsPathNotFound({ pathname });
+      expect(result).toEqual({ wsPath: 'my Workspace:file path.md' });
+    });
+
+    it('should return null when wsPath is missing', () => {
+      const pathname = '/ws-error/no-path/';
+      const result = parseUrlPath.pageWsPathNotFound({ pathname });
+      expect(result).toBeNull();
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/ws-error/other';
+      const result = parseUrlPath.pageWsPathNotFound({ pathname });
+      expect(result).toBeNull();
     });
   });
 
-  test('handles pathname with special characters in wsName', () => {
-    expect(pathnameToWsPath('/ws/test%40ws/some/file.md')).toEqual({
-      wsName: 'test@ws',
-      wsPath: 'test@ws:some/file.md',
+  describe('pageFatalError', () => {
+    it('should return an empty object when pathname matches', () => {
+      const pathname = '/ws-error/fatal-error';
+      const result = parseUrlPath.pageFatalError({ pathname });
+      expect(result).toEqual({});
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/ws-error/other';
+      const result = parseUrlPath.pageFatalError({ pathname });
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('pageWelcome', () => {
+    it('should return an empty object when pathname is "/"', () => {
+      const pathname = '/';
+      const result = parseUrlPath.pageWelcome({ pathname });
+      expect(result).toEqual({});
+    });
+
+    it('should return null when pathname does not match', () => {
+      const pathname = '/not-home';
+      const result = parseUrlPath.pageWelcome({ pathname });
+      expect(result).toBeNull();
     });
   });
 });

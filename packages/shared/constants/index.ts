@@ -33,3 +33,4 @@ export type WorkspaceStorageType =
 export * from './command';
 export * from './browser-history-events';
 export * from './theme';
+export * from './routes';

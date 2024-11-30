@@ -71,7 +71,7 @@ export default meta;
 
 type NavItem = {
   title: string;
-  url: string;
+  wsPath: string;
   isActive?: boolean; // Optional property to indicate if the item is active
   items?: NavItem[]; // Recursive type to allow nested navigation
 };
@@ -134,136 +134,136 @@ const data = {
   navMain: [
     {
       title: 'Getting Started',
-      url: '#',
+      wsPath: 'dead:route.md',
       items: [
         {
           title: 'Installation',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Project Structure',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
       ],
     },
     {
       title: 'Building Your Application',
-      url: '#',
+      wsPath: 'dead:route.md',
       items: [
         {
           title: 'Routing',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Data Fetching',
-          url: '#',
+          wsPath: 'dead:route.md',
           isActive: true,
         },
         {
           title: 'Rendering',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Caching',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Styling',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Optimizing',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Configuring',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Testing',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Authentication',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Deploying',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Upgrading',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Examples',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
       ],
     },
     {
       title: 'API Reference',
-      url: '#',
+      wsPath: 'dead:route.md',
       items: [
         {
           title: 'Components',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'File Conventions',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Functions',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'next.config.js Options',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'CLI',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Edge Runtime',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
       ],
     },
     {
       title: 'Architecture',
-      url: '#',
+      wsPath: 'dead:route.md',
       items: [
         {
           title: 'Accessibility',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Fast Refresh',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Next.js Compiler',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Supported Browsers',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
         {
           title: 'Turbopack',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
       ],
     },
     {
       title: 'Community',
-      url: '#',
+      wsPath: 'dead:route.md',
       items: [
         {
           title: 'Contribution Guide',
-          url: '#',
+          wsPath: 'dead:route.md',
         },
       ],
     },
@@ -329,7 +329,7 @@ function AppSidebar2({
             {navItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
+                  <a href={item.wsPath} className="font-medium">
                     {item.title}
                   </a>
                 </SidebarMenuButton>
@@ -338,7 +338,7 @@ function AppSidebar2({
                     {item.items.map((item) => (
                       <SidebarMenuSubItem key={item.title}>
                         <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                          <a href={item.wsPath}>{item.title}</a>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}

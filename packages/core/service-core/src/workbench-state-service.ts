@@ -1,6 +1,7 @@
 import { BaseService } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import type {
+  AppAlertDialogProps,
   DialogSingleInputProps,
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
@@ -21,15 +22,22 @@ export class WorkbenchStateService extends BaseService {
   $singleInputDialog = atom<
     | undefined
     | ({
-        dialogId: string;
+        dialogId: `dialog::${string}`;
       } & Omit<DialogSingleInputProps, 'open' | 'setOpen'>)
   >(undefined);
   $singleSelectDialog = atom<
     | undefined
     | ({
-        dialogId: string;
+        dialogId: `dialog::${string}`;
       } & Omit<DialogSingleSelectProps, 'open' | 'setOpen'>)
   >(undefined);
+  $alertDialog = atom<
+    | undefined
+    | ({ dialogId: `dialog::${string}` } & Omit<
+        AppAlertDialogProps,
+        'open' | 'setOpen'
+      >)
+  >();
 
   constructor(
     baseOptions: BaseServiceCommonOptions,

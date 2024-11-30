@@ -1,22 +1,18 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseService, isAppError } from '@bangle.io/base-utils';
 import type {
   BaseRouterService,
   BaseServiceCommonOptions,
   PageLifeCycleState,
+  RouterLocation,
   RouterState,
 } from '@bangle.io/types';
-import {
-  isValidFileWsPath,
-  pathnameToWsPath,
-  wsPathToPathname,
-} from '@bangle.io/ws-path';
+import { buildUrlPath, parseUrlPath, resolvePath } from '@bangle.io/ws-path';
+import type { WritableAtom } from 'jotai';
 import { atom } from 'jotai';
 
 export class NavigationService extends BaseService {
   private routerService: BaseRouterService;
 
-  $wsName = atom<string | undefined>(undefined);
-  $wsPath = atom<string | undefined>(undefined);
   $lifeCycle = atom<{
     current: PageLifeCycleState;
     previous: PageLifeCycleState;
@@ -25,11 +21,62 @@ export class NavigationService extends BaseService {
     previous: undefined,
   });
 
+  $location: WritableAtom<
+    {
+      pathname: string;
+      search: Record<string, string>;
+    },
+    [
+      {
+        pathname: string;
+        search: Record<string, string>;
+      },
+    ],
+    void
+  >;
+
+  $wsPath = atom<string | undefined>((get) => {
+    try {
+      const result = parseUrlPath.pageEditor(get(this.$location));
+      return result?.wsPath;
+    } catch (error) {
+      // prevent the app from crashing, but still
+      // handle the validation error
+      if (isAppError(error)) {
+        this.emitAppError(error);
+        return undefined;
+      }
+      throw error;
+    }
+  });
+
+  $wsName = atom<string | undefined>((get) => {
+    try {
+      const wsPath = get(this.$wsPath);
+
+      if (wsPath) {
+        return resolvePath(wsPath)?.wsName;
+      }
+
+      const result = parseUrlPath.pageWsHome(get(this.$location));
+      return result?.wsName;
+    } catch (error) {
+      // prevent the app from crashing, but still
+      // handle the validation error
+      if (isAppError(error)) {
+        this.emitAppError(error);
+        return undefined;
+      }
+      throw error;
+    }
+  });
+
   resolveAtoms() {
     return {
       wsName: this.store.get(this.$wsName),
       wsPath: this.store.get(this.$wsPath),
       lifeCycle: this.store.get(this.$lifeCycle),
+      location: this.store.get(this.$location),
     };
   }
 
@@ -37,11 +84,11 @@ export class NavigationService extends BaseService {
     return this.routerService.setUnsavedChanges(bool);
   }
 
-  get pathname(): string {
+  get pathname(): RouterLocation['pathname'] {
     return this.routerService.pathname ?? '';
   }
 
-  get search(): string | undefined {
+  get search(): RouterLocation['search'] {
     return this.routerService.search;
   }
 
@@ -66,6 +113,11 @@ export class NavigationService extends BaseService {
       dependencies,
     });
     this.routerService = dependencies.routerService;
+
+    this.$location = atom({
+      pathname: this.routerService.pathname,
+      search: this.routerService.search,
+    });
   }
   protected async onInitialize(): Promise<void> {
     this.syncLocationAtoms();
@@ -93,24 +145,25 @@ export class NavigationService extends BaseService {
   }
 
   private syncLocationAtoms() {
-    const { wsName, wsPath } = pathnameToWsPath(this.routerService.pathname);
-    if (wsPath) {
-      if (!isValidFileWsPath(wsPath)) {
-        this.goNotFound(this.routerService.pathname);
-        return;
-      }
-    }
-    this.logger.debug(`Route changed to ${wsName} - ${wsPath}`);
-    this.store.set(this.$wsName, wsName);
-    this.store.set(this.$wsPath, wsPath);
+    this.store.set(this.$location, {
+      pathname: this.routerService.pathname,
+      search: this.routerService.search,
+    });
   }
 
-  go(to: string | URL, options?: { replace?: boolean; state?: RouterState }) {
+  go(
+    to: Partial<RouterLocation>,
+    options?: { replace?: boolean; state?: RouterState },
+  ) {
     this.routerService.navigate(to, options);
   }
 
   goWsPath(wsPath: string) {
-    this.go(wsPathToPathname(wsPath));
+    const { pathname, search } = buildUrlPath.pageEditor({ wsPath });
+    this.go({
+      pathname,
+      search,
+    });
   }
 
   /**
@@ -122,22 +175,18 @@ export class NavigationService extends BaseService {
     if (!targetWsName) {
       this.goNotFound();
     } else {
-      this.go(`/ws/${targetWsName}`);
+      this.go(buildUrlPath.pageWsHome({ wsName: targetWsName }));
     }
   }
 
   goNotFound(originalPath?: string) {
     this.logger.error(`goNotFound ${originalPath}`);
-
-    let suffix = '';
-    suffix += originalPath
-      ? `?originalPath=${encodeURIComponent(originalPath)}`
-      : '';
-
-    this.go(`/ws-not-found${suffix}`);
+    this.go(buildUrlPath.pageNotFound({ path: originalPath }));
   }
 
   goHome() {
-    this.go('/');
+    this.go({
+      pathname: '/',
+    });
   }
 }

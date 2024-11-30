@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSyncExternalStore } from 'react';
-import type { BaseLocationHook } from 'wouter';
+import type { BaseLocationHook, BaseSearchHook } from 'wouter';
 import { Router as WouterRouter } from 'wouter';
 import { useCoreServices } from './service-core-context';
 
@@ -28,14 +28,20 @@ const useRouterHook: BaseLocationHook = function useRouterHook() {
 
   const path = useSyncExternalStore(subscribe, getSnapshot, getSsrPath);
 
-  const navigate: (typeof coreServices.navigation)['go'] = useCallback(
-    (to, options) => {
-      coreServices.navigation.go(to, options);
-    },
-    [coreServices],
-  );
-
-  return [path, navigate];
+  return [
+    path,
+    useCallback(
+      (to, options) => {
+        coreServices.navigation.go(
+          {
+            pathname: to,
+          },
+          options,
+        );
+      },
+      [coreServices],
+    ),
+  ];
 };
 
 export function RouterContext({ children }: { children: React.ReactNode }) {
