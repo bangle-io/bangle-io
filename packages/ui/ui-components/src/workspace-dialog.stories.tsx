@@ -1,19 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   CreateWorkspaceDialog,
+  type CreateWorkspaceDialogProps,
   type DirectoryPickResult,
   type StorageTypeConfig,
 } from './workspace-dialog';
 
-export const meta: Meta<typeof CreateWorkspaceDialog> = {
+export default {
   title: 'WorkspaceDialog',
   component: CreateWorkspaceDialog,
   tags: [],
-};
+} as Meta<typeof CreateWorkspaceDialog>;
 
-export default meta;
-
-export type Story = StoryObj<typeof CreateWorkspaceDialog>;
+type Story = StoryObj<typeof CreateWorkspaceDialog>;
 
 const getStorageTypes = ({
   browserDisabled = false,
@@ -42,12 +41,26 @@ const getStorageTypes = ({
   },
 ];
 
+const validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'] = ({
+  name,
+}) => {
+  const isValid = /^[a-zA-Z0-9_]+$/.test(name);
+  if (isValid) {
+    return { isValid: true };
+  }
+  return {
+    isValid: false,
+    message: 'Workspace name contains invalid characters.',
+  };
+};
+
 const Template: Story = {
   args: {
     open: true,
     onOpenChange: () => {},
     onDone: () => {},
     storageTypes: getStorageTypes({}),
+    validateWorkspace,
   },
 };
 
@@ -82,5 +95,13 @@ export const NativeFsError: Story = {
       browserDisabled: true,
       defaultSelected: 'nativefs',
     }),
+  },
+};
+
+export const InvalidWsName: Story = {
+  ...Template,
+  args: {
+    ...Template.args,
+    validateWorkspace,
   },
 };

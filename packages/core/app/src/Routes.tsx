@@ -44,12 +44,10 @@ export function AppRoutes() {
       <Route path={ROUTES.pageFatalError}>
         <PageFatalError />
       </Route>
-
-      <Redirect to={ROUTES.pageNotFound} />
-
       <Route path={ROUTES.pageWelcome}>
         <PageWelcome />
       </Route>
+      <Redirect to={ROUTES.pageNotFound} />
     </Switch>
   );
 }

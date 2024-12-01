@@ -15,7 +15,7 @@ import {
 import { useAtomValue } from 'jotai';
 
 import { resolvePath } from '@bangle.io/ws-path';
-import React, {} from 'react';
+import React from 'react';
 export function OmniSearch({
   open,
   setOpen,
@@ -68,7 +68,7 @@ export function OmniSearch({
                 );
               }}
             >
-              <span>{resolvePath(wsPath).filePath}</span>
+              <span>{resolvePath(wsPath)?.filePath}</span>
             </CommandItem>
           ))}
         </CommandGroup>

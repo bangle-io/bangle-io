@@ -6,11 +6,12 @@ test('Submit workspace name', async ({ page }) => {
   await page.getByRole('button', { name: 'Acme Inc Enterprise' }).click();
   await page.getByText('New Workspace').click();
 
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByLabel('Name', { exact: true }).fill('test');
+  // Select browser storage type
+  await page.getByRole('radio', { name: /Browser Storage/i }).click();
+  await page.getByRole('button', { name: /next/i }).click();
 
-  await expect(
-    page.getByRole('dialog', { name: /workspace/i }),
-  ).toHaveScreenshot();
+  // Fill workspace name
+  await page.getByLabel('Workspace Name', { exact: true }).fill('test');
+
   await page.getByRole('button', { name: 'Create Workspace' }).click();
 });

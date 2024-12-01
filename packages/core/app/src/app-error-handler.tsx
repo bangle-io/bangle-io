@@ -51,6 +51,7 @@ export function AppErrorHandler({
     };
 
     const handleAppLikeError = (error: Error) => {
+      logger.error(error);
       return handleAppError(error, (appError, error) => {
         switch (appError.name) {
           case 'error::workspace:native-fs-auth-needed': {

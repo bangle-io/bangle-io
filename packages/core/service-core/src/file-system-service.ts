@@ -18,12 +18,14 @@ import type {
 } from '@bangle.io/types';
 import {
   VALID_NOTE_EXTENSIONS_SET,
+  assertSplitWsPath,
   getExtension,
-  isValidFileWsPath,
-  isValidNoteWsPath,
-  resolvePath,
-  validateFileWsPath,
+  getWsName,
 } from '@bangle.io/ws-path';
+import {
+  assertValidNoteWsPath,
+  validateWsPath,
+} from '@bangle.io/ws-path/src/helpers';
 import { atom } from 'jotai';
 
 type ChangeEvent =
@@ -89,9 +91,9 @@ export class FileSystemService extends BaseService<{
   }
 
   private async getStorageService(
-    wsPath: string,
+    wsPathOrName: string,
   ): Promise<BaseFileStorageService> {
-    const { wsName } = resolvePath(wsPath);
+    const wsName = getWsName(wsPathOrName);
     const wsInfo = await this.config.getWorkspaceInfo({ wsName });
     const wsInfoType = wsInfo.type as WorkspaceStorageType;
     return FileSystemService._getStorageServiceForType(
@@ -106,7 +108,6 @@ export class FileSystemService extends BaseService<{
   protected async onDispose(): Promise<void> {}
 
   isFileTypeSupported({ extension }: { extension: string }) {
-    // TODO: we are only doing notes for now, need to expand
     return VALID_NOTE_EXTENSIONS_SET.has(extension);
   }
 
@@ -147,13 +148,13 @@ export class FileSystemService extends BaseService<{
   ): Promise<string[]> {
     await this.initializedPromise;
     // Using a dummy wsPath to get the storage service for the workspace
-    const dummyWsPath = `${wsName}:/`;
+    const dummyWsPath = `${wsName}:dummy.md`;
     const storageService = await this.getStorageService(dummyWsPath);
 
     let wsPaths = await storageService.listAllFiles(wsName, abortSignal, {});
 
     wsPaths = wsPaths.filter((r) => {
-      const isValid = isValidFileWsPath(r);
+      const { isValid } = validateWsPath(r);
       const extension = getExtension(r);
       const result =
         isValid && extension && this.isFileTypeSupported({ extension });
@@ -172,7 +173,7 @@ export class FileSystemService extends BaseService<{
 
   async readFile(wsPath: string): Promise<File | undefined> {
     await this.initializedPromise;
-    validateFileWsPath(wsPath);
+    assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
     const file = await storageService.readFile(wsPath, {});
@@ -182,11 +183,7 @@ export class FileSystemService extends BaseService<{
 
   async readFileAsText(wsPath: string): Promise<string | undefined> {
     await this.initializedPromise;
-    if (!isValidNoteWsPath(wsPath)) {
-      throwAppError('error::file:invalid-note-path', 'Invalid note file path', {
-        invalidWsPath: wsPath,
-      });
-    }
+    assertValidNoteWsPath(wsPath);
 
     const file = await this.readFile(wsPath);
 
@@ -203,7 +200,7 @@ export class FileSystemService extends BaseService<{
     _options: { sha?: string } = {},
   ): Promise<void> {
     await this.initializedPromise;
-    validateFileWsPath(wsPath);
+    assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
     await storageService.createFile(wsPath, file, {});
@@ -219,7 +216,7 @@ export class FileSystemService extends BaseService<{
     options: { sha?: string } = {},
   ): Promise<void> {
     await this.initializedPromise;
-    validateFileWsPath(wsPath);
+    assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
     await storageService.writeFile(wsPath, file, {
@@ -233,7 +230,7 @@ export class FileSystemService extends BaseService<{
 
   async deleteFile(wsPath: string): Promise<void> {
     await this.initializedPromise;
-    validateFileWsPath(wsPath);
+    assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
     await storageService.deleteFile(wsPath, {});
@@ -251,11 +248,9 @@ export class FileSystemService extends BaseService<{
     newWsPath: string;
   }): Promise<void> {
     await this.initializedPromise;
-    validateFileWsPath(oldWsPath);
-    validateFileWsPath(newWsPath);
 
-    const { wsName: currentWsName } = resolvePath(oldWsPath);
-    const { wsName: newWsName } = resolvePath(newWsPath);
+    const { wsName: currentWsName } = assertSplitWsPath(oldWsPath);
+    const { wsName: newWsName } = assertSplitWsPath(newWsPath);
 
     if (currentWsName !== newWsName) {
       throwAppError(

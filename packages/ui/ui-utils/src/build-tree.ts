@@ -1,5 +1,9 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { filePathToWsPath, pathJoin, resolvePath } from '@bangle.io/ws-path';
+import {
+  assertSplitWsPath,
+  filePathToWsPath,
+  pathJoin,
+} from '@bangle.io/ws-path';
 
 export interface TreeItem {
   name: string;
@@ -19,16 +23,13 @@ export function buildTree(
   wsPaths: string[],
   openPaths: string[] = [],
   comparator?: SortComparator,
-  skipValidation = false,
 ): TreeItem[] {
-  const filePaths = wsPaths.map(
-    (wsPath) => resolvePath(wsPath, skipValidation).filePath,
-  );
+  const filePaths = wsPaths.map((wsPath) => assertSplitWsPath(wsPath).filePath);
   const openFilePaths = new Set(
-    openPaths.map((wsPath) => resolvePath(wsPath).filePath),
+    openPaths.map((wsPath) => assertSplitWsPath(wsPath).filePath),
   );
 
-  const wsName = wsPaths[0] ? resolvePath(wsPaths[0]).wsName : '';
+  const wsName = wsPaths[0] ? assertSplitWsPath(wsPaths[0]).wsName : '';
 
   if (wsPaths.length > 0 && !wsName) {
     throwAppError('error::ws-path:invalid-ws-path', 'Invalid ws path', {

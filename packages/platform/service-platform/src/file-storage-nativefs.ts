@@ -44,27 +44,14 @@ export class FileStorageNativeFs
   public readonly description = 'Saves data in your hard drive';
   private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
 
-  constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private options: {
-      onChange: (event: FileStorageChangeEvent) => void;
-    },
-  ) {
-    super({
-      ...baseOptions,
-      name: 'file-storage-nativefs',
-      kind: 'platform',
-      dependencies,
-      needsConfig: true,
-    });
-  }
-
-  protected async onInitialize(): Promise<void> {}
-
-  // Modified onDispose method
-  protected async onDispose(): Promise<void> {
-    await this.invalidateCache();
+  private getFsPath(wsPath: string) {
+    const fsPath = toFSPath(wsPath);
+    if (!fsPath) {
+      throwAppError('error::ws-path:invalid-ws-path', 'Invalid path', {
+        invalidPath: wsPath,
+      });
+    }
+    return fsPath;
   }
 
   private internalOnChange(event: FileStorageChangeEvent) {
@@ -113,6 +100,29 @@ export class FileStorageNativeFs
     return fs;
   }
 
+  constructor(
+    baseOptions: BaseServiceCommonOptions,
+    dependencies: undefined,
+    private options: {
+      onChange: (event: FileStorageChangeEvent) => void;
+    },
+  ) {
+    super({
+      ...baseOptions,
+      name: 'file-storage-nativefs',
+      kind: 'platform',
+      dependencies,
+      needsConfig: true,
+    });
+  }
+
+  protected async onInitialize(): Promise<void> {}
+
+  // Modified onDispose method
+  protected async onDispose(): Promise<void> {
+    await this.invalidateCache();
+  }
+
   // Add invalidateCache method
   protected async invalidateCache(): Promise<void> {
     this.fsCache.clear();
@@ -121,7 +131,7 @@ export class FileStorageNativeFs
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.initialize;
 
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     const fs = await this.getFs(wsPath);
 
     await fs.writeFile(path, file);
@@ -135,7 +145,7 @@ export class FileStorageNativeFs
   async deleteFile(wsPath: string): Promise<void> {
     await this.initialize;
     const fs = await this.getFs(wsPath);
-    await fs.unlink(toFSPath(wsPath));
+    await fs.unlink(this.getFsPath(wsPath));
     this.internalOnChange({
       type: 'delete',
       wsPath,
@@ -145,7 +155,7 @@ export class FileStorageNativeFs
   async fileExists(wsPath: string): Promise<boolean> {
     await this.initialize;
     const fs = await this.getFs(wsPath);
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     try {
       await fs.stat(path);
       return true;
@@ -163,7 +173,7 @@ export class FileStorageNativeFs
   async fileStat(wsPath: string) {
     await this.initialize;
     const fs = await this.getFs(wsPath);
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     const stat = await fs.stat(path);
     return {
       ctime: stat.mtimeMs,
@@ -199,7 +209,7 @@ export class FileStorageNativeFs
     if (!(await this.fileExists(wsPath))) {
       return undefined;
     }
-    return fs.readFile(toFSPath(wsPath));
+    return fs.readFile(this.getFsPath(wsPath));
   }
 
   async renameFile(
@@ -212,7 +222,7 @@ export class FileStorageNativeFs
   ): Promise<void> {
     await this.initialize;
     const fs = await this.getFs(wsPath);
-    await fs.rename(toFSPath(wsPath), toFSPath(newWsPath));
+    await fs.rename(this.getFsPath(wsPath), this.getFsPath(newWsPath));
     this.internalOnChange({
       type: 'rename',
       oldWsPath: wsPath,
@@ -233,7 +243,8 @@ export class FileStorageNativeFs
         },
       );
     }
-    await fs.writeFile(toFSPath(wsPath), file);
+
+    await fs.writeFile(this.getFsPath(wsPath), file);
     this.internalOnChange({
       type: 'update',
       wsPath,

@@ -1,10 +1,10 @@
 import { BaseError, expectType, throwAppError } from '@bangle.io/base-utils';
 import {
   appendNoteExtension,
+  assertSplitWsPath,
+  assertedResolvePath,
   filePathToWsPath,
   pathJoin,
-  removeExtension,
-  resolvePath,
 } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
@@ -130,13 +130,15 @@ export const commandHandlers = [
           groupHeading: 'Notes',
           emptyMessage: 'No notes found',
           options: wsPaths.map((path) => ({
-            title: resolvePath(path).filePath,
+            title: assertSplitWsPath(path).filePath,
             id: path,
           })),
           Icon: Trash2,
-          initialSearch: wsPath ? resolvePath(wsPath).filePath : undefined,
+          initialSearch: wsPath
+            ? assertSplitWsPath(wsPath).filePath
+            : undefined,
           onSelect: (option) => {
-            const fileName = resolvePath(option.id).fileNameWithoutExt;
+            const fileName = assertedResolvePath(option.id).fileNameWithoutExt;
             if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
               dispatch('command::ws:delete-ws-path', { wsPath: option.id });
             }
@@ -158,7 +160,8 @@ export const commandHandlers = [
         });
       }
 
-      const { wsName, fileNameWithoutExt, dirPath } = resolvePath(oldWsPath);
+      const { wsName, fileNameWithoutExt, dirPath } =
+        assertedResolvePath(oldWsPath);
 
       store.set(workbenchState.$singleInputDialog, () => {
         return {
@@ -184,7 +187,7 @@ export const commandHandlers = [
               );
             }
 
-            const newName = appendNoteExtension(removeExtension(input.trim()));
+            const newName = appendNoteExtension(input.trim());
 
             validateInputPath(newName);
 
@@ -192,7 +195,7 @@ export const commandHandlers = [
               wsName,
               inputPath: pathJoin(dirPath, newName),
             });
-            resolvePath(newWsPath, false);
+            assertSplitWsPath(newWsPath);
 
             dispatch('command::ws:rename-ws-path', {
               newWsPath,
@@ -293,7 +296,7 @@ export const commandHandlers = [
       const dirPaths = [
         ...new Set(
           existingWsPaths.map((path) => {
-            const { dirPath } = resolvePath(path);
+            const { dirPath } = assertedResolvePath(path);
             return dirPath;
           }),
         ),
@@ -305,7 +308,7 @@ export const commandHandlers = [
         });
       }
       const { wsName, fileName, fileNameWithoutExt, dirPath } =
-        resolvePath(oldWsPath);
+        assertedResolvePath(oldWsPath);
 
       const isAtRoot = dirPath === '';
 
@@ -346,7 +349,7 @@ export const commandHandlers = [
               wsName,
               inputPath: newPath,
             });
-            resolvePath(newWsPath, false);
+            assertedResolvePath(newWsPath);
 
             dispatch('command::ws:rename-ws-path', {
               newWsPath,
@@ -387,7 +390,7 @@ export const commandHandlers = [
         );
       }
 
-      const { fileNameWithoutExt } = resolvePath(newWsPath);
+      const { fileNameWithoutExt } = assertedResolvePath(newWsPath);
 
       void fileSystem
         .createFile(
@@ -433,8 +436,8 @@ export const commandHandlers = [
   c(
     'command::ws:rename-ws-path',
     ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
-      const { wsName } = resolvePath(wsPath, false);
-      const { wsName: wsNameNew } = resolvePath(newWsPath, false);
+      const { wsName } = assertSplitWsPath(wsPath);
+      const { wsName: wsNameNew } = assertSplitWsPath(newWsPath);
 
       if (wsName !== wsNameNew) {
         throwAppError(

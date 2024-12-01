@@ -8,6 +8,7 @@ import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { CreateWorkspaceDialog } from '@bangle.io/ui-components';
+import { validateWsName } from '@bangle.io/ws-path/src/helpers';
 import { useAtom } from 'jotai';
 import React from 'react';
 
@@ -50,7 +51,18 @@ export function AppCreateWorkspaceDialog() {
     <CreateWorkspaceDialog
       open={openWsDialog}
       onOpenChange={setOpenWsDialog}
-      onDone={({ wsName, type, dirHandle }) => {
+      validateWorkspace={({ name: wsName }) => {
+        const result = validateWsName(wsName);
+        if (result.isValid) {
+          return { isValid: true };
+        }
+
+        return {
+          isValid: false,
+          message: result.reason,
+        };
+      }}
+      onDone={({ name: wsName, type, dirHandle }) => {
         setOpenWsDialog(false);
         if (type === WORKSPACE_STORAGE_TYPE.NativeFS) {
           if (!dirHandle) {
@@ -58,7 +70,7 @@ export function AppCreateWorkspaceDialog() {
               'error::workspace:invalid-metadata',
               `Directory handle for ${wsName} is invalid `,
               {
-                wsName,
+                wsName: wsName,
               },
             );
           }
@@ -93,7 +105,7 @@ export function AppCreateWorkspaceDialog() {
           'error::workspace:unknown-ws-type',
           'Unknown workspace type',
           {
-            wsName,
+            wsName: wsName,
             type,
           },
         );

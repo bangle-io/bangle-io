@@ -24,7 +24,8 @@ export function PageEditor() {
             return coreServices.fileSystem.readFileAsText(wsPath);
           }}
           writeNote={async (wsPath, content) => {
-            const { fileName } = resolvePath(wsPath);
+            const fileName = resolvePath(wsPath)?.fileName || '';
+
             void coreServices.fileSystem.createFile(
               wsPath,
               new File([content], fileName, {

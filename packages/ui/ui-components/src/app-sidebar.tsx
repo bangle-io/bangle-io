@@ -99,7 +99,7 @@ export function AppSidebar({
   onMoveFileClick = () => {},
 }: AppSidebarProps) {
   const tree = useMemo(
-    () => buildTree(wsPaths, activeWsPaths, undefined, true),
+    () => buildTree(wsPaths, activeWsPaths, undefined),
     [wsPaths, activeWsPaths],
   );
 

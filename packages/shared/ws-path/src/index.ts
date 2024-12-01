@@ -1,17 +1,16 @@
 export {
-  VALID_NOTE_EXTENSIONS_SET,
+  appendNoteExtension,
+  assertedResolvePath,
+  assertValidNoteWsPath,
+  assertSplitWsPath,
   filePathToWsPath,
   fromFsPath,
   getExtension,
-  isValidFileWsPath,
-  isValidNoteWsPath,
+  getWsName,
   pathJoin,
-  removeExtension,
   resolvePath,
   toFSPath,
-  validateFileWsPath,
-  getWsName,
-  appendNoteExtension,
+  VALID_NOTE_EXTENSIONS_SET,
 } from './helpers';
 
 export * from './routing';

@@ -107,4 +107,16 @@ export type AppError =
       payload: {
         invalidWsPath: string;
       };
+    }
+  | {
+      name: `error::ws-path:invalid-ws-name`;
+      payload: {
+        invalidPath: string;
+      };
+    }
+  | {
+      name: `error::ws-path:invalid-note-path`;
+      payload: {
+        invalidWsPath: string;
+      };
     };

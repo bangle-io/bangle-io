@@ -42,10 +42,20 @@ export class FileStorageIndexedDB
     this.options.onChange(event);
   }
 
+  private getFsPath(wsPath: string) {
+    const fsPath = toFSPath(wsPath);
+    if (!fsPath) {
+      throwAppError('error::ws-path:invalid-ws-path', 'Invalid path', {
+        invalidPath: wsPath,
+      });
+    }
+    return fsPath;
+  }
+
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.initialize;
 
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     await this._idb.writeFile(path, file);
 
     this.internalOnChange({
@@ -57,7 +67,7 @@ export class FileStorageIndexedDB
   async deleteFile(wsPath: string): Promise<void> {
     await this.initialize;
 
-    await this._idb.unlink(toFSPath(wsPath));
+    await this._idb.unlink(this.getFsPath(wsPath));
     this.internalOnChange({
       type: 'delete',
       wsPath,
@@ -67,7 +77,7 @@ export class FileStorageIndexedDB
   async fileExists(wsPath: string): Promise<boolean> {
     await this.initialize;
 
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     try {
       await this._idb.stat(path);
 
@@ -85,7 +95,7 @@ export class FileStorageIndexedDB
   async fileStat(wsPath: string) {
     await this.initialize;
 
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     const stat = await this._idb.stat(path);
 
     return {
@@ -120,7 +130,7 @@ export class FileStorageIndexedDB
       return undefined;
     }
 
-    return this._idb.readFile(toFSPath(wsPath));
+    return this._idb.readFile(this.getFsPath(wsPath));
   }
 
   async renameFile(
@@ -133,7 +143,7 @@ export class FileStorageIndexedDB
   ): Promise<void> {
     await this.initialize;
 
-    await this._idb.rename(toFSPath(wsPath), toFSPath(newWsPath));
+    await this._idb.rename(this.getFsPath(wsPath), this.getFsPath(newWsPath));
 
     this.internalOnChange({
       type: 'rename',
@@ -156,7 +166,7 @@ export class FileStorageIndexedDB
       );
     }
 
-    const path = toFSPath(wsPath);
+    const path = this.getFsPath(wsPath);
     await this._idb.writeFile(path, file);
     this.internalOnChange({
       type: 'update',
