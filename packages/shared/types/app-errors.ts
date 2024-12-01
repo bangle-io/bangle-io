@@ -58,6 +58,13 @@ export type AppError =
       };
     }
   | {
+      name: `error::workspace:unknown-ws-type`;
+      payload: {
+        wsName: string;
+        type: string;
+      };
+    }
+  | {
       name: `error::workspace:native-fs-auth-needed`;
       payload: {
         wsName: string;

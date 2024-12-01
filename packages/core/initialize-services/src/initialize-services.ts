@@ -76,7 +76,11 @@ export function initializeServices(
     platform: platformServices,
   };
 
-  // init config
+  // Init config
+
+  // error service should be initialized asap to catch any errors
+  platformServices.errorService.initialize();
+
   if (platformServices.fileStorage.nativefs instanceof FileStorageNativeFs) {
     platformServices.fileStorage.nativefs.setInitConfig({
       getRootDirHandle: async (wsName: string) => {
@@ -107,6 +111,23 @@ export function initializeServices(
       },
     });
   }
+
+  coreServices.fileSystem.setInitConfig({
+    getWorkspaceInfo: async ({ wsName }) => {
+      const wsInfo = await coreServices.workspaceOps.getWorkspaceInfo(wsName);
+      if (!wsInfo) {
+        throwAppError(
+          'error::workspace:not-found',
+          `Workspace not found: ${wsName}`,
+          {
+            wsName,
+          },
+        );
+      }
+
+      return wsInfo;
+    },
+  });
 
   coreServices.commandRegistry.setInitConfig({
     commands,
@@ -145,8 +166,6 @@ export function initializeServices(
       }),
   });
 
-  // init services
-
   // dispose services on abort
   abortSignal.addEventListener(
     'abort',
@@ -173,8 +192,7 @@ function initPlatformServices(
     undefined,
     rootEmitter,
   );
-  // error service should be initialized asap to catch any errors
-  errorService.initialize();
+
   const idbDatabase = new IdbDatabaseService(commonOpts, undefined);
   const fileStorageServiceIdb = new FileStorageIndexedDB(
     commonOpts,
@@ -232,7 +250,7 @@ function initCoreServices(
   const fileSystemService = new FileSystemService(
     commonOpts,
     { ...platformServices.fileStorage },
-    { rootEmitter },
+    { rootEmitter, fileStorageServices: platformServices.fileStorage },
   );
   const navigation = new NavigationService(commonOpts, {
     routerService: platformServices.router,

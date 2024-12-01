@@ -39,7 +39,11 @@ type RootEvents =
       payload: {
         wsPath: string;
         oldWsPath?: string;
-        type: 'file-create' | 'file-update' | 'file-delete' | 'file-rename';
+        type:
+          | 'file-create'
+          | 'file-content-update'
+          | 'file-delete'
+          | 'file-rename';
         sender: EventSenderMetadata;
       };
     };

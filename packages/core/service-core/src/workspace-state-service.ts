@@ -6,6 +6,7 @@ import type { FileSystemService } from './file-system-service';
 import type { NavigationService } from './navigation-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 
+const EMPTY_ARRAY: string[] = [];
 /**
  * A service that focuses on managing the workspace state
  */
@@ -27,22 +28,23 @@ export class WorkspaceStateService extends BaseService {
   $wsPaths = unwrap<Promise<string[]>, string[]>(
     atom(async (get, { signal }) => {
       // to subscribe to file changes
-      get(this.fileSystem.$fileChanged);
+      get(this.fileSystem.$fileTreeChangeCount);
       const wsName = get(this.$wsName);
       if (!wsName) {
-        return [];
+        return EMPTY_ARRAY;
       }
+
       return this.atomHandleAppError(
         this.fileSystem.listFiles(wsName, signal),
-        [],
+        EMPTY_ARRAY,
       );
     }),
-    () => [],
+    () => EMPTY_ARRAY,
   );
 
   $activeWsPaths = atom<string[]>((get) => {
     const wsPath = get(this.$wsPath);
-    return wsPath ? [wsPath] : [];
+    return wsPath ? [wsPath] : EMPTY_ARRAY;
   });
 
   constructor(

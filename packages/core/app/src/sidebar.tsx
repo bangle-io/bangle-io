@@ -43,7 +43,7 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
         }))}
         onNewWorkspaceClick={() => {
           commandDispatcher.dispatch(
-            'command::ui:new-workspace-dialog',
+            'command::ui:create-workspace-dialog',
             null,
             'ui',
           );
@@ -61,7 +61,7 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
         }}
         onNewFileClick={() => {
           commandDispatcher.dispatch(
-            'command::ui:new-note-dialog',
+            'command::ui:create-note-dialog',
             {
               prefillName: undefined,
             },
@@ -70,7 +70,7 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
         }}
         onDeleteFileClick={(item) => {
           commandDispatcher.dispatch(
-            'command::ui:delete-ws-path-dialog',
+            'command::ui:delete-note-dialog',
             { wsPath: item.wsPath },
             'ui',
           );

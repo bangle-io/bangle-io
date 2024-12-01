@@ -3,21 +3,51 @@ import { T } from '@bangle.io/mini-zod';
 import type { Command } from '@bangle.io/types';
 import { narrow } from './common';
 
+// pattern command::ui:{action}-{target}
 export const uiCommands = narrow([
+  // this command for test only
   {
     id: 'command::ui:test-no-use',
     disabled: true,
     keywords: ['new', 'create', 'workspace'],
     dependencies: {
       services: ['workspaceOps'],
-      commands: ['command::ui:delete-ws-path-dialog', 'command::ws:new-note'],
+      commands: [
+        'command::ui:delete-note-dialog',
+        'command::ui:create-note-dialog',
+        'command::ws:go-workspace',
+      ],
     },
     args: {
       workspaceType: T.String,
       wsName: T.String,
     },
   },
-  // UI Commands
+
+  // Create commands
+  {
+    id: 'command::ui:create-workspace-dialog',
+    title: 'New Workspace',
+    keywords: ['new', 'create', 'workspace'],
+    dependencies: { services: ['workbenchState'] },
+    omniSearch: true,
+    args: null,
+  },
+  {
+    id: 'command::ui:create-note-dialog',
+    title: 'New Note',
+    keywords: ['new', 'create', 'note'],
+    dependencies: {
+      services: ['workbenchState'],
+      commands: ['command::ws:new-note-from-input'],
+    },
+    omniSearch: true,
+    args: {
+      prefillName: T.Optional(T.String),
+    },
+  },
+
+  // Toggle commands
   {
     id: 'command::ui:toggle-sidebar',
     title: 'Toggle Sidebar',
@@ -30,59 +60,38 @@ export const uiCommands = narrow([
     args: null,
   },
   {
-    id: 'command::ui:toggle-omni-search',
+    id: 'command::ui:toggle-search',
     dependencies: { services: ['workbenchState'] },
     keybindings: [...KEYBOARD_SHORTCUTS.toggleOmniSearch.keys],
     args: null,
   },
+
+  // Switch commands
   {
-    id: 'command::ui:new-workspace-dialog',
-    title: 'New Workspace',
-    keywords: ['new', 'create', 'workspace'],
-    dependencies: { services: ['workbenchState'] },
+    id: 'command::ui:switch-workspace',
+    title: 'Switch Workspace',
+    keywords: ['switch', 'workspace', 'change'],
+    dependencies: {
+      services: ['workbenchState', 'workspaceState', 'navigation'],
+    },
     omniSearch: true,
     args: null,
   },
   {
-    id: 'command::ui:new-note-dialog',
-    title: 'New Note',
-    keywords: ['new', 'create', 'note'],
-    dependencies: {
-      services: ['workbenchState'],
-      commands: ['command::ws:new-note-from-input'],
-    },
+    id: 'command::ui:switch-theme',
+    title: 'Switch Theme',
     omniSearch: true,
-    args: {
-      prefillName: T.Optional(T.String),
-    },
+    keywords: ['theme', 'change', 'switch'],
+    dependencies: { services: ['workbenchState'] },
+    args: {},
   },
+
+  // Delete commands
   {
-    id: 'command::ui:move-note-dialog',
-    title: 'Move Note',
-    keywords: ['move', 'note'],
-    dependencies: {
-      services: ['workbenchState', 'workspaceState'],
-      commands: ['command::ws:rename-ws-path'],
-    },
-    omniSearch: true,
-    args: {
-      wsPath: T.Optional(T.String),
-    },
-  },
-  {
-    id: 'command::ws:new-note',
-    title: 'New Note',
-    omniSearch: false,
-    dependencies: { services: ['workspaceOps'] },
-    args: {
-      wsPath: T.String,
-    },
-  },
-  {
-    id: 'command::ui:delete-ws-path-dialog',
+    id: 'command::ui:delete-note-dialog',
     title: 'Delete Note',
     omniSearch: true,
-    keywords: ['delete', 'note'],
+    keywords: ['delete', 'note', 'remove'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
       commands: ['command::ws:delete-ws-path'],
@@ -92,33 +101,30 @@ export const uiCommands = narrow([
     },
   },
   {
-    id: 'command::ui:switch-workspace-dialog',
-    title: 'Switch Workspace',
-    keywords: ['switch', 'workspace'],
-    dependencies: {
-      services: ['workbenchState', 'workspaceState', 'navigation'],
-    },
-    omniSearch: true,
-    args: null,
-  },
-  {
-    id: 'command::ui:change-theme-pref-dialog',
-    title: 'Switch theme',
-    omniSearch: true,
-    keywords: ['theme'],
-    dependencies: { services: ['workbenchState'] },
-    args: {},
-  },
-  {
     id: 'command::ui:delete-workspace-dialog',
     title: 'Delete Workspace',
-    keywords: ['delete', 'workspace'],
+    keywords: ['delete', 'workspace', 'remove'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
       commands: ['command::ws:delete-workspace'],
     },
     omniSearch: true,
     args: null,
+  },
+
+  // Move/Rename commands
+  {
+    id: 'command::ui:move-note-dialog',
+    title: 'Move Note',
+    keywords: ['move', 'note', 'relocate'],
+    dependencies: {
+      services: ['workbenchState', 'workspaceState'],
+      commands: ['command::ws:rename-ws-path'],
+    },
+    omniSearch: true,
+    args: {
+      wsPath: T.Optional(T.String),
+    },
   },
   {
     id: 'command::ui:rename-note-dialog',

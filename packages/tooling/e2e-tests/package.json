@@ -30,10 +30,13 @@
     "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
+    "@storybook/react": "^8.4.5",
+
     "@bangle.io/browser-entry": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/storybook": "workspace:*",
     "@playwright/experimental-ct-react": "^1.48.2",
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.10.0",

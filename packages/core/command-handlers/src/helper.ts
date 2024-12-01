@@ -64,24 +64,30 @@ export function useC<T extends BangleAppCommand['id']>(
   }, [id, coreServices, handler]);
 }
 
-type ChildDispatcher<TId extends string> = (
+export type ChildDispatcher<TId extends BangleAppCommand['id']> = (
   id: TId,
   args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
 ) => void;
+
+type ChildCommandsIds<T extends string> = Extract<
+  BangleAppCommand,
+  { id: T }
+>['dependencies'] extends {
+  commands?: Array<infer C>;
+}
+  ? C extends string
+    ? C
+    : never
+  : never;
 
 export function getCtx<T extends string>(
   key: CommandKey<T>,
 ): {
   store: Store;
-  dispatch: ChildDispatcher<
-    Extract<BangleAppCommand, { id: T }>['dependencies'] extends {
-      commands?: Array<infer C>;
-    }
-      ? C extends string
-        ? C
-        : never
-      : never
-  >;
+  dispatch: <TInput extends ChildCommandsIds<T>>(
+    id: TInput,
+    args: CommandArgs<Extract<BangleAppCommand, { id: TInput }>>,
+  ) => void;
 } {
   const result = commandKeyToContext.get(key);
   if (!result) {

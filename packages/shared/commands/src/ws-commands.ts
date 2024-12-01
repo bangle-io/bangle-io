@@ -5,6 +5,15 @@ import { narrow } from './common';
 // Workspace Commands
 export const wsCommands = narrow([
   {
+    id: 'command::ws:create-note',
+    title: 'New Note',
+    omniSearch: false,
+    dependencies: { services: ['workspaceOps'] },
+    args: {
+      wsPath: T.String,
+    },
+  },
+  {
     id: 'command::ws:new-note-from-input',
     title: 'New Note',
     omniSearch: false,

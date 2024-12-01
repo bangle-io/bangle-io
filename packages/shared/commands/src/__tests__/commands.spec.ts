@@ -64,7 +64,7 @@ describe('Bangle App Commands Validation', () => {
       id: 'command::test:mixed-args',
       title: 'Test Mixed Args',
       omniSearch: true,
-      dependencies: { services: ['database'] },
+      dependencies: { services: ['navigation'] },
       args: {
         param1: T.String,
         param2: T.Optional(T.String),
@@ -81,7 +81,7 @@ describe('Bangle App Commands Validation', () => {
       id: 'command::test:mixed-args',
       title: 'Test Mixed Args',
       omniSearch: true,
-      dependencies: { services: ['database'] },
+      dependencies: { services: ['navigation'] },
       args: {
         param1: T.Optional(T.String),
         param2: T.Optional(T.String),

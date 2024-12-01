@@ -1,7 +1,7 @@
-import type { StorageType } from '@bangle.io/types';
+import type { WorkspaceStorageType } from '@bangle.io/types';
 import { cn } from '@bangle.io/ui-utils';
 import { usePrevious } from '@mantine/hooks';
-import { Check } from 'lucide-react';
+import { Check, FolderOpen } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { Button } from './button';
 import {
@@ -14,33 +14,60 @@ import {
 } from './dialog';
 import { Input } from './input';
 import { Label } from './label';
-interface WorkspaceDialogRootProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onDone: ({ wsName }: { wsName: string }) => void;
-  disabledStorageTypes?: StorageType[]; // New prop
+
+export interface StorageTypeConfig {
+  type: WorkspaceStorageType;
+  disabled?: boolean;
+  defaultSelected?: boolean;
+  title: string;
+  description: string;
 }
 
-export function WorkspaceDialogRoot({
+export type DirectoryPickResult =
+  | { type: 'success'; dirHandle: FileSystemDirectoryHandle }
+  | { type: 'error'; error: Error; title?: string; message?: string };
+
+export interface CreateWorkspaceDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onDone: (opts: {
+    wsName: string;
+    type: WorkspaceStorageType;
+    dirHandle?: FileSystemDirectoryHandle;
+  }) => void;
+  storageTypes: StorageTypeConfig[];
+  onDirectoryPick?: () => Promise<DirectoryPickResult>;
+}
+
+export function CreateWorkspaceDialog({
   open,
   onOpenChange,
   onDone,
-  disabledStorageTypes = [],
-}: WorkspaceDialogRootProps) {
+  storageTypes,
+  onDirectoryPick,
+}: CreateWorkspaceDialogProps) {
   const prevOpen = usePrevious(open);
+  const defaultStorage =
+    storageTypes.find((t) => t.defaultSelected)?.type ||
+    storageTypes[0]?.type ||
+    'browser';
+
   const [state, setState] = React.useState<
-    | { stage: 'select-type'; selected: StorageType }
-    | { stage: 'selected-native-fs' }
+    | { stage: 'select-type'; selected: WorkspaceStorageType }
+    | {
+        stage: 'selected-nativefs';
+        pick: DirectoryPickResult | undefined;
+      }
     | { stage: 'selected-browser'; name: string }
-  >({ stage: 'select-type', selected: 'browser' });
+  >({ stage: 'select-type', selected: defaultStorage });
 
   useEffect(() => {
     if (open && !prevOpen) {
-      setState({ stage: 'select-type', selected: 'browser' });
+      setState({ stage: 'select-type', selected: defaultStorage });
     }
-  }, [open, prevOpen]);
+  }, [open, prevOpen, defaultStorage]);
 
-  const handleSelectStorage = (selected: StorageType) => {
+  const handleSelectStorage = (selected: WorkspaceStorageType) => {
     setState({
       stage: 'select-type',
       selected: selected,
@@ -48,28 +75,60 @@ export function WorkspaceDialogRoot({
   };
 
   const handleNext = () => {
-    if (state.stage === 'select-type' && state.selected === 'browser') {
-      setState({ stage: 'selected-browser', name: '' });
-    } else {
-      throw new Error('Not implemented');
+    if (state.stage === 'select-type') {
+      if (state.selected === 'browser') {
+        setState({ stage: 'selected-browser', name: '' });
+      } else if (state.selected === 'nativefs') {
+        setState({ stage: 'selected-nativefs', pick: undefined });
+      }
     }
   };
+
   const handleChangeName = (name: string) => {
     setState({ stage: 'selected-browser', name });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (state.stage === 'selected-browser') {
-      onDone({ wsName: state.name });
-    } else if (state.stage === 'selected-native-fs') {
-      onDone({ wsName: 'native-fs' });
+      onDone({ wsName: state.name, type: 'browser' });
+    } else if (
+      state.stage === 'selected-nativefs' &&
+      state.pick?.type === 'success'
+    ) {
+      onDone({
+        wsName: state.pick.dirHandle.name,
+        dirHandle: state.pick.dirHandle,
+        type: 'nativefs',
+      });
     }
+  };
+
+  const handlePickDirectory = () => {
+    if (onDirectoryPick) {
+      onDirectoryPick().then((result) => {
+        setState((existingState) => {
+          if (existingState.stage === 'selected-nativefs') {
+            return { ...existingState, pick: result };
+          }
+          return existingState;
+        });
+      });
+    }
+  };
+
+  const handleClearDirectory = () => {
+    setState((existingState) => {
+      if (existingState.stage === 'selected-nativefs') {
+        return { ...existingState, pick: undefined };
+      }
+      return existingState;
+    });
   };
 
   const handleBack = () => {
     if (
       state.stage === 'selected-browser' ||
-      state.stage === 'selected-native-fs'
+      state.stage === 'selected-nativefs'
     ) {
       setState({ stage: 'select-type', selected: 'browser' });
     }
@@ -83,7 +142,7 @@ export function WorkspaceDialogRoot({
             selectedStorage={state.selected}
             onSelectStorage={handleSelectStorage}
             onNext={handleNext}
-            disabledStorageTypes={disabledStorageTypes}
+            storageTypes={storageTypes}
           />
         )}
         {state.stage === 'selected-browser' && (
@@ -94,23 +153,43 @@ export function WorkspaceDialogRoot({
             onSubmit={handleSubmit}
           />
         )}
+        {state.stage === 'selected-nativefs' && (
+          <StagePickDirectory
+            dirHandle={
+              state.pick?.type === 'success' ? state.pick.dirHandle : undefined
+            }
+            error={
+              state.pick?.type === 'error'
+                ? {
+                    title: state.pick.title,
+                    message: state.pick.message,
+                    error: state.pick.error,
+                  }
+                : undefined
+            }
+            onPickDirectory={handlePickDirectory}
+            onClearDirectory={handleClearDirectory}
+            onBack={handleBack}
+            onSubmit={handleSubmit}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
 }
 
 interface StageSelectStorageProps {
-  selectedStorage: StorageType;
-  onSelectStorage: (selected: StorageType) => void;
+  selectedStorage: WorkspaceStorageType;
+  onSelectStorage: (selected: WorkspaceStorageType) => void;
   onNext: () => void;
-  disabledStorageTypes: StorageType[];
+  storageTypes: StorageTypeConfig[];
 }
 
 const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   selectedStorage,
   onSelectStorage,
   onNext,
-  disabledStorageTypes,
+  storageTypes,
 }) => {
   return (
     <>
@@ -120,30 +199,17 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
         </DialogTitle>
       </DialogHeader>
       <ul className="space-y-4">
-        <ListItem
-          title="Browser Storage"
-          description="Store notes in your browser's storage. Suitable for trying out Bangle, but notes may be lost if browser storage is cleared."
-          isSelected={selectedStorage === 'browser'}
-          onClick={() => onSelectStorage('browser')}
-          disabled={disabledStorageTypes.includes('browser')}
-          className={
-            disabledStorageTypes.includes('browser')
-              ? 'cursor-not-allowed opacity-50'
-              : ''
-          }
-        />
-        <ListItem
-          title="Local File Storage"
-          description="Save notes directly to a folder of your choice for complete data ownership."
-          isSelected={selectedStorage === 'native-fs'}
-          onClick={() => onSelectStorage('native-fs')}
-          disabled={disabledStorageTypes.includes('native-fs')}
-          className={
-            disabledStorageTypes.includes('native-fs')
-              ? 'cursor-not-allowed opacity-50'
-              : ''
-          }
-        />
+        {storageTypes.map((config) => (
+          <ListItem
+            key={config.type}
+            title={config.title}
+            description={config.description}
+            isSelected={selectedStorage === config.type}
+            onClick={() => onSelectStorage(config.type)}
+            disabled={config.disabled || false}
+            className={config.disabled ? 'cursor-not-allowed opacity-50' : ''}
+          />
+        ))}
       </ul>
       <DialogFooter className="flex-col sm:justify-between">
         <div className="flex items-center pb-1 sm:pb-0">
@@ -217,6 +283,75 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
           Back
         </Button>
         <Button type="submit" onClick={onSubmit} disabled={!workspaceName}>
+          Create Workspace
+        </Button>
+      </DialogFooter>
+    </>
+  );
+};
+
+interface StagePickDirectoryProps {
+  dirHandle?: FileSystemDirectoryHandle;
+  error?: {
+    title?: string;
+    message?: string;
+    error: Error;
+  };
+  onPickDirectory: () => void;
+  onClearDirectory: () => void;
+  onBack: () => void;
+  onSubmit: () => void;
+}
+
+const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
+  dirHandle,
+  error,
+  onPickDirectory,
+  onClearDirectory,
+  onBack,
+  onSubmit,
+}) => {
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>Select Directory</DialogTitle>
+        <DialogDescription>
+          <span>Choose a directory to store your notes.</span>
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-4 py-4">
+        {!dirHandle && (
+          <Button onClick={onPickDirectory}>
+            <FolderOpen />
+            <span>Pick Directory</span>
+          </Button>
+        )}
+        {dirHandle && (
+          <div className="flex items-center space-x-2">
+            <Button onClick={onPickDirectory}>
+              <Check />
+              <span>{dirHandle.name}</span>
+            </Button>
+
+            <Button variant="outline" onClick={onClearDirectory}>
+              Clear
+            </Button>
+          </div>
+        )}
+        {error && (
+          <div className="text-destructive text-sm">
+            <strong>{error.title || 'Error'}:</strong>{' '}
+            {error.message || error.error.message}
+          </div>
+        )}
+      </div>
+
+      <DialogFooter className="flex justify-between">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={onSubmit} disabled={!dirHandle}>
           Create Workspace
         </Button>
       </DialogFooter>

@@ -1,7 +1,4 @@
-import { WorkspaceDialogRootExample } from '@bangle.io/ui-components/src/workspace-dialog.stories';
 import { expect, test } from '@playwright/experimental-ct-react';
-import type { Locator, Page } from '@playwright/test';
-import React from 'react';
 
 test('Submit workspace name', async ({ page }) => {
   await page.goto('/');

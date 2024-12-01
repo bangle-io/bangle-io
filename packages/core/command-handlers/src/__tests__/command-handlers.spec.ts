@@ -19,7 +19,7 @@ describe('Command Validation', () => {
     const handlerIds = new Set(commandHandlers.map((c) => c.id));
     const commandIds = new Set(bangleAppCommands.map((c) => c.id));
     for (const id of handlerIds) {
-      expect(commandIds.has(id)).toBe(true);
+      expect(commandIds).toContain(id);
     }
   });
 });

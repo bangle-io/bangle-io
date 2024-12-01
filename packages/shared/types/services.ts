@@ -58,7 +58,10 @@ export type BaseRouterService = BaseRouter<RouterState> & BaseService;
 export type CommandExcludedServices = (typeof commandExcludedServices)[number];
 
 // Services exposed to commands
-export type CommandExposedServices = Omit<AllServices, CommandExcludedServices>;
+export type CommandExposedServices = Omit<
+  CoreServices,
+  CommandExcludedServices
+>;
 
 export type CoreServices = {
   // ensure this name stays in sync with the name in the CommandExposedServices

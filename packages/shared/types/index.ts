@@ -3,8 +3,6 @@ import type { ThemeConfig } from '@bangle.io/color-scheme-manager';
 export type ColorScheme = 'light' | 'dark';
 export type ThemePreference = ThemeConfig['defaultPreference'];
 
-export type StorageType = 'native-fs' | 'browser';
-
 export * from './app-errors';
 
 export type * from './base-database';
@@ -15,3 +13,4 @@ export type * from './services';
 export type * from './commands';
 export type * from './base-router';
 export type * from '@bangle.io/root-emitter';
+export type { WorkspaceStorageType } from '@bangle.io/constants';

@@ -13,6 +13,7 @@ import type {
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';
+import type { FileSystemService } from '../file-system-service';
 
 class TestService extends BaseService {
   constructor(baseOptions: BaseServiceCommonOptions) {
@@ -52,7 +53,7 @@ async function setup() {
   dispatchService.setInitConfig({
     exposedServices: {
       fileSystem: new TestService(commonOpts),
-    } as CommandExposedServices,
+    } as unknown as CommandExposedServices,
   });
   await dispatchService.initialize();
   return {

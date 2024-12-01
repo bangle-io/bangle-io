@@ -414,15 +414,15 @@ export async function pickADirectory() {
 
     return dirHandle;
   } catch (err) {
-    if (err instanceof Error) {
-      if (isAbortError(err)) {
-        throw new NativeBrowserFileSystemError({
-          message: 'The user aborted.',
-          code: NATIVE_BROWSER_USER_ABORTED_ERROR,
-        });
-      }
+    if (err instanceof BaseFileSystemError) {
+      throw err;
+    }
 
-      throw new Error(err.message);
+    if (isAbortError(err)) {
+      throw new NativeBrowserFileSystemError({
+        message: 'The user aborted.',
+        code: NATIVE_BROWSER_USER_ABORTED_ERROR,
+      });
     }
     throw err;
   }

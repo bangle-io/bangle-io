@@ -1,19 +1,16 @@
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import {
   AppAlertDialog,
   DialogSingleInput,
   DialogSingleSelect,
-  WorkspaceDialogRoot,
 } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
 import React from 'react';
+import { AppCreateWorkspaceDialog } from './components/create-workspace-dialog';
 
 export function AppDialogs() {
   const coreServices = useCoreServices();
-  const [openWsDialog, setOpenWsDialog] = useAtom(
-    coreServices.workbenchState.$openWsDialog,
-  );
+
   const [singleSelectDialog, setSingleSelectDialog] = useAtom(
     coreServices.workbenchState.$singleSelectDialog,
   );
@@ -26,19 +23,7 @@ export function AppDialogs() {
 
   return (
     <>
-      <WorkspaceDialogRoot
-        open={openWsDialog}
-        onOpenChange={setOpenWsDialog}
-        onDone={({ wsName }) => {
-          setOpenWsDialog(false);
-          coreServices.workspaceOps.createWorkspaceInfo({
-            metadata: {},
-            name: wsName,
-            type: WORKSPACE_STORAGE_TYPE.Browser,
-          });
-        }}
-      />
-
+      <AppCreateWorkspaceDialog />
       <AppAlertDialog
         key={alertDialog?.dialogId}
         open={Boolean(alertDialog)}

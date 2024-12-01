@@ -16,20 +16,12 @@ export const commandHandlers = [
   c(
     'command::ui:test-no-use',
     ({ workspaceOps }, { workspaceType, wsName }, key) => {
-      const { dispatch } = getCtx(key);
+      getCtx(key);
 
       expectType<string, typeof workspaceType>(workspaceType);
       expectType<string, typeof workspaceOps.name>(workspaceOps.name);
       expectType<string, typeof wsName>(wsName);
       expectType<{ key: 'command::ui:test-no-use' }, typeof key>(key);
-
-      dispatch('command::ui:delete-ws-path-dialog', {
-        wsPath: undefined,
-      });
-
-      dispatch('command::ws:new-note', {
-        wsPath: 'test:note.md',
-      });
     },
   ),
 
@@ -38,13 +30,13 @@ export const commandHandlers = [
     store.set(workbenchState.$sidebarOpen, (prev) => !prev);
   }),
 
-  c('command::ui:new-workspace-dialog', ({ workbenchState }, _, key) => {
+  c('command::ui:create-workspace-dialog', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
     store.set(workbenchState.$openWsDialog, (prev) => !prev);
   }),
 
   c(
-    'command::ui:new-note-dialog',
+    'command::ui:create-note-dialog',
     ({ workbenchState }, { prefillName }, key) => {
       const { store, dispatch } = getCtx(key);
       store.set(workbenchState.$singleInputDialog, () => {
@@ -68,12 +60,12 @@ export const commandHandlers = [
     },
   ),
 
-  c('command::ui:toggle-omni-search', ({ workbenchState }, _, key) => {
+  c('command::ui:toggle-search', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
     store.set(workbenchState.$openOmniSearch, (prev) => !prev);
   }),
 
-  c('command::ui:change-theme-pref-dialog', ({ workbenchState }, _, key) => {
+  c('command::ui:switch-theme', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
     const currentPref = store.get(workbenchState.$themePref);
     const system = 'system' satisfies ThemePreference;
@@ -113,7 +105,7 @@ export const commandHandlers = [
   }),
 
   c(
-    'command::ui:delete-ws-path-dialog',
+    'command::ui:delete-note-dialog',
     ({ workbenchState, workspaceState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
       const wsPaths = store.get(workspaceState.$wsPaths);
@@ -213,7 +205,7 @@ export const commandHandlers = [
   ),
 
   c(
-    'command::ui:switch-workspace-dialog',
+    'command::ui:switch-workspace',
     ({ workbenchState, workspaceState, navigation }, _, key) => {
       const { store } = getCtx(key);
       const workspaces = store.get(workspaceState.$workspaces);
