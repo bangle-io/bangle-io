@@ -1,4 +1,9 @@
-import type { BaseError, BaseService, Logger } from '@bangle.io/base-utils';
+import type {
+  BaseError,
+  BaseErrorService,
+  BaseService,
+  Logger,
+} from '@bangle.io/base-utils';
 import type {
   WorkspaceStorageType,
   commandExcludedServices,
@@ -9,16 +14,13 @@ import type {
   FileSystemService,
   NavigationService,
   ShortcutService,
+  UserActivityService,
   WorkbenchService,
   WorkbenchStateService,
   WorkspaceOpsService,
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-import type {
-  BrowserErrorHandlerService,
-  IdbDatabaseService,
-} from '@bangle.io/service-platform';
 import type { createStore } from 'jotai';
 
 import type { BaseAppDatabase } from './base-database';
@@ -37,6 +39,7 @@ export type BaseServiceOptions = {
 } & BaseServiceCommonOptions;
 
 export type BaseServiceCommonOptions = {
+  rootAbortSignal: AbortSignal;
   logger: Logger;
   store: Store;
   // for cases where throwing an error is not possible
@@ -75,11 +78,12 @@ export type CoreServices = {
   workspace: WorkspaceService;
   workspaceOps: WorkspaceOpsService;
   workspaceState: WorkspaceStateService;
+  userActivityService: UserActivityService;
 };
 
 export type PlatformServices = {
-  database: IdbDatabaseService;
-  errorService: BrowserErrorHandlerService;
+  database: BaseDatabaseService;
+  errorService: BaseErrorService;
   fileStorage: Partial<Record<WorkspaceStorageType, BaseFileStorageService>>;
   router: BaseRouterService;
 };

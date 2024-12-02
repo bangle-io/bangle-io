@@ -86,6 +86,13 @@ export type AppError =
         newWsPath: string;
       };
     }
+  // User Activity errors
+  | {
+      name: `error::user-activity:invalid-data`;
+      payload: {
+        entityType: string;
+      };
+    }
 
   // File storage
   | {

@@ -10,6 +10,7 @@ export * from '@bangle.io/base-error';
 export * from '@bangle.io/browser';
 export * from '@bangle.io/logger';
 export * from '@bangle.io/mini-js-utils';
+export * from './base-error-service';
 
 // TODO this is stub
 export function getEventSenderMetadata({

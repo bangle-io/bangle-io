@@ -4,6 +4,7 @@ import { afterEach, vi } from 'vitest';
 export { default as waitForExpect } from 'wait-for-expect';
 import { RootEmitter } from '@bangle.io/root-emitter';
 import { createStore } from 'jotai';
+export * from './test-service-setup';
 
 export const sleep = (ms = 15): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -23,12 +24,13 @@ export const makeTestService = () => {
   const { logger, mockLog } = makeTestLogger();
   const controller = new AbortController();
   const rootEmitter = new RootEmitter({
-    abortSignal: new AbortController().signal,
+    abortSignal: controller.signal,
   });
   const commonOpts: BaseServiceCommonOptions = {
     logger,
     store: createStore(),
     emitAppError: vi.fn(),
+    rootAbortSignal: controller.signal,
   };
 
   return { commonOpts, mockLog, controller, rootEmitter };

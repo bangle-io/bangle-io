@@ -32,6 +32,9 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "jotai": "^2.10.3",
-    "@bangle.io/root-emitter": "workspace:*"
+    "@bangle.io/root-emitter": "workspace:*",
+    "@bangle.io/service-platform": "workspace:*",
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/service-core": "workspace:*"
   }
 }

@@ -501,12 +501,21 @@ importers:
 
   packages/shared/test-utils:
     dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../base-utils
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../root-emitter
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../../core/service-core
+      '@bangle.io/service-platform':
+        specifier: workspace:*
+        version: link:../../platform/service-platform
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types

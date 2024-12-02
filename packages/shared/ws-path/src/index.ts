@@ -1,8 +1,9 @@
 export {
   appendNoteExtension,
+  assertedGetWsName,
   assertedResolvePath,
-  assertValidNoteWsPath,
   assertSplitWsPath,
+  assertValidNoteWsPath,
   filePathToWsPath,
   fromFsPath,
   getExtension,
@@ -10,6 +11,7 @@ export {
   pathJoin,
   resolvePath,
   toFSPath,
+  validateWsPath,
   VALID_NOTE_EXTENSIONS_SET,
 } from './helpers';
 

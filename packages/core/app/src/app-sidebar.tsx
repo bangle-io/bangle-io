@@ -1,5 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
-import { AppSidebar, Sidebar } from '@bangle.io/ui-components';
+import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React from 'react';
@@ -8,7 +8,7 @@ interface SidebarProps {
   children: React.ReactNode;
 }
 
-export const SidebarComponent = ({ children }: SidebarProps) => {
+export const AppSidebar = ({ children }: SidebarProps) => {
   const { commandDispatcher, workspaceState, workbenchState, navigation } =
     useCoreServices();
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
@@ -23,7 +23,7 @@ export const SidebarComponent = ({ children }: SidebarProps) => {
       open={sidebarOpen}
       setOpen={(open) => setSidebarOpen(open)}
     >
-      <AppSidebar
+      <UIAppSidebar
         onTreeItemClick={(item) => {
           const wsPath = item.wsPath;
           if (!item.isDir && wsPath) {

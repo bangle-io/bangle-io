@@ -13,7 +13,7 @@ import React from 'react';
 import { AppRoutes } from './Routes';
 import { AppDialogs } from './app-dialogs';
 import { AppErrorHandler } from './app-error-handler';
-import { SidebarComponent } from './sidebar';
+import { AppSidebar } from './app-sidebar';
 
 export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
   const coreServices = useCoreServices();
@@ -40,7 +40,7 @@ export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
       />
       <Toaster />
       <AppErrorHandler rootEmitter={rootEmitter} />
-      <SidebarComponent>
+      <AppSidebar>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
           <Sidebar.SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
@@ -63,7 +63,7 @@ export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
         <div className="B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0">
           <AppRoutes />
         </div>
-      </SidebarComponent>
+      </AppSidebar>
     </>
   );
 }

@@ -21,6 +21,7 @@ import {
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
+import { UserActivityService } from '@bangle.io/service-core';
 import {
   BrowserErrorHandlerService,
   BrowserRouterService,
@@ -50,6 +51,7 @@ export function initializeServices(
   const commonOpts: BaseServiceCommonOptions = {
     logger,
     store,
+    rootAbortSignal: abortSignal,
     emitAppError(error) {
       rootEmitter.emit('event::error:uncaught-error', {
         error,
@@ -285,6 +287,11 @@ function initCoreServices(
     fileSystem: fileSystemService,
   });
 
+  const userActivityService = new UserActivityService(commonOpts, {
+    workspaceState: workspaceState,
+    workspaceOps: workspaceOps,
+  });
+
   return {
     commandDispatcher: commandDispatcherService,
     commandRegistry: commandRegistryService,
@@ -296,5 +303,6 @@ function initCoreServices(
     workbench,
     workspace,
     workspaceState,
+    userActivityService,
   };
 }

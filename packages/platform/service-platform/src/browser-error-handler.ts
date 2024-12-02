@@ -1,4 +1,5 @@
 import {
+  BaseErrorService,
   BaseService,
   getEventSenderMetadata,
   isAbortError,
@@ -6,7 +7,7 @@ import {
 } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions, RootEmitter } from '@bangle.io/types';
 
-export class BrowserErrorHandlerService extends BaseService {
+export class BrowserErrorHandlerService extends BaseErrorService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
 
   constructor(
@@ -86,9 +87,5 @@ export class BrowserErrorHandlerService extends BaseService {
     }
     window.removeEventListener('error', this.handleError);
     window.removeEventListener('unhandledrejection', this.handleError);
-  }
-
-  isAppErrorLike(error: Error): boolean {
-    return isAppError(error); // Add other checks as needed
   }
 }

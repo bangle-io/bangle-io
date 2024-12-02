@@ -20,12 +20,9 @@ import {
   VALID_NOTE_EXTENSIONS_SET,
   assertSplitWsPath,
   getExtension,
-  getWsName,
-} from '@bangle.io/ws-path';
-import {
-  assertValidNoteWsPath,
   validateWsPath,
-} from '@bangle.io/ws-path/src/helpers';
+} from '@bangle.io/ws-path';
+import { assertValidNoteWsPath, assertedGetWsName } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 
 type ChangeEvent =
@@ -93,7 +90,7 @@ export class FileSystemService extends BaseService<{
   private async getStorageService(
     wsPathOrName: string,
   ): Promise<BaseFileStorageService> {
-    const wsName = getWsName(wsPathOrName);
+    const wsName = assertedGetWsName(wsPathOrName);
     const wsInfo = await this.config.getWorkspaceInfo({ wsName });
     const wsInfoType = wsInfo.type as WorkspaceStorageType;
     return FileSystemService._getStorageServiceForType(
@@ -292,6 +289,10 @@ export class FileSystemService extends BaseService<{
       case WORKSPACE_STORAGE_TYPE.NativeFS: {
         return getDep(WORKSPACE_STORAGE_TYPE.NativeFS);
       }
+      case WORKSPACE_STORAGE_TYPE.Memory: {
+        return getDep(WORKSPACE_STORAGE_TYPE.Memory);
+      }
+
       case WORKSPACE_STORAGE_TYPE.Help:
       case WORKSPACE_STORAGE_TYPE.PrivateFS:
       // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
@@ -302,6 +303,7 @@ export class FileSystemService extends BaseService<{
           { wsName, type: wsInfoType },
         );
       }
+
       default: {
         const _exhaustiveCheck: never = wsInfoType;
         throwAppError(

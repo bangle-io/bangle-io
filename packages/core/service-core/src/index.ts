@@ -8,3 +8,4 @@ export * from './workbench-state-service';
 export * from './workspace-ops-service';
 export * from './workspace-service';
 export * from './workspace-state-service';
+export * from './user-activity-service';

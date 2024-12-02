@@ -354,7 +354,7 @@ function WorkspaceSwitcher({
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Workspaces
             </DropdownMenuLabel>
-            {workspaces.map((workspace, index) => {
+            {workspaces.map((workspace) => {
               const LogoComponent = workspace.logo
                 ? workspace.logo
                 : GalleryVerticalEnd;
@@ -369,7 +369,6 @@ function WorkspaceSwitcher({
                     <LogoComponent className="size-4 shrink-0" />
                   </div>
                   {workspace.name}
-                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               );
             })}

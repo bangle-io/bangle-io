@@ -1,0 +1,139 @@
+import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import { initUserActivityDepsService, sleep } from '@bangle.io/test-utils';
+import { createStore } from 'jotai';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { UserActivityService } from '../user-activity-service';
+
+const TEST_WS_NAME = 'test-workspace';
+const TEST_WS_PATH = 'test-workspace:test.md';
+const TEST_WS_PATH2 = 'test-workspace:test2.md';
+const TEST_WS_PATH3 = 'test-workspace:test3.md';
+const TEST_WS_PATH4 = 'test-workspace:test4.md';
+
+async function setupUserActivityService({
+  controller = new AbortController(),
+  cooldownMs = 500,
+  maxEntries = 10,
+}: {
+  cooldownMs?: number;
+  maxEntries?: number;
+  controller?: AbortController;
+}) {
+  const store = createStore();
+
+  const deps = await initUserActivityDepsService({
+    store,
+    signal: controller.signal,
+  });
+
+  await deps.initAllServices();
+
+  const userActivityService = new UserActivityService(
+    deps.commonOpts,
+    {
+      workspaceState: deps.workspaceState,
+      workspaceOps: deps.workspaceOps,
+    },
+    {
+      activityCooldownMs: cooldownMs,
+      maxRecentEntries: maxEntries,
+    },
+  );
+
+  // Create a test workspace
+  await deps.workspaceOps.createWorkspaceInfo({
+    name: TEST_WS_NAME,
+    type: WORKSPACE_STORAGE_TYPE.Memory,
+    metadata: {},
+  });
+
+  await userActivityService.initialize();
+
+  return {
+    userActivityService,
+    ...deps,
+    store,
+  };
+}
+
+describe('UserActivityService', () => {
+  let controller = new AbortController();
+  beforeEach(async () => {
+    controller = new AbortController();
+  });
+  afterEach(async () => {
+    controller.abort();
+  });
+
+  it('should record and retrieve ws-path activity', async () => {
+    const service = await setupUserActivityService({ controller });
+    const data = { wsPath: TEST_WS_PATH };
+    service.navigation.goWsPath(TEST_WS_PATH);
+
+    expect(service.navigation.resolveAtoms().wsPath).toEqual(TEST_WS_PATH);
+
+    const activities = await vi.waitUntil(async () => {
+      const result = await service.userActivityService.getRecent(
+        TEST_WS_NAME,
+        'ws-path',
+      );
+      if (result.length === 0) {
+        return undefined;
+      }
+      return result;
+    });
+
+    expect(activities).toHaveLength(1);
+    expect(activities?.[0]).toEqual({
+      entityType: 'ws-path',
+      data,
+      timestamp: expect.any(Number),
+    });
+  });
+
+  it('it should work for multiple paths', async () => {
+    const { userActivityService, navigation } = await setupUserActivityService({
+      controller,
+    });
+    navigation.goWsPath(TEST_WS_PATH);
+    await sleep(5);
+    navigation.goWsPath(TEST_WS_PATH2);
+    await sleep(5);
+    navigation.goWsPath(TEST_WS_PATH3);
+
+    await sleep(100);
+
+    const activities = await userActivityService.getRecent(
+      TEST_WS_NAME,
+      'ws-path',
+    );
+    expect(activities).toHaveLength(3);
+  });
+
+  it('should limit entries to maxRecentEntries', async () => {
+    const { userActivityService, navigation } = await setupUserActivityService({
+      controller,
+      maxEntries: 2, // Set small max for testing
+    });
+
+    // Record 3 paths, but only 2 should be kept
+    navigation.goWsPath(TEST_WS_PATH);
+    await sleep(5);
+    navigation.goWsPath(TEST_WS_PATH2);
+    await sleep(5);
+    navigation.goWsPath(TEST_WS_PATH3);
+    await sleep(5);
+    navigation.goWsPath(TEST_WS_PATH4);
+    await sleep(100);
+
+    const activities = await userActivityService.getRecent(
+      TEST_WS_NAME,
+      'ws-path',
+    );
+
+    expect(activities).toHaveLength(2);
+    // reverse order
+    expect(activities?.[0]?.data.wsPath).toBe(TEST_WS_PATH4);
+    expect(activities?.[1]?.data.wsPath).toBe(TEST_WS_PATH3);
+  });
+});

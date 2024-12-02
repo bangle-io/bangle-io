@@ -25,6 +25,7 @@ export const WORKSPACE_STORAGE_TYPE = {
   // but provides a private directory to each origin.
   PrivateFS: 'privatefs',
   Github: 'github-storage',
+  Memory: 'memory',
 } as const;
 
 export type WorkspaceStorageType =

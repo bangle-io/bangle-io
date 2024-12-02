@@ -135,7 +135,7 @@ export function CreateWorkspaceDialog({
   const defaultStorage =
     storageTypes.find((t) => t.defaultSelected)?.type ||
     storageTypes[0]?.type ||
-    'browser';
+    DEFAULT_STORAGE;
 
   const [state, dispatch] = useReducer(reducer, {
     stage: 'select-type',

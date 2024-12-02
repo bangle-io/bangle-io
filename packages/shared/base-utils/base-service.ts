@@ -87,10 +87,12 @@ export abstract class BaseService<Config = void> {
     return this._baseOptions.store;
   }
 
-  public addCleanup(callback: () => void): void {
-    this.abortSignal.addEventListener('abort', callback, {
-      once: true,
-    });
+  public addCleanup(...callbacks: Array<() => void>): void {
+    for (const cb of callbacks) {
+      this.abortSignal.addEventListener('abort', cb, {
+        once: true,
+      });
+    }
   }
 
   constructor(private readonly _baseOptions: BaseServiceOptions) {
@@ -103,6 +105,15 @@ export abstract class BaseService<Config = void> {
       this.logger,
       this.name,
       this.initTask.bind(this),
+    );
+
+    // if root aborts, dispose the service
+    _baseOptions.rootAbortSignal.addEventListener(
+      'abort',
+      () => {
+        this.dispose();
+      },
+      { once: true },
     );
 
     this.lifecycle.controller.signal.addEventListener(

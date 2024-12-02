@@ -219,15 +219,31 @@ export function splitWsPath(wsPathOrWsName: string): [string, string] {
   return [wsName, filePath];
 }
 
-export function getWsName(wsPathOrWsName: string): string {
+function _getWsName(wsPathOrWsName: string) {
   const wsName = splitWsPath(wsPathOrWsName)[0];
   const validationResult = validateWsName(wsName);
   if (!validationResult.isValid) {
-    throwAppError('error::ws-path:invalid-ws-name', validationResult.reason, {
-      invalidPath: wsName,
-    });
+    return validationResult;
   }
   return wsName;
+}
+
+export function getWsName(wsPathOrWsName: string): string | undefined {
+  const result = _getWsName(wsPathOrWsName);
+  if (typeof result !== 'string') {
+    return undefined;
+  }
+  return result;
+}
+
+export function assertedGetWsName(wsPathOrWsName: string): string {
+  const result = _getWsName(wsPathOrWsName);
+  if (typeof result !== 'string') {
+    throwAppError('error::ws-path:invalid-ws-name', result.reason, {
+      invalidPath: wsPathOrWsName,
+    });
+  }
+  return result;
 }
 
 export function removeExtension(str: string): string {
