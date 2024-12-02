@@ -74,7 +74,10 @@ async function shouldRespectAllowedWorkspace(
     // to allow for circular dependencies, since it is just types.
     // this makes it convenient to rely on types without explicitly
     // depending on the corresponding JS code.
-    if (name === KNOWN_PACKAGES.sharedTypedPkg) {
+    if (
+      name === KNOWN_PACKAGES.sharedTypedPkg ||
+      name === KNOWN_PACKAGES.testUtils
+    ) {
       continue;
     }
 

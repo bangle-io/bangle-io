@@ -8,6 +8,7 @@ export const KNOWN_PACKAGES = {
   constantsPkg: '@bangle.io/constants',
   sharedTypedPkg: '@bangle.io/types',
   colorSchemeManagerPkg: '@bangle.io/color-scheme-manager',
+  testUtils: '@bangle.io/test-utils',
 };
 export const VITEST_PKG_NAME = 'vitest';
 
