@@ -1,10 +1,11 @@
 import { BaseError, BaseService } from '@bangle.io/base-utils';
 import { commandKeyToContext } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-zod';
-import { makeTestLogger, makeTestService } from '@bangle.io/test-utils';
+import { makeTestService } from '@bangle.io/test-utils';
 import type {
   BaseServiceCommonOptions,
   Command,
+  CommandDispatchResult,
   CommandExposedServices,
   CommandHandler,
   CommandHandlerContext,
@@ -13,7 +14,6 @@ import type {
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';
-import type { FileSystemService } from '../file-system-service';
 
 class TestService extends BaseService {
   constructor(baseOptions: BaseServiceCommonOptions) {
@@ -44,9 +44,19 @@ async function setup() {
   const logger = commonOpts.logger;
   const commandRegistry = new CommandRegistryService(commonOpts, undefined);
 
-  const dispatchService = new CommandDispatchService(commonOpts, {
-    commandRegistry,
-  });
+  const dispatchedCommands: CommandDispatchResult[] = [];
+
+  const dispatchService = new CommandDispatchService(
+    commonOpts,
+    {
+      commandRegistry,
+    },
+    {
+      emitResult: (result) => {
+        dispatchedCommands.push(result);
+      },
+    },
+  );
 
   commandRegistry.setInitConfig({ commands: [], commandHandlers: [] });
 
@@ -61,6 +71,7 @@ async function setup() {
     commandRegistry,
     dispatchService,
     mockLog: mockLog,
+    dispatchedCommands,
   };
 }
 
@@ -70,7 +81,8 @@ describe('CommandDispatchService', () => {
   });
 
   test('should dispatch a command successfully', async () => {
-    const { mockLog, commandRegistry, dispatchService } = await setup();
+    const { mockLog, commandRegistry, dispatchService, dispatchedCommands } =
+      await setup();
     const command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
@@ -98,6 +110,12 @@ describe('CommandDispatchService', () => {
         key: expect.any(String),
       },
     );
+
+    expect(dispatchedCommands).toContainEqual({
+      type: 'success',
+      command,
+      from: 'testSource',
+    });
 
     () => {
       // type checks
@@ -496,5 +514,88 @@ describe('CommandDispatchService', () => {
     expect(handlerB).toHaveBeenCalledTimes(1);
     expect(handlerC).toHaveBeenCalledTimes(1);
     expect(handlerD).toHaveBeenCalledTimes(1);
+  });
+
+  // Add test for command failure
+  test('should handle command failure correctly', async () => {
+    const { commandRegistry, dispatchService, dispatchedCommands } =
+      await setup();
+    const failingCommand = {
+      id: 'command::fail',
+      dependencies: { services: ['fileSystem'] },
+      args: null,
+    } as const satisfies Command;
+
+    const failingHandler = vi.fn().mockImplementation(() => {
+      throw new BaseError({ message: 'Command failed' });
+    });
+
+    commandRegistry.register(failingCommand);
+    commandRegistry.registerHandler({
+      id: 'command::fail',
+      handler: failingHandler,
+    });
+
+    expect(() =>
+      dispatchService.dispatch(
+        // @ts-expect-error custom command
+        'command::fail',
+        null,
+        'testSource',
+      ),
+    ).toThrow(/Command failed/);
+
+    expect(dispatchedCommands).toContainEqual({
+      type: 'failure',
+      command: failingCommand,
+      from: 'testSource',
+    });
+  });
+
+  // Add test for asynchronous command dispatch
+  test('should handle async commands correctly', async () => {
+    const { commandRegistry, dispatchService, dispatchedCommands } =
+      await setup();
+    const asyncCommand = {
+      id: 'command::async',
+      dependencies: { services: ['fileSystem'] },
+      args: null,
+    } as const satisfies Command;
+
+    const asyncHandler = vi.fn().mockResolvedValue('Async Success');
+
+    commandRegistry.register(asyncCommand);
+    commandRegistry.registerHandler({
+      id: 'command::async',
+      handler: asyncHandler,
+    });
+
+    dispatchService.dispatch(
+      // @ts-expect-error custom command
+      'command::async',
+      null,
+      'testSource',
+    );
+
+    expect(dispatchedCommands).toHaveLength(0);
+
+    // Wait for the async handler to resolve
+    await Promise.resolve();
+
+    expect(asyncHandler).toHaveBeenCalledWith(
+      {
+        fileSystem: expect.any(TestService),
+      },
+      null,
+      {
+        key: expect.any(String),
+      },
+    );
+
+    expect(dispatchedCommands).toContainEqual({
+      type: 'success',
+      command: asyncCommand,
+      from: 'testSource',
+    });
   });
 });

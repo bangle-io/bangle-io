@@ -13,11 +13,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     useCoreServices();
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
   const workspaces = useAtomValue(workspaceState.$workspaces);
-  const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const [sidebarOpen, setSidebarOpen] = useAtom(workbenchState.$sidebarOpen);
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
-
   return (
     <Sidebar.SidebarProvider
       open={sidebarOpen}
@@ -35,7 +33,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName == null ? i === 0 : activeWsName === ws.name,
         }))}
-        wsPaths={wsPaths}
+        wsPaths={[]}
         navItems={activeWsPaths.map((wsPath) => ({
           title: resolvePath(wsPath)?.fileName || '',
           wsPath,
@@ -59,13 +57,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         onNewFileClick={() => {
-          commandDispatcher.dispatch(
-            'command::ui:create-note-dialog',
-            {
-              prefillName: undefined,
-            },
-            'ui',
-          );
+          commandDispatcher.dispatch('command::ui:quick-new-note', null, 'ui');
         }}
         onDeleteFileClick={(item) => {
           commandDispatcher.dispatch(

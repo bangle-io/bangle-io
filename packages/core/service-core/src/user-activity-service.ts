@@ -1,10 +1,12 @@
 import { BaseService, throwAppError } from '@bangle.io/base-utils';
 import { type InferType, T } from '@bangle.io/mini-zod';
 import type {
-  BaseDatabaseService,
   BaseServiceCommonOptions,
+  CommandDispatchResult,
 } from '@bangle.io/types';
 import { getWsName } from '@bangle.io/ws-path';
+import { atom } from 'jotai';
+import { unwrap } from 'jotai/utils';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 import type { WorkspaceStateService } from './workspace-state-service';
 
@@ -28,10 +30,64 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 export class UserActivityService extends BaseService {
   private workspaceState: WorkspaceStateService;
   private workspaceOps: WorkspaceOpsService;
+
   private activityLogKey = 'ws-activity';
   private activityLogCache: Map<string, ActivityLogEntry[]> = new Map();
   private maxRecentEntries: number;
   private activityCooldownMs: number;
+  private $refreshActivityCounter = atom(0);
+
+  $recentWsPaths = unwrap(
+    atom(async (get): Promise<string[]> => {
+      const wsName = get(this.workspaceState.$wsName);
+      const wsPaths = get(this.workspaceState.$wsPaths);
+      const wsPathsSet = new Set(wsPaths);
+      // trigger refresh when counter changes
+
+      get(this.$refreshActivityCounter);
+
+      if (!wsName) {
+        return [];
+      }
+
+      const activities = await this.getRecent(wsName, 'ws-path');
+      const seen = new Set<string>();
+      return activities
+        .map((activity) => activity.data.wsPath)
+        .filter((wsPath) => {
+          if (!wsPathsSet.has(wsPath) || seen.has(wsPath)) {
+            return false;
+          }
+          seen.add(wsPath);
+          return true;
+        });
+    }),
+    () => [],
+  );
+
+  $recentCommands = unwrap(
+    atom(async (get): Promise<string[]> => {
+      const wsName = get(this.workspaceState.$wsName);
+      get(this.$refreshActivityCounter);
+
+      if (!wsName) {
+        return [];
+      }
+
+      const activities = await this.getRecent(wsName, 'command');
+      const seen = new Set<string>();
+      return activities
+        .map((activity) => activity.data.commandId)
+        .filter((commandId) => {
+          if (seen.has(commandId)) {
+            return false;
+          }
+          seen.add(commandId);
+          return true;
+        });
+    }),
+    () => [],
+  );
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
@@ -52,6 +108,7 @@ export class UserActivityService extends BaseService {
     });
     this.workspaceState = dependencies.workspaceState;
     this.workspaceOps = dependencies.workspaceOps;
+
     this.maxRecentEntries =
       options.maxRecentEntries ?? DEFAULT_MAX_RECENT_ENTRIES;
     this.activityCooldownMs =
@@ -74,7 +131,6 @@ export class UserActivityService extends BaseService {
 
   protected async onDispose(): Promise<void> {
     this.activityLogCache.clear();
-    // ...existing code...
   }
 
   private static areActivitiesEqual<T extends EntityType>(
@@ -89,6 +145,7 @@ export class UserActivityService extends BaseService {
     entityType: T,
     data: InferType<(typeof EntityValidators)[T]>,
   ): Promise<void> {
+    await this.initializedPromise;
     if (!EntityValidators[entityType].validate(data)) {
       this.logger.warn(`Invalid data for entity type ${entityType}`, { data });
 
@@ -121,9 +178,12 @@ export class UserActivityService extends BaseService {
         this.maxRecentEntries,
       );
     });
+
+    this.store.set(this.$refreshActivityCounter, (c) => c + 1);
   }
 
   private async getActivityLog(wsName: string): Promise<ActivityLogEntry[]> {
+    await this.initializedPromise;
     const existingLogs = this.activityLogCache.get(wsName);
     if (existingLogs) {
       return existingLogs;
@@ -143,6 +203,7 @@ export class UserActivityService extends BaseService {
     wsName: string,
     updateCallback: (logs: ActivityLogEntry[]) => ActivityLogEntry[],
   ): Promise<void> {
+    await this.initializedPromise;
     await this.workspaceOps.updateWorkspaceMetadata(wsName, (metadata) => {
       const result = metadata[this.activityLogKey];
       const logs: ActivityLogEntry[] = Array.isArray(result) ? result : [];
@@ -157,22 +218,46 @@ export class UserActivityService extends BaseService {
     });
   }
 
+  private async getLastSavedEntity<T extends EntityType>(
+    wsName: string,
+    entityType: T,
+  ): Promise<ActivityLogEntry<T> | undefined> {
+    await this.initializedPromise;
+    const recentEntities = await this.getRecent(wsName, entityType);
+    return recentEntities[0];
+  }
+
+  public async recordCommandResult(result: CommandDispatchResult) {
+    await this.initializedPromise;
+
+    // Skip if command is not available in omni search, as it's not user initiated
+    if (!result.command.omniSearch) {
+      return;
+    }
+
+    this.logger.debug('Recording command activity', result);
+    const wsName = this.store.get(this.workspaceState.$wsName);
+
+    // Skip if no workspace is active
+    if (!wsName) {
+      return;
+    }
+
+    this.logger.warn('Recording command activity', result);
+    await this.recordActivity(wsName, 'command', {
+      commandId: result.command.id,
+    });
+  }
+
   public async getRecent<T extends EntityType>(
     wsName: string,
     entityType: T,
   ): Promise<ActivityLogEntry<T>[]> {
+    await this.initializedPromise;
     const activityLog = await this.getActivityLog(wsName);
 
     return activityLog.filter(
       (entry): entry is ActivityLogEntry<T> => entry.entityType === entityType,
     );
-  }
-
-  private async getLastSavedEntity<T extends EntityType>(
-    wsName: string,
-    entityType: T,
-  ): Promise<ActivityLogEntry<T> | undefined> {
-    const recentEntities = await this.getRecent(wsName, entityType);
-    return recentEntities[0];
   }
 }

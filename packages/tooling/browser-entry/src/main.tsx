@@ -18,8 +18,12 @@ const logger = new Logger(
 );
 
 const abortController = new AbortController();
+const emitterLogger = logger.child('root-emitter');
 const rootEmitter: RootEmitter = new RootEmitter({
   abortSignal: abortController.signal,
+  onEvent: (event) => {
+    emitterLogger.debug('[event]', event);
+  },
 });
 
 const store = createStore();
@@ -31,6 +35,7 @@ const services = initializeServices(
   themeManager,
   abortController.signal,
 );
+
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,11 +1,10 @@
 import {
   BaseErrorService,
-  BaseService,
   getEventSenderMetadata,
   isAbortError,
   isAppError,
 } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions, RootEmitter } from '@bangle.io/types';
+import type { BaseServiceCommonOptions } from '@bangle.io/types';
 
 export class BrowserErrorHandlerService extends BaseErrorService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
@@ -13,7 +12,14 @@ export class BrowserErrorHandlerService extends BaseErrorService {
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: undefined,
-    private emitter: RootEmitter,
+    private options: {
+      onError: (params: {
+        appLikeError: boolean;
+        error: Error;
+        isFakeThrow: boolean;
+        rejection: boolean;
+      }) => void;
+    },
   ) {
     super({
       ...baseOptions,
@@ -68,12 +74,11 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       event.preventDefault();
     }
 
-    this.emitter.emit('event::error:uncaught-error', {
+    this.options.onError({
       appLikeError,
       error,
       isFakeThrow: false,
       rejection: isPromiseRejection,
-      sender: getEventSenderMetadata({ tag: this.name }),
     });
   };
   protected async onInitialize(): Promise<void> {}

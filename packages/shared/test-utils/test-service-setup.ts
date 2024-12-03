@@ -73,7 +73,16 @@ function createFileSystemService({
     new FileSystemService(
       entities.commonOpts,
       { ...platformServices.fileStorage },
-      { rootEmitter, fileStorageServices: platformServices.fileStorage },
+      {
+        fileStorageServices: platformServices.fileStorage,
+        emitUpdate: (change) => {
+          rootEmitter.emit('event::file:update', {
+            type: change.type,
+            ...change.payload,
+            sender: getEventSenderMetadata({ tag: 'FileSystemService' }),
+          });
+        },
+      },
     ),
     entities.allServices,
   );
@@ -88,7 +97,15 @@ function createWorkspaceOpsService({
     new WorkspaceOpsService(
       entities.commonOpts,
       { database: platformServices.database },
-      rootEmitter,
+      {
+        emitUpdate: (change) => {
+          rootEmitter.emit('event::workspace-info:update', {
+            type: change.type,
+            wsName: change.payload.wsName,
+            sender: getEventSenderMetadata({ tag: 'WorkspaceOpsService' }),
+          });
+        },
+      },
     ),
     entities.allServices,
   );
@@ -115,7 +132,14 @@ function initPlatformServices(
   rootEmitter: RootEmitter,
 ): PlatformServices {
   const errorService = pushAndReturn(
-    new NodeErrorHandlerService(entities.commonOpts, undefined, rootEmitter),
+    new NodeErrorHandlerService(entities.commonOpts, undefined, {
+      onError: (params) => {
+        rootEmitter.emit('event::error:uncaught-error', {
+          ...params,
+          sender: getEventSenderMetadata({ tag: errorService.name }),
+        });
+      },
+    }),
     entities.allServices,
   );
 

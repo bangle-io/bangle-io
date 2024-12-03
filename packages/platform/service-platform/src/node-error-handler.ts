@@ -13,7 +13,14 @@ export class NodeErrorHandlerService extends BaseErrorService {
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: undefined,
-    private emitter: RootEmitter,
+    private options: {
+      onError: (params: {
+        appLikeError: boolean;
+        error: Error;
+        isFakeThrow: boolean;
+        rejection: boolean;
+      }) => void;
+    },
   ) {
     super({
       ...baseOptions,
@@ -61,12 +68,11 @@ export class NodeErrorHandlerService extends BaseErrorService {
       // Implement custom logic if needed
     }
 
-    this.emitter.emit('event::error:uncaught-error', {
+    this.options.onError({
       appLikeError,
       error,
       isFakeThrow: false,
       rejection: false,
-      sender: getEventSenderMetadata({ tag: this.name }),
     });
   };
 
@@ -85,12 +91,11 @@ export class NodeErrorHandlerService extends BaseErrorService {
 
     const appLikeError = isAppError(error);
 
-    this.emitter.emit('event::error:uncaught-error', {
+    this.options.onError({
       appLikeError,
       error,
       isFakeThrow: false,
       rejection: true,
-      sender: getEventSenderMetadata({ tag: this.name }),
     });
   };
 

@@ -50,7 +50,9 @@ export class WorkspaceOpsService extends BaseService {
     dependencies: {
       database: BaseDatabaseService;
     },
-    private rootEmitter: RootEmitter,
+    private options: {
+      emitUpdate: (event: ChangeEvent) => void;
+    },
   ) {
     super({
       ...baseOptions,
@@ -62,12 +64,8 @@ export class WorkspaceOpsService extends BaseService {
   }
 
   private onChange(change: ChangeEvent) {
+    this.options.emitUpdate(change);
     this.store.set(this.$workspaceChanged, (v) => v + 1);
-    this.rootEmitter.emit('event::workspace-info:update', {
-      type: change.type,
-      wsName: change.payload.wsName,
-      sender: getEventSenderMetadata({ tag: this.name }),
-    });
   }
 
   protected async onInitialize(): Promise<void> {}
@@ -145,7 +143,6 @@ export class WorkspaceOpsService extends BaseService {
     if (updated) {
       // Invalidate cache when workspace info changes
       this.invalidateCache();
-
       this.onChange({
         type: 'workspace-create',
         payload: { wsName },

@@ -189,11 +189,14 @@ function initPlatformServices(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: RootEmitter,
 ): PlatformServices {
-  const errorService = new BrowserErrorHandlerService(
-    commonOpts,
-    undefined,
-    rootEmitter,
-  );
+  const errorService = new BrowserErrorHandlerService(commonOpts, undefined, {
+    onError: (params) => {
+      rootEmitter.emit('event::error:uncaught-error', {
+        ...params,
+        sender: getEventSenderMetadata({ tag: errorService.name }),
+      });
+    },
+  });
 
   const idbDatabase = new IdbDatabaseService(commonOpts, undefined);
   const fileStorageServiceIdb = new FileStorageIndexedDB(
@@ -245,14 +248,31 @@ function initCoreServices(
     commonOpts,
     undefined,
   );
-  const commandDispatcherService = new CommandDispatchService(commonOpts, {
-    commandRegistry: commandRegistryService,
-  });
+  const commandDispatcherService = new CommandDispatchService(
+    commonOpts,
+    {
+      commandRegistry: commandRegistryService,
+    },
+    {
+      emitResult: (result) => {
+        rootEmitter.emit('event::command:result', result);
+      },
+    },
+  );
 
   const fileSystemService = new FileSystemService(
     commonOpts,
     { ...platformServices.fileStorage },
-    { rootEmitter, fileStorageServices: platformServices.fileStorage },
+    {
+      fileStorageServices: platformServices.fileStorage,
+      emitUpdate: (change) => {
+        rootEmitter.emit('event::file:update', {
+          type: change.type,
+          ...change.payload,
+          sender: getEventSenderMetadata({ tag: fileSystemService.name }),
+        });
+      },
+    },
   );
   const navigation = new NavigationService(commonOpts, {
     routerService: platformServices.router,
@@ -272,7 +292,15 @@ function initCoreServices(
   const workspaceOps = new WorkspaceOpsService(
     commonOpts,
     { database: platformServices.database },
-    rootEmitter,
+    {
+      emitUpdate: (change) => {
+        rootEmitter.emit('event::workspace-info:update', {
+          type: change.type,
+          wsName: change.payload.wsName,
+          sender: getEventSenderMetadata({ tag: workspaceOps.name }),
+        });
+      },
+    },
   );
 
   const workspaceState = new WorkspaceStateService(commonOpts, {
@@ -291,6 +319,14 @@ function initCoreServices(
     workspaceState: workspaceState,
     workspaceOps: workspaceOps,
   });
+
+  rootEmitter.on(
+    'event::command:result',
+    (result) => {
+      userActivityService.recordCommandResult(result);
+    },
+    abortSignal,
+  );
 
   return {
     commandDispatcher: commandDispatcherService,

@@ -3,6 +3,7 @@ import {
   Emitter,
   type EventListener,
 } from '@bangle.io/emitter';
+import type { Command } from '@bangle.io/types';
 
 export type EventSenderMetadata = {
   id: string;
@@ -46,6 +47,14 @@ type RootEvents =
           | 'file-rename';
         sender: EventSenderMetadata;
       };
+    }
+  | {
+      event: 'event::command:result';
+      payload: {
+        type: 'success' | 'failure';
+        command: Command;
+        from: string;
+      };
     };
 
 type EmitterType = DiscriminatedEmitter<RootEvents>;
@@ -56,6 +65,7 @@ export class RootEmitter {
   constructor(
     private options: {
       abortSignal: AbortSignal;
+      onEvent?: (event: RootEvents) => void;
     },
   ) {
     this.options.abortSignal.addEventListener(
@@ -65,6 +75,12 @@ export class RootEmitter {
       },
       { once: true },
     );
+
+    if (this.options.onEvent) {
+      this.emitter.onAll((event) => {
+        this.options.onEvent?.(event);
+      });
+    }
   }
 
   on = <T extends RootEvents['event']>(

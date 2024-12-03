@@ -48,3 +48,9 @@ export type CommandHandler = (
 ) => void | Promise<void>;
 
 export type CommandKey<T extends string> = { key: T };
+
+export type CommandDispatchResult = {
+  type: 'success' | 'failure';
+  command: Command;
+  from: string;
+};

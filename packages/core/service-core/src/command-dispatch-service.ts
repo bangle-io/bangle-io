@@ -8,6 +8,7 @@ import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type {
   BaseServiceCommonOptions,
   Command,
+  CommandDispatchResult,
   CommandExposedServices,
   CommandHandlerContext,
   CommandKey,
@@ -33,6 +34,9 @@ export class CommandDispatchService extends BaseService<{
     baseOptions: BaseServiceCommonOptions,
     dependencies: {
       commandRegistry: CommandRegistryService;
+    },
+    private options: {
+      emitResult: (event: CommandDispatchResult) => void;
     },
   ) {
     super({
@@ -69,6 +73,10 @@ export class CommandDispatchService extends BaseService<{
       },
     };
     commandKeyToContext.set(key, { context });
+  }
+
+  private onCommandResult(result: CommandDispatchResult): void {
+    this.options.emitResult(result);
   }
 
   dispatch<TId extends BangleAppCommand['id']>(
@@ -134,7 +142,41 @@ export class CommandDispatchService extends BaseService<{
     this.setCommandContext(command, key);
     this.fromChain.push(from);
     try {
-      void handler?.(result, args, key);
+      const outcome = handler?.(result, args, key);
+
+      if (outcome instanceof Promise) {
+        outcome.then(
+          (o) => {
+            this.onCommandResult({
+              type: 'success',
+              command,
+              from,
+            });
+            return o;
+          },
+          (error) => {
+            this.onCommandResult({
+              type: 'failure',
+              command,
+              from,
+            });
+            throw error;
+          },
+        );
+      } else {
+        this.onCommandResult({
+          type: 'success',
+          command,
+          from,
+        });
+      }
+    } catch (error) {
+      this.onCommandResult({
+        type: 'failure',
+        command,
+        from,
+      });
+      throw error;
     } finally {
       // even if the handler throws, we should remove the command from the chain
       // to clean up the state

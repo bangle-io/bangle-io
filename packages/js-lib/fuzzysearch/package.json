@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/root-emitter",
+  "name": "@bangle.io/fuzzysearch",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/root-emitter"
+    "directory": "packages/js-lib/fuzzysearch"
   },
   "authors": [
     {
@@ -27,8 +27,5 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/types": "workspace:*"
-  }
+  "dependencies": {}
 }

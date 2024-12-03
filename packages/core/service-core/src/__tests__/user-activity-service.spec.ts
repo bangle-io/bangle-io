@@ -136,4 +136,59 @@ describe('UserActivityService', () => {
     expect(activities?.[0]?.data.wsPath).toBe(TEST_WS_PATH4);
     expect(activities?.[1]?.data.wsPath).toBe(TEST_WS_PATH3);
   });
+
+  it('should record command activity', async () => {
+    const { userActivityService, navigation } = await setupUserActivityService({
+      controller,
+    });
+
+    navigation.goWsPath(TEST_WS_PATH);
+
+    await userActivityService.recordCommandResult({
+      type: 'success',
+      from: 'test',
+      command: {
+        id: 'test-command',
+        omniSearch: true,
+        args: {},
+      },
+    });
+
+    const activities = await userActivityService.getRecent(
+      TEST_WS_NAME,
+      'command',
+    );
+
+    expect(activities).toHaveLength(1);
+    expect(activities[0]).toEqual({
+      entityType: 'command',
+      data: { commandId: 'test-command' },
+      timestamp: expect.any(Number),
+    });
+  });
+
+  it('should skip recording non-omni-search commands', async () => {
+    const { userActivityService, navigation } = await setupUserActivityService({
+      controller,
+    });
+
+    navigation.goWsPath(TEST_WS_PATH);
+
+    await userActivityService.recordCommandResult({
+      type: 'success',
+      from: 'test',
+
+      command: {
+        id: 'test-command',
+        omniSearch: false,
+        args: {},
+      },
+    });
+    const activities = await userActivityService.getRecent(
+      TEST_WS_NAME,
+      'command',
+    );
+
+    expect(activities).toHaveLength(0);
+  });
 });

@@ -25,23 +25,10 @@ import {
 import { assertValidNoteWsPath, assertedGetWsName } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 
-type ChangeEvent =
-  | {
-      type: 'file-create';
-      payload: { wsPath: string };
-    }
-  | {
-      type: 'file-content-update';
-      payload: { wsPath: string };
-    }
-  | {
-      type: 'file-delete';
-      payload: { wsPath: string };
-    }
-  | {
-      type: 'file-rename';
-      payload: { oldWsPath?: string; wsPath: string };
-    };
+type ChangeEvent = {
+  type: 'file-create' | 'file-content-update' | 'file-delete' | 'file-rename';
+  payload: { oldWsPath?: string; wsPath: string };
+};
 
 export class FileSystemService extends BaseService<{
   getWorkspaceInfo: ({ wsName }: { wsName: string }) => Promise<WorkspaceInfo>;
@@ -62,7 +49,7 @@ export class FileSystemService extends BaseService<{
     baseOptions: BaseServiceCommonOptions,
     dependencies: Record<string, BaseService>,
     private options: {
-      rootEmitter: RootEmitter;
+      emitUpdate: (change: ChangeEvent) => void;
       fileStorageServices: Record<string, BaseFileStorageService>;
     },
   ) {
@@ -130,13 +117,7 @@ export class FileSystemService extends BaseService<{
       }
     }
 
-    this.options.rootEmitter.emit('event::file:update', {
-      type: change.type,
-      wsPath: change.payload.wsPath,
-      oldWsPath:
-        change.type === 'file-rename' ? change.payload.oldWsPath : undefined,
-      sender: getEventSenderMetadata({ tag: this.name }),
-    });
+    this.options.emitUpdate(change);
   }
 
   async listFiles(

@@ -261,6 +261,9 @@ importers:
       '@bangle.io/context':
         specifier: workspace:*
         version: link:../context
+      '@bangle.io/fuzzysearch':
+        specifier: workspace:*
+        version: link:../../js-lib/fuzzysearch
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -270,6 +273,9 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+      '@tanstack/react-virtual':
+        specifier: ^3.10.9
+        version: 3.10.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
@@ -364,6 +370,8 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../mini-js-utils
+
+  packages/js-lib/fuzzysearch: {}
 
   packages/js-lib/is-abort-error: {}
 
@@ -498,6 +506,9 @@ importers:
       '@bangle.io/emitter':
         specifier: workspace:*
         version: link:../../js-lib/emitter
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../types
 
   packages/shared/test-utils:
     dependencies:
@@ -978,6 +989,9 @@ importers:
       '@storybook/types':
         specifier: ^8.4.6
         version: 8.4.6(storybook@8.4.5(prettier@3.4.1))
+      '@tanstack/react-virtual':
+        specifier: ^3.10.9
+        version: 3.10.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -2639,6 +2653,15 @@ packages:
 
   '@swc/types@0.1.17':
     resolution: {integrity: sha512-V5gRru+aD8YVyCOMAjMpWR1Ui577DD5KSJsHP8RAxopAH22jFz6GZd/qxqjO6MJHQhcsjvjOFXyDhyLQUnMveQ==}
+
+  '@tanstack/react-virtual@3.10.9':
+    resolution: {integrity: sha512-OXO2uBjFqA4Ibr2O3y0YMnkrRWGVNqcvHQXmGvMu6IK8chZl3PrDxFXdGZ2iZkSrKh3/qUYoFqYe+Rx23RoU0g==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@tanstack/virtual-core@3.10.9':
+    resolution: {integrity: sha512-kBknKOKzmeR7lN+vSadaKWXaLS0SZZG+oqpQ/k80Q6g9REn6zRHS/ZYdrIzHnpHgy/eWs00SujveUN/GJT2qTw==}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -7996,6 +8019,14 @@ snapshots:
   '@swc/types@0.1.17':
     dependencies:
       '@swc/counter': 0.1.3
+
+  '@tanstack/react-virtual@3.10.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/virtual-core': 3.10.9
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@tanstack/virtual-core@3.10.9': {}
 
   '@testing-library/dom@10.4.0':
     dependencies:
