@@ -207,6 +207,7 @@ function Tree({
           className="data-[active=true]:bg-transparent"
           onClick={() => onTreeItemClick(item)}
           isActive={item.isOpen}
+          size="sm"
         >
           <FileIcon
             className={cx(
@@ -259,7 +260,7 @@ function Tree({
         defaultOpen={item.isOpen ?? false}
       >
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton>
+          <SidebarMenuButton size="sm">
             <ChevronRight className="transition-transform" />
             <Folder />
             {item.name}
