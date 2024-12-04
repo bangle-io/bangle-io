@@ -200,26 +200,32 @@ function FilteredRoute({
     const searchables = baseItems.map((item) => item.title);
     const fuzzyResults = rankedFuzzySearch(search, searchables, {});
 
+    const fuzzyResultsMap = new Map<string, (typeof fuzzyResults)[number]>();
+    fuzzyResults.forEach((result) => {
+      fuzzyResultsMap.set(result.item, result);
+    });
+
+    const recentCommandsSet = new Set(recentCommands);
+    const recentWsPathsSet = new Set(recentWsPaths);
+
     const scoredItems = baseItems
       .map((item) => {
-        const fuzzyMatch = fuzzyResults.find((r) => r.item === item.title);
+        const fuzzyMatch = fuzzyResultsMap.get(item.title);
         if (!fuzzyMatch) return null;
 
         let finalScore = fuzzyMatch.score;
 
-        // Apply boost for commands
         if (item.metadata.type === 'command') {
-          if (recentCommands.includes(item.title)) {
-            finalScore = finalScore * 4; // Stronger boost for recent commands
+          if (recentCommandsSet.has(item.title)) {
+            finalScore *= 4;
           } else {
-            finalScore = finalScore * 2.5; // Regular boost for commands
+            finalScore *= 2.5;
           }
         } else if (
           item.metadata.type === 'file' &&
-          recentWsPaths.includes(item.metadata.wsPath)
+          recentWsPathsSet.has(item.metadata.wsPath)
         ) {
-          // Boost score for recent files
-          finalScore = finalScore * 1.5;
+          finalScore *= 1.5;
         }
 
         return {
@@ -246,7 +252,7 @@ function FilteredRoute({
   });
 
   if (filteredItems.length === 0) {
-    return undefined;
+    return null;
   }
 
   return (

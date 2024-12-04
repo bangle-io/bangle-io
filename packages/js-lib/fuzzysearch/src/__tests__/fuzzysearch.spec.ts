@@ -86,7 +86,7 @@ describe('rankedFuzzySearch', () => {
 
   it('returns ranked results using Levenshtein algorithm and scoring function', () => {
     const results = rankedFuzzySearch('apple', items, {
-      algorithm: 'levenshtein',
+      fuzzySearchFunction: levenshteinFuzzySearch,
       scoringFunction: levenshteinScoringFunction,
     });
     expect(results?.[0]?.item).toBe('apple');
@@ -118,12 +118,6 @@ describe('rankedFuzzySearch', () => {
     expect(results.length).toBe(items.length);
   });
 
-  it('throws error when custom algorithm is selected without providing fuzzySearchFunction', () => {
-    expect(() => {
-      rankedFuzzySearch('test', items, { algorithm: 'custom' });
-    }).toThrow('Custom algorithm requires a fuzzySearchFunction');
-  });
-
   it('uses custom fuzzySearchFunction when algorithm is custom', () => {
     const customFuzzySearchFunction = (needle: string, haystack: string) => {
       // Match only if haystack starts with needle
@@ -131,7 +125,6 @@ describe('rankedFuzzySearch', () => {
     };
 
     const results = rankedFuzzySearch('ap', items, {
-      algorithm: 'custom',
       fuzzySearchFunction: customFuzzySearchFunction,
     });
     expect(results).toEqual([
@@ -355,31 +348,82 @@ describe('rankedFuzzySearch', () => {
     });
   });
 
+  it('should return matched items with scores', () => {
+    const results = rankedFuzzySearch('your', [
+      'i-ll-love-your-shining-lights.md',
+      'my-favourite-things.md',
+      'if-you-want-to-share.md',
+      'know-your-amphetamines.md',
+      'so-you-want-to-talk-about-race.md',
+      'agora-youtube-integration.md',
+      'choose-your-own-adventure.md',
+      'a-bicycle-for-our-minds.md',
+      'cant-break-your-heart.md',
+    ]);
+    expect(results.length).toBeGreaterThan(0);
+    expect(results).toMatchInlineSnapshot(`
+      [
+        {
+          "item": "my-favourite-things.md",
+          "score": 0.039953102453102456,
+        },
+        {
+          "item": "if-you-want-to-share.md",
+          "score": 0.02909992372234935,
+        },
+        {
+          "item": "know-your-amphetamines.md",
+          "score": 0.021825396825396828,
+        },
+        {
+          "item": "so-you-want-to-talk-about-race.md",
+          "score": 0.019809203142536477,
+        },
+        {
+          "item": "agora-youtube-integration.md",
+          "score": 0.015320294784580498,
+        },
+        {
+          "item": "choose-your-own-adventure.md",
+          "score": 0.015250721500721503,
+        },
+        {
+          "item": "a-bicycle-for-our-minds.md",
+          "score": 0.014281674208144798,
+        },
+        {
+          "item": "cant-break-your-heart.md",
+          "score": 0.01243131868131868,
+        },
+        {
+          "item": "i-ll-love-your-shining-lights.md",
+          "score": 0.010081064768564768,
+        },
+      ]
+    `);
+  });
+
   it('should rank exact matches higher', () => {
     const results = rankedFuzzySearch('apple', haystacks);
     expect(results?.[0]?.item).toBe('apple');
   });
 
-  it('should handle different algorithms', () => {
+  it('should handle different fuzzy search functions', () => {
+    const haystacks = ['apple', 'application', 'banana'];
+
     const resultsDefault = rankedFuzzySearch('appl', haystacks, {
-      algorithm: 'default',
+      fuzzySearchFunction: defaultFuzzySearch,
     });
     const resultsSubstring = rankedFuzzySearch('appl', haystacks, {
-      algorithm: 'substring',
+      fuzzySearchFunction: substringFuzzySearch,
     });
     const resultsLevenshtein = rankedFuzzySearch('appl', haystacks, {
-      algorithm: 'levenshtein',
+      fuzzySearchFunction: levenshteinFuzzySearch,
     });
 
     expect(resultsDefault.length).toBeGreaterThan(0);
     expect(resultsSubstring.length).toBeGreaterThan(0);
     expect(resultsLevenshtein.length).toBeGreaterThan(0);
-  });
-
-  it('should throw error when custom algorithm is selected without function', () => {
-    expect(() => {
-      rankedFuzzySearch('apple', haystacks, { algorithm: 'custom' });
-    }).toThrow('Custom algorithm requires a fuzzySearchFunction');
   });
 
   it('should use custom fuzzy search and scoring functions', () => {
@@ -393,7 +437,6 @@ describe('rankedFuzzySearch', () => {
       return needle.length / haystack.length;
     };
     const results = rankedFuzzySearch('app', haystacks, {
-      algorithm: 'custom',
       fuzzySearchFunction: customFuzzySearch,
       scoringFunction: customScoringFunction,
     });

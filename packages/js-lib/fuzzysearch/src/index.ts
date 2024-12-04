@@ -15,17 +15,12 @@ export type ScoringFunction = (needle: string, haystack: string) => number;
  */
 export interface FuzzySearchOptions {
   /**
-   * The fuzzy search algorithm to use.
-   */
-  algorithm?: 'default' | 'substring' | 'levenshtein' | 'custom';
-
-  /**
-   * Custom fuzzy search function. Required if algorithm is 'custom'.
+   * Fuzzy search function to use. Defaults to defaultFuzzySearch.
    */
   fuzzySearchFunction?: FuzzySearchFunction;
 
   /**
-   * Custom scoring function. Defaults to a position and length-based scoring.
+   * Scoring function. Defaults to defaultScoringFunction.
    */
   scoringFunction?: ScoringFunction;
 }
@@ -122,34 +117,13 @@ export function rankedFuzzySearch(
   options: FuzzySearchOptions = {},
 ): { item: string; score: number }[] {
   const {
-    algorithm = 'default',
-    fuzzySearchFunction,
+    fuzzySearchFunction = defaultFuzzySearch,
     scoringFunction = defaultScoringFunction,
   } = options;
 
-  let searchFunction: FuzzySearchFunction;
-
-  switch (algorithm) {
-    case 'substring':
-      searchFunction = substringFuzzySearch;
-      break;
-    case 'levenshtein':
-      searchFunction = levenshteinFuzzySearch;
-      break;
-    case 'custom':
-      if (!fuzzySearchFunction) {
-        throw new Error('Custom algorithm requires a fuzzySearchFunction');
-      }
-      searchFunction = fuzzySearchFunction;
-      break;
-    default:
-      searchFunction = defaultFuzzySearch;
-      break;
-  }
-
   return haystacks
     .map((haystack) => {
-      const isMatch = searchFunction(needle, haystack);
+      const isMatch = fuzzySearchFunction(needle, haystack);
       if (!isMatch) {
         return null;
       }
