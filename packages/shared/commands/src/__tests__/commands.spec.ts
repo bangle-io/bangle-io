@@ -47,18 +47,6 @@ describe('Bangle App Commands Validation', () => {
     }
   });
 
-  it('should have args as null when keybindings are provided', () => {
-    let assertionCount = 0;
-    for (const command of allCommands) {
-      if (Array.isArray(command.keybindings)) {
-        assertionCount++;
-        console.log(command.id);
-        expect(command.args).toBeNull();
-      }
-    }
-    expect(assertionCount).toBeGreaterThan(0);
-  });
-
   it('should return false when some args are not optional', () => {
     const commandWithMixedArgs: Command = {
       id: 'command::test:mixed-args',

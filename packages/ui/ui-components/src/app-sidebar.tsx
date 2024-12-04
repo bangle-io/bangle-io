@@ -25,7 +25,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from './dropdown-menu';
 
@@ -82,6 +81,8 @@ export type AppSidebarProps = {
   onDeleteFileClick?: (item: TreeItem) => void;
   onRenameFileClick?: (item: TreeItem) => void;
   onMoveFileClick?: (item: TreeItem) => void;
+  isTruncated?: boolean;
+  onTruncatedClick?: () => void;
 };
 
 export function AppSidebar({
@@ -97,6 +98,8 @@ export function AppSidebar({
   onDeleteFileClick = () => {},
   onRenameFileClick = () => {},
   onMoveFileClick = () => {},
+  isTruncated = false,
+  onTruncatedClick = () => {},
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined),
@@ -166,6 +169,13 @@ export function AppSidebar({
                   onTreeItemMove={onMoveFileClick}
                 />
               ))}
+              {isTruncated && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={onTruncatedClick}>
+                    Show More
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

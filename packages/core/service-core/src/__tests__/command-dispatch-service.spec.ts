@@ -105,7 +105,7 @@ describe('CommandDispatchService', () => {
       {
         fileSystem: expect.any(TestService),
       },
-      null,
+      {},
       {
         key: expect.any(String),
       },
@@ -268,9 +268,13 @@ describe('CommandDispatchService', () => {
     dispatchService.dispatch('command::ui:toggle-sidebar', null, 'testSource');
 
     // handler should be called with an empty object
-    expect(handler).toHaveBeenCalledWith({}, null, {
-      key: expect.any(String),
-    });
+    expect(handler).toHaveBeenCalledWith(
+      {},
+      {},
+      {
+        key: expect.any(String),
+      },
+    );
   });
 
   test('should throw error when dispatch service is not ready', async () => {
@@ -540,7 +544,7 @@ describe('CommandDispatchService', () => {
       dispatchService.dispatch(
         // @ts-expect-error custom command
         'command::fail',
-        null,
+        {},
         'testSource',
       ),
     ).toThrow(/Command failed/);
@@ -573,7 +577,7 @@ describe('CommandDispatchService', () => {
     dispatchService.dispatch(
       // @ts-expect-error custom command
       'command::async',
-      null,
+      {},
       'testSource',
     );
 
@@ -586,7 +590,7 @@ describe('CommandDispatchService', () => {
       {
         fileSystem: expect.any(TestService),
       },
-      null,
+      {},
       {
         key: expect.any(String),
       },

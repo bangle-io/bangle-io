@@ -8,7 +8,6 @@ export function PageWsHome() {
   const coreServices = useCoreServices();
   const wsName = useAtomValue(coreServices.navigation.$wsName);
   const { current } = useAtomValue(coreServices.navigation.$lifeCycle);
-  console.log({ wsName });
   return (
     <div>
       {wsName && (

@@ -118,8 +118,8 @@ export class UserActivityService extends BaseService {
   protected async onInitialize(): Promise<void> {
     this.addCleanup(
       this.store.sub(this.workspaceState.$wsPath, () => {
-        this.logger.debug('Recording ws-path activity');
         const wsPath = this.store.get(this.workspaceState.$wsPath);
+        this.logger.debug('Recording ws-path activity', wsPath);
         const wsName = wsPath && getWsName(wsPath);
         if (!wsName) {
           return;

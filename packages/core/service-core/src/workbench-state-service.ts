@@ -11,6 +11,9 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
+
+type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
+
 /**
  * a service that focuses on the workbench (UI) state
  */
@@ -38,6 +41,25 @@ export class WorkbenchStateService extends BaseService {
         'open' | 'setOpen'
       >)
   >();
+  $omniSearchInput = atom('');
+  $omniSearchRoute = atom<Route>((get) => {
+    const input = get(this.$omniSearchInput);
+    return input === ''
+      ? 'omni-home'
+      : input.startsWith('>')
+        ? 'omni-command'
+        : 'omni-filtered';
+  });
+
+  $cleanSearchTerm = atom((get) => {
+    const search = get(this.$omniSearchInput);
+    const route = get(this.$omniSearchRoute);
+
+    if (route === 'omni-command') {
+      return search.slice(1).trim().toLowerCase();
+    }
+    return search.trim().toLowerCase();
+  });
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
@@ -63,6 +85,14 @@ export class WorkbenchStateService extends BaseService {
 
   changeThemePreference(preference: ThemeConfig['defaultPreference']) {
     this.themeManager.setPreference(preference);
+  }
+
+  updateOmniSearchInput(input: string) {
+    this.store.set(this.$omniSearchInput, input);
+  }
+
+  resetOmniSearch() {
+    this.store.set(this.$omniSearchInput, '');
   }
 
   protected async onDispose(): Promise<void> {}

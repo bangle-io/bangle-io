@@ -142,7 +142,7 @@ export class CommandDispatchService extends BaseService<{
     this.setCommandContext(command, key);
     this.fromChain.push(from);
     try {
-      const outcome = handler?.(result, args, key);
+      const outcome = handler?.(result, args || {}, key);
 
       if (outcome instanceof Promise) {
         outcome.then(

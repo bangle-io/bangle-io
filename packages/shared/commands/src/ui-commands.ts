@@ -37,10 +37,12 @@ export const uiCommands = narrow([
     args: null,
   },
   {
-    id: 'command::ui:toggle-search',
+    id: 'command::ui:toggle-omni-search',
     dependencies: { services: ['workbenchState'] },
     keybindings: [...KEYBOARD_SHORTCUTS.toggleOmniSearch.keys],
-    args: null,
+    args: {
+      prefill: T.Optional(T.String),
+    },
   },
   {
     id: 'command::ui:switch-theme',

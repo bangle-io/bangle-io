@@ -5,7 +5,6 @@ import React from 'react';
 export function PageNotFound() {
   // const [location] = useLocation();
   // const [search] = useSearch();
-  // console.log('search', search);
 
   const platform = usePlatformService();
   return (

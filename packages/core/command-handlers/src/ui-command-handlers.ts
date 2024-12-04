@@ -31,7 +31,7 @@ export const uiCommandHandlers = [
     store.set(workbenchState.$sidebarOpen, (prev) => !prev);
   }),
 
-  c('command::ui:toggle-search', ({ workbenchState }, _, key) => {
+  c('command::ui:toggle-omni-search', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
     store.set(workbenchState.$openOmniSearch, (prev) => !prev);
   }),

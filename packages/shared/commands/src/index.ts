@@ -41,9 +41,13 @@ function validate(commands: Command[]) {
       }
     }
 
-    if (Array.isArray(command.keybindings) && command.args !== null) {
+    if (
+      Array.isArray(command.keybindings) &&
+      command.args !== null &&
+      !areAllValuesOptional(command.args)
+    ) {
       throw new Error(
-        `Command "${command.id}" has keybindings but has non-null args.`,
+        `Command "${command.id}" has keybindings but has non-optional args.`,
       );
     }
 

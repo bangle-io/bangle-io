@@ -2,7 +2,9 @@ import { useCoreServices } from '@bangle.io/context';
 import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import React from 'react';
+import React, { useMemo } from 'react';
+
+const MAX_WS_PATHS = 700;
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -16,6 +18,13 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const [sidebarOpen, setSidebarOpen] = useAtom(workbenchState.$sidebarOpen);
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
+  const wsPaths = useAtomValue(workspaceState.$wsPaths);
+
+  const isTruncated = wsPaths.length > MAX_WS_PATHS;
+  const displayedWsPaths = useMemo(() => {
+    return !isTruncated ? wsPaths : wsPaths.slice(0, MAX_WS_PATHS);
+  }, [wsPaths, isTruncated]);
+
   return (
     <Sidebar.SidebarProvider
       open={sidebarOpen}
@@ -33,7 +42,17 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName == null ? i === 0 : activeWsName === ws.name,
         }))}
-        wsPaths={[]}
+        wsPaths={displayedWsPaths}
+        isTruncated={isTruncated}
+        onTruncatedClick={() => {
+          commandDispatcher.dispatch(
+            'command::ui:toggle-omni-search',
+            {
+              prefill: undefined,
+            },
+            'ui',
+          );
+        }}
         navItems={activeWsPaths.map((wsPath) => ({
           title: resolvePath(wsPath)?.fileName || '',
           wsPath,

@@ -10,12 +10,13 @@ import {
   CommandSeparator,
   KbdShortcut,
 } from '@bangle.io/ui-components';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
-import { fuzzySearch } from '@bangle.io/fuzzysearch';
+import { rankedFuzzySearch } from '@bangle.io/fuzzysearch';
 
 import { assertSplitWsPath } from '@bangle.io/ws-path';
-import React, { useMemo } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import React, { useMemo, useState } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
@@ -40,27 +41,6 @@ type CommandItemProp = {
       };
   onSelect: () => void;
 };
-
-type Route = 'home' | 'command' | 'filtered';
-
-function useOmniRoute(search: string): Route {
-  return useMemo(() => {
-    if (search === '') {
-      return 'home';
-    }
-    if (search.startsWith('>')) {
-      return 'command';
-    }
-    return 'filtered';
-  }, [search]);
-}
-
-function cleanSearchTerm(search: string, route: Route): string {
-  if (route === 'command') {
-    return search.slice(1).trim().toLowerCase();
-  }
-  return search.trim().toLowerCase();
-}
 
 function CommandGroupSection({
   heading,
@@ -111,14 +91,14 @@ function HomeRoute({
       )
       .filter((r): r is CommandItemProp => Boolean(r))
       .slice(0, MAX_RECENT_COMMANDS)
-      .map((item) => ({ ...item }));
+      .map((item) => ({ ...item, id: `recent-${item.id}` }));
 
     const recentIds = new Set(recentCmds.map((cmd) => cmd.id));
 
     const remainingCommands = commands
       .filter((cmd) => !recentIds.has(cmd.id))
-      .slice(0, MAX_COMMANDS_PER_GROUP)
-      .sort((a, b) => a.title.localeCompare(b.title));
+      .sort((a, b) => a.title.localeCompare(b.title))
+      .slice(0, MAX_COMMANDS_PER_GROUP);
 
     return [...recentCmds, ...remainingCommands];
   }, [baseItems, recentCommands]);
@@ -126,6 +106,7 @@ function HomeRoute({
   const allFiles = useMemo(() => {
     return baseItems
       .filter((item) => item.metadata.type === 'file')
+      .sort((a, b) => a.title.localeCompare(b.title))
       .slice(0, MAX_FILES_GLOBAL);
   }, [baseItems]);
 
@@ -162,7 +143,6 @@ function HomeRoute({
     </>
   );
 }
-
 function CommandRoute({
   baseItems,
   search,
@@ -179,47 +159,137 @@ function CommandRoute({
   );
   const commands = useMemo(() => {
     if (!search) return items;
-    return items.filter(
-      (item) =>
-        fuzzySearch(search, item.title) ||
-        item.keywords?.some((keyword) => fuzzySearch(search, keyword)),
+
+    const searchables = items.flatMap((item) => [
+      item.title,
+      ...(item.keywords || []),
+    ]);
+
+    const results = rankedFuzzySearch(search, searchables);
+
+    return items.filter((item) =>
+      results.some(
+        (r) => r.item === item.title || item.keywords?.includes(r.item),
+      ),
     );
   }, [items, search]);
 
   return <CommandGroupSection heading="> Commands" items={commands} />;
 }
-
 function FilteredRoute({
   baseItems,
   search,
   recentWsPaths,
+  recentCommands,
 }: {
   baseItems: CommandItemProp[];
   search: string;
   recentWsPaths: string[];
+  recentCommands: string[];
 }) {
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (parentRef.current) {
+      parentRef.current.scrollTop = 0;
+    }
+  }, []);
+
   const filteredItems = useMemo(() => {
     if (!search) return baseItems;
-    const matchingItems = baseItems.filter(
-      (item) =>
-        fuzzySearch(search, item.title) ||
-        item.keywords?.some((keyword) => fuzzySearch(search, keyword)),
-    );
 
-    // Sort matching items to prioritize recent files
-    return matchingItems.sort((a, b) => {
-      if (a.metadata.type === 'file' && b.metadata.type === 'file') {
-        const aIsRecent = recentWsPaths.includes(a.metadata.wsPath);
-        const bIsRecent = recentWsPaths.includes(b.metadata.wsPath);
-        if (aIsRecent !== bIsRecent) {
-          return aIsRecent ? -1 : 1;
+    const searchables = baseItems.map((item) => item.title);
+    const fuzzyResults = rankedFuzzySearch(search, searchables, {});
+
+    const scoredItems = baseItems
+      .map((item) => {
+        const fuzzyMatch = fuzzyResults.find((r) => r.item === item.title);
+        if (!fuzzyMatch) return null;
+
+        let finalScore = fuzzyMatch.score;
+
+        // Apply boost for commands
+        if (item.metadata.type === 'command') {
+          if (recentCommands.includes(item.title)) {
+            finalScore = finalScore * 4; // Stronger boost for recent commands
+          } else {
+            finalScore = finalScore * 2.5; // Regular boost for commands
+          }
+        } else if (
+          item.metadata.type === 'file' &&
+          recentWsPaths.includes(item.metadata.wsPath)
+        ) {
+          // Boost score for recent files
+          finalScore = finalScore * 1.5;
         }
-      }
-      return 0;
-    });
-  }, [baseItems, search, recentWsPaths]);
 
-  return <CommandGroupSection items={filteredItems} />;
+        return {
+          item,
+          score: finalScore,
+        };
+      })
+      .filter(
+        (result): result is { item: CommandItemProp; score: number } =>
+          result !== null,
+      );
+
+    return scoredItems
+      .sort((a, b) => b.score - a.score)
+      .map((result) => result.item);
+  }, [baseItems, search, recentWsPaths, recentCommands]);
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredItems.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 44,
+    overscan: 7,
+    scrollPaddingStart: 24,
+  });
+
+  if (filteredItems.length === 0) {
+    return undefined;
+  }
+
+  return (
+    <CommandGroup
+      heading={'Filtered'}
+      ref={parentRef}
+      style={{ height: '428px', overflowY: 'auto' }}
+    >
+      <div
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          position: 'relative',
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          const item = filteredItems[virtualRow.index]!;
+          const key = item.id;
+          return (
+            <div
+              key={key}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: `${virtualRow.size}px`,
+                transform: `translateY(${virtualRow.start}px)`,
+                width: '100%',
+              }}
+            >
+              <CommandItem id={key} title={item.title} onSelect={item.onSelect}>
+                <span>
+                  {item.metadata.type === 'command' ? '> ' : ''}
+                  {item.title}
+                </span>
+                {item.keybindings && <KbdShortcut keys={item.keybindings} />}
+              </CommandItem>
+            </div>
+          );
+        })}
+      </div>
+    </CommandGroup>
+  );
 }
 
 export function OmniSearch({
@@ -233,16 +303,18 @@ export function OmniSearch({
   commands: Command[];
   onCommand: (cmd: Command) => void;
 }) {
-  const { workspaceState, commandDispatcher, userActivityService } =
-    useCoreServices();
+  const {
+    workspaceState,
+    commandDispatcher,
+    userActivityService,
+    workbenchState,
+  } = useCoreServices();
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
-  const [search, setSearch] = React.useState('');
-
+  const [search, updateSearch] = useAtom(workbenchState.$omniSearchInput);
+  const route = useAtomValue(workbenchState.$omniSearchRoute);
   const recentWsPaths = useAtomValue(userActivityService.$recentWsPaths);
   const recentCommands = useAtomValue(userActivityService.$recentCommands);
-
-  const route = useOmniRoute(search);
-  const cleanedSearch = cleanSearchTerm(search, route);
+  const cleanedSearch = useAtomValue(workbenchState.$cleanSearchTerm);
 
   const baseItems: CommandItemProp[] = React.useMemo(() => {
     const filteredCommands = commands.map(
@@ -281,9 +353,8 @@ export function OmniSearch({
       };
     });
 
-    const combinedItems = [...filteredCommands, ...filteredFiles];
-    return combinedItems;
-  }, [commands, setOpen, wsPaths, onCommand, commandDispatcher]);
+    return [...filteredCommands, ...filteredFiles];
+  }, [commands, wsPaths, onCommand, commandDispatcher, setOpen]);
 
   return (
     <CommandDialog
@@ -291,7 +362,7 @@ export function OmniSearch({
       onOpenChange={(open) => {
         setOpen(open);
         if (!open) {
-          setSearch('');
+          workbenchState.resetOmniSearch();
         }
       }}
       shouldFilter={false}
@@ -300,27 +371,31 @@ export function OmniSearch({
       <CommandInput
         placeholder="Type a command or search..."
         value={search}
-        onValueChange={setSearch}
+        onValueChange={(value) => updateSearch(value)}
       />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        {route === 'home' && (
+      <CommandList className="max-h-[428px]">
+        {route === 'omni-home' && (
           <HomeRoute
             baseItems={baseItems}
             recentWsPaths={recentWsPaths}
             recentCommands={recentCommands}
           />
         )}
-        {route === 'command' && (
+        {route === 'omni-command' && (
           <CommandRoute baseItems={baseItems} search={cleanedSearch} />
         )}
-        {route === 'filtered' && (
+        {route === 'omni-filtered' && (
           <FilteredRoute
             baseItems={baseItems}
             search={cleanedSearch}
             recentWsPaths={recentWsPaths}
+            recentCommands={recentCommands}
           />
         )}
+
+        <CommandEmpty>
+          <span>No results found.</span>
+        </CommandEmpty>
       </CommandList>
     </CommandDialog>
   );
