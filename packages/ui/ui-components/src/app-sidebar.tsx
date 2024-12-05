@@ -202,7 +202,12 @@ function Tree({
   if (!item.isDir) {
     const isActive = item.wsPath && activeWsPaths.includes(item.wsPath);
     return (
-      <SidebarMenuItem className={cx(isActive && 'bg-sidebar-accent')}>
+      <SidebarMenuItem
+        className={cx(isActive && 'bg-sidebar-accent')}
+        style={{
+          contentVisibility: 'auto',
+        }}
+      >
         <SidebarMenuButton
           className="data-[active=true]:bg-transparent"
           onClick={() => onTreeItemClick(item)}
@@ -361,6 +366,7 @@ function WorkspaceSwitcher({
             align="start"
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
+            onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Workspaces

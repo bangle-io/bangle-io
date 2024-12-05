@@ -16,26 +16,30 @@ import { atom } from 'jotai';
 const WORKSPACE_INFO_TABLE = 'workspace-info';
 const MISC_TABLE = 'misc';
 
-type ChangeEvent =
-  | {
-      type: 'workspace-create';
-      payload: { wsName: string };
-    }
-  | {
-      type: 'workspace-update';
-      payload: { wsName: string };
-    }
-  | {
-      type: 'workspace-delete';
-      payload: { wsName: string };
-    };
+type WorkspaceChangeEvent = {
+  type: 'workspace-create' | 'workspace-update' | 'workspace-delete';
+  payload: { wsName: string };
+};
+// | {
+//     type: 'workspace-update';
+//     payload: { wsName: string };
+//   }
+// | {
+//     type: 'workspace-delete';
+//     payload: { wsName: string };
+//   };
 
 // a service mostly acting as the API for workspace related operations
 // does not manage any state or react to any state changes
 export class WorkspaceOpsService extends BaseService {
   private database: BaseDatabaseService;
 
-  $workspaceChanged = atom(0);
+  // any workspace info change
+  $workspaceInfoAnyChange = atom(0);
+  /**
+   * if there is an addition or removal of workspace
+   */
+  $workspaceInfoListChange = atom(0);
 
   // Add a cache variable
   private workspaceInfoCache = new Map<string, WorkspaceInfo>();
@@ -51,7 +55,7 @@ export class WorkspaceOpsService extends BaseService {
       database: BaseDatabaseService;
     },
     private options: {
-      emitUpdate: (event: ChangeEvent) => void;
+      emitUpdate: (event: WorkspaceChangeEvent) => void;
     },
   ) {
     super({
@@ -63,9 +67,17 @@ export class WorkspaceOpsService extends BaseService {
     this.database = dependencies.database;
   }
 
-  private onChange(change: ChangeEvent) {
+  public receiveUpdate(event: WorkspaceChangeEvent) {
+    this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
+    if (
+      event.type === 'workspace-create' ||
+      event.type === 'workspace-delete'
+    ) {
+      this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
+    }
+  }
+  private onChange(change: WorkspaceChangeEvent) {
     this.options.emitUpdate(change);
-    this.store.set(this.$workspaceChanged, (v) => v + 1);
   }
 
   protected async onInitialize(): Promise<void> {}

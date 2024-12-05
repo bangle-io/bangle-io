@@ -1,6 +1,11 @@
-import { BaseService } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  arrayEqual,
+  atomWithCompare,
+} from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions, WorkspaceInfo } from '@bangle.io/types';
 import { atom } from 'jotai';
+import { atomEffect } from 'jotai-effect';
 import { unwrap } from 'jotai/utils';
 import type { FileSystemService } from './file-system-service';
 import type { NavigationService } from './navigation-service';
@@ -18,30 +23,17 @@ export class WorkspaceStateService extends BaseService {
   $workspaces = unwrap(
     atom<Promise<WorkspaceInfo[]>>(async (get) => {
       // to subscribe to workspace changes
-      get(this.workspaceOps.$workspaceChanged);
+      get(this.workspaceOps.$workspaceInfoListChange);
       return this.atomHandleAppError(this.workspaceOps.getAllWorkspaces(), []);
     }),
-    (): WorkspaceInfo[] => [],
+    (prev): WorkspaceInfo[] => prev || [],
   );
   $wsName = atom<string | undefined>((get) => get(this.navigation.$wsName));
   $wsPath = atom<string | undefined>((get) => get(this.navigation.$wsPath));
-  $wsPaths = unwrap<Promise<string[]>, string[]>(
-    atom(async (get, { signal }) => {
-      // to subscribe to file changes
-      get(this.fileSystem.$fileTreeChangeCount);
-      const wsName = get(this.$wsName);
-      if (!wsName) {
-        return EMPTY_ARRAY;
-      }
-
-      return this.atomHandleAppError(
-        this.fileSystem.listFiles(wsName, signal),
-        EMPTY_ARRAY,
-      );
-    }),
-    () => EMPTY_ARRAY,
-  );
-
+  $wsPaths = atom((get) => {
+    return get(this.$rawWsPaths);
+  });
+  private $rawWsPaths = atomWithCompare<string[]>(EMPTY_ARRAY, arrayEqual);
   $activeWsPaths = atom<string[]>((get) => {
     const wsPath = get(this.$wsPath);
     return wsPath ? [wsPath] : EMPTY_ARRAY;
@@ -66,7 +58,35 @@ export class WorkspaceStateService extends BaseService {
     this.workspaceOps = dependencies.workspaceOps;
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async onInitialize(): Promise<void> {
+    this.addCleanup(
+      this.store.sub(
+        atomEffect((get, set) => {
+          const abortController = new AbortController();
+          // to subscribe to file changes
+          get(this.fileSystem.$fileTreeChangeCount);
+          const wsName = get(this.$wsName);
+
+          if (!wsName) {
+            return;
+          }
+          this.atomHandleAppError(
+            this.fileSystem.listFiles(wsName, abortController.signal),
+            EMPTY_ARRAY,
+          ).then((paths) => {
+            if (abortController.signal.aborted) {
+              return;
+            }
+            set(this.$rawWsPaths, paths);
+          });
+          return () => {
+            abortController.abort();
+          };
+        }),
+        () => {},
+      ),
+    );
+  }
 
   protected async onDispose(): Promise<void> {}
 }

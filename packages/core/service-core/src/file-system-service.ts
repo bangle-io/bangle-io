@@ -95,7 +95,7 @@ export class FileSystemService extends BaseService<{
     return VALID_NOTE_EXTENSIONS_SET.has(extension);
   }
 
-  private onChange(change: ChangeEvent) {
+  public receiveUpdate(change: ChangeEvent) {
     switch (change.type) {
       case 'file-create': {
         this.store.set(this.$fileCreateCount, (c) => c + 1);
@@ -116,7 +116,9 @@ export class FileSystemService extends BaseService<{
       default: {
       }
     }
+  }
 
+  private onChange(change: ChangeEvent) {
     this.options.emitUpdate(change);
   }
 

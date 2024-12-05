@@ -4,7 +4,7 @@ import { resolvePath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React, { useMemo } from 'react';
 
-const MAX_WS_PATHS = 700;
+const MAX_WS_PATHS = 800;
 
 interface SidebarProps {
   children: React.ReactNode;

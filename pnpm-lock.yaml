@@ -336,6 +336,9 @@ importers:
       jotai:
         specifier: ^2.10.3
         version: 2.10.3(@types/react@18.3.12)(react@18.3.1)
+      jotai-effect:
+        specifier: ^1.0.4
+        version: 1.0.4(jotai@2.10.3(@types/react@18.3.12)(react@18.3.1))
     devDependencies:
       '@bangle.io/test-utils':
         specifier: workspace:*
@@ -4565,6 +4568,11 @@ packages:
 
   joi@17.13.3:
     resolution: {integrity: sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA==}
+
+  jotai-effect@1.0.4:
+    resolution: {integrity: sha512-4ug5RsLwZpxqv+nb8u4VwnvjpGUbmYASKrywT/YYcLOvLJZA+nBZbLU1WxqhyZfmnw42jkIAtBWj+5xFLITyVg==}
+    peerDependencies:
+      jotai: '>=2.5.0'
 
   jotai@2.10.3:
     resolution: {integrity: sha512-Nnf4IwrLhNfuz2JOQLI0V/AgwcpxvVy8Ec8PidIIDeRi4KCFpwTFIpHAAcU+yCgnw/oASYElq9UY0YdUUegsSA==}
@@ -10292,6 +10300,10 @@ snapshots:
       '@sideway/address': 4.1.5
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
+
+  jotai-effect@1.0.4(jotai@2.10.3(@types/react@18.3.12)(react@18.3.1)):
+    dependencies:
+      jotai: 2.10.3(@types/react@18.3.12)(react@18.3.1)
 
   jotai@2.10.3(@types/react@18.3.12)(react@18.3.1):
     optionalDependencies:

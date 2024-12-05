@@ -37,7 +37,6 @@ import type {
   Services,
   Store,
 } from '@bangle.io/types';
-import { atom } from 'jotai';
 
 export function initializeServices(
   logger: Logger,
@@ -70,7 +69,6 @@ export function initializeServices(
     platformServices,
     rootEmitter,
     theme,
-    abortSignal,
   );
 
   const services: Services = {
@@ -82,6 +80,36 @@ export function initializeServices(
 
   // error service should be initialized asap to catch any errors
   platformServices.errorService.initialize();
+
+  rootEmitter.on(
+    'event::command:result',
+    (result) => {
+      coreServices.userActivityService.recordCommandResult(result);
+    },
+    abortSignal,
+  );
+
+  rootEmitter.on(
+    'event::workspace-info:update',
+    (event) => {
+      coreServices.workspaceOps.receiveUpdate({
+        type: event.type,
+        payload: { wsName: event.wsName },
+      });
+    },
+    abortSignal,
+  );
+
+  rootEmitter.on(
+    'event::file:update',
+    (event) => {
+      coreServices.fileSystem.receiveUpdate({
+        type: event.type,
+        payload: event,
+      });
+    },
+    abortSignal,
+  );
 
   if (platformServices.fileStorage.nativefs instanceof FileStorageNativeFs) {
     platformServices.fileStorage.nativefs.setInitConfig({
@@ -233,17 +261,7 @@ function initCoreServices(
   platformServices: PlatformServices,
   rootEmitter: RootEmitter,
   theme: ThemeManager,
-  abortSignal: AbortSignal,
 ): CoreServices {
-  const $workspaceChanged = atom(0);
-  rootEmitter.on(
-    'event::workspace-info:update',
-    () => {
-      commonOpts.store.set($workspaceChanged, (prev) => prev + 1);
-    },
-    abortSignal,
-  );
-
   const commandRegistryService = new CommandRegistryService(
     commonOpts,
     undefined,
@@ -319,14 +337,6 @@ function initCoreServices(
     workspaceState: workspaceState,
     workspaceOps: workspaceOps,
   });
-
-  rootEmitter.on(
-    'event::command:result',
-    (result) => {
-      userActivityService.recordCommandResult(result);
-    },
-    abortSignal,
-  );
 
   return {
     commandDispatcher: commandDispatcherService,

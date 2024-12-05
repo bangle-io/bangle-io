@@ -41,6 +41,7 @@
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
     "jotai": "^2.10.3",
+    "jotai-effect": "^1.0.4",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*"
   },

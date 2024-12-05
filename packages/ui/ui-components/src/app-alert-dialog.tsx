@@ -38,7 +38,7 @@ export function AppAlertDialog({
 }: AppAlertDialogProps) {
   return (
     <AlertDialog key={dialogId} open={open} onOpenChange={setOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent autoFocus>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>

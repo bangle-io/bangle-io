@@ -11,6 +11,7 @@ export * from '@bangle.io/browser';
 export * from '@bangle.io/logger';
 export * from '@bangle.io/mini-js-utils';
 export * from './base-error-service';
+export * from './jotai';
 
 // TODO this is stub
 export function getEventSenderMetadata({

@@ -69,23 +69,22 @@ function createFileSystemService({
   rootEmitter,
   platformServices,
 }: ServiceDeps) {
-  return pushAndReturn(
-    new FileSystemService(
-      entities.commonOpts,
-      { ...platformServices.fileStorage },
-      {
-        fileStorageServices: platformServices.fileStorage,
-        emitUpdate: (change) => {
-          rootEmitter.emit('event::file:update', {
-            type: change.type,
-            ...change.payload,
-            sender: getEventSenderMetadata({ tag: 'FileSystemService' }),
-          });
-        },
+  const service = new FileSystemService(
+    entities.commonOpts,
+    { ...platformServices.fileStorage },
+    {
+      fileStorageServices: platformServices.fileStorage,
+      emitUpdate: (change) => {
+        rootEmitter.emit('event::file:update', {
+          type: change.type,
+          ...change.payload,
+          sender: getEventSenderMetadata({ tag: 'FileSystemService' }),
+        });
+        service.receiveUpdate(change);
       },
-    ),
-    entities.allServices,
+    },
   );
+  return pushAndReturn(service, entities.allServices);
 }
 
 function createWorkspaceOpsService({
@@ -93,22 +92,21 @@ function createWorkspaceOpsService({
   platformServices,
   rootEmitter,
 }: ServiceDeps) {
-  return pushAndReturn(
-    new WorkspaceOpsService(
-      entities.commonOpts,
-      { database: platformServices.database },
-      {
-        emitUpdate: (change) => {
-          rootEmitter.emit('event::workspace-info:update', {
-            type: change.type,
-            wsName: change.payload.wsName,
-            sender: getEventSenderMetadata({ tag: 'WorkspaceOpsService' }),
-          });
-        },
+  const service = new WorkspaceOpsService(
+    entities.commonOpts,
+    { database: platformServices.database },
+    {
+      emitUpdate: (change) => {
+        rootEmitter.emit('event::workspace-info:update', {
+          type: change.type,
+          wsName: change.payload.wsName,
+          sender: getEventSenderMetadata({ tag: 'WorkspaceOpsService' }),
+        });
+        service.receiveUpdate(change);
       },
-    ),
-    entities.allServices,
+    },
   );
+  return pushAndReturn(service, entities.allServices);
 }
 
 function createWorkspaceStateService({
