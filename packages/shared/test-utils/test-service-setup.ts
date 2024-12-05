@@ -69,19 +69,16 @@ function createFileSystemService({
   rootEmitter,
   platformServices,
 }: ServiceDeps) {
+  const abortController = new AbortController();
   const service = new FileSystemService(
     entities.commonOpts,
     { ...platformServices.fileStorage },
     {
       fileStorageServices: platformServices.fileStorage,
-      emitUpdate: (change) => {
-        rootEmitter.emit('event::file:update', {
-          type: change.type,
-          ...change.payload,
-          sender: getEventSenderMetadata({ tag: 'FileSystemService' }),
-        });
-        service.receiveUpdate(change);
-      },
+      emitter: rootEmitter.scoped(
+        ['event::file:update'],
+        abortController.signal,
+      ),
     },
   );
   return pushAndReturn(service, entities.allServices);
@@ -92,18 +89,15 @@ function createWorkspaceOpsService({
   platformServices,
   rootEmitter,
 }: ServiceDeps) {
+  const abortController = new AbortController();
   const service = new WorkspaceOpsService(
     entities.commonOpts,
     { database: platformServices.database },
     {
-      emitUpdate: (change) => {
-        rootEmitter.emit('event::workspace-info:update', {
-          type: change.type,
-          wsName: change.payload.wsName,
-          sender: getEventSenderMetadata({ tag: 'WorkspaceOpsService' }),
-        });
-        service.receiveUpdate(change);
-      },
+      emitter: rootEmitter.scoped(
+        ['event::workspace-info:update'],
+        abortController.signal,
+      ),
     },
   );
   return pushAndReturn(service, entities.allServices);

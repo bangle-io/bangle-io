@@ -1,6 +1,7 @@
 import { Emitter } from '@bangle.io/emitter';
+import { expectType } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
-import { expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { vi } from 'vitest';
 import { RootEmitter } from '../index';
 
@@ -122,4 +123,153 @@ test('RootEmitter works correctly with custom pubSub provided', () => {
   emitter.emit('event::file:update', payload);
 
   expect(listener).toHaveBeenCalledWith(payload);
+});
+
+describe('ScopedEmitter', () => {
+  test('should only allow specified events', () => {
+    const abortController = new AbortController();
+    const rootEmitter = new RootEmitter({
+      abortSignal: abortController.signal,
+    });
+
+    const scopedEmitter = rootEmitter.scoped(
+      ['event::file:update'],
+      abortController.signal,
+    );
+    const listener = vi.fn();
+
+    scopedEmitter.on('event::file:update', listener, abortController.signal);
+
+    const payload = {
+      wsPath: '/path/to/file',
+      type: 'file-create' as const,
+      sender: { id: 'sender1' },
+    };
+
+    scopedEmitter.emit('event::file:update', payload);
+    expect(listener).toHaveBeenCalledWith(payload);
+
+    expect(() => {
+      scopedEmitter.emit(
+        // @ts-expect-error - Should not allow events outside scope
+        'event::workspace-info:update',
+        {
+          wsName: 'test',
+          type: 'workspace-create',
+          sender: { id: 'test' },
+        },
+      );
+    }).toThrow();
+  });
+
+  test('should cleanup listeners when parent signal is aborted', () => {
+    const abortController = new AbortController();
+    const rootEmitter = new RootEmitter({
+      abortSignal: abortController.signal,
+    });
+
+    const listener = vi.fn();
+    const scopedEmitter = rootEmitter.scoped(
+      ['event::file:update'],
+      abortController.signal,
+    );
+
+    scopedEmitter.on('event::file:update', listener, abortController.signal);
+
+    const payload = {
+      wsPath: '/path/to/file',
+      type: 'file-create' as const,
+      sender: { id: 'sender1' },
+    };
+
+    scopedEmitter.emit('event::file:update', payload);
+    expect(listener).toHaveBeenCalledWith(payload);
+
+    abortController.abort();
+
+    listener.mockClear();
+    scopedEmitter.emit('event::file:update', payload);
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  test('should cleanup listeners when scoped signal is aborted', () => {
+    const rootAbortController = new AbortController();
+    const scopedAbortController = new AbortController();
+
+    const rootEmitter = new RootEmitter({
+      abortSignal: rootAbortController.signal,
+    });
+
+    const listener = vi.fn();
+    const scopedEmitter = rootEmitter.scoped(
+      ['event::file:update'],
+      scopedAbortController.signal,
+    );
+
+    scopedEmitter.on(
+      'event::file:update',
+      listener,
+      scopedAbortController.signal,
+    );
+
+    const payload = {
+      wsPath: '/path/to/file',
+      type: 'file-create' as const,
+      sender: { id: 'sender1' },
+    };
+
+    scopedEmitter.emit('event::file:update', payload);
+    expect(listener).toHaveBeenCalledWith(payload);
+
+    scopedAbortController.abort();
+
+    listener.mockClear();
+    scopedEmitter.emit('event::file:update', payload);
+    expect(listener).not.toHaveBeenCalled();
+  });
+});
+
+describe('types', () => {
+  test('ScopedEmitter type safety', () => {
+    const abortController = new AbortController();
+    const rootEmitter = new RootEmitter({
+      abortSignal: abortController.signal,
+    });
+
+    const scopedEmitter = rootEmitter.scoped(
+      ['event::file:update'],
+      abortController.signal,
+    );
+
+    scopedEmitter.on(
+      'event::file:update',
+      (data) => {
+        expectType<string, typeof data.wsPath>(data.wsPath);
+        expectType<
+          'file-create' | 'file-content-update' | 'file-delete' | 'file-rename',
+          typeof data.type
+        >(data.type);
+      },
+      abortController.signal,
+    );
+
+    expect(() =>
+      scopedEmitter.on(
+        // @ts-expect-error - Should not allow events outside scope
+        'event::workspace-info:update',
+        () => {},
+        abortController.signal,
+      ),
+    ).toThrowError();
+
+    expect(() =>
+      // @ts-expect-error - Should not allow invalid payload type
+      scopedEmitter.emit('event::workspace-info:update', {}),
+    ).toThrowError();
+
+    scopedEmitter.emit('event::file:update', {
+      // @ts-expect-error - Should not allow invalid payload type
+      invalidField: 'test',
+    });
+  });
 });

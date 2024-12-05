@@ -3,6 +3,7 @@ import { type InferType, T } from '@bangle.io/mini-zod';
 import type {
   BaseServiceCommonOptions,
   CommandDispatchResult,
+  ScopedEmitter,
 } from '@bangle.io/types';
 import { getWsName } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
@@ -95,10 +96,11 @@ export class UserActivityService extends BaseService {
       workspaceState: WorkspaceStateService;
       workspaceOps: WorkspaceOpsService;
     },
-    options: {
+    private options: {
+      emitter: ScopedEmitter<'event::command:result'>;
       maxRecentEntries?: number;
       activityCooldownMs?: number;
-    } = {},
+    },
   ) {
     super({
       ...baseOptions,
@@ -116,6 +118,14 @@ export class UserActivityService extends BaseService {
   }
 
   protected async onInitialize(): Promise<void> {
+    this.options.emitter.on(
+      'event::command:result',
+      (result) => {
+        this._recordCommandResult(result);
+      },
+      this.abortSignal,
+    );
+
     this.addCleanup(
       this.store.sub(this.workspaceState.$wsPath, () => {
         const wsPath = this.store.get(this.workspaceState.$wsPath);
@@ -227,7 +237,7 @@ export class UserActivityService extends BaseService {
     return recentEntities[0];
   }
 
-  public async recordCommandResult(result: CommandDispatchResult) {
+  async _recordCommandResult(result: CommandDispatchResult) {
     await this.initializedPromise;
 
     // Skip if command is not available in omni search, as it's not user initiated

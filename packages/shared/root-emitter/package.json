@@ -30,5 +30,8 @@
   "dependencies": {
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.io/mini-js-utils": "workspace:*"
   }
 }

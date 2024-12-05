@@ -16,7 +16,7 @@ import { rankedFuzzySearch } from '@bangle.io/fuzzysearch';
 
 import { assertSplitWsPath } from '@bangle.io/ws-path';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
@@ -90,8 +90,7 @@ function HomeRoute({
         ),
       )
       .filter((r): r is CommandItemProp => Boolean(r))
-      .slice(0, MAX_RECENT_COMMANDS)
-      .map((item) => ({ ...item, id: `recent-${item.id}` }));
+      .slice(0, MAX_RECENT_COMMANDS);
 
     const recentIds = new Set(recentCmds.map((cmd) => cmd.id));
 
@@ -123,7 +122,7 @@ function HomeRoute({
       .slice(0, MAX_RECENT_FILES)
       .map((item) => ({
         ...item,
-        id: `recent-${item.id}`,
+        id: item.id,
       }));
 
     return recentFiles;

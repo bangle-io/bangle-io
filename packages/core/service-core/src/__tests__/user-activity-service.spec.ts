@@ -37,6 +37,10 @@ async function setupUserActivityService({
     {
       activityCooldownMs: cooldownMs,
       maxRecentEntries: maxEntries,
+      emitter: deps.rootEmitter.scoped(
+        ['event::command:result'],
+        controller.signal,
+      ),
     },
   );
 
@@ -144,7 +148,7 @@ describe('UserActivityService', () => {
 
     navigation.goWsPath(TEST_WS_PATH);
 
-    await userActivityService.recordCommandResult({
+    await userActivityService._recordCommandResult({
       type: 'success',
       from: 'test',
       command: {
@@ -174,7 +178,7 @@ describe('UserActivityService', () => {
 
     navigation.goWsPath(TEST_WS_PATH);
 
-    await userActivityService.recordCommandResult({
+    await userActivityService._recordCommandResult({
       type: 'success',
       from: 'test',
 

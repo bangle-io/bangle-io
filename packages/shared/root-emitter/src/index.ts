@@ -127,4 +127,83 @@ export class RootEmitter {
   ) => {
     return this.publisher.emit(event, data);
   };
+
+  scoped<T extends RootEvents['event']>(
+    scopedEvents: T[],
+    signal: AbortSignal,
+  ) {
+    const combinedController = new AbortController();
+
+    // Create independent signal handlers to avoid race conditions
+    signal.addEventListener(
+      'abort',
+      () => {
+        combinedController.abort();
+      },
+      { once: true },
+    );
+
+    this.options.abortSignal.addEventListener(
+      'abort',
+      () => {
+        combinedController.abort();
+      },
+      { once: true },
+    );
+
+    return new ScopedEmitter({
+      scope: scopedEvents,
+      publisher: this.publisher,
+      subscriber: this.subscriber,
+      signal: combinedController.signal,
+    });
+  }
+}
+
+export class ScopedEmitter<TScope extends RootEvents['event']> {
+  constructor(
+    private config: {
+      scope: TScope[];
+      publisher: Emitter<any>;
+      subscriber: Emitter<any>;
+      signal: AbortSignal;
+    },
+  ) {}
+
+  private validateEvent(event: TScope) {
+    if (!this.config.scope.includes(event)) {
+      throw new Error(
+        `Event "${event}" is not in allowed scope. Allowed events are: ${this.config.scope.join(
+          ', ',
+        )}`,
+      );
+    }
+  }
+
+  on = <T extends TScope>(
+    event: T,
+    listener: EventListener<Extract<RootEvents, { event: T }>['payload']>,
+    signal: AbortSignal,
+  ) => {
+    this.validateEvent(event);
+
+    const combinedSignal = new AbortController();
+
+    signal.addEventListener('abort', () => combinedSignal.abort());
+    this.config.signal.addEventListener('abort', () => combinedSignal.abort());
+
+    return this.config.subscriber.on(
+      event,
+      listener as EventListener<any>,
+      combinedSignal.signal,
+    );
+  };
+
+  emit = <T extends TScope>(
+    event: T,
+    data: Extract<RootEvents, { event: T }>['payload'],
+  ) => {
+    this.validateEvent(event);
+    return this.config.publisher.emit(event, data);
+  };
 }

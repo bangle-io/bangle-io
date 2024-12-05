@@ -14,3 +14,4 @@ export type * from './commands';
 export type * from './base-router';
 export type * from '@bangle.io/root-emitter';
 export type { WorkspaceStorageType } from '@bangle.io/constants';
+export type * from './emitter';

@@ -7,7 +7,7 @@ import {
 import type {
   BaseDatabaseService,
   BaseServiceCommonOptions,
-  RootEmitter,
+  ScopedEmitter,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';
@@ -55,7 +55,7 @@ export class WorkspaceOpsService extends BaseService {
       database: BaseDatabaseService;
     },
     private options: {
-      emitUpdate: (event: WorkspaceChangeEvent) => void;
+      emitter: ScopedEmitter<'event::workspace-info:update'>;
     },
   ) {
     super({
@@ -67,20 +67,29 @@ export class WorkspaceOpsService extends BaseService {
     this.database = dependencies.database;
   }
 
-  public receiveUpdate(event: WorkspaceChangeEvent) {
-    this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
-    if (
-      event.type === 'workspace-create' ||
-      event.type === 'workspace-delete'
-    ) {
-      this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
-    }
-  }
   private onChange(change: WorkspaceChangeEvent) {
-    this.options.emitUpdate(change);
+    this.options.emitter.emit('event::workspace-info:update', {
+      type: change.type,
+      wsName: change.payload.wsName,
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async onInitialize(): Promise<void> {
+    this.options.emitter.on(
+      'event::workspace-info:update',
+      (event) => {
+        this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
+        if (
+          event.type === 'workspace-create' ||
+          event.type === 'workspace-delete'
+        ) {
+          this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
+        }
+      },
+      this.abortSignal,
+    );
+  }
 
   protected async onDispose(): Promise<void> {}
 

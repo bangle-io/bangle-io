@@ -13,7 +13,7 @@ import {
 import type {
   BaseFileStorageService,
   BaseServiceCommonOptions,
-  RootEmitter,
+  ScopedEmitter,
   WorkspaceInfo,
 } from '@bangle.io/types';
 import {
@@ -49,7 +49,7 @@ export class FileSystemService extends BaseService<{
     baseOptions: BaseServiceCommonOptions,
     dependencies: Record<string, BaseService>,
     private options: {
-      emitUpdate: (change: ChangeEvent) => void;
+      emitter: ScopedEmitter<'event::file:update'>;
       fileStorageServices: Record<string, BaseFileStorageService>;
     },
   ) {
@@ -87,7 +87,34 @@ export class FileSystemService extends BaseService<{
     );
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async onInitialize(): Promise<void> {
+    this.options.emitter.on(
+      'event::file:update',
+      (event) => {
+        switch (event.type) {
+          case 'file-create': {
+            this.store.set(this.$fileCreateCount, (c) => c + 1);
+            break;
+          }
+          case 'file-content-update': {
+            this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
+            break;
+          }
+          case 'file-delete': {
+            this.store.set(this.$fileDeleteCount, (c) => c + 1);
+            break;
+          }
+          case 'file-rename': {
+            this.store.set(this.$fileRenameCount, (c) => c + 1);
+            break;
+          }
+          default: {
+          }
+        }
+      },
+      this.abortSignal,
+    );
+  }
 
   protected async onDispose(): Promise<void> {}
 
@@ -95,31 +122,12 @@ export class FileSystemService extends BaseService<{
     return VALID_NOTE_EXTENSIONS_SET.has(extension);
   }
 
-  public receiveUpdate(change: ChangeEvent) {
-    switch (change.type) {
-      case 'file-create': {
-        this.store.set(this.$fileCreateCount, (c) => c + 1);
-        break;
-      }
-      case 'file-content-update': {
-        this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
-        break;
-      }
-      case 'file-delete': {
-        this.store.set(this.$fileDeleteCount, (c) => c + 1);
-        break;
-      }
-      case 'file-rename': {
-        this.store.set(this.$fileRenameCount, (c) => c + 1);
-        break;
-      }
-      default: {
-      }
-    }
-  }
-
   private onChange(change: ChangeEvent) {
-    this.options.emitUpdate(change);
+    this.options.emitter.emit('event::file:update', {
+      type: change.type,
+      ...change.payload,
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
   }
 
   async listFiles(

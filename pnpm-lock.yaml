@@ -512,6 +512,10 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
+    devDependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-js-utils
 
   packages/shared/test-utils:
     dependencies:

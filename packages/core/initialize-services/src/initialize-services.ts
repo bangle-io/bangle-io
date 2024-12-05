@@ -81,36 +81,6 @@ export function initializeServices(
   // error service should be initialized asap to catch any errors
   platformServices.errorService.initialize();
 
-  rootEmitter.on(
-    'event::command:result',
-    (result) => {
-      coreServices.userActivityService.recordCommandResult(result);
-    },
-    abortSignal,
-  );
-
-  rootEmitter.on(
-    'event::workspace-info:update',
-    (event) => {
-      coreServices.workspaceOps.receiveUpdate({
-        type: event.type,
-        payload: { wsName: event.wsName },
-      });
-    },
-    abortSignal,
-  );
-
-  rootEmitter.on(
-    'event::file:update',
-    (event) => {
-      coreServices.fileSystem.receiveUpdate({
-        type: event.type,
-        payload: event,
-      });
-    },
-    abortSignal,
-  );
-
   if (platformServices.fileStorage.nativefs instanceof FileStorageNativeFs) {
     platformServices.fileStorage.nativefs.setInitConfig({
       getRootDirHandle: async (wsName: string) => {
@@ -283,13 +253,10 @@ function initCoreServices(
     { ...platformServices.fileStorage },
     {
       fileStorageServices: platformServices.fileStorage,
-      emitUpdate: (change) => {
-        rootEmitter.emit('event::file:update', {
-          type: change.type,
-          ...change.payload,
-          sender: getEventSenderMetadata({ tag: fileSystemService.name }),
-        });
-      },
+      emitter: rootEmitter.scoped(
+        ['event::file:update'],
+        commonOpts.rootAbortSignal,
+      ),
     },
   );
   const navigation = new NavigationService(commonOpts, {
@@ -311,13 +278,10 @@ function initCoreServices(
     commonOpts,
     { database: platformServices.database },
     {
-      emitUpdate: (change) => {
-        rootEmitter.emit('event::workspace-info:update', {
-          type: change.type,
-          wsName: change.payload.wsName,
-          sender: getEventSenderMetadata({ tag: workspaceOps.name }),
-        });
-      },
+      emitter: rootEmitter.scoped(
+        ['event::workspace-info:update'],
+        commonOpts.rootAbortSignal,
+      ),
     },
   );
 
@@ -333,10 +297,19 @@ function initCoreServices(
     fileSystem: fileSystemService,
   });
 
-  const userActivityService = new UserActivityService(commonOpts, {
-    workspaceState: workspaceState,
-    workspaceOps: workspaceOps,
-  });
+  const userActivityService = new UserActivityService(
+    commonOpts,
+    {
+      workspaceState: workspaceState,
+      workspaceOps: workspaceOps,
+    },
+    {
+      emitter: rootEmitter.scoped(
+        ['event::command:result'],
+        commonOpts.rootAbortSignal,
+      ),
+    },
+  );
 
   return {
     commandDispatcher: commandDispatcherService,

@@ -11,6 +11,7 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
+import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
@@ -80,6 +81,16 @@ export class WorkbenchStateService extends BaseService {
       this.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
+
+      this.store.sub(
+        atomEffect((get, set) => {
+          const open = get(this.$openOmniSearch);
+          if (!open) {
+            set(this.$omniSearchInput, '');
+          }
+        }),
+        () => {},
+      ),
     );
   }
 
