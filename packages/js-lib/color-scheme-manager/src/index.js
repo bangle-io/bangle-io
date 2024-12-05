@@ -17,6 +17,7 @@ export class ThemeManager {
         this.currentTheme = this.getTheme();
         this.reflectTheme();
         this.setupSystemPreferenceListener();
+        this.setupStorageListener();
     }
     getPrefersDarkScheme() {
         if (typeof window !== 'undefined' &&
@@ -86,6 +87,27 @@ export class ThemeManager {
                 this.currentTheme = this.getTheme();
                 this.reflectTheme();
                 this.triggerCallbacks();
+            }
+        });
+    }
+    setupStorageListener() {
+        window.addEventListener('storage', (event) => {
+            if (event.key === this.config.storageKey) {
+                const newPreference = event.newValue;
+                if (newPreference === 'light' ||
+                    newPreference === 'dark' ||
+                    newPreference === 'system' ||
+                    newPreference === null) {
+                    const preferenceToSet = newPreference !== null
+                        ? newPreference
+                        : this.config.defaultPreference;
+                    if (preferenceToSet !== this.currentPreference) {
+                        this.currentPreference = preferenceToSet;
+                        this.currentTheme = this.getTheme();
+                        this.reflectTheme();
+                        this.triggerCallbacks();
+                    }
+                }
             }
         });
     }

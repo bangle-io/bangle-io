@@ -34,6 +34,7 @@ export declare class ThemeManager {
     getTheme(): string;
     private reflectTheme;
     private setupSystemPreferenceListener;
+    private setupStorageListener;
     setPreference(preference: ThemePreference): void;
     onThemeChange(callback: ThemeCallback): () => void;
     private triggerCallbacks;
