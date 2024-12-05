@@ -1,8 +1,4 @@
-import {
-  type DiscriminatedEmitter,
-  Emitter,
-  type EventListener,
-} from '@bangle.io/emitter';
+import { Emitter, type EventListener } from '@bangle.io/emitter';
 import type { Command } from '@bangle.io/types';
 
 export type EventSenderMetadata = {
@@ -10,7 +6,7 @@ export type EventSenderMetadata = {
   tag?: string;
 };
 
-type RootEvents =
+export type RootEvents =
   | {
       event: 'event::error:uncaught-error';
       payload: {
@@ -57,28 +53,58 @@ type RootEvents =
       };
     };
 
-type EmitterType = DiscriminatedEmitter<RootEvents>;
+// These events are allowed to be broadcasted to other tabs
+export const CROSS_TAB_EVENTS = [
+  'event::workspace-info:update',
+  'event::file:update',
+] as const satisfies RootEvents['event'][];
+
+export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];
 
 export class RootEmitter {
-  private emitter: EmitterType = new Emitter();
+  private publisher: Emitter;
+  private subscriber: Emitter;
 
   constructor(
     private options: {
       abortSignal: AbortSignal;
       onEvent?: (event: RootEvents) => void;
+      pubSub?: {
+        publisher: Emitter;
+        subscriber: Emitter;
+      };
     },
   ) {
-    this.options.abortSignal.addEventListener(
-      'abort',
-      () => {
-        this.emitter.destroy();
-      },
-      { once: true },
-    );
+    if (this.options.pubSub) {
+      const { publisher, subscriber } = this.options.pubSub;
+      if (!publisher || !subscriber) {
+        throw new Error(
+          'Both publisher and subscriber must be provided together',
+        );
+      }
+      this.publisher = publisher;
+      this.subscriber = subscriber;
+    } else {
+      this.publisher = new Emitter();
+      this.subscriber = new Emitter();
+      this.options.abortSignal.addEventListener(
+        'abort',
+        () => {
+          this.publisher.destroy();
+          this.subscriber.destroy();
+        },
+        { once: true },
+      );
+
+      // Wire the default publisher and subscriber
+      this.publisher.onAll(({ event, payload }) => {
+        this.subscriber.emit(event, payload);
+      });
+    }
 
     if (this.options.onEvent) {
-      this.emitter.onAll((event) => {
-        this.options.onEvent?.(event);
+      this.subscriber.onAll(({ event, payload }) => {
+        this.options.onEvent?.({ event, payload } as RootEvents);
       });
     }
   }
@@ -88,13 +114,17 @@ export class RootEmitter {
     listener: EventListener<Extract<RootEvents, { event: T }>['payload']>,
     signal: AbortSignal,
   ) => {
-    return this.emitter.on(event, listener as EventListener<any>, signal);
+    return this.subscriber.on(
+      event,
+      listener as EventListener<unknown>,
+      signal,
+    );
   };
 
   emit = <T extends RootEvents['event']>(
     event: T,
     data: Extract<RootEvents, { event: T }>['payload'],
   ) => {
-    return this.emitter.emit(event, data as any);
+    return this.publisher.emit(event, data);
   };
 }

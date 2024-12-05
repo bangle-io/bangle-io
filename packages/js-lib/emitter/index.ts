@@ -1,51 +1,40 @@
 export type EventListener<T> = (data: T) => void;
 
-type EventListeners = Record<string, Set<EventListener<any>>>;
-
-type AllEventListener<E extends EventMessage<any, any>> = (message: E) => void;
-
-export type DiscriminatedEmitter<U extends EventMessage<any, any>> = Emitter<
-  DiscriminatedUnionToObject<U>
->;
-
 export type EventMessage<E extends string, P> = {
   event: E;
   payload: P;
 };
-// Utility type function for converting discriminated union to object type
-type DiscriminatedUnionToObject<U extends EventMessage<any, any>> = {
-  [K in U['event']]: Extract<U, { event: K }>['payload'];
+
+export type AllEventListener<U extends EventMessage<any, any>> = (
+  message: U,
+) => void;
+
+type EventListeners<U extends EventMessage<any, any>> = {
+  [E in U['event']]?: Set<EventListener<Extract<U, { event: E }>['payload']>>;
 };
 
-export type ObjectToDiscriminatedUnion<T extends object> = {
-  [K in keyof T]: K extends string ? EventMessage<K, T[K]> : never;
-}[keyof T];
-
-interface EmitterOptions {
+interface EmitterOptions<U extends EventMessage<any, any>> {
   paused?: boolean;
   onDestroy?: () => void;
-  onEmit?: (message: EventMessage<any, any>) => void;
+  onEmit?: (message: U) => void;
 }
 
-export class Emitter<T extends object = any> {
-  /**
-   * provides a way to create an emitter with discriminated union types
-   */
-  static create<U extends EventMessage<string, any>>(options?: {
-    onEmit?: (message: U) => void;
-    onDestroy?: () => void;
-  }) {
-    const emitter = new Emitter<DiscriminatedUnionToObject<U>>(options as any);
-    return emitter;
+export class Emitter<
+  U extends EventMessage<any, any> = EventMessage<any, unknown>,
+> {
+  static create<U extends EventMessage<string, any>>(
+    options?: EmitterOptions<U>,
+  ) {
+    return new Emitter<U>(options);
   }
 
-  public _eventListeners: EventListeners = {};
-  public _allEventListeners = new Set<AllEventListener<any>>();
+  private _eventListeners: EventListeners<U> = {};
+  private _allEventListeners = new Set<AllEventListener<U>>();
   private destroyed = false;
   private paused = false;
-  private buffer: Array<{ event: keyof T; data: any }> = [];
+  private buffer: U[] = [];
 
-  constructor(private options: EmitterOptions = {}) {
+  constructor(private options: EmitterOptions<U> = {}) {
     if (options?.paused) {
       this.paused = true;
     }
@@ -57,33 +46,33 @@ export class Emitter<T extends object = any> {
     this.options?.onDestroy?.();
   }
 
-  emit<K extends keyof T>(event: K, data: T[K]) {
+  emit<E extends U['event']>(
+    event: E,
+    payload: Extract<U, { event: E }>['payload'],
+  ) {
     if (this.destroyed) {
       return;
     }
 
+    const message = { event, payload: payload } as U;
+
     if (this.paused) {
-      this.buffer.push({ event, data });
+      this.buffer.push(message);
       return;
     }
 
-    const callbacks = this._eventListeners[event as string];
+    const callbacks = this._eventListeners[event];
     if (callbacks) {
       for (const callback of callbacks) {
-        callback(data);
+        callback(payload);
       }
     }
 
-    const val = {
-      event: event as string,
-      payload: data,
-    } satisfies EventMessage<string, T[K]>;
-
     for (const callback of this._allEventListeners) {
-      callback(val);
+      callback(message);
     }
 
-    return;
+    this.options.onEmit?.(message);
   }
 
   pause(): this {
@@ -95,15 +84,12 @@ export class Emitter<T extends object = any> {
 
   unpause(): this {
     if (!this.destroyed) {
-      // Unpause before processing the buffer
       this.paused = false;
       while (this.buffer.length > 0) {
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        const { event, data } = this.buffer.shift()!;
-        this.emit(event, data);
+        const message = this.buffer.shift()!;
+        this.emit(message.event, message.payload);
       }
-
-      this.paused = false;
     }
     return this;
   }
@@ -118,21 +104,20 @@ export class Emitter<T extends object = any> {
     return this;
   }
 
-  on<K extends keyof T>(
-    event: K,
-    fn: EventListener<T[K]>,
+  on<E extends U['event']>(
+    event: E,
+    fn: EventListener<Extract<U, { event: E }>['payload']>,
     signal?: AbortSignal,
   ): () => void {
     if (this.destroyed) {
       return () => undefined;
     }
 
-    const eventKey = event as string;
-    let existing = this._eventListeners[eventKey];
+    let existing = this._eventListeners[event];
 
     if (!existing) {
       existing = new Set();
-      this._eventListeners[eventKey] = existing;
+      this._eventListeners[event] = existing;
     }
 
     existing.add(fn);
@@ -146,7 +131,7 @@ export class Emitter<T extends object = any> {
     return cleanup;
   }
 
-  onAll(fn: AllEventListener<ObjectToDiscriminatedUnion<T>>): () => void {
+  onAll(fn: AllEventListener<U>): () => void {
     if (this.destroyed) {
       return () => undefined;
     }
@@ -156,26 +141,4 @@ export class Emitter<T extends object = any> {
       this._allEventListeners.delete(fn);
     };
   }
-
-  readOnly<const K extends keyof T>(_events: K[]): ReadOnlyEmitter<Pick<T, K>> {
-    return this as unknown as ReadOnlyEmitter<T>;
-  }
-
-  writeOnly<const K extends keyof T>(
-    _events: K[],
-  ): WriteOnlyEmitter<Pick<T, K>> {
-    return this as unknown as WriteOnlyEmitter<T>;
-  }
 }
-
-export type ReadOnlyEmitter<T extends object = any> = {
-  on<K extends keyof T>(
-    event: K,
-    fn: EventListener<T[K]>,
-    signal?: AbortSignal,
-  ): void;
-};
-
-export type WriteOnlyEmitter<T extends object = any> = {
-  emit<K extends keyof T>(event: K, data: T[K]): void;
-};

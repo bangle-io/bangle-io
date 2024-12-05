@@ -3,12 +3,14 @@ import './index.css';
 import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
+import { Emitter } from '@bangle.io/emitter';
 import { initializeServices } from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
-import { RootEmitter } from '@bangle.io/root-emitter';
 import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { setupRootEmitter } from './setup-root-emitter';
+
 const logger = new Logger(
   '',
   window.location.hostname === 'localhost' ||
@@ -18,13 +20,14 @@ const logger = new Logger(
 );
 
 const abortController = new AbortController();
-const emitterLogger = logger.child('root-emitter');
-const rootEmitter: RootEmitter = new RootEmitter({
-  abortSignal: abortController.signal,
-  onEvent: (event) => {
-    emitterLogger.debug('[event]', event);
-  },
-});
+const tabId = 'tab_' + Math.random().toString(36).substr(2, 9);
+
+const rootEmitter = setupRootEmitter(
+  'bangle_io_channel',
+  tabId,
+  logger,
+  abortController.signal,
+);
 
 const store = createStore();
 const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);

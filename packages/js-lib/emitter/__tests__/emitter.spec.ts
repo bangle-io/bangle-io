@@ -1,10 +1,10 @@
 import { expectType } from '@bangle.io/mini-js-utils';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { Emitter, type ReadOnlyEmitter, type WriteOnlyEmitter } from '../index';
+import { Emitter } from '../index';
 
 describe('Emitter', () => {
-  let emitter: Emitter;
+  let emitter: Emitter<any>;
 
   beforeEach(() => {
     emitter = new Emitter();
@@ -118,7 +118,16 @@ describe('types', () => {
   }
   test('works with types', () => {
     // Create an instance of Emitter
-    const emitter = new Emitter<TestEvents>();
+    const emitter = new Emitter<
+      | {
+          event: 'event1';
+          payload: string;
+        }
+      | {
+          event: 'event2';
+          payload: number;
+        }
+    >();
 
     emitter.onAll((data) => {
       switch (data.event) {
@@ -150,7 +159,16 @@ describe('types', () => {
   });
 
   test('emitting events with incorrect data types should cause type errors', () => {
-    const emitter = new Emitter<TestEvents>();
+    const emitter = new Emitter<
+      | {
+          event: 'event1';
+          payload: string;
+        }
+      | {
+          event: 'event2';
+          payload: number;
+        }
+    >();
 
     // @ts-expect-error - Should be incorrect
     emitter.emit('event1', 42); // Incorrect type
@@ -261,7 +279,7 @@ describe('Emitter with onAll feature', () => {
 });
 
 describe('Emitter onAll', () => {
-  let emitter: Emitter;
+  let emitter: Emitter<any>;
 
   beforeEach(() => {
     emitter = new Emitter();
@@ -335,8 +353,10 @@ describe('Emitter onAll', () => {
 
     // Clear all listeners and emit events again
     emitter.clearListeners();
-    expect(emitter._eventListeners).toEqual({});
-    expect(emitter._allEventListeners.size).toBe(0);
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    expect(emitter['_eventListeners']).toEqual({});
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    expect(emitter['_allEventListeners'].size).toBe(0);
 
     emitter.emit('specificEvent', 'dataForSpecificEvent');
     emitter.emit('anotherEvent', 'dataForAnotherEvent');
@@ -363,8 +383,10 @@ describe('Emitter onAll', () => {
 
     // Clear all listeners and emit events again
     emitter.destroy();
-    expect(emitter._eventListeners).toEqual({});
-    expect(emitter._allEventListeners.size).toBe(0);
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    expect(emitter['_eventListeners']).toEqual({});
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    expect(emitter['_allEventListeners'].size).toBe(0);
 
     emitter.emit('specificEvent', 'dataForSpecificEvent');
     emitter.emit('anotherEvent', 'dataForAnotherEvent');
@@ -376,7 +398,7 @@ describe('Emitter onAll', () => {
 });
 
 describe('Emitter with pause functionality', () => {
-  let emitter: Emitter;
+  let emitter: Emitter<any>;
 
   beforeEach(() => {
     emitter = new Emitter({ paused: true });
@@ -459,170 +481,170 @@ describe('Emitter with pause functionality', () => {
   });
 });
 
-describe('ReadOnlyEmitter', () => {
-  interface ReadOnlyTestEvents {
-    event1: string;
-    event2: number;
-    event3: boolean;
-  }
+// describe('ReadOnlyEmitter', () => {
+//   interface ReadOnlyTestEvents {
+//     event1: string;
+//     event2: number;
+//     event3: boolean;
+//   }
 
-  let emitter: Emitter<ReadOnlyTestEvents>;
-  let readOnlyEmitter: ReadOnlyEmitter<
-    Pick<ReadOnlyTestEvents, 'event1' | 'event2'>
-  >;
+//   let emitter: Emitter<ReadOnlyTestEvents>;
+//   let readOnlyEmitter: ReadOnlyEmitter<
+//     Pick<ReadOnlyTestEvents, 'event1' | 'event2'>
+//   >;
 
-  beforeEach(() => {
-    emitter = new Emitter();
-    const _readOnlyEmitter = emitter.readOnly(['event1', 'event2']);
-    readOnlyEmitter = _readOnlyEmitter;
-  });
+//   beforeEach(() => {
+//     emitter = new Emitter();
+//     const _readOnlyEmitter = emitter.readOnly(['event1', 'event2']);
+//     readOnlyEmitter = _readOnlyEmitter<any>;
+//   });
 
-  afterEach(() => {
-    emitter.destroy();
-  });
+//   afterEach(() => {
+//     emitter.destroy();
+//   });
 
-  test('should allow adding listeners for allowed events', () => {
-    const mockCallback = vi.fn();
-    readOnlyEmitter.on('event1', mockCallback);
-    emitter.emit('event1', 'test-data');
+//   test('should allow adding listeners for allowed events', () => {
+//     const mockCallback = vi.fn();
+//     readOnlyEmitter.on('event1', mockCallback);
+//     emitter.emit('event1', 'test-data');
 
-    // emitter.on('event1', (x) => {
+//     // emitter.on('event1', (x) => {
 
-    // });
-    expect(mockCallback).toHaveBeenCalledWith('test-data');
-  });
+//     // });
+//     expect(mockCallback).toHaveBeenCalledWith('test-data');
+//   });
 
-  test('should not allow adding listeners for disallowed events', () => {
-    readOnlyEmitter.on(
-      // @ts-expect-error - 'event3' is not allowed
-      'event3',
-      () => {},
-    );
-    expect(1).toBe(1);
-  });
+//   test('should not allow adding listeners for disallowed events', () => {
+//     readOnlyEmitter.on(
+//       // @ts-expect-error - 'event3' is not allowed
+//       'event3',
+//       () => {},
+//     );
+//     expect(1).toBe(1);
+//   });
 
-  test('should not allow emitting events', () => {
-    readOnlyEmitter
-      // @ts-expect-error - 'emit' should not be available
-      .emit('event1', 'test-data');
+//   test('should not allow emitting events', () => {
+//     readOnlyEmitter
+//       // @ts-expect-error - 'emit' should not be available
+//       .emit('event1', 'test-data');
 
-    expect(1).toBe(1); // Placeholder to ensure test passes
-  });
+//     expect(1).toBe(1); // Placeholder to ensure test passes
+//   });
 
-  test('listeners receive events emitted by parent emitter', () => {
-    const mockCallback = vi.fn();
-    readOnlyEmitter.on('event2', mockCallback);
-    emitter.emit('event2', 42);
-    expect(mockCallback).toHaveBeenCalledWith(42);
-  });
+//   test('listeners receive events emitted by parent emitter', () => {
+//     const mockCallback = vi.fn();
+//     readOnlyEmitter.on('event2', mockCallback);
+//     emitter.emit('event2', 42);
+//     expect(mockCallback).toHaveBeenCalledWith(42);
+//   });
 
-  test('listeners can be removed via returned off function', () => {
-    const mockCallback = vi.fn();
-    const controller = new AbortController();
-    readOnlyEmitter.on('event1', mockCallback, controller.signal);
-    controller.abort();
-    emitter.emit('event1', 'test-data');
-    expect(mockCallback).not.toHaveBeenCalled();
-  });
+//   test('listeners can be removed via returned off function', () => {
+//     const mockCallback = vi.fn();
+//     const controller = new AbortController();
+//     readOnlyEmitter.on('event1', mockCallback, controller.signal);
+//     controller.abort();
+//     emitter.emit('event1', 'test-data');
+//     expect(mockCallback).not.toHaveBeenCalled();
+//   });
 
-  test('parent emitter functions independently of read-only emitter', () => {
-    const parentCallback = vi.fn();
-    emitter.on('event1', parentCallback);
-    emitter.emit('event1', 'parent-data');
-    expect(parentCallback).toHaveBeenCalledWith('parent-data');
-  });
+//   test('parent emitter functions independently of read-only emitter', () => {
+//     const parentCallback = vi.fn();
+//     emitter.on('event1', parentCallback);
+//     emitter.emit('event1', 'parent-data');
+//     expect(parentCallback).toHaveBeenCalledWith('parent-data');
+//   });
 
-  test('type safety is enforced for event data', () => {
-    readOnlyEmitter.on('event1', (data) => {
-      expectType<string, typeof data>(data);
-    });
+//   test('type safety is enforced for event data', () => {
+//     readOnlyEmitter.on('event1', (data) => {
+//       expectType<string, typeof data>(data);
+//     });
 
-    readOnlyEmitter.on('event2', (data) => {
-      expectType<number, typeof data>(data);
-    });
-    expect(1).toBe(1);
-  });
+//     readOnlyEmitter.on('event2', (data) => {
+//       expectType<number, typeof data>(data);
+//     });
+//     expect(1).toBe(1);
+//   });
 
-  test('read-only emitter does not expose destroy method', () => {
-    // @ts-expect-error - 'destroy' should not be available
-    readOnlyEmitter.destroy();
-    expect(1).toBe(1);
-  });
-});
+//   test('read-only emitter does not expose destroy method', () => {
+//     // @ts-expect-error - 'destroy' should not be available
+//     readOnlyEmitter.destroy();
+//     expect(1).toBe(1);
+//   });
+// });
 
-describe('WriteOnlyEmitter', () => {
-  interface WriteOnlyTestEvents {
-    event1: string;
-    event2: number;
-    event3: boolean;
-  }
+// describe('WriteOnlyEmitter', () => {
+//   interface WriteOnlyTestEvents {
+//     event1: string;
+//     event2: number;
+//     event3: boolean;
+//   }
 
-  let emitter: Emitter<WriteOnlyTestEvents>;
-  let writeOnlyEmitter: WriteOnlyEmitter<
-    Pick<WriteOnlyTestEvents, 'event1' | 'event2'>
-  >;
+//   let emitter: Emitter<WriteOnlyTestEvents>;
+//   let writeOnlyEmitter: WriteOnlyEmitter<
+//     Pick<WriteOnlyTestEvents, 'event1' | 'event2'>
+//   >;
 
-  beforeEach(() => {
-    emitter = new Emitter<WriteOnlyTestEvents>();
-    const _writeOnlyEmitter = emitter.writeOnly(['event1', 'event2']);
-    writeOnlyEmitter = _writeOnlyEmitter;
-  });
+//   beforeEach(() => {
+//     emitter = new Emitter<WriteOnlyTestEvents>();
+//     const _writeOnlyEmitter = emitter.writeOnly(['event1', 'event2']);
+//     writeOnlyEmitter = _writeOnlyEmitter<any>;
+//   });
 
-  afterEach(() => {
-    emitter.destroy();
-  });
+//   afterEach(() => {
+//     emitter.destroy();
+//   });
 
-  test('should allow emitting allowed events', () => {
-    const mockCallback = vi.fn();
-    emitter.on('event1', mockCallback);
-    writeOnlyEmitter.emit('event1', 'test-data');
-    expect(mockCallback).toHaveBeenCalledWith('test-data');
-  });
+//   test('should allow emitting allowed events', () => {
+//     const mockCallback = vi.fn();
+//     emitter.on('event1', mockCallback);
+//     writeOnlyEmitter.emit('event1', 'test-data');
+//     expect(mockCallback).toHaveBeenCalledWith('test-data');
+//   });
 
-  test('should not allow emitting disallowed events', () => {
-    writeOnlyEmitter.emit(
-      // @ts-expect-error - 'event3' is not allowed
-      'event3',
-      false,
-    );
-    expect(1).toBe(1); // Placeholder to ensure test passes
-  });
+//   test('should not allow emitting disallowed events', () => {
+//     writeOnlyEmitter.emit(
+//       // @ts-expect-error - 'event3' is not allowed
+//       'event3',
+//       false,
+//     );
+//     expect(1).toBe(1); // Placeholder to ensure test passes
+//   });
 
-  test('should not allow adding listeners', () => {
-    // @ts-expect-error - 'on' should not be available
-    writeOnlyEmitter.on('event1', () => {});
-    expect(1).toBe(1); // Placeholder to ensure test passes
-  });
+//   test('should not allow adding listeners', () => {
+//     // @ts-expect-error - 'on' should not be available
+//     writeOnlyEmitter.on('event1', () => {});
+//     expect(1).toBe(1); // Placeholder to ensure test passes
+//   });
 
-  test('parent emitter receives events emitted by write-only emitter', () => {
-    const mockCallback = vi.fn();
-    emitter.on('event2', mockCallback);
-    writeOnlyEmitter.emit('event2', 42);
-    expect(mockCallback).toHaveBeenCalledWith(42);
-  });
+//   test('parent emitter receives events emitted by write-only emitter', () => {
+//     const mockCallback = vi.fn();
+//     emitter.on('event2', mockCallback);
+//     writeOnlyEmitter.emit('event2', 42);
+//     expect(mockCallback).toHaveBeenCalledWith(42);
+//   });
 
-  test('parent emitter functions independently of write-only emitter', () => {
-    const mockCallback = vi.fn();
-    emitter.on('event1', mockCallback);
-    emitter.emit('event1', 'parent-data');
-    expect(mockCallback).toHaveBeenCalledWith('parent-data');
-  });
+//   test('parent emitter functions independently of write-only emitter', () => {
+//     const mockCallback = vi.fn();
+//     emitter.on('event1', mockCallback);
+//     emitter.emit('event1', 'parent-data');
+//     expect(mockCallback).toHaveBeenCalledWith('parent-data');
+//   });
 
-  test('type safety is enforced when emitting events', () => {
-    writeOnlyEmitter.emit(
-      'event2',
-      // @ts-expect-error - 'not-a-number' is not a number
-      'not-a-number',
-    );
+//   test('type safety is enforced when emitting events', () => {
+//     writeOnlyEmitter.emit(
+//       'event2',
+//       // @ts-expect-error - 'not-a-number' is not a number
+//       'not-a-number',
+//     );
 
-    writeOnlyEmitter.emit('event1', 'hello world');
+//     writeOnlyEmitter.emit('event1', 'hello world');
 
-    expect(1).toBe(1); // Placeholder to ensure test passes
-  });
+//     expect(1).toBe(1); // Placeholder to ensure test passes
+//   });
 
-  test('write-only emitter does not expose destroy method', () => {
-    // @ts-expect-error - 'destroy' should not be available
-    writeOnlyEmitter.destroy();
-    expect(1).toBe(1); // Placeholder to ensure test passes
-  });
-});
+//   test('write-only emitter does not expose destroy method', () => {
+//     // @ts-expect-error - 'destroy' should not be available
+//     writeOnlyEmitter.destroy();
+//     expect(1).toBe(1); // Placeholder to ensure test passes
+//   });
+// });

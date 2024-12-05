@@ -1,5 +1,5 @@
 import type { browserHistoryStateEvents } from '@bangle.io/constants';
-import type { DiscriminatedEmitter } from '@bangle.io/emitter';
+import type { Emitter } from '@bangle.io/emitter';
 
 export type PageLifeCycleEvent = {
   newState: PageLifeCycleState;
@@ -36,7 +36,7 @@ export interface BaseRouter<RouterState = any> {
 
   setUnsavedChanges: (_: boolean) => void;
 
-  emitter: DiscriminatedEmitter<
+  emitter: Emitter<
     | {
         event: 'event::router:route-update';
         payload: {
