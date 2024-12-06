@@ -36,7 +36,7 @@ export class WorkspaceService extends BaseService {
     this.navigation = dependencies.navigation;
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
 
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 }

@@ -43,7 +43,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     });
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     const logger = this.logger;
     this.db = await idb.openDB(DB_NAME, DB_VERSION, {
       upgrade(db, oldVersion) {
@@ -76,7 +76,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     this.logger.info('IndexedDB initialized');
   }
 
-  protected async onDispose(): Promise<void> {
+  protected async hookOnDispose(): Promise<void> {
     this.logger.info('Disposing IndexedDB');
     this.db?.close();
     this.logger.info('IndexedDB disposed');

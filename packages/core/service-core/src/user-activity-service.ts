@@ -117,7 +117,7 @@ export class UserActivityService extends BaseService {
       options.activityCooldownMs ?? DEFAULT_ACTIVITY_COOLDOWN_MS;
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.options.emitter.on(
       'event::command:result',
       (result) => {
@@ -139,7 +139,7 @@ export class UserActivityService extends BaseService {
     );
   }
 
-  protected async onDispose(): Promise<void> {
+  protected async hookOnDispose(): Promise<void> {
     this.activityLogCache.clear();
   }
 

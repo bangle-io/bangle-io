@@ -35,8 +35,8 @@ export class FileStorageIndexedDB
     });
   }
 
-  protected async onInitialize(): Promise<void> {}
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 
   private internalOnChange(event: FileStorageChangeEvent) {
     this.options.onChange(event);

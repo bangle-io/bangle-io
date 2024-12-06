@@ -87,7 +87,7 @@ export class FileSystemService extends BaseService<{
     );
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.options.emitter.on(
       'event::file:update',
       (event) => {
@@ -116,7 +116,7 @@ export class FileSystemService extends BaseService<{
     );
   }
 
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 
   isFileTypeSupported({ extension }: { extension: string }) {
     return VALID_NOTE_EXTENSIONS_SET.has(extension);

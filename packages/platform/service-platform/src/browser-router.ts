@@ -101,7 +101,7 @@ export class BrowserRouterService
     });
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.emitter.unpause();
   }
 

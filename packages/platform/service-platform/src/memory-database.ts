@@ -21,9 +21,9 @@ export class MemoryDatabaseService
     });
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
 
-  protected async onDispose(): Promise<void> {
+  protected async hookOnDispose(): Promise<void> {
     this.workspaces.clear();
     this.miscData.clear();
   }

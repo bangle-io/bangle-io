@@ -75,7 +75,7 @@ export class WorkspaceOpsService extends BaseService {
     });
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.options.emitter.on(
       'event::workspace-info:update',
       (event) => {
@@ -91,7 +91,7 @@ export class WorkspaceOpsService extends BaseService {
     );
   }
 
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 
   // Update the getWorkspaceInfo method to use the cache
   async getWorkspaceInfo(

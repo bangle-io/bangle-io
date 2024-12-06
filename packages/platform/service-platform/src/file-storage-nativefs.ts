@@ -116,10 +116,10 @@ export class FileStorageNativeFs
     });
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
 
   // Modified onDispose method
-  protected async onDispose(): Promise<void> {
+  protected async hookOnDispose(): Promise<void> {
     await this.invalidateCache();
   }
 

@@ -119,7 +119,7 @@ export abstract class BaseService<Config = void> {
     this.lifecycle.controller.signal.addEventListener(
       'abort',
       () => {
-        this.onDispose();
+        this.hookOnDispose();
       },
       {
         once: true,
@@ -233,10 +233,10 @@ export abstract class BaseService<Config = void> {
       );
     }
 
-    await this.onInitialize();
+    await this.hookOnInitialize();
   }
 
   // hooks that can be implemented by the service
-  protected async onInitialize(): Promise<void> {}
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 }

@@ -24,9 +24,9 @@ export class WorkbenchService extends BaseService {
     this.workbenchState = dependencies.workbenchState;
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     // Initialization logic if needed
   }
 
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 }

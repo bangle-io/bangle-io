@@ -75,7 +75,7 @@ export class WorkbenchStateService extends BaseService {
     });
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.store.set(this.$themePref, this.themeManager.currentPreference);
     this.addCleanup(
       this.themeManager.onThemeChange(({ preference }) => {
@@ -106,5 +106,5 @@ export class WorkbenchStateService extends BaseService {
     this.store.set(this.$omniSearchInput, '');
   }
 
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 }

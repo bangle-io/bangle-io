@@ -119,7 +119,7 @@ export class NavigationService extends BaseService {
       search: this.routerService.search,
     });
   }
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.syncLocationAtoms();
     this.syncPageLifeCycleAtom();
     this.routerService.emitter.on(

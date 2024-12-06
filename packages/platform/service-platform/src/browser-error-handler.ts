@@ -81,9 +81,9 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       rejection: isPromiseRejection,
     });
   };
-  protected async onInitialize(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
 
-  async onDispose(): Promise<void> {
+  async hookOnDispose(): Promise<void> {
     while (this.eventQueue.length > 0) {
       const event = this.eventQueue.shift();
       if (event) {

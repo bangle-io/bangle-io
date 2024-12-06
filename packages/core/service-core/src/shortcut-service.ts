@@ -50,9 +50,9 @@ export class ShortcutService extends BaseService<{
     }
   }
 
-  protected async onInitialize(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {}
 
-  protected async onDispose(): Promise<void> {
+  protected async hookOnDispose(): Promise<void> {
     this.target.removeEventListener('keydown', this.eventHandler);
     this.shortcutManager.deregisterAll();
   }

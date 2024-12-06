@@ -22,10 +22,10 @@ describe('BaseService', () => {
         dependencies,
       });
     }
-    protected async onInitialize(): Promise<void> {
+    protected async hookOnInitialize(): Promise<void> {
       // Simulate initialization
     }
-    protected async onDispose(): Promise<void> {
+    protected async hookOnDispose(): Promise<void> {
       // Simulate disposal
     }
     protected hookPostConfigSet(): void {}

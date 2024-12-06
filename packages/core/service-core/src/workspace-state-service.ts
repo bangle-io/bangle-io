@@ -58,7 +58,7 @@ export class WorkspaceStateService extends BaseService {
     this.workspaceOps = dependencies.workspaceOps;
   }
 
-  protected async onInitialize(): Promise<void> {
+  protected async hookOnInitialize(): Promise<void> {
     this.addCleanup(
       this.store.sub(
         atomEffect((get, set) => {
@@ -88,5 +88,5 @@ export class WorkspaceStateService extends BaseService {
     );
   }
 
-  protected async onDispose(): Promise<void> {}
+  protected async hookOnDispose(): Promise<void> {}
 }
