@@ -9,7 +9,17 @@ type ValidationResult =
   | { isValid: false; reason: string; invalidPath: string };
 
 export function pathJoin(...args: string[]): string {
-  return args.join('/');
+  return args
+    .filter((part) => part !== '')
+    .map((part, index) => {
+      if (index === 0) {
+        // Remove trailing slashes from the first part
+        return part.replace(/\/+$/, '');
+      }
+      // Remove leading and trailing slashes from subsequent parts
+      return part.replace(/^\/+|\/+$/g, '');
+    })
+    .join('/');
 }
 
 export function getExtension(strInput: string): string | undefined {
@@ -60,6 +70,7 @@ export function toFSPath(wsPath: string): string | undefined {
   return [resolved.wsName, resolved.filePath].join('/');
 }
 
+// should work for dirPath as well
 export function filePathToWsPath({
   wsName,
   inputPath,
@@ -109,7 +120,7 @@ export function validateWsPath(wsPath: string): ValidationResult {
 
   const [wsName, filePath] = splitWsPath(wsPath);
 
-  if (!wsName || !filePath) {
+  if (!wsName || filePath === undefined) {
     return {
       isValid: false,
       reason: 'wsName or filePath is missing',
@@ -159,6 +170,18 @@ export function assertedResolvePath(wsPath: string) {
     });
   }
   return resolved;
+}
+
+export function resolveDirWsPath(dirWsPath: string) {
+  if (!isDirWsPath(dirWsPath)) {
+    return undefined;
+  }
+
+  const [wsName, dirPath] = splitWsPath(dirWsPath);
+  return {
+    wsName,
+    dirPath: dirPath.endsWith('/') ? dirPath.slice(0, -1) : dirPath,
+  };
 }
 
 // TODO call it resolveFileWsPath
@@ -290,4 +313,29 @@ export function assertValidNoteWsPath(wsPath: string): void {
       },
     );
   }
+}
+
+export function isRootLevelFile(wsPath: string): boolean {
+  if (!isValidNoteWsPath(wsPath)) return false;
+  const resolved = resolvePath(wsPath);
+  if (!resolved) return false;
+  return resolved.dirPath === '/' || resolved.dirPath === '';
+}
+
+export function isFileWsPath(wsPath: string): boolean {
+  const validationResult = validateWsPath(wsPath);
+  if (!validationResult.isValid) {
+    return false;
+  }
+
+  return Boolean(getExtension(wsPath));
+}
+
+export function isDirWsPath(wsPath: string): boolean {
+  const validationResult = validateWsPath(wsPath);
+  if (!validationResult.isValid) {
+    return false;
+  }
+
+  return !getExtension(wsPath);
 }

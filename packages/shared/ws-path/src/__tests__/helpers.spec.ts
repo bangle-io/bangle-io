@@ -3,11 +3,52 @@ import {
   assertSplitWsPath,
   assertedResolvePath,
   getExtension,
+  pathJoin,
+  resolveDirWsPath,
   resolvePath,
   splitWsPath,
   validateWsPath,
 } from '../helpers';
 
+describe('resolveDirWsPath', () => {
+  it('should work with dir wsPaths', () => {
+    const wsPath = 'ws:';
+    const result = resolveDirWsPath(wsPath);
+    expect(result).toEqual({
+      wsName: 'ws',
+      dirPath: '',
+    });
+  });
+
+  it('should work with nested dir wsPaths', () => {
+    const wsPath = 'ws:dir/subdir/';
+    const result = resolveDirWsPath(wsPath);
+    expect(result).toEqual({
+      wsName: 'ws',
+      dirPath: 'dir/subdir',
+    });
+  });
+
+  it('should return undefined for empty string', () => {
+    const result = resolveDirWsPath('ws:dir.md');
+    expect(result).toBeUndefined();
+  });
+
+  it('should return undefined for empty string', () => {
+    const result = resolveDirWsPath('ws:dir/x.md');
+    expect(result).toBeUndefined();
+  });
+
+  it('should return undefined for empty string', () => {
+    const result = resolveDirWsPath('w');
+    expect(result).toBeUndefined();
+  });
+
+  it('should return undefined for empty string', () => {
+    const result = resolveDirWsPath('w.md');
+    expect(result).toBeUndefined();
+  });
+});
 describe('resolvePath - Valid Inputs', () => {
   it('should resolve wsPath with simple workspace and file', () => {
     const wsPath = 'workspace1:file.txt';
@@ -308,7 +349,6 @@ describe('validateWsPath', () => {
         [' ', 'Missing : in wsPath'],
         ['invalid//path', 'Invalid path segment'],
         [':', 'wsName or filePath is missing'],
-        ['ws:', 'wsName or filePath is missing'],
         [':path', 'wsName or filePath is missing'],
         ['ws:/path', 'filePath should not start with /'],
         ['ws:path//', 'Invalid path segment'],
@@ -433,5 +473,52 @@ describe('getExtension', () => {
   test('handles dots in directory names correctly', () => {
     expect(getExtension('path.with.dots/file.md')).toBe('.md');
     expect(getExtension('my.folder/sub.dir/file.txt')).toBe('.txt');
+  });
+});
+
+describe('pathJoin', () => {
+  it('should join paths without any slashes correctly', () => {
+    expect(pathJoin('foo', 'bar', 'baz')).toBe('foo/bar/baz');
+  });
+
+  it('should handle trailing slashes in the first argument', () => {
+    expect(pathJoin('foo/', 'bar', 'baz')).toBe('foo/bar/baz');
+  });
+
+  it('should handle leading and trailing slashes in middle arguments', () => {
+    expect(pathJoin('foo/', '/bar/', 'baz')).toBe('foo/bar/baz');
+  });
+
+  it('should handle leading slashes in all arguments', () => {
+    expect(pathJoin('/foo', '/bar', '/baz')).toBe('/foo/bar/baz');
+  });
+
+  it('should handle multiple consecutive slashes', () => {
+    expect(pathJoin('foo//', '//bar//', 'baz//')).toBe('foo/bar/baz');
+  });
+
+  it('should handle single arguments with slashes', () => {
+    expect(pathJoin('/foo/')).toBe('/foo');
+    expect(pathJoin('foo/')).toBe('foo');
+    expect(pathJoin('/foo/bar/')).toBe('/foo/bar');
+  });
+
+  it('should return an empty string when no arguments are provided', () => {
+    expect(pathJoin()).toBe('');
+  });
+
+  it('should handle empty strings within arguments', () => {
+    expect(pathJoin('foo', '', 'baz')).toBe('foo/baz');
+    expect(pathJoin('', 'bar', '')).toBe('bar');
+  });
+
+  it('should preserve absolute paths', () => {
+    expect(pathJoin('/foo', 'bar', 'baz')).toBe('/foo/bar/baz');
+    expect(pathJoin('/foo/', '/bar/', '/baz/')).toBe('/foo/bar/baz');
+  });
+
+  it('should handle relative paths correctly', () => {
+    expect(pathJoin('./foo', 'bar', 'baz')).toBe('./foo/bar/baz');
+    expect(pathJoin('../foo/', '/bar/', 'baz/')).toBe('../foo/bar/baz');
   });
 });

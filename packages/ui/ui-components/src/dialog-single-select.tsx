@@ -6,6 +6,7 @@ import {
   CommandDialog,
   CommandEmpty,
   CommandGroup,
+  CommandHints,
   CommandInput,
   CommandItem,
   CommandList,
@@ -28,6 +29,7 @@ export type DialogSingleSelectProps = {
   emptyMessage?: string;
   Icon?: React.ElementType;
   initialSearch?: string;
+  hints?: string[];
 };
 
 function SingleSelectItem({
@@ -74,6 +76,7 @@ export function DialogSingleSelect({
   emptyMessage = 'No options available.',
   initialSearch = '',
   Icon,
+  hints,
 }: DialogSingleSelectProps) {
   const [search, setSearch] = React.useState(initialSearch);
 
@@ -133,6 +136,7 @@ export function DialogSingleSelect({
           )}
         </CommandGroup>
       </CommandList>
+      <CommandHints hints={hints} />
     </CommandDialog>
   );
 }

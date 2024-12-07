@@ -1,23 +1,11 @@
 import {
-  ChevronRight,
   ChevronsUpDown,
-  Command as CommandIcon,
-  File as FileIcon,
-  Folder,
   GalleryVerticalEnd,
-  MoreHorizontal,
   Plus,
   PlusIcon,
   Search,
-  X as XIcon,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
-
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './collapsible';
 
 import {
   DropdownMenu,
@@ -30,10 +18,9 @@ import {
 
 import { Label } from './label';
 
-import { cx } from '@bangle.io/base-utils';
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { type TreeItem, buildTree } from '@bangle.io/ui-utils';
-import { Button } from './button';
+import { Tree, type TreeProps } from './Tree';
 import { KbdShortcut } from './kbd';
 import {
   Sidebar,
@@ -45,7 +32,6 @@ import {
   SidebarHeader,
   SidebarInput,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -83,6 +69,7 @@ export type AppSidebarProps = {
   onMoveFileClick?: (item: TreeItem) => void;
   isTruncated?: boolean;
   onTruncatedClick?: () => void;
+  onFileDrop?: TreeProps['onFileDrop'];
 };
 
 export function AppSidebar({
@@ -100,6 +87,7 @@ export function AppSidebar({
   onMoveFileClick = () => {},
   isTruncated = false,
   onTruncatedClick = () => {},
+  onFileDrop = () => {},
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined),
@@ -157,18 +145,15 @@ export function AppSidebar({
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
-              {tree.map((item, index) => (
-                <Tree
-                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                  key={index}
-                  item={item}
-                  activeWsPaths={activeWsPaths}
-                  onTreeItemClick={onTreeItemClick}
-                  onTreeItemDelete={onDeleteFileClick}
-                  onTreeItemRename={onRenameFileClick}
-                  onTreeItemMove={onMoveFileClick}
-                />
-              ))}
+              <Tree
+                rootItem={tree}
+                activeWsPaths={activeWsPaths}
+                onTreeItemClick={onTreeItemClick}
+                onTreeItemDelete={onDeleteFileClick}
+                onTreeItemRename={onRenameFileClick}
+                onTreeItemMove={onMoveFileClick}
+                onFileDrop={onFileDrop}
+              />
               {isTruncated && (
                 <SidebarMenuItem>
                   <SidebarMenuButton onClick={onTruncatedClick}>
@@ -181,114 +166,6 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
-}
-
-function Tree({
-  item,
-  onTreeItemClick,
-  onTreeItemDelete,
-  onTreeItemRename,
-  onTreeItemMove,
-  activeWsPaths,
-}: {
-  activeWsPaths: string[];
-  item: TreeItem;
-  onTreeItemClick: (item: TreeItem) => void;
-  onTreeItemDelete: (item: TreeItem) => void;
-  onTreeItemRename: (item: TreeItem) => void;
-  onTreeItemMove: (item: TreeItem) => void;
-}) {
-  if (!item.isDir) {
-    const isActive = item.wsPath && activeWsPaths.includes(item.wsPath);
-    return (
-      <SidebarMenuItem
-        className={cx(isActive && 'bg-sidebar-accent')}
-        style={{
-          contentVisibility: 'auto',
-        }}
-      >
-        <SidebarMenuButton
-          className="data-[active=true]:bg-transparent"
-          onClick={() => onTreeItemClick(item)}
-          isActive={item.isOpen}
-          size="sm"
-        >
-          <FileIcon
-            className={cx(
-              isActive ? 'fill-current text-accent' : 'text-inherit',
-            )}
-          />
-          <span className={cx(isActive ? 'font-semibold' : '')}>
-            {item.name}
-          </span>
-        </SidebarMenuButton>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuAction showOnHover>
-              <MoreHorizontal />
-            </SidebarMenuAction>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start">
-            <DropdownMenuItem
-              onClick={() => {
-                onTreeItemRename(item);
-              }}
-            >
-              Rename
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                onTreeItemDelete(item);
-              }}
-            >
-              Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                onTreeItemMove(item);
-              }}
-            >
-              Move
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    );
-  }
-
-  return (
-    <SidebarMenuItem>
-      <Collapsible
-        className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-        defaultOpen={item.isOpen ?? false}
-      >
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton size="sm">
-            <ChevronRight className="transition-transform" />
-            <Folder />
-            {item.name}
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {item.children?.map((subItem, index) => (
-              <Tree
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                key={index}
-                item={subItem}
-                onTreeItemClick={onTreeItemClick}
-                onTreeItemDelete={onTreeItemDelete}
-                onTreeItemRename={onTreeItemRename}
-                onTreeItemMove={onTreeItemMove}
-                activeWsPaths={activeWsPaths}
-              />
-            ))}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </Collapsible>
-    </SidebarMenuItem>
   );
 }
 

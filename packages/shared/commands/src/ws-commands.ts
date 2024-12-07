@@ -1,5 +1,4 @@
 import { T } from '@bangle.io/mini-zod';
-import type { Command } from '@bangle.io/types';
 import { narrow } from './common';
 
 // Workspace Commands
@@ -70,6 +69,18 @@ export const wsCommands = narrow([
     args: {
       wsPath: T.String,
       newWsPath: T.String,
+    },
+  },
+  {
+    id: 'command::ws:move-ws-path',
+    title: 'Move Note',
+    omniSearch: false,
+    dependencies: {
+      services: ['fileSystem', 'navigation', 'workspaceState'],
+    },
+    args: {
+      wsPath: T.String,
+      destDirWsPath: T.String,
     },
   },
 ]);

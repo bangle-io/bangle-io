@@ -77,3 +77,11 @@ export const DestructiveBadge: Story = {
     open: true,
   },
 };
+
+export const WithHint: Story = {
+  ...Template,
+  args: {
+    ...Template.args,
+    hints: ['Press ↵ to confirm your selection.', 'Press Esc to close.'],
+  },
+};

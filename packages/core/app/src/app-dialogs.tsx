@@ -36,6 +36,8 @@ export function AppDialogs() {
         continueText={alertDialog?.continueText}
         onCancel={alertDialog?.onCancel || (() => {})}
         onContinue={alertDialog?.onContinue || (() => {})}
+        tone={alertDialog?.tone}
+        dialogId={alertDialog?.dialogId}
       />
 
       <DialogSingleInput
@@ -54,6 +56,7 @@ export function AppDialogs() {
         Icon={singleInputDialog?.Icon}
         option={singleInputDialog?.option || { id: '' }}
         initialSearch={singleInputDialog?.initialSearch}
+        hints={singleInputDialog?.hints}
       />
 
       <DialogSingleSelect
@@ -73,6 +76,7 @@ export function AppDialogs() {
         emptyMessage={singleSelectDialog?.emptyMessage}
         Icon={singleSelectDialog?.Icon}
         initialSearch={singleSelectDialog?.initialSearch}
+        hints={singleSelectDialog?.hints}
       />
     </>
   );

@@ -6,12 +6,13 @@ import {
 } from '@bangle.io/ws-path';
 
 export interface TreeItem {
+  id: string;
   name: string;
   isDir: boolean;
   isOpen?: boolean;
   children?: TreeItem[];
   // only for files
-  wsPath?: string;
+  wsPath: string;
 }
 
 type SortComparator = (
@@ -106,20 +107,28 @@ export function buildTree(
         const isOpen =
           isPathOpen(newPathParts) || hasOpenDescendant(newPathParts);
 
+        const wsPath = filePathToWsPath({
+          wsName,
+          inputPath: pathJoin(...newPathParts),
+        });
         items.push({
+          id: wsPath,
+          wsPath,
           name,
           isDir: true,
           children,
           ...(isOpen && children.length > 0 ? { isOpen: true } : {}),
         });
       } else {
+        const wsPath = filePathToWsPath({
+          wsName,
+          inputPath: pathJoin(...newPathParts),
+        });
         items.push({
+          id: wsPath,
           name,
           isDir: false,
-          wsPath: filePathToWsPath({
-            wsName,
-            inputPath: pathJoin(...newPathParts),
-          }),
+          wsPath,
         });
       }
     }

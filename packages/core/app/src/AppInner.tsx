@@ -38,7 +38,7 @@ export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
           });
         }}
       />
-      <Toaster />
+      <Toaster position="top-center" />
       <AppErrorHandler rootEmitter={rootEmitter} />
       <AppSidebar>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">

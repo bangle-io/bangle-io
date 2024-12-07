@@ -1,6 +1,10 @@
 import { useCoreServices } from '@bangle.io/context';
 import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
-import { resolvePath } from '@bangle.io/ws-path';
+import {
+  assertedResolvePath,
+  filePathToWsPath,
+  resolvePath,
+} from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React, { useMemo } from 'react';
 
@@ -31,6 +35,22 @@ export const AppSidebar = ({ children }: SidebarProps) => {
       setOpen={(open) => setSidebarOpen(open)}
     >
       <UIAppSidebar
+        onFileDrop={(source, destination) => {
+          const wsName = assertedResolvePath(source.wsPath).wsName;
+          const destWsPath =
+            'isRoot' in destination
+              ? filePathToWsPath({ wsName, inputPath: '' })
+              : destination.wsPath;
+
+          commandDispatcher.dispatch(
+            'command::ws:move-ws-path',
+            {
+              wsPath: source.wsPath,
+              destDirWsPath: destWsPath,
+            },
+            'ui',
+          );
+        }}
         onTreeItemClick={(item) => {
           const wsPath = item.wsPath;
           if (!item.isDir && wsPath) {

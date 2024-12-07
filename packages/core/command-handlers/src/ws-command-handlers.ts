@@ -3,6 +3,8 @@ import {
   assertSplitWsPath,
   assertedResolvePath,
   filePathToWsPath,
+  pathJoin,
+  resolveDirWsPath,
 } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
@@ -97,6 +99,61 @@ export const wsCommandHandlers = [
             operation: 'rename',
             oldWsPath: wsPath,
             newWsPath,
+          },
+        );
+      }
+
+      const needsRedirect = navigation.resolveAtoms().wsPath === wsPath;
+      if (needsRedirect) {
+        navigation.goWorkspace();
+      }
+
+      void fileSystem
+        .renameFile({
+          oldWsPath: wsPath,
+          newWsPath,
+        })
+        .then(() => {
+          if (needsRedirect) {
+            navigation.goWsPath(newWsPath);
+          }
+        });
+    },
+  ),
+
+  c(
+    'command::ws:move-ws-path',
+    (
+      { fileSystem, navigation, workspaceState },
+      { wsPath, destDirWsPath },
+      key,
+    ) => {
+      const { store } = getCtx(key);
+
+      const { fileName } = assertedResolvePath(wsPath);
+      const resolvedDirPath = resolveDirWsPath(destDirWsPath);
+      if (!resolvedDirPath) {
+        throwAppError('error::workspace:not-opened', 'No workspace open', {
+          wsPath,
+        });
+      }
+
+      const newWsPath = filePathToWsPath({
+        wsName: resolvedDirPath.wsName,
+        inputPath: pathJoin(resolvedDirPath.dirPath, fileName),
+      });
+
+      if (wsPath === newWsPath) {
+        return;
+      }
+
+      const existingWsPaths = store.get(workspaceState.$wsPaths);
+      if (existingWsPaths.includes(newWsPath)) {
+        throwAppError(
+          'error::file:already-existing',
+          'A note with the same name already exists in the destination directory',
+          {
+            wsPath: newWsPath,
           },
         );
       }

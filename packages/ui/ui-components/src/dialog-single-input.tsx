@@ -5,6 +5,7 @@ import React from 'react';
 import {
   CommandBadge,
   CommandDialog,
+  CommandHints,
   CommandInput,
   CommandItem,
   CommandList,
@@ -24,6 +25,7 @@ export type DialogSingleInputProps = {
   badgeTone?: 'destructive' | 'default';
   badgeText?: string;
   initialSearch?: string;
+  hints?: string[];
 };
 
 /**
@@ -40,6 +42,7 @@ export function DialogSingleInput({
   badgeTone = 'default',
   Icon,
   initialSearch = '',
+  hints,
 }: DialogSingleInputProps) {
   const [search, setSearch] = React.useState(initialSearch);
   return (
@@ -83,6 +86,7 @@ export function DialogSingleInput({
           </CommandItem>
         </CommandGroup>
       </CommandList>
+      <CommandHints hints={hints} />
     </CommandDialog>
   );
 }

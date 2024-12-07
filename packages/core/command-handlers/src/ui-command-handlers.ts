@@ -136,9 +136,20 @@ export const uiCommandHandlers = [
             : undefined,
           onSelect: (option) => {
             const fileName = assertedResolvePath(option.id).fileNameWithoutExt;
-            if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
-              dispatch('command::ws:delete-ws-path', { wsPath: option.id });
-            }
+
+            store.set(workbenchState.$alertDialog, () => {
+              return {
+                dialogId: 'dialog::alert',
+                title: 'Confirm Delete',
+                tone: 'destructive',
+                description: `Are you sure you want to delete "${fileName}"?`,
+                continueText: 'Delete',
+                onContinue: () => {
+                  dispatch('command::ws:delete-ws-path', { wsPath: option.id });
+                },
+                onCancel: () => {},
+              };
+            });
           },
         };
       });
@@ -218,28 +229,36 @@ export const uiCommandHandlers = [
             return dirPath;
           }),
         ),
-      ];
+      ]
+        // filter out root
+        .filter((dirPath) => dirPath !== '');
 
       if (!oldWsPath) {
         throwAppError('error::workspace:not-opened', 'No workspace is opened', {
           wsPath,
         });
       }
-      const { wsName, fileName, fileNameWithoutExt, dirPath } =
-        assertedResolvePath(oldWsPath);
+      const {
+        wsName,
+        fileNameWithoutExt,
+        dirPath: oldDirPath,
+      } = assertedResolvePath(oldWsPath);
 
-      const isAtRoot = dirPath === '';
+      const isAtRoot = oldDirPath === '';
 
-      const options = dirPaths.map((dirPath) => ({
-        title: dirPath,
-        id: dirPath,
-      }));
+      const options = dirPaths
+
+        .filter((dirPath) => dirPath !== oldDirPath)
+        .map((dirPath) => ({
+          title: dirPath,
+          id: dirPath,
+        }));
 
       const ROOT_ID = '<{bangle_root}>';
 
       if (!isAtRoot) {
         options.push({
-          title: '/ Root',
+          title: '/',
           id: ROOT_ID,
         });
       }
@@ -254,24 +273,19 @@ export const uiCommandHandlers = [
           Icon: Briefcase,
           groupHeading: 'Directories',
           onSelect: (selectedDir) => {
-            const newDirPath = selectedDir.id;
+            let newDirPath = selectedDir.id;
+            if (newDirPath === ROOT_ID) {
+              newDirPath = '';
+            } else {
+              validateInputPath(newDirPath);
+            }
 
-            const newPath =
-              newDirPath === ROOT_ID
-                ? fileName
-                : pathJoin(newDirPath, fileName);
-
-            validateInputPath(newPath);
-
-            const newWsPath = filePathToWsPath({
-              wsName,
-              inputPath: newPath,
-            });
-            assertedResolvePath(newWsPath);
-
-            dispatch('command::ws:rename-ws-path', {
-              newWsPath,
+            dispatch('command::ws:move-ws-path', {
               wsPath: oldWsPath,
+              destDirWsPath: filePathToWsPath({
+                wsName,
+                inputPath: newDirPath,
+              }),
             });
           },
         };
@@ -339,7 +353,7 @@ export const uiCommandHandlers = [
             })
             .map((ws) => ({
               title: ws.name,
-              id: ws.type + ws.name,
+              id: `${ws.type}-${ws.name}`,
             })),
           Icon: Briefcase,
           onSelect: (option) => {
@@ -366,7 +380,7 @@ export const uiCommandHandlers = [
           emptyMessage: 'No workspaces found',
           options: workspaces.map((ws) => ({
             title: ws.name,
-            id: ws.type + ws.name,
+            id: `${ws.type}-${ws.name}`,
           })),
           Icon: Trash2,
           onSelect: (option) => {

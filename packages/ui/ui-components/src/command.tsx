@@ -174,6 +174,28 @@ const CommandShortcut = ({
 };
 CommandShortcut.displayName = 'CommandShortcut';
 
+const CommandHints = ({ hints }: { hints?: string[] }) => {
+  if (!hints?.length) {
+    return null;
+  }
+
+  return (
+    <div className="flex h-10 items-center justify-end border-border border-t bg-muted/30 px-3">
+      {hints.map((hint, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: acceptable for static hints
+        <React.Fragment key={index}>
+          {index > 0 && (
+            <div className="mx-3 h-3 w-px bg-border" aria-hidden="true" />
+          )}
+          <span className="text-muted-foreground text-xs">{hint}</span>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+CommandHints.displayName = 'CommandHints';
+
 export {
   Command,
   CommandDialog,
@@ -185,4 +207,5 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
+  CommandHints,
 };

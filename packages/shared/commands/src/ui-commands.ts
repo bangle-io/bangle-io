@@ -99,7 +99,7 @@ export const uiCommands = narrow([
     keywords: ['move', 'note', 'relocate'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
-      commands: ['command::ws:rename-ws-path'],
+      commands: ['command::ws:move-ws-path'],
     },
     omniSearch: true,
     args: {
