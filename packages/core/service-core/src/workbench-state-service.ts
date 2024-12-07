@@ -15,6 +15,38 @@ import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
+// Pure function to determine the omni search route based on current route and input
+function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
+  switch (currentRoute) {
+    case 'omni-home': {
+      if (input.startsWith('>')) {
+        return 'omni-command';
+      }
+
+      return 'omni-filtered';
+    }
+
+    case 'omni-command': {
+      if (!input.startsWith('>')) {
+        if (input.trim() === '') {
+          return 'omni-home';
+        }
+        return 'omni-filtered';
+      }
+      return 'omni-command';
+    }
+    case 'omni-filtered': {
+      // Once in filtered mode, stay there unless input is empty
+      if (input.trim() === '') {
+        return 'omni-home';
+      }
+      return 'omni-filtered';
+    }
+    default: {
+      return 'omni-home';
+    }
+  }
+}
 /**
  * a service that focuses on the workbench (UI) state
  */
@@ -43,14 +75,7 @@ export class WorkbenchStateService extends BaseService {
       >)
   >();
   $omniSearchInput = atom('');
-  $omniSearchRoute = atom<Route>((get) => {
-    const input = get(this.$omniSearchInput);
-    return input === ''
-      ? 'omni-home'
-      : input.startsWith('>')
-        ? 'omni-command'
-        : 'omni-filtered';
-  });
+  $omniSearchRoute = atom<Route>('omni-home');
 
   $cleanSearchTerm = atom((get) => {
     const search = get(this.$omniSearchInput);
@@ -87,7 +112,6 @@ export class WorkbenchStateService extends BaseService {
       this.options.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
-
       this.store.sub(
         atomEffect((get, set) => {
           const open = get(this.$openOmniSearch);
@@ -97,6 +121,15 @@ export class WorkbenchStateService extends BaseService {
         }),
         () => {},
       ),
+      // Update route state management
+      this.store.sub(this.$omniSearchInput, () => {
+        const input = this.store.get(this.$omniSearchInput);
+        const currentRoute = this.store.get(this.$omniSearchRoute);
+        const newRoute = determineOmniSearchRoute(input, currentRoute);
+        if (newRoute !== currentRoute) {
+          this.store.set(this.$omniSearchRoute, newRoute);
+        }
+      }),
     );
   }
 
@@ -110,13 +143,17 @@ export class WorkbenchStateService extends BaseService {
 
   resetOmniSearch() {
     this.store.set(this.$omniSearchInput, '');
+    this.store.set(this.$omniSearchRoute, 'omni-home');
   }
 
-  protected async hookOnDispose(): Promise<void> {}
+  goToCommandRoute() {
+    this.store.set(this.$omniSearchInput, '>');
+  }
 
   reloadUi() {
     this.options.emitter.emit('event::app:reload-ui', {
       sender: getEventSenderMetadata({ tag: this.name }),
     });
   }
+  protected async hookOnDispose(): Promise<void> {}
 }

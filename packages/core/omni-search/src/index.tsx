@@ -16,7 +16,7 @@ import { rankedFuzzySearch } from '@bangle.io/fuzzysearch';
 
 import { assertSplitWsPath } from '@bangle.io/ws-path';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
@@ -71,10 +71,12 @@ function HomeRoute({
   baseItems,
   recentWsPaths,
   recentCommands,
+  goToCommandRoute,
 }: {
   baseItems: CommandItemProp[];
   recentWsPaths: string[];
   recentCommands: string[];
+  goToCommandRoute: () => void;
 }) {
   const allCommands = useMemo(() => {
     const commands = baseItems.filter(
@@ -94,13 +96,27 @@ function HomeRoute({
 
     const recentIds = new Set(recentCmds.map((cmd) => cmd.id));
 
+    // Get remaining commands sorted alphabetically
     const remainingCommands = commands
       .filter((cmd) => !recentIds.has(cmd.id))
-      .sort((a, b) => a.title.localeCompare(b.title))
-      .slice(0, MAX_COMMANDS_PER_GROUP);
+      .sort((a, b) => a.title.localeCompare(b.title));
 
-    return [...recentCmds, ...remainingCommands];
-  }, [baseItems, recentCommands]);
+    // Calculate how many additional commands we can show
+    const additionalCommandsCount = Math.max(
+      0,
+      MAX_COMMANDS_PER_GROUP - recentCmds.length,
+    );
+    const regularCommands = remainingCommands.slice(0, additionalCommandsCount);
+
+    const viewAllCommand: CommandItemProp = {
+      id: 'view-all-commands',
+      title: 'View All Commands',
+      metadata: { type: 'command', cmd: { id: 'view-all-commands', args: {} } },
+      onSelect: goToCommandRoute,
+    };
+
+    return [...recentCmds, ...regularCommands, viewAllCommand];
+  }, [baseItems, recentCommands, goToCommandRoute]);
 
   const allFiles = useMemo(() => {
     return baseItems
@@ -308,6 +324,7 @@ export function OmniSearch({
   commands: Command[];
   onCommand: (cmd: Command) => void;
 }) {
+  const commandInputRef = React.useRef<HTMLInputElement>(null);
   const {
     workspaceState,
     commandDispatcher,
@@ -361,6 +378,11 @@ export function OmniSearch({
     return [...filteredCommands, ...filteredFiles];
   }, [commands, wsPaths, onCommand, commandDispatcher, setOpen]);
 
+  const goToCommandRoute = React.useCallback(() => {
+    workbenchState.goToCommandRoute();
+    commandInputRef.current?.focus();
+  }, [workbenchState]);
+
   return (
     <CommandDialog
       open={open}
@@ -374,9 +396,13 @@ export function OmniSearch({
       screenReaderTitle="omni command bar"
     >
       <CommandInput
+        ref={commandInputRef}
         placeholder="Type a command or search..."
         value={search}
-        onValueChange={(value) => updateSearch(value)}
+        onValueChange={(value) => {
+          updateSearch(value);
+          // No need to update route here
+        }}
       />
       <CommandList className="max-h-[428px]">
         {route === 'omni-home' && (
@@ -384,6 +410,7 @@ export function OmniSearch({
             baseItems={baseItems}
             recentWsPaths={recentWsPaths}
             recentCommands={recentCommands}
+            goToCommandRoute={goToCommandRoute}
           />
         )}
         {route === 'omni-command' && (
