@@ -65,8 +65,16 @@ export async function formatPackageJSON({
               a.localeCompare(b),
             ),
           ),
-          dependencies,
-          devDependencies,
+          dependencies: Object.fromEntries(
+            Object.entries(dependencies ?? {}).sort(([a], [b]) =>
+              a.localeCompare(b),
+            ),
+          ),
+          devDependencies: Object.fromEntries(
+            Object.entries(devDependencies ?? {}).sort(([a], [b]) =>
+              a.localeCompare(b),
+            ),
+          ),
         };
       });
     },

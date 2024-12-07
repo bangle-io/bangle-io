@@ -27,5 +27,6 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {}
 }

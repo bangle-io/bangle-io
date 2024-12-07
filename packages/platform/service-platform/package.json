@@ -28,16 +28,17 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/baby-fs": "workspace:*",
+    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/types": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/db-key-val": "workspace:*",
-    "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/base-error": "workspace:*",
-    "wouter": "^3.3.5",
-    "page-lifecycle": "^0.1.2"
-  }
+    "@bangle.io/types": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*",
+    "page-lifecycle": "^0.1.2",
+    "wouter": "^3.3.5"
+  },
+  "devDependencies": {}
 }

@@ -25,11 +25,12 @@
   "module": "src/index.ts",
   "scripts": {},
   "dependencies": {
+    "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "wouter": "^3.3.5",
-    "@bangle.io/base-utils": "workspace:*",
-    "regexparam": "^3.0.0"
-  }
+    "regexparam": "^3.0.0",
+    "wouter": "^3.3.5"
+  },
+  "devDependencies": {}
 }

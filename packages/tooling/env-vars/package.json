@@ -28,5 +28,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7"
-  }
+  },
+  "devDependencies": {}
 }

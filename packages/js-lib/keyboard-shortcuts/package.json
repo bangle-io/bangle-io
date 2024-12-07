@@ -29,5 +29,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/base-error": "workspace:*"
-  }
+  },
+  "devDependencies": {}
 }

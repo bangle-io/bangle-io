@@ -29,16 +29,16 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/command-handlers": "workspace:*",
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
-    "@bangle.io/types": "workspace:*",
     "@bangle.io/service-platform": "workspace:*",
-    "jotai": "^2.10.3",
-    "@bangle.io/color-scheme-manager": "workspace:*"
+    "@bangle.io/types": "workspace:*",
+    "jotai": "^2.10.3"
   },
   "devDependencies": {
-    "@bangle.io/test-utils": "workspace:*",
-    "@bangle.io/emitter": "workspace:*"
+    "@bangle.io/emitter": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*"
   }
 }

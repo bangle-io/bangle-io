@@ -180,7 +180,7 @@ const CommandHints = ({ hints }: { hints?: string[] }) => {
   }
 
   return (
-    <div className="flex h-10 items-center justify-end border-border border-t bg-muted/30 px-3">
+    <div className="mt-2 flex h-10 items-center justify-end border-border border-t bg-muted/30 px-3">
       {hints.map((hint, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: acceptable for static hints
         <React.Fragment key={index}>

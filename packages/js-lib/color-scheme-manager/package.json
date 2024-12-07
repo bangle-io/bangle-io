@@ -31,5 +31,6 @@
   "scripts": {
     "build": "pnpm tsc src/index.ts --outDir ./src --target ES6 --module es2015 --strict --noEmitOnError false --skipLibCheck --declaration"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {}
 }

@@ -28,9 +28,9 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/types": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/types": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/base-utils": "workspace:*"

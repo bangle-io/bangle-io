@@ -20,5 +20,7 @@
     "env": "universal",
     "kind": "js-util"
   },
-  "scripts": {}
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
 }

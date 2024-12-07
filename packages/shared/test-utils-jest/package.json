@@ -28,7 +28,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/logger": "workspace:*"
-  }
+    "@bangle.io/logger": "workspace:*",
+    "wait-for-expect": "^3.0.2"
+  },
+  "devDependencies": {}
 }

@@ -28,14 +28,14 @@
   },
   "scripts": {},
   "dependencies": {
-    "react": "^18.3.1",
+    "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/browser": "workspace:*",
     "@bangle.io/keyboard-shortcuts": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*",
-    "wouter": "^3.3.5",
     "@bangle.io/ws-path": "workspace:*",
-    "jotai": "^2.10.3"
+    "jotai": "^2.10.3",
+    "react": "^19.0.0",
+    "wouter": "^3.3.5"
   }
 }

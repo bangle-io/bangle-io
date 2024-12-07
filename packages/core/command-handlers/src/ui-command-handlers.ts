@@ -139,6 +139,7 @@ export const uiCommandHandlers = [
             id: path,
           })),
           Icon: Trash2,
+          hints: ['Press Enter or Click to delete'],
           initialSearch: wsPath
             ? assertSplitWsPath(wsPath).filePath
             : undefined,

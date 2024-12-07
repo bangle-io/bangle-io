@@ -28,13 +28,14 @@
   },
   "scripts": {},
   "dependencies": {
-    "wait-for-expect": "^3.0.2",
+    "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/logger": "workspace:*",
+    "@bangle.io/root-emitter": "workspace:*",
+    "@bangle.io/service-core": "workspace:*",
+    "@bangle.io/service-platform": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "jotai": "^2.10.3",
-    "@bangle.io/root-emitter": "workspace:*",
-    "@bangle.io/service-platform": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/service-core": "workspace:*"
-  }
+    "wait-for-expect": "^3.0.2"
+  },
+  "devDependencies": {}
 }

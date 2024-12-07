@@ -28,7 +28,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/color-scheme-manager": "workspace:*"
-  }
+    "@bangle.io/color-scheme-manager": "workspace:*",
+    "@bangle.io/types": "workspace:*"
+  },
+  "devDependencies": {}
 }
