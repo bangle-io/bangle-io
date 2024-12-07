@@ -254,7 +254,7 @@ function initCoreServices(
     {
       fileStorageServices: platformServices.fileStorage,
       emitter: rootEmitter.scoped(
-        ['event::file:update'],
+        ['event::file:update', 'event::file:force-update'],
         commonOpts.rootAbortSignal,
       ),
     },

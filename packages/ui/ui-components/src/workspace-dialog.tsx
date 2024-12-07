@@ -31,7 +31,7 @@ export interface ErrorInfo {
 
 export type DirectoryPickResult =
   | { type: 'success'; dirHandle: FileSystemDirectoryHandle }
-  | { type: 'error'; error: ErrorInfo };
+  | { type: 'error'; errorInfo: ErrorInfo; error: Error };
 
 export interface WorkspaceValidation {
   isValid: boolean;
@@ -380,7 +380,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
     }
     const result = await onDirectoryPick();
     if (result.type === 'error') {
-      dispatch({ type: 'UPDATE_ERROR', error: result.error });
+      dispatch({ type: 'UPDATE_ERROR', error: result.errorInfo });
     } else {
       dispatch({
         type: 'UPDATE_DIRECTORY_HANDLE',

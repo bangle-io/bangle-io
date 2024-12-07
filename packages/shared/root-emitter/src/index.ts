@@ -45,6 +45,12 @@ export type RootEvents =
       };
     }
   | {
+      event: 'event::file:force-update';
+      payload: {
+        sender: EventSenderMetadata;
+      };
+    }
+  | {
       event: 'event::command:result';
       payload: {
         type: 'success' | 'failure';

@@ -12,6 +12,7 @@ import type {
 import lifecycle from 'page-lifecycle';
 import { navigate } from 'wouter/use-browser-location';
 
+type SearchRecord = Record<string, string | null>;
 const pendingSymbol = Symbol('pending');
 
 export class BrowserRouterService
@@ -51,7 +52,6 @@ export class BrowserRouterService
   private onBrowserHistoryEvent = (event: Event) => {
     this._search = parseBrowserSearch();
     this._pathname = parseBrowserPathname();
-    // const { pathname, search } = location;
     this.emitter.emit('event::router:route-update', {
       location: {
         pathname: this._pathname,
@@ -146,10 +146,10 @@ export class BrowserRouterService
 
 function parseBrowserSearch(
   rawSearch: string = window.location.search,
-): Record<string, string> {
+): SearchRecord {
   const params = new URLSearchParams(rawSearch);
 
-  const search: Record<string, string> = {};
+  const search: SearchRecord = {};
   for (const [key, value] of params) {
     search[key] = value;
   }
@@ -162,7 +162,12 @@ function parseBrowserPathname(pathname = window.location.pathname): string {
 }
 
 function buildURL(location: RouterLocation): string {
-  const params = new URLSearchParams(location.search);
+  const normalizedSearch: Record<string, string> = Object.fromEntries(
+    Object.entries(location.search).filter(
+      (arg): arg is [string, string] => arg[1] !== null,
+    ),
+  );
+  const params = new URLSearchParams(normalizedSearch);
 
   let searchStr = params.toString();
   if (searchStr.length > 0) {

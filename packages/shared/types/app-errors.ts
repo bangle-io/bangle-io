@@ -1,3 +1,4 @@
+// packages/shared/types/app-errors.ts
 export type AppError =
   // General main errors
   | {

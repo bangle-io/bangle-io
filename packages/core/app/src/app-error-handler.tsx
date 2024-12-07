@@ -1,15 +1,8 @@
-import {
-  BaseError,
-  getGithubUrl,
-  handleAppError,
-  isAppError,
-  throwAppError,
-} from '@bangle.io/base-utils';
+import { getGithubUrl, handleAppError } from '@bangle.io/base-utils';
 import { useCoreServices, useLogger } from '@bangle.io/context';
-import { FileStorageNativeFs } from '@bangle.io/service-platform';
 import type { RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
-import { useAtom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import React, { useEffect } from 'react';
 
 export function AppErrorHandler({
@@ -19,7 +12,6 @@ export function AppErrorHandler({
 }) {
   const coreServices = useCoreServices();
   const logger = useLogger();
-  const setAlertDialog = useSetAtom(coreServices.workbenchState.$alertDialog);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -47,6 +39,12 @@ export function AppErrorHandler({
           label: 'Dismiss',
           onClick: () => {},
         },
+        action: {
+          label: 'Report',
+          onClick: () => {
+            window.open(getGithubUrl(error, logger), '_blank');
+          },
+        },
       });
     };
 
@@ -55,57 +53,14 @@ export function AppErrorHandler({
       return handleAppError(error, (appError, error) => {
         switch (appError.name) {
           case 'error::workspace:native-fs-auth-needed': {
-            const wsName = appError.payload.wsName;
-
-            coreServices.workspaceOps
-              .getWorkspaceMetadata(wsName)
-              .then(({ rootDirHandle }) => {
-                if (!rootDirHandle) {
-                  throwAppError(
-                    'error::workspace:invalid-metadata',
-                    `Invalid workspace metadata for ${wsName}. Missing root dir handle`,
-                    {
-                      wsName,
-                    },
-                  );
-                }
-
-                const onNotGranted = () => {
-                  toast.error('Permission not granted', {
-                    duration: 5000,
-                    cancel: {
-                      label: 'Dismiss',
-                      onClick: () => {},
-                    },
-                  });
-                  coreServices.navigation.goHome();
-                };
-
-                setAlertDialog({
-                  dialogId: 'dialog::workspace:native-fs-auth-needed',
-                  title: 'Grant permission?',
-                  description: `Bangle.io needs you permission to access "${wsName}"`,
-                  continueText: 'Grant',
-                  onContinue: async () => {
-                    const granted =
-                      await FileStorageNativeFs.requestNativeBrowserFSPermission(
-                        rootDirHandle,
-                      );
-
-                    if (!granted) {
-                      onNotGranted();
-                      return;
-                    }
-                    coreServices.navigation.goWorkspace(wsName);
-                    return;
-                  },
-                  onCancel: () => {
-                    onNotGranted();
-                  },
-                });
-              });
+            coreServices.commandDispatcher.dispatch(
+              'command::ui:native-fs-auth',
+              { wsName: appError.payload.wsName },
+              'AppErrorHandler',
+            );
             return;
           }
+
           default: {
             showAppLikeError(error);
             return;
@@ -132,7 +87,7 @@ export function AppErrorHandler({
     return () => {
       controller.abort();
     };
-  }, [rootEmitter, setAlertDialog, coreServices, logger]);
+  }, [rootEmitter, coreServices, logger]);
 
   return null;
 }

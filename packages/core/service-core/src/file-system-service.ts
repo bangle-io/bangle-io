@@ -49,7 +49,7 @@ export class FileSystemService extends BaseService<{
     baseOptions: BaseServiceCommonOptions,
     dependencies: Record<string, BaseService>,
     private options: {
-      emitter: ScopedEmitter<'event::file:update'>;
+      emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
       fileStorageServices: Record<string, BaseFileStorageService>;
     },
   ) {
@@ -87,7 +87,24 @@ export class FileSystemService extends BaseService<{
     );
   }
 
+  forceUpdate(from: string) {
+    this.options.emitter.emit('event::file:force-update', {
+      sender: getEventSenderMetadata({ tag: from }),
+    });
+  }
+
   protected async hookOnInitialize(): Promise<void> {
+    this.options.emitter.on(
+      'event::file:force-update',
+      () => {
+        this.store.set(this.$fileCreateCount, (c) => c + 1);
+        this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
+        this.store.set(this.$fileDeleteCount, (c) => c + 1);
+        this.store.set(this.$fileRenameCount, (c) => c + 1);
+      },
+      this.abortSignal,
+    );
+
     this.options.emitter.on(
       'event::file:update',
       (event) => {
@@ -108,7 +125,10 @@ export class FileSystemService extends BaseService<{
             this.store.set(this.$fileRenameCount, (c) => c + 1);
             break;
           }
+          // REMEMBER to update force update event when adding new event types
+
           default: {
+            const _exhaustiveCheck: never = event.type;
           }
         }
       },

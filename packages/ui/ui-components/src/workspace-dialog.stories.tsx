@@ -90,6 +90,10 @@ export const NativeFsError: Story = {
     onDirectoryPick: async (): Promise<DirectoryPickResult> => ({
       type: 'error',
       error: new Error('Failed to access directory.'),
+      errorInfo: {
+        title: 'NotFoundError',
+        message: 'Failed to access directory',
+      },
     }),
     storageTypes: getStorageTypes({
       browserDisabled: true,

@@ -1,5 +1,13 @@
-import { BaseError, expectType, throwAppError } from '@bangle.io/base-utils';
+// packages/core/command-handlers/src/ui-command-handlers.ts
+import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
+import {
+  BaseError,
+  expectType,
+  getEventSenderMetadata,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import type { ThemePreference } from '@bangle.io/types';
+import { toast } from '@bangle.io/ui-components';
 import {
   appendNoteExtension,
   assertSplitWsPath,
@@ -417,6 +425,82 @@ export const uiCommandHandlers = [
           },
           Icon: FilePlus,
         };
+      });
+    },
+  ),
+
+  c(
+    'command::ui:native-fs-auth',
+    (
+      { workspaceOps, navigation, workbenchState, fileSystem },
+      { wsName },
+      key,
+    ) => {
+      const { store } = getCtx(key);
+
+      workspaceOps.getWorkspaceMetadata(wsName).then(({ rootDirHandle }) => {
+        if (!rootDirHandle) {
+          throwAppError(
+            'error::workspace:invalid-metadata',
+            `Invalid workspace metadata for ${wsName}. Missing root dir handle`,
+            { wsName },
+          );
+        }
+
+        let attempt = 0;
+
+        const failAndGoToHome = () => {
+          toast.error('Permission not granted', {
+            duration: 5000,
+            cancel: {
+              label: 'Dismiss',
+              onClick: () => {},
+            },
+          });
+          navigation.goHome();
+        };
+
+        const onNotGranted = () => {
+          queueMicrotask(() => {
+            if (attempt++ > 2) {
+              failAndGoToHome();
+              return;
+            }
+            store.set(workbenchState.$alertDialog, {
+              dialogId: 'dialog::workspace:native-fs-auth-needed',
+              title: 'Grant permission?',
+              description: `That didn't work. Bangle.io needs your permission to access "${wsName}"`,
+              continueText: 'Try Again',
+              onContinue,
+              onCancel: () => {
+                failAndGoToHome();
+              },
+            });
+          });
+        };
+
+        const onContinue = async () => {
+          const granted = await requestNativeBrowserFSPermission(rootDirHandle);
+
+          if (!granted) {
+            onNotGranted();
+            return;
+          }
+
+          fileSystem.forceUpdate(key.key);
+          navigation.goWorkspace(wsName, { skipIfAlreadyThere: true });
+        };
+
+        store.set(workbenchState.$alertDialog, {
+          dialogId: 'dialog::workspace:native-fs-auth-needed',
+          title: 'Grant permission?',
+          description: `Bangle.io needs your permission to access "${wsName}"`,
+          continueText: 'Grant',
+          onContinue,
+          onCancel: () => {
+            failAndGoToHome();
+          },
+        });
       });
     },
   ),

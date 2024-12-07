@@ -149,4 +149,14 @@ export const uiCommands = narrow([
     omniSearch: true,
     args: null,
   },
+  {
+    id: 'command::ui:native-fs-auth',
+    dependencies: {
+      services: ['workspaceOps', 'navigation', 'workbenchState', 'fileSystem'],
+    },
+    args: {
+      wsName: T.String,
+    },
+    omniSearch: false,
+  },
 ]);

@@ -16,11 +16,11 @@ export type PageLifeCycleState =
 
 export type RouterLocation = {
   pathname: string;
-  search: Record<string, string>;
+  search: Record<string, string | null>;
 };
 export interface BaseRouter<RouterState = any> {
   readonly pathname: string;
-  readonly search: Record<string, string>;
+  readonly search: Record<string, string | null>;
 
   readonly basePath: string;
   // should merge with the location

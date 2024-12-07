@@ -21,19 +21,7 @@ export class NavigationService extends BaseService {
     previous: undefined,
   });
 
-  $location: WritableAtom<
-    {
-      pathname: string;
-      search: Record<string, string>;
-    },
-    [
-      {
-        pathname: string;
-        search: Record<string, string>;
-      },
-    ],
-    void
-  >;
+  $location: WritableAtom<RouterLocation, [RouterLocation], void>;
 
   $wsPath = atom<string | undefined>((get) => {
     try {
@@ -153,7 +141,7 @@ export class NavigationService extends BaseService {
 
   go(
     to: Partial<RouterLocation>,
-    options?: { replace?: boolean; state?: RouterState },
+    options?: { clearPath?: boolean; replace?: boolean; state?: RouterState },
   ) {
     this.routerService.navigate(to, options);
   }
@@ -170,11 +158,17 @@ export class NavigationService extends BaseService {
    * takes you to a given workspace home
    * if wsName is not provided, it will take you to the current workspace home
    */
-  goWorkspace(wsName?: string) {
+  goWorkspace(
+    wsName?: string,
+    { skipIfAlreadyThere }: { skipIfAlreadyThere?: boolean } = {},
+  ) {
     const targetWsName = wsName || this.store.get(this.$wsName);
     if (!targetWsName) {
       this.goNotFound();
     } else {
+      if (skipIfAlreadyThere && targetWsName === this.store.get(this.$wsName)) {
+        return;
+      }
       this.go(buildUrlPath.pageWsHome({ wsName: targetWsName }));
     }
   }
@@ -187,6 +181,10 @@ export class NavigationService extends BaseService {
   goHome() {
     this.go({
       pathname: '/',
+      // TODO this should be in ws-path lib
+      search: {
+        p: null,
+      },
     });
   }
 }

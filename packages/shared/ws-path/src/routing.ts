@@ -1,5 +1,6 @@
 import { throwAppError } from '@bangle.io/base-utils';
 import { ROUTES } from '@bangle.io/constants';
+import type { RouterLocation } from '@bangle.io/types';
 // wouter uses this regexparam
 import { parse as parsePattern } from 'regexparam';
 import { matchRoute } from 'wouter';
@@ -10,7 +11,7 @@ export const buildUrlPath = {
     pathname: ROUTES.pageFatalError,
   }),
   pageWsHome: ({ wsName }: { wsName: string }) => {
-    return { pathname: '/ws/' + wsName };
+    return { pathname: '/ws/' + wsName, search: { p: null } };
   },
   pageEditor: ({ wsPath }: { wsPath: string }) => {
     const [wsName, filePath] = splitWsPath(wsPath);
@@ -31,7 +32,7 @@ export const buildUrlPath = {
   },
   pageNotFound: ({ path }: { path?: string }) => ({
     pathname: ROUTES.pageNotFound,
-    search: path ? { p: path } : undefined,
+    search: path ? { p: path } : { p: null },
   }),
   pageWorkspaceNotFound: ({ wsName }: { wsName: string }) => {
     return { pathname: '/ws-error/no-ws/' + wsName };
@@ -44,7 +45,7 @@ export const buildUrlPath = {
   }),
 } satisfies Record<
   string,
-  (args: any) => { pathname: string; search?: Record<string, string> }
+  (args: any) => { pathname: string; search?: RouterLocation['search'] }
 >;
 
 type ParseResult<T> = T | null;
@@ -53,7 +54,7 @@ export const parseUrlPath = {
   pageEditor({
     pathname,
     search = {},
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<{
     wsPath: string;
   }> {
     const isMatch = matchRoute(parsePattern, ROUTES.pageEditor, pathname)[0];
@@ -74,7 +75,7 @@ export const parseUrlPath = {
 
   pageWsHome({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<{
     wsName: string;
   }> {
     const [isMatch, match] = matchRoute(
@@ -90,7 +91,7 @@ export const parseUrlPath = {
 
   pageNativeFsAuthFailed({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<{
     wsName: string;
   }> {
     const [isMatch, match] = matchRoute(
@@ -106,7 +107,7 @@ export const parseUrlPath = {
 
   pageNativeFsAuthReq({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<{
     wsName: string;
   }> {
     const [isMatch, match] = matchRoute(
@@ -122,7 +123,7 @@ export const parseUrlPath = {
 
   pageNotFound({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<
     Record<string, never>
   > {
     const [isMatch] = matchRoute(parsePattern, ROUTES.pageNotFound, pathname);
@@ -131,7 +132,7 @@ export const parseUrlPath = {
 
   pageWorkspaceNotFound({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<{
     wsName: string;
   }> {
     const [isMatch, match] = matchRoute(
@@ -147,7 +148,7 @@ export const parseUrlPath = {
 
   pageWsPathNotFound({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<{
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<{
     wsPath: string;
   }> {
     const [isMatch, match] = matchRoute(
@@ -163,7 +164,7 @@ export const parseUrlPath = {
 
   pageFatalError({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<
     Record<string, never>
   > {
     const [isMatch] = matchRoute(parsePattern, ROUTES.pageFatalError, pathname);
@@ -172,7 +173,7 @@ export const parseUrlPath = {
 
   pageWelcome({
     pathname,
-  }: { pathname: string; search?: Record<string, string> }): ParseResult<
+  }: { pathname: string; search?: RouterLocation['search'] }): ParseResult<
     Record<string, never>
   > {
     const [isMatch] = matchRoute(parsePattern, ROUTES.pageWelcome, pathname);

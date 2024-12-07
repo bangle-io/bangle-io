@@ -15,19 +15,25 @@ describe('buildUrlPath', () => {
     it('should return the correct pathname with wsName', () => {
       const wsName = 'myWorkspace';
       const result = buildUrlPath.pageWsHome({ wsName });
-      expect(result).toEqual({ pathname: `/ws/${wsName}` });
+      expect(result).toEqual({
+        pathname: `/ws/${wsName}`,
+        search: { p: null },
+      });
     });
 
     it('should handle special characters in wsName', () => {
       const wsName = 'my Work space!';
       const result = buildUrlPath.pageWsHome({ wsName });
-      expect(result).toEqual({ pathname: `/ws/${wsName}` });
+      expect(result).toEqual({
+        pathname: `/ws/${wsName}`,
+        search: { p: null },
+      });
     });
 
     it('should handle empty wsName', () => {
       const wsName = '';
       const result = buildUrlPath.pageWsHome({ wsName });
-      expect(result).toEqual({ pathname: '/ws/' });
+      expect(result).toEqual({ pathname: '/ws/', search: { p: null } });
     });
   });
 

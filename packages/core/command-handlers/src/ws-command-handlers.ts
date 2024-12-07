@@ -1,3 +1,4 @@
+// packages/core/command-handlers/src/ws-command-handlers.ts
 import { throwAppError } from '@bangle.io/base-utils';
 import {
   appendNoteExtension,

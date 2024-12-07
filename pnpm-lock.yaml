@@ -131,6 +131,9 @@ importers:
 
   packages/core/command-handlers:
     dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
@@ -149,6 +152,9 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
+      '@bangle.io/ui-components':
+        specifier: workspace:*
+        version: link:../../ui/ui-components
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path

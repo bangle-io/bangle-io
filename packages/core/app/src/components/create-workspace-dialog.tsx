@@ -11,36 +11,7 @@ import { CreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { validateWsName } from '@bangle.io/ws-path/src/helpers';
 import { useAtom } from 'jotai';
 import React from 'react';
-
-// First add these constants
-const ERROR_TYPES = {
-  ERROR_PICKING_DIRECTORY: 'ERROR_PICKING_DIRECTORY',
-  UNKNOWN: 'UNKNOWN_ERROR',
-  WORKSPACE_AUTH_REJECTED: 'WORKSPACE_AUTH_REJECTED',
-  CLICKED_TOO_SOON: 'CLICKED_TOO_SOON_ERROR',
-} as const;
-
-type ErrorType = (typeof ERROR_TYPES)[keyof typeof ERROR_TYPES];
-
-const ERROR_MESSAGES: Record<ErrorType, { title: string; message: string }> = {
-  [ERROR_TYPES.ERROR_PICKING_DIRECTORY]: {
-    title: 'There was an error opening your notes folder.',
-    message:
-      'Please make sure your notes folder is inside a common location like Documents or Desktop.',
-  },
-  [ERROR_TYPES.CLICKED_TOO_SOON]: {
-    title: "That didn't work",
-    message: 'Please try clicking the Browse button again.',
-  },
-  [ERROR_TYPES.WORKSPACE_AUTH_REJECTED]: {
-    title: 'Access was denied',
-    message: 'Please allow access to your folder to continue.',
-  },
-  [ERROR_TYPES.UNKNOWN]: {
-    title: 'Unknown error occurred',
-    message: 'Please try again or reload the page.',
-  },
-};
+import { nativeFsErrorParse } from '../common/native-fs-error-parse';
 
 export function AppCreateWorkspaceDialog() {
   const coreServices = useCoreServices();
@@ -132,31 +103,7 @@ export function AppCreateWorkspaceDialog() {
             throw error;
           }
 
-          let errorType: ErrorType;
-
-          if (
-            error instanceof Error &&
-            error.message.toLowerCase().includes('user activation is required')
-          ) {
-            errorType = ERROR_TYPES.CLICKED_TOO_SOON;
-          } else if (
-            error instanceof BaseFileSystemError &&
-            (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
-              error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
-          ) {
-            errorType = ERROR_TYPES.WORKSPACE_AUTH_REJECTED;
-          } else if (error instanceof BaseFileSystemError) {
-            errorType = ERROR_TYPES.ERROR_PICKING_DIRECTORY;
-          } else {
-            errorType = ERROR_TYPES.UNKNOWN;
-            console.error('Unknown error during directory pick:', error);
-          }
-
-          return {
-            type: 'error',
-            ...ERROR_MESSAGES[errorType],
-            error: error,
-          };
+          return nativeFsErrorParse(error);
         }
       }}
     />
