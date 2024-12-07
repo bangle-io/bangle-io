@@ -1,8 +1,8 @@
 import { useCoreServices } from '@bangle.io/context';
 import {
   AppAlertDialog,
-  DialogSingleInput,
   DialogSingleSelect,
+  DialogSingleInput,
 } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
 import React from 'react';

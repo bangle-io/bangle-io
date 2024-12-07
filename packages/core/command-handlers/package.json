@@ -38,7 +38,7 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "lucide-react": "^0.468.0",
-    "react": "^19.0.0"
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@bangle.io/service-core": "workspace:*"

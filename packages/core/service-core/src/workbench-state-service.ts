@@ -1,5 +1,5 @@
-import { BaseService } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
+import { BaseService, getEventSenderMetadata } from '@bangle.io/base-utils';
+import type { BaseServiceCommonOptions, ScopedEmitter } from '@bangle.io/types';
 import type {
   AppAlertDialogProps,
   DialogSingleInputProps,
@@ -65,7 +65,10 @@ export class WorkbenchStateService extends BaseService {
   constructor(
     baseOptions: BaseServiceCommonOptions,
     dependencies: undefined,
-    private themeManager: ThemeManager,
+    private options: {
+      themeManager: ThemeManager;
+      emitter: ScopedEmitter<'event::app:reload-ui'>;
+    },
   ) {
     super({
       ...baseOptions,
@@ -76,9 +79,12 @@ export class WorkbenchStateService extends BaseService {
   }
 
   protected async hookOnInitialize(): Promise<void> {
-    this.store.set(this.$themePref, this.themeManager.currentPreference);
+    this.store.set(
+      this.$themePref,
+      this.options.themeManager.currentPreference,
+    );
     this.addCleanup(
-      this.themeManager.onThemeChange(({ preference }) => {
+      this.options.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
 
@@ -95,7 +101,7 @@ export class WorkbenchStateService extends BaseService {
   }
 
   changeThemePreference(preference: ThemeConfig['defaultPreference']) {
-    this.themeManager.setPreference(preference);
+    this.options.themeManager.setPreference(preference);
   }
 
   updateOmniSearchInput(input: string) {
@@ -107,4 +113,10 @@ export class WorkbenchStateService extends BaseService {
   }
 
   protected async hookOnDispose(): Promise<void> {}
+
+  reloadUi() {
+    this.options.emitter.emit('event::app:reload-ui', {
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
+  }
 }

@@ -24,6 +24,12 @@ export type RootEvents =
       };
     }
   | {
+      event: 'event::app:reload-ui';
+      payload: {
+        sender: EventSenderMetadata;
+      };
+    }
+  | {
       event: 'event::workspace-info:update';
       payload: {
         wsName: string;
@@ -63,6 +69,8 @@ export type RootEvents =
 export const CROSS_TAB_EVENTS = [
   'event::workspace-info:update',
   'event::file:update',
+  'event::file:force-update',
+  'event::app:reload-ui',
 ] as const satisfies RootEvents['event'][];
 
 export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];

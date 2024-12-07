@@ -19,7 +19,7 @@
     "@types/bun": "^1.1.14",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.1",
-    "@types/react": "^19.0.1",
+    "@types/react": "^18.3.14",
     "@types/wicg-file-system-access": "^2023.10.5",
     "fake-indexeddb": "^6.0.0",
     "happy-dom": "^15.11.7",
@@ -34,14 +34,8 @@
   "pnpm": {
     "overrides": {},
     "supportedArchitectures": {
-      "os": [
-        "darwin",
-        "linux"
-      ],
-      "cpu": [
-        "x64",
-        "arm64"
-      ]
+      "os": ["darwin", "linux"],
+      "cpu": ["x64", "arm64"]
     }
   },
   "prettier": {

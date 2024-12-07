@@ -83,6 +83,10 @@ export const uiCommandHandlers = [
     });
   }),
 
+  c('command::ui:reload-app', ({ workbenchState }) => {
+    workbenchState.reloadUi();
+  }),
+
   // GROUP: NOTES MANAGEMENT
   c(
     'command::ui:create-note-dialog',

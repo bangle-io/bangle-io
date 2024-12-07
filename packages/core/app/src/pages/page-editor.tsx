@@ -1,9 +1,8 @@
 import { useCoreServices } from '@bangle.io/context';
 import { EditorComp } from '@bangle.io/editor';
-import { parseUrlPath, resolvePath } from '@bangle.io/ws-path';
+import { resolvePath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { useLocation } from 'wouter';
 
 export function PageEditor() {
   const coreServices = useCoreServices();

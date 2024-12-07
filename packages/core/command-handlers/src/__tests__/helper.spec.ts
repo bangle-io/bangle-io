@@ -1,7 +1,7 @@
 import { expectType } from '@bangle.io/base-utils';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
 import { describe, expect, test } from 'vitest';
-import { type ChildDispatcher, c, getCtx } from '../helper';
+import { c, getCtx } from '../helper';
 
 describe('c helper ', () => {
   test('dependencies type check', () => {

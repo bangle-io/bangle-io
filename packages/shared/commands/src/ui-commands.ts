@@ -37,6 +37,16 @@ export const uiCommands = narrow([
     args: null,
   },
   {
+    id: 'command::ui:reload-app',
+    title: 'Reload App',
+    keywords: ['reload', 'refresh', 'restart'],
+    dependencies: {
+      services: ['workbenchState'],
+    },
+    omniSearch: true,
+    args: null,
+  },
+  {
     id: 'command::ui:toggle-omni-search',
     dependencies: { services: ['workbenchState'] },
     keybindings: [...KEYBOARD_SHORTCUTS.toggleOmniSearch.keys],

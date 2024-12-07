@@ -29,6 +29,6 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "react": "^19.0.0"
+    "react": "^18.3.1"
   }
 }

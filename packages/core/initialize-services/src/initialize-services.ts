@@ -1,6 +1,7 @@
 import {
   type Logger,
   assertIsDefined,
+  flatServices,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -170,11 +171,9 @@ export function initializeServices(
   abortSignal.addEventListener(
     'abort',
     () => {
-      for (const childServices of Object.values(services)) {
-        for (const service of Object.values(childServices)) {
-          service.dispose();
-        }
-      }
+      flatServices(services).forEach((service) => {
+        service.dispose();
+      });
     },
     { once: true },
   );
@@ -264,11 +263,13 @@ function initCoreServices(
   });
 
   const shortcut = new ShortcutService(commonOpts, undefined, document);
-  const workbenchState = new WorkbenchStateService(
-    commonOpts,
-    undefined,
-    theme,
-  );
+  const workbenchState = new WorkbenchStateService(commonOpts, undefined, {
+    themeManager: theme,
+    emitter: rootEmitter.scoped(
+      ['event::app:reload-ui'],
+      commonOpts.rootAbortSignal,
+    ),
+  });
 
   const workbench = new WorkbenchService(commonOpts, {
     workbenchState,

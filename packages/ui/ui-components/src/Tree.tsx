@@ -45,7 +45,7 @@ interface TreeNodeProps {
   onTreeItemMove: (item: TreeItem) => void;
 }
 
-const TreeNode = memo(function TreeNode({
+const TreeNode = function TreeNode({
   item,
   activeWsPaths,
   onTreeItemClick,
@@ -176,7 +176,7 @@ const TreeNode = memo(function TreeNode({
       </Collapsible>
     </SidebarMenuItem>
   );
-});
+};
 
 export interface TreeProps {
   rootItem: TreeItem[];

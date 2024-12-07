@@ -11,43 +11,65 @@ import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { setupRootEmitter } from './setup-root-emitter';
 
-const logger = new Logger(
-  '',
-  window.location.hostname === 'localhost' ||
-    window.location.search.includes('debug=true')
-    ? 'debug'
-    : 'info',
-);
+main();
 
-const abortController = new AbortController();
-const tabId = 'tab_' + Math.random().toString(36).substr(2, 9);
+function main() {
+  const logger = new Logger(
+    '',
+    window.location.hostname === 'localhost' ||
+      window.location.search.includes('debug=true')
+      ? 'debug'
+      : 'info',
+  );
 
-const rootEmitter = setupRootEmitter(
-  'bangle_io_channel',
-  tabId,
-  logger,
-  abortController.signal,
-);
+  const abortController = new AbortController();
+  const tabId = 'tab_' + Math.random().toString(36).substr(2, 9);
 
-const store = createStore();
-const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
-const services = initializeServices(
-  logger,
-  rootEmitter,
-  store,
-  themeManager,
-  abortController.signal,
-);
+  const rootEmitter = setupRootEmitter(
+    'bangle_io_channel',
+    tabId,
+    logger,
+    abortController.signal,
+  );
 
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App
-      logger={logger}
-      services={services}
-      store={store}
-      rootEmitter={rootEmitter}
-      themeManager={themeManager}
-    />
-  </StrictMode>,
-);
+  const store = createStore();
+  const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
+  const services = initializeServices(
+    logger,
+    rootEmitter,
+    store,
+    themeManager,
+    abortController.signal,
+  );
+
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  const root = createRoot(document.getElementById('root')!);
+
+  root.render(
+    <StrictMode>
+      <App
+        logger={logger}
+        services={services}
+        store={store}
+        rootEmitter={rootEmitter}
+        themeManager={themeManager}
+      />
+    </StrictMode>,
+  );
+
+  abortController.signal.addEventListener('abort', () => {
+    root.unmount();
+  });
+
+  rootEmitter.on(
+    'event::app:reload-ui',
+    () => {
+      logger.info('-------------Reloading UI-------------');
+      abortController.abort();
+      queueMicrotask(() => {
+        main();
+      });
+    },
+    abortController.signal,
+  );
+}
