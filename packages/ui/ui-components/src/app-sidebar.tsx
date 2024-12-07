@@ -133,7 +133,14 @@ export function AppSidebar({
           </SidebarGroup>
         )}
         <SidebarGroup>
-          <SidebarGroupLabel>Files</SidebarGroupLabel>
+          <SidebarGroupLabel
+            onClick={() => {
+              onTruncatedClick();
+            }}
+            className="cursor-pointer select-none"
+          >
+            Files
+          </SidebarGroupLabel>
           <SidebarGroupAction
             title="New File"
             onClick={() => {
