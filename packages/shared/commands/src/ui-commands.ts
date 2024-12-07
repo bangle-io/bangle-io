@@ -162,7 +162,12 @@ export const uiCommands = narrow([
   {
     id: 'command::ui:native-fs-auth',
     dependencies: {
-      services: ['workspaceOps', 'navigation', 'workbenchState', 'fileSystem'],
+      services: [
+        'workspaceOps',
+        'navigation',
+        'workbenchState',
+        'editorService',
+      ],
     },
     args: {
       wsName: T.String,

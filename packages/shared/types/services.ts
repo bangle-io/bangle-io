@@ -11,6 +11,7 @@ import type {
 import type {
   CommandDispatchService,
   CommandRegistryService,
+  EditorService,
   FileSystemService,
   NavigationService,
   ShortcutService,
@@ -73,6 +74,7 @@ export type CoreServices = {
   fileSystem: FileSystemService;
   navigation: NavigationService;
   shortcut: ShortcutService;
+  editorService: EditorService;
   workbench: WorkbenchService;
   workbenchState: WorkbenchStateService;
   workspace: WorkspaceService;

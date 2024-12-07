@@ -9,3 +9,4 @@ export * from './workspace-ops-service';
 export * from './workspace-service';
 export * from './workspace-state-service';
 export * from './user-activity-service';
+export * from './editor-service';

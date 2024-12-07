@@ -8,7 +8,9 @@ export function PageEditor() {
   const coreServices = useCoreServices();
 
   const wsPath = useAtomValue(coreServices.navigation.$wsPath);
-  const wsName = useAtomValue(coreServices.navigation.$wsName);
+  const $forceReloadCounter = useAtomValue(
+    coreServices.editorService.$forceReloadCounter,
+  );
 
   if (!wsPath) {
     return <div>Invalid path</div>;
@@ -18,6 +20,7 @@ export function PageEditor() {
     <div>
       {wsPath && (
         <EditorComp
+          key={$forceReloadCounter}
           wsPath={wsPath}
           readNote={async (wsPath) => {
             return coreServices.fileSystem.readFileAsText(wsPath);

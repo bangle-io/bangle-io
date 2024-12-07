@@ -87,12 +87,6 @@ export class FileSystemService extends BaseService<{
     );
   }
 
-  forceUpdate(from: string) {
-    this.options.emitter.emit('event::file:force-update', {
-      sender: getEventSenderMetadata({ tag: from }),
-    });
-  }
-
   protected async hookOnInitialize(): Promise<void> {
     this.options.emitter.on(
       'event::file:force-update',

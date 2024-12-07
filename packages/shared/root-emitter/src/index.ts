@@ -30,6 +30,13 @@ export type RootEvents =
       };
     }
   | {
+      event: 'event::editor:reload-editor';
+      payload: {
+        wsName: string;
+        sender: EventSenderMetadata;
+      };
+    }
+  | {
       event: 'event::workspace-info:update';
       payload: {
         wsName: string;

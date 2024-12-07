@@ -437,7 +437,7 @@ export const uiCommandHandlers = [
   c(
     'command::ui:native-fs-auth',
     (
-      { workspaceOps, navigation, workbenchState, fileSystem },
+      { workspaceOps, navigation, workbenchState, editorService },
       { wsName },
       key,
     ) => {
@@ -492,7 +492,7 @@ export const uiCommandHandlers = [
             return;
           }
 
-          fileSystem.forceUpdate(key.key);
+          editorService.onNativeFsAuthSuccess(wsName);
           navigation.goWorkspace(wsName, { skipIfAlreadyThere: true });
         };
 

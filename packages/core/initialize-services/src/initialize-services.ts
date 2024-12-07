@@ -12,6 +12,7 @@ import { getEnabledCommands } from '@bangle.io/commands';
 import {
   CommandDispatchService,
   CommandRegistryService,
+  EditorService,
   FileSystemService,
   NavigationService,
   ShortcutService,
@@ -112,6 +113,8 @@ export function initializeServices(
       },
     });
   }
+
+  coreServices.editorService.setInitConfig({ dummyVal: '' });
 
   coreServices.fileSystem.setInitConfig({
     getWorkspaceInfo: async ({ wsName }) => {
@@ -312,17 +315,29 @@ function initCoreServices(
     },
   );
 
+  const editorService = new EditorService(
+    commonOpts,
+    {},
+    {
+      emitter: rootEmitter.scoped(
+        ['event::editor:reload-editor', 'event::file:force-update'],
+        commonOpts.rootAbortSignal,
+      ),
+    },
+  );
+
   return {
     commandDispatcher: commandDispatcherService,
     commandRegistry: commandRegistryService,
+    editorService,
     fileSystem: fileSystemService,
     navigation,
     shortcut,
-    workbenchState,
-    workspaceOps,
-    workbench,
-    workspace,
-    workspaceState,
     userActivityService,
+    workbench,
+    workbenchState,
+    workspace,
+    workspaceOps,
+    workspaceState,
   };
 }
