@@ -1,5 +1,6 @@
 import { throwAppError } from '@bangle.io/base-utils';
 import {
+  appendNoteExtension,
   assertSplitWsPath,
   assertedResolvePath,
   filePathToWsPath,
@@ -8,45 +9,43 @@ import {
 } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
-import type { ThemePreference } from '@bangle.io/types';
-import { Briefcase, FilePlus, Sun, Trash2 } from 'lucide-react';
 import { validateInputPath } from './utils';
 
 export const wsCommandHandlers = [
-  c(
-    'command::ws:new-note-from-input',
-    ({ fileSystem, navigation, workspaceState }, { inputPath }, key) => {
-      validateInputPath(inputPath);
-      const { store } = getCtx(key);
+  c('command::ws:new-note-from-input', ({ navigation }, { inputPath }, key) => {
+    const { dispatch } = getCtx(key);
+    validateInputPath(inputPath);
 
-      const { wsName } = navigation.resolveAtoms();
+    const { wsName } = navigation.resolveAtoms();
+
+    if (!wsName) {
+      throwAppError('error::ws-path:create-new-note', 'No workspace open', {
+        invalidWsPath: inputPath,
+      });
+    }
+
+    inputPath = appendNoteExtension(inputPath);
+    const wsPath = filePathToWsPath({ wsName, inputPath });
+
+    dispatch('command::ws:create-note', { wsPath, navigate: true });
+  }),
+
+  c(
+    'command::ws:create-note',
+    ({ fileSystem, navigation }, { wsPath, navigate }) => {
+      const { wsName } = assertSplitWsPath(wsPath);
 
       if (!wsName) {
         throwAppError('error::ws-path:create-new-note', 'No workspace open', {
-          invalidWsPath: inputPath,
+          invalidWsPath: wsPath,
         });
       }
-      if (!inputPath.endsWith('.md')) {
-        inputPath = `${inputPath}.md`;
-      }
-      const newWsPath = filePathToWsPath({ wsName, inputPath });
 
-      const existingWsPaths = store.get(workspaceState.$wsPaths);
-      if (existingWsPaths.includes(newWsPath)) {
-        throwAppError(
-          'error::file:invalid-note-path',
-          'Note with the given name already already exists',
-          {
-            invalidWsPath: newWsPath,
-          },
-        );
-      }
-
-      const { fileNameWithoutExt } = assertedResolvePath(newWsPath);
+      const { fileNameWithoutExt } = assertedResolvePath(wsPath);
 
       void fileSystem
         .createFile(
-          newWsPath,
+          wsPath,
           new File(
             [`I am content of ${fileNameWithoutExt}`],
             fileNameWithoutExt,
@@ -56,7 +55,9 @@ export const wsCommandHandlers = [
           ),
         )
         .then(() => {
-          navigation.goWsPath(newWsPath);
+          if (navigate) {
+            navigation.goWsPath(wsPath);
+          }
         });
     },
   ),
@@ -175,4 +176,45 @@ export const wsCommandHandlers = [
         });
     },
   ),
+
+  c('command::ws:quick-new-note', ({ workspaceState }, { pathPrefix }, key) => {
+    const { store, dispatch } = getCtx(key);
+    const wsPaths = store.get(workspaceState.$wsPaths) || [];
+
+    const untitledNotes = wsPaths
+      .map((path) => assertedResolvePath(path).fileNameWithoutExt)
+      .filter((name) => name.startsWith('untitled-'))
+      .map((name) => {
+        const num = Number.parseInt(name.replace('untitled-', ''));
+        return Number.isNaN(num) ? 0 : num;
+      });
+
+    const nextNum =
+      untitledNotes.length > 0 ? Math.max(...untitledNotes) + 1 : 1;
+    const newNoteName = `untitled-${nextNum}`;
+
+    dispatch('command::ws:new-note-from-input', {
+      inputPath: pathJoin(pathPrefix || '', newNoteName),
+    });
+  }),
+
+  c('command::ws:create-directory', (_, { dirWsPath }, key) => {
+    const { dispatch } = getCtx(key);
+    const resolvedDirPath = resolveDirWsPath(dirWsPath);
+
+    if (!resolvedDirPath) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'Invalid directory path',
+        {
+          invalidPath: dirWsPath,
+        },
+      );
+    }
+    // We do not support bare directories, so this hack allows us to
+    // create a directory by creating a note
+    dispatch('command::ws:quick-new-note', {
+      pathPrefix: resolvedDirPath.dirPath,
+    });
+  }),
 ];

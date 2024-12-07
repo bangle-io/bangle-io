@@ -74,6 +74,7 @@ export function AppCreateWorkspaceDialog() {
               },
             );
           }
+
           coreServices.workspaceOps
             .createWorkspaceInfo({
               name: wsName,

@@ -26,7 +26,7 @@ export type DialogSingleSelectProps = {
   groupHeading?: string;
   badgeTone?: 'destructive' | 'default';
   badgeText?: string;
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
   Icon?: React.ElementType;
   initialSearch?: string;
   hints?: string[];

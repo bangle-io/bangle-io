@@ -96,7 +96,13 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         onNewFileClick={() => {
-          commandDispatcher.dispatch('command::ui:quick-new-note', null, 'ui');
+          commandDispatcher.dispatch(
+            'command::ws:quick-new-note',
+            {
+              pathPrefix: undefined,
+            },
+            'ui',
+          );
         }}
         onDeleteFileClick={(item) => {
           commandDispatcher.dispatch(

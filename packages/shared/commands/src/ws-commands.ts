@@ -7,9 +7,24 @@ export const wsCommands = narrow([
     id: 'command::ws:create-note',
     title: 'New Note',
     omniSearch: false,
-    dependencies: { services: ['workspaceOps'] },
+    dependencies: { services: ['fileSystem', 'navigation'] },
     args: {
       wsPath: T.String,
+      // whether to navigate to the newly created note
+      navigate: T.Optional(T.Boolean),
+    },
+  },
+  {
+    id: 'command::ws:quick-new-note',
+    title: 'Quick New Note',
+    keywords: ['new', 'create', 'note', 'quick', 'untitled'],
+    dependencies: {
+      services: ['workspaceState'],
+      commands: ['command::ws:new-note-from-input'],
+    },
+    omniSearch: true,
+    args: {
+      pathPrefix: T.Optional(T.String),
     },
   },
   {
@@ -18,11 +33,26 @@ export const wsCommands = narrow([
     omniSearch: false,
     dependencies: {
       services: ['workspaceState', 'fileSystem', 'navigation'],
+      commands: ['command::ws:create-note'],
     },
     args: {
       inputPath: T.String,
     },
   },
+
+  {
+    id: 'command::ws:create-directory',
+    title: 'Create Directory',
+    omniSearch: false,
+    dependencies: {
+      services: [],
+      commands: ['command::ws:quick-new-note'],
+    },
+    args: {
+      dirWsPath: T.String,
+    },
+  },
+
   {
     id: 'command::ws:go-workspace',
     title: 'Go to Workspace',

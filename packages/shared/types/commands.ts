@@ -8,7 +8,7 @@ export type AllowedValidator =
   | Validator<number>
   | Validator<boolean>
   | Validator<string[]>
-  | Validator<string | undefined>;
+  | Validator<string | boolean | undefined>;
 
 export type Command = {
   id: string;

@@ -474,6 +474,27 @@ describe('getExtension', () => {
     expect(getExtension('path.with.dots/file.md')).toBe('.md');
     expect(getExtension('my.folder/sub.dir/file.txt')).toBe('.txt');
   });
+
+  test('should work with wspath', () => {
+    expect(getExtension('ws:file.md')).toBe('.md');
+    expect(getExtension('ws:file.txt')).toBe('.txt');
+    expect(getExtension('ws:file.test.ts')).toBe('.ts');
+  });
+
+  test('should work with wspath with dot in it', () => {
+    expect(getExtension('w.s:file.md')).toBe('.md');
+  });
+
+  test('should work with dir wspath with dot in it', () => {
+    expect(getExtension('w.s:dir')).toBe(undefined);
+  });
+
+  test('should work with dir wspath with dot in it', () => {
+    expect(getExtension('w.s:d.r')).toBe('.r');
+  });
+  test('should work with dir wspath with dot in it', () => {
+    expect(getExtension('.:.r')).toBe('.r');
+  });
 });
 
 describe('pathJoin', () => {
@@ -520,5 +541,13 @@ describe('pathJoin', () => {
   it('should handle relative paths correctly', () => {
     expect(pathJoin('./foo', 'bar', 'baz')).toBe('./foo/bar/baz');
     expect(pathJoin('../foo/', '/bar/', 'baz/')).toBe('../foo/bar/baz');
+  });
+
+  it('should handle root path', () => {
+    expect(pathJoin('', 'path', 'to', 'file')).toBe('path/to/file');
+  });
+
+  it('should handle root path', () => {
+    expect(pathJoin('', 'ut.md')).toBe('ut.md');
   });
 });

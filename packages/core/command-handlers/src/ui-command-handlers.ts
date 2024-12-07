@@ -272,6 +272,10 @@ export const uiCommandHandlers = [
           options,
           Icon: Briefcase,
           groupHeading: 'Directories',
+          hints: [
+            'Press Enter or Click',
+            'Tip: Try dragging a note in the sidebar',
+          ],
           onSelect: (selectedDir) => {
             let newDirPath = selectedDir.id;
             if (newDirPath === ROOT_ID) {
@@ -292,27 +296,6 @@ export const uiCommandHandlers = [
       });
     },
   ),
-
-  c('command::ui:quick-new-note', ({ workspaceState }, _, key) => {
-    const { store, dispatch } = getCtx(key);
-    const wsPaths = store.get(workspaceState.$wsPaths) || [];
-
-    const untitledNotes = wsPaths
-      .map((path) => assertedResolvePath(path).fileNameWithoutExt)
-      .filter((name) => name.startsWith('untitled-'))
-      .map((name) => {
-        const num = Number.parseInt(name.replace('untitled-', ''));
-        return Number.isNaN(num) ? 0 : num;
-      });
-
-    const nextNum =
-      untitledNotes.length > 0 ? Math.max(...untitledNotes) + 1 : 1;
-    const newNoteName = `untitled-${nextNum}`;
-
-    dispatch('command::ws:new-note-from-input', {
-      inputPath: newNoteName,
-    });
-  }),
 
   // GROUP: WORKSPACE MANAGEMENT
   c('command::ui:create-workspace-dialog', ({ workbenchState }, _, key) => {
@@ -394,6 +377,45 @@ export const uiCommandHandlers = [
               dispatch('command::ws:delete-workspace', { wsName });
             }
           },
+        };
+      });
+    },
+  ),
+
+  c(
+    'command::ui:create-directory-dialog',
+    ({ workbenchState, workspaceState }, _, key) => {
+      const { store, dispatch } = getCtx(key);
+      const wsName = store.get(workspaceState.$wsName);
+
+      if (!wsName) {
+        throwAppError(
+          'error::workspace:not-opened',
+          'No workspace is opened',
+          {},
+        );
+      }
+
+      store.set(workbenchState.$singleInputDialog, () => {
+        return {
+          dialogId: 'dialog::new-directory-dialog',
+          placeholder: 'Input directory name',
+          badgeText: 'Create Directory',
+          option: {
+            id: 'new-directory-dialog',
+            title: 'Create',
+          },
+          onSelect: (_input) => {
+            const input = _input.trim();
+            validateInputPath(input);
+            dispatch('command::ws:create-directory', {
+              dirWsPath: filePathToWsPath({
+                wsName,
+                inputPath: input,
+              }),
+            });
+          },
+          Icon: FilePlus,
         };
       });
     },

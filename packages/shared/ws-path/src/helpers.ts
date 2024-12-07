@@ -8,6 +8,9 @@ type ValidationResult =
   | { isValid: true; wsName: string; filePath: string }
   | { isValid: false; reason: string; invalidPath: string };
 
+// joins into path, will not remove leading or trailing slashes
+// if '' empty string, it will be filtered out,
+// will prevent having `//` in the joined path
 export function pathJoin(...args: string[]): string {
   return args
     .filter((part) => part !== '')
@@ -24,6 +27,11 @@ export function pathJoin(...args: string[]): string {
 
 export function getExtension(strInput: string): string | undefined {
   let str = strInput;
+  // if it is a wsPath remove the wsName
+  if (str.includes(':')) {
+    str = str.slice(str.indexOf(':') + 1);
+  }
+
   if (str.includes('/')) {
     str = str.slice(str.lastIndexOf('/') + 1);
   }
@@ -44,6 +52,14 @@ export function validateWsName(wsName: string): ValidationResult {
     return {
       isValid: false,
       reason: 'wsName contains invalid character ":"',
+      invalidPath: wsName,
+    };
+  }
+
+  if (wsName === '.') {
+    return {
+      isValid: false,
+      reason: 'wsName cannot be "."',
       invalidPath: wsName,
     };
   }

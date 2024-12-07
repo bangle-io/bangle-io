@@ -106,13 +106,14 @@ export const uiCommands = narrow([
       wsPath: T.Optional(T.String),
     },
   },
+
   {
-    id: 'command::ui:quick-new-note',
-    title: 'Quick New Note',
-    keywords: ['new', 'create', 'note', 'quick', 'untitled'],
+    id: 'command::ui:create-directory-dialog',
+    title: 'New Directory',
+    keywords: ['new', 'create', 'directory', 'folder'],
     dependencies: {
-      services: ['workspaceState'],
-      commands: ['command::ws:new-note-from-input'],
+      services: ['workbenchState', 'workspaceState'],
+      commands: ['command::ws:create-directory'],
     },
     omniSearch: true,
     args: null,
