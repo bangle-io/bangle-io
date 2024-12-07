@@ -66,9 +66,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         isTruncated={isTruncated}
         onTruncatedClick={() => {
           commandDispatcher.dispatch(
-            'command::ui:toggle-omni-search',
+            'command::ui:toggle-all-files',
             {
-              prefill: undefined,
+              prefillInput: undefined,
             },
             'ui',
           );

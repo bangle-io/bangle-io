@@ -47,5 +47,6 @@
     "tailwindcss": "^3.4.16",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^1.2.0"
-  }
+  },
+  "devDependencies": {}
 }

@@ -76,6 +76,8 @@ export class WorkbenchStateService extends BaseService {
   >();
   $omniSearchInput = atom('');
   $omniSearchRoute = atom<Route>('omni-home');
+  $openAllFiles = atom(false);
+  $allFilesSearchInput = atom('');
 
   $cleanSearchTerm = atom((get) => {
     const search = get(this.$omniSearchInput);
@@ -112,6 +114,16 @@ export class WorkbenchStateService extends BaseService {
       this.options.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
+      this.store.sub(
+        atomEffect((get, set) => {
+          const open = get(this.$openAllFiles);
+          if (!open) {
+            set(this.$allFilesSearchInput, '');
+          }
+        }),
+        () => {},
+      ),
+
       this.store.sub(
         atomEffect((get, set) => {
           const open = get(this.$openOmniSearch);

@@ -12,7 +12,11 @@ import {
 } from '@bangle.io/ui-components';
 import { useAtom, useAtomValue } from 'jotai';
 
-import { rankedFuzzySearch } from '@bangle.io/fuzzysearch';
+import {
+  defaultFuzzySearch,
+  rankedFuzzySearch,
+  substringFuzzySearch,
+} from '@bangle.io/fuzzysearch';
 
 import { assertSplitWsPath } from '@bangle.io/ws-path';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -158,13 +162,26 @@ function HomeRoute({
     </>
   );
 }
+
+// Update CommandRoute component
 function CommandRoute({
   baseItems,
   search,
-}: {
-  baseItems: CommandItemProp[];
-  search: string;
-}) {
+}: { baseItems: CommandItemProp[]; search: string }) {
+  React.useEffect(() => {
+    let unmounted = false;
+    // for some reason scroll goes to the bottom when changing routes
+    requestAnimationFrame(() => {
+      const firstItem = document.querySelector('[cmdk-list]');
+      if (firstItem && !unmounted) {
+        firstItem.scrollTop = 0;
+      }
+    });
+    return () => {
+      unmounted = true;
+    };
+  }, []);
+
   const items = useMemo(
     () =>
       baseItems
@@ -172,25 +189,14 @@ function CommandRoute({
         .sort((a, b) => a.title.localeCompare(b.title)),
     [baseItems],
   );
+
   const commands = useMemo(() => {
-    if (!search) return items;
-
-    const searchables = items.flatMap((item) => [
-      item.title,
-      ...(item.keywords || []),
-    ]);
-
-    const results = rankedFuzzySearch(search, searchables);
-
-    return items.filter((item) =>
-      results.some(
-        (r) => r.item === item.title || item.keywords?.includes(r.item),
-      ),
-    );
+    return searchItems(items, search);
   }, [items, search]);
 
   return <CommandGroupSection heading="> Commands" items={commands} />;
 }
+
 function FilteredRoute({
   baseItems,
   search,
@@ -210,53 +216,8 @@ function FilteredRoute({
   }, []);
 
   const filteredItems = useMemo(() => {
-    if (!search) return baseItems;
-
-    const searchables = baseItems.map((item) => item.title);
-    const fuzzyResults = rankedFuzzySearch(search, searchables, {});
-
-    const fuzzyResultsMap = new Map<string, (typeof fuzzyResults)[number]>();
-    fuzzyResults.forEach((result) => {
-      fuzzyResultsMap.set(result.item, result);
-    });
-
-    const recentCommandsSet = new Set(recentCommands);
-    const recentWsPathsSet = new Set(recentWsPaths);
-
-    const scoredItems = baseItems
-      .map((item) => {
-        const fuzzyMatch = fuzzyResultsMap.get(item.title);
-        if (!fuzzyMatch) return null;
-
-        let finalScore = fuzzyMatch.score;
-
-        if (item.metadata.type === 'command') {
-          if (recentCommandsSet.has(item.title)) {
-            finalScore *= 4;
-          } else {
-            finalScore *= 2.5;
-          }
-        } else if (
-          item.metadata.type === 'file' &&
-          recentWsPathsSet.has(item.metadata.wsPath)
-        ) {
-          finalScore *= 1.5;
-        }
-
-        return {
-          item,
-          score: finalScore,
-        };
-      })
-      .filter(
-        (result): result is { item: CommandItemProp; score: number } =>
-          result !== null,
-      );
-
-    return scoredItems
-      .sort((a, b) => b.score - a.score)
-      .map((result) => result.item);
-  }, [baseItems, search, recentWsPaths, recentCommands]);
+    return searchItems(baseItems, search, { recentCommands, recentWsPaths });
+  }, [baseItems, search, recentCommands, recentWsPaths]);
 
   const rowVirtualizer = useVirtualizer({
     count: filteredItems.length,
@@ -401,7 +362,6 @@ export function OmniSearch({
         value={search}
         onValueChange={(value) => {
           updateSearch(value);
-          // No need to update route here
         }}
       />
       <CommandList className="max-h-[428px]">
@@ -431,4 +391,65 @@ export function OmniSearch({
       </CommandList>
     </CommandDialog>
   );
+}
+
+function searchItems(
+  items: CommandItemProp[],
+  search: string,
+  opts: {
+    recentCommands?: string[];
+    recentWsPaths?: string[];
+  } = {},
+) {
+  if (!search) {
+    return items;
+  }
+
+  const searchables = items.map((item) => item.title);
+  let fuzzyResults = rankedFuzzySearch(search, searchables, {
+    fuzzySearchFunction: substringFuzzySearch,
+  });
+
+  if (fuzzyResults.length === 0) {
+    fuzzyResults = rankedFuzzySearch(search, searchables, {
+      fuzzySearchFunction: defaultFuzzySearch,
+    });
+  }
+
+  const fuzzyResultsMap = new Map(fuzzyResults.map((r) => [r.item, r]));
+  const { recentCommands = [], recentWsPaths = [] } = opts;
+
+  const recentCommandsSet = new Set(recentCommands);
+  const recentWsPathsSet = new Set(recentWsPaths);
+
+  const scoredItems = items
+    .map((item) => {
+      const fuzzyMatch = fuzzyResultsMap.get(item.title);
+      if (!fuzzyMatch) return null;
+
+      let finalScore = fuzzyMatch.score;
+
+      if (item.metadata.type === 'command') {
+        if (recentCommandsSet.has(item.metadata.cmd.id)) {
+          finalScore *= 4;
+        } else {
+          finalScore *= 2.5;
+        }
+      } else if (
+        item.metadata.type === 'file' &&
+        recentWsPathsSet.has(item.metadata.wsPath)
+      ) {
+        finalScore *= 1.5;
+      }
+
+      return {
+        item,
+        score: finalScore,
+      };
+    })
+    .filter((r): r is { item: CommandItemProp; score: number } => r !== null);
+
+  return scoredItems
+    .sort((a, b) => b.score - a.score)
+    .map((result) => result.item);
 }

@@ -1,0 +1,129 @@
+import { useCoreServices } from '@bangle.io/context';
+import {
+  rankedFuzzySearch,
+  substringFuzzySearch,
+} from '@bangle.io/fuzzysearch';
+import {
+  CommandBadge,
+  CommandDialog,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@bangle.io/ui-components';
+import { assertSplitWsPath } from '@bangle.io/ws-path';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
+import React from 'react';
+import { useMemo, useRef } from 'react';
+
+export function AllFilesDialog() {
+  const { workbenchState } = useCoreServices();
+  const [open, setOpen] = useAtom(workbenchState.$openAllFiles);
+  const [search, setSearch] = useAtom(workbenchState.$allFilesSearchInput);
+
+  return (
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      shouldFilter={false}
+      screenReaderTitle="All Files"
+    >
+      <CommandBadge>
+        <span>All Files</span>
+      </CommandBadge>
+      <CommandInput
+        placeholder="Search files..."
+        value={search}
+        onValueChange={setSearch}
+      />
+      <AllFilesContent search={search} onClose={() => setOpen(false)} />
+    </CommandDialog>
+  );
+}
+
+interface AllFilesContentProps {
+  search: string;
+  onClose: () => void;
+}
+
+function AllFilesContent({ search, onClose }: AllFilesContentProps) {
+  const { workspaceState, commandDispatcher } = useCoreServices();
+  const wsPaths = useAtomValue(workspaceState.$wsPaths);
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const files = useMemo(() => {
+    return wsPaths.map((wsPath) => {
+      const { filePath } = assertSplitWsPath(wsPath);
+      return {
+        id: wsPath,
+        title: filePath,
+        onSelect: () => {
+          onClose();
+          commandDispatcher.dispatch(
+            'command::ws:go-ws-path',
+            { wsPath },
+            'ui',
+          );
+        },
+      };
+    });
+  }, [wsPaths, commandDispatcher, onClose]);
+
+  const filteredFiles = useMemo(() => {
+    if (!search) return files;
+    const results = rankedFuzzySearch(
+      search,
+      files.map((file) => file.title),
+      {
+        fuzzySearchFunction: substringFuzzySearch,
+      },
+    );
+    const resultSet = new Set(results.map((r) => r.item));
+    return files.filter((file) => resultSet.has(file.title));
+  }, [files, search]);
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredFiles.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 44,
+    overscan: 5,
+  });
+
+  return (
+    <CommandList ref={parentRef}>
+      <div
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          position: 'relative',
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          const file = filteredFiles[virtualRow.index]!;
+          return (
+            <div
+              key={file.id}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: `${virtualRow.size}px`,
+                transform: `translateY(${virtualRow.start}px)`,
+                width: '100%',
+              }}
+            >
+              <CommandItem onSelect={file.onSelect}>
+                <span>{file.title}</span>
+              </CommandItem>
+            </div>
+          );
+        })}
+      </div>
+      <CommandEmpty>
+        <span>No files found.</span>
+      </CommandEmpty>
+    </CommandList>
+  );
+}

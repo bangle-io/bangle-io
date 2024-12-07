@@ -87,6 +87,17 @@ export const uiCommandHandlers = [
     workbenchState.reloadUi();
   }),
 
+  c(
+    'command::ui:toggle-all-files',
+    ({ workbenchState }, { prefillInput }, key) => {
+      const { store } = getCtx(key);
+      store.set(workbenchState.$openAllFiles, (prev) => !prev);
+      if (prefillInput) {
+        store.set(workbenchState.$allFilesSearchInput, prefillInput);
+      }
+    },
+  ),
+
   // GROUP: NOTES MANAGEMENT
   c(
     'command::ui:create-note-dialog',

@@ -174,4 +174,14 @@ export const uiCommands = narrow([
     },
     omniSearch: false,
   },
+  {
+    id: 'command::ui:toggle-all-files',
+    title: 'View All Files',
+    keywords: ['files', 'list', 'browse', 'all'],
+    dependencies: { services: ['workbenchState'] },
+    omniSearch: true,
+    args: {
+      prefillInput: T.Optional(T.String),
+    },
+  },
 ]);

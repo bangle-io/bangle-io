@@ -38,6 +38,7 @@
     "@bangle.io/context": "workspace:*",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
+    "@bangle.io/fuzzysearch": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/omni-search": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
@@ -45,9 +46,11 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
+    "@tanstack/react-virtual": "^3.11.0",
     "jotai": "^2.10.3",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "wouter": "^3.3.5"
-  }
+  },
+  "devDependencies": {}
 }
