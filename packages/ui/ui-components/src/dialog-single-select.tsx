@@ -73,7 +73,7 @@ export function DialogSingleSelect({
   groupHeading = '',
   badgeText,
   badgeTone = 'default',
-  emptyMessage = 'No options available.',
+  emptyMessage = 'No items found.',
   initialSearch = '',
   Icon,
   hints,
@@ -117,7 +117,6 @@ export function DialogSingleSelect({
         Icon={Icon}
       />
       <CommandList>
-        {emptyMessage && <CommandEmpty>{emptyMessage}</CommandEmpty>}
         <CommandGroup heading={groupHeading}>
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
@@ -132,7 +131,7 @@ export function DialogSingleSelect({
               />
             ))
           ) : (
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>{emptyMessage}</CommandEmpty>
           )}
         </CommandGroup>
       </CommandList>

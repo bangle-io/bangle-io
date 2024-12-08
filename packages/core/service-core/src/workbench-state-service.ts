@@ -159,6 +159,7 @@ export class WorkbenchStateService extends BaseService {
   }
 
   goToCommandRoute() {
+    this.store.set(this.$openOmniSearch, true);
     this.store.set(this.$omniSearchInput, '>');
   }
 

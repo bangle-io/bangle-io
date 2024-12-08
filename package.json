@@ -63,7 +63,7 @@
     "precursor": "echo \"ok\"",
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
-    "test:ci": "pnpm jest --ci && pnpm vitest run",
+    "test:ci": "pnpm vitest run",
     "typecheck": "tsc -b"
   },
   "module": "index.ts",

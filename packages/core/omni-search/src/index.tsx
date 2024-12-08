@@ -150,14 +150,14 @@ function HomeRoute({
 
   return (
     <>
-      <CommandGroupSection heading="> Commands" items={allCommands} />
-      <CommandSeparator />
       {recentFiles.length > 0 && (
         <>
           <CommandGroupSection heading="Recent Notes" items={recentFiles} />
           <CommandSeparator />
         </>
       )}
+      <CommandGroupSection heading="> Commands" items={allCommands} />
+      <CommandSeparator />
       <CommandGroupSection heading="All Notes" items={allFiles} />
     </>
   );

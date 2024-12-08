@@ -11,6 +11,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import React from 'react';
 import { AppSidebar } from './app-sidebar';
 import {
@@ -78,6 +79,24 @@ type NavItem = {
 
 export function AppSidebarExample() {
   const [open, setOpen] = React.useState(true);
+  const footerChildren = (
+    <>
+      <DropdownMenuLabel className="text-muted-foreground text-xs">
+        Footer Menu
+      </DropdownMenuLabel>
+      <DropdownMenuItem onClick={() => alert('Settings clicked')}>
+        Settings
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => alert('Profile clicked')}>
+        Profile
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={() => alert('Logout clicked')}>
+        Logout
+      </DropdownMenuItem>
+    </>
+  );
+
   return (
     <SidebarProvider
       open={open}
@@ -98,6 +117,9 @@ export function AppSidebarExample() {
         // onSearchValueChange={updateInput}
         onNewWorkspaceClick={() => {}}
         setActiveWorkspace={() => {}}
+        footerChildren={footerChildren}
+        footerTitle="User Menu"
+        footerSubtitle="John Doe"
       />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
@@ -132,6 +154,20 @@ export function AppSidebarExample() {
 
 export function AppSidebarTruncatedExample() {
   const [open, setOpen] = React.useState(true);
+  const footerChildren = (
+    <>
+      <DropdownMenuLabel className="text-muted-foreground text-xs">
+        Truncated Footer Menu
+      </DropdownMenuLabel>
+      <DropdownMenuItem onClick={() => alert('Option 1 clicked')}>
+        Option 1
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => alert('Option 2 clicked')}>
+        Option 2
+      </DropdownMenuItem>
+    </>
+  );
+
   return (
     <SidebarProvider
       open={open}
@@ -154,6 +190,9 @@ export function AppSidebarTruncatedExample() {
         }}
         onNewWorkspaceClick={() => {}}
         setActiveWorkspace={() => {}}
+        footerChildren={footerChildren}
+        footerTitle="Bangle.io"
+        footerSubtitle=""
       />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">

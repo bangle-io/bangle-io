@@ -1,11 +1,31 @@
+import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
-import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  KbdShortcut,
+  Sidebar,
+  AppSidebar as UIAppSidebar,
+} from '@bangle.io/ui-components';
+import { DropdownMenuLabel } from '@bangle.io/ui-components';
+import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
 import {
   assertedResolvePath,
   filePathToWsPath,
   resolvePath,
 } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import {
+  BugPlay,
+  Command,
+  Folder,
+  Github,
+  MessageCircle,
+  Paintbrush2,
+  PlusIcon,
+  Search,
+  Twitter,
+} from 'lucide-react';
 import React, { useMemo } from 'react';
 
 const MAX_WS_PATHS = 800;
@@ -125,6 +145,115 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
+        footerTitle="Bangle.io"
+        footerChildren={
+          <>
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              New
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() =>
+                commandDispatcher.dispatch(
+                  'command::ui:create-note-dialog',
+                  {
+                    prefillName: undefined,
+                  },
+                  'ui',
+                )
+              }
+            >
+              <PlusIcon className="mr-2 h-4 w-4" />
+              <span>New Note</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                commandDispatcher.dispatch(
+                  'command::ui:create-workspace-dialog',
+                  null,
+                  'ui',
+                )
+              }
+            >
+              <Folder className="mr-2 h-4 w-4" />
+              <span>New Workspace</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              App Actions
+            </DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setOpenOmniSearch(true)}>
+              <Search className="mr-2 h-4 w-4" />
+              <span>Omni Search</span>
+              <KbdShortcut
+                className="ml-auto"
+                keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys}
+              />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => workbenchState.goToCommandRoute()}>
+              <Command className="mr-2 h-4 w-4" />
+              <span>All Commands</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                commandDispatcher.dispatch('command::ui:switch-theme', {}, 'ui')
+              }
+            >
+              <Paintbrush2 className="mr-2 h-4 w-4" />
+              <span>Change Theme</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              Links
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => window.open('https://bangle.io', '_blank')}
+            >
+              <img
+                src={bangleIcon}
+                alt="Bangle.io"
+                className="mr-2 h-4 w-4 grayscale"
+              />
+              <span>Homepage</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                window.open('https://github.com/bangle-io/bangle-io', '_blank')
+              }
+            >
+              <Github className="mr-2 h-4 w-4" />
+              <span>GitHub Project</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                window.open(
+                  'https://github.com/bangle-io/bangle-io/issues/new',
+                  '_blank',
+                )
+              }
+            >
+              <BugPlay className="mr-2 h-4 w-4" />
+              <span>Report an Issue</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                window.open('https://twitter.com/bangle_io', '_blank')
+              }
+            >
+              <Twitter className="mr-2 h-4 w-4" />
+              <span>Twitter</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                window.open('https://discord.gg/GvvbWJrYq8', '_blank')
+              }
+            >
+              <MessageCircle className="mr-2 h-4 w-4" />
+              <span>Discord</span>
+            </DropdownMenuItem>
+          </>
+        }
       />
       <Sidebar.SidebarInset>{children}</Sidebar.SidebarInset>
     </Sidebar.SidebarProvider>

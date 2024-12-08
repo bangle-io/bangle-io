@@ -6,6 +6,7 @@ import {
   Search,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
+import bangleIcon from './bangle-transparent_x512.png';
 
 import {
   DropdownMenu,
@@ -19,12 +20,13 @@ import {
 import { Label } from './label';
 
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import { type TreeItem, buildTree } from '@bangle.io/ui-utils';
+import { type TreeItem, buildTree, cn } from '@bangle.io/ui-utils';
 import { Tree, type TreeProps } from './Tree';
 import { KbdShortcut } from './kbd';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupAction,
   SidebarGroupContent,
@@ -70,7 +72,74 @@ export type AppSidebarProps = {
   isTruncated?: boolean;
   onTruncatedClick?: () => void;
   onFileDrop?: TreeProps['onFileDrop'];
+  footerChildren?: React.ReactNode;
+  footerTitle?: string;
+  footerSubtitle?: string;
 };
+
+interface DropdownButtonProps {
+  icon?: React.ElementType;
+  imageSrc?: string;
+  title: string;
+  subtitle: string;
+  fancy?: boolean;
+}
+
+function DropdownButton({
+  icon: IconComponent,
+  imageSrc,
+  title,
+  subtitle,
+  fancy = false,
+}: DropdownButtonProps) {
+  const getButtonClass = (isFancy: boolean) =>
+    cn(
+      // Base styles
+      'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
+      // Conditional fancy styles
+      isFancy &&
+        'shadow-[0_0_20px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_25px_rgba(255,255,255,0.25)]' +
+          'border border-sidebar-accent dark:border-sidebar-accent-foreground',
+    );
+
+  const textClass = cn(
+    'grid flex-1 text-left text-sm leading-tight select-none',
+    fancy && 'font-bold tracking-tight',
+  );
+
+  const subtitleClass = cn('truncate text-xs', fancy && 'font-medium');
+
+  return (
+    <DropdownMenuTrigger asChild>
+      <SidebarMenuButton size="lg" className={cn(getButtonClass(fancy))}>
+        {imageSrc ? (
+          <div className="flex aspect-square size-10 items-center justify-center overflow-hidden rounded-lg text-sidebar-primary-foreground">
+            <img
+              src={imageSrc}
+              alt={title}
+              className="size-8 select-none object-contain"
+            />
+          </div>
+        ) : (
+          IconComponent && (
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+              <IconComponent className="size-4" />
+            </div>
+          )
+        )}
+        <div className={textClass}>
+          <span
+            className={cn('font-semibold', fancy && 'text-base leading-snug')}
+          >
+            {title}
+          </span>
+          <span className={subtitleClass}>{subtitle}</span>
+        </div>
+        <ChevronsUpDown className="ml-auto" />
+      </SidebarMenuButton>
+    </DropdownMenuTrigger>
+  );
+}
 
 export function AppSidebar({
   onNewWorkspaceClick,
@@ -88,6 +157,9 @@ export function AppSidebar({
   isTruncated = false,
   onTruncatedClick = () => {},
   onFileDrop = () => {},
+  footerChildren,
+  footerTitle,
+  footerSubtitle,
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined),
@@ -172,7 +244,51 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {footerChildren && (
+        <AppSidebarFooter
+          title={footerTitle}
+          subtitle={footerSubtitle}
+          dropdownPosition="top"
+        >
+          {footerChildren}
+        </AppSidebarFooter>
+      )}
     </Sidebar>
+  );
+}
+
+function AppSidebarFooter({
+  children,
+  title = 'Bangle.io',
+  subtitle = '',
+  dropdownPosition = 'right',
+}: {
+  children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
+  dropdownPosition?: 'bottom' | 'right' | 'top' | 'left';
+}) {
+  const { isMobile } = useSidebar();
+
+  return (
+    <SidebarFooter>
+      <DropdownMenu>
+        <DropdownButton
+          imageSrc={bangleIcon}
+          title={title}
+          subtitle={subtitle}
+          fancy={true}
+        />
+        <DropdownMenuContent
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+          align="start"
+          side={isMobile ? 'top' : dropdownPosition}
+          sideOffset={4}
+        >
+          {children}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarFooter>
   );
 }
 
@@ -214,37 +330,24 @@ function WorkspaceSwitcher({
   onNewWorkspaceClick: () => void;
 }) {
   const { isMobile } = useSidebar();
-  let activeWs = workspaces.find((ws) => ws.isActive);
+  const activeWs = workspaces.find((ws) => ws.isActive) ?? {
+    name: 'Acme Inc Enterprise',
+    isActive: true,
+    misc: 'Enterprise',
+  };
 
-  if (!activeWs) {
-    activeWs = {
-      name: 'Acme Inc Enterprise',
-      isActive: true,
-      misc: 'Enterprise',
-    };
-  }
-
-  const Logo = activeWs.logo ? activeWs.logo : GalleryVerticalEnd;
+  const Logo = activeWs.logo ?? GalleryVerticalEnd;
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Logo className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{activeWs.name}</span>
-                <span className="truncate text-xs">{activeWs.misc}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
+          <DropdownButton
+            icon={Logo}
+            title={activeWs.name}
+            subtitle={activeWs.misc}
+          />
+
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             align="start"
