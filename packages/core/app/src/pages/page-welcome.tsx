@@ -1,10 +1,18 @@
 import React from 'react';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
 
 export function PageWelcome() {
   return (
-    <div>
-      <h1>Welcome to the App</h1>
-      {/* ...additional content... */}
-    </div>
+    <>
+      <PageHeaderWrapper>
+        <h1>Bangle.io</h1>
+      </PageHeaderWrapper>
+      <PageMainContentWrapper>
+        <div>
+          <h1>Welcome!</h1>
+        </div>
+      </PageMainContentWrapper>
+    </>
   );
 }

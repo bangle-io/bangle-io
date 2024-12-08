@@ -10,17 +10,14 @@ import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { setupRootEmitter } from './setup-root-emitter';
+const isDebug =
+  window.location.hostname === 'localhost' ||
+  window.location.search.includes('debug=true');
 
 main();
 
 function main() {
-  const logger = new Logger(
-    '',
-    window.location.hostname === 'localhost' ||
-      window.location.search.includes('debug=true')
-      ? 'debug'
-      : 'info',
-  );
+  const logger = new Logger('', isDebug ? 'debug' : 'info');
 
   const abortController = new AbortController();
   const tabId = `tab_${Math.random().toString(36).substr(2, 9)}`;
@@ -56,6 +53,10 @@ function main() {
       />
     </StrictMode>,
   );
+
+  if (isDebug) {
+    (window as any).services = services;
+  }
 
   abortController.signal.addEventListener('abort', () => {
     root.unmount();

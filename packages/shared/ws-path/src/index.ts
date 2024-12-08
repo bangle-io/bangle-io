@@ -15,6 +15,11 @@ export {
   VALID_NOTE_EXTENSIONS_SET,
   isRootLevelFile,
   resolveDirWsPath,
+  splitWsPath,
+  breakPathIntoParts,
+  isFileWsPath,
+  getParentWsPath,
+  PATH_SEPARATOR,
 } from './helpers';
 
 export * from './routing';

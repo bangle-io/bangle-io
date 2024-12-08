@@ -2,12 +2,7 @@ import '@bangle.io/editor/src/style.css';
 import { useCoreServices } from '@bangle.io/context';
 import { OmniSearch } from '@bangle.io/omni-search';
 import type { RootEmitter } from '@bangle.io/types';
-import {
-  Breadcrumb,
-  Separator,
-  Sidebar,
-  Toaster,
-} from '@bangle.io/ui-components';
+import { Toaster } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { AppRoutes } from './Routes';
@@ -40,28 +35,7 @@ export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
       <Toaster position="top-center" />
       <AppErrorHandler rootEmitter={rootEmitter} />
       <AppSidebar>
-        <header className="flex h-16 shrink-0 items-center gap-2 px-4">
-          <Sidebar.SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb.Breadcrumb>
-            <Breadcrumb.BreadcrumbList>
-              <Breadcrumb.BreadcrumbItem className="hidden md:block">
-                <Breadcrumb.BreadcrumbLink href="#">
-                  Building Your Application
-                </Breadcrumb.BreadcrumbLink>
-              </Breadcrumb.BreadcrumbItem>
-              <Breadcrumb.BreadcrumbSeparator className="hidden md:block" />
-              <Breadcrumb.BreadcrumbItem>
-                <Breadcrumb.BreadcrumbPage>
-                  Data Fetching
-                </Breadcrumb.BreadcrumbPage>
-              </Breadcrumb.BreadcrumbItem>
-            </Breadcrumb.BreadcrumbList>
-          </Breadcrumb.Breadcrumb>
-        </header>
-        <div className="B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0">
-          <AppRoutes />
-        </div>
+        <AppRoutes />
       </AppSidebar>
     </>
   );

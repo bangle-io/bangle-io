@@ -9,6 +9,7 @@ import type {
   RouterLocation,
   RouterState,
 } from '@bangle.io/types';
+import { buildURL } from '@bangle.io/ws-path';
 import lifecycle from 'page-lifecycle';
 import { navigate } from 'wouter/use-browser-location';
 
@@ -159,20 +160,4 @@ function parseBrowserSearch(
 
 function parseBrowserPathname(pathname = window.location.pathname): string {
   return decodeURI(pathname);
-}
-
-function buildURL(location: RouterLocation): string {
-  const normalizedSearch: Record<string, string> = Object.fromEntries(
-    Object.entries(location.search).filter(
-      (arg): arg is [string, string] => arg[1] !== null,
-    ),
-  );
-  const params = new URLSearchParams(normalizedSearch);
-
-  let searchStr = params.toString();
-  if (searchStr.length > 0) {
-    searchStr = `?${searchStr}`;
-  }
-
-  return `${encodeURI(location.pathname)}${searchStr}`;
 }

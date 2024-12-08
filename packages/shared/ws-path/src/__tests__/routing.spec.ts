@@ -42,7 +42,7 @@ describe('buildUrlPath', () => {
       const wsPath = 'myWorkspace';
       expect(() =>
         buildUrlPath.pageEditor({ wsPath }),
-      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Invalid file wsPath]');
+      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Missing : in wsPath]');
     });
 
     it('should return the correct pathname and search when wsPath contains ":"', () => {
@@ -74,16 +74,19 @@ describe('buildUrlPath', () => {
 
     it('should handle empty filePath when wsPath contains ":"', () => {
       const wsPath = 'myWorkspace:';
-      expect(() =>
-        buildUrlPath.pageEditor({ wsPath }),
-      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Invalid file wsPath]');
+      expect(buildUrlPath.pageEditor({ wsPath })).toEqual({
+        pathname: '/ws/myWorkspace',
+        search: { p: null },
+      });
     });
 
     it('should handle empty wsName when wsPath contains ":"', () => {
       const wsPath = ':file.md';
       expect(() =>
         buildUrlPath.pageEditor({ wsPath }),
-      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Invalid file wsPath]');
+      ).toThrowErrorMatchingInlineSnapshot(
+        '[BaseError: wsName or filePath is missing]',
+      );
     });
 
     it('should throw an error when wsPath is undefined', () => {

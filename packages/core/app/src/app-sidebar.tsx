@@ -1,13 +1,11 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
+  DropdownMenu,
   KbdShortcut,
   Sidebar,
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
-import { DropdownMenuLabel } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
 import {
   assertedResolvePath,
@@ -148,10 +146,10 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         footerTitle="Bangle.io"
         footerChildren={
           <>
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
+            <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
               New
-            </DropdownMenuLabel>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuLabel>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 commandDispatcher.dispatch(
                   'command::ui:create-note-dialog',
@@ -164,8 +162,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             >
               <PlusIcon className="mr-2 h-4 w-4" />
               <span>New Note</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 commandDispatcher.dispatch(
                   'command::ui:create-workspace-dialog',
@@ -176,38 +174,42 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             >
               <Folder className="mr-2 h-4 w-4" />
               <span>New Workspace</span>
-            </DropdownMenuItem>
+            </DropdownMenu.DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
+            <DropdownMenu.DropdownMenuSeparator />
+            <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
               App Actions
-            </DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => setOpenOmniSearch(true)}>
+            </DropdownMenu.DropdownMenuLabel>
+            <DropdownMenu.DropdownMenuItem
+              onClick={() => setOpenOmniSearch(true)}
+            >
               <Search className="mr-2 h-4 w-4" />
               <span>Omni Search</span>
               <KbdShortcut
                 className="ml-auto"
                 keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys}
               />
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => workbenchState.goToCommandRoute()}>
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
+              onClick={() => workbenchState.goToCommandRoute()}
+            >
               <Command className="mr-2 h-4 w-4" />
               <span>All Commands</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 commandDispatcher.dispatch('command::ui:switch-theme', {}, 'ui')
               }
             >
               <Paintbrush2 className="mr-2 h-4 w-4" />
               <span>Change Theme</span>
-            </DropdownMenuItem>
+            </DropdownMenu.DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
+            <DropdownMenu.DropdownMenuSeparator />
+            <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
               Links
-            </DropdownMenuLabel>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuLabel>
+            <DropdownMenu.DropdownMenuItem
               onClick={() => window.open('https://bangle.io', '_blank')}
             >
               <img
@@ -216,16 +218,16 @@ export const AppSidebar = ({ children }: SidebarProps) => {
                 className="mr-2 h-4 w-4 grayscale"
               />
               <span>Homepage</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 window.open('https://github.com/bangle-io/bangle-io', '_blank')
               }
             >
               <Github className="mr-2 h-4 w-4" />
               <span>GitHub Project</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 window.open(
                   'https://github.com/bangle-io/bangle-io/issues/new',
@@ -235,23 +237,23 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             >
               <BugPlay className="mr-2 h-4 w-4" />
               <span>Report an Issue</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 window.open('https://twitter.com/bangle_io', '_blank')
               }
             >
               <Twitter className="mr-2 h-4 w-4" />
               <span>Twitter</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
+            </DropdownMenu.DropdownMenuItem>
+            <DropdownMenu.DropdownMenuItem
               onClick={() =>
                 window.open('https://discord.gg/GvvbWJrVQY', '_blank')
               }
             >
               <MessageCircle className="mr-2 h-4 w-4" />
               <span>Discord</span>
-            </DropdownMenuItem>
+            </DropdownMenu.DropdownMenuItem>
           </>
         }
       />

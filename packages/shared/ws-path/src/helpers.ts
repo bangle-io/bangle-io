@@ -8,6 +8,12 @@ type ValidationResult =
   | { isValid: true; wsName: string; filePath: string }
   | { isValid: false; reason: string; invalidPath: string };
 
+export const PATH_SEPARATOR = '/';
+
+export function breakPathIntoParts(path: string): string[] {
+  return path.split(PATH_SEPARATOR);
+}
+
 // joins into path, will not remove leading or trailing slashes
 // if '' empty string, it will be filtered out,
 // will prevent having `//` in the joined path
@@ -354,4 +360,26 @@ export function isDirWsPath(wsPath: string): boolean {
   }
 
   return !getExtension(wsPath);
+}
+
+export function getParentWsPath(wsPath: string): string | undefined {
+  const validationResult = validateWsPath(wsPath);
+  if (!validationResult.isValid) {
+    return undefined;
+  }
+  const { wsName, filePath } = validationResult;
+
+  if (!filePath || filePath === '') {
+    // Already at the top level
+    return `${wsName}:`;
+  }
+
+  const pathParts = filePath.split('/');
+  if (pathParts.length <= 1) {
+    // Parent is the root
+    return `${wsName}:`;
+  }
+
+  const parentPath = pathParts.slice(0, -1).join('/');
+  return `${wsName}:${parentPath}`;
 }

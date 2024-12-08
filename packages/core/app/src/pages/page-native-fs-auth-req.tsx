@@ -1,9 +1,18 @@
 import React from 'react';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
 
 export function PageNativeFsAuthReq() {
   return (
-    <div>
-      <h1>We were unable to get permission for </h1>
-    </div>
+    <>
+      <PageHeaderWrapper>
+        <h1>We were unable to get permission for </h1>
+      </PageHeaderWrapper>
+      <PageMainContentWrapper>
+        <div>
+          <h1>We were unable to get permission for </h1>
+        </div>
+      </PageMainContentWrapper>
+    </>
   );
 }

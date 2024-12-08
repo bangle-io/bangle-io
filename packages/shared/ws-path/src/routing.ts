@@ -4,22 +4,35 @@ import type { RouterLocation } from '@bangle.io/types';
 // wouter uses this regexparam
 import { parse as parsePattern } from 'regexparam';
 import { matchRoute } from 'wouter';
-import { splitWsPath } from './helpers';
+import { splitWsPath, validateWsPath } from './helpers';
 
+const pageWsHome = ({ wsName }: { wsName: string }) => {
+  return { pathname: '/ws/' + wsName, search: { p: null } };
+};
+
+// Rename this to buildUrlPath -> buildLocation
 export const buildUrlPath = {
   pageFatalError: () => ({
     pathname: ROUTES.pageFatalError,
   }),
-  pageWsHome: ({ wsName }: { wsName: string }) => {
-    return { pathname: '/ws/' + wsName, search: { p: null } };
-  },
+  pageWsHome,
   pageEditor: ({ wsPath }: { wsPath: string }) => {
+    const result = validateWsPath(wsPath);
+    if (!result.isValid) {
+      throwAppError('error::ws-path:invalid-ws-path', result.reason, {
+        invalidPath: result.invalidPath,
+      });
+    }
     const [wsName, filePath] = splitWsPath(wsPath);
 
-    if (!wsName || !filePath) {
+    if (!wsName) {
       throwAppError('error::ws-path:invalid-ws-path', 'Invalid file wsPath', {
         invalidPath: wsPath,
       });
+    }
+
+    if (!filePath) {
+      return pageWsHome({ wsName });
     }
 
     return { pathname: `/ws/${wsName}/editor`, search: { p: filePath } };
@@ -180,3 +193,19 @@ export const parseUrlPath = {
     return isMatch ? {} : null;
   },
 };
+
+export function buildURL(location: RouterLocation): string {
+  const normalizedSearch: Record<string, string> = Object.fromEntries(
+    Object.entries(location.search).filter(
+      (arg): arg is [string, string] => arg[1] !== null,
+    ),
+  );
+  const params = new URLSearchParams(normalizedSearch);
+
+  let searchStr = params.toString();
+  if (searchStr.length > 0) {
+    searchStr = `?${searchStr}`;
+  }
+
+  return `${encodeURI(location.pathname)}${searchStr}`;
+}

@@ -1,10 +1,18 @@
 import React from 'react';
-import { useParams } from 'wouter';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
 
 export function PageFatalError() {
   return (
-    <div>
-      <h1>Unexpected Error</h1>
-    </div>
+    <>
+      <PageHeaderWrapper>
+        <h1>Unexpected Error</h1>
+      </PageHeaderWrapper>
+      <PageMainContentWrapper>
+        <div>
+          <h1>Unexpected Error</h1>
+        </div>
+      </PageMainContentWrapper>
+    </>
   );
 }

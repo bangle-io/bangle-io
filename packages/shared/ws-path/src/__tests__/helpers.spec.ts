@@ -3,6 +3,7 @@ import {
   assertSplitWsPath,
   assertedResolvePath,
   getExtension,
+  getParentWsPath,
   pathJoin,
   resolveDirWsPath,
   resolvePath,
@@ -330,6 +331,7 @@ describe('validateWsPath', () => {
         ['ws:path:/more', 'ws', 'path:/more'],
         ['ws name:path', 'ws name', 'path'],
         ['/ws:path', '/ws', 'path'],
+        ['ws:', 'ws', ''],
       ])(
         'should validate "%s" correctly',
         (wsPath, expectedWsName, expectedFilePath) => {
@@ -549,5 +551,74 @@ describe('pathJoin', () => {
 
   it('should handle root path', () => {
     expect(pathJoin('', 'ut.md')).toBe('ut.md');
+  });
+});
+
+describe('getParentWsPath', () => {
+  it('should return parent dirWsPath for a given wsPath', () => {
+    expect(getParentWsPath('ws:dir/subdir/file.txt')).toBe('ws:dir/subdir');
+    expect(getParentWsPath('ws:dir/subdir/')).toBe('ws:dir/subdir');
+    expect(getParentWsPath('ws:dir/subdir')).toBe('ws:dir');
+    expect(getParentWsPath('ws:dir/file.txt')).toBe('ws:dir');
+  });
+
+  it('should return wsName with colon when at top level', () => {
+    expect(getParentWsPath('ws:file.txt')).toBe('ws:');
+    expect(getParentWsPath('ws:dir')).toBe('ws:');
+    expect(getParentWsPath('ws:')).toBe('ws:');
+    expect(getParentWsPath('ws')).toBe(undefined);
+  });
+
+  it('should return undefined for invalid wsPath', () => {
+    expect(getParentWsPath('')).toBeUndefined();
+    expect(getParentWsPath(':')).toBeUndefined();
+    expect(getParentWsPath('invalid')).toBeUndefined();
+  });
+
+  it('should handle paths with special characters', () => {
+    expect(getParentWsPath('ws:dir@#$/sub$/file.txt')).toBe('ws:dir@#$/sub$');
+    expect(getParentWsPath('ws:dir spaces/file name.txt')).toBe(
+      'ws:dir spaces',
+    );
+  });
+
+  it('should handle unicode characters in path', () => {
+    expect(getParentWsPath('ws:目录/子目录/文件.txt')).toBe('ws:目录/子目录');
+    expect(getParentWsPath('ws:目录/文件.txt')).toBe('ws:目录');
+  });
+
+  it('should handle paths with dots', () => {
+    expect(getParentWsPath('ws:dir.1/file.txt')).toBe('ws:dir.1');
+    expect(getParentWsPath('ws:dir.1/dir.2/file.txt')).toBe('ws:dir.1/dir.2');
+    expect(getParentWsPath('ws:file.name.with.dots.txt')).toBe('ws:');
+  });
+
+  it('should handle paths with multiple extensions', () => {
+    expect(getParentWsPath('ws:dir/file.tar.gz')).toBe('ws:dir');
+    expect(getParentWsPath('ws:file.tar.gz')).toBe('ws:');
+  });
+
+  it('should handle special wsNames', () => {
+    expect(getParentWsPath('ws-1:dir/file.txt')).toBe('ws-1:dir');
+    expect(getParentWsPath('ws.1:dir/file.txt')).toBe('ws.1:dir');
+    expect(getParentWsPath('ws_1:dir/file.txt')).toBe('ws_1:dir');
+  });
+
+  it('should handle trailing slashes correctly', () => {
+    expect(getParentWsPath('ws:dir/subdir/')).toBe('ws:dir/subdir');
+    expect(getParentWsPath('ws:dir/')).toBe('ws:dir');
+  });
+
+  it('should handle paths with empty segments', () => {
+    expect(getParentWsPath('ws:dir/')).toBe('ws:dir');
+    expect(getParentWsPath('ws:/')).toBe(undefined);
+  });
+
+  it('should handle more invalid cases', () => {
+    expect(getParentWsPath('.')).toBeUndefined();
+    expect(getParentWsPath('..')).toBeUndefined();
+    expect(getParentWsPath('ws:')).toBe('ws:');
+    expect(getParentWsPath('ws:.')).toBe('ws:');
+    expect(getParentWsPath('ws:..')).toBe('ws:');
   });
 });
