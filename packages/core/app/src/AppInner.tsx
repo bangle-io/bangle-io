@@ -18,7 +18,6 @@ import { AppSidebar } from './app-sidebar';
 export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
   const coreServices = useCoreServices();
   const [open, setOpen] = useAtom(coreServices.workbenchState.$openOmniSearch);
-
   return (
     <>
       <AppDialogs />

@@ -1,8 +1,7 @@
 import { execa } from 'execa';
-
 import { rootPath } from '../config';
 import { makeLogger } from '../lib';
-import { isAValidBanglePackage, setup } from '../lib';
+import { collectAllDependencies, isAValidBanglePackage, setup } from '../lib';
 
 const logger = makeLogger('addWorkspaceDep');
 
@@ -24,6 +23,8 @@ async function addWorkspaceDep({
   const { default: pMap } = await import('p-map');
 
   const packages = Array.from(packagesMap.values());
+  const allDependencies = await collectAllDependencies(packagesMap);
+
   await pMap(
     packagesMap.entries(),
     async ([name, pkg]) => {
@@ -32,13 +33,28 @@ async function addWorkspaceDep({
       ).filter((dep) => !dep.startsWith('node:'));
 
       for (const dep of deps) {
-        if (!pkg.dependencies[dep] && isAValidBanglePackage(dep, packages)) {
-          logger(`Adding dep: ${dep} to pkg:${name}`);
-          await pkg.addDependency({
-            name: dep,
-            version: 'workspace:*',
-            type: 'dependencies',
-          });
+        if (!pkg.dependencies[dep]) {
+          if (isAValidBanglePackage(dep, packages)) {
+            logger(`Adding dep: ${dep} to pkg:${name}`);
+            await pkg.addDependency({
+              name: dep,
+              version: 'workspace:*',
+              type: 'dependencies',
+            });
+          } else if (allDependencies[dep]) {
+            const versions = allDependencies[dep].versions;
+            const version = versions[0];
+
+            if (!version) {
+              throw new Error(`No version found for ${dep}`);
+            }
+            logger(`Adding dep: ${dep} to pkg:${name}`);
+            await pkg.addDependency({
+              name: dep,
+              version: version,
+              type: 'dependencies',
+            });
+          }
         }
       }
     },
@@ -47,6 +63,7 @@ async function addWorkspaceDep({
     },
   );
 
+  // currently only install bangel dev dependencies
   await pMap(
     packagesMap.entries(),
     async ([name, pkg]) => {

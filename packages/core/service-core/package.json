@@ -32,18 +32,14 @@
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/commands": "workspace:*",
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
     "@bangle.io/keyboard-shortcuts": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
-    "@bangle.io/service-platform": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "jotai": "^2.10.3",
-    "jotai-effect": "^1.0.5"
+    "jotai-effect": "^1.0.4"
   },
   "devDependencies": {
     "@bangle.io/logger": "workspace:*",

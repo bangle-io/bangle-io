@@ -15,7 +15,6 @@ export function AppErrorHandler({
 
   useEffect(() => {
     const controller = new AbortController();
-
     const showUnexpectedError = (error: Error) => {
       toast.error(error.message, {
         duration: Number.POSITIVE_INFINITY,

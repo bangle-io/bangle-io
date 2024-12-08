@@ -569,3 +569,34 @@ export function isAValidBanglePackage(name: string, packages: Package[]) {
   const result = packages.some((pkg) => pkg.name === name);
   return result;
 }
+
+export async function collectAllDependencies(
+  packagesMap: Map<string, Package>,
+): Promise<Record<string, { versions: string[]; usedBy: string[] }>> {
+  const dependencyMap: Record<
+    string,
+    { versions: Set<string>; usedBy: Set<string> }
+  > = {};
+
+  for (const [packageName, pkg] of packagesMap.entries()) {
+    const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
+
+    for (const [depName, depVersion] of Object.entries(allDeps)) {
+      if (!dependencyMap[depName]) {
+        dependencyMap[depName] = { versions: new Set(), usedBy: new Set() };
+      }
+      dependencyMap[depName].versions.add(depVersion);
+      dependencyMap[depName].usedBy.add(packageName);
+    }
+  }
+
+  const result: Record<string, { versions: string[]; usedBy: string[] }> = {};
+  for (const [depName, data] of Object.entries(dependencyMap)) {
+    result[depName] = {
+      versions: Array.from(data.versions),
+      usedBy: Array.from(data.usedBy),
+    };
+  }
+
+  return result;
+}

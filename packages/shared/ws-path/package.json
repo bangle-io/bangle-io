@@ -27,7 +27,6 @@
   "dependencies": {
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "regexparam": "^3.0.0",
     "wouter": "^3.3.5"

@@ -38,7 +38,6 @@ export function App({
 
   return (
     <LoggerProvider logger={logger}>
-      {/* @ts-expect-error some issue with React versions */}
       <Provider store={store}>
         <PlatformServiceProvider services={services.platform}>
           <CoreServiceProvider services={services.core}>

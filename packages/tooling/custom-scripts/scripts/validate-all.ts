@@ -1,6 +1,7 @@
 import { KNOWN_PACKAGES, VITEST_PKG_NAME, serviceKindOrders } from '../config';
 import {
   type SetupResult,
+  collectAllDependencies,
   isMainModule,
   makeLogger,
   makeThrowValidationError,
@@ -27,6 +28,7 @@ export async function validate(item: SetupResult) {
     testSharedConstantsShouldNotHaveDeps(item.packagesMap),
     testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap),
     testServicePackagesDependencies(item.packagesMap),
+    validateSameDependencyVersions(item.packagesMap),
   ];
 
   await Promise.all(promises);
@@ -325,6 +327,35 @@ async function testSharedConstantsShouldNotHaveDeps(
   if (!visited) {
     throwValidationError(
       `Package "${KNOWN_PACKAGES.constantsPkg}" is not present in the workspace`,
+    );
+  }
+}
+
+async function validateSameDependencyVersions(
+  packagesMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'validateSameDependencyVersions',
+  );
+
+  const dependencyMap = await collectAllDependencies(packagesMap);
+  const errors: string[] = [];
+
+  for (const [depName, { versions, usedBy }] of Object.entries(dependencyMap)) {
+    if (versions.length > 1) {
+      errors.push(
+        `Dependency "${depName}" is used with multiple versions: ${versions.join(
+          ', ',
+        )}.\nUsed by packages: ${usedBy.join(', ')}`,
+      );
+    }
+  }
+
+  if (errors.length > 0) {
+    throwValidationError(
+      `Multiple versions of the same dependency are used:\n\n${errors.join(
+        '\n\n',
+      )}`,
     );
   }
 }

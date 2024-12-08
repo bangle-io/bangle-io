@@ -302,7 +302,7 @@ export function OmniSearch({
   const baseItems: CommandItemProp[] = React.useMemo(() => {
     const filteredCommands = commands.map(
       (cmd): CommandItemProp => ({
-        id: 'cmd-' + cmd.id,
+        id: `cmd-${cmd.id}`,
         title: cmd.title || cmd.id,
         keybindings: cmd.keybindings,
         keywords: cmd.keywords,
@@ -317,7 +317,7 @@ export function OmniSearch({
     const filteredFiles = wsPaths.map((wsPath): CommandItemProp => {
       const { wsName, filePath } = assertSplitWsPath(wsPath);
       return {
-        id: 'file-' + wsPath,
+        id: `file-${wsPath}`,
         title: filePath,
         metadata: {
           type: 'file',

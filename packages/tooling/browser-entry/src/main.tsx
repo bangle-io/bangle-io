@@ -23,7 +23,7 @@ function main() {
   );
 
   const abortController = new AbortController();
-  const tabId = 'tab_' + Math.random().toString(36).substr(2, 9);
+  const tabId = `tab_${Math.random().toString(36).substr(2, 9)}`;
 
   const rootEmitter = setupRootEmitter(
     'bangle_io_channel',
