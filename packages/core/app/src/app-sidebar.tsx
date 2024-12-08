@@ -246,7 +246,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                window.open('https://discord.gg/GvvbWJrYq8', '_blank')
+                window.open('https://discord.gg/GvvbWJrVQY', '_blank')
               }
             >
               <MessageCircle className="mr-2 h-4 w-4" />
