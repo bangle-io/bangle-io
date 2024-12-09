@@ -28,11 +28,12 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
   timestamp: number;
 };
 
+const ACTIVITY_LOG_KEY = 'ws-activity';
+
 export class UserActivityService extends BaseService {
   private workspaceState: WorkspaceStateService;
   private workspaceOps: WorkspaceOpsService;
 
-  private activityLogKey = 'ws-activity';
   private activityLogCache: Map<string, ActivityLogEntry[]> = new Map();
   private maxRecentEntries: number;
   private activityCooldownMs: number;
@@ -200,7 +201,7 @@ export class UserActivityService extends BaseService {
     }
 
     const metadata = await this.workspaceOps.getWorkspaceMetadata(wsName);
-    const result = metadata[this.activityLogKey];
+    const result = metadata[ACTIVITY_LOG_KEY];
 
     const logs: ActivityLogEntry[] = Array.isArray(result) ? result : [];
     // Cache the results
@@ -215,7 +216,7 @@ export class UserActivityService extends BaseService {
   ): Promise<void> {
     await this.initializedPromise;
     await this.workspaceOps.updateWorkspaceMetadata(wsName, (metadata) => {
-      const result = metadata[this.activityLogKey];
+      const result = metadata[ACTIVITY_LOG_KEY];
       const logs: ActivityLogEntry[] = Array.isArray(result) ? result : [];
 
       const updatedLogs = updateCallback(logs);
@@ -223,7 +224,7 @@ export class UserActivityService extends BaseService {
 
       return {
         ...metadata,
-        [this.activityLogKey]: updatedLogs,
+        [ACTIVITY_LOG_KEY]: updatedLogs,
       };
     });
   }
