@@ -99,23 +99,18 @@ const TreeNode = function TreeNode({
           // we allow dropping on root level files
           isDroppableDisabled ? undefined : dropRef
         }
-        className={cn(
-          isActive && 'select-none bg-sidebar-accent',
-          'relative',
-          isDragging && 'opacity-50',
-        )}
+        className={cn('relative', isDragging && 'opacity-50')}
         style={{ contentVisibility: 'auto' }}
       >
         <SidebarMenuButton
-          className="data-[active=true]:bg-transparent"
           onClick={handleClick}
-          isActive={item.isOpen}
+          isActive={isActive}
           size="sm"
           ref={dragRef}
           {...attributes}
           {...listeners}
         >
-          <FileIcon className={cn(isActive ? 'text-accent' : 'text-inherit')} />
+          <FileIcon />
           <span className={cn('select-none', isActive ? 'font-semibold' : '')}>
             {item.name}
           </span>
@@ -144,7 +139,7 @@ const TreeNode = function TreeNode({
       ref={dropRef}
       className={cn(
         isOver &&
-          'rounded bg-sidebar-accent/50 outline outline-accent drop-shadow-lg',
+          'rounded bg-sidebar-accent/50 outline outline-accent drop-shadow-xl',
       )}
     >
       <Collapsible

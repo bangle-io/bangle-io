@@ -1,6 +1,5 @@
 import { BaseService } from '@bangle.io/base-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
-import { atom } from 'jotai';
 import type { WorkbenchStateService } from './workbench-state-service';
 
 /**

@@ -51,7 +51,7 @@
     --BV-muted: 0 0% 84%;
     --BV-muted-foreground: 0 0% 43%;
 
-    --BV-accent: 194 99% 68%;
+    --BV-accent: 240 5% 96%;
     --BV-accent-foreground: 0 0% 13%;
 
     --BV-destructive: 5 82% 54%;
@@ -96,7 +96,7 @@
     --BV-muted: 0 0% 29%;
     --BV-muted-foreground: 0 0% 69%;
 
-    --BV-accent: 323 100% 57%;
+    --BV-accent: 240 4% 16%;
     --BV-accent-foreground: 0 0% 92%;
 
     --BV-destructive: 5 82% 54%;
@@ -117,3 +117,4 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+

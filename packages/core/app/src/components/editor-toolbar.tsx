@@ -1,46 +1,69 @@
 import { useCoreServices } from '@bangle.io/context';
-import { Separator, Sidebar } from '@bangle.io/ui-components';
+import { Button, Separator, Sidebar } from '@bangle.io/ui-components';
 import {
   getParentWsPath,
   pathJoin,
   resolveDirWsPath,
 } from '@bangle.io/ws-path';
 import { PATH_SEPARATOR } from '@bangle.io/ws-path';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import React from 'react';
 import { NoteBreadcrumb } from './note-breadcrumb';
+import { MoveHorizontal, ChevronsRightLeft } from 'lucide-react';
+import { checkWidescreen, cx } from '@bangle.io/base-utils';
 
+const isWideEditor = checkWidescreen();
 export function EditorToolbar() {
   const coreServices = useCoreServices();
   const wsPath = useAtomValue(coreServices.navigation.$wsPath);
   const wsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);
+  const [wideEditor, setWideEditor] = useAtom(
+    coreServices.workbenchState.$wideEditor,
+  );
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 px-4">
-      <Sidebar.SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-2 h-4" />
-      {wsPath && (
-        <NoteBreadcrumb
-          wsPath={wsPath}
-          wsPaths={wsPaths}
-          onNewNote={({ wsPath }) => {
-            const parent = getParentWsPath(wsPath);
-
-            let path = parent && resolveDirWsPath(parent)?.dirPath;
-
-            if (path) {
-              path += PATH_SEPARATOR;
-            }
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:create-note-dialog',
-              {
-                prefillName: path || '',
-              },
-              'EditorToolbar',
-            );
-          }}
-        />
-      )}
+    <header
+      className={cx('h-16 w-full', !wideEditor && 'max-w-screen-md pr-8')}
+    >
+      <div className="flex h-full items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Sidebar.SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="h-4" />
+          {wsPath && (
+            <NoteBreadcrumb
+              wsPath={wsPath}
+              wsPaths={wsPaths}
+              onNewNote={({ wsPath }) => {
+                const parent = getParentWsPath(wsPath);
+                let path = parent && resolveDirWsPath(parent)?.dirPath;
+                if (path) {
+                  path += PATH_SEPARATOR;
+                }
+                coreServices.commandDispatcher.dispatch(
+                  'command::ui:create-note-dialog',
+                  {
+                    prefillName: path || '',
+                  },
+                  'EditorToolbar',
+                );
+              }}
+            />
+          )}
+        </div>
+        <div className="flex items-center">
+          {isWideEditor && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setWideEditor((prev) => !prev)}
+              className="ml-2"
+            >
+              {wideEditor ? <ChevronsRightLeft /> : <MoveHorizontal />}
+              <span className="sr-only">Toggle Max Width</span>
+            </Button>
+          )}
+        </div>
+      </div>
     </header>
   );
 }

@@ -1,3 +1,6 @@
+import { cx } from '@bangle.io/base-utils';
+import { useCoreServices } from '@bangle.io/context';
+import { useAtomValue } from 'jotai';
 import React from 'react';
 
 export interface PageMainContentWrapperProps {
@@ -7,8 +10,16 @@ export interface PageMainContentWrapperProps {
 export function PageMainContentWrapper({
   children,
 }: PageMainContentWrapperProps) {
+  const coreServices = useCoreServices();
+
+  const wideEditor = useAtomValue(coreServices.workbenchState.$wideEditor);
   return (
-    <div className="B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0">
+    <div
+      className={cx(
+        'B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0',
+        !wideEditor && 'max-w-screen-md',
+      )}
+    >
       {children}
     </div>
   );

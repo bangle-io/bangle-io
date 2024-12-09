@@ -6,7 +6,6 @@ import type {
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
 import { atom } from 'jotai';
-
 import type {
   ThemeConfig,
   ThemeManager,
@@ -54,6 +53,7 @@ export class WorkbenchStateService extends BaseService {
   $sidebarOpen = atom(true);
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
+  $wideEditor = atom(true);
   $themePref = atom<ThemeConfig['defaultPreference']>('system');
   $singleInputDialog = atom<
     | undefined
