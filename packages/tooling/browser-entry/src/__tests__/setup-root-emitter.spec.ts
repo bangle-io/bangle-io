@@ -102,13 +102,11 @@ describe('setupCrossTabComms', () => {
     const { pubSub, abortController } = setup();
     const destroyPublisherSpy = vi.spyOn(pubSub.publisher, 'destroy');
     const destroySubscriberSpy = vi.spyOn(pubSub.subscriber, 'destroy');
-    const disposeBroadcastChannelSpy = vi.spyOn(pubSub.broadcastBus, 'dispose');
 
     abortController.abort();
 
     expect(destroyPublisherSpy).toHaveBeenCalled();
     expect(destroySubscriberSpy).toHaveBeenCalled();
-    expect(disposeBroadcastChannelSpy).toHaveBeenCalled();
   });
 
   test('should not broadcast non-cross-tab events', () => {
@@ -159,7 +157,7 @@ describe('setupCrossTabComms', () => {
     };
 
     // Simulate receiving the message via broadcastChannel
-    pubSub.broadcastBus.onmessage?.(
+    pubSub.broadcastBus._channel.onmessage?.(
       new MessageEvent('message', { data: testMessage }),
     );
 

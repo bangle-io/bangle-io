@@ -13,6 +13,7 @@ export function setupCrossTabComms(
     name: broadcastChannelName,
     senderId: tabId,
     logger: logger,
+    signal: abortSignal,
   });
 
   const publisher = new Emitter();
@@ -42,7 +43,6 @@ export function setupCrossTabComms(
   abortSignal.addEventListener(
     'abort',
     () => {
-      broadcastBus.dispose();
       publisher.destroy();
       subscriber.destroy();
     },
