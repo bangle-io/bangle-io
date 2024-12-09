@@ -322,6 +322,12 @@ importers:
 
   packages/js-lib/base-error: {}
 
+  packages/js-lib/broadcast-channel:
+    dependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../logger
+
   packages/js-lib/browser: {}
 
   packages/js-lib/color-scheme-manager: {}
@@ -378,6 +384,12 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/broadcast-channel':
+        specifier: workspace:*
+        version: link:../../js-lib/broadcast-channel
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -564,6 +576,9 @@ importers:
       '@bangle.io/app':
         specifier: workspace:*
         version: link:../../core/app
+      '@bangle.io/broadcast-channel':
+        specifier: workspace:*
+        version: link:../../js-lib/broadcast-channel
       '@bangle.io/browser':
         specifier: workspace:*
         version: link:../../js-lib/browser

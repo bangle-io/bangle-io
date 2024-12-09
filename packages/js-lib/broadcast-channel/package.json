@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/service-platform",
+  "name": "@bangle.io/broadcast-channel",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/platform/service-platform"
+    "directory": "packages/js-lib/broadcast-channel"
   },
   "authors": [
     {
@@ -19,7 +19,7 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "browser",
-    "kind": "service-platform"
+    "kind": "library"
   },
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -28,17 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/broadcast-channel": "workspace:*",
-    "@bangle.io/config": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/db-key-val": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "page-lifecycle": "^0.1.2",
-    "wouter": "^3.3.5"
+    "@bangle.io/logger": "workspace:*"
   },
   "devDependencies": {}
 }

@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@bangle.io/app": "workspace:*",
+    "@bangle.io/broadcast-channel": "workspace:*",
     "@bangle.io/browser": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/constants": "workspace:*",
