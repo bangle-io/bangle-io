@@ -17,7 +17,6 @@ async function findStories(): Promise<StoriesEntry[]> {
   });
   const groupedStories: { [packageName: string]: StoriesEntry } = {};
 
-  // biome-ignore lint/complexity/noForEach: <explanation>
   stories.forEach((story) => {
     // Normalize the path based on OS (to ensure correct path separators)
     const normalizedStory = path.normalize(story);

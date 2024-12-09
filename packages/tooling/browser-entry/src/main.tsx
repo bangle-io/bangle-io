@@ -1,15 +1,15 @@
-import './index.css';
+import './default-theme.processed.css';
 
 import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-import { Emitter } from '@bangle.io/emitter';
 import { initializeServices } from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
 import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { setupRootEmitter } from './setup-root-emitter';
+
 const isDebug =
   window.location.hostname === 'localhost' ||
   window.location.search.includes('debug=true');

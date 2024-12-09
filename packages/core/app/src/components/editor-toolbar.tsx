@@ -8,7 +8,7 @@ import {
 import { PATH_SEPARATOR } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { NoteBreadcrumb } from './NoteBreadcrumb';
+import { NoteBreadcrumb } from './note-breadcrumb';
 
 export function EditorToolbar() {
   const coreServices = useCoreServices();

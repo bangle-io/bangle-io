@@ -1,4 +1,4 @@
-import '@bangle.io/browser-entry/src/index.css';
+import '@bangle.io/browser-entry/src/default-theme.processed.css';
 
 import type { Decorator, Preview } from '@storybook/react';
 import React, { useLayoutEffect } from 'react';

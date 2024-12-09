@@ -1,0 +1,103 @@
+@layer base {
+  :root {
+    --BV-miscActivitybarWidth: 48px;
+    --BV-miscMiniEditorWidth: 400px;
+    --BV-miscPageMaxWidth: 700px;
+    --BV-miscLeftAsideWidth: 300px;
+    --BV-miscRightAsideWidth: 300px;
+    --BV-miscTitlebarHeight: 48px;
+    --BV-borderWidthDEFAULT: 1px;
+    --BV-radius: 0.5rem;
+    --BV-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans";
+    /* Note sidebar vars are also used for command UI */
+    --BV-sidebar-background: hsl(0 0% 98%);
+    --BV-sidebar-foreground: hsl(240 5.3% 26.1%);
+    --BV-sidebar-primary: hsl(240 5.9% 10%);
+    --BV-sidebar-primary-foreground: hsl(0 0% 98%);
+    --BV-sidebar-accent: hsl(240 4.8% 95.9%);
+    --BV-sidebar-accent-foreground: hsl(240 5.9% 10%);
+    --BV-sidebar-border: hsl(220 13% 91%);
+    --BV-sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+    /* chart are hsl */
+    --BV-chart-1: hsl(12 76% 61%);
+    --BV-chart-2: hsl(173 58% 39%);
+    --BV-chart-3: hsl(197 37% 24%);
+    --BV-chart-4: hsl(43 74% 66%);
+    --BV-chart-5: hsl(27 87% 67%);
+
+    --BV-background: rgb(255 255 255);
+    --BV-foreground: rgb(34 34 34);
+
+    --BV-card: rgb(255 255 255);
+    --BV-card-foreground: rgb(34 34 34);
+
+    --BV-popover: rgb(255 255 255);
+    --BV-popover-foreground: rgb(34 34 34);
+
+    --BV-primary: rgb(70 70 70);
+    --BV-primary-foreground: rgb(255 255 255);
+
+    --BV-secondary: rgb(177 177 177);
+    --BV-secondary-foreground: rgb(70 70 70);
+
+    --BV-muted: rgb(213 213 213);
+    --BV-muted-foreground: rgb(109 109 109);
+
+    --BV-accent: hsl(240 4.8% 95.9%);
+    --BV-accent-foreground: rgb(34 34 34);
+
+    --BV-destructive: rgb(234 56 41);
+    --BV-destructive-foreground: rgb(255 255 255);
+
+    --BV-border: rgb(213 213 213);
+    --BV-input: rgb(213 213 213);
+    --BV-ring: rgb(34 34 34);
+  }
+
+  .BU_dark-scheme {
+    --BV-sidebar-background: hsl(240 5.9% 10%);
+    --BV-sidebar-foreground: hsl(240 4.8% 95.9%);
+    --BV-sidebar-primary: hsl(224.3 76.3% 48%);
+    --BV-sidebar-primary-foreground: hsl(0 0% 100%);
+    --BV-sidebar-accent: hsl(240 3.7% 15.9%);
+    --BV-sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+    --BV-sidebar-border: hsl(240 3.7% 15.9%);
+    --BV-sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+    --BV-chart-1: hsl(220 70% 50%);
+    --BV-chart-2: hsl(160 60% 45%);
+    --BV-chart-3: hsl(30 80% 55%);
+    --BV-chart-4: hsl(280 65% 60%);
+    --BV-chart-5: hsl(340 75% 55%);
+
+    --BV-background: rgb(0 0 0);
+    --BV-foreground: rgb(235 235 235);
+
+    --BV-card: rgb(0 0 0);
+    --BV-card-foreground: rgb(235 235 235);
+
+    --BV-popover: rgb(0 0 0);
+    --BV-popover-foreground: rgb(235 235 235);
+
+    --BV-primary: rgb(208 208 208);
+    --BV-primary-foreground: rgb(0 0 0);
+
+    --BV-secondary: rgb(106 106 106);
+    --BV-secondary-foreground: rgb(208 208 208);
+
+    --BV-muted: rgb(75 75 75);
+    --BV-muted-foreground: rgb(176 176 176);
+
+    --BV-accent: hsl(240 3.7% 15.9%);
+    --BV-accent-foreground: rgb(235 235 235);
+
+    --BV-destructive: rgb(234 56 41);
+    --BV-destructive-foreground: rgb(0 0 0);
+
+    --BV-border: rgb(75 75 75);
+    --BV-input: rgb(75 75 75);
+    --BV-ring: rgb(235 235 235);
+  }
+}

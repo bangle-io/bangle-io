@@ -3,7 +3,7 @@ import {
   getVisibleSegments,
   shouldShowEllipsis,
   wsPathToBreadcrumb,
-} from '../NoteBreadcrumb';
+} from '../note-breadcrumb';
 
 describe('wsPathToBreadcrumb', () => {
   it('handles root workspace path', () => {
