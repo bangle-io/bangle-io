@@ -1,3 +1,4 @@
+import { checkWidescreen, cx } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import { Button, Separator, Sidebar } from '@bangle.io/ui-components';
 import {
@@ -7,10 +8,9 @@ import {
 } from '@bangle.io/ws-path';
 import { PATH_SEPARATOR } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
+import { ChevronsRightLeft, MoveHorizontal } from 'lucide-react';
 import React from 'react';
 import { NoteBreadcrumb } from './note-breadcrumb';
-import { MoveHorizontal, ChevronsRightLeft } from 'lucide-react';
-import { checkWidescreen, cx } from '@bangle.io/base-utils';
 
 const isWideEditor = checkWidescreen();
 export function EditorToolbar() {

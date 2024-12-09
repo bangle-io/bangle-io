@@ -1,4 +1,8 @@
 import { BaseService, getEventSenderMetadata } from '@bangle.io/base-utils';
+import type {
+  ThemeConfig,
+  ThemeManager,
+} from '@bangle.io/color-scheme-manager';
 import type { BaseServiceCommonOptions, ScopedEmitter } from '@bangle.io/types';
 import type {
   AppAlertDialogProps,
@@ -6,10 +10,6 @@ import type {
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
 import { atom } from 'jotai';
-import type {
-  ThemeConfig,
-  ThemeManager,
-} from '@bangle.io/color-scheme-manager';
 import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
