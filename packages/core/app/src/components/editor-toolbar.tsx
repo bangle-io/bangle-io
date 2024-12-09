@@ -57,8 +57,8 @@ export function EditorToolbar() {
             <Button
               variant="ghost"
               size="icon"
+              className="ml-2 h-7 w-7"
               onClick={() => setWideEditor((prev) => !prev)}
-              className="ml-2"
             >
               {wideEditor ? <ChevronsRightLeft /> : <MoveHorizontal />}
               <span className="sr-only">Toggle Max Width</span>
