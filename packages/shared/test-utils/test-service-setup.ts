@@ -34,6 +34,8 @@ import {
 import { createStore } from 'jotai';
 import { Provider, useAtom, useAtomValue, useStore } from 'jotai/react';
 import { vi } from 'vitest';
+import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 export type { Store } from '@bangle.io/types';
 
 type CommonEntities = ReturnType<typeof createCommonEntities>;
@@ -54,6 +56,14 @@ interface ServiceWithDeps extends ServiceDeps {
   fileSystem: FileSystemService;
   workspaceOps: WorkspaceOpsService;
 }
+
+// Add theme manager mock near the top of the file with other imports
+const themeManager = {
+  currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
+  onThemeChange: () => () => {},
+  setPreference: () => {},
+  currentTheme: THEME_MANAGER_CONFIG.lightThemeClass,
+} as unknown as ThemeManager;
 
 function createNavigationService({ entities, platformServices }: ServiceDeps) {
   return pushAndReturn(
@@ -106,6 +116,29 @@ function createWorkspaceStateService({
       fileSystem,
       workspaceOps,
     }),
+    entities.allServices,
+  );
+}
+
+function createWorkbenchStateService({
+  entities,
+  rootEmitter,
+  platformServices,
+}: ServiceWithDeps) {
+  return pushAndReturn(
+    new WorkbenchStateService(
+      entities.commonOpts,
+      {
+        database: platformServices.database,
+      },
+      {
+        themeManager,
+        emitter: rootEmitter.scoped(
+          ['event::app:reload-ui'],
+          entities.commonOpts.rootAbortSignal,
+        ),
+      },
+    ),
     entities.allServices,
   );
 }
@@ -185,6 +218,14 @@ export function initUserActivityDepsService({
     workspaceOps,
   });
 
+  const workbenchState = createWorkbenchStateService({
+    ...deps,
+    navigation,
+    fileSystem: fileSystemService,
+    workspaceOps,
+    platformServices,
+  });
+
   return {
     ...entities.mockLog,
     initAllServices: async () => {
@@ -222,6 +263,7 @@ export function initUserActivityDepsService({
     fileSystemService,
     workspaceOps,
     workspaceState,
+    workbenchState,
   };
 }
 

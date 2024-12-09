@@ -3,7 +3,11 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
-import type { BaseServiceCommonOptions, ScopedEmitter } from '@bangle.io/types';
+import type {
+  BaseDatabaseService,
+  BaseServiceCommonOptions,
+  ScopedEmitter,
+} from '@bangle.io/types';
 import type {
   AppAlertDialogProps,
   DialogSingleInputProps,
@@ -91,7 +95,9 @@ export class WorkbenchStateService extends BaseService {
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
+    dependencies: {
+      database: BaseDatabaseService;
+    },
     private options: {
       themeManager: ThemeManager;
       emitter: ScopedEmitter<'event::app:reload-ui'>;

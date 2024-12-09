@@ -492,6 +492,12 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../base-utils
+      '@bangle.io/color-scheme-manager':
+        specifier: workspace:*
+        version: link:../../js-lib/color-scheme-manager
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger

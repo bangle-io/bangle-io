@@ -266,13 +266,19 @@ function initCoreServices(
   });
 
   const shortcut = new ShortcutService(commonOpts, undefined, document);
-  const workbenchState = new WorkbenchStateService(commonOpts, undefined, {
-    themeManager: theme,
-    emitter: rootEmitter.scoped(
-      ['event::app:reload-ui'],
-      commonOpts.rootAbortSignal,
-    ),
-  });
+  const workbenchState = new WorkbenchStateService(
+    commonOpts,
+    {
+      database: platformServices.database,
+    },
+    {
+      themeManager: theme,
+      emitter: rootEmitter.scoped(
+        ['event::app:reload-ui'],
+        commonOpts.rootAbortSignal,
+      ),
+    },
+  );
 
   const workbench = new WorkbenchService(commonOpts, {
     workbenchState,
