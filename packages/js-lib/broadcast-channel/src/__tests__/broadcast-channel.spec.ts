@@ -32,6 +32,8 @@ describe('TypedBroadcastBus', () => {
   let busB: TypedBroadcastBus<string>;
   let loggerA: { debug: Mock<any>; error: Mock<any> };
   let loggerB: { debug: Mock<any>; error: Mock<any> };
+  let controllerA: AbortController;
+  let controllerB: AbortController;
 
   beforeEach(() => {
     const logA = makeTestLogger();
@@ -39,21 +41,26 @@ describe('TypedBroadcastBus', () => {
     loggerA = logA.mockLog;
     loggerB = logB.mockLog;
 
+    controllerA = new AbortController();
+    controllerB = new AbortController();
+
     busA = new TypedBroadcastBus({
       name: 'test-channel',
       senderId: 'senderA',
       logger: logA.logger,
+      signal: controllerA.signal,
     });
     busB = new TypedBroadcastBus({
       name: 'test-channel',
       senderId: 'senderB',
       logger: logB.logger,
+      signal: controllerB.signal,
     });
   });
 
   afterEach(() => {
-    busA.dispose();
-    busB.dispose();
+    controllerA.abort();
+    controllerB.abort();
   });
 
   it('should send and receive messages', () => {
@@ -118,8 +125,19 @@ describe('TypedBroadcastBus', () => {
 
     busB.subscribe(handlerB, controller1.signal);
 
-    busB.dispose();
+    controllerA.abort();
     busA.send('Hello after dispose');
+    expect(handlerB).toHaveBeenCalledTimes(0);
+  });
+
+  it('should cleanup properly when aborted', () => {
+    const handlerB = vi.fn();
+    const msgController = new AbortController();
+
+    busB.subscribe(handlerB, msgController.signal);
+
+    controllerB.abort(); // abort the bus
+    busA.send('Hello after abort');
     expect(handlerB).toHaveBeenCalledTimes(0);
   });
 });

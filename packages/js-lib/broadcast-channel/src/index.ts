@@ -21,6 +21,13 @@ export interface TypedBroadcastBusOptions {
    * Optional logger for debugging or error logging.
    */
   logger?: Logger;
+
+  useMemoryChannel?: boolean;
+
+  /**
+   * AbortSignal to cleanup resources when aborted
+   */
+  signal: AbortSignal;
 }
 
 export class TypedBroadcastBus<T> {
@@ -30,11 +37,25 @@ export class TypedBroadcastBus<T> {
   private readonly logger?: Logger;
 
   constructor(options: TypedBroadcastBusOptions) {
-    this._channel = new BroadcastChannel(options.name);
+    if (options.useMemoryChannel) {
+      this._channel = new MemoryBroadcastChannel(options.name);
+    } else {
+      this._channel = new BroadcastChannel(options.name);
+    }
     this.senderId = options.senderId;
     this.logger = options.logger;
 
     this._channel.onmessage = this.handleMessage;
+
+    options.signal.addEventListener(
+      'abort',
+      () => {
+        this.handlers.clear();
+        this._channel.onmessage = null;
+        this._channel.close();
+      },
+      { once: true },
+    );
   }
 
   private handleMessage = (event: MessageEvent) => {
@@ -86,20 +107,16 @@ export class TypedBroadcastBus<T> {
       { once: true },
     );
   }
-
-  dispose(): void {
-    this.handlers.clear();
-    this._channel.onmessage = null;
-    this._channel.close();
-  }
 }
 
-export class MemoryBroadcastChannel {
+export class MemoryBroadcastChannel implements BroadcastChannel {
   onmessage: ((event: MessageEvent) => void) | null = null;
   private static channels: Map<string, Set<MemoryBroadcastChannel>> = new Map();
   private closed = false;
 
+  name: string;
   constructor(public channelName: string) {
+    this.name = channelName;
     if (!MemoryBroadcastChannel.channels.has(channelName)) {
       MemoryBroadcastChannel.channels.set(channelName, new Set());
     }
@@ -135,4 +152,17 @@ export class MemoryBroadcastChannel {
     }
     this.onmessage = null;
   }
+  onmessageerror: ((event: MessageEvent) => void) | null = null;
+
+  addEventListener() {
+    throw new Error('Method not implemented.');
+  }
+
+  removeEventListener() {
+    throw new Error('Method not implemented.');
+  }
+
+  dispatchEvent = () => {
+    throw new Error('Method not implemented.');
+  };
 }
