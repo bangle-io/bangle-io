@@ -28,26 +28,28 @@ export function EditorToolbar() {
       <div className="flex h-full items-center justify-between">
         <div className="flex items-center space-x-2">
           <Sidebar.SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="h-4" />
           {wsPath && (
-            <NoteBreadcrumb
-              wsPath={wsPath}
-              wsPaths={wsPaths}
-              onNewNote={({ wsPath }) => {
-                const parent = getParentWsPath(wsPath);
-                let path = parent && resolveDirWsPath(parent)?.dirPath;
-                if (path) {
-                  path += PATH_SEPARATOR;
-                }
-                coreServices.commandDispatcher.dispatch(
-                  'command::ui:create-note-dialog',
-                  {
-                    prefillName: path || '',
-                  },
-                  'EditorToolbar',
-                );
-              }}
-            />
+            <>
+              <Separator orientation="vertical" className="h-4" />
+              <NoteBreadcrumb
+                wsPath={wsPath}
+                wsPaths={wsPaths}
+                onNewNote={({ wsPath }) => {
+                  const parent = getParentWsPath(wsPath);
+                  let path = parent && resolveDirWsPath(parent)?.dirPath;
+                  if (path) {
+                    path += PATH_SEPARATOR;
+                  }
+                  coreServices.commandDispatcher.dispatch(
+                    'command::ui:create-note-dialog',
+                    {
+                      prefillName: path || '',
+                    },
+                    'EditorToolbar',
+                  );
+                }}
+              />
+            </>
           )}
         </div>
         <div className="flex items-center">
