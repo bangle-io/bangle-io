@@ -1,5 +1,16 @@
 export type DatabaseQueryOptions = {
-  tableName: 'workspace-info' | 'misc';
+  // this is not the best way to do this, but it's fine for now
+  tableName: // table for workspace related information like name, last modified, etc (dont contain actual Files)
+    | 'workspace-info'
+    // a dump table for all the other information
+    | 'misc';
+};
+
+export type DatabaseChange = {
+  type: 'create' | 'update' | 'delete';
+  tableName: DatabaseQueryOptions['tableName'];
+  key: string;
+  value: unknown;
 };
 
 /**
@@ -24,4 +35,13 @@ export interface BaseAppDatabase {
   deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void>;
 
   getAllEntries(options: DatabaseQueryOptions): Promise<unknown[]>;
+
+  /**
+   * Subscribe to changes in the database
+   */
+  subscribe(
+    options: DatabaseQueryOptions,
+    callback: (change: DatabaseChange) => void,
+    signal: AbortSignal,
+  ): void;
 }
