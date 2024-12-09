@@ -10,8 +10,10 @@ import type {
   BaseAppDatabase,
   BaseServiceCommonOptions,
   DatabaseQueryOptions,
+  DatabaseChange,
 } from '@bangle.io/types';
-
+import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 export const DB_NAME = 'bangle-io-db';
 export const DB_VERSION = 2;
 export const MISC_TABLE = 'MiscTable';
@@ -33,6 +35,7 @@ export interface AppDatabase extends BangleDbSchema {
 
 export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   db!: idb.IDBPDatabase<AppDatabase>;
+  private bus!: TypedBroadcastBus<DatabaseChange>;
 
   constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
     super({
@@ -74,6 +77,12 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       },
     });
     this.logger.info('IndexedDB initialized');
+    this.bus = new TypedBroadcastBus({
+      name: `${this.name}`,
+      senderId: BROWSING_CONTEXT_ID,
+      logger: this.logger.child('bus'),
+      signal: this.abortSignal,
+    });
   }
 
   protected async hookOnDispose(): Promise<void> {
@@ -109,6 +118,21 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
 
   private getMiscTable() {
     return getTable(DB_NAME, MISC_TABLE, async () => this.db);
+  }
+
+  subscribe(
+    options: DatabaseQueryOptions,
+    callback: (change: DatabaseChange) => void,
+    signal: AbortSignal,
+  ): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.bus.subscribe((msg) => {
+      if (msg.data.tableName === options.tableName) {
+        callback(msg.data);
+      }
+    }, signal);
   }
 
   async getEntry(
@@ -171,10 +195,22 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         tx.done,
       ]);
 
-      return {
+      const result = {
         found: true,
         value: updated.value,
       };
+
+      if (result.found) {
+        const change: DatabaseChange = {
+          type: existing ? 'update' : 'create',
+          tableName: options.tableName,
+          key,
+          value: result.value,
+        };
+        this.bus.send(change);
+      }
+
+      return result;
     } catch (error) {
       this.throwUnknownError(error);
     }
@@ -191,6 +227,14 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       const objStore = tx.objectStore(table);
 
       await Promise.all([objStore.delete(key), tx.done]);
+
+      const change: DatabaseChange = {
+        type: 'delete',
+        tableName: options.tableName,
+        key,
+        value: undefined,
+      };
+      this.bus.send(change);
     } catch (error) {
       this.throwUnknownError(error);
     }

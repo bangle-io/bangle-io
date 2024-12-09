@@ -87,19 +87,10 @@ function createFileSystemService({
 function createWorkspaceOpsService({
   entities,
   platformServices,
-  rootEmitter,
 }: ServiceDeps) {
-  const abortController = new AbortController();
-  const service = new WorkspaceOpsService(
-    entities.commonOpts,
-    { database: platformServices.database },
-    {
-      emitter: rootEmitter.scoped(
-        ['event::workspace-info:update'],
-        abortController.signal,
-      ),
-    },
-  );
+  const service = new WorkspaceOpsService(entities.commonOpts, {
+    database: platformServices.database,
+  });
   return pushAndReturn(service, entities.allServices);
 }
 

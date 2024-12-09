@@ -278,16 +278,9 @@ function initCoreServices(
     workbenchState,
   });
 
-  const workspaceOps = new WorkspaceOpsService(
-    commonOpts,
-    { database: platformServices.database },
-    {
-      emitter: rootEmitter.scoped(
-        ['event::workspace-info:update'],
-        commonOpts.rootAbortSignal,
-      ),
-    },
-  );
+  const workspaceOps = new WorkspaceOpsService(commonOpts, {
+    database: platformServices.database,
+  });
 
   const workspaceState = new WorkspaceStateService(commonOpts, {
     navigation,
