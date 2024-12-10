@@ -26,6 +26,7 @@ import {
 import { UserActivityService } from '@bangle.io/service-core';
 import {
   BrowserErrorHandlerService,
+  BrowserLocalStorageSyncDatabaseService,
   BrowserRouterService,
   FileStorageIndexedDB,
   FileStorageNativeFs,
@@ -217,9 +218,15 @@ function initPlatformServices(
 
   const browserRouterService = new BrowserRouterService(commonOpts, undefined);
 
+  const browserLocalStorage = new BrowserLocalStorageSyncDatabaseService(
+    commonOpts,
+    undefined,
+  );
+
   return {
     errorService,
     database: idbDatabase,
+    syncDatabase: browserLocalStorage,
     fileStorage: {
       [fileStorageServiceIdb.workspaceType]: fileStorageServiceIdb,
       [nativeFsFileStorage.workspaceType]: nativeFsFileStorage,
@@ -270,6 +277,7 @@ function initCoreServices(
     commonOpts,
     {
       database: platformServices.database,
+      syncDatabase: platformServices.syncDatabase,
     },
     {
       themeManager: theme,

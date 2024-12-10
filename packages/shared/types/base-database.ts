@@ -6,9 +6,19 @@ export type DatabaseQueryOptions = {
     | 'misc';
 };
 
+export type SyncDatabaseQueryOptions = {
+  tableName: 'sync';
+};
+
 export type DatabaseChange = {
   type: 'create' | 'update' | 'delete';
   tableName: DatabaseQueryOptions['tableName'];
+  key: string;
+  value: unknown;
+};
+export type SyncDatabaseChange = {
+  type: 'create' | 'update' | 'delete';
+  tableName: SyncDatabaseQueryOptions['tableName'];
   key: string;
   value: unknown;
 };
@@ -42,6 +52,40 @@ export interface BaseAppDatabase {
   subscribe(
     options: DatabaseQueryOptions,
     callback: (change: DatabaseChange) => void,
+    signal: AbortSignal,
+  ): void;
+}
+
+/**
+ * This is the synchronous interface for implementing a sync database.
+ * Useful for UI components that need to read/write to the database synchronously.
+ */
+export interface BaseAppSyncDatabase {
+  name: string;
+
+  getEntry(
+    key: string,
+    options: SyncDatabaseQueryOptions,
+  ): { found: boolean; value: unknown };
+
+  updateEntry(
+    key: string,
+    updateCallback: (options: { value: unknown; found: boolean }) => null | {
+      value: unknown;
+    },
+    options: SyncDatabaseQueryOptions,
+  ): { value: unknown; found: boolean };
+
+  deleteEntry(key: string, options: SyncDatabaseQueryOptions): void;
+
+  getAllEntries(options: SyncDatabaseQueryOptions): unknown[];
+
+  /**
+   * Subscribe to changes in the database.
+   */
+  subscribe(
+    options: SyncDatabaseQueryOptions,
+    callback: (change: SyncDatabaseChange) => void,
     signal: AbortSignal,
   ): void;
 }

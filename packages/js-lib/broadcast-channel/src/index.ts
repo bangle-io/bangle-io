@@ -71,7 +71,6 @@ export class TypedBroadcastBus<T> {
       return;
     }
 
-    // Ignore messages from self
     if (message.senderId === this.senderId) {
       return;
     }

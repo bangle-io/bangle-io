@@ -1,11 +1,17 @@
-import { BaseService, getEventSenderMetadata } from '@bangle.io/base-utils';
+import {
+  atomStorage,
+  BaseService,
+  getEventSenderMetadata,
+} from '@bangle.io/base-utils';
 import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
+import { T } from '@bangle.io/mini-zod';
 import type {
   BaseDatabaseService,
   BaseServiceCommonOptions,
+  BaseSyncDatabaseService,
   ScopedEmitter,
 } from '@bangle.io/types';
 import type {
@@ -13,8 +19,9 @@ import type {
   DialogSingleInputProps,
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
-import { atom } from 'jotai';
+import { atom, type PrimitiveAtom, type WritableAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
+import { atomWithStorage } from 'jotai/utils';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
@@ -54,7 +61,22 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
  * a service that focuses on the workbench (UI) state
  */
 export class WorkbenchStateService extends BaseService {
-  $sidebarOpen = atom(true);
+  private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
+
+  get $sidebarOpen() {
+    if (!this.$_sidebarOpen) {
+      this.$_sidebarOpen = atomStorage({
+        key: 'sidebar-open',
+        initValue: true,
+        syncDb: this.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+
+    return this.$_sidebarOpen;
+  }
+
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
   $wideEditor = atom(true);
@@ -83,6 +105,8 @@ export class WorkbenchStateService extends BaseService {
   $openAllFiles = atom(false);
   $allFilesSearchInput = atom('');
 
+  private syncDatabase: BaseSyncDatabaseService;
+
   $cleanSearchTerm = atom((get) => {
     const search = get(this.$omniSearchInput);
     const route = get(this.$omniSearchRoute);
@@ -97,6 +121,7 @@ export class WorkbenchStateService extends BaseService {
     baseOptions: BaseServiceCommonOptions,
     dependencies: {
       database: BaseDatabaseService;
+      syncDatabase: BaseSyncDatabaseService;
     },
     private options: {
       themeManager: ThemeManager;
@@ -109,6 +134,8 @@ export class WorkbenchStateService extends BaseService {
       kind: 'core',
       dependencies,
     });
+
+    this.syncDatabase = dependencies.syncDatabase;
   }
 
   protected async hookOnInitialize(): Promise<void> {

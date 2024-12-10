@@ -18,11 +18,13 @@ import {
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-// to avoid loading page-lifecycle
+
+// use direct paths to avoid loading page-lifecycle
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
 import { MemoryRouterService } from '@bangle.io/service-platform/src/memory-router';
 import { NodeErrorHandlerService } from '@bangle.io/service-platform/src/node-error-handler';
+import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
 
 import {
   type BaseServiceCommonOptions,
@@ -130,6 +132,7 @@ function createWorkbenchStateService({
       entities.commonOpts,
       {
         database: platformServices.database,
+        syncDatabase: platformServices.syncDatabase,
       },
       {
         themeManager,
@@ -178,9 +181,14 @@ function initPlatformServices(
     entities.allServices,
   );
 
+  const syncDatabase = new MemorySyncDatabaseService(
+    entities.commonOpts,
+    undefined,
+  );
   return {
     errorService,
     database,
+    syncDatabase,
     fileStorage: {
       [fileStorageServiceIdb.workspaceType]: fileStorageServiceIdb,
     },
