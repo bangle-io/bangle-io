@@ -27,7 +27,6 @@ export function EditorToolbar() {
     >
       <div className="flex h-full items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Sidebar.SidebarTrigger className="-ml-1" />
           {wsPath && (
             <>
               <Separator orientation="vertical" className="h-4" />
