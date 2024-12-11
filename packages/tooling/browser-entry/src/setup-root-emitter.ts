@@ -1,33 +1,28 @@
+import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { Emitter, type EventMessage } from '@bangle.io/emitter';
 import type { Logger } from '@bangle.io/logger';
 import { CROSS_TAB_EVENTS, RootEmitter } from '@bangle.io/root-emitter';
 
-interface BroadcastMessage {
-  senderId: string;
-  data: EventMessage<string, unknown>;
-  timestamp: number;
-}
-
-export function setupBroadcastChannel(
+export function setupCrossTabComms(
   broadcastChannelName: string,
   tabId: string,
   logger: Logger,
   abortSignal: AbortSignal,
 ) {
-  const broadcastChannel = new BroadcastChannel(broadcastChannelName);
+  const broadcastBus = new TypedBroadcastBus<EventMessage<string, unknown>>({
+    name: broadcastChannelName,
+    senderId: tabId,
+    logger: logger,
+    signal: abortSignal,
+  });
+
   const publisher = new Emitter();
   const subscriber = new Emitter();
 
   publisher.onAll((message) => {
     if (CROSS_TAB_EVENTS.includes(message.event)) {
-      const broadcastMessage: BroadcastMessage = {
-        senderId: tabId,
-        data: message,
-        timestamp: Date.now(),
-      };
       logger.debug('post-cross-tab', message.event);
-      broadcastChannel.postMessage(broadcastMessage);
-
+      broadcastBus.send(message);
       subscriber.emit(message.event, message.payload);
     } else {
       logger.debug('post', message.event);
@@ -35,37 +30,26 @@ export function setupBroadcastChannel(
     }
   });
 
-  broadcastChannel.onmessage = (messageEvent) => {
-    const message = messageEvent.data as BroadcastMessage;
-    if (!message) {
-      logger.error('invalid message', message);
-      return;
-    }
-
-    if (message.senderId === tabId) {
-      return;
-    }
-
-    const { data, senderId } = message;
+  broadcastBus.subscribe((message) => {
+    const { data } = message;
     if ((CROSS_TAB_EVENTS as string[]).includes(data.event)) {
-      logger.debug(`received message ${senderId}`, data.event);
+      logger.debug(`received message ${message.senderId}`, data.event);
       subscriber.emit(data.event, data.payload);
     } else {
       logger.warn('rejected message', data);
     }
-  };
+  }, abortSignal);
 
   abortSignal.addEventListener(
     'abort',
     () => {
-      broadcastChannel.close();
       publisher.destroy();
       subscriber.destroy();
     },
     { once: true },
   );
 
-  return { publisher, subscriber, broadcastChannel };
+  return { publisher, subscriber, broadcastBus };
 }
 
 export function setupRootEmitter(
@@ -78,7 +62,7 @@ export function setupRootEmitter(
 
   const pubSub =
     typeof BroadcastChannel !== 'undefined'
-      ? setupBroadcastChannel(broadcastChannelName, tabId, logger, abortSignal)
+      ? setupCrossTabComms(broadcastChannelName, tabId, logger, abortSignal)
       : undefined;
 
   return new RootEmitter({

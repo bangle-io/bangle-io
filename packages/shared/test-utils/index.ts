@@ -35,3 +35,19 @@ export const makeTestService = () => {
 
   return { commonOpts, mockLog, controller, rootEmitter };
 };
+
+export const makeCommonOpts = () => {
+  const { logger, mockLog } = makeTestLogger();
+  const controller = new AbortController();
+  const rootEmitter = new RootEmitter({
+    abortSignal: controller.signal,
+  });
+  const commonOpts: BaseServiceCommonOptions = {
+    logger,
+    store: createStore(),
+    emitAppError: vi.fn(),
+    rootAbortSignal: controller.signal,
+  };
+
+  return { commonOpts, mockLog, controller, rootEmitter };
+};

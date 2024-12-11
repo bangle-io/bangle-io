@@ -36,15 +36,15 @@ test('RootEmitter should handle multiple listeners for the same event', () => {
 
   const listener1 = vi.fn();
   const listener2 = vi.fn();
-  emitter.on('event::workspace-info:update', listener1, abortController.signal);
-  emitter.on('event::workspace-info:update', listener2, abortController.signal);
+  emitter.on('event::app:reload-ui', listener1, abortController.signal);
+  emitter.on('event::app:reload-ui', listener2, abortController.signal);
 
   const payload = {
     wsName: 'workspace1',
     type: 'workspace-create' as const,
     sender: { id: 'sender2' },
   };
-  emitter.emit('event::workspace-info:update', payload);
+  emitter.emit('event::app:reload-ui', payload);
 
   expect(listener1).toHaveBeenCalledWith(payload);
   expect(listener2).toHaveBeenCalledWith(payload);
@@ -152,7 +152,7 @@ describe('ScopedEmitter', () => {
     expect(() => {
       scopedEmitter.emit(
         // @ts-expect-error - Should not allow events outside scope
-        'event::workspace-info:update',
+        'event::app:reload-ui',
         {
           wsName: 'test',
           type: 'workspace-create',
@@ -256,7 +256,7 @@ describe('types', () => {
     expect(() =>
       scopedEmitter.on(
         // @ts-expect-error - Should not allow events outside scope
-        'event::workspace-info:update',
+        'event::app:reload-ui',
         () => {},
         abortController.signal,
       ),
@@ -264,7 +264,7 @@ describe('types', () => {
 
     expect(() =>
       // @ts-expect-error - Should not allow invalid payload type
-      scopedEmitter.emit('event::workspace-info:update', {}),
+      scopedEmitter.emit('event::app:reload-ui', {}),
     ).toThrowError();
 
     scopedEmitter.emit('event::file:update', {

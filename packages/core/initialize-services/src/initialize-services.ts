@@ -26,6 +26,7 @@ import {
 import { UserActivityService } from '@bangle.io/service-core';
 import {
   BrowserErrorHandlerService,
+  BrowserLocalStorageSyncDatabaseService,
   BrowserRouterService,
   FileStorageIndexedDB,
   FileStorageNativeFs,
@@ -217,9 +218,15 @@ function initPlatformServices(
 
   const browserRouterService = new BrowserRouterService(commonOpts, undefined);
 
+  const browserLocalStorage = new BrowserLocalStorageSyncDatabaseService(
+    commonOpts,
+    undefined,
+  );
+
   return {
     errorService,
     database: idbDatabase,
+    syncDatabase: browserLocalStorage,
     fileStorage: {
       [fileStorageServiceIdb.workspaceType]: fileStorageServiceIdb,
       [nativeFsFileStorage.workspaceType]: nativeFsFileStorage,
@@ -266,28 +273,28 @@ function initCoreServices(
   });
 
   const shortcut = new ShortcutService(commonOpts, undefined, document);
-  const workbenchState = new WorkbenchStateService(commonOpts, undefined, {
-    themeManager: theme,
-    emitter: rootEmitter.scoped(
-      ['event::app:reload-ui'],
-      commonOpts.rootAbortSignal,
-    ),
-  });
+  const workbenchState = new WorkbenchStateService(
+    commonOpts,
+    {
+      database: platformServices.database,
+      syncDatabase: platformServices.syncDatabase,
+    },
+    {
+      themeManager: theme,
+      emitter: rootEmitter.scoped(
+        ['event::app:reload-ui'],
+        commonOpts.rootAbortSignal,
+      ),
+    },
+  );
 
   const workbench = new WorkbenchService(commonOpts, {
     workbenchState,
   });
 
-  const workspaceOps = new WorkspaceOpsService(
-    commonOpts,
-    { database: platformServices.database },
-    {
-      emitter: rootEmitter.scoped(
-        ['event::workspace-info:update'],
-        commonOpts.rootAbortSignal,
-      ),
-    },
-  );
+  const workspaceOps = new WorkspaceOpsService(commonOpts, {
+    database: platformServices.database,
+  });
 
   const workspaceState = new WorkspaceStateService(commonOpts, {
     navigation,

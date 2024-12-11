@@ -30,13 +30,20 @@
   "dependencies": {
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/broadcast-channel": "workspace:*",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/db-key-val": "workspace:*",
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "page-lifecycle": "^0.1.2",
+    "jotai": "^2.10.3",
     "wouter": "^3.3.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/mini-zod": "workspace:*",
+    "@bangle.io/logger": "workspace:*"
+  }
 }

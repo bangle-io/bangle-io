@@ -322,6 +322,12 @@ importers:
 
   packages/js-lib/base-error: {}
 
+  packages/js-lib/broadcast-channel:
+    dependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../logger
+
   packages/js-lib/browser: {}
 
   packages/js-lib/color-scheme-manager: {}
@@ -378,6 +384,12 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/broadcast-channel':
+        specifier: workspace:*
+        version: link:../../js-lib/broadcast-channel
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -393,12 +405,25 @@ importers:
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+      jotai:
+        specifier: ^2.10.3
+        version: 2.10.3(@types/react@18.3.14)(react@18.3.1)
       page-lifecycle:
         specifier: ^0.1.2
         version: 0.1.2
       wouter:
         specifier: ^3.3.5
         version: 3.3.5(react@18.3.1)
+    devDependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/mini-zod':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-zod
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../shared/test-utils
 
   packages/shared/base-utils:
     dependencies:
@@ -480,6 +505,12 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../base-utils
+      '@bangle.io/color-scheme-manager':
+        specifier: workspace:*
+        version: link:../../js-lib/color-scheme-manager
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -564,6 +595,9 @@ importers:
       '@bangle.io/app':
         specifier: workspace:*
         version: link:../../core/app
+      '@bangle.io/broadcast-channel':
+        specifier: workspace:*
+        version: link:../../js-lib/broadcast-channel
       '@bangle.io/browser':
         specifier: workspace:*
         version: link:../../js-lib/browser

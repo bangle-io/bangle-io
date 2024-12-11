@@ -54,9 +54,6 @@ export class WorkspaceOpsService extends BaseService {
     dependencies: {
       database: BaseDatabaseService;
     },
-    private options: {
-      emitter: ScopedEmitter<'event::workspace-info:update'>;
-    },
   ) {
     super({
       ...baseOptions,
@@ -67,23 +64,12 @@ export class WorkspaceOpsService extends BaseService {
     this.database = dependencies.database;
   }
 
-  private onChange(change: WorkspaceChangeEvent) {
-    this.options.emitter.emit('event::workspace-info:update', {
-      type: change.type,
-      wsName: change.payload.wsName,
-      sender: getEventSenderMetadata({ tag: this.name }),
-    });
-  }
-
   protected async hookOnInitialize(): Promise<void> {
-    this.options.emitter.on(
-      'event::workspace-info:update',
-      (event) => {
+    this.database.subscribe(
+      { tableName: WORKSPACE_INFO_TABLE },
+      (change) => {
         this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
-        if (
-          event.type === 'workspace-create' ||
-          event.type === 'workspace-delete'
-        ) {
+        if (change.type === 'create' || change.type === 'delete') {
           this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
         }
       },
@@ -164,10 +150,6 @@ export class WorkspaceOpsService extends BaseService {
     if (updated) {
       // Invalidate cache when workspace info changes
       this.invalidateCache();
-      this.onChange({
-        type: 'workspace-create',
-        payload: { wsName },
-      });
 
       return updated;
     }
@@ -205,11 +187,6 @@ export class WorkspaceOpsService extends BaseService {
 
     // Invalidate cache when workspace info changes
     this.invalidateCache();
-
-    this.onChange({
-      type: 'workspace-delete',
-      payload: { wsName: wsName },
-    });
   }
 
   async updateWorkspaceInfo(
@@ -249,11 +226,6 @@ export class WorkspaceOpsService extends BaseService {
     if (result.found) {
       // Invalidate cache when workspace info changes
       this.invalidateCache();
-
-      this.onChange({
-        type: 'workspace-update',
-        payload: { wsName: name },
-      });
 
       return result.value as WorkspaceInfo;
     }

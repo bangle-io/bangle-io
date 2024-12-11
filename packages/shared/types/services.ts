@@ -24,7 +24,7 @@ import type {
 } from '@bangle.io/service-core';
 import type { createStore } from 'jotai';
 
-import type { BaseAppDatabase } from './base-database';
+import type { BaseAppDatabase, BaseAppSyncDatabase } from './base-database';
 import type { BaseFileStorageProvider } from './base-file-storage';
 import type { BaseRouter } from './base-router';
 
@@ -88,9 +88,11 @@ export type PlatformServices = {
   errorService: BaseErrorService;
   fileStorage: Partial<Record<WorkspaceStorageType, BaseFileStorageService>>;
   router: BaseRouterService;
+  syncDatabase: BaseSyncDatabaseService;
 };
 
 export type AllServiceName = (keyof CoreServices | keyof PlatformServices) & {};
 
 export type BaseDatabaseService = BaseAppDatabase & BaseService;
 export type BaseFileStorageService = BaseFileStorageProvider & BaseService<any>;
+export type BaseSyncDatabaseService = BaseAppSyncDatabase & BaseService;

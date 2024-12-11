@@ -18,12 +18,16 @@ import {
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-// to avoid loading page-lifecycle
+
+// use direct paths to avoid loading page-lifecycle
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
 import { MemoryRouterService } from '@bangle.io/service-platform/src/memory-router';
+import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
 import { NodeErrorHandlerService } from '@bangle.io/service-platform/src/node-error-handler';
 
+import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import {
   type BaseServiceCommonOptions,
   CoreServices,
@@ -54,6 +58,14 @@ interface ServiceWithDeps extends ServiceDeps {
   fileSystem: FileSystemService;
   workspaceOps: WorkspaceOpsService;
 }
+
+// Add theme manager mock near the top of the file with other imports
+const themeManager = {
+  currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
+  onThemeChange: () => () => {},
+  setPreference: () => {},
+  currentTheme: THEME_MANAGER_CONFIG.lightThemeClass,
+} as unknown as ThemeManager;
 
 function createNavigationService({ entities, platformServices }: ServiceDeps) {
   return pushAndReturn(
@@ -87,19 +99,10 @@ function createFileSystemService({
 function createWorkspaceOpsService({
   entities,
   platformServices,
-  rootEmitter,
 }: ServiceDeps) {
-  const abortController = new AbortController();
-  const service = new WorkspaceOpsService(
-    entities.commonOpts,
-    { database: platformServices.database },
-    {
-      emitter: rootEmitter.scoped(
-        ['event::workspace-info:update'],
-        abortController.signal,
-      ),
-    },
-  );
+  const service = new WorkspaceOpsService(entities.commonOpts, {
+    database: platformServices.database,
+  });
   return pushAndReturn(service, entities.allServices);
 }
 
@@ -115,6 +118,30 @@ function createWorkspaceStateService({
       fileSystem,
       workspaceOps,
     }),
+    entities.allServices,
+  );
+}
+
+function createWorkbenchStateService({
+  entities,
+  rootEmitter,
+  platformServices,
+}: ServiceWithDeps) {
+  return pushAndReturn(
+    new WorkbenchStateService(
+      entities.commonOpts,
+      {
+        database: platformServices.database,
+        syncDatabase: platformServices.syncDatabase,
+      },
+      {
+        themeManager,
+        emitter: rootEmitter.scoped(
+          ['event::app:reload-ui'],
+          entities.commonOpts.rootAbortSignal,
+        ),
+      },
+    ),
     entities.allServices,
   );
 }
@@ -154,9 +181,14 @@ function initPlatformServices(
     entities.allServices,
   );
 
+  const syncDatabase = new MemorySyncDatabaseService(
+    entities.commonOpts,
+    undefined,
+  );
   return {
     errorService,
     database,
+    syncDatabase,
     fileStorage: {
       [fileStorageServiceIdb.workspaceType]: fileStorageServiceIdb,
     },
@@ -192,6 +224,14 @@ export function initUserActivityDepsService({
     navigation,
     fileSystem: fileSystemService,
     workspaceOps,
+  });
+
+  const workbenchState = createWorkbenchStateService({
+    ...deps,
+    navigation,
+    fileSystem: fileSystemService,
+    workspaceOps,
+    platformServices,
   });
 
   return {
@@ -231,6 +271,7 @@ export function initUserActivityDepsService({
     fileSystemService,
     workspaceOps,
     workspaceState,
+    workbenchState,
   };
 }
 

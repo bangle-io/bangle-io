@@ -1,62 +1,21 @@
+import {
+  MemoryBroadcastChannel,
+  type TypedBroadcastBus,
+} from '@bangle.io/broadcast-channel';
 import type { Emitter } from '@bangle.io/emitter';
-// test/setupBroadcastChannel.test.ts
 import { Logger } from '@bangle.io/logger';
 import { CROSS_TAB_EVENTS } from '@bangle.io/root-emitter';
 import { describe, expect, test, vi } from 'vitest';
-import { setupBroadcastChannel } from '../setup-root-emitter';
+import { setupCrossTabComms } from '../setup-root-emitter';
 
-class MockBroadcastChannel {
-  onmessage: ((event: MessageEvent) => void) | null = null;
-  private static channels: Map<string, Set<MockBroadcastChannel>> = new Map();
-  private closed = false;
-
-  constructor(public channelName: string) {
-    if (!MockBroadcastChannel.channels.has(channelName)) {
-      MockBroadcastChannel.channels.set(channelName, new Set());
-    }
-    MockBroadcastChannel.channels.get(channelName)?.add(this);
-  }
-
-  postMessage(data: unknown) {
-    if (this.closed) return;
-
-    const event = new MessageEvent('message', { data });
-    const channels = MockBroadcastChannel.channels.get(this.channelName);
-
-    if (channels) {
-      for (const channel of channels) {
-        if (channel !== this && !channel.closed) {
-          if (channel.onmessage) {
-            channel.onmessage(event);
-          }
-        }
-      }
-    }
-  }
-
-  close() {
-    if (this.closed) return;
-    this.closed = true;
-    const channels = MockBroadcastChannel.channels.get(this.channelName);
-    if (channels) {
-      channels.delete(this);
-      if (channels.size === 0) {
-        MockBroadcastChannel.channels.delete(this.channelName);
-      }
-    }
-    this.onmessage = null;
-  }
-}
-
-// Replace the global BroadcastChannel with our mock
-vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+// Replace the global BroadcastChannel with our MemoryBroadcastChannel
+vi.stubGlobal('BroadcastChannel', MemoryBroadcastChannel);
 
 interface TestSetup {
-  broadcastChannel: MockBroadcastChannel;
   pubSub: {
     publisher: Emitter;
     subscriber: Emitter;
-    broadcastChannel: BroadcastChannel;
+    broadcastBus: TypedBroadcastBus<any>;
   };
   abortController: AbortController;
   logger: Logger;
@@ -71,7 +30,7 @@ function setup(): TestSetup {
   const tabId = `test-tab-id-${tabCounter++}`;
   const channelName = 'test-channel';
 
-  const pubSub = setupBroadcastChannel(
+  const pubSub = setupCrossTabComms(
     channelName,
     tabId,
     logger,
@@ -79,8 +38,6 @@ function setup(): TestSetup {
   );
 
   return {
-    broadcastChannel:
-      pubSub.broadcastChannel as unknown as MockBroadcastChannel,
     pubSub,
     abortController,
     logger,
@@ -88,7 +45,7 @@ function setup(): TestSetup {
   };
 }
 
-describe('setupBroadcastChannel', () => {
+describe('setupCrossTabComms', () => {
   test('should emit cross-tab events to other tabs', () => {
     const setup1 = setup();
     const setup2 = setup();
@@ -118,7 +75,7 @@ describe('setupBroadcastChannel', () => {
   });
 
   test('should ignore messages from same tab', () => {
-    const { pubSub, broadcastChannel, tabId } = setup();
+    const { pubSub, tabId } = setup();
 
     const subscriberSpy = vi.fn();
 
@@ -134,7 +91,7 @@ describe('setupBroadcastChannel', () => {
       timestamp: Date.now(),
     };
 
-    broadcastChannel.onmessage?.(
+    pubSub.broadcastBus._channel.onmessage?.(
       new MessageEvent('message', { data: testMessage }),
     );
 
@@ -142,34 +99,32 @@ describe('setupBroadcastChannel', () => {
   });
 
   test('should cleanup resources on abort', () => {
-    const { pubSub, abortController, broadcastChannel } = setup();
+    const { pubSub, abortController } = setup();
     const destroyPublisherSpy = vi.spyOn(pubSub.publisher, 'destroy');
     const destroySubscriberSpy = vi.spyOn(pubSub.subscriber, 'destroy');
-    const closeBroadcastChannelSpy = vi.spyOn(broadcastChannel, 'close');
 
     abortController.abort();
 
     expect(destroyPublisherSpy).toHaveBeenCalled();
     expect(destroySubscriberSpy).toHaveBeenCalled();
-    expect(closeBroadcastChannelSpy).toHaveBeenCalled();
   });
 
   test('should not broadcast non-cross-tab events', () => {
-    const { pubSub, broadcastChannel } = setup();
-    const postMessageSpy = vi.spyOn(broadcastChannel, 'postMessage');
+    const { pubSub } = setup();
+    const sendSpy = vi.spyOn(pubSub.broadcastBus, 'send');
     const subscriberSpy = vi.fn();
     const regularEvent = 'regular-event';
 
     pubSub.subscriber.on(regularEvent, subscriberSpy);
     pubSub.publisher.emit(regularEvent, { test: 'data' });
 
-    expect(postMessageSpy).not.toHaveBeenCalled();
+    expect(sendSpy).not.toHaveBeenCalled();
     expect(subscriberSpy).toHaveBeenCalledTimes(1);
   });
 
-  test('should broadcast cross-tab events via BroadcastChannel', () => {
-    const { pubSub, broadcastChannel } = setup();
-    const postMessageSpy = vi.spyOn(broadcastChannel, 'postMessage');
+  test('should broadcast cross-tab events via TypedBroadcastBus', () => {
+    const { pubSub } = setup();
+    const sendSpy = vi.spyOn(pubSub.broadcastBus, 'send');
     const subscriberSpy = vi.fn();
 
     pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
@@ -177,21 +132,17 @@ describe('setupBroadcastChannel', () => {
     const testPayload = { test: 'data' };
     pubSub.publisher.emit(CROSS_TAB_EVENTS[0], testPayload);
 
-    expect(postMessageSpy).toHaveBeenCalledTimes(1);
-    expect(postMessageSpy).toHaveBeenCalledWith({
-      senderId: expect.any(String),
-      data: {
-        event: CROSS_TAB_EVENTS[0],
-        payload: testPayload,
-      },
-      timestamp: expect.any(Number),
+    expect(sendSpy).toHaveBeenCalledTimes(1);
+    expect(sendSpy).toHaveBeenCalledWith({
+      event: CROSS_TAB_EVENTS[0],
+      payload: testPayload,
     });
 
     expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
   });
 
   test('should ignore messages not in CROSS_TAB_EVENTS', () => {
-    const { pubSub, broadcastChannel } = setup();
+    const { pubSub } = setup();
     const subscriberSpy = vi.fn();
 
     pubSub.subscriber.on('some-other-event', subscriberSpy);
@@ -206,7 +157,7 @@ describe('setupBroadcastChannel', () => {
     };
 
     // Simulate receiving the message via broadcastChannel
-    broadcastChannel.onmessage?.(
+    pubSub.broadcastBus._channel.onmessage?.(
       new MessageEvent('message', { data: testMessage }),
     );
 

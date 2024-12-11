@@ -27,7 +27,6 @@ export function EditorToolbar() {
     >
       <div className="flex h-full items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Sidebar.SidebarTrigger className="-ml-1" />
           {wsPath && (
             <>
               <Separator orientation="vertical" className="h-4" />
@@ -57,8 +56,8 @@ export function EditorToolbar() {
             <Button
               variant="ghost"
               size="icon"
+              className="ml-2 h-7 w-7"
               onClick={() => setWideEditor((prev) => !prev)}
-              className="ml-2"
             >
               {wideEditor ? <ChevronsRightLeft /> : <MoveHorizontal />}
               <span className="sr-only">Toggle Max Width</span>

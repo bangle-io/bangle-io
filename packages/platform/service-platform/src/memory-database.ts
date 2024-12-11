@@ -1,7 +1,10 @@
 import { BaseService } from '@bangle.io/base-utils';
+import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type {
   BaseAppDatabase,
   BaseServiceCommonOptions,
+  DatabaseChange,
   DatabaseQueryOptions,
 } from '@bangle.io/types';
 
@@ -11,6 +14,7 @@ export class MemoryDatabaseService
 {
   private workspaces = new Map<string, unknown>();
   private miscData = new Map<string, unknown>();
+  private bus!: TypedBroadcastBus<DatabaseChange>;
 
   constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
     super({
@@ -21,7 +25,15 @@ export class MemoryDatabaseService
     });
   }
 
-  protected async hookOnInitialize(): Promise<void> {}
+  protected async hookOnInitialize(): Promise<void> {
+    this.bus = new TypedBroadcastBus({
+      name: `${this.name}`,
+      senderId: BROWSING_CONTEXT_ID,
+      logger: this.logger.child('bus'),
+      useMemoryChannel: true,
+      signal: this.abortSignal,
+    });
+  }
 
   protected async hookOnDispose(): Promise<void> {
     this.workspaces.clear();
@@ -55,6 +67,13 @@ export class MemoryDatabaseService
 
     if (result) {
       dataMap.set(key, result.value);
+      const change: DatabaseChange = {
+        type: found ? 'update' : 'create',
+        tableName: options.tableName,
+        key,
+        value: result.value,
+      };
+      this.bus.send(change);
       return { value: result.value, found: true };
     }
 
@@ -64,7 +83,32 @@ export class MemoryDatabaseService
   async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {
     const dataMap =
       options.tableName === 'workspace-info' ? this.workspaces : this.miscData;
-    dataMap.delete(key);
+    const found = dataMap.delete(key);
+
+    if (found) {
+      const change: DatabaseChange = {
+        type: 'delete',
+        tableName: options.tableName,
+        key,
+        value: undefined,
+      };
+      this.bus.send(change);
+    }
+  }
+
+  subscribe(
+    options: DatabaseQueryOptions,
+    callback: (change: DatabaseChange) => void,
+    signal: AbortSignal,
+  ): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.bus.subscribe((msg) => {
+      if (msg.data.tableName === options.tableName) {
+        callback(msg.data);
+      }
+    }, signal);
   }
 
   async getAllEntries(options: DatabaseQueryOptions): Promise<unknown[]> {

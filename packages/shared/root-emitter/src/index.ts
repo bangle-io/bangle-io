@@ -37,14 +37,6 @@ export type RootEvents =
       };
     }
   | {
-      event: 'event::workspace-info:update';
-      payload: {
-        wsName: string;
-        type: 'workspace-create' | 'workspace-update' | 'workspace-delete';
-        sender: EventSenderMetadata;
-      };
-    }
-  | {
       event: 'event::file:update';
       payload: {
         wsPath: string;
@@ -74,7 +66,6 @@ export type RootEvents =
 
 // These events are allowed to be broadcasted to other tabs
 export const CROSS_TAB_EVENTS = [
-  'event::workspace-info:update',
   'event::file:update',
   'event::file:force-update',
   'event::app:reload-ui',

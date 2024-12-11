@@ -1,16 +1,27 @@
-import { BaseService, getEventSenderMetadata } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  atomStorage,
+  getEventSenderMetadata,
+} from '@bangle.io/base-utils';
 import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
-import type { BaseServiceCommonOptions, ScopedEmitter } from '@bangle.io/types';
+import { T } from '@bangle.io/mini-zod';
+import type {
+  BaseDatabaseService,
+  BaseServiceCommonOptions,
+  BaseSyncDatabaseService,
+  ScopedEmitter,
+} from '@bangle.io/types';
 import type {
   AppAlertDialogProps,
   DialogSingleInputProps,
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
-import { atom } from 'jotai';
+import { type PrimitiveAtom, type WritableAtom, atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
+import { atomWithStorage } from 'jotai/utils';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
@@ -50,10 +61,37 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
  * a service that focuses on the workbench (UI) state
  */
 export class WorkbenchStateService extends BaseService {
-  $sidebarOpen = atom(true);
+  private $_wideEditor: PrimitiveAtom<boolean> | undefined;
+  get $wideEditor() {
+    if (!this.$_wideEditor) {
+      this.$_wideEditor = atomStorage({
+        key: 'wide-editor',
+        initValue: true,
+        syncDb: this.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_wideEditor;
+  }
+
+  private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
+  get $sidebarOpen() {
+    if (!this.$_sidebarOpen) {
+      this.$_sidebarOpen = atomStorage({
+        key: 'sidebar-open',
+        initValue: true,
+        syncDb: this.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+
+    return this.$_sidebarOpen;
+  }
+
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
-  $wideEditor = atom(true);
   $themePref = atom<ThemeConfig['defaultPreference']>('system');
   $singleInputDialog = atom<
     | undefined
@@ -79,6 +117,8 @@ export class WorkbenchStateService extends BaseService {
   $openAllFiles = atom(false);
   $allFilesSearchInput = atom('');
 
+  private syncDatabase: BaseSyncDatabaseService;
+
   $cleanSearchTerm = atom((get) => {
     const search = get(this.$omniSearchInput);
     const route = get(this.$omniSearchRoute);
@@ -91,7 +131,10 @@ export class WorkbenchStateService extends BaseService {
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
+    dependencies: {
+      database: BaseDatabaseService;
+      syncDatabase: BaseSyncDatabaseService;
+    },
     private options: {
       themeManager: ThemeManager;
       emitter: ScopedEmitter<'event::app:reload-ui'>;
@@ -103,6 +146,8 @@ export class WorkbenchStateService extends BaseService {
       kind: 'core',
       dependencies,
     });
+
+    this.syncDatabase = dependencies.syncDatabase;
   }
 
   protected async hookOnInitialize(): Promise<void> {
