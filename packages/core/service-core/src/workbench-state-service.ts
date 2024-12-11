@@ -61,8 +61,21 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
  * a service that focuses on the workbench (UI) state
  */
 export class WorkbenchStateService extends BaseService {
-  private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
+  private $_wideEditor: PrimitiveAtom<boolean> | undefined;
+  get $wideEditor() {
+    if (!this.$_wideEditor) {
+      this.$_wideEditor = atomStorage({
+        key: 'wide-editor',
+        initValue: true,
+        syncDb: this.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_wideEditor;
+  }
 
+  private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
   get $sidebarOpen() {
     if (!this.$_sidebarOpen) {
       this.$_sidebarOpen = atomStorage({
@@ -79,7 +92,6 @@ export class WorkbenchStateService extends BaseService {
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
-  $wideEditor = atom(true);
   $themePref = atom<ThemeConfig['defaultPreference']>('system');
   $singleInputDialog = atom<
     | undefined

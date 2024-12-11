@@ -31,6 +31,7 @@ export function arrayEqual<T>(a: T[], b: T[]) {
   return true;
 }
 
+// should be used for simple UI config that needs to be persisted
 export function atomStorage<TValue>({
   key,
   initValue,
