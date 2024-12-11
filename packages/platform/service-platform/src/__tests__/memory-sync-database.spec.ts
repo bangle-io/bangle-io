@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
 import { makeTestService } from '@bangle.io/test-utils';
+import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { MemorySyncDatabaseService } from '../memory-sync-database';
 
 describe('MemorySyncDatabaseService', () => {

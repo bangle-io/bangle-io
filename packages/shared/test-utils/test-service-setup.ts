@@ -23,9 +23,11 @@ import {
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
 import { MemoryRouterService } from '@bangle.io/service-platform/src/memory-router';
-import { NodeErrorHandlerService } from '@bangle.io/service-platform/src/node-error-handler';
 import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
+import { NodeErrorHandlerService } from '@bangle.io/service-platform/src/node-error-handler';
 
+import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import {
   type BaseServiceCommonOptions,
   CoreServices,
@@ -36,8 +38,6 @@ import {
 import { createStore } from 'jotai';
 import { Provider, useAtom, useAtomValue, useStore } from 'jotai/react';
 import { vi } from 'vitest';
-import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 export type { Store } from '@bangle.io/types';
 
 type CommonEntities = ReturnType<typeof createCommonEntities>;

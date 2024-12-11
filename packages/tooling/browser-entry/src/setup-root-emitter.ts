@@ -1,7 +1,7 @@
+import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { Emitter, type EventMessage } from '@bangle.io/emitter';
 import type { Logger } from '@bangle.io/logger';
 import { CROSS_TAB_EVENTS, RootEmitter } from '@bangle.io/root-emitter';
-import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 
 export function setupCrossTabComms(
   broadcastChannelName: string,

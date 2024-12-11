@@ -1,12 +1,12 @@
 import { BaseService } from '@bangle.io/base-utils';
+import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type {
   BaseAppDatabase,
   BaseServiceCommonOptions,
-  DatabaseQueryOptions,
   DatabaseChange,
+  DatabaseQueryOptions,
 } from '@bangle.io/types';
-import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
-import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 
 export class MemoryDatabaseService
   extends BaseService

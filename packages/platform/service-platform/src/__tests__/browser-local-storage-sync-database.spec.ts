@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
 import { makeTestService } from '@bangle.io/test-utils';
+import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BrowserLocalStorageSyncDatabaseService } from '../browser-local-storage-sync-database';
 
 describe('BrowserLocalStorageSyncDatabaseService', () => {

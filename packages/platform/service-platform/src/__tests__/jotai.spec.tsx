@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { atomStorage, atomWithCompare } from '@bangle.io/base-utils';
-import type { BaseAppSyncDatabase, Store } from '@bangle.io/types';
-import { T, type Validator } from '@bangle.io/mini-zod';
 import type { Logger } from '@bangle.io/logger';
-import { MemorySyncDatabaseService } from '../memory-sync-database';
+import { T, type Validator } from '@bangle.io/mini-zod';
 import { makeCommonOpts } from '@bangle.io/test-utils';
+import type { BaseAppSyncDatabase, Store } from '@bangle.io/types';
 import { RESET } from 'jotai/utils';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { MemorySyncDatabaseService } from '../memory-sync-database';
 
 describe('atomStorage', () => {
   let syncDb: BaseAppSyncDatabase;

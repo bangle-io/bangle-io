@@ -1,6 +1,6 @@
 import {
-  atomStorage,
   BaseService,
+  atomStorage,
   getEventSenderMetadata,
 } from '@bangle.io/base-utils';
 import type {
@@ -19,7 +19,7 @@ import type {
   DialogSingleInputProps,
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
-import { atom, type PrimitiveAtom, type WritableAtom } from 'jotai';
+import { type PrimitiveAtom, type WritableAtom, atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 import { atomWithStorage } from 'jotai/utils';
 

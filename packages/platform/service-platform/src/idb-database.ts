@@ -1,4 +1,6 @@
 import { BaseService, isAppError, throwAppError } from '@bangle.io/base-utils';
+import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import {
   type BangleDbSchema,
   type DbRecord,
@@ -9,11 +11,9 @@ import {
 import type {
   BaseAppDatabase,
   BaseServiceCommonOptions,
-  DatabaseQueryOptions,
   DatabaseChange,
+  DatabaseQueryOptions,
 } from '@bangle.io/types';
-import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
-import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 export const DB_NAME = 'bangle-io-db';
 export const DB_VERSION = 2;
 export const MISC_TABLE = 'MiscTable';

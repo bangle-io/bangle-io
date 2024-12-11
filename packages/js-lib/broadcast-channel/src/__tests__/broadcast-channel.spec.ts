@@ -1,18 +1,18 @@
+import { Logger } from '@bangle.io/logger';
 import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  vi,
   type Mock,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
 } from 'vitest';
 import {
+  type BroadcastMessage,
   MemoryBroadcastChannel,
   TypedBroadcastBus,
-  type BroadcastMessage,
 } from '../index';
-import { Logger } from '@bangle.io/logger';
 
 vi.stubGlobal('BroadcastChannel', MemoryBroadcastChannel);
 
