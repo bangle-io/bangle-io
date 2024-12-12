@@ -184,6 +184,12 @@ export abstract class BaseService<Config = void> {
 
   // Allows setting the config before initialization
   public setInitConfig(config: Config) {
+    if (this.isConfigSet) {
+      throw new Error(
+        `Config already set for service: ${this.name}. Cannot set config again.`,
+      );
+    }
+
     if (!this._baseOptions.needsConfig) {
       throw new Error(
         `Config is not needed for service: ${this.name}. Remove the config from the service.`,

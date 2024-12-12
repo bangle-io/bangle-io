@@ -10,6 +10,7 @@ export type * from './workspace';
 export type * from './base-file-storage';
 export type * from '@bangle.io/base-error';
 export type * from './services';
+export type * from './services-setup';
 export type * from './commands';
 export type * from './base-router';
 export type * from '@bangle.io/root-emitter';

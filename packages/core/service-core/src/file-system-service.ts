@@ -47,7 +47,7 @@ export class FileSystemService extends BaseService<{
 
   constructor(
     baseOptions: BaseServiceCommonOptions,
-    dependencies: Record<string, BaseService>,
+    dependencies: Record<string, BaseService<any>>,
     private options: {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
       fileStorageServices: Record<string, BaseFileStorageService>;

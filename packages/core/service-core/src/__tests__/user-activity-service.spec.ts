@@ -1,5 +1,9 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
-import { initUserActivityDepsService, sleep } from '@bangle.io/test-utils';
+import {
+  TestServiceInitializer,
+  createTestEnvironment,
+  sleep,
+} from '@bangle.io/test-utils';
 import { createStore } from 'jotai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { UserActivityService } from '../user-activity-service';
@@ -21,41 +25,48 @@ async function setupUserActivityService({
 }) {
   const store = createStore();
 
-  const deps = await initUserActivityDepsService({
-    store,
-    signal: controller.signal,
+  const testEnv = createTestEnvironment({ controller });
+
+  const testService = new TestServiceInitializer(testEnv);
+
+  const userActivityService = testEnv.factory.create(UserActivityService, {
+    create() {
+      return new UserActivityService(
+        testEnv.commonOpts,
+        {
+          workspaceState: testService.coreWorkspaceStateService(),
+          workspaceOps: testService.coreWorkspaceOpsService(),
+        },
+        {
+          activityCooldownMs: cooldownMs,
+          maxRecentEntries: maxEntries,
+          emitter: testEnv.rootEmitter.scoped(
+            ['event::command:result'],
+            controller.signal,
+          ),
+        },
+      );
+    },
   });
 
-  await deps.initAllServices();
+  const navigation = testService.coreNavigationService();
+  const workspaceOps = testService.coreWorkspaceOpsService();
 
-  const userActivityService = new UserActivityService(
-    deps.commonOpts,
-    {
-      workspaceState: deps.workspaceState,
-      workspaceOps: deps.workspaceOps,
-    },
-    {
-      activityCooldownMs: cooldownMs,
-      maxRecentEntries: maxEntries,
-      emitter: deps.rootEmitter.scoped(
-        ['event::command:result'],
-        controller.signal,
-      ),
-    },
-  );
+  testService.configure();
+  testEnv.initAll();
+
+  await userActivityService.initializedPromise;
 
   // Create a test workspace
-  await deps.workspaceOps.createWorkspaceInfo({
+  await workspaceOps.createWorkspaceInfo({
     name: TEST_WS_NAME,
     type: WORKSPACE_STORAGE_TYPE.Memory,
     metadata: {},
   });
 
-  await userActivityService.initialize();
-
   return {
     userActivityService,
-    ...deps,
+    navigation,
     store,
   };
 }

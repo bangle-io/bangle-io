@@ -1,5 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
-import { makeTestLogger, makeTestService } from '@bangle.io/test-utils';
+import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { BaseService } from '../base-service';
@@ -43,7 +43,7 @@ describe('BaseService', () => {
   };
 
   beforeEach(() => {
-    const { commonOpts, mockLog: _mockLog } = makeTestService();
+    const { commonOpts, mockLog: _mockLog } = makeTestCommonOpts();
     mockLog = _mockLog;
     service = new TestService(commonOpts, dependencies);
   });
@@ -53,7 +53,7 @@ describe('BaseService', () => {
   });
 
   test('should emit an app error when emitAppError is called', async () => {
-    const { commonOpts } = makeTestService();
+    const { commonOpts } = makeTestCommonOpts();
     const service = new TestService(commonOpts, dependencies);
     const error = createAppError(
       'error::workspace:not-found',
@@ -87,7 +87,7 @@ describe('BaseService', () => {
   });
 
   test('should dispose the service correctly', async () => {
-    const { commonOpts, mockLog } = makeTestService();
+    const { commonOpts, mockLog } = makeTestCommonOpts();
     const service = new TestService(commonOpts, dependencies, 'TestService1');
     await service.initialize();
     await service.dispose();
@@ -99,7 +99,7 @@ describe('BaseService', () => {
 
   test('should abort disposal if not initialized', async () => {
     const service = new TestService(
-      makeTestService().commonOpts,
+      makeTestCommonOpts().commonOpts,
       dependencies,
       'TestService2',
     );
@@ -108,7 +108,7 @@ describe('BaseService', () => {
   });
 
   test('should initialize with dependencies', async () => {
-    const { commonOpts, mockLog } = makeTestService();
+    const { commonOpts, mockLog } = makeTestCommonOpts();
     const depService = new TestService(commonOpts, dependencies, 'DepService');
     dependencies = { dep: depService };
     service = new TestService(commonOpts, dependencies);
@@ -135,7 +135,7 @@ describe('BaseService', () => {
 
   test('should set initialization config when needed', () => {
     service = new TestService(
-      { ...makeTestService().commonOpts, needsConfig: true },
+      { ...makeTestCommonOpts().commonOpts, needsConfig: true },
       dependencies,
     );
     const hookPostConfigSetSpy = vi.spyOn(
@@ -156,7 +156,7 @@ describe('BaseService', () => {
 
   test('should throw error when setting config if not needed', () => {
     service = new TestService(
-      makeTestService().commonOpts,
+      makeTestCommonOpts().commonOpts,
       dependencies,
       'TestService',
     );

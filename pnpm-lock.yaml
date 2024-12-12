@@ -508,9 +508,18 @@ importers:
       '@bangle.io/color-scheme-manager':
         specifier: workspace:*
         version: link:../../js-lib/color-scheme-manager
+      '@bangle.io/command-handlers':
+        specifier: workspace:*
+        version: link:../../core/command-handlers
+      '@bangle.io/commands':
+        specifier: workspace:*
+        version: link:../commands
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../constants
+      '@bangle.io/initialize-services':
+        specifier: workspace:*
+        version: link:../../core/initialize-services
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger

@@ -65,7 +65,6 @@ export class NodeErrorHandlerService extends BaseErrorService {
 
     // App errors should be handled by the app and not logged
     if (appLikeError) {
-      // Implement custom logic if needed
     }
 
     this.options.onError({

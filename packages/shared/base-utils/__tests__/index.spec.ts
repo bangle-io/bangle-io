@@ -1,4 +1,4 @@
-import { makeTestService } from '@bangle.io/test-utils';
+import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { describe, expect, test } from 'vitest';
 import { BaseService, flatServices } from '../index';
@@ -20,14 +20,14 @@ describe('flatServices', () => {
   });
 
   test('returns single service', () => {
-    const { commonOpts } = makeTestService();
+    const { commonOpts } = makeTestCommonOpts();
 
     const service = new TestService(commonOpts);
     expect(flatServices({ service })).toEqual([service]);
   });
 
   test('returns nested services', () => {
-    const { commonOpts } = makeTestService();
+    const { commonOpts } = makeTestCommonOpts();
 
     const service1 = new TestService(commonOpts);
     const service2 = new TestService(commonOpts);
@@ -44,7 +44,7 @@ describe('flatServices', () => {
   });
 
   test('ignores non-service values', () => {
-    const { commonOpts } = makeTestService();
+    const { commonOpts } = makeTestCommonOpts();
 
     const service = new TestService(commonOpts);
     const services = {

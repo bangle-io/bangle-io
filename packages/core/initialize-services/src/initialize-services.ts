@@ -1,13 +1,11 @@
+// initialize-service (refactored to a class-based approach)
+
 import {
-  type Logger,
+  type BaseService,
   assertIsDefined,
-  flatServices,
-  getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { commandHandlers } from '@bangle.io/command-handlers';
-import { getEnabledCommands } from '@bangle.io/commands';
 
 import {
   CommandDispatchService,
@@ -17,334 +15,328 @@ import {
   NavigationService,
   ShortcutService,
   type ShortcutServiceConfig,
+  UserActivityService,
   WorkbenchService,
   WorkbenchStateService,
   WorkspaceOpsService,
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-import { UserActivityService } from '@bangle.io/service-core';
-import {
-  BrowserErrorHandlerService,
-  BrowserLocalStorageSyncDatabaseService,
-  BrowserRouterService,
-  FileStorageIndexedDB,
-  FileStorageNativeFs,
-  IdbDatabaseService,
-} from '@bangle.io/service-platform';
+
 import type {
   BaseServiceCommonOptions,
+  Command,
+  CommandHandler,
   CoreServices,
   PlatformServices,
   RootEmitter,
-  Services,
-  Store,
 } from '@bangle.io/types';
 
-export function initializeServices(
-  logger: Logger,
-  rootEmitter: RootEmitter,
-  store: Store,
-  theme: ThemeManager,
-  abortSignal: AbortSignal,
-): Services {
-  const commands = getEnabledCommands();
+type ServiceCreator<T extends BaseService<any>> = {
+  create: () => T;
+  configure?: (instance: T, { xyz }: { xyz: string }) => void;
+};
 
-  const commonOpts: BaseServiceCommonOptions = {
-    logger,
-    store,
-    rootAbortSignal: abortSignal,
-    emitAppError(error) {
-      rootEmitter.emit('event::error:uncaught-error', {
-        error,
-        appLikeError: true,
-        rejection: false,
-        isFakeThrow: true,
-        sender: getEventSenderMetadata({ tag: 'initialize-service' }),
-      });
-    },
-  };
+export class ServiceFactory {
+  private instanceMap = new Map<string, BaseService<any>>();
+  private configurationMap = new Map<
+    string,
+    NonNullable<ServiceCreator<BaseService<any>>['configure']>
+  >();
 
-  const platformServices = initPlatformServices(commonOpts, rootEmitter);
+  create<T extends BaseService<any>>(
+    serviceClass: new (...args: any[]) => T,
+    creator: ServiceCreator<T>,
+  ): T {
+    const name = serviceClass.name;
+    const existing = this.instanceMap.get(name) as T | undefined;
 
-  const coreServices = initCoreServices(
-    commonOpts,
-    platformServices,
-    rootEmitter,
-    theme,
-  );
+    if (existing) {
+      return existing;
+    }
 
-  const services: Services = {
-    core: coreServices,
-    platform: platformServices,
-  };
+    const instance = creator.create();
+    this.instanceMap.set(name, instance);
 
-  // Init config
+    if (creator.configure) {
+      this.configurationMap.set(name, creator.configure as any);
+    }
 
-  // error service should be initialized asap to catch any errors
-  platformServices.errorService.initialize();
+    return instance;
+  }
 
-  if (platformServices.fileStorage.nativefs instanceof FileStorageNativeFs) {
-    platformServices.fileStorage.nativefs.setInitConfig({
-      getRootDirHandle: async (wsName: string) => {
-        const { rootDirHandle } =
-          await coreServices.workspaceOps.getWorkspaceMetadata(wsName);
+  configure() {
+    for (const [name, configure] of this.configurationMap) {
+      const instance = this.instanceMap.get(name);
+      if (instance) {
+        configure(instance, { xyz: 'abc' });
+      }
+    }
+    this.configurationMap.clear();
+  }
 
-        if (!rootDirHandle) {
-          throwAppError(
-            'error::workspace:invalid-metadata',
-            `Invalid workspace metadata for ${wsName}. Missing root dir handle`,
-            {
-              wsName,
-            },
-          );
-        }
+  disposeAll() {
+    for (const service of this.instanceMap.values()) {
+      service.dispose();
+    }
+  }
 
-        if (!(await FileStorageNativeFs.hasPermission(rootDirHandle))) {
-          throwAppError(
-            'error::workspace:native-fs-auth-needed',
-            `Need permission for ${rootDirHandle.name}`,
-            {
-              wsName,
-            },
-          );
-        }
+  initAll() {
+    for (const service of this.instanceMap.values()) {
+      service.initialize();
+    }
+  }
+}
 
-        return { handle: rootDirHandle };
+export class CoreServiceManager {
+  constructor(
+    private factory: ServiceFactory,
+    private commonOpts: BaseServiceCommonOptions,
+    private platform: PlatformServices,
+    private rootEmitter: RootEmitter,
+    private commands: Command[],
+    private commandHandlers: Array<{ id: string; handler: CommandHandler }>,
+    private theme: ThemeManager,
+  ) {}
+
+  configure() {
+    this.factory.configure();
+  }
+
+  coreCommandRegistryService() {
+    return this.factory.create(CommandRegistryService, {
+      create: () => new CommandRegistryService(this.commonOpts, undefined),
+      configure: (commandRegistry) => {
+        commandRegistry.setInitConfig({
+          commands: this.commands,
+          commandHandlers: this.commandHandlers,
+        });
       },
     });
   }
 
-  coreServices.editorService.setInitConfig({ dummyVal: '' });
-
-  coreServices.fileSystem.setInitConfig({
-    getWorkspaceInfo: async ({ wsName }) => {
-      const wsInfo = await coreServices.workspaceOps.getWorkspaceInfo(wsName);
-      if (!wsInfo) {
-        throwAppError(
-          'error::workspace:not-found',
-          `Workspace not found: ${wsName}`,
+  coreCommandDispatchService() {
+    return this.factory.create(CommandDispatchService, {
+      create: () => {
+        return new CommandDispatchService(
+          this.commonOpts,
           {
-            wsName,
+            commandRegistry: this.coreCommandRegistryService(),
+          },
+          {
+            emitResult: (result) => {
+              this.rootEmitter.emit('event::command:result', result);
+            },
           },
         );
-      }
-
-      return wsInfo;
-    },
-  });
-
-  coreServices.commandRegistry.setInitConfig({
-    commands,
-    commandHandlers: commandHandlers,
-  });
-  coreServices.commandDispatcher.setInitConfig({
-    exposedServices: {
-      ...coreServices,
-      ...platformServices,
-    },
-  });
-
-  coreServices.shortcut.setInitConfig({
-    shortcuts: commands
-      .filter((command) => command.keybindings)
-      .map((command): ShortcutServiceConfig => {
-        assertIsDefined(command.keybindings);
-        const keys = command.keybindings.join('-');
-        return {
-          keyBinding: {
-            id: command.id,
-            keys,
-          },
-          handler: (event) => {
-            coreServices.commandDispatcher.dispatch(
-              // @ts-ignore - we know this is defined and typed
-              command.id,
-              event,
-              `keyboard(${keys})`,
-            );
-          },
-          options: {
-            unique: true,
-          },
-        };
-      }),
-  });
-
-  // dispose services on abort
-  abortSignal.addEventListener(
-    'abort',
-    () => {
-      flatServices(services).forEach((service) => {
-        service.dispose();
-      });
-    },
-    { once: true },
-  );
-
-  // any other setup
-  return services;
-}
-
-function initPlatformServices(
-  commonOpts: BaseServiceCommonOptions,
-  rootEmitter: RootEmitter,
-): PlatformServices {
-  const errorService = new BrowserErrorHandlerService(commonOpts, undefined, {
-    onError: (params) => {
-      rootEmitter.emit('event::error:uncaught-error', {
-        ...params,
-        sender: getEventSenderMetadata({ tag: errorService.name }),
-      });
-    },
-  });
-
-  const idbDatabase = new IdbDatabaseService(commonOpts, undefined);
-  const fileStorageServiceIdb = new FileStorageIndexedDB(
-    commonOpts,
-    undefined,
-    {
-      onChange: (change) => {
-        commonOpts.logger.info('File storage change:', change);
       },
-    },
-  );
-
-  const nativeFsFileStorage = new FileStorageNativeFs(commonOpts, undefined, {
-    onChange: (change) => {
-      commonOpts.logger.info('File storage change:', change);
-    },
-  });
-
-  const browserRouterService = new BrowserRouterService(commonOpts, undefined);
-
-  const browserLocalStorage = new BrowserLocalStorageSyncDatabaseService(
-    commonOpts,
-    undefined,
-  );
-
-  return {
-    errorService,
-    database: idbDatabase,
-    syncDatabase: browserLocalStorage,
-    fileStorage: {
-      [fileStorageServiceIdb.workspaceType]: fileStorageServiceIdb,
-      [nativeFsFileStorage.workspaceType]: nativeFsFileStorage,
-    },
-    router: browserRouterService,
-  };
-}
-
-function initCoreServices(
-  commonOpts: BaseServiceCommonOptions,
-  platformServices: PlatformServices,
-  rootEmitter: RootEmitter,
-  theme: ThemeManager,
-): CoreServices {
-  const commandRegistryService = new CommandRegistryService(
-    commonOpts,
-    undefined,
-  );
-  const commandDispatcherService = new CommandDispatchService(
-    commonOpts,
-    {
-      commandRegistry: commandRegistryService,
-    },
-    {
-      emitResult: (result) => {
-        rootEmitter.emit('event::command:result', result);
+      configure: (commandDispatcher) => {
+        commandDispatcher.setInitConfig({
+          exposedServices: {
+            ...this.getServices(),
+          },
+        });
       },
-    },
-  );
+    });
+  }
 
-  const fileSystemService = new FileSystemService(
-    commonOpts,
-    { ...platformServices.fileStorage },
-    {
-      fileStorageServices: platformServices.fileStorage,
-      emitter: rootEmitter.scoped(
-        ['event::file:update', 'event::file:force-update'],
-        commonOpts.rootAbortSignal,
-      ),
-    },
-  );
-  const navigation = new NavigationService(commonOpts, {
-    routerService: platformServices.router,
-  });
+  coreFileSystemService() {
+    return this.factory.create(FileSystemService, {
+      create: () => {
+        return new FileSystemService(
+          this.commonOpts,
+          {
+            ...this.platform.fileStorage,
+          },
+          {
+            fileStorageServices: this.platform.fileStorage,
+            emitter: this.rootEmitter.scoped(
+              ['event::file:update', 'event::file:force-update'],
+              this.commonOpts.rootAbortSignal,
+            ),
+          },
+        );
+      },
+      configure: (fileSystemService) => {
+        const workspaceOps = this.coreWorkspaceOpsService();
+        fileSystemService.setInitConfig({
+          getWorkspaceInfo: async ({ wsName }) => {
+            const wsInfo = await workspaceOps.getWorkspaceInfo(wsName);
+            if (!wsInfo) {
+              throwAppError(
+                'error::workspace:not-found',
+                `Workspace not found: ${wsName}`,
+                {
+                  wsName,
+                },
+              );
+            }
+            return wsInfo;
+          },
+        });
+      },
+    });
+  }
 
-  const shortcut = new ShortcutService(commonOpts, undefined, document);
-  const workbenchState = new WorkbenchStateService(
-    commonOpts,
-    {
-      database: platformServices.database,
-      syncDatabase: platformServices.syncDatabase,
-    },
-    {
-      themeManager: theme,
-      emitter: rootEmitter.scoped(
-        ['event::app:reload-ui'],
-        commonOpts.rootAbortSignal,
-      ),
-    },
-  );
+  coreNavigationService() {
+    return this.factory.create(NavigationService, {
+      create: () =>
+        new NavigationService(this.commonOpts, {
+          routerService: this.platform.router,
+        }),
+    });
+  }
 
-  const workbench = new WorkbenchService(commonOpts, {
-    workbenchState,
-  });
+  coreShortcutService() {
+    return this.factory.create(ShortcutService, {
+      create: () => new ShortcutService(this.commonOpts, undefined, document),
+      configure: (shortcut) => {
+        const coreCommandDispatchService = this.coreCommandDispatchService();
+        shortcut.setInitConfig({
+          shortcuts: this.commands
+            .filter((command) => command.keybindings)
+            .map((command): ShortcutServiceConfig => {
+              assertIsDefined(command.keybindings);
+              const keys = command.keybindings.join('-');
+              return {
+                keyBinding: {
+                  id: command.id,
+                  keys,
+                },
+                handler: (event) => {
+                  coreCommandDispatchService.dispatch(
+                    command.id as any,
+                    event,
+                    `keyboard(${keys})`,
+                  );
+                },
+                options: {
+                  unique: true,
+                },
+              };
+            }),
+        });
+      },
+    });
+  }
 
-  const workspaceOps = new WorkspaceOpsService(commonOpts, {
-    database: platformServices.database,
-  });
+  coreWorkspaceOpsService() {
+    return this.factory.create(WorkspaceOpsService, {
+      create: () =>
+        new WorkspaceOpsService(this.commonOpts, {
+          database: this.platform.database,
+        }),
+    });
+  }
 
-  const workspaceState = new WorkspaceStateService(commonOpts, {
-    navigation,
-    fileSystem: fileSystemService,
-    workspaceOps,
-  });
-  const workspace = new WorkspaceService(commonOpts, {
-    workspaceOps,
-    workspaceState,
-    navigation,
-    fileSystem: fileSystemService,
-  });
+  coreWorkspaceStateService() {
+    return this.factory.create(WorkspaceStateService, {
+      create: () =>
+        new WorkspaceStateService(this.commonOpts, {
+          navigation: this.coreNavigationService(),
+          fileSystem: this.coreFileSystemService(),
+          workspaceOps: this.coreWorkspaceOpsService(),
+        }),
+    });
+  }
 
-  const userActivityService = new UserActivityService(
-    commonOpts,
-    {
-      workspaceState: workspaceState,
-      workspaceOps: workspaceOps,
-    },
-    {
-      emitter: rootEmitter.scoped(
-        ['event::command:result'],
-        commonOpts.rootAbortSignal,
-      ),
-    },
-  );
+  coreUserActivityService() {
+    return this.factory.create(UserActivityService, {
+      create: () =>
+        new UserActivityService(
+          this.commonOpts,
+          {
+            workspaceState: this.coreWorkspaceStateService(),
+            workspaceOps: this.coreWorkspaceOpsService(),
+          },
+          {
+            emitter: this.rootEmitter.scoped(
+              ['event::command:result'],
+              this.commonOpts.rootAbortSignal,
+            ),
+          },
+        ),
+    });
+  }
 
-  const editorService = new EditorService(
-    commonOpts,
-    {},
-    {
-      emitter: rootEmitter.scoped(
-        ['event::editor:reload-editor', 'event::file:force-update'],
-        commonOpts.rootAbortSignal,
-      ),
-    },
-  );
+  coreWorkbenchStateService() {
+    return this.factory.create(WorkbenchStateService, {
+      create: () =>
+        new WorkbenchStateService(
+          this.commonOpts,
+          {
+            database: this.platform.database,
+            syncDatabase: this.platform.syncDatabase,
+          },
+          {
+            themeManager: this.theme,
+            emitter: this.rootEmitter.scoped(
+              ['event::app:reload-ui'],
+              this.commonOpts.rootAbortSignal,
+            ),
+          },
+        ),
+    });
+  }
 
-  return {
-    commandDispatcher: commandDispatcherService,
-    commandRegistry: commandRegistryService,
-    editorService,
-    fileSystem: fileSystemService,
-    navigation,
-    shortcut,
-    userActivityService,
-    workbench,
-    workbenchState,
-    workspace,
-    workspaceOps,
-    workspaceState,
-  };
+  coreWorkbenchService() {
+    return this.factory.create(WorkbenchService, {
+      create: () =>
+        new WorkbenchService(this.commonOpts, {
+          workbenchState: this.coreWorkbenchStateService(),
+        }),
+    });
+  }
+
+  coreWorkspaceService() {
+    return this.factory.create(WorkspaceService, {
+      create: () =>
+        new WorkspaceService(this.commonOpts, {
+          workspaceOps: this.coreWorkspaceOpsService(),
+          workspaceState: this.coreWorkspaceStateService(),
+          navigation: this.coreNavigationService(),
+          fileSystem: this.coreFileSystemService(),
+        }),
+    });
+  }
+
+  coreEditorService() {
+    return this.factory.create(EditorService, {
+      create: () =>
+        new EditorService(
+          this.commonOpts,
+          {},
+          {
+            emitter: this.rootEmitter.scoped(
+              ['event::editor:reload-editor', 'event::file:force-update'],
+              this.commonOpts.rootAbortSignal,
+            ),
+          },
+        ),
+      configure: (editorService) => {
+        editorService.setInitConfig({ dummyVal: '' });
+      },
+    });
+  }
+
+  getServices(): CoreServices {
+    return {
+      commandDispatcher: this.coreCommandDispatchService(),
+      commandRegistry: this.coreCommandRegistryService(),
+      editorService: this.coreEditorService(),
+      fileSystem: this.coreFileSystemService(),
+      navigation: this.coreNavigationService(),
+      shortcut: this.coreShortcutService(),
+      userActivityService: this.coreUserActivityService(),
+      workbench: this.coreWorkbenchService(),
+      workbenchState: this.coreWorkbenchStateService(),
+      workspace: this.coreWorkspaceService(),
+      workspaceOps: this.coreWorkspaceOpsService(),
+      workspaceState: this.coreWorkspaceStateService(),
+    };
+  }
+
+  dispose() {
+    this.factory.disposeAll();
+  }
 }

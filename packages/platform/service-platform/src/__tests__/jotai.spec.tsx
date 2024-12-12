@@ -1,7 +1,7 @@
 import { atomStorage, atomWithCompare } from '@bangle.io/base-utils';
 import type { Logger } from '@bangle.io/logger';
 import { T, type Validator } from '@bangle.io/mini-zod';
-import { makeCommonOpts } from '@bangle.io/test-utils';
+import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { BaseAppSyncDatabase, Store } from '@bangle.io/types';
 import { RESET } from 'jotai/utils';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -12,10 +12,10 @@ describe('atomStorage', () => {
   let logger: Logger;
   let service: MemorySyncDatabaseService;
   let store: Store;
-  let mockLog: ReturnType<typeof makeCommonOpts>['mockLog'];
+  let mockLog: ReturnType<typeof makeTestCommonOpts>['mockLog'];
 
   beforeEach(async () => {
-    const result = makeCommonOpts();
+    const result = makeTestCommonOpts();
     mockLog = result.mockLog;
     const { commonOpts } = result;
     store = commonOpts.store;

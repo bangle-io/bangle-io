@@ -1,5 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
-import { makeTestService } from '@bangle.io/test-utils';
+import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { Command } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CommandRegistryService } from '../command-registry-service';
@@ -9,7 +9,7 @@ describe('CommandRegistryService', () => {
   let service: CommandRegistryService;
 
   beforeEach(() => {
-    const { commonOpts } = makeTestService();
+    const { commonOpts } = makeTestCommonOpts();
 
     _logger = commonOpts.logger;
     service = new CommandRegistryService(commonOpts, undefined);

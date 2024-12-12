@@ -1,7 +1,7 @@
 import { BaseError, BaseService } from '@bangle.io/base-utils';
 import { commandKeyToContext } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-zod';
-import { makeTestService } from '@bangle.io/test-utils';
+import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
   BaseServiceCommonOptions,
   Command,
@@ -40,7 +40,7 @@ function getCtx(key: CommandKey<string>) {
 }
 
 async function setup() {
-  const { commonOpts, mockLog } = makeTestService();
+  const { commonOpts, mockLog } = makeTestCommonOpts();
   const logger = commonOpts.logger;
   const commandRegistry = new CommandRegistryService(commonOpts, undefined);
 

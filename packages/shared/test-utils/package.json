@@ -37,7 +37,10 @@
     "jotai": "^2.10.3",
     "wait-for-expect": "^3.0.2",
     "@bangle.io/color-scheme-manager": "workspace:*",
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/commands": "workspace:*",
+    "@bangle.io/command-handlers": "workspace:*",
+    "@bangle.io/initialize-services": "workspace:*"
   },
   "devDependencies": {}
 }
