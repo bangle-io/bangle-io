@@ -19,6 +19,7 @@ if (isMainModule(import.meta.url)) {
 export async function validate(item: SetupResult) {
   const logger = makeLogger('validate');
   const promises: Promise<any>[] = [
+    testUtilsCanOnlyBeDevDependency(item.packagesMap),
     testKnownPackagesExistInWorkspace(item.packagesMap),
     shouldOnlyUseDependenciesDefinedInPackageJSON(item.packagesMap),
     shouldOnlyUseDevDependenciesDefinedInPackageJSON(item.packagesMap),
@@ -72,14 +73,14 @@ async function shouldRespectAllowedWorkspace(
   );
 
   for (const [name, pkg] of packageMap.entries()) {
-    // shared-types is a special package that can be imported anywhere
+    // shared-types is a special package that can be
+    // import anything and be imported anywhere
     // to allow for circular dependencies, since it is just types.
     // this makes it convenient to rely on types without explicitly
     // depending on the corresponding JS code.
-    if (
-      name === KNOWN_PACKAGES.sharedTypedPkg ||
-      name === KNOWN_PACKAGES.testUtils
-    ) {
+
+    // skip checking for shared-types as it can import anything
+    if (name === KNOWN_PACKAGES.sharedTypedPkg) {
       continue;
     }
 
@@ -89,6 +90,11 @@ async function shouldRespectAllowedWorkspace(
     deps = [...new Set(deps)];
 
     for (const dep of deps) {
+      // test utils can be imported anywhere
+      if (dep === KNOWN_PACKAGES.testUtils) {
+        continue;
+      }
+
       const result = pkg.workspace.allowedWsDependency(
         [...Object.values(workspaceMap)],
         dep,
@@ -357,5 +363,27 @@ async function validateSameDependencyVersions(
         '\n\n',
       )}`,
     );
+  }
+}
+
+async function testUtilsCanOnlyBeDevDependency(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testUtilsCanOnlyBeDevDependency',
+  );
+
+  for (const [name, pkg] of packageMap.entries()) {
+    // Skip test-utils package itself
+    if (pkg.name === KNOWN_PACKAGES.testUtils) {
+      continue;
+    }
+
+    // Check if test-utils is in dependencies
+    if (pkg.workspaceDependencies[KNOWN_PACKAGES.testUtils]) {
+      throwValidationError(
+        `Package ${name} has test-utils as a dependency. test-utils can only be used as a devDependency.`,
+      );
+    }
   }
 }

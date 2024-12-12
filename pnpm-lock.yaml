@@ -230,7 +230,7 @@ importers:
         version: link:../../js-lib/emitter
       '@bangle.io/test-utils':
         specifier: workspace:*
-        version: link:../../shared/test-utils
+        version: link:../../tooling/test-utils
 
   packages/core/omni-search:
     dependencies:
@@ -285,6 +285,9 @@ importers:
       '@bangle.io/mini-zod':
         specifier: workspace:*
         version: link:../../js-lib/mini-zod
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../tooling/test-utils
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -304,9 +307,6 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
-      '@bangle.io/test-utils':
-        specifier: workspace:*
-        version: link:../../shared/test-utils
 
   packages/js-lib/baby-fs:
     dependencies:
@@ -423,7 +423,7 @@ importers:
         version: link:../../js-lib/mini-zod
       '@bangle.io/test-utils':
         specifier: workspace:*
-        version: link:../../shared/test-utils
+        version: link:../../tooling/test-utils
 
   packages/shared/base-utils:
     dependencies:
@@ -454,7 +454,7 @@ importers:
     devDependencies:
       '@bangle.io/test-utils':
         specifier: workspace:*
-        version: link:../test-utils
+        version: link:../../tooling/test-utils
 
   packages/shared/commands:
     dependencies:
@@ -499,57 +499,6 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
-
-  packages/shared/test-utils:
-    dependencies:
-      '@bangle.io/base-utils':
-        specifier: workspace:*
-        version: link:../base-utils
-      '@bangle.io/color-scheme-manager':
-        specifier: workspace:*
-        version: link:../../js-lib/color-scheme-manager
-      '@bangle.io/command-handlers':
-        specifier: workspace:*
-        version: link:../../core/command-handlers
-      '@bangle.io/commands':
-        specifier: workspace:*
-        version: link:../commands
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../constants
-      '@bangle.io/initialize-services':
-        specifier: workspace:*
-        version: link:../../core/initialize-services
-      '@bangle.io/logger':
-        specifier: workspace:*
-        version: link:../../js-lib/logger
-      '@bangle.io/root-emitter':
-        specifier: workspace:*
-        version: link:../root-emitter
-      '@bangle.io/service-core':
-        specifier: workspace:*
-        version: link:../../core/service-core
-      '@bangle.io/service-platform':
-        specifier: workspace:*
-        version: link:../../platform/service-platform
-      '@bangle.io/types':
-        specifier: workspace:*
-        version: link:../types
-      jotai:
-        specifier: ^2.10.3
-        version: 2.10.3(@types/react@18.3.14)(react@18.3.1)
-      wait-for-expect:
-        specifier: ^3.0.2
-        version: 3.0.2
-
-  packages/shared/test-utils-jest:
-    dependencies:
-      '@bangle.io/logger':
-        specifier: workspace:*
-        version: link:../../js-lib/logger
-      wait-for-expect:
-        specifier: ^3.0.2
-        version: 3.0.2
 
   packages/shared/types:
     dependencies:
@@ -937,6 +886,48 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.0.3(@types/node@22.10.1)(jiti@1.21.6)(terser@5.37.0)(yaml@2.6.1)
+
+  packages/tooling/test-utils:
+    dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/color-scheme-manager':
+        specifier: workspace:*
+        version: link:../../js-lib/color-scheme-manager
+      '@bangle.io/command-handlers':
+        specifier: workspace:*
+        version: link:../../core/command-handlers
+      '@bangle.io/commands':
+        specifier: workspace:*
+        version: link:../../shared/commands
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/initialize-services':
+        specifier: workspace:*
+        version: link:../../core/initialize-services
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
+      '@bangle.io/root-emitter':
+        specifier: workspace:*
+        version: link:../../shared/root-emitter
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../../core/service-core
+      '@bangle.io/service-platform':
+        specifier: workspace:*
+        version: link:../../platform/service-platform
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+      jotai:
+        specifier: ^2.10.3
+        version: 2.10.3(@types/react@18.3.14)(react@18.3.1)
+      wait-for-expect:
+        specifier: ^3.0.2
+        version: 3.0.2
 
   packages/ui/ui-components:
     dependencies:
