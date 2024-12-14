@@ -8,8 +8,13 @@ import { BrowserLocalStorageSyncDatabaseService } from '../browser-local-storage
 describe('BrowserLocalStorageSyncDatabaseService', () => {
   const { commonOpts } = createTestEnvironment();
   const service = new BrowserLocalStorageSyncDatabaseService(
-    commonOpts,
-    undefined,
+    {
+      ctx: commonOpts,
+      serviceContext: {
+        abortSignal: commonOpts.rootAbortSignal,
+      },
+    },
+    null,
   );
   const options: SyncDatabaseQueryOptions = { tableName: 'sync' };
 

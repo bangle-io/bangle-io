@@ -40,14 +40,23 @@ function getCtx(key: CommandKey<string>) {
 }
 
 async function setup() {
-  const { commonOpts, mockLog } = makeTestCommonOpts();
+  const { commonOpts, mockLog, controller } = makeTestCommonOpts();
   const logger = commonOpts.logger;
-  const commandRegistry = new CommandRegistryService(commonOpts, undefined);
+  const context = {
+    ctx: commonOpts,
+    serviceContext: {
+      abortSignal: commonOpts.rootAbortSignal,
+    },
+  };
+  const commandRegistry = new CommandRegistryService(context, null, {
+    commands: [],
+    commandHandlers: [],
+  });
 
   const dispatchedCommands: CommandDispatchResult[] = [];
 
   const dispatchService = new CommandDispatchService(
-    commonOpts,
+    context,
     {
       commandRegistry,
     },
@@ -58,20 +67,18 @@ async function setup() {
     },
   );
 
-  commandRegistry.setInitConfig({ commands: [], commandHandlers: [] });
+  dispatchService.exposedServices = {
+    fileSystem: new TestService(commonOpts),
+  } as unknown as CommandExposedServices;
 
-  dispatchService.setInitConfig({
-    exposedServices: {
-      fileSystem: new TestService(commonOpts),
-    } as unknown as CommandExposedServices,
-  });
-  await dispatchService.initialize();
+  await dispatchService.mount();
   return {
     logger,
     commandRegistry,
     dispatchService,
     mockLog: mockLog,
     dispatchedCommands,
+    controller,
   };
 }
 
@@ -176,8 +183,7 @@ describe('CommandDispatchService', () => {
       },
     );
 
-    expect(mockLog.debug).nthCalledWith(
-      10,
+    expect(mockLog.debug).toBeCalledWith(
       '[command-dispatch]',
       'Dispatching command::ui:test-no-use from testSource:',
       {
@@ -278,8 +284,8 @@ describe('CommandDispatchService', () => {
   });
 
   test('should throw error when dispatch service is not ready', async () => {
-    const { dispatchService } = await setup();
-    await dispatchService.dispose();
+    const { dispatchService, controller } = await setup();
+    controller.abort();
 
     expect(() =>
       dispatchService.dispatch(

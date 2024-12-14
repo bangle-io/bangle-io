@@ -1,18 +1,17 @@
 import {
   BaseErrorService,
-  getEventSenderMetadata,
+  type BaseServiceContext,
   isAbortError,
   isAppError,
 } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
 
 export class BrowserErrorHandlerService extends BaseErrorService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private options: {
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
       onError: (params: {
         appLikeError: boolean;
         error: Error;
@@ -21,28 +20,29 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       }) => void;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'browser-error-handler',
-      kind: 'platform',
-      dependencies,
-    });
+    super('browser-error-handler', context, dependencies);
     window.addEventListener('error', this.handleError);
     window.addEventListener('unhandledrejection', this.handleError);
+  }
 
-    // we want to emit queued events after initialization
-    this.initializedPromise.then(() => {
-      while (this.eventQueue.length > 0) {
-        const event = this.eventQueue.shift();
-        if (event) {
-          this.handleError(event);
-        }
+  async hookMount() {
+    // Process any queued events
+    while (this.eventQueue.length > 0) {
+      const event = this.eventQueue.shift();
+      if (event) {
+        this.handleError(event);
       }
+    }
+
+    // Add cleanup to remove event listeners on abort
+    this.addCleanup(() => {
+      window.removeEventListener('error', this.handleError);
+      window.removeEventListener('unhandledrejection', this.handleError);
     });
   }
 
   handleError = (event: PromiseRejectionEvent | ErrorEvent) => {
-    if (!this.isOk) {
+    if (!this.mounted) {
       this.logger.warn('Received an error event during not ok');
       this.logger.error(event);
       this.eventQueue.push(event);
@@ -74,23 +74,11 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       event.preventDefault();
     }
 
-    this.options.onError({
+    this.config.onError({
       appLikeError,
       error,
       isFakeThrow: false,
       rejection: isPromiseRejection,
     });
   };
-  protected async hookOnInitialize(): Promise<void> {}
-
-  async hookOnDispose(): Promise<void> {
-    while (this.eventQueue.length > 0) {
-      const event = this.eventQueue.shift();
-      if (event) {
-        this.handleError(event);
-      }
-    }
-    window.removeEventListener('error', this.handleError);
-    window.removeEventListener('unhandledrejection', this.handleError);
-  }
 }

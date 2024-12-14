@@ -1,5 +1,6 @@
 import {
-  BaseService,
+  BaseService2,
+  type BaseServiceContext,
   atomStorage,
   getEventSenderMetadata,
 } from '@bangle.io/base-utils';
@@ -10,7 +11,6 @@ import type {
 import { T } from '@bangle.io/mini-zod';
 import type {
   BaseDatabaseService,
-  BaseServiceCommonOptions,
   BaseSyncDatabaseService,
   ScopedEmitter,
 } from '@bangle.io/types';
@@ -19,23 +19,20 @@ import type {
   DialogSingleInputProps,
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
-import { type PrimitiveAtom, type WritableAtom, atom } from 'jotai';
+import { type PrimitiveAtom, atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 import { atomWithStorage } from 'jotai/utils';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
-// Pure function to determine the omni search route based on current route and input
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
   switch (currentRoute) {
     case 'omni-home': {
       if (input.startsWith('>')) {
         return 'omni-command';
       }
-
       return 'omni-filtered';
     }
-
     case 'omni-command': {
       if (!input.startsWith('>')) {
         if (input.trim() === '') {
@@ -46,7 +43,6 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
       return 'omni-command';
     }
     case 'omni-filtered': {
-      // Once in filtered mode, stay there unless input is empty
       if (input.trim() === '') {
         return 'omni-home';
       }
@@ -57,38 +53,15 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
     }
   }
 }
+
 /**
- * a service that focuses on the workbench (UI) state
+ * Manages UI state such as theme preferences, dialogs, and omni-search state
  */
-export class WorkbenchStateService extends BaseService {
+export class WorkbenchStateService extends BaseService2 {
+  static deps = ['database', 'syncDatabase'] as const;
+
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
-  get $wideEditor() {
-    if (!this.$_wideEditor) {
-      this.$_wideEditor = atomStorage({
-        key: 'wide-editor',
-        initValue: true,
-        syncDb: this.syncDatabase,
-        validator: T.Boolean,
-        logger: this.logger,
-      });
-    }
-    return this.$_wideEditor;
-  }
-
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
-  get $sidebarOpen() {
-    if (!this.$_sidebarOpen) {
-      this.$_sidebarOpen = atomStorage({
-        key: 'sidebar-open',
-        initValue: true,
-        syncDb: this.syncDatabase,
-        validator: T.Boolean,
-        logger: this.logger,
-      });
-    }
-
-    return this.$_sidebarOpen;
-  }
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
@@ -117,8 +90,6 @@ export class WorkbenchStateService extends BaseService {
   $openAllFiles = atom(false);
   $allFilesSearchInput = atom('');
 
-  private syncDatabase: BaseSyncDatabaseService;
-
   $cleanSearchTerm = atom((get) => {
     const search = get(this.$omniSearchInput);
     const route = get(this.$omniSearchRoute);
@@ -130,33 +101,23 @@ export class WorkbenchStateService extends BaseService {
   });
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: {
+    context: BaseServiceContext,
+    private dep: {
       database: BaseDatabaseService;
       syncDatabase: BaseSyncDatabaseService;
     },
-    private options: {
+    private config: {
       themeManager: ThemeManager;
       emitter: ScopedEmitter<'event::app:reload-ui'>;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'workbench-state',
-      kind: 'core',
-      dependencies,
-    });
-
-    this.syncDatabase = dependencies.syncDatabase;
+    super('workbench-state', context, dep);
+    this.store.set(this.$themePref, this.config.themeManager.currentPreference);
   }
 
-  protected async hookOnInitialize(): Promise<void> {
-    this.store.set(
-      this.$themePref,
-      this.options.themeManager.currentPreference,
-    );
+  hookMount() {
     this.addCleanup(
-      this.options.themeManager.onThemeChange(({ preference }) => {
+      this.config.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
       this.store.sub(
@@ -168,7 +129,6 @@ export class WorkbenchStateService extends BaseService {
         }),
         () => {},
       ),
-
       this.store.sub(
         atomEffect((get, set) => {
           const open = get(this.$openOmniSearch);
@@ -178,7 +138,6 @@ export class WorkbenchStateService extends BaseService {
         }),
         () => {},
       ),
-      // Update route state management
       this.store.sub(this.$omniSearchInput, () => {
         const input = this.store.get(this.$omniSearchInput);
         const currentRoute = this.store.get(this.$omniSearchRoute);
@@ -190,28 +149,53 @@ export class WorkbenchStateService extends BaseService {
     );
   }
 
-  changeThemePreference(preference: ThemeConfig['defaultPreference']) {
-    this.options.themeManager.setPreference(preference);
+  public changeThemePreference(preference: ThemeConfig['defaultPreference']) {
+    this.config.themeManager.setPreference(preference);
   }
 
-  updateOmniSearchInput(input: string) {
+  public updateOmniSearchInput(input: string) {
     this.store.set(this.$omniSearchInput, input);
   }
 
-  resetOmniSearch() {
+  public resetOmniSearch() {
     this.store.set(this.$omniSearchInput, '');
     this.store.set(this.$omniSearchRoute, 'omni-home');
   }
 
-  goToCommandRoute() {
+  public goToCommandRoute() {
     this.store.set(this.$openOmniSearch, true);
     this.store.set(this.$omniSearchInput, '>');
   }
 
-  reloadUi() {
-    this.options.emitter.emit('event::app:reload-ui', {
+  public reloadUi() {
+    this.config.emitter.emit('event::app:reload-ui', {
       sender: getEventSenderMetadata({ tag: this.name }),
     });
   }
-  protected async hookOnDispose(): Promise<void> {}
+
+  get $wideEditor() {
+    if (!this.$_wideEditor) {
+      this.$_wideEditor = atomStorage({
+        key: 'wide-editor',
+        initValue: true,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_wideEditor;
+  }
+
+  get $sidebarOpen() {
+    if (!this.$_sidebarOpen) {
+      this.$_sidebarOpen = atomStorage({
+        key: 'sidebar-open',
+        initValue: true,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_sidebarOpen;
+  }
 }

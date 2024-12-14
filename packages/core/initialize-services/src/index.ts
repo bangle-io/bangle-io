@@ -13,8 +13,7 @@ import type {
   Services,
   Store,
 } from '@bangle.io/types';
-import { CoreServiceManager, ServiceFactory } from './initialize-services';
-import { platformServicesSetup } from './platform-service-setup';
+import { initializeServices as initializeServices2 } from './initialize-services';
 
 export function initializeServices(
   logger: Logger,
@@ -38,38 +37,18 @@ export function initializeServices(
     },
   };
 
-  const platform = platformServicesSetup(commonOpts, rootEmitter);
-
-  const coreServiceManager = new CoreServiceManager(
-    new ServiceFactory(),
+  const services = initializeServices2(
     commonOpts,
-    platform.services,
     rootEmitter,
     getEnabledCommands(),
     commandHandlers,
     theme,
   );
 
-  platform.configure({
-    workspaceOps: coreServiceManager.coreWorkspaceOpsService(),
-  });
-
-  const coreServices = coreServiceManager.getServices();
-  coreServiceManager.configure();
-
-  abortSignal.addEventListener(
-    'abort',
-    () => {
-      flatServices(platform.services).forEach((service) => {
-        service.dispose();
-      });
-      coreServiceManager.dispose();
-    },
-    { once: true },
-  );
+  services.mountAll();
 
   return {
-    core: coreServices,
-    platform: platform.services,
+    core: services.coreServices,
+    platform: services.platformServices,
   };
 }

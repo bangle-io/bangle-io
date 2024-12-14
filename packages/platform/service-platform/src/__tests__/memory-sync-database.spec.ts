@@ -3,16 +3,31 @@ import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { MemorySyncDatabaseService } from '../memory-sync-database';
 
+async function setup() {
+  const { commonOpts, mockLog, controller } = makeTestCommonOpts();
+  const context = {
+    ctx: commonOpts,
+    serviceContext: {
+      abortSignal: commonOpts.rootAbortSignal,
+    },
+  };
+
+  const service = new MemorySyncDatabaseService(context, null, null);
+  await service.mount();
+
+  return {
+    service,
+    mockLog,
+    controller,
+  };
+}
+
 describe('MemorySyncDatabaseService', () => {
-  let service: MemorySyncDatabaseService;
   const options: SyncDatabaseQueryOptions = { tableName: 'sync' };
 
-  beforeEach(() => {
-    const { commonOpts } = makeTestCommonOpts();
-    service = new MemorySyncDatabaseService(commonOpts, undefined);
-  });
+  it('should store and retrieve entries', async () => {
+    const { service } = await setup();
 
-  it('should store and retrieve entries', () => {
     const result = service.updateEntry(
       'key1',
       () => ({ value: 'value1' }),
@@ -26,7 +41,9 @@ describe('MemorySyncDatabaseService', () => {
     });
   });
 
-  it('should handle deletion of entries', () => {
+  it('should handle deletion of entries', async () => {
+    const { service } = await setup();
+
     service.updateEntry('key1', () => ({ value: 'value1' }), options);
     service.deleteEntry('key1', options);
 
@@ -36,7 +53,9 @@ describe('MemorySyncDatabaseService', () => {
     });
   });
 
-  it('should get all entries for a table', () => {
+  it('should get all entries for a table', async () => {
+    const { service } = await setup();
+
     service.updateEntry('key1', () => ({ value: 'value1' }), options);
     service.updateEntry('key2', () => ({ value: 'value2' }), options);
 
@@ -46,7 +65,9 @@ describe('MemorySyncDatabaseService', () => {
     expect(entries).toContain('value2');
   });
 
-  it('should handle updates to existing entries', () => {
+  it('should handle updates to existing entries', async () => {
+    const { service } = await setup();
+
     service.updateEntry('key1', () => ({ value: 'value1' }), options);
     service.updateEntry('key1', () => ({ value: 'updated' }), options);
 
@@ -56,7 +77,9 @@ describe('MemorySyncDatabaseService', () => {
     });
   });
 
-  it.todo('should notify subscribers of changes', () => {
+  it.todo('should notify subscribers of changes', async () => {
+    const { service } = await setup();
+
     const changes: any[] = [];
     const controller = new AbortController();
 

@@ -37,13 +37,13 @@
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "page-lifecycle": "^0.1.2",
     "jotai": "^2.10.3",
+    "page-lifecycle": "^0.1.2",
     "wouter": "^3.3.5"
   },
   "devDependencies": {
-    "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
-    "@bangle.io/logger": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
   }
 }

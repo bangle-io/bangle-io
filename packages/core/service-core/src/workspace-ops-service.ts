@@ -1,13 +1,11 @@
 import {
-  BaseService,
-  getEventSenderMetadata,
+  BaseService2,
+  type BaseServiceContext,
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type {
   BaseDatabaseService,
-  BaseServiceCommonOptions,
-  ScopedEmitter,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';
@@ -16,55 +14,26 @@ import { atom } from 'jotai';
 const WORKSPACE_INFO_TABLE = 'workspace-info';
 const MISC_TABLE = 'misc';
 
-type WorkspaceChangeEvent = {
-  type: 'workspace-create' | 'workspace-update' | 'workspace-delete';
-  payload: { wsName: string };
-};
-// | {
-//     type: 'workspace-update';
-//     payload: { wsName: string };
-//   }
-// | {
-//     type: 'workspace-delete';
-//     payload: { wsName: string };
-//   };
+/**
+ * Provides API operations for managing workspace metadata and info
+ */
+export class WorkspaceOpsService extends BaseService2 {
+  static deps = ['database'] as const;
 
-// a service mostly acting as the API for workspace related operations
-// does not manage any state or react to any state changes
-export class WorkspaceOpsService extends BaseService {
-  private database: BaseDatabaseService;
-
-  // any workspace info change
   $workspaceInfoAnyChange = atom(0);
-  /**
-   * if there is an addition or removal of workspace
-   */
   $workspaceInfoListChange = atom(0);
-
-  // Add a cache variable
   private workspaceInfoCache = new Map<string, WorkspaceInfo>();
 
-  // Add a method to invalidate the cache externally
-  invalidateCache(): void {
-    this.workspaceInfoCache.clear();
-  }
-
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: {
+    context: BaseServiceContext,
+    private dep: {
       database: BaseDatabaseService;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'workspace-ops',
-      kind: 'core',
-      dependencies,
-    });
-    this.database = dependencies.database;
+    super('workspace-ops', context, dep);
   }
 
-  protected async hookOnInitialize(): Promise<void> {
+  async hookMount(): Promise<void> {
     this.database.subscribe(
       { tableName: WORKSPACE_INFO_TABLE },
       (change) => {
@@ -77,17 +46,14 @@ export class WorkspaceOpsService extends BaseService {
     );
   }
 
-  protected async hookOnDispose(): Promise<void> {}
-
-  // Update the getWorkspaceInfo method to use the cache
-  async getWorkspaceInfo(
+  public async getWorkspaceInfo(
     wsName: string,
     options?: WorkspaceDatabaseQueryOptions,
   ): Promise<WorkspaceInfo | undefined> {
-    await this.initializedPromise;
+    await this.mountPromise;
 
-    const cacheKey = wsName + options?.type + options?.allowDeleted;
-
+    const cacheKey =
+      wsName + (options?.type || '') + (options?.allowDeleted || '');
     if (this.workspaceInfoCache.has(cacheKey)) {
       return this.workspaceInfoCache.get(cacheKey);
     }
@@ -114,12 +80,11 @@ export class WorkspaceOpsService extends BaseService {
     return wsInfo;
   }
 
-  async createWorkspaceInfo(
+  public async createWorkspaceInfo(
     info: Omit<WorkspaceInfo, 'lastModified' | 'deleted'>,
   ): Promise<WorkspaceInfo | undefined> {
-    await this.initializedPromise;
+    await this.mountPromise;
     const wsName = info.name;
-
     const result = await this.database.updateEntry(
       wsName,
       (existing) => {
@@ -148,17 +113,15 @@ export class WorkspaceOpsService extends BaseService {
 
     const updated = result.found ? (result.value as WorkspaceInfo) : undefined;
     if (updated) {
-      // Invalidate cache when workspace info changes
       this.invalidateCache();
-
       return updated;
     }
 
     return undefined;
   }
 
-  async deleteWorkspaceInfo(wsName: string): Promise<void> {
-    await this.initializedPromise;
+  public async deleteWorkspaceInfo(wsName: string): Promise<void> {
+    await this.mountPromise;
     await this.database.updateEntry(
       wsName,
       (existing) => {
@@ -184,16 +147,14 @@ export class WorkspaceOpsService extends BaseService {
       },
       { tableName: WORKSPACE_INFO_TABLE },
     );
-
-    // Invalidate cache when workspace info changes
     this.invalidateCache();
   }
 
-  async updateWorkspaceInfo(
+  public async updateWorkspaceInfo(
     name: string,
     update: (wsInfo: WorkspaceInfo) => WorkspaceInfo,
   ): Promise<WorkspaceInfo | undefined> {
-    await this.initializedPromise;
+    await this.mountPromise;
     const result = await this.database.updateEntry(
       name,
       (existing) => {
@@ -224,20 +185,18 @@ export class WorkspaceOpsService extends BaseService {
     );
 
     if (result.found) {
-      // Invalidate cache when workspace info changes
       this.invalidateCache();
-
       return result.value as WorkspaceInfo;
     }
 
     return undefined;
   }
 
-  async getAllWorkspaces(options?: {
+  public async getAllWorkspaces(options?: {
     type?: WorkspaceInfo['type'];
     allowDeleted?: boolean;
   }): Promise<WorkspaceInfo[]> {
-    await this.initializedPromise;
+    await this.mountPromise;
     const result = (await this.database.getAllEntries({
       tableName: WORKSPACE_INFO_TABLE,
     })) as WorkspaceInfo[];
@@ -246,17 +205,17 @@ export class WorkspaceOpsService extends BaseService {
       if (!options?.allowDeleted && wsInfo?.deleted) {
         return false;
       }
-
       if (options?.type) {
         return wsInfo.type === options.type;
       }
-
       return true;
     });
   }
 
-  async getWorkspaceMetadata(name: string): Promise<Record<string, any>> {
-    await this.initializedPromise;
+  public async getWorkspaceMetadata(
+    name: string,
+  ): Promise<Record<string, any>> {
+    await this.mountPromise;
     const result = (await this.getWorkspaceInfo(name))?.metadata;
 
     if (!result || !isPlainObject(result)) {
@@ -264,17 +223,14 @@ export class WorkspaceOpsService extends BaseService {
     }
     return result;
   }
-  /**
-   * The callback is called with the existing metadata and the
-   *  return value is used to replace all of the metadata.
-   */
-  async updateWorkspaceMetadata(
+
+  public async updateWorkspaceMetadata(
     name: string,
     metadata: (
       existingMetadata: WorkspaceInfo['metadata'],
     ) => WorkspaceInfo['metadata'],
   ): Promise<boolean> {
-    await this.initializedPromise;
+    await this.mountPromise;
     await this.updateWorkspaceInfo(name, (wsInfo) => {
       const finalMetadata = metadata(wsInfo.metadata ?? {});
 
@@ -297,8 +253,8 @@ export class WorkspaceOpsService extends BaseService {
     return true;
   }
 
-  async getMiscData(key: string): Promise<{ data: string } | undefined> {
-    await this.initializedPromise;
+  public async getMiscData(key: string): Promise<{ data: string } | undefined> {
+    await this.mountPromise;
     const data = await this.database.getEntry(key, {
       tableName: MISC_TABLE,
     });
@@ -318,8 +274,8 @@ export class WorkspaceOpsService extends BaseService {
     };
   }
 
-  async setMiscData(key: string, data: string): Promise<void> {
-    await this.initializedPromise;
+  public async setMiscData(key: string, data: string): Promise<void> {
+    await this.mountPromise;
     if (typeof data !== 'string') {
       throwAppError(
         'error::workspace:invalid-misc-data',
@@ -341,10 +297,18 @@ export class WorkspaceOpsService extends BaseService {
     );
   }
 
-  async deleteMiscData(key: string): Promise<void> {
-    await this.initializedPromise;
+  public async deleteMiscData(key: string): Promise<void> {
+    await this.mountPromise;
     await this.database.deleteEntry(key, {
       tableName: MISC_TABLE,
     });
+  }
+
+  public invalidateCache(): void {
+    this.workspaceInfoCache.clear();
+  }
+
+  private get database() {
+    return this.dep.database;
   }
 }

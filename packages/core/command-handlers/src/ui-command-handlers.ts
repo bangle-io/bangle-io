@@ -1,12 +1,9 @@
-// packages/core/command-handlers/src/ui-command-handlers.ts
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
 import {
-  BaseError,
   expectType,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
-import type { ThemePreference } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
 import {
   appendNoteExtension,
@@ -47,9 +44,9 @@ export const uiCommandHandlers = [
   c('command::ui:switch-theme', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
     const currentPref = store.get(workbenchState.$themePref);
-    const system = 'system' satisfies ThemePreference;
-    const light = 'light' satisfies ThemePreference;
-    const dark = 'dark' satisfies ThemePreference;
+    const system = 'system' as const;
+    const light = 'light' as const;
+    const dark = 'dark' as const;
 
     store.set(workbenchState.$singleSelectDialog, () => {
       return {
@@ -75,8 +72,6 @@ export const uiCommandHandlers = [
             option.id === dark
           ) {
             workbenchState.changeThemePreference(option.id);
-          } else {
-            throw new BaseError({ message: 'Invalid theme preference' });
           }
         },
       };
@@ -131,9 +126,9 @@ export const uiCommandHandlers = [
       const wsPaths = store.get(workspaceState.$wsPaths);
       const wsName = store.get(workspaceState.$wsName);
 
-      if (!wsName || wsPaths?.length === 0) {
+      if (!wsName || !wsPaths || wsPaths.length === 0) {
         throwAppError(
-          'error::workspace:not-allowed',
+          'error::workspace:no-notes-found',
           'No notes provided or available to delete',
           {
             wsName,
@@ -246,22 +241,21 @@ export const uiCommandHandlers = [
       const oldWsPath = wsPath || store.get(workspaceState.$wsPath);
       const existingWsPaths = store.get(workspaceState.$wsPaths);
 
-      const dirPaths = [
-        ...new Set(
-          existingWsPaths.map((path) => {
-            const { dirPath } = assertedResolvePath(path);
-            return dirPath;
-          }),
-        ),
-      ]
-        // filter out root
-        .filter((dirPath) => dirPath !== '');
-
       if (!oldWsPath) {
         throwAppError('error::workspace:not-opened', 'No workspace is opened', {
           wsPath,
         });
       }
+
+      const dirPaths = [
+        ...new Set(
+          (existingWsPaths || []).map((path) => {
+            const { dirPath } = assertedResolvePath(path);
+            return dirPath;
+          }),
+        ),
+      ].filter((dirPath) => dirPath !== '');
+
       const {
         wsName,
         fileNameWithoutExt,
@@ -271,7 +265,6 @@ export const uiCommandHandlers = [
       const isAtRoot = oldDirPath === '';
 
       const options = dirPaths
-
         .filter((dirPath) => dirPath !== oldDirPath)
         .map((dirPath) => ({
           title: dirPath,
@@ -321,7 +314,6 @@ export const uiCommandHandlers = [
     },
   ),
 
-  // GROUP: WORKSPACE MANAGEMENT
   c('command::ui:create-workspace-dialog', ({ workbenchState }, _, key) => {
     const { store } = getCtx(key);
     store.set(workbenchState.$openWsDialog, (prev) => !prev);
@@ -343,7 +335,7 @@ export const uiCommandHandlers = [
           badgeText: 'Switch Workspace',
           groupHeading: 'Workspaces',
           emptyMessage: 'No workspaces found',
-          options: workspaces
+          options: (workspaces || [])
             .sort((a, b) => {
               const aRecent = new Date(a.lastModified) >= sevenDaysAgo;
               const bRecent = new Date(b.lastModified) >= sevenDaysAgo;
@@ -385,7 +377,7 @@ export const uiCommandHandlers = [
           badgeTone: 'destructive',
           groupHeading: 'Workspaces',
           emptyMessage: 'No workspaces found',
-          options: workspaces.map((ws) => ({
+          options: (workspaces || []).map((ws) => ({
             title: ws.name,
             id: `${ws.type}-${ws.name}`,
           })),

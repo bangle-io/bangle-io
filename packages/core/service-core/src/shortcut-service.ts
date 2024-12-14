@@ -1,11 +1,14 @@
-import { BaseService, isDarwin } from '@bangle.io/base-utils';
+import {
+  BaseService2,
+  type BaseServiceContext,
+  isDarwin,
+} from '@bangle.io/base-utils';
 import type {
   KeyBinding,
   RegisterOptions,
   ShortcutHandler,
 } from '@bangle.io/keyboard-shortcuts';
 import { ShortcutManager } from '@bangle.io/keyboard-shortcuts';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
 
 export type ShortcutServiceConfig = {
   keyBinding: KeyBinding;
@@ -13,15 +16,18 @@ export type ShortcutServiceConfig = {
   options: RegisterOptions;
 };
 
-export class ShortcutService extends BaseService<{
-  shortcuts: ShortcutServiceConfig[];
-}> {
+/**
+ * Manages global keyboard shortcuts
+ */
+export class ShortcutService extends BaseService2 {
+  static deps = [] as const;
+
   private shortcutManager = new ShortcutManager({
     isDarwin: isDarwin,
   });
 
   eventHandler = (event: KeyboardEvent) => {
-    if (!this.isOk) {
+    if (!this.mounted) {
       this.logger.warn('ShortcutService is not ok');
       return;
     }
@@ -29,35 +35,31 @@ export class ShortcutService extends BaseService<{
   };
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private readonly target: Document,
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
+      target: {
+        addEventListener: Document['addEventListener'];
+        removeEventListener: Document['removeEventListener'];
+      };
+      shortcuts: ShortcutServiceConfig[];
+    },
   ) {
-    super({
-      ...baseOptions,
-      name: 'shortcut',
-      kind: 'core',
-      needsConfig: true,
-      dependencies,
-    });
-
-    target.addEventListener('keydown', this.eventHandler);
-  }
-
-  protected hookPostConfigSet(): void {
+    super('shortcut', context, dependencies);
     for (const shortcut of this.config.shortcuts) {
       this.register(shortcut);
     }
   }
 
-  protected async hookOnInitialize(): Promise<void> {}
-
-  protected async hookOnDispose(): Promise<void> {
-    this.target.removeEventListener('keydown', this.eventHandler);
-    this.shortcutManager.deregisterAll();
+  hookMount() {
+    this.config.target.addEventListener('keydown', this.eventHandler);
+    this.addCleanup(() => {
+      this.config.target.removeEventListener('keydown', this.eventHandler);
+      this.shortcutManager.deregisterAll();
+    });
   }
 
-  register(shortcut: ShortcutServiceConfig) {
+  public register(shortcut: ShortcutServiceConfig) {
     return this.shortcutManager.register(
       shortcut.keyBinding,
       shortcut.handler,

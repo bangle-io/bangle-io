@@ -1,7 +1,8 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
 import {
   BaseError,
-  BaseService,
+  BaseService2,
+  type BaseServiceContext,
   assertIsDefined,
   getEventSenderMetadata,
   throwAppError,
@@ -12,17 +13,16 @@ import {
 } from '@bangle.io/constants';
 import type {
   BaseFileStorageService,
-  BaseServiceCommonOptions,
   ScopedEmitter,
   WorkspaceInfo,
 } from '@bangle.io/types';
 import {
   VALID_NOTE_EXTENSIONS_SET,
   assertSplitWsPath,
+  assertedGetWsName,
   getExtension,
   validateWsPath,
 } from '@bangle.io/ws-path';
-import { assertValidNoteWsPath, assertedGetWsName } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 
 type ChangeEvent = {
@@ -30,9 +30,15 @@ type ChangeEvent = {
   payload: { oldWsPath?: string; wsPath: string };
 };
 
-export class FileSystemService extends BaseService<{
-  getWorkspaceInfo: ({ wsName }: { wsName: string }) => Promise<WorkspaceInfo>;
-}> {
+/**
+ * Provides file system operations (list, read, write, rename, delete files)
+ */
+export class FileSystemService extends BaseService2 {
+  static deps = [] as const;
+
+  fileStorageServices!: Record<string, BaseFileStorageService>;
+  getWorkspaceInfo!: ({ wsName }: { wsName: string }) => Promise<WorkspaceInfo>;
+
   $fileCreateCount = atom(0);
   $fileContentUpdateCount = atom(0);
   $fileDeleteCount = atom(0);
@@ -46,49 +52,20 @@ export class FileSystemService extends BaseService<{
   });
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: Record<string, BaseService<any>>,
-    private options: {
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
-      fileStorageServices: Record<string, BaseFileStorageService>;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'file-system-service',
-      kind: 'core',
-      dependencies,
-      needsConfig: true,
-    });
-
-    const depSet = new Set(Object.values(dependencies));
-
-    for (const [type, service] of Object.entries(
-      this.options.fileStorageServices,
-    )) {
-      if (!depSet.has(service)) {
-        throw new BaseError({
-          message: `missing file storage ${type} in service dependency`,
-        });
-      }
-    }
+    super('file-system-service', context, dependencies);
   }
 
-  private async getStorageService(
-    wsPathOrName: string,
-  ): Promise<BaseFileStorageService> {
-    const wsName = assertedGetWsName(wsPathOrName);
-    const wsInfo = await this.config.getWorkspaceInfo({ wsName });
-    const wsInfoType = wsInfo.type as WorkspaceStorageType;
-    return FileSystemService._getStorageServiceForType(
-      wsInfoType,
-      this.options.fileStorageServices,
-      wsName,
-    );
-  }
+  async hookMount(): Promise<void> {
+    assertIsDefined(this.fileStorageServices, 'fileStorageServices');
+    assertIsDefined(this.getWorkspaceInfo, 'getWorkspaceInfo');
 
-  protected async hookOnInitialize(): Promise<void> {
-    this.options.emitter.on(
+    this.config.emitter.on(
       'event::file:force-update',
       () => {
         this.store.set(this.$fileCreateCount, (c) => c + 1);
@@ -99,7 +76,7 @@ export class FileSystemService extends BaseService<{
       this.abortSignal,
     );
 
-    this.options.emitter.on(
+    this.config.emitter.on(
       'event::file:update',
       (event) => {
         switch (event.type) {
@@ -119,8 +96,6 @@ export class FileSystemService extends BaseService<{
             this.store.set(this.$fileRenameCount, (c) => c + 1);
             break;
           }
-          // REMEMBER to update force update event when adding new event types
-
           default: {
             const _exhaustiveCheck: never = event.type;
           }
@@ -130,31 +105,19 @@ export class FileSystemService extends BaseService<{
     );
   }
 
-  protected async hookOnDispose(): Promise<void> {}
-
-  isFileTypeSupported({ extension }: { extension: string }) {
+  public isFileTypeSupported({ extension }: { extension: string }) {
     return VALID_NOTE_EXTENSIONS_SET.has(extension);
   }
 
-  private onChange(change: ChangeEvent) {
-    this.options.emitter.emit('event::file:update', {
-      type: change.type,
-      ...change.payload,
-      sender: getEventSenderMetadata({ tag: this.name }),
-    });
-  }
-
-  async listFiles(
+  public async listFiles(
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
-    await this.initializedPromise;
-    // Using a dummy wsPath to get the storage service for the workspace
+    await this.mountPromise;
     const dummyWsPath = `${wsName}:dummy.md`;
     const storageService = await this.getStorageService(dummyWsPath);
 
     let wsPaths = await storageService.listAllFiles(wsName, abortSignal, {});
-
     wsPaths = wsPaths.filter((r) => {
       const { isValid } = validateWsPath(r);
       const extension = getExtension(r);
@@ -166,15 +129,14 @@ export class FileSystemService extends BaseService<{
           `listFiles: Ignoring file "${r}" as it is not supported`,
         );
       }
-
       return result;
     });
 
     return wsPaths;
   }
 
-  async readFile(wsPath: string): Promise<File | undefined> {
-    await this.initializedPromise;
+  public async readFile(wsPath: string): Promise<File | undefined> {
+    await this.mountPromise;
     assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
@@ -183,25 +145,23 @@ export class FileSystemService extends BaseService<{
     return file;
   }
 
-  async readFileAsText(wsPath: string): Promise<string | undefined> {
-    await this.initializedPromise;
-    assertValidNoteWsPath(wsPath);
+  public async readFileAsText(wsPath: string): Promise<string | undefined> {
+    await this.mountPromise;
+    assertSplitWsPath(wsPath);
 
     const file = await this.readFile(wsPath);
-
     if (!file) {
       return undefined;
     }
-
     return readFileAsText(file);
   }
 
-  async createFile(
+  public async createFile(
     wsPath: string,
     file: File,
     _options: { sha?: string } = {},
   ): Promise<void> {
-    await this.initializedPromise;
+    await this.mountPromise;
     assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
@@ -212,12 +172,12 @@ export class FileSystemService extends BaseService<{
     });
   }
 
-  async writeFile(
+  public async writeFile(
     wsPath: string,
     file: File,
     options: { sha?: string } = {},
   ): Promise<void> {
-    await this.initializedPromise;
+    await this.mountPromise;
     assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
@@ -230,8 +190,8 @@ export class FileSystemService extends BaseService<{
     });
   }
 
-  async deleteFile(wsPath: string): Promise<void> {
-    await this.initializedPromise;
+  public async deleteFile(wsPath: string): Promise<void> {
+    await this.mountPromise;
     assertSplitWsPath(wsPath);
 
     const storageService = await this.getStorageService(wsPath);
@@ -242,14 +202,14 @@ export class FileSystemService extends BaseService<{
     });
   }
 
-  async renameFile({
+  public async renameFile({
     oldWsPath,
     newWsPath,
   }: {
     oldWsPath: string;
     newWsPath: string;
   }): Promise<void> {
-    await this.initializedPromise;
+    await this.mountPromise;
 
     const { wsName: currentWsName } = assertSplitWsPath(oldWsPath);
     const { wsName: newWsName } = assertSplitWsPath(newWsPath);
@@ -297,18 +257,16 @@ export class FileSystemService extends BaseService<{
       case WORKSPACE_STORAGE_TYPE.Memory: {
         return getDep(WORKSPACE_STORAGE_TYPE.Memory);
       }
-
       case WORKSPACE_STORAGE_TYPE.Help:
       case WORKSPACE_STORAGE_TYPE.PrivateFS:
-      // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
       case WORKSPACE_STORAGE_TYPE.Github: {
         throwAppError(
           'error::workspace:unknown-ws-type',
           `${wsInfoType} workspace is not supported for file operations`,
           { wsName, type: wsInfoType },
         );
+        break;
       }
-
       default: {
         const _exhaustiveCheck: never = wsInfoType;
         throwAppError(
@@ -318,5 +276,27 @@ export class FileSystemService extends BaseService<{
         );
       }
     }
+  }
+
+  private async getStorageService(
+    wsPathOrName: string,
+  ): Promise<BaseFileStorageService> {
+    await this.mountPromise;
+    const wsName = assertedGetWsName(wsPathOrName);
+    const wsInfo = await this.getWorkspaceInfo({ wsName });
+    const wsInfoType = wsInfo.type as WorkspaceStorageType;
+    return FileSystemService._getStorageServiceForType(
+      wsInfoType,
+      this.fileStorageServices,
+      wsName,
+    );
+  }
+
+  private onChange(change: ChangeEvent) {
+    this.config.emitter.emit('event::file:update', {
+      type: change.type,
+      ...change.payload,
+      sender: getEventSenderMetadata({ tag: this.name }),
+    });
   }
 }

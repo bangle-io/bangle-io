@@ -1,4 +1,3 @@
-
 tsconfig.tsbuildinfo
 
 node_modules
@@ -32,3 +31,9 @@ packages/tooling/browser-entry/dist
 packages/tooling/e2e-tests/test-results
 packages/tooling/e2e-tests/playwright/.cache
 packages/tooling/e2e-tests/playwright/playwright-report
+
+# Environment variables
+.env
+.env.*
+
+.aider*

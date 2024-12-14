@@ -1,7 +1,10 @@
-import { BaseService, isAppError } from '@bangle.io/base-utils';
+import {
+  BaseService2,
+  type BaseServiceContext,
+  isAppError,
+} from '@bangle.io/base-utils';
 import type {
   BaseRouterService,
-  BaseServiceCommonOptions,
   PageLifeCycleState,
   RouterLocation,
   RouterState,
@@ -10,9 +13,13 @@ import { buildUrlPath, parseUrlPath, resolvePath } from '@bangle.io/ws-path';
 import type { WritableAtom } from 'jotai';
 import { atom } from 'jotai';
 
-export class NavigationService extends BaseService {
-  private routerService: BaseRouterService;
+/**
+ * Handles navigation and route state management
+ */
+export class NavigationService extends BaseService2 {
+  static deps = ['router'] as const;
 
+  $location!: WritableAtom<RouterLocation, [RouterLocation], void>;
   $lifeCycle = atom<{
     current: PageLifeCycleState;
     previous: PageLifeCycleState;
@@ -21,15 +28,11 @@ export class NavigationService extends BaseService {
     previous: undefined,
   });
 
-  $location: WritableAtom<RouterLocation, [RouterLocation], void>;
-
   $wsPath = atom<string | undefined>((get) => {
     try {
       const result = parseUrlPath.pageEditor(get(this.$location));
       return result?.wsPath;
     } catch (error) {
-      // prevent the app from crashing, but still
-      // handle the validation error
       if (isAppError(error)) {
         this.emitAppError(error);
         return undefined;
@@ -41,7 +44,6 @@ export class NavigationService extends BaseService {
   $wsName = atom<string | undefined>((get) => {
     try {
       const wsPath = get(this.$wsPath);
-
       if (wsPath) {
         return resolvePath(wsPath)?.wsName;
       }
@@ -49,8 +51,6 @@ export class NavigationService extends BaseService {
       const result = parseUrlPath.pageWsHome(get(this.$location));
       return result?.wsName;
     } catch (error) {
-      // prevent the app from crashing, but still
-      // handle the validation error
       if (isAppError(error)) {
         this.emitAppError(error);
         return undefined;
@@ -59,7 +59,40 @@ export class NavigationService extends BaseService {
     }
   });
 
-  resolveAtoms() {
+  constructor(
+    context: BaseServiceContext,
+    private dep: { router: BaseRouterService },
+  ) {
+    super('navigation-service', context, dep);
+  }
+
+  hookPostInstantiate(): void {
+    this.$location = atom({
+      pathname: this.routerService.pathname,
+      search: this.routerService.search,
+    });
+  }
+
+  hookMount() {
+    this.syncLocationAtoms();
+    this.syncPageLifeCycleAtom();
+    this.routerService.emitter.on(
+      'event::router:route-update',
+      () => {
+        this.syncLocationAtoms();
+      },
+      this.abortSignal,
+    );
+    this.routerService.emitter.on(
+      'event::router:page-lifecycle-state',
+      () => {
+        this.syncPageLifeCycleAtom();
+      },
+      this.abortSignal,
+    );
+  }
+
+  public resolveAtoms() {
     return {
       wsName: this.store.get(this.$wsName),
       wsPath: this.store.get(this.$wsPath),
@@ -68,97 +101,39 @@ export class NavigationService extends BaseService {
     };
   }
 
-  setUnsavedChanges(bool: boolean) {
+  public setUnsavedChanges(bool: boolean) {
     return this.routerService.setUnsavedChanges(bool);
   }
 
-  get pathname(): RouterLocation['pathname'] {
+  public get pathname(): RouterLocation['pathname'] {
     return this.routerService.pathname ?? '';
   }
 
-  get search(): RouterLocation['search'] {
+  public get search(): RouterLocation['search'] {
     return this.routerService.search;
   }
 
-  get basePath(): string {
+  public get basePath(): string {
     return this.routerService.basePath;
   }
 
-  get emitter(): Pick<BaseRouterService['emitter'], 'on'> {
+  public get emitter(): Pick<BaseRouterService['emitter'], 'on'> {
     return this.routerService.emitter;
   }
 
-  constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: {
-      routerService: BaseRouterService;
-    },
-  ) {
-    super({
-      ...baseOptions,
-      name: 'navigation-service',
-      kind: 'core',
-      dependencies,
-    });
-    this.routerService = dependencies.routerService;
-
-    this.$location = atom({
-      pathname: this.routerService.pathname,
-      search: this.routerService.search,
-    });
-  }
-  protected async hookOnInitialize(): Promise<void> {
-    this.syncLocationAtoms();
-    this.syncPageLifeCycleAtom();
-    this.routerService.emitter.on(
-      'event::router:route-update',
-      (_event) => {
-        this.syncLocationAtoms();
-      },
-      this.abortSignal,
-    );
-    this.routerService.emitter.on(
-      'event::router:page-lifecycle-state',
-      (_event) => {
-        this.syncPageLifeCycleAtom();
-      },
-      this.abortSignal,
-    );
-  }
-
-  private syncPageLifeCycleAtom() {
-    const { current, previous } = this.routerService.lifeCycle;
-    this.logger.debug(`page lifecycle changed from ${previous} to ${current}`);
-    this.store.set(this.$lifeCycle, { current, previous });
-  }
-
-  private syncLocationAtoms() {
-    this.store.set(this.$location, {
-      pathname: this.routerService.pathname,
-      search: this.routerService.search,
-    });
-  }
-
-  go(
+  public go(
     to: Partial<RouterLocation>,
     options?: { clearPath?: boolean; replace?: boolean; state?: RouterState },
   ) {
     this.routerService.navigate(to, options);
   }
 
-  goWsPath(wsPath: string) {
+  public goWsPath(wsPath: string) {
     const { pathname, search } = buildUrlPath.pageEditor({ wsPath });
-    this.go({
-      pathname,
-      search,
-    });
+    this.go({ pathname, search });
   }
 
-  /**
-   * takes you to a given workspace home
-   * if wsName is not provided, it will take you to the current workspace home
-   */
-  goWorkspace(
+  public goWorkspace(
     wsName?: string,
     { skipIfAlreadyThere }: { skipIfAlreadyThere?: boolean } = {},
   ) {
@@ -173,18 +148,32 @@ export class NavigationService extends BaseService {
     }
   }
 
-  goNotFound(originalPath?: string) {
+  public goNotFound(originalPath?: string) {
     this.logger.error(`goNotFound ${originalPath}`);
     this.go(buildUrlPath.pageNotFound({ path: originalPath }));
   }
 
-  goHome() {
+  public goHome() {
     this.go({
       pathname: '/',
-      // TODO this should be in ws-path lib
-      search: {
-        p: null,
-      },
+      search: { p: null },
+    });
+  }
+
+  private get routerService() {
+    return this.dep.router;
+  }
+
+  private syncPageLifeCycleAtom() {
+    const { current, previous } = this.routerService.lifeCycle;
+    this.logger.debug(`page lifecycle changed from ${previous} to ${current}`);
+    this.store.set(this.$lifeCycle, { current, previous });
+  }
+
+  private syncLocationAtoms() {
+    this.store.set(this.$location, {
+      pathname: this.routerService.pathname,
+      search: this.routerService.search,
     });
   }
 }

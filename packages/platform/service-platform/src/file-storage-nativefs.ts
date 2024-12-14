@@ -7,7 +7,9 @@ import {
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
-  BaseService,
+  BaseService2,
+  type BaseServiceContext,
+  assertIsDefined,
   isWorkerGlobalScope,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -22,13 +24,32 @@ import { VALID_NOTE_EXTENSIONS_SET } from '@bangle.io/ws-path';
 import { getWsName } from '@bangle.io/ws-path';
 
 export class FileStorageNativeFs
-  extends BaseService<{
-    getRootDirHandle: (
-      wsName: string,
-    ) => Promise<{ handle: FileSystemDirectoryHandle }>;
-  }>
+  extends BaseService2
   implements BaseFileStorageProvider
 {
+  getRootDirHandle!: (
+    wsName: string,
+  ) => Promise<{ handle: FileSystemDirectoryHandle }>;
+
+  async hookMount(): Promise<void> {
+    assertIsDefined(this.getRootDirHandle, 'getRootDirHandle');
+    this.addCleanup(() => {
+      this.invalidateCache();
+    });
+  }
+
+  constructor(
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
+      onChange: (event: FileStorageChangeEvent) => void;
+    },
+  ) {
+    super('file-storage-nativefs', context, dependencies);
+  }
+
+  private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
+
   static async hasPermission(handle: FileSystemDirectoryHandle) {
     return hasPermission(handle);
   }
@@ -42,7 +63,6 @@ export class FileStorageNativeFs
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
   public readonly displayName = 'Native Storage';
   public readonly description = 'Saves data in your hard drive';
-  private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
 
   private getFsPath(wsPath: string) {
     const fsPath = toFSPath(wsPath);
@@ -55,7 +75,7 @@ export class FileStorageNativeFs
   }
 
   private internalOnChange(event: FileStorageChangeEvent) {
-    this.options.onChange(event);
+    this.config.onChange(event);
   }
 
   // Modified getFs method with caching
@@ -78,8 +98,7 @@ export class FileStorageNativeFs
       return cached;
     }
 
-    const { handle: rootDirHandle } =
-      await this.config.getRootDirHandle(wsName);
+    const { handle: rootDirHandle } = await this.getRootDirHandle(wsName);
 
     const fs = new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
@@ -100,36 +119,13 @@ export class FileStorageNativeFs
     return fs;
   }
 
-  constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private options: {
-      onChange: (event: FileStorageChangeEvent) => void;
-    },
-  ) {
-    super({
-      ...baseOptions,
-      name: 'file-storage-nativefs',
-      kind: 'platform',
-      dependencies,
-      needsConfig: true,
-    });
-  }
-
-  protected async hookOnInitialize(): Promise<void> {}
-
-  // Modified onDispose method
-  protected async hookOnDispose(): Promise<void> {
-    await this.invalidateCache();
-  }
-
   // Add invalidateCache method
   protected async invalidateCache(): Promise<void> {
     this.fsCache.clear();
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
 
     const path = this.getFsPath(wsPath);
     const fs = await this.getFs(wsPath);
@@ -143,7 +139,7 @@ export class FileStorageNativeFs
   }
 
   async deleteFile(wsPath: string): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsPath);
     await fs.unlink(this.getFsPath(wsPath));
     this.internalOnChange({
@@ -153,7 +149,7 @@ export class FileStorageNativeFs
   }
 
   async fileExists(wsPath: string): Promise<boolean> {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsPath);
     const path = this.getFsPath(wsPath);
     try {
@@ -171,7 +167,7 @@ export class FileStorageNativeFs
   }
 
   async fileStat(wsPath: string) {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsPath);
     const path = this.getFsPath(wsPath);
     const stat = await fs.stat(path);
@@ -193,7 +189,7 @@ export class FileStorageNativeFs
     wsName: string,
     abortSignal: AbortSignal,
   ): Promise<string[]> {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsName);
     const rawPaths = await fs.opendirRecursive(wsName);
     abortSignal.throwIfAborted();
@@ -204,7 +200,7 @@ export class FileStorageNativeFs
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsPath);
     if (!(await this.fileExists(wsPath))) {
       return undefined;
@@ -220,7 +216,7 @@ export class FileStorageNativeFs
       newWsPath: string;
     },
   ): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsPath);
     await fs.rename(this.getFsPath(wsPath), this.getFsPath(newWsPath));
     this.internalOnChange({
@@ -231,7 +227,7 @@ export class FileStorageNativeFs
   }
 
   async writeFile(wsPath: string, file: File): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const fs = await this.getFs(wsPath);
     if (!(await this.fileExists(wsPath))) {
       throwAppError(

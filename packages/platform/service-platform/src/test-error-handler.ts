@@ -1,13 +1,9 @@
-import { BaseErrorService } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 
-export class TestErrorHandlerService extends BaseErrorService {
-  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
-    super({
-      ...baseOptions,
-      name: 'test-error-handler',
-      kind: 'platform',
-      dependencies,
-    });
+export class TestErrorHandlerService extends BaseService2 {
+  constructor(context: BaseServiceContext, dependencies: null) {
+    super('test-error-handler', context, dependencies);
   }
+
+  async hookMount(): Promise<void> {}
 }

@@ -1,4 +1,3 @@
-// packages/shared/types/app-errors.ts
 export type AppError =
   // General main errors
   | {
@@ -71,6 +70,12 @@ export type AppError =
         wsName: string;
       };
     }
+  | {
+      name: 'error::workspace:no-notes-found';
+      payload: {
+        wsName?: string;
+      };
+    }
 
   // File errors
   | {
@@ -93,6 +98,7 @@ export type AppError =
         wsPath: string;
       };
     }
+
   // User Activity errors
   | {
       name: `error::user-activity:invalid-data`;
@@ -109,6 +115,7 @@ export type AppError =
         storage: string;
       };
     }
+
   // WS Path errors
   | {
       name: `error::ws-path:invalid-ws-path`;
@@ -132,5 +139,21 @@ export type AppError =
       name: `error::ws-path:invalid-note-path`;
       payload: {
         invalidWsPath: string;
+      };
+    }
+
+  // Command errors
+  | {
+      name: 'error::command:unregistered';
+      payload: {
+        commandId: string;
+      };
+    }
+
+  // UI errors
+  | {
+      name: 'error::ui:invalid-theme-preference';
+      payload: {
+        selectedPref: string;
       };
     };

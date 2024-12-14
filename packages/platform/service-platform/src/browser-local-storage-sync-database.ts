@@ -1,15 +1,14 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type {
   BaseAppSyncDatabase,
-  BaseServiceCommonOptions,
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
 
 export class BrowserLocalStorageSyncDatabaseService
-  extends BaseService
+  extends BaseService2
   implements BaseAppSyncDatabase
 {
   private storage: Storage = window.localStorage;
@@ -17,15 +16,11 @@ export class BrowserLocalStorageSyncDatabaseService
   // we make it optional we will lose some events but it should only be a brief period at app start
   private bus?: TypedBroadcastBus<SyncDatabaseChange>;
 
-  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
-    super({
-      ...baseOptions,
-      name: 'browser-local-storage-sync-database',
-      kind: 'platform',
-      dependencies,
-    });
+  constructor(context: BaseServiceContext, dependencies: null) {
+    super('browser-local-storage-sync-database', context, dependencies);
   }
-  async hookOnInitialize() {
+
+  async hookMount(): Promise<void> {
     this.bus = new TypedBroadcastBus<SyncDatabaseChange>({
       name: `${this.name}`,
       senderId: BROWSING_CONTEXT_ID,
@@ -33,8 +28,6 @@ export class BrowserLocalStorageSyncDatabaseService
       signal: this.abortSignal,
     });
   }
-
-  async hookOnDispose() {}
 
   getEntry(
     key: string,
@@ -136,7 +129,7 @@ export class BrowserLocalStorageSyncDatabaseService
     callback: (change: SyncDatabaseChange) => void,
     signal: AbortSignal,
   ): void {
-    if (this.isDisposed) {
+    if (this.aborted) {
       return;
     }
 

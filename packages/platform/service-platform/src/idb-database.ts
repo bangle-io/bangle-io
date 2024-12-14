@@ -1,4 +1,9 @@
-import { BaseService, isAppError, throwAppError } from '@bangle.io/base-utils';
+import {
+  BaseService2,
+  type BaseServiceContext,
+  isAppError,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import {
@@ -10,7 +15,6 @@ import {
 } from '@bangle.io/db-key-val';
 import type {
   BaseAppDatabase,
-  BaseServiceCommonOptions,
   DatabaseChange,
   DatabaseQueryOptions,
 } from '@bangle.io/types';
@@ -33,20 +37,18 @@ export interface AppDatabase extends BangleDbSchema {
   };
 }
 
-export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
+export class IdbDatabaseService
+  extends BaseService2
+  implements BaseAppDatabase
+{
   db!: idb.IDBPDatabase<AppDatabase>;
   private bus!: TypedBroadcastBus<DatabaseChange>;
 
-  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
-    super({
-      ...baseOptions,
-      name: 'idb-database',
-      kind: 'platform',
-      dependencies,
-    });
+  constructor(context: BaseServiceContext, dependencies: null, _config: null) {
+    super('idb-database', context, dependencies);
   }
 
-  protected async hookOnInitialize(): Promise<void> {
+  async hookMount(): Promise<void> {
     const logger = this.logger;
     this.db = await idb.openDB(DB_NAME, DB_VERSION, {
       upgrade(db, oldVersion) {
@@ -77,18 +79,17 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       },
     });
     this.logger.info('IndexedDB initialized');
+
     this.bus = new TypedBroadcastBus({
       name: `${this.name}`,
       senderId: BROWSING_CONTEXT_ID,
       logger: this.logger.child('bus'),
       signal: this.abortSignal,
     });
-  }
 
-  protected async hookOnDispose(): Promise<void> {
-    this.logger.info('Disposing IndexedDB');
-    this.db?.close();
-    this.logger.info('IndexedDB disposed');
+    this.addCleanup(() => {
+      this.db?.close();
+    });
   }
 
   private throwUnknownError(error: any): never {
@@ -125,7 +126,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     callback: (change: DatabaseChange) => void,
     signal: AbortSignal,
   ): void {
-    if (this.isDisposed) {
+    if (this.aborted) {
       return;
     }
     this.bus.subscribe((msg) => {
@@ -142,7 +143,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     found: boolean;
     value: unknown;
   }> {
-    await this.initializedPromise;
+    await this.mountPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
 
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
@@ -168,7 +169,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     } | null,
     options: DatabaseQueryOptions,
   ) {
-    await this.initializedPromise;
+    await this.mountPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
     try {
@@ -217,7 +218,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   }
 
   async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {
-    await this.initializedPromise;
+    await this.mountPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
 
@@ -243,7 +244,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   }
 
   async getAllEntries({ tableName }: DatabaseQueryOptions): Promise<unknown[]> {
-    await this.initializedPromise;
+    await this.mountPromise;
     if (tableName === 'workspace-info') {
       try {
         return await this.getWorkspaceInfoTable().getAll();

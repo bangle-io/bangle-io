@@ -1,31 +1,25 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type {
   BaseAppDatabase,
-  BaseServiceCommonOptions,
   DatabaseChange,
   DatabaseQueryOptions,
 } from '@bangle.io/types';
 
 export class MemoryDatabaseService
-  extends BaseService
+  extends BaseService2
   implements BaseAppDatabase
 {
   private workspaces = new Map<string, unknown>();
   private miscData = new Map<string, unknown>();
   private bus!: TypedBroadcastBus<DatabaseChange>;
 
-  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
-    super({
-      ...baseOptions,
-      name: 'memory-database',
-      kind: 'platform',
-      dependencies,
-    });
+  constructor(context: BaseServiceContext, dependencies: null) {
+    super('memory-database', context, dependencies);
   }
 
-  protected async hookOnInitialize(): Promise<void> {
+  async hookMount(): Promise<void> {
     this.bus = new TypedBroadcastBus({
       name: `${this.name}`,
       senderId: BROWSING_CONTEXT_ID,
@@ -33,11 +27,11 @@ export class MemoryDatabaseService
       useMemoryChannel: true,
       signal: this.abortSignal,
     });
-  }
 
-  protected async hookOnDispose(): Promise<void> {
-    this.workspaces.clear();
-    this.miscData.clear();
+    this.addCleanup(() => {
+      this.workspaces.clear();
+      this.miscData.clear();
+    });
   }
 
   async getEntry(
@@ -101,7 +95,7 @@ export class MemoryDatabaseService
     callback: (change: DatabaseChange) => void,
     signal: AbortSignal,
   ): void {
-    if (this.isDisposed) {
+    if (this.aborted) {
       return;
     }
     this.bus.subscribe((msg) => {

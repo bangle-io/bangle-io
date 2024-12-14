@@ -1,9 +1,5 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
-import {
-  TestServiceInitializer,
-  createTestEnvironment,
-  sleep,
-} from '@bangle.io/test-utils';
+import { createTestEnvironment, sleep } from '@bangle.io/test-utils';
 import { createStore } from 'jotai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { UserActivityService } from '../user-activity-service';
@@ -27,35 +23,22 @@ async function setupUserActivityService({
 
   const testEnv = createTestEnvironment({ controller });
 
-  const testService = new TestServiceInitializer(testEnv);
+  testEnv.setDefaultConfig();
+  testEnv.getContainer().setConfig(UserActivityService, () => ({
+    activityCooldownMs: cooldownMs,
+    maxRecentEntries: maxEntries,
+    emitter: testEnv.rootEmitter.scoped(
+      ['event::command:result'],
+      controller.signal,
+    ),
+  }));
 
-  const userActivityService = testEnv.factory.create(UserActivityService, {
-    create() {
-      return new UserActivityService(
-        testEnv.commonOpts,
-        {
-          workspaceState: testService.coreWorkspaceStateService(),
-          workspaceOps: testService.coreWorkspaceOpsService(),
-        },
-        {
-          activityCooldownMs: cooldownMs,
-          maxRecentEntries: maxEntries,
-          emitter: testEnv.rootEmitter.scoped(
-            ['event::command:result'],
-            controller.signal,
-          ),
-        },
-      );
-    },
-  });
+  const services = testEnv.instantiateAll();
+  const navigation = services.navigation;
+  const workspaceOps = services.workspaceOps;
+  const userActivityService = services.userActivityService;
 
-  const navigation = testService.coreNavigationService();
-  const workspaceOps = testService.coreWorkspaceOpsService();
-
-  testService.configure();
-  testEnv.initAll();
-
-  await userActivityService.initializedPromise;
+  await testEnv.mountAll();
 
   // Create a test workspace
   await workspaceOps.createWorkspaceInfo({

@@ -1,19 +1,14 @@
-import {
-  BaseErrorService,
-  getEventSenderMetadata,
-  isAbortError,
-  isAppError,
-} from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions, RootEmitter } from '@bangle.io/types';
+import { isAbortError, isAppError } from '@bangle.io/base-utils';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 
-export class NodeErrorHandlerService extends BaseErrorService {
+export class NodeErrorHandlerService extends BaseService2 {
   private eventQueue: Array<Error | { reason: any; promise: Promise<any> }> =
     [];
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private options: {
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
       onError: (params: {
         appLikeError: boolean;
         error: Error;
@@ -22,18 +17,25 @@ export class NodeErrorHandlerService extends BaseErrorService {
       }) => void;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'node-error-handler',
-      kind: 'platform',
-      dependencies,
-    });
-
+    super('node-error-handler', context, dependencies);
     process.on('uncaughtException', this.handleError);
     process.on('unhandledRejection', this.handleRejection);
+  }
 
+  async hookMount(): Promise<void> {
     // Process queued events after initialization
-    this.initializedPromise.then(() => {
+    while (this.eventQueue.length > 0) {
+      const event = this.eventQueue.shift();
+      if (event) {
+        if (event instanceof Error) {
+          this.handleError(event);
+        } else {
+          this.handleRejection(event.reason, event.promise);
+        }
+      }
+    }
+
+    this.addCleanup(() => {
       while (this.eventQueue.length > 0) {
         const event = this.eventQueue.shift();
         if (event) {
@@ -44,11 +46,13 @@ export class NodeErrorHandlerService extends BaseErrorService {
           }
         }
       }
+      process.removeListener('uncaughtException', this.handleError);
+      process.removeListener('unhandledRejection', this.handleRejection);
     });
   }
 
   handleError = (error: Error) => {
-    if (!this.isOk) {
+    if (!this.mounted) {
       this.logger.warn('Received an error during not ok');
       this.logger.error(error);
       this.eventQueue.push(error);
@@ -67,7 +71,7 @@ export class NodeErrorHandlerService extends BaseErrorService {
     if (appLikeError) {
     }
 
-    this.options.onError({
+    this.config.onError({
       appLikeError,
       error,
       isFakeThrow: false,
@@ -77,7 +81,7 @@ export class NodeErrorHandlerService extends BaseErrorService {
 
   handleRejection = (reason: any, promise: Promise<any>) => {
     const error = reason instanceof Error ? reason : new Error(String(reason));
-    if (!this.isOk) {
+    if (!this.mounted) {
       this.eventQueue.push({ reason, promise });
       return;
     }
@@ -90,28 +94,11 @@ export class NodeErrorHandlerService extends BaseErrorService {
 
     const appLikeError = isAppError(error);
 
-    this.options.onError({
+    this.config.onError({
       appLikeError,
       error,
       isFakeThrow: false,
       rejection: true,
     });
   };
-
-  protected async hookOnInitialize(): Promise<void> {}
-
-  async hookOnDispose(): Promise<void> {
-    while (this.eventQueue.length > 0) {
-      const event = this.eventQueue.shift();
-      if (event) {
-        if (event instanceof Error) {
-          this.handleError(event);
-        } else {
-          this.handleRejection(event.reason, event.promise);
-        }
-      }
-    }
-    process.removeListener('uncaughtException', this.handleError);
-    process.removeListener('unhandledRejection', this.handleRejection);
-  }
 }

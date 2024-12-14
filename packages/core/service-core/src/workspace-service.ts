@@ -1,42 +1,33 @@
-import { BaseService } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import type { FileSystemService } from './file-system-service';
 import type { NavigationService } from './navigation-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 import type { WorkspaceStateService } from './workspace-state-service';
 
 /**
- * A service that focuses on managing the workspace
+ * Manages workspace-level operations from a UI and logic perspective
  */
-export class WorkspaceService extends BaseService {
-  private workspaceOps: WorkspaceOpsService;
-  private workspaceState: WorkspaceStateService;
-  private fileSystem: FileSystemService;
-  private navigation: NavigationService;
+export class WorkspaceService extends BaseService2 {
+  static deps = [
+    'fileSystem',
+    'navigation',
+    'workspaceOps',
+    'workspaceState',
+  ] as const;
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: {
+    context: BaseServiceContext,
+    private dep: {
       fileSystem: FileSystemService;
       navigation: NavigationService;
       workspaceOps: WorkspaceOpsService;
       workspaceState: WorkspaceStateService;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'workspace',
-      kind: 'core',
-      dependencies,
-    });
-
-    this.workspaceOps = dependencies.workspaceOps;
-    this.workspaceState = dependencies.workspaceState;
-    this.fileSystem = dependencies.fileSystem;
-    this.navigation = dependencies.navigation;
+    super('workspace', context, dep);
   }
 
-  protected async hookOnInitialize(): Promise<void> {}
-
-  protected async hookOnDispose(): Promise<void> {}
+  hookMount() {
+    // no-op currently
+  }
 }

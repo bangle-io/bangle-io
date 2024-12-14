@@ -20,8 +20,8 @@ export const wsCommandHandlers = [
     const { wsName } = navigation.resolveAtoms();
 
     if (!wsName) {
-      throwAppError('error::ws-path:create-new-note', 'No workspace open', {
-        invalidWsPath: inputPath,
+      throwAppError('error::workspace:not-opened', 'No workspace open', {
+        wsPath: inputPath,
       });
     }
 
@@ -37,8 +37,8 @@ export const wsCommandHandlers = [
       const { wsName } = assertSplitWsPath(wsPath);
 
       if (!wsName) {
-        throwAppError('error::ws-path:create-new-note', 'No workspace open', {
-          invalidWsPath: wsPath,
+        throwAppError('error::workspace:not-opened', 'No workspace open', {
+          wsPath,
         });
       }
 
@@ -92,6 +92,12 @@ export const wsCommandHandlers = [
     ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
       const { wsName } = assertSplitWsPath(wsPath);
       const { wsName: wsNameNew } = assertSplitWsPath(newWsPath);
+
+      if (!wsName) {
+        throwAppError('error::workspace:not-opened', 'No workspace open', {
+          wsPath,
+        });
+      }
 
       if (wsName !== wsNameNew) {
         throwAppError(
@@ -212,8 +218,7 @@ export const wsCommandHandlers = [
         },
       );
     }
-    // We do not support bare directories, so this hack allows us to
-    // create a directory by creating a note
+    // We do not support bare directories, so create a note as a placeholder
     dispatch('command::ws:quick-new-note', {
       pathPrefix: resolvedDirPath.dirPath,
     });

@@ -1,26 +1,42 @@
 import type { Logger } from '@bangle.io/logger';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { Command } from '@bangle.io/types';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { CommandRegistryService } from '../command-registry-service';
 
+async function setup() {
+  const { commonOpts, controller } = makeTestCommonOpts();
+  const logger = commonOpts.logger;
+  const service = new CommandRegistryService(
+    {
+      serviceContext: {
+        abortSignal: commonOpts.rootAbortSignal,
+      },
+      ctx: commonOpts,
+    },
+    null,
+    {
+      commands: [],
+      commandHandlers: [],
+    },
+  );
+
+  await service.mount();
+
+  return {
+    service,
+    logger,
+    controller,
+  };
+}
+
 describe('CommandRegistryService', () => {
-  let _logger: Logger;
-  let service: CommandRegistryService;
-
-  beforeEach(() => {
-    const { commonOpts } = makeTestCommonOpts();
-
-    _logger = commonOpts.logger;
-    service = new CommandRegistryService(commonOpts, undefined);
-    service.setInitConfig({ commands: [], commandHandlers: [] });
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  test('should register a command successfully', () => {
+  test('should register a command successfully', async () => {
+    const { service } = await setup();
     const command = {
       id: 'testCommand',
       keywords: ['test', 'command'],
@@ -35,7 +51,8 @@ describe('CommandRegistryService', () => {
     ).toBeDefined();
   });
 
-  test('should get a command by id', () => {
+  test('should get a command by id', async () => {
+    const { service } = await setup();
     const command = {
       id: 'testCommand',
       keywords: ['test', 'command'],
@@ -49,7 +66,8 @@ describe('CommandRegistryService', () => {
     expect(retrievedCommand).toEqual(command);
   });
 
-  test('should throw error when registering a duplicate command', () => {
+  test('should throw error when registering a duplicate command', async () => {
+    const { service } = await setup();
     const command = {
       id: 'duplicateCommand',
       keywords: ['duplicate'],
@@ -64,13 +82,15 @@ describe('CommandRegistryService', () => {
     );
   });
 
-  test('should throw error when getting a non-existent command', () => {
+  test('should throw error when getting a non-existent command', async () => {
+    const { service } = await setup();
     expect(() => service.getCommand('nonExistentCommand')).toThrow(
       /Command "nonExistentCommand" not found/,
     );
   });
 
-  test('should register a handler successfully', () => {
+  test('should register a handler successfully', async () => {
+    const { service } = await setup();
     const handler = vi.fn();
     service.registerHandler({ id: 'testCommand', handler });
 
@@ -78,7 +98,8 @@ describe('CommandRegistryService', () => {
     expect(registeredHandler).toBe(handler);
   });
 
-  test('should throw error when registering a duplicate handler', () => {
+  test('should throw error when registering a duplicate handler', async () => {
+    const { service } = await setup();
     const handler = vi.fn();
     service.registerHandler({ id: 'testCommand', handler });
 
@@ -87,12 +108,14 @@ describe('CommandRegistryService', () => {
     ).toThrow(/Handler for command "testCommand" is already registered/);
   });
 
-  test('should return undefined when finding a handler that does not exist', () => {
+  test('should return undefined when finding a handler that does not exist', async () => {
+    const { service } = await setup();
     const handler = service.findHandler('nonExistentCommand');
     expect(handler).toBeUndefined();
   });
 
   test('onDispose should clear all commands and handlers', async () => {
+    const { service, controller } = await setup();
     const command = {
       id: 'testCommand',
       keywords: ['duplicate'],
@@ -103,9 +126,11 @@ describe('CommandRegistryService', () => {
     const handler = vi.fn();
     service.register(command);
     service.registerHandler({ id: 'testCommand', handler });
+    controller.abort();
 
-    await service.dispose();
+    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(service.getCommands().length).toBe(0);
+
     expect(service.findHandler('testCommand')).toBeUndefined();
   });
 });

@@ -1,17 +1,12 @@
-import {
-  type BaseService,
-  getEventSenderMetadata,
-  throwAppError,
-} from '@bangle.io/base-utils';
+import { throwAppError } from '@bangle.io/base-utils';
 import {
   CommandDispatchService,
   CommandRegistryService,
-  EditorService, // Added import
+  EditorService,
   FileSystemService,
   NavigationService,
   ShortcutService,
-  type ShortcutServiceConfig,
-  UserActivityService, // Added import
+  UserActivityService,
   WorkbenchService,
   WorkbenchStateService,
   WorkspaceOpsService,
@@ -19,41 +14,27 @@ import {
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 
-import {} from '@bangle.io/initialize-services';
-import { BrowserErrorHandlerService } from '@bangle.io/service-platform'; // Added mock or adjusted initialization if needed
 // use direct paths to avoid loading page-lifecycle
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
 import { MemoryRouterService } from '@bangle.io/service-platform/src/memory-router';
 import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
-import { NodeErrorHandlerService } from '@bangle.io/service-platform/src/node-error-handler';
 
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-import {
-  type CoreServices,
-  type PlatformServices,
-  Services,
-  type Store,
-} from '@bangle.io/types';
+
 import { vi } from 'vitest';
 export type { Store } from '@bangle.io/types';
 import { Logger } from '@bangle.io/logger';
-import type {
-  BaseFileStorageService,
-  BaseServiceCommonOptions,
-} from '@bangle.io/types';
+import type { BaseServiceCommonOptions } from '@bangle.io/types';
 export { default as waitForExpect } from 'wait-for-expect';
 import { getEnabledCommands } from '@bangle.io/commands';
 import { RootEmitter } from '@bangle.io/root-emitter';
 import { createStore } from 'jotai';
 export * from './test-service-setup';
 import { commandHandlers } from '@bangle.io/command-handlers';
-import {
-  CoreServiceManager,
-  ServiceFactory,
-} from '@bangle.io/initialize-services/src/initialize-services';
-import { platformServicesSetup } from './platform-service-setup';
+import { Container } from '@bangle.io/poor-mans-di';
+import { TestErrorHandlerService } from '@bangle.io/service-platform/src/test-error-handler';
 
 export type MockLog = ReturnType<typeof createMockLogger>;
 
@@ -67,19 +48,6 @@ const createMockLogger = () => ({
 export const sleep = (ms = 15): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-interface TestEnvironment {
-  logger: Logger;
-  mockLog: MockLog;
-  controller: AbortController;
-  rootEmitter: RootEmitter;
-  commonOpts: BaseServiceCommonOptions;
-  factory: ServiceFactory;
-  platformServices: PlatformServices;
-  platformConfigure: () => void;
-  initAll: () => void;
-}
-
-// Add theme manager mock near the top of the file with other imports
 const themeManager = {
   currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
   onThemeChange: () => () => {},
@@ -91,7 +59,7 @@ export function createTestEnvironment({
   controller = new AbortController(),
 }: {
   controller?: AbortController;
-} = {}): TestEnvironment {
+} = {}) {
   const mockLog = createMockLogger();
   const logger = new Logger('', 'debug', mockLog as any);
   const rootEmitter = new RootEmitter({ abortSignal: controller.signal });
@@ -103,35 +71,132 @@ export function createTestEnvironment({
     rootAbortSignal: controller.signal,
   };
 
-  const factory = new ServiceFactory();
-  const platform = platformServicesSetup(commonOpts, rootEmitter);
+  const container = new Container(
+    {
+      context: commonOpts,
+      abortSignal: controller.signal,
+    },
+    {
+      // Platform services
+      errorService: TestErrorHandlerService,
+      database: MemoryDatabaseService,
+      syncDatabase: MemorySyncDatabaseService,
+      fileStorageIdb: FileStorageMemory,
+      router: MemoryRouterService,
+
+      // Core services
+      commandDispatcher: CommandDispatchService,
+      commandRegistry: CommandRegistryService,
+      fileSystem: FileSystemService,
+      navigation: NavigationService,
+      editorService: EditorService,
+      shortcut: ShortcutService,
+      workbench: WorkbenchService,
+      workbenchState: WorkbenchStateService,
+      workspace: WorkspaceService,
+      workspaceOps: WorkspaceOpsService,
+      workspaceState: WorkspaceStateService,
+      userActivityService: UserActivityService,
+    },
+  );
 
   return {
-    platformServices: platform.services,
-    platformConfigure: platform.configure,
     logger,
     mockLog,
     controller,
     rootEmitter,
     commonOpts,
-    factory,
-    initAll: () => {
-      factory.configure();
-      factory.initAll();
+
+    setDefaultConfig: () => {
+      container.setConfig(ShortcutService, () => ({
+        target: {
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        },
+        shortcuts: [],
+      }));
+
+      container.setConfig(FileStorageMemory, () => ({
+        onChange: (change) => {
+          commonOpts.logger.info('File storage change:', change);
+        },
+      }));
+
+      // Core service configs
+      container.setConfig(CommandRegistryService, () => ({
+        commands: getEnabledCommands(),
+        commandHandlers,
+      }));
+
+      container.setConfig(CommandDispatchService, () => ({
+        emitResult: (result) => {
+          rootEmitter.emit('event::command:result', result);
+        },
+      }));
+
+      container.setConfig(FileSystemService, () => ({
+        emitter: rootEmitter.scoped(
+          ['event::file:update', 'event::file:force-update'],
+          controller.signal,
+        ),
+      }));
+
+      container.setConfig(UserActivityService, () => ({
+        emitter: rootEmitter.scoped(
+          ['event::command:result'],
+          controller.signal,
+        ),
+      }));
+
+      container.setConfig(WorkbenchStateService, () => ({
+        themeManager,
+        emitter: rootEmitter.scoped(
+          ['event::app:reload-ui'],
+          controller.signal,
+        ),
+      }));
+
+      container.setConfig(EditorService, () => ({
+        emitter: rootEmitter.scoped(
+          ['event::editor:reload-editor', 'event::file:force-update'],
+          controller.signal,
+        ),
+      }));
+    },
+
+    getContainer: () => container,
+
+    mountAll: async () => {
+      await container.mountAll();
+    },
+
+    instantiateAll: () => {
+      const services = container.instantiateAll();
+
+      services.commandDispatcher.exposedServices = {
+        ...services,
+      };
+
+      const fileStorageServices = {
+        [services.fileStorageIdb.workspaceType]: services.fileStorageIdb,
+      };
+
+      services.fileSystem.fileStorageServices = fileStorageServices;
+      services.fileSystem.getWorkspaceInfo = async ({ wsName }) => {
+        const wsInfo = await services.workspaceOps.getWorkspaceInfo(wsName);
+        if (!wsInfo) {
+          throwAppError(
+            'error::workspace:not-found',
+            `Workspace not found: ${wsName}`,
+            {
+              wsName,
+            },
+          );
+        }
+        return wsInfo;
+      };
+
+      return services;
     },
   };
-}
-
-export class TestServiceInitializer extends CoreServiceManager {
-  constructor(env: TestEnvironment) {
-    super(
-      env.factory,
-      env.commonOpts,
-      env.platformServices,
-      env.rootEmitter,
-      getEnabledCommands(),
-      commandHandlers,
-      themeManager,
-    );
-  }
 }

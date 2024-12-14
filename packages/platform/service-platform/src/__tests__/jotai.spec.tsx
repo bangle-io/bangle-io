@@ -1,35 +1,39 @@
-import { atomStorage, atomWithCompare } from '@bangle.io/base-utils';
-import type { Logger } from '@bangle.io/logger';
-import { T, type Validator } from '@bangle.io/mini-zod';
+import { atomStorage } from '@bangle.io/base-utils';
+import { T } from '@bangle.io/mini-zod';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
-import type { BaseAppSyncDatabase, Store } from '@bangle.io/types';
 import { RESET } from 'jotai/utils';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { MemorySyncDatabaseService } from '../memory-sync-database';
 
+async function setup() {
+  const result = makeTestCommonOpts();
+  const { commonOpts, mockLog } = result;
+  const store = commonOpts.store;
+  const context = {
+    ctx: commonOpts,
+    serviceContext: {
+      abortSignal: commonOpts.rootAbortSignal,
+    },
+  };
+  const service = new MemorySyncDatabaseService(context, null, null);
+  await service.mount();
+  const syncDb = service;
+  const logger = commonOpts.logger;
+  const controller = new AbortController();
+
+  return {
+    syncDb,
+    logger,
+    service,
+    store,
+    mockLog,
+    controller,
+  };
+}
+
 describe('atomStorage', () => {
-  let syncDb: BaseAppSyncDatabase;
-  let logger: Logger;
-  let service: MemorySyncDatabaseService;
-  let store: Store;
-  let mockLog: ReturnType<typeof makeTestCommonOpts>['mockLog'];
-
-  beforeEach(async () => {
-    const result = makeTestCommonOpts();
-    mockLog = result.mockLog;
-    const { commonOpts } = result;
-    store = commonOpts.store;
-    service = new MemorySyncDatabaseService(commonOpts, undefined);
-    await service.initialize(); // Assuming there's an initialize method
-    syncDb = service;
-    logger = commonOpts.logger;
-  });
-
-  afterEach(async () => {
-    await service.dispose(); // Assuming there's a dispose method
-  });
-
-  it('should initialize with the initial value', () => {
+  it('should initialize with the initial value', async () => {
+    const { syncDb, logger, store } = await setup();
     const atom = atomStorage({
       key: 'testKey',
       initValue: 'initial',
@@ -42,7 +46,8 @@ describe('atomStorage', () => {
     expect(value).toBe('initial');
   });
 
-  it('should update the value correctly', () => {
+  it('should update the value correctly', async () => {
+    const { syncDb, logger, store } = await setup();
     const atom = atomStorage({
       key: 'testKey',
       initValue: 'initial',
@@ -60,7 +65,8 @@ describe('atomStorage', () => {
     });
   });
 
-  it('should remove the value correctly', () => {
+  it('should remove the value correctly', async () => {
+    const { syncDb, logger, store } = await setup();
     const atom = atomStorage({
       key: 'testKey',
       initValue: 'initial',
@@ -79,7 +85,8 @@ describe('atomStorage', () => {
     });
   });
 
-  it('should handle different types correctly', () => {
+  it('should handle different types correctly', async () => {
+    const { syncDb, logger, store } = await setup();
     const numberAtom = atomStorage({
       key: 'numberKey',
       initValue: 42,
@@ -115,7 +122,8 @@ describe('atomStorage', () => {
     });
   });
 
-  it('should handle invalid values and log errors', () => {
+  it('should handle invalid values and log errors', async () => {
+    const { syncDb, logger, store, mockLog } = await setup();
     const atom = atomStorage({
       key: 'invalidKey',
       initValue: 'valid',

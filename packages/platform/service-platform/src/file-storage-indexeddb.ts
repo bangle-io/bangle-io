@@ -3,7 +3,11 @@ import {
   FILE_NOT_FOUND_ERROR,
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
-import { BaseService, throwAppError } from '@bangle.io/base-utils';
+import {
+  BaseService2,
+  type BaseServiceContext,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
@@ -13,7 +17,7 @@ import type {
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
 export class FileStorageIndexedDB
-  extends BaseService
+  extends BaseService2
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Browser;
@@ -23,23 +27,17 @@ export class FileStorageIndexedDB
   private _idb = new IndexedDBFileSystem();
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private options: { onChange: (event: FileStorageChangeEvent) => void },
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: { onChange: (event: FileStorageChangeEvent) => void },
   ) {
-    super({
-      ...baseOptions,
-      name: 'file-storage-indexeddb',
-      kind: 'platform',
-      dependencies,
-    });
+    super('file-storage-indexeddb', context, dependencies);
   }
 
-  protected async hookOnInitialize(): Promise<void> {}
-  protected async hookOnDispose(): Promise<void> {}
+  async hookMount(): Promise<void> {}
 
   private internalOnChange(event: FileStorageChangeEvent) {
-    this.options.onChange(event);
+    this.config.onChange(event);
   }
 
   private getFsPath(wsPath: string) {
@@ -53,7 +51,7 @@ export class FileStorageIndexedDB
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
 
     const path = this.getFsPath(wsPath);
     await this._idb.writeFile(path, file);
@@ -65,7 +63,7 @@ export class FileStorageIndexedDB
   }
 
   async deleteFile(wsPath: string): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
 
     await this._idb.unlink(this.getFsPath(wsPath));
     this.internalOnChange({
@@ -75,7 +73,7 @@ export class FileStorageIndexedDB
   }
 
   async fileExists(wsPath: string): Promise<boolean> {
-    await this.initialize;
+    await this.mountPromise;
 
     const path = this.getFsPath(wsPath);
     try {
@@ -93,7 +91,7 @@ export class FileStorageIndexedDB
   }
 
   async fileStat(wsPath: string) {
-    await this.initialize;
+    await this.mountPromise;
 
     const path = this.getFsPath(wsPath);
     const stat = await this._idb.stat(path);
@@ -112,7 +110,7 @@ export class FileStorageIndexedDB
     wsName: string,
     abortSignal: AbortSignal,
   ): Promise<string[]> {
-    await this.initialize;
+    await this.mountPromise;
 
     const rawPaths: string[] = await this._idb.opendirRecursive(wsName);
 
@@ -124,7 +122,7 @@ export class FileStorageIndexedDB
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
-    await this.initialize;
+    await this.mountPromise;
 
     if (!(await this.fileExists(wsPath))) {
       return undefined;
@@ -141,7 +139,7 @@ export class FileStorageIndexedDB
       newWsPath: string;
     },
   ): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
 
     await this._idb.rename(this.getFsPath(wsPath), this.getFsPath(newWsPath));
 
@@ -153,7 +151,7 @@ export class FileStorageIndexedDB
   }
 
   async writeFile(wsPath: string, file: File): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
 
     if (!(await this.fileExists(wsPath))) {
       throwAppError(

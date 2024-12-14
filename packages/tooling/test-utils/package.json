@@ -6,7 +6,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/shared/test-utils"
+    "directory": "packages/tooling/test-utils"
   },
   "authors": [
     {
@@ -29,6 +29,11 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/color-scheme-manager": "workspace:*",
+    "@bangle.io/command-handlers": "workspace:*",
+    "@bangle.io/commands": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/initialize-services": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
@@ -36,11 +41,7 @@
     "@bangle.io/types": "workspace:*",
     "jotai": "^2.10.3",
     "wait-for-expect": "^3.0.2",
-    "@bangle.io/color-scheme-manager": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/commands": "workspace:*",
-    "@bangle.io/command-handlers": "workspace:*",
-    "@bangle.io/initialize-services": "workspace:*"
+    "@bangle.io/poor-mans-di": "workspace:*"
   },
   "devDependencies": {}
 }

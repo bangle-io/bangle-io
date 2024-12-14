@@ -56,6 +56,9 @@ importers:
       plop:
         specifier: ^4.0.1
         version: 4.0.1
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -215,6 +218,9 @@ importers:
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
+      '@bangle.io/poor-mans-di':
+        specifier: workspace:*
+        version: link:../../js-lib/poor-mans-di
       '@bangle.io/service-core':
         specifier: workspace:*
         version: link:../service-core
@@ -285,9 +291,6 @@ importers:
       '@bangle.io/mini-zod':
         specifier: workspace:*
         version: link:../../js-lib/mini-zod
-      '@bangle.io/test-utils':
-        specifier: workspace:*
-        version: link:../../tooling/test-utils
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -307,6 +310,9 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../tooling/test-utils
 
   packages/js-lib/baby-fs:
     dependencies:
@@ -369,6 +375,12 @@ importers:
         version: link:../weak-cache
 
   packages/js-lib/mini-zod:
+    devDependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../mini-js-utils
+
+  packages/js-lib/poor-mans-di:
     devDependencies:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
@@ -445,6 +457,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/poor-mans-di':
+        specifier: workspace:*
+        version: link:../../js-lib/poor-mans-di
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
@@ -910,6 +925,9 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/poor-mans-di':
+        specifier: workspace:*
+        version: link:../../js-lib/poor-mans-di
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../../shared/root-emitter

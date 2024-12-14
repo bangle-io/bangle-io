@@ -1,9 +1,12 @@
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from '@bangle.io/baby-fs';
-import { BaseService, throwAppError } from '@bangle.io/base-utils';
+import {
+  BaseService2,
+  type BaseServiceContext,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
-  BaseServiceCommonOptions,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
@@ -15,7 +18,7 @@ interface FileEntry {
 }
 
 export class FileStorageMemory
-  extends BaseService
+  extends BaseService2
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Memory;
@@ -25,26 +28,21 @@ export class FileStorageMemory
   private files = new Map<string, FileEntry>();
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private options: { onChange: (event: FileStorageChangeEvent) => void },
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: { onChange: (event: FileStorageChangeEvent) => void },
   ) {
-    super({
-      ...baseOptions,
-      name: 'file-storage-memory',
-      kind: 'platform',
-      dependencies,
+    super('file-storage-memory', context, dependencies);
+  }
+
+  async hookMount(): Promise<void> {
+    this.addCleanup(() => {
+      this.files.clear();
     });
   }
 
-  protected async hookOnInitialize(): Promise<void> {}
-
-  protected async hookOnDispose(): Promise<void> {
-    this.files.clear();
-  }
-
   private internalOnChange(event: FileStorageChangeEvent) {
-    this.options.onChange(event);
+    this.config.onChange(event);
   }
 
   private getFsPath(wsPath: string) {
@@ -58,7 +56,7 @@ export class FileStorageMemory
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const path = this.getFsPath(wsPath);
     const now = Date.now();
 
@@ -75,7 +73,7 @@ export class FileStorageMemory
   }
 
   async deleteFile(wsPath: string): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const path = this.getFsPath(wsPath);
     this.files.delete(path);
 
@@ -86,12 +84,12 @@ export class FileStorageMemory
   }
 
   async fileExists(wsPath: string): Promise<boolean> {
-    await this.initialize;
+    await this.mountPromise;
     return this.files.has(this.getFsPath(wsPath));
   }
 
   async fileStat(wsPath: string) {
-    await this.initialize;
+    await this.mountPromise;
     const path = this.getFsPath(wsPath);
     const entry = this.files.get(path);
 
@@ -116,7 +114,7 @@ export class FileStorageMemory
     wsName: string,
     abortSignal: AbortSignal,
   ): Promise<string[]> {
-    await this.initialize;
+    await this.mountPromise;
 
     const files = Array.from(this.files.keys())
       .filter((path) => path.startsWith(wsName))
@@ -129,7 +127,7 @@ export class FileStorageMemory
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
-    await this.initialize;
+    await this.mountPromise;
     const entry = this.files.get(this.getFsPath(wsPath));
 
     return entry?.file;
@@ -139,7 +137,7 @@ export class FileStorageMemory
     wsPath: string,
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const oldPath = this.getFsPath(wsPath);
     const newPath = this.getFsPath(newWsPath);
     const entry = this.files.get(oldPath);
@@ -157,7 +155,7 @@ export class FileStorageMemory
   }
 
   async writeFile(wsPath: string, file: File): Promise<void> {
-    await this.initialize;
+    await this.mountPromise;
     const path = this.getFsPath(wsPath);
 
     if (!this.files.has(path)) {

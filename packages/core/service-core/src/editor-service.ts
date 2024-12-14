@@ -1,56 +1,47 @@
-import { BaseService, getEventSenderMetadata } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions, ScopedEmitter } from '@bangle.io/types';
+import {
+  BaseService2,
+  type BaseServiceContext,
+  getEventSenderMetadata,
+} from '@bangle.io/base-utils';
+import type { ScopedEmitter } from '@bangle.io/types';
 import { atom } from 'jotai';
-import type { FileSystemService } from './file-system-service';
 
-export class EditorService extends BaseService<{
-  dummyVal: string;
-}> {
+/**
+ * Manages editor state, including reload triggers
+ */
+export class EditorService extends BaseService2 {
+  static deps = [] as const;
+
   private $_forceReloadCounter = atom(0);
-
   $forceReloadCounter = atom((get) => get(this.$_forceReloadCounter));
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    // biome-ignore lint/complexity/noBannedTypes: <explanation>
-    dependencies: {},
-    private options: {
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
       emitter: ScopedEmitter<
         'event::editor:reload-editor' | 'event::file:force-update'
       >;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'editor',
-      kind: 'core',
-      needsConfig: true,
-      dependencies,
-    });
+    super('editor', context, dependencies);
   }
 
-  protected hookPostConfigSet(): void {}
-
-  protected async hookOnInitialize(): Promise<void> {
-    this.options.emitter.on(
+  async hookMount(): Promise<void> {
+    this.config.emitter.on(
       'event::editor:reload-editor',
       () => {
-        // TODO implement a check for wsName
         this.store.set(this.$_forceReloadCounter, (prev) => prev + 1);
       },
       this.abortSignal,
     );
   }
 
-  protected async hookOnDispose(): Promise<void> {}
-
-  //   TODO not a great way to do this, but right we need to reload the editor page to make it
-  //  work.
-  onNativeFsAuthSuccess(wsName: string) {
-    this.options.emitter.emit('event::file:force-update', {
+  public onNativeFsAuthSuccess(wsName: string) {
+    this.config.emitter.emit('event::file:force-update', {
       sender: getEventSenderMetadata({ tag: this.name }),
     });
-    this.options.emitter.emit('event::editor:reload-editor', {
+    this.config.emitter.emit('event::editor:reload-editor', {
       wsName,
       sender: getEventSenderMetadata({ tag: this.name }),
     });

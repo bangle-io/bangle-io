@@ -1,31 +1,26 @@
-import { BaseService } from '@bangle.io/base-utils';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import type { WorkbenchStateService } from './workbench-state-service';
 
 /**
- * a service that focuses on managing the Workbench (UI)
+ * Manages the Workbench (UI) level operations
  */
-export class WorkbenchService extends BaseService {
-  workbenchState: WorkbenchStateService;
+export class WorkbenchService extends BaseService2 {
+  static deps = ['workbenchState'] as const;
 
   constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: {
+    context: BaseServiceContext,
+    private dep: {
       workbenchState: WorkbenchStateService;
     },
   ) {
-    super({
-      ...baseOptions,
-      name: 'workbench',
-      kind: 'core',
-      dependencies,
-    });
-    this.workbenchState = dependencies.workbenchState;
+    super('workbench', context, dep);
   }
 
-  protected async hookOnInitialize(): Promise<void> {
-    // Initialization logic if needed
+  hookMount() {
+    // no-op currently
   }
 
-  protected async hookOnDispose(): Promise<void> {}
+  get workbenchState() {
+    return this.dep.workbenchState;
+  }
 }

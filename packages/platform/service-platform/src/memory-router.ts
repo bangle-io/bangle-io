@@ -1,22 +1,34 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { Emitter } from '@bangle.io/emitter';
 import type {
   BaseRouter,
-  BaseServiceCommonOptions,
   PageLifeCycleState,
   RouterLocation,
   RouterState,
 } from '@bangle.io/types';
 
 export class MemoryRouterService
-  extends BaseService
+  extends BaseService2
   implements BaseRouter<RouterState>
 {
   private _pathname: RouterLocation['pathname'] = '/';
   private _search: RouterLocation['search'] = {};
   private _state: RouterState | null = null;
-
   emitter: BaseRouter<RouterState>['emitter'] = new Emitter();
+
+  constructor(
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: { basePath?: string },
+  ) {
+    super('memory-router', context, dependencies);
+  }
+
+  async hookMount(): Promise<void> {
+    this.addCleanup(() => {
+      this.emitter.destroy();
+    });
+  }
 
   get pathname() {
     return this._pathname;
@@ -27,25 +39,7 @@ export class MemoryRouterService
   }
 
   get basePath() {
-    return this.constructorOptions.basePath ?? '';
-  }
-  constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private constructorOptions: { basePath?: string } = {},
-  ) {
-    super({
-      ...baseOptions,
-      name: 'memory-router',
-      kind: 'platform',
-      dependencies,
-    });
-  }
-
-  protected async hookOnInitialize(): Promise<void> {}
-
-  protected async hookOnDispose(): Promise<void> {
-    this.emitter.destroy();
+    return this.config.basePath ?? '';
   }
 
   get lifeCycle(): {

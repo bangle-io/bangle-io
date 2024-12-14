@@ -1,4 +1,4 @@
-import { BaseError } from '@bangle.io/base-utils';
+import { throwAppError } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
 import { commandKeyToContext } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
@@ -91,8 +91,8 @@ export function getCtx<T extends string>(
 } {
   const result = commandKeyToContext.get(key);
   if (!result) {
-    throw new BaseError({
-      message: `Command "${key.key}" is not registered.`,
+    throwAppError('error::command:unregistered', 'Command not registered', {
+      commandId: key.key,
     });
   }
   return {

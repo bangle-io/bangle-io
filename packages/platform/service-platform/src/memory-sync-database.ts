@@ -1,33 +1,24 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type {
   BaseAppSyncDatabase,
-  BaseServiceCommonOptions,
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
 
 export class MemorySyncDatabaseService
-  extends BaseService
+  extends BaseService2
   implements BaseAppSyncDatabase
 {
   private storage = new Map<string, unknown>();
-  //   since this is and we cannot initialize the bus in the constructor as it will start emitting events before the service is ready
-  // we make it optional we will lose some events but it should only be a brief period at app start
   private bus?: TypedBroadcastBus<SyncDatabaseChange>;
 
-  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
-    super({
-      ...baseOptions,
-      name: 'memory-sync-database',
-      kind: 'platform',
-      dependencies,
-    });
+  constructor(context: BaseServiceContext, dependencies: null, _config: null) {
+    super('memory-sync-database', context, dependencies);
   }
 
-  protected async hookOnInitialize(): Promise<void> {
-    // since this is sync we will need the bus to be ready
+  async hookMount(): Promise<void> {
     this.bus = new TypedBroadcastBus({
       name: `${this.name}`,
       senderId: BROWSING_CONTEXT_ID,
@@ -36,8 +27,6 @@ export class MemorySyncDatabaseService
       signal: this.abortSignal,
     });
   }
-
-  protected async hookOnDispose(): Promise<void> {}
 
   getEntry(
     key: string,
@@ -109,7 +98,7 @@ export class MemorySyncDatabaseService
     callback: (change: SyncDatabaseChange) => void,
     signal: AbortSignal,
   ): void {
-    if (this.isDisposed) {
+    if (!this.mounted) {
       return;
     }
     this.bus?.subscribe((msg) => {

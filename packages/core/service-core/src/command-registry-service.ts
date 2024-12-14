@@ -1,55 +1,34 @@
-import { BaseError, BaseService } from '@bangle.io/base-utils';
-import type {
-  BaseServiceCommonOptions,
-  Command,
-  CommandHandler,
-  CommandKey,
-} from '@bangle.io/types';
+import {
+  BaseError,
+  BaseService2,
+  type BaseServiceContext,
+} from '@bangle.io/base-utils';
+import type { Command, CommandHandler, CommandKey } from '@bangle.io/types';
 
 type CommandHandlerConfig = { id: string; handler: CommandHandler };
 
-export class CommandRegistryService extends BaseService<{
-  commands: Command[];
-  commandHandlers: CommandHandlerConfig[];
-}> {
+/**
+ * Registers commands and their handlers for the app
+ */
+export class CommandRegistryService extends BaseService2 {
+  static deps = [] as const;
+
   private commands: Map<string, Command> = new Map();
   private handlers: Map<string, CommandHandler> = new Map();
   private commandKeyMap: WeakMap<Command, CommandKey<string>> = new WeakMap();
 
-  public getCommands(): Command[] {
-    return Array.from(this.commands.values());
+  constructor(
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
+      commands: Command[];
+      commandHandlers: CommandHandlerConfig[];
+    },
+  ) {
+    super('command-registry', context, dependencies);
   }
 
-  getCommandKey(command: Command): CommandKey<string> {
-    const key = this.commandKeyMap.get(command);
-
-    if (!key) {
-      throw new BaseError({
-        message: `Command "${command.id}" does not have a key.`,
-      });
-    }
-
-    return key;
-  }
-
-  constructor(baseOptions: BaseServiceCommonOptions, dependencies: undefined) {
-    super({
-      ...baseOptions,
-      name: 'command-registry',
-      kind: 'core',
-      dependencies,
-      needsConfig: true,
-    });
-  }
-
-  protected async hookOnInitialize(): Promise<void> {}
-
-  protected async hookOnDispose(): Promise<void> {
-    this.commands.clear();
-    this.handlers.clear();
-  }
-
-  protected hookPostConfigSet(): void {
+  hookMount() {
     for (const command of this.config.commands) {
       this.register(command);
     }
@@ -59,11 +38,30 @@ export class CommandRegistryService extends BaseService<{
     }
 
     this.logger.info(
-      `Command registry initialized ${Object.keys(this.config.commands).length} commands & ${Object.keys(this.config.commandHandlers).length} handlers.`,
+      `Command registry initialized ${this.config.commands.length} commands & ${this.config.commandHandlers.length} handlers.`,
     );
+
+    this.addCleanup(() => {
+      this.commands.clear();
+      this.handlers.clear();
+    });
   }
 
-  register(command: Command) {
+  public getCommands(): Command[] {
+    return Array.from(this.commands.values());
+  }
+
+  public getCommandKey(command: Command): CommandKey<string> {
+    const key = this.commandKeyMap.get(command);
+    if (!key) {
+      throw new BaseError({
+        message: `Command "${command.id}" does not have a key.`,
+      });
+    }
+    return key;
+  }
+
+  public register(command: Command) {
     if (this.commands.has(command.id)) {
       throw new BaseError({
         message: `Command "${command.id}" is already registered.`,
@@ -77,7 +75,7 @@ export class CommandRegistryService extends BaseService<{
     this.commands.set(command.id, command);
   }
 
-  registerHandler({ id, handler }: CommandHandlerConfig) {
+  public registerHandler({ id, handler }: CommandHandlerConfig) {
     if (this.handlers.has(id)) {
       throw new BaseError({
         message: `Handler for command "${id}" is already registered.`,
@@ -90,12 +88,12 @@ export class CommandRegistryService extends BaseService<{
     };
   }
 
-  findHandler(id: string) {
+  public findHandler(id: string) {
     const handler = this.handlers.get(id);
     return handler;
   }
 
-  getCommand(id: string): Command {
+  public getCommand(id: string): Command {
     const command = this.commands.get(id);
     if (!command) {
       throw new BaseError({
@@ -105,7 +103,7 @@ export class CommandRegistryService extends BaseService<{
     return command;
   }
 
-  getOmniSearchCommands(): Command[] {
+  public getOmniSearchCommands(): Command[] {
     return this.getCommands().filter((cmd) => cmd.omniSearch);
   }
 }

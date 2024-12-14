@@ -1,9 +1,8 @@
-import { BaseService } from '@bangle.io/base-utils';
+import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { browserHistoryStateEvents } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type {
   BaseRouter,
-  BaseServiceCommonOptions,
   PageLifeCycleEvent,
   PageLifeCycleState,
   RouterLocation,
@@ -17,18 +16,29 @@ type SearchRecord = Record<string, string | null>;
 const pendingSymbol = Symbol('pending');
 
 export class BrowserRouterService
-  extends BaseService
+  extends BaseService2
   implements BaseRouter<RouterState>
 {
+  constructor(
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
+      basePath?: string;
+      isStatic?: boolean;
+    },
+  ) {
+    super('browser-router', context, dependencies);
+  }
+
   private _pathname: RouterLocation['pathname'] = parseBrowserPathname();
   private _search: RouterLocation['search'] = parseBrowserSearch();
 
   get basePath() {
-    return this.constructorOptions.basePath ?? '';
+    return this.config.basePath ?? '';
   }
 
   get static() {
-    return this.constructorOptions.isStatic ?? false;
+    return this.config.isStatic ?? false;
   }
 
   emitter: BaseRouter<RouterState>['emitter'] = new Emitter({ paused: true });
@@ -74,17 +84,8 @@ export class BrowserRouterService
     });
   };
 
-  constructor(
-    baseOptions: BaseServiceCommonOptions,
-    dependencies: undefined,
-    private constructorOptions: { basePath?: string; isStatic?: boolean } = {},
-  ) {
-    super({
-      ...baseOptions,
-      name: 'browser-router',
-      kind: 'platform',
-      dependencies,
-    });
+  async hookMount(): Promise<void> {
+    this.emitter.unpause();
     for (const event of browserHistoryStateEvents) {
       window.addEventListener(event, this.onBrowserHistoryEvent);
       this.addCleanup(() => {
@@ -102,12 +103,8 @@ export class BrowserRouterService
     });
   }
 
-  protected async hookOnInitialize(): Promise<void> {
-    this.emitter.unpause();
-  }
-
   setUnsavedChanges(unsavedChanges: boolean) {
-    if (this.isOk) {
+    if (this.mounted) {
       if (unsavedChanges) {
         lifecycle.addUnsavedChanges(pendingSymbol);
       } else {
@@ -134,10 +131,12 @@ export class BrowserRouterService
         options,
       );
     };
-
-    if (!this.isOk) {
+    if (this.aborted) {
+      return;
+    }
+    if (!this.mounted) {
       this.logger.warn('Cannot navigate, service is not ok');
-      this.initializedPromise.then(go);
+      this.mountPromise.then(go);
     } else {
       go();
     }
