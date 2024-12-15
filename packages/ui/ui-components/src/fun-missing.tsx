@@ -43,5 +43,5 @@ export const FunMissing = (): JSX.Element => {
 
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
 
-  return <div data-testid="fun-missing-message">{randomMessage}</div>;
+  return <span data-testid="fun-missing-message">{randomMessage}</span>;
 };
