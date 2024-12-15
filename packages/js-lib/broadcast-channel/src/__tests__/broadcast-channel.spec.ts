@@ -63,7 +63,7 @@ describe('TypedBroadcastBus', () => {
     controllerB.abort();
   });
 
-  it('should send and receive messages', () => {
+  it('should send and receive messages from others', () => {
     const handlerB = vi.fn();
     busB.subscribe(handlerB, new AbortController().signal);
 
@@ -73,6 +73,7 @@ describe('TypedBroadcastBus', () => {
       .calls?.[0]?.[0] as BroadcastMessage<string>;
     expect(firstCallArg.data).toBe('Hello from A');
     expect(firstCallArg.senderId).toBe('senderA');
+    expect(firstCallArg.isSelf).toBe(false);
     expect(loggerA.debug).toHaveBeenCalledWith(
       expect.any(String),
       'sending message',
@@ -81,16 +82,20 @@ describe('TypedBroadcastBus', () => {
     expect(loggerB.debug).toHaveBeenCalledWith(
       expect.any(String),
       'received message from senderA',
-      expect.objectContaining({ data: 'Hello from A' }),
+      expect.objectContaining({ data: 'Hello from A', isSelf: false }),
     );
   });
 
-  it('should ignore messages from itself', () => {
+  it('should also receive messages from itself', () => {
     const handlerA = vi.fn();
     busA.subscribe(handlerA, new AbortController().signal);
 
     busA.send('Hello from A');
-    expect(handlerA).not.toHaveBeenCalled();
+    expect(handlerA).toHaveBeenCalledTimes(1);
+    const msg = handlerA.mock.calls?.[0]?.[0] as BroadcastMessage<string>;
+    expect(msg.data).toBe('Hello from A');
+    expect(msg.senderId).toBe('senderA');
+    expect(msg.isSelf).toBe(true);
   });
 
   it('should allow multiple handlers and unsubscribing', () => {
@@ -113,10 +118,14 @@ describe('TypedBroadcastBus', () => {
   });
 
   it('should handle invalid messages gracefully', () => {
-    // Force an invalid message scenario
     busA._channel.postMessage({ invalid: 'data' });
-    expect(loggerA.error).not.toHaveBeenCalled(); // Bus A won't receive this message
-    expect(loggerB.error).toHaveBeenCalled(); // Bus B receives invalid message from A channel
+    expect(loggerA.error).toHaveBeenCalled();
+    expect(loggerB.error).toHaveBeenCalled();
+    expect(loggerA.error).toHaveBeenCalledWith(
+      expect.any(String),
+      'Invalid message received',
+      { invalid: 'data' },
+    );
   });
 
   it('should dispose properly', () => {
@@ -136,8 +145,52 @@ describe('TypedBroadcastBus', () => {
 
     busB.subscribe(handlerB, msgController.signal);
 
-    controllerB.abort(); // abort the bus
+    controllerB.abort(); // abort the bus B
     busA.send('Hello after abort');
     expect(handlerB).toHaveBeenCalledTimes(0);
+  });
+
+  it('should receive messages from self with native BroadcastChannel', () => {
+    // Create a bus with native BroadcastChannel
+    const controller = new AbortController();
+    const bus = new TypedBroadcastBus({
+      name: 'test-channel',
+      senderId: 'sender',
+      useMemoryChannel: false,
+      signal: controller.signal,
+    });
+
+    const handler = vi.fn();
+    bus.subscribe(handler, new AbortController().signal);
+
+    bus.send('Hello');
+    expect(handler).toHaveBeenCalledTimes(1);
+    const msg = handler.mock.calls[0][0] as BroadcastMessage<string>;
+    expect(msg.data).toBe('Hello');
+    expect(msg.isSelf).toBe(true);
+
+    controller.abort();
+  });
+
+  it('should receive messages from self with MemoryBroadcastChannel', () => {
+    // Create a bus with MemoryBroadcastChannel
+    const controller = new AbortController();
+    const bus = new TypedBroadcastBus({
+      name: 'test-channel',
+      senderId: 'sender',
+      useMemoryChannel: true,
+      signal: controller.signal,
+    });
+
+    const handler = vi.fn();
+    bus.subscribe(handler, new AbortController().signal);
+
+    bus.send('Hello');
+    expect(handler).toHaveBeenCalledTimes(1);
+    const msg = handler.mock.calls[0][0] as BroadcastMessage<string>;
+    expect(msg.data).toBe('Hello');
+    expect(msg.isSelf).toBe(true);
+
+    controller.abort();
   });
 });

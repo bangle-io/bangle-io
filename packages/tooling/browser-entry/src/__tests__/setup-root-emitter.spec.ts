@@ -74,7 +74,7 @@ describe('setupCrossTabComms', () => {
     expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
   });
 
-  test('should ignore messages from same tab', () => {
+  test('should handle messages from same tab', () => {
     const { pubSub, tabId } = setup();
 
     const subscriberSpy = vi.fn();
@@ -95,7 +95,7 @@ describe('setupCrossTabComms', () => {
       new MessageEvent('message', { data: testMessage }),
     );
 
-    expect(subscriberSpy).not.toHaveBeenCalled();
+    expect(subscriberSpy).toHaveBeenCalled();
   });
 
   test('should cleanup resources on abort', () => {
@@ -162,5 +162,18 @@ describe('setupCrossTabComms', () => {
     );
 
     expect(subscriberSpy).not.toHaveBeenCalled();
+  });
+
+  test('should not emit duplicate events for CROSS_TAB_EVENTS', () => {
+    const { pubSub } = setup();
+    const subscriberSpy = vi.fn();
+
+    pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
+
+    const testPayload = { test: 'data' };
+    pubSub.publisher.emit(CROSS_TAB_EVENTS[0], testPayload);
+
+    expect(subscriberSpy).toHaveBeenCalledTimes(1);
+    expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
   });
 });

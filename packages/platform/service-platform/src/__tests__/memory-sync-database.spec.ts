@@ -77,7 +77,7 @@ describe('MemorySyncDatabaseService', () => {
     });
   });
 
-  it.todo('should notify subscribers of changes', async () => {
+  it('should notify subscribers of changes', async () => {
     const { service } = await setup();
 
     const changes: any[] = [];

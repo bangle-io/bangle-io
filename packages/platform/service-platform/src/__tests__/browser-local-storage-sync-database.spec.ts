@@ -5,75 +5,80 @@ import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BrowserLocalStorageSyncDatabaseService } from '../browser-local-storage-sync-database';
 
-describe('BrowserLocalStorageSyncDatabaseService', () => {
+async function setup() {
   const { commonOpts } = createTestEnvironment();
-  const service = new BrowserLocalStorageSyncDatabaseService(
-    {
-      ctx: commonOpts,
-      serviceContext: {
-        abortSignal: commonOpts.rootAbortSignal,
-      },
+  const context = {
+    ctx: commonOpts,
+    serviceContext: {
+      abortSignal: commonOpts.rootAbortSignal,
     },
-    null,
-  );
+  };
+
+  const service = new BrowserLocalStorageSyncDatabaseService(context, null);
+  await service.mount();
+
+  return {
+    service,
+    commonOpts,
+  };
+}
+
+describe('BrowserLocalStorageSyncDatabaseService', () => {
   const options: SyncDatabaseQueryOptions = { tableName: 'sync' };
 
   beforeEach(() => {
     window.localStorage.clear();
   });
 
-  it('should store and retrieve entries synchronously', () => {
+  it('should store and retrieve entries synchronously', async () => {
+    const { service } = await setup();
+
     service.updateEntry('key1', () => ({ value: 'value1' }), options);
     const entry = service.getEntry('key1', options);
     expect(entry).toEqual({ found: true, value: 'value1' });
   });
 
-  it.todo(
-    'should notify subscribers on entry creation, update, and deletion',
-    () => {
-      const callback = vi.fn();
-      const abortController = new AbortController();
+  it('should notify subscribers on entry creation, update, and deletion', async () => {
+    const { service } = await setup();
+    const callback = vi.fn();
+    const abortController = new AbortController();
 
-      service.subscribe(
-        { tableName: 'sync' },
-        callback,
-        abortController.signal,
-      );
+    service.subscribe({ tableName: 'sync' }, callback, abortController.signal);
 
-      // Create entry
-      service.updateEntry('key1', () => ({ value: 'value1' }), options);
+    // Create entry
+    service.updateEntry('key1', () => ({ value: 'value1' }), options);
 
-      expect(callback).toHaveBeenCalledWith({
-        type: 'create',
-        tableName: 'sync',
-        key: 'key1',
-        value: 'value1',
-      });
+    expect(callback).toHaveBeenCalledWith({
+      type: 'create',
+      tableName: 'sync',
+      key: 'key1',
+      value: 'value1',
+    });
 
-      // Update entry
-      service.updateEntry('key1', () => ({ value: 'value2' }), options);
-      expect(callback).toHaveBeenCalledWith({
-        type: 'update',
-        tableName: 'sync',
-        key: 'key1',
-        value: 'value2',
-      });
+    // Update entry
+    service.updateEntry('key1', () => ({ value: 'value2' }), options);
+    expect(callback).toHaveBeenCalledWith({
+      type: 'update',
+      tableName: 'sync',
+      key: 'key1',
+      value: 'value2',
+    });
 
-      // Delete entry
-      service.deleteEntry('key1', options);
-      expect(callback).toHaveBeenCalledWith({
-        type: 'delete',
-        tableName: 'sync',
-        key: 'key1',
-        value: undefined,
-      });
+    // Delete entry
+    service.deleteEntry('key1', options);
+    expect(callback).toHaveBeenCalledWith({
+      type: 'delete',
+      tableName: 'sync',
+      key: 'key1',
+      value: undefined,
+    });
 
-      // Unsubscribe
-      abortController.abort();
-    },
-  );
+    // Unsubscribe
+    abortController.abort();
+  });
 
-  it('should not notify subscribers after unsubscribing', () => {
+  it('should not notify subscribers after unsubscribing', async () => {
+    const { service } = await setup();
     const callback = vi.fn();
     const abortController = new AbortController();
 

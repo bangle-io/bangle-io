@@ -23,7 +23,6 @@ export function setupCrossTabComms(
     if (CROSS_TAB_EVENTS.includes(message.event)) {
       logger.debug('post-cross-tab', message.event);
       broadcastBus.send(message);
-      subscriber.emit(message.event, message.payload);
     } else {
       logger.debug('post', message.event);
       subscriber.emit(message.event, message.payload);

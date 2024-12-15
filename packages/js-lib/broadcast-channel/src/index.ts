@@ -4,7 +4,10 @@ export interface BroadcastMessage<T> {
   senderId: string;
   data: T;
   timestamp: number;
+  isSelf: boolean;
 }
+
+type RawBroadcastMessage<T> = Omit<BroadcastMessage<T>, 'isSelf'>;
 
 export type MessageHandler<T> = (msg: BroadcastMessage<T>) => void;
 
@@ -14,7 +17,7 @@ export interface TypedBroadcastBusOptions {
    */
   name: string;
   /**
-   * A unique identifier for the sender. Messages from this senderId will be ignored locally.
+   * A unique identifier for the sender.
    */
   senderId: string;
   /**
@@ -59,23 +62,28 @@ export class TypedBroadcastBus<T> {
   }
 
   private handleMessage = (event: MessageEvent) => {
-    const message = event.data as BroadcastMessage<T>;
+    const rawMessage = event.data as RawBroadcastMessage<T>;
 
     if (
-      !message ||
-      typeof message !== 'object' ||
-      !message.senderId ||
-      !('data' in message)
+      !rawMessage ||
+      typeof rawMessage !== 'object' ||
+      !rawMessage.senderId ||
+      !('data' in rawMessage)
     ) {
-      this.logger?.error('Invalid message received', message);
+      this.logger?.error('Invalid message received', rawMessage);
       return;
     }
 
-    if (message.senderId === this.senderId) {
-      return;
-    }
+    const isSelf = rawMessage.senderId === this.senderId;
+    const message: BroadcastMessage<T> = {
+      ...rawMessage,
+      isSelf,
+    };
 
-    this.logger?.debug?.(`received message from ${message.senderId}`, message);
+    this.logger?.debug?.(
+      `received message from ${rawMessage.senderId}`,
+      message,
+    );
 
     for (const handler of this.handlers) {
       handler(message);
@@ -83,16 +91,24 @@ export class TypedBroadcastBus<T> {
   };
 
   /**
-   * Send a message to all other listeners on this channel.
+   * Send a message to all listeners on this channel including self.
    */
   send(data: T): void {
-    const message: BroadcastMessage<T> = {
+    const rawMessage: RawBroadcastMessage<T> = {
       senderId: this.senderId,
       data,
       timestamp: Date.now(),
     };
-    this.logger?.debug?.('sending message', message);
-    this._channel.postMessage(message);
+    this.logger?.debug?.('sending message', rawMessage);
+
+    // Send through broadcast channel (for other instances)
+    this._channel.postMessage(rawMessage);
+
+    // If using native BroadcastChannel (not memory), explicitly handle self message
+    if (!(this._channel instanceof MemoryBroadcastChannel)) {
+      // Manually trigger self message
+      this.handleMessage(new MessageEvent('message', { data: rawMessage }));
+    }
   }
 
   subscribe(handler: MessageHandler<T>, signal: AbortSignal) {
@@ -130,10 +146,8 @@ export class MemoryBroadcastChannel implements BroadcastChannel {
 
     if (channels) {
       for (const channel of channels) {
-        if (channel !== this && !channel.closed) {
-          if (channel.onmessage) {
-            channel.onmessage(event);
-          }
+        if (!channel.closed && channel.onmessage) {
+          channel.onmessage(event);
         }
       }
     }
