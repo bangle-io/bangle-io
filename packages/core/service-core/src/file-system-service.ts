@@ -44,6 +44,7 @@ export class FileSystemService extends BaseService2 {
   $fileContentUpdateCount = atom(0);
   $fileDeleteCount = atom(0);
   $fileRenameCount = atom(0);
+
   $fileTreeChangeCount = atom((get) => {
     return (
       get(this.$fileCreateCount) +
@@ -115,6 +116,7 @@ export class FileSystemService extends BaseService2 {
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
     await this.mountPromise;
+    // A dummy path is used to identify the correct storage service for this workspace.
     const dummyWsPath = `${wsName}:dummy.md`;
     const storageService = await this.getStorageService(dummyWsPath);
 
@@ -122,15 +124,15 @@ export class FileSystemService extends BaseService2 {
     wsPaths = wsPaths.filter((r) => {
       const { isValid } = validateWsPath(r);
       const extension = getExtension(r);
-      const result =
+      const isSupported =
         isValid && extension && this.isFileTypeSupported({ extension });
 
-      if (!result) {
+      if (!isSupported) {
         this.logger.warn(
           `listFiles: Ignoring file "${r}" as it is not supported`,
         );
       }
-      return result;
+      return isSupported;
     });
 
     return wsPaths;
@@ -142,7 +144,6 @@ export class FileSystemService extends BaseService2 {
 
     const storageService = await this.getStorageService(wsPath);
     const file = await storageService.readFile(wsPath, {});
-
     return file;
   }
 

@@ -14,7 +14,7 @@ import {
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 
-// use direct paths to avoid loading page-lifecycle
+// Use direct paths to avoid loading page-lifecycle
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
 import { MemoryRouterService } from '@bangle.io/service-platform/src/memory-router';
@@ -38,6 +38,9 @@ import { TestErrorHandlerService } from '@bangle.io/service-platform/src/test-er
 
 export type MockLog = ReturnType<typeof createMockLogger>;
 
+/**
+ * Creates a mock logger for testing, allowing you to track and assert logs.
+ */
 const createMockLogger = () => ({
   debug: vi.fn(),
   info: vi.fn(),
@@ -45,6 +48,9 @@ const createMockLogger = () => ({
   error: vi.fn(),
 });
 
+/**
+ * Returns a promise that resolves after `ms` milliseconds.
+ */
 export const sleep = (ms = 15): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -55,6 +61,11 @@ const themeManager = {
   currentTheme: THEME_MANAGER_CONFIG.lightThemeClass,
 } as unknown as ThemeManager;
 
+/**
+ * Creates a fully configured test environment with mock services and configuration.
+ * This can be used in tests to simulate the application environment, including
+ * in-memory databases, file systems, and router services.
+ */
 export function createTestEnvironment({
   controller = new AbortController(),
 }: {
@@ -71,8 +82,8 @@ export function createTestEnvironment({
     rootAbortSignal: controller.signal,
   };
 
+  // Platform-specific service mappings to in-memory / mock equivalents.
   const platformServicesMap = {
-    // Platform services
     errorService: TestErrorHandlerService,
     database: MemoryDatabaseService,
     syncDatabase: MemorySyncDatabaseService,
@@ -80,6 +91,7 @@ export function createTestEnvironment({
     router: MemoryRouterService,
   };
 
+  // Core services that rely on the platform services above.
   const coreServicesMap = {
     commandDispatcher: CommandDispatchService,
     commandRegistry: CommandRegistryService,
@@ -125,6 +137,10 @@ export function createTestEnvironment({
     rootEmitter,
     commonOpts,
 
+    /**
+     * Sets default configurations for various services, including event emitters
+     * and command registries. This allows tests to simulate common scenarios.
+     */
     setDefaultConfig: () => {
       container.setConfig(ShortcutService, () => ({
         target: {
@@ -182,15 +198,26 @@ export function createTestEnvironment({
       }));
     },
 
+    /**
+     * Returns the DI container holding all services.
+     */
     getContainer: () => container,
 
+    /**
+     * Mounts all services. Useful for ensuring all asynchronous initialization
+     * completes before running tests.
+     */
     mountAll: async () => {
       await container.mountAll();
     },
 
+    /**
+     * Instantiates all services, optionally focusing on a particular service.
+     * This is helpful if you want to bring up only a subset of services in tests.
+     */
     instantiateAll: (focusService?: keyof typeof serviceMap) => {
       const focuses = focusService
-        ? // always instantiate platform services
+        ? // always instantiate platform services plus the focused one
           [...Object.keys(platformServicesMap), focusService]
         : undefined;
 

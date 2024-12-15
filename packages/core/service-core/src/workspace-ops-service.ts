@@ -23,6 +23,7 @@ export class WorkspaceOpsService extends BaseService2 {
 
   $workspaceInfoAnyChange = atom(0);
   $workspaceInfoListChange = atom(0);
+
   private workspaceInfoCache = new Map<string, WorkspaceInfo>();
 
   constructor(
@@ -38,6 +39,8 @@ export class WorkspaceOpsService extends BaseService2 {
     this.database.subscribe(
       { tableName: WORKSPACE_INFO_TABLE },
       (change) => {
+        this.invalidateCache();
+
         this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
         if (change.type === 'create' || change.type === 'delete') {
           this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
@@ -47,6 +50,10 @@ export class WorkspaceOpsService extends BaseService2 {
     );
   }
 
+  /**
+   * Retrieves workspace info for a given workspace name, optionally restricted by type.
+   * Uses an internal cache to speed up repeated queries.
+   */
   public async getWorkspaceInfo(
     wsName: string,
     options?: WorkspaceDatabaseQueryOptions,
@@ -113,12 +120,7 @@ export class WorkspaceOpsService extends BaseService2 {
     );
 
     const updated = result.found ? (result.value as WorkspaceInfo) : undefined;
-    if (updated) {
-      this.invalidateCache();
-      return updated;
-    }
-
-    return undefined;
+    return updated;
   }
 
   public async deleteWorkspaceInfo(wsName: string): Promise<void> {
@@ -148,7 +150,6 @@ export class WorkspaceOpsService extends BaseService2 {
       },
       { tableName: WORKSPACE_INFO_TABLE },
     );
-    this.invalidateCache();
   }
 
   public async updateWorkspaceInfo(
@@ -186,7 +187,6 @@ export class WorkspaceOpsService extends BaseService2 {
     );
 
     if (result.found) {
-      this.invalidateCache();
       return result.value as WorkspaceInfo;
     }
 
