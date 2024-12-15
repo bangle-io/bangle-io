@@ -3,10 +3,9 @@
 import '@testing-library/jest-dom/vitest';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { renderWithServices } from '@bangle.io/test-utils';
-import type { CoreServices } from '@bangle.io/types';
 import { screen } from '@testing-library/react';
 import React, { act } from 'react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { vi } from 'vitest';
 import { PageWelcome } from '../page-welcome';
 import { processRecentPaths } from '../page-welcome';
