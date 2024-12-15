@@ -2,9 +2,9 @@
  * @vitest-environment happy-dom
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FileStorageIndexedDB } from '../file-storage-indexeddb';
 import { createTestEnvironment } from '@bangle.io/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { FileStorageIndexedDB } from '../file-storage-indexeddb';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();

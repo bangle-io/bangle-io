@@ -2,10 +2,10 @@
  * @vitest-environment happy-dom
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { IdbDatabaseService } from '../idb-database';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { DatabaseQueryOptions } from '@bangle.io/types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { IdbDatabaseService } from '../idb-database';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
