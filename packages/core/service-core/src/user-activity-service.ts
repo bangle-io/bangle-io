@@ -3,6 +3,7 @@ import {
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import { type InferType, T } from '@bangle.io/mini-zod';
 import type { CommandDispatchResult, ScopedEmitter } from '@bangle.io/types';
 import { getWsName } from '@bangle.io/ws-path';
@@ -105,7 +106,7 @@ export class UserActivityService extends BaseService2 {
       activityCooldownMs?: number;
     },
   ) {
-    super('user-activity', context, dep);
+    super(SERVICE_NAME.userActivityService, context, dep);
   }
 
   postInstantiate(): void {

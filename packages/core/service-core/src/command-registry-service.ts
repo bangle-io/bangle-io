@@ -3,6 +3,7 @@ import {
   BaseService2,
   type BaseServiceContext,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type { Command, CommandHandler, CommandKey } from '@bangle.io/types';
 
 type CommandHandlerConfig = { id: string; handler: CommandHandler };
@@ -25,7 +26,7 @@ export class CommandRegistryService extends BaseService2 {
       commandHandlers: CommandHandlerConfig[];
     },
   ) {
-    super('command-registry', context, dependencies);
+    super(SERVICE_NAME.commandRegistryService, context, dependencies);
   }
 
   hookMount() {

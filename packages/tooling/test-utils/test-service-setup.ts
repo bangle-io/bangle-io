@@ -71,33 +71,51 @@ export function createTestEnvironment({
     rootAbortSignal: controller.signal,
   };
 
+  const platformServicesMap = {
+    // Platform services
+    errorService: TestErrorHandlerService,
+    database: MemoryDatabaseService,
+    syncDatabase: MemorySyncDatabaseService,
+    fileStorageIdb: FileStorageMemory,
+    router: MemoryRouterService,
+  };
+
+  const coreServicesMap = {
+    commandDispatcher: CommandDispatchService,
+    commandRegistry: CommandRegistryService,
+    fileSystem: FileSystemService,
+    navigation: NavigationService,
+    editorService: EditorService,
+    shortcut: ShortcutService,
+    workbench: WorkbenchService,
+    workbenchState: WorkbenchStateService,
+    workspace: WorkspaceService,
+    workspaceOps: WorkspaceOpsService,
+    workspaceState: WorkspaceStateService,
+    userActivityService: UserActivityService,
+  };
+
+  const serviceMap = {
+    ...platformServicesMap,
+    ...coreServicesMap,
+  };
+
+  type ServiceMapType = typeof serviceMap;
+  type ServiceKeys = keyof ServiceMapType;
+
+  function hasOwn<T extends ServiceKeys>(
+    obj: Record<string, unknown>,
+    prop: T,
+  ): obj is Record<T, InstanceType<ServiceMapType[T]>> {
+    return Object.prototype.hasOwnProperty.call(obj, prop);
+  }
+
   const container = new Container(
     {
       context: commonOpts,
       abortSignal: controller.signal,
     },
-    {
-      // Platform services
-      errorService: TestErrorHandlerService,
-      database: MemoryDatabaseService,
-      syncDatabase: MemorySyncDatabaseService,
-      fileStorageIdb: FileStorageMemory,
-      router: MemoryRouterService,
-
-      // Core services
-      commandDispatcher: CommandDispatchService,
-      commandRegistry: CommandRegistryService,
-      fileSystem: FileSystemService,
-      navigation: NavigationService,
-      editorService: EditorService,
-      shortcut: ShortcutService,
-      workbench: WorkbenchService,
-      workbenchState: WorkbenchStateService,
-      workspace: WorkspaceService,
-      workspaceOps: WorkspaceOpsService,
-      workspaceState: WorkspaceStateService,
-      userActivityService: UserActivityService,
-    },
+    serviceMap,
   );
 
   return {
@@ -170,12 +188,19 @@ export function createTestEnvironment({
       await container.mountAll();
     },
 
-    instantiateAll: () => {
-      const services = container.instantiateAll();
+    instantiateAll: (focusService?: keyof typeof serviceMap) => {
+      const focuses = focusService
+        ? // always instantiate platform services
+          [...Object.keys(platformServicesMap), focusService]
+        : undefined;
 
-      services.commandDispatcher.exposedServices = {
-        ...services,
-      };
+      const services = container.instantiateAll(focuses as any[]);
+
+      if (hasOwn(services, 'commandDispatcher')) {
+        services.commandDispatcher.exposedServices = {
+          ...services,
+        };
+      }
 
       const fileStorageServices = {
         [services.fileStorageIdb.workspaceType]: services.fileStorageIdb,

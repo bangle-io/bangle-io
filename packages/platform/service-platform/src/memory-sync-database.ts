@@ -1,6 +1,8 @@
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
+import { SERVICE_NAME } from '@bangle.io/constants';
+
 import type {
   BaseAppSyncDatabase,
   SyncDatabaseChange,
@@ -15,7 +17,7 @@ export class MemorySyncDatabaseService
   private bus?: TypedBroadcastBus<SyncDatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null, _config: null) {
-    super('memory-sync-database', context, dependencies);
+    super(SERVICE_NAME.memorySyncDatabaseService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {

@@ -33,7 +33,7 @@ async function setupUserActivityService({
     ),
   }));
 
-  const services = testEnv.instantiateAll();
+  const services = testEnv.instantiateAll('userActivityService');
   const navigation = services.navigation;
   const workspaceOps = services.workspaceOps;
   const userActivityService = services.userActivityService;

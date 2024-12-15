@@ -6,6 +6,7 @@ import {
 } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import {
   type BangleDbSchema,
   type DbRecord,
@@ -45,7 +46,7 @@ export class IdbDatabaseService
   private bus!: TypedBroadcastBus<DatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null, _config: null) {
-    super('idb-database', context, dependencies);
+    super(SERVICE_NAME.idbDatabaseService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {

@@ -1,6 +1,7 @@
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseAppSyncDatabase,
   SyncDatabaseChange,
@@ -17,7 +18,11 @@ export class BrowserLocalStorageSyncDatabaseService
   private bus?: TypedBroadcastBus<SyncDatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null) {
-    super('browser-local-storage-sync-database', context, dependencies);
+    super(
+      SERVICE_NAME.browserLocalStorageSyncDatabaseService,
+      context,
+      dependencies,
+    );
   }
 
   async hookMount(): Promise<void> {

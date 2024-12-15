@@ -6,6 +6,7 @@ import {
 } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
 import {
+  SERVICE_NAME,
   commandExcludedServices,
   commandKeyToContext,
 } from '@bangle.io/constants';
@@ -43,7 +44,7 @@ export class CommandDispatchService extends BaseService2 {
       emitResult: (event: CommandDispatchResult) => void;
     },
   ) {
-    super('command-dispatch', context, dep);
+    super(SERVICE_NAME.commandDispatchService, context, dep);
     this.addCleanup(() => {
       this.fromChain = [];
     });

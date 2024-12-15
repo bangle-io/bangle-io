@@ -1,5 +1,5 @@
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
-import { browserHistoryStateEvents } from '@bangle.io/constants';
+import { SERVICE_NAME, browserHistoryStateEvents } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type {
   BaseRouter,
@@ -27,7 +27,7 @@ export class BrowserRouterService
       isStatic?: boolean;
     },
   ) {
-    super('browser-router', context, dependencies);
+    super(SERVICE_NAME.browserRouterService, context, dependencies);
   }
 
   private _pathname: RouterLocation['pathname'] = parseBrowserPathname();

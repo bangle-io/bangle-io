@@ -1,4 +1,5 @@
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type {
   BaseRouter,
@@ -21,7 +22,7 @@ export class MemoryRouterService
     dependencies: null,
     private config: { basePath?: string },
   ) {
-    super('memory-router', context, dependencies);
+    super(SERVICE_NAME.memoryRouterService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {

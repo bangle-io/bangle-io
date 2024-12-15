@@ -8,6 +8,7 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import {
+  SERVICE_NAME,
   WORKSPACE_STORAGE_TYPE,
   type WorkspaceStorageType,
 } from '@bangle.io/constants';
@@ -58,7 +59,7 @@ export class FileSystemService extends BaseService2 {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
     },
   ) {
-    super('file-system-service', context, dependencies);
+    super(SERVICE_NAME.fileSystemService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {

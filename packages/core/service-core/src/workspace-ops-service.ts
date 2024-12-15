@@ -4,6 +4,7 @@ import {
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseDatabaseService,
   WorkspaceDatabaseQueryOptions,
@@ -30,7 +31,7 @@ export class WorkspaceOpsService extends BaseService2 {
       database: BaseDatabaseService;
     },
   ) {
-    super('workspace-ops', context, dep);
+    super(SERVICE_NAME.workspaceOpsService, context, dep);
   }
 
   async hookMount(): Promise<void> {

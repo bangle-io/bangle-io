@@ -8,7 +8,7 @@ import {
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import { SERVICE_NAME, WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
   BaseServiceCommonOptions,
@@ -31,7 +31,7 @@ export class FileStorageIndexedDB
     dependencies: null,
     private config: { onChange: (event: FileStorageChangeEvent) => void },
   ) {
-    super('file-storage-indexeddb', context, dependencies);
+    super(SERVICE_NAME.fileStorageIndexedDBService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {}

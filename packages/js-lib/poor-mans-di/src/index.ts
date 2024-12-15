@@ -110,13 +110,15 @@ export class Container<
   /**
    * Instantiates all services, respecting dependencies and calling postInstantiate if defined.
    */
-  instantiateAll(): ConstructorToInstance<TContainer> {
+  instantiateAll(
+    focus?: (keyof TContainer & string) | (keyof TContainer & string)[],
+  ): ConstructorToInstance<TContainer> {
     if (this.instantiatedServices) {
       throw new Error('instantiateAll() can only be called once.');
     }
 
     const dependencyList = this.createDependencyList();
-    const instantiatedServicesMap = recursiveInstantiate(dependencyList);
+    const instantiatedServicesMap = recursiveInstantiate(dependencyList, focus);
 
     this.instantiatedServices = {};
     for (const [key, instance] of Object.entries(instantiatedServicesMap)) {
@@ -130,6 +132,27 @@ export class Container<
     }
 
     this.hasInstantiatedAll = true;
+
+    // If in focus mode, return a proxy that validates access
+    if (focus) {
+      const instantiatedKeys = Object.keys(instantiatedServicesMap);
+      return new Proxy(
+        instantiatedServicesMap as ConstructorToInstance<TContainer>,
+        {
+          get(target, prop) {
+            if (typeof prop === 'string' && !instantiatedKeys.includes(prop)) {
+              throw new Error(
+                `Cannot access service "${String(prop)}" in focus mode. Only these services are instantiated: ${instantiatedKeys.join(
+                  ', ',
+                )}`,
+              );
+            }
+            return target[prop as keyof typeof target];
+          },
+        },
+      );
+    }
+
     return instantiatedServicesMap as ConstructorToInstance<TContainer>;
   }
 

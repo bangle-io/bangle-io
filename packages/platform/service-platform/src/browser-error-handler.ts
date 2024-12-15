@@ -4,6 +4,7 @@ import {
   isAbortError,
   isAppError,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 
 export class BrowserErrorHandlerService extends BaseErrorService {
   private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
@@ -20,7 +21,7 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       }) => void;
     },
   ) {
-    super('browser-error-handler', context, dependencies);
+    super(SERVICE_NAME.browserErrorHandlerService, context, dependencies);
     window.addEventListener('error', this.handleError);
     window.addEventListener('unhandledrejection', this.handleError);
   }

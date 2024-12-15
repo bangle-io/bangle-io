@@ -3,6 +3,7 @@ import {
   type BaseServiceContext,
   isAppError,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseRouterService,
   PageLifeCycleState,
@@ -63,7 +64,7 @@ export class NavigationService extends BaseService2 {
     context: BaseServiceContext,
     private dep: { router: BaseRouterService },
   ) {
-    super('navigation-service', context, dep);
+    super(SERVICE_NAME.navigationService, context, dep);
   }
 
   hookPostInstantiate(): void {

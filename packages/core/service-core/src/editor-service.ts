@@ -3,6 +3,7 @@ import {
   type BaseServiceContext,
   getEventSenderMetadata,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type { ScopedEmitter } from '@bangle.io/types';
 import { atom } from 'jotai';
 
@@ -24,7 +25,7 @@ export class EditorService extends BaseService2 {
       >;
     },
   ) {
-    super('editor', context, dependencies);
+    super(SERVICE_NAME.editorService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {

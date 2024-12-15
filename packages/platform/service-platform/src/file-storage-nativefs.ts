@@ -13,7 +13,7 @@ import {
   isWorkerGlobalScope,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import { SERVICE_NAME, WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
   BaseServiceCommonOptions,
@@ -45,7 +45,7 @@ export class FileStorageNativeFs
       onChange: (event: FileStorageChangeEvent) => void;
     },
   ) {
-    super('file-storage-nativefs', context, dependencies);
+    super(SERVICE_NAME.fileStorageNativeFsService, context, dependencies);
   }
 
   private fsCache: Map<string, NativeBrowserFileSystem> = new Map();

@@ -8,6 +8,7 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-zod';
 import type {
   BaseDatabaseService,
@@ -111,7 +112,7 @@ export class WorkbenchStateService extends BaseService2 {
       emitter: ScopedEmitter<'event::app:reload-ui'>;
     },
   ) {
-    super('workbench-state', context, dep);
+    super(SERVICE_NAME.workbenchStateService, context, dep);
     this.store.set(this.$themePref, this.config.themeManager.currentPreference);
   }
 

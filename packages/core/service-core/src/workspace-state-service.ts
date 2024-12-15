@@ -4,6 +4,7 @@ import {
   arrayEqual,
   atomWithCompare,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/types';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
@@ -47,7 +48,7 @@ export class WorkspaceStateService extends BaseService2 {
       workspaceOps: WorkspaceOpsService;
     },
   ) {
-    super('workspace-state', context, dep);
+    super(SERVICE_NAME.workspaceStateService, context, dep);
   }
 
   async hookMount(): Promise<void> {

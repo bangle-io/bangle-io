@@ -1,4 +1,5 @@
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type { WorkbenchStateService } from './workbench-state-service';
 
 /**
@@ -13,7 +14,7 @@ export class WorkbenchService extends BaseService2 {
       workbenchState: WorkbenchStateService;
     },
   ) {
-    super('workbench', context, dep);
+    super(SERVICE_NAME.workbenchService, context, dep);
   }
 
   hookMount() {

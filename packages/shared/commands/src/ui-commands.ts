@@ -184,4 +184,15 @@ export const uiCommands = narrow([
       prefillInput: T.Optional(T.String),
     },
   },
+
+  {
+    id: 'command::ui:toggle-wide-editor',
+    title: 'Toggle Wide Editor',
+    keywords: ['toggle', 'wide', 'editor'],
+    dependencies: {
+      services: ['workbenchState', 'workspaceState'],
+    },
+    omniSearch: true,
+    args: null,
+  },
 ]);

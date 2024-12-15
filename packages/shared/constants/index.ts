@@ -1,7 +1,7 @@
 import type { ColorScheme } from '../types';
 
-const LIGHT_SCHEME = 'light' satisfies ColorScheme;
-const DARK_SCHEME = 'dark' satisfies ColorScheme;
+const LIGHT_SCHEME = 'light' as const;
+const DARK_SCHEME = 'dark' as const;
 
 export const COLOR_SCHEME = {
   LIGHT: LIGHT_SCHEME,
@@ -11,8 +11,6 @@ export const COLOR_SCHEME = {
 export const WIDESCREEN_WIDTH = 759;
 
 export const KEYBOARD_SHORTCUTS = {
-  // add shortcuts here
-  // example
   toggleOmniSearch: { id: 'toggleOmniSearch', keys: ['meta', 'k'] },
 } as const;
 
@@ -20,9 +18,6 @@ export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',
   Browser: 'browser',
-  // See https://webkit.org/blog/12257/the-file-system-access-api-with-origin-private-file-system/
-  // is supported by Safari and Chrome. It is similar to nativefs in API (not verified, there might be differences)
-  // but provides a private directory to each origin.
   PrivateFS: 'privatefs',
   Github: 'github-storage',
   Memory: 'memory',
@@ -30,6 +25,36 @@ export const WORKSPACE_STORAGE_TYPE = {
 
 export type WorkspaceStorageType =
   (typeof WORKSPACE_STORAGE_TYPE)[keyof typeof WORKSPACE_STORAGE_TYPE];
+
+// Add all service names here
+export const SERVICE_NAME = {
+  browserErrorHandlerService: 'browser-error-handler',
+  browserLocalStorageSyncDatabaseService: 'browser-local-storage-sync-database',
+  browserRouterService: 'browser-router',
+  commandDispatchService: 'command-dispatch',
+  commandRegistryService: 'command-registry',
+  editorService: 'editor',
+  fileStorageIndexedDBService: 'file-storage-indexeddb',
+  fileStorageMemoryService: 'file-storage-memory',
+  fileStorageNativeFsService: 'file-storage-nativefs',
+  fileSystemService: 'file-system-service',
+  idbDatabaseService: 'idb-database',
+  memoryDatabaseService: 'memory-database',
+  memoryRouterService: 'memory-router',
+  memorySyncDatabaseService: 'memory-sync-database',
+  navigationService: 'navigation-service',
+  nodeErrorHandlerService: 'node-error-handler',
+  shortcutService: 'shortcut',
+  testErrorHandlerService: 'test-error-handler',
+  userActivityService: 'user-activity',
+  workbenchService: 'workbench',
+  workbenchStateService: 'workbench-state',
+  workspaceOpsService: 'workspace-ops',
+  workspaceService: 'workspace',
+  workspaceStateService: 'workspace-state',
+} as const;
+
+export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
 
 export * from './command';
 export * from './browser-history-events';

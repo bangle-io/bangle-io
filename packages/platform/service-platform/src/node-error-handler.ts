@@ -1,5 +1,6 @@
 import { isAbortError, isAppError } from '@bangle.io/base-utils';
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 
 export class NodeErrorHandlerService extends BaseService2 {
   private eventQueue: Array<Error | { reason: any; promise: Promise<any> }> =
@@ -17,7 +18,7 @@ export class NodeErrorHandlerService extends BaseService2 {
       }) => void;
     },
   ) {
-    super('node-error-handler', context, dependencies);
+    super(SERVICE_NAME.nodeErrorHandlerService, context, dependencies);
     process.on('uncaughtException', this.handleError);
     process.on('unhandledRejection', this.handleRejection);
   }

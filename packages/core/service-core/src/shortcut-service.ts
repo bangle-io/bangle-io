@@ -3,6 +3,7 @@ import {
   type BaseServiceContext,
   isDarwin,
 } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   KeyBinding,
   RegisterOptions,
@@ -45,7 +46,7 @@ export class ShortcutService extends BaseService2 {
       shortcuts: ShortcutServiceConfig[];
     },
   ) {
-    super('shortcut', context, dependencies);
+    super(SERVICE_NAME.shortcutService, context, dependencies);
     for (const shortcut of this.config.shortcuts) {
       this.register(shortcut);
     }

@@ -1,4 +1,5 @@
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type { FileSystemService } from './file-system-service';
 import type { NavigationService } from './navigation-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
@@ -24,7 +25,7 @@ export class WorkspaceService extends BaseService2 {
       workspaceState: WorkspaceStateService;
     },
   ) {
-    super('workspace', context, dep);
+    super(SERVICE_NAME.workspaceService, context, dep);
   }
 
   hookMount() {
