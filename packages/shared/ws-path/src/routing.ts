@@ -7,7 +7,7 @@ import { matchRoute } from 'wouter';
 import { splitWsPath, validateWsPath } from './helpers';
 
 const pageWsHome = ({ wsName }: { wsName: string }) => {
-  return { pathname: '/ws/' + wsName, search: { p: null } };
+  return { pathname: `/ws/${wsName}`, search: { p: null } };
 };
 
 // Rename this to buildUrlPath -> buildLocation
@@ -38,20 +38,20 @@ export const buildUrlPath = {
     return { pathname: `/ws/${wsName}/editor`, search: { p: filePath } };
   },
   pageNativeFsAuthFailed: ({ wsName }: { wsName: string }) => {
-    return { pathname: '/ws-auth/failed/native-fs/' + wsName };
+    return { pathname: `/ws-auth/failed/native-fs/${wsName}` };
   },
   pageNativeFsAuthReq: ({ wsName }: { wsName: string }) => {
-    return { pathname: '/ws-auth/req/native-fs/' + wsName };
+    return { pathname: `/ws-auth/req/native-fs/${wsName}` };
   },
   pageNotFound: ({ path }: { path?: string }) => ({
     pathname: ROUTES.pageNotFound,
     search: path ? { p: path } : { p: null },
   }),
   pageWorkspaceNotFound: ({ wsName }: { wsName: string }) => {
-    return { pathname: '/ws-error/no-ws/' + wsName };
+    return { pathname: `/ws-error/no-ws/${wsName}` };
   },
   pageWsPathNotFound: ({ wsPath }: { wsPath: string }) => {
-    return { pathname: '/ws-error/no-path/' + wsPath };
+    return { pathname: `/ws-error/no-path/${wsPath}` };
   },
   pageWelcome: () => ({
     pathname: ROUTES.pageWelcome,

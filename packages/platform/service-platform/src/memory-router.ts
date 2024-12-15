@@ -12,17 +12,21 @@ export class MemoryRouterService
   extends BaseService2
   implements BaseRouter<RouterState>
 {
-  private _pathname: RouterLocation['pathname'] = '/';
-  private _search: RouterLocation['search'] = {};
-  private _state: RouterState | null = null;
+  static deps = [] as const;
   emitter: BaseRouter<RouterState>['emitter'] = new Emitter();
+
+  private _currentPathname: RouterLocation['pathname'] = '/';
+  private _currentSearch: RouterLocation['search'] = {};
+  private _currentState: RouterState | null = null;
+  private _basePath: string;
 
   constructor(
     context: BaseServiceContext,
-    dependencies: null,
-    private config: { basePath?: string },
+    _dependencies: null,
+    config: { basePath?: string } = {},
   ) {
-    super(SERVICE_NAME.memoryRouterService, context, dependencies);
+    super(SERVICE_NAME.memoryRouterService, context, null);
+    this._basePath = config.basePath ?? '';
   }
 
   async hookMount(): Promise<void> {
@@ -32,20 +36,20 @@ export class MemoryRouterService
   }
 
   get pathname() {
-    return this._pathname;
+    return this._currentPathname;
   }
 
   get search() {
-    return this._search;
+    return this._currentSearch;
   }
 
   get basePath() {
-    return this.config.basePath ?? '';
+    return this._basePath;
   }
 
   get lifeCycle(): {
     current: PageLifeCycleState;
-    previous: PageLifeCycleState;
+    previous: PageLifeCycleState | undefined;
   } {
     return {
       current: 'active',
@@ -53,23 +57,28 @@ export class MemoryRouterService
     };
   }
 
-  setUnsavedChanges(_: boolean): void {}
+  setUnsavedChanges(_: boolean): void {
+    // no op for memory router
+  }
 
   navigate(
     to: Partial<RouterLocation>,
     options?: { replace?: boolean; state?: RouterState },
   ): void {
-    this._pathname = to.pathname || this._pathname;
-    this._search = {
-      ...this._search,
+    this._currentPathname = to.pathname || this._currentPathname;
+    this._currentSearch = {
+      ...this._currentSearch,
       ...to.search,
     };
 
-    this._state = options?.state ?? null;
+    this._currentState = options?.state ?? null;
 
     this.emitter.emit('event::router:route-update', {
-      location: { pathname: this._pathname, search: this._search },
-      state: this._state ?? {},
+      location: {
+        pathname: this._currentPathname,
+        search: this._currentSearch,
+      },
+      state: this._currentState ?? {},
       kind: 'pushState',
     });
   }

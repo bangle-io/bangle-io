@@ -177,7 +177,7 @@ describe('Container', () => {
       mountPromise: Promise<void>;
 
       constructor(
-        context: { ctx: TestContext; serviceContext: ServiceContext },
+        _context: { ctx: TestContext; serviceContext: ServiceContext },
         _deps: Record<string, never>,
       ) {
         this.mountPromise = Promise.resolve().then(() => {

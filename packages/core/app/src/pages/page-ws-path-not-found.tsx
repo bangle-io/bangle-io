@@ -1,10 +1,7 @@
+import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
+import { EmptyState } from '../components/EmptyState';
 
 export function PageWsPathNotFound() {
-  return (
-    <div>
-      <h1>Page Not Found</h1>
-      <p>Page editor content goes here.</p>
-    </div>
-  );
+  return <EmptyState title="Path Not Found" message={<FunMissing />} />;
 }

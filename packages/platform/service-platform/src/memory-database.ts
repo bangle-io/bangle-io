@@ -8,12 +8,14 @@ import type {
   DatabaseQueryOptions,
 } from '@bangle.io/types';
 
+type DataMap = Map<string, unknown>;
+
 export class MemoryDatabaseService
   extends BaseService2
   implements BaseAppDatabase
 {
-  private workspaces = new Map<string, unknown>();
-  private miscData = new Map<string, unknown>();
+  private workspaceData: DataMap = new Map();
+  private miscData: DataMap = new Map();
   private bus!: TypedBroadcastBus<DatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null) {
@@ -22,7 +24,7 @@ export class MemoryDatabaseService
 
   async hookMount(): Promise<void> {
     this.bus = new TypedBroadcastBus({
-      name: `${this.name}`,
+      name: this.name,
       senderId: BROWSING_CONTEXT_ID,
       logger: this.logger.child('bus'),
       useMemoryChannel: true,
@@ -30,20 +32,22 @@ export class MemoryDatabaseService
     });
 
     this.addCleanup(() => {
-      this.workspaces.clear();
+      this.workspaceData.clear();
       this.miscData.clear();
     });
+  }
+
+  private getDataMap(tableName: DatabaseQueryOptions['tableName']): DataMap {
+    return tableName === 'workspace-info' ? this.workspaceData : this.miscData;
   }
 
   async getEntry(
     key: string,
     options: DatabaseQueryOptions,
   ): Promise<{ found: boolean; value: unknown }> {
-    const dataMap =
-      options.tableName === 'workspace-info' ? this.workspaces : this.miscData;
+    const dataMap = this.getDataMap(options.tableName);
     const value = dataMap.get(key);
-    const found = value !== undefined;
-    return { found, value };
+    return { found: value !== undefined, value };
   }
 
   async updateEntry(
@@ -53,34 +57,32 @@ export class MemoryDatabaseService
     } | null,
     options: DatabaseQueryOptions,
   ): Promise<{ value: unknown; found: boolean }> {
-    const dataMap =
-      options.tableName === 'workspace-info' ? this.workspaces : this.miscData;
-    const existing = dataMap.get(key);
+    const dataMap = this.getDataMap(options.tableName);
+    const existingValue = dataMap.get(key);
     const found = dataMap.has(key);
 
-    const result = updateCallback({ value: existing, found });
+    const updateResult = updateCallback({ value: existingValue, found });
 
-    if (result) {
-      dataMap.set(key, result.value);
+    if (updateResult) {
+      dataMap.set(key, updateResult.value);
       const change: DatabaseChange = {
         type: found ? 'update' : 'create',
         tableName: options.tableName,
         key,
-        value: result.value,
+        value: updateResult.value,
       };
       this.bus.send(change);
-      return { value: result.value, found: true };
+      return { value: updateResult.value, found: true };
     }
 
     return { value: undefined, found: false };
   }
 
   async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {
-    const dataMap =
-      options.tableName === 'workspace-info' ? this.workspaces : this.miscData;
-    const found = dataMap.delete(key);
+    const dataMap = this.getDataMap(options.tableName);
+    const deleted = dataMap.delete(key);
 
-    if (found) {
+    if (deleted) {
       const change: DatabaseChange = {
         type: 'delete',
         tableName: options.tableName,
@@ -107,8 +109,7 @@ export class MemoryDatabaseService
   }
 
   async getAllEntries(options: DatabaseQueryOptions): Promise<unknown[]> {
-    const dataMap =
-      options.tableName === 'workspace-info' ? this.workspaces : this.miscData;
+    const dataMap = this.getDataMap(options.tableName);
     return Array.from(dataMap.values());
   }
 }

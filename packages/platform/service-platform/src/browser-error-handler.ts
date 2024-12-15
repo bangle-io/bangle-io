@@ -6,80 +6,83 @@ import {
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
+type ErrorInfo = {
+  isAppError: boolean;
+  error: Error;
+  isFakeThrow: boolean;
+  isRejection: boolean;
+};
+
 export class BrowserErrorHandlerService extends BaseErrorService {
-  private eventQueue: Array<PromiseRejectionEvent | ErrorEvent> = [];
+  private pendingEvents: Array<PromiseRejectionEvent | ErrorEvent> = [];
+  private readonly onError: (params: ErrorInfo) => void;
 
   constructor(
     context: BaseServiceContext,
     dependencies: null,
-    private config: {
-      onError: (params: {
-        appLikeError: boolean;
-        error: Error;
-        isFakeThrow: boolean;
-        rejection: boolean;
-      }) => void;
+    config: {
+      onError: (params: ErrorInfo) => void;
     },
   ) {
     super(SERVICE_NAME.browserErrorHandlerService, context, dependencies);
-    window.addEventListener('error', this.handleError);
-    window.addEventListener('unhandledrejection', this.handleError);
+    this.onError = config.onError;
+    window.addEventListener('error', this.handleErrorEvent);
+    window.addEventListener('unhandledrejection', this.handleErrorEvent);
   }
 
   async hookMount() {
     // Process any queued events
-    while (this.eventQueue.length > 0) {
-      const event = this.eventQueue.shift();
+    while (this.pendingEvents.length > 0) {
+      const event = this.pendingEvents.shift();
       if (event) {
-        this.handleError(event);
+        this.handleErrorEvent(event);
       }
     }
 
     // Add cleanup to remove event listeners on abort
     this.addCleanup(() => {
-      window.removeEventListener('error', this.handleError);
-      window.removeEventListener('unhandledrejection', this.handleError);
+      window.removeEventListener('error', this.handleErrorEvent);
+      window.removeEventListener('unhandledrejection', this.handleErrorEvent);
     });
   }
 
-  handleError = (event: PromiseRejectionEvent | ErrorEvent) => {
+  private handleErrorEvent = (event: PromiseRejectionEvent | ErrorEvent) => {
     if (!this.mounted) {
-      this.logger.warn('Received an error event during not ok');
+      this.logger.warn(
+        'Received an error event before the service was fully mounted.',
+      );
       this.logger.error(event);
-      this.eventQueue.push(event);
+      this.pendingEvents.push(event);
       return;
     }
 
     let error: Error | undefined;
-    const isPromiseRejection = 'reason' in event;
+    const isRejection = 'reason' in event;
 
-    if (isPromiseRejection) {
-      if (event.reason instanceof Error) {
-        error = event.reason;
-      }
+    if (isRejection) {
+      error = event.reason instanceof Error ? event.reason : undefined;
     } else {
-      if (event.error instanceof Error) {
-        error = event.error;
-      }
+      error = event.error instanceof Error ? event.error : undefined;
     }
+
     if (!error || isAbortError(error)) {
       return;
     }
 
     this.logger.debug(`Error event received: "${error.message}"`);
 
-    const appLikeError = isAppError(error);
+    const isAppErrorFlag = isAppError(error);
 
-    // app errors should be handled by the app and not logged
-    if (appLikeError) {
+    // App errors should be handled by the app and not logged
+    if (isAppErrorFlag) {
       event.preventDefault();
     }
 
-    this.config.onError({
-      appLikeError,
+    this.onError({
+      isAppError: isAppErrorFlag,
       error,
       isFakeThrow: false,
-      rejection: isPromiseRejection,
+      isRejection,
     });
   };
 }

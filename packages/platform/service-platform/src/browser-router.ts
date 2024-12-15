@@ -13,12 +13,38 @@ import lifecycle from 'page-lifecycle';
 import { navigate } from 'wouter/use-browser-location';
 
 type SearchRecord = Record<string, string | null>;
-const pendingSymbol = Symbol('pending');
+const UNSAVED_CHANGES_SYMBOL = Symbol('pending');
+
+function parseBrowserSearch(
+  rawSearch: string = window.location.search,
+): SearchRecord {
+  const params = new URLSearchParams(rawSearch);
+  const search: SearchRecord = {};
+  for (const [key, value] of params) {
+    search[key] = value;
+  }
+  return search;
+}
+
+function parseBrowserPathname(pathname = window.location.pathname): string {
+  return decodeURI(pathname);
+}
 
 export class BrowserRouterService
   extends BaseService2
   implements BaseRouter<RouterState>
 {
+  static readonly deps = [] as const;
+  private _pathname: RouterLocation['pathname'] = parseBrowserPathname();
+  private _search: RouterLocation['search'] = parseBrowserSearch();
+  private lifecycleState: {
+    current: PageLifeCycleState;
+    previous: PageLifeCycleState;
+  } = { current: lifecycle.state, previous: undefined };
+  readonly emitter: BaseRouter<RouterState>['emitter'] = new Emitter({
+    paused: true,
+  });
+
   constructor(
     context: BaseServiceContext,
     dependencies: null,
@@ -30,18 +56,13 @@ export class BrowserRouterService
     super(SERVICE_NAME.browserRouterService, context, dependencies);
   }
 
-  private _pathname: RouterLocation['pathname'] = parseBrowserPathname();
-  private _search: RouterLocation['search'] = parseBrowserSearch();
-
   get basePath() {
     return this.config.basePath ?? '';
   }
 
-  get static() {
+  get isStatic() {
     return this.config.isStatic ?? false;
   }
-
-  emitter: BaseRouter<RouterState>['emitter'] = new Emitter({ paused: true });
 
   get pathname() {
     return this._pathname;
@@ -51,16 +72,11 @@ export class BrowserRouterService
     return this._search;
   }
 
-  private lifeCycleState: {
-    current: PageLifeCycleState;
-    previous: PageLifeCycleState;
-  } = { current: lifecycle.state, previous: undefined };
-
   get lifeCycle() {
-    return this.lifeCycleState;
+    return this.lifecycleState;
   }
 
-  private onBrowserHistoryEvent = (event: Event) => {
+  private handleBrowserHistoryEvent = (event: Event) => {
     this._search = parseBrowserSearch();
     this._pathname = parseBrowserPathname();
     this.emitter.emit('event::router:route-update', {
@@ -73,8 +89,8 @@ export class BrowserRouterService
     });
   };
 
-  private lifeCycleEmit = (event: PageLifeCycleEvent) => {
-    this.lifeCycleState = {
+  private handleLifecycleStateChange = (event: PageLifeCycleEvent) => {
+    this.lifecycleState = {
       current: event.newState,
       previous: event.oldState,
     };
@@ -86,16 +102,20 @@ export class BrowserRouterService
 
   async hookMount(): Promise<void> {
     this.emitter.unpause();
+
     for (const event of browserHistoryStateEvents) {
-      window.addEventListener(event, this.onBrowserHistoryEvent);
+      window.addEventListener(event, this.handleBrowserHistoryEvent);
       this.addCleanup(() => {
-        window.removeEventListener(event, this.onBrowserHistoryEvent);
+        window.removeEventListener(event, this.handleBrowserHistoryEvent);
       });
     }
 
-    lifecycle.addEventListener('statechange', this.lifeCycleEmit);
+    lifecycle.addEventListener('statechange', this.handleLifecycleStateChange);
     this.addCleanup(() => {
-      lifecycle.removeEventListener('statechange', this.lifeCycleEmit);
+      lifecycle.removeEventListener(
+        'statechange',
+        this.handleLifecycleStateChange,
+      );
     });
 
     this.addCleanup(() => {
@@ -103,15 +123,18 @@ export class BrowserRouterService
     });
   }
 
-  setUnsavedChanges(unsavedChanges: boolean) {
-    if (this.mounted) {
-      if (unsavedChanges) {
-        lifecycle.addUnsavedChanges(pendingSymbol);
-      } else {
-        lifecycle.removeUnsavedChanges(pendingSymbol);
-      }
+  setUnsavedChanges(hasUnsavedChanges: boolean) {
+    if (!this.mounted) {
+      this.logger.warn(
+        'Cannot set unsaved changes because the service is not mounted.',
+      );
+      return;
+    }
+
+    if (hasUnsavedChanges) {
+      lifecycle.addUnsavedChanges(UNSAVED_CHANGES_SYMBOL);
     } else {
-      this.logger.warn('Cannot setUnsavedChanges, service is not ok');
+      lifecycle.removeUnsavedChanges(UNSAVED_CHANGES_SYMBOL);
     }
   }
 
@@ -119,7 +142,11 @@ export class BrowserRouterService
     to: Partial<RouterLocation>,
     options?: { replace?: boolean; state?: RouterState },
   ): void {
-    const go = () => {
+    if (this.aborted) {
+      return;
+    }
+
+    const navigateTo = () => {
       navigate(
         buildURL({
           pathname: to.pathname ?? this._pathname,
@@ -131,32 +158,12 @@ export class BrowserRouterService
         options,
       );
     };
-    if (this.aborted) {
-      return;
-    }
+
     if (!this.mounted) {
-      this.logger.warn('Cannot navigate, service is not ok');
-      this.mountPromise.then(go);
+      this.logger.warn('Cannot navigate because the service is not mounted.');
+      this.mountPromise.then(navigateTo);
     } else {
-      go();
+      navigateTo();
     }
-    return;
   }
-}
-
-function parseBrowserSearch(
-  rawSearch: string = window.location.search,
-): SearchRecord {
-  const params = new URLSearchParams(rawSearch);
-
-  const search: SearchRecord = {};
-  for (const [key, value] of params) {
-    search[key] = value;
-  }
-
-  return search;
-}
-
-function parseBrowserPathname(pathname = window.location.pathname): string {
-  return decodeURI(pathname);
 }

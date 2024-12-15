@@ -25,48 +25,54 @@ export class FileStorageMemory
   public readonly displayName = 'Memory Storage';
   public readonly description = 'Temporarily saves data in memory';
 
-  private files = new Map<string, FileEntry>();
+  private fileEntries = new Map<string, FileEntry>();
+  private onChange: (event: FileStorageChangeEvent) => void;
 
   constructor(
     context: BaseServiceContext,
     dependencies: null,
-    private config: { onChange: (event: FileStorageChangeEvent) => void },
+    config: { onChange: (event: FileStorageChangeEvent) => void },
   ) {
     super(SERVICE_NAME.fileStorageMemoryService, context, dependencies);
+    this.onChange = config.onChange;
   }
 
   async hookMount(): Promise<void> {
     this.addCleanup(() => {
-      this.files.clear();
+      this.fileEntries.clear();
     });
   }
 
-  private internalOnChange(event: FileStorageChangeEvent) {
-    this.config.onChange(event);
+  private emitChange(event: FileStorageChangeEvent) {
+    this.onChange(event);
   }
 
-  private getFsPath(wsPath: string) {
+  private getFileEntryPath(wsPath: string) {
     const fsPath = toFSPath(wsPath);
     if (!fsPath) {
-      throwAppError('error::ws-path:invalid-ws-path', 'Invalid path', {
-        invalidPath: wsPath,
-      });
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'Invalid workspace path',
+        {
+          invalidPath: wsPath,
+        },
+      );
     }
     return fsPath;
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-    const path = this.getFsPath(wsPath);
+    const fileEntryPath = this.getFileEntryPath(wsPath);
     const now = Date.now();
 
-    this.files.set(path, {
+    this.fileEntries.set(fileEntryPath, {
       file,
       mtime: now,
       ctime: now,
     });
 
-    this.internalOnChange({
+    this.emitChange({
       type: 'create',
       wsPath,
     });
@@ -74,10 +80,10 @@ export class FileStorageMemory
 
   async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
-    const path = this.getFsPath(wsPath);
-    this.files.delete(path);
+    const fileEntryPath = this.getFileEntryPath(wsPath);
+    this.fileEntries.delete(fileEntryPath);
 
-    this.internalOnChange({
+    this.emitChange({
       type: 'delete',
       wsPath,
     });
@@ -85,13 +91,13 @@ export class FileStorageMemory
 
   async fileExists(wsPath: string): Promise<boolean> {
     await this.mountPromise;
-    return this.files.has(this.getFsPath(wsPath));
+    return this.fileEntries.has(this.getFileEntryPath(wsPath));
   }
 
   async fileStat(wsPath: string) {
     await this.mountPromise;
-    const path = this.getFsPath(wsPath);
-    const entry = this.files.get(path);
+    const fileEntryPath = this.getFileEntryPath(wsPath);
+    const entry = this.fileEntries.get(fileEntryPath);
 
     if (!entry) {
       throw new BaseFileSystemError({
@@ -116,7 +122,7 @@ export class FileStorageMemory
   ): Promise<string[]> {
     await this.mountPromise;
 
-    const files = Array.from(this.files.keys())
+    const files = Array.from(this.fileEntries.keys())
       .filter((path) => path.startsWith(wsName))
       .map((path) => fromFsPath(path))
       .filter((r): r is string => Boolean(r));
@@ -128,7 +134,7 @@ export class FileStorageMemory
 
   async readFile(wsPath: string): Promise<File | undefined> {
     await this.mountPromise;
-    const entry = this.files.get(this.getFsPath(wsPath));
+    const entry = this.fileEntries.get(this.getFileEntryPath(wsPath));
 
     return entry?.file;
   }
@@ -138,16 +144,16 @@ export class FileStorageMemory
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
-    const oldPath = this.getFsPath(wsPath);
-    const newPath = this.getFsPath(newWsPath);
-    const entry = this.files.get(oldPath);
+    const oldPath = this.getFileEntryPath(wsPath);
+    const newPath = this.getFileEntryPath(newWsPath);
+    const entry = this.fileEntries.get(oldPath);
 
     if (entry) {
-      this.files.set(newPath, entry);
-      this.files.delete(oldPath);
+      this.fileEntries.set(newPath, entry);
+      this.fileEntries.delete(oldPath);
     }
 
-    this.internalOnChange({
+    this.emitChange({
       type: 'rename',
       oldWsPath: wsPath,
       newWsPath,
@@ -156,12 +162,13 @@ export class FileStorageMemory
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-    const path = this.getFsPath(wsPath);
+    const fileEntryPath = this.getFileEntryPath(wsPath);
+    const entry = this.fileEntries.get(fileEntryPath);
 
-    if (!this.files.has(path)) {
+    if (!entry) {
       throwAppError(
         'error::file-storage:file-does-not-exist',
-        'Cannot write file as it does not exist',
+        'Cannot write to file because it does not exist',
         {
           wsPath,
           storage: this.name,
@@ -169,27 +176,13 @@ export class FileStorageMemory
       );
     }
 
-    if (!(await this.fileExists(wsPath))) {
-      throwAppError(
-        'error::file-storage:file-does-not-exist',
-        'Cannot write file as it does not exist',
-        {
-          wsPath,
-          storage: this.name,
-        },
-      );
-    }
-
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    const entry = this.files.get(path)!;
-
-    this.files.set(path, {
+    this.fileEntries.set(fileEntryPath, {
       ...entry,
       file,
       mtime: Date.now(),
     });
 
-    this.internalOnChange({
+    this.emitChange({
       type: 'update',
       wsPath,
     });

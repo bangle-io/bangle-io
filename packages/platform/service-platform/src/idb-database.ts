@@ -19,14 +19,14 @@ import type {
   DatabaseChange,
   DatabaseQueryOptions,
 } from '@bangle.io/types';
+
 export const DB_NAME = 'bangle-io-db';
 export const DB_VERSION = 2;
 export const MISC_TABLE = 'MiscTable';
 export const WORKSPACE_INFO_TABLE = 'WorkspaceInfo';
 
-export const tables = [WORKSPACE_INFO_TABLE, MISC_TABLE] as const;
+export const ALL_TABLES = [WORKSPACE_INFO_TABLE, MISC_TABLE] as const;
 
-// for legacy reasons, we have two tables
 export interface AppDatabase extends BangleDbSchema {
   [WORKSPACE_INFO_TABLE]: {
     key: string;
@@ -43,7 +43,7 @@ export class IdbDatabaseService
   implements BaseAppDatabase
 {
   db!: idb.IDBPDatabase<AppDatabase>;
-  private bus!: TypedBroadcastBus<DatabaseChange>;
+  private changeBus!: TypedBroadcastBus<DatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null, _config: null) {
     super(SERVICE_NAME.idbDatabaseService, context, dependencies);
@@ -51,19 +51,19 @@ export class IdbDatabaseService
 
   async hookMount(): Promise<void> {
     const logger = this.logger;
+
     this.db = await idb.openDB(DB_NAME, DB_VERSION, {
       upgrade(db, oldVersion) {
-        logger.info('Upgrading IndexedDB', { oldVersion });
+        logger.info('IndexedDB upgrade started', { oldVersion });
+
         if (oldVersion < 1) {
-          // Version 1 upgrade: Create initial tables
-          for (const table of tables) {
+          for (const table of ALL_TABLES) {
             if (!db.objectStoreNames.contains(table)) {
-              db.createObjectStore(table, {
-                keyPath: 'key',
-              });
+              db.createObjectStore(table, { keyPath: 'key' });
             }
           }
         }
+
         if (oldVersion < 2) {
           // Version 2 upgrade: Additional setup for version 2
           // ... (add any version 2 specific upgrades here)
@@ -77,11 +77,13 @@ export class IdbDatabaseService
         //     db.deleteObjectStore(DUMMY_TABLE);
         //   }
         // }
+        logger.info('IndexedDB upgrade completed', { oldVersion });
       },
     });
+
     this.logger.info('IndexedDB initialized');
 
-    this.bus = new TypedBroadcastBus({
+    this.changeBus = new TypedBroadcastBus({
       name: `${this.name}`,
       senderId: BROWSING_CONTEXT_ID,
       logger: this.logger.child('bus'),
@@ -93,9 +95,9 @@ export class IdbDatabaseService
     });
   }
 
-  private throwUnknownError(error: any): never {
+  private throwError(error: any): never {
     if (isAppError(error)) {
-      this.logger.error('AppError encountered:', error);
+      this.logger.error('App error:', error);
       throw error;
     }
 
@@ -103,7 +105,7 @@ export class IdbDatabaseService
       this.logger.error('Unknown error:', error);
       throwAppError(
         'error::database:unknown-error',
-        'Error writing to IndexedDB',
+        'Failed to perform database operation',
         {
           error,
           databaseName: this.name,
@@ -114,12 +116,10 @@ export class IdbDatabaseService
     throw error;
   }
 
-  private getWorkspaceInfoTable() {
-    return getTable(DB_NAME, WORKSPACE_INFO_TABLE, async () => this.db);
-  }
-
-  private getMiscTable() {
-    return getTable(DB_NAME, MISC_TABLE, async () => this.db);
+  private getTableStore(tableName: DatabaseQueryOptions['tableName']) {
+    const isWorkspaceInfo = tableName === 'workspace-info';
+    const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+    return getTable(DB_NAME, table, async () => this.db);
   }
 
   subscribe(
@@ -130,7 +130,7 @@ export class IdbDatabaseService
     if (this.aborted) {
       return;
     }
-    this.bus.subscribe((msg) => {
+    this.changeBus.subscribe((msg) => {
       if (msg.data.tableName === options.tableName) {
         callback(msg.data);
       }
@@ -145,12 +145,14 @@ export class IdbDatabaseService
     value: unknown;
   }> {
     await this.mountPromise;
+    // TODO: we have multiple names of tables!
     const isWorkspaceInfo = options.tableName === 'workspace-info';
 
-    const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+    const tableName = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+
     try {
-      const tx = this.db.transaction(table, 'readonly');
-      const objStore = tx.objectStore(table);
+      const tx = this.db.transaction(tableName, 'readonly');
+      const objStore = tx.objectStore(tableName);
       const existing = await objStore.get(key);
       await tx.done;
 
@@ -159,7 +161,7 @@ export class IdbDatabaseService
         value: existing?.value,
       };
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwError(error);
     }
   }
 
@@ -173,11 +175,11 @@ export class IdbDatabaseService
     await this.mountPromise;
     const isWorkspaceInfo = options.tableName === 'workspace-info';
     const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+
+    const wsName = key;
     try {
       const tx = this.db.transaction(table, 'readwrite');
       const objStore = tx.objectStore(table);
-
-      const wsName = key;
       const existing = await objStore.get(wsName);
 
       const updated = updateCallback({
@@ -202,19 +204,17 @@ export class IdbDatabaseService
         value: updated.value,
       };
 
-      if (result.found) {
-        const change: DatabaseChange = {
-          type: existing ? 'update' : 'create',
-          tableName: options.tableName,
-          key,
-          value: result.value,
-        };
-        this.bus.send(change);
-      }
+      const change: DatabaseChange = {
+        type: existing ? 'update' : 'create',
+        tableName: options.tableName,
+        key,
+        value: result.value,
+      };
+      this.changeBus.send(change);
 
       return result;
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwError(error);
     }
   }
 
@@ -225,7 +225,6 @@ export class IdbDatabaseService
 
     try {
       const tx = this.db.transaction(table, 'readwrite');
-
       const objStore = tx.objectStore(table);
 
       await Promise.all([objStore.delete(key), tx.done]);
@@ -236,28 +235,18 @@ export class IdbDatabaseService
         key,
         value: undefined,
       };
-      this.bus.send(change);
+      this.changeBus.send(change);
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwError(error);
     }
-
-    return;
   }
 
   async getAllEntries({ tableName }: DatabaseQueryOptions): Promise<unknown[]> {
     await this.mountPromise;
-    if (tableName === 'workspace-info') {
-      try {
-        return await this.getWorkspaceInfoTable().getAll();
-      } catch (error) {
-        this.throwUnknownError(error);
-      }
-    }
-
     try {
-      return await this.getMiscTable().getAll();
+      return await this.getTableStore(tableName).getAll();
     } catch (error) {
-      this.throwUnknownError(error);
+      this.throwError(error);
     }
   }
 }

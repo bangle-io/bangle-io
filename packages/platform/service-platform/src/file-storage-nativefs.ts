@@ -16,20 +16,40 @@ import {
 import { SERVICE_NAME, WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
-  BaseServiceCommonOptions,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { fromFsPath, getExtension, toFSPath } from '@bangle.io/ws-path';
+import {
+  fromFsPath,
+  getExtension,
+  getWsName,
+  toFSPath,
+} from '@bangle.io/ws-path';
 import { VALID_NOTE_EXTENSIONS_SET } from '@bangle.io/ws-path';
-import { getWsName } from '@bangle.io/ws-path';
+
+type Config = {
+  onChange: (event: FileStorageChangeEvent) => void;
+};
 
 export class FileStorageNativeFs
   extends BaseService2
   implements BaseFileStorageProvider
 {
+  public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
+  public readonly displayName = 'Native Storage';
+  public readonly description = 'Saves data on your hard drive';
+
+  private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
   getRootDirHandle!: (
     wsName: string,
   ) => Promise<{ handle: FileSystemDirectoryHandle }>;
+
+  constructor(
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: Config,
+  ) {
+    super(SERVICE_NAME.fileStorageNativeFsService, context, dependencies);
+  }
 
   async hookMount(): Promise<void> {
     assertIsDefined(this.getRootDirHandle, 'getRootDirHandle');
@@ -37,18 +57,6 @@ export class FileStorageNativeFs
       this.invalidateCache();
     });
   }
-
-  constructor(
-    context: BaseServiceContext,
-    dependencies: null,
-    private config: {
-      onChange: (event: FileStorageChangeEvent) => void;
-    },
-  ) {
-    super(SERVICE_NAME.fileStorageNativeFsService, context, dependencies);
-  }
-
-  private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
 
   static async hasPermission(handle: FileSystemDirectoryHandle) {
     return hasPermission(handle);
@@ -60,21 +68,21 @@ export class FileStorageNativeFs
     return requestNativeBrowserFSPermission(handle);
   }
 
-  public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
-  public readonly displayName = 'Native Storage';
-  public readonly description = 'Saves data in your hard drive';
-
-  private getFsPath(wsPath: string) {
+  private getFsPath(wsPath: string): string {
     const fsPath = toFSPath(wsPath);
     if (!fsPath) {
-      throwAppError('error::ws-path:invalid-ws-path', 'Invalid path', {
-        invalidPath: wsPath,
-      });
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'Invalid workspace path',
+        {
+          invalidPath: wsPath,
+        },
+      );
     }
     return fsPath;
   }
 
-  private internalOnChange(event: FileStorageChangeEvent) {
+  private emitChange(event: FileStorageChangeEvent) {
     this.config.onChange(event);
   }
 
@@ -92,10 +100,9 @@ export class FileStorageNativeFs
       );
     }
 
-    // Check cache first
-    const cached = this.fsCache.get(wsName);
-    if (cached) {
-      return cached;
+    const cachedFs = this.fsCache.get(wsName);
+    if (cachedFs) {
+      return cachedFs;
     }
 
     const { handle: rootDirHandle } = await this.getRootDirHandle(wsName);
@@ -107,32 +114,25 @@ export class FileStorageNativeFs
         if (!extension) {
           return false;
         }
-        if (!VALID_NOTE_EXTENSIONS_SET.has(extension)) {
-          return false;
-        }
-        return true;
+        return VALID_NOTE_EXTENSIONS_SET.has(extension);
       },
     });
 
-    // Store in cache
     this.fsCache.set(wsName, fs);
     return fs;
   }
 
-  // Add invalidateCache method
-  protected async invalidateCache(): Promise<void> {
+  private async invalidateCache(): Promise<void> {
     this.fsCache.clear();
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-
-    const path = this.getFsPath(wsPath);
+    const fsPath = this.getFsPath(wsPath);
     const fs = await this.getFs(wsPath);
+    await fs.writeFile(fsPath, file);
 
-    await fs.writeFile(path, file);
-
-    this.internalOnChange({
+    this.emitChange({
       type: 'create',
       wsPath,
     });
@@ -142,7 +142,7 @@ export class FileStorageNativeFs
     await this.mountPromise;
     const fs = await this.getFs(wsPath);
     await fs.unlink(this.getFsPath(wsPath));
-    this.internalOnChange({
+    this.emitChange({
       type: 'delete',
       wsPath,
     });
@@ -151,9 +151,9 @@ export class FileStorageNativeFs
   async fileExists(wsPath: string): Promise<boolean> {
     await this.mountPromise;
     const fs = await this.getFs(wsPath);
-    const path = this.getFsPath(wsPath);
+    const fsPath = this.getFsPath(wsPath);
     try {
-      await fs.stat(path);
+      await fs.stat(fsPath);
       return true;
     } catch (error) {
       if (
@@ -169,19 +169,19 @@ export class FileStorageNativeFs
   async fileStat(wsPath: string) {
     await this.mountPromise;
     const fs = await this.getFs(wsPath);
-    const path = this.getFsPath(wsPath);
-    const stat = await fs.stat(path);
+    const fsPath = this.getFsPath(wsPath);
+    const stat = await fs.stat(fsPath);
     return {
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
     };
   }
+
   isSupported() {
     // TODO we donot have a great way to detect if supported in worker
     if (isWorkerGlobalScope()) {
       return true;
     }
-
     return supportsNativeBrowserFs();
   }
 
@@ -193,10 +193,10 @@ export class FileStorageNativeFs
     const fs = await this.getFs(wsName);
     const rawPaths = await fs.opendirRecursive(wsName);
     abortSignal.throwIfAborted();
-    const files = rawPaths
+    return rawPaths
       .map((r) => fromFsPath(r))
-      .filter((r): r is string => Boolean(r));
-    return files.sort((a, b) => a.localeCompare(b));
+      .filter((r): r is string => Boolean(r))
+      .sort((a, b) => a.localeCompare(b));
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
@@ -219,7 +219,7 @@ export class FileStorageNativeFs
     await this.mountPromise;
     const fs = await this.getFs(wsPath);
     await fs.rename(this.getFsPath(wsPath), this.getFsPath(newWsPath));
-    this.internalOnChange({
+    this.emitChange({
       type: 'rename',
       oldWsPath: wsPath,
       newWsPath,
@@ -232,16 +232,15 @@ export class FileStorageNativeFs
     if (!(await this.fileExists(wsPath))) {
       throwAppError(
         'error::file-storage:file-does-not-exist',
-        'Cannot write file as it does not exist',
+        'Cannot write to file because it does not exist',
         {
           wsPath,
           storage: this.name,
         },
       );
     }
-
     await fs.writeFile(this.getFsPath(wsPath), file);
-    this.internalOnChange({
+    this.emitChange({
       type: 'update',
       wsPath,
     });

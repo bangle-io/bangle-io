@@ -14,15 +14,15 @@ export class MemorySyncDatabaseService
   implements BaseAppSyncDatabase
 {
   private storage = new Map<string, unknown>();
-  private bus?: TypedBroadcastBus<SyncDatabaseChange>;
+  private changeBus?: TypedBroadcastBus<SyncDatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null, _config: null) {
     super(SERVICE_NAME.memorySyncDatabaseService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {
-    this.bus = new TypedBroadcastBus({
-      name: `${this.name}`,
+    this.changeBus = new TypedBroadcastBus({
+      name: this.name,
       senderId: BROWSING_CONTEXT_ID,
       logger: this.logger.child('bus'),
       useMemoryChannel: true,
@@ -47,21 +47,20 @@ export class MemorySyncDatabaseService
     options: SyncDatabaseQueryOptions,
   ): { value: unknown; found: boolean } {
     const storageKey = this.getStorageKey(key, options.tableName);
-    const existing = this.storage.get(storageKey);
+    const existingValue = this.storage.get(storageKey);
     const found = this.storage.has(storageKey);
 
-    const result = updateCallback({ value: existing, found });
+    const updateResult = updateCallback({ value: existingValue, found });
 
-    if (result) {
-      this.storage.set(storageKey, result.value);
-      const change: SyncDatabaseChange = {
+    if (updateResult) {
+      this.storage.set(storageKey, updateResult.value);
+      this.publishChange({
         type: found ? 'update' : 'create',
         tableName: options.tableName,
         key,
-        value: result.value,
-      };
-      this.bus?.send(change);
-      return { value: result.value, found: true };
+        value: updateResult.value,
+      });
+      return { value: updateResult.value, found: true };
     }
 
     return { value: undefined, found: false };
@@ -72,22 +71,21 @@ export class MemorySyncDatabaseService
     const found = this.storage.delete(storageKey);
 
     if (found) {
-      const change: SyncDatabaseChange = {
+      this.publishChange({
         type: 'delete',
         tableName: options.tableName,
         key,
         value: undefined,
-      };
-      this.bus?.send(change);
+      });
     }
   }
 
   getAllEntries(options: SyncDatabaseQueryOptions): unknown[] {
-    const prefix = this.getTablePrefix(options.tableName);
+    const tablePrefix = this.getTablePrefix(options.tableName);
     const entries: unknown[] = [];
 
     for (const [key, value] of this.storage.entries()) {
-      if (key.startsWith(prefix)) {
+      if (key.startsWith(tablePrefix)) {
         entries.push(value);
       }
     }
@@ -100,10 +98,10 @@ export class MemorySyncDatabaseService
     callback: (change: SyncDatabaseChange) => void,
     signal: AbortSignal,
   ): void {
-    if (!this.mounted) {
+    if (!this.mounted || !this.changeBus) {
       return;
     }
-    this.bus?.subscribe((msg) => {
+    this.changeBus.subscribe((msg) => {
       if (msg.data.tableName === options.tableName) {
         callback(msg.data);
       }
@@ -116,5 +114,9 @@ export class MemorySyncDatabaseService
 
   private getTablePrefix(tableName: string): string {
     return `${this.name}.${tableName}`;
+  }
+
+  private publishChange(change: SyncDatabaseChange) {
+    this.changeBus?.send(change);
   }
 }

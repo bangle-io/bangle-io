@@ -5,7 +5,7 @@ export const testHandlers = [
   c(
     'command::ui:test-no-use',
     ({ workspaceOps }, { workspaceType, wsName }, key) => {
-      const ctx = getCtx(key);
+      const _ctx = getCtx(key);
 
       expectType<string, typeof workspaceType>(workspaceType);
       expectType<string, typeof workspaceOps.name>(workspaceOps.name);

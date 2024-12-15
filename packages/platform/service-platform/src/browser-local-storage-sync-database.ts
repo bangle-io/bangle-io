@@ -13,9 +13,7 @@ export class BrowserLocalStorageSyncDatabaseService
   implements BaseAppSyncDatabase
 {
   private storage: Storage = window.localStorage;
-  //   since this is and we cannot initialize the bus in the constructor as it will start emitting events before the service is ready
-  // we make it optional we will lose some events but it should only be a brief period at app start
-  private bus?: TypedBroadcastBus<SyncDatabaseChange>;
+  private syncBus?: TypedBroadcastBus<SyncDatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null) {
     super(
@@ -26,7 +24,7 @@ export class BrowserLocalStorageSyncDatabaseService
   }
 
   async hookMount(): Promise<void> {
-    this.bus = new TypedBroadcastBus<SyncDatabaseChange>({
+    this.syncBus = new TypedBroadcastBus<SyncDatabaseChange>({
       name: `${this.name}`,
       senderId: BROWSING_CONTEXT_ID,
       logger: this.logger?.child('bus'),
@@ -40,13 +38,17 @@ export class BrowserLocalStorageSyncDatabaseService
   ): { found: boolean; value: unknown } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const item = this.storage.getItem(storageKey);
-    if (item !== null && typeof item === 'string') {
-      const parsed = this.parseJSON(item);
-      if (parsed.parsed) {
-        return { found: true, value: parsed.value };
-      }
+
+    if (item === null) {
+      return { found: false, value: undefined };
     }
-    return { found: false, value: undefined };
+
+    const parsed = this.parseJSON(item);
+    if (!parsed.parsed) {
+      return { found: false, value: undefined };
+    }
+
+    return { found: true, value: parsed.value };
   }
 
   updateEntry(
@@ -54,29 +56,31 @@ export class BrowserLocalStorageSyncDatabaseService
     updateCallback: (options: { value: unknown; found: boolean }) => null | {
       value: unknown;
     },
-
     options: SyncDatabaseQueryOptions,
   ): { value: unknown; found: boolean } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const item = this.storage.getItem(storageKey);
 
-    const [found, existingValue] = (() => {
-      if (item !== null) {
-        const parsed = this.parseJSON(item);
-        return parsed.parsed ? [true, parsed.value] : [false, undefined];
+    const { found, value: existingValue } = (() => {
+      if (item === null) {
+        return { found: false, value: undefined };
       }
-      return [false, undefined];
+      const parsed = this.parseJSON(item);
+      return parsed.parsed
+        ? { found: true, value: parsed.value }
+        : { found: false, value: undefined };
     })();
 
-    const result = updateCallback({
+    const updateResult = updateCallback({
       value: existingValue,
-      found: found,
+      found,
     });
 
-    if (!result) {
+    if (!updateResult) {
       return { value: undefined, found: false };
     }
-    const serializedValue = this.stringifyJSON(result.value);
+
+    const serializedValue = this.stringifyJSON(updateResult.value);
     if (serializedValue === null) {
       return { value: undefined, found: false };
     }
@@ -87,45 +91,53 @@ export class BrowserLocalStorageSyncDatabaseService
       type: found ? 'update' : 'create',
       tableName: options.tableName,
       key,
-      value: result.value,
+      value: updateResult.value,
     };
 
-    this.bus?.send(change);
+    this.syncBus?.send(change);
 
-    return { value: result.value, found: true };
+    return { value: updateResult.value, found: true };
   }
 
   deleteEntry(key: string, options: SyncDatabaseQueryOptions): void {
     const storageKey = this.getStorageKey(key, options.tableName);
-    const found = this.storage.getItem(storageKey) !== null;
-    if (found) {
-      this.storage.removeItem(storageKey);
+    const item = this.storage.getItem(storageKey);
 
-      const change: SyncDatabaseChange = {
-        type: 'delete',
-        tableName: options.tableName,
-        key,
-        value: undefined,
-      };
-      this.bus?.send(change);
+    if (item === null) {
+      return;
     }
+
+    this.storage.removeItem(storageKey);
+
+    const change: SyncDatabaseChange = {
+      type: 'delete',
+      tableName: options.tableName,
+      key,
+      value: undefined,
+    };
+
+    this.syncBus?.send(change);
   }
 
   getAllEntries(options: SyncDatabaseQueryOptions): unknown[] {
     const entries: unknown[] = [];
-    const prefix = this.getTablePrefix(options.tableName);
+    const tablePrefix = this.getTablePrefix(options.tableName);
+
     for (let i = 0; i < this.storage.length; i++) {
       const storageKey = this.storage.key(i);
-      if (storageKey?.startsWith(prefix)) {
+
+      if (storageKey?.startsWith(tablePrefix)) {
         const item = this.storage.getItem(storageKey);
+
         if (item !== null) {
-          const value = this.parseJSON(item);
-          if (value !== undefined) {
-            entries.push(value);
+          const parsed = this.parseJSON(item);
+          if (parsed.parsed) {
+            entries.push(parsed.value);
           }
         }
       }
     }
+
     return entries;
   }
 
@@ -138,7 +150,7 @@ export class BrowserLocalStorageSyncDatabaseService
       return;
     }
 
-    this.bus?.subscribe((msg) => {
+    this.syncBus?.subscribe((msg) => {
       if (msg.data.tableName === options.tableName) {
         callback(msg.data);
       }
@@ -157,21 +169,18 @@ export class BrowserLocalStorageSyncDatabaseService
     item: string,
   ): { parsed: true; value: unknown } | { parsed: false } {
     try {
-      const parsed = JSON.parse(item);
-      return { parsed: true, value: parsed };
-    } catch (err) {
-      this.logger.error('Failed to parse JSON', err);
-      return {
-        parsed: false,
-      };
+      return { parsed: true, value: JSON.parse(item) };
+    } catch (error) {
+      this.logger.error('Failed to parse JSON from local storage', error);
+      return { parsed: false };
     }
   }
 
   private stringifyJSON(value: unknown): string | null {
     try {
       return JSON.stringify(value);
-    } catch (err) {
-      this.logger.error(err);
+    } catch (error) {
+      this.logger.error('Failed to stringify JSON for local storage', error);
       return null;
     }
   }

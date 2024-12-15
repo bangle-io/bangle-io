@@ -1,21 +1,18 @@
-import { useCoreServices } from '@bangle.io/context';
-import { parseUrlPath } from '@bangle.io/ws-path';
-import { useAtomValue } from 'jotai';
+import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
-import { useParams } from 'wouter';
+import { EmptyState } from '../components/EmptyState';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
 
 export function PageWorkspaceNotFound() {
-  // const { wsName } = useParams();
-
-  const coreServices = useCoreServices();
-
-  const location = useAtomValue(coreServices.navigation.$location);
-
-  const wsName = parseUrlPath.pageWsHome(location)?.wsName;
-
   return (
-    <div>
-      <h1>Workspace Not Found {wsName}</h1>
-    </div>
+    <>
+      <PageHeaderWrapper>
+        <h1>Page Not Found</h1>
+      </PageHeaderWrapper>
+      <PageMainContentWrapper>
+        <EmptyState title="Workspace Not Found" message={<FunMissing />} />
+      </PageMainContentWrapper>
+    </>
   );
 }

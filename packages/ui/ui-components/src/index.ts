@@ -15,3 +15,4 @@ export * from './dialog-single-select';
 export * from './kbd';
 export * from './app-alert-dialog';
 export * from './button';
+export * from './fun-missing';

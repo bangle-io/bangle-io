@@ -2,75 +2,76 @@ import { isAbortError, isAppError } from '@bangle.io/base-utils';
 import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
+type ErrorInfo = {
+  appLikeError: boolean;
+  error: Error;
+  isFakeThrow: boolean;
+  rejection: boolean;
+};
+
 export class NodeErrorHandlerService extends BaseService2 {
-  private eventQueue: Array<Error | { reason: any; promise: Promise<any> }> =
+  static deps = [] as const;
+  private pendingEvents: Array<Error | { reason: any; promise: Promise<any> }> =
     [];
 
   constructor(
     context: BaseServiceContext,
     dependencies: null,
     private config: {
-      onError: (params: {
-        appLikeError: boolean;
-        error: Error;
-        isFakeThrow: boolean;
-        rejection: boolean;
-      }) => void;
+      onError: (params: ErrorInfo) => void;
     },
   ) {
     super(SERVICE_NAME.nodeErrorHandlerService, context, dependencies);
-    process.on('uncaughtException', this.handleError);
-    process.on('unhandledRejection', this.handleRejection);
+    process.on('uncaughtException', this.handleUncaughtException);
+    process.on('unhandledRejection', this.handleUnhandledRejection);
   }
 
   async hookMount(): Promise<void> {
-    // Process queued events after initialization
-    while (this.eventQueue.length > 0) {
-      const event = this.eventQueue.shift();
-      if (event) {
-        if (event instanceof Error) {
-          this.handleError(event);
-        } else {
-          this.handleRejection(event.reason, event.promise);
-        }
+    // Process any pending events that occurred before the service was mounted.
+    while (this.pendingEvents.length > 0) {
+      const event = this.pendingEvents.shift();
+      if (event instanceof Error) {
+        this.handleUncaughtException(event);
+      } else if (event) {
+        this.handleUnhandledRejection(event.reason, event.promise);
       }
     }
 
     this.addCleanup(() => {
-      while (this.eventQueue.length > 0) {
-        const event = this.eventQueue.shift();
-        if (event) {
-          if (event instanceof Error) {
-            this.handleError(event);
-          } else {
-            this.handleRejection(event.reason, event.promise);
-          }
+      // Process any remaining events during cleanup.
+      while (this.pendingEvents.length > 0) {
+        const event = this.pendingEvents.shift();
+        if (event instanceof Error) {
+          this.handleUncaughtException(event);
+        } else if (event) {
+          this.handleUnhandledRejection(event.reason, event.promise);
         }
       }
-      process.removeListener('uncaughtException', this.handleError);
-      process.removeListener('unhandledRejection', this.handleRejection);
+      process.removeListener('uncaughtException', this.handleUncaughtException);
+      process.removeListener(
+        'unhandledRejection',
+        this.handleUnhandledRejection,
+      );
     });
   }
 
-  handleError = (error: Error) => {
+  private handleUncaughtException = (error: Error) => {
     if (!this.mounted) {
-      this.logger.warn('Received an error during not ok');
+      this.logger.warn(
+        'Received an uncaught exception before the service was ready.',
+      );
       this.logger.error(error);
-      this.eventQueue.push(error);
+      this.pendingEvents.push(error);
       return;
     }
 
-    if (!error || isAbortError(error)) {
+    if (isAbortError(error)) {
       return;
     }
 
-    this.logger.debug(`Error received: "${error.message}"`);
+    this.logger.debug(`Uncaught exception: "${error.message}"`);
 
     const appLikeError = isAppError(error);
-
-    // App errors should be handled by the app and not logged
-    if (appLikeError) {
-    }
 
     this.config.onError({
       appLikeError,
@@ -80,10 +81,11 @@ export class NodeErrorHandlerService extends BaseService2 {
     });
   };
 
-  handleRejection = (reason: any, promise: Promise<any>) => {
+  private handleUnhandledRejection = (reason: any, promise: Promise<any>) => {
     const error = reason instanceof Error ? reason : new Error(String(reason));
+
     if (!this.mounted) {
-      this.eventQueue.push({ reason, promise });
+      this.pendingEvents.push({ reason, promise });
       return;
     }
 
@@ -91,7 +93,7 @@ export class NodeErrorHandlerService extends BaseService2 {
       return;
     }
 
-    this.logger.debug(`Unhandled rejection received: "${error.message}"`);
+    this.logger.debug(`Unhandled rejection: "${error.message}"`);
 
     const appLikeError = isAppError(error);
 

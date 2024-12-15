@@ -71,7 +71,7 @@ describe('FileStorageMemory', () => {
     const file = new File(['No file'], 'nonExistent.md');
 
     await expect(service.writeFile(wsPath, file)).rejects.toThrow(
-      /Cannot write file as it does not exist/,
+      /does not exist/,
     );
   });
 
