@@ -2,7 +2,6 @@ import type {
   BaseError,
   BaseErrorService,
   BaseService,
-  BaseService2,
   Logger,
 } from '@bangle.io/base-utils';
 import type {
@@ -33,13 +32,6 @@ export type ServiceKind = 'platform' | 'core';
 
 export type Store = ReturnType<typeof createStore>;
 
-export type BaseServiceOptions = {
-  name: string;
-  kind: ServiceKind;
-  dependencies?: Record<string, BaseService<any>>;
-  needsConfig?: boolean;
-} & BaseServiceCommonOptions;
-
 export type BaseServiceCommonOptions = {
   rootAbortSignal: AbortSignal;
   logger: Logger;
@@ -58,7 +50,7 @@ export type Services = {
   platform: PlatformServices;
 };
 
-export type BaseRouterService = BaseRouter<RouterState> & BaseService2;
+export type BaseRouterService = BaseRouter<RouterState> & BaseService;
 
 export type CommandExcludedServices = (typeof commandExcludedServices)[number];
 
@@ -94,6 +86,6 @@ export type PlatformServices = {
 
 export type AllServiceName = (keyof CoreServices | keyof PlatformServices) & {};
 
-export type BaseDatabaseService = BaseAppDatabase & BaseService2;
-export type BaseFileStorageService = BaseFileStorageProvider & BaseService2;
-export type BaseSyncDatabaseService = BaseAppSyncDatabase & BaseService2;
+export type BaseDatabaseService = BaseAppDatabase & BaseService;
+export type BaseFileStorageService = BaseFileStorageProvider & BaseService;
+export type BaseSyncDatabaseService = BaseAppSyncDatabase & BaseService;

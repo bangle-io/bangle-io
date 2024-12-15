@@ -1,9 +1,12 @@
-import { BaseError, BaseService } from '@bangle.io/base-utils';
+import {
+  BaseError,
+  BaseService,
+  type BaseServiceContext,
+} from '@bangle.io/base-utils';
 import { commandKeyToContext } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-zod';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
-  BaseServiceCommonOptions,
   Command,
   CommandDispatchResult,
   CommandExposedServices,
@@ -16,13 +19,15 @@ import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';
 
 class TestService extends BaseService {
-  constructor(baseOptions: BaseServiceCommonOptions) {
-    super({
-      ...baseOptions,
-      name: 'file-system-test',
-      kind: 'core',
-      dependencies: {},
-    });
+  constructor(
+    context: BaseServiceContext,
+    private dependencies: null,
+  ) {
+    super('file-system-test', context, null);
+  }
+
+  hookMount() {
+    // noop
   }
 }
 
@@ -68,7 +73,7 @@ async function setup() {
   );
 
   dispatchService.exposedServices = {
-    fileSystem: new TestService(commonOpts),
+    fileSystem: new TestService(context, null),
   } as unknown as CommandExposedServices;
 
   await dispatchService.mount();

@@ -1,5 +1,9 @@
-import { isAbortError, isAppError } from '@bangle.io/base-utils';
-import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseErrorService,
+  isAbortError,
+  isAppError,
+} from '@bangle.io/base-utils';
+import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
 type ErrorInfo = {
@@ -9,7 +13,7 @@ type ErrorInfo = {
   rejection: boolean;
 };
 
-export class NodeErrorHandlerService extends BaseService2 {
+export class NodeErrorHandlerService extends BaseErrorService {
   static deps = [] as const;
   private pendingEvents: Array<Error | { reason: any; promise: Promise<any> }> =
     [];

@@ -10,12 +10,12 @@ export type RootEvents =
   | {
       event: 'event::error:uncaught-error';
       payload: {
-        rejection: boolean;
+        isRejection: boolean;
         error: Error;
         // if true, it means the error was expected and is part of the app's logic
         // for example a validation error thrown when user tries to save a document
         // they are generally not a bug.
-        appLikeError: boolean;
+        isAppError: boolean;
         // if true, it means the error wasn't thrown but emitted
         // this can happen in cases where we cannot throw error and stop
         // everything in the middle of the operation.

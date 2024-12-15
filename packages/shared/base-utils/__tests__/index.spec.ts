@@ -1,16 +1,17 @@
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { describe, expect, test } from 'vitest';
-import { BaseService, flatServices } from '../index';
+import { BaseService, type BaseServiceContext, flatServices } from '../index';
 
 class TestService extends BaseService {
-  constructor(baseOptions: BaseServiceCommonOptions) {
-    super({
-      ...baseOptions,
-      name: 'file-system-test',
-      kind: 'core',
-      dependencies: {},
-    });
+  constructor(
+    context: BaseServiceContext,
+    private dependencies: null,
+  ) {
+    super('file-system-test', context, null);
+  }
+
+  hookMount() {
+    // noop
   }
 }
 
@@ -20,17 +21,17 @@ describe('flatServices', () => {
   });
 
   test('returns single service', () => {
-    const { commonOpts } = makeTestCommonOpts();
+    const { testServiceContext } = makeTestCommonOpts();
 
-    const service = new TestService(commonOpts);
+    const service = new TestService(testServiceContext, null);
     expect(flatServices({ service })).toEqual([service]);
   });
 
   test('returns nested services', () => {
-    const { commonOpts } = makeTestCommonOpts();
+    const { testServiceContext } = makeTestCommonOpts();
 
-    const service1 = new TestService(commonOpts);
-    const service2 = new TestService(commonOpts);
+    const service1 = new TestService(testServiceContext, null);
+    const service2 = new TestService(testServiceContext, null);
     const services = {
       group1: {
         service1,
@@ -44,9 +45,9 @@ describe('flatServices', () => {
   });
 
   test('ignores non-service values', () => {
-    const { commonOpts } = makeTestCommonOpts();
+    const { testServiceContext } = makeTestCommonOpts();
 
-    const service = new TestService(commonOpts);
+    const service = new TestService(testServiceContext, null);
     const services = {
       service,
       notService: 'hello',

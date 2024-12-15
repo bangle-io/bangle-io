@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   getEventSenderMetadata,
 } from '@bangle.io/base-utils';
@@ -10,7 +10,7 @@ import { atom } from 'jotai';
 /**
  * Manages editor state, including reload triggers
  */
-export class EditorService extends BaseService2 {
+export class EditorService extends BaseService {
   static deps = [] as const;
 
   private $_forceReloadCounter = atom(0);

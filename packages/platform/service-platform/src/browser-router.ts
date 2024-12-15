@@ -1,4 +1,4 @@
-import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME, browserHistoryStateEvents } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type {
@@ -31,7 +31,7 @@ function parseBrowserPathname(pathname = window.location.pathname): string {
 }
 
 export class BrowserRouterService
-  extends BaseService2
+  extends BaseService
   implements BaseRouter<RouterState>
 {
   static readonly deps = [] as const;

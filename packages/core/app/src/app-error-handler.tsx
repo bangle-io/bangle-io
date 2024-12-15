@@ -71,7 +71,7 @@ export function AppErrorHandler({
     rootEmitter.on(
       'event::error:uncaught-error',
       (event) => {
-        if (!event.appLikeError) {
+        if (!event.isAppError) {
           showUnexpectedError(event.error);
           return;
         }

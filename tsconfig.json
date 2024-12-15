@@ -53,6 +53,7 @@
 		"packages/**/*.tsx",
 		"packages/tooling/storybook/.storybook/**/*.ts",
 		"packages/tooling/storybook/.storybook/**/*.tsx",
+		"vitest.config.ts",
 		"globals.d.ts"
 	],
 	"exclude": [

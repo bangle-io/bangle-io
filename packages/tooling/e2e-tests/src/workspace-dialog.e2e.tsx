@@ -4,7 +4,10 @@ test('Submit workspace name', async ({ page }) => {
   await page.goto('/');
 
   await page.getByRole('button', { name: 'Acme Inc Enterprise' }).click();
-  await page.getByText('New Workspace').click();
+  await page
+    .locator('[data-radix-popper-content-wrapper]')
+    .getByText('New Workspace')
+    .click();
 
   // Select browser storage type
   await page.getByRole('radio', { name: /Browser Storage/i }).click();

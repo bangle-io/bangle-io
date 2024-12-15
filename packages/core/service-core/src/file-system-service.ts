@@ -1,7 +1,7 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
 import {
   BaseError,
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   assertIsDefined,
   getEventSenderMetadata,
@@ -34,7 +34,7 @@ type ChangeEvent = {
 /**
  * Provides file system operations (list, read, write, rename, delete files)
  */
-export class FileSystemService extends BaseService2 {
+export class FileSystemService extends BaseService {
   static deps = [] as const;
 
   fileStorageServices!: Record<string, BaseFileStorageService>;

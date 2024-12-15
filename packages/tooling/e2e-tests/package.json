@@ -27,6 +27,7 @@
   "type": "module",
   "scripts": {
     "test": "playwright test  -c ./playwright.config.ts",
+    "test-ui-mode": "playwright test --ui -c ./playwright.config.ts",
     "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {

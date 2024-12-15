@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   arrayEqual,
   atomWithCompare,
@@ -18,7 +18,7 @@ const EMPTY_ARRAY: string[] = [];
 /**
  * Manages the state of current and available workspaces
  */
-export class WorkspaceStateService extends BaseService2 {
+export class WorkspaceStateService extends BaseService {
   static deps = ['navigation', 'fileSystem', 'workspaceOps'] as const;
 
   $workspaces = unwrap(

@@ -29,8 +29,8 @@ export function initializeServices(
     emitAppError(error) {
       rootEmitter.emit('event::error:uncaught-error', {
         error,
-        appLikeError: true,
-        rejection: false,
+        isAppError: true,
+        isRejection: false,
         isFakeThrow: true,
         sender: getEventSenderMetadata({ tag: 'initialize-service' }),
       });

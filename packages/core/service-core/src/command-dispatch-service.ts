@@ -1,6 +1,6 @@
 import {
   BaseError,
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   assertIsDefined,
 } from '@bangle.io/base-utils';
@@ -31,7 +31,7 @@ type CommandArgs<C extends Command> = C['args'] extends null
 /**
  * Service responsible for dispatching commands to their handlers
  */
-export class CommandDispatchService extends BaseService2 {
+export class CommandDispatchService extends BaseService {
   static deps = ['commandRegistry'] as const;
 
   private fromChain: string[] = [];

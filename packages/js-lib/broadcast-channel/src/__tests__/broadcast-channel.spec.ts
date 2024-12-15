@@ -165,7 +165,7 @@ describe('TypedBroadcastBus', () => {
 
     bus.send('Hello');
     expect(handler).toHaveBeenCalledTimes(1);
-    const msg = handler.mock.calls[0][0] as BroadcastMessage<string>;
+    const msg = handler.mock?.calls?.[0]?.[0] as BroadcastMessage<string>;
     expect(msg.data).toBe('Hello');
     expect(msg.isSelf).toBe(true);
 
@@ -187,7 +187,7 @@ describe('TypedBroadcastBus', () => {
 
     bus.send('Hello');
     expect(handler).toHaveBeenCalledTimes(1);
-    const msg = handler.mock.calls[0][0] as BroadcastMessage<string>;
+    const msg = handler.mock?.calls?.[0]?.[0] as BroadcastMessage<string>;
     expect(msg.data).toBe('Hello');
     expect(msg.isSelf).toBe(true);
 

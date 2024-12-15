@@ -1,10 +1,10 @@
 import { Container, type ServiceContext } from '@bangle.io/poor-mans-di';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import { BaseService2, type BaseServiceContext } from '../base-service-2';
+import { BaseService, type BaseServiceContext } from '../base-service-2';
 
-describe('BaseService2', () => {
-  class TestService extends BaseService2 {
+describe('BaseService', () => {
+  class TestService extends BaseService {
     dep = {};
     mockHookMount = vi.fn();
 
@@ -68,7 +68,7 @@ describe('BaseService2', () => {
   test('should mount dependencies before self', async () => {
     const { commonOpts, serviceContext } = await setup();
 
-    class DepService extends BaseService2 {
+    class DepService extends BaseService {
       dep = {};
       mockHookMount = vi.fn();
 
@@ -86,7 +86,7 @@ describe('BaseService2', () => {
       null,
     );
 
-    class ServiceWithDep extends BaseService2 {
+    class ServiceWithDep extends BaseService {
       dep = { depService };
       mockHookMount = vi.fn();
 
@@ -155,7 +155,7 @@ describe('BaseService2', () => {
   test('should handle complex dependency chains', async () => {
     const { commonOpts, serviceContext } = await setup();
 
-    class ServiceA extends BaseService2 {
+    class ServiceA extends BaseService {
       dep = {};
       mockHookMount = vi.fn();
 
@@ -168,7 +168,7 @@ describe('BaseService2', () => {
       }
     }
 
-    class ServiceB extends BaseService2 {
+    class ServiceB extends BaseService {
       dep = {};
       mockHookMount = vi.fn();
 
@@ -184,7 +184,7 @@ describe('BaseService2', () => {
     const serviceA = new ServiceA({ ctx: commonOpts, serviceContext }, null);
     const serviceB = new ServiceB({ ctx: commonOpts, serviceContext }, null);
 
-    class ServiceC extends BaseService2 {
+    class ServiceC extends BaseService {
       dep = { serviceA, serviceB };
       mockHookMount = vi.fn();
 
@@ -233,7 +233,7 @@ describe('BaseService2', () => {
     const { commonOpts, abortController } = await setup();
     const mountOrder: string[] = [];
 
-    class ServiceA extends BaseService2 {
+    class ServiceA extends BaseService {
       constructor(context: BaseServiceContext, dependencies: null) {
         super('ServiceA', context, dependencies);
       }
@@ -244,7 +244,7 @@ describe('BaseService2', () => {
       }
     }
 
-    class ServiceB extends BaseService2 {
+    class ServiceB extends BaseService {
       static deps = ['serviceA'];
 
       constructor(
@@ -260,7 +260,7 @@ describe('BaseService2', () => {
       }
     }
 
-    class ServiceC extends BaseService2 {
+    class ServiceC extends BaseService {
       static deps = ['serviceB'];
 
       constructor(
@@ -294,7 +294,7 @@ describe('BaseService2', () => {
   test('should replace service using container.use()', async () => {
     const { commonOpts, abortController } = await setup();
 
-    class MainService extends BaseService2 {
+    class MainService extends BaseService {
       mockHookMount = vi.fn();
       dep = {};
 
@@ -307,7 +307,7 @@ describe('BaseService2', () => {
       }
     }
 
-    class ReplacementService extends BaseService2 {
+    class ReplacementService extends BaseService {
       mockHookMount = vi.fn();
       dep = {};
 

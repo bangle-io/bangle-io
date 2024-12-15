@@ -1,9 +1,7 @@
 // @vitest-environment jsdom
-import { BaseService, BaseService2, type Logger } from '@bangle.io/base-utils';
+import { BaseService } from '@bangle.io/base-utils';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { Emitter } from '@bangle.io/emitter';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
-import type { RootEmitter, Store } from '@bangle.io/types';
 import { expect, test } from 'vitest';
 import { initializeServices } from '../index';
 
@@ -38,11 +36,11 @@ test('initializeServices returns unique service names', () => {
   controller.abort();
 
   for (const service of serviceValues) {
-    if (service instanceof BaseService2) {
+    if (service instanceof BaseService) {
       expect(service.aborted).toBe(true);
     } else {
       for (const s of Object.values(service)) {
-        if (s instanceof BaseService2) {
+        if (s instanceof BaseService) {
           expect(s.aborted).toBe(true);
         } else {
           throw new Error('Unexpected service type');

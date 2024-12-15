@@ -1,6 +1,6 @@
 import {
   BaseError,
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
@@ -11,7 +11,7 @@ type CommandHandlerConfig = { id: string; handler: CommandHandler };
 /**
  * Registers commands and their handlers for the app
  */
-export class CommandRegistryService extends BaseService2 {
+export class CommandRegistryService extends BaseService {
   static deps = [] as const;
 
   private commands: Map<string, Command> = new Map();

@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   isPlainObject,
   throwAppError,
@@ -18,7 +18,7 @@ const MISC_TABLE = 'misc';
 /**
  * Provides API operations for managing workspace metadata and info
  */
-export class WorkspaceOpsService extends BaseService2 {
+export class WorkspaceOpsService extends BaseService {
   static deps = ['database'] as const;
 
   $workspaceInfoAnyChange = atom(0);

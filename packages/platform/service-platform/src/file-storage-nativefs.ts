@@ -7,7 +7,7 @@ import {
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   assertIsDefined,
   isWorkerGlobalScope,
@@ -31,7 +31,7 @@ type Config = {
 };
 
 export class FileStorageNativeFs
-  extends BaseService2
+  extends BaseService
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;

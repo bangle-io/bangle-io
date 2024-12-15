@@ -1,6 +1,6 @@
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from '@bangle.io/baby-fs';
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -18,7 +18,7 @@ interface FileEntry {
 }
 
 export class FileStorageMemory
-  extends BaseService2
+  extends BaseService
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Memory;

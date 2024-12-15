@@ -4,7 +4,7 @@ import {
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -20,7 +20,7 @@ type Config = {
 };
 
 export class FileStorageIndexedDB
-  extends BaseService2
+  extends BaseService
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Browser;

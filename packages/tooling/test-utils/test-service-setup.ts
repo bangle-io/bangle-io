@@ -87,7 +87,7 @@ export function createTestEnvironment({
     errorService: TestErrorHandlerService,
     database: MemoryDatabaseService,
     syncDatabase: MemorySyncDatabaseService,
-    fileStorageIdb: FileStorageMemory,
+    fileStorageMemory: FileStorageMemory,
     router: MemoryRouterService,
   };
 
@@ -230,7 +230,7 @@ export function createTestEnvironment({
       }
 
       const fileStorageServices = {
-        [services.fileStorageIdb.workspaceType]: services.fileStorageIdb,
+        [services.fileStorageMemory.workspaceType]: services.fileStorageMemory,
       };
 
       services.fileSystem.fileStorageServices = fileStorageServices;

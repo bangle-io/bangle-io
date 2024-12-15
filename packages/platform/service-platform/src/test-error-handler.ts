@@ -1,7 +1,10 @@
-import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseErrorService,
+  type BaseServiceContext,
+} from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
-export class TestErrorHandlerService extends BaseService2 {
+export class TestErrorHandlerService extends BaseErrorService {
   constructor(context: BaseServiceContext, dependencies: null) {
     super(SERVICE_NAME.testErrorHandlerService, context, dependencies);
   }

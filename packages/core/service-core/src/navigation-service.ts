@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   isAppError,
 } from '@bangle.io/base-utils';
@@ -17,7 +17,7 @@ import { atom } from 'jotai';
 /**
  * Handles navigation and route state management
  */
-export class NavigationService extends BaseService2 {
+export class NavigationService extends BaseService {
   static deps = ['router'] as const;
 
   $location!: WritableAtom<RouterLocation, [RouterLocation], void>;

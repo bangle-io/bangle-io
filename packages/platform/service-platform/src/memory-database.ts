@@ -1,4 +1,4 @@
-import { BaseService2, type BaseServiceContext } from '@bangle.io/base-utils';
+import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
@@ -11,7 +11,7 @@ import type {
 type DataMap = Map<string, unknown>;
 
 export class MemoryDatabaseService
-  extends BaseService2
+  extends BaseService
   implements BaseAppDatabase
 {
   private workspaceData: DataMap = new Map();

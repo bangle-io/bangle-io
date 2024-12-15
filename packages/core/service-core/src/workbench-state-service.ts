@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   atomStorage,
   getEventSenderMetadata,
@@ -58,7 +58,7 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
 /**
  * Manages UI state such as theme preferences, dialogs, and omni-search state
  */
-export class WorkbenchStateService extends BaseService2 {
+export class WorkbenchStateService extends BaseService {
   static deps = ['database', 'syncDatabase'] as const;
 
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;

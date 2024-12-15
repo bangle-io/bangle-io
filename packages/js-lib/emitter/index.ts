@@ -50,7 +50,6 @@ export class Emitter<
     event: E,
     payload: Extract<U, { event: E }>['payload'],
   ) {
-    console.log('emit', event, payload);
     if (this.destroyed) {
       return;
     }

@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   isAppError,
   throwAppError,
@@ -38,10 +38,7 @@ export interface AppDatabase extends BangleDbSchema {
   };
 }
 
-export class IdbDatabaseService
-  extends BaseService2
-  implements BaseAppDatabase
-{
+export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   db!: idb.IDBPDatabase<AppDatabase>;
   private changeBus!: TypedBroadcastBus<DatabaseChange>;
 

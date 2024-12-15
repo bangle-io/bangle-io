@@ -1,4 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import type { Service, ServiceContext } from '@bangle.io/poor-mans-di';
 import type {
   BaseError,
@@ -12,9 +13,7 @@ export type BaseServiceContext = {
   serviceContext: ServiceContext;
 };
 
-export abstract class BaseService2
-  implements Service<BaseServiceCommonOptions>
-{
+export abstract class BaseService implements Service<BaseServiceCommonOptions> {
   hookPostInstantiate?() {}
 
   // called after hookPostInstantiate and  asynchronously after all dependencies have mounted
@@ -109,6 +108,9 @@ export abstract class BaseService2
     try {
       return await promise;
     } catch (error) {
+      if (isAbortError(error)) {
+        return fallbackValue;
+      }
       if (error instanceof Error) {
         const appError = getAppErrorCause(error as BaseError);
         if (appError) {

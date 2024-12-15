@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   isDarwin,
 } from '@bangle.io/base-utils';
@@ -20,7 +20,7 @@ export type ShortcutServiceConfig = {
 /**
  * Manages global keyboard shortcuts
  */
-export class ShortcutService extends BaseService2 {
+export class ShortcutService extends BaseService {
   static deps = [] as const;
 
   private shortcutManager = new ShortcutManager({

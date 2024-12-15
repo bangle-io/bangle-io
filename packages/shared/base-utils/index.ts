@@ -1,8 +1,7 @@
 import { isPlainObject } from '@bangle.io/mini-js-utils';
 import type { EventSenderMetadata } from '@bangle.io/types';
-import { BaseService } from './base-service';
+import { BaseService } from './base-service-2';
 
-export * from './base-service';
 export * from './cx';
 export * from './github-bug-url';
 export * from './misc';

@@ -42,5 +42,15 @@ export const makeTestCommonOpts = () => {
     rootAbortSignal: controller.signal,
   };
 
-  return { commonOpts, mockLog, controller, rootEmitter };
+  /**
+   * Only use this if you are testing service individually
+   */
+  const testServiceContext = {
+    ctx: commonOpts,
+    serviceContext: {
+      abortSignal: commonOpts.rootAbortSignal,
+    },
+  };
+
+  return { commonOpts, mockLog, controller, rootEmitter, testServiceContext };
 };

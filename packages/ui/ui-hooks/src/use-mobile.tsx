@@ -7,6 +7,7 @@ export function useIsMobile() {
   );
 
   React.useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
     const mql = window.matchMedia(`(max-width: ${WIDESCREEN_WIDTH - 1}px)`);
     const onChange = () => {
       setIsMobile(window.innerWidth < WIDESCREEN_WIDTH);

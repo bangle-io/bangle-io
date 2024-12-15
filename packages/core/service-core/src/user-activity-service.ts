@@ -1,5 +1,5 @@
 import {
-  BaseService2,
+  BaseService,
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -31,10 +31,16 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 
 const ACTIVITY_LOG_KEY = 'ws-activity';
 
+type RecentWsPathInfo = {
+  wsPath: string;
+  timestamp: number;
+  wsName: string;
+};
+
 /**
  * Tracks user activities like recent workspaces and commands executed
  */
-export class UserActivityService extends BaseService2 {
+export class UserActivityService extends BaseService {
   static deps = ['workspaceState', 'workspaceOps'] as const;
 
   private activityLogCache: Map<string, ActivityLogEntry[]> = new Map();
@@ -42,29 +48,63 @@ export class UserActivityService extends BaseService2 {
   private activityCooldownMs!: number;
   private $refreshActivityCounter = atom(0);
 
+  $allRecentWsPaths = unwrap(
+    atom(async (get): Promise<Array<{ wsPath: string; timestamp: number }>> => {
+      await this.mountPromise;
+      get(this.$refreshActivityCounter);
+
+      // Get all workspaces
+      const workspaces = await this.workspaceOps.getAllWorkspaces();
+
+      // Collect recent paths from all workspaces
+      const allActivities: ActivityLogEntry<'ws-path'>[] = [];
+
+      for (const workspace of workspaces) {
+        const activities = await this.getRecent(workspace.name, 'ws-path');
+        allActivities.push(...activities);
+      }
+
+      // Sort by timestamp descending
+      allActivities.sort((a, b) => b.timestamp - a.timestamp);
+
+      // Filter unique paths
+      const seen = new Set<string>();
+      return allActivities
+        .map((activity) => ({
+          wsPath: activity.data.wsPath,
+          timestamp: activity.timestamp,
+        }))
+        .filter((item) => {
+          if (seen.has(item.wsPath)) {
+            return false;
+          }
+          seen.add(item.wsPath);
+          return true;
+        })
+        .slice(0, this.maxRecentEntries);
+    }),
+    () => [],
+  );
+
   $recentWsPaths = unwrap(
     atom(async (get): Promise<string[]> => {
       await this.mountPromise;
       const wsName = get(this.workspaceState.$wsName);
       const wsPaths = get(this.workspaceState.$wsPaths);
       const wsPathsSet = new Set(wsPaths);
-      get(this.$refreshActivityCounter);
 
+      // If no workspace is active, return empty array
       if (!wsName) {
         return [];
       }
 
-      const activities = await this.getRecent(wsName, 'ws-path');
-      const seen = new Set<string>();
-      return activities
-        .map((activity) => activity.data.wsPath)
-        .filter((wsPath) => {
-          if (!wsPathsSet.has(wsPath) || seen.has(wsPath)) {
-            return false;
-          }
-          seen.add(wsPath);
-          return true;
-        });
+      // Get all recent paths
+      const allRecentPaths = await get(this.$allRecentWsPaths);
+
+      // Filter to only include paths from current workspace and existing files
+      return allRecentPaths
+        .filter((item) => wsPathsSet.has(item.wsPath))
+        .map((item) => item.wsPath);
     }),
     () => [],
   );
