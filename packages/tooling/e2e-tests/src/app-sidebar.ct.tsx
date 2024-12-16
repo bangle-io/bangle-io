@@ -1,6 +1,5 @@
 import { AppSidebarExample } from '@bangle.io/ui-components/src/app-sidebar.stories.tsx';
 import { expect, test } from '@playwright/experimental-ct-react';
-import type { Locator, Page } from '@playwright/test';
 import React from 'react';
 
 test('Collapsing file', async ({ mount }) => {
