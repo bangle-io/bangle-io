@@ -6,7 +6,7 @@ import {
 } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
-import { SERVICE_NAME } from '@bangle.io/constants';
+import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
 import {
   type BangleDbSchema,
   type DbRecord,
@@ -22,17 +22,18 @@ import type {
 
 export const DB_NAME = 'bangle-io-db';
 export const DB_VERSION = 2;
-export const MISC_TABLE = 'MiscTable';
-export const WORKSPACE_INFO_TABLE = 'WorkspaceInfo';
 
-export const ALL_TABLES = [WORKSPACE_INFO_TABLE, MISC_TABLE] as const;
+export const ALL_TABLES = [
+  DATABASE_TABLE_NAME.workspaceInfo,
+  DATABASE_TABLE_NAME.misc,
+] as const;
 
 export interface AppDatabase extends BangleDbSchema {
-  [WORKSPACE_INFO_TABLE]: {
+  [DATABASE_TABLE_NAME.workspaceInfo]: {
     key: string;
     value: DbRecord<unknown>;
   };
-  [MISC_TABLE]: {
+  [DATABASE_TABLE_NAME.misc]: {
     key: string;
     value: DbRecord<unknown>;
   };
@@ -113,9 +114,21 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     throw error;
   }
 
-  private getTableStore(tableName: DatabaseQueryOptions['tableName']) {
-    const isWorkspaceInfo = tableName === 'workspace-info';
-    const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+  private getTableName(options: DatabaseQueryOptions) {
+    switch (options.tableName) {
+      case DATABASE_TABLE_NAME.workspaceInfo:
+        return DATABASE_TABLE_NAME.workspaceInfo;
+      case DATABASE_TABLE_NAME.misc:
+        return DATABASE_TABLE_NAME.misc;
+      default: {
+        const _exhaustiveCheck: never = options.tableName;
+        throw new Error(`Unknown table name: ${_exhaustiveCheck}`);
+      }
+    }
+  }
+
+  private getTableStore(options: DatabaseQueryOptions) {
+    const table = this.getTableName(options);
     return getTable(DB_NAME, table, async () => this.db);
   }
 
@@ -142,11 +155,8 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     value: unknown;
   }> {
     await this.mountPromise;
-    // TODO: we have multiple names of tables!
-    const isWorkspaceInfo = options.tableName === 'workspace-info';
 
-    const tableName = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
-
+    const tableName = this.getTableName(options);
     try {
       const tx = this.db.transaction(tableName, 'readonly');
       const objStore = tx.objectStore(tableName);
@@ -170,8 +180,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     options: DatabaseQueryOptions,
   ) {
     await this.mountPromise;
-    const isWorkspaceInfo = options.tableName === 'workspace-info';
-    const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+    const table = this.getTableName(options);
 
     const wsName = key;
     try {
@@ -217,8 +226,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
 
   async deleteEntry(key: string, options: DatabaseQueryOptions): Promise<void> {
     await this.mountPromise;
-    const isWorkspaceInfo = options.tableName === 'workspace-info';
-    const table = isWorkspaceInfo ? WORKSPACE_INFO_TABLE : MISC_TABLE;
+    const table = this.getTableName(options);
 
     try {
       const tx = this.db.transaction(table, 'readwrite');
@@ -238,10 +246,10 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     }
   }
 
-  async getAllEntries({ tableName }: DatabaseQueryOptions): Promise<unknown[]> {
+  async getAllEntries(options: DatabaseQueryOptions): Promise<unknown[]> {
     await this.mountPromise;
     try {
-      return await this.getTableStore(tableName).getAll();
+      return await this.getTableStore(options).getAll();
     } catch (error) {
       this.throwError(error);
     }

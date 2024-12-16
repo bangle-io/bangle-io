@@ -1,11 +1,8 @@
-export type DatabaseQueryOptions = {
-  // this is not the best way to do this, but it's fine for now
-  tableName: // table for workspace related information like name, last modified, etc (dont contain actual Files)
-    | 'workspace-info'
-    // a dump table for all the other information
-    | 'misc';
-};
+import type { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 
+export type DatabaseQueryOptions = {
+  tableName: (typeof DATABASE_TABLE_NAME)[keyof typeof DATABASE_TABLE_NAME];
+};
 export type SyncDatabaseQueryOptions = {
   tableName: 'sync';
 };

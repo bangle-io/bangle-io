@@ -2,6 +2,7 @@
  * @vitest-environment happy-dom
  */
 
+import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { DatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -28,9 +29,11 @@ async function setup() {
 
 describe('MemoryDatabaseService', () => {
   const workspaceOptions: DatabaseQueryOptions = {
-    tableName: 'workspace-info',
+    tableName: DATABASE_TABLE_NAME.workspaceInfo,
   };
-  const miscOptions: DatabaseQueryOptions = { tableName: 'misc' };
+  const miscOptions: DatabaseQueryOptions = {
+    tableName: DATABASE_TABLE_NAME.misc,
+  };
 
   it('should handle CRUD operations correctly', async () => {
     const { service } = await setup();
@@ -117,19 +120,19 @@ describe('MemoryDatabaseService', () => {
     expect(changes).toHaveLength(3);
     expect(changes[0]).toEqual({
       type: 'create',
-      tableName: 'workspace-info',
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
       key: 'key1',
       value: 'initial',
     });
     expect(changes[1]).toEqual({
       type: 'update',
-      tableName: 'workspace-info',
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
       key: 'key1',
       value: 'updated',
     });
     expect(changes[2]).toEqual({
       type: 'delete',
-      tableName: 'workspace-info',
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
       key: 'key1',
       value: undefined,
     });

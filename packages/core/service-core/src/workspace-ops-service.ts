@@ -4,16 +4,13 @@ import {
   isPlainObject,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { SERVICE_NAME } from '@bangle.io/constants';
+import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseDatabaseService,
   WorkspaceDatabaseQueryOptions,
   WorkspaceInfo,
 } from '@bangle.io/types';
 import { atom } from 'jotai';
-
-const WORKSPACE_INFO_TABLE = 'workspace-info';
-const MISC_TABLE = 'misc';
 
 /**
  * Provides API operations for managing workspace metadata and info
@@ -37,7 +34,7 @@ export class WorkspaceOpsService extends BaseService {
 
   async hookMount(): Promise<void> {
     this.database.subscribe(
-      { tableName: WORKSPACE_INFO_TABLE },
+      { tableName: DATABASE_TABLE_NAME.workspaceInfo },
       (change) => {
         this.invalidateCache();
 
@@ -67,7 +64,7 @@ export class WorkspaceOpsService extends BaseService {
     }
 
     const result = await this.database.getEntry(wsName, {
-      tableName: WORKSPACE_INFO_TABLE,
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
     });
 
     if (!result.found) {
@@ -116,7 +113,7 @@ export class WorkspaceOpsService extends BaseService {
           value,
         };
       },
-      { tableName: WORKSPACE_INFO_TABLE },
+      { tableName: DATABASE_TABLE_NAME.workspaceInfo },
     );
 
     const updated = result.found ? (result.value as WorkspaceInfo) : undefined;
@@ -148,7 +145,7 @@ export class WorkspaceOpsService extends BaseService {
           value,
         };
       },
-      { tableName: WORKSPACE_INFO_TABLE },
+      { tableName: DATABASE_TABLE_NAME.workspaceInfo },
     );
   }
 
@@ -182,7 +179,7 @@ export class WorkspaceOpsService extends BaseService {
         };
       },
       {
-        tableName: WORKSPACE_INFO_TABLE,
+        tableName: DATABASE_TABLE_NAME.workspaceInfo,
       },
     );
 
@@ -199,7 +196,7 @@ export class WorkspaceOpsService extends BaseService {
   }): Promise<WorkspaceInfo[]> {
     await this.mountPromise;
     const result = (await this.database.getAllEntries({
-      tableName: WORKSPACE_INFO_TABLE,
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
     })) as WorkspaceInfo[];
 
     return result.filter((wsInfo) => {
@@ -257,7 +254,7 @@ export class WorkspaceOpsService extends BaseService {
   public async getMiscData(key: string): Promise<{ data: string } | undefined> {
     await this.mountPromise;
     const data = await this.database.getEntry(key, {
-      tableName: MISC_TABLE,
+      tableName: DATABASE_TABLE_NAME.misc,
     });
 
     if (!data.found) {
@@ -294,14 +291,14 @@ export class WorkspaceOpsService extends BaseService {
           value: data,
         };
       },
-      { tableName: MISC_TABLE },
+      { tableName: DATABASE_TABLE_NAME.misc },
     );
   }
 
   public async deleteMiscData(key: string): Promise<void> {
     await this.mountPromise;
     await this.database.deleteEntry(key, {
-      tableName: MISC_TABLE,
+      tableName: DATABASE_TABLE_NAME.misc,
     });
   }
 

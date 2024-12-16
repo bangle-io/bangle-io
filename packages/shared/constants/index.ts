@@ -60,3 +60,11 @@ export * from './command';
 export * from './browser-history-events';
 export * from './theme';
 export * from './routes';
+
+// Note we are stuck with these names because of the indexeddb
+export const DATABASE_TABLE_NAME = {
+  // table for workspace related information like name, last modified, etc (dont contain actual Files)
+  workspaceInfo: 'WorkspaceInfo',
+  // a dump table for all the other information
+  misc: 'MiscTable',
+} as const;

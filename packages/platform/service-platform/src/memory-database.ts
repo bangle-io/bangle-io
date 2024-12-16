@@ -1,7 +1,7 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
-import { SERVICE_NAME } from '@bangle.io/constants';
+import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseAppDatabase,
   DatabaseChange,
@@ -38,7 +38,9 @@ export class MemoryDatabaseService
   }
 
   private getDataMap(tableName: DatabaseQueryOptions['tableName']): DataMap {
-    return tableName === 'workspace-info' ? this.workspaceData : this.miscData;
+    return tableName === DATABASE_TABLE_NAME.workspaceInfo
+      ? this.workspaceData
+      : this.miscData;
   }
 
   async getEntry(

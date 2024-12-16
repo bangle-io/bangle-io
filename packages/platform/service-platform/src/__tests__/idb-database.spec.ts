@@ -2,6 +2,7 @@
  * @vitest-environment happy-dom
  */
 
+import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { DatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -23,7 +24,9 @@ async function setup() {
 }
 
 describe('IdbDatabaseService', () => {
-  const options: DatabaseQueryOptions = { tableName: 'workspace-info' };
+  const options: DatabaseQueryOptions = {
+    tableName: DATABASE_TABLE_NAME.workspaceInfo,
+  };
 
   beforeEach(async () => {
     // IndexedDB resets automatically in happy-dom environment between tests.
@@ -56,7 +59,7 @@ describe('IdbDatabaseService', () => {
     await service.updateEntry(key, () => ({ value: 'v1' }), options);
     expect(callback).toHaveBeenCalledWith({
       type: 'create',
-      tableName: 'workspace-info',
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
       key,
       value: 'v1',
     });
@@ -65,7 +68,7 @@ describe('IdbDatabaseService', () => {
     await service.updateEntry(key, () => ({ value: 'v2' }), options);
     expect(callback).toHaveBeenCalledWith({
       type: 'update',
-      tableName: 'workspace-info',
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
       key,
       value: 'v2',
     });
@@ -74,7 +77,7 @@ describe('IdbDatabaseService', () => {
     await service.deleteEntry(key, options);
     expect(callback).toHaveBeenCalledWith({
       type: 'delete',
-      tableName: 'workspace-info',
+      tableName: DATABASE_TABLE_NAME.workspaceInfo,
       key,
       value: undefined,
     });
