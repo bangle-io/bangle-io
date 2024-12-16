@@ -37,7 +37,7 @@ export abstract class BaseService implements Service<BaseServiceCommonOptions> {
     return this._mountPromise;
   }
 
-  get store(): Store {
+  protected get store(): Store {
     return this.__context.ctx.store;
   }
 

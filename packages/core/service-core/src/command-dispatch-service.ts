@@ -10,23 +10,15 @@ import {
   commandExcludedServices,
   commandKeyToContext,
 } from '@bangle.io/constants';
-import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type {
   Command,
+  CommandArgs,
   CommandDispatchResult,
   CommandExposedServices,
   CommandHandlerContext,
   CommandKey,
 } from '@bangle.io/types';
 import type { CommandRegistryService } from './command-registry-service';
-
-type CommandArgs<C extends Command> = C['args'] extends null
-  ? null
-  : {
-      [K in keyof C['args']]: C['args'][K] extends Validator<any>
-        ? InferType<C['args'][K]>
-        : never;
-    };
 
 /**
  * Service responsible for dispatching commands to their handlers

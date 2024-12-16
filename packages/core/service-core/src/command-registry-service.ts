@@ -6,7 +6,7 @@ import {
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type { Command, CommandHandler, CommandKey } from '@bangle.io/types';
 
-type CommandHandlerConfig = { id: string; handler: CommandHandler };
+export type CommandHandlerConfig = { id: string; handler: CommandHandler };
 
 /**
  * Registers commands and their handlers for the app

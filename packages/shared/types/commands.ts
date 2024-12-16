@@ -1,5 +1,5 @@
 import type { BaseService } from '@bangle.io/base-utils';
-import type { Validator } from '@bangle.io/mini-zod';
+import type { InferType, Validator } from '@bangle.io/mini-zod';
 import type { CommandExposedServices, Store } from './services';
 
 // To keep things simple we are only allowing a select few types
@@ -54,3 +54,11 @@ export type CommandDispatchResult = {
   command: Command;
   from: string;
 };
+
+export type CommandArgs<C extends Command> = C['args'] extends null
+  ? null
+  : {
+      [K in keyof C['args']]: C['args'][K] extends Validator<any>
+        ? InferType<C['args'][K]>
+        : never;
+    };

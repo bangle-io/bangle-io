@@ -26,7 +26,7 @@ import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import { vi } from 'vitest';
 export type { Store } from '@bangle.io/types';
 import { Logger } from '@bangle.io/logger';
-import type { BaseServiceCommonOptions } from '@bangle.io/types';
+import type { BaseServiceCommonOptions, Store } from '@bangle.io/types';
 export { default as waitForExpect } from 'wait-for-expect';
 import { getEnabledCommands } from '@bangle.io/commands';
 import { RootEmitter } from '@bangle.io/root-emitter';
@@ -136,6 +136,7 @@ export function createTestEnvironment({
     controller,
     rootEmitter,
     commonOpts,
+    store: commonOpts.store as Store,
 
     /**
      * Sets default configurations for various services, including event emitters
