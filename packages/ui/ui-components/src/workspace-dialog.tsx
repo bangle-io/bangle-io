@@ -246,14 +246,15 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
       </ul>
       <ErrorMessage error={error} />
       <DialogFooter className="flex-col sm:justify-between">
-        <div className="flex items-center pb-1 sm:pb-0">
-          <a
-            href="https://bangle.io/privacy"
-            className="block text-blue-400 text-sm hover:underline"
-          >
+        <Button
+          variant="ghost"
+          className="ml-3 text-primary text-sm hover:underline"
+          asChild
+        >
+          <a href="https://bangle.io/privacy" target="_blank" rel="noreferrer">
             Your data stays with you
           </a>
-        </div>
+        </Button>
         <Button onClick={handleNext} disabled={!selected}>
           Next
         </Button>
@@ -500,7 +501,7 @@ const ListItem: React.FC<ListItemProps> = ({
             <h3 className="mb-1 font-semibold text-sm leading-none tracking-tight">
               {title}
             </h3>
-            <p className="text-gray-400 text-sm">{description}</p>
+            <p className="text-foreground/80 text-sm">{description}</p>
           </div>
           <div className="h-4 w-4 flex-shrink-0">
             <Check
@@ -518,7 +519,7 @@ const ListItem: React.FC<ListItemProps> = ({
 const ErrorMessage: React.FC<{ error?: ErrorInfo }> = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="text-destructive text-sm">
+    <div className="text-destructive-foreground text-sm">
       {error.title && <strong>{error.title}: </strong>}
       {error.message}
     </div>

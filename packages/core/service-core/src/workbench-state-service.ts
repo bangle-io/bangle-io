@@ -177,6 +177,7 @@ export class WorkbenchStateService extends BaseService {
   get $wideEditor() {
     if (!this.$_wideEditor) {
       this.$_wideEditor = atomStorage({
+        serviceName: this.name,
         key: 'wide-editor',
         initValue: true,
         syncDb: this.dep.syncDatabase,
@@ -190,6 +191,7 @@ export class WorkbenchStateService extends BaseService {
   get $sidebarOpen() {
     if (!this.$_sidebarOpen) {
       this.$_sidebarOpen = atomStorage({
+        serviceName: this.name,
         key: 'sidebar-open',
         initValue: true,
         syncDb: this.dep.syncDatabase,

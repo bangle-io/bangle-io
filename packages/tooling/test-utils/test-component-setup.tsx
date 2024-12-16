@@ -19,7 +19,7 @@ export function renderWithServices({
   const testEnv = createTestEnvironment(testEnvArgs);
 
   return {
-    autoMount: async () => {
+    autoMountServices: async () => {
       testEnv.setDefaultConfig();
       const instance = testEnv.instantiateAll();
       await testEnv.mountAll();
@@ -86,6 +86,7 @@ export function renderWithServices({
           result.rerender(<Wrapper>{ui}</Wrapper>),
       };
     },
+
     testEnv,
   };
 }

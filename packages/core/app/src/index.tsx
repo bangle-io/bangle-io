@@ -12,6 +12,7 @@ import type { RootEmitter, Services, Store } from '@bangle.io/types';
 import { Provider } from 'jotai/react';
 import React, { useEffect } from 'react';
 import { AppInner } from './AppInner';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export function App({
   logger,
@@ -42,7 +43,9 @@ export function App({
         <PlatformServiceProvider services={services.platform}>
           <CoreServiceProvider services={services.core}>
             <RouterContext>
-              <AppInner rootEmitter={rootEmitter} />
+              <ErrorBoundary>
+                <AppInner rootEmitter={rootEmitter} />
+              </ErrorBoundary>
             </RouterContext>
           </CoreServiceProvider>
         </PlatformServiceProvider>

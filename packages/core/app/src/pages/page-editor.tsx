@@ -1,34 +1,33 @@
 import { useCoreServices } from '@bangle.io/context';
 import { EditorComp } from '@bangle.io/editor';
+import { FunMissing } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { EditorToolbar } from '../components/editor-toolbar';
+import { NoticeView } from '../components/NoticeView';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
 
 export function PageEditor() {
   const coreServices = useCoreServices();
-
-  const wsPath = useAtomValue(coreServices.navigation.$wsPath);
+  const currentWsPath = useAtomValue(
+    coreServices.workspaceState.$currentWsPath,
+  );
+  const currentWsName = useAtomValue(
+    coreServices.workspaceState.$currentWsName,
+  );
   const $forceReloadCounter = useAtomValue(
     coreServices.editorService.$forceReloadCounter,
   );
 
-  if (!wsPath) {
-    return <div>Invalid path</div>;
-  }
-
   return (
     <>
-      <PageHeaderWrapper>
-        <EditorToolbar />
-      </PageHeaderWrapper>
+      <PageHeaderWrapper />
       <PageMainContentWrapper>
-        {wsPath && (
+        {currentWsPath && currentWsName ? (
           <EditorComp
             key={$forceReloadCounter}
-            wsPath={wsPath}
+            wsPath={currentWsPath}
             readNote={async (wsPath) => {
               return coreServices.fileSystem.readFileAsText(wsPath);
             }}
@@ -42,6 +41,32 @@ export function PageEditor() {
                 }),
               );
             }}
+          />
+        ) : (
+          <NoticeView
+            title="Note not found"
+            description={<FunMissing />}
+            secondaryActions={[
+              {
+                label: 'New Note',
+                onClick: () =>
+                  coreServices.commandDispatcher.dispatch(
+                    'command::ui:create-note-dialog',
+                    { prefillName: undefined },
+                    'ui',
+                  ),
+              },
+              {
+                label: 'View All Notes',
+                variant: 'outline',
+                onClick: () =>
+                  coreServices.commandDispatcher.dispatch(
+                    'command::ui:toggle-all-files',
+                    { prefillInput: undefined },
+                    'ui',
+                  ),
+              },
+            ]}
           />
         )}
       </PageMainContentWrapper>

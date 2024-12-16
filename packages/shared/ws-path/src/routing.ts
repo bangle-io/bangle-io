@@ -55,6 +55,7 @@ export const buildUrlPath = {
   },
   pageWelcome: () => ({
     pathname: ROUTES.pageWelcome,
+    search: { p: null },
   }),
 } satisfies Record<
   string,

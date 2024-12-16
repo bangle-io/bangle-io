@@ -223,4 +223,7 @@ export const wsCommandHandlers = [
       pathPrefix: resolvedDirPath.dirPath,
     });
   }),
+  c('command::ws:go-ws-home', ({ navigation }) => {
+    navigation.goWorkspace();
+  }),
 ];

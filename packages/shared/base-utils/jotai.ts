@@ -33,20 +33,24 @@ export function arrayEqual<T>(a: T[], b: T[]) {
 
 // should be used for simple UI config that needs to be persisted
 export function atomStorage<TValue>({
-  key,
+  serviceName,
+  key: inputKey,
   initValue,
   syncDb,
   validator,
   logger,
 }: {
+  serviceName: string;
   key: string;
   initValue: TValue;
   syncDb: BaseAppSyncDatabase;
   validator: Validator<TValue>;
   logger: Logger;
 }) {
+  const storageKey = `${serviceName}:${inputKey}`;
+
   const atom = atomWithStorage<TValue>(
-    key,
+    storageKey,
     initValue,
     {
       getItem: (key) => {

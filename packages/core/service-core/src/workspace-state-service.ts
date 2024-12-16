@@ -40,6 +40,34 @@ export class WorkspaceStateService extends BaseService {
     return wsPath ? [wsPath] : EMPTY_ARRAY;
   });
 
+  /**
+   * This atom is used to check if the current note path
+   * is on the disk.
+   */
+  $currentWsPath = atom((get) => {
+    const wsPath = get(this.$wsPath);
+    const wsPaths = get(this.$wsPaths);
+    return wsPath && wsPaths.includes(wsPath) ? wsPath : undefined;
+  });
+
+  /**
+   * This atom is used to check if the current workspace name
+   * is valid.
+   */
+  $currentWsName = atom((get) => {
+    const wsName = get(this.$wsName);
+    const workspaces = get(this.$workspaces);
+    return workspaces.find((ws) => ws.name === wsName)?.name;
+  });
+
+  resolveAtoms() {
+    return {
+      workspaces: this.store.get(this.$workspaces),
+      wsPaths: this.store.get(this.$wsPaths),
+      currentWsName: this.store.get(this.$currentWsName),
+    };
+  }
+
   constructor(
     context: BaseServiceContext,
     private dep: {

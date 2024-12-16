@@ -1,7 +1,12 @@
 import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
-import { EmptyState } from '../components/EmptyState';
+import { NoticeView } from '../components/NoticeView';
+import { Section } from '../components/section';
 
 export function PageWsPathNotFound() {
-  return <EmptyState title="Path Not Found" message={<FunMissing />} />;
+  return (
+    <Section>
+      <NoticeView title="Path Not Found" description={<FunMissing />} />
+    </Section>
+  );
 }

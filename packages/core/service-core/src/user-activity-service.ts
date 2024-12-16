@@ -1,18 +1,23 @@
 import {
   BaseService,
   type BaseServiceContext,
+  atomStorage,
   throwAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import { type InferType, T } from '@bangle.io/mini-zod';
-import type { CommandDispatchResult, ScopedEmitter } from '@bangle.io/types';
+import type {
+  BaseSyncDatabaseService,
+  CommandDispatchResult,
+  ScopedEmitter,
+} from '@bangle.io/types';
 import { getWsName } from '@bangle.io/ws-path';
-import { atom } from 'jotai';
+import { type PrimitiveAtom, atom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 import type { WorkspaceStateService } from './workspace-state-service';
 
-const DEFAULT_MAX_RECENT_ENTRIES = 10;
+const DEFAULT_MAX_RECENT_ENTRIES = 100;
 const DEFAULT_ACTIVITY_COOLDOWN_MS = 5000;
 
 const EntityValidators = {
@@ -31,22 +36,21 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 
 const ACTIVITY_LOG_KEY = 'ws-activity';
 
-type RecentWsPathInfo = {
-  wsPath: string;
-  timestamp: number;
-  wsName: string;
-};
-
 /**
  * Tracks user activities like recent workspaces and commands executed
  */
 export class UserActivityService extends BaseService {
-  static deps = ['workspaceState', 'workspaceOps'] as const;
+  static deps = ['workspaceState', 'workspaceOps', 'syncDatabase'] as const;
 
   private activityLogCache: Map<string, ActivityLogEntry[]> = new Map();
   private maxRecentEntries!: number;
   private activityCooldownMs!: number;
   private $refreshActivityCounter = atom(0);
+  private $_timesAppLoaded: PrimitiveAtom<number> | undefined;
+
+  $isNewUser = atom((get) => {
+    return get(this.$timesAppLoaded) <= 1;
+  });
 
   $allRecentWsPaths = unwrap(
     atom(async (get): Promise<Array<{ wsPath: string; timestamp: number }>> => {
@@ -134,11 +138,26 @@ export class UserActivityService extends BaseService {
     () => [],
   );
 
+  get $timesAppLoaded() {
+    if (!this.$_timesAppLoaded) {
+      this.$_timesAppLoaded = atomStorage({
+        serviceName: this.name,
+        key: 'times-app-loaded',
+        initValue: 0,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Number,
+        logger: this.logger,
+      });
+    }
+    return this.$_timesAppLoaded;
+  }
+
   constructor(
     context: BaseServiceContext,
     private dep: {
       workspaceState: WorkspaceStateService;
       workspaceOps: WorkspaceOpsService;
+      syncDatabase: BaseSyncDatabaseService;
     },
     private config: {
       emitter: ScopedEmitter<'event::command:result'>;
@@ -150,6 +169,9 @@ export class UserActivityService extends BaseService {
   }
 
   postInstantiate(): void {
+    const currentCount = this.store.get(this.$timesAppLoaded);
+    this.store.set(this.$timesAppLoaded, currentCount + 1);
+
     this.maxRecentEntries =
       this.config.maxRecentEntries ?? DEFAULT_MAX_RECENT_ENTRIES;
     this.activityCooldownMs =

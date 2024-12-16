@@ -1,8 +1,9 @@
 import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
-import { EmptyState } from '../components/EmptyState';
+import { NoticeView } from '../components/NoticeView';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Section } from '../components/section';
 
 export function PageNativeFsAuthReq() {
   return (
@@ -11,12 +12,14 @@ export function PageNativeFsAuthReq() {
         <h1>We were unable to get permission for </h1>
       </PageHeaderWrapper>
       <PageMainContentWrapper>
-        <EmptyState
-          title="Authentication Required, Please allow access to continue"
-          message={<FunMissing />}
-          actionLabel="Authorize"
-          onAction={() => window.location.reload()}
-        />
+        <Section>
+          <NoticeView
+            title="Authentication Required, Please allow access to continue"
+            description={<FunMissing />}
+            primaryActionLabel="Authorize"
+            onPrimaryAction={() => window.location.reload()}
+          />
+        </Section>
       </PageMainContentWrapper>
     </>
   );

@@ -24,60 +24,80 @@ export function NoteBreadcrumb({
   onNewNote,
 }: NoteBreadcrumbProps) {
   const segments = React.useMemo(() => wsPathToBreadcrumb(wsPath), [wsPath]);
-  const showEllipsis = shouldShowEllipsis(segments);
   const visibleSegments = getVisibleSegments(segments);
-
-  if (segments.length === 0) {
-    return null;
-  }
 
   return (
     <Breadcrumb.Breadcrumb>
       <Breadcrumb.BreadcrumbList>
-        {visibleSegments.map((segment, idx) => {
-          const isLast = idx === visibleSegments.length - 1;
-          const showSeparator = !isLast;
-          const isFirst = idx === 0;
-
-          return (
-            <React.Fragment key={segment.wsPath ?? segment.label}>
-              <Breadcrumb.BreadcrumbItem>
-                {isFirst ? (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7"
-                    asChild
-                  >
-                    <Breadcrumb.BreadcrumbLink
-                      href={buildURL(
-                        buildUrlPath.pageEditor({ wsPath: segment.wsPath }),
-                      )}
-                    >
-                      <Folder size={16} />
-                    </Breadcrumb.BreadcrumbLink>
-                  </Button>
-                ) : (
-                  <DirectoryDropdown
-                    segment={segment}
-                    wsPaths={wsPaths}
-                    onNewNote={onNewNote}
-                  />
-                )}
-              </Breadcrumb.BreadcrumbItem>
-              {showSeparator && (
-                <>
-                  <Breadcrumb.BreadcrumbSeparator />
-                  {idx === 0 && showEllipsis && (
-                    <Breadcrumb.BreadcrumbEllipsis />
-                  )}
-                </>
-              )}
-            </React.Fragment>
-          );
-        })}
+        {visibleSegments.map((segment, idx) => (
+          <BreadcrumbItem
+            key={segment.wsPath ?? segment.label}
+            segment={segment}
+            isFirst={idx === 0}
+            isLast={idx === visibleSegments.length - 1}
+            showEllipsis={shouldShowEllipsis(segments)}
+            wsPaths={wsPaths}
+            onNewNote={onNewNote}
+          />
+        ))}
       </Breadcrumb.BreadcrumbList>
     </Breadcrumb.Breadcrumb>
+  );
+}
+
+interface BreadcrumbItemProps {
+  segment: BreadcrumbSegment;
+  isFirst: boolean;
+  isLast: boolean;
+  showEllipsis: boolean;
+  wsPaths: string[];
+  onNewNote: (opts: { wsPath: string }) => void;
+}
+
+function BreadcrumbItem({
+  segment,
+  isFirst,
+  isLast,
+  showEllipsis,
+  wsPaths,
+  onNewNote,
+}: BreadcrumbItemProps) {
+  return (
+    <React.Fragment>
+      <Breadcrumb.BreadcrumbItem>
+        {isFirst ? (
+          <HomeFolderLink segment={segment} />
+        ) : (
+          <DirectoryDropdown
+            segment={segment}
+            wsPaths={wsPaths}
+            onNewNote={onNewNote}
+          />
+        )}
+      </Breadcrumb.BreadcrumbItem>
+      {!isLast && (
+        <>
+          <Breadcrumb.BreadcrumbSeparator />
+          {isFirst && showEllipsis && <Breadcrumb.BreadcrumbEllipsis />}
+        </>
+      )}
+    </React.Fragment>
+  );
+}
+
+interface HomeFolderLinkProps {
+  segment: BreadcrumbSegment;
+}
+
+function HomeFolderLink({ segment }: HomeFolderLinkProps) {
+  return (
+    <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
+      <Breadcrumb.BreadcrumbLink
+        href={buildURL(buildUrlPath.pageEditor({ wsPath: segment.wsPath }))}
+      >
+        <Folder size={16} />
+      </Breadcrumb.BreadcrumbLink>
+    </Button>
   );
 }
 
@@ -147,30 +167,49 @@ function DirectoryDropdown({
         {segment.label}
       </DropdownMenu.DropdownMenuTrigger>
       <DropdownMenu.DropdownMenuContent align="start">
-        <DropdownMenu.DropdownMenuItem
-          onClick={() => onNewNote({ wsPath: segment.wsPath })}
-        >
-          <PlusIcon className="mr-2 h-4 w-4" />
-          <span>New Note</span>
-        </DropdownMenu.DropdownMenuItem>
+        <NewNoteMenuItem segment={segment} onNewNote={onNewNote} />
         {siblingFiles.length > 0 && (
           <>
             <DropdownMenu.DropdownMenuSeparator />
             {siblingFiles.map((file) => (
-              <DropdownMenu.DropdownMenuItem key={file.wsPath} asChild>
-                <Breadcrumb.BreadcrumbLink
-                  href={buildURL(
-                    buildUrlPath.pageEditor({ wsPath: file.wsPath }),
-                  )}
-                >
-                  {file.label}
-                </Breadcrumb.BreadcrumbLink>
-              </DropdownMenu.DropdownMenuItem>
+              <SiblingFileMenuItem key={file.wsPath} file={file} />
             ))}
           </>
         )}
       </DropdownMenu.DropdownMenuContent>
     </DropdownMenu.DropdownMenu>
+  );
+}
+
+interface NewNoteMenuItemProps {
+  segment: BreadcrumbSegment;
+  onNewNote: NoteBreadcrumbProps['onNewNote'];
+}
+
+function NewNoteMenuItem({ segment, onNewNote }: NewNoteMenuItemProps) {
+  return (
+    <DropdownMenu.DropdownMenuItem
+      onClick={() => onNewNote({ wsPath: segment.wsPath })}
+    >
+      <PlusIcon className="mr-2 h-4 w-4" />
+      <span>New Note</span>
+    </DropdownMenu.DropdownMenuItem>
+  );
+}
+
+interface SiblingFileMenuItemProps {
+  file: BreadcrumbSegment;
+}
+
+function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
+  return (
+    <DropdownMenu.DropdownMenuItem asChild>
+      <Breadcrumb.BreadcrumbLink
+        href={buildURL(buildUrlPath.pageEditor({ wsPath: file.wsPath }))}
+      >
+        {file.label}
+      </Breadcrumb.BreadcrumbLink>
+    </DropdownMenu.DropdownMenuItem>
   );
 }
 

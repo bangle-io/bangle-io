@@ -113,4 +113,12 @@ export const wsCommands = narrow([
       destDirWsPath: T.String,
     },
   },
+  {
+    id: 'command::ws:go-ws-home',
+    title: 'Go to Workspace Home',
+    keywords: ['home', 'workspace', 'go'],
+    omniSearch: true,
+    dependencies: { services: ['navigation'] },
+    args: null,
+  },
 ]);

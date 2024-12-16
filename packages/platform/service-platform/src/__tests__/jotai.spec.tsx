@@ -35,6 +35,7 @@ describe('atomStorage', () => {
   it('should initialize with the initial value', async () => {
     const { syncDb, logger, store } = await setup();
     const atom = atomStorage({
+      serviceName: 'test',
       key: 'testKey',
       initValue: 'initial',
       syncDb,
@@ -49,6 +50,7 @@ describe('atomStorage', () => {
   it('should update the value correctly', async () => {
     const { syncDb, logger, store } = await setup();
     const atom = atomStorage({
+      serviceName: 'test',
       key: 'testKey',
       initValue: 'initial',
       syncDb,
@@ -59,7 +61,7 @@ describe('atomStorage', () => {
     store.set(atom, 'updated');
 
     expect(store.get(atom)).toBe('updated');
-    expect(syncDb.getEntry('testKey', { tableName: 'sync' })).toEqual({
+    expect(syncDb.getEntry('test:testKey', { tableName: 'sync' })).toEqual({
       found: true,
       value: 'updated',
     });
@@ -68,6 +70,7 @@ describe('atomStorage', () => {
   it('should remove the value correctly', async () => {
     const { syncDb, logger, store } = await setup();
     const atom = atomStorage({
+      serviceName: 'test',
       key: 'testKey',
       initValue: 'initial',
       syncDb,
@@ -79,7 +82,7 @@ describe('atomStorage', () => {
     store.set(atom, RESET);
 
     expect(store.get(atom)).toBe('initial');
-    expect(syncDb.getEntry('testKey', { tableName: 'sync' })).toEqual({
+    expect(syncDb.getEntry('test:testKey', { tableName: 'sync' })).toEqual({
       found: false,
       value: undefined,
     });
@@ -88,6 +91,7 @@ describe('atomStorage', () => {
   it('should handle different types correctly', async () => {
     const { syncDb, logger, store } = await setup();
     const numberAtom = atomStorage({
+      serviceName: 'test',
       key: 'numberKey',
       initValue: 42,
       syncDb,
@@ -99,12 +103,13 @@ describe('atomStorage', () => {
 
     store.set(numberAtom, 100);
     expect(store.get(numberAtom)).toBe(100);
-    expect(syncDb.getEntry('numberKey', { tableName: 'sync' })).toEqual({
+    expect(syncDb.getEntry('test:numberKey', { tableName: 'sync' })).toEqual({
       found: true,
       value: 100,
     });
 
     const objectAtom = atomStorage({
+      serviceName: 'test',
       key: 'objectKey',
       initValue: { name: 'test' },
       syncDb,
@@ -116,7 +121,7 @@ describe('atomStorage', () => {
 
     store.set(objectAtom, { name: 'updated' });
     expect(store.get(objectAtom)).toEqual({ name: 'updated' });
-    expect(syncDb.getEntry('objectKey', { tableName: 'sync' })).toEqual({
+    expect(syncDb.getEntry('test:objectKey', { tableName: 'sync' })).toEqual({
       found: true,
       value: { name: 'updated' },
     });
@@ -125,6 +130,7 @@ describe('atomStorage', () => {
   it('should handle invalid values and log errors', async () => {
     const { syncDb, logger, store, mockLog } = await setup();
     const atom = atomStorage({
+      serviceName: 'test',
       key: 'invalidKey',
       initValue: 'valid',
       syncDb,
@@ -138,14 +144,14 @@ describe('atomStorage', () => {
       123,
     );
     expect(store.get(atom)).toBe(123);
-    expect(syncDb.getEntry('invalidKey', { tableName: 'sync' })).toEqual({
+    expect(syncDb.getEntry('test:invalidKey', { tableName: 'sync' })).toEqual({
       found: false,
       value: undefined,
     });
     expect(mockLog.error).toHaveBeenCalledWith(
       expect.any(String),
       'Invalid value for key',
-      'invalidKey',
+      'test:invalidKey',
       123,
     );
   });

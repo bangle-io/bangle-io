@@ -196,7 +196,12 @@ describe('buildUrlPath', () => {
   describe('pageWelcome', () => {
     it('should return the correct pathname', () => {
       const result = buildUrlPath.pageWelcome();
-      expect(result).toEqual({ pathname: '/' });
+      expect(result).toEqual({
+        pathname: '/',
+        search: {
+          p: null,
+        },
+      });
     });
   });
 });

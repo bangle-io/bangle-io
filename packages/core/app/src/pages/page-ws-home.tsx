@@ -1,21 +1,121 @@
 import { useCoreServices } from '@bangle.io/context';
+import { FunMissing } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { EditorToolbar } from '../components/editor-toolbar';
+import { NoticeView } from '../components/NoticeView';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Section } from '../components/section';
+import {
+  Actions,
+  Header,
+  ItemList,
+  getRelativeTimeOrNull,
+  useGroupedWorkspaceNotes,
+} from '../components/welcome-shared';
+
+const MAX_NOTES_TO_SHOW = 5;
 
 export function PageWsHome() {
   const coreServices = useCoreServices();
-  const wsName = useAtomValue(coreServices.navigation.$wsName);
+  const currentWsName = useAtomValue(
+    coreServices.workspaceState.$currentWsName,
+  );
+  const groups = useGroupedWorkspaceNotes();
+
+  // Prepare recent notes list (just top MAX_NOTES_TO_SHOW from "all" sorted)
+  const allNotes = React.useMemo(() => {
+    const notes = [...(groups.all || [])];
+    return notes
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+      .slice(0, MAX_NOTES_TO_SHOW);
+  }, [groups]);
+
+  const notesWithTime = React.useMemo(() => {
+    return allNotes.map((note) => ({
+      label: note.fileName,
+      href: note.href,
+      relativeTime: note.timestamp
+        ? getRelativeTimeOrNull(note.timestamp)
+        : null,
+    }));
+  }, [allNotes]);
+
+  const noItemsMessage = 'No notes found in this workspace.';
 
   return (
     <>
-      <PageHeaderWrapper>
-        <EditorToolbar />
-      </PageHeaderWrapper>
+      <PageHeaderWrapper />
       <PageMainContentWrapper>
-        {wsName && <div>Get started</div>}
+        {currentWsName ? (
+          <Section hasPadding={false}>
+            <Header title={`${currentWsName}`} />
+            <ItemList
+              heading="Recent notes"
+              items={notesWithTime}
+              emptyMessage={noItemsMessage}
+              showViewMore={groups.all && groups.all.length > MAX_NOTES_TO_SHOW}
+              onClickViewMore={() =>
+                coreServices.commandDispatcher.dispatch(
+                  'command::ui:toggle-all-files',
+                  { prefillInput: undefined },
+                  'ui',
+                )
+              }
+            />
+            {(groups.isEmpty || notesWithTime.length > 0) && (
+              <Actions
+                actions={[
+                  {
+                    label: 'New Note',
+                    onClick: () =>
+                      coreServices.commandDispatcher.dispatch(
+                        'command::ui:create-note-dialog',
+                        { prefillName: undefined },
+                        'ui',
+                      ),
+                  },
+                  {
+                    label: 'Switch Workspace',
+                    variant: 'outline',
+                    onClick: () =>
+                      coreServices.commandDispatcher.dispatch(
+                        'command::ui:switch-workspace',
+                        null,
+                        'ui',
+                      ),
+                  },
+                ]}
+              />
+            )}
+          </Section>
+        ) : (
+          <NoticeView
+            title="Workspace not found"
+            description={<FunMissing />}
+            secondaryActions={[
+              {
+                label: 'Create Workspace',
+                onClick: () =>
+                  coreServices.commandDispatcher.dispatch(
+                    'command::ui:create-workspace-dialog',
+                    null,
+                    'ui',
+                  ),
+              },
+              {
+                label: 'Switch Workspace',
+                variant: 'outline',
+                onClick: () =>
+                  coreServices.commandDispatcher.dispatch(
+                    'command::ui:switch-workspace',
+                    null,
+                    'ui',
+                  ),
+              },
+            ]}
+          />
+        )}
       </PageMainContentWrapper>
     </>
   );
