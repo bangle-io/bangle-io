@@ -16,6 +16,10 @@ import {
 
 const MAX_NOTES_TO_SHOW = 5;
 
+/**
+ * This is the home page for a given workspace.
+ * It shows the recent notes, and actions to create a new note or switch workspace.
+ */
 export function PageWsHome() {
   const coreServices = useCoreServices();
   const currentWsName = useAtomValue(
@@ -57,8 +61,8 @@ export function PageWsHome() {
               showViewMore={groups.all && groups.all.length > MAX_NOTES_TO_SHOW}
               onClickViewMore={() =>
                 coreServices.commandDispatcher.dispatch(
-                  'command::ui:toggle-all-files',
-                  { prefillInput: undefined },
+                  'command::ui:toggle-omni-search',
+                  { prefill: undefined },
                   'ui',
                 )
               }
