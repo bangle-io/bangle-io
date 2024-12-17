@@ -22,8 +22,8 @@
     "kind": "app",
     "type": "browser"
   },
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "src/index.tsx",
+  "module": "src/index.tsx",
   "publishConfig": {
     "access": "public"
   },
@@ -36,6 +36,14 @@
     "@bangle.dev/pm": "0.32.1",
     "@types/react": "^18.3.12",
     "prosemirror-markdown": "^1.13.1",
-    "react": "^18.3.1"
+    "prosekit": "^0.11.0",
+    "react": "^18.3.1",
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.0",
+    "remark-html": "^16.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5",
+    "@bangle.io/base-utils": "workspace:*"
   }
 }

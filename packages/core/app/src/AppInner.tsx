@@ -1,4 +1,3 @@
-import '@bangle.io/editor/src/style.css';
 import { useCoreServices } from '@bangle.io/context';
 import { OmniSearch } from '@bangle.io/omni-search';
 import type { RootEmitter } from '@bangle.io/types';

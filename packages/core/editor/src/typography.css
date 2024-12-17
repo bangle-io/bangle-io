@@ -1,0 +1,203 @@
+div.ProseMirror {
+  & {
+    /* Disable margin collapsing */
+    display: flex;
+    flex-direction: column;
+  }
+
+  & p:first-child,
+  & h1:first-child,
+  & h2:first-child,
+  & h3:first-child,
+  & h4:first-child,
+  & h5:first-child,
+  & h6:first-child {
+    margin-top: 0;
+  }
+
+  & p:last-child,
+  & h1:last-child,
+  & h2:last-child,
+  & h3:last-child,
+  & h4:last-child,
+  & h5:last-child,
+  & h6:last-child {
+    margin-bottom: 0;
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    font-weight: 600;
+    line-height: 1.25;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-style: none;
+  }
+
+  & a {
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  & p,
+  & ul,
+  & ol,
+  & pre {
+    margin: 0;
+    padding: 0.5rem 0;
+    line-height: 1.5;
+  }
+
+  & blockquote {
+    padding-left: 1em;
+    border-left: 0.25em solid hsla(0, 0%, 60%, 0.4);
+  }
+
+  & h1 {
+    margin: 1rem 0;
+    font-size: 2.25em;
+  }
+
+  & h2 {
+    margin: 1.75em 0 0.5em;
+    font-size: 1.75em;
+  }
+
+  & h3 {
+    margin: 1.5em 0 0.5em;
+    font-size: 1.375em;
+  }
+
+  & h4 {
+    margin: 1em 0;
+    font-size: 1.125em;
+  }
+
+  & h5 {
+    margin: 0.5em 0;
+  }
+
+  & h6 {
+    opacity: 0.8;
+  }
+
+  & img,
+  & video {
+    margin: 0;
+    width: min-content;
+    max-width: 100%;
+  }
+
+  & code {
+    font-size: 0.875em;
+    font-weight: 600;
+  }
+
+  & pre {
+    margin: 0.5rem 0;
+    padding: 1.2rem 1.2rem;
+    overflow-x: auto;
+    border-radius: 0.375rem;
+  }
+
+  & pre,
+  & code {
+    white-space: break-spaces;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    tab-size: 4;
+    hyphens: none;
+  }
+
+  & pre code {
+    font-weight: inherit;
+  }
+
+  & hr {
+    margin: 2em 0;
+  }
+
+  & .prosekit-horizontal-rule {
+    padding: 1em 0;
+    margin: 1em 0;
+
+    & hr {
+      margin: 0;
+    }
+  }
+
+  & .prosemirror-flat-list {
+    /* Use the same line-height as <p> */
+    line-height: 1.5;
+
+    &::before,
+    & > .list-marker {
+      /* Use the same padding as <p> */
+      top: 0.5rem;
+    }
+
+    &:has(> div.list-content > h1) {
+      &::before,
+      & > .list-marker {
+        top: 1em;
+      }
+    }
+    &:has(> div.list-content > h2) {
+      &::before,
+      & > .list-marker {
+        top: 0.6em;
+      }
+    }
+    &:has(> div.list-content > h3) {
+      &::before,
+      & > .list-marker {
+        top: 0.25em;
+      }
+    }
+    &:has(> div.list-content > h4) {
+      &::before,
+      & > .list-marker {
+        top: 0;
+      }
+    }
+    &:has(> div.list-content > h5) {
+      &::before,
+      & > .list-marker {
+        top: -0.1em;
+      }
+    }
+    &:has(> div.list-content > h6) {
+      &::before,
+      & > .list-marker {
+        top: -0.1em;
+      }
+    }
+  }
+
+  /*
+     In Chrome, when an editor is styled with a background color and a selected
+     node is dragged, the dragged element inherits this background color, along
+     with an additional shadow effect. This visual is not ideal, especially when
+     the dragged element lacks any margin or padding. To address this issue, we
+     adjust the z-index of the dragged element as a workaround, preventing it from
+     inheriting the background color.
+  
+     See also https://stackoverflow.com/a/61812377
+     */
+  .ProseMirror-selectednode {
+    z-index: calc(infinity);
+  }
+
+  /*
+     Don't generate box for node view wrapper. This make it easier to style
+     the node views.
+     */
+  div[data-node-view-root="true"] {
+    display: contents;
+  }
+}

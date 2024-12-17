@@ -1,5 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
-import { EditorComp } from '@bangle.io/editor';
+import { Editor } from '@bangle.io/editor';
 import { FunMissing } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
@@ -25,7 +25,7 @@ export function PageEditor() {
       <PageHeaderWrapper />
       <PageMainContentWrapper>
         {currentWsPath && currentWsName ? (
-          <EditorComp
+          <Editor
             key={$forceReloadCounter}
             wsPath={currentWsPath}
             readNote={async (wsPath) => {
@@ -42,6 +42,9 @@ export function PageEditor() {
               );
             }}
           />
+          // <EditorComp
+
+          // />
         ) : (
           <NoticeView
             title="Note not found"

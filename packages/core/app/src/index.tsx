@@ -1,5 +1,3 @@
-import '@bangle.io/editor/src/style.css';
-
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import {
   CoreServiceProvider,
