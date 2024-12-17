@@ -30,7 +30,6 @@
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/is-abort-error": "workspace:*",
-    "idb": "^8.0.0"
-  },
-  "devDependencies": {}
+    "idb": "^8.0.1"
+  }
 }

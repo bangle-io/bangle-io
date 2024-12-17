@@ -33,19 +33,18 @@
     "@bangle.io/command-handlers": "workspace:*",
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/context": "workspace:*",
     "@bangle.io/initialize-services": "workspace:*",
     "@bangle.io/logger": "workspace:*",
+    "@bangle.io/poor-mans-di": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/service-platform": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "jotai": "^2.10.3",
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/poor-mans-di": "workspace:*",
-    "react": "^18.3.1",
-    "@bangle.io/context": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
     "@testing-library/react": "^16.1.0",
-    "@bangle.io/ui-components": "workspace:*"
-  },
-  "devDependencies": {}
+    "jotai": "^2.10.4",
+    "react": "^18.3.1",
+    "wait-for-expect": "^3.0.2"
+  }
 }

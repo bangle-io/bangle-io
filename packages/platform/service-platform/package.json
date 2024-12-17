@@ -37,7 +37,7 @@
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "jotai": "^2.10.3",
+    "jotai": "^2.10.4",
     "page-lifecycle": "^0.1.2",
     "wouter": "^3.3.5"
   },

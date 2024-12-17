@@ -28,7 +28,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "idb": "^8.0.0"
-  },
-  "devDependencies": {}
+    "idb": "^8.0.1"
+  }
 }

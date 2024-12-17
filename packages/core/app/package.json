@@ -39,17 +39,17 @@
     "@bangle.io/omni-search": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "@tanstack/react-virtual": "^3.10.9",
-    "@testing-library/jest-dom": "^6.6.3",
-    "date-fns": "^4.1.0",
-    "jotai": "^2.10.3",
-    "lucide-react": "^0.461.0",
-    "react": "^18.3.1",
-    "wouter": "^3.3.5",
-    "@testing-library/react": "^16.1.0",
     "@bangle.io/ui-hooks": "workspace:*",
-    "react-error-boundary": "^4.1.2"
+    "@bangle.io/ws-path": "workspace:*",
+    "@tanstack/react-virtual": "^3.11.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "date-fns": "^4.1.0",
+    "jotai": "^2.10.4",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-error-boundary": "^4.1.2",
+    "wouter": "^3.3.5"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

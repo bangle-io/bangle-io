@@ -37,12 +37,12 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "lucide-react": "^0.461.0",
+    "lucide-react": "^0.468.0",
     "react": "^18.3.1"
   },
   "devDependencies": {
-    "@bangle.io/service-core": "workspace:*",
     "@bangle.io/command-handlers": "workspace:*",
+    "@bangle.io/service-core": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/jest-dom": "^6.6.3"
   }
