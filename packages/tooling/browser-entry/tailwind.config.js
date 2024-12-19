@@ -98,10 +98,21 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'editor-selected-node': {
+          from: {
+            borderRadius: '2px',
+            backgroundColor: 'hsl(var(--BV-accent))',
+          },
+          to: {
+            backgroundColor: 'transparent',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'editor-selected-node':
+          'editor-selected-node 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955)',
       },
     },
   },

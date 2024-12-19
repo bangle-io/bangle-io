@@ -8,6 +8,7 @@ import {
 } from 'prosekit/extensions/code-block';
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
 import { docToMarkdown, markdownFromHTML, markdownToDoc } from './remark';
+import { activeNode } from './plugin-active-node';
 
 export function createPMEditor({
   defaultContent,
@@ -42,6 +43,7 @@ export function createPMEditor({
           },
         }),
     ),
+    definePlugin(activeNode),
   );
   const editor = createEditor({
     extension,

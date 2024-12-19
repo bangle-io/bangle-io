@@ -57,6 +57,7 @@ export class PmEditorService extends BaseService {
       });
       this.editorMap.set(domNode, editor);
       editor?.mount(domNode);
+      editor?.focus();
     });
   }
 
