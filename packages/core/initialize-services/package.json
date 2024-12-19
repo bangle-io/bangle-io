@@ -35,7 +35,8 @@
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/service-platform": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "@bangle.io/poor-mans-di": "workspace:*"
+    "@bangle.io/poor-mans-di": "workspace:*",
+    "@bangle.io/editor": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/emitter": "workspace:*",

@@ -49,6 +49,7 @@ export function renderWithServices({
         workspaceOps: services.workspaceOps,
         workspaceState: services.workspaceState,
         userActivityService: services.userActivityService,
+        pmEditorService: services.pmEditorService,
       };
 
       const platformServices: PlatformServices = {

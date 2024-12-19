@@ -52,6 +52,7 @@ export const SERVICE_NAME = {
   workspaceOpsService: 'workspace-ops',
   workspaceService: 'workspace',
   workspaceStateService: 'workspace-state',
+  pmEditorService: 'pmEditorService',
 } as const;
 
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];

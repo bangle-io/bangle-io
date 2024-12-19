@@ -1,7 +1,6 @@
 import { useCoreServices } from '@bangle.io/context';
 import { Editor } from '@bangle.io/editor';
 import { FunMissing } from '@bangle.io/ui-components';
-import { resolvePath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import { NoticeView } from '../components/NoticeView';
@@ -26,25 +25,9 @@ export function PageEditor() {
       <PageMainContentWrapper>
         {currentWsPath && currentWsName ? (
           <Editor
-            key={$forceReloadCounter}
+            key={$forceReloadCounter + currentWsPath}
             wsPath={currentWsPath}
-            readNote={async (wsPath) => {
-              return coreServices.fileSystem.readFileAsText(wsPath);
-            }}
-            writeNote={async (wsPath, content) => {
-              const fileName = resolvePath(wsPath)?.fileName || '';
-
-              void coreServices.fileSystem.createFile(
-                wsPath,
-                new File([content], fileName, {
-                  type: 'text/plain',
-                }),
-              );
-            }}
           />
-          // <EditorComp
-
-          // />
         ) : (
           <NoticeView
             title="Note not found"

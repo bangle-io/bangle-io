@@ -66,6 +66,16 @@ export class BrowserErrorHandlerService extends BaseErrorService {
     }
 
     if (!error || isAbortError(error)) {
+      this.logger.debug(`AbortError ${error?.message}`);
+      event.preventDefault();
+      return;
+    }
+
+    if (error.cause && isAbortError(error.cause)) {
+      this.logger.warn(
+        `Error received which was caused by abort: "${error.message}"`,
+      );
+      event.preventDefault();
       return;
     }
 

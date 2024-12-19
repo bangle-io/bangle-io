@@ -29,6 +29,7 @@ import {
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 
+import { PmEditorService } from '@bangle.io/editor';
 import { Container } from '@bangle.io/poor-mans-di';
 import type {
   BaseServiceCommonOptions,
@@ -73,6 +74,7 @@ export function initializeServices(
       workspaceOps: WorkspaceOpsService,
       workspaceState: WorkspaceStateService,
       userActivityService: UserActivityService,
+      pmEditorService: PmEditorService,
     },
   );
 
@@ -164,6 +166,10 @@ export function initializeServices(
     },
   }));
 
+  container.setConfig(PmEditorService, () => ({
+    nothing: true,
+  }));
+
   const services = container.instantiateAll();
 
   services.commandDispatcher.exposedServices = {
@@ -235,6 +241,7 @@ export function initializeServices(
       workspaceOps: services.workspaceOps,
       workspaceState: services.workspaceState,
       userActivityService: services.userActivityService,
+      pmEditorService: services.pmEditorService,
     } satisfies CoreServices,
     mountAll: () => {
       container.mountAll();

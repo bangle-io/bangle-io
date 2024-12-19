@@ -141,6 +141,12 @@ export type AppError =
         invalidWsPath: string;
       };
     }
+  | {
+      name: `error::ws-path:invalid-markdown-path`;
+      payload: {
+        invalidWsPath: string;
+      };
+    }
 
   // Command errors
   | {

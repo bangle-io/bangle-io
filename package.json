@@ -31,7 +31,8 @@
     "plop": "^4.0.1",
     "tslib": "^2.8.1",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "remark-gfm": "^4.0.0"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",

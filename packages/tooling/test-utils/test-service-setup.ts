@@ -33,6 +33,7 @@ import { RootEmitter } from '@bangle.io/root-emitter';
 import { createStore } from 'jotai';
 export * from './test-service-setup';
 import { commandHandlers } from '@bangle.io/command-handlers';
+import { PmEditorService } from '@bangle.io/editor';
 import { Container } from '@bangle.io/poor-mans-di';
 import { TestErrorHandlerService } from '@bangle.io/service-platform/src/test-error-handler';
 
@@ -105,6 +106,7 @@ export function createTestEnvironment({
     workspaceOps: WorkspaceOpsService,
     workspaceState: WorkspaceStateService,
     userActivityService: UserActivityService,
+    pmEditorService: PmEditorService,
   };
 
   const serviceMap = {
@@ -196,6 +198,10 @@ export function createTestEnvironment({
           ['event::editor:reload-editor', 'event::file:force-update'],
           controller.signal,
         ),
+      }));
+
+      container.setConfig(PmEditorService, () => ({
+        nothing: true,
       }));
     },
 

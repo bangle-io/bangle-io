@@ -19,6 +19,7 @@ export {
   breakPathIntoParts,
   isFileWsPath,
   getParentWsPath,
+  assertValidMarkdownWsPath,
   PATH_SEPARATOR,
 } from './helpers';
 

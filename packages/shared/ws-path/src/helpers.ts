@@ -3,6 +3,8 @@ import { throwAppError } from '@bangle.io/base-utils';
 export const DEFAULT_NOTE_EXTENSION = '.md';
 export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
 export const VALID_NOTE_EXTENSIONS_SET = new Set(VALID_NOTE_EXTENSIONS);
+export const VALID_MARKDOWN_EXTENSIONS = ['.md', '.markdown'];
+export const VALID_MARKDOWN_EXTENSIONS_SET = new Set(VALID_MARKDOWN_EXTENSIONS);
 
 type ValidationResult =
   | { isValid: true; wsName: string; filePath: string }
@@ -323,6 +325,26 @@ export function isValidNoteWsPath(wsPath: string | undefined): boolean {
   const resolved = resolvePath(wsPath);
   if (!resolved) return false;
   return hasValidNoteExtension(resolved.fileName);
+}
+
+export function isValidMarkdownWsPath(wsPath: string | undefined): boolean {
+  if (!wsPath) return false;
+  const ext = getExtension(wsPath);
+  if (!ext) return false;
+
+  return VALID_MARKDOWN_EXTENSIONS_SET.has(ext);
+}
+
+export function assertValidMarkdownWsPath(wsPath: string): void {
+  if (!isValidMarkdownWsPath(wsPath)) {
+    throwAppError(
+      'error::ws-path:invalid-markdown-path',
+      'Expected markdown file that ends with .md or .markdown',
+      {
+        invalidWsPath: wsPath,
+      },
+    );
+  }
 }
 
 export function assertValidNoteWsPath(wsPath: string): void {

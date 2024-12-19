@@ -18,7 +18,7 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "universal",
+    "env": "browser",
     "kind": "app",
     "type": "browser"
   },
@@ -29,21 +29,24 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/base-components": "^0.32.1",
-    "@bangle.dev/core": "^0.32.1",
-    "@bangle.dev/markdown": "^0.32.1",
-    "@bangle.dev/markdown-front-matter": "^0.32.1",
-    "@bangle.dev/pm": "0.32.1",
     "@types/react": "^18.3.12",
     "prosemirror-markdown": "^1.13.1",
     "prosekit": "^0.11.0",
+    "unist-util-visit": "^5.0.0",
+    "@prosekit/pm": "^0.1.9",
     "react": "^18.3.1",
     "rehype-parse": "^9.0.1",
     "rehype-remark": "^10.0.0",
     "remark-html": "^16.0.1",
+    "mdast": "^3.0.0",
+    "@types/mdast": "^4.0.4",
+    "remark-gfm": "^4.0.0",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.5",
-    "@bangle.io/base-utils": "workspace:*"
+    "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/service-core": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   }
 }

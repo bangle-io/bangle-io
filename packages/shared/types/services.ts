@@ -8,6 +8,7 @@ import type {
   WorkspaceStorageType,
   commandExcludedServices,
 } from '@bangle.io/constants';
+import type { PmEditorService } from '@bangle.io/editor';
 import type {
   CommandDispatchService,
   CommandRegistryService,
@@ -74,6 +75,7 @@ export type CoreServices = {
   workspaceOps: WorkspaceOpsService;
   workspaceState: WorkspaceStateService;
   userActivityService: UserActivityService;
+  pmEditorService: PmEditorService;
 };
 
 export type PlatformServices = {
