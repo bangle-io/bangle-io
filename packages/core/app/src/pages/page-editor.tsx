@@ -1,3 +1,4 @@
+import { APP_MAIN_CONTENT_PADDING } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { Editor } from '@bangle.io/editor';
 import { FunMissing } from '@bangle.io/ui-components';
@@ -22,11 +23,13 @@ export function PageEditor() {
   return (
     <>
       <PageHeaderWrapper />
-      <PageMainContentWrapper>
+      <PageMainContentWrapper applyPadding={false}>
         {currentWsPath && currentWsName ? (
           <Editor
             key={$forceReloadCounter + currentWsPath}
             wsPath={currentWsPath}
+            // Let editor manage its own padding to show the drag handle
+            className={APP_MAIN_CONTENT_PADDING}
           />
         ) : (
           <NoticeView

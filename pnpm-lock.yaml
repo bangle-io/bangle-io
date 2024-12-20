@@ -240,12 +240,18 @@ importers:
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.17
+      jotai:
+        specifier: ^2.10.4
+        version: 2.10.4(@types/react@18.3.17)(react@18.3.1)
       mdast:
         specifier: ^3.0.0
         version: 3.0.0
       prosekit:
         specifier: ^0.11.0
         version: 0.11.0(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-transform@1.10.2)(prosemirror-view@1.37.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(solid-js@1.9.3)(svelte@5.14.1)(vue@3.5.13(typescript@5.7.2))
+      prosemirror-flat-list:
+        specifier: ~0.5.4
+        version: 0.5.4
       prosemirror-markdown:
         specifier: ^1.13.1
         version: 1.13.1

@@ -63,6 +63,10 @@ export default {
           DEFAULT: 'hsl(var(--BV-card))',
           foreground: 'hsl(var(--BV-card-foreground))',
         },
+        pop: {
+          DEFAULT: 'hsl(var(--BV-pop))',
+          foreground: 'hsl(var(--BV-pop-foreground))',
+        },
         chart: {
           1: 'hsl(var(--BV-chart-1))',
           2: 'hsl(var(--BV-chart-2))',

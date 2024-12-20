@@ -54,6 +54,9 @@
     --BV-border: rgb(213 213 213);
     --BV-input: rgb(213 213 213);
     --BV-ring: rgb(34 34 34);
+
+    --BV-pop: hsl(326 100% 60%);
+    --BV-pop-foreground: rgb(255 255 255);
   }
 
   .BU_dark-scheme {
@@ -99,5 +102,8 @@
     --BV-border: rgb(75 75 75);
     --BV-input: rgb(75 75 75);
     --BV-ring: rgb(235 235 235);
+
+    --BV-pop: hsl(180 100% 50%);
+    --BV-pop-foreground: rgb(0 0 0);
   }
 }

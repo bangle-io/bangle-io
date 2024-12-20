@@ -7,7 +7,18 @@ import {
   defineCodeBlockShiki,
 } from 'prosekit/extensions/code-block';
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
+import {
+  type ListAttributes,
+  getListType,
+  isListNode,
+} from 'prosemirror-flat-list';
+import {
+  createCustomElement,
+  createDragAndDropPlugin,
+  customElementPlugin,
+} from './dd';
 import { activeNode } from './plugin-active-node';
+import { createGlobalDragHandlePlugin } from './plugin-drag2';
 import { placeholderPlugin } from './plugin-placeholder';
 import { docToMarkdown, markdownFromHTML, markdownToDoc } from './remark';
 import { funPlaceholder } from './utils';
@@ -23,8 +34,9 @@ export function createPMEditor({
     defineBasicExtension(),
     defineDropCursor({
       color: false,
-      width: 4,
-      class: 'transition-all bg-blue-500',
+      width: 1,
+      class:
+        'transition-all bg-pop border-solid border-2 border-solid border-pop rounded-sm',
     }),
     defineCodeBlock(),
     defineCodeBlockShiki({
@@ -46,7 +58,11 @@ export function createPMEditor({
         }),
     ),
     definePlugin(activeNode),
-    definePlugin(placeholderPlugin({ placeholder: funPlaceholder() })),
+    definePlugin(
+      createGlobalDragHandlePlugin({
+        notDraggableClassName: 'prosemirror-flat-list',
+      }),
+    ),
   );
   const editor = createEditor({
     extension,

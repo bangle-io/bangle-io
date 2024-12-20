@@ -1,6 +1,6 @@
 import type { EditorState } from '@prosekit/pm/state';
-import { Decoration, DecorationSet } from '@prosekit/pm/view';
 import { Plugin, PluginKey } from '@prosekit/pm/state';
+import { Decoration, DecorationSet } from '@prosekit/pm/view';
 
 export function activeNode() {
   const key = new PluginKey('active-node');

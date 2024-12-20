@@ -31,7 +31,9 @@
   "dependencies": {
     "@types/react": "^18.3.12",
     "prosemirror-markdown": "^1.13.1",
+    "jotai": "^2.10.4",
     "prosekit": "^0.11.0",
+    "prosemirror-flat-list": "~0.5.4",
     "unist-util-visit": "^5.0.0",
     "@prosekit/pm": "^0.1.9",
     "react": "^18.3.1",

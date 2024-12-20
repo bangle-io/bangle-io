@@ -14,19 +14,26 @@ import React, { useState } from 'react';
 import { useCoreServices } from '../../context/src';
 export { PmEditorService } from './pm-editor-service';
 
-export function Editor({ wsPath }: { wsPath: string }) {
+export function Editor({
+  wsPath,
+  className,
+}: {
+  wsPath: string;
+  className?: string;
+}) {
   const { pmEditorService } = useCoreServices();
   const [mountEditor] = useState(() => pmEditorService.newEditor({ wsPath }));
 
   return (
-    <div className="box-border flex h-full min-h-36 w-full flex-col overflow-x-hidden overflow-y-hidden">
-      <div className="relative box-border w-full flex-1 overflow-y-scroll">
+    <div className="box-border flex h-full min-h-36 w-full flex-col ">
+      <div className="relative box-border w-full flex-1">
         <div
           ref={mountEditor}
           className={cx(
             'ProseMirror box-border min-h-full py-8 outline-none outline-0',
             '[&_:not(pre)_code]:rounded-md [&_:not(pre)_code]:bg-muted/40 [&_:not(pre)_code]:px-1.5 [&_:not(pre)_code]:py-0.5 [&_:not(pre)_code]:font-mono',
             "[&_pre]:bg-muted/30 [&_span[data-mention='tag']]:text-primary [&_span[data-mention='user']]:text-accent",
+            className,
           )}
         />
       </div>
