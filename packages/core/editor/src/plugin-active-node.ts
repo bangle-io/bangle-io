@@ -1,10 +1,9 @@
 import type { EditorState } from '@prosekit/pm/state';
 import { Decoration, DecorationSet } from '@prosekit/pm/view';
-const extName = '@bangle.io/core-editor';
 import { Plugin, PluginKey } from '@prosekit/pm/state';
 
 export function activeNode() {
-  const key = new PluginKey(extName + ':active_node');
+  const key = new PluginKey('active-node');
 
   return new Plugin({
     key,
@@ -12,7 +11,7 @@ export function activeNode() {
       init: (_, state) => {
         return buildDeco(state);
       },
-      apply: (tr, old, oldState, newState) => {
+      apply: (tr, old, _oldState, newState) => {
         if (!tr.selectionSet) {
           return old;
         }

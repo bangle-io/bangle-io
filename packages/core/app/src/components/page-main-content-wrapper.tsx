@@ -16,7 +16,7 @@ export function PageMainContentWrapper({
   return (
     <div
       className={cx(
-        'B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0',
+        'B-app-main-content flex flex-1 flex-col gap-4 p-4 pt-0 md:px-6',
         !wideEditor && 'max-w-screen-md',
       )}
     >

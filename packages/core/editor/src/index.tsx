@@ -13,31 +13,6 @@ import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
 import React, { useState } from 'react';
 import { useCoreServices } from '../../context/src';
 export { PmEditorService } from './pm-editor-service';
-export function defineExtension() {
-  return union(
-    defineBasicExtension(),
-    defineDropCursor({
-      color: false,
-      width: 4,
-      class: 'transition-all bg-blue-500',
-    }),
-    defineCodeBlock(),
-    defineCodeBlockShiki({
-      themes: ['github-light'],
-      langs: ['typescript', 'javascript', 'python', 'rust', 'go', 'java'],
-    }),
-    // definePlugin(
-    //   () =>
-    //     new Plugin({
-    //       view(view) {
-    //         return {
-    //           update(view, prevState) {},
-    //         };
-    //       },
-    //     }),
-    // ),
-  );
-}
 
 export function Editor({ wsPath }: { wsPath: string }) {
   const { pmEditorService } = useCoreServices();

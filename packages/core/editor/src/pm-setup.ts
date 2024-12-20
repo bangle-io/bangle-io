@@ -7,8 +7,10 @@ import {
   defineCodeBlockShiki,
 } from 'prosekit/extensions/code-block';
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
-import { docToMarkdown, markdownFromHTML, markdownToDoc } from './remark';
 import { activeNode } from './plugin-active-node';
+import { placeholderPlugin } from './plugin-placeholder';
+import { docToMarkdown, markdownFromHTML, markdownToDoc } from './remark';
+import { funPlaceholder } from './utils';
 
 export function createPMEditor({
   defaultContent,
@@ -44,6 +46,7 @@ export function createPMEditor({
         }),
     ),
     definePlugin(activeNode),
+    definePlugin(placeholderPlugin({ placeholder: funPlaceholder() })),
   );
   const editor = createEditor({
     extension,

@@ -47,13 +47,9 @@ export const wsCommandHandlers = [
       void fileSystem
         .createFile(
           wsPath,
-          new File(
-            [`I am content of ${fileNameWithoutExt}`],
-            fileNameWithoutExt,
-            {
-              type: 'text/plain',
-            },
-          ),
+          new File([''], fileNameWithoutExt, {
+            type: 'text/plain',
+          }),
         )
         .then(() => {
           if (navigate) {
