@@ -61,6 +61,7 @@ export function createPMEditor({
     definePlugin(
       createGlobalDragHandlePlugin({
         notDraggableClassName: 'prosemirror-flat-list',
+        excludedTags: ['blockquote'],
       }),
     ),
   );
