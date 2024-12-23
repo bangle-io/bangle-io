@@ -225,6 +225,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../../js-lib/logger
       '@bangle.io/service-core':
         specifier: workspace:*
         version: link:../service-core

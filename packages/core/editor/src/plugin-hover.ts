@@ -1,7 +1,4 @@
-import type { ProseMirrorNode } from '@prosekit/pm/model';
-import type { EditorState } from '@prosekit/pm/state';
 import { Plugin, PluginKey } from '@prosekit/pm/state';
-import type { Transaction } from '@prosekit/pm/state';
 import { Decoration, DecorationSet } from '@prosekit/pm/view';
 import type { EditorView } from '@prosekit/pm/view';
 

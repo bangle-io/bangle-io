@@ -4,18 +4,14 @@ import {
   type Schema,
   Slice,
 } from '@prosekit/pm/model';
-import { EditorState, NodeSelection } from '@prosekit/pm/state';
+import { type EditorState, NodeSelection } from '@prosekit/pm/state';
 import { Plugin, PluginKey, TextSelection } from '@prosekit/pm/state';
-import type { Transaction } from '@prosekit/pm/state';
 import {
-  Decoration,
-  DecorationSet,
   // @ts-expect-error not exposed
   __serializeForClipboard,
 } from '@prosekit/pm/view';
 import type { EditorView } from '@prosekit/pm/view';
 import { createDragHandle } from './drag-handle';
-
 const ORDERED_LIST_TAG = 'OL';
 
 type ListType = 'ordered' | 'unordered' | 'todo' | null;
@@ -178,9 +174,8 @@ function nodePosAtDOM(
     top: boundingRect.top + 1,
   })?.inside;
 }
-
-function calcNodePos(pos: number, view: EditorView) {
-  const $pos = view.state.doc.resolve(pos);
+function calcNodePos(pos: number, state: EditorState) {
+  const $pos = state.doc.resolve(pos);
   if ($pos.depth > 1) return $pos.before($pos.depth);
   return pos;
 }
@@ -234,12 +229,12 @@ export function createGlobalDragHandlePlugin(
 
     let draggedNodePos = nodePosAtDOM(node, view, options);
     if (draggedNodePos == null || draggedNodePos < 0) return;
-    draggedNodePos = calcNodePos(draggedNodePos, view);
+    draggedNodePos = calcNodePos(draggedNodePos, view.state);
 
     const { from, to } = view.state.selection;
     const diff = from - to;
 
-    const fromSelectionPos = calcNodePos(from, view);
+    const fromSelectionPos = calcNodePos(from, view.state);
     let differentNodeSelected = false;
 
     const nodePos = view.state.doc.resolve(fromSelectionPos);
@@ -300,7 +295,6 @@ export function createGlobalDragHandlePlugin(
     event.dataTransfer.setData('text/html', dom.innerHTML);
     event.dataTransfer.setData('text/plain', text);
     event.dataTransfer.effectAllowed = 'copyMove';
-
     event.dataTransfer.setDragImage(node, 0, 0);
     view.dragging = { slice, move: event.ctrlKey };
   }

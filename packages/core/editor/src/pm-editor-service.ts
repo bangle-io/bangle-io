@@ -17,6 +17,7 @@ export class PmEditorService extends BaseService {
   static deps = ['fileSystem'] as const;
 
   private editorMap = new WeakMap<HTMLElement, Editor>();
+  private editors = new Map<string, WeakRef<Editor>>();
 
   constructor(
     context: BaseServiceContext,
@@ -46,6 +47,8 @@ export class PmEditorService extends BaseService {
     this.dependencies.fileSystem.readFileAsText(wsPath).then((content) => {
       const editor = createPMEditor({
         defaultContent: content || '',
+        logger: this.logger,
+        store: this.store,
         onDocChange: (doc) => {
           this.dependencies.fileSystem.writeFile(
             wsPath,
@@ -67,9 +70,14 @@ export class PmEditorService extends BaseService {
     this.editorMap.delete(domNode);
   }
 
-  newEditor({ wsPath }: { wsPath: string }) {
+  newEditor({ wsPath, name }: { wsPath: string; name: string }) {
     if (this.aborted) {
       return;
+    }
+
+    const editor = this.editors.get(name);
+    if (editor) {
+      throw new Error(`Editor with name ${name} already exists`);
     }
 
     let domNode: HTMLElement | null = null;
