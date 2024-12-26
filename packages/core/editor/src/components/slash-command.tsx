@@ -1,66 +1,46 @@
-import { $suggestion } from '@bangle.io/prosemirror-plugins';
-import {
-  autoUpdate,
-  computePosition,
-  flip,
-  offset,
-  shift,
-} from '@floating-ui/dom';
-import { useAtomValue } from 'jotai';
-import React, { useEffect, useRef, type ReactElement } from 'react';
+import { suggestions } from '@bangle.io/prosemirror-plugins';
+import { useAtomValue, useSetAtom } from 'jotai';
+import React, { useEffect, type ReactElement } from 'react';
+import { useFloatingPosition } from './use-floating-position';
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
  * the suggestion mark that triggers the slash command.
  */
 export function SlashCommand(): ReactElement | null {
-  const suggestion = useAtomValue($suggestion);
-  const slashRef = useRef<HTMLDivElement>(null);
+  const suggestion = useAtomValue(suggestions.$suggestion);
+  const markName = suggestion?.markName;
+  const setSuggestionUi = useSetAtom(suggestions.$suggestionUi);
 
   useEffect(() => {
-    if (!suggestion?.show) {
-      return;
-    }
-    const floating = slashRef.current;
-    if (!floating) {
+    if (!markName) {
       return;
     }
 
-    const anchor = suggestion.anchorEl();
-
-    const boundary = document.querySelector(
-      '.ProseMirror:not([contenteditable="false"])',
-    );
-    if (!anchor || !boundary) {
-      return;
-    }
-
-    // Recompute position on scroll / resize / selection changes
-    // autoUpdate will call our callback whenever it detects changes
-    const cleanup = autoUpdate(anchor, floating, async () => {
-      const { x, y } = await computePosition(anchor, floating, {
-        strategy: 'absolute',
-        placement: 'bottom-start',
-        middleware: [
-          offset({
-            mainAxis: 8,
-          }),
-          flip(),
-          shift({ boundary }),
-        ],
-      });
-
-      Object.assign(floating.style, {
-        position: 'absolute',
-        left: `${Math.round(x)}px`,
-        top: `${Math.round(y)}px`,
-      });
-    });
+    setSuggestionUi((existing) => ({
+      ...existing,
+      [markName]: {
+        onSelect: (index) => {
+          console.log('onSelect', index);
+        },
+      },
+    }));
 
     return () => {
-      cleanup();
+      setSuggestionUi((existing) => {
+        const cloned = { ...existing };
+        delete cloned[markName];
+
+        return cloned;
+      });
     };
-  }, [suggestion]);
+  }, [markName, setSuggestionUi]);
+
+  const slashRef = useFloatingPosition({
+    show: Boolean(suggestion?.show),
+    anchorEl: () => suggestion?.anchorEl() ?? null,
+    boundarySelector: '.ProseMirror:not([contenteditable="false"])',
+  });
 
   if (!suggestion?.show) {
     return null;
@@ -79,7 +59,9 @@ export function SlashCommand(): ReactElement | null {
       }}
     >
       <div style={{ color: 'white', fontSize: 14 }}>
-        <strong>Position:</strong> {suggestion.position} <br />
+        <strong>Position:</strong> {suggestion.position}{' '}
+        {suggestion.selectedIndex}
+        <br />
         <strong>Query:</strong> {suggestion.text}
       </div>
     </div>

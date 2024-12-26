@@ -1,10 +1,12 @@
 import { Plugin } from '@prosekit/pm/state';
 import { defineBasicExtension } from 'prosekit/basic';
 import {
-  type NodeJSON,
+  Priority,
   createEditor,
+  defineKeymap,
   defineMarkSpec,
   definePlugin,
+  withPriority,
 } from 'prosekit/core';
 import { union } from 'prosekit/core';
 import {
@@ -15,12 +17,7 @@ import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
 import { defineInputRule } from 'prosekit/extensions/input-rule';
 
 import type { Logger } from '@bangle.io/logger';
-import {
-  pluginSuggestion,
-  storePlugin,
-  suggestionsMark,
-  triggerInputRule,
-} from '@bangle.io/prosemirror-plugins';
+import { storePlugin, suggestions } from '@bangle.io/prosemirror-plugins';
 import type { Store } from '@bangle.io/types';
 import { createGlobalDragHandlePlugin } from './drag/plugin-drag';
 import { activeNode } from './plugin-active-node';
@@ -79,24 +76,28 @@ export function createPMEditor({
     ),
     // suggestions
     defineMarkSpec(
-      suggestionsMark({
+      suggestions.suggestionsMark({
         markName: SLASH.markName,
         className: 'text-pop',
         trigger: SLASH.trigger,
       }),
     ),
     defineInputRule(
-      triggerInputRule({
+      suggestions.triggerInputRule({
         trigger: SLASH.trigger,
         markName: SLASH.markName,
       }),
     ),
     definePlugin(
-      pluginSuggestion({
+      suggestions.pluginSuggestion({
         markName: SLASH.markName,
         trigger: SLASH.trigger,
         logger,
       }),
+    ),
+    withPriority(
+      defineKeymap(suggestions.suggestionKeymap()),
+      Priority.highest,
     ),
   );
   const editor = createEditor({

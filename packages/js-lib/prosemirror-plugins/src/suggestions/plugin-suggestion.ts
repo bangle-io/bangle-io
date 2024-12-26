@@ -13,18 +13,22 @@ import { isTextSelection } from 'prosekit/core';
 import { editorStore } from '../pm-utils/store';
 import { findFirstMarkPosition } from '../pm-utils/utils';
 
-export const $suggestion = atom<
-  | undefined
-  | {
-      markName: string;
-      trigger: string;
-      show: boolean;
-      text: string;
-      position: number;
-      refresh: number;
-      anchorEl: () => VirtualElement | null;
-    }
->();
+type Suggestion = {
+  markName: string;
+  trigger: string;
+  show: boolean;
+  text: string;
+  position: number;
+  refresh: number;
+  anchorEl: () => VirtualElement | null;
+  selectedIndex: number;
+};
+
+export const $suggestion = atom<Suggestion | undefined>();
+
+export const $suggestionUi = atom<
+  Record<string, { onSelect: (selected: Suggestion) => void }>
+>({});
 
 /**
  * A minimal "virtual element" interface that floating-ui expects
@@ -147,6 +151,7 @@ export function pluginSuggestion({
             }
 
             editorStore.set(state, $suggestion, {
+              selectedIndex: suggestion?.selectedIndex ?? 0,
               markName,
               trigger,
               show: true,
@@ -236,25 +241,24 @@ export function removeSuggestMark({
 
     editorStore.set(state, $suggestion, undefined);
 
-    const { start, end } = queryMark;
     if (
-      start === -1 &&
+      !queryMark &&
       state.storedMarks &&
       markType.isInSet(state.storedMarks)
     ) {
-      if (dispatch) {
-        dispatch(state.tr.removeStoredMark(markType));
-      }
+      dispatch?.(
+        state.tr.removeStoredMark(markType).setMeta('addToHistory', false),
+      );
       return true;
     }
 
-    if (start === -1) {
+    if (!queryMark) {
       return false;
     }
 
     dispatch?.(
       state.tr
-        .removeMark(start, end, markType)
+        .removeMark(queryMark.start, queryMark.end, markType)
         .removeStoredMark(markType)
         .setMeta('addToHistory', false),
     );
