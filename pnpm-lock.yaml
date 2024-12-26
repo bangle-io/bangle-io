@@ -228,12 +228,21 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/prosemirror-plugins':
+        specifier: workspace:*
+        version: link:../../js-lib/prosemirror-plugins
       '@bangle.io/service-core':
         specifier: workspace:*
         version: link:../service-core
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
+      '@floating-ui/dom':
+        specifier: ^1.6.12
+        version: 1.6.12
       '@prosekit/pm':
         specifier: ^0.1.9
         version: 0.1.9
@@ -470,6 +479,30 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../mini-js-utils
+
+  packages/js-lib/prosemirror-plugins:
+    dependencies:
+      '@bangle.io/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../mini-js-utils
+      '@floating-ui/dom':
+        specifier: ^1.6.12
+        version: 1.6.12
+      '@prosekit/pm':
+        specifier: ^0.1.9
+        version: 0.1.9
+      jotai:
+        specifier: ^2.10.4
+        version: 2.10.4(@types/react@18.3.17)(react@18.3.1)
+      prosekit:
+        specifier: ^0.11.0
+        version: 0.11.0(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-transform@1.10.2)(prosemirror-view@1.37.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(solid-js@1.9.3)(svelte@5.14.1)(vue@3.5.13(typescript@5.7.2))
+      prosemirror-flat-list:
+        specifier: ~0.5.4
+        version: 0.5.4
 
   packages/js-lib/weak-cache: {}
 

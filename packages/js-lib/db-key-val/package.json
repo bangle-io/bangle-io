@@ -29,5 +29,6 @@
   "scripts": {},
   "dependencies": {
     "idb": "^8.0.1"
-  }
+  },
+  "devDependencies": {}
 }

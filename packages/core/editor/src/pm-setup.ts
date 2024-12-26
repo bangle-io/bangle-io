@@ -15,15 +15,17 @@ import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
 import { defineInputRule } from 'prosekit/extensions/input-rule';
 
 import type { Logger } from '@bangle.io/logger';
-import { defineImage } from 'prosekit/extensions/image';
+import {
+  pluginSuggestion,
+  storePlugin,
+  suggestionsMark,
+  triggerInputRule,
+} from '@bangle.io/prosemirror-plugins';
+import type { Store } from '@bangle.io/types';
 import { createGlobalDragHandlePlugin } from './drag/plugin-drag';
 import { activeNode } from './plugin-active-node';
 import { placeholderPlugin } from './plugin-placeholder';
-import { type Store, storePlugin } from './pm-utils/atom';
-import { docToMarkdown, markdownFromHTML, markdownToDoc } from './remark';
-import { triggerInputRule } from './suggestions/input-rule';
-import { pluginSuggestion } from './suggestions/plugin-suggestion';
-import { suggestionsMark } from './suggestions/suggestions-mark';
+import { docToMarkdown, markdownToDoc } from './remark';
 import { funPlaceholder } from './utils';
 
 const SLASH = { trigger: '/', markName: 'suggestions' };

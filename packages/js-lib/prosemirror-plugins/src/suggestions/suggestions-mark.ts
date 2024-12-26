@@ -1,4 +1,4 @@
-import { assertIsDefined } from '@bangle.io/base-utils';
+import { assertIsDefined } from '@bangle.io/mini-js-utils';
 import type { Mark, Schema } from '@prosekit/pm/model';
 import type { MarkSpecOptions } from 'prosekit/core';
 
@@ -19,7 +19,7 @@ export function suggestionsMark<TMarkName extends string>({
     inclusive: true,
     excludes: '_',
     group: 'suggestTriggerMarks',
-    parseDOM: [{ tag: `span[data-${markName}]` }],
+    parseDOM: [{ tag: `span[data-mark-name="${markName}"]` }],
     toDOM: () => {
       return [
         'span',

@@ -34,6 +34,7 @@
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/context": "workspace:*",
+    "@bangle.io/editor": "workspace:*",
     "@bangle.io/initialize-services": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/poor-mans-di": "workspace:*",
@@ -45,7 +46,7 @@
     "@testing-library/react": "^16.1.0",
     "jotai": "^2.10.4",
     "react": "^18.3.1",
-    "wait-for-expect": "^3.0.2",
-    "@bangle.io/editor": "workspace:*"
-  }
+    "wait-for-expect": "^3.0.2"
+  },
+  "devDependencies": {}
 }

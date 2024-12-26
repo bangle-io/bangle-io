@@ -3,17 +3,9 @@ import 'prosekit/extensions/list/style.css';
 import './typography.css';
 
 import { cx } from '@bangle.io/base-utils';
-import { useAtomValue } from 'jotai';
-import { defineBasicExtension } from 'prosekit/basic';
-import { union } from 'prosekit/core';
-import {
-  defineCodeBlock,
-  defineCodeBlockShiki,
-} from 'prosekit/extensions/code-block';
-import { defineDropCursor } from 'prosekit/extensions/drop-cursor';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useCoreServices } from '../../context/src';
-import { $suggestion } from './suggestions/plugin-suggestion';
+import { SlashCommand } from './components/slash-command';
 export { PmEditorService } from './pm-editor-service';
 
 const MAIN_EDITOR_NAME = 'main-editor';
@@ -42,45 +34,8 @@ export function Editor({
             className,
           )}
         />
-        <Suggestion />
+        <SlashCommand />
       </div>
-    </div>
-  );
-}
-
-function Suggestion() {
-  const suggestion = useAtomValue($suggestion);
-
-  const [position, updatePosition] = useState(() => {
-    return suggestion?.coordsAtPos();
-  });
-
-  useEffect(() => {
-    const coords = suggestion?.coordsAtPos();
-    if (!coords) {
-      return;
-    }
-    updatePosition({
-      top: coords.top,
-      left: coords.left,
-    });
-  }, [suggestion?.coordsAtPos]);
-
-  if (!suggestion || !position) {
-    return null;
-  }
-
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        top: position?.top,
-        left: position?.left,
-
-        backgroundColor: 'green',
-      }}
-    >
-      {suggestion.position} {suggestion.text}
     </div>
   );
 }

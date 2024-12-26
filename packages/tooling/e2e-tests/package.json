@@ -27,8 +27,8 @@
   "type": "module",
   "scripts": {
     "test": "playwright test  -c ./playwright.config.ts",
-    "test-ui-mode": "playwright test --ui -c ./playwright.config.ts",
-    "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts"
+    "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts",
+    "test-ui-mode": "playwright test --ui -c ./playwright.config.ts"
   },
   "dependencies": {
     "@bangle.io/browser-entry": "workspace:*",
@@ -48,5 +48,6 @@
     "tailwindcss": "^3.4.16",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^1.2.0"
-  }
+  },
+  "devDependencies": {}
 }

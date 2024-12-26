@@ -30,5 +30,6 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "react": "^18.3.1"
-  }
+  },
+  "devDependencies": {}
 }

@@ -1,12 +1,5 @@
-import { assertIsDefined } from '@bangle.io/base-utils';
 import type { Logger } from '@bangle.io/logger';
-import {
-  Fragment,
-  type MarkType,
-  type ProseMirrorNode,
-  type Schema,
-  Slice,
-} from '@prosekit/pm/model';
+import type { MarkType } from '@prosekit/pm/model';
 import {
   type Command,
   type EditorState,
@@ -14,9 +7,10 @@ import {
   type Selection,
 } from '@prosekit/pm/state';
 
+import { assertIsDefined } from '@bangle.io/mini-js-utils';
 import { atom } from 'jotai';
 import { isTextSelection } from 'prosekit/core';
-import { editorStore } from '../pm-utils/atom';
+import { editorStore } from '../pm-utils/store';
 import { findFirstMarkPosition } from '../pm-utils/utils';
 
 export const $suggestion = atom<
@@ -27,9 +21,18 @@ export const $suggestion = atom<
       show: boolean;
       text: string;
       position: number;
-      coordsAtPos: () => undefined | { top: number; left: number };
+      refresh: number;
+      anchorEl: () => VirtualElement | null;
     }
 >();
+
+/**
+ * A minimal "virtual element" interface that floating-ui expects
+ * (using only getBoundingClientRect).
+ */
+export interface VirtualElement {
+  getBoundingClientRect(): DOMRect;
+}
 
 // TODO current if the query is /sdsd /s dasdlkasd and the user moves out the second subquery is selected
 export function pluginSuggestion({
@@ -43,11 +46,42 @@ export function pluginSuggestion({
 }) {
   const log = logger?.child(`pluginSuggestion[${markName}]`);
   return new Plugin({
-    view: (e) => {
-      editorStore.sub(e.state, $suggestion, () => {
-        log?.debug('suggestion:sub', editorStore.get(e.state, $suggestion));
+    view: (view) => {
+      const handleScrollOrResize = () => {
+        const suggestion = editorStore.get(view.state, $suggestion);
+        if (suggestion) {
+          editorStore.set(view.state, $suggestion, {
+            ...suggestion,
+            refresh: Date.now(),
+          });
+        }
+      };
+
+      let rafId: number | null = null;
+      const handleScrollOrResizeWithRaf = () => {
+        if (rafId === null) {
+          rafId = requestAnimationFrame(() => {
+            handleScrollOrResize();
+            rafId = null;
+          });
+        }
+      };
+
+      window.addEventListener('scroll', handleScrollOrResizeWithRaf, {
+        passive: true,
       });
+      window.addEventListener('resize', handleScrollOrResizeWithRaf, {
+        passive: true,
+      });
+
       return {
+        destroy: () => {
+          window.removeEventListener('scroll', handleScrollOrResizeWithRaf);
+          window.removeEventListener('resize', handleScrollOrResizeWithRaf);
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+          }
+        },
         update: (view, lastState) => {
           const { state } = view;
           if (lastState === state) {
@@ -58,7 +92,6 @@ export function pluginSuggestion({
           assertIsDefined(markType, `markType ${markName} not found`);
 
           const querytext = querySuggestionMarkTextContent(markName, state);
-
           log?.debug('querytext', querytext);
 
           if (
@@ -119,18 +152,23 @@ export function pluginSuggestion({
               show: true,
               text,
               position: startPosition,
-              coordsAtPos: () => {
+              refresh: Date.now(),
+              anchorEl: () => {
                 if (view.isDestroyed) {
-                  return undefined;
+                  return null;
                 }
-                const pos = view.coordsAtPos(startPosition);
 
-                console.log('view.nodeDOM', view.nodeDOM(startPosition));
-                console.log('view.nodeDOM', pos);
-                return {
-                  left: pos?.left,
-                  top: pos?.bottom,
+                const coords = view.coordsAtPos(startPosition);
+                if (!coords) {
+                  return null;
+                }
+
+                // Return a virtual element with getBoundingClientRect
+                const rect = new DOMRect(coords.left, coords.bottom, 0, 0);
+                const virtualEl: VirtualElement = {
+                  getBoundingClientRect: () => rect,
                 };
+                return virtualEl;
               },
             });
           } else {
@@ -159,15 +197,12 @@ function doesQueryHaveTrigger(
   trigger: string,
 ) {
   const { nodeBefore } = state.selection.$from;
-
   // nodeBefore in a new line (a new paragraph) is null
   if (!nodeBefore) {
     return false;
   }
 
   const suggestMark = markType.isInSet(nodeBefore.marks || []);
-
-  // suggestMark is undefined if you delete the trigger while keeping the rest of the query alive
   if (!suggestMark) {
     return false;
   }
@@ -220,17 +255,7 @@ export function removeSuggestMark({
     dispatch?.(
       state.tr
         .removeMark(start, end, markType)
-        // stored marks are marks which will be carried forward to whatever
-        // the user types next, like if current mark
-        // is bold, new input continues being bold
         .removeStoredMark(markType)
-        // This helps us avoid the case:
-        // when a user deleted the trigger/ in '<suggest_mark>/something</suggest_mark>'
-        // and then performs undo.
-        // If we do not hide this from history, command z will bring
-        // us in the state of `<suggest_mark>something<suggest_mark>` without the trigger `/`
-        // and seeing this state `tooltipActivatePlugin` plugin will dispatch a new command removing
-        // the mark, hence never allowing the user to command z.
         .setMeta('addToHistory', false),
     );
     return true;
@@ -247,19 +272,19 @@ export function querySuggestionMarkTextContent(
 
   let suggestionText = '';
   let withinMark = false;
-
   let startPosition = -1;
 
   doc.descendants((node, pos) => {
     if (node.marks.some((mark) => mark.type === markType)) {
-      startPosition = pos;
+      if (!withinMark) {
+        startPosition = pos;
+      }
       withinMark = true;
       suggestionText += node.textContent;
     } else if (withinMark) {
       // Encountered a break in the mark, stop further processing
       return false;
     }
-
     return undefined;
   });
 

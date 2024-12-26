@@ -1,6 +1,5 @@
 import { type EditorState, Plugin, PluginKey } from '@prosekit/pm/state';
 import { type Atom, type WritableAtom, createStore } from 'jotai';
-import type { Editor } from 'prosekit/core';
 export type Store = ReturnType<typeof createStore>;
 
 const atomStoreKey = new PluginKey('atomStore');
