@@ -53,7 +53,8 @@
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",
     "@bangle.io/types": "workspace:*",
-    "@floating-ui/dom": "^1.6.12"
+    "@floating-ui/dom": "^1.6.12",
+    "@bangle.io/ui-components": "workspace:*"
   },
   "devDependencies": {}
 }

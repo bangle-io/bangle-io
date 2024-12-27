@@ -13,7 +13,7 @@ import { isTextSelection } from 'prosekit/core';
 import { editorStore } from '../pm-utils/store';
 import { findFirstMarkPosition } from '../pm-utils/utils';
 
-type Suggestion = {
+export type Suggestion = {
   markName: string;
   trigger: string;
   show: boolean;

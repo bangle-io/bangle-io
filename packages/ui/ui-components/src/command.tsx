@@ -69,9 +69,13 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
     Icon?: React.ElementType;
+    hidden?: boolean;
   }
->(({ className, Icon = Search, ...props }, ref) => (
-  <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+>(({ className, Icon = Search, hidden, ...props }, ref) => (
+  <div
+    className={cn('flex items-center border-b px-3', hidden ? 'hidden' : '')}
+    cmdk-input-wrapper=""
+  >
     <Icon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
@@ -149,7 +153,7 @@ const CommandItem = React.forwardRef<
     className={cn(
       "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-sidebar-accent data-[selected=true]:text-sidebar-accent-foreground data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       // for showing the little highlight on left
-      "data-[selected=true]:after:absolute data-[selected=true]:after:top-[20%] data-[selected=true]:after:left-[-6px] data-[selected=true]:after:h-[60%] data-[selected=true]:after:w-[4px] data-[selected=true]:after:rounded data-[selected=true]:after:bg-accent data-[selected=true]:after:content-['']",
+      "data-[selected=true]:after:absolute data-[selected=true]:after:top-[20%] data-[selected=true]:after:left-[-6px] data-[selected=true]:after:h-[60%] data-[selected=true]:after:w-[4px] data-[selected=true]:after:rounded data-[selected=true]:after:bg-pop data-[selected=true]:after:content-['']",
       className,
     )}
     {...props}
@@ -180,7 +184,7 @@ const CommandHints = ({ hints }: { hints?: string[] }) => {
   }
 
   return (
-    <div className="mt-2 flex h-10 items-center justify-end border-border border-t bg-muted/30 px-3">
+    <div className="mt-2 flex h-10 select-none items-center justify-end border-border border-t bg-muted/30 px-3">
       {hints.map((hint, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: acceptable for static hints
         <React.Fragment key={index}>
