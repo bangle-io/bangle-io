@@ -9,10 +9,26 @@ import {
   CommandList,
   CommandSeparator,
 } from '@bangle.io/ui-components';
+import {
+  addMonths,
+  addWeeks,
+  format,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+} from 'date-fns';
 import { useAtomValue, useSetAtom } from 'jotai';
-import React, { useEffect, useRef, type ReactElement } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  type ReactElement,
+} from 'react';
 import { useCoreServices } from '../../../context/src';
-import { useFloatingPosition } from './use-floating-position';
+import {
+  FLOATING_INITIAL_STYLE,
+  useFloatingPosition,
+} from './use-floating-position';
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
@@ -30,32 +46,13 @@ export function SlashCommand({
   const prevSelectedIndexRef = useRef<number>(0);
   const { pmEditorService } = useCoreServices();
 
-  const commands = [
-    {
-      group: 'Basic',
-      items: [
-        { id: 'create-new', label: 'Create new' },
-        { id: 'paragraph', label: 'Paragraph' },
-        { id: 'heading-1', label: 'Heading 1' },
-        { id: 'heading-2', label: 'Heading 2' },
-        { id: 'heading-3', label: 'Heading 3' },
-      ],
-    },
-    {
-      group: 'Lists',
-      items: [
-        { id: 'bullet-list', label: 'Bullet list' },
-        { id: 'numbered-list', label: 'Numbered list' },
-        { id: 'todo-list', label: 'To-do list' },
-      ],
-    },
-  ];
-
   // Add effect to watch selectedIndex changes
   useEffect(() => {
     const selectedIndex = suggestion?.selectedIndex ?? 0;
     const prevIndex = prevSelectedIndexRef.current;
 
+    // Well cmdk isnt the best maintained library, so we need to manually
+    // wire up the keyboard navigation.
     if (selectedIndex !== prevIndex && commandRef.current) {
       const key = selectedIndex > prevIndex ? 'ArrowDown' : 'ArrowUp';
       const event = new KeyboardEvent('keydown', {
@@ -107,24 +104,27 @@ export function SlashCommand({
   });
   const editor = pmEditorService.getEditor(editorName);
 
+  const dismissCommandUi = useCallback(() => {
+    if (!editor || !suggestion?.markName) {
+      return;
+    }
+
+    suggestions.replaceSuggestMarkWith({
+      markName: suggestion.markName,
+      content: '',
+    })(editor.view.state, editor.view.dispatch);
+  }, [editor, suggestion?.markName]);
+
   if (!editor || !suggestion?.show) {
     return null;
   }
 
   return (
-    <div
-      ref={slashRef}
-      style={{
-        // this is important to prevent cmdk from causing vertical layout issues due to its scrollIntoView
-        display: 'none',
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        zIndex: 100,
-      }}
-      className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
-    >
-      <Command ref={commandRef}>
+    <div ref={slashRef} style={FLOATING_INITIAL_STYLE}>
+      <Command
+        ref={commandRef}
+        className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+      >
         <CommandInput
           hidden
           value={suggestion.text.slice(1)}
@@ -134,28 +134,127 @@ export function SlashCommand({
           <span className="text-muted-foreground">Nothing found</span>
         </CommandEmpty>
         <CommandList>
-          {commands.map((group, groupIndex) => {
-            return (
-              <React.Fragment key={group.group}>
-                {groupIndex > 0 && <CommandSeparator />}
-                <CommandGroup heading={group.group} className="text-foreground">
-                  {group.items.map((command) => {
-                    return (
-                      <CommandItem
-                        key={command.id}
-                        value={command.id}
-                        onSelect={() => {
-                          console.log('Selected:', command.label);
-                        }}
-                      >
-                        {command.label}
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              </React.Fragment>
-            );
-          })}
+          <CommandGroup heading="Basic">
+            <CommandItem
+              value="paragraph"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.setBlockType({ type: 'paragraph' });
+              }}
+            >
+              Paragraph
+            </CommandItem>
+            <CommandItem
+              value="heading-1"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.setHeading({ level: 1 });
+              }}
+            >
+              Heading 1
+            </CommandItem>
+            <CommandItem
+              value="heading-2"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.setHeading({ level: 2 });
+              }}
+            >
+              Heading 2
+            </CommandItem>
+            <CommandItem
+              value="heading-3"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.setHeading({ level: 3 });
+              }}
+            >
+              Heading 3
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandSeparator />
+
+          <CommandGroup heading="Lists">
+            <CommandItem
+              value="bullet-list"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.toggleList({ kind: 'bullet' });
+              }}
+            >
+              Bullet list
+            </CommandItem>
+            <CommandItem
+              value="numbered-list"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.toggleList({ kind: 'ordered' });
+              }}
+            >
+              Numbered list
+            </CommandItem>
+            <CommandItem
+              value="todo-list"
+              onSelect={() => {
+                dismissCommandUi();
+                editor.commands.toggleList({ kind: 'task' });
+              }}
+            >
+              To-do list
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandSeparator />
+
+          <CommandGroup heading="Time">
+            <CommandItem
+              value="today"
+              onSelect={() => {
+                dismissCommandUi();
+                const today = format(new Date(), 'PP');
+                editor.commands.insertText({ text: today });
+              }}
+            >
+              Today
+            </CommandItem>
+            <CommandItem
+              value="yesterday"
+              onSelect={() => {
+                dismissCommandUi();
+                const yesterday = format(subDays(new Date(), 1), 'PP');
+                editor.commands.insertText({ text: yesterday });
+              }}
+            >
+              Yesterday
+            </CommandItem>
+            <CommandItem
+              value="next-week"
+              onSelect={() => {
+                dismissCommandUi();
+                const nextWeek = format(
+                  startOfWeek(addWeeks(new Date(), 1)),
+                  'PPP',
+                );
+                editor.commands.insertText({ text: nextWeek });
+              }}
+            >
+              Next week
+            </CommandItem>
+            <CommandItem
+              value="next-month"
+              onSelect={() => {
+                dismissCommandUi();
+                const nextMonth = format(
+                  startOfMonth(addMonths(new Date(), 1)),
+                  'PP',
+                );
+                editor.commands.insertText({ text: nextMonth });
+              }}
+            >
+              Next month
+            </CommandItem>
+          </CommandGroup>
         </CommandList>
         <CommandHints hints={['Enter to select', 'Escape to dismiss']} />
       </Command>

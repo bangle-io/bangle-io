@@ -4,6 +4,7 @@ import {
   $suggestion,
   $suggestionUi,
   removeSuggestMark,
+  replaceSuggestMarkWith,
 } from './plugin-suggestion';
 
 export const suggestionKeymap = () =>

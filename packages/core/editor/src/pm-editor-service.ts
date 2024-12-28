@@ -96,7 +96,7 @@ export class PmEditorService extends BaseService {
     };
   }
 
-  getEditor(name: string): Editor | undefined {
+  getEditor(name: string): ReturnType<typeof createPMEditor> | undefined {
     const editor = this.editors.get(name);
     return editor?.editor;
   }

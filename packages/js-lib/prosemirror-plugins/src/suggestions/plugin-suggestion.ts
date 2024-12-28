@@ -1,15 +1,16 @@
 import type { Logger } from '@bangle.io/logger';
-import type { MarkType } from '@prosekit/pm/model';
+import { Fragment, type MarkType, Node } from '@prosekit/pm/model';
 import {
   type Command,
   type EditorState,
   Plugin,
-  type Selection,
+  Selection,
 } from '@prosekit/pm/state';
 
 import { assertIsDefined } from '@bangle.io/mini-js-utils';
 import { atom } from 'jotai';
 import { isTextSelection } from 'prosekit/core';
+import { safeInsert } from '../pm-utils';
 import { editorStore } from '../pm-utils/store';
 import {
   type MarkScanResult,
@@ -315,4 +316,102 @@ export function querySuggestionMarkTextContent(
   }
 
   return scan;
+}
+
+export type ReplacementContent = string | Node | Fragment;
+
+export function replaceSuggestMarkWith({
+  markName,
+  content,
+  focus = true,
+}: {
+  markName: string;
+  content?: ReplacementContent;
+  focus?: boolean;
+}): Command {
+  return (state, dispatch, view) => {
+    const { schema } = state;
+    const markType = schema.marks[markName];
+    assertIsDefined(markType, `markType ${markName} not found`);
+
+    const suggestion = editorStore.get(state, $suggestion);
+    if (!suggestion) {
+      return false;
+    }
+
+    const [scanRangeStart, scanRangeEnd] = clampRange(
+      state.selection.from - MARK_SCAN_RANGE_PADDING,
+      state.selection.to + MARK_SCAN_RANGE_PADDING,
+      state.doc.content.size,
+    );
+
+    const queryMark = findFirstMarkPosition(
+      markType,
+      state.doc,
+      scanRangeStart,
+      scanRangeEnd,
+    );
+
+    if (!queryMark) {
+      return false;
+    }
+
+    let tr = state.tr.removeStoredMark(markType);
+
+    // If no content is provided, simply remove the mark text
+    if (!content) {
+      tr = tr.delete(queryMark.start, queryMark.end);
+      dispatch?.(tr);
+      return true;
+    }
+
+    try {
+      if (typeof content === 'string') {
+        // If content is string, replace the existing text with the new string
+        tr = tr.replaceWith(
+          queryMark.start,
+          queryMark.end,
+          schema.text(content),
+        );
+      } else if (content instanceof Fragment) {
+        // If content is Fragment, replace directly
+        tr = tr.replaceWith(queryMark.start, queryMark.end, content);
+      } else if (content instanceof Node) {
+        // At this point, content is a ProseMirror Node
+        if (content.isText) {
+          // For text node, replace directly
+          tr = tr.replaceWith(queryMark.start, queryMark.end, content);
+        } else if (content.isBlock) {
+          tr = safeInsert(content)(tr);
+        } else if (content.isInline) {
+          // For inline nodes, append a space to ensure proper cursor positioning
+          const fragment = Fragment.fromArray([content, schema.text(' ')]);
+          tr = tr.replaceWith(queryMark.start, queryMark.end, fragment);
+        }
+      } else {
+        // Unexpected content type—log or handle accordingly
+        console.warn('Unknown content type, skipping replacement');
+        return false;
+      }
+
+      // Move the selection to just after our newly inserted content
+      const pos = tr.mapping.map(
+        queryMark.start + (content instanceof Fragment ? content.size : 1),
+      );
+      tr = tr.setSelection(Selection.near(tr.doc.resolve(pos)));
+
+      if (dispatch) {
+        // Focus the editor if a valid view is present
+        if (focus && view && typeof view.focus === 'function') {
+          view.focus();
+        }
+        dispatch(tr);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error replacing suggestion mark:', error);
+      return false;
+    }
+  };
 }

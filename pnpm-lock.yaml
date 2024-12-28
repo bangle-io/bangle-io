@@ -255,6 +255,9 @@ importers:
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.17
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       jotai:
         specifier: ^2.10.4
         version: 2.10.4(@types/react@18.3.17)(react@18.3.1)
@@ -506,6 +509,12 @@ importers:
       prosemirror-flat-list:
         specifier: ~0.5.4
         version: 0.5.4
+      prosemirror-schema-basic:
+        specifier: ^1.2.3
+        version: 1.2.3
+      prosemirror-test-builder:
+        specifier: ^1.1.1
+        version: 1.1.1
 
   packages/js-lib/weak-cache: {}
 
@@ -6029,6 +6038,12 @@ packages:
   prosemirror-safari-ime-span@1.0.2:
     resolution: {integrity: sha512-QJqD8s1zE/CuK56kDsUhndh5hiHh/gFnAuPOA9ytva2s85/ZEt2tNWeALTJN48DtWghSKOmiBsvVn2OlnJ5H2w==}
 
+  prosemirror-schema-basic@1.2.3:
+    resolution: {integrity: sha512-h+H0OQwZVqMon1PNn0AG9cTfx513zgIG2DY00eJ00Yvgb3UD+GQ/VlWW5rcaxacpCGT1Yx8nuhwXk4+QbXUfJA==}
+
+  prosemirror-schema-list@1.5.0:
+    resolution: {integrity: sha512-gg1tAfH1sqpECdhIHOA/aLg2VH3ROKBWQ4m8Qp9mBKrOxQRW61zc+gMCI8nh22gnBzd1t2u1/NPLmO3nAa3ssg==}
+
   prosemirror-search@1.0.0:
     resolution: {integrity: sha512-NIMlwP0ibqrqBowvy+C81+YZFUYqJ1XNJV5kayIbjUjccnEWGv+sQPiE+c9XKc0GUfngM5ws4rg+VDeYS1fXlQ==}
 
@@ -6051,6 +6066,9 @@ packages:
 
   prosemirror-tables@1.6.1:
     resolution: {integrity: sha512-p8WRJNA96jaNQjhJolmbxTzd6M4huRE5xQ8OxjvMhQUP0Nzpo4zz6TztEiwk6aoqGBhz9lxRWR1yRZLlpQN98w==}
+
+  prosemirror-test-builder@1.1.1:
+    resolution: {integrity: sha512-DJ1+4TNTE9ZcYN/ozXCaWJVrGA99UttMoVvZuidvAotRg7FaiNtEYxL/vlDwfZDRnzJDXNYhmM3XPv3EweK7yA==}
 
   prosemirror-transform@1.10.2:
     resolution: {integrity: sha512-2iUq0wv2iRoJO/zj5mv8uDUriOHWzXRnOTVgCzSXnktS/2iQRa3UUQwVlkBlYZFtygw6Nh1+X4mGqoYBINn5KQ==}
@@ -12977,6 +12995,16 @@ snapshots:
       prosemirror-state: 1.4.3
       prosemirror-view: 1.37.1
 
+  prosemirror-schema-basic@1.2.3:
+    dependencies:
+      prosemirror-model: 1.24.1
+
+  prosemirror-schema-list@1.5.0:
+    dependencies:
+      prosemirror-model: 1.24.1
+      prosemirror-state: 1.4.3
+      prosemirror-transform: 1.10.2
+
   prosemirror-search@1.0.0:
     dependencies:
       prosemirror-model: 1.24.1
@@ -13002,6 +13030,12 @@ snapshots:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.2
       prosemirror-view: 1.37.1
+
+  prosemirror-test-builder@1.1.1:
+    dependencies:
+      prosemirror-model: 1.24.1
+      prosemirror-schema-basic: 1.2.3
+      prosemirror-schema-list: 1.5.0
 
   prosemirror-transform@1.10.2:
     dependencies:

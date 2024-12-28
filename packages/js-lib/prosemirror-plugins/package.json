@@ -34,7 +34,9 @@
     "@bangle.io/logger": "workspace:*",
     "jotai": "^2.10.4",
     "@bangle.io/mini-js-utils": "workspace:*",
-    "@floating-ui/dom": "^1.6.12"
+    "@floating-ui/dom": "^1.6.12",
+    "prosemirror-test-builder": "^1.1.1",
+    "prosemirror-schema-basic": "^1.2.3"
   },
   "devDependencies": {}
 }

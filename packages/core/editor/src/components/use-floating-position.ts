@@ -14,6 +14,15 @@ type UseFloatingPositionProps = {
   boundarySelector: string;
 };
 
+export const FLOATING_INITIAL_STYLE = {
+  // this is important to prevent cmdk from causing vertical layout issues due to its scrollIntoView
+  display: 'none',
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  zIndex: 100,
+} as const;
+
 export function useFloatingPosition({
   show,
   anchorEl,

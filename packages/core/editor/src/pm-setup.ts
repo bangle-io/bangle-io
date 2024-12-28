@@ -25,7 +25,7 @@ import { placeholderPlugin } from './plugin-placeholder';
 import { docToMarkdown, markdownToDoc } from './remark';
 import { funPlaceholder } from './utils';
 
-const SLASH = { trigger: '/', markName: 'suggestions' };
+const SLASH = { trigger: '/', markName: 'slash-command' };
 
 export function createPMEditor({
   defaultContent,

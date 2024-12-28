@@ -37,6 +37,7 @@
     "@prosekit/pm": "^0.1.9",
     "@types/mdast": "^4.0.4",
     "@types/react": "^18.3.12",
+    "date-fns": "^4.1.0",
     "jotai": "^2.10.4",
     "mdast": "^3.0.0",
     "prosekit": "^0.11.0",
