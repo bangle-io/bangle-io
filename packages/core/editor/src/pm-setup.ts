@@ -84,8 +84,8 @@ export function createPMEditor({
     ),
     defineInputRule(
       suggestions.triggerInputRule({
-        trigger: SLASH.trigger,
         markName: SLASH.markName,
+        trigger: SLASH.trigger,
       }),
     ),
     definePlugin(

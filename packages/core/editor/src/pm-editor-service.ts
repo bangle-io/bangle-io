@@ -16,8 +16,7 @@ export type PmEditorServiceConfig = {
 export class PmEditorService extends BaseService {
   static deps = ['fileSystem'] as const;
 
-  private editorMap = new WeakMap<HTMLElement, Editor>();
-  private editors = new Map<string, WeakRef<Editor>>();
+  private editors = new Map<string, { editor: Editor }>();
 
   constructor(
     context: BaseServiceContext,
@@ -36,13 +35,16 @@ export class PmEditorService extends BaseService {
     });
   }
 
-  private mountEditor(domNode: HTMLElement, wsPath: string) {
-    if (this.editorMap.has(domNode)) {
+  private mountEditor({
+    domNode,
+    wsPath,
+    name,
+    focus = true,
+  }: { domNode: HTMLElement; wsPath: string; name: string; focus?: boolean }) {
+    if (this.editors.has(name)) {
       return;
     }
-
     assertValidMarkdownWsPath(wsPath);
-
     const fileName = assertedResolvePath(wsPath).fileName;
     this.dependencies.fileSystem.readFileAsText(wsPath).then((content) => {
       const editor = createPMEditor({
@@ -58,25 +60,21 @@ export class PmEditorService extends BaseService {
           );
         },
       });
-      this.editorMap.set(domNode, editor);
+      this.editors.set(name, { editor });
       editor?.mount(domNode);
-      editor?.focus();
+      if (focus) {
+        editor?.focus();
+      }
     });
   }
 
-  private unmountEditor(domNode: HTMLElement) {
-    const editor = this.editorMap.get(domNode);
-    editor?.unmount();
-    this.editorMap.delete(domNode);
-  }
-
+  // returns a callback ref to mount the editor
   newEditor({ wsPath, name }: { wsPath: string; name: string }) {
     if (this.aborted) {
       return;
     }
 
-    const editor = this.editors.get(name);
-    if (editor) {
+    if (this.editors.has(name)) {
       throw new Error(`Editor with name ${name} already exists`);
     }
 
@@ -86,13 +84,20 @@ export class PmEditorService extends BaseService {
       if (_domNode && !domNode) {
         domNode = _domNode;
 
-        this.mountEditor(domNode, wsPath);
+        this.mountEditor({ domNode, wsPath, name });
       }
 
       if (!_domNode && domNode) {
-        this.unmountEditor(domNode);
+        const editor = this.editors.get(name);
+        editor?.editor?.unmount();
+        this.editors.delete(name);
         domNode = null;
       }
     };
+  }
+
+  getEditor(name: string): Editor | undefined {
+    const editor = this.editors.get(name);
+    return editor?.editor;
   }
 }

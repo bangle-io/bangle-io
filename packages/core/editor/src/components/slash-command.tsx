@@ -11,18 +11,24 @@ import {
 } from '@bangle.io/ui-components';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useEffect, useRef, type ReactElement } from 'react';
+import { useCoreServices } from '../../../context/src';
 import { useFloatingPosition } from './use-floating-position';
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
  * the suggestion mark that triggers the slash command.
  */
-export function SlashCommand(): ReactElement | null {
+export function SlashCommand({
+  editorName,
+}: {
+  editorName: string;
+}): ReactElement | null {
   const suggestion = useAtomValue(suggestions.$suggestion);
   const markName = suggestion?.markName;
   const setSuggestionUi = useSetAtom(suggestions.$suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
+  const { pmEditorService } = useCoreServices();
 
   const commands = [
     {
@@ -99,8 +105,9 @@ export function SlashCommand(): ReactElement | null {
     anchorEl: () => suggestion?.anchorEl() ?? null,
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
+  const editor = pmEditorService.getEditor(editorName);
 
-  if (!suggestion?.show) {
+  if (!editor || !suggestion?.show) {
     return null;
   }
 
@@ -108,10 +115,12 @@ export function SlashCommand(): ReactElement | null {
     <div
       ref={slashRef}
       style={{
+        // this is important to prevent cmdk from causing vertical layout issues due to its scrollIntoView
+        display: 'none',
         position: 'absolute',
         left: 0,
         top: 0,
-        zIndex: 10,
+        zIndex: 100,
       }}
       className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
     >

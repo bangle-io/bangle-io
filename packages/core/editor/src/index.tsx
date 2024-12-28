@@ -1,6 +1,7 @@
 import 'prosekit/basic/typography.css';
 import 'prosekit/extensions/list/style.css';
 import './typography.css';
+import '@prosekit/pm/view/style/prosemirror.css';
 
 import { cx } from '@bangle.io/base-utils';
 import React, { useState } from 'react';
@@ -8,25 +9,26 @@ import { useCoreServices } from '../../context/src';
 import { SlashCommand } from './components/slash-command';
 export { PmEditorService } from './pm-editor-service';
 
-const MAIN_EDITOR_NAME = 'main-editor';
-
 export function Editor({
   wsPath,
   className,
+  name,
 }: {
   wsPath: string;
   className?: string;
+  name: string;
 }) {
   const { pmEditorService } = useCoreServices();
-  const [mountEditor] = useState(() =>
-    pmEditorService.newEditor({ wsPath, name: MAIN_EDITOR_NAME }),
+  const [mountEditorRef] = useState(() =>
+    pmEditorService.newEditor({ wsPath, name }),
   );
 
   return (
     <div className="box-border flex h-full min-h-36 w-full flex-col ">
       <div className="relative box-border w-full flex-1">
         <div
-          ref={mountEditor}
+          ref={mountEditorRef}
+          data-editor-name={name}
           className={cx(
             'ProseMirror box-border min-h-full py-8 outline-none outline-0',
             '[&_:not(pre)_code]:rounded-md [&_:not(pre)_code]:bg-muted/40 [&_:not(pre)_code]:px-1.5 [&_:not(pre)_code]:py-0.5 [&_:not(pre)_code]:font-mono',
@@ -34,7 +36,7 @@ export function Editor({
             className,
           )}
         />
-        <SlashCommand />
+        <SlashCommand editorName={name} />
       </div>
     </div>
   );

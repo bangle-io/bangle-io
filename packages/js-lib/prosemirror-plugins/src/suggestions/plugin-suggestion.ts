@@ -11,7 +11,11 @@ import { assertIsDefined } from '@bangle.io/mini-js-utils';
 import { atom } from 'jotai';
 import { isTextSelection } from 'prosekit/core';
 import { editorStore } from '../pm-utils/store';
-import { findFirstMarkPosition } from '../pm-utils/utils';
+import {
+  type MarkScanResult,
+  clampRange,
+  findFirstMarkPosition,
+} from '../pm-utils/utils';
 
 export type Suggestion = {
   markName: string;
@@ -23,6 +27,9 @@ export type Suggestion = {
   anchorEl: () => VirtualElement | null;
   selectedIndex: number;
 };
+
+// for better performance we scan a range around the selection
+const MARK_SCAN_RANGE_PADDING = 500;
 
 export const $suggestion = atom<Suggestion | undefined>();
 
@@ -95,9 +102,6 @@ export function pluginSuggestion({
           const markType = state.schema.marks[markName];
           assertIsDefined(markType, `markType ${markName} not found`);
 
-          const querytext = querySuggestionMarkTextContent(markName, state);
-          log?.debug('querytext', querytext);
-
           if (
             lastState.doc.eq(state.doc) &&
             state.selection.eq(lastState.selection)
@@ -135,17 +139,26 @@ export function pluginSuggestion({
 
           const suggestion = editorStore.get(state, $suggestion);
           if (isMarkActive) {
-            const result = querySuggestionMarkTextContent(markName, state);
+            const [scanRangeStart, scanRangeEnd] = clampRange(
+              state.selection.from - MARK_SCAN_RANGE_PADDING,
+              state.selection.to + MARK_SCAN_RANGE_PADDING,
+              state.doc.content.size,
+            );
+            const result = querySuggestionMarkTextContent(
+              markName,
+              state,
+              scanRangeStart,
+              scanRangeEnd,
+            );
             if (!result) {
               return;
             }
-
-            const { text, startPosition } = result;
+            log?.debug('querytext', result?.text);
 
             if (
               suggestion?.markName === markName &&
-              suggestion.text === text &&
-              suggestion.position === startPosition
+              suggestion.text === result.text &&
+              suggestion.position === result.start
             ) {
               return;
             }
@@ -155,21 +168,37 @@ export function pluginSuggestion({
               markName,
               trigger,
               show: true,
-              text,
-              position: startPosition,
+              text: result.text ?? '',
+              position: result.start,
               refresh: Date.now(),
               anchorEl: () => {
                 if (view.isDestroyed) {
                   return null;
                 }
 
-                const coords = view.coordsAtPos(startPosition);
-                if (!coords) {
+                const [startPos, endPos] = clampRange(
+                  result.start,
+                  result.end,
+                  view.state.doc.content.size,
+                );
+
+                const coordsStart = view.coordsAtPos(startPos);
+                if (!coordsStart) {
+                  return null;
+                }
+                const coordsEnd = view.coordsAtPos(endPos);
+                if (!coordsEnd) {
                   return null;
                 }
 
-                // Return a virtual element with getBoundingClientRect
-                const rect = new DOMRect(coords.left, coords.bottom, 0, 0);
+                const left = Math.min(coordsStart.left, coordsEnd.left);
+                const top = Math.min(coordsStart.top, coordsEnd.top);
+                const right = Math.max(
+                  coordsStart.right ?? coordsStart.left,
+                  coordsEnd.right ?? coordsEnd.left,
+                );
+                const bottom = Math.max(coordsStart.bottom, coordsEnd.bottom);
+                const rect = new DOMRect(left, top, right - left, bottom - top);
                 const virtualEl: VirtualElement = {
                   getBoundingClientRect: () => rect,
                 };
@@ -266,38 +295,24 @@ export function removeSuggestMark({
   };
 }
 
+/**
+ * Returns the text content **within** the mark
+ */
 export function querySuggestionMarkTextContent(
   markName: string,
   state: EditorState,
-): undefined | { text: string; startPosition: number } {
+  startPos: number,
+  endPos: number,
+): undefined | MarkScanResult {
   const { schema, doc } = state;
   const markType = schema.marks[markName];
   assertIsDefined(markType, `markType ${markName} not found`);
 
-  let suggestionText = '';
-  let withinMark = false;
-  let startPosition = -1;
+  const scan = findFirstMarkPosition(markType, doc, startPos, endPos);
 
-  doc.descendants((node, pos) => {
-    if (node.marks.some((mark) => mark.type === markType)) {
-      if (!withinMark) {
-        startPosition = pos;
-      }
-      withinMark = true;
-      suggestionText += node.textContent;
-    } else if (withinMark) {
-      // Encountered a break in the mark, stop further processing
-      return false;
-    }
-    return undefined;
-  });
-
-  if (startPosition === -1) {
+  if (!scan) {
     return undefined;
   }
 
-  return {
-    text: suggestionText,
-    startPosition: startPosition,
-  };
+  return scan;
 }
