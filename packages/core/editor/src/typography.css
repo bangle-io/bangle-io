@@ -191,7 +191,12 @@ div.ProseMirror {
      */
   .ProseMirror-selectednode {
     z-index: calc(infinity);
+    outline: 2px solid hsl(var(--BV-pop));
+    outline-offset: 1px;
+    border-radius: .375rem;
   }
+
+
 
   /*
      Don't generate box for node view wrapper. This make it easier to style
