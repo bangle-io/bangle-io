@@ -480,6 +480,42 @@ importers:
         specifier: workspace:*
         version: link:../mini-js-utils
 
+  packages/js-lib/pm:
+    dependencies:
+      prosemirror-commands:
+        specifier: ^1.6.2
+        version: 1.6.2
+      prosemirror-history:
+        specifier: ^1.4.1
+        version: 1.4.1
+      prosemirror-keymap:
+        specifier: ^1.2.2
+        version: 1.2.2
+      prosemirror-markdown:
+        specifier: ^1.13.1
+        version: 1.13.1
+      prosemirror-model:
+        specifier: ^1.24.1
+        version: 1.24.1
+      prosemirror-schema-basic:
+        specifier: ^1.2.3
+        version: 1.2.3
+      prosemirror-schema-list:
+        specifier: ^1.5.0
+        version: 1.5.0
+      prosemirror-state:
+        specifier: ^1.4.3
+        version: 1.4.3
+      prosemirror-test-builder:
+        specifier: ^1.1.1
+        version: 1.1.1
+      prosemirror-transform:
+        specifier: ^1.10.2
+        version: 1.10.2
+      prosemirror-view:
+        specifier: ^1.37.1
+        version: 1.37.1
+
   packages/js-lib/poor-mans-di:
     devDependencies:
       '@bangle.io/mini-js-utils':
