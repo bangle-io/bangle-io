@@ -1,4 +1,4 @@
-import { suggestions } from '@bangle.io/prosemirror-plugins';
+import { $suggestion, $suggestionUi } from '@bangle.io/prosemirror-plugins';
 import {
   Command,
   CommandEmpty,
@@ -39,9 +39,9 @@ export function SlashCommand({
 }: {
   editorName: string;
 }): ReactElement | null {
-  const suggestion = useAtomValue(suggestions.$suggestion);
+  const suggestion = useAtomValue($suggestion);
   const markName = suggestion?.markName;
-  const setSuggestionUi = useSetAtom(suggestions.$suggestionUi);
+  const setSuggestionUi = useSetAtom($suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
   const { pmEditorService } = useCoreServices();
@@ -102,20 +102,21 @@ export function SlashCommand({
     anchorEl: () => suggestion?.anchorEl() ?? null,
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
-  const editor = pmEditorService.getEditor(editorName);
+  const editorView = pmEditorService.getEditor(editorName);
+
+  const ext = pmEditorService.extensions;
 
   const dismissCommandUi = useCallback(() => {
-    if (!editor || !suggestion?.markName) {
+    if (!editorView || !suggestion?.markName) {
       return;
     }
 
-    suggestions.replaceSuggestMarkWith({
-      markName: suggestion.markName,
+    ext.suggestions.command.replaceSuggestMarkWith({
       content: '',
-    })(editor.view.state, editor.view.dispatch);
-  }, [editor, suggestion?.markName]);
+    })(editorView.state, editorView.dispatch, editorView);
+  }, [editorView, suggestion?.markName, ext]);
 
-  if (!editor || !suggestion?.show) {
+  if (!editorView || !suggestion?.show) {
     return null;
   }
 
@@ -139,7 +140,11 @@ export function SlashCommand({
               value="paragraph"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.setBlockType({ type: 'paragraph' });
+                ext.paragraph.command.convertToParagraph(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Paragraph
@@ -148,7 +153,11 @@ export function SlashCommand({
               value="heading-1"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.setHeading({ level: 1 });
+                ext.heading.command.toggleHeading(1)(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Heading 1
@@ -157,7 +166,11 @@ export function SlashCommand({
               value="heading-2"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.setHeading({ level: 2 });
+                ext.heading.command.toggleHeading(2)(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Heading 2
@@ -166,7 +179,11 @@ export function SlashCommand({
               value="heading-3"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.setHeading({ level: 3 });
+                ext.heading.command.toggleHeading(3)(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Heading 3
@@ -180,7 +197,11 @@ export function SlashCommand({
               value="bullet-list"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.toggleList({ kind: 'bullet' });
+                ext.list.command.toggleBulletList(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Bullet list
@@ -189,7 +210,11 @@ export function SlashCommand({
               value="numbered-list"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.toggleList({ kind: 'ordered' });
+                ext.list.command.toggleOrderedList(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Numbered list
@@ -198,7 +223,11 @@ export function SlashCommand({
               value="todo-list"
               onSelect={() => {
                 dismissCommandUi();
-                editor.commands.toggleList({ kind: 'task' });
+                ext.list.command.toggleTaskList(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               To-do list
@@ -213,7 +242,12 @@ export function SlashCommand({
               onSelect={() => {
                 dismissCommandUi();
                 const today = format(new Date(), 'PP');
-                editor.commands.insertText({ text: today });
+
+                ext.base.command.insertText({ text: today })(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Today
@@ -223,7 +257,11 @@ export function SlashCommand({
               onSelect={() => {
                 dismissCommandUi();
                 const yesterday = format(subDays(new Date(), 1), 'PP');
-                editor.commands.insertText({ text: yesterday });
+                ext.base.command.insertText({ text: yesterday })(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Yesterday
@@ -236,7 +274,11 @@ export function SlashCommand({
                   startOfWeek(addWeeks(new Date(), 1)),
                   'PPP',
                 );
-                editor.commands.insertText({ text: nextWeek });
+                ext.base.command.insertText({ text: nextWeek })(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Next week
@@ -249,7 +291,11 @@ export function SlashCommand({
                   startOfMonth(addMonths(new Date(), 1)),
                   'PP',
                 );
-                editor.commands.insertText({ text: nextMonth });
+                ext.base.command.insertText({ text: nextMonth })(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
               }}
             >
               Next month

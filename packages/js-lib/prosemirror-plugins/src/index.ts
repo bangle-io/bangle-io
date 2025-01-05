@@ -1,2 +1,3 @@
-export * as suggestions from './suggestions';
-export * from './pm-utils';
+export * from '@bangle.io/banger-editor';
+export * from '@bangle.io/banger-editor/src/pm';
+export { markdownLoader } from '@bangle.dev/pm-markdown';

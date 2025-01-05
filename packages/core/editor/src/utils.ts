@@ -1,19 +1,3 @@
-import type { ProseMirrorNode } from '@prosekit/pm/model';
-
-// Check if the document is empty, only checks the top level nodes
-export function isDocEmpty(doc: ProseMirrorNode) {
-  if (doc.childCount === 0) return true;
-
-  let isEmpty = true;
-  doc.forEach((child) => {
-    if (child.content.size > 0) {
-      isEmpty = false;
-    }
-  });
-
-  return isEmpty;
-}
-
 export function funPlaceholder(): string {
   const messages = [
     'A blank page is just a masterpiece waiting to happen. 🎨',

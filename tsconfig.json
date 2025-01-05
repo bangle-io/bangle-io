@@ -59,6 +59,6 @@
 	"exclude": [
 		"node_modules",
 		"packages/js-lib/color-scheme-manager/src/**/*",
-		"packages/js-lib/poor-mans-di/src/__tests__/poor-mans-di.spec.ts"
+		"packages/js-lib/poor-mans-di/src/__tests__/poor-mans-di.spec.ts",
 	]
 }

@@ -1,10 +1,12 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type { FileSystemService } from '@bangle.io/service-core';
+import type { Store } from '@bangle.io/types';
 import { assertedResolvePath } from '@bangle.io/ws-path';
 import { assertValidMarkdownWsPath } from '@bangle.io/ws-path';
-import type { Editor } from 'prosekit/core';
-import { createPMEditor } from './pm-setup';
+
+import { setupExtensions } from './extensions';
+import { createEditor } from './pm-setup';
 
 export type PmEditorServiceConfig = {
   nothing: boolean;
@@ -16,7 +18,12 @@ export type PmEditorServiceConfig = {
 export class PmEditorService extends BaseService {
   static deps = ['fileSystem'] as const;
 
-  private editors = new Map<string, { editor: Editor }>();
+  public readonly extensions: ReturnType<typeof setupExtensions>;
+
+  private editors = new Map<
+    string,
+    { editorView: ReturnType<typeof createEditor> }
+  >();
 
   constructor(
     context: BaseServiceContext,
@@ -26,10 +33,11 @@ export class PmEditorService extends BaseService {
     private config: PmEditorServiceConfig,
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
+
+    this.extensions = setupExtensions(this.logger);
   }
 
   hookMount() {
-    // Setup any event listeners or initialization here
     this.addCleanup(() => {
       // Cleanup code here
     });
@@ -40,17 +48,22 @@ export class PmEditorService extends BaseService {
     wsPath,
     name,
     focus = true,
-  }: { domNode: HTMLElement; wsPath: string; name: string; focus?: boolean }) {
+  }: {
+    domNode: HTMLElement;
+    wsPath: string;
+    name: string;
+    focus?: boolean;
+  }) {
     if (this.editors.has(name)) {
       return;
     }
     assertValidMarkdownWsPath(wsPath);
     const fileName = assertedResolvePath(wsPath).fileName;
     this.dependencies.fileSystem.readFileAsText(wsPath).then((content) => {
-      const editor = createPMEditor({
+      const editorView = createEditor({
         defaultContent: content || '',
-        logger: this.logger,
-        store: this.store,
+        store: this.store as Store,
+        domNode,
         onDocChange: (doc) => {
           this.dependencies.fileSystem.writeFile(
             wsPath,
@@ -59,11 +72,11 @@ export class PmEditorService extends BaseService {
             }),
           );
         },
+        extensions: this.extensions,
       });
-      this.editors.set(name, { editor });
-      editor?.mount(domNode);
+      this.editors.set(name, { editorView });
       if (focus) {
-        editor?.focus();
+        editorView.focus();
       }
     });
   }
@@ -83,21 +96,21 @@ export class PmEditorService extends BaseService {
     return (_domNode: HTMLElement | null | undefined) => {
       if (_domNode && !domNode) {
         domNode = _domNode;
-
         this.mountEditor({ domNode, wsPath, name });
       }
 
       if (!_domNode && domNode) {
-        const editor = this.editors.get(name);
-        editor?.editor?.unmount();
-        this.editors.delete(name);
+        const existing = this.editors.get(name);
+        if (existing) {
+          existing.editorView.destroy();
+          this.editors.delete(name);
+        }
         domNode = null;
       }
     };
   }
 
-  getEditor(name: string): ReturnType<typeof createPMEditor> | undefined {
-    const editor = this.editors.get(name);
-    return editor?.editor;
+  getEditor(name: string) {
+    return this.editors.get(name)?.editorView;
   }
 }

@@ -28,15 +28,9 @@
   },
   "scripts": {},
   "dependencies": {
-    "prosekit": "^0.11.0",
-    "prosemirror-flat-list": "~0.5.4",
-    "@prosekit/pm": "^0.1.9",
-    "@bangle.io/logger": "workspace:*",
-    "jotai": "^2.10.4",
-    "@bangle.io/mini-js-utils": "workspace:*",
-    "@floating-ui/dom": "^1.6.12",
-    "prosemirror-test-builder": "^1.1.1",
-    "prosemirror-schema-basic": "^1.2.3"
+    "@bangle.dev/pm-markdown": "2.0.0-alpha.12",
+    "@bangle.io/banger-editor": "workspace:*",
+    "jotai": "^2.11.0"
   },
   "devDependencies": {}
 }

@@ -1,7 +1,5 @@
-import 'prosekit/basic/typography.css';
-import 'prosekit/extensions/list/style.css';
+import 'prosemirror-view/style/prosemirror.css';
 import './typography.css';
-import '@prosekit/pm/view/style/prosemirror.css';
 
 import { cx } from '@bangle.io/base-utils';
 import React, { useState } from 'react';
