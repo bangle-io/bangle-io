@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import {
   AudioWaveform,
   Check,
@@ -11,7 +11,6 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { PlusIcon } from 'lucide-react';
 import React from 'react';
 import { AppSidebar } from './app-sidebar';
 import {

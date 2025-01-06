@@ -1,10 +1,5 @@
 import { expect, test } from '@playwright/test';
-import {
-  EDITOR_SELECTOR,
-  clearEditor,
-  getEditorLocator,
-  getEditorText,
-} from './common';
+import { clearEditor, getEditorLocator, getEditorText } from './common';
 
 test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');

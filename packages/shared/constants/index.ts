@@ -1,5 +1,3 @@
-import type { ColorScheme } from '../types';
-
 const LIGHT_SCHEME = 'light' as const;
 const DARK_SCHEME = 'dark' as const;
 

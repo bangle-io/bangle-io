@@ -1,6 +1,6 @@
 import { Blob } from 'node:buffer';
 import 'fake-indexeddb/auto';
-import { IDBFactory, IDBRequest } from 'fake-indexeddb';
+import { IDBFactory } from 'fake-indexeddb';
 import { beforeEach } from 'vitest';
 
 const original = structuredClone;

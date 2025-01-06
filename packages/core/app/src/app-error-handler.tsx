@@ -2,7 +2,6 @@ import { getGithubUrl, handleAppError } from '@bangle.io/base-utils';
 import { useCoreServices, useLogger } from '@bangle.io/context';
 import type { RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
-import { useSetAtom } from 'jotai';
 import React, { useEffect } from 'react';
 
 export function AppErrorHandler({

@@ -1,6 +1,5 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
 import {
-  BaseError,
   BaseService,
   type BaseServiceContext,
   assertIsDefined,

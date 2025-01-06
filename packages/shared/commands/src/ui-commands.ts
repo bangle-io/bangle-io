@@ -1,6 +1,5 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-zod';
-import type { Command } from '@bangle.io/types';
 import { narrow } from './common';
 
 // pattern command::ui:{action}-{target}

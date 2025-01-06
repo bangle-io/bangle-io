@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/experimental-ct-react';
+import { test } from '@playwright/experimental-ct-react';
 
 test('Submit workspace name', async ({ page }) => {
   await page.goto('/');

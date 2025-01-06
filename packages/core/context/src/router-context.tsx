@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSyncExternalStore } from 'react';
-import type { BaseLocationHook, BaseSearchHook } from 'wouter';
+import type { BaseLocationHook } from 'wouter';
 import { Router as WouterRouter } from 'wouter';
 import { useCoreServices } from './service-core-context';
 

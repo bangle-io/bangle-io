@@ -9,7 +9,6 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from './dialog';

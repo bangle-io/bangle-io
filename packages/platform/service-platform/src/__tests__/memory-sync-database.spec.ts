@@ -1,6 +1,6 @@
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { MemorySyncDatabaseService } from '../memory-sync-database';
 
 async function setup() {

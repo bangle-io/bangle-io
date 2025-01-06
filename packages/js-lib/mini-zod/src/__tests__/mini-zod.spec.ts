@@ -1,5 +1,5 @@
 import { expectType } from '@bangle.io/mini-js-utils';
-import { describe, expect, it, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { type InferType, T } from '../index';
 
 describe('Validators', () => {

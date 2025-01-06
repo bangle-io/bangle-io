@@ -1,8 +1,4 @@
-import {
-  type Logger,
-  flatServices,
-  getEventSenderMetadata,
-} from '@bangle.io/base-utils';
+import { type Logger, getEventSenderMetadata } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';

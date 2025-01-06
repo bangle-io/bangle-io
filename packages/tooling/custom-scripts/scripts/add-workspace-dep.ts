@@ -1,5 +1,3 @@
-import { execa } from 'execa';
-import { rootPath } from '../config';
 import { makeLogger } from '../lib';
 import { collectAllDependencies, isAValidBanglePackage, setup } from '../lib';
 

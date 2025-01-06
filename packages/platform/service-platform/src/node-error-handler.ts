@@ -3,7 +3,7 @@ import {
   isAbortError,
   isAppError,
 } from '@bangle.io/base-utils';
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import type { BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
 type ErrorInfo = {

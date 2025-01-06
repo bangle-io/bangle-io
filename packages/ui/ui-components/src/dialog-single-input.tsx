@@ -1,5 +1,4 @@
 import { cx } from '@bangle.io/base-utils';
-import { DialogTitle } from '@radix-ui/react-dialog';
 import { CommandGroup } from 'cmdk';
 import React from 'react';
 import {

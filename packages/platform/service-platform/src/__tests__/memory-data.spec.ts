@@ -5,7 +5,7 @@
 import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { DatabaseQueryOptions } from '@bangle.io/types';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { MemoryDatabaseService } from '../memory-database';
 
 async function setup() {

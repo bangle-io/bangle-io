@@ -9,7 +9,6 @@ import type {
   Command,
   CommandArgs,
   CommandExposedServices,
-  CommandHandler,
   RootEvents,
 } from '@bangle.io/types';
 import { createTestEnvironment } from './test-service-setup';

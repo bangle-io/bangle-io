@@ -1,5 +1,5 @@
 import type { CoreServices } from '@bangle.io/types';
-import React, { useEffect, createContext } from 'react';
+import React, { createContext } from 'react';
 
 export const CoreServiceContext = createContext<CoreServices>(
   {} as CoreServices,

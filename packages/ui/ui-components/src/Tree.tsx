@@ -12,11 +12,10 @@ import {
 } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronRight, FileIcon, Folder, MoreHorizontal } from 'lucide-react';
-import React, { useState, useCallback, memo, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 
 import { type TreeItem, cn } from '@bangle.io/ui-utils';
 import { isRootLevelFile } from '@bangle.io/ws-path';
-import { isValidNoteWsPath } from '@bangle.io/ws-path/src/helpers';
 import {
   Collapsible,
   CollapsibleContent,
@@ -29,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 import {
-  SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,

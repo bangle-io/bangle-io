@@ -22,7 +22,6 @@ import type {
 } from '@bangle.io/ui-components';
 import { type PrimitiveAtom, atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
-import { atomWithStorage } from 'jotai/utils';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 

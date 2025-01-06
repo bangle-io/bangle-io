@@ -1,5 +1,5 @@
 import type { PlatformServices } from '@bangle.io/types';
-import React, { useEffect, createContext } from 'react';
+import React, { createContext } from 'react';
 
 export const ServiceContext = createContext({} as PlatformServices);
 

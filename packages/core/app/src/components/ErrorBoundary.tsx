@@ -1,6 +1,5 @@
 import { getGithubUrl } from '@bangle.io/base-utils';
 import { useLogger } from '@bangle.io/context';
-import { FunMissing } from '@bangle.io/ui-components';
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';

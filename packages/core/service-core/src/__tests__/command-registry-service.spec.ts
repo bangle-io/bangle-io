@@ -1,4 +1,3 @@
-import type { Logger } from '@bangle.io/logger';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type { Command } from '@bangle.io/types';
 import { afterEach, describe, expect, test, vi } from 'vitest';

@@ -1,5 +1,5 @@
 import { Logger } from '@bangle.io/base-utils';
-import React, { useEffect, createContext } from 'react';
+import React, { createContext } from 'react';
 
 export const LoggerContext = createContext(new Logger('default-logger'));
 

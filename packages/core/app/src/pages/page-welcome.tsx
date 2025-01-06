@@ -2,7 +2,6 @@ import { useCoreServices } from '@bangle.io/context';
 import { buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { NoticeView } from '../components/NoticeView';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
 import { Section } from '../components/section';

@@ -1,4 +1,3 @@
-import { BaseError, throwAppError } from '@bangle.io/base-utils';
 import { describe, expect, it } from 'vitest';
 import { validateInputPath } from '../utils';
 

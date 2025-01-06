@@ -1,38 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from 'lucide-react';
 import React from 'react';
-import {
-  CommandBadge,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from './command';
-import {
-  type Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogTitle,
-  DialogTrigger,
-} from './dialog';
 import { DialogSingleSelect } from './dialog-single-select';
-import { Input } from './input';
-import { Label } from './label';
 
 const meta: Meta<typeof DialogSingleSelect> = {
   title: 'DialogSingleSelect',

@@ -1,6 +1,6 @@
 import { Logger } from '@bangle.io/logger';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
-import { afterEach, vi } from 'vitest';
+import { vi } from 'vitest';
 export { default as waitForExpect } from 'wait-for-expect';
 import { RootEmitter } from '@bangle.io/root-emitter';
 import { createStore } from 'jotai';
