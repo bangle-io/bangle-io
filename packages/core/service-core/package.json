@@ -39,10 +39,9 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "jotai": "^2.11.0",
-    "jotai-effect": "^1.0.5"
+    "jotai-effect": "^1.0.7"
   },
   "devDependencies": {
-    "@bangle.io/logger": "workspace:*",
     "@bangle.io/test-utils": "workspace:*"
   }
 }

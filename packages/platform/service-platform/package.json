@@ -42,7 +42,6 @@
     "wouter": "^3.3.5"
   },
   "devDependencies": {
-    "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/test-utils": "workspace:*"
   }

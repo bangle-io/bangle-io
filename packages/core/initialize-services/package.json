@@ -39,7 +39,6 @@
     "@bangle.io/types": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.io/emitter": "workspace:*",
     "@bangle.io/test-utils": "workspace:*"
   }
 }
