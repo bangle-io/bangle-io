@@ -2,9 +2,9 @@ import 'prosemirror-view/style/prosemirror.css';
 import './typography.css';
 
 import { cx } from '@bangle.io/base-utils';
+import { useCoreServices } from '@bangle.io/context';
 import React, { useState } from 'react';
-import { useCoreServices } from '../../context/src';
-import { SlashCommand } from './components/slash-command';
+import { SlashCommand } from './components';
 export { PmEditorService } from './pm-editor-service';
 
 export function Editor({

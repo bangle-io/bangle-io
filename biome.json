@@ -39,7 +39,9 @@
       "**/tsconfig.json"
     ]
   },
-  "organizeImports": { "enabled": true },
+  "organizeImports": {
+    "enabled": true
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -51,7 +53,11 @@
         "noExplicitAny": "warn"
       },
       "nursery": {
-        "useSortedClasses": "error"
+        "useSortedClasses": "error",
+        "noDuplicateElseIf": "error",
+        "useImportRestrictions": {
+          "level": "error"
+        }
       },
       "correctness": {
         "noUnusedVariables": "warn"
@@ -61,7 +67,6 @@
       }
     }
   },
-
   "javascript": {
     "jsxRuntime": "reactClassic",
     "formatter": {

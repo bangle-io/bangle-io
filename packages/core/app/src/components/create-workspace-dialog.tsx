@@ -6,7 +6,7 @@ import { CreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { validateWsName } from '@bangle.io/ws-path/src/helpers';
 import { useAtom } from 'jotai';
 import React from 'react';
-import { nativeFsErrorParse } from '../common/native-fs-error-parse';
+import { nativeFsErrorParse } from '../common';
 
 export function AppCreateWorkspaceDialog() {
   const coreServices = useCoreServices();

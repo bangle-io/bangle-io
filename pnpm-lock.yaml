@@ -216,6 +216,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../context
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
@@ -563,6 +566,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/mini-zod':
+        specifier: workspace:*
+        version: link:../../js-lib/mini-zod
       '@bangle.io/poor-mans-di':
         specifier: workspace:*
         version: link:../../js-lib/poor-mans-di

@@ -1,4 +1,4 @@
-import { collection } from './common/collection';
+import { collection } from './common';
 import { type EditorState, Plugin, PluginKey } from './pm';
 import { Decoration, DecorationSet } from './pm';
 import { findParentNode } from './pm-utils';

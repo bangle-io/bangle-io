@@ -1,8 +1,8 @@
 import type { Logger } from '@bangle.io/logger';
+import type { Validator } from '@bangle.io/mini-zod';
 import type { BaseAppSyncDatabase } from '@bangle.io/types';
 import { atomWithReducer, atomWithStorage } from 'jotai/utils';
 import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
-import type { Validator } from '../../js-lib/mini-zod/src';
 
 export function atomWithCompare<Value>(
   initialValue: Value,

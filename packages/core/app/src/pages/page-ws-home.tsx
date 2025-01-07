@@ -2,17 +2,17 @@ import { useCoreServices } from '@bangle.io/context';
 import { FunMissing } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { NoticeView } from '../components/NoticeView';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
 import {
   Actions,
   Header,
   ItemList,
+  NoticeView,
+  PageHeaderWrapper,
+  PageMainContentWrapper,
+  Section,
   getRelativeTimeOrNull,
   useGroupedWorkspaceNotes,
-} from '../components/welcome-shared';
+} from '../components';
 
 const MAX_NOTES_TO_SHOW = 5;
 

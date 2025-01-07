@@ -1,3 +1,4 @@
+import { useCoreServices } from '@bangle.io/context';
 import { $suggestion, $suggestionUi } from '@bangle.io/prosemirror-plugins';
 import {
   Command,
@@ -24,7 +25,7 @@ import React, {
   useRef,
   type ReactElement,
 } from 'react';
-import { useCoreServices } from '../../../context/src';
+
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,

@@ -1,4 +1,4 @@
-import { assertIsDefined } from '../common/misc';
+import { assertIsDefined } from '../common';
 import {
   Fragment,
   NodeSelection,

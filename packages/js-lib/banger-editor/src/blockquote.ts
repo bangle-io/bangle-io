@@ -1,6 +1,5 @@
 import { nodes as schemaBasicNodes } from 'prosemirror-schema-basic';
-import { type CollectionType, collection } from './common/collection';
-import { keybinding } from './common/keybinding';
+import { type CollectionType, collection, keybinding } from './common';
 import type { Command, NodeSpec, NodeType, Schema } from './pm';
 import { lift, wrapIn } from './pm';
 import { inputRules, wrappingInputRule } from './pm';

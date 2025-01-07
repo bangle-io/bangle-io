@@ -6,8 +6,7 @@ import {
 } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
 import React from 'react';
-import { AllFilesDialog } from './components/all-files-dialog';
-import { AppCreateWorkspaceDialog } from './components/create-workspace-dialog';
+import { AllFilesDialog, AppCreateWorkspaceDialog } from './components';
 
 export function AppDialogs() {
   const coreServices = useCoreServices();

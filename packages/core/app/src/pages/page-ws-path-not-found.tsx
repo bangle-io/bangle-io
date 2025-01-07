@@ -1,7 +1,6 @@
 import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
-import { NoticeView } from '../components/NoticeView';
-import { Section } from '../components/section';
+import { NoticeView, Section } from '../components';
 
 export function PageWsPathNotFound() {
   return (

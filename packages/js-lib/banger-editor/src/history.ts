@@ -1,6 +1,4 @@
-import { keybinding } from './common';
-import { collection } from './common/collection';
-import { isMac } from './common/misc';
+import { collection, isMac, keybinding } from './common';
 import { history, redo, undo } from './pm';
 
 export type HistoryConfig = {

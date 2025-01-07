@@ -4,9 +4,11 @@ import { Editor } from '@bangle.io/editor';
 import { FunMissing } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
-import { NoticeView } from '../components/NoticeView';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import {
+  NoticeView,
+  PageHeaderWrapper,
+  PageMainContentWrapper,
+} from '../components';
 
 const MAIN_EDITOR_NAME = 'main-editor';
 

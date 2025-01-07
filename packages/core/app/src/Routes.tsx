@@ -2,15 +2,17 @@ import React from 'react';
 
 import { ROUTES } from '@bangle.io/constants';
 import { Redirect, Route, Switch } from 'wouter';
-import { PageEditor } from './pages/page-editor';
-import { PageFatalError } from './pages/page-fatal-error';
-import { PageNativeFsAuthFailed } from './pages/page-native-fs-auth-failed';
-import { PageNativeFsAuthReq } from './pages/page-native-fs-auth-req';
-import { PageNotFound } from './pages/page-not-found';
-import { PageWelcome } from './pages/page-welcome';
-import { PageWorkspaceNotFound } from './pages/page-workspace-not-found';
-import { PageWsHome } from './pages/page-ws-home';
-import { PageWsPathNotFound } from './pages/page-ws-path-not-found';
+import {
+  PageEditor,
+  PageFatalError,
+  PageNativeFsAuthFailed,
+  PageNativeFsAuthReq,
+  PageNotFound,
+  PageWelcome,
+  PageWorkspaceNotFound,
+  PageWsHome,
+  PageWsPathNotFound,
+} from './pages';
 
 export function AppRoutes() {
   return (

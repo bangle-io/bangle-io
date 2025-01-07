@@ -2,15 +2,15 @@ import { useCoreServices } from '@bangle.io/context';
 import { buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
 import {
   Actions,
   Header,
   ItemList,
+  PageHeaderWrapper,
+  PageMainContentWrapper,
+  Section,
   getRelativeTimeOrNull,
-} from '../components/welcome-shared';
+} from '../components';
 
 const MAX_RECENT_WORKSPACES = 5;
 

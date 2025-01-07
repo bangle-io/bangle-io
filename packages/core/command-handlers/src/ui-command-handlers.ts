@@ -1,7 +1,9 @@
-import { basicOperationsHandlers } from './ui-handlers/basic-operations';
-import { noteManagementHandlers } from './ui-handlers/note-management';
-import { testHandlers } from './ui-handlers/test-handler';
-import { workspaceManagementHandlers } from './ui-handlers/workspace-management';
+import {
+  basicOperationsHandlers,
+  noteManagementHandlers,
+  testHandlers,
+  workspaceManagementHandlers,
+} from './ui-handlers';
 
 export const uiCommandHandlers = [
   ...testHandlers,
