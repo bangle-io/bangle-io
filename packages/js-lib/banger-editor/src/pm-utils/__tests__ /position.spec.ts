@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import type { EditorView } from 'prosemirror-view';
 import { describe, expect, it, vi } from 'vitest';
-import { createVirtualElementFromRange } from '../position';
 import { assertIsDefined } from '../../common';
+import { createVirtualElementFromRange } from '../position';
 describe('pm-utils/position', () => {
   describe('createVirtualElementFromRange', () => {
     it('returns null if view is destroyed', () => {
