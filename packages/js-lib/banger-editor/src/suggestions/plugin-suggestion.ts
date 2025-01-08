@@ -8,14 +8,16 @@ import {
 } from '../pm';
 
 import type { Logger } from '../common';
-import { getMarkType } from '../pm-utils';
 import {
   type MarkScanResult,
+  type VirtualElement,
   clampRange,
   findFirstMarkPosition,
+  getMarkType,
   isTextSelection,
   safeInsert,
 } from '../pm-utils';
+import { createVirtualElementFromRange } from '../pm-utils';
 import { store } from '../store';
 
 export type Suggestion = {
@@ -37,14 +39,6 @@ export const $suggestion = store.atom<Suggestion | undefined>();
 export const $suggestionUi = store.atom<
   Record<string, { onSelect: (selected: Suggestion) => void }>
 >({});
-
-/**
- * A minimal "virtual element" interface that floating-ui expects
- * (using only getBoundingClientRect).
- */
-export interface VirtualElement {
-  getBoundingClientRect(): DOMRect;
-}
 
 // TODO current if the query is /sdsd /s dasdlkasd and the user moves out the second subquery is selected
 export function pluginSuggestion({
@@ -172,37 +166,12 @@ export function pluginSuggestion({
               position: result.start,
               refresh: Date.now(),
               anchorEl: () => {
-                if (view.isDestroyed) {
-                  return null;
-                }
-
-                const [startPos, endPos] = clampRange(
+                const [start, end] = clampRange(
                   result.start,
                   result.end,
                   view.state.doc.content.size,
                 );
-
-                const coordsStart = view.coordsAtPos(startPos);
-                if (!coordsStart) {
-                  return null;
-                }
-                const coordsEnd = view.coordsAtPos(endPos);
-                if (!coordsEnd) {
-                  return null;
-                }
-
-                const left = Math.min(coordsStart.left, coordsEnd.left);
-                const top = Math.min(coordsStart.top, coordsEnd.top);
-                const right = Math.max(
-                  coordsStart.right ?? coordsStart.left,
-                  coordsEnd.right ?? coordsEnd.left,
-                );
-                const bottom = Math.max(coordsStart.bottom, coordsEnd.bottom);
-                const rect = new DOMRect(left, top, right - left, bottom - top);
-                const virtualEl: VirtualElement = {
-                  getBoundingClientRect: () => rect,
-                };
-                return virtualEl;
+                return createVirtualElementFromRange(view, start, end);
               },
             });
           } else {
