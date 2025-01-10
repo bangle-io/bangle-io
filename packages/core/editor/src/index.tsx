@@ -4,7 +4,7 @@ import './typography.css';
 import { cx } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import React, { useState } from 'react';
-import { SlashCommand } from './components';
+import { LinkMenu, SlashCommand } from './components';
 export { PmEditorService } from './pm-editor-service';
 
 export function Editor({
@@ -35,6 +35,7 @@ export function Editor({
           )}
         />
         <SlashCommand editorName={name} />
+        <LinkMenu editorName={name} />
       </div>
     </div>
   );

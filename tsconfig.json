@@ -1,64 +1,64 @@
 {
-	"compilerOptions": {
-		// General Options
-		"composite": true,
-		"pretty": true,
-		"removeComments": false,
-		"skipLibCheck": true,
-		"stripInternal": true,
-		"experimentalDecorators": true,
-		// JavaScript Support
-		"allowJs": true,
-		"checkJs": true,
-		// Module Resolution
-		"esModuleInterop": true,
-		"allowImportingTsExtensions": true,
-		"module": "ES2020",
-		"moduleResolution": "node",
-		"moduleDetection": "force",
-		"resolveJsonModule": false,
-		"isolatedModules": true,
-		"jsx": "react",
-		// Emit Options
-		"declaration": true,
-		"declarationMap": true,
-		"noEmit": true,
-		"noEmitOnError": false,
-		"importHelpers": true,
-		// Strict Type-Checking Options
-		"strict": true,
-		"noImplicitAny": true,
-		"noImplicitReturns": true,
-		"noUncheckedIndexedAccess": true,
-		"noUnusedLocals": false,
-		"noUnusedParameters": true,
-		"forceConsistentCasingInFileNames": true,
-		"noFallthroughCasesInSwitch": true,
-		"noPropertyAccessFromIndexSignature": false,
-		// JSX
-		// Target and Libraries
-		"target": "ES2020",
-		"lib": [
-			"dom",
-			"ES2020",
-			"dom.iterable",
-			"webworker"
-		],
-		// Miscellaneous
-		"newLine": "lf",
-		"useDefineForClassFields": true
-	},
-	"include": [
-		"packages/**/*.ts",
-		"packages/**/*.tsx",
-		"packages/tooling/storybook/.storybook/**/*.ts",
-		"packages/tooling/storybook/.storybook/**/*.tsx",
-		"vitest.config.ts",
-		"globals.d.ts"
-	],
-	"exclude": [
-		"node_modules",
-		"packages/js-lib/color-scheme-manager/src/**/*",
-		"packages/js-lib/poor-mans-di/src/__tests__/poor-mans-di.spec.ts",
-	]
+  "compilerOptions": {
+    // General Options
+    "composite": true,
+    "pretty": true,
+    "removeComments": false,
+    "skipLibCheck": true,
+    "stripInternal": true,
+    "experimentalDecorators": true,
+    // JavaScript Support
+    "allowJs": true,
+    "checkJs": true,
+    // Module Resolution
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "moduleDetection": "force",
+    "resolveJsonModule": false,
+    "isolatedModules": true,
+    "jsx": "react",
+    // Emit Options
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "noEmitOnError": false,
+    "importHelpers": true,
+    // Strict Type-Checking Options
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": false,
+    // JSX
+    // Target and Libraries
+    "target": "ES2020",
+    "lib": [
+      "dom",
+      "ES2020",
+      "dom.iterable",
+      "webworker"
+    ],
+    // Miscellaneous
+    "newLine": "lf",
+    "useDefineForClassFields": true
+  },
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "packages/tooling/storybook/.storybook/**/*.ts",
+    "packages/tooling/storybook/.storybook/**/*.tsx",
+    "vitest.config.ts",
+    "globals.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "packages/js-lib/color-scheme-manager/src/**/*",
+    "packages/js-lib/poor-mans-di/src/__tests__/poor-mans-di.spec.ts",
+  ]
 }

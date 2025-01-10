@@ -20,7 +20,7 @@ export const FLOATING_INITIAL_STYLE = {
   position: 'absolute',
   left: 0,
   top: 0,
-  zIndex: 100,
+  zIndex: 10,
 } as const;
 
 export function useFloatingPosition({

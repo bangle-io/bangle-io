@@ -43,6 +43,7 @@
     "jotai": "^2.11.0",
     "prosemirror-view": "^1.37.1",
     "react": "^18.3.1",
-    "@bangle.io/context": "workspace:*"
+    "@bangle.io/context": "workspace:*",
+    "lucide-react": "^0.469.0"
   }
 }

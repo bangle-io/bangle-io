@@ -16,6 +16,7 @@ import {
   getMarkType,
   isTextSelection,
   safeInsert,
+  setupScrollAndResizeHandlers,
 } from '../pm-utils';
 import { createVirtualElementFromRange } from '../pm-utils';
 import { store } from '../store';
@@ -53,40 +54,21 @@ export function pluginSuggestion({
   return new Plugin({
     key: new PluginKey(`suggestion-${markName}`),
     view: (view) => {
-      const handleScrollOrResize = () => {
+      const abortController = new AbortController();
+
+      setupScrollAndResizeHandlers((refresh_counter) => {
         const suggestion = store.get(view.state, $suggestion);
         if (suggestion) {
           store.set(view.state, $suggestion, {
             ...suggestion,
-            refresh: Date.now(),
+            refresh: refresh_counter,
           });
         }
-      };
-
-      let rafId: number | null = null;
-      const handleScrollOrResizeWithRaf = () => {
-        if (rafId === null) {
-          rafId = requestAnimationFrame(() => {
-            handleScrollOrResize();
-            rafId = null;
-          });
-        }
-      };
-
-      window.addEventListener('scroll', handleScrollOrResizeWithRaf, {
-        passive: true,
-      });
-      window.addEventListener('resize', handleScrollOrResizeWithRaf, {
-        passive: true,
-      });
+      }, abortController.signal);
 
       return {
         destroy: () => {
-          window.removeEventListener('scroll', handleScrollOrResizeWithRaf);
-          window.removeEventListener('resize', handleScrollOrResizeWithRaf);
-          if (rafId !== null) {
-            cancelAnimationFrame(rafId);
-          }
+          abortController.abort();
         },
         update: (view, lastState) => {
           const { state } = view;
@@ -164,7 +146,7 @@ export function pluginSuggestion({
               show: true,
               text: result.text ?? '',
               position: result.start,
-              refresh: Date.now(),
+              refresh: suggestion?.refresh ?? 0,
               anchorEl: () => {
                 const [start, end] = clampRange(
                   result.start,

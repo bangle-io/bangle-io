@@ -47,3 +47,47 @@ export function createVirtualElementFromRange(
       new DOMRect(left, top, right - left, bottom - top),
   };
 }
+
+/**
+ * Sets up scroll and resize handlers to trigger a callback.
+ *
+ * @param callback - The function to call on scroll or resize events.
+ *                   It receives a `refresh_counter` to track updates.
+ * @param abortSignal - An `AbortSignal` to stop the handlers.
+ */
+export function setupScrollAndResizeHandlers(
+  callback: (refresh_counter: number) => void,
+  abortSignal: AbortSignal,
+) {
+  let refresh_counter = 0;
+  let rafId: number | null = null;
+
+  const handleScrollOrResizeWithRaf = () => {
+    if (rafId === null) {
+      rafId = requestAnimationFrame(() => {
+        refresh_counter++;
+        callback(refresh_counter);
+        rafId = null;
+      });
+    }
+  };
+
+  if (abortSignal.aborted) {
+    return;
+  }
+
+  window.addEventListener('scroll', handleScrollOrResizeWithRaf, {
+    passive: true,
+  });
+  window.addEventListener('resize', handleScrollOrResizeWithRaf, {
+    passive: true,
+  });
+
+  abortSignal.addEventListener('abort', () => {
+    window.removeEventListener('scroll', handleScrollOrResizeWithRaf);
+    window.removeEventListener('resize', handleScrollOrResizeWithRaf);
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+    }
+  });
+}

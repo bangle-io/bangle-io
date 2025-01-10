@@ -19,6 +19,7 @@ import {
   setupImage,
   setupItalic,
   setupLink,
+  setupLinkMenu,
   setupList,
   setupParagraph,
   setupStrike,
@@ -27,6 +28,7 @@ import {
 import { funPlaceholder } from './utils';
 
 export function setupExtensions(logger: Logger) {
+  const link = setupLink();
   return {
     image: setupImage(),
     activeNode: setupActiveNode({
@@ -69,6 +71,7 @@ export function setupExtensions(logger: Logger) {
     code: setupCode(),
     codeBlock: setupCodeBlock(),
     italic: setupItalic(),
-    link: setupLink(),
+    link,
+    linkMenu: setupLinkMenu({ link }),
   };
 }

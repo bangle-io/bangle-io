@@ -147,7 +147,7 @@ export function setupLink(userConfig?: LinkConfig) {
   };
 
   return collection({
-    id: name,
+    id: 'link',
     marks,
     plugin,
     command: {
@@ -159,6 +159,7 @@ export function setupLink(userConfig?: LinkConfig) {
       isSelectionAroundLink: isSelectionAroundLink(config),
       linkAllowedInRange: linkAllowedInRange(config),
       getLinkDetails: getLinkDetails(config),
+      getLinkMark: getLinkMark(config),
     },
     markdown: markdown(config),
   });
@@ -512,6 +513,13 @@ function getLinkDetails(config: RequiredConfig) {
       };
     }
     return undefined;
+  };
+}
+
+function getLinkMark(config: RequiredConfig) {
+  return (state: EditorState) => {
+    const linkMark = getMarkType(state.schema, config.name);
+    return linkMark;
   };
 }
 
