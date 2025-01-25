@@ -7,11 +7,7 @@ import {
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
-import {
-  assertedResolvePath,
-  filePathToWsPath,
-  resolvePath,
-} from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   BugPlay,
@@ -54,10 +50,10 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     >
       <UIAppSidebar
         onFileDrop={(source, destination) => {
-          const wsName = assertedResolvePath(source.wsPath).wsName;
+          const wsName = WsPath.assert(source.wsPath).wsName;
           const destWsPath =
             'isRoot' in destination
-              ? filePathToWsPath({ wsName, inputPath: '' })
+              ? WsPath.fromParts(wsName, '').wsPath
               : destination.wsPath;
 
           commandDispatcher.dispatch(
@@ -80,7 +76,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName == null ? i === 0 : activeWsName === ws.name,
         }))}
-        wsPaths={displayedWsPaths}
+        wsPaths={displayedWsPaths.map((wsPath) => wsPath.wsPath)}
         isTruncated={isTruncated}
         onTruncatedClick={() => {
           commandDispatcher.dispatch(
@@ -92,8 +88,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         navItems={activeWsPaths.map((wsPath) => ({
-          title: resolvePath(wsPath)?.fileName || '',
-          wsPath,
+          title: wsPath.fileName || '',
+          wsPath: wsPath.wsPath,
         }))}
         onNewWorkspaceClick={() => {
           commandDispatcher.dispatch(
@@ -102,7 +98,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
-        activeWsPaths={activeWsPaths}
+        activeWsPaths={activeWsPaths.map((wsPath) => wsPath.wsPath)}
         onSearchClick={() => {
           setOpenOmniSearch(true);
         }}

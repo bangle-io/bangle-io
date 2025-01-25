@@ -25,8 +25,8 @@ describe('wsPathToBreadcrumb', () => {
     const result = wsPathToBreadcrumb('my-workspace:folder/subfolder/note.md');
     expect(result).toEqual([
       { label: 'my-workspace', wsPath: 'my-workspace:' },
-      { label: 'folder', wsPath: 'my-workspace:folder' },
-      { label: 'subfolder', wsPath: 'my-workspace:folder/subfolder' },
+      { label: 'folder', wsPath: 'my-workspace:folder/' },
+      { label: 'subfolder', wsPath: 'my-workspace:folder/subfolder/' },
       { label: 'note.md', wsPath: 'my-workspace:folder/subfolder/note.md' },
     ]);
   });

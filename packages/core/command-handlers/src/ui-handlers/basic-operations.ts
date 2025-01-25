@@ -75,7 +75,7 @@ export const basicOperationsHandlers = [
     'command::ui:toggle-wide-editor',
     ({ workbenchState, workspaceState }, _, key) => {
       const { store } = getCtx(key);
-      const currentWsPath = store.get(workspaceState.$wsPath);
+      const currentWsPath = store.get(workspaceState.$currentWsPath);
       if (!currentWsPath) {
         throwAppError(
           'error::workspace:not-opened',

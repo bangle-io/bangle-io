@@ -519,7 +519,7 @@ const ListItem: React.FC<ListItemProps> = ({
 const ErrorMessage: React.FC<{ error?: ErrorInfo }> = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="text-destructive-foreground text-sm">
+    <div className="rounded-sm bg-destructive p-2 text-destructive-foreground text-sm">
       {error.title && <strong>{error.title}: </strong>}
       {error.message}
     </div>

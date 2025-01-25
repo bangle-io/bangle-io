@@ -47,6 +47,23 @@ async function setupUserActivityService({
     metadata: {},
   });
 
+  await services.fileSystem.createTextFile(
+    TEST_WS_PATH,
+    'I am content of test.md',
+  );
+  await services.fileSystem.createTextFile(
+    TEST_WS_PATH2,
+    'I am content of test2.md',
+  );
+  await services.fileSystem.createTextFile(
+    TEST_WS_PATH3,
+    'I am content of test3.md',
+  );
+  await services.fileSystem.createTextFile(
+    TEST_WS_PATH4,
+    'I am content of test4.md',
+  );
+
   return {
     userActivityService,
     navigation,
@@ -68,7 +85,9 @@ describe('UserActivityService', () => {
     const data = { wsPath: TEST_WS_PATH };
     service.navigation.goWsPath(TEST_WS_PATH);
 
-    expect(service.navigation.resolveAtoms().wsPath).toEqual(TEST_WS_PATH);
+    expect(service.navigation.resolveAtoms().wsPath?.wsPath).toEqual(
+      TEST_WS_PATH,
+    );
 
     const activities = await vi.waitUntil(async () => {
       const result = await service.userActivityService.getRecent(
@@ -185,6 +204,23 @@ describe('UserActivityService', () => {
     const activities = await userActivityService.getRecent(
       TEST_WS_NAME,
       'command',
+    );
+
+    expect(activities).toHaveLength(0);
+  });
+
+  it('should handle navigation to non-existent path', async () => {
+    const { userActivityService, navigation } = await setupUserActivityService({
+      controller,
+    });
+    const nonExistentPath = 'test-workspace:does-not-exist.md';
+
+    navigation.goWsPath(nonExistentPath);
+    await sleep(10);
+
+    const activities = await userActivityService.getRecent(
+      TEST_WS_NAME,
+      'ws-path',
     );
 
     expect(activities).toHaveLength(0);

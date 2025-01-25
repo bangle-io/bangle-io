@@ -1,7 +1,7 @@
 import { useCoreServices } from '@bangle.io/context';
 import { Button } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
-import { buildURL, buildUrlPath, resolvePath } from '@bangle.io/ws-path';
+import { WsPath, buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { differenceInYears, formatDistanceToNow } from 'date-fns';
 import { useAtomValue } from 'jotai';
 import React from 'react';
@@ -30,14 +30,14 @@ export function useGroupedWorkspaceNotes() {
 
   const sortedPathsWithTimestamp = React.useMemo(() => {
     return allWsPaths
-      .map((wsPath) => {
+      .map((wsPath): { wsPath: string; timestamp: number } => {
         const recentActivity = allRecentWsPaths.find(
-          (r) => r.wsPath === wsPath,
+          (r) => r.wsPath === wsPath.wsPath,
         );
         if (recentActivity) {
-          return { wsPath, timestamp: recentActivity.timestamp };
+          return { wsPath: wsPath.wsPath, timestamp: recentActivity.timestamp };
         }
-        return { wsPath, timestamp: 0 };
+        return { wsPath: wsPath.wsPath, timestamp: 0 };
       })
       .sort((a, b) => b.timestamp - a.timestamp);
   }, [allWsPaths, allRecentWsPaths]);
@@ -45,10 +45,10 @@ export function useGroupedWorkspaceNotes() {
   return React.useMemo(() => {
     // Get recent paths (top 5) with timestamps
     const recentOrdered = recentWsPaths
-      .filter((p) => allWsPaths.includes(p))
+      .filter((p) => allWsPaths.some((wsPath) => wsPath.wsPath === p))
       .slice(0, 5)
       .map((wsPath) => ({
-        wsPath,
+        wsPath: wsPath,
         timestamp:
           allRecentWsPaths.find((r) => r.wsPath === wsPath)?.timestamp || 0,
       }));
@@ -64,8 +64,9 @@ export function useGroupedWorkspaceNotes() {
     );
 
     const toLinkObj = (item: { wsPath: string; timestamp: number }) => {
-      const resolved = resolvePath(item.wsPath);
-      const fileName = resolved?.fileName || item.wsPath;
+      const wsPath = WsPath.fromString(item.wsPath);
+      const filePath = wsPath.asFile();
+      const fileName = filePath?.fileName || item.wsPath;
       const href = buildURL(buildUrlPath.pageEditor({ wsPath: item.wsPath }));
       return {
         wsPath: item.wsPath,

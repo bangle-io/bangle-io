@@ -1,7 +1,7 @@
 import {
   BaseService,
   type BaseServiceContext,
-  isAppError,
+  createAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
@@ -10,7 +10,12 @@ import type {
   RouterLocation,
   RouterState,
 } from '@bangle.io/types';
-import { buildUrlPath, parseUrlPath, resolvePath } from '@bangle.io/ws-path';
+import {
+  type WsFilePath,
+  WsPath,
+  buildUrlPath,
+  parseUrlPath,
+} from '@bangle.io/ws-path';
 import type { WritableAtom } from 'jotai';
 import { atom } from 'jotai';
 
@@ -29,35 +34,39 @@ export class NavigationService extends BaseService {
     previous: undefined,
   });
 
-  $wsPath = atom<string | undefined>((get) => {
-    try {
-      const result = parseUrlPath.pageEditor(get(this.$location));
-      return result?.wsPath;
-    } catch (error) {
-      if (isAppError(error)) {
-        this.emitAppError(error);
-        return undefined;
-      }
-      throw error;
+  $wsFilePath = atom<WsFilePath | undefined>((get) => {
+    const result = parseUrlPath.pageEditor(get(this.$location));
+    if (!result?.wsPath) {
+      return undefined;
     }
+    const wsPath = WsPath.safeParse(result?.wsPath);
+
+    if (wsPath.validationError || !wsPath.data) {
+      this.emitAppError(
+        createAppError(
+          'error::ws-path:invalid-ws-path',
+          wsPath.validationError?.reason || 'Invalid workspace path',
+          {
+            invalidPath: result?.wsPath,
+          },
+        ),
+      );
+      return undefined;
+    }
+
+    return wsPath.data?.asFile();
   });
 
   $wsName = atom<string | undefined>((get) => {
-    try {
-      const wsPath = get(this.$wsPath);
-      if (wsPath) {
-        return resolvePath(wsPath)?.wsName;
-      }
-
-      const result = parseUrlPath.pageWsHome(get(this.$location));
-      return result?.wsName;
-    } catch (error) {
-      if (isAppError(error)) {
-        this.emitAppError(error);
-        return undefined;
-      }
-      throw error;
+    // prefer wsFilePath over location
+    const wsPath = get(this.$wsFilePath);
+    if (wsPath) {
+      return wsPath?.wsName;
     }
+
+    // else false back to parsing from location, as not everything is a file
+    const result = parseUrlPath.pageWsHome(get(this.$location));
+    return result?.wsName;
   });
 
   constructor(
@@ -96,7 +105,7 @@ export class NavigationService extends BaseService {
   public resolveAtoms() {
     return {
       wsName: this.store.get(this.$wsName),
-      wsPath: this.store.get(this.$wsPath),
+      wsPath: this.store.get(this.$wsFilePath),
       lifeCycle: this.store.get(this.$lifeCycle),
       location: this.store.get(this.$location),
     };

@@ -11,7 +11,6 @@ import type {
   CommandDispatchResult,
   ScopedEmitter,
 } from '@bangle.io/types';
-import { getWsName } from '@bangle.io/ws-path';
 import { type PrimitiveAtom, atom } from 'jotai';
 import { unwrap } from 'jotai/utils';
 import type { WorkspaceOpsService } from './workspace-ops-service';
@@ -87,7 +86,7 @@ export class UserActivityService extends BaseService {
         })
         .slice(0, this.maxRecentEntries);
     }),
-    () => [],
+    (): Array<{ wsPath: string; timestamp: number }> => [],
   );
 
   $recentWsPaths = unwrap(
@@ -95,7 +94,7 @@ export class UserActivityService extends BaseService {
       await this.mountPromise;
       const wsName = get(this.workspaceState.$wsName);
       const wsPaths = get(this.workspaceState.$wsPaths);
-      const wsPathsSet = new Set(wsPaths);
+      const wsPathsSet = new Set(wsPaths.map((path) => path.wsPath));
 
       // If no workspace is active, return empty array
       if (!wsName) {
@@ -110,7 +109,7 @@ export class UserActivityService extends BaseService {
         .filter((item) => wsPathsSet.has(item.wsPath))
         .map((item) => item.wsPath);
     }),
-    () => [],
+    (): string[] => [],
   );
 
   $recentCommands = unwrap(
@@ -135,7 +134,7 @@ export class UserActivityService extends BaseService {
           return true;
         });
     }),
-    () => [],
+    (): string[] => [],
   );
 
   get $timesAppLoaded() {
@@ -188,15 +187,15 @@ export class UserActivityService extends BaseService {
     );
 
     this.addCleanup(
-      this.store.sub(this.workspaceState.$wsPath, () => {
-        const wsPath = this.store.get(this.workspaceState.$wsPath);
+      this.store.sub(this.workspaceState.$currentWsPath, () => {
+        const wsPath = this.store.get(this.workspaceState.$currentWsPath);
         this.logger.debug('Recording ws-path activity', wsPath);
-        const wsName = wsPath && getWsName(wsPath);
+        const wsName = wsPath?.wsName;
         if (!wsName) {
           return;
         }
-        this.recordActivity(wsName, 'ws-path', { wsPath }).catch((err) =>
-          this.logger.error(err),
+        this.recordActivity(wsName, 'ws-path', { wsPath: wsPath.wsPath }).catch(
+          (err) => this.logger.error(err),
         );
       }),
     );

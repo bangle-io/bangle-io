@@ -6,13 +6,7 @@ import {
   Separator,
   Sidebar,
 } from '@bangle.io/ui-components';
-import {
-  buildURL,
-  buildUrlPath,
-  getParentWsPath,
-  resolveDirWsPath,
-} from '@bangle.io/ws-path';
-import { PATH_SEPARATOR } from '@bangle.io/ws-path';
+import { WsPath, buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
 import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
 import React from 'react';
@@ -23,9 +17,9 @@ const isWideEditor = checkWidescreen();
 
 export function AppToolbar() {
   const coreServices = useCoreServices();
-  const wsPath = useAtomValue(coreServices.navigation.$wsPath);
-  const wsName = useAtomValue(coreServices.navigation.$wsName);
   const wsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);
+  const wsPath = useAtomValue(coreServices.workspaceState.$currentWsPath);
+  const wsName = useAtomValue(coreServices.workspaceState.$wsName);
   const [wideEditor, setWideEditor] = useAtom(
     coreServices.workbenchState.$wideEditor,
   );
@@ -39,9 +33,9 @@ export function AppToolbar() {
       <div className="flex h-full items-center justify-between">
         <ToolbarLeftSection
           showEditorToolbar={showEditorToolbar}
-          wsPath={wsPath}
+          wsPath={wsPath?.wsPath}
           wsName={wsName}
-          wsPaths={wsPaths}
+          wsPaths={wsPaths.map((wsPath) => wsPath.wsPath)}
         />
         {wsPath && wsName && (
           <ToolbarRightSection
@@ -83,11 +77,9 @@ function ToolbarLeftSection({
               wsPath={wsPath}
               wsPaths={wsPaths}
               onNewNote={({ wsPath }) => {
-                const parent = getParentWsPath(wsPath);
-                let path = parent && resolveDirWsPath(parent)?.dirPath;
-                if (path) {
-                  path += PATH_SEPARATOR;
-                }
+                const parent = WsPath.fromString(wsPath).getParent();
+                const path = parent?.path;
+
                 coreServices.commandDispatcher.dispatch(
                   'command::ui:create-note-dialog',
                   {

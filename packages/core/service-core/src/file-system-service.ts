@@ -16,13 +16,7 @@ import type {
   ScopedEmitter,
   WorkspaceInfo,
 } from '@bangle.io/types';
-import {
-  VALID_NOTE_EXTENSIONS_SET,
-  assertSplitWsPath,
-  assertedGetWsName,
-  getExtension,
-  validateWsPath,
-} from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 
 type ChangeEvent = {
@@ -107,7 +101,7 @@ export class FileSystemService extends BaseService {
   }
 
   public isFileTypeSupported({ extension }: { extension: string }) {
-    return VALID_NOTE_EXTENSIONS_SET.has(extension);
+    return WsPath.VALID_NOTE_EXTENSIONS_SET.has(extension);
   }
 
   public async listFiles(
@@ -116,15 +110,32 @@ export class FileSystemService extends BaseService {
   ): Promise<string[]> {
     await this.mountPromise;
     // A dummy path is used to identify the correct storage service for this workspace.
-    const dummyWsPath = `${wsName}:dummy.md`;
-    const storageService = await this.getStorageService(dummyWsPath);
+    const dummyWsPath = WsPath.fromParts(wsName, '').wsPath;
+    const storageService = await this.getStorageService({
+      wsPath: dummyWsPath,
+    });
 
     let wsPaths = await storageService.listAllFiles(wsName, abortSignal, {});
     wsPaths = wsPaths.filter((r) => {
-      const { isValid } = validateWsPath(r);
-      const extension = getExtension(r);
-      const isSupported =
-        isValid && extension && this.isFileTypeSupported({ extension });
+      const result = WsPath.safeParse(r);
+      if (!result.ok) {
+        this.logger.warn(
+          `listFiles: Ignoring file "${r}" as it is not a valid wsPath`,
+        );
+        return false;
+      }
+      const wsPath = result.data;
+      const filePath = wsPath?.asFile();
+      if (!filePath) {
+        this.logger.warn(
+          `listFiles: Ignoring file "${r}" as it is not a file path`,
+        );
+        return false;
+      }
+      const extension = filePath.extension;
+      const isSupported = extension
+        ? this.isFileTypeSupported({ extension })
+        : false;
 
       if (!isSupported) {
         this.logger.warn(
@@ -139,16 +150,16 @@ export class FileSystemService extends BaseService {
 
   public async readFile(wsPath: string): Promise<File | undefined> {
     await this.mountPromise;
-    assertSplitWsPath(wsPath);
+    WsPath.assertFile(wsPath);
 
-    const storageService = await this.getStorageService(wsPath);
+    const storageService = await this.getStorageService({ wsPath });
     const file = await storageService.readFile(wsPath, {});
     return file;
   }
 
   public async readFileAsText(wsPath: string): Promise<string | undefined> {
     await this.mountPromise;
-    assertSplitWsPath(wsPath);
+    WsPath.assertFile(wsPath);
 
     const file = await this.readFile(wsPath);
     if (!file) {
@@ -163,14 +174,25 @@ export class FileSystemService extends BaseService {
     _options: { sha?: string } = {},
   ): Promise<void> {
     await this.mountPromise;
-    assertSplitWsPath(wsPath);
+    WsPath.assertFile(wsPath);
 
-    const storageService = await this.getStorageService(wsPath);
+    const storageService = await this.getStorageService({ wsPath });
     await storageService.createFile(wsPath, file, {});
     this.onChange({
       type: 'file-create',
       payload: { wsPath },
     });
+  }
+
+  public async createTextFile(wsPath: string, text: string): Promise<void> {
+    await this.mountPromise;
+    const fileWsPath = WsPath.assertFile(wsPath);
+    await this.createFile(
+      wsPath,
+      new File([text], fileWsPath.fileNameWithoutExtension, {
+        type: 'text/plain',
+      }),
+    );
   }
 
   public async writeFile(
@@ -179,9 +201,9 @@ export class FileSystemService extends BaseService {
     options: { sha?: string } = {},
   ): Promise<void> {
     await this.mountPromise;
-    assertSplitWsPath(wsPath);
+    WsPath.assertFile(wsPath);
 
-    const storageService = await this.getStorageService(wsPath);
+    const storageService = await this.getStorageService({ wsPath });
     await storageService.writeFile(wsPath, file, {
       sha: options.sha,
     });
@@ -193,9 +215,9 @@ export class FileSystemService extends BaseService {
 
   public async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
-    assertSplitWsPath(wsPath);
+    WsPath.assertFile(wsPath);
 
-    const storageService = await this.getStorageService(wsPath);
+    const storageService = await this.getStorageService({ wsPath });
     await storageService.deleteFile(wsPath, {});
     this.onChange({
       type: 'file-delete',
@@ -212,10 +234,22 @@ export class FileSystemService extends BaseService {
   }): Promise<void> {
     await this.mountPromise;
 
-    const { wsName: currentWsName } = assertSplitWsPath(oldWsPath);
-    const { wsName: newWsName } = assertSplitWsPath(newWsPath);
+    const oldPath = WsPath.fromString(oldWsPath).asFile();
+    const newPath = WsPath.fromString(newWsPath).asFile();
 
-    if (currentWsName !== newWsName) {
+    if (!oldPath || !newPath) {
+      throwAppError(
+        'error::file:invalid-operation',
+        'Invalid file paths provided',
+        {
+          operation: 'rename',
+          oldWsPath,
+          newWsPath,
+        },
+      );
+    }
+
+    if (oldPath.wsName !== newPath.wsName) {
       throwAppError(
         'error::file:invalid-operation',
         'Cannot rename file across different workspaces',
@@ -227,7 +261,9 @@ export class FileSystemService extends BaseService {
       );
     }
 
-    const storageService = await this.getStorageService(oldWsPath);
+    const storageService = await this.getStorageService({
+      wsPath: oldPath.wsPath,
+    });
     await storageService.renameFile(oldWsPath, {
       newWsPath,
     });
@@ -279,11 +315,13 @@ export class FileSystemService extends BaseService {
     }
   }
 
-  private async getStorageService(
-    wsPathOrName: string,
-  ): Promise<BaseFileStorageService> {
+  private async getStorageService({
+    wsPath,
+  }: {
+    wsPath: string;
+  }): Promise<BaseFileStorageService> {
     await this.mountPromise;
-    const wsName = assertedGetWsName(wsPathOrName);
+    const wsName = WsPath.fromString(wsPath).wsName;
     const wsInfo = await this.getWorkspaceInfo({ wsName });
     const wsInfoType = wsInfo.type as WorkspaceStorageType;
     return FileSystemService._getStorageServiceForType(

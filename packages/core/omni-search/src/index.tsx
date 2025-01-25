@@ -18,7 +18,6 @@ import {
   substringFuzzySearch,
 } from '@bangle.io/fuzzysearch';
 
-import { assertSplitWsPath } from '@bangle.io/ws-path';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import React, { useMemo } from 'react';
 
@@ -315,13 +314,13 @@ export function OmniSearch({
     );
 
     const filteredFiles = wsPaths.map((wsPath): CommandItemProp => {
-      const { wsName, filePath } = assertSplitWsPath(wsPath);
+      const { wsName, filePath } = wsPath;
       return {
         id: `file-${wsPath}`,
         title: filePath,
         metadata: {
           type: 'file',
-          wsPath,
+          wsPath: wsPath.wsPath,
           filePath,
           wsName,
         },
@@ -329,7 +328,7 @@ export function OmniSearch({
           setOpen(false);
           commandDispatcher.dispatch(
             'command::ws:go-ws-path',
-            { wsPath: wsPath },
+            { wsPath: wsPath.wsPath },
             'ui',
           );
         },

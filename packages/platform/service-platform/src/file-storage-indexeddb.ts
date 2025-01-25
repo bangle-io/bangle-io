@@ -13,7 +13,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   onChange: (event: FileStorageChangeEvent) => void;
@@ -42,8 +42,8 @@ export class FileStorageIndexedDB
   }
 
   private getFsPath(wsPath: string): string {
-    const fsPath = toFSPath(wsPath);
-    if (!fsPath) {
+    const path = WsPath.fromString(wsPath).toFSPath();
+    if (!path) {
       throwAppError(
         'error::ws-path:invalid-ws-path',
         'Invalid workspace path',
@@ -52,7 +52,7 @@ export class FileStorageIndexedDB
         },
       );
     }
-    return fsPath;
+    return path;
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
@@ -119,8 +119,9 @@ export class FileStorageIndexedDB
     abortSignal.throwIfAborted();
 
     return rawPaths
-      .map(fromFsPath)
-      .filter((path): path is string => Boolean(path))
+      .map((path) => WsPath.fromFSPath(path))
+      .filter((path) => !!path)
+      .map((path) => path.wsPath)
       .sort((a, b) => a.localeCompare(b));
   }
 

@@ -3,7 +3,7 @@ import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { CreateWorkspaceDialog } from '@bangle.io/ui-components';
-import { validateWsName } from '@bangle.io/ws-path/src/helpers';
+import { WsPath } from '@bangle.io/ws-path';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { nativeFsErrorParse } from '../common';
@@ -18,14 +18,14 @@ export function AppCreateWorkspaceDialog() {
       open={openWsDialog}
       onOpenChange={setOpenWsDialog}
       validateWorkspace={({ name: wsName }) => {
-        const result = validateWsName(wsName);
-        if (result.isValid) {
+        const result = WsPath.safeFromParts(wsName, '');
+        if (result.ok) {
           return { isValid: true };
         }
 
         return {
           isValid: false,
-          message: result.reason,
+          message: result.validationError?.reason || 'Invalid workspace name',
         };
       }}
       onDone={({ name: wsName, type, dirHandle }) => {

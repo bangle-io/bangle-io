@@ -1,13 +1,5 @@
 import { Breadcrumb, Button, DropdownMenu } from '@bangle.io/ui-components';
-import {
-  breakPathIntoParts,
-  buildURL,
-  buildUrlPath,
-  filePathToWsPath,
-  isFileWsPath,
-  pathJoin,
-  splitWsPath,
-} from '@bangle.io/ws-path';
+import { WsPath, buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { Folder, PlusIcon } from 'lucide-react';
 // packages/core/app/src/components/NoteBreadcrumb.tsx
 import React from 'react';
@@ -107,23 +99,30 @@ export interface BreadcrumbSegment {
 }
 
 export function wsPathToBreadcrumb(wsPath: string): BreadcrumbSegment[] {
-  const [wsName, filePath] = splitWsPath(wsPath);
+  let path = WsPath.fromString(wsPath);
+
   const segments: BreadcrumbSegment[] = [
-    { label: wsName, wsPath: filePathToWsPath({ wsName, inputPath: '' }) },
+    {
+      label: path.name || path.wsName,
+      wsPath: path.wsPath,
+    },
   ];
 
-  if (!filePath) {
+  if (!path.path) {
     return segments;
   }
 
-  const parts = breakPathIntoParts(filePath).filter(Boolean);
-  parts.forEach((part, idx) => {
-    const currentPath = pathJoin(...parts.slice(0, idx + 1));
-    segments.push({
-      label: part,
-      wsPath: filePathToWsPath({ wsName, inputPath: currentPath }),
+  while (true) {
+    const parent = path.getParent();
+    if (!parent) {
+      break;
+    }
+    segments.unshift({
+      label: parent.name || path.wsName,
+      wsPath: parent.wsPath,
     });
-  });
+    path = parent;
+  }
 
   return segments;
 }
@@ -217,24 +216,26 @@ function getSiblingFiles(
   segment: BreadcrumbSegment,
   wsPaths: string[],
 ): BreadcrumbSegment[] {
-  const [wsName, dirPath] = splitWsPath(segment.wsPath);
-  const dirParts = breakPathIntoParts(dirPath);
-  const parentDir = pathJoin(...dirParts.slice(0, -1));
+  const segmentPath = WsPath.fromString(segment.wsPath);
+  const parentDir = segmentPath.getParent();
 
   return wsPaths
     .filter((path) => {
-      const [pathWsName, pathFilePath] = splitWsPath(path);
-      if (pathWsName !== wsName) return false;
-      const pathDir = pathJoin(
-        ...breakPathIntoParts(pathFilePath).slice(0, -1),
-      );
+      const wsPath = WsPath.fromString(path);
+      const filePath = wsPath.asFile();
+      if (!filePath || wsPath.wsName !== segmentPath.wsName) return false;
+
+      const pathParent = filePath.getParent();
       return (
-        pathDir === parentDir && pathFilePath !== dirPath && isFileWsPath(path)
+        pathParent?.path === parentDir?.path && wsPath.path !== segmentPath.path
       );
     })
     .map((path) => {
-      const [_, filePath] = splitWsPath(path);
-      const label = breakPathIntoParts(filePath).pop() || '';
-      return { label, wsPath: path };
+      const wsPath = WsPath.fromString(path);
+      const filePath = wsPath.asFile();
+      return {
+        label: filePath?.fileName || '',
+        wsPath: path,
+      };
     });
 }

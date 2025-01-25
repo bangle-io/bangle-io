@@ -1,9 +1,5 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import {
-  assertSplitWsPath,
-  filePathToWsPath,
-  pathJoin,
-} from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 
 export interface TreeItem {
   id: string;
@@ -25,12 +21,12 @@ export function buildTree(
   openPaths: string[] = [],
   comparator?: SortComparator,
 ): TreeItem[] {
-  const filePaths = wsPaths.map((wsPath) => assertSplitWsPath(wsPath).filePath);
+  const filePaths = wsPaths.map((wsPath) => WsPath.fromString(wsPath).path);
   const openFilePaths = new Set(
-    openPaths.map((wsPath) => assertSplitWsPath(wsPath).filePath),
+    openPaths.map((wsPath) => WsPath.fromString(wsPath).path),
   );
 
-  const wsName = wsPaths[0] ? assertSplitWsPath(wsPaths[0]).wsName : '';
+  const wsName = wsPaths[0] ? WsPath.fromString(wsPaths[0]).wsName : '';
 
   if (wsPaths.length > 0 && !wsName) {
     throwAppError('error::ws-path:invalid-ws-path', 'Invalid ws path', {
@@ -107,10 +103,10 @@ export function buildTree(
         const isOpen =
           isPathOpen(newPathParts) || hasOpenDescendant(newPathParts);
 
-        const wsPath = filePathToWsPath({
+        const { wsPath } = WsPath.fromParts(
           wsName,
-          inputPath: pathJoin(...newPathParts),
-        });
+          WsPath.pathJoin(...newPathParts),
+        );
         items.push({
           id: wsPath,
           wsPath,
@@ -120,10 +116,10 @@ export function buildTree(
           ...(isOpen && children.length > 0 ? { isOpen: true } : {}),
         });
       } else {
-        const wsPath = filePathToWsPath({
+        const { wsPath } = WsPath.fromParts(
           wsName,
-          inputPath: pathJoin(...newPathParts),
-        });
+          WsPath.pathJoin(...newPathParts),
+        );
         items.push({
           id: wsPath,
           name,

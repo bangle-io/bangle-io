@@ -4,7 +4,7 @@ import type { RouterLocation } from '@bangle.io/types';
 // wouter uses this regexparam
 import { parse as parsePattern } from 'regexparam';
 import { matchRoute } from 'wouter';
-import { splitWsPath, validateWsPath } from './helpers';
+import { WsPath } from './ws-path';
 
 const pageWsHome = ({ wsName }: { wsName: string }) => {
   return { pathname: `/ws/${wsName}`, search: { p: null } };
@@ -17,13 +17,24 @@ export const buildUrlPath = {
   }),
   pageWsHome,
   pageEditor: ({ wsPath }: { wsPath: string }) => {
-    const result = validateWsPath(wsPath);
-    if (!result.isValid) {
-      throwAppError('error::ws-path:invalid-ws-path', result.reason, {
-        invalidPath: result.invalidPath,
+    const result = WsPath.safeParse(wsPath);
+    if (result.validationError) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        result.validationError.reason ?? 'Invalid path',
+        {
+          invalidPath: result.validationError?.invalidPath ?? wsPath,
+        },
+      );
+    }
+    if (!result.data) {
+      throwAppError('error::ws-path:invalid-ws-path', 'Invalid path', {
+        invalidPath: wsPath,
       });
     }
-    const [wsName, filePath] = splitWsPath(wsPath);
+
+    const wsName = result.data.wsName;
+    const filePath = result.data.path;
 
     if (!wsName) {
       throwAppError('error::ws-path:invalid-ws-path', 'Invalid file wsPath', {

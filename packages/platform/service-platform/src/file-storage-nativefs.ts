@@ -18,13 +18,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import {
-  fromFsPath,
-  getExtension,
-  getWsName,
-  toFSPath,
-} from '@bangle.io/ws-path';
-import { VALID_NOTE_EXTENSIONS_SET } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   onChange: (event: FileStorageChangeEvent) => void;
@@ -69,8 +63,8 @@ export class FileStorageNativeFs
   }
 
   private getFsPath(wsPath: string): string {
-    const fsPath = toFSPath(wsPath);
-    if (!fsPath) {
+    const path = WsPath.fromString(wsPath).toFSPath();
+    if (!path) {
       throwAppError(
         'error::ws-path:invalid-ws-path',
         'Invalid workspace path',
@@ -79,7 +73,7 @@ export class FileStorageNativeFs
         },
       );
     }
-    return fsPath;
+    return path;
   }
 
   private emitChange(event: FileStorageChangeEvent) {
@@ -87,14 +81,27 @@ export class FileStorageNativeFs
   }
 
   // Modified getFs method with caching
-  private async getFs(wsPathOrName: string): Promise<NativeBrowserFileSystem> {
-    const wsName = getWsName(wsPathOrName);
+  private async getFs(
+    input:
+      | { wsPath: string; wsName?: undefined }
+      | { wsName: string; wsPath?: undefined },
+  ): Promise<NativeBrowserFileSystem> {
+    let wsName: string | undefined;
+
+    if (input.wsPath) {
+      wsName = WsPath.safeParse(input.wsPath).data?.wsName;
+    } else if (input.wsName) {
+      wsName = WsPath.validation.validateWsName(input.wsName)?.ok
+        ? input.wsName
+        : undefined;
+    }
+
     if (!wsName) {
       throwAppError(
         'error::file-storage:file-does-not-exist',
         'Invalid workspace path',
         {
-          wsPath: wsPathOrName,
+          wsPath: input.wsName || input.wsPath || '<unknown>',
           storage: this.name,
         },
       );
@@ -109,12 +116,9 @@ export class FileStorageNativeFs
 
     const fs = new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: ({ name }) => {
-        const extension = getExtension(name);
-        if (!extension) {
-          return false;
-        }
-        return VALID_NOTE_EXTENSIONS_SET.has(extension);
+      allowedFile: () => {
+        // TODO implement ignoring weird files
+        return true;
       },
     });
 
@@ -129,7 +133,7 @@ export class FileStorageNativeFs
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     const fsPath = this.getFsPath(wsPath);
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     await fs.writeFile(fsPath, file);
 
     this.emitChange({
@@ -140,7 +144,7 @@ export class FileStorageNativeFs
 
   async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     await fs.unlink(this.getFsPath(wsPath));
     this.emitChange({
       type: 'delete',
@@ -150,7 +154,7 @@ export class FileStorageNativeFs
 
   async fileExists(wsPath: string): Promise<boolean> {
     await this.mountPromise;
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     const fsPath = this.getFsPath(wsPath);
     try {
       await fs.stat(fsPath);
@@ -168,7 +172,7 @@ export class FileStorageNativeFs
 
   async fileStat(wsPath: string) {
     await this.mountPromise;
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     const fsPath = this.getFsPath(wsPath);
     const stat = await fs.stat(fsPath);
     return {
@@ -190,18 +194,19 @@ export class FileStorageNativeFs
     abortSignal: AbortSignal,
   ): Promise<string[]> {
     await this.mountPromise;
-    const fs = await this.getFs(wsName);
+    const fs = await this.getFs({ wsName });
     const rawPaths = await fs.opendirRecursive(wsName);
     abortSignal.throwIfAborted();
     return rawPaths
-      .map((r) => fromFsPath(r))
-      .filter((r): r is string => Boolean(r))
+      .map((r) => WsPath.fromFSPath(r))
+      .filter((r) => !!r)
+      .map((r) => r.wsPath)
       .sort((a, b) => a.localeCompare(b));
   }
 
   async readFile(wsPath: string): Promise<File | undefined> {
     await this.mountPromise;
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     if (!(await this.fileExists(wsPath))) {
       return undefined;
     }
@@ -217,7 +222,7 @@ export class FileStorageNativeFs
     },
   ): Promise<void> {
     await this.mountPromise;
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     await fs.rename(this.getFsPath(wsPath), this.getFsPath(newWsPath));
     this.emitChange({
       type: 'rename',
@@ -228,7 +233,7 @@ export class FileStorageNativeFs
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-    const fs = await this.getFs(wsPath);
+    const fs = await this.getFs({ wsPath });
     if (!(await this.fileExists(wsPath))) {
       throwAppError(
         'error::file-storage:file-does-not-exist',

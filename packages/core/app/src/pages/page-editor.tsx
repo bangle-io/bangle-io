@@ -36,9 +36,9 @@ export function PageEditor() {
       <PageMainContentWrapper applyPadding={false}>
         {currentWsPath && currentWsName ? (
           <Editor
-            key={$forceReloadCounter + currentWsPath}
+            key={$forceReloadCounter + currentWsPath.wsPath}
             name={editorName}
-            wsPath={currentWsPath}
+            wsPath={currentWsPath.wsPath}
             // Let editor manage its own padding to show the drag handle
             className={APP_MAIN_CONTENT_PADDING}
           />

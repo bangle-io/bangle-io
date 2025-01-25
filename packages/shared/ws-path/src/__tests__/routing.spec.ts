@@ -42,7 +42,9 @@ describe('buildUrlPath', () => {
       const wsPath = 'myWorkspace';
       expect(() =>
         buildUrlPath.pageEditor({ wsPath }),
-      ).toThrowErrorMatchingInlineSnapshot('[BaseError: Missing : in wsPath]');
+      ).toThrowErrorMatchingInlineSnapshot(
+        `[BaseError: Invalid wsPath: Missing required ":" separator between workspace name and path]`,
+      );
     });
 
     it('should return the correct pathname and search when wsPath contains ":"', () => {
@@ -85,7 +87,7 @@ describe('buildUrlPath', () => {
       expect(() =>
         buildUrlPath.pageEditor({ wsPath }),
       ).toThrowErrorMatchingInlineSnapshot(
-        '[BaseError: wsName or filePath is missing]',
+        '[BaseError: Invalid wsPath: Workspace name cannot be empty]',
       );
     });
 

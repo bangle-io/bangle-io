@@ -11,7 +11,6 @@ import {
   CommandItem,
   CommandList,
 } from '@bangle.io/ui-components';
-import { assertSplitWsPath } from '@bangle.io/ws-path';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom } from 'jotai';
 import { useAtomValue } from 'jotai';
@@ -55,15 +54,15 @@ function AllFilesContent({ search, onClose }: AllFilesContentProps) {
 
   const files = useMemo(() => {
     return wsPaths.map((wsPath) => {
-      const { filePath } = assertSplitWsPath(wsPath);
+      const filePath = wsPath.filePath;
       return {
-        id: wsPath,
+        id: wsPath.wsPath,
         title: filePath,
         onSelect: () => {
           onClose();
           commandDispatcher.dispatch(
             'command::ws:go-ws-path',
-            { wsPath },
+            { wsPath: wsPath.wsPath },
             'ui',
           );
         },

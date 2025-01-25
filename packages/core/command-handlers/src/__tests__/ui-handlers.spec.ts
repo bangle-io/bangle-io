@@ -7,7 +7,7 @@ import {
   type TestCommandHandlerReturnType,
   testCommandHandler,
 } from '@bangle.io/test-utils';
-import { assertedResolvePath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { describe, expect, it, vi } from 'vitest';
 import { commandHandlers as defaultCommandHandlers } from '../index';
 
@@ -48,7 +48,9 @@ async function setupTest({
       });
       if (workspace.notes) {
         for (const wsPath of workspace.notes) {
-          const { fileNameWithoutExt } = assertedResolvePath(wsPath);
+          const fileNameWithoutExt =
+            WsPath.fromString(wsPath).asFile()?.fileNameWithoutExtension ||
+            'unknown';
           await services.fileSystem.createFile(
             wsPath,
             new File(
@@ -81,7 +83,7 @@ async function setupTest({
       services.navigation.goWsPath(wsPath);
 
       await vi.waitFor(() => {
-        expect(services.navigation.resolveAtoms().wsPath).toBe(wsPath);
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(wsPath);
         expect(
           services.workspaceState.resolveAtoms().wsPaths.length,
         ).toBeGreaterThan(0);

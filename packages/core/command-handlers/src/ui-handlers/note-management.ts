@@ -1,11 +1,5 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import {
-  appendNoteExtension,
-  assertSplitWsPath,
-  assertedResolvePath,
-  filePathToWsPath,
-  pathJoin,
-} from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { FilePlus, Trash2 } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
@@ -60,16 +54,15 @@ export const noteManagementHandlers = [
           groupHeading: 'Notes',
           emptyMessage: 'No notes found',
           options: wsPaths.map((path) => ({
-            title: assertSplitWsPath(path).filePath,
-            id: path,
+            title: path.filePath,
+            id: path.wsPath,
           })),
           Icon: Trash2,
           hints: ['Press Enter or Click to delete'],
-          initialSearch: wsPath
-            ? assertSplitWsPath(wsPath).filePath
-            : undefined,
+          initialSearch: wsPath ? WsPath.fromString(wsPath).path : undefined,
           onSelect: (option) => {
-            const fileName = assertedResolvePath(option.id).fileNameWithoutExt;
+            const wsPath = WsPath.fromString(option.id);
+            const fileName = wsPath.asFile()?.fileNameWithoutExtension;
 
             store.set(workbenchState.$alertDialog, () => {
               return {
@@ -94,23 +87,33 @@ export const noteManagementHandlers = [
     'command::ui:rename-note-dialog',
     ({ workspaceState, workbenchState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
-      const oldWsPath = wsPath || store.get(workspaceState.$wsPath);
+      const { data: oldWsPath } = WsPath.safeParse(
+        wsPath || store.get(workspaceState.$currentWsPath) || '',
+      );
 
       if (!oldWsPath) {
         throwAppError('error::workspace:not-opened', 'No workspace is opened', {
           wsPath,
         });
       }
+      const fileOldWsPath = oldWsPath.asFile();
 
-      const { wsName, fileNameWithoutExt, dirPath } =
-        assertedResolvePath(oldWsPath);
+      if (!fileOldWsPath) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          'Invalid note path provided',
+          {
+            invalidWsPath: oldWsPath.wsPath,
+          },
+        );
+      }
 
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-note-dialog',
           placeholder: 'Provide a new name',
-          badgeText: `Renaming "${fileNameWithoutExt}"`,
-          initialSearch: fileNameWithoutExt,
+          badgeText: `Renaming "${fileOldWsPath.fileNameWithoutExtension}"`,
+          initialSearch: fileOldWsPath.fileNameWithoutExtension,
           Icon: FilePlus,
           option: {
             id: 'rename-note-dialog',
@@ -122,25 +125,42 @@ export const noteManagementHandlers = [
                 'error::file:invalid-operation',
                 'Invalid note name provided',
                 {
-                  oldWsPath: oldWsPath,
+                  oldWsPath: oldWsPath.wsPath,
                   newWsPath: input,
                   operation: 'rename',
                 },
               );
             }
 
-            const newName = appendNoteExtension(input.trim());
+            const newName =
+              input.trim() +
+              (input.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)
+                ? ''
+                : WsPath.DEFAULT_NOTE_EXTENSION);
             validateInputPath(newName);
 
-            const newWsPath = filePathToWsPath({
-              wsName,
-              inputPath: pathJoin(dirPath, newName),
-            });
-            assertSplitWsPath(newWsPath);
+            const parentDirPath = fileOldWsPath.getParent();
+
+            if (!parentDirPath) {
+              throwAppError(
+                'error::file:invalid-operation',
+                'Invalid note name provided',
+                {
+                  oldWsPath: oldWsPath.wsPath,
+                  newWsPath: input,
+                  operation: 'rename',
+                },
+              );
+            }
+
+            const newWsPath = WsPath.fromParts(
+              oldWsPath.wsName,
+              WsPath.pathJoin(parentDirPath.path, newName),
+            );
 
             dispatch('command::ws:rename-ws-path', {
-              newWsPath,
-              wsPath: oldWsPath,
+              newWsPath: newWsPath.wsPath,
+              wsPath: oldWsPath.wsPath,
             });
           },
         };
@@ -152,7 +172,9 @@ export const noteManagementHandlers = [
     'command::ui:move-note-dialog',
     ({ workspaceState, workbenchState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
-      const oldWsPath = wsPath || store.get(workspaceState.$wsPath);
+      const { data: oldWsPath } = WsPath.safeParse(
+        wsPath || store.get(workspaceState.$currentWsPath) || '',
+      );
       const existingWsPaths = store.get(workspaceState.$wsPaths);
 
       if (!oldWsPath) {
@@ -164,18 +186,15 @@ export const noteManagementHandlers = [
       const dirPaths = [
         ...new Set(
           (existingWsPaths || []).map((path) => {
-            const { dirPath } = assertedResolvePath(path);
-            return dirPath;
+            const wsPath = WsPath.fromString(path.wsPath);
+            const parent = wsPath.getParent();
+            return parent ? parent.path : '';
           }),
         ),
       ].filter((dirPath) => dirPath !== '');
 
-      const {
-        wsName,
-        fileNameWithoutExt,
-        dirPath: oldDirPath,
-      } = assertedResolvePath(oldWsPath);
-
+      const filePath = WsPath.assertFile(oldWsPath.wsPath);
+      const oldDirPath = filePath.getParent()?.path || '';
       const isAtRoot = oldDirPath === '';
 
       const options = dirPaths
@@ -198,7 +217,7 @@ export const noteManagementHandlers = [
         return {
           dialogId: 'dialog::move-note-dialog',
           placeholder: 'Select a path to move the note',
-          badgeText: `Move "${fileNameWithoutExt}"`,
+          badgeText: `Move "${filePath.fileNameWithoutExtension}"`,
           emptyMessage: 'No directories found',
           options,
           Icon: FilePlus,
@@ -216,11 +235,9 @@ export const noteManagementHandlers = [
             }
 
             dispatch('command::ws:move-ws-path', {
-              wsPath: oldWsPath,
-              destDirWsPath: filePathToWsPath({
-                wsName,
-                inputPath: newDirPath,
-              }),
+              wsPath: oldWsPath.wsPath,
+              destDirWsPath: WsPath.fromParts(oldWsPath.wsName, newDirPath)
+                .wsPath,
             });
           },
         };
@@ -255,10 +272,7 @@ export const noteManagementHandlers = [
             const input = _input.trim();
             validateInputPath(input);
             dispatch('command::ws:create-directory', {
-              dirWsPath: filePathToWsPath({
-                wsName,
-                inputPath: input,
-              }),
+              dirWsPath: WsPath.fromParts(wsName, input).wsPath,
             });
           },
           Icon: FilePlus,

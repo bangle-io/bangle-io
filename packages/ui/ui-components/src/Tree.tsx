@@ -15,7 +15,7 @@ import { ChevronRight, FileIcon, Folder, MoreHorizontal } from 'lucide-react';
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { type TreeItem, cn } from '@bangle.io/ui-utils';
-import { isRootLevelFile } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import {
   Collapsible,
   CollapsibleContent,
@@ -65,7 +65,8 @@ const TreeNode = function TreeNode({
     disabled: item.isDir,
   });
 
-  const isDroppableDisabled = !isRootLevelFile(item.wsPath) && !item.isDir;
+  const isDroppableDisabled =
+    !WsPath.fromString(item.wsPath).getParent()?.isRoot && !item.isDir;
   // Droppable for directories only
   const { setNodeRef: dropRef, isOver } = useDroppable({
     id: `drop-${item.id}`,
@@ -231,7 +232,7 @@ export function Tree({
         destinationItem === null ||
         (destinationItem &&
           !destinationItem.isDir &&
-          isRootLevelFile(destinationItem.wsPath))
+          WsPath.fromString(destinationItem.wsPath).getParent()?.isRoot)
       ) {
         // Treat root-level files like root
         onFileDrop?.(sourceItem, { isRoot: true });

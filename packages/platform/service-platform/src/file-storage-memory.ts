@@ -9,7 +9,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 
 interface FileEntry {
   file: File;
@@ -48,8 +48,8 @@ export class FileStorageMemory
   }
 
   private getFileEntryPath(wsPath: string) {
-    const fsPath = toFSPath(wsPath);
-    if (!fsPath) {
+    const path = WsPath.fromString(wsPath).toFSPath();
+    if (!path) {
       throwAppError(
         'error::ws-path:invalid-ws-path',
         'Invalid workspace path',
@@ -58,7 +58,7 @@ export class FileStorageMemory
         },
       );
     }
-    return fsPath;
+    return path;
   }
 
   async createFile(wsPath: string, file: File): Promise<void> {
@@ -124,8 +124,10 @@ export class FileStorageMemory
 
     const files = Array.from(this.fileEntries.keys())
       .filter((path) => path.startsWith(wsName))
-      .map((path) => fromFsPath(path))
-      .filter((r): r is string => Boolean(r));
+      .map((path) => WsPath.fromFSPath(path))
+      .filter((r) => !!r)
+      .map((r) => r.wsPath)
+      .sort((a, b) => a.localeCompare(b));
 
     abortSignal.throwIfAborted();
 

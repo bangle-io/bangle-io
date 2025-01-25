@@ -1,13 +1,6 @@
 // packages/core/command-handlers/src/ws-command-handlers.ts
 import { throwAppError } from '@bangle.io/base-utils';
-import {
-  appendNoteExtension,
-  assertSplitWsPath,
-  assertedResolvePath,
-  filePathToWsPath,
-  pathJoin,
-  resolveDirWsPath,
-} from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
 import { validateInputPath } from './utils';
@@ -25,8 +18,11 @@ export const wsCommandHandlers = [
       });
     }
 
-    inputPath = appendNoteExtension(inputPath);
-    const wsPath = filePathToWsPath({ wsName, inputPath });
+    // Add .md extension if not present
+    if (!inputPath.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)) {
+      inputPath = inputPath + WsPath.DEFAULT_NOTE_EXTENSION;
+    }
+    const wsPath = WsPath.fromParts(wsName, inputPath).toString();
 
     dispatch('command::ws:create-note', { wsPath, navigate: true });
   }),
@@ -34,7 +30,8 @@ export const wsCommandHandlers = [
   c(
     'command::ws:create-note',
     ({ fileSystem, navigation }, { wsPath, navigate }) => {
-      const { wsName } = assertSplitWsPath(wsPath);
+      const parsedPath = WsPath.fromString(wsPath);
+      const wsName = parsedPath.wsName;
 
       if (!wsName) {
         throwAppError('error::workspace:not-opened', 'No workspace open', {
@@ -42,7 +39,8 @@ export const wsCommandHandlers = [
         });
       }
 
-      const { fileNameWithoutExt } = assertedResolvePath(wsPath);
+      const filePath = WsPath.assertFile(wsPath);
+      const fileNameWithoutExt = filePath.fileNameWithoutExtension;
 
       void fileSystem
         .createFile(
@@ -77,7 +75,7 @@ export const wsCommandHandlers = [
   ),
 
   c('command::ws:delete-ws-path', ({ fileSystem, navigation }, { wsPath }) => {
-    if (navigation.resolveAtoms().wsPath === wsPath) {
+    if (navigation.resolveAtoms().wsPath?.wsPath === wsPath) {
       navigation.goWorkspace();
     }
     fileSystem.deleteFile(wsPath);
@@ -86,16 +84,16 @@ export const wsCommandHandlers = [
   c(
     'command::ws:rename-ws-path',
     ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
-      const { wsName } = assertSplitWsPath(wsPath);
-      const { wsName: wsNameNew } = assertSplitWsPath(newWsPath);
+      const oldPath = WsPath.fromString(wsPath);
+      const newPath = WsPath.fromString(newWsPath);
 
-      if (!wsName) {
+      if (!oldPath.wsName) {
         throwAppError('error::workspace:not-opened', 'No workspace open', {
           wsPath,
         });
       }
 
-      if (wsName !== wsNameNew) {
+      if (oldPath.wsName !== newPath.wsName) {
         throwAppError(
           'error::file:invalid-operation',
           'Cannot rename note to a different workspace',
@@ -107,7 +105,7 @@ export const wsCommandHandlers = [
         );
       }
 
-      const needsRedirect = navigation.resolveAtoms().wsPath === wsPath;
+      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
       if (needsRedirect) {
         navigation.goWorkspace();
       }
@@ -134,24 +132,26 @@ export const wsCommandHandlers = [
     ) => {
       const { store } = getCtx(key);
 
-      const { fileName } = assertedResolvePath(wsPath);
-      const resolvedDirPath = resolveDirWsPath(destDirWsPath);
-      if (!resolvedDirPath) {
+      const filePath = WsPath.assertFile(wsPath);
+      const destDir = WsPath.fromString(destDirWsPath).asDir();
+      if (!destDir) {
         throwAppError('error::workspace:not-opened', 'No workspace open', {
           wsPath,
         });
       }
 
-      const newWsPath = filePathToWsPath({
-        wsName: resolvedDirPath.wsName,
-        inputPath: pathJoin(resolvedDirPath.dirPath, fileName),
-      });
+      const newWsPath = WsPath.fromParts(
+        destDir.wsName,
+        WsPath.pathJoin(destDir.path, filePath.fileName),
+      ).toString();
 
       if (wsPath === newWsPath) {
         return;
       }
 
-      const existingWsPaths = store.get(workspaceState.$wsPaths);
+      const existingWsPaths = store
+        .get(workspaceState.$wsPaths)
+        .map((path) => path.wsPath);
       if (existingWsPaths.includes(newWsPath)) {
         throwAppError(
           'error::file:already-existing',
@@ -162,7 +162,7 @@ export const wsCommandHandlers = [
         );
       }
 
-      const needsRedirect = navigation.resolveAtoms().wsPath === wsPath;
+      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
       if (needsRedirect) {
         navigation.goWorkspace();
       }
@@ -185,7 +185,7 @@ export const wsCommandHandlers = [
     const wsPaths = store.get(workspaceState.$wsPaths) || [];
 
     const untitledNotes = wsPaths
-      .map((path) => assertedResolvePath(path).fileNameWithoutExt)
+      .map((path) => path.fileNameWithoutExtension)
       .filter((name) => name.startsWith('untitled-'))
       .map((name) => {
         const num = Number.parseInt(name.replace('untitled-', ''));
@@ -197,15 +197,17 @@ export const wsCommandHandlers = [
     const newNoteName = `untitled-${nextNum}`;
 
     dispatch('command::ws:new-note-from-input', {
-      inputPath: pathJoin(pathPrefix || '', newNoteName),
+      inputPath: pathPrefix
+        ? WsPath.pathJoin(pathPrefix, newNoteName)
+        : newNoteName,
     });
   }),
 
   c('command::ws:create-directory', (_, { dirWsPath }, key) => {
     const { dispatch } = getCtx(key);
-    const resolvedDirPath = resolveDirWsPath(dirWsPath);
+    const dirPath = WsPath.fromString(dirWsPath).asDir();
 
-    if (!resolvedDirPath) {
+    if (!dirPath) {
       throwAppError(
         'error::ws-path:invalid-ws-path',
         'Invalid directory path',
@@ -216,7 +218,7 @@ export const wsCommandHandlers = [
     }
     // We do not support bare directories, so create a note as a placeholder
     dispatch('command::ws:quick-new-note', {
-      pathPrefix: resolvedDirPath.dirPath,
+      pathPrefix: dirPath.path,
     });
   }),
   c('command::ws:go-ws-home', ({ navigation }) => {

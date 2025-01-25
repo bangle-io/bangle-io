@@ -2,8 +2,7 @@ import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type { FileSystemService } from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
-import { assertedResolvePath } from '@bangle.io/ws-path';
-import { assertValidMarkdownWsPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 
 import { setupExtensions } from './extensions';
 import { createEditor } from './pm-setup';
@@ -57,8 +56,10 @@ export class PmEditorService extends BaseService {
     if (this.editors.has(name)) {
       return;
     }
-    assertValidMarkdownWsPath(wsPath);
-    const fileName = assertedResolvePath(wsPath).fileName;
+    const wsPathObj = WsPath.fromString(wsPath);
+    wsPathObj.assertMarkdown();
+    const fileName = WsPath.assertFile(wsPath).fileName;
+
     this.dependencies.fileSystem.readFileAsText(wsPath).then((content) => {
       const editorView = createEditor({
         defaultContent: content || '',

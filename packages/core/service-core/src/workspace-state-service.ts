@@ -6,6 +6,7 @@ import {
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/types';
+import { type WsFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 import { unwrap } from 'jotai/utils';
@@ -13,7 +14,8 @@ import type { FileSystemService } from './file-system-service';
 import type { NavigationService } from './navigation-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 
-const EMPTY_ARRAY: string[] = [];
+const EMPTY_FILE_PATH_ARRAY: WsFilePath[] = [];
+const EMPTY_STRING_ARRAY: string[] = [];
 
 /**
  * Manages the state of current and available workspaces
@@ -30,14 +32,20 @@ export class WorkspaceStateService extends BaseService {
   );
 
   $wsName = atom<string | undefined>((get) => get(this.navigation.$wsName));
-  $wsPath = atom<string | undefined>((get) => get(this.navigation.$wsPath));
-  private $rawWsPaths = atomWithCompare<string[]>(EMPTY_ARRAY, arrayEqual);
-  $wsPaths = atom((get) => {
-    return get(this.$rawWsPaths);
+
+  private $rawWsPaths = atomWithCompare<string[]>(
+    EMPTY_STRING_ARRAY,
+    arrayEqual,
+  );
+
+  $wsPaths = atom<WsFilePath[]>((get) => {
+    return get(this.$rawWsPaths)
+      .map((path) => WsPath.fromString(path).asFile())
+      .filter((path) => path !== undefined);
   });
-  $activeWsPaths = atom<string[]>((get) => {
-    const wsPath = get(this.$wsPath);
-    return wsPath ? [wsPath] : EMPTY_ARRAY;
+  $activeWsPaths = atom<WsFilePath[]>((get) => {
+    const wsPath = get(this.navigation.$wsFilePath);
+    return wsPath ? [wsPath] : EMPTY_FILE_PATH_ARRAY;
   });
 
   /**
@@ -45,9 +53,9 @@ export class WorkspaceStateService extends BaseService {
    * is on the disk.
    */
   $currentWsPath = atom((get) => {
-    const wsPath = get(this.$wsPath);
-    const wsPaths = get(this.$wsPaths);
-    return wsPath && wsPaths.includes(wsPath) ? wsPath : undefined;
+    const wsPath = get(this.navigation.$wsFilePath);
+    const rawWsPaths = get(this.$rawWsPaths);
+    return wsPath && rawWsPaths.includes(wsPath.wsPath) ? wsPath : undefined;
   });
 
   /**
@@ -92,7 +100,7 @@ export class WorkspaceStateService extends BaseService {
           }
           this.atomHandleAppError(
             this.fileSystem.listFiles(wsName, abortController.signal),
-            EMPTY_ARRAY,
+            EMPTY_STRING_ARRAY,
           ).then((paths) => {
             if (!abortController.signal.aborted) {
               set(this.$rawWsPaths, paths);
