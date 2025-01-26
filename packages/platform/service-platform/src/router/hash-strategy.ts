@@ -20,8 +20,6 @@ import {
  */
 export class HashStrategy implements RouteStrategy {
   parseBrowserLocation(location: Location, basePath: string): EncodedRoute {
-    debugger;
-
     // We ignore location.search here, focusing on the hash.
     // The returned EncodedRoute keeps the 'pathname' so we can strip the base path,
     // but the rest of the route data lives in the 'hash'.
