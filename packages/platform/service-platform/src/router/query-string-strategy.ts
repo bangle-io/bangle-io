@@ -145,8 +145,9 @@ export class QueryStringStrategy implements RouteStrategy {
         };
       }
 
-      default:
+      default: {
         return { route: 'not-found', payload: { path: route } };
+      }
     }
   }
 }
