@@ -39,7 +39,7 @@ export class PmEditorService extends BaseService {
   hookMount() {
     this.addCleanup(() => {
       // Destroy all editor views
-      for (const [name, editor] of this.editors) {
+      for (const [_name, editor] of this.editors) {
         editor.editorView.destroy();
       }
       this.editors.clear();

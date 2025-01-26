@@ -45,13 +45,10 @@ function stripBasePath(pathname: string, basePath: string): string {
 }
 
 function joinPaths(...parts: string[]): string {
-  return (
-    '/' +
-    parts
-      .map((p) => p.replace(/^\/|\/$/g, ''))
-      .filter(Boolean)
-      .join('/')
-  ).replace(/\/+/g, '/');
+  return `/${parts
+    .map((p) => p.replace(/^\/|\/$/g, ''))
+    .filter(Boolean)
+    .join('/')}`.replace(/\/+/g, '/');
 }
 
 /**

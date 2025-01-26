@@ -5,7 +5,7 @@ import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png
 import { WsPath } from '@bangle.io/ws-path';
 import { differenceInYears, formatDistanceToNow } from 'date-fns';
 import { useAtomValue } from 'jotai';
-import { FileX, Briefcase } from 'lucide-react';
+import { Briefcase, FileX } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './NoticeView';
 

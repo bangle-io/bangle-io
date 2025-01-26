@@ -87,7 +87,7 @@ export class HashStrategy implements RouteStrategy {
     return {
       pathname: basePath || '/',
       search: '',
-      hash: hashStr ? '#' + hashStr : '',
+      hash: hashStr ? `#${hashStr}` : '',
     };
   }
 

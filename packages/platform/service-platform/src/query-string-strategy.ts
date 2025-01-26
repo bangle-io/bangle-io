@@ -62,7 +62,7 @@ export class QueryStringStrategy implements RouteStrategy {
   }
 
   decodeRouteInfo(encodedRoute: EncodedRoute, basePath: string): AppRouteInfo {
-    const pathname = stripBasePath(encodedRoute.pathname, basePath);
+    const _pathname = stripBasePath(encodedRoute.pathname, basePath);
     const search = parseBrowserSearch(encodedRoute.search ?? '');
     const route = search.route;
 
