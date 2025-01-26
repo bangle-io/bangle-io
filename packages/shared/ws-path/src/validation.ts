@@ -37,6 +37,25 @@ export function validateWsName(wsName: string): ValidationResult<string> {
       },
     };
   }
+  if (wsName.includes('\\')) {
+    return {
+      ok: false,
+      validationError: {
+        reason: 'Workspace name contains invalid character "\\"',
+        invalidPath: wsName,
+      },
+    };
+  }
+
+  if (wsName.includes('/')) {
+    return {
+      ok: false,
+      validationError: {
+        reason: 'Workspace name contains invalid character "/"',
+        invalidPath: wsName,
+      },
+    };
+  }
 
   return { ok: true, data: wsName };
 }

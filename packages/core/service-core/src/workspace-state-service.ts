@@ -53,6 +53,7 @@ export class WorkspaceStateService extends BaseService {
    * is on the disk.
    */
   $currentWsPath = atom((get) => {
+    debugger;
     const wsPath = get(this.navigation.$wsFilePath);
     const rawWsPaths = get(this.$rawWsPaths);
     return wsPath && rawWsPaths.includes(wsPath.wsPath) ? wsPath : undefined;

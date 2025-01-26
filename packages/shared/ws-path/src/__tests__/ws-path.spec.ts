@@ -480,6 +480,26 @@ describe('WsPath', () => {
         expect(path3.extension).toBeUndefined();
       });
     });
+
+    it('should reject workspace name containing backslash', () => {
+      const result = WsPath.safeParse('work\\space:file.txt');
+      expect(result.ok).toBe(false);
+      if (!result.ok && result.validationError) {
+        expect(result.validationError.reason).toBe(
+          'Workspace name contains invalid character "\\"',
+        );
+      }
+    });
+
+    it('should reject workspace name containing forward slash', () => {
+      const result = WsPath.safeParse('work/space:file.txt');
+      expect(result.ok).toBe(false);
+      if (!result.ok && result.validationError) {
+        expect(result.validationError.reason).toBe(
+          'Workspace name contains invalid character "/"',
+        );
+      }
+    });
   });
 
   describe('Additional Edge Cases (parity with helpers.spec.ts)', () => {
