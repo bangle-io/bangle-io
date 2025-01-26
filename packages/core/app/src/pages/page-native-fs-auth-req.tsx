@@ -18,8 +18,12 @@ export function PageNativeFsAuthReq() {
           <NoticeView
             title="Authentication Required, Please allow access to continue"
             description={<FunMissing />}
-            primaryActionLabel="Authorize"
-            onPrimaryAction={() => window.location.reload()}
+            actions={[
+              {
+                label: 'Authorize',
+                onClick: () => window.location.reload(),
+              },
+            ]}
           />
         </Section>
       </PageMainContentWrapper>

@@ -1,11 +1,10 @@
 import { APP_MAIN_CONTENT_PADDING } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { Editor } from '@bangle.io/editor';
-import { FunMissing } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
 import {
-  NoticeView,
+  NotFoundView,
   PageHeaderWrapper,
   PageMainContentWrapper,
 } from '../components';
@@ -43,31 +42,8 @@ export function PageEditor() {
             className={APP_MAIN_CONTENT_PADDING}
           />
         ) : (
-          <NoticeView
-            title="Note not found"
-            description={<FunMissing />}
-            secondaryActions={[
-              {
-                label: 'New Note',
-                onClick: () =>
-                  coreServices.commandDispatcher.dispatch(
-                    'command::ui:create-note-dialog',
-                    { prefillName: undefined },
-                    'ui',
-                  ),
-              },
-              {
-                label: 'View All Notes',
-                variant: 'outline',
-                onClick: () =>
-                  coreServices.commandDispatcher.dispatch(
-                    'command::ui:toggle-all-files',
-                    { prefillInput: undefined },
-                    'ui',
-                  ),
-              },
-            ]}
-          />
+          // NOTE: It is intentional we are not redirecting to the error page so that we avoid bouncing user
+          <NotFoundView />
         )}
       </PageMainContentWrapper>
     </>

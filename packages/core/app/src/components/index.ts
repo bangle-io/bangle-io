@@ -12,3 +12,4 @@ export {
   getRelativeTimeOrNull,
   useGroupedWorkspaceNotes,
 } from './welcome-shared';
+export { NotFoundView } from './welcome-shared';

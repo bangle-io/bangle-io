@@ -2,11 +2,12 @@ import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type {
+  AppRouteInfo,
   BaseRouter,
   PageLifeCycleState,
-  RouterLocation,
   RouterState,
 } from '@bangle.io/types';
+import { WsPath } from '@bangle.io/ws-path';
 
 export class MemoryRouterService
   extends BaseService
@@ -15,8 +16,10 @@ export class MemoryRouterService
   static deps = [] as const;
   emitter: BaseRouter<RouterState>['emitter'] = new Emitter();
 
-  private _currentPathname: RouterLocation['pathname'] = '/';
-  private _currentSearch: RouterLocation['search'] = {};
+  private _routeInfo: AppRouteInfo = {
+    route: 'welcome',
+    payload: {},
+  };
   private _currentState: RouterState | null = null;
   private _basePath: string;
 
@@ -35,12 +38,8 @@ export class MemoryRouterService
     });
   }
 
-  get pathname() {
-    return this._currentPathname;
-  }
-
-  get search() {
-    return this._currentSearch;
+  get routeInfo() {
+    return this._routeInfo;
   }
 
   get basePath() {
@@ -62,24 +61,44 @@ export class MemoryRouterService
   }
 
   navigate(
-    to: Partial<RouterLocation>,
+    to: AppRouteInfo,
     options?: { replace?: boolean; state?: RouterState },
   ): void {
-    this._currentPathname = to.pathname || this._currentPathname;
-    this._currentSearch = {
-      ...this._currentSearch,
-      ...to.search,
-    };
-
+    this._routeInfo = to;
     this._currentState = options?.state ?? null;
 
     this.emitter.emit('event::router:route-update', {
-      location: {
-        pathname: this._currentPathname,
-        search: this._currentSearch,
-      },
+      routeInfo: this._routeInfo,
       state: this._currentState ?? {},
       kind: 'pushState',
     });
+  }
+
+  toUri(routeInfo: AppRouteInfo): string {
+    return `${this._basePath}/memory/${encodeURIComponent(JSON.stringify(routeInfo))}`;
+  }
+
+  fromUri(uri: string): AppRouteInfo {
+    const pathname = uri.replace(this._basePath, '');
+    const match = /^\/memory\/(.+)$/.exec(pathname);
+
+    if (match?.[1]) {
+      try {
+        const decoded = decodeURIComponent(match[1]);
+        const parsed = JSON.parse(decoded) as AppRouteInfo;
+        return parsed;
+      } catch {
+        // If parsing fails, return not found
+        return {
+          route: 'not-found',
+          payload: { path: pathname },
+        };
+      }
+    }
+
+    return {
+      route: 'not-found',
+      payload: { path: pathname },
+    };
   }
 }

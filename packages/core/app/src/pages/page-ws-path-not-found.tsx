@@ -1,11 +1,23 @@
-import { FunMissing } from '@bangle.io/ui-components';
+import { useCoreServices } from '@bangle.io/context';
 import React from 'react';
-import { NoticeView, Section } from '../components';
+import {
+  NotFoundView,
+  PageHeaderWrapper,
+  PageMainContentWrapper,
+  Section,
+} from '../components';
 
 export function PageWsPathNotFound() {
+  const coreServices = useCoreServices();
+
   return (
-    <Section>
-      <NoticeView title="Path Not Found" description={<FunMissing />} />
-    </Section>
+    <>
+      <PageHeaderWrapper />
+      <PageMainContentWrapper>
+        <Section>
+          <NotFoundView />
+        </Section>
+      </PageMainContentWrapper>
+    </>
   );
 }

@@ -38,7 +38,11 @@ export class PmEditorService extends BaseService {
 
   hookMount() {
     this.addCleanup(() => {
-      // Cleanup code here
+      // Destroy all editor views
+      for (const [name, editor] of this.editors) {
+        editor.editorView.destroy();
+      }
+      this.editors.clear();
     });
   }
 
@@ -89,7 +93,8 @@ export class PmEditorService extends BaseService {
     }
 
     if (this.editors.has(name)) {
-      throw new Error(`Editor with name ${name} already exists`);
+      this.logger.error(`Editor with name ${name} already exists`);
+      return;
     }
 
     let domNode: HTMLElement | null = null;

@@ -39,7 +39,8 @@
     "@bangle.io/ws-path": "workspace:*",
     "jotai": "^2.11.0",
     "page-lifecycle": "^0.1.2",
-    "wouter": "^3.3.5"
+    "wouter": "^3.3.5",
+    "regexparam": "^3.0.0"
   },
   "devDependencies": {
     "@bangle.io/mini-zod": "workspace:*",

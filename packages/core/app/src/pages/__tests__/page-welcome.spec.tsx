@@ -64,9 +64,9 @@ describe('PageWelcome', () => {
 
     expect(items.sort()).toMatchInlineSnapshot(`
       [
-        "/",
-        "/ws/workspace1",
-        "/ws/workspace2",
+        "/memory/%7B%22route%22%3A%22welcome%22%2C%22payload%22%3A%7B%7D%7D",
+        "/memory/%7B%22route%22%3A%22ws-home%22%2C%22payload%22%3A%7B%22wsName%22%3A%22workspace1%22%7D%7D",
+        "/memory/%7B%22route%22%3A%22ws-home%22%2C%22payload%22%3A%7B%22wsName%22%3A%22workspace2%22%7D%7D",
         "https://bangle.io",
       ]
     `);

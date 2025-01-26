@@ -1,4 +1,3 @@
-import { Button } from '@bangle.io/ui-components';
 import React from 'react';
 import { EmptyStateIllustration } from './EmptyStateIllustration';
 import { Section } from './section';
@@ -8,9 +7,7 @@ interface NoticeViewProps {
   title: string;
   description?: React.ReactNode;
   illustration?: React.ReactNode;
-  primaryActionLabel?: string;
-  onPrimaryAction?: () => void;
-  secondaryActions?: {
+  actions?: {
     label: string;
     variant?: 'default' | 'outline' | 'ghost';
     onClick: () => void;
@@ -24,9 +21,7 @@ export function NoticeView({
   title,
   description,
   illustration = <EmptyStateIllustration />,
-  primaryActionLabel,
-  onPrimaryAction,
-  secondaryActions,
+  actions,
 }: NoticeViewProps) {
   return (
     <Section hasPadding>
@@ -34,12 +29,7 @@ export function NoticeView({
       {description ? (
         <p className="mt-2 text-muted-foreground">{description}</p>
       ) : null}
-      {primaryActionLabel && onPrimaryAction ? (
-        <div className="mt-4">
-          <Button onClick={onPrimaryAction}>{primaryActionLabel}</Button>
-        </div>
-      ) : null}
-      {secondaryActions ? <Actions actions={secondaryActions} /> : null}
+      {actions ? <Actions actions={actions} /> : null}
     </Section>
   );
 }

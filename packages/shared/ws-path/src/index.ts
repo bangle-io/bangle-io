@@ -1,2 +1,2 @@
 export * from './ws-path';
-export * from './routing';
+export * from './route-strategy';

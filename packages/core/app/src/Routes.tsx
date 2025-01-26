@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ROUTES } from '@bangle.io/constants';
-import { Redirect, Route, Switch } from 'wouter';
+import { useCoreServices } from '@bangle.io/context';
+import { useAtomValue } from 'jotai';
 import {
   PageEditor,
   PageFatalError,
@@ -15,41 +15,35 @@ import {
 } from './pages';
 
 export function AppRoutes() {
-  return (
-    <Switch>
-      <Route path={ROUTES.pageEditor}>
-        <PageEditor />
-      </Route>
-      <Route path={ROUTES.pageWsHome}>
-        <PageWsHome />
-      </Route>
+  const coreServices = useCoreServices();
 
-      <Route path={ROUTES.pageNativeFsAuthReq}>
-        <PageNativeFsAuthReq />
-      </Route>
-      <Route path={ROUTES.pageNativeFsAuthFailed}>
-        <PageNativeFsAuthFailed />
-      </Route>
+  const route = useAtomValue(coreServices.navigation.$routeInfo).route;
 
-      <Route path={ROUTES.pageWorkspaceNotFound}>
-        <PageWorkspaceNotFound />
-      </Route>
+  console.log('route', route);
+  switch (route) {
+    case 'editor':
+      return <PageEditor />;
+    case 'ws-home':
+      return <PageWsHome />;
+    case 'welcome':
+      return <PageWelcome />;
+    case 'native-fs-auth-req':
+      return <PageNativeFsAuthReq />;
+    case 'native-fs-auth-failed':
+      return <PageNativeFsAuthFailed />;
+    case 'workspace-not-found':
+      return <PageWorkspaceNotFound />;
+    case 'ws-path-not-found':
+      return <PageWsPathNotFound />;
+    case 'fatal-error':
+      return <PageFatalError />;
+    case 'not-found':
+      return <PageNotFound />;
 
-      <Route path={ROUTES.pageWsPathNotFound}>
-        <PageWsPathNotFound />
-      </Route>
+    default: {
+      const _route: never = route;
 
-      <Route path={ROUTES.pageNotFound}>
-        <PageNotFound />
-      </Route>
-
-      <Route path={ROUTES.pageFatalError}>
-        <PageFatalError />
-      </Route>
-      <Route path={ROUTES.pageWelcome}>
-        <PageWelcome />
-      </Route>
-      <Redirect to={ROUTES.pageNotFound} />
-    </Switch>
-  );
+      throw new Error(`Unknown route: ${_route}`);
+    }
+  }
 }

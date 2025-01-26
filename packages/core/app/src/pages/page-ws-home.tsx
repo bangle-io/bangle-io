@@ -97,7 +97,7 @@ export function PageWsHome() {
           <NoticeView
             title="Workspace not found"
             description={<FunMissing />}
-            secondaryActions={[
+            actions={[
               {
                 label: 'Create Workspace',
                 onClick: () =>

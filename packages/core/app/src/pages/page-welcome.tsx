@@ -1,5 +1,4 @@
 import { useCoreServices } from '@bangle.io/context';
-import { buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import {
@@ -15,7 +14,7 @@ import {
 const MAX_RECENT_WORKSPACES = 5;
 
 export function PageWelcome() {
-  const { commandDispatcher, workspaceState, userActivityService } =
+  const { commandDispatcher, workspaceState, userActivityService, navigation } =
     useCoreServices();
   const workspaces = useAtomValue(workspaceState.$workspaces);
   const isNewUser = useAtomValue(userActivityService.$isNewUser);
@@ -24,14 +23,17 @@ export function PageWelcome() {
     const sorted = workspaces
       .map((ws) => ({
         label: ws.name,
-        href: buildURL(buildUrlPath.pageWsHome({ wsName: ws.name })),
+        href: navigation.toUri({
+          route: 'ws-home',
+          payload: { wsName: ws.name },
+        }),
         relativeTime: getRelativeTimeOrNull(ws.lastModified),
         timestamp: ws.lastModified,
       }))
       .sort((a, b) => b.timestamp - a.timestamp)
       .slice(0, MAX_RECENT_WORKSPACES);
     return sorted;
-  }, [workspaces]);
+  }, [workspaces, navigation.toUri]);
 
   const welcomeMessage = isNewUser ? 'Welcome to Bangle!' : 'Welcome back!';
 

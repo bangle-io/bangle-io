@@ -3,7 +3,6 @@ import {
   CoreServiceProvider,
   LoggerProvider,
   PlatformServiceProvider,
-  RouterContext,
 } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
 import type { RootEmitter, Services, Store } from '@bangle.io/types';
@@ -40,11 +39,9 @@ export function App({
       <Provider store={store}>
         <PlatformServiceProvider services={services.platform}>
           <CoreServiceProvider services={services.core}>
-            <RouterContext>
-              <ErrorBoundary>
-                <AppInner rootEmitter={rootEmitter} />
-              </ErrorBoundary>
-            </RouterContext>
+            <ErrorBoundary>
+              <AppInner rootEmitter={rootEmitter} />
+            </ErrorBoundary>
           </CoreServiceProvider>
         </PlatformServiceProvider>
       </Provider>

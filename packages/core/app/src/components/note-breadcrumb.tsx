@@ -1,5 +1,6 @@
+import { useCoreServices } from '@bangle.io/context';
 import { Breadcrumb, Button, DropdownMenu } from '@bangle.io/ui-components';
-import { WsPath, buildURL, buildUrlPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { Folder, PlusIcon } from 'lucide-react';
 // packages/core/app/src/components/NoteBreadcrumb.tsx
 import React from 'react';
@@ -82,10 +83,14 @@ interface HomeFolderLinkProps {
 }
 
 function HomeFolderLink({ segment }: HomeFolderLinkProps) {
+  const { navigation } = useCoreServices();
   return (
     <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
       <Breadcrumb.BreadcrumbLink
-        href={buildURL(buildUrlPath.pageEditor({ wsPath: segment.wsPath }))}
+        href={navigation.toUri({
+          route: 'editor',
+          payload: { wsPath: segment.wsPath },
+        })}
       >
         <Folder size={16} />
       </Breadcrumb.BreadcrumbLink>
@@ -201,10 +206,14 @@ interface SiblingFileMenuItemProps {
 }
 
 function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
+  const { navigation } = useCoreServices();
   return (
     <DropdownMenu.DropdownMenuItem asChild>
       <Breadcrumb.BreadcrumbLink
-        href={buildURL(buildUrlPath.pageEditor({ wsPath: file.wsPath }))}
+        href={navigation.toUri({
+          route: 'editor',
+          payload: { wsPath: file.wsPath },
+        })}
       >
         {file.label}
       </Breadcrumb.BreadcrumbLink>

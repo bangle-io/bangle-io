@@ -1,6 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
 import { Breadcrumb, DropdownMenu } from '@bangle.io/ui-components';
-import { buildURL, buildUrlPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import { Home, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -18,7 +17,10 @@ export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
       <Breadcrumb.BreadcrumbList>
         <Breadcrumb.BreadcrumbItem>
           <Breadcrumb.BreadcrumbLink
-            href={buildURL(buildUrlPath.pageWelcome())}
+            href={coreServices.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            })}
             title="Home"
           >
             <Home size={16} />

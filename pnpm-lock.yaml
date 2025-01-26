@@ -538,6 +538,9 @@ importers:
       page-lifecycle:
         specifier: ^0.1.2
         version: 0.1.2
+      regexparam:
+        specifier: ^3.0.0
+        version: 3.0.0
       wouter:
         specifier: ^3.3.5
         version: 3.3.5(react@18.3.1)

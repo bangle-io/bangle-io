@@ -6,7 +6,7 @@ import {
   Separator,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { WsPath, buildURL, buildUrlPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
 import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
 import React from 'react';
@@ -101,6 +101,7 @@ function ToolbarLeftSection({
 }
 
 function HomeBreadcrumb() {
+  const coreServices = useCoreServices();
   return (
     <>
       <Separator orientation="vertical" className="h-4" />
@@ -108,7 +109,10 @@ function HomeBreadcrumb() {
         <Breadcrumb.BreadcrumbList>
           <Breadcrumb.BreadcrumbItem>
             <Breadcrumb.BreadcrumbLink
-              href={buildURL(buildUrlPath.pageWelcome())}
+              href={coreServices.navigation.toUri({
+                route: 'welcome',
+                payload: {},
+              })}
               title="Home"
             >
               <Home size={16} />

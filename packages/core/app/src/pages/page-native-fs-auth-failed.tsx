@@ -18,8 +18,12 @@ export function PageNativeFsAuthFailed() {
           <NoticeView
             title="Authentication Failed Please try again"
             description={<FunMissing />}
-            primaryActionLabel="Try Again"
-            onPrimaryAction={() => window.location.reload()}
+            actions={[
+              {
+                label: 'Try Again',
+                onClick: () => window.location.reload(),
+              },
+            ]}
           />
         </Section>
       </PageMainContentWrapper>

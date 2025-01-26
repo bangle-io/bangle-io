@@ -2,45 +2,30 @@ import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME, browserHistoryStateEvents } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/emitter';
 import type {
+  AppRouteInfo,
   BaseRouter,
   PageLifeCycleEvent,
   PageLifeCycleState,
-  RouterLocation,
   RouterState,
 } from '@bangle.io/types';
-import { buildURL } from '@bangle.io/ws-path';
+import type { RouteStrategy } from '@bangle.io/ws-path';
 import lifecycle from 'page-lifecycle';
 import { navigate } from 'wouter/use-browser-location';
 
-type SearchRecord = Record<string, string | null>;
 const UNSAVED_CHANGES_SYMBOL = Symbol('pending');
-
-function parseBrowserSearch(
-  rawSearch: string = window.location.search,
-): SearchRecord {
-  const params = new URLSearchParams(rawSearch);
-  const search: SearchRecord = {};
-  for (const [key, value] of params) {
-    search[key] = value;
-  }
-  return search;
-}
-
-function parseBrowserPathname(pathname = window.location.pathname): string {
-  return decodeURI(pathname);
-}
 
 export class BrowserRouterService
   extends BaseService
   implements BaseRouter<RouterState>
 {
   static readonly deps = [] as const;
-  private _pathname: RouterLocation['pathname'] = parseBrowserPathname();
-  private _search: RouterLocation['search'] = parseBrowserSearch();
+
   private lifecycleState: {
     current: PageLifeCycleState;
     previous: PageLifeCycleState;
   } = { current: lifecycle.state, previous: undefined };
+
+  private _routeInfo: AppRouteInfo;
   readonly emitter: BaseRouter<RouterState>['emitter'] = new Emitter({
     paused: true,
   });
@@ -51,25 +36,30 @@ export class BrowserRouterService
     private config: {
       basePath?: string;
       isStatic?: boolean;
+      strategy: RouteStrategy;
     },
   ) {
     super(SERVICE_NAME.browserRouterService, context, dependencies);
+    const encoded = this.config.strategy.parseBrowserLocation(
+      window.location,
+      this.basePath,
+    );
+    this._routeInfo = this.config.strategy.decodeRouteInfo(
+      encoded,
+      this.basePath,
+    );
   }
 
-  get basePath() {
+  private get basePath() {
     return this.config.basePath ?? '';
   }
 
-  get isStatic() {
+  private get isStatic() {
     return this.config.isStatic ?? false;
   }
 
-  get pathname() {
-    return this._pathname;
-  }
-
-  get search() {
-    return this._search;
+  get routeInfo() {
+    return this._routeInfo;
   }
 
   get lifeCycle() {
@@ -77,14 +67,18 @@ export class BrowserRouterService
   }
 
   private handleBrowserHistoryEvent = (event: Event) => {
-    this._search = parseBrowserSearch();
-    this._pathname = parseBrowserPathname();
+    const encoded = this.config.strategy.parseBrowserLocation(
+      window.location,
+      this.basePath,
+    );
+    this._routeInfo = this.config.strategy.decodeRouteInfo(
+      encoded,
+      this.basePath,
+    );
+
     this.emitter.emit('event::router:route-update', {
-      location: {
-        pathname: this._pathname,
-        search: this._search,
-      },
-      state: history.state,
+      routeInfo: this._routeInfo,
+      state: history.state ?? {},
       kind: event.type as (typeof browserHistoryStateEvents)[number],
     });
   };
@@ -139,31 +133,47 @@ export class BrowserRouterService
   }
 
   navigate(
-    to: Partial<RouterLocation>,
+    to: AppRouteInfo,
     options?: { replace?: boolean; state?: RouterState },
   ): void {
     if (this.aborted) {
       return;
     }
 
-    const navigateTo = () => {
-      navigate(
-        buildURL({
-          pathname: to.pathname ?? this._pathname,
-          search: {
-            ...this._search,
-            ...to.search,
-          },
-        }),
-        options,
-      );
+    const doNavigate = () => {
+      const encoded = this.config.strategy.encodeRouteInfo(to, this.basePath);
+      const searchPart = encoded.search ?? '';
+      const hashPart = encoded.hash ?? '';
+      const url = `${encoded.pathname}${searchPart}${hashPart}`;
+
+      navigate(url, options);
     };
 
     if (!this.mounted) {
       this.logger.warn('Cannot navigate because the service is not mounted.');
-      this.mountPromise.then(navigateTo);
+      this.mountPromise.then(doNavigate);
     } else {
-      navigateTo();
+      doNavigate();
     }
+  }
+
+  toUri(routeInfo: AppRouteInfo): string {
+    const encoded = this.config.strategy.encodeRouteInfo(
+      routeInfo,
+      this.basePath,
+    );
+    const searchPart = encoded.search ?? '';
+    const hashPart = encoded.hash ?? '';
+    return `${encoded.pathname}${searchPart}${hashPart}`;
+  }
+
+  fromUri(uri: string): AppRouteInfo {
+    const url = new URL(uri, window.location.origin);
+    const encoded = {
+      pathname: url.pathname,
+      search: url.search,
+      hash: url.hash,
+    };
+    return this.config.strategy.decodeRouteInfo(encoded, this.basePath);
   }
 }

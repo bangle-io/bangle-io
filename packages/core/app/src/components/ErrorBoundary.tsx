@@ -25,7 +25,7 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
                 />
               </div>
             }
-            secondaryActions={[
+            actions={[
               {
                 label: 'Report',
                 variant: 'outline',

@@ -31,6 +31,11 @@ import {
 
 import { PmEditorService } from '@bangle.io/editor';
 import { Container } from '@bangle.io/poor-mans-di';
+import {
+  HashStrategy,
+  PathBasedStrategy,
+  QueryStringStrategy,
+} from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
   Command,
@@ -77,6 +82,11 @@ export function initializeServices(
       pmEditorService: PmEditorService,
     },
   );
+
+  container.setConfig(BrowserRouterService, () => ({
+    strategy: new HashStrategy(),
+    basePath: '/ws',
+  }));
 
   container.setConfig(BrowserErrorHandlerService, () => ({
     onError: (params) => {

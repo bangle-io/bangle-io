@@ -9,3 +9,6 @@ export * from './memory-database';
 export * from './memory-router';
 export * from './node-error-handler';
 export * from './memory-sync-database';
+export * from './path-based-strategy';
+export * from './hash-strategy';
+export * from './query-string-strategy';

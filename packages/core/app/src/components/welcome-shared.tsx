@@ -1,10 +1,14 @@
 import { useCoreServices } from '@bangle.io/context';
 import { Button } from '@bangle.io/ui-components';
+import { FunMissing } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
-import { WsPath, buildURL, buildUrlPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 import { differenceInYears, formatDistanceToNow } from 'date-fns';
 import { useAtomValue } from 'jotai';
+import { FileX } from 'lucide-react';
 import React from 'react';
+import { NoticeView } from './NoticeView';
+
 export interface Item {
   label: string;
   href: string;
@@ -67,7 +71,10 @@ export function useGroupedWorkspaceNotes() {
       const wsPath = WsPath.fromString(item.wsPath);
       const filePath = wsPath.asFile();
       const fileName = filePath?.fileName || item.wsPath;
-      const href = buildURL(buildUrlPath.pageEditor({ wsPath: item.wsPath }));
+      const href = coreServices.navigation.toUri({
+        route: 'editor',
+        payload: { wsPath: item.wsPath },
+      });
       return {
         wsPath: item.wsPath,
         fileName,
@@ -87,7 +94,13 @@ export function useGroupedWorkspaceNotes() {
       all: sortedPathsWithTimestamp.map(toLinkObj),
       isEmpty,
     };
-  }, [allWsPaths, recentWsPaths, sortedPathsWithTimestamp, allRecentWsPaths]);
+  }, [
+    allWsPaths,
+    recentWsPaths,
+    sortedPathsWithTimestamp,
+    allRecentWsPaths,
+    coreServices.navigation.toUri,
+  ]);
 }
 
 export function Header({ title, illustration }: HeaderProps) {
@@ -199,6 +212,57 @@ export function Actions({ actions }: ActionsProps) {
         </Button>
       ))}
     </div>
+  );
+}
+
+export function NotFoundView() {
+  const coreServices = useCoreServices();
+
+  const handleNewNote = () => {
+    coreServices.commandDispatcher.dispatch(
+      'command::ui:create-note-dialog',
+      { prefillName: undefined },
+      'ui',
+    );
+  };
+
+  const handleViewAllNotes = () => {
+    coreServices.commandDispatcher.dispatch(
+      'command::ui:toggle-all-files',
+      { prefillInput: undefined },
+      'ui',
+    );
+  };
+
+  return (
+    <NoticeView
+      title="Note Not Found"
+      description={
+        <>
+          <p>The note you're looking for doesn't exist or has been moved.</p>
+          <FunMissing />
+        </>
+      }
+      illustration={
+        <div className="flex items-center justify-center">
+          <FileX
+            className="h-24 w-24 stroke-[1.5] stroke-muted-foreground"
+            aria-hidden="true"
+          />
+        </div>
+      }
+      actions={[
+        {
+          label: 'View All Notes',
+          onClick: handleViewAllNotes,
+        },
+        {
+          label: 'New Note',
+          variant: 'outline',
+          onClick: handleNewNote,
+        },
+      ]}
+    />
   );
 }
 

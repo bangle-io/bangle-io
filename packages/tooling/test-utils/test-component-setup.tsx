@@ -2,7 +2,6 @@ import {
   CoreServiceProvider,
   LoggerProvider,
   PlatformServiceProvider,
-  RouterContext,
 } from '@bangle.io/context';
 import type { CoreServices, PlatformServices } from '@bangle.io/types';
 import { Sidebar } from '@bangle.io/ui-components';
@@ -70,7 +69,7 @@ export function renderWithServices({
               <PlatformServiceProvider services={platformServices}>
                 <CoreServiceProvider services={coreServices}>
                   <Sidebar.SidebarProvider open={false} setOpen={() => {}}>
-                    <RouterContext>{children}</RouterContext>
+                    {children}
                   </Sidebar.SidebarProvider>
                 </CoreServiceProvider>
               </PlatformServiceProvider>
