@@ -17,7 +17,7 @@ import {
 // Use direct paths to avoid loading page-lifecycle
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
-import { MemoryRouterService } from '@bangle.io/service-platform/src/memory-router';
+import { MemoryRouterService } from '@bangle.io/service-platform/src/router/memory-router';
 import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
 
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
