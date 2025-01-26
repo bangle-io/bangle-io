@@ -1,11 +1,11 @@
 import type { AppRouteInfo } from '@bangle.io/types';
 import type { EncodedRoute, RouteStrategy } from '@bangle.io/ws-path';
 import {
+  handleRouteInfo,
   joinPaths,
+  parseBrowserSearch,
   stripBasePath,
   toSearchString,
-  parseBrowserSearch,
-  handleRouteInfo,
 } from './common';
 
 /**

@@ -1,11 +1,11 @@
 import type { AppRouteInfo } from '@bangle.io/types';
 import type { EncodedRoute, RouteStrategy } from '@bangle.io/ws-path';
 import {
-  stripBasePath,
-  toSearchString,
+  handleRouteInfo,
   parseBrowserSearch,
   payloadToSearch,
-  handleRouteInfo,
+  stripBasePath,
+  toSearchString,
 } from './common';
 
 /**
@@ -20,6 +20,8 @@ import {
  */
 export class HashStrategy implements RouteStrategy {
   parseBrowserLocation(location: Location, basePath: string): EncodedRoute {
+    debugger;
+
     // We ignore location.search here, focusing on the hash.
     // The returned EncodedRoute keeps the 'pathname' so we can strip the base path,
     // but the rest of the route data lives in the 'hash'.

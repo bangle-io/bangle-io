@@ -1,11 +1,11 @@
 import type { AppRouteInfo } from '@bangle.io/types';
 import type { EncodedRoute, RouteStrategy } from '@bangle.io/ws-path';
 import {
-  stripBasePath,
-  toSearchString,
+  handleRouteInfo,
   parseBrowserSearch,
   payloadToSearch,
-  handleRouteInfo,
+  stripBasePath,
+  toSearchString,
 } from './common';
 
 export class QueryStringStrategy implements RouteStrategy {
