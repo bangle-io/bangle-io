@@ -59,8 +59,7 @@ export class WorkspaceStateService extends BaseService {
   });
 
   /**
-   * This atom is used to check if the current workspace name
-   * is valid.
+   * This atom is used to check if the current workspace even exists.
    */
   $currentWsName = atom((get) => {
     const wsName = get(this.$wsName);

@@ -62,7 +62,7 @@ function BreadcrumbItem({
     <React.Fragment>
       <Breadcrumb.BreadcrumbItem>
         {isFirst ? (
-          <HomeFolderLink segment={segment} />
+          <HomeFolderLink />
         ) : (
           <DirectoryDropdown
             segment={segment}

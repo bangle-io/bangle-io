@@ -4,10 +4,11 @@ import { Editor } from '@bangle.io/editor';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
 import {
-  NotFoundView,
+  NoteNotFoundView,
   PageHeaderWrapper,
   PageMainContentWrapper,
 } from '../components';
+import { WorkspaceNotFoundView } from '../components';
 
 const MAIN_EDITOR_NAME = 'main-editor';
 
@@ -41,9 +42,13 @@ export function PageEditor() {
             // Let editor manage its own padding to show the drag handle
             className={APP_MAIN_CONTENT_PADDING}
           />
+        ) : !currentWsName ? (
+          <WorkspaceNotFoundView
+            wsName={coreServices.navigation.resolveAtoms().wsName}
+          />
         ) : (
           // NOTE: It is intentional we are not redirecting to the error page so that we avoid bouncing user
-          <NotFoundView />
+          <NoteNotFoundView />
         )}
       </PageMainContentWrapper>
     </>

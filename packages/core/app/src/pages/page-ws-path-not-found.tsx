@@ -1,21 +1,19 @@
 import { useCoreServices } from '@bangle.io/context';
 import React from 'react';
 import {
-  NotFoundView,
+  NoteNotFoundView,
   PageHeaderWrapper,
   PageMainContentWrapper,
   Section,
 } from '../components';
 
 export function PageWsPathNotFound() {
-  const coreServices = useCoreServices();
-
   return (
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
         <Section>
-          <NotFoundView />
+          <NoteNotFoundView />
         </Section>
       </PageMainContentWrapper>
     </>

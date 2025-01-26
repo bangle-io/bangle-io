@@ -5,7 +5,7 @@ import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png
 import { WsPath } from '@bangle.io/ws-path';
 import { differenceInYears, formatDistanceToNow } from 'date-fns';
 import { useAtomValue } from 'jotai';
-import { FileX } from 'lucide-react';
+import { FileX, Briefcase } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './NoticeView';
 
@@ -215,7 +215,7 @@ export function Actions({ actions }: ActionsProps) {
   );
 }
 
-export function NotFoundView() {
+export function NoteNotFoundView() {
   const coreServices = useCoreServices();
 
   const handleNewNote = () => {
@@ -260,6 +260,44 @@ export function NotFoundView() {
           label: 'New Note',
           variant: 'outline',
           onClick: handleNewNote,
+        },
+      ]}
+    />
+  );
+}
+
+export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
+  const coreServices = useCoreServices();
+
+  const handleGoHome = () => {
+    coreServices.navigation.goHome();
+  };
+
+  // NOTE: we donot show workspace switcher as activity logger will start throwing error
+  // because workspace is missing.
+  return (
+    <NoticeView
+      title="Workspace Not Found"
+      description={
+        <>
+          <p>
+            The workspace <b>{wsName}</b> doesn't exist.
+          </p>
+          <FunMissing />
+        </>
+      }
+      illustration={
+        <div className="flex items-center justify-center">
+          <Briefcase
+            className="h-24 w-24 stroke-[1.5] stroke-muted-foreground"
+            aria-hidden="true"
+          />
+        </div>
+      }
+      actions={[
+        {
+          label: 'Go Home',
+          onClick: handleGoHome,
         },
       ]}
     />
