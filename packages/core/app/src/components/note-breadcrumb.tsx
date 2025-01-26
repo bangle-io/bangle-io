@@ -55,6 +55,9 @@ function BreadcrumbItem({
   wsPaths,
   onNewNote,
 }: BreadcrumbItemProps) {
+  if (isFirst) {
+    console.log('isFirst', segment, wsPaths);
+  }
   return (
     <React.Fragment>
       <Breadcrumb.BreadcrumbItem>
@@ -78,19 +81,23 @@ function BreadcrumbItem({
   );
 }
 
-interface HomeFolderLinkProps {
-  segment: BreadcrumbSegment;
-}
-
-function HomeFolderLink({ segment }: HomeFolderLinkProps) {
+function HomeFolderLink() {
   const { navigation } = useCoreServices();
+  const { wsName } = navigation.resolveAtoms();
   return (
     <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
       <Breadcrumb.BreadcrumbLink
-        href={navigation.toUri({
-          route: 'editor',
-          payload: { wsPath: segment.wsPath },
-        })}
+        href={navigation.toUri(
+          wsName
+            ? {
+                route: 'ws-home',
+                payload: { wsName },
+              }
+            : {
+                route: 'welcome',
+                payload: {},
+              },
+        )}
       >
         <Folder size={16} />
       </Breadcrumb.BreadcrumbLink>
