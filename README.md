@@ -1,83 +1,38 @@
-## Frequent commands
+# Bangle.io
 
-`# update all packages pnpm -r update --latest`
+[Bangle.io](http://Bangle.io) is a modern web based note taking platform.
 
-# Architecture Proposal
+### You own your notes
 
-**Date: 2024-07-01**
+- **Local:** Modify notes right from your computer. Think Notion, but local only.
 
-## Introduction
+- **No data lock-in:** bangle stores your notes in a human readable **_Markdown_** format.
 
-This is my third attempt at creating a note-taking tool. It’s a clichéd endeavor for any web developer, yet I feel compelled to pursue it. The urge to build such a tool probably strikes 99% of developers at some point in their careers. Despite recognizing the futility of this idea, as I mentioned earlier, I still want to go through with it.
+### Not your usual note taking app
 
-I have a few reasons for this irrational pursuit, which has often come at a cost of my personal life. But I will not delve into those reasons here. Instead, I will focus on the architecture of this tool.
+- **WYSIWYG**: Even though we save things in Markdown format, Bangle will enrich your eyes with rich text formatting.
 
-## Goals
+- **Modern rich text editor:** Bangle uses its sister project [bangle.dev](https://github.com/bangle-io/bangle.dev) which unlocks us to build a powerful editor like [Notion](https://www.notion.so/) or [Dropbox paper](https://www.dropbox.com/paper) and support real time collaboration.
 
-These are short-term (~1 year) goals:
+- **Extensibility:** Even though it's a web app it was built ground up to be extended by awesome extensions. (_We have bunch of community extensions coming out soon.)_
 
-* Ensure users can start taking notes in less than 30 seconds.
+### Portability at its core
 
-* Create a simple, keyboard-friendly UI.
+- **No Electron:**  :heart: for web and speed, thats it.
 
-* Develop a frontend-heavy note-taking tool that saves notes to the local filesystem, featuring a WYSIWYG editor while saving notes in markdown format.
+- **Performant:** Throw thousands of notes at it and Bangle will chug along fine. _(Try opening a heavy project like [10,000 Markdown Files](https://github.com/Zettelkasten-Method/10000-markdown-files).)_
 
-* Incorporate features similar to VSCode, such as split-screen functionality.
+### Usage
 
-* Design a scalable, efficient, and fast architecture that can be maintained by a single developer, allowing for future features like collaboration, cloud sync, and authentication.
+Head to <https://bangle.io> to use the app.
 
-* Offer a free and functional open-source version, while providing valuable paid features to generate revenue.
+### Development
 
-* Prioritize maintainability over performance, ensuring the app remains easy to maintain and doesn’t get abandoned within a few months.
+- `yarn install` to install
 
-* Mobile Safari support is OK, but not a priority.
+- `yarn start` to start a development instance on `localhost:4000`
 
-### Non-Goals
+Please read [Contributing.md](./CONTRIBUTING.md) for more details. 
 
-Non-goals for the short term are:
 
-* Implementing a backend, but should be easy to add in the future.
-
-* Collaboration features, but still should be easy to add in the future.
-
-* iOS and Android apps.
-
-## Current State
-
-I have been working on this project for at least 4 years, often starting over and chasing the wrong things.
-
-## Architecture
-
-Bangle has multiple workspaces (dirs directly under `/packages`), and each workspace has a specific purpose and dependency tree. The field `bangleWorkspaceConfig.allowedWorkspaces` in the `package.json` file defines the allowed workspace a package in a workspace can depend on.
-
-For example if the `allowedWorkspace` for `core` workspace is `['core', 'ui', 'tooling']`, then a packages within the `core` workspace add dependencies from packages in the `core`, `ui`, and `tooling` workspaces.
-
-Here is a brief overview in order of dependency (top most can depend on any workspace below it, and so on):
-
-### tooling
-
-All the tooling/build related code is here. This is where we also define vite config to start the app. This also contains build related and other miscellaneous scripts.
-
-Can freely import from any workspace any workspace.
-
-### core
-
-This is the core of the app. It contains the core logic of the app.
-
-Like tooling it also has a liberal `allowedWorkspaces` config and can import from any workspace listed below.
-
-### platform
-
-This is where we define the platform specific code. For example, routing related logic specific to the web platform.
-
-### ui
-
-This is where we define all the dumb UI components, that are mostly agnostic of the app logic.
-
-### shared
-
-This is where we define shared types, config and constants that can be used across multiple workspaces. For example, shared utility functions.
-
-### js-lib
-
-This is where we define all the utility code that is agnostic of the app. For example, a markdown parser. It should not have any dependencies on any other workspace. Think if it as general purpose utility library.
+- [RANT.md](./RANT.md)
