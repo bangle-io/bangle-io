@@ -2,7 +2,6 @@ import { useCoreServices } from '@bangle.io/context';
 import { Breadcrumb, Button, DropdownMenu } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { Folder, PlusIcon } from 'lucide-react';
-// packages/core/app/src/components/NoteBreadcrumb.tsx
 import React from 'react';
 
 interface NoteBreadcrumbProps {
@@ -31,6 +30,7 @@ export function NoteBreadcrumb({
             showEllipsis={shouldShowEllipsis(segments)}
             wsPaths={wsPaths}
             onNewNote={onNewNote}
+            currentWsPath={wsPath}
           />
         ))}
       </Breadcrumb.BreadcrumbList>
@@ -45,6 +45,7 @@ interface BreadcrumbItemProps {
   showEllipsis: boolean;
   wsPaths: string[];
   onNewNote: (opts: { wsPath: string }) => void;
+  currentWsPath: string;
 }
 
 function BreadcrumbItem({
@@ -54,10 +55,8 @@ function BreadcrumbItem({
   showEllipsis,
   wsPaths,
   onNewNote,
+  currentWsPath,
 }: BreadcrumbItemProps) {
-  if (isFirst) {
-    console.log('isFirst', segment, wsPaths);
-  }
   return (
     <React.Fragment>
       <Breadcrumb.BreadcrumbItem>
@@ -67,6 +66,7 @@ function BreadcrumbItem({
           <DirectoryDropdown
             segment={segment}
             wsPaths={wsPaths}
+            currentWsPath={currentWsPath}
             onNewNote={onNewNote}
           />
         )}
@@ -160,16 +160,18 @@ interface DirectoryDropdownProps {
   segment: BreadcrumbSegment;
   wsPaths: string[];
   onNewNote: NoteBreadcrumbProps['onNewNote'];
+  currentWsPath: string;
 }
 
 function DirectoryDropdown({
   segment,
   wsPaths,
   onNewNote,
+  currentWsPath,
 }: DirectoryDropdownProps) {
   const siblingFiles = React.useMemo(
-    () => getSiblingFiles(segment, wsPaths),
-    [segment, wsPaths],
+    () => getSiblingFiles(segment, wsPaths, currentWsPath),
+    [segment, wsPaths, currentWsPath],
   );
 
   return (
@@ -209,7 +211,7 @@ function NewNoteMenuItem({ segment, onNewNote }: NewNoteMenuItemProps) {
 }
 
 interface SiblingFileMenuItemProps {
-  file: BreadcrumbSegment;
+  file: BreadcrumbSegment & { isCurrent?: boolean };
 }
 
 function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
@@ -222,7 +224,12 @@ function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
           payload: { wsPath: file.wsPath },
         })}
       >
-        {file.label}
+        <>
+          <span>{file.label}</span>
+          {file.isCurrent && (
+            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
+          )}
+        </>
       </Breadcrumb.BreadcrumbLink>
     </DropdownMenu.DropdownMenuItem>
   );
@@ -231,27 +238,26 @@ function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
 function getSiblingFiles(
   segment: BreadcrumbSegment,
   wsPaths: string[],
-): BreadcrumbSegment[] {
+  currentWsPath: string,
+): (BreadcrumbSegment & { isCurrent?: boolean })[] {
   const segmentPath = WsPath.fromString(segment.wsPath);
   const parentDir = segmentPath.getParent();
 
   return wsPaths
     .filter((path) => {
-      const wsPath = WsPath.fromString(path);
-      const filePath = wsPath.asFile();
-      if (!filePath || wsPath.wsName !== segmentPath.wsName) return false;
-
+      const wsPathObj = WsPath.fromString(path);
+      const filePath = wsPathObj.asFile();
+      if (!filePath || wsPathObj.wsName !== segmentPath.wsName) return false;
       const pathParent = filePath.getParent();
-      return (
-        pathParent?.path === parentDir?.path && wsPath.path !== segmentPath.path
-      );
+      return pathParent?.path === parentDir?.path;
     })
     .map((path) => {
-      const wsPath = WsPath.fromString(path);
-      const filePath = wsPath.asFile();
+      const wsPathObj = WsPath.fromString(path);
+      const filePath = wsPathObj.asFile();
       return {
         label: filePath?.fileName || '',
         wsPath: path,
+        isCurrent: path === currentWsPath,
       };
     });
 }
