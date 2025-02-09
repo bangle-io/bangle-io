@@ -39,7 +39,9 @@
     "overrides": {},
     "onlyBuiltDependencies": [
       "@biomejs/biome",
-      "@swc/core"
+      "@swc/core",
+      "esbuild",
+      "msw"
     ],
     "supportedArchitectures": {
       "os": [
