@@ -38,8 +38,14 @@
   "pnpm": {
     "overrides": {},
     "supportedArchitectures": {
-      "os": ["darwin", "linux"],
-      "cpu": ["x64", "arm64"]
+      "os": [
+        "darwin",
+        "linux"
+      ],
+      "cpu": [
+        "x64",
+        "arm64"
+      ]
     }
   },
   "prettier": {

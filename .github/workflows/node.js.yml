@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main, dev, staging, production, v2, v3]
+    branches: [main, dev, staging, production]
   pull_request:
-    branches: [main, dev, staging, production, v2, v3]
+    branches: [main, dev, staging, production]
 
 concurrency:
   group: bangle-${{ github.event.pull_request.number || github.ref }}
@@ -23,6 +23,7 @@ jobs:
         id: pnpm-install
         run: |
           corepack enable
+          corepack prepare pnpm@latest --activate
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -46,6 +47,7 @@ jobs:
         id: pnpm-install
         run: |
           corepack enable
+          corepack prepare pnpm@latest --activate
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -65,6 +67,7 @@ jobs:
         id: pnpm-install
         run: |
           corepack enable
+          corepack prepare pnpm@latest --activate
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
