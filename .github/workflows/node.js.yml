@@ -37,6 +37,8 @@ jobs:
         run: pnpm install
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
+        with:
+          version: latest
       - name: Lint
         run: pnpm run lint:ci
   test:
