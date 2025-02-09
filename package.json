@@ -37,21 +37,10 @@
   "license": "AGPL-3.0-or-later",
   "pnpm": {
     "overrides": {},
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "@swc/core",
-      "esbuild",
-      "msw"
-    ],
+    "onlyBuiltDependencies": ["@biomejs/biome", "@swc/core", "esbuild", "msw"],
     "supportedArchitectures": {
-      "os": [
-        "darwin",
-        "linux"
-      ],
-      "cpu": [
-        "x64",
-        "arm64"
-      ]
+      "os": ["darwin", "linux"],
+      "cpu": ["x64", "arm64"]
     }
   },
   "prettier": {
