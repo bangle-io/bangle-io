@@ -23,7 +23,7 @@ jobs:
         id: pnpm-install
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          corepack prepare --activate
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -47,7 +47,7 @@ jobs:
         id: pnpm-install
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          corepack prepare --activate
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -67,7 +67,7 @@ jobs:
         id: pnpm-install
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          corepack prepare --activate
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
