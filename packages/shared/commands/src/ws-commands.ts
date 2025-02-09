@@ -121,4 +121,12 @@ export const wsCommands = narrow([
     dependencies: { services: ['navigation'] },
     args: null,
   },
+  {
+    id: 'command::ws:clone-note',
+    title: 'Clone Note',
+    omniSearch: true,
+    keywords: ['clone', 'duplicate', 'copy'],
+    dependencies: { services: ['workspaceState', 'fileSystem', 'navigation'] },
+    args: null,
+  },
 ]);

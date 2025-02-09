@@ -51,6 +51,7 @@ export class WorkspaceStateService extends BaseService {
   /**
    * This atom is used to check if the current note path
    * is on the disk.
+   * TODO: rename to currentWsFilePath
    */
   $currentWsPath = atom((get) => {
     const wsPath = get(this.navigation.$wsFilePath);

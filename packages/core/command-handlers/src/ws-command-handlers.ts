@@ -224,4 +224,73 @@ export const wsCommandHandlers = [
   c('command::ws:go-ws-home', ({ navigation }) => {
     navigation.goWorkspace();
   }),
+
+  c(
+    'command::ws:clone-note',
+    async ({ workspaceState, fileSystem, navigation }, _args, key) => {
+      const { store } = getCtx(key);
+      const currentWsPath = store.get(workspaceState.$currentWsPath);
+
+      if (!currentWsPath) {
+        throwAppError(
+          'error::workspace:not-opened',
+          'No note open to clone',
+          {},
+        );
+      }
+
+      // Determine base name by stripping any existing '-copy-<n>' suffix
+      const origName = currentWsPath.fileNameWithoutExtension;
+      const copyRegex = /^(.*?)(-copy-\d+)?$/;
+      const match = origName.match(copyRegex);
+      const base = match ? match[1] : origName;
+
+      // Get all sibling notes in the same directory
+      const wsNotes = store.get(workspaceState.$wsPaths);
+      const siblingNames = new Set<string>();
+      for (const note of wsNotes) {
+        const noteParsed = WsPath.fromString(note.wsPath);
+        const noteFile = noteParsed.asFile();
+        if (noteFile) {
+          const noteParent = noteFile.getParent();
+          if (noteParent?.path === currentWsPath.getParent()?.path) {
+            siblingNames.add(noteFile.fileNameWithoutExtension);
+          }
+        }
+      }
+
+      // Find the smallest copy number that is not already used
+      let copyNumber = 1;
+      let candidate = `${base}-copy-${copyNumber}`;
+      while (siblingNames.has(candidate)) {
+        copyNumber++;
+        candidate = `${base}-copy-${copyNumber}`;
+      }
+
+      const newFileName = candidate + WsPath.DEFAULT_NOTE_EXTENSION;
+      const newWsPath = WsPath.fromParts(
+        currentWsPath.wsName,
+        WsPath.pathJoin(currentWsPath.getParent()?.path || '', newFileName),
+      ).toString();
+
+      const originalFile = await fileSystem.readFile(currentWsPath.wsPath);
+      if (!originalFile) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          'Original note not found',
+          {
+            invalidWsPath: currentWsPath.wsPath,
+          },
+        );
+      }
+      const content = await originalFile.text();
+
+      await fileSystem.createFile(
+        newWsPath,
+        new File([content], newFileName, { type: 'text/plain' }),
+      );
+
+      navigation.goWsPath(newWsPath);
+    },
+  ),
 ];
