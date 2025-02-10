@@ -76,7 +76,6 @@ export function createEditor({
     marks: resolved.marks,
   });
 
-  console.log(resolved.nodes, resolved.marks);
   const markdown = markdownLoader([...Object.values(extensions)], schema);
 
   const view = new EditorView(

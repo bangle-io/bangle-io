@@ -38,8 +38,8 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "jotai": "^2.11.0",
-    "jotai-effect": "^1.0.7"
+    "jotai": "^2.11.3",
+    "jotai-effect": "^1.1.6"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

@@ -28,8 +28,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/prosemirror-all": "2.0.0-alpha.12",
-    "prosemirror-markdown": "^1.13.1",
+    "@bangle.dev/prosemirror-all": "2.0.0-alpha.15",
+    "jotai": "^2.11.3",
     "orderedmap": "^2.1.1",
     "prosemirror-commands": "^1.6.2",
     "prosemirror-dropcursor": "^1.8.1",
@@ -38,13 +38,12 @@
     "prosemirror-history": "^1.4.1",
     "prosemirror-inputrules": "^1.4.0",
     "prosemirror-keymap": "^1.2.2",
+    "prosemirror-markdown": "^1.13.1",
     "prosemirror-model": "^1.24.1",
     "prosemirror-schema-basic": "^1.2.3",
     "prosemirror-state": "^1.4.3",
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.10.2",
-    "prosemirror-view": "^1.37.1",
-    "jotai": "^2.11.0"
-  },
-  "devDependencies": {}
+    "prosemirror-view": "^1.37.2"
+  }
 }

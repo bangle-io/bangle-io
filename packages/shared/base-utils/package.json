@@ -31,10 +31,10 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/poor-mans-di": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "jotai": "^2.11.0",
-    "@bangle.io/mini-zod": "workspace:*"
+    "jotai": "^2.11.3"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"
