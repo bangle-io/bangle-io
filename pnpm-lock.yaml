@@ -381,8 +381,8 @@ importers:
   packages/js-lib/banger-editor:
     dependencies:
       '@bangle.dev/prosemirror-all':
-        specifier: 2.0.0-alpha.15
-        version: 2.0.0-alpha.15
+        specifier: 2.0.0-alpha.17
+        version: 2.0.0-alpha.17
       jotai:
         specifier: ^2.11.3
         version: 2.11.3(@types/react@18.3.18)(react@18.3.1)
@@ -495,8 +495,8 @@ importers:
   packages/js-lib/prosemirror-plugins:
     dependencies:
       '@bangle.dev/pm-markdown':
-        specifier: 2.0.0-alpha.15
-        version: 2.0.0-alpha.15(prosemirror-markdown@1.13.1)
+        specifier: 2.0.0-alpha.17
+        version: 2.0.0-alpha.17(prosemirror-markdown@1.13.1)
       '@bangle.io/banger-editor':
         specifier: workspace:*
         version: link:../banger-editor
@@ -1382,13 +1382,13 @@ packages:
     resolution: {integrity: sha512-eUuWapzEGWFEpHFxgEaBG8e3n6S8L3MSu0oda755rOfabWPnh0Our1AozNFVUxGFIhbKgd1ksprsoDGMinTOTA==}
     engines: {node: '>=6.9.0'}
 
-  '@bangle.dev/pm-markdown@2.0.0-alpha.15':
-    resolution: {integrity: sha512-nVei4yxojnQ5PGMHzkii/zpCDkqq5qK4EJCfZzLiKdGqcHg9wq1FG4n/aUMByP9vZQpwWZhnvxiWwPMa4rWiSw==}
+  '@bangle.dev/pm-markdown@2.0.0-alpha.17':
+    resolution: {integrity: sha512-1JA644UP4EDvuGiMmR4pyy2FkJv/RkCqJCvi/lOyYdFckOwio1y3qNi4rU6Rc4HpR+sLUk5W6dNlXETcCOXpWg==}
     peerDependencies:
       prosemirror-markdown: '*'
 
-  '@bangle.dev/prosemirror-all@2.0.0-alpha.15':
-    resolution: {integrity: sha512-R7AVnjQ6YeyKrlkrhYS/0mZVWDGx7E1qCq+Z2HNIS5s92cCzsTJirGvlC50e+TQuIPwykMoDuTeAei6AbgzrZg==}
+  '@bangle.dev/prosemirror-all@2.0.0-alpha.17':
+    resolution: {integrity: sha512-Tt9ciTWRxXQejU1do3u2LN2UaAJUjuuPZ36J+VoxAKlhoitoiikTrGCMXVFnx0gj5OlefL5tbeLdNbnKTInEUw==}
 
   '@bangle.io/config-template@0.0.7':
     resolution: {integrity: sha512-nPFkcM3aU/w+NJxwiQrpfu7Md3wpQrVY870ieeaZNyqPGvYj7qOng06Z7GalEvR2a6dLsvsQC3X1MgQImEOCGw==}
@@ -6829,13 +6829,13 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@bangle.dev/pm-markdown@2.0.0-alpha.15(prosemirror-markdown@1.13.1)':
+  '@bangle.dev/pm-markdown@2.0.0-alpha.17(prosemirror-markdown@1.13.1)':
     dependencies:
       '@types/markdown-it': 14.1.2
       markdown-it: 14.1.0
       prosemirror-markdown: 1.13.1
 
-  '@bangle.dev/prosemirror-all@2.0.0-alpha.15':
+  '@bangle.dev/prosemirror-all@2.0.0-alpha.17':
     dependencies:
       '@types/orderedmap': 2.0.0
       orderedmap: 2.1.1

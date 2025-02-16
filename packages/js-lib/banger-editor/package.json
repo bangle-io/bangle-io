@@ -28,7 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/prosemirror-all": "2.0.0-alpha.15",
+    "@bangle.dev/prosemirror-all": "2.0.0-alpha.17",
     "jotai": "^2.11.3",
     "orderedmap": "^2.1.1",
     "prosemirror-commands": "^1.6.2",
