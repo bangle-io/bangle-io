@@ -166,10 +166,6 @@ export {
   Decoration,
   DecorationSet,
   EditorView,
-  // @ts-ignore
-  __serializeForClipboard,
-  // @ts-ignore
-  __parseFromClipboard,
 } from 'prosemirror-view';
 
 export { builders } from 'prosemirror-test-builder';

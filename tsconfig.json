@@ -13,7 +13,7 @@
     // Module Resolution
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
-    "module": "ES2020",
+    "module": "ES2022",
     "moduleResolution": "node",
     "moduleDetection": "force",
     "resolveJsonModule": false,
@@ -37,10 +37,10 @@
     "noPropertyAccessFromIndexSignature": false,
     // JSX
     // Target and Libraries
-    "target": "ES2020",
+    "target": "ES2022",
     "lib": [
       "dom",
-      "ES2020",
+      "ES2022",
       "dom.iterable",
       "webworker"
     ],

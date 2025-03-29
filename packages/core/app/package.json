@@ -40,15 +40,15 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.0",
+    "@tanstack/react-virtual": "^3.13.5",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "date-fns": "^4.1.0",
-    "jotai": "^2.11.3",
-    "lucide-react": "^0.469.0",
+    "jotai": "^2.12.2",
+    "lucide-react": "^0.485.0",
     "react": "^18.3.1",
     "react-error-boundary": "^5.0.0",
-    "wouter": "^3.5.1"
+    "wouter": "^3.6.0"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

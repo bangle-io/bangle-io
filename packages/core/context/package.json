@@ -31,6 +31,6 @@
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "react": "^18.3.1",
-    "wouter": "^3.5.1"
+    "wouter": "^3.6.0"
   }
 }

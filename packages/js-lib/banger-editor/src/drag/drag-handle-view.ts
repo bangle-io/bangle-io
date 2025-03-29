@@ -1,9 +1,6 @@
 import { NodeSelection, Plugin, PluginKey, TextSelection } from '../pm';
 import type { EditorView } from '../pm';
-import {
-  // @ts-ignore they donot export
-  __serializeForClipboard,
-} from '../pm';
+import {} from '../pm';
 import { isNodeSelection } from '../pm-utils';
 import { createDragHandle } from './drag-handle-ui';
 import {
@@ -101,7 +98,7 @@ function handleDragStart(
 
   // Copy the snippet to the dataTransfer
   const slice = view.state.selection.content();
-  const { dom, text } = (__serializeForClipboard as any)(view, slice);
+  const { dom, text } = view.serializeForClipboard(slice);
   event.dataTransfer.clearData();
   event.dataTransfer.setData('text/html', dom.innerHTML);
   event.dataTransfer.setData('text/plain', text);
