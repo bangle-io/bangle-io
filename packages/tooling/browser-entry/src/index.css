@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    * {
+      @apply border-border;
+    }
+    html {
+      @apply scroll-smooth;
+    }
+    body {
+      @apply bg-background text-foreground overscroll-none;
+      /* font-feature-settings: "rlig" 1, "calt" 1; */
+      font-synthesis-weight: none;
+      text-rendering: optimizeLegibility;
+    }
+  
+    /* biome-ignore lint/a11y/useGenericFontNames: <explanation> */
+    @supports (font: -apple-system-body) and (-webkit-appearance: none) {
+      [data-wrapper] {
+        @apply min-[1800px]:border-t;
+      }
+    }
+  
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: hsl(var(--BV-border));
+      border-radius: 5px;
+    }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: hsl(var(--BV-border)) transparent;
+    }
+  }
+  

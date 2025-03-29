@@ -1,4 +1,5 @@
 import './default-theme.processed.css';
+import './index.css';
 
 import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
