@@ -1,8 +1,8 @@
 import React from 'react';
 import { Actions } from './actions';
+import { ContentSection } from './content-section';
 import { EmptyStateIllustration } from './empty-state-illustration';
-import { PageHeader } from './page-header';
-import { Section } from './section';
+import { IllustratedPageHeader } from './illustrated-page-header';
 
 interface NoticeViewProps {
   title: string;
@@ -15,9 +15,7 @@ interface NoticeViewProps {
   }[];
 }
 
-/**
- * avoid doing things that can throw errors here as this is used in error boundary
- */
+/** Displays a standard notice message with a title, description, illustration, and optional actions. */
 export function NoticeView({
   title,
   description,
@@ -25,12 +23,12 @@ export function NoticeView({
   actions,
 }: NoticeViewProps) {
   return (
-    <Section hasPadding>
-      <PageHeader title={title} illustration={illustration} />
+    <ContentSection hasPadding>
+      <IllustratedPageHeader title={title} illustration={illustration} />
       {description ? (
         <p className="mt-2 text-muted-foreground">{description}</p>
       ) : null}
       {actions ? <Actions actions={actions} /> : null}
-    </Section>
+    </ContentSection>
   );
 }

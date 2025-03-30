@@ -1,13 +1,13 @@
 import { useCoreServices } from '@bangle.io/context';
 import { useAtomValue } from 'jotai';
 import React from 'react';
+import { getRelativeTimeOrNull } from '../common/get-relative-time';
 import { Actions } from '../components/actions';
-import { getRelativeTimeOrNull } from '../components/get-relative-time';
-import { ItemList } from '../components/item-list';
 import { PageHeader } from '../components/page-header';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageItemList } from '../components/page-item-list';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
+import { PageSection } from '../components/page-section';
 
 const MAX_RECENT_WORKSPACES = 5;
 
@@ -39,9 +39,9 @@ export function PageWelcome() {
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <Section hasPadding={false}>
+        <PageSection hasPadding={false}>
           <PageHeader title={welcomeMessage} />
-          <ItemList
+          <PageItemList
             heading="Recent workspaces"
             items={workspaceLinks}
             emptyMessage="Create a workspace to get started."
@@ -72,7 +72,7 @@ export function PageWelcome() {
               },
             ]}
           />
-        </Section>
+        </PageSection>
       </PageMainContentWrapper>
     </>
   );

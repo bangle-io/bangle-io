@@ -3,7 +3,7 @@ import React from 'react';
 import { NoticeView } from '../components/notice-view';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
+import { PageSection } from '../components/page-section';
 
 export function PageNativeFsAuthFailed() {
   return (
@@ -12,7 +12,7 @@ export function PageNativeFsAuthFailed() {
         <h1>We were unable to get permission for </h1>
       </PageHeaderWrapper>
       <PageMainContentWrapper>
-        <Section>
+        <PageSection>
           <NoticeView
             title="Authentication Failed Please try again"
             description={<FunMissing />}
@@ -23,7 +23,7 @@ export function PageNativeFsAuthFailed() {
               },
             ]}
           />
-        </Section>
+        </PageSection>
       </PageMainContentWrapper>
     </>
   );

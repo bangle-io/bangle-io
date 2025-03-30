@@ -5,7 +5,7 @@ import React from 'react';
 import { NoticeView } from '../components/notice-view';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
+import { PageSection } from '../components/page-section';
 
 export function PageWorkspaceNotFound() {
   const coreServices = useCoreServices();
@@ -14,7 +14,7 @@ export function PageWorkspaceNotFound() {
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <Section>
+        <PageSection>
           <NoticeView
             title="Workspace Not Found"
             description={
@@ -56,7 +56,7 @@ export function PageWorkspaceNotFound() {
               },
             ]}
           />
-        </Section>
+        </PageSection>
       </PageMainContentWrapper>
     </>
   );

@@ -6,7 +6,7 @@ import React from 'react';
 import { NoticeView } from '../components/notice-view';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
+import { PageSection } from '../components/page-section';
 
 export function PageNotFound() {
   const coreServices = useCoreServices();
@@ -16,7 +16,7 @@ export function PageNotFound() {
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <Section>
+        <PageSection>
           <NoticeView
             title="Page Not Found"
             description={<FunMissing />}
@@ -45,7 +45,7 @@ export function PageNotFound() {
               },
             ]}
           />
-        </Section>
+        </PageSection>
       </PageMainContentWrapper>
     </>
   );

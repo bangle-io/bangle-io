@@ -1,17 +1,18 @@
 import { cx } from '@bangle.io/base-utils';
 import React from 'react';
 
-export interface SectionProps {
+export interface ContentSectionProps {
   children: React.ReactNode;
   className?: string;
   hasPadding?: boolean;
 }
 
-export function Section({
+/** A section component that centers its content and applies optional padding. */
+export function ContentSection({
   children,
   className,
   hasPadding = false,
-}: SectionProps) {
+}: ContentSectionProps) {
   return (
     <section
       className={cx(

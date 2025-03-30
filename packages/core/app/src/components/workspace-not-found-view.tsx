@@ -4,6 +4,7 @@ import { Briefcase } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './notice-view';
 
+/** Displays a notice indicating that the requested workspace could not be found. */
 export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
   const coreServices = useCoreServices();
 

@@ -6,7 +6,7 @@ import React from 'react';
 import { NoticeView } from '../components/notice-view';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { Section } from '../components/section';
+import { PageSection } from '../components/page-section';
 
 export function PageFatalError() {
   const logger = useLogger();
@@ -15,7 +15,7 @@ export function PageFatalError() {
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <Section>
+        <PageSection>
           <NoticeView
             title="Fatal Error"
             description="Something went seriously wrong. We apologize for the inconvenience."
@@ -44,7 +44,7 @@ export function PageFatalError() {
               },
             ]}
           />
-        </Section>
+        </PageSection>
       </PageMainContentWrapper>
     </>
   );

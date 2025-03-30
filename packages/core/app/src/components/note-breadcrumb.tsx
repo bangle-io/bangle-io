@@ -11,10 +11,12 @@ export interface BreadcrumbSegment {
 }
 
 // Moved from breadcrumb-utils.ts
+/** Determines if the breadcrumb should display an ellipsis for brevity. */
 export function shouldShowEllipsis(segments: BreadcrumbSegment[]): boolean {
   return segments.length > 4;
 }
 
+/** Gets the segments to display in the breadcrumb, potentially truncating with ellipsis. */
 export function getVisibleSegments(
   segments: BreadcrumbSegment[],
 ): BreadcrumbSegment[] {
@@ -29,6 +31,7 @@ export function getVisibleSegments(
 }
 
 // Moved from ws-path-to-breadcrumb.ts
+/** Converts a WsPath string into an array of breadcrumb segments. */
 export function wsPathToBreadcrumb(wsPath: string): BreadcrumbSegment[] {
   let path = WsPath.fromString(wsPath);
 
@@ -64,6 +67,7 @@ interface NoteBreadcrumbProps {
   onNewNote: (opts: { wsPath: string }) => void;
 }
 
+/** Renders the breadcrumb navigation for the current note path. */
 export function NoteBreadcrumb({
   wsPath,
   wsPaths,

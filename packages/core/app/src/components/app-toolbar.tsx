@@ -14,6 +14,7 @@ import { NoteBreadcrumb } from './note-breadcrumb';
 
 const isWideEditor = checkWidescreen();
 
+/** The main application toolbar containing navigation controls like sidebar toggle, breadcrumbs, and editor width toggle. */
 export function AppToolbar() {
   const coreServices = useCoreServices();
   const wsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);

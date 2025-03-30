@@ -8,6 +8,7 @@ interface WsNameBreadcrumbProps {
   wsName: string;
 }
 
+/** Renders the breadcrumb for the workspace home page, showing the current workspace name and allowing switching/creating workspaces. */
 export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
   const coreServices = useCoreServices();
   const workspaces = useAtomValue(coreServices.workspaceState.$workspaces);

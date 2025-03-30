@@ -9,6 +9,7 @@ interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
+/** Catches JavaScript errors anywhere in its child component tree and displays a fallback UI. */
 export function ErrorBoundary({ children }: ErrorBoundaryProps) {
   const logger = useLogger();
   return (

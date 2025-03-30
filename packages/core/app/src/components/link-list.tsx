@@ -1,27 +1,28 @@
 import { Button } from '@bangle.io/ui-components';
 import React from 'react';
 
-export interface Item {
+export interface LinkListItem {
   label: string;
   href: string;
   relativeTime?: string | null;
 }
 
-interface ItemListProps {
+interface LinkListProps {
   heading: string;
-  items: Item[];
+  items: LinkListItem[];
   emptyMessage: string;
   showViewMore?: boolean;
   onClickViewMore?: () => void;
 }
 
-export function ItemList({
+/** Renders a list of navigable links with a heading, optional relative time, and a 'View More' option. */
+export function LinkList({
   heading,
   items,
   emptyMessage,
   showViewMore,
   onClickViewMore,
-}: ItemListProps) {
+}: LinkListProps) {
   return (
     <div className="mx-auto flex w-full max-w-[600px] flex-col items-center gap-3 px-4">
       {items.length > 0 ? (

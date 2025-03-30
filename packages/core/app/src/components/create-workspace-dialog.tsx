@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import React from 'react';
 import { nativeFsErrorParse } from '../common';
 
+/** A dialog component for creating a new workspace, allowing selection of storage type and name. */
 export function CreateWorkspaceDialog() {
   const coreServices = useCoreServices();
   const [openWsDialog, setOpenWsDialog] = useAtom(

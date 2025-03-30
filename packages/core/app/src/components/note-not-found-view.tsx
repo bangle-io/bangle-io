@@ -4,6 +4,7 @@ import { FileX } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './notice-view';
 
+/** Displays a notice indicating that the requested note could not be found. */
 export function NoteNotFoundView() {
   const coreServices = useCoreServices();
 

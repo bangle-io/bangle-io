@@ -1,6 +1,7 @@
 import { Squirrel } from 'lucide-react';
 import React from 'react';
 
+/** Displays a default illustration (a squirrel) used for empty states or notices. */
 export function EmptyStateIllustration() {
   return (
     <div className="flex items-center justify-center">

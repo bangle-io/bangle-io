@@ -17,6 +17,7 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 import { useMemo, useRef } from 'react';
 
+/** A command dialog for searching and navigating to any file within the current workspace. */
 export function AllFilesDialog() {
   const { workbenchState } = useCoreServices();
   const [open, setOpen] = useAtom(workbenchState.$openAllFiles);
