@@ -28,7 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/pm-markdown": "2.0.0-alpha.17",
+    "@bangle.dev/pm-markdown": "2.0.0-alpha.18",
     "@bangle.io/banger-editor": "workspace:*"
   },
   "devDependencies": {}
