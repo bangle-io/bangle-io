@@ -35,6 +35,7 @@ export function PageWsHome() {
       .slice(0, MAX_NOTES_TO_SHOW);
   }, [groups]);
 
+  console.log({ allNotes });
   const notesWithTime = React.useMemo(() => {
     return allNotes.map((note) => ({
       label: note.fileName,

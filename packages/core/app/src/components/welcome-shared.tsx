@@ -155,7 +155,7 @@ export function ItemList({
           <div className="flex w-full flex-col gap-2">
             {items.map(({ label, href, relativeTime }) => (
               <Button
-                key={label}
+                key={label + href}
                 variant="ghost"
                 asChild
                 className="flex w-full items-center justify-between"
