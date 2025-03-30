@@ -9,7 +9,7 @@ import type { RootEmitter, Services, Store } from '@bangle.io/types';
 import { Provider } from 'jotai/react';
 import React, { useEffect } from 'react';
 import { AppInner } from './AppInner';
-import { ErrorBoundary } from './components';
+import { ErrorBoundary } from './components/error-boundary';
 
 export function App({
   logger,

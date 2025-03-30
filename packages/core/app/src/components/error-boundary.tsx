@@ -3,7 +3,7 @@ import { useLogger } from '@bangle.io/context';
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
-import { NoticeView } from './NoticeView';
+import { NoticeView } from './notice-view';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

@@ -2,17 +2,15 @@ import { useCoreServices } from '@bangle.io/context';
 import { FunMissing } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import {
-  Actions,
-  Header,
-  ItemList,
-  NoticeView,
-  PageHeaderWrapper,
-  PageMainContentWrapper,
-  Section,
-  getRelativeTimeOrNull,
-  useGroupedWorkspaceNotes,
-} from '../components';
+import { Actions } from '../components/actions';
+import { getRelativeTimeOrNull } from '../components/get-relative-time';
+import { useGroupedWorkspaceNotes } from '../components/grouped-workspace-notes';
+import { ItemList } from '../components/item-list';
+import { NoticeView } from '../components/notice-view';
+import { PageHeader as Header } from '../components/page-header';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Section } from '../components/section';
 
 const MAX_NOTES_TO_SHOW = 5;
 

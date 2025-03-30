@@ -4,6 +4,60 @@ import { WsPath } from '@bangle.io/ws-path';
 import { Folder, PlusIcon } from 'lucide-react';
 import React from 'react';
 
+// Moved from breadcrumb-segment.ts
+export interface BreadcrumbSegment {
+  label: string;
+  wsPath: string;
+}
+
+// Moved from breadcrumb-utils.ts
+export function shouldShowEllipsis(segments: BreadcrumbSegment[]): boolean {
+  return segments.length > 4;
+}
+
+export function getVisibleSegments(
+  segments: BreadcrumbSegment[],
+): BreadcrumbSegment[] {
+  if (!shouldShowEllipsis(segments)) {
+    return segments;
+  }
+  const first = segments[0];
+  if (!first) {
+    return [];
+  }
+  return [first, ...segments.slice(-2)];
+}
+
+// Moved from ws-path-to-breadcrumb.ts
+export function wsPathToBreadcrumb(wsPath: string): BreadcrumbSegment[] {
+  let path = WsPath.fromString(wsPath);
+
+  const segments: BreadcrumbSegment[] = [
+    {
+      label: path.name || path.wsName,
+      wsPath: path.wsPath,
+    },
+  ];
+
+  if (!path.path) {
+    return segments;
+  }
+
+  while (true) {
+    const parent = path.getParent();
+    if (!parent) {
+      break;
+    }
+    segments.unshift({
+      label: parent.name || path.wsName,
+      wsPath: parent.wsPath,
+    });
+    path = parent;
+  }
+
+  return segments;
+}
+
 interface NoteBreadcrumbProps {
   wsPath: string;
   wsPaths: string[];
@@ -105,57 +159,6 @@ function HomeFolderLink() {
   );
 }
 
-export interface BreadcrumbSegment {
-  label: string;
-  wsPath: string;
-}
-
-export function wsPathToBreadcrumb(wsPath: string): BreadcrumbSegment[] {
-  let path = WsPath.fromString(wsPath);
-
-  const segments: BreadcrumbSegment[] = [
-    {
-      label: path.name || path.wsName,
-      wsPath: path.wsPath,
-    },
-  ];
-
-  if (!path.path) {
-    return segments;
-  }
-
-  while (true) {
-    const parent = path.getParent();
-    if (!parent) {
-      break;
-    }
-    segments.unshift({
-      label: parent.name || path.wsName,
-      wsPath: parent.wsPath,
-    });
-    path = parent;
-  }
-
-  return segments;
-}
-
-export function shouldShowEllipsis(segments: BreadcrumbSegment[]): boolean {
-  return segments.length > 4;
-}
-
-export function getVisibleSegments(
-  segments: BreadcrumbSegment[],
-): BreadcrumbSegment[] {
-  if (!shouldShowEllipsis(segments)) {
-    return segments;
-  }
-  const first = segments[0];
-  if (!first) {
-    return [];
-  }
-  return [first, ...segments.slice(-2)];
-}
-
 interface DirectoryDropdownProps {
   segment: BreadcrumbSegment;
   wsPaths: string[];
@@ -218,22 +221,20 @@ interface SiblingFileMenuItemProps {
 }
 
 function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
-  const { navigation } = useCoreServices();
+  const coreServices = useCoreServices();
   return (
-    <DropdownMenu.DropdownMenuItem asChild>
-      <Breadcrumb.BreadcrumbLink
-        href={navigation.toUri({
+    <DropdownMenu.DropdownMenuItem
+      className={file.isCurrent ? 'font-medium text-foreground' : ''}
+      asChild
+    >
+      <a
+        href={coreServices.navigation.toUri({
           route: 'editor',
           payload: { wsPath: file.wsPath },
         })}
       >
-        <>
-          <span>{file.label}</span>
-          {file.isCurrent && (
-            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
-          )}
-        </>
-      </Breadcrumb.BreadcrumbLink>
+        {file.label}
+      </a>
     </DropdownMenu.DropdownMenuItem>
   );
 }
@@ -244,23 +245,25 @@ function getSiblingFiles(
   currentWsPath: string,
 ): (BreadcrumbSegment & { isCurrent?: boolean })[] {
   const segmentPath = WsPath.fromString(segment.wsPath);
-  const parentDir = segmentPath.getParent();
+  const parentPath = segmentPath.getParent();
+
+  if (!parentPath) {
+    return [];
+  }
 
   return wsPaths
     .filter((path) => {
-      const wsPathObj = WsPath.fromString(path);
-      const filePath = wsPathObj.asFile();
-      if (!filePath || wsPathObj.wsName !== segmentPath.wsName) return false;
-      const pathParent = filePath.getParent();
-      return pathParent?.path === parentDir?.path;
+      const wsPath = WsPath.fromString(path);
+      const parent = wsPath.getParent();
+      return parent && parent.wsPath === parentPath.wsPath;
     })
     .map((path) => {
-      const wsPathObj = WsPath.fromString(path);
-      const filePath = wsPathObj.asFile();
+      const wsPath = WsPath.fromString(path);
       return {
-        label: filePath?.fileName || '',
+        label: wsPath.name || 'Unknown',
         wsPath: path,
         isCurrent: path === currentWsPath,
       };
-    });
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 }

@@ -2,19 +2,19 @@ import { pickADirectory } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
-import { CreateWorkspaceDialog } from '@bangle.io/ui-components';
+import { CreateWorkspaceDialog as UICreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { nativeFsErrorParse } from '../common';
 
-export function AppCreateWorkspaceDialog() {
+export function CreateWorkspaceDialog() {
   const coreServices = useCoreServices();
   const [openWsDialog, setOpenWsDialog] = useAtom(
     coreServices.workbenchState.$openWsDialog,
   );
   return (
-    <CreateWorkspaceDialog
+    <UICreateWorkspaceDialog
       open={openWsDialog}
       onOpenChange={setOpenWsDialog}
       validateWorkspace={({ name: wsName }) => {

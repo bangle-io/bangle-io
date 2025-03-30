@@ -2,12 +2,10 @@ import { useCoreServices } from '@bangle.io/context';
 import { FunMissing } from '@bangle.io/ui-components';
 import { FolderX } from 'lucide-react';
 import React from 'react';
-import {
-  NoticeView,
-  PageHeaderWrapper,
-  PageMainContentWrapper,
-  Section,
-} from '../components';
+import { NoticeView } from '../components/notice-view';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Section } from '../components/section';
 
 export function PageWorkspaceNotFound() {
   const coreServices = useCoreServices();

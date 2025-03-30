@@ -1,11 +1,9 @@
 import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
-import {
-  NoticeView,
-  PageHeaderWrapper,
-  PageMainContentWrapper,
-  Section,
-} from '../components';
+import { NoticeView } from '../components/notice-view';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Section } from '../components/section';
 
 export function PageNativeFsAuthReq() {
   return (

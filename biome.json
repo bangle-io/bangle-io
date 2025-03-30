@@ -54,10 +54,7 @@
       },
       "nursery": {
         "useSortedClasses": "error",
-        "noDuplicateElseIf": "error",
-        "useImportRestrictions": {
-          "level": "error"
-        }
+        "noDuplicateElseIf": "error"
       },
       "correctness": {
         "noUnusedVariables": "warn"

@@ -1,11 +1,9 @@
 import { useCoreServices } from '@bangle.io/context';
 import React from 'react';
-import {
-  NoteNotFoundView,
-  PageHeaderWrapper,
-  PageMainContentWrapper,
-  Section,
-} from '../components';
+import { NoteNotFoundView } from '../components/note-not-found-view';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Section } from '../components/section';
 
 export function PageWsPathNotFound() {
   return (

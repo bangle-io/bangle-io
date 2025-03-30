@@ -3,12 +3,10 @@ import { useCoreServices } from '@bangle.io/context';
 import { Editor } from '@bangle.io/editor';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
-import {
-  NoteNotFoundView,
-  PageHeaderWrapper,
-  PageMainContentWrapper,
-} from '../components';
-import { WorkspaceNotFoundView } from '../components';
+import { NoteNotFoundView } from '../components/note-not-found-view';
+import { PageHeaderWrapper } from '../components/page-header-wrapper';
+import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { WorkspaceNotFoundView } from '../components/workspace-not-found-view';
 
 const MAIN_EDITOR_NAME = 'main-editor';
 

@@ -6,7 +6,8 @@ import {
 } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
 import React from 'react';
-import { AllFilesDialog, AppCreateWorkspaceDialog } from './components';
+import { AllFilesDialog } from './components/all-files-dialog';
+import { CreateWorkspaceDialog } from './components/create-workspace-dialog';
 
 export function AppDialogs() {
   const coreServices = useCoreServices();
@@ -24,7 +25,7 @@ export function AppDialogs() {
   return (
     <>
       <AllFilesDialog />
-      <AppCreateWorkspaceDialog />
+      <CreateWorkspaceDialog />
       <AppAlertDialog
         key={alertDialog?.dialogId}
         open={Boolean(alertDialog)}
