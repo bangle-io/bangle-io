@@ -1,18 +1,16 @@
 import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
+import { ContentSection } from '../components/content-section';
 import { NoticeView } from '../components/notice-view';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { PageSection } from '../components/page-section';
 
 export function PageNativeFsAuthReq() {
   return (
     <>
-      <PageHeaderWrapper>
-        <h1>We were unable to get permission for </h1>
-      </PageHeaderWrapper>
+      <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <PageSection>
+        <ContentSection>
           <NoticeView
             title="Authentication Required, Please allow access to continue"
             description={<FunMissing />}
@@ -23,7 +21,7 @@ export function PageNativeFsAuthReq() {
               },
             ]}
           />
-        </PageSection>
+        </ContentSection>
       </PageMainContentWrapper>
     </>
   );

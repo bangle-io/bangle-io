@@ -3,11 +3,11 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 import { getRelativeTimeOrNull } from '../common/get-relative-time';
 import { Actions } from '../components/actions';
+import { ContentSection } from '../components/content-section';
 import { PageHeader } from '../components/page-header';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageItemList } from '../components/page-item-list';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { PageSection } from '../components/page-section';
 
 const MAX_RECENT_WORKSPACES = 5;
 
@@ -31,7 +31,7 @@ export function PageWelcome() {
       .sort((a, b) => b.timestamp - a.timestamp)
       .slice(0, MAX_RECENT_WORKSPACES);
     return sorted;
-  }, [workspaces, navigation.toUri]);
+  }, [workspaces, navigation]); // Removed navigation.toUri dependency as it's stable per navigation instance
 
   const welcomeMessage = isNewUser ? 'Welcome to Bangle!' : 'Welcome back!';
 
@@ -39,7 +39,7 @@ export function PageWelcome() {
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <PageSection hasPadding={false}>
+        <ContentSection hasPadding={false}>
           <PageHeader title={welcomeMessage} />
           <PageItemList
             heading="Recent workspaces"
@@ -72,7 +72,7 @@ export function PageWelcome() {
               },
             ]}
           />
-        </PageSection>
+        </ContentSection>
       </PageMainContentWrapper>
     </>
   );

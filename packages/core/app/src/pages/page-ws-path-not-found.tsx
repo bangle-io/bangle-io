@@ -1,18 +1,17 @@
-import { useCoreServices } from '@bangle.io/context';
 import React from 'react';
+import { ContentSection } from '../components/content-section';
 import { NoteNotFoundView } from '../components/note-not-found-view';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { PageSection } from '../components/page-section';
 
 export function PageWsPathNotFound() {
   return (
     <>
       <PageHeaderWrapper />
       <PageMainContentWrapper>
-        <PageSection>
+        <ContentSection>
           <NoteNotFoundView />
-        </PageSection>
+        </ContentSection>
       </PageMainContentWrapper>
     </>
   );

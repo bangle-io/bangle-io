@@ -34,7 +34,6 @@ export function AppToolbar() {
         <ToolbarLeftSection
           showEditorToolbar={showEditorToolbar}
           wsPath={wsPath?.wsPath}
-          wsName={wsName}
           wsPaths={wsPaths.map((wsPath) => wsPath.wsPath)}
         />
         {wsPath && wsName && (
@@ -54,7 +53,6 @@ export function AppToolbar() {
 interface ToolbarLeftSectionProps {
   showEditorToolbar: boolean;
   wsPath: string | undefined;
-  wsName: string | undefined;
   wsPaths: string[];
 }
 

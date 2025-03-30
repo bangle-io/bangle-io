@@ -19,7 +19,6 @@ export function AppRoutes() {
 
   const route = useAtomValue(coreServices.navigation.$routeInfo).route;
 
-  console.log('route', route);
   switch (route) {
     case 'editor':
       return <PageEditor />;

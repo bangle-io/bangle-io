@@ -2,7 +2,7 @@ import React from 'react';
 import { Actions } from './actions';
 import { ContentSection } from './content-section';
 import { EmptyStateIllustration } from './empty-state-illustration';
-import { IllustratedPageHeader } from './illustrated-page-header';
+import { PageHeader } from './page-header';
 
 interface NoticeViewProps {
   title: string;
@@ -24,7 +24,7 @@ export function NoticeView({
 }: NoticeViewProps) {
   return (
     <ContentSection hasPadding>
-      <IllustratedPageHeader title={title} illustration={illustration} />
+      <PageHeader title={title} illustration={illustration} />
       {description ? (
         <p className="mt-2 text-muted-foreground">{description}</p>
       ) : null}

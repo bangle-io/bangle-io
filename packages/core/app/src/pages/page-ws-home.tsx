@@ -5,12 +5,12 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 import { getRelativeTimeOrNull } from '../common/get-relative-time';
 import { Actions } from '../components/actions';
+import { ContentSection } from '../components/content-section';
 import { NoticeView } from '../components/notice-view';
-import { PageHeader as Header } from '../components/page-header';
+import { PageHeader } from '../components/page-header';
 import { PageHeaderWrapper } from '../components/page-header-wrapper';
 import { PageItemList } from '../components/page-item-list';
 import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { PageSection } from '../components/page-section';
 
 const MAX_NOTES_TO_SHOW = 5;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -34,7 +34,6 @@ export function PageWsHome() {
       .slice(0, MAX_NOTES_TO_SHOW);
   }, [groups]);
 
-  console.log({ allNotes });
   const notesWithTime = React.useMemo(() => {
     return allNotes.map((note) => ({
       label: note.fileName,
@@ -52,8 +51,8 @@ export function PageWsHome() {
       <PageHeaderWrapper />
       <PageMainContentWrapper>
         {currentWsName ? (
-          <PageSection hasPadding={false}>
-            <Header title={`${currentWsName}`} />
+          <ContentSection hasPadding={false}>
+            <PageHeader title={`${currentWsName}`} />
             <PageItemList
               heading="Recent notes"
               items={notesWithTime}
@@ -92,7 +91,7 @@ export function PageWsHome() {
                 ]}
               />
             )}
-          </PageSection>
+          </ContentSection>
         ) : (
           <NoticeView
             title="Workspace not found"
