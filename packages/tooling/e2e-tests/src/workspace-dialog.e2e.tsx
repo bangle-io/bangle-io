@@ -3,7 +3,7 @@ import { test } from '@playwright/experimental-ct-react';
 test('Submit workspace name', async ({ page }) => {
   await page.goto('/');
 
-  await page.getByRole('button', { name: 'Acme Inc Enterprise' }).click();
+  await page.getByRole('button', { name: 'No workspace selected' }).click();
   await page
     .locator('[data-radix-popper-content-wrapper]')
     .getByText('New Workspace')

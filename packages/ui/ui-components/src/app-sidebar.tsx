@@ -84,6 +84,7 @@ interface DropdownButtonProps {
   title: string;
   subtitle: string;
   fancy?: boolean;
+  className?: string;
 }
 
 function DropdownButton({
@@ -92,15 +93,15 @@ function DropdownButton({
   title,
   subtitle,
   fancy = false,
+  className,
 }: DropdownButtonProps) {
   const getButtonClass = (isFancy: boolean) =>
     cn(
-      // Base styles
       'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
-      // Conditional fancy styles
       isFancy &&
         'shadow-[0_0_20px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_25px_rgba(255,255,255,0.25)]' +
           'border border-sidebar-accent dark:border-sidebar-accent-foreground',
+      className,
     );
 
   const textClass = cn(
@@ -287,6 +288,7 @@ function AppSidebarFooter({
           align="start"
           side={isMobile ? 'top' : dropdownPosition}
           sideOffset={4}
+          onCloseAutoFocus={(e) => e.preventDefault()}
         >
           {children}
         </DropdownMenuContent>
@@ -333,13 +335,10 @@ function WorkspaceSwitcher({
   onNewWorkspaceClick: () => void;
 }) {
   const { isMobile } = useSidebar();
-  const activeWs = workspaces.find((ws) => ws.isActive) ?? {
-    name: 'Acme Inc Enterprise',
-    isActive: true,
-    misc: 'Enterprise',
-  };
 
-  const Logo = activeWs.logo ?? GalleryVerticalEnd;
+  const activeWs = workspaces.find((ws) => ws.isActive);
+
+  const Logo = activeWs?.logo ?? GalleryVerticalEnd;
 
   return (
     <SidebarMenu>
@@ -347,8 +346,13 @@ function WorkspaceSwitcher({
         <DropdownMenu>
           <DropdownButton
             icon={Logo}
-            title={activeWs.name}
-            subtitle={activeWs.misc}
+            title={activeWs ? activeWs.name : 'No workspace selected'}
+            subtitle={activeWs ? activeWs.misc : 'Click to select a workspace'}
+            className={
+              !activeWs
+                ? 'bg-pop/10 hover:bg-pop/15 data-[state=open]:bg-pop/15'
+                : undefined
+            }
           />
 
           <DropdownMenuContent
@@ -369,9 +373,7 @@ function WorkspaceSwitcher({
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
-              <div className="font-medium text-muted-foreground">
-                New Workspace
-              </div>
+              <span className="">New Workspace</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {workspaces.map((workspace) => {
@@ -388,7 +390,7 @@ function WorkspaceSwitcher({
                   <div className="flex size-6 items-center justify-center rounded-sm border">
                     <LogoComponent className="size-4 shrink-0" />
                   </div>
-                  {workspace.name}
+                  <span className="">{workspace.name}</span>
                 </DropdownMenuItem>
               );
             })}

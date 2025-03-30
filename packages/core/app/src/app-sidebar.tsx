@@ -85,10 +85,10 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             );
           }
         }}
-        workspaces={workspaces.map((ws, i) => ({
+        workspaces={workspaces.map((ws, _i) => ({
           name: ws.name,
           misc: ws.type,
-          isActive: activeWsName == null ? i === 0 : activeWsName === ws.name,
+          isActive: activeWsName === ws.name,
         }))}
         wsPaths={displayedWsPaths.map((wsPath) => wsPath.wsPath)}
         isTruncated={isTruncated}

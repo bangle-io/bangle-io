@@ -271,8 +271,6 @@ describe('UI command handlers', () => {
           workspaces: [{ name: 'test-ws' }, { name: 'ws2' }],
         });
 
-      vi.spyOn(window, 'confirm').mockImplementation(() => true);
-
       dispatch('command::ui:delete-workspace-dialog', null);
       const dialog = testEnv.store.get(
         services.workbenchState.$singleSelectDialog,
@@ -281,9 +279,17 @@ describe('UI command handlers', () => {
       expect(dialog?.dialogId).toBe('dialog::delete-workspace-dialog');
 
       dialog?.onSelect({ id: 'ws2', title: 'ws2' });
-      expect(window.confirm).toHaveBeenCalledWith(
+
+      const alertDialog = testEnv.store.get(
+        services.workbenchState.$alertDialog,
+      );
+      expect(alertDialog).toBeDefined();
+      expect(alertDialog?.dialogId).toBe('dialog::alert-delete-workspace');
+      expect(alertDialog?.description).toBe(
         'Are you sure you want to delete the workspace "ws2"? This action cannot be undone.',
       );
+
+      alertDialog?.onContinue();
 
       await vi.waitFor(() => {
         expect(

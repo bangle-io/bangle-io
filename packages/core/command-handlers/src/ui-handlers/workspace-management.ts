@@ -75,13 +75,20 @@ export const workspaceManagementHandlers = [
           Icon: Trash2,
           onSelect: (option) => {
             const wsName = option.title;
-            if (
-              wsName &&
-              confirm(
-                `Are you sure you want to delete the workspace "${wsName}"? This action cannot be undone.`,
-              )
-            ) {
-              dispatch('command::ws:delete-workspace', { wsName });
+            if (wsName) {
+              store.set(workbenchState.$alertDialog, () => {
+                return {
+                  dialogId: 'dialog::alert-delete-workspace',
+                  title: 'Confirm Delete',
+                  tone: 'destructive',
+                  description: `Are you sure you want to delete the workspace "${wsName}"? This action cannot be undone.`,
+                  continueText: 'Delete',
+                  onContinue: () => {
+                    dispatch('command::ws:delete-workspace', { wsName });
+                  },
+                  onCancel: () => {},
+                };
+              });
             }
           },
         };
