@@ -112,8 +112,9 @@ export function AppSidebarExample() {
         wsPaths={data.tree}
         navItems={data.navMain}
         onTreeItemClick={() => {}}
-        // searchValue={input}
-        // onSearchValueChange={updateInput}
+        onTreeItemCreateNote={(item) =>
+          alert(`Create note in directory: ${item.name}`)
+        }
         onNewWorkspaceClick={() => {}}
         setActiveWorkspace={() => {}}
         footerChildren={footerChildren}
@@ -183,6 +184,9 @@ export function AppSidebarTruncatedExample() {
         wsPaths={data.tree}
         navItems={data.navMain}
         onTreeItemClick={() => {}}
+        onTreeItemCreateNote={(item) =>
+          alert(`Create note in directory: ${item.name}`)
+        }
         isTruncated={true}
         onTruncatedClick={() => {
           alert('truncated called');

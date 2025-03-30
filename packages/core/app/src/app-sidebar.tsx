@@ -71,6 +71,20 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             navigation.goWsPath(wsPath);
           }
         }}
+        onTreeItemCreateNote={(item) => {
+          if (item.isDir && item.wsPath) {
+            const parent = WsPath.fromString(item.wsPath);
+            const path = parent?.path;
+
+            commandDispatcher.dispatch(
+              'command::ui:create-note-dialog',
+              {
+                prefillName: path,
+              },
+              'ui',
+            );
+          }
+        }}
         workspaces={workspaces.map((ws, i) => ({
           name: ws.name,
           misc: ws.type,

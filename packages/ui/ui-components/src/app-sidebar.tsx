@@ -69,6 +69,7 @@ export type AppSidebarProps = {
   onDeleteFileClick?: (item: TreeItem) => void;
   onRenameFileClick?: (item: TreeItem) => void;
   onMoveFileClick?: (item: TreeItem) => void;
+  onTreeItemCreateNote?: (item: TreeItem) => void;
   isTruncated?: boolean;
   onTruncatedClick?: () => void;
   onFileDrop?: TreeProps['onFileDrop'];
@@ -154,6 +155,7 @@ export function AppSidebar({
   onDeleteFileClick = () => {},
   onRenameFileClick = () => {},
   onMoveFileClick = () => {},
+  onTreeItemCreateNote = () => {},
   isTruncated = false,
   onTruncatedClick = () => {},
   onFileDrop = () => {},
@@ -231,6 +233,7 @@ export function AppSidebar({
                 onTreeItemDelete={onDeleteFileClick}
                 onTreeItemRename={onRenameFileClick}
                 onTreeItemMove={onMoveFileClick}
+                onTreeItemCreateNote={onTreeItemCreateNote}
                 onFileDrop={onFileDrop}
               />
               {isTruncated && (

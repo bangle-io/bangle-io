@@ -41,6 +41,7 @@ interface TreeNodeProps {
   onTreeItemRename: (item: TreeItem) => void;
   onTreeItemDelete: (item: TreeItem) => void;
   onTreeItemMove: (item: TreeItem) => void;
+  onTreeItemCreateNote: (item: TreeItem) => void;
 }
 
 const TreeNode = function TreeNode({
@@ -50,6 +51,7 @@ const TreeNode = function TreeNode({
   onTreeItemRename,
   onTreeItemDelete,
   onTreeItemMove,
+  onTreeItemCreateNote,
 }: TreeNodeProps) {
   const isActive = activeWsPaths.includes(item.wsPath);
 
@@ -67,7 +69,7 @@ const TreeNode = function TreeNode({
 
   const isDroppableDisabled =
     !WsPath.fromString(item.wsPath).getParent()?.isRoot && !item.isDir;
-  // Droppable for directories only
+  // Droppable for directories or root-level files
   const { setNodeRef: dropRef, isOver } = useDroppable({
     id: `drop-${item.id}`,
     data: { item },
@@ -90,15 +92,27 @@ const TreeNode = function TreeNode({
     () => onTreeItemMove(item),
     [onTreeItemMove, item],
   );
+  const handleCreateNote = useCallback(
+    () => onTreeItemCreateNote(item),
+    [onTreeItemCreateNote, item],
+  );
 
   if (!item.isDir) {
+    // File node
     return (
       <SidebarMenuItem
         ref={
-          // we allow dropping on root level files
+          // we allow dropping on root level files, so they need a dropRef
           isDroppableDisabled ? undefined : dropRef
         }
-        className={cn('relative', isDragging && 'opacity-50')}
+        className={cn(
+          'relative',
+          isDragging && 'opacity-50',
+          // Apply drop indicator style also to root files when hovered over
+          isOver &&
+            !isDroppableDisabled &&
+            'rounded bg-sidebar-accent/50 outline outline-accent drop-shadow-xl',
+        )}
         style={{ contentVisibility: 'auto' }}
       >
         <SidebarMenuButton
@@ -152,6 +166,21 @@ const TreeNode = function TreeNode({
             <span className="select-none">{item.name}</span>
           </SidebarMenuButton>
         </CollapsibleTrigger>
+
+        {/* Add dropdown menu for directories */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuAction showOnHover>
+              <MoreHorizontal />
+            </SidebarMenuAction>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="right" align="start">
+            <DropdownMenuItem onClick={handleCreateNote}>
+              Create Note
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <CollapsibleContent>
           <SidebarMenuSub>
             {children.map((subItem) => (
@@ -162,6 +191,7 @@ const TreeNode = function TreeNode({
                 onTreeItemDelete={onTreeItemDelete}
                 onTreeItemRename={onTreeItemRename}
                 onTreeItemMove={onTreeItemMove}
+                onTreeItemCreateNote={onTreeItemCreateNote}
                 activeWsPaths={activeWsPaths}
               />
             ))}
@@ -179,6 +209,7 @@ export interface TreeProps {
   onTreeItemDelete: (item: TreeItem) => void;
   onTreeItemRename: (item: TreeItem) => void;
   onTreeItemMove: (item: TreeItem) => void;
+  onTreeItemCreateNote: (item: TreeItem) => void;
   onFileDrop: (
     sourceItem: TreeItem,
     destinationItem: { isRoot: true } | TreeItem,
@@ -192,6 +223,7 @@ export function Tree({
   onTreeItemDelete,
   onTreeItemRename,
   onTreeItemMove,
+  onTreeItemCreateNote,
   onFileDrop,
 }: TreeProps) {
   const [activeDragItem, setActiveDragItem] = useState<TreeItem | null>(null);
@@ -203,6 +235,9 @@ export function Tree({
     }
   }, []);
 
+  // Note: No explicit root drop zone needed currently.
+  // Dropping outside any valid droppable (or onto a root-level file)
+  // is handled in handleDragEnd by checking `over` and `destinationItem`.
   // const { setNodeRef: setRootRef, isOver: isRootOver } = useDroppable({
   //   id: 'root-drop',
   //   data: { isRoot: true },
@@ -211,46 +246,76 @@ export function Tree({
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+      setActiveDragItem(null); // Reset drag item regardless of outcome
+
       if (!active) {
-        setActiveDragItem(null);
         return;
       }
 
       const sourceItem = active.data.current?.item as TreeItem | undefined;
-      if (!sourceItem || !over) {
-        setActiveDragItem(null);
+      // If no source item, or dropped outside any droppable area (`over` is null)
+      if (!sourceItem) {
         return;
       }
 
-      const destinationItem =
-        over.id === 'root-drop'
-          ? null
-          : (over.data.current?.item as TreeItem | null);
-
-      // Updated logic here
-      if (
-        destinationItem === null ||
-        (destinationItem &&
-          !destinationItem.isDir &&
-          WsPath.fromString(destinationItem.wsPath).getParent()?.isRoot)
-      ) {
-        // Treat root-level files like root
+      // Case 1: Dropped outside any registered droppable area
+      if (!over) {
+        // Treat dropping outside as dropping to the root
         onFileDrop?.(sourceItem, { isRoot: true });
-      } else if (destinationItem?.isDir) {
-        onFileDrop?.(sourceItem, destinationItem);
+        return;
       }
 
-      setActiveDragItem(null);
+      // Retrieve destination item from droppable data
+      const destinationItem = over.data.current?.item as TreeItem | null;
+
+      // Case 2: Dropped onto a registered droppable area, but it has no item data (should not happen with current setup)
+      if (!destinationItem) {
+        // This case might indicate an issue or an unexpected droppable target.
+        // Optionally, treat as root drop or log an error.
+        // For now, let's treat it as a root drop for robustness.
+        onFileDrop?.(sourceItem, { isRoot: true });
+        return;
+      }
+
+      // Case 3: Dropped onto a root-level file (which acts as a root drop target)
+      const destWsPath = WsPath.fromString(destinationItem.wsPath);
+      if (!destinationItem.isDir && destWsPath.getParent()?.isRoot) {
+        onFileDrop?.(sourceItem, { isRoot: true });
+        return;
+      }
+
+      // Case 4: Dropped onto a directory
+      if (destinationItem.isDir) {
+        // Prevent dropping an item onto itself or its current parent directory (no-op)
+        if (sourceItem.id === destinationItem.id) {
+          return;
+        }
+        const sourceParentPath = WsPath.fromString(sourceItem.wsPath)
+          .getParent()
+          ?.toString();
+        const destPath = destinationItem.wsPath;
+        if (sourceParentPath === destPath) {
+          return;
+        }
+
+        onFileDrop?.(sourceItem, destinationItem);
+        return;
+      }
+
+      // If none of the above, it's likely an invalid drop target (e.g., non-root file)
+      // No action needed.
     },
     [onFileDrop],
   );
 
   const mouseSensor = useSensor(MouseSensor, {
+    // Require the mouse to move by X pixels before starting a drag
     activationConstraint: {
       distance: 8,
     },
   });
   const touchSensor = useSensor(TouchSensor, {
+    // Delay drag start by 700ms on touch devices, allow 15px tolerance
     activationConstraint: {
       delay: 700,
       tolerance: 15,
@@ -266,6 +331,8 @@ export function Tree({
       modifiers={useMemo(() => [restrictToVerticalAxis], [])}
       sensors={sensors}
     >
+      {/* Potential future location for an explicit root drop zone wrapper if needed */}
+      {/* <div ref={setRootRef} className={cn(isRootOver && 'bg-blue-100')}> */}
       {rootItem.map((item) => (
         <TreeNode
           key={item.id}
@@ -275,8 +342,10 @@ export function Tree({
           onTreeItemDelete={onTreeItemDelete}
           onTreeItemRename={onTreeItemRename}
           onTreeItemMove={onTreeItemMove}
+          onTreeItemCreateNote={onTreeItemCreateNote}
         />
       ))}
+      {/* </div> */}
 
       <DragOverlay>
         {activeDragItem ? (
