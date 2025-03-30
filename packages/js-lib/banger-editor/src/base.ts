@@ -20,6 +20,13 @@ export type BaseConfig = {
    * @default 'Mod-z'
    */
   keyUndoInputRule?: string | false;
+  /**
+   * Prevent Tab key from moving focus out of the editor.
+   * When true, Tab and Shift-Tab keys will be handled by the editor
+   * and won't bubble to the browser (only if no other keymap handles them).
+   * @default true
+   */
+  trapTabKey?: boolean;
 };
 
 type RequiredConfig = Required<BaseConfig>;
@@ -29,6 +36,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   nameText: 'text',
   backspaceToUndoInputRule: true,
   keyUndoInputRule: 'Mod-z',
+  trapTabKey: true,
 };
 
 export function setupBase(userConfig?: BaseConfig) {
@@ -58,6 +66,15 @@ export function setupBase(userConfig?: BaseConfig) {
         'backspaceToUndoInputRule',
         PRIORITY.baseUndoInputRuleKey,
       ),
+    trapTabKey: keybinding(
+      {
+        Tab: trapTabCommand(config),
+        'Shift-Tab': trapTabCommand(config),
+      },
+      'trapTabKey',
+      // Use the lowest priority so this only runs after all other plugins
+      PRIORITY.baseKeymap,
+    ),
   };
 
   const command = {
@@ -83,6 +100,19 @@ export function insertText() {
       }
       return true;
     };
+}
+
+/**
+ * Command to trap Tab key in the editor.
+ * Simply returns true to indicate we've handled the key, preventing it from bubbling up.
+ */
+function trapTabCommand(config: RequiredConfig): Command {
+  return () => {
+    if (config.trapTabKey) {
+      return true;
+    }
+    return false;
+  };
 }
 
 // MARKDOWN
