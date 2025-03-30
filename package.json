@@ -36,11 +36,14 @@
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
   "pnpm": {
-    "overrides": {},
     "onlyBuiltDependencies": ["@biomejs/biome", "@swc/core", "esbuild", "msw"],
     "supportedArchitectures": {
       "os": ["darwin", "linux"],
       "cpu": ["x64", "arm64"]
+    },
+    "overrides": {
+      "react": "18.3.1",
+      "react-dom": "18.3.1"
     }
   },
   "prettier": {
