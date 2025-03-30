@@ -120,7 +120,8 @@ export const noteManagementHandlers = [
             title: 'Confirm name change',
           },
           onSelect: (input) => {
-            if (!input) {
+            const trimmedInput = input.trim();
+            if (!trimmedInput) {
               throwAppError(
                 'error::file:invalid-operation',
                 'Invalid note name provided',
@@ -133,29 +134,43 @@ export const noteManagementHandlers = [
             }
 
             const newName =
-              input.trim() +
-              (input.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)
+              trimmedInput +
+              (trimmedInput.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)
                 ? ''
                 : WsPath.DEFAULT_NOTE_EXTENSION);
-            validateInputPath(newName);
 
             const parentDirPath = fileOldWsPath.getParent();
 
+            // Construct the relative path for validation
+            const relativeNewPath = parentDirPath
+              ? WsPath.pathJoin(parentDirPath.path, newName)
+              : newName;
+
+            // Validate the constructed relative path
+            validateInputPath(relativeNewPath);
+
             if (!parentDirPath) {
-              throwAppError(
-                'error::file:invalid-operation',
-                'Invalid note name provided',
-                {
-                  oldWsPath: oldWsPath.wsPath,
-                  newWsPath: input,
-                  operation: 'rename',
-                },
-              );
+              // This case should ideally be handled by validateInputPath if newName contains '/',
+              // but we keep the check for clarity and robustness.
+              // If parentDirPath is null, it means the original file was at the root.
+              // We construct the new path directly from the newName.
+              if (newName.includes('/')) {
+                // Prevent creating subdirectories during rename implicitly
+                throwAppError(
+                  'error::file:invalid-operation',
+                  'Cannot move file during rename operation. Use move command.',
+                  {
+                    oldWsPath: oldWsPath.wsPath,
+                    newWsPath: input,
+                    operation: 'rename',
+                  },
+                );
+              }
             }
 
             const newWsPath = WsPath.fromParts(
               oldWsPath.wsName,
-              WsPath.pathJoin(parentDirPath.path, newName),
+              relativeNewPath, // Use the validated relative path
             );
 
             dispatch('command::ws:rename-ws-path', {
