@@ -179,7 +179,10 @@ function DirectoryDropdown({
       <DropdownMenu.DropdownMenuTrigger className="cursor-pointer hover:underline">
         {segment.label}
       </DropdownMenu.DropdownMenuTrigger>
-      <DropdownMenu.DropdownMenuContent align="start">
+      <DropdownMenu.DropdownMenuContent
+        align="start"
+        className="max-h-[400px] overflow-y-auto"
+      >
         <NewNoteMenuItem segment={segment} onNewNote={onNewNote} />
         {siblingFiles.length > 0 && (
           <>

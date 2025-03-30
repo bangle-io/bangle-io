@@ -11,7 +11,6 @@ import { useAtom, useAtomValue } from 'jotai';
 import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
 import React from 'react';
 import { NoteBreadcrumb } from './note-breadcrumb';
-import { WsNameBreadcrumb } from './ws-name-breadcrumb';
 
 const isWideEditor = checkWidescreen();
 
@@ -61,11 +60,9 @@ interface ToolbarLeftSectionProps {
 function ToolbarLeftSection({
   showEditorToolbar,
   wsPath,
-  wsName,
   wsPaths,
 }: ToolbarLeftSectionProps) {
   const coreServices = useCoreServices();
-
   return (
     <div className="flex items-center space-x-2">
       <Sidebar.SidebarTrigger className="-ml-1" />
@@ -89,9 +86,7 @@ function ToolbarLeftSection({
                 );
               }}
             />
-          ) : (
-            <WsNameBreadcrumb wsName={wsName ?? ''} />
-          )}
+          ) : null}
         </>
       ) : (
         <HomeBreadcrumb />

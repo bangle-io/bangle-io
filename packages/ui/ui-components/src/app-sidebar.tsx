@@ -352,7 +352,7 @@ function WorkspaceSwitcher({
           />
 
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="max-h-[400px] w-[--radix-dropdown-menu-trigger-width] min-w-56 overflow-y-auto rounded-lg"
             align="start"
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
@@ -361,6 +361,19 @@ function WorkspaceSwitcher({
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Workspaces
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="gap-2 p-2"
+              onClick={onNewWorkspaceClick}
+            >
+              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                <Plus className="size-4" />
+              </div>
+              <div className="font-medium text-muted-foreground">
+                New Workspace
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             {workspaces.map((workspace) => {
               const LogoComponent = workspace.logo
                 ? workspace.logo
@@ -379,18 +392,6 @@ function WorkspaceSwitcher({
                 </DropdownMenuItem>
               );
             })}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="gap-2 p-2"
-              onClick={onNewWorkspaceClick}
-            >
-              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                <Plus className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">
-                New Workspace
-              </div>
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
