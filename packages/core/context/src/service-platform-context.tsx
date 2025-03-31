@@ -14,9 +14,5 @@ export function PlatformServiceProvider({
   children: React.ReactNode;
   services: PlatformServices;
 }) {
-  return (
-    <ServiceContext.Provider value={services}>
-      {children}
-    </ServiceContext.Provider>
-  );
+  return <ServiceContext value={services}>{children}</ServiceContext>;
 }

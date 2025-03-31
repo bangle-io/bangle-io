@@ -30,7 +30,7 @@
   "dependencies": {
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "react": "^18.3.1",
+    "react": "19.1.0",
     "wouter": "^3.6.0"
   }
 }

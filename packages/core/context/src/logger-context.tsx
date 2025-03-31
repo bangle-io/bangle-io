@@ -14,7 +14,5 @@ export function LoggerProvider({
   children: React.ReactNode;
   logger: Logger;
 }) {
-  return (
-    <LoggerContext.Provider value={logger}>{children}</LoggerContext.Provider>
-  );
+  return <LoggerContext value={logger}>{children}</LoggerContext>;
 }

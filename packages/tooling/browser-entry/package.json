@@ -29,7 +29,8 @@
     "build": "vite build",
     "dev": "vite",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview-production": "vite build && vite preview"
   },
   "dependencies": {
     "@bangle.io/app": "workspace:*",
@@ -57,16 +58,16 @@
     "class-variance-authority": "^0.7.1",
     "jotai": "^2.12.2",
     "lucide-react": "^0.485.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "vite": "^6.2.3",
     "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
     "@storybook/react": "^8.6.11",
     "@storybook/test": "^8.6.11",
-    "@types/react": "^18.3.20",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.21",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",

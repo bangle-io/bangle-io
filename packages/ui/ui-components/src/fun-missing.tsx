@@ -2,7 +2,7 @@
  * A React component that displays random fun messages for various UI states
  */
 import React from 'react';
-export const FunMissing = (): JSX.Element => {
+export const FunMissing = () => {
   const messages = [
     'Oops! Looks like we took a wrong turn at Albuquerque!',
     'Houston, we have a problem - something got lost in space! 🚀',

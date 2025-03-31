@@ -20,8 +20,9 @@ export class PmEditorService extends BaseService {
   public readonly extensions: ReturnType<typeof setupExtensions>;
 
   private editors = new Map<
-    string,
-    { editorView: ReturnType<typeof createEditor> }
+    HTMLElement,
+    | { name: string; editorView: ReturnType<typeof createEditor> }
+    | { name: string; status: 'pending' }
   >();
 
   constructor(
@@ -39,14 +40,16 @@ export class PmEditorService extends BaseService {
   hookMount() {
     this.addCleanup(() => {
       // Destroy all editor views
-      for (const [_name, editor] of this.editors) {
-        editor.editorView.destroy();
+      for (const [_domNode, editor] of this.editors) {
+        if ('editorView' in editor) {
+          editor.editorView.destroy();
+        }
       }
       this.editors.clear();
     });
   }
 
-  private mountEditor({
+  mountEditor({
     domNode,
     wsPath,
     name,
@@ -57,14 +60,24 @@ export class PmEditorService extends BaseService {
     name: string;
     focus?: boolean;
   }) {
-    if (this.editors.has(name)) {
-      return;
+    if (this.editors.has(domNode)) {
+      return () => this.unmountEditor(domNode);
     }
+
     const wsPathObj = WsPath.fromString(wsPath);
     wsPathObj.assertMarkdown();
     const fileName = WsPath.assertFile(wsPath).fileName;
 
+    // Mark this editor as pending
+    this.editors.set(domNode, { name, status: 'pending' });
+
     this.dependencies.fileSystem.readFileAsText(wsPath).then((content) => {
+      const editorEntry = this.editors.get(domNode);
+      if (!editorEntry || 'editorView' in editorEntry) {
+        // Editor was unmounted or already initialized, don't create new editorView
+        return;
+      }
+
       const editorView = createEditor({
         defaultContent: content || '',
         store: this.store as Store,
@@ -79,44 +92,32 @@ export class PmEditorService extends BaseService {
         },
         extensions: this.extensions,
       });
-      this.editors.set(name, { editorView });
+
+      this.editors.set(domNode, { name, editorView });
       if (focus) {
         editorView.focus();
       }
     });
+
+    return () => this.unmountEditor(domNode);
   }
 
-  // returns a callback ref to mount the editor
-  newEditor({ wsPath, name }: { wsPath: string; name: string }) {
-    if (this.aborted) {
-      return;
+  private unmountEditor(domNode: HTMLElement) {
+    const editor = this.editors.get(domNode);
+    if (editor && 'editorView' in editor) {
+      console.debug('unmounting editor', domNode);
+
+      editor.editorView.destroy();
     }
-
-    if (this.editors.has(name)) {
-      this.logger.error(`Editor with name ${name} already exists`);
-      return;
-    }
-
-    let domNode: HTMLElement | null = null;
-
-    return (_domNode: HTMLElement | null | undefined) => {
-      if (_domNode && !domNode) {
-        domNode = _domNode;
-        this.mountEditor({ domNode, wsPath, name });
-      }
-
-      if (!_domNode && domNode) {
-        const existing = this.editors.get(name);
-        if (existing) {
-          existing.editorView.destroy();
-          this.editors.delete(name);
-        }
-        domNode = null;
-      }
-    };
+    this.editors.delete(domNode);
   }
 
   getEditor(name: string) {
-    return this.editors.get(name)?.editorView;
+    for (const [_, editor] of this.editors) {
+      if (editor.name === name && 'editorView' in editor) {
+        return editor.editorView;
+      }
+    }
+    return undefined;
   }
 }

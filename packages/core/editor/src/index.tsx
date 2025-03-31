@@ -3,7 +3,7 @@ import './typography.css';
 
 import { cx } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
-import React, { useState } from 'react';
+import React from 'react';
 import { LinkMenu, SlashCommand } from './components';
 export { PmEditorService } from './pm-editor-service';
 
@@ -17,15 +17,24 @@ export function Editor({
   name: string;
 }) {
   const { pmEditorService } = useCoreServices();
-  const [mountEditorRef] = useState(() =>
-    pmEditorService.newEditor({ wsPath, name }),
-  );
 
   return (
     <div className="box-border flex h-full min-h-36 w-full flex-col ">
       <div className="relative box-border w-full flex-1">
         <div
-          ref={mountEditorRef}
+          ref={(node) => {
+            const cleanup =
+              node &&
+              pmEditorService.mountEditor({
+                domNode: node,
+                wsPath,
+                name,
+              });
+
+            return () => {
+              cleanup?.();
+            };
+          }}
           data-editor-name={name}
           className={cx(
             'ProseMirror box-border min-h-full py-8 outline-none outline-0',
