@@ -1,6 +1,6 @@
 // packages/core/command-handlers/src/ws-command-handlers.ts
 import { throwAppError } from '@bangle.io/base-utils';
-import { WsPath } from '@bangle.io/ws-path';
+import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
 import { validateInputPath } from './utils';
@@ -141,10 +141,7 @@ export const wsCommandHandlers = [
         });
       }
 
-      const newWsPath = WsPath.fromParts(
-        destDir.wsName,
-        WsPath.pathJoin(destDir.path, filePath.fileName),
-      ).toString();
+      const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
 
       if (wsPath === newWsPath) {
         return;
@@ -269,10 +266,9 @@ export const wsCommandHandlers = [
       }
 
       const newFileName = candidate + WsPath.DEFAULT_NOTE_EXTENSION;
-      const newWsPath = WsPath.fromParts(
-        currentWsPath.wsName,
-        WsPath.pathJoin(currentWsPath.getParent()?.path || '', newFileName),
-      ).toString();
+
+      // Use replaceFileName to create the new WsPath
+      const newWsPath = currentWsPath.replaceFileName(newFileName).wsPath;
 
       const originalFile = await fileSystem.readFile(currentWsPath.wsPath);
       if (!originalFile) {
@@ -333,12 +329,11 @@ export const wsCommandHandlers = [
       const formattedDate = `${year}-${month}-${day}`;
       const fileName = `${formattedDate}-daily${WsPath.DEFAULT_NOTE_EXTENSION}`;
 
-      const parentPath = currentWsPath?.getParent()?.path || '';
+      const parentDir =
+        currentWsPath?.getParent() || WsDirPath.fromString(`${wsName}:`);
 
-      const dailyNoteWsPath = WsPath.fromParts(
-        wsName,
-        WsPath.pathJoin(parentPath, fileName),
-      ).toString();
+      const dailyNotePath = parentDir.createFilePath(fileName);
+      const dailyNoteWsPath = dailyNotePath.wsPath;
 
       const exists = await fileSystem.exists(dailyNoteWsPath);
 

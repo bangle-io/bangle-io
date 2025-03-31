@@ -7,6 +7,9 @@ export type ValidationResult<T> =
   | { ok: true; data: T }
   | { ok: false; validationError: ValidationError };
 
+// biome-ignore lint/suspicious/noControlCharactersInRegex: Need to match control characters
+export const INVALID_CHARS_REGEX = /[<>:"\\|?*\x00-\x1F]/g;
+
 export function validateWsName(wsName: string): ValidationResult<string> {
   if (!wsName) {
     return {
@@ -57,6 +60,16 @@ export function validateWsName(wsName: string): ValidationResult<string> {
     };
   }
 
+  if (INVALID_CHARS_REGEX.test(wsName)) {
+    return {
+      ok: false,
+      validationError: {
+        reason: 'Workspace name contains invalid characters',
+        invalidPath: wsName,
+      },
+    };
+  }
+
   return { ok: true, data: wsName };
 }
 
@@ -100,6 +113,15 @@ export function validatePath(filePath: string): ValidationResult<string> {
         ok: false,
         validationError: {
           reason: 'Invalid wsPath: Path segments cannot be "." or ".."',
+          invalidPath: filePath,
+        },
+      };
+    }
+    if (INVALID_CHARS_REGEX.test(segment)) {
+      return {
+        ok: false,
+        validationError: {
+          reason: 'Invalid wsPath: Path segment contains invalid characters',
           invalidPath: filePath,
         },
       };

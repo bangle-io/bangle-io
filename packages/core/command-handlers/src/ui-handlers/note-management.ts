@@ -168,10 +168,7 @@ export const noteManagementHandlers = [
               }
             }
 
-            const newWsPath = WsPath.fromParts(
-              oldWsPath.wsName,
-              relativeNewPath, // Use the validated relative path
-            );
+            const newWsPath = fileOldWsPath.replaceFileName(newName);
 
             dispatch('command::ws:rename-ws-path', {
               newWsPath: newWsPath.wsPath,

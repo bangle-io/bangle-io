@@ -105,8 +105,6 @@ export class PmEditorService extends BaseService {
   private unmountEditor(domNode: HTMLElement) {
     const editor = this.editors.get(domNode);
     if (editor && 'editorView' in editor) {
-      console.debug('unmounting editor', domNode);
-
       editor.editorView.destroy();
     }
     this.editors.delete(domNode);

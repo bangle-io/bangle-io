@@ -33,9 +33,6 @@ describe('WsPath Utilities', () => {
     });
 
     it('should handle special cases for root level files', () => {
-      const fileWithColon = WsFilePath.fromString('ws:dir:file.txt');
-      expect(fileWithColon.isRootLevelFile()).toBe(true);
-
       const fileWithDot = WsFilePath.fromString('ws:.hidden.txt');
       expect(fileWithDot.isRootLevelFile()).toBe(true);
     });
@@ -52,15 +49,15 @@ describe('WsPath Utilities', () => {
       );
     });
 
-    it('should handle paths with colons after workspace name', () => {
-      const path = WsPath.fromString('ws:dir:subdir:file.txt');
+    it('should handle paths with encoded special characters', () => {
+      const path = WsPath.fromString('ws:dir%20with%20spaces/file.txt');
       expect(path.wsName).toBe('ws');
-      expect(path.path).toBe('dir:subdir:file.txt');
+      expect(path.path).toBe('dir%20with%20spaces/file.txt');
       expect(path.isFile).toBe(true);
 
-      const dirPath = WsPath.fromString('ws:dir:subdir:');
+      const dirPath = WsPath.fromString('ws:dir%20with%20spaces/');
       expect(dirPath.wsName).toBe('ws');
-      expect(dirPath.path).toBe('dir:subdir:/');
+      expect(dirPath.path).toBe('dir%20with%20spaces/');
       expect(dirPath.isDir).toBe(true);
     });
   });

@@ -604,6 +604,44 @@ export class WsFilePath extends WsPath {
     return undefined;
   }
 
+  /**
+   * Replaces the file name of this WsFilePath with a new one.
+   * @param newFileName The new file name to use (with extension)
+   * @returns A new WsFilePath instance with the replaced file name
+   * @throws Error if the new file name is invalid
+   */
+  public replaceFileName(newFileName: string): WsFilePath {
+    if (!newFileName) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'New file name cannot be empty',
+        {
+          invalidPath: newFileName,
+        },
+      );
+    }
+
+    // Check if newFileName has an extension
+    const dotIndex = newFileName.lastIndexOf('.');
+    if (dotIndex === -1 || dotIndex === newFileName.length - 1) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'New file name must have an extension',
+        {
+          invalidPath: newFileName,
+        },
+      );
+    }
+
+    // Get the directory path
+    const dirPath = this._getDirPath();
+
+    // Combine workspace name, directory path, and the new file name
+    const newPath = `${this.wsName}:${dirPath}${newFileName}`;
+
+    return WsFilePath.fromString(newPath);
+  }
+
   public isRootLevelFile(): boolean {
     return this.getParent()?.isRoot ?? false;
   }
@@ -670,6 +708,52 @@ export class WsDirPath extends WsPath {
 
   public asDir(): WsDirPath {
     return this;
+  }
+
+  /**
+   * Creates a new file path in this directory.
+   * @param fileName The file name to create (with extension)
+   * @returns A new WsFilePath instance in the current directory
+   * @throws Error if the file name is invalid
+   */
+  public createFilePath(fileName: string): WsFilePath {
+    if (!fileName) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'File name cannot be empty',
+        {
+          invalidPath: fileName,
+        },
+      );
+    }
+
+    // Check if fileName has an extension
+    const dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex === -1 || dotIndex === fileName.length - 1) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        'File name must have an extension',
+        {
+          invalidPath: fileName,
+        },
+      );
+    }
+
+    // Ensure fileName doesn't have any path separators
+    if (fileName.includes(WsPath.PATH_SEPARATOR)) {
+      throwAppError(
+        'error::ws-path:invalid-ws-path',
+        `File name cannot contain path separator (${WsPath.PATH_SEPARATOR})`,
+        {
+          invalidPath: fileName,
+        },
+      );
+    }
+
+    // Combine workspace name, current directory path, and the file name
+    const newPath = `${this.wsName}:${this.path}${fileName}`;
+
+    return WsFilePath.fromString(newPath);
   }
 }
 

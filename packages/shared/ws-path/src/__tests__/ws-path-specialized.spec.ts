@@ -140,6 +140,71 @@ describe('WsFilePath', () => {
     });
   });
 
+  describe('replaceFileName', () => {
+    it('should replace the file name while keeping the directory path', () => {
+      const filePath = WsFilePath.fromString('ws:dir/subdir/file.txt');
+      const newPath = filePath.replaceFileName('newfile.md');
+
+      expect(newPath.wsName).toBe('ws');
+      expect(newPath.path).toBe('dir/subdir/newfile.md');
+      expect(newPath.fileName).toBe('newfile.md');
+      expect(newPath.extension).toBe('.md');
+      expect(newPath.toString()).toBe('ws:dir/subdir/newfile.md');
+    });
+
+    it('should replace the file name for root-level files', () => {
+      const filePath = WsFilePath.fromString('ws:file.txt');
+      const newPath = filePath.replaceFileName('readme.md');
+
+      expect(newPath.wsName).toBe('ws');
+      expect(newPath.path).toBe('readme.md');
+      expect(newPath.fileName).toBe('readme.md');
+      expect(newPath.extension).toBe('.md');
+      expect(newPath.toString()).toBe('ws:readme.md');
+    });
+
+    it('should handle file names with multiple dots', () => {
+      const filePath = WsFilePath.fromString('ws:file.txt');
+      const newPath = filePath.replaceFileName('config.test.json');
+
+      expect(newPath.path).toBe('config.test.json');
+      expect(newPath.fileName).toBe('config.test.json');
+      expect(newPath.extension).toBe('.json');
+    });
+
+    it('should handle special characters in the new file name', () => {
+      const filePath = WsFilePath.fromString('ws:dir/file.txt');
+      const newPath = filePath.replaceFileName('file@#$.md');
+
+      expect(newPath.path).toBe('dir/file@#$.md');
+      expect(newPath.fileName).toBe('file@#$.md');
+    });
+
+    it('should throw for new file name without extension', () => {
+      const filePath = WsFilePath.fromString('ws:file.txt');
+
+      expect(() => filePath.replaceFileName('newfile')).toThrow(
+        'New file name must have an extension',
+      );
+    });
+
+    it('should throw for new file name with just a dot', () => {
+      const filePath = WsFilePath.fromString('ws:file.txt');
+
+      expect(() => filePath.replaceFileName('newfile.')).toThrow(
+        'New file name must have an extension',
+      );
+    });
+
+    it('should throw for empty new file name', () => {
+      const filePath = WsFilePath.fromString('ws:file.txt');
+
+      expect(() => filePath.replaceFileName('')).toThrow(
+        'New file name cannot be empty',
+      );
+    });
+  });
+
   describe('Conversion Methods', () => {
     it('should always return self for asFile', () => {
       const filePath = WsFilePath.fromString('ws:file.txt');
@@ -302,6 +367,80 @@ describe('WsDirPath', () => {
         expect(path3.wsName).toBe('my.ws');
         expect(path3.path).toBe('dir/internal/');
         expect(path3.isDir).toBe(true);
+      });
+    });
+
+    describe('createFilePath', () => {
+      it('should create a file in the directory', () => {
+        const dirPath = WsDirPath.fromString('ws:dir/subdir');
+        const filePath = dirPath.createFilePath('file.txt');
+
+        expect(filePath instanceof WsFilePath).toBe(true);
+        expect(filePath.wsName).toBe('ws');
+        expect(filePath.path).toBe('dir/subdir/file.txt');
+        expect(filePath.fileName).toBe('file.txt');
+        expect(filePath.extension).toBe('.txt');
+        expect(filePath.toString()).toBe('ws:dir/subdir/file.txt');
+      });
+
+      it('should create a file in the root directory', () => {
+        const rootDir = WsDirPath.fromString('ws:');
+        const filePath = rootDir.createFilePath('file.md');
+
+        expect(filePath.wsName).toBe('ws');
+        expect(filePath.path).toBe('file.md');
+        expect(filePath.fileName).toBe('file.md');
+        expect(filePath.extension).toBe('.md');
+        expect(filePath.toString()).toBe('ws:file.md');
+      });
+
+      it('should handle file names with multiple dots', () => {
+        const dirPath = WsDirPath.fromString('ws:dir');
+        const filePath = dirPath.createFilePath('config.test.json');
+
+        expect(filePath.path).toBe('dir/config.test.json');
+        expect(filePath.fileName).toBe('config.test.json');
+        expect(filePath.extension).toBe('.json');
+      });
+
+      it('should handle special characters in the file name', () => {
+        const dirPath = WsDirPath.fromString('ws:dir');
+        const filePath = dirPath.createFilePath('file@#$.md');
+
+        expect(filePath.path).toBe('dir/file@#$.md');
+        expect(filePath.fileName).toBe('file@#$.md');
+      });
+
+      it('should throw for file name without extension', () => {
+        const dirPath = WsDirPath.fromString('ws:dir');
+
+        expect(() => dirPath.createFilePath('newfile')).toThrow(
+          'File name must have an extension',
+        );
+      });
+
+      it('should throw for file name with just a dot', () => {
+        const dirPath = WsDirPath.fromString('ws:dir');
+
+        expect(() => dirPath.createFilePath('newfile.')).toThrow(
+          'File name must have an extension',
+        );
+      });
+
+      it('should throw for empty file name', () => {
+        const dirPath = WsDirPath.fromString('ws:dir');
+
+        expect(() => dirPath.createFilePath('')).toThrow(
+          'File name cannot be empty',
+        );
+      });
+
+      it('should throw for file name containing path separators', () => {
+        const dirPath = WsDirPath.fromString('ws:dir');
+
+        expect(() => dirPath.createFilePath('subdir/file.txt')).toThrow(
+          'File name cannot contain path separator',
+        );
       });
     });
   });

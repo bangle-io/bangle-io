@@ -552,10 +552,11 @@ describe('WsPath', () => {
     });
 
     it('should handle colon in the path after the first colon', () => {
-      const wsPath = WsPath.fromString('ws:dir:subdir:file.txt');
-      expect(wsPath.wsName).toBe('ws');
-      expect(wsPath.path).toBe('dir:subdir:file.txt');
-      expect(wsPath.isFile).toBe(true);
+      expect(() =>
+        WsPath.fromString('ws:dir:subdir:file.txt').toFSPath(),
+      ).toThrowErrorMatchingInlineSnapshot(
+        '[BaseError: Invalid wsPath: Path segment contains invalid characters]',
+      );
     });
 
     it('should reject file path that starts with slash (like ws:/abs/path)', () => {
@@ -584,9 +585,12 @@ describe('WsPath', () => {
         expect(wsPath.toFSPath()).toBe('ws@123/dir/file@#$.txt');
       });
 
-      it('should handle paths with colons after workspace name', () => {
-        const wsPath = WsPath.fromString('ws:dir:subdir:file.txt');
-        expect(wsPath.toFSPath()).toBe('ws/dir:subdir:file.txt');
+      it('should error on handle paths with colons after workspace name', () => {
+        expect(() =>
+          WsPath.fromString('ws:dir:subdir:file.txt').toFSPath(),
+        ).toThrowErrorMatchingInlineSnapshot(
+          '[BaseError: Invalid wsPath: Path segment contains invalid characters]',
+        );
       });
     });
 
