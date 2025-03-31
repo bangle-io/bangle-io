@@ -129,4 +129,17 @@ export const wsCommands = narrow([
     dependencies: { services: ['workspaceState', 'fileSystem', 'navigation'] },
     args: null,
   },
+  {
+    id: 'command::ws:daily-note',
+    title: 'Open Daily Note',
+    keywords: ['daily', 'note', 'today', 'journal'],
+    omniSearch: true,
+    dependencies: {
+      services: ['workspaceState', 'fileSystem', 'navigation'],
+      commands: ['command::ws:create-note'],
+    },
+    args: {
+      date: T.Optional(T.Number),
+    },
+  },
 ]);

@@ -294,4 +294,62 @@ export const wsCommandHandlers = [
       navigation.goWsPath(newWsPath);
     },
   ),
+
+  c(
+    'command::ws:daily-note',
+    async ({ workspaceState, fileSystem, navigation }, args, key) => {
+      const { store, dispatch } = getCtx(key);
+      const wsName = store.get(workspaceState.$wsName);
+      const currentWsPath = store.get(workspaceState.$currentWsPath);
+
+      if (!wsName) {
+        throwAppError(
+          'error::workspace:not-opened',
+          'No workspace is open to create a daily note.',
+          {},
+        );
+      }
+
+      const today = args?.date ? new Date(args.date) : new Date();
+
+      // Format date as YYYY-MMM-DD
+      const year = today.getFullYear();
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      const month = monthNames[today.getMonth()];
+      const day = String(today.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      const fileName = `${formattedDate}-daily${WsPath.DEFAULT_NOTE_EXTENSION}`;
+
+      const parentPath = currentWsPath?.getParent()?.path || '';
+
+      const dailyNoteWsPath = WsPath.fromParts(
+        wsName,
+        WsPath.pathJoin(parentPath, fileName),
+      ).toString();
+
+      const exists = await fileSystem.exists(dailyNoteWsPath);
+
+      if (exists) {
+        navigation.goWsPath(dailyNoteWsPath);
+      } else {
+        dispatch('command::ws:create-note', {
+          wsPath: dailyNoteWsPath,
+          navigate: true,
+        });
+      }
+    },
+  ),
 ];

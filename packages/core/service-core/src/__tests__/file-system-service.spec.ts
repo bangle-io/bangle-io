@@ -1,6 +1,7 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { FileSystemService } from '../file-system-service';
 
 describe('FileSystemService.getStorageServiceForType', () => {
@@ -58,5 +59,55 @@ describe('FileSystemService.getStorageServiceForType', () => {
         'test-ws',
       ),
     ).toThrow('workspace is not supported for file operations');
+  });
+});
+
+describe('FileSystemService', () => {
+  let controller: AbortController;
+
+  const TEST_WS_NAME = 'test-workspace';
+  const EXISTING_FILE = 'test-workspace:exists.md';
+  const NON_EXISTING_FILE = 'test-workspace:not-exists.md';
+
+  async function setupFileSystemTest({
+    controller = new AbortController(),
+  } = {}) {
+    const testEnv = createTestEnvironment({ controller });
+    testEnv.setDefaultConfig();
+
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: TEST_WS_NAME,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+
+    await services.fileSystem.createTextFile(EXISTING_FILE, 'Test content');
+
+    return {
+      fileSystem: services.fileSystem,
+      workspaceOps: services.workspaceOps,
+      controller,
+    };
+  }
+
+  beforeEach(() => {
+    controller = new AbortController();
+  });
+
+  afterEach(() => {
+    controller.abort();
+  });
+
+  it('exists should check if a file exists', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    const existsResult = await fileSystem.exists(EXISTING_FILE);
+    expect(existsResult).toBe(true);
+
+    const notExistsResult = await fileSystem.exists(NON_EXISTING_FILE);
+    expect(notExistsResult).toBe(false);
   });
 });

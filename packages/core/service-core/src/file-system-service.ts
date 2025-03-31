@@ -168,6 +168,17 @@ export class FileSystemService extends BaseService {
     return readFileAsText(file);
   }
 
+  /**
+   * Checks if a file exists at the given wsPath
+   */
+  public async exists(wsPath: string): Promise<boolean> {
+    await this.mountPromise;
+    WsPath.assertFile(wsPath);
+
+    const storageService = await this.getStorageService({ wsPath });
+    return storageService.fileExists(wsPath, {});
+  }
+
   public async createFile(
     wsPath: string,
     file: File,
