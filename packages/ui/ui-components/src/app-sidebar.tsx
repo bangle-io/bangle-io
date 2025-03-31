@@ -61,7 +61,6 @@ export type AppSidebarProps = {
   workspaces: Workspace[];
   wsPaths: string[];
   navItems: NavItem[];
-  setActiveWorkspace: (name: string) => void;
   onSearchClick?: () => void;
   onTreeItemClick: (item: TreeItem) => void;
   activeWsPaths?: string[];
@@ -76,6 +75,8 @@ export type AppSidebarProps = {
   footerChildren?: React.ReactNode;
   footerTitle?: string;
   footerSubtitle?: string;
+  wsPathToHref?: (wsPath: string) => string;
+  wsNameToHref: (wsName: string) => string;
 };
 
 interface DropdownButtonProps {
@@ -148,7 +149,6 @@ export function AppSidebar({
   workspaces,
   wsPaths,
   navItems,
-  setActiveWorkspace,
   onSearchClick = () => {},
   activeWsPaths = [],
   onTreeItemClick,
@@ -163,6 +163,8 @@ export function AppSidebar({
   footerChildren,
   footerTitle,
   footerSubtitle,
+  wsPathToHref,
+  wsNameToHref,
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined),
@@ -174,8 +176,8 @@ export function AppSidebar({
       <SidebarHeader>
         <WorkspaceSwitcher
           workspaces={workspaces}
-          setActiveWorkspace={setActiveWorkspace}
           onNewWorkspaceClick={onNewWorkspaceClick}
+          wsNameToHref={wsNameToHref}
         />
         <CommandButton onClick={() => onSearchClick?.()} />
       </SidebarHeader>
@@ -187,7 +189,10 @@ export function AppSidebar({
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href="#dead" className="font-medium">
+                    <a
+                      href={wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'}
+                      className="font-medium"
+                    >
                       {item.title}
                     </a>
                   </SidebarMenuButton>
@@ -196,7 +201,15 @@ export function AppSidebar({
                       {item.items.map((item) => (
                         <SidebarMenuSubItem key={item.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href="#dead">{item.title}</a>
+                            <a
+                              href={
+                                wsPathToHref
+                                  ? wsPathToHref(item.wsPath)
+                                  : '#dead'
+                              }
+                            >
+                              {item.title}
+                            </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -236,6 +249,7 @@ export function AppSidebar({
                 onTreeItemMove={onMoveFileClick}
                 onTreeItemCreateNote={onTreeItemCreateNote}
                 onFileDrop={onFileDrop}
+                wsPathToHref={wsPathToHref}
               />
               {isTruncated && (
                 <SidebarMenuItem>
@@ -327,12 +341,12 @@ function CommandButton({ onClick }: { onClick: () => void }) {
 
 function WorkspaceSwitcher({
   workspaces,
-  setActiveWorkspace,
   onNewWorkspaceClick,
+  wsNameToHref,
 }: {
   workspaces: Workspace[];
-  setActiveWorkspace: (name: string) => void;
   onNewWorkspaceClick: () => void;
+  wsNameToHref: (wsName: string) => string;
 }) {
   const { isMobile } = useSidebar();
 
@@ -384,13 +398,26 @@ function WorkspaceSwitcher({
               return (
                 <DropdownMenuItem
                   key={workspace.name}
-                  onClick={() => setActiveWorkspace(workspace.name)}
-                  className="gap-2 p-2"
+                  className={cn(
+                    'gap-2 p-2',
+                    workspace.isActive && 'font-medium text-foreground',
+                  )}
+                  asChild
                 >
-                  <div className="flex size-6 items-center justify-center rounded-sm border">
-                    <LogoComponent className="size-4 shrink-0" />
-                  </div>
-                  <span className="">{workspace.name}</span>
+                  <a
+                    href={wsNameToHref(workspace.name)}
+                    className="flex items-center"
+                  >
+                    <div className="flex size-6 items-center justify-center rounded-sm border">
+                      <LogoComponent className="size-4 shrink-0" />
+                    </div>
+                    <span className={workspace.isActive ? 'underline' : ''}>
+                      {workspace.name}
+                    </span>
+                    {workspace.isActive && (
+                      <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
+                    )}
+                  </a>
                 </DropdownMenuItem>
               );
             })}

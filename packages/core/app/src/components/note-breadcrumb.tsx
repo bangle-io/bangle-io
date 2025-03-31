@@ -188,7 +188,7 @@ function DirectoryDropdown({
       </DropdownMenu.DropdownMenuTrigger>
       <DropdownMenu.DropdownMenuContent
         align="start"
-        className="max-h-[400px] overflow-y-auto"
+        className="max-h-[400px] max-w-[300px] overflow-y-auto"
       >
         <NewNoteMenuItem segment={segment} onNewNote={onNewNote} />
         {siblingFiles.length > 0 && (
@@ -231,14 +231,19 @@ function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
       className={file.isCurrent ? 'font-medium text-foreground' : ''}
       asChild
     >
-      <a
+      <Breadcrumb.BreadcrumbLink
         href={coreServices.navigation.toUri({
           route: 'editor',
           payload: { wsPath: file.wsPath },
         })}
       >
-        {file.label}
-      </a>
+        <>
+          <span>{file.label}</span>
+          {file.isCurrent && (
+            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
+          )}
+        </>
+      </Breadcrumb.BreadcrumbLink>
     </DropdownMenu.DropdownMenuItem>
   );
 }

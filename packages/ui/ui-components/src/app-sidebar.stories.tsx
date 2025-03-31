@@ -116,10 +116,11 @@ export function AppSidebarExample() {
           alert(`Create note in directory: ${item.name}`)
         }
         onNewWorkspaceClick={() => {}}
-        setActiveWorkspace={() => {}}
         footerChildren={footerChildren}
         footerTitle="User Menu"
         footerSubtitle="John Doe"
+        wsPathToHref={(wsPath) => `#${wsPath}`}
+        wsNameToHref={(wsName) => `#workspace/${wsName}`}
       />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
@@ -192,10 +193,11 @@ export function AppSidebarTruncatedExample() {
           alert('truncated called');
         }}
         onNewWorkspaceClick={() => {}}
-        setActiveWorkspace={() => {}}
         footerChildren={footerChildren}
         footerTitle="Bangle.io"
         footerSubtitle=""
+        wsPathToHref={(wsPath) => `#${wsPath}`}
+        wsNameToHref={(wsName) => `#workspace/${wsName}`}
       />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">

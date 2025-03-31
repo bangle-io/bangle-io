@@ -65,12 +65,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
-        onTreeItemClick={(item) => {
-          const wsPath = item.wsPath;
-          if (!item.isDir && wsPath) {
-            navigation.goWsPath(wsPath);
-          }
-        }}
+        onTreeItemClick={() => {}}
         onTreeItemCreateNote={(item) => {
           if (item.isDir && item.wsPath) {
             const parent = WsPath.fromString(item.wsPath);
@@ -104,7 +99,23 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         navItems={activeWsPaths.map((wsPath) => ({
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,
+          href: navigation.toUri({
+            route: 'editor',
+            payload: { wsPath: wsPath.wsPath },
+          }),
         }))}
+        wsPathToHref={(wsPath) =>
+          navigation.toUri({
+            route: 'editor',
+            payload: { wsPath },
+          })
+        }
+        wsNameToHref={(wsName) =>
+          navigation.toUri({
+            route: 'ws-home',
+            payload: { wsName },
+          })
+        }
         onNewWorkspaceClick={() => {
           commandDispatcher.dispatch(
             'command::ui:create-workspace-dialog',
@@ -115,13 +126,6 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         activeWsPaths={activeWsPaths.map((wsPath) => wsPath.wsPath)}
         onSearchClick={() => {
           setOpenOmniSearch(true);
-        }}
-        setActiveWorkspace={(name) => {
-          commandDispatcher.dispatch(
-            'command::ws:go-workspace',
-            { wsName: name },
-            'ui',
-          );
         }}
         onNewFileClick={() => {
           commandDispatcher.dispatch(

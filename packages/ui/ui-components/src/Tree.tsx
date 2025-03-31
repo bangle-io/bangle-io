@@ -42,6 +42,7 @@ interface TreeNodeProps {
   onTreeItemDelete: (item: TreeItem) => void;
   onTreeItemMove: (item: TreeItem) => void;
   onTreeItemCreateNote: (item: TreeItem) => void;
+  wsPathToHref?: (wsPath: string) => string;
 }
 
 const TreeNode = function TreeNode({
@@ -52,6 +53,7 @@ const TreeNode = function TreeNode({
   onTreeItemDelete,
   onTreeItemMove,
   onTreeItemCreateNote,
+  wsPathToHref,
 }: TreeNodeProps) {
   const isActive = activeWsPaths.includes(item.wsPath);
 
@@ -122,11 +124,30 @@ const TreeNode = function TreeNode({
           ref={dragRef}
           {...attributes}
           {...listeners}
+          asChild={!!wsPathToHref && !item.isDir}
         >
-          <FileIcon />
-          <span className={cn('select-none', isActive ? 'font-semibold' : '')}>
-            {item.name}
-          </span>
+          {wsPathToHref && !item.isDir ? (
+            <a
+              href={wsPathToHref(item.wsPath)}
+              className="flex w-full items-center gap-2"
+            >
+              <FileIcon />
+              <span
+                className={cn('select-none', isActive ? 'font-semibold' : '')}
+              >
+                {item.name}
+              </span>
+            </a>
+          ) : (
+            <>
+              <FileIcon />
+              <span
+                className={cn('select-none', isActive ? 'font-semibold' : '')}
+              >
+                {item.name}
+              </span>
+            </>
+          )}
         </SidebarMenuButton>
 
         <DropdownMenu>
@@ -193,6 +214,7 @@ const TreeNode = function TreeNode({
                 onTreeItemMove={onTreeItemMove}
                 onTreeItemCreateNote={onTreeItemCreateNote}
                 activeWsPaths={activeWsPaths}
+                wsPathToHref={wsPathToHref}
               />
             ))}
           </SidebarMenuSub>
@@ -214,6 +236,7 @@ export interface TreeProps {
     sourceItem: TreeItem,
     destinationItem: { isRoot: true } | TreeItem,
   ) => void;
+  wsPathToHref?: (wsPath: string) => string;
 }
 
 export function Tree({
@@ -225,6 +248,7 @@ export function Tree({
   onTreeItemMove,
   onTreeItemCreateNote,
   onFileDrop,
+  wsPathToHref,
 }: TreeProps) {
   const [activeDragItem, setActiveDragItem] = useState<TreeItem | null>(null);
 
@@ -343,6 +367,7 @@ export function Tree({
           onTreeItemRename={onTreeItemRename}
           onTreeItemMove={onTreeItemMove}
           onTreeItemCreateNote={onTreeItemCreateNote}
+          wsPathToHref={wsPathToHref}
         />
       ))}
       {/* </div> */}
