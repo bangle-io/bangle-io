@@ -37,3 +37,6 @@ packages/tooling/e2e-tests/playwright/playwright-report
 .env.*
 
 .aider*
+
+# Sentry Config File
+.env.sentry-build-plugin

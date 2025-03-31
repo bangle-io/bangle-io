@@ -10,6 +10,7 @@ import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { setupRootEmitter } from './setup-root-emitter';
+import { initializeSentry } from './setup-sentry';
 
 const isDebug =
   window.location.hostname === 'localhost' ||
@@ -19,6 +20,9 @@ main();
 
 function main() {
   const logger = new Logger('', isDebug ? 'debug' : 'info');
+
+  // Initialize Sentry with privacy protections
+  initializeSentry(logger, isDebug);
 
   const abortController = new AbortController();
   const tabId = `tab_${Math.random().toString(36).substr(2, 9)}`;

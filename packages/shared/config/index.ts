@@ -27,10 +27,12 @@ export const IS_WORKER_CONTEXT =
 
 // a unique id for each browser context like a window,  iframe, worker
 export const BROWSING_CONTEXT_ID: string = `bCtx_${IS_WORKER_CONTEXT ? 'worker_' : ''}${randomStr(4)}`;
+const SENTRY_DSN =
+  'https://c477171ea90a1b9c9880663eab622aa6@o573373.ingest.us.sentry.io/4506209099382784';
 
 export const sentryConfig = {
   environment: APP_ENV,
-  dsn: 'https://c477171ea90a1b9c9880663eab622aa6@o573373.ingest.sentry.io/4506209099382784',
+  dsn: SENTRY_DSN,
   release: RELEASE_ID,
   tracesSampleRate:
     APP_ENV === 'production' ? 0.8 : APP_ENV === 'staging' ? 1 : 0,

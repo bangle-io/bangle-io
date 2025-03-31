@@ -1,7 +1,7 @@
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import getEnvVars from '@bangle.io/env-vars';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
-
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
@@ -24,6 +24,11 @@ export default defineConfig(async (env) => {
         inject: {
           data: { ...envVars.htmlInjections },
         },
+      }),
+      sentryVitePlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: 'self-zf',
+        project: 'bangle-v2',
       }),
       react(),
     ],
