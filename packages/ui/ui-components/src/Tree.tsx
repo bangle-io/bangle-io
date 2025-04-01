@@ -130,6 +130,24 @@ const TreeNode = function TreeNode({
             <a
               href={wsPathToHref(item.wsPath)}
               className="flex w-full items-center gap-2"
+              ref={
+                !isActive
+                  ? undefined
+                  : (node) => {
+                      let cb: NodeJS.Timeout | undefined;
+                      if (isActive && node) {
+                        cb = setTimeout(() => {
+                          node.scrollIntoView({
+                            behavior: 'auto',
+                            block: 'nearest',
+                          });
+                        }, 0);
+                      }
+                      return () => {
+                        cb && clearTimeout(cb);
+                      };
+                    }
+              }
             >
               <FileIcon />
               <span
