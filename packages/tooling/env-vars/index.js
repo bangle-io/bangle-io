@@ -123,24 +123,6 @@ module.exports = ({
 ${inlinedScripts}
 </script>`.trim(),
       favicon: getFavicon(appEnv),
-      sentry: isProduction
-        ? `<script
-      src="https://js.sentry-cdn.com/f1a3d53e530e465e8f74f847370b594b.min.js"
-      crossorigin="anonymous"
-      data-lazy="no"
-    ></script>`
-        : '',
-      // bangleHelpPreload: `<link
-      //   rel="preload"
-      //   href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/getting%20started.md"
-      //   as="fetch"
-      //   crossorigin
-      // />`,
-
-      // fathom:
-      //   appEnv === 'production'
-      //     ? `<script defer src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="AOGIPUKY"></script>`
-      //     : '',
     },
     globalIdentifiers: {
       __BANGLE_BUILD_TIME_CONFIG__: JSON.stringify(bangleConfig.serialize()),
