@@ -55,8 +55,6 @@ export function createEditor({
                       view.state.doc,
                     );
 
-                    console.log(result);
-
                     onDocChange(result);
                   }
                 },
