@@ -18,6 +18,9 @@ export default defineConfig(async (env) => {
   });
 
   return {
+    build: {
+      sourcemap: true,
+    },
     plugins: [
       createHtmlPlugin({
         minify: isProduction,
