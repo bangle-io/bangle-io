@@ -1,4 +1,4 @@
-import { pickADirectory } from '@bangle.io/baby-fs';
+import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
@@ -88,6 +88,7 @@ export function CreateWorkspaceDialog() {
           type: WORKSPACE_STORAGE_TYPE.NativeFS,
           title: 'Native File System',
           description: 'Save workspace data in native file system',
+          disabled: !supportsNativeBrowserFs(),
         },
       ]}
       onDirectoryPick={async () => {
