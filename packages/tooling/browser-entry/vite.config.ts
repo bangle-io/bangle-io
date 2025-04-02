@@ -1,4 +1,4 @@
-import { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { ThemeManager } from '@bangle.io/color-scheme-manager/src/index';
 import getEnvVars from '@bangle.io/env-vars';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';

@@ -17,6 +17,9 @@ importers:
       '@bangle.io/plop-configs':
         specifier: workspace:*
         version: link:packages/tooling/plop-configs
+      '@bangle.io/translations':
+        specifier: workspace:*
+        version: link:packages/shared/translations
       '@bangle.io/types':
         specifier: workspace:*
         version: link:packages/shared/types
@@ -619,8 +622,6 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../types
-
-  packages/shared/js-lib: {}
 
   packages/shared/root-emitter:
     dependencies:

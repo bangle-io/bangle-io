@@ -26,11 +26,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "dev": "vite",
+    "build": "vite build --configLoader runner",
+    "dev": "vite --configLoader runner",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "preview-production": "vite build && vite preview"
+    "preview": "vite preview --configLoader runner",
+    "preview-production": "vite build --configLoader runner && vite preview --configLoader runner"
   },
   "dependencies": {
     "@bangle.io/app": "workspace:*",
