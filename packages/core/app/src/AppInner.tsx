@@ -5,9 +5,9 @@ import { Toaster } from '@bangle.io/ui-components';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { AppRoutes } from './Routes';
-import { AppDialogs } from './app-dialogs';
 import { AppErrorHandler } from './app-error-handler';
 import { AppSidebar } from './app-sidebar';
+import { AppDialogs } from './dialogs/app-dialogs';
 
 export function AppInner({ rootEmitter }: { rootEmitter: RootEmitter }) {
   const coreServices = useCoreServices();
