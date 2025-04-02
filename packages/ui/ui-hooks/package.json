@@ -30,5 +30,6 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "react": "19.1.0"
-  }
+  },
+  "devDependencies": {}
 }

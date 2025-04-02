@@ -37,5 +37,6 @@
     "@types/react": "^19.0.12",
     "jotai": "^2.12.2",
     "react": "19.1.0"
-  }
+  },
+  "devDependencies": {}
 }

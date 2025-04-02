@@ -45,5 +45,6 @@
     "lucide-react": "^0.485.0",
     "prosemirror-view": "^1.38.1",
     "react": "19.1.0"
-  }
+  },
+  "devDependencies": {}
 }

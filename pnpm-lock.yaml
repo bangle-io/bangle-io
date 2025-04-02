@@ -620,6 +620,8 @@ importers:
         specifier: workspace:*
         version: link:../types
 
+  packages/shared/js-lib: {}
+
   packages/shared/root-emitter:
     dependencies:
       '@bangle.io/emitter':
@@ -632,6 +634,8 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+
+  packages/shared/translations: {}
 
   packages/shared/types:
     dependencies:

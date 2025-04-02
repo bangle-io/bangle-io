@@ -32,5 +32,6 @@
     "@bangle.io/types": "workspace:*",
     "react": "19.1.0",
     "wouter": "^3.6.0"
-  }
+  },
+  "devDependencies": {}
 }

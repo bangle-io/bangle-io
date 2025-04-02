@@ -38,5 +38,6 @@
     "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
     "jotai": "^2.12.2"
-  }
+  },
+  "devDependencies": {}
 }

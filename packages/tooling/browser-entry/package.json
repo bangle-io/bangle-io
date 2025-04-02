@@ -37,6 +37,7 @@
     "@bangle.io/broadcast-channel": "workspace:*",
     "@bangle.io/browser": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*",
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/context": "workspace:*",
     "@bangle.io/editor": "workspace:*",
@@ -56,6 +57,7 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@sentry/browser": "^9.10.1",
     "@sentry/tracing": "^7.120.3",
+    "@sentry/vite-plugin": "^3.2.4",
     "@vitejs/plugin-react": "^4.3.4",
     "class-variance-authority": "^0.7.1",
     "jotai": "^2.12.2",
@@ -63,9 +65,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "vite": "^6.2.3",
-    "vite-plugin-html": "^3.2.2",
-    "@sentry/vite-plugin": "^3.2.4",
-    "@bangle.io/config": "workspace:*"
+    "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
     "@storybook/react": "^8.6.11",

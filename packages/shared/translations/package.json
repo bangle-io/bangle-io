@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/db-key-val",
+  "name": "@bangle.io/translations",
   "description": "",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/db-key-val"
+    "directory": "packages/shared/translations"
   },
   "authors": [
     {
@@ -19,16 +19,14 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "universal",
-    "kind": "js-util"
+    "kind": "static"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "idb": "^8.0.2"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }
