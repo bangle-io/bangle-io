@@ -33,10 +33,9 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.5",
+    "@tanstack/react-virtual": "^3.13.6",
     "@types/react": "^19.0.12",
     "jotai": "^2.12.2",
     "react": "19.1.0"
-  },
-  "devDependencies": {}
+  }
 }

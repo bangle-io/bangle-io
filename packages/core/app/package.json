@@ -40,7 +40,7 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.5",
+    "@tanstack/react-virtual": "^3.13.6",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "date-fns": "^4.1.0",
