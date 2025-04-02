@@ -70,7 +70,7 @@
     "preview-production": "pnpm -r --filter \"browser-entry\" run preview-production",
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
-    "test:ci": "pnpm vitest run",
+    "test:ci": "pnpm vitest run  --configLoader runner",
     "typecheck": "tsc -b"
   },
   "module": "index.ts",

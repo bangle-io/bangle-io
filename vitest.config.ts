@@ -1,5 +1,6 @@
 import getEnvVars from '@bangle.io/env-vars';
 import { defineConfig } from 'vitest/config';
+
 export default defineConfig((env) => {
   const isProduction = env.mode === 'production';
 

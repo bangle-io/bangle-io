@@ -48,6 +48,7 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/omni-search": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
+    "@bangle.io/translations": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@radix-ui/react-alert-dialog": "^1.1.6",

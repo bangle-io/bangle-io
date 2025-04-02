@@ -1,4 +1,6 @@
 import { Blob } from 'node:buffer';
+import { t } from '@bangle.io/translations';
+
 import 'fake-indexeddb/auto';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeEach } from 'vitest';
@@ -8,6 +10,7 @@ const original = structuredClone;
 // // We override this function to allow for perserving `File` instance when
 // // saving in `fake-indexeddb`.
 globalThis.structuredClone = newStructuredClone;
+globalThis.t = t;
 
 function newStructuredClone(obj, transferables) {
   if (obj instanceof File) {

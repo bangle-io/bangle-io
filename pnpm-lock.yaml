@@ -736,6 +736,9 @@ importers:
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../../shared/root-emitter
+      '@bangle.io/translations':
+        specifier: workspace:*
+        version: link:../../shared/translations
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types

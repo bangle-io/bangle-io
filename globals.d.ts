@@ -1,3 +1,12 @@
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+type DeepReadonly<T> = T extends Function
+  ? T
+  : T extends object
+    ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+    : T;
+// // biome-ignore lint/style/noVar: <explanation>
+declare const t: DeepReadonly<import('@bangle.io/translations').Translations>;
+
 // biome-ignore lint/style/noVar: <explanation>
 declare var __BANGLE_BUILD_TIME_CONFIG__: string | undefined;
 // biome-ignore lint/style/noVar: <explanation>

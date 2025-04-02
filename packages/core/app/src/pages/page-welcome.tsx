@@ -33,7 +33,9 @@ export function PageWelcome() {
     return sorted;
   }, [workspaces, navigation]); // Removed navigation.toUri dependency as it's stable per navigation instance
 
-  const welcomeMessage = isNewUser ? 'Welcome to Bangle!' : 'Welcome back!';
+  const welcomeMessage = isNewUser
+    ? t.app.pageWelcome.newUser
+    : t.app.pageWelcome.regularUser;
 
   return (
     <>
