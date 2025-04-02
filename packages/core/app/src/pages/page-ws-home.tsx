@@ -44,7 +44,7 @@ export function PageWsHome() {
     }));
   }, [allNotes]);
 
-  const noItemsMessage = 'No notes found in this workspace.';
+  const noItemsMessage = t.app.pageWsHome.noNotesMessage;
 
   return (
     <>
@@ -54,7 +54,7 @@ export function PageWsHome() {
           <ContentSection hasPadding={false}>
             <PageHeader title={`${currentWsName}`} />
             <PageItemList
-              heading="Recent notes"
+              heading={t.app.pageWsHome.recentNotesHeading}
               items={notesWithTime}
               emptyMessage={noItemsMessage}
               showViewMore={groups.all && groups.all.length > MAX_NOTES_TO_SHOW}
@@ -70,7 +70,7 @@ export function PageWsHome() {
               <Actions
                 actions={[
                   {
-                    label: 'New Note',
+                    label: t.app.pageWsHome.newNoteButton,
                     onClick: () =>
                       coreServices.commandDispatcher.dispatch(
                         'command::ui:create-note-dialog',
@@ -79,7 +79,7 @@ export function PageWsHome() {
                       ),
                   },
                   {
-                    label: 'Switch Workspace',
+                    label: t.app.pageWsHome.switchWorkspaceButton,
                     variant: 'outline',
                     onClick: () =>
                       coreServices.commandDispatcher.dispatch(
@@ -94,11 +94,11 @@ export function PageWsHome() {
           </ContentSection>
         ) : (
           <NoticeView
-            title="Workspace not found"
+            title={t.app.pageWorkspaceNotFound.title}
             description={<FunMissing />}
             actions={[
               {
-                label: 'Create Workspace',
+                label: t.app.pageWorkspaceNotFound.createWorkspaceButton,
                 onClick: () =>
                   coreServices.commandDispatcher.dispatch(
                     'command::ui:create-workspace-dialog',
@@ -107,7 +107,7 @@ export function PageWsHome() {
                   ),
               },
               {
-                label: 'Switch Workspace',
+                label: t.app.pageWorkspaceNotFound.switchWorkspaceButton,
                 variant: 'outline',
                 onClick: () =>
                   coreServices.commandDispatcher.dispatch(

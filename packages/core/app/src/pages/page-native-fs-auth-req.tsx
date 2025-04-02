@@ -12,11 +12,11 @@ export function PageNativeFsAuthReq() {
       <PageMainContentWrapper>
         <ContentSection>
           <NoticeView
-            title="Authentication Required, Please allow access to continue"
+            title={t.app.pageNativeFsAuthReq.title}
             description={<FunMissing />}
             actions={[
               {
-                label: 'Authorize',
+                label: t.app.pageNativeFsAuthReq.authorizeButton,
                 onClick: () => window.location.reload(),
               },
             ]}

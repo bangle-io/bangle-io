@@ -16,8 +16,8 @@ export function PageFatalError() {
       <PageMainContentWrapper>
         <ContentSection>
           <NoticeView
-            title="Fatal Error"
-            description="Something went seriously wrong. We apologize for the inconvenience."
+            title={t.app.pageFatalError.title}
+            description={t.app.pageFatalError.description}
             illustration={
               <div className="flex items-center justify-center">
                 <AlertTriangle
@@ -28,11 +28,11 @@ export function PageFatalError() {
             }
             actions={[
               {
-                label: 'Reload App',
+                label: t.app.pageFatalError.reloadButton,
                 onClick: () => window.location.reload(),
               },
               {
-                label: 'Report Issue',
+                label: t.app.pageFatalError.reportButton,
                 variant: 'outline',
                 onClick: () => {
                   window.open(

@@ -5,7 +5,7 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
 
   await test.step('create new workspace', async () => {
-    await page.getByRole('button', { name: 'New Workspace' }).click();
+    await page.getByRole('button', { name: 'Create Workspace' }).click();
 
     await expect(page.getByRole('radiogroup')).toContainText('Browser');
     await page

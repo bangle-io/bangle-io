@@ -26,10 +26,10 @@ export function NoteNotFoundView() {
 
   return (
     <NoticeView
-      title="Note Not Found"
+      title={t.app.noteNotFoundView.title}
       description={
         <>
-          <p>The note you're looking for doesn't exist or has been moved.</p>
+          <p>{t.app.noteNotFoundView.description}</p>
           <FunMissing />
         </>
       }
@@ -43,11 +43,11 @@ export function NoteNotFoundView() {
       }
       actions={[
         {
-          label: 'New Note',
+          label: t.app.pageWsHome.newNoteButton,
           onClick: handleNewNote,
         },
         {
-          label: 'View All Notes',
+          label: t.app.noteNotFoundView.viewAllNotesButton,
           variant: 'outline',
           onClick: handleViewAllNotes,
         },

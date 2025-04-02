@@ -18,7 +18,7 @@ export function PageNotFound() {
       <PageMainContentWrapper>
         <ContentSection>
           <NoticeView
-            title="Page Not Found"
+            title={t.app.pageNotFound.title}
             description={<FunMissing />}
             illustration={
               <div className="flex items-center justify-center">
@@ -30,11 +30,11 @@ export function PageNotFound() {
             }
             actions={[
               {
-                label: 'Go to Welcome Screen',
+                label: t.app.pageNotFound.goHomeButton,
                 onClick: () => coreServices.navigation.goHome(),
               },
               {
-                label: 'Report Issue',
+                label: t.app.pageNotFound.reportButton,
                 variant: 'outline',
                 onClick: () => {
                   window.open(

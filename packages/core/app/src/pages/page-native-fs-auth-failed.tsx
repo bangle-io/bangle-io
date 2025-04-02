@@ -12,11 +12,11 @@ export function PageNativeFsAuthFailed() {
       <PageMainContentWrapper>
         <ContentSection>
           <NoticeView
-            title="Authentication Failed Please try again"
+            title={t.app.pageNativeFsAuthFailed.title}
             description={<FunMissing />}
             actions={[
               {
-                label: 'Try Again',
+                label: t.app.pageNativeFsAuthFailed.tryAgainButton,
                 onClick: () => window.location.reload(),
               },
             ]}

@@ -44,9 +44,9 @@ export function PageWelcome() {
         <ContentSection hasPadding={false}>
           <PageHeader title={welcomeMessage} />
           <PageItemList
-            heading="Recent workspaces"
+            heading={t.app.pageWelcome.recentWorkspacesHeading}
             items={workspaceLinks}
-            emptyMessage="Create a workspace to get started."
+            emptyMessage={t.app.pageWelcome.createWorkspacePrompt}
             showViewMore={workspaces.length > MAX_RECENT_WORKSPACES}
             onClickViewMore={() =>
               commandDispatcher.dispatch(
@@ -59,7 +59,7 @@ export function PageWelcome() {
           <Actions
             actions={[
               {
-                label: 'New Workspace',
+                label: t.app.pageWorkspaceNotFound.createWorkspaceButton,
                 onClick: () =>
                   commandDispatcher.dispatch(
                     'command::ui:create-workspace-dialog',
@@ -68,7 +68,7 @@ export function PageWelcome() {
                   ),
               },
               {
-                label: 'Landing page',
+                label: t.app.landingPage,
                 variant: 'outline',
                 onClick: () => window.open('https://bangle.io', '_blank'),
               },

@@ -14,13 +14,13 @@ export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
 
   return (
     <NoticeView
-      title="Workspace Not Found"
+      title={t.app.workspaceNotFoundView.title}
       description={
         <>
           <p>
             {wsName
-              ? `The workspace "${wsName}" doesn't exist or was renamed.`
-              : `This workspace doesn't exist or was renamed.`}
+              ? t.app.workspaceNotFoundView.description({ wsName })
+              : t.app.workspaceNotFoundView.genericDescription}
           </p>
           <FunMissing />
         </>
@@ -35,7 +35,7 @@ export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
       }
       actions={[
         {
-          label: 'Go Home',
+          label: t.app.workspaceNotFoundView.goHomeButton,
           onClick: handleGoHome,
         },
       ]}
