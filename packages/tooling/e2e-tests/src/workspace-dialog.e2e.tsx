@@ -16,5 +16,5 @@ test('Submit workspace name', async ({ page }) => {
   // Fill workspace name
   await page.getByLabel('Workspace Name', { exact: true }).fill('test');
 
-  await page.getByRole('button', { name: 'Create Workspace' }).click();
+  await page.getByRole('button', { name: 'Create' }).click();
 });

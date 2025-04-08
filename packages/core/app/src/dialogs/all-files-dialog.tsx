@@ -28,13 +28,13 @@ export function AllFilesDialog() {
       open={open}
       onOpenChange={setOpen}
       shouldFilter={false}
-      screenReaderTitle="All Files"
+      screenReaderTitle={t.app.dialogs.allFiles.title}
     >
       <CommandBadge>
-        <span>All Files</span>
+        <span>{t.app.dialogs.allFiles.title}</span>
       </CommandBadge>
       <CommandInput
-        placeholder="Search files..."
+        placeholder={t.app.dialogs.allFiles.searchPlaceholder}
         value={search}
         onValueChange={setSearch}
       />
@@ -122,7 +122,7 @@ function AllFilesContent({ search, onClose }: AllFilesContentProps) {
         })}
       </div>
       <CommandEmpty>
-        <span>No files found.</span>
+        <span>{t.app.dialogs.allFiles.emptyMessage}</span>
       </CommandEmpty>
     </CommandList>
   );

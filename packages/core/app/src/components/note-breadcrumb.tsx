@@ -156,6 +156,7 @@ function HomeFolderLink() {
                 payload: {},
               },
         )}
+        title={t.app.common.home}
       >
         <Folder size={16} />
       </Breadcrumb.BreadcrumbLink>
@@ -215,7 +216,7 @@ function NewNoteMenuItem({ segment, onNewNote }: NewNoteMenuItemProps) {
       onClick={() => onNewNote({ wsPath: segment.wsPath })}
     >
       <PlusIcon className="mr-2 h-4 w-4" />
-      <span>New Note</span>
+      <span>{t.app.common.newNote}</span>
     </DropdownMenu.DropdownMenuItem>
   );
 }
@@ -269,7 +270,7 @@ function getSiblingFiles(
     .map((path) => {
       const wsPath = WsPath.fromString(path);
       return {
-        label: wsPath.name || 'Unknown',
+        label: wsPath.name || t.app.common.unknown,
         wsPath: path,
         isCurrent: path === currentWsPath,
       };

@@ -22,7 +22,7 @@ export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
               route: 'welcome',
               payload: {},
             })}
-            title="Home"
+            title={t.app.common.home}
           >
             <Home size={16} />
           </Breadcrumb.BreadcrumbLink>
@@ -44,7 +44,7 @@ export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
                 }}
               >
                 <PlusIcon className="mr-2 h-4 w-4" />
-                <span>New Workspace</span>
+                <span>{t.app.common.newWorkspace}</span>
               </DropdownMenu.DropdownMenuItem>
               {workspaces.length > 0 && (
                 <>

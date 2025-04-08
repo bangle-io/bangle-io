@@ -54,7 +54,7 @@ export function LinkList({
                 onClick={onClickViewMore}
                 className="flex w-full items-center justify-between"
               >
-                <span className="font-medium">View all</span>
+                <span className="font-medium">{t.app.common.viewAll}</span>
                 <span className="text-sm">→</span>
               </Button>
             )}

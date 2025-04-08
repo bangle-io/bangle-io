@@ -12,11 +12,11 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::new-note-dialog',
-          placeholder: 'Input a note name',
-          badgeText: 'Create Note',
+          placeholder: t.app.dialogs.createNote.placeholder,
+          badgeText: t.app.dialogs.createNote.badgeText,
           option: {
             id: 'new-note-dialog',
-            title: 'Create',
+            title: t.app.dialogs.createNote.optionTitle,
           },
           onSelect: (input) => {
             dispatch('command::ws:new-note-from-input', {
@@ -40,7 +40,7 @@ export const noteManagementHandlers = [
       if (!wsName || !wsPaths || wsPaths.length === 0) {
         throwAppError(
           'error::workspace:no-notes-found',
-          'No notes provided or available to delete',
+          t.app.errors.workspace.noNotesToDelete,
           { wsName },
         );
       }
@@ -48,17 +48,17 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::delete-ws-path-dialog',
-          placeholder: 'Select or type a note to delete',
-          badgeText: 'Delete Note',
+          placeholder: t.app.dialogs.deleteNote.placeholder,
+          badgeText: t.app.dialogs.deleteNote.badgeText,
           badgeTone: 'destructive',
-          groupHeading: 'Notes',
-          emptyMessage: 'No notes found',
+          groupHeading: t.app.dialogs.deleteNote.groupHeading,
+          emptyMessage: t.app.dialogs.deleteNote.emptyMessage,
           options: wsPaths.map((path) => ({
             title: path.filePath,
             id: path.wsPath,
           })),
           Icon: Trash2,
-          hints: ['Press Enter or Click to delete'],
+          hints: [t.app.dialogs.deleteNote.hintDelete],
           initialSearch: wsPath ? WsPath.fromString(wsPath).path : undefined,
           onSelect: (option) => {
             const wsPath = WsPath.fromString(option.id);
@@ -67,10 +67,12 @@ export const noteManagementHandlers = [
             store.set(workbenchState.$alertDialog, () => {
               return {
                 dialogId: 'dialog::alert',
-                title: 'Confirm Delete',
+                title: t.app.dialogs.confirmDelete.title,
                 tone: 'destructive',
-                description: `Are you sure you want to delete "${fileName}"?`,
-                continueText: 'Delete',
+                description: t.app.dialogs.confirmDelete.description({
+                  fileName: fileName || t.app.common.unknown,
+                }),
+                continueText: t.app.dialogs.confirmDelete.continueText,
                 onContinue: () => {
                   dispatch('command::ws:delete-ws-path', { wsPath: option.id });
                 },
@@ -92,16 +94,20 @@ export const noteManagementHandlers = [
       );
 
       if (!oldWsPath) {
-        throwAppError('error::workspace:not-opened', 'No workspace is opened', {
-          wsPath,
-        });
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {
+            wsPath,
+          },
+        );
       }
       const fileOldWsPath = oldWsPath.asFile();
 
       if (!fileOldWsPath) {
         throwAppError(
           'error::file:invalid-note-path',
-          'Invalid note path provided',
+          t.app.errors.file.invalidNotePath,
           {
             invalidWsPath: oldWsPath.wsPath,
           },
@@ -111,20 +117,22 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-note-dialog',
-          placeholder: 'Provide a new name',
-          badgeText: `Renaming "${fileOldWsPath.fileNameWithoutExtension}"`,
+          placeholder: t.app.dialogs.renameNote.placeholder,
+          badgeText: t.app.dialogs.renameNote.badgeText({
+            fileNameWithoutExtension: fileOldWsPath.fileNameWithoutExtension,
+          }),
           initialSearch: fileOldWsPath.fileNameWithoutExtension,
           Icon: FilePlus,
           option: {
             id: 'rename-note-dialog',
-            title: 'Confirm name change',
+            title: t.app.dialogs.renameNote.optionTitle,
           },
           onSelect: (input) => {
             const trimmedInput = input.trim();
             if (!trimmedInput) {
               throwAppError(
                 'error::file:invalid-operation',
-                'Invalid note name provided',
+                t.app.errors.file.invalidNoteName,
                 {
                   oldWsPath: oldWsPath.wsPath,
                   newWsPath: input,
@@ -158,7 +166,7 @@ export const noteManagementHandlers = [
                 // Prevent creating subdirectories during rename implicitly
                 throwAppError(
                   'error::file:invalid-operation',
-                  'Cannot move file during rename operation. Use move command.',
+                  t.app.errors.file.cannotMoveDuringRename,
                   {
                     oldWsPath: oldWsPath.wsPath,
                     newWsPath: input,
@@ -190,9 +198,13 @@ export const noteManagementHandlers = [
       const existingWsPaths = store.get(workspaceState.$wsPaths);
 
       if (!oldWsPath) {
-        throwAppError('error::workspace:not-opened', 'No workspace is opened', {
-          wsPath,
-        });
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {
+            wsPath,
+          },
+        );
       }
 
       const dirPaths = [
@@ -228,15 +240,17 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::move-note-dialog',
-          placeholder: 'Select a path to move the note',
-          badgeText: `Move "${filePath.fileNameWithoutExtension}"`,
-          emptyMessage: 'No directories found',
+          placeholder: t.app.dialogs.moveNote.placeholder,
+          badgeText: t.app.dialogs.moveNote.badgeText({
+            fileNameWithoutExtension: filePath.fileNameWithoutExtension,
+          }),
+          emptyMessage: t.app.dialogs.moveNote.emptyMessage,
           options,
           Icon: FilePlus,
-          groupHeading: 'Directories',
+          groupHeading: t.app.dialogs.moveNote.groupHeading,
           hints: [
-            'Press Enter or Click',
-            'Tip: Try dragging a note in the sidebar',
+            t.app.dialogs.moveNote.hintClick,
+            t.app.dialogs.moveNote.hintDrag,
           ],
           onSelect: (selectedDir) => {
             let newDirPath = selectedDir.id;
@@ -266,7 +280,7 @@ export const noteManagementHandlers = [
       if (!wsName) {
         throwAppError(
           'error::workspace:not-opened',
-          'No workspace is opened',
+          t.app.errors.workspace.notOpened,
           {},
         );
       }
@@ -274,11 +288,11 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::new-directory-dialog',
-          placeholder: 'Input directory name',
-          badgeText: 'Create Directory',
+          placeholder: t.app.dialogs.createDirectory.placeholder,
+          badgeText: t.app.dialogs.createDirectory.badgeText,
           option: {
             id: 'new-directory-dialog',
-            title: 'Create',
+            title: t.app.dialogs.createDirectory.optionTitle,
           },
           onSelect: (_input) => {
             const input = _input.trim();

@@ -19,7 +19,7 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     ).toBeVisible();
 
     await page.getByLabel('Workspace Name', { exact: true }).fill('test-123');
-    await page.getByRole('button', { name: 'Create Workspace' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(page.getByRole('main')).toContainText('test-123');
     await expect(page.getByRole('main')).toContainText(

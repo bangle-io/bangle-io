@@ -15,21 +15,20 @@ type ErrorType = (typeof ERROR_TYPES)[keyof typeof ERROR_TYPES];
 
 const ERROR_MESSAGES: Record<ErrorType, { title: string; message: string }> = {
   [ERROR_TYPES.ERROR_PICKING_DIRECTORY]: {
-    title: 'There was an error opening your notes folder.',
-    message:
-      'Please make sure your notes folder is inside a common location like Documents or Desktop.',
+    title: t.app.errors.nativeFs.errorOpening.title,
+    message: t.app.errors.nativeFs.errorOpening.message,
   },
   [ERROR_TYPES.CLICKED_TOO_SOON]: {
-    title: "That didn't work",
-    message: 'Please try clicking the Browse button again.',
+    title: t.app.errors.nativeFs.clickedTooSoon.title,
+    message: t.app.errors.nativeFs.clickedTooSoon.message,
   },
   [ERROR_TYPES.WORKSPACE_AUTH_REJECTED]: {
-    title: 'Access was denied',
-    message: 'Please allow access to your folder to continue.',
+    title: t.app.errors.nativeFs.accessDenied.title,
+    message: t.app.errors.nativeFs.accessDenied.message,
   },
   [ERROR_TYPES.UNKNOWN]: {
-    title: 'Unknown error occurred',
-    message: 'Please try again or reload the page.',
+    title: t.app.errors.nativeFs.unknown.title,
+    message: t.app.errors.nativeFs.unknown.message,
   },
 };
 

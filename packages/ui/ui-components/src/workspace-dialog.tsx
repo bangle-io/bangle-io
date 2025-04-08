@@ -153,13 +153,17 @@ export function CreateWorkspaceDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Error</DialogTitle>
+            <DialogTitle>
+              {t.app.dialogs.createWorkspace.errorTitle}
+            </DialogTitle>
           </DialogHeader>
           <div className="text-destructive">
-            No storage types are available.
+            {t.app.dialogs.createWorkspace.noStorageTypes}
           </div>
           <DialogFooter>
-            <Button onClick={() => onOpenChange(false)}>Close</Button>
+            <Button onClick={() => onOpenChange(false)}>
+              {t.app.common.closeButton}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -229,7 +233,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
     <>
       <DialogHeader className="mb-2">
         <DialogTitle className="font-semibold text-lg">
-          Select a workspace type
+          {t.app.dialogs.createWorkspace.selectTypeTitle}
         </DialogTitle>
       </DialogHeader>
       <ul className="space-y-4" role="radiogroup">
@@ -252,11 +256,11 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
           asChild
         >
           <a href="https://bangle.io/privacy" target="_blank" rel="noreferrer">
-            Your data stays with you
+            {t.app.dialogs.createWorkspace.dataPrivacyLink}
           </a>
         </Button>
         <Button onClick={handleNext} disabled={!selected}>
-          Next
+          {t.app.common.nextButton}
         </Button>
       </DialogFooter>
     </>
@@ -303,7 +307,11 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
     if (!validation.isValid) {
       dispatch({
         type: 'UPDATE_ERROR',
-        error: { message: validation.message || 'Invalid workspace name' },
+        error: {
+          message:
+            validation.message ||
+            t.app.dialogs.createWorkspace.invalidNameDefault,
+        },
       });
       return;
     }
@@ -317,15 +325,17 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Enter Workspace Name</DialogTitle>
+        <DialogTitle>
+          {t.app.dialogs.createWorkspace.enterNameTitle}
+        </DialogTitle>
         <DialogDescription>
-          Please enter a name for your workspace.
+          {t.app.dialogs.createWorkspace.enterNameDescription}
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="workspaceName" className="text-right">
-            Workspace Name
+            {t.app.dialogs.createWorkspace.nameLabel}
           </Label>
           <Input
             id="workspaceName"
@@ -340,14 +350,14 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       </div>
       <DialogFooter className="flex justify-between">
         <Button variant="outline" onClick={handleBack}>
-          Back
+          {t.app.common.backButton}
         </Button>
         <Button
           type="submit"
           onClick={handleSubmit}
           disabled={Boolean(error) || !name}
         >
-          Create Workspace
+          {t.app.common.createButton}
         </Button>
       </DialogFooter>
     </>
@@ -375,7 +385,9 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
     if (!onDirectoryPick) {
       dispatch({
         type: 'UPDATE_ERROR',
-        error: { message: 'Directory picking is not supported.' },
+        error: {
+          message: t.app.dialogs.createWorkspace.directoryPickingUnsupported,
+        },
       });
       return;
     }
@@ -409,7 +421,11 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
     if (!validation.isValid) {
       dispatch({
         type: 'UPDATE_ERROR',
-        error: { message: validation.message || 'Invalid directory selection' },
+        error: {
+          message:
+            validation.message ||
+            t.app.dialogs.createWorkspace.invalidDirectoryDefault,
+        },
       });
       return;
     }
@@ -419,9 +435,13 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Select Directory</DialogTitle>
+        <DialogTitle>
+          {t.app.dialogs.createWorkspace.selectDirectoryTitle}
+        </DialogTitle>
         <DialogDescription>
-          <span>Choose a directory to store your notes.</span>
+          <span>
+            {t.app.dialogs.createWorkspace.selectDirectoryDescription}
+          </span>
         </DialogDescription>
       </DialogHeader>
 
@@ -429,7 +449,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
         {!dirHandle ? (
           <Button onClick={handlePickDirectory} disabled={!onDirectoryPick}>
             <FolderOpen />
-            <span>Pick Directory</span>
+            <span>{t.app.dialogs.createWorkspace.pickDirectoryButton}</span>
           </Button>
         ) : (
           <div className="flex items-center space-x-2">
@@ -439,7 +459,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
             </Button>
 
             <Button variant="outline" onClick={handleClearDirectory}>
-              Clear
+              {t.app.common.clearButton}
             </Button>
           </div>
         )}
@@ -448,10 +468,10 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
 
       <DialogFooter className="flex justify-between">
         <Button variant="outline" onClick={handleBack}>
-          Back
+          {t.app.common.backButton}
         </Button>
         <Button onClick={handleSubmit} disabled={!dirHandle}>
-          Create Workspace
+          {t.app.common.createButton}
         </Button>
       </DialogFooter>
     </>

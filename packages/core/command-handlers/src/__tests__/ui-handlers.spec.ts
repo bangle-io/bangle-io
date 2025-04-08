@@ -72,6 +72,7 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::change-theme-pref-dialog');
+      expect(dialog?.placeholder).toBe(t.app.dialogs.changeTheme.placeholder);
       //  since we mock the theme preference, not needed to check for theme change
     });
   });
@@ -91,6 +92,8 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::new-note-dialog');
+      expect(dialog?.placeholder).toBe(t.app.dialogs.createNote.placeholder);
+      expect(dialog?.badgeText).toBe(t.app.dialogs.createNote.badgeText);
 
       dialog?.onSelect('My Note');
 
@@ -121,6 +124,8 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::delete-ws-path-dialog');
+      expect(dialog?.placeholder).toBe(t.app.dialogs.deleteNote.placeholder);
+      expect(dialog?.badgeText).toBe(t.app.dialogs.deleteNote.badgeText);
 
       dialog?.onSelect({ id: 'test-ws:test.md', title: 'test.md' });
       const alertDialog = testEnv.store.get(
@@ -128,6 +133,10 @@ describe('UI command handlers', () => {
       );
       expect(alertDialog).toBeDefined();
       expect(alertDialog?.dialogId).toBe('dialog::alert');
+      expect(alertDialog?.title).toBe(t.app.dialogs.confirmDelete.title);
+      expect(alertDialog?.description).toBe(
+        t.app.dialogs.confirmDelete.description({ fileName: 'test' }),
+      );
 
       alertDialog?.onContinue?.();
 
@@ -157,6 +166,12 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::rename-note-dialog');
+      expect(dialog?.placeholder).toBe(t.app.dialogs.renameNote.placeholder);
+      expect(dialog?.badgeText).toBe(
+        t.app.dialogs.renameNote.badgeText({
+          fileNameWithoutExtension: 'test',
+        }),
+      );
 
       dialog?.onSelect('New Name');
 
@@ -191,6 +206,10 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::move-note-dialog');
+      expect(dialog?.placeholder).toBe(t.app.dialogs.moveNote.placeholder);
+      expect(dialog?.badgeText).toBe(
+        t.app.dialogs.moveNote.badgeText({ fileNameWithoutExtension: 'test' }),
+      );
 
       dialog?.onSelect({ id: 'dir', title: 'dir' });
 
@@ -218,6 +237,10 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::new-directory-dialog');
+      expect(dialog?.placeholder).toBe(
+        t.app.dialogs.createDirectory.placeholder,
+      );
+      expect(dialog?.badgeText).toBe(t.app.dialogs.createDirectory.badgeText);
 
       dialog?.onSelect('My Directory');
 
@@ -258,6 +281,9 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::switch-workspace-dialog');
+      expect(dialog?.placeholder).toBe(
+        t.app.dialogs.switchWorkspace.placeholder,
+      );
       dialog?.onSelect({ id: 'test-ws', title: 'test-ws' });
       expect(services.navigation.resolveAtoms().wsName).toBe('test-ws');
     });
@@ -277,6 +303,9 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::delete-workspace-dialog');
+      expect(dialog?.placeholder).toBe(
+        t.app.dialogs.deleteWorkspace.placeholder,
+      );
 
       dialog?.onSelect({ id: 'ws2', title: 'ws2' });
 
@@ -285,8 +314,11 @@ describe('UI command handlers', () => {
       );
       expect(alertDialog).toBeDefined();
       expect(alertDialog?.dialogId).toBe('dialog::alert-delete-workspace');
+      expect(alertDialog?.title).toBe(
+        t.app.dialogs.confirmDeleteWorkspace.title,
+      );
       expect(alertDialog?.description).toBe(
-        'Are you sure you want to delete the workspace "ws2"? This action cannot be undone.',
+        t.app.dialogs.confirmDeleteWorkspace.description({ wsName: 'ws2' }),
       );
 
       alertDialog?.onContinue();
@@ -326,6 +358,13 @@ describe('UI command handlers', () => {
         expect(alertDialog).toBeDefined();
         expect(alertDialog?.dialogId).toBe(
           'dialog::workspace:native-fs-auth-needed',
+        );
+        expect(alertDialog?.title).toBe(t.app.dialogs.nativeFsAuth.title);
+        expect(alertDialog?.description).toBe(
+          t.app.dialogs.nativeFsAuth.descriptionInitial({ wsName: 'test-ws' }),
+        );
+        expect(alertDialog?.continueText).toBe(
+          t.app.dialogs.nativeFsAuth.continueTextInitial,
         );
 
         alertDialog?.onContinue();

@@ -157,11 +157,11 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
-        footerTitle="Bangle.io"
+        footerTitle={t.app.sidebar.footerTitle}
         footerChildren={
           <>
             <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
-              New
+              {t.app.sidebar.newLabel}
             </DropdownMenu.DropdownMenuLabel>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -175,7 +175,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <PlusIcon className="mr-2 h-4 w-4" />
-              <span>New Note</span>
+              <span>{t.app.common.newNote}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -187,18 +187,18 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <Folder className="mr-2 h-4 w-4" />
-              <span>New Workspace</span>
+              <span>{t.app.common.newWorkspace}</span>
             </DropdownMenu.DropdownMenuItem>
 
             <DropdownMenu.DropdownMenuSeparator />
             <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
-              App Actions
+              {t.app.sidebar.appActionsLabel}
             </DropdownMenu.DropdownMenuLabel>
             <DropdownMenu.DropdownMenuItem
               onClick={() => setOpenOmniSearch(true)}
             >
               <Search className="mr-2 h-4 w-4" />
-              <span>Omni Search</span>
+              <span>{t.app.sidebar.omniSearch}</span>
               <KbdShortcut
                 className="ml-auto"
                 keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys}
@@ -208,7 +208,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               onClick={() => workbenchState.goToCommandRoute()}
             >
               <Command className="mr-2 h-4 w-4" />
-              <span>All Commands</span>
+              <span>{t.app.sidebar.allCommands}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -216,22 +216,22 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <Paintbrush2 className="mr-2 h-4 w-4" />
-              <span>Change Theme</span>
+              <span>{t.app.sidebar.changeTheme}</span>
             </DropdownMenu.DropdownMenuItem>
 
             <DropdownMenu.DropdownMenuSeparator />
             <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
-              Links
+              {t.app.sidebar.linksLabel}
             </DropdownMenu.DropdownMenuLabel>
             <DropdownMenu.DropdownMenuItem
               onClick={() => window.open('https://bangle.io', '_blank')}
             >
               <img
                 src={bangleIcon}
-                alt="Bangle.io"
+                alt={t.app.common.bangleLogoAlt}
                 className="mr-2 h-4 w-4 grayscale"
               />
-              <span>Homepage</span>
+              <span>{t.app.sidebar.homepage}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -239,7 +239,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <Github className="mr-2 h-4 w-4" />
-              <span>GitHub Project</span>
+              <span>{t.app.sidebar.githubProject}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -250,7 +250,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <BugPlay className="mr-2 h-4 w-4" />
-              <span>Report an Issue</span>
+              <span>{t.app.sidebar.reportIssue}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -258,7 +258,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <Twitter className="mr-2 h-4 w-4" />
-              <span>Twitter</span>
+              <span>{t.app.sidebar.twitter}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
               onClick={() =>
@@ -266,7 +266,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               }
             >
               <MessageCircle className="mr-2 h-4 w-4" />
-              <span>Discord</span>
+              <span>{t.app.sidebar.discord}</span>
             </DropdownMenu.DropdownMenuItem>
           </>
         }

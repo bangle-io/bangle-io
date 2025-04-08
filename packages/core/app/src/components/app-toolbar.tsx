@@ -107,7 +107,7 @@ function HomeBreadcrumb() {
                 route: 'welcome',
                 payload: {},
               })}
-              title="Home"
+              title={t.app.common.home}
             >
               <Home size={16} />
             </Breadcrumb.BreadcrumbLink>
@@ -139,7 +139,7 @@ function ToolbarRightSection({
           onClick={() => toggleEditor()}
         >
           {wideEditor ? <ChevronsRightLeft /> : <MoveHorizontal />}
-          <span className="sr-only">Toggle Max Width</span>
+          <span className="sr-only">{t.app.toolbar.toggleMaxWidth}</span>
         </Button>
       )}
     </div>

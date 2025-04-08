@@ -18,11 +18,11 @@ export function AppErrorHandler({
       toast.error(error.message, {
         duration: Number.POSITIVE_INFINITY,
         cancel: {
-          label: 'Dismiss',
+          label: t.app.common.dismiss,
           onClick: () => {},
         },
         action: {
-          label: 'Report',
+          label: t.app.common.report,
           onClick: () => {
             window.open(getGithubUrl(error, logger), '_blank');
           },
@@ -34,11 +34,11 @@ export function AppErrorHandler({
       toast.error(error.message, {
         duration: 5000,
         cancel: {
-          label: 'Dismiss',
+          label: t.app.common.dismiss,
           onClick: () => {},
         },
         action: {
-          label: 'Report',
+          label: t.app.common.report,
           onClick: () => {
             window.open(getGithubUrl(error, logger), '_blank');
           },

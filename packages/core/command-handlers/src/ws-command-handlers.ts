@@ -13,9 +13,13 @@ export const wsCommandHandlers = [
     const { wsName } = navigation.resolveAtoms();
 
     if (!wsName) {
-      throwAppError('error::workspace:not-opened', 'No workspace open', {
-        wsPath: inputPath,
-      });
+      throwAppError(
+        'error::workspace:not-opened',
+        t.app.errors.workspace.notOpened,
+        {
+          wsPath: inputPath,
+        },
+      );
     }
 
     // Add .md extension if not present
@@ -34,9 +38,13 @@ export const wsCommandHandlers = [
       const wsName = parsedPath.wsName;
 
       if (!wsName) {
-        throwAppError('error::workspace:not-opened', 'No workspace open', {
-          wsPath,
-        });
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {
+            wsPath,
+          },
+        );
       }
 
       const filePath = WsPath.assertFile(wsPath);
@@ -89,15 +97,19 @@ export const wsCommandHandlers = [
       const newPath = WsPath.fromString(newWsPath);
 
       if (!oldPath.wsName) {
-        throwAppError('error::workspace:not-opened', 'No workspace open', {
-          wsPath,
-        });
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {
+            wsPath,
+          },
+        );
       }
 
       if (oldPath.wsName !== newPath.wsName) {
         throwAppError(
           'error::file:invalid-operation',
-          'Cannot rename note to a different workspace',
+          t.app.errors.file.cannotRenameToDifferentWorkspace,
           {
             operation: 'rename',
             oldWsPath: wsPath,
@@ -136,9 +148,13 @@ export const wsCommandHandlers = [
       const filePath = WsPath.assertFile(wsPath);
       const destDir = WsPath.fromString(destDirWsPath).asDir();
       if (!destDir) {
-        throwAppError('error::workspace:not-opened', 'No workspace open', {
-          wsPath,
-        });
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {
+            wsPath,
+          },
+        );
       }
 
       const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
@@ -153,7 +169,7 @@ export const wsCommandHandlers = [
       if (existingWsPaths.includes(newWsPath)) {
         throwAppError(
           'error::file:already-existing',
-          'A note with the same name already exists in the destination directory',
+          t.app.errors.file.alreadyExistsInDest,
           {
             wsPath: newWsPath,
           },
@@ -208,7 +224,7 @@ export const wsCommandHandlers = [
     if (!dirPath) {
       throwAppError(
         'error::ws-path:invalid-ws-path',
-        'Invalid directory path',
+        t.app.errors.wsPath.invalidDirectoryPath,
         {
           invalidPath: dirWsPath,
         },
@@ -232,7 +248,7 @@ export const wsCommandHandlers = [
       if (!currentWsPath) {
         throwAppError(
           'error::workspace:not-opened',
-          'No note open to clone',
+          t.app.errors.workspace.noNoteOpenToClone,
           {},
         );
       }
@@ -274,7 +290,7 @@ export const wsCommandHandlers = [
       if (!originalFile) {
         throwAppError(
           'error::file:invalid-note-path',
-          'Original note not found',
+          t.app.errors.file.originalNoteNotFound,
           {
             invalidWsPath: currentWsPath.wsPath,
           },
@@ -301,7 +317,7 @@ export const wsCommandHandlers = [
       if (!wsName) {
         throwAppError(
           'error::workspace:not-opened',
-          'No workspace is open to create a daily note.',
+          t.app.errors.workspace.noWorkspaceForDailyNote,
           {},
         );
       }

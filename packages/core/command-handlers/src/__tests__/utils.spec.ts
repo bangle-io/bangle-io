@@ -17,7 +17,7 @@ describe('validateInputPath', () => {
   it('should throw error for non-string input', () => {
     const error = catchError(() => validateInputPath(123));
     expect(error).toMatchObject({
-      message: 'Invalid note path',
+      message: t.app.errors.wsPath.invalidNotePath,
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
@@ -31,7 +31,7 @@ describe('validateInputPath', () => {
     invalidPaths.forEach((path) => {
       const error = catchError(() => validateInputPath(path));
       expect(error).toMatchObject({
-        message: 'Invalid note path',
+        message: t.app.errors.wsPath.invalidNotePath,
       });
       expect(error?.cause).toMatchObject({
         isBangleAppError: true,
@@ -46,7 +46,7 @@ describe('validateInputPath', () => {
     absolutePaths.forEach((path) => {
       const error = catchError(() => validateInputPath(path));
       expect(error).toMatchObject({
-        message: 'Absolute paths are not allowed',
+        message: t.app.errors.wsPath.absolutePathNotAllowed,
       });
       expect(error?.cause).toMatchObject({
         isBangleAppError: true,
@@ -61,7 +61,7 @@ describe('validateInputPath', () => {
     traversalPaths.forEach((path) => {
       const error = catchError(() => validateInputPath(path));
       expect(error).toMatchObject({
-        message: 'Directory traversal is not allowed',
+        message: t.app.errors.wsPath.directoryTraversalNotAllowed,
       });
       expect(error?.cause).toMatchObject({
         isBangleAppError: true,
@@ -85,7 +85,7 @@ describe('validateInputPath', () => {
     invalidCharPaths.forEach((path) => {
       const error = catchError(() => validateInputPath(path));
       expect(error).toMatchObject({
-        message: 'Invalid characters in path',
+        message: t.app.errors.wsPath.invalidCharsInPath,
       });
       expect(error?.cause).toMatchObject({
         isBangleAppError: true,
@@ -99,7 +99,7 @@ describe('validateInputPath', () => {
     const longPath = 'a'.repeat(256);
     const error = catchError(() => validateInputPath(longPath));
     expect(error).toMatchObject({
-      message: 'Path exceeds maximum length',
+      message: t.app.errors.wsPath.pathTooLong,
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,

@@ -175,9 +175,15 @@ const TreeNode = function TreeNode({
             </SidebarMenuAction>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" align="start">
-            <DropdownMenuItem onClick={handleRename}>Rename</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleMove}>Move</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleRename}>
+              {t.app.components.tree.renameAction}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>
+              {t.app.components.tree.deleteAction}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleMove}>
+              {t.app.components.tree.moveAction}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
@@ -215,7 +221,7 @@ const TreeNode = function TreeNode({
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" align="start">
             <DropdownMenuItem onClick={handleCreateNote}>
-              Create Note
+              {t.app.components.tree.createNoteAction}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

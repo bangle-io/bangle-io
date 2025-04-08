@@ -17,7 +17,7 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
       fallbackRender={({ error }) => {
         return (
           <NoticeView
-            title="Something went wrong"
+            title={t.app.common.somethingWentWrong}
             illustration={
               <div className="flex items-center justify-center">
                 <AlertCircle
@@ -28,7 +28,7 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
             }
             actions={[
               {
-                label: 'Report',
+                label: t.app.common.report,
                 variant: 'outline',
                 onClick: () => {
                   window.open(getGithubUrl(error, logger), '_blank');

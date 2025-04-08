@@ -1,8 +1,9 @@
 import '@bangle.io/browser-entry/src/default-theme.processed.css';
-
+import { t } from '@bangle.io/translations';
 import type { Decorator, Preview } from '@storybook/react';
 import React, { useLayoutEffect } from 'react';
 
+(window as any).t = t;
 // import { IS_STORYBOOK } from '@bangle.io/config';
 // import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
 

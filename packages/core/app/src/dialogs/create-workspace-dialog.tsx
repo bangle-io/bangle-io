@@ -26,7 +26,9 @@ export function CreateWorkspaceDialog() {
 
         return {
           isValid: false,
-          message: result.validationError?.reason || 'Invalid workspace name',
+          message:
+            result.validationError?.reason ||
+            t.app.dialogs.createWorkspace.invalidName,
         };
       }}
       onDone={({ name: wsName, type, dirHandle }) => {
@@ -81,13 +83,13 @@ export function CreateWorkspaceDialog() {
       storageTypes={[
         {
           type: WORKSPACE_STORAGE_TYPE.Browser,
-          title: 'Browser',
-          description: 'Save workspace data in browser storage',
+          title: t.app.dialogs.createWorkspace.browserTitle,
+          description: t.app.dialogs.createWorkspace.browserDescription,
         },
         {
           type: WORKSPACE_STORAGE_TYPE.NativeFS,
-          title: 'Native File System',
-          description: 'Save workspace data in native file system',
+          title: t.app.dialogs.createWorkspace.nativeFsTitle,
+          description: t.app.dialogs.createWorkspace.nativeFsDescription,
           disabled: !supportsNativeBrowserFs(),
         },
       ]}

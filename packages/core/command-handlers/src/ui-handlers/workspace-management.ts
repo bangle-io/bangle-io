@@ -22,10 +22,10 @@ export const workspaceManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::switch-workspace-dialog',
-          placeholder: 'Select a workspace to switch',
-          badgeText: 'Switch Workspace',
-          groupHeading: 'Workspaces',
-          emptyMessage: 'No workspaces found',
+          placeholder: t.app.dialogs.switchWorkspace.placeholder,
+          badgeText: t.app.dialogs.switchWorkspace.badgeText,
+          groupHeading: t.app.dialogs.switchWorkspace.groupHeading,
+          emptyMessage: t.app.dialogs.switchWorkspace.emptyMessage,
           options: (workspaces || [])
             .sort((a, b) => {
               const aRecent = new Date(a.lastModified) >= sevenDaysAgo;
@@ -63,11 +63,11 @@ export const workspaceManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::delete-workspace-dialog',
-          placeholder: 'Select a workspace to delete',
-          badgeText: 'Delete Workspace',
+          placeholder: t.app.dialogs.deleteWorkspace.placeholder,
+          badgeText: t.app.dialogs.deleteWorkspace.badgeText,
           badgeTone: 'destructive',
-          groupHeading: 'Workspaces',
-          emptyMessage: 'No workspaces found',
+          groupHeading: t.app.dialogs.deleteWorkspace.groupHeading,
+          emptyMessage: t.app.dialogs.deleteWorkspace.emptyMessage,
           options: (workspaces || []).map((ws) => ({
             title: ws.name,
             id: `${ws.type}-${ws.name}`,
@@ -79,10 +79,13 @@ export const workspaceManagementHandlers = [
               store.set(workbenchState.$alertDialog, () => {
                 return {
                   dialogId: 'dialog::alert-delete-workspace',
-                  title: 'Confirm Delete',
+                  title: t.app.dialogs.confirmDeleteWorkspace.title,
                   tone: 'destructive',
-                  description: `Are you sure you want to delete the workspace "${wsName}"? This action cannot be undone.`,
-                  continueText: 'Delete',
+                  description: t.app.dialogs.confirmDeleteWorkspace.description(
+                    { wsName },
+                  ),
+                  continueText:
+                    t.app.dialogs.confirmDeleteWorkspace.continueText,
                   onContinue: () => {
                     dispatch('command::ws:delete-workspace', { wsName });
                   },
@@ -109,7 +112,7 @@ export const workspaceManagementHandlers = [
         if (!rootDirHandle) {
           throwAppError(
             'error::workspace:invalid-metadata',
-            `Invalid workspace metadata for ${wsName}. Missing root dir handle`,
+            t.app.errors.workspace.invalidMetadata({ wsName }),
             { wsName },
           );
         }
@@ -117,10 +120,10 @@ export const workspaceManagementHandlers = [
         let attempt = 0;
 
         const failAndGoToHome = () => {
-          toast.error('Permission not granted', {
+          toast.error(t.app.toasts.permissionNotGranted, {
             duration: 5000,
             cancel: {
-              label: 'Dismiss',
+              label: t.app.common.dismiss,
               onClick: () => {},
             },
           });
@@ -135,9 +138,11 @@ export const workspaceManagementHandlers = [
             }
             store.set(workbenchState.$alertDialog, {
               dialogId: 'dialog::workspace:native-fs-auth-needed',
-              title: 'Grant permission?',
-              description: `That didn't work. Bangle.io needs your permission to access "${wsName}"`,
-              continueText: 'Try Again',
+              title: t.app.dialogs.nativeFsAuth.title,
+              description: t.app.dialogs.nativeFsAuth.descriptionRetry({
+                wsName,
+              }),
+              continueText: t.app.dialogs.nativeFsAuth.continueTextRetry,
               onContinue,
               onCancel: () => {
                 failAndGoToHome();
@@ -160,9 +165,11 @@ export const workspaceManagementHandlers = [
 
         store.set(workbenchState.$alertDialog, {
           dialogId: 'dialog::workspace:native-fs-auth-needed',
-          title: 'Grant permission?',
-          description: `Bangle.io needs your permission to access "${wsName}"`,
-          continueText: 'Grant',
+          title: t.app.dialogs.nativeFsAuth.title,
+          description: t.app.dialogs.nativeFsAuth.descriptionInitial({
+            wsName,
+          }),
+          continueText: t.app.dialogs.nativeFsAuth.continueTextInitial,
           onContinue,
           onCancel: () => {
             failAndGoToHome();

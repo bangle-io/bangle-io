@@ -36,7 +36,7 @@ export function DialogSingleInput({
   option,
   onSelect,
   groupHeading = '',
-  placeholder = 'Input..',
+  placeholder = t.app.dialogs.singleInput.placeholderDefault,
   badgeText,
   badgeTone = 'default',
   Icon,

@@ -18,7 +18,7 @@ export function PageHeader({ title, illustration }: PageHeaderProps) {
     >
       <img
         src={bangleIcon}
-        alt="Bangle logo"
+        alt={t.app.common.bangleLogoAlt}
         className="h-28 w-28 opacity-40 grayscale"
       />
     </a>

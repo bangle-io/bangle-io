@@ -29,18 +29,26 @@ export const basicOperationsHandlers = [
     store.set(workbenchState.$singleSelectDialog, () => {
       return {
         dialogId: 'dialog::change-theme-pref-dialog',
-        placeholder: 'Select a theme preference',
-        badgeText: 'Change Theme',
-        groupHeading: 'Themes',
-        emptyMessage: 'No themes available',
+        placeholder: t.app.dialogs.changeTheme.placeholder,
+        badgeText: t.app.dialogs.changeTheme.badgeText,
+        groupHeading: t.app.dialogs.changeTheme.groupHeading,
+        emptyMessage: t.app.dialogs.changeTheme.emptyMessage,
         options: [
           {
-            title: 'System',
+            title: t.app.dialogs.changeTheme.options.system,
             id: 'system',
             active: currentPref === system,
           },
-          { title: 'Light', id: 'light', active: currentPref === light },
-          { title: 'Dark', id: 'dark', active: currentPref === dark },
+          {
+            title: t.app.dialogs.changeTheme.options.light,
+            id: 'light',
+            active: currentPref === light,
+          },
+          {
+            title: t.app.dialogs.changeTheme.options.dark,
+            id: 'dark',
+            active: currentPref === dark,
+          },
         ],
         Icon: Sun,
         onSelect: (option) => {
@@ -79,7 +87,7 @@ export const basicOperationsHandlers = [
       if (!currentWsPath) {
         throwAppError(
           'error::workspace:not-opened',
-          'No note is currently open, cannot toggle wide editor.',
+          t.app.errors.workspace.noNoteOpenCannotToggleWideEditor,
           {},
         );
       }

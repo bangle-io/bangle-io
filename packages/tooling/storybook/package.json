@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@bangle.io/browser-entry": "workspace:*",
+    "@bangle.io/translations": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@chromatic-com/storybook": "^3.2.6",
     "@storybook/addon-essentials": "^8.6.11",

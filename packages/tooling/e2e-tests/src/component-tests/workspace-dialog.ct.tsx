@@ -29,7 +29,7 @@ test('Default dialog shows storage options and navigates', async ({
   await page.getByRole('radio', { name: /Browser Storage/i }).click();
   await page.getByRole('button', { name: /next/i }).click();
   await page.getByLabel('Workspace Name', { exact: true }).fill('my_workspace');
-  await page.getByRole('button', { name: 'Create Workspace' }).click();
+  await page.getByRole('button', { name: 'Create' }).click();
   await expect(page).toHaveScreenshot();
 });
 
@@ -59,7 +59,7 @@ test('NativeFs dialog shows directory picker and navigates', async ({
   // Pick directory again and create workspace
   await page.getByRole('button', { name: /Pick Directory/i }).click();
   await expect(page.getByText('MyDirectory')).toBeVisible();
-  await page.getByRole('button', { name: 'Create Workspace' }).click();
+  await page.getByRole('button', { name: 'Create' }).click();
 
   await expect(page).toHaveScreenshot();
 });
@@ -77,9 +77,7 @@ test('NativeFs shows error when directory pick fails', async ({
 
   await page.getByRole('button', { name: /Pick Directory/i }).click();
   await expect(page.getByText(/Failed to access directory/i)).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Create Workspace' }),
-  ).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
 });
 
 test('Shows error for invalid workspace name', async ({ mount, page }) => {
@@ -91,10 +89,8 @@ test('Shows error for invalid workspace name', async ({ mount, page }) => {
   await page.getByRole('button', { name: /next/i }).click();
 
   await page.getByLabel('Workspace Name', { exact: true }).fill('invalid@name');
-  await page.getByRole('button', { name: /Create Workspace/i }).click();
+  await page.getByRole('button', { name: /Create/i }).click();
 
   await expect(page.getByText(/contains invalid characters/i)).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Create Workspace' }),
-  ).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
 });

@@ -2,23 +2,31 @@ import { throwAppError } from '@bangle.io/base-utils';
 
 export function validateInputPath(inputPath: unknown): void {
   if (typeof inputPath !== 'string') {
-    throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-      invalidWsPath: `${inputPath}`,
-    });
+    throwAppError(
+      'error::ws-path:create-new-note',
+      t.app.errors.wsPath.invalidNotePath,
+      {
+        invalidWsPath: `${inputPath}`,
+      },
+    );
   }
   if (
     inputPath.endsWith('/') ||
     inputPath.endsWith('/.md') ||
     inputPath.trim() === ''
   ) {
-    throwAppError('error::ws-path:create-new-note', 'Invalid note path', {
-      invalidWsPath: inputPath,
-    });
+    throwAppError(
+      'error::ws-path:create-new-note',
+      t.app.errors.wsPath.invalidNotePath,
+      {
+        invalidWsPath: inputPath,
+      },
+    );
   }
   if (inputPath.startsWith('/') || /^[A-Za-z]:[\\/]/.test(inputPath)) {
     throwAppError(
       'error::ws-path:create-new-note',
-      'Absolute paths are not allowed',
+      t.app.errors.wsPath.absolutePathNotAllowed,
       {
         invalidWsPath: inputPath,
       },
@@ -27,7 +35,7 @@ export function validateInputPath(inputPath: unknown): void {
   if (inputPath.includes('../') || inputPath.includes('..\\')) {
     throwAppError(
       'error::ws-path:create-new-note',
-      'Directory traversal is not allowed',
+      t.app.errors.wsPath.directoryTraversalNotAllowed,
       {
         invalidWsPath: inputPath,
       },
@@ -38,7 +46,7 @@ export function validateInputPath(inputPath: unknown): void {
   if (invalidChars.test(inputPath)) {
     throwAppError(
       'error::ws-path:create-new-note',
-      'Invalid characters in path',
+      t.app.errors.wsPath.invalidCharsInPath,
       {
         invalidWsPath: inputPath,
       },
@@ -48,7 +56,7 @@ export function validateInputPath(inputPath: unknown): void {
   if (inputPath.length > maxPathLength) {
     throwAppError(
       'error::ws-path:create-new-note',
-      'Path exceeds maximum length',
+      t.app.errors.wsPath.pathTooLong,
       {
         invalidWsPath: inputPath,
       },

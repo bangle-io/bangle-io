@@ -976,6 +976,9 @@ importers:
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../env-vars
+      '@bangle.io/translations':
+        specifier: workspace:*
+        version: link:../../shared/translations
       '@chromatic-com/storybook':
         specifier: ^3.2.6
         version: 3.2.6(react@19.1.0)(storybook@8.6.11(prettier@3.5.3))

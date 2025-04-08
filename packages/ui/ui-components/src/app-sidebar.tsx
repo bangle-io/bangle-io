@@ -184,7 +184,9 @@ export function AppSidebar({
       <SidebarContent>
         {navItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Opened</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {t.app.components.appSidebar.openedLabel}
+            </SidebarGroupLabel>
             <SidebarMenu className="gap-2">
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
@@ -227,16 +229,18 @@ export function AppSidebar({
             }}
             className="cursor-pointer select-none"
           >
-            Files
+            {t.app.components.appSidebar.filesLabel}
           </SidebarGroupLabel>
           <SidebarGroupAction
-            title="New File"
+            title={t.app.components.appSidebar.newFileActionTitle}
             onClick={() => {
               onNewFileClick();
             }}
           >
             <PlusIcon />
-            <span className="sr-only">Create File</span>
+            <span className="sr-only">
+              {t.app.components.appSidebar.newFileActionSr}
+            </span>
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -254,7 +258,7 @@ export function AppSidebar({
               {isTruncated && (
                 <SidebarMenuItem>
                   <SidebarMenuButton onClick={onTruncatedClick}>
-                    Show More
+                    {t.app.components.appSidebar.showMoreButton}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
@@ -321,11 +325,11 @@ function CommandButton({ onClick }: { onClick: () => void }) {
       <SidebarGroup className="py-0">
         <SidebarGroupContent className="relative">
           <Label htmlFor="command-button" className="sr-only">
-            Search
+            {t.app.common.searchLabel}
           </Label>
           <SidebarInput
             id="command-button"
-            placeholder="Search..."
+            placeholder={t.app.common.searchInputPlaceholder}
             className="pointer-events-none pr-8 pl-8"
             readOnly
           />
@@ -360,8 +364,16 @@ function WorkspaceSwitcher({
         <DropdownMenu>
           <DropdownButton
             icon={Logo}
-            title={activeWs ? activeWs.name : 'No workspace selected'}
-            subtitle={activeWs ? activeWs.misc : 'Click to select a workspace'}
+            title={
+              activeWs
+                ? activeWs.name
+                : t.app.components.appSidebar.noWorkspaceSelectedTitle
+            }
+            subtitle={
+              activeWs
+                ? activeWs.misc
+                : t.app.components.appSidebar.noWorkspaceSelectedSubtitle
+            }
             className={
               !activeWs
                 ? 'bg-pop/10 hover:bg-pop/15 data-[state=open]:bg-pop/15'
@@ -377,7 +389,7 @@ function WorkspaceSwitcher({
             onCloseAutoFocus={(e) => e.preventDefault()}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Workspaces
+              {t.app.components.appSidebar.workspacesLabel}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -387,7 +399,7 @@ function WorkspaceSwitcher({
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
-              <span className="">New Workspace</span>
+              <span className="">{t.app.common.newWorkspace}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {workspaces.map((workspace) => {
