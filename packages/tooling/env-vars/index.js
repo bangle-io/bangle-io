@@ -133,9 +133,11 @@ module.exports = ({
           const hashedPart = await sha256(searchAndHash);
           obfuscatedPath += '|' + hashedPart;
       }
-      window.goatcounter.count({
+      if (typeof window.goatcounter.count === 'function') {
+        window.goatcounter.count({
           path: obfuscatedPath,
-      });
+        });
+      }
   });
 </script>
 <script data-goatcounter="https://bangle-io.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>      
