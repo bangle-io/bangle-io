@@ -1,16 +1,16 @@
 import { FunMissing } from '@bangle.io/ui-components';
 import React from 'react';
-import { ContentSection } from '../components/content-section';
-import { NoticeView } from '../components/notice-view';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { ContentSection } from '../components/common/content-section';
+import { NoticeView } from '../components/feedback/notice-view';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 export function PageNativeFsAuthReq() {
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper>
-        <ContentSection>
+      <AppHeader />
+      <MainContentContainer>
+        <ContentSection hasPadding>
           <NoticeView
             title={t.app.pageNativeFsAuthReq.title}
             description={<FunMissing />}
@@ -22,7 +22,7 @@ export function PageNativeFsAuthReq() {
             ]}
           />
         </ContentSection>
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }

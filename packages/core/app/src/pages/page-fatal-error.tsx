@@ -2,19 +2,19 @@ import { getGithubUrl } from '@bangle.io/base-utils';
 import { useLogger } from '@bangle.io/context';
 import { AlertTriangle } from 'lucide-react';
 import React from 'react';
-import { ContentSection } from '../components/content-section';
-import { NoticeView } from '../components/notice-view';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { ContentSection } from '../components/common/content-section';
+import { NoticeView } from '../components/feedback/notice-view';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 export function PageFatalError() {
   const logger = useLogger();
 
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper>
-        <ContentSection>
+      <AppHeader />
+      <MainContentContainer>
+        <ContentSection hasPadding>
           <NoticeView
             title={t.app.pageFatalError.title}
             description={t.app.pageFatalError.description}
@@ -44,7 +44,7 @@ export function PageFatalError() {
             ]}
           />
         </ContentSection>
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }

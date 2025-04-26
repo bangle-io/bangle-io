@@ -54,7 +54,6 @@ function main() {
         services={services}
         store={store}
         rootEmitter={rootEmitter}
-        themeManager={themeManager}
       />
     </StrictMode>,
   );

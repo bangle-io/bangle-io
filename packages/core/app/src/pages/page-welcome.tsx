@@ -2,12 +2,12 @@ import { useCoreServices } from '@bangle.io/context';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import { getRelativeTimeOrNull } from '../common/get-relative-time';
-import { Actions } from '../components/actions';
-import { ContentSection } from '../components/content-section';
-import { PageHeader } from '../components/page-header';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageItemList } from '../components/page-item-list';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Actions } from '../components/common/actions';
+import { ContentSection } from '../components/common/content-section';
+import { PageHeader } from '../components/common/page-header';
+import { ItemList } from '../components/lists/item-list';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 const MAX_RECENT_WORKSPACES = 5;
 
@@ -39,11 +39,11 @@ export function PageWelcome() {
 
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper>
-        <ContentSection hasPadding={false}>
+      <AppHeader />
+      <MainContentContainer>
+        <ContentSection hasPadding>
           <PageHeader title={welcomeMessage} />
-          <PageItemList
+          <ItemList // Use ItemList instead of PageItemList
             heading={t.app.pageWelcome.recentWorkspacesHeading}
             items={workspaceLinks}
             emptyMessage={t.app.pageWelcome.createWorkspacePrompt}
@@ -75,7 +75,7 @@ export function PageWelcome() {
             ]}
           />
         </ContentSection>
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }

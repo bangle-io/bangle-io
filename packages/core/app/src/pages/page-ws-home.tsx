@@ -4,13 +4,13 @@ import { WsPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import { getRelativeTimeOrNull } from '../common/get-relative-time';
-import { Actions } from '../components/actions';
-import { ContentSection } from '../components/content-section';
-import { NoticeView } from '../components/notice-view';
-import { PageHeader } from '../components/page-header';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageItemList } from '../components/page-item-list';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { Actions } from '../components/common/actions';
+import { ContentSection } from '../components/common/content-section';
+import { PageHeader } from '../components/common/page-header';
+import { NoticeView } from '../components/feedback/notice-view';
+import { ItemList } from '../components/lists/item-list';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 const MAX_NOTES_TO_SHOW = 5;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -48,12 +48,12 @@ export function PageWsHome() {
 
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper>
+      <AppHeader />
+      <MainContentContainer>
         {currentWsName ? (
-          <ContentSection hasPadding={false}>
+          <ContentSection hasPadding>
             <PageHeader title={`${currentWsName}`} />
-            <PageItemList
+            <ItemList
               heading={t.app.pageWsHome.recentNotesHeading}
               items={notesWithTime}
               emptyMessage={noItemsMessage}
@@ -93,33 +93,35 @@ export function PageWsHome() {
             )}
           </ContentSection>
         ) : (
-          <NoticeView
-            title={t.app.pageWorkspaceNotFound.title}
-            description={<FunMissing />}
-            actions={[
-              {
-                label: t.app.pageWorkspaceNotFound.createWorkspaceButton,
-                onClick: () =>
-                  coreServices.commandDispatcher.dispatch(
-                    'command::ui:create-workspace-dialog',
-                    null,
-                    'ui',
-                  ),
-              },
-              {
-                label: t.app.pageWorkspaceNotFound.switchWorkspaceButton,
-                variant: 'outline',
-                onClick: () =>
-                  coreServices.commandDispatcher.dispatch(
-                    'command::ui:switch-workspace',
-                    null,
-                    'ui',
-                  ),
-              },
-            ]}
-          />
+          <ContentSection hasPadding>
+            <NoticeView
+              title={t.app.pageWorkspaceNotFound.title}
+              description={<FunMissing />}
+              actions={[
+                {
+                  label: t.app.pageWorkspaceNotFound.createWorkspaceButton,
+                  onClick: () =>
+                    coreServices.commandDispatcher.dispatch(
+                      'command::ui:create-workspace-dialog',
+                      null,
+                      'ui',
+                    ),
+                },
+                {
+                  label: t.app.pageWorkspaceNotFound.switchWorkspaceButton,
+                  variant: 'outline',
+                  onClick: () =>
+                    coreServices.commandDispatcher.dispatch(
+                      'command::ui:switch-workspace',
+                      null,
+                      'ui',
+                    ),
+                },
+              ]}
+            />
+          </ContentSection>
         )}
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }
@@ -185,7 +187,6 @@ function useGroupedWorkspaceNotes() {
         timestamp: item.timestamp,
       };
     };
-
     const isEmpty =
       last7days.length === 0 &&
       sortedPathsWithTimestamp.length === 0 &&

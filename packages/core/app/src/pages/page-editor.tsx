@@ -3,10 +3,10 @@ import { useCoreServices } from '@bangle.io/context';
 import { Editor } from '@bangle.io/editor';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
-import { NoteNotFoundView } from '../components/note-not-found-view';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { WorkspaceNotFoundView } from '../components/workspace-not-found-view';
+import { NoteNotFoundView } from '../components/feedback/note-not-found-view';
+import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 const MAIN_EDITOR_NAME = 'main-editor';
 
@@ -24,14 +24,14 @@ export function PageEditor() {
 
   const editorName = useMemo(() => {
     return currentWsPath
-      ? `editor::${MAIN_EDITOR_NAME}-${$forceReloadCounter}:${currentWsPath}`
+      ? `editor::${MAIN_EDITOR_NAME}-${$forceReloadCounter}:${currentWsPath.wsPath}` // Use wsPath directly
       : MAIN_EDITOR_NAME;
   }, [currentWsPath, $forceReloadCounter]);
 
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper applyPadding={false}>
+      <AppHeader />
+      <MainContentContainer applyPadding={false}>
         {currentWsPath && currentWsName ? (
           <Editor
             key={$forceReloadCounter + currentWsPath.wsPath}
@@ -48,7 +48,7 @@ export function PageEditor() {
           // NOTE: It is intentional we are not redirecting to the error page so that we avoid bouncing user
           <NoteNotFoundView />
         )}
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }

@@ -1,10 +1,10 @@
 import { useCoreServices } from '@bangle.io/context';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { ContentSection } from '../components/content-section';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
-import { WorkspaceNotFoundView } from '../components/workspace-not-found-view';
+import { ContentSection } from '../components/common/content-section';
+import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 export function PageWorkspaceNotFound() {
   const { navigation } = useCoreServices();
@@ -17,13 +17,12 @@ export function PageWorkspaceNotFound() {
 
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper>
-        <ContentSection>
-          {/* Use the dedicated component, passing the wsName */}
+      <AppHeader />
+      <MainContentContainer>
+        <ContentSection hasPadding>
           <WorkspaceNotFoundView wsName={wsName} />
         </ContentSection>
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }

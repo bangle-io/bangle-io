@@ -4,6 +4,8 @@ import { clearEditor, getEditorLocator, getEditorText } from './common';
 test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
 
+  const mainContentLocator = page.locator('main.B-app-main-content');
+
   await test.step('create new workspace', async () => {
     await page.getByRole('button', { name: 'Create Workspace' }).click();
 
@@ -21,8 +23,9 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await page.getByLabel('Workspace Name', { exact: true }).fill('test-123');
     await page.getByRole('button', { name: 'Create' }).click();
 
-    await expect(page.getByRole('main')).toContainText('test-123');
-    await expect(page.getByRole('main')).toContainText(
+    // Use the specific locator for assertions
+    await expect(mainContentLocator).toContainText('test-123');
+    await expect(mainContentLocator).toContainText(
       'No notes found in this workspace.',
     );
   });
@@ -43,19 +46,19 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
   });
 
   await test.step('verify toolbar', async () => {
-    await expect(page.getByRole('main')).toMatchAriaSnapshot(`
-    - button "Toggle Sidebar":
-      - img
-    - navigation "breadcrumb":
-      - list:
-        - listitem:
-          - link:
-            - img
-        - listitem:
-          - button "test-note-1.md"
-    - button "Toggle Max Width":
-      - img
-    `);
+    await expect(page.locator('header')).toMatchAriaSnapshot(`
+      - button "Toggle Sidebar":
+        - img
+      - navigation "breadcrumb":
+        - list:
+          - listitem:
+            - link:
+              - img
+          - listitem:
+            - button "test-note-1.md"
+      - button "Toggle Max Width":
+        - img
+      `);
   });
 
   await test.step('edit note content', async () => {

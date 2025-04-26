@@ -3,10 +3,10 @@ import { useCoreServices, useLogger } from '@bangle.io/context';
 import { FunMissing } from '@bangle.io/ui-components';
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
-import { ContentSection } from '../components/content-section';
-import { NoticeView } from '../components/notice-view';
-import { PageHeaderWrapper } from '../components/page-header-wrapper';
-import { PageMainContentWrapper } from '../components/page-main-content-wrapper';
+import { ContentSection } from '../components/common/content-section';
+import { NoticeView } from '../components/feedback/notice-view';
+import { AppHeader } from '../layout/app-header';
+import { MainContentContainer } from '../layout/main-content-container';
 
 export function PageNotFound() {
   const coreServices = useCoreServices();
@@ -14,9 +14,9 @@ export function PageNotFound() {
 
   return (
     <>
-      <PageHeaderWrapper />
-      <PageMainContentWrapper>
-        <ContentSection>
+      <AppHeader />
+      <MainContentContainer>
+        <ContentSection hasPadding>
           <NoticeView
             title={t.app.pageNotFound.title}
             description={<FunMissing />}
@@ -46,7 +46,7 @@ export function PageNotFound() {
             ]}
           />
         </ContentSection>
-      </PageMainContentWrapper>
+      </MainContentContainer>
     </>
   );
 }

@@ -273,30 +273,41 @@ function FilteredRoute({
   );
 }
 
-export function OmniSearch({
-  open,
-  setOpen,
-  commands,
-  onCommand,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  commands: Command[];
-  onCommand: (cmd: Command) => void;
-}) {
-  const commandInputRef = React.useRef<HTMLInputElement>(null);
+export function OmniSearch() {
   const {
     workspaceState,
     commandDispatcher,
     userActivityService,
     workbenchState,
+    commandRegistry,
   } = useCoreServices();
+  const commands = useMemo(
+    () => commandRegistry.getOmniSearchCommands(),
+    [commandRegistry],
+  );
+  const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
+
+  const commandInputRef = React.useRef<HTMLInputElement>(null);
+
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const [search, updateSearch] = useAtom(workbenchState.$omniSearchInput);
   const route = useAtomValue(workbenchState.$omniSearchRoute);
   const recentWsPaths = useAtomValue(userActivityService.$recentWsPaths);
   const recentCommands = useAtomValue(userActivityService.$recentCommands);
   const cleanedSearch = useAtomValue(workbenchState.$cleanSearchTerm);
+
+  const onCommand = React.useCallback(
+    (cmd: Command) => {
+      setOpen(false);
+      commandDispatcher.dispatch(
+        // @ts-expect-error - command id will be correct
+        cmd.id,
+        {},
+        'omni-search',
+      );
+    },
+    [commandDispatcher, setOpen],
+  );
 
   const baseItems: CommandItemProp[] = React.useMemo(() => {
     const filteredCommands = commands.map(
