@@ -17,7 +17,7 @@ interface ItemListProps {
 
 /**
  * Renders a list of navigable items (links) with a heading, optional relative time,
- * and a 'View More' option. Consolidates LinkList and PageItemList.
+ * and a 'View More' option.
  */
 export function ItemList({
   heading,
@@ -27,24 +27,24 @@ export function ItemList({
   onClickViewMore,
 }: ItemListProps) {
   return (
-    <div className="mx-auto flex w-full max-w-[600px] flex-col items-center gap-3 px-4">
+    <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-3 px-4">
       {items.length > 0 ? (
         <>
-          <h3 className="self-start font-semibold text-muted-foreground text-sm">
+          <h3 className="w-full self-start pl-3 font-semibold text-muted-foreground text-sm">
             {heading}
           </h3>
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col gap-1">
             {items.map(({ label, href, relativeTime }) => (
               <Button
                 key={label + href}
                 variant="ghost"
                 asChild
-                className="flex w-full items-center justify-between px-3 py-2"
+                className="h-auto w-full justify-between px-3 py-1.5 text-left"
               >
-                <a href={href}>
+                <a href={href} className="flex items-center justify-between">
                   <span className="truncate font-medium">{label}</span>
                   {relativeTime && (
-                    <span className="flex-shrink-0 text-muted-foreground text-sm">
+                    <span className="ml-2 flex-shrink-0 text-muted-foreground text-xs">
                       {relativeTime}
                     </span>
                   )}
@@ -55,7 +55,7 @@ export function ItemList({
               <Button
                 variant="ghost"
                 onClick={onClickViewMore}
-                className="flex w-full items-center justify-between px-3 py-2 text-sm" // Adjusted padding and text size
+                className="h-auto w-full justify-between px-3 py-1.5 text-left text-sm"
               >
                 <span className="font-medium">{t.app.common.viewAll}</span>
                 <span className="text-sm">→</span>
@@ -64,7 +64,9 @@ export function ItemList({
           </div>
         </>
       ) : (
-        <div className="py-4 text-muted-foreground text-sm">{emptyMessage}</div> // Added padding
+        <div className="py-4 text-center text-muted-foreground text-sm">
+          {emptyMessage}
+        </div>
       )}
     </div>
   );

@@ -4,11 +4,11 @@ import React from 'react';
 import { ContentSection } from '../components/common/content-section';
 import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
 import { AppHeader } from '../layout/app-header';
-import { MainContentContainer } from '../layout/main-content-container';
+import { PageContentContainer } from '../layout/main-content-container';
 
 export function PageWorkspaceNotFound() {
   const { navigation } = useCoreServices();
-  // Extract wsName from the current route payload
+  // Extract wsName from the current route payload if the route matches
   const routeInfo = useAtomValue(navigation.$routeInfo);
   const wsName =
     routeInfo.route === 'workspace-not-found'
@@ -18,11 +18,11 @@ export function PageWorkspaceNotFound() {
   return (
     <>
       <AppHeader />
-      <MainContentContainer>
+      <PageContentContainer>
         <ContentSection hasPadding>
           <WorkspaceNotFoundView wsName={wsName} />
         </ContentSection>
-      </MainContentContainer>
+      </PageContentContainer>
     </>
   );
 }

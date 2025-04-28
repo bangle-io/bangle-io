@@ -25,10 +25,10 @@ export function NoticeView({
   return (
     <ContentSection hasPadding className="mx-auto w-full max-w-lg">
       <PageHeader title={title} illustration={illustration} />
-      {description ? (
-        <p className="mt-2 text-muted-foreground">{description}</p>
-      ) : null}
-      {actions ? <Actions actions={actions} /> : null}
+      {description && (
+        <p className="mt-2 text-center text-muted-foreground">{description}</p>
+      )}
+      {actions && actions.length > 0 && <Actions actions={actions} />}
     </ContentSection>
   );
 }

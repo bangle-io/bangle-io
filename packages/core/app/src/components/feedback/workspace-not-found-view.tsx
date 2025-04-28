@@ -4,12 +4,20 @@ import { Briefcase } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './notice-view';
 
-/** Displays a notice indicating that the requested workspace could not be found. */
+/** Displays a notice indicating that the requested workspace could not be found, using NoticeView. */
 export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
   const coreServices = useCoreServices();
 
   const handleGoHome = () => {
     coreServices.navigation.goHome();
+  };
+
+  const handleCreateWorkspace = () => {
+    coreServices.commandDispatcher.dispatch(
+      'command::ui:create-workspace-dialog',
+      null,
+      'ui',
+    );
   };
 
   return (
@@ -38,12 +46,11 @@ export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
           label: t.app.workspaceNotFoundView.goHomeButton,
           onClick: handleGoHome,
         },
-        // Optional: Add create workspace button?
-        // {
-        //   label: t.app.pageWorkspaceNotFound.createWorkspaceButton,
-        //   variant: 'outline',
-        //   onClick: () => coreServices.commandDispatcher.dispatch('command::ui:create-workspace-dialog', null, 'ui'),
-        // },
+        {
+          label: t.app.pageWorkspaceNotFound.createWorkspaceButton, // Reusing translation key
+          variant: 'outline',
+          onClick: handleCreateWorkspace,
+        },
       ]}
     />
   );

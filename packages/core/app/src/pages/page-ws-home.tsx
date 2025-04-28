@@ -10,7 +10,7 @@ import { PageHeader } from '../components/common/page-header';
 import { NoticeView } from '../components/feedback/notice-view';
 import { ItemList } from '../components/lists/item-list';
 import { AppHeader } from '../layout/app-header';
-import { MainContentContainer } from '../layout/main-content-container';
+import { PageContentContainer } from '../layout/main-content-container';
 
 const MAX_NOTES_TO_SHOW = 5;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -49,7 +49,7 @@ export function PageWsHome() {
   return (
     <>
       <AppHeader />
-      <MainContentContainer>
+      <PageContentContainer>
         {currentWsName ? (
           <ContentSection hasPadding>
             <PageHeader title={`${currentWsName}`} />
@@ -121,7 +121,7 @@ export function PageWsHome() {
             />
           </ContentSection>
         )}
-      </MainContentContainer>
+      </PageContentContainer>
     </>
   );
 }

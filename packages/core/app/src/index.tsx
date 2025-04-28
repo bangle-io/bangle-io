@@ -60,7 +60,6 @@ export function App({
 
 function AppRoutes() {
   const coreServices = useCoreServices();
-
   const { route } = useAtomValue(coreServices.navigation.$routeInfo);
 
   switch (route) {

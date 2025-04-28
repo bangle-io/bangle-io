@@ -7,7 +7,7 @@ import { ContentSection } from '../components/common/content-section';
 import { PageHeader } from '../components/common/page-header';
 import { ItemList } from '../components/lists/item-list';
 import { AppHeader } from '../layout/app-header';
-import { MainContentContainer } from '../layout/main-content-container';
+import { PageContentContainer } from '../layout/main-content-container';
 
 const MAX_RECENT_WORKSPACES = 5;
 
@@ -40,7 +40,7 @@ export function PageWelcome() {
   return (
     <>
       <AppHeader />
-      <MainContentContainer>
+      <PageContentContainer>
         <ContentSection hasPadding>
           <PageHeader title={welcomeMessage} />
           <ItemList // Use ItemList instead of PageItemList
@@ -75,7 +75,7 @@ export function PageWelcome() {
             ]}
           />
         </ContentSection>
-      </MainContentContainer>
+      </PageContentContainer>
     </>
   );
 }

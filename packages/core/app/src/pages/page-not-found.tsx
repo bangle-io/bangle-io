@@ -6,7 +6,7 @@ import React from 'react';
 import { ContentSection } from '../components/common/content-section';
 import { NoticeView } from '../components/feedback/notice-view';
 import { AppHeader } from '../layout/app-header';
-import { MainContentContainer } from '../layout/main-content-container';
+import { PageContentContainer } from '../layout/main-content-container';
 
 export function PageNotFound() {
   const coreServices = useCoreServices();
@@ -15,7 +15,7 @@ export function PageNotFound() {
   return (
     <>
       <AppHeader />
-      <MainContentContainer>
+      <PageContentContainer>
         <ContentSection hasPadding>
           <NoticeView
             title={t.app.pageNotFound.title}
@@ -37,16 +37,17 @@ export function PageNotFound() {
                 label: t.app.pageNotFound.reportButton,
                 variant: 'outline',
                 onClick: () => {
-                  window.open(
-                    getGithubUrl(new Error('404 Page Not Found'), logger),
-                    '_blank',
+                  const error = new Error(
+                    `404 Page Not Found: ${window.location.href}`,
                   );
+                  logger.error(error);
+                  window.open(getGithubUrl(error, logger), '_blank');
                 },
               },
             ]}
           />
         </ContentSection>
-      </MainContentContainer>
+      </PageContentContainer>
     </>
   );
 }

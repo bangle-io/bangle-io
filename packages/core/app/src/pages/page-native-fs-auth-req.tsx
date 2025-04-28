@@ -3,13 +3,13 @@ import React from 'react';
 import { ContentSection } from '../components/common/content-section';
 import { NoticeView } from '../components/feedback/notice-view';
 import { AppHeader } from '../layout/app-header';
-import { MainContentContainer } from '../layout/main-content-container';
+import { PageContentContainer } from '../layout/main-content-container';
 
 export function PageNativeFsAuthReq() {
   return (
     <>
       <AppHeader />
-      <MainContentContainer>
+      <PageContentContainer>
         <ContentSection hasPadding>
           <NoticeView
             title={t.app.pageNativeFsAuthReq.title}
@@ -22,7 +22,7 @@ export function PageNativeFsAuthReq() {
             ]}
           />
         </ContentSection>
-      </MainContentContainer>
+      </PageContentContainer>
     </>
   );
 }

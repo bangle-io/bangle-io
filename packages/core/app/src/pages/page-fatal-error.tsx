@@ -5,7 +5,7 @@ import React from 'react';
 import { ContentSection } from '../components/common/content-section';
 import { NoticeView } from '../components/feedback/notice-view';
 import { AppHeader } from '../layout/app-header';
-import { MainContentContainer } from '../layout/main-content-container';
+import { PageContentContainer } from '../layout/main-content-container';
 
 export function PageFatalError() {
   const logger = useLogger();
@@ -13,7 +13,7 @@ export function PageFatalError() {
   return (
     <>
       <AppHeader />
-      <MainContentContainer>
+      <PageContentContainer>
         <ContentSection hasPadding>
           <NoticeView
             title={t.app.pageFatalError.title}
@@ -35,16 +35,16 @@ export function PageFatalError() {
                 label: t.app.pageFatalError.reportButton,
                 variant: 'outline',
                 onClick: () => {
-                  window.open(
-                    getGithubUrl(new Error('Fatal Error'), logger),
-                    '_blank',
-                  );
+                  // Log the error before opening GitHub link
+                  const error = new Error('Fatal Error Page Triggered');
+                  logger.error(error);
+                  window.open(getGithubUrl(error, logger), '_blank');
                 },
               },
             ]}
           />
         </ContentSection>
-      </MainContentContainer>
+      </PageContentContainer>
     </>
   );
 }

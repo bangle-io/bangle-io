@@ -8,9 +8,17 @@ interface WsNameBreadcrumbProps {
   wsName: string;
 }
 
+/**
+ * Renders the breadcrumb for the workspace home page,
+ * showing the current workspace name and allowing switching/creating workspaces. */
 export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
   const coreServices = useCoreServices();
   const workspaces = useAtomValue(coreServices.workspaceState.$workspaces);
+
+  const otherWorkspaces = React.useMemo(
+    () => workspaces.filter((workspace) => workspace.name !== wsName),
+    [workspaces, wsName],
+  );
 
   return (
     <Breadcrumb.Breadcrumb>
@@ -52,21 +60,19 @@ export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
                 <PlusIcon className="mr-2 h-4 w-4" />
                 <span>{t.app.common.newWorkspace}</span>
               </DropdownMenu.DropdownMenuItem>
-              {workspaces.length > 1 && (
+              {otherWorkspaces.length > 0 && (
                 <>
                   <DropdownMenu.DropdownMenuSeparator />
-                  {workspaces
-                    .filter((workspace) => workspace.name !== wsName)
-                    .map((workspace) => (
-                      <DropdownMenu.DropdownMenuItem
-                        key={workspace.name}
-                        onClick={() => {
-                          coreServices.navigation.goWorkspace(workspace.name);
-                        }}
-                      >
-                        {workspace.name}
-                      </DropdownMenu.DropdownMenuItem>
-                    ))}
+                  {otherWorkspaces.map((workspace) => (
+                    <DropdownMenu.DropdownMenuItem
+                      key={workspace.name}
+                      onClick={() => {
+                        coreServices.navigation.goWorkspace(workspace.name);
+                      }}
+                    >
+                      {workspace.name}
+                    </DropdownMenu.DropdownMenuItem>
+                  ))}
                 </>
               )}
             </DropdownMenu.DropdownMenuContent>
