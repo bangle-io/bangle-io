@@ -4,7 +4,7 @@ import { clearEditor, getEditorLocator, getEditorText } from './common';
 test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
 
-  const mainContentLocator = page.locator('main.B-app-main-content');
+  const mainContentLocator = page.locator('main.B-app-page-content');
 
   await test.step('create new workspace', async () => {
     await page.getByRole('button', { name: 'Create Workspace' }).click();
@@ -23,8 +23,8 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await page.getByLabel('Workspace Name', { exact: true }).fill('test-123');
     await page.getByRole('button', { name: 'Create' }).click();
 
-    // Use the specific locator for assertions
     await expect(mainContentLocator).toContainText('test-123');
+    await expect(page.getByRole('heading', { name: 'test-123' })).toBeVisible();
     await expect(mainContentLocator).toContainText(
       'No notes found in this workspace.',
     );
