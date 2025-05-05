@@ -64,6 +64,11 @@ async function setupUserActivityService({
     'I am content of test4.md',
   );
 
+  // Not proud of this, but it's a hack to wait for the system to be ready
+  await vi.waitUntil(async () => {
+    return services.workspaceState.hasWorkspace(TEST_WS_NAME);
+  });
+
   return {
     userActivityService,
     navigation,
@@ -160,7 +165,6 @@ describe('UserActivityService', () => {
     });
 
     navigation.goWsPath(TEST_WS_PATH);
-
     await userActivityService._recordCommandResult({
       type: 'success',
       from: 'test',

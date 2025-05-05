@@ -94,8 +94,8 @@ export class WorkspaceStateService extends BaseService {
           const abortController = new AbortController();
           get(this.fileSystem.$fileTreeChangeCount);
           const wsName = get(this.$wsName);
-
           if (!wsName) {
+            set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
             return;
           }
           this.atomHandleAppError(
@@ -125,5 +125,10 @@ export class WorkspaceStateService extends BaseService {
 
   private get workspaceOps() {
     return this.dep.workspaceOps;
+  }
+
+  hasWorkspace(wsName: string) {
+    const workspaces = this.store.get(this.$workspaces);
+    return workspaces.some((ws) => ws.name === wsName);
   }
 }

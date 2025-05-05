@@ -37,7 +37,6 @@ export class WorkspaceOpsService extends BaseService {
       { tableName: DATABASE_TABLE_NAME.workspaceInfo },
       (change) => {
         this.invalidateCache();
-
         this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
         if (change.type === 'create' || change.type === 'delete') {
           this.store.set(this.$workspaceInfoListChange, (v) => v + 1);

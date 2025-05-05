@@ -254,6 +254,11 @@ export class UserActivityService extends BaseService {
     data: InferType<(typeof EntityValidators)[T]>,
   ): Promise<void> {
     await this.mountPromise;
+
+    if (!this.workspaceState.hasWorkspace(wsName)) {
+      return;
+    }
+
     const validationResult = EntityValidators[entityType].validate(data);
     if (!validationResult) {
       this.logger.warn(`Invalid data for entity type ${entityType}`, { data });
@@ -292,6 +297,11 @@ export class UserActivityService extends BaseService {
 
   private async getActivityLog(wsName: string): Promise<ActivityLogEntry[]> {
     await this.mountPromise;
+
+    if (!this.workspaceState.hasWorkspace(wsName)) {
+      return [];
+    }
+
     const existingLogs = this.activityLogCache.get(wsName);
     if (existingLogs) {
       return existingLogs;
@@ -310,6 +320,11 @@ export class UserActivityService extends BaseService {
     updateCallback: (logs: ActivityLogEntry[]) => ActivityLogEntry[],
   ): Promise<void> {
     await this.mountPromise;
+
+    if (!this.workspaceState.hasWorkspace(wsName)) {
+      return;
+    }
+
     await this.workspaceOps.updateWorkspaceMetadata(wsName, (metadata) => {
       const result = metadata[ACTIVITY_LOG_KEY];
       const logs: ActivityLogEntry[] = Array.isArray(result) ? result : [];
