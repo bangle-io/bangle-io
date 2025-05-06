@@ -69,6 +69,7 @@ async function setup() {
       emitResult: (result) => {
         dispatchedCommands.push(result);
       },
+      focusEditor: () => {},
     },
   );
 

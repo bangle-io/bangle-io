@@ -58,7 +58,11 @@ export const uiCommands = narrow([
     title: 'Switch Theme',
     omniSearch: true,
     keywords: ['theme', 'change', 'switch'],
-    dependencies: { services: ['workbenchState'] },
+    dependencies: {
+      services: ['workbenchState'],
+      commands: ['command::ui:focus-editor'],
+    },
+    autoFocusEditor: false,
     args: {},
   },
 
@@ -69,9 +73,10 @@ export const uiCommands = narrow([
     keywords: ['new', 'create', 'note'],
     dependencies: {
       services: ['workbenchState'],
-      commands: ['command::ws:new-note-from-input'],
+      commands: ['command::ws:new-note-from-input', 'command::ui:focus-editor'],
     },
     omniSearch: true,
+    autoFocusEditor: false,
     args: {
       prefillName: T.Optional(T.String),
     },
@@ -83,8 +88,9 @@ export const uiCommands = narrow([
     keywords: ['delete', 'note', 'remove'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
-      commands: ['command::ws:delete-ws-path'],
+      commands: ['command::ws:delete-ws-path', 'command::ui:focus-editor'],
     },
+    autoFocusEditor: false,
     args: {
       wsPath: T.Optional(T.String),
     },
@@ -95,9 +101,10 @@ export const uiCommands = narrow([
     keywords: ['rename', 'note', 'file'],
     dependencies: {
       services: ['workspaceState', 'workbenchState'],
-      commands: ['command::ws:rename-ws-path'],
+      commands: ['command::ws:rename-ws-path', 'command::ui:focus-editor'],
     },
     omniSearch: true,
+    autoFocusEditor: false,
     args: {
       wsPath: T.Optional(T.String),
     },
@@ -108,9 +115,10 @@ export const uiCommands = narrow([
     keywords: ['move', 'note', 'relocate'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
-      commands: ['command::ws:move-ws-path'],
+      commands: ['command::ws:move-ws-path', 'command::ui:focus-editor'],
     },
     omniSearch: true,
+    autoFocusEditor: false,
     args: {
       wsPath: T.Optional(T.String),
     },
@@ -125,6 +133,7 @@ export const uiCommands = narrow([
       commands: ['command::ws:create-directory'],
     },
     omniSearch: true,
+    autoFocusEditor: false,
     args: null,
   },
 
@@ -135,6 +144,7 @@ export const uiCommands = narrow([
     keywords: ['new', 'create', 'workspace'],
     dependencies: { services: ['workbenchState'] },
     omniSearch: true,
+    autoFocusEditor: false,
     args: null,
   },
   {
@@ -156,6 +166,7 @@ export const uiCommands = narrow([
       commands: ['command::ws:delete-workspace'],
     },
     omniSearch: true,
+    autoFocusEditor: false,
     args: null,
   },
   {
@@ -168,6 +179,7 @@ export const uiCommands = narrow([
         'editorService',
       ],
     },
+    autoFocusEditor: false,
     args: {
       wsName: T.String,
     },
@@ -179,6 +191,7 @@ export const uiCommands = narrow([
     keywords: ['files', 'list', 'browse', 'all'],
     dependencies: { services: ['workbenchState'] },
     omniSearch: true,
+    autoFocusEditor: false,
     args: {
       prefillInput: T.Optional(T.String),
     },
@@ -190,6 +203,17 @@ export const uiCommands = narrow([
     keywords: ['toggle', 'wide', 'editor'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
+    },
+    omniSearch: true,
+    args: null,
+  },
+
+  {
+    id: 'command::ui:focus-editor',
+    title: 'Focus Editor',
+    keywords: ['focus', 'editor', 'cursor'],
+    dependencies: {
+      services: ['workbenchState', 'workspaceState', 'pmEditorService'],
     },
     omniSearch: true,
     args: null,

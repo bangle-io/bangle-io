@@ -113,6 +113,9 @@ export function initializeServices(
     emitResult: (result) => {
       rootEmitter.emit('event::command:result', result);
     },
+    focusEditor: () => {
+      services.pmEditorService.focusEditor();
+    },
   }));
 
   container.setConfig(FileSystemService, () => ({

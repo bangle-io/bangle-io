@@ -20,7 +20,7 @@ export const basicOperationsHandlers = [
   ),
 
   c('command::ui:switch-theme', ({ workbenchState }, _, key) => {
-    const { store } = getCtx(key);
+    const { store, dispatch } = getCtx(key);
     const currentPref = store.get(workbenchState.$themePref);
     const system = 'system' as const;
     const light = 'light' as const;
@@ -58,6 +58,7 @@ export const basicOperationsHandlers = [
             option.id === dark
           ) {
             workbenchState.changeThemePreference(option.id);
+            dispatch('command::ui:focus-editor', null);
           }
         },
       };
@@ -93,6 +94,20 @@ export const basicOperationsHandlers = [
       }
       // Note is open, toggle the wide editor
       store.set(workbenchState.$wideEditor, (prev) => !prev);
+    },
+  ),
+
+  c(
+    'command::ui:focus-editor',
+    ({ workspaceState, pmEditorService }, _, key) => {
+      const { store } = getCtx(key);
+      const currentWsPath = store.get(workspaceState.$currentWsPath);
+
+      if (!currentWsPath) {
+        return;
+      }
+
+      pmEditorService.focusEditor();
     },
   ),
 ];

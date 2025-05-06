@@ -20,6 +20,14 @@ import type {
 } from '@bangle.io/types';
 import type { CommandRegistryService } from './command-registry-service';
 
+type CommandDispatchServiceConfig = {
+  emitResult: (event: CommandDispatchResult) => void;
+  /**
+   * Focus the editor.
+   * This is used to focus the editor when a command is dispatched.
+   */
+  focusEditor: () => void;
+};
 /**
  * Service responsible for dispatching commands to their handlers
  */
@@ -32,9 +40,7 @@ export class CommandDispatchService extends BaseService {
   constructor(
     context: BaseServiceContext,
     private dep: { commandRegistry: CommandRegistryService },
-    private config: {
-      emitResult: (event: CommandDispatchResult) => void;
-    },
+    private config: CommandDispatchServiceConfig,
   ) {
     super(SERVICE_NAME.commandDispatchService, context, dep);
     this.addCleanup(() => {
@@ -50,6 +56,12 @@ export class CommandDispatchService extends BaseService {
     id: TId,
     args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
     from: string,
+    options?: {
+      /**
+       * Focus the editor after the command is dispatched.
+       */
+      overrideAutoFocus?: boolean;
+    },
   ): void {
     this.logger.debug(`Dispatching ${id} from ${from}:`, args);
 
@@ -147,6 +159,14 @@ export class CommandDispatchService extends BaseService {
     } finally {
       // even if the handler throws, we should remove the command from the chain
       this.fromChain.pop();
+      const autoFocus =
+        options?.overrideAutoFocus ??
+        command.autoFocusEditor ??
+        command.omniSearch;
+
+      if (autoFocus === true) {
+        this.config.focusEditor();
+      }
     }
   }
 

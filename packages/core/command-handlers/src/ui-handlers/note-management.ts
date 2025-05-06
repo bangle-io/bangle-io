@@ -22,6 +22,7 @@ export const noteManagementHandlers = [
             dispatch('command::ws:new-note-from-input', {
               inputPath: input.trim(),
             });
+            dispatch('command::ui:focus-editor', null);
           },
           Icon: FilePlus,
           initialSearch: prefillName,
@@ -75,6 +76,7 @@ export const noteManagementHandlers = [
                 continueText: t.app.dialogs.confirmDelete.continueText,
                 onContinue: () => {
                   dispatch('command::ws:delete-ws-path', { wsPath: option.id });
+                  dispatch('command::ui:focus-editor', null);
                 },
                 onCancel: () => {},
               };
@@ -182,6 +184,7 @@ export const noteManagementHandlers = [
               newWsPath: newWsPath.wsPath,
               wsPath: oldWsPath.wsPath,
             });
+            dispatch('command::ui:focus-editor', null);
           },
         };
       });
@@ -265,6 +268,7 @@ export const noteManagementHandlers = [
               destDirWsPath: WsPath.fromParts(oldWsPath.wsName, newDirPath)
                 .wsPath,
             });
+            dispatch('command::ui:focus-editor', null);
           },
         };
       });

@@ -169,6 +169,7 @@ export function createTestEnvironment({
         emitResult: (result) => {
           rootEmitter.emit('event::command:result', result);
         },
+        focusEditor: () => {},
       }));
 
       container.setConfig(FileSystemService, () => ({

@@ -299,12 +299,14 @@ export function OmniSearch() {
   const onCommand = React.useCallback(
     (cmd: Command) => {
       setOpen(false);
-      commandDispatcher.dispatch(
-        // @ts-expect-error - command id will be correct
-        cmd.id,
-        {},
-        'omni-search',
-      );
+      requestAnimationFrame(() => {
+        commandDispatcher.dispatch(
+          // @ts-expect-error - command id will be correct
+          cmd.id,
+          {},
+          'omni-search',
+        );
+      });
     },
     [commandDispatcher, setOpen],
   );

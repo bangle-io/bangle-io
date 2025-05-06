@@ -118,4 +118,17 @@ export class PmEditorService extends BaseService {
     }
     return undefined;
   }
+
+  focusEditor() {
+    for (const [_, editor] of this.editors) {
+      if (
+        'editorView' in editor &&
+        !editor.editorView.isDestroyed &&
+        !editor.editorView.hasFocus()
+      ) {
+        editor.editorView.focus();
+        return;
+      }
+    }
+  }
 }
