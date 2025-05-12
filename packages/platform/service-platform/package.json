@@ -37,10 +37,10 @@
     "@bangle.io/emitter": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "jotai": "^2.12.2",
+    "jotai": "^2.12.4",
     "page-lifecycle": "^0.1.2",
     "regexparam": "^3.0.0",
-    "wouter": "^3.6.0"
+    "wouter": "^3.7.0"
   },
   "devDependencies": {
     "@bangle.io/mini-zod": "workspace:*",

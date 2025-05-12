@@ -29,7 +29,6 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "regexparam": "^3.0.0",
-    "wouter": "^3.6.0"
-  },
-  "devDependencies": {}
+    "wouter": "^3.7.0"
+  }
 }

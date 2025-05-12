@@ -37,7 +37,6 @@
     "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
-    "jotai": "^2.12.2"
-  },
-  "devDependencies": {}
+    "jotai": "^2.12.4"
+  }
 }
