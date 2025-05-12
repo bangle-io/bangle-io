@@ -14,12 +14,12 @@ Tech Stack
 Build the note-taking web app per these guidelines.
 
 - TypeScript
-
-  Vite
+- Vite
 - Vitest
 - Playwright
 - TailwindCSS
 - ShadCN
+- Jotai for state management
 
 ## Project Structure
 
@@ -38,6 +38,8 @@ Build the note-taking web app per these guidelines.
 ## WsPath Format
 
 `wsPath` defines file or directory paths in the workspace:
+
+[ws-path.ts](mdc:packages/shared/ws-path/src/ws-path.ts)
 
 - **File**: `<workspaceName>:<filePath>` (e.g., `myWorkspace:myNote.md`)
 - **Directory**: `<workspaceName>:<dirPath>` (e.g., `myWorkspace:myDir/mySubDir`)
@@ -68,6 +70,10 @@ Below is a command config:
   }
 ```
 
+Example file for command config [ui-commands.ts](mdc:packages/shared/commands/src/ui-commands.ts) for UI, for workspace [workspace-ops-service.ts](mdc:packages/core/service-core/src/workspace-ops-service.ts)
+
+
+
 Below is an example of a command handler
 
 ```
@@ -77,12 +83,19 @@ Below is an example of a command handler
   })
 ```
 
+Example file for implementation of config [ui-command-handlers.ts](mdc:packages/core/command-handlers/src/ui-command-handlers.ts)
+
 ### Services
 
 Services encapsulate the core logic, we have following directories
-- service-core
+- service-core 
+  - can depend on platform services
+  - example [navigation-service.ts](mdc:packages/core/service-core/src/navigation-service.ts) [workspace-service.ts](mdc:packages/core/service-core/src/workspace-service.ts) , Editor service [editor-service.ts](mdc:packages/core/service-core/src/editor-service.ts)
+
 - service-platform
-    - relatively free of dependencies for example cannot depend on service-core
+    - CANNOT depend on service-core or any other higher level.
+    - Can only depend on other platform services.
+    - Example [memory-database.ts](mdc:packages/platform/service-platform/src/memory-database.ts) , [file-storage-indexeddb.ts](mdc:packages/platform/service-platform/src/file-storage-indexeddb.ts)
 
 
 
