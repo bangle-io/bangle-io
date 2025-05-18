@@ -62,7 +62,7 @@
     "@vitejs/plugin-react": "^4.4.1",
     "class-variance-authority": "^0.7.1",
     "jotai": "^2.12.4",
-    "lucide-react": "^0.485.0",
+    "lucide-react": "^0.511.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "vite": "^6.3.5",

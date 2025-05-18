@@ -45,9 +45,9 @@
     "@testing-library/react": "^16.3.0",
     "date-fns": "^4.1.0",
     "jotai": "^2.12.4",
-    "lucide-react": "^0.485.0",
+    "lucide-react": "^0.511.0",
     "react": "19.1.0",
-    "react-error-boundary": "^5.0.0",
+    "react-error-boundary": "^6.0.0",
     "wouter": "^3.7.0"
   },
   "devDependencies": {

@@ -51,8 +51,8 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3(msw@2.7.3(@types/node@22.15.18)(typescript@5.8.3))(playwright@1.52.0)(vite@6.3.5(@types/node@22.15.18)(jiti@1.21.7)(terser@5.39.2)(yaml@2.8.0))(vitest@3.1.3)
       '@vitest/coverage-v8':
-        specifier: 3.1.1
-        version: 3.1.1(@vitest/browser@3.1.3)(vitest@3.1.3)
+        specifier: 3.1.3
+        version: 3.1.3(@vitest/browser@3.1.3)(vitest@3.1.3)
       fake-indexeddb:
         specifier: ^6.0.1
         version: 6.0.1
@@ -132,14 +132,14 @@ importers:
         specifier: ^2.12.4
         version: 2.12.4(@types/react@19.1.4)(react@19.1.0)
       lucide-react:
-        specifier: ^0.485.0
-        version: 0.485.0(react@19.1.0)
+        specifier: ^0.511.0
+        version: 0.511.0(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
       react-error-boundary:
-        specifier: ^5.0.0
-        version: 5.0.0(react@19.1.0)
+        specifier: ^6.0.0
+        version: 6.0.0(react@19.1.0)
       wouter:
         specifier: ^3.7.0
         version: 3.7.0(react@19.1.0)
@@ -178,8 +178,8 @@ importers:
         specifier: workspace:*
         version: link:../../shared/ws-path
       lucide-react:
-        specifier: ^0.485.0
-        version: 0.485.0(react@19.1.0)
+        specifier: ^0.511.0
+        version: 0.511.0(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -253,8 +253,8 @@ importers:
         specifier: ^2.12.4
         version: 2.12.4(@types/react@19.1.4)(react@19.1.0)
       lucide-react:
-        specifier: ^0.485.0
-        version: 0.485.0(react@19.1.0)
+        specifier: ^0.511.0
+        version: 0.511.0(react@19.1.0)
       prosemirror-view:
         specifier: ^1.39.3
         version: 1.39.3
@@ -779,8 +779,8 @@ importers:
         specifier: ^2.12.4
         version: 2.12.4(@types/react@19.1.4)(react@19.1.0)
       lucide-react:
-        specifier: ^0.485.0
-        version: 0.485.0(react@19.1.0)
+        specifier: ^0.511.0
+        version: 0.511.0(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -843,8 +843,8 @@ importers:
         specifier: ^2.9.3
         version: 2.9.3
       execa:
-        specifier: 9.5.2
-        version: 9.5.2
+        specifier: 9.5.3
+        version: 9.5.3
       fs-extra:
         specifier: ^11.3.0
         version: 11.3.0
@@ -952,8 +952,8 @@ importers:
   packages/tooling/plop-configs:
     dependencies:
       execa:
-        specifier: 9.5.2
-        version: 9.5.2
+        specifier: 9.5.3
+        version: 9.5.3
       fs-extra:
         specifier: ^11.3.0
         version: 11.3.0
@@ -1010,8 +1010,8 @@ importers:
         specifier: ^8.6.14
         version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
       '@storybook/test-runner':
-        specifier: ^0.21.3
-        version: 0.21.3(@types/node@22.15.18)(storybook@8.6.14(prettier@3.5.3))(ts-node@10.9.2(@swc/core@1.11.24)(@types/node@22.15.18)(typescript@5.8.3))
+        specifier: ^0.22.0
+        version: 0.22.0(@types/node@22.15.18)(storybook@8.6.14(prettier@3.5.3))(ts-node@10.9.2(@swc/core@1.11.24)(@types/node@22.15.18)(typescript@5.8.3))
       '@storybook/theming':
         specifier: ^8.6.14
         version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
@@ -1181,14 +1181,14 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lucide-react:
-        specifier: ^0.485.0
-        version: 0.485.0(react@19.1.0)
+        specifier: ^0.511.0
+        version: 0.511.0(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
       sonner:
-        specifier: ^1.7.4
-        version: 1.7.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^2.0.3
+        version: 2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       '@storybook/react':
         specifier: ^8.6.14
@@ -1215,8 +1215,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       tailwind-merge:
-        specifier: ^2.6.0
-        version: 2.6.0
+        specifier: ^3.3.0
+        version: 3.3.0
 
 packages:
 
@@ -2803,12 +2803,12 @@ packages:
       typescript:
         optional: true
 
-  '@storybook/test-runner@0.21.3':
-    resolution: {integrity: sha512-tsorR0IVYElcaTZrT/ZrH/8YDw7c+wrLDN0e3qj1WdbqU8l2IU4+a32HLXaakzdDpuTn+d8xCk4VZMlzMrmToA==}
+  '@storybook/test-runner@0.22.0':
+    resolution: {integrity: sha512-fKY6MTE/bcvMaulKXy+z0fPmRXJx1REkYMOMcGn8zn6uffyBigGgaVf/sZ+AZfibwvjzg/StWhJ9HvAM8pc14g==}
     engines: {node: ^16.10.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+      storybook: ^0.0.0-0 || ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
 
   '@storybook/test@8.6.14':
     resolution: {integrity: sha512-GkPNBbbZmz+XRdrhMtkxPotCLOQ1BaGNp/gFZYdGDk2KmUWBKmvc5JxxOhtoXM2703IzNFlQHSSNnhrDZYuLlw==}
@@ -3114,11 +3114,11 @@ packages:
       webdriverio:
         optional: true
 
-  '@vitest/coverage-v8@3.1.1':
-    resolution: {integrity: sha512-MgV6D2dhpD6Hp/uroUoAIvFqA8AuvXEFBC2eepG3WFc1pxTfdk1LEqqkWoWhjz+rytoqrnUUCdf6Lzco3iHkLQ==}
+  '@vitest/coverage-v8@3.1.3':
+    resolution: {integrity: sha512-cj76U5gXCl3g88KSnf80kof6+6w+K4BjOflCl7t6yRJPDuCrHtVu0SgNYOUARJOL5TI8RScDbm5x4s1/P9bvpw==}
     peerDependencies:
-      '@vitest/browser': 3.1.1
-      vitest: 3.1.1
+      '@vitest/browser': 3.1.3
+      vitest: 3.1.3
     peerDependenciesMeta:
       '@vitest/browser':
         optional: true
@@ -4025,8 +4025,8 @@ packages:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
 
-  execa@9.5.2:
-    resolution: {integrity: sha512-EHlpxMCpHWSAh1dgS6bVeoLAXGnJNdR93aabr4QCGbzOM73o5XmRfM/e5FUqsw3aagP8S8XEWUWFAxnRBnAF0Q==}
+  execa@9.5.3:
+    resolution: {integrity: sha512-QFNnTvU3UjgWFy8Ef9iDHvIdcgZ344ebkwYx4/KLbR+CKQA4xBaHzv+iRpp86QfMHP8faFQLh8iOc57215y4Rg==}
     engines: {node: ^18.19.0 || >=20.5.0}
 
   exit@0.1.2:
@@ -5006,8 +5006,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.485.0:
-    resolution: {integrity: sha512-NvyQJ0LKyyCxL23nPKESlr/jmz8r7fJO1bkuptSNYSy0s8VVj4ojhX0YAgmE1e0ewfxUZjIlZpvH+otfTnla8Q==}
+  lucide-react@0.511.0:
+    resolution: {integrity: sha512-VK5a2ydJ7xm8GvBeKLS9mu1pVK6ucef9780JVUjw6bAjJL/QXnd4Y0p7SPeOUMC27YhzNCZvm5d/QX0Tp3rc0w==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -5646,8 +5646,8 @@ packages:
     peerDependencies:
       react: ^19.1.0
 
-  react-error-boundary@5.0.0:
-    resolution: {integrity: sha512-tnjAxG+IkpLephNcePNA7v6F/QpWLH8He65+DmedchDwg162JZqx4NmbXj0mlAYVVEd81OW7aFhmbsScYfiAFQ==}
+  react-error-boundary@6.0.0:
+    resolution: {integrity: sha512-gdlJjD7NWr0IfkPlaREN2d9uUZUlksrfOx7SX62VRerwXbMY6ftGCIZua1VG1aXFNOimhISsTq+Owp725b9SiA==}
     peerDependencies:
       react: '>=16.13.1'
 
@@ -5890,8 +5890,8 @@ packages:
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
 
-  sonner@1.7.4:
-    resolution: {integrity: sha512-DIS8z4PfJRbIyfVFDVnK9rO3eYDtse4Omcm6bt0oEr5/jtLgysmjuBl1frJ9E/EQZrFmKx2A8m/s5s9CRXIzhw==}
+  sonner@2.0.3:
+    resolution: {integrity: sha512-njQ4Hht92m0sMqqHVDL32V2Oun9W1+PHO9NDv9FHfJjT3JT22IG4Jpo3FPQy+mouRKCXFWO+r67v6MrHX2zeIA==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
       react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
@@ -6038,8 +6038,8 @@ packages:
     engines: {node: '>=18.18.0'}
     hasBin: true
 
-  tailwind-merge@2.6.0:
-    resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
+  tailwind-merge@3.3.0:
+    resolution: {integrity: sha512-fyW/pEfcQSiigd5SNn0nApUOxx0zB/dm6UDU/rEwc2c3sX2smWUNbapHv+QRqLGVp9GWX3THIa7MUGPo+YkDzQ==}
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -8292,7 +8292,7 @@ snapshots:
       '@storybook/test': 8.6.14(storybook@8.6.14(prettier@3.5.3))
       typescript: 5.8.3
 
-  '@storybook/test-runner@0.21.3(@types/node@22.15.18)(storybook@8.6.14(prettier@3.5.3))(ts-node@10.9.2(@swc/core@1.11.24)(@types/node@22.15.18)(typescript@5.8.3))':
+  '@storybook/test-runner@0.22.0(@types/node@22.15.18)(storybook@8.6.14(prettier@3.5.3))(ts-node@10.9.2(@swc/core@1.11.24)(@types/node@22.15.18)(typescript@5.8.3))':
     dependencies:
       '@babel/core': 7.27.1
       '@babel/generator': 7.27.1
@@ -8636,7 +8636,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@vitest/coverage-v8@3.1.1(@vitest/browser@3.1.3)(vitest@3.1.3)':
+  '@vitest/coverage-v8@3.1.3(@vitest/browser@3.1.3)(vitest@3.1.3)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
@@ -9623,7 +9623,7 @@ snapshots:
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
 
-  execa@9.5.2:
+  execa@9.5.3:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
       cross-spawn: 7.0.6
@@ -10886,7 +10886,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.485.0(react@19.1.0):
+  lucide-react@0.511.0(react@19.1.0):
     dependencies:
       react: 19.1.0
 
@@ -11590,7 +11590,7 @@ snapshots:
       react: 19.1.0
       scheduler: 0.26.0
 
-  react-error-boundary@5.0.0(react@19.1.0):
+  react-error-boundary@6.0.0(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.27.1
       react: 19.1.0
@@ -11832,7 +11832,7 @@ snapshots:
       dot-case: 3.0.4
       tslib: 2.8.1
 
-  sonner@1.7.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  sonner@2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -12003,7 +12003,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  tailwind-merge@2.6.0: {}
+  tailwind-merge@3.3.0: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.11.24)(@types/node@22.15.18)(typescript@5.8.3))):
     dependencies:

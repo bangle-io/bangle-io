@@ -20,7 +20,7 @@
     "@tsconfig/node18": "^18.2.4",
     "@types/fs-extra": "^11.0.4",
     "colord": "^2.9.3",
-    "execa": "9.5.2",
+    "execa": "9.5.3",
     "fs-extra": "^11.3.0",
     "globby": "^14.1.0",
     "p-map": "^7.0.3",
