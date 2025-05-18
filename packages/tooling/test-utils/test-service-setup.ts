@@ -25,35 +25,15 @@ import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 
 import { vi } from 'vitest';
 export type { Store } from '@bangle.io/types';
-import { Logger } from '@bangle.io/logger';
-import type { BaseServiceCommonOptions, Store } from '@bangle.io/types';
+import type { Store } from '@bangle.io/types';
 export { default as waitForExpect } from 'wait-for-expect';
 import { getEnabledCommands } from '@bangle.io/commands';
-import { RootEmitter } from '@bangle.io/root-emitter';
-import { createStore } from 'jotai';
 export * from './test-service-setup';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { PmEditorService } from '@bangle.io/editor';
 import { Container } from '@bangle.io/poor-mans-di';
 import { TestErrorHandlerService } from '@bangle.io/service-platform/src/test-error-handler';
-
-export type MockLog = ReturnType<typeof createMockLogger>;
-
-/**
- * Creates a mock logger for testing, allowing you to track and assert logs.
- */
-const createMockLogger = () => ({
-  debug: vi.fn(),
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-});
-
-/**
- * Returns a promise that resolves after `ms` milliseconds.
- */
-export const sleep = (ms = 15): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+import { makeTestCommonOpts } from './common-opts';
 
 const themeManager = {
   currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
@@ -72,16 +52,9 @@ export function createTestEnvironment({
 }: {
   controller?: AbortController;
 } = {}) {
-  const mockLog = createMockLogger();
-  const logger = new Logger('', 'debug', mockLog as any);
-  const rootEmitter = new RootEmitter({ abortSignal: controller.signal });
-
-  const commonOpts: BaseServiceCommonOptions = {
-    logger,
-    store: createStore(),
-    emitAppError: vi.fn(),
-    rootAbortSignal: controller.signal,
-  };
+  const { commonOpts, mockLog, rootEmitter } = makeTestCommonOpts({
+    controller,
+  });
 
   // Platform-specific service mappings to in-memory / mock equivalents.
   const platformServicesMap = {
@@ -132,8 +105,8 @@ export function createTestEnvironment({
     serviceMap,
   );
 
-  return {
-    logger,
+  const result = {
+    logger: commonOpts.logger,
     mockLog,
     controller,
     rootEmitter,
@@ -204,6 +177,8 @@ export function createTestEnvironment({
       container.setConfig(PmEditorService, () => ({
         nothing: true,
       }));
+
+      return result;
     },
 
     /**
@@ -259,4 +234,6 @@ export function createTestEnvironment({
       return services;
     },
   };
+
+  return result;
 }

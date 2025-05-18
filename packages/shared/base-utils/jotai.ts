@@ -1,8 +1,11 @@
 import type { Logger } from '@bangle.io/logger';
 import type { Validator } from '@bangle.io/mini-zod';
-import type { BaseAppSyncDatabase } from '@bangle.io/types';
-import { atomWithReducer, atomWithStorage } from 'jotai/utils';
+import type { BaseAppSyncDatabase, BaseError } from '@bangle.io/types';
+import type { Atom } from 'jotai';
+import { atom } from 'jotai';
+import { atomWithReducer, atomWithStorage, unwrap } from 'jotai/utils';
 import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
+import { wrapPromiseInAppErrorHandler } from './throw-app-error';
 
 export function atomWithCompare<Value>(
   initialValue: Value,
@@ -99,4 +102,38 @@ export function atomStorage<TValue>({
   );
 
   return atom;
+}
+
+/**
+ * Creates a Jotai atom that unwraps a promise, handling errors gracefully.
+ *
+ * This is a convenience method that combines `atom`, `unwrap`, and error handling
+ * using `atomHandleAppError`.
+ *
+ * @param asyncGetter - An async function that takes a Jotai `get` function and an options object with an `AbortSignal`.
+ *                      It should return a Promise that resolves to the atom's value.
+ * @param initialValue - A function that returns the initial value of the atom. It can optionally take the previous value.
+ * @param emitAppErrorFn - A callback that emits an app error.
+ * @returns A Jotai atom.
+ */
+export function createAsyncAtom<Value>(
+  asyncGetter: (
+    get: <V>(atom: Atom<V>) => V,
+    options: { signal: AbortSignal },
+  ) => Promise<Value>,
+  initialValue: (prev?: Value) => NoInfer<Value>,
+  emitAppErrorFn: (error: BaseError) => void,
+): Atom<Value> {
+  return unwrap(
+    atom(async (get, { signal }) => {
+      // TODO  should we pass prev here??
+      const fallback = initialValue() as unknown as Value;
+      return wrapPromiseInAppErrorHandler(
+        asyncGetter(get, { signal }),
+        fallback,
+        emitAppErrorFn,
+      );
+    }),
+    initialValue,
+  );
 }

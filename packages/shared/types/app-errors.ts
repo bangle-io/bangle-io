@@ -76,6 +76,12 @@ export type AppError =
         wsName?: string;
       };
     }
+  | {
+      name: 'error::workspace:no-note-opened';
+      payload: {
+        wsPath?: string;
+      };
+    }
 
   // File errors
   | {

@@ -1,13 +1,10 @@
 import type { Logger } from '@bangle.io/logger';
-import { isAbortError } from '@bangle.io/mini-js-utils';
 import type { Service, ServiceContext } from '@bangle.io/poor-mans-di';
 import type {
   BaseError,
   BaseServiceCommonOptions,
   Store,
 } from '@bangle.io/types';
-import { getAppErrorCause } from './throw-app-error';
-
 export type BaseServiceContext = {
   ctx: BaseServiceCommonOptions;
   serviceContext: ServiceContext;
@@ -94,31 +91,10 @@ export abstract class BaseService implements Service<BaseServiceCommonOptions> {
     return this._mountPromise;
   }
 
-  protected emitAppError(error: BaseError): void {
+  protected emitAppError = (error: BaseError): void => {
     this.logger.debug('Emitting app error');
     queueMicrotask(() => {
       this.__context.ctx.emitAppError(error);
     });
-  }
-
-  protected async atomHandleAppError<T>(
-    promise: Promise<T>,
-    fallbackValue: NoInfer<T>,
-  ): Promise<T> {
-    try {
-      return await promise;
-    } catch (error) {
-      if (isAbortError(error)) {
-        return fallbackValue;
-      }
-      if (error instanceof Error) {
-        const appError = getAppErrorCause(error as BaseError);
-        if (appError) {
-          this.emitAppError(error);
-          return fallbackValue;
-        }
-      }
-      throw error;
-    }
-  }
+  };
 }

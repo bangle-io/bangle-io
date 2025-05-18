@@ -28,6 +28,8 @@ export const t = {
       continueButton: 'Fortfahren',
       searchLabel: 'Suche',
       searchInputPlaceholder: 'Suchen...',
+      starItem: 'Als Favorit markieren',
+      unstarItem: 'Favorit entfernen',
     },
     toolbar: {
       toggleMaxWidth: 'Maximale Breite umschalten',
@@ -181,6 +183,7 @@ export const t = {
         noNoteOpenToClone: 'Keine Notiz zum Klonen geöffnet',
         noWorkspaceForDailyNote:
           'Kein Arbeitsbereich geöffnet, um eine tägliche Notiz zu erstellen.',
+        noNoteOpened: 'Derzeit ist keine Notiz geöffnet.',
       },
       file: {
         invalidNotePath: 'Ungültiger Notizpfad angegeben',

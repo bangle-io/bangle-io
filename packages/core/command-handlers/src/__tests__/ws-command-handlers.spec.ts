@@ -189,4 +189,43 @@ describe('WS command handlers', () => {
       });
     });
   });
+
+  describe('command::workspace:toggle-star', () => {
+    test('should toggle star status for the currently open note', async () => {
+      const NOTE_WS_PATH = 'test-ws:current-note.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::workspace:toggle-star',
+        workspaces: [{ name: 'test-ws', notes: [NOTE_WS_PATH] }],
+        autoNavigate: 'ws-path',
+      });
+
+      await vi.waitFor(() => {
+        const starredPaths =
+          services.userActivityService.resolveAtoms().starredWsPaths;
+        expect(starredPaths).toEqual([]);
+      });
+
+      dispatch('command::workspace:toggle-star', {
+        wsPath: undefined,
+      });
+
+      await vi.waitFor(() => {
+        const starredPaths =
+          services.userActivityService.resolveAtoms().starredWsPaths;
+        expect(starredPaths).toContain(NOTE_WS_PATH);
+      });
+
+      // Action 2: Unstar the note by dispatching the command again
+      dispatch('command::workspace:toggle-star', {
+        wsPath: undefined,
+      });
+
+      await vi.waitFor(() => {
+        const starredPaths =
+          services.userActivityService.resolveAtoms().starredWsPaths;
+        // Since it was the only starred note, the list should be empty again.
+        expect(starredPaths).toEqual([]);
+      });
+    });
+  });
 });

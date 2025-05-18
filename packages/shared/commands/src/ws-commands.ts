@@ -142,4 +142,17 @@ export const wsCommands = narrow([
       date: T.Optional(T.Number),
     },
   },
+  {
+    id: 'command::workspace:toggle-star',
+    title: 'Toggle Star for Current Note',
+    keywords: ['star', 'unstar', 'favorite', 'note', 'toggle', 'workspace'],
+    dependencies: {
+      services: ['workspaceState', 'userActivityService'],
+    },
+    omniSearch: true,
+    keybindings: ['meta', 'shift', 's'],
+    args: {
+      wsPath: T.Optional(T.String),
+    },
+  },
 ]);

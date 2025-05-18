@@ -16,6 +16,7 @@ export * from './fun-missing';
 export * from './input';
 export * from './kbd';
 export * from './separator';
+export * from './star-button';
 export * from './toaster';
 export * from './toggle-group';
 export * from './toggle';

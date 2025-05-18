@@ -5,6 +5,7 @@ import {
   Button,
   Separator,
   Sidebar,
+  StarButton,
 } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
@@ -136,8 +137,36 @@ function ToolbarRightSection({
   wideEditor,
   toggleEditor,
 }: ToolbarRightSectionProps) {
+  const coreServices = useCoreServices();
+  const isCurrentWsPathStarred = useAtomValue(
+    coreServices.userActivityService.$isCurrentWsPathStarred,
+  );
+  const currentWsPathValue = useAtomValue(
+    coreServices.workspaceState.$currentWsPath,
+  );
+  const currentWsPathString = currentWsPathValue?.wsPath;
+
+  const handleStarClick = () => {
+    coreServices.commandDispatcher.dispatch(
+      'command::workspace:toggle-star',
+      { wsPath: currentWsPathString },
+      'AppHeader.ToolbarRightSection',
+    );
+  };
+
   return (
     <div className="flex items-center">
+      <StarButton
+        isStarred={isCurrentWsPathStarred}
+        onClick={handleStarClick}
+        className="ml-2"
+        disabled={!currentWsPathString}
+        title={
+          isCurrentWsPathStarred
+            ? t.app.common.unstarItem
+            : t.app.common.starItem
+        }
+      />
       {isWideScreen && (
         <Button
           variant="ghost"

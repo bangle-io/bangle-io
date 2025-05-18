@@ -1,5 +1,5 @@
 import { BaseError } from '@bangle.io/base-error';
-import { isPlainObject } from '@bangle.io/mini-js-utils';
+import { isAbortError, isPlainObject } from '@bangle.io/mini-js-utils';
 import type { AppError } from '@bangle.io/types';
 
 export type AppErrorName = AppError['name'];
@@ -77,4 +77,26 @@ export function handleAppError(
 
 export function isAppError(error: unknown): error is BaseError {
   return getCauseObject(error) !== null;
+}
+
+export async function wrapPromiseInAppErrorHandler<T>(
+  promise: Promise<T>,
+  fallbackValue: NoInfer<T>,
+  emitAppErrorFn: (error: BaseError) => void,
+): Promise<T> {
+  try {
+    return await promise;
+  } catch (error) {
+    if (isAbortError(error)) {
+      return fallbackValue;
+    }
+    if (error instanceof Error) {
+      const appError = getAppErrorCause(error as BaseError);
+      if (appError) {
+        emitAppErrorFn(error);
+        return fallbackValue;
+      }
+    }
+    throw error;
+  }
 }

@@ -29,9 +29,12 @@ export function makeTestLogger() {
   };
 }
 
-export const makeTestCommonOpts = () => {
+export const makeTestCommonOpts = ({
+  controller = new AbortController(),
+}: {
+  controller?: AbortController;
+} = {}) => {
   const { logger, mockLog } = makeTestLogger();
-  const controller = new AbortController();
   const rootEmitter = new RootEmitter({
     abortSignal: controller.signal,
   });

@@ -1,7 +1,9 @@
 import {
   BaseService,
   type BaseServiceContext,
+  type Logger,
   atomStorage,
+  createAsyncAtom,
   throwAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
@@ -11,8 +13,8 @@ import type {
   CommandDispatchResult,
   ScopedEmitter,
 } from '@bangle.io/types';
+import type { WsPath } from '@bangle.io/ws-path';
 import { type PrimitiveAtom, atom } from 'jotai';
-import { unwrap } from 'jotai/utils';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 import type { WorkspaceStateService } from './workspace-state-service';
 
@@ -34,6 +36,7 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 };
 
 const ACTIVITY_LOG_KEY = 'ws-activity';
+const STARRED_ITEMS_KEY = 'starred-items';
 
 /**
  * Tracks user activities like recent workspaces and commands executed
@@ -41,25 +44,25 @@ const ACTIVITY_LOG_KEY = 'ws-activity';
 export class UserActivityService extends BaseService {
   static deps = ['workspaceState', 'workspaceOps', 'syncDatabase'] as const;
 
+  // TODO: activityLogCache need to have size limit
   private activityLogCache: Map<string, ActivityLogEntry[]> = new Map();
   private maxRecentEntries!: number;
   private activityCooldownMs!: number;
   private $refreshActivityCounter = atom(0);
   private $_timesAppLoaded: PrimitiveAtom<number> | undefined;
+  private $starredItemsChangeCounter = atom(0);
+  private starredItemManager: StarredItemManager;
 
   $isNewUser = atom((get) => {
     return get(this.$timesAppLoaded) <= 1;
   });
 
-  $allRecentWsPaths = unwrap(
-    atom(async (get): Promise<Array<{ wsPath: string; timestamp: number }>> => {
+  $allRecentWsPaths = createAsyncAtom(
+    async (get): Promise<Array<{ wsPath: string; timestamp: number }>> => {
       await this.mountPromise;
       get(this.$refreshActivityCounter);
 
-      // Get all workspaces
       const workspaces = await this.workspaceOps.getAllWorkspaces();
-
-      // Collect recent paths from all workspaces
       const allActivities: ActivityLogEntry<'ws-path'>[] = [];
 
       for (const workspace of workspaces) {
@@ -67,10 +70,8 @@ export class UserActivityService extends BaseService {
         allActivities.push(...activities);
       }
 
-      // Sort by timestamp descending
       allActivities.sort((a, b) => b.timestamp - a.timestamp);
 
-      // Filter unique paths
       const seen = new Set<string>();
       return allActivities
         .map((activity) => ({
@@ -85,37 +86,36 @@ export class UserActivityService extends BaseService {
           return true;
         })
         .slice(0, this.maxRecentEntries);
-    }),
+    },
     (): Array<{ wsPath: string; timestamp: number }> => [],
+    this.emitAppError,
   );
 
-  $recentWsPaths = unwrap(
-    atom(async (get): Promise<string[]> => {
+  $recentWsPaths = createAsyncAtom(
+    async (get): Promise<string[]> => {
       await this.mountPromise;
-      const wsName = get(this.workspaceState.$wsName);
+      const wsName = get(this.workspaceState.$currentWsName);
       const wsPaths = get(this.workspaceState.$wsPaths);
       const wsPathsSet = new Set(wsPaths.map((path) => path.wsPath));
 
-      // If no workspace is active, return empty array
       if (!wsName) {
         return [];
       }
 
-      // Get all recent paths
       const allRecentPaths = await get(this.$allRecentWsPaths);
 
-      // Filter to only include paths from current workspace and existing files
       return allRecentPaths
         .filter((item) => wsPathsSet.has(item.wsPath))
         .map((item) => item.wsPath);
-    }),
+    },
     (): string[] => [],
+    this.emitAppError,
   );
 
-  $recentCommands = unwrap(
-    atom(async (get): Promise<string[]> => {
+  $recentCommands = createAsyncAtom(
+    async (get): Promise<string[]> => {
       await this.mountPromise;
-      const wsName = get(this.workspaceState.$wsName);
+      const wsName = get(this.workspaceState.$currentWsName);
       get(this.$refreshActivityCounter);
 
       if (!wsName) {
@@ -133,9 +133,43 @@ export class UserActivityService extends BaseService {
           seen.add(commandId);
           return true;
         });
-    }),
+    },
     (): string[] => [],
+    this.emitAppError,
   );
+
+  $starredWsPaths = createAsyncAtom(
+    async (get): Promise<string[]> => {
+      await this.mountPromise;
+      get(this.$starredItemsChangeCounter);
+      const wsPaths = get(this.workspaceState.$wsPaths);
+      const wsName = get(this.workspaceState.$currentWsName);
+      if (wsPaths.length === 0 || !wsName) {
+        return [];
+      }
+      const starredWsPaths =
+        await this.starredItemManager.getStarredItems(wsName);
+      return starredWsPaths;
+    },
+    () => [],
+    this.emitAppError,
+  );
+
+  $isCurrentWsPathStarred = atom((get) => {
+    const currentWsPath = get(this.workspaceState.$currentWsPath);
+    if (!currentWsPath) {
+      return false;
+    }
+
+    const starredPathsInCurrentWs = get(this.$starredWsPaths);
+    return starredPathsInCurrentWs.includes(currentWsPath.wsPath);
+  });
+
+  resolveAtoms() {
+    return {
+      starredWsPaths: this.store.get(this.$starredWsPaths),
+    };
+  }
 
   get $timesAppLoaded() {
     if (!this.$_timesAppLoaded) {
@@ -165,6 +199,11 @@ export class UserActivityService extends BaseService {
     },
   ) {
     super(SERVICE_NAME.userActivityService, context, dep);
+    this.starredItemManager = new StarredItemManager(
+      this.dep.workspaceOps,
+      this.dep.workspaceState,
+      this.logger,
+    );
   }
 
   postInstantiate(): void {
@@ -220,7 +259,7 @@ export class UserActivityService extends BaseService {
     }
 
     this.logger.debug('Recording command activity', result);
-    const wsName = this.store.get(this.workspaceState.$wsName);
+    const wsName = this.store.get(this.workspaceState.$currentWsName);
 
     // Skip if no workspace is active
     if (!wsName) {
@@ -346,5 +385,94 @@ export class UserActivityService extends BaseService {
     await this.mountPromise;
     const recentEntities = await this.getRecent(wsName, entityType);
     return recentEntities[0];
+  }
+
+  public async toggleStarItem(
+    item: WsPath,
+    desiredState?: boolean,
+  ): Promise<void> {
+    await this.mountPromise;
+    await this.starredItemManager.toggleStarItem(item, desiredState);
+    this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
+  }
+}
+
+class StarredItemManager {
+  private readonly logger: Logger;
+  constructor(
+    private readonly workspaceOps: WorkspaceOpsService,
+    private readonly workspaceState: WorkspaceStateService,
+    logger: Logger,
+  ) {
+    this.logger = logger.child('StarredItemManager');
+  }
+
+  private async _updateStarredItemsList(
+    wsName: string,
+    updateFn: (currentItems: string[]) => string[],
+  ): Promise<void> {
+    const { currentWsName, wsPaths } = this.workspaceState.resolveAtoms();
+    if (currentWsName !== wsName) {
+      this.logger.warn(
+        `Current workspace ${currentWsName} does not match requested workspace ${wsName}.`,
+      );
+      return;
+    }
+
+    await this.workspaceOps.updateWorkspaceMetadata(wsName, (metadata) => {
+      const wsPathsSet = new Set(wsPaths.map((path) => path.wsPath));
+      let existingRawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
+      if (!Array.isArray(existingRawStarredItems)) {
+        this.logger.error(
+          `Invalid starred items metadata for ${wsName}. Expected array, got ${typeof existingRawStarredItems}.`,
+        );
+        existingRawStarredItems = [];
+      }
+      const newRawStarredItems = updateFn(existingRawStarredItems).filter(
+        (item) => wsPathsSet.has(item),
+      );
+      this.logger.debug(
+        `Persisting ${newRawStarredItems.length} starred item(s) in ${wsName}.`,
+      );
+      return {
+        ...metadata,
+        [STARRED_ITEMS_KEY]: newRawStarredItems,
+      };
+    });
+  }
+
+  async toggleStarItem(item: WsPath, desiredState?: boolean): Promise<void> {
+    const { wsName, wsPath } = item;
+    await this._updateStarredItemsList(wsName, (currentItems) => {
+      const set = new Set(currentItems);
+      const shouldBeStarred = desiredState ?? !set.has(wsPath);
+
+      if (shouldBeStarred) {
+        set.add(wsPath);
+      } else {
+        set.delete(wsPath);
+      }
+      return Array.from(set);
+    });
+  }
+
+  async getStarredItems(wsName: string): Promise<string[]> {
+    const metadata = await this.workspaceOps.getWorkspaceMetadata(wsName);
+    const rawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
+
+    if (!Array.isArray(rawStarredItems)) {
+      this.logger.error(
+        `Invalid starred items metadata for ${wsName}. Expected array, got ${typeof rawStarredItems}.`,
+      );
+      return [];
+    }
+
+    const { wsPaths } = this.workspaceState.resolveAtoms();
+    const existingWsPaths = new Set(wsPaths.map((p) => p.wsPath));
+    const validStarredPaths: string[] = rawStarredItems.filter((item) =>
+      existingWsPaths.has(item),
+    );
+
+    return validStarredPaths;
   }
 }

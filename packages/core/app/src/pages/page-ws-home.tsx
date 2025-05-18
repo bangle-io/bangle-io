@@ -2,6 +2,7 @@ import { useCoreServices } from '@bangle.io/context';
 import { FunMissing } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
+import { Star as StarIcon } from 'lucide-react';
 import React from 'react';
 import { getRelativeTimeOrNull } from '../common/get-relative-time';
 import { Actions } from '../components/common/actions';
@@ -25,6 +26,9 @@ export function PageWsHome() {
     coreServices.workspaceState.$currentWsName,
   );
   const groups = useGroupedWorkspaceNotes();
+  const starredPaths = useAtomValue(
+    coreServices.userActivityService.$starredWsPaths,
+  );
 
   // Prepare recent notes list (just top MAX_NOTES_TO_SHOW from "all" sorted)
   const allNotes = React.useMemo(() => {
@@ -34,15 +38,35 @@ export function PageWsHome() {
       .slice(0, MAX_NOTES_TO_SHOW);
   }, [groups]);
 
-  const notesWithTime = React.useMemo(() => {
-    return allNotes.map((note) => ({
+  const notesWithTimeOrStar = React.useMemo(() => {
+    const starredNotesRaw = (groups.all || []).filter((note) =>
+      starredPaths.includes(note.wsPath),
+    );
+
+    const recentNotesRaw = allNotes.filter(
+      (note) => !starredPaths.includes(note.wsPath),
+    );
+
+    const starredNotes = starredNotesRaw.map((note) => ({
       label: note.fileName,
       href: note.href,
-      relativeTime: note.timestamp
-        ? getRelativeTimeOrNull(note.timestamp)
-        : null,
+      rightElement: (
+        <StarIcon className="h-4 w-4 fill-current text-yellow-500" />
+      ),
     }));
-  }, [allNotes]);
+
+    const recentNotes = recentNotesRaw.map((note) => ({
+      label: note.fileName,
+      href: note.href,
+      rightElement: note.timestamp ? (
+        <span className="text-muted-foreground text-xs">
+          {getRelativeTimeOrNull(note.timestamp)}
+        </span>
+      ) : null,
+    }));
+
+    return [...starredNotes, ...recentNotes];
+  }, [allNotes, groups.all, starredPaths]);
 
   const noItemsMessage = t.app.pageWsHome.noNotesMessage;
 
@@ -55,7 +79,7 @@ export function PageWsHome() {
             <PageHeader title={`${currentWsName}`} />
             <ItemList
               heading={t.app.pageWsHome.recentNotesHeading}
-              items={notesWithTime}
+              items={notesWithTimeOrStar}
               emptyMessage={noItemsMessage}
               showViewMore={groups.all && groups.all.length > MAX_NOTES_TO_SHOW}
               onClickViewMore={() =>
@@ -66,7 +90,7 @@ export function PageWsHome() {
                 )
               }
             />
-            {(groups.isEmpty || notesWithTime.length > 0) && (
+            {(groups.isEmpty || notesWithTimeOrStar.length > 0) && (
               <Actions
                 actions={[
                   {

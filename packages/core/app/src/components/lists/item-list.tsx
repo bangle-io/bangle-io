@@ -4,7 +4,7 @@ import React from 'react';
 export interface Item {
   label: string;
   href: string;
-  relativeTime?: string | null;
+  rightElement?: React.ReactNode;
 }
 
 interface ItemListProps {
@@ -16,7 +16,7 @@ interface ItemListProps {
 }
 
 /**
- * Renders a list of navigable items (links) with a heading, optional relative time,
+ * Renders a list of navigable items (links) with a heading, optional right element,
  * and a 'View More' option.
  */
 export function ItemList({
@@ -34,7 +34,7 @@ export function ItemList({
             {heading}
           </h3>
           <div className="flex w-full flex-col gap-1">
-            {items.map(({ label, href, relativeTime }) => (
+            {items.map(({ label, href, rightElement }) => (
               <Button
                 key={label + href}
                 variant="ghost"
@@ -43,10 +43,8 @@ export function ItemList({
               >
                 <a href={href} className="flex items-center justify-between">
                   <span className="truncate font-medium">{label}</span>
-                  {relativeTime && (
-                    <span className="ml-2 flex-shrink-0 text-muted-foreground text-xs">
-                      {relativeTime}
-                    </span>
+                  {rightElement && (
+                    <span className="ml-2 flex-shrink-0">{rightElement}</span>
                   )}
                 </a>
               </Button>

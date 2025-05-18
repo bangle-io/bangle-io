@@ -25,7 +25,11 @@ export function PageWelcome() {
           route: 'ws-home',
           payload: { wsName: ws.name },
         }),
-        relativeTime: getRelativeTimeOrNull(ws.lastModified),
+        rightElement: ws.lastModified ? (
+          <span className="text-muted-foreground text-xs">
+            {getRelativeTimeOrNull(ws.lastModified)}
+          </span>
+        ) : null,
         timestamp: ws.lastModified,
       }))
       .sort((a, b) => b.timestamp - a.timestamp)

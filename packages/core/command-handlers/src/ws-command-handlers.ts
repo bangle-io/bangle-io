@@ -311,7 +311,7 @@ export const wsCommandHandlers = [
     'command::ws:daily-note',
     async ({ workspaceState, fileSystem, navigation }, args, key) => {
       const { store, dispatch } = getCtx(key);
-      const wsName = store.get(workspaceState.$wsName);
+      const wsName = store.get(workspaceState.$currentWsName);
       const currentWsPath = store.get(workspaceState.$currentWsPath);
 
       if (!wsName) {
@@ -361,6 +361,34 @@ export const wsCommandHandlers = [
           navigate: true,
         });
       }
+    },
+  ),
+
+  c(
+    'command::workspace:toggle-star',
+    async (
+      { workspaceState, userActivityService },
+      { wsPath: argWsPath },
+      key,
+    ) => {
+      const { store } = getCtx(key);
+      const currentOpenWsPath = store.get(
+        workspaceState.$currentWsPath,
+      )?.wsPath;
+      const wsPathToToggleString = argWsPath ?? currentOpenWsPath;
+
+      if (!wsPathToToggleString) {
+        throwAppError(
+          'error::workspace:no-note-opened',
+          t.app.errors.workspace.noNoteOpened,
+          {},
+        );
+        return;
+      }
+
+      await userActivityService.toggleStarItem(
+        WsPath.fromString(wsPathToToggleString),
+      );
     },
   ),
 ];

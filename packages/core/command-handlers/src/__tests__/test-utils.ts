@@ -61,7 +61,9 @@ export async function setupTest({
       assertIsDefined(workspace);
       services.navigation.goWorkspace(workspace.name);
       await vi.waitFor(() => {
-        expect(services.navigation.resolveAtoms().wsName).toBe(workspace.name);
+        expect(services.workspaceState.resolveAtoms().currentWsName).toBe(
+          workspace.name,
+        );
       });
     }
     if (autoNavigate === 'ws-path') {

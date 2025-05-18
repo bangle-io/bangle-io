@@ -36,7 +36,7 @@ export const noteManagementHandlers = [
     ({ workbenchState, workspaceState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
       const wsPaths = store.get(workspaceState.$wsPaths);
-      const wsName = store.get(workspaceState.$wsName);
+      const wsName = store.get(workspaceState.$currentWsName);
 
       if (!wsName || !wsPaths || wsPaths.length === 0) {
         throwAppError(
@@ -279,7 +279,7 @@ export const noteManagementHandlers = [
     'command::ui:create-directory-dialog',
     ({ workbenchState, workspaceState }, _, key) => {
       const { store, dispatch } = getCtx(key);
-      const wsName = store.get(workspaceState.$wsName);
+      const wsName = store.get(workspaceState.$currentWsName);
 
       if (!wsName) {
         throwAppError(

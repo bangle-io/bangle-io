@@ -28,6 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/translations": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/types": "workspace:*",

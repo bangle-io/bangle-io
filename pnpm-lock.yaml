@@ -1114,6 +1114,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/translations':
+        specifier: workspace:*
+        version: link:../../shared/translations
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types

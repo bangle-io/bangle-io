@@ -33,6 +33,8 @@ export const t = {
       continueButton: 'Continue',
       searchLabel: 'Search',
       searchInputPlaceholder: 'Search...',
+      starItem: 'Star this item',
+      unstarItem: 'Unstar this item',
     },
     toolbar: {
       toggleMaxWidth: 'Toggle Max Width',
@@ -179,6 +181,7 @@ export const t = {
           `Invalid workspace metadata for ${wsName}. Missing root dir handle`,
         noNoteOpenToClone: 'No note open to clone',
         noWorkspaceForDailyNote: 'No workspace is open to create a daily note.',
+        noNoteOpened: 'No note is currently open.',
       },
       file: {
         invalidNotePath: 'Invalid note path provided',

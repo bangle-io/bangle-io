@@ -3,13 +3,13 @@ import {
   type BaseServiceContext,
   arrayEqual,
   atomWithCompare,
+  createAsyncAtom,
+  wrapPromiseInAppErrorHandler,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { WorkspaceInfo } from '@bangle.io/types';
 import { type WsFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
-import { unwrap } from 'jotai/utils';
 import type { FileSystemService } from './file-system-service';
 import type { NavigationService } from './navigation-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
@@ -23,15 +23,15 @@ const EMPTY_STRING_ARRAY: string[] = [];
 export class WorkspaceStateService extends BaseService {
   static deps = ['navigation', 'fileSystem', 'workspaceOps'] as const;
 
-  $workspaces = unwrap(
-    atom<Promise<WorkspaceInfo[]>>(async (get) => {
+  $workspaces = createAsyncAtom(
+    async (get) => {
       get(this.workspaceOps.$workspaceInfoListChange);
-      return this.atomHandleAppError(this.workspaceOps.getAllWorkspaces(), []);
-    }),
-    (prev): WorkspaceInfo[] => prev || [],
+      const workspaces = await this.workspaceOps.getAllWorkspaces();
+      return workspaces;
+    },
+    (prev) => prev || [],
+    this.emitAppError,
   );
-
-  $wsName = atom<string | undefined>((get) => get(this.navigation.$wsName));
 
   private $rawWsPaths = atomWithCompare<string[]>(
     EMPTY_STRING_ARRAY,
@@ -43,6 +43,7 @@ export class WorkspaceStateService extends BaseService {
       .map((path) => WsPath.fromString(path).asFile())
       .filter((path) => path !== undefined);
   });
+
   $activeWsPaths = atom<WsFilePath[]>((get) => {
     const wsPath = get(this.navigation.$wsFilePath);
     return wsPath ? [wsPath] : EMPTY_FILE_PATH_ARRAY;
@@ -61,9 +62,10 @@ export class WorkspaceStateService extends BaseService {
 
   /**
    * This atom is used to check if the current workspace even exists.
+   * Prefer using this over $wsName as it is more robust.
    */
   $currentWsName = atom((get) => {
-    const wsName = get(this.$wsName);
+    const wsName = get(this.navigation.$wsName);
     const workspaces = get(this.$workspaces);
     return workspaces.find((ws) => ws.name === wsName)?.name;
   });
@@ -73,6 +75,7 @@ export class WorkspaceStateService extends BaseService {
       workspaces: this.store.get(this.$workspaces),
       wsPaths: this.store.get(this.$wsPaths),
       currentWsName: this.store.get(this.$currentWsName),
+      currentWsPath: this.store.get(this.$currentWsPath),
     };
   }
 
@@ -93,14 +96,15 @@ export class WorkspaceStateService extends BaseService {
         atomEffect((get, set) => {
           const abortController = new AbortController();
           get(this.fileSystem.$fileTreeChangeCount);
-          const wsName = get(this.$wsName);
+          const wsName = get(this.$currentWsName);
           if (!wsName) {
             set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
             return;
           }
-          this.atomHandleAppError(
+          wrapPromiseInAppErrorHandler(
             this.fileSystem.listFiles(wsName, abortController.signal),
             EMPTY_STRING_ARRAY,
+            this.emitAppError,
           ).then((paths) => {
             if (!abortController.signal.aborted) {
               set(this.$rawWsPaths, paths);

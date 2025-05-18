@@ -19,7 +19,7 @@ export function AppToolbar() {
   const coreServices = useCoreServices();
   const wsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);
   const wsPath = useAtomValue(coreServices.workspaceState.$currentWsPath);
-  const wsName = useAtomValue(coreServices.workspaceState.$wsName);
+  const wsName = useAtomValue(coreServices.workspaceState.$currentWsName);
   const [wideEditor, setWideEditor] = useAtom(
     coreServices.workbenchState.$wideEditor,
   );
