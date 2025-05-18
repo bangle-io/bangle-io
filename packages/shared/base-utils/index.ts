@@ -1,6 +1,6 @@
 import { isPlainObject } from '@bangle.io/mini-js-utils';
 import type { EventSenderMetadata } from '@bangle.io/types';
-import { BaseService } from './base-service-2';
+import { BaseService } from './base-service';
 
 export * from './cx';
 export * from './github-bug-url';
@@ -13,7 +13,7 @@ export * from '@bangle.io/logger';
 export * from '@bangle.io/mini-js-utils';
 export * from './base-error-service';
 export * from './jotai';
-export * from './base-service-2';
+export * from './base-service';
 
 // TODO this is stub
 export function getEventSenderMetadata({

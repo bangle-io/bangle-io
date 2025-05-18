@@ -108,7 +108,7 @@ export class UserActivityService extends BaseService {
         .filter((item) => wsPathsSet.has(item.wsPath))
         .map((item) => item.wsPath);
     },
-    (): string[] => [],
+    () => [],
     this.emitAppError,
   );
 
@@ -134,7 +134,7 @@ export class UserActivityService extends BaseService {
           return true;
         });
     },
-    (): string[] => [],
+    () => [],
     this.emitAppError,
   );
 

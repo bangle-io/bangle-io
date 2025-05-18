@@ -1,4 +1,4 @@
-import { BaseService } from './base-service-2';
+import { BaseService } from './base-service';
 import { isAppError } from './throw-app-error';
 
 export abstract class BaseErrorService extends BaseService {

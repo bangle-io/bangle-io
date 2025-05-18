@@ -1,7 +1,7 @@
 import { Container, type ServiceContext } from '@bangle.io/poor-mans-di';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import { BaseService, type BaseServiceContext } from '../base-service-2';
+import { BaseService, type BaseServiceContext } from '../base-service';
 
 describe('BaseService', () => {
   class TestService extends BaseService {
