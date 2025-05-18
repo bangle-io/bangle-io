@@ -44,6 +44,6 @@
     "prosemirror-state": "^1.4.3",
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.10.4",
-    "prosemirror-view": "^1.39.2"
+    "prosemirror-view": "^1.39.3"
   }
 }

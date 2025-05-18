@@ -28,9 +28,9 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/translations": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/translations": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-hooks": "workspace:*",
     "@bangle.io/ui-utils": "workspace:*",
@@ -49,7 +49,7 @@
     "@radix-ui/react-toggle": "^1.1.8",
     "@radix-ui/react-toggle-group": "^1.1.9",
     "@radix-ui/react-tooltip": "^1.2.6",
-    "@storybook/types": "^8.6.12",
+    "@storybook/types": "^8.6.14",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "lucide-react": "^0.485.0",
@@ -57,6 +57,6 @@
     "sonner": "^1.7.4"
   },
   "devDependencies": {
-    "@storybook/react": "^8.6.12"
+    "@storybook/react": "^8.6.14"
   }
 }
