@@ -113,7 +113,7 @@ const TreeNode = function TreeNode({
           // Apply drop indicator style also to root files when hovered over
           isOver &&
             !isDroppableDisabled &&
-            'rounded bg-sidebar-accent/50 outline outline-accent drop-shadow-xl',
+            'rounded bg-sidebar-accent/50 outline-accent outline-solid drop-shadow-xl',
         )}
         style={{ contentVisibility: 'auto' }}
       >
@@ -197,7 +197,7 @@ const TreeNode = function TreeNode({
       ref={dropRef}
       className={cn(
         isOver &&
-          'rounded bg-sidebar-accent/50 outline outline-accent drop-shadow-xl',
+          'rounded bg-sidebar-accent/50 outline-accent outline-solid drop-shadow-xl',
       )}
     >
       <Collapsible

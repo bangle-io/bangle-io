@@ -39,7 +39,7 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@floating-ui/dom": "^1.7.0",
-    "@types/react": "^19.1.4",
+    "@types/react": "^19.1.5",
     "date-fns": "^4.1.0",
     "jotai": "^2.12.4",
     "lucide-react": "^0.511.0",

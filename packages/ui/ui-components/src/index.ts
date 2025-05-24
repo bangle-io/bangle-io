@@ -21,4 +21,5 @@ export * from './toaster';
 export * from './toggle-group';
 export * from './toggle';
 export * from './tooltip';
+export * from './types';
 export * from './workspace-dialog';

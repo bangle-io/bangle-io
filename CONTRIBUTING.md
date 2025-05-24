@@ -1,5 +1,3 @@
-> THIS is WIP
-
 ## Contributing
 
 **pnpm**
@@ -44,9 +42,16 @@ pnpm vitest
 
 If you are in mac, you will need to run docker to update the snapshots.
 
-CT Snapshot update
+CT Snapshot update (local)
+
 ```bash
-docker run -p 9323 -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.51.1-noble bash -c 'cd work && corepack enable && corepack prepare --activate  && pnpm install  && pnpm run e2e-install && NODE_OPTIONS="--max-old-space-size=8144" pnpm run e2e-ct-update-snapshots'
+pnpm run e2e-ct-update-snapshots
+```
+
+CT Snapshot update (docker)
+
+```bash
+docker run -p 9323 -v $(pwd):/work/ mcr.microsoft.com/playwright:v1.52.0-noble bash -c 'cd work && corepack enable && corepack prepare --activate  && pnpm install  && pnpm run e2e-install && NODE_OPTIONS="--max-old-space-size=8144" pnpm run e2e-ct-update-snapshots'
 ```
 
 Aria snapshot update
@@ -61,12 +66,10 @@ pn e2e-update-snapshots
 pnpm --filter "@bangle.io/e2e-tests" run test --debug
 ```
 
-
 **Deployment**
 
-App is deployed via netlify. 
+App is deployed via cloudflare pages.
 
 Push to `staging` branch will deploy to https://staging.app.bangle.io/
 
 Push to `production` branch will deploy to https://app.bangle.io/
-

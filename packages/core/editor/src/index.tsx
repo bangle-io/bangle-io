@@ -42,7 +42,7 @@ export function Editor({
           )}
           data-editor-name={name}
           className={cx(
-            'ProseMirror box-border min-h-full py-8 outline-none outline-0',
+            'ProseMirror box-border min-h-full py-8 outline-0 outline-hidden',
             '[&_:not(pre)_code]:rounded-md [&_:not(pre)_code]:bg-muted/40 [&_:not(pre)_code]:px-1.5 [&_:not(pre)_code]:py-0.5 [&_:not(pre)_code]:font-mono',
             "[&_pre]:bg-muted/30 [&_span[data-mention='tag']]:text-primary [&_span[data-mention='user']]:text-accent",
             className,

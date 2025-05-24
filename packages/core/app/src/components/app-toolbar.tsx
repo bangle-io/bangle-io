@@ -28,7 +28,10 @@ export function AppToolbar() {
 
   return (
     <header
-      className={cx('h-16 w-full', !wideEditor && 'max-w-screen-md pr-8')}
+      className={cx(
+        'h-16 w-full',
+        !wideEditor && 'max-w-(--breakpoint-md) pr-8',
+      )}
     >
       <div className="flex h-full items-center justify-between">
         <ToolbarLeftSection

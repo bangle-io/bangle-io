@@ -28,7 +28,7 @@ export function PageContentContainer({
     <main
       className={cx(
         'B-app-page-content flex flex-1 flex-col gap-4',
-        !wideEditor && 'mx-auto w-full max-w-screen-md',
+        !wideEditor && 'mx-auto w-full max-w-(--breakpoint-md)',
         applyPadding && APP_MAIN_CONTENT_PADDING,
       )}
     >

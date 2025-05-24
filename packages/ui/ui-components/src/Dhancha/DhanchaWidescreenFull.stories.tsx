@@ -33,7 +33,7 @@ function App() {
       leftAside={<LeftSidebar />}
       rightAside={<NoteSidebar />}
       titlebar={
-        <div className="h-full border-colorBorderSubdued border-b border-b-1 bg-colorBgLayerFloat">
+        <div className="h-full border-colorBorderSubdued border-b border-b bg-colorBgLayerFloat">
           I am titlebar
         </div>
       }

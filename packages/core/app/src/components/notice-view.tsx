@@ -1,3 +1,4 @@
+import type { ActionVariant } from '@bangle.io/ui-components';
 import React from 'react';
 import { Actions } from './actions';
 import { ContentSection } from './content-section';
@@ -10,7 +11,7 @@ interface NoticeViewProps {
   illustration?: React.ReactNode;
   actions?: {
     label: string;
-    variant?: 'default' | 'outline' | 'ghost';
+    variant?: ActionVariant;
     onClick: () => void;
   }[];
 }

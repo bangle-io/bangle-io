@@ -1,9 +1,9 @@
-import { Button } from '@bangle.io/ui-components';
+import { type ActionVariant, Button } from '@bangle.io/ui-components';
 import React from 'react';
 
 interface Action {
   label: string;
-  variant?: 'default' | 'outline' | 'ghost';
+  variant?: ActionVariant;
   onClick: () => void;
 }
 

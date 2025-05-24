@@ -197,7 +197,7 @@ function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
       >
         <span className="truncate">{file.label}</span>
         {file.isCurrent && (
-          <span className="ml-2 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-primary" /> // Use primary color
+          <span className="ml-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary" /> // Use primary color
         )}
       </Breadcrumb.BreadcrumbLink>
     </DropdownMenu.DropdownMenuItem>

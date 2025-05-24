@@ -302,7 +302,7 @@ function AppSidebarFooter({
           fancy={true}
         />
         <DropdownMenuContent
-          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
           align="start"
           side={isMobile ? 'top' : dropdownPosition}
           sideOffset={4}
@@ -382,7 +382,7 @@ function WorkspaceSwitcher({
           />
 
           <DropdownMenuContent
-            className="max-h-[400px] w-[--radix-dropdown-menu-trigger-width] min-w-56 overflow-y-auto rounded-lg"
+            className="max-h-[400px] w-(--radix-dropdown-menu-trigger-width) min-w-56 overflow-y-auto rounded-lg"
             align="start"
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}

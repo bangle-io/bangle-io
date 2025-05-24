@@ -44,7 +44,7 @@ export function ItemList({
                 <a href={href} className="flex items-center justify-between">
                   <span className="truncate font-medium">{label}</span>
                   {rightElement && (
-                    <span className="ml-2 flex-shrink-0">{rightElement}</span>
+                    <span className="ml-2 shrink-0">{rightElement}</span>
                   )}
                 </a>
               </Button>

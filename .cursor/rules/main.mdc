@@ -11,6 +11,7 @@ Tech Stack
 
 bangel.io is an opensource local browser based note taking web app.
 
+- PNPM 
 - React
 - TypeScript
 - Vite

@@ -523,7 +523,7 @@ const ListItem: React.FC<ListItemProps> = ({
             </h3>
             <p className="text-foreground/80 text-sm">{description}</p>
           </div>
-          <div className="h-4 w-4 flex-shrink-0">
+          <div className="h-4 w-4 shrink-0">
             <Check
               className={`h-4 w-4 transition-opacity duration-300 ${
                 isSelected ? 'opacity-100' : 'opacity-0'

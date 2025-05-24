@@ -47,18 +47,17 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
 
   await test.step('verify toolbar', async () => {
     await expect(page.locator('header')).toMatchAriaSnapshot(`
-      - button "Toggle Sidebar":
-        - img
+      - button "Toggle Sidebar"
       - navigation "breadcrumb":
         - list:
           - listitem:
-            - link:
-              - img
+            - link "Home":
+              - /url: /ws#route=ws-home&wsName=test-123
           - listitem:
             - button "test-note-1.md"
-      - button "Toggle Max Width":
-        - img
-      `);
+      - button "Star this item"
+      - button "Toggle Max Width"
+    `);
   });
 
   await test.step('edit note content', async () => {

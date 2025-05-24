@@ -2,6 +2,8 @@ import { ThemeManager } from '@bangle.io/color-scheme-manager/src/index';
 import getEnvVars from '@bangle.io/env-vars';
 import { languages } from '@bangle.io/translations';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+// @ts-ignore - moduleResolution error
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
@@ -68,6 +70,7 @@ export default defineConfig(async (env) => {
         org: 'self-zf',
         project: 'bangle-v2',
       }),
+      tailwindcss(),
       react(),
     ],
     define: {

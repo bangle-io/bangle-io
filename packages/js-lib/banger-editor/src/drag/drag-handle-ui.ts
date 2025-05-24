@@ -9,7 +9,7 @@ export function createDragHandle(): HTMLElement {
     'duration-200',
     'ease-linear',
     'fixed',
-    'focus-visible:outline-none',
+    'focus-visible:outline-hidden',
     'focus-visible:ring-2',
     'focus-visible:ring-ring',
     'h-6',

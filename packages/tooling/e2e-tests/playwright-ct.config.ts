@@ -1,5 +1,7 @@
 import getEnvVars from '@bangle.io/env-vars';
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
+// @ts-ignore - moduleResolution error
+import tailwindcss from '@tailwindcss/vite';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -40,6 +42,7 @@ export default defineConfig({
         define: {
           ...envVars.globalIdentifiers,
         },
+        plugins: [tailwindcss()],
       };
     },
   },

@@ -135,7 +135,7 @@ export function LinkMenu({ editorName }: { editorName: string }) {
 
   return (
     <div ref={menuRef} style={FLOATING_INITIAL_STYLE}>
-      <div className="flex items-center gap-0.5 rounded-md border bg-popover p-0.5 shadow-sm ring-offset-background transition-all duration-100 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+      <div className="flex items-center gap-0.5 rounded-md border bg-popover p-0.5 shadow-xs ring-offset-background transition-all duration-100 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <Input
           value={
             href || ext.link.query.getLinkDetails(editorView.state)?.href || ''
