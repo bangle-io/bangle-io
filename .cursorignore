@@ -1,3 +1,13 @@
 .*
 *.yaml
 
+biome.json
+vitest.config.ts
+local-ci-check.sh
+components.json
+RANT.md
+vitest-global-setup.js
+plopfile.js
+CHANGELOG.md
+netlify.toml
+globals.d.ts
