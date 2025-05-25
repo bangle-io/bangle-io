@@ -31,11 +31,7 @@ import {
 
 import { PmEditorService } from '@bangle.io/editor';
 import { Container } from '@bangle.io/poor-mans-di';
-import {
-  HashStrategy,
-  PathBasedStrategy,
-  QueryStringStrategy,
-} from '@bangle.io/service-platform';
+import { HashStrategy } from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
   Command,

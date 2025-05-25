@@ -1,4 +1,4 @@
-import { ThemeManager } from '@bangle.io/color-scheme-manager/src/index';
+import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import getEnvVars from '@bangle.io/env-vars';
 import { languages } from '@bangle.io/translations';
 import { sentryVitePlugin } from '@sentry/vite-plugin';

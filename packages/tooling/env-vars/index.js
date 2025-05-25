@@ -5,6 +5,18 @@ const { BangleConfig } = require('@bangle.io/config-template');
 
 const releaseVersion = require('../../../package.json').version;
 
+const IS_CLOUDFLARE_PAGES = process.env.CF_PAGES === '1';
+const IS_GITHUB_ACTIONS = process.env.GITHUB_ACTIONS === 'true';
+const IS_CI_BUILD = IS_CLOUDFLARE_PAGES || IS_GITHUB_ACTIONS;
+
+const GIT_BRANCH = process.env.CF_PAGES_BRANCH || process.env.GITHUB_REF_NAME;
+const GIT_COMMIT_SHA =
+  process.env.CF_PAGES_COMMIT_SHA || process.env.GITHUB_SHA;
+
+const CI_BUILD_ID = GIT_COMMIT_SHA;
+
+const BANGLE_HOT_ENABLED = process.env.BANGLE_HOT;
+
 function readChangelogText() {
   return fs.readFileSync(
     path.join(__dirname, '..', '..', '..', 'CHANGELOG.md'),
@@ -16,43 +28,26 @@ function readChangelogText() {
  * @returns either `local`, `production`, `staging` or `dev/*` where * is the current branch name
  */
 function getAppEnv(isProd) {
-  if (!isProd || !process.env.NETLIFY) {
+  if (!isProd || !IS_CI_BUILD) {
     return 'local';
   }
-  const branch = process.env.BRANCH;
 
-  // comes from netlify
-  switch (process.env.CONTEXT) {
-    case 'production': {
-      if (branch === 'production') {
-        return 'production';
-      }
-
-      return branch;
-    }
-
-    case 'deploy-preview':
-    case 'branch-deploy': {
-      const branch = process.env.BRANCH;
-
-      if (branch === 'staging') {
-        return 'staging';
-      }
-
-      return `dev/${branch}`;
-    }
-
-    default: {
-      throw new Error('Unknown CONTEXT');
-    }
+  if (GIT_BRANCH === 'production') {
+    return 'production';
   }
+  if (GIT_BRANCH === 'staging' || GIT_BRANCH === 'main') {
+    return 'staging';
+  }
+
+  return `dev/${GIT_BRANCH}`;
 }
+
 function getReleaseId(isProduction) {
   if (!isProduction) {
     return `${releaseVersion}#local`;
   }
-
-  return `${releaseVersion}#${process.env.BUILD_ID}`;
+  // In CI (isProduction=true), CI_BUILD_ID should be set.
+  return `${releaseVersion}#${CI_BUILD_ID || 'unknown_ci_build'}`;
 }
 
 function getFavicon(appEnv) {
@@ -84,22 +79,25 @@ module.exports = ({
 }) => {
   const appEnv = getAppEnv(isProduction);
 
-  const hot = Boolean(process.env.BANGLE_HOT);
+  const hot = Boolean(BANGLE_HOT_ENABLED);
   const bangleConfig = new BangleConfig({
     build: {
       appEnv: appEnv,
       buildTime: new Date().toISOString(),
       commitHash: (
-        process.env.GITHUB_SHA ||
-        process.env.COMMIT_REF ||
+        GIT_COMMIT_SHA ||
         require('node:child_process')
           .execSync('git rev-parse --short HEAD')
           .toString()
           .trim()
       ).slice(0, 7),
-      deployBranch: (isProduction ? process.env.BRANCH : 'local') || 'local',
+      deployBranch: (isProduction ? GIT_BRANCH : 'local') || 'local',
       hot,
-      netlifyBuildContext: process.env.CONTEXT || '',
+      buildEnvironment: IS_CLOUDFLARE_PAGES
+        ? 'cloudflare_pages'
+        : IS_GITHUB_ACTIONS
+          ? 'github_actions'
+          : 'local',
       nodeEnv: isProduction ? 'production' : 'development',
       releaseId: getReleaseId(isProduction),
       releaseVersion: releaseVersion,
