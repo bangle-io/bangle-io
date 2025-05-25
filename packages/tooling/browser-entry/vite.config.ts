@@ -51,7 +51,7 @@ export default defineConfig(async (env) => {
     isProduction: isProduction,
     isVite: true,
     helpDocsVersion: '0.0.0',
-    inlinedScripts: [translationInline, themeInline].join('\n'),
+    inlinedScripts: [translationInline, themeInline],
   });
 
   return {

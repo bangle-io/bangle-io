@@ -19,7 +19,7 @@ declare module '@bangle.io/env-vars' {
     isVite?: boolean;
     isStorybook?: boolean;
     helpDocsVersion: string;
-    inlinedScripts?: string;
+    inlinedScripts?: string[];
   }
 
   const _default: (options: DefaultExportOptions) => BangleConfigOutput;

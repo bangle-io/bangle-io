@@ -75,7 +75,7 @@ module.exports = ({
   isVite = false,
   isStorybook = false,
   helpDocsVersion,
-  inlinedScripts = '',
+  inlinedScripts = [],
 }) => {
   const appEnv = getAppEnv(isProduction);
 
@@ -150,7 +150,7 @@ module.exports = ({
     htmlInjections: {
       inlinedScripts: `
 <script>
-${inlinedScripts}
+${inlinedScripts.join(';\n\n')}
 </script>`.trim(),
       favicon: getFavicon(appEnv),
       goatAnalytics,
