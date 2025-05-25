@@ -93,7 +93,7 @@ module.exports = ({
       ).slice(0, 7),
       deployBranch: (isProduction ? GIT_BRANCH : 'local') || 'local',
       hot,
-      buildEnvironment: IS_CLOUDFLARE_PAGES
+      netlifyBuildContext: IS_CLOUDFLARE_PAGES
         ? 'cloudflare_pages'
         : IS_GITHUB_ACTIONS
           ? 'github_actions'
