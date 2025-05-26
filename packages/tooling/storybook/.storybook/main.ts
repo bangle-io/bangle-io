@@ -72,7 +72,6 @@ const config: StorybookConfig = {
 
     const envVars = getEnvVars({
       isProduction: configType === 'PRODUCTION',
-      isVite: true,
       isStorybook: true,
       helpDocsVersion: '0.0.0',
     });

@@ -6,7 +6,6 @@ export default defineConfig((env) => {
 
   const envVars = getEnvVars({
     isProduction: isProduction,
-    isVite: true,
     helpDocsVersion: '0.0.0',
   });
 

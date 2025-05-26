@@ -1,6 +1,6 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { Emitter } from '@bangle.io/emitter';
+import { Emitter } from '@bangle.io/mini-js-utils';
 import type {
   AppRouteInfo,
   BaseRouter,

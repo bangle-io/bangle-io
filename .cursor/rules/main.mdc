@@ -23,12 +23,12 @@ bangel.io is an opensource local browser based note taking web app.
 
 ## Project Structure
 
-1. **core**: Business logic.
+1. **core**: Business logic and the main bread and butter of the app.
 2. **platform**: Platform-specific abstractions (e.g., IndexedDB for browser).
 3. **shared**: Shared code, types, constants.
 4. **tooling**: Build tools and scripts.
-5. **ui**: React components, use shared code. 
-6. **js-lib**: Independent libraries.
+5. **ui**: React components, somewhat business logic agnostic.
+6. **js-lib**: Independent business lgoic agnostic packages.
 
 ## Guidelines
 
@@ -39,6 +39,15 @@ bangel.io is an opensource local browser based note taking web app.
 - Prefer KISS over DRY.
 - Avoid writing unsafe typescript code that leverages `as any` or other lint suppresions.
 - Mocking/stubbing is not good and prefer using real stuff when writing unit tests.
+- project is a monorepo with many `@bangle.io/*` packages. 
+- For `@bangle.io/*` packages, we PREFER importing like this `import {x} from @bangle.io/mini-js-utils` and we AVOID importing paths `import {x} from @bangle.io/mini-js-utils/src/some-path`.
+- DONOT `cd ` into a package to run tests or lint, instead run the commands like `pnpm test:ci` or `pnpm lint:ci` from the `root`.
+
+## Running tests and other commands
+
+We have a monorepo structure, so tests or any scripts should be run from root. See the [package.json](mdc:package.json) scripts the find relevant test
+
+
 
 ## WsPath Format
 
@@ -115,4 +124,5 @@ Services encapsulate the core logic, we have following directories
 Each service should only depend on another service if it is absolutely needed, otherwise take advantage of config constructor param to pass in a callback for a decoupled way of making a service depend on another. 
 
 ## Translation
-We have translation that is globally available as variable `t`. If you use user facing text make sure you update @en.ts with correct translation id.
+
+We have translation that is globally available as variable `t`. If you are editing user facing text make sure you update [en.ts](mdc:packages/shared/translations/src/languages/en.ts) with correct translation id.

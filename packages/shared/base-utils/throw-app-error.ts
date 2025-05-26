@@ -1,4 +1,4 @@
-import { BaseError } from '@bangle.io/base-error';
+import { BaseError } from '@bangle.io/mini-js-utils';
 import { isAbortError, isPlainObject } from '@bangle.io/mini-js-utils';
 import type { AppError } from '@bangle.io/types';
 

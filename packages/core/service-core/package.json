@@ -30,11 +30,11 @@
   "dependencies": {
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
+    "@bangle.io/browser-utils": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/keyboard-shortcuts": "workspace:*",
-    "@bangle.io/mini-zod": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",

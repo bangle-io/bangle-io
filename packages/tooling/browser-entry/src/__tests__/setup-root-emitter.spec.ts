@@ -1,10 +1,11 @@
 import {
   MemoryBroadcastChannel,
   type TypedBroadcastBus,
-} from '@bangle.io/broadcast-channel';
-import type { Emitter } from '@bangle.io/emitter';
+} from '@bangle.io/browser-utils';
 import { Logger } from '@bangle.io/logger';
+import type { Emitter } from '@bangle.io/mini-js-utils';
 import { CROSS_TAB_EVENTS } from '@bangle.io/root-emitter';
+import { RootEmitter } from '@bangle.io/root-emitter';
 import { describe, expect, test, vi } from 'vitest';
 import { setupCrossTabComms } from '../setup-root-emitter';
 

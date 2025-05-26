@@ -40,13 +40,23 @@ export class TypedBroadcastBus<T> {
   private readonly logger?: Logger;
 
   constructor(options: TypedBroadcastBusOptions) {
-    if (options.useMemoryChannel) {
-      this._channel = new MemoryBroadcastChannel(options.name);
-    } else {
-      this._channel = new BroadcastChannel(options.name);
-    }
     this.senderId = options.senderId;
     this.logger = options.logger;
+
+    const shouldUseNativeChannel =
+      !options.useMemoryChannel && typeof BroadcastChannel !== 'undefined';
+
+    if (shouldUseNativeChannel) {
+      this._channel = new BroadcastChannel(options.name);
+      this.logger?.debug?.('Using native BroadcastChannel.');
+    } else {
+      this._channel = new MemoryBroadcastChannel(options.name);
+      this.logger?.debug?.(
+        options.useMemoryChannel
+          ? 'Using MemoryBroadcastChannel due to options.useMemoryChannel.'
+          : 'Using MemoryBroadcastChannel due to native BroadcastChannel not being available.',
+      );
+    }
 
     this._channel.onmessage = this.handleMessage;
 

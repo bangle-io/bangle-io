@@ -29,7 +29,7 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/mini-zod": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/types": "workspace:*"
   },
   "devDependencies": {

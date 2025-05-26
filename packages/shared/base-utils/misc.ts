@@ -1,7 +1,7 @@
-import { isMobile } from '@bangle.io/browser';
 import { IS_STORYBOOK } from '@bangle.io/config';
 import { COLOR_SCHEME, WIDESCREEN_WIDTH } from '@bangle.io/constants';
 
+import { isMobile } from '@bangle.io/mini-js-utils';
 import { rafSchedule } from './safe-js';
 
 type ColorScheme =

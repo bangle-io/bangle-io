@@ -1,6 +1,6 @@
-import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
-import { Emitter, type EventMessage } from '@bangle.io/emitter';
+import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import type { Logger } from '@bangle.io/logger';
+import { Emitter, type EventMessage } from '@bangle.io/mini-js-utils';
 import { CROSS_TAB_EVENTS, RootEmitter } from '@bangle.io/root-emitter';
 
 export function setupCrossTabComms(

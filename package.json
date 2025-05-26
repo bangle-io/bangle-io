@@ -11,7 +11,6 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "devDependencies": {
     "@bangle.io/env-vars": "workspace:*",
-    "@bangle.io/jsdom-env": "workspace:*",
     "@bangle.io/plop-configs": "workspace:*",
     "@bangle.io/translations": "workspace:*",
     "@bangle.io/types": "workspace:*",
@@ -45,14 +44,8 @@
       "msw"
     ],
     "supportedArchitectures": {
-      "os": [
-        "darwin",
-        "linux"
-      ],
-      "cpu": [
-        "x64",
-        "arm64"
-      ]
+      "os": ["darwin", "linux"],
+      "cpu": ["x64", "arm64"]
     }
   },
   "prettier": {

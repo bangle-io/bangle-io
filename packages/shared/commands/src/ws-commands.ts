@@ -1,4 +1,4 @@
-import { T } from '@bangle.io/mini-zod';
+import { T } from '@bangle.io/mini-js-utils';
 import { narrow } from './common';
 
 // Workspace Commands

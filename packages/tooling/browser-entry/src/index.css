@@ -1,7 +1,7 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* biome-ignore lint/correctness/noInvalidPositionAtImportRule: <explanation> */
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
 @plugin 'tailwindcss-animate';
 
@@ -62,7 +62,7 @@
   --radius-sm: calc(var(--BV-radius) - 4px);
 
   --font-sans: var(--BV-font-sans), ui-sans-serif, system-ui, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;

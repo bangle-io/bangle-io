@@ -1,4 +1,4 @@
-import { Emitter } from '@bangle.io/emitter';
+import { Emitter } from '@bangle.io/mini-js-utils';
 import { expectType } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
 import { describe, expect, test } from 'vitest';

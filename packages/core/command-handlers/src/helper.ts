@@ -3,7 +3,7 @@ import type { BangleAppCommand } from '@bangle.io/commands';
 import { commandKeyToContext } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 
-import type { InferType, Validator } from '@bangle.io/mini-zod';
+import type { InferType, Validator } from '@bangle.io/mini-js-utils';
 import type {
   Command,
   CommandExposedServices,

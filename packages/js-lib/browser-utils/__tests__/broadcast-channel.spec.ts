@@ -12,7 +12,7 @@ import {
   type BroadcastMessage,
   MemoryBroadcastChannel,
   TypedBroadcastBus,
-} from '../index';
+} from '../src/broadcast-channel'; // Adjusted import path
 
 vi.stubGlobal('BroadcastChannel', MemoryBroadcastChannel);
 

@@ -1,4 +1,4 @@
-import { BaseError } from '@bangle.io/base-error';
+import { BaseError } from '@bangle.io/mini-js-utils';
 
 export type ShortcutHandler = (opts: {
   keyBinding: KeyBinding;

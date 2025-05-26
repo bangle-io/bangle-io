@@ -1,7 +1,8 @@
-import getEnvVars from '@bangle.io/env-vars';
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 // @ts-ignore - moduleResolution error
 import tailwindcss from '@tailwindcss/vite';
+// @ts-ignore - moduleResolution error
+import { tsImport } from 'tsx/esm/api';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -32,9 +33,10 @@ export default defineConfig({
     /* Port to use for Playwright component endpoint. */
     ctPort: 3100,
     ctViteConfig: async () => {
+      const loaded = await tsImport('@bangle.io/env-vars', import.meta.url);
+      const getEnvVars = loaded.default;
       const envVars = getEnvVars({
         isProduction: true,
-        isVite: true,
         isStorybook: true,
         helpDocsVersion: '0.0.0',
       });

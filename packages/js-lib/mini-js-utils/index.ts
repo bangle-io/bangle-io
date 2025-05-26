@@ -5,8 +5,12 @@ export { createEmptyArray } from './create-empty-array';
 export { DuoWeakMap } from './duo-weak-map';
 export { getLast } from './get-last';
 export { weakCacheDuo } from './weak-cache-duo';
-export { weakCache } from '@bangle.io/weak-cache';
+export { weakCache } from './weak-cache';
 export * from './is-abort-error';
+export * from './base-error';
+export * from './mini-zod';
+export * from './browser';
+export * from './emitter';
 
 export function isPlainObject(value: any) {
   if (typeof value !== 'object' || value === null) {

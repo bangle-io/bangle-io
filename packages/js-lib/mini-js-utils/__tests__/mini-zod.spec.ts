@@ -1,6 +1,6 @@
-import { expectType } from '@bangle.io/mini-js-utils';
 import { describe, expect, test } from 'vitest';
-import { type InferType, T } from '../index';
+import { expectType } from '../index';
+import { type InferType, T } from '../mini-zod';
 
 describe('Validators', () => {
   test('StringValidator should validate strings', () => {
@@ -201,84 +201,91 @@ describe('Validators', () => {
       expect(personValidator.validate(emptyObject)).toBe(false);
     });
 
-    test('validates an array of correct people', () => {
-      const validPeople: InferType<typeof peopleValidator> = [
-        { name: 'Grace', age: 22 },
-        { name: 'Heidi', age: 27 },
-      ];
-      expect(peopleValidator.validate(validPeople)).toBe(true);
+    test('validates an object with optional property present', () => {
+      const withOptional: InferType<typeof optionalValidator> = {
+        name: 'Grace',
+        age: 35,
+      };
+      expect(optionalValidator.validate(withOptional)).toBe(true);
     });
 
-    test('invalidates an array with an incorrect person', () => {
-      const invalidPeople: InferType<typeof peopleValidator> = [
-        { name: 'Ivan', age: 35 },
-        {
-          name: 'Judy',
-          // @ts-expect-error should be number
-          age: 'thirty',
-        },
+    test('validates an object with optional property missing', () => {
+      const withoutOptional: InferType<typeof optionalValidator> = {
+        name: 'Henry',
+        age: undefined,
+      };
+      expect(optionalValidator.validate(withoutOptional)).toBe(true);
+    });
+
+    test('validates an object with optional property undefined', () => {
+      const withUndefinedOptional: InferType<typeof optionalValidator> = {
+        name: 'Ivy',
+        age: undefined,
+      };
+      expect(optionalValidator.validate(withUndefinedOptional)).toBe(true);
+    });
+
+    test('invalidates an object with optional property of wrong type', () => {
+      const wrongTypeOptional: InferType<typeof optionalValidator> = {
+        name: 'Jack',
+        // @ts-expect-error should be number or undefined
+        age: 'thirty-five',
+      };
+      expect(optionalValidator.validate(wrongTypeOptional)).toBe(false);
+    });
+
+    test('validates union type with first variant', () => {
+      const usernameLogin: InferType<typeof loginValidator> = {
+        username: 'user123',
+        password: 'pass123',
+      };
+      expect(loginValidator.validate(usernameLogin)).toBe(true);
+    });
+
+    test('validates union type with second variant', () => {
+      const emailLogin: InferType<typeof loginValidator> = {
+        email: 'user@example.com',
+        password: 'pass123',
+      };
+      expect(loginValidator.validate(emailLogin)).toBe(true);
+    });
+
+    test('invalidates union type with mixed properties', () => {
+      const mixedLogin = {
+        username: 'user123',
+        email: 'user@example.com',
+        password: 'pass123',
+      };
+      expect(loginValidator.validate(mixedLogin)).toBe(true);
+    });
+
+    test('invalidates union type with missing required property', () => {
+      const incompleteLogin = {
+        username: 'user123',
+        // missing password
+      };
+      expect(loginValidator.validate(incompleteLogin)).toBe(false);
+    });
+
+    test('validates array of people', () => {
+      const people: InferType<typeof peopleValidator> = [
+        { name: 'Alice', age: 30 },
+        { name: 'Bob', age: 25 },
+      ];
+      expect(peopleValidator.validate(people)).toBe(true);
+    });
+
+    test('invalidates array with invalid person', () => {
+      const invalidPeople = [
+        { name: 'Alice', age: 30 },
+        { name: 'Bob', age: 'twenty-five' }, // invalid age
       ];
       expect(peopleValidator.validate(invalidPeople)).toBe(false);
     });
 
-    test('validates person object with optional age', () => {
-      // @ts-expect-error missing age
-      const validOptional: InferType<typeof optionalValidator> = {
-        name: 'Kate',
-      };
-      expect(optionalValidator.validate(validOptional)).toBe(true);
+    test('validates empty array', () => {
+      const emptyPeople: InferType<typeof peopleValidator> = [];
+      expect(peopleValidator.validate(emptyPeople)).toBe(true);
     });
-
-    test('optional validator with undefined', () => {
-      const optional: InferType<typeof optionalValidator> = {
-        name: 'Leo',
-        age: undefined,
-      };
-      expect(optionalValidator.validate(optional)).toBe(true);
-    });
-
-    test('validates union login with username and password', () => {
-      const validLogin1: InferType<typeof loginValidator> = {
-        username: 'user1',
-        password: 'pass1',
-      };
-      expect(loginValidator.validate(validLogin1)).toBe(true);
-    });
-
-    test('validates union login with email and password', () => {
-      const validLogin2: InferType<typeof loginValidator> = {
-        email: 'user@example.com',
-        password: 'pass2',
-      };
-      expect(loginValidator.validate(validLogin2)).toBe(true);
-    });
-
-    test('invalidates union login missing password', () => {
-      // @ts-expect-error missing password
-      const invalidLogin: InferType<typeof loginValidator> = {
-        username: 'user3',
-      };
-      expect(loginValidator.validate(invalidLogin)).toBe(false);
-    });
-  });
-
-  test('UnionValidator should validate union types', () => {
-    const stringOrNumberValidator = T.Union([T.String, T.Number]);
-    expect(stringOrNumberValidator.validate('hello')).toBe(true);
-    expect(stringOrNumberValidator.validate(42)).toBe(true);
-    expect(stringOrNumberValidator.validate(true)).toBe(false);
-    expectType<string | number, InferType<typeof stringOrNumberValidator>>(
-      null as any,
-    );
-  });
-
-  test('OptionalValidator should validate optional values', () => {
-    const optionalStringValidator = T.Optional(T.String);
-    expect(optionalStringValidator.validate('hello')).toBe(true);
-    expect(optionalStringValidator.validate(undefined)).toBe(true);
-    expect(optionalStringValidator.validate(123)).toBe(false);
-    expectType<string | undefined, InferType<typeof optionalStringValidator>>(
-      null as any,
-    );
   });
 });

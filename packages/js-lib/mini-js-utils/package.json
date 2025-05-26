@@ -27,8 +27,6 @@
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {
-    "@bangle.io/weak-cache": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }

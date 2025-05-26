@@ -9,7 +9,7 @@ import type {
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { T } from '@bangle.io/mini-zod';
+import { T } from '@bangle.io/mini-js-utils';
 import type {
   BaseDatabaseService,
   BaseSyncDatabaseService,

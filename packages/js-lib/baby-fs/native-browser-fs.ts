@@ -1,4 +1,4 @@
-import { isAbortError } from '@bangle.io/is-abort-error';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 
 import {
   BaseFileMetadata,

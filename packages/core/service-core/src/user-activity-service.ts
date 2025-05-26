@@ -7,7 +7,7 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { type InferType, T } from '@bangle.io/mini-zod';
+import { type InferType, T } from '@bangle.io/mini-js-utils';
 import type {
   BaseSyncDatabaseService,
   CommandDispatchResult,

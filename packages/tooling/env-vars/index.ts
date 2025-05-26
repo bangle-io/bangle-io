@@ -1,9 +1,18 @@
-/* eslint-disable no-process-env */
-const path = require('node:path');
-const fs = require('node:fs');
-const { BangleConfig } = require('@bangle.io/config-template');
+import { execSync } from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { BangleConfig } from '@bangle.io/config-template';
 
-const releaseVersion = require('../../../package.json').version;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const packageJson = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, '..', '..', '..', 'package.json'),
+    'utf-8',
+  ),
+);
+const releaseVersion: string = packageJson.version;
 
 const IS_CLOUDFLARE_PAGES = process.env.CF_PAGES === '1';
 const IS_GITHUB_ACTIONS = process.env.GITHUB_ACTIONS === 'true';
@@ -17,7 +26,7 @@ const CI_BUILD_ID = GIT_COMMIT_SHA;
 
 const BANGLE_HOT_ENABLED = process.env.BANGLE_HOT;
 
-function readChangelogText() {
+function readChangelogText(): string {
   return fs.readFileSync(
     path.join(__dirname, '..', '..', '..', 'CHANGELOG.md'),
     'utf-8',
@@ -27,7 +36,7 @@ function readChangelogText() {
 /**
  * @returns either `local`, `production`, `staging` or `dev/*` where * is the current branch name
  */
-function getAppEnv(isProd) {
+function getAppEnv(isProd: boolean): string {
   if (!isProd || !IS_CI_BUILD) {
     return 'local';
   }
@@ -42,7 +51,7 @@ function getAppEnv(isProd) {
   return `dev/${GIT_BRANCH}`;
 }
 
-function getReleaseId(isProduction) {
+function getReleaseId(isProduction: boolean): string {
   if (!isProduction) {
     return `${releaseVersion}#local`;
   }
@@ -50,7 +59,7 @@ function getReleaseId(isProduction) {
   return `${releaseVersion}#${CI_BUILD_ID || 'unknown_ci_build'}`;
 }
 
-function getFavicon(appEnv) {
+function getFavicon(appEnv: string): string {
   if (appEnv === 'production') {
     return `
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -70,13 +79,37 @@ function getFavicon(appEnv) {
     <link rel="mask-icon" href="/favicon-dev.svg" color="#FFF0F4" />`;
 }
 
-module.exports = ({
+interface EnvVarsOptions {
+  isProduction?: boolean;
+  isStorybook?: boolean;
+  helpDocsVersion?: string;
+  inlinedScripts?: string[];
+}
+
+interface HtmlInjections {
+  inlinedScripts: string;
+  favicon: string;
+  goatAnalytics: string;
+}
+
+interface GlobalIdentifiers {
+  __BANGLE_BUILD_TIME_CONFIG__: string;
+}
+
+interface EnvVarsResult {
+  helpDocsVersion?: string;
+  appEnv: string;
+  hot: boolean;
+  htmlInjections: HtmlInjections;
+  globalIdentifiers: GlobalIdentifiers;
+}
+
+export default ({
   isProduction = false,
-  isVite = false,
   isStorybook = false,
   helpDocsVersion,
   inlinedScripts = [],
-}) => {
+}: EnvVarsOptions): EnvVarsResult => {
   const appEnv = getAppEnv(isProduction);
 
   const hot = Boolean(BANGLE_HOT_ENABLED);
@@ -86,10 +119,7 @@ module.exports = ({
       buildTime: new Date().toISOString(),
       commitHash: (
         GIT_COMMIT_SHA ||
-        require('node:child_process')
-          .execSync('git rev-parse --short HEAD')
-          .toString()
-          .trim()
+        execSync('git rev-parse --short HEAD').toString().trim()
       ).slice(0, 7),
       deployBranch: (isProduction ? GIT_BRANCH : 'local') || 'local',
       hot,

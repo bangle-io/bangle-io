@@ -1,5 +1,5 @@
 import { atomStorage } from '@bangle.io/base-utils';
-import { T } from '@bangle.io/mini-zod';
+import { T } from '@bangle.io/mini-js-utils';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { RESET } from 'jotai/utils';
 import { describe, expect, it } from 'vitest';

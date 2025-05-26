@@ -1,6 +1,6 @@
 import type { Logger } from '@bangle.io/logger';
-import type { Validator } from '@bangle.io/mini-zod';
-import type { BaseAppSyncDatabase, BaseError } from '@bangle.io/types';
+import type { BaseError, Validator } from '@bangle.io/mini-js-utils';
+import type { BaseAppSyncDatabase } from '@bangle.io/types';
 import type { Atom } from 'jotai';
 import { atom } from 'jotai';
 import { atomWithReducer, atomWithStorage, unwrap } from 'jotai/utils';

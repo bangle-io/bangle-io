@@ -25,13 +25,10 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/browser": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
-    "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/poor-mans-di": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "jotai": "^2.12.4"

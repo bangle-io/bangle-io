@@ -21,10 +21,9 @@
     "env": "nodejs",
     "kind": "build"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.ts",
+  "module": "index.ts",
   "publishConfig": {},
-  "types": "index.d.ts",
   "scripts": {},
   "dependencies": {
     "@bangle.io/config-template": "^0.0.7"

@@ -1,5 +1,5 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
-import { TypedBroadcastBus } from '@bangle.io/broadcast-channel';
+import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
 

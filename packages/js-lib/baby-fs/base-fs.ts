@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 // based on node's stat
 
-import { BaseError } from '@bangle.io/base-error';
+import { BaseError } from '@bangle.io/mini-js-utils';
 
 // ctimeMs is not supported by native browser fs, so only focusing on mTime
 export class BaseFileMetadata {

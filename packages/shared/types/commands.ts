@@ -1,5 +1,5 @@
 import type { BaseService } from '@bangle.io/base-utils';
-import type { InferType, Validator } from '@bangle.io/mini-zod';
+import type { InferType, Validator } from '@bangle.io/mini-js-utils';
 import type { CommandExposedServices, Store } from './services';
 
 // To keep things simple we are only allowing a select few types

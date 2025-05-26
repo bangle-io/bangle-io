@@ -1,4 +1,4 @@
-import { Emitter, type EventListener } from '@bangle.io/emitter';
+import { Emitter, type EventListener } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
 
 export type EventSenderMetadata = {

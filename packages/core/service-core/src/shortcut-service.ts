@@ -3,13 +3,13 @@ import {
   type BaseServiceContext,
   isDarwin,
 } from '@bangle.io/base-utils';
-import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   KeyBinding,
   RegisterOptions,
   ShortcutHandler,
-} from '@bangle.io/keyboard-shortcuts';
-import { ShortcutManager } from '@bangle.io/keyboard-shortcuts';
+} from '@bangle.io/browser-utils';
+import { ShortcutManager } from '@bangle.io/browser-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 
 export type ShortcutServiceConfig = {
   keyBinding: KeyBinding;

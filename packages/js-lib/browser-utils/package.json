@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/weak-cache",
-  "description": "",
+  "name": "@bangle.io/browser-utils",
+  "description": "Collection of browser-specific utility functions for Bangle.io",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/weak-cache"
+    "directory": "packages/js-lib/browser-utils"
   },
   "authors": [
     {
@@ -18,15 +18,19 @@
   "homepage": "https://bangle.io",
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
-    "env": "universal",
+    "env": "browser",
     "kind": "js-util"
   },
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "@bangle.io/logger": "workspace:*",
+    "idb": "^8.0.3",
+    "@bangle.io/mini-js-utils": "workspace:*"
+  },
   "devDependencies": {}
 }

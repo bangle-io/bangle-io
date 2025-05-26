@@ -4,7 +4,7 @@ import {
   type BaseServiceContext,
 } from '@bangle.io/base-utils';
 import { commandKeyToContext } from '@bangle.io/constants';
-import { T } from '@bangle.io/mini-zod';
+import { T } from '@bangle.io/mini-js-utils';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
   Command,

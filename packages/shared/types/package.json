@@ -28,15 +28,14 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/editor": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
-    "@bangle.io/mini-zod": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/service-core": "workspace:*",
     "jotai": "^2.12.4"
-  }
+  },
+  "devDependencies": {}
 }

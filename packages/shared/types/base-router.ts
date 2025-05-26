@@ -1,5 +1,5 @@
 import type { browserHistoryStateEvents } from '@bangle.io/constants';
-import type { Emitter } from '@bangle.io/emitter';
+import type { Emitter } from '@bangle.io/mini-js-utils';
 
 export type AppRouteInfo =
   | {

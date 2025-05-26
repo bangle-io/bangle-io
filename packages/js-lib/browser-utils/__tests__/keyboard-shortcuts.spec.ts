@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { type KeyBinding, ShortcutManager } from '../index';
+import { type KeyBinding, ShortcutManager } from '../src/keyboard-shortcuts'; // Adjusted import path
 
 describe('ShortcutManager', () => {
   let shortcutManager: ShortcutManager;

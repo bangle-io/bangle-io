@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { weakCache } from '../index';
+import { weakCache } from '../weak-cache';
 
 describe('weakCache', () => {
   it('should cache function results using WeakMap', () => {

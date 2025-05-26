@@ -30,11 +30,10 @@
   "dependencies": {
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/broadcast-channel": "workspace:*",
+    "@bangle.io/browser-utils": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/db-key-val": "workspace:*",
-    "@bangle.io/emitter": "workspace:*",
+    "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "jotai": "^2.12.4",
@@ -42,7 +41,6 @@
     "wouter": "^3.7.0"
   },
   "devDependencies": {
-    "@bangle.io/mini-zod": "workspace:*",
     "@bangle.io/test-utils": "workspace:*"
   }
 }
