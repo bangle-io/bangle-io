@@ -431,12 +431,6 @@ importers:
 
   packages/js-lib/color-scheme-manager: {}
 
-  packages/js-lib/emitter:
-    devDependencies:
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../mini-js-utils
-
   packages/js-lib/fuzzysearch: {}
 
   packages/js-lib/logger: {}
@@ -475,9 +469,9 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
-      '@bangle.io/emitter':
+      '@bangle.io/mini-js-utils':
         specifier: workspace:*
-        version: link:../../js-lib/emitter
+        version: link:../../js-lib/mini-js-utils
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -494,9 +488,6 @@ importers:
         specifier: ^3.7.0
         version: 3.7.0(react@19.1.0)
     devDependencies:
-      '@bangle.io/mini-js-utils':
-        specifier: workspace:*
-        version: link:../../js-lib/mini-js-utils
       '@bangle.io/test-utils':
         specifier: workspace:*
         version: link:../../tooling/test-utils
