@@ -1,8 +1,8 @@
 import type { WorkspaceStorageType } from '@bangle.io/types';
-import { cn } from './cn';
 import { Check, FolderOpen } from 'lucide-react';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { Button } from './button';
+import { cn } from './cn';
 import {
   Dialog,
   DialogContent,

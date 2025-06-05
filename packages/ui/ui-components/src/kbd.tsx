@@ -1,6 +1,6 @@
 import { isDarwin } from '@bangle.io/base-utils';
-import { cn } from './cn';
 import React from 'react';
+import { cn } from './cn';
 
 export function Kbd({ keys }: { keys: string | string[] | readonly string[] }) {
   const isMac = isDarwin;

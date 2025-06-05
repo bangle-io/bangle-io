@@ -14,9 +14,9 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronRight, FileIcon, Folder, MoreHorizontal } from 'lucide-react';
 import React, { useState, useCallback, useMemo } from 'react';
 
+import { WsPath } from '@bangle.io/ws-path';
 import type { TreeItem } from './build-tree';
 import { cn } from './cn';
-import { WsPath } from '@bangle.io/ws-path';
 import {
   Collapsible,
   CollapsibleContent,

@@ -20,9 +20,9 @@ import {
 import { Label } from './label';
 
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
+import { Tree, type TreeProps } from './Tree';
 import { type TreeItem, buildTree } from './build-tree';
 import { cn } from './cn';
-import { Tree, type TreeProps } from './Tree';
 import { KbdShortcut } from './kbd';
 import {
   Sidebar,

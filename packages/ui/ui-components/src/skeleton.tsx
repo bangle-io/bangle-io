@@ -1,5 +1,5 @@
-import { cn } from './cn';
 import React from 'react';
+import { cn } from './cn';
 
 function Skeleton({
   className,

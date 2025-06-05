@@ -204,7 +204,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
     if (existingFile) {
       throw new IndexedDBFileSystemError({
-        message: `Cannot rename; File "${oldFilePath}" already exists`,
+        message: `Cannot rename; File "${newFilePath}" already exists`,
         code: FILE_ALREADY_EXISTS_ERROR,
       });
     }

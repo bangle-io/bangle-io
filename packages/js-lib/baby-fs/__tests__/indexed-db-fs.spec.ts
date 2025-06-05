@@ -89,7 +89,7 @@ test('rename throws error if new file already exists', async () => {
   await expect(
     fs.rename('hola/hi', 'ebola/two'),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[IndexedDBFileSystemError: Cannot rename; File "hola/hi" already exists]`,
+    `[IndexedDBFileSystemError: Cannot rename; File "ebola/two" already exists]`,
   );
 });
 
