@@ -18,7 +18,7 @@
 
 ### Portability at its core
 
-- **No Electron:**  :heart: for web and speed, thats it.
+- **No Electron:** :heart: for web and speed, thats it.
 
 - **Performant:** Throw thousands of notes at it and Bangle will chug along fine. _(Try opening a heavy project like [10,000 Markdown Files](https://github.com/Zettelkasten-Method/10000-markdown-files).)_
 
@@ -28,9 +28,9 @@ Head to <https://bangle.io> to use the app.
 
 ### Development
 
-- `yarn install` to install
+- `pnpm install` to install
 
-- `yarn start` to start a development instance on `localhost:4000`
+- `pnpm start` to start a development instance on `localhost:4000`
 
 Please read [Contributing.md](./CONTRIBUTING.md) for more details.
 
@@ -40,8 +40,8 @@ Please read [Contributing.md](./CONTRIBUTING.md) for more details.
 
 2. Second item
 
-  1. Nested first
+3. Nested first
 
-  2. Nested second
+4. Nested second
 
-3. Third item
+5. Third item
