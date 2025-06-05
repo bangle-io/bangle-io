@@ -42,6 +42,7 @@ bangel.io is an opensource local browser based note taking web app.
 - project is a monorepo with many `@bangle.io/*` packages. 
 - For `@bangle.io/*` packages, we PREFER importing like this `import {x} from @bangle.io/mini-js-utils` and we AVOID importing paths `import {x} from @bangle.io/mini-js-utils/src/some-path`.
 - DONOT `cd ` into a package to run tests or lint, instead run the commands like `pnpm test:ci` or `pnpm lint:ci` from the `root`.
+- avoid type unsafe code like `any` or doing `as XYZ` where possible. 
 
 ## Running tests and other commands
 
