@@ -1020,12 +1020,6 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
-      '@bangle.io/ui-hooks':
-        specifier: workspace:*
-        version: link:../ui-hooks
-      '@bangle.io/ui-utils':
-        specifier: workspace:*
-        version: link:../ui-utils
       '@bangle.io/ws-path':
         specifier: workspace:*
         version: link:../../shared/ws-path
@@ -1077,6 +1071,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1089,34 +1086,13 @@ importers:
       sonner:
         specifier: ^2.0.3
         version: 2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      tailwind-merge:
+        specifier: ^3.3.0
+        version: 3.3.0
     devDependencies:
       '@storybook/react':
         specifier: ^8.6.14
         version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
-
-  packages/ui/ui-hooks:
-    dependencies:
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
-      react:
-        specifier: 19.1.0
-        version: 19.1.0
-
-  packages/ui/ui-utils:
-    dependencies:
-      '@bangle.io/base-utils':
-        specifier: workspace:*
-        version: link:../../shared/base-utils
-      '@bangle.io/ws-path':
-        specifier: workspace:*
-        version: link:../../shared/ws-path
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      tailwind-merge:
-        specifier: ^3.3.0
-        version: 3.3.0
 
 packages:
 

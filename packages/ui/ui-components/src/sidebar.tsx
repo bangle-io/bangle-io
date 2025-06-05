@@ -3,8 +3,8 @@ import { type VariantProps, cva } from 'class-variance-authority';
 import { PanelLeft } from 'lucide-react';
 import React from 'react';
 
-import { useIsMobile } from '@bangle.io/ui-hooks';
-import { cn } from '@bangle.io/ui-utils';
+import { useIsMobile } from './use-mobile';
+import { cn } from './cn';
 
 import { Button } from './button';
 import { Input } from './input';

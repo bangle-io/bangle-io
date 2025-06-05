@@ -11,9 +11,9 @@
   },
   "aliases": {
     "components": "@bangle.io/ui-components",
-    "utils": "@bangle.io/ui-utils",
+    "utils": "@bangle.io/ui-components",
     "ui": "@bangle.io/ui-components",
-    "lib": "@bangle.io/ui-utils",
-    "hooks": "@bangle.io/ui-hooks"
+    "lib": "@bangle.io/ui-components",
+    "hooks": "@bangle.io/ui-components"
   }
 }

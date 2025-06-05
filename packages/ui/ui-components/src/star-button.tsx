@@ -2,7 +2,7 @@ import { Star as StarIcon } from 'lucide-react';
 import * as React from 'react';
 
 import { t } from '@bangle.io/translations';
-import { cn } from '@bangle.io/ui-utils';
+import { cn } from './cn';
 import type { ComponentPropsWithoutRef } from 'react';
 import { Button } from './button';
 

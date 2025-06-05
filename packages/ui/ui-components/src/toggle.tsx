@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@bangle.io/ui-utils';
+import { cn } from './cn';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import { type VariantProps, cva } from 'class-variance-authority';
 import * as React from 'react';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { cn } from '@bangle.io/ui-utils';
+import { cn } from './cn';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}

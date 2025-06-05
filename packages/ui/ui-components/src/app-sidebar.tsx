@@ -20,7 +20,8 @@ import {
 import { Label } from './label';
 
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import { type TreeItem, buildTree, cn } from '@bangle.io/ui-utils';
+import { type TreeItem, buildTree } from './build-tree';
+import { cn } from './cn';
 import { Tree, type TreeProps } from './Tree';
 import { KbdShortcut } from './kbd';
 import {
