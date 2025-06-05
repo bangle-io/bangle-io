@@ -29,8 +29,8 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/logger": "workspace:*",
-    "idb": "^8.0.3",
-    "@bangle.io/mini-js-utils": "workspace:*"
+    "@bangle.io/mini-js-utils": "workspace:*",
+    "idb": "^8.0.3"
   },
   "devDependencies": {}
 }

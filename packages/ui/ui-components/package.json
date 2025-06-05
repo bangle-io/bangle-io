@@ -32,8 +32,6 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/translations": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.3.0",
     "@bangle.io/ws-path": "workspace:*",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
@@ -51,10 +49,12 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@storybook/types": "^8.6.14",
     "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "lucide-react": "^0.511.0",
     "react": "19.1.0",
-    "sonner": "^2.0.3"
+    "sonner": "^2.0.3",
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@storybook/react": "^8.6.14"

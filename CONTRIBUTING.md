@@ -104,6 +104,13 @@ The development instance will be available on `localhost:4000`.
 pn biome check --fix --unsafe && pn local-ci-check
 ```
 
+The `local-ci-check` script runs all CI validation scripts defined in package.json (scripts ending with `:ci`):
+- `lint:ci` - Custom validation, typecheck, and biome linting
+- `test:ci` - Unit tests with vitest  
+- `e2e:ci` - End-to-end and component tests
+
+This ensures your changes will pass CI before pushing to the repository.
+
 **Typecheck**
 
 ```bash
@@ -152,3 +159,71 @@ App is deployed via cloudflare pages.
 Push to `staging` branch will deploy to https://staging.app.bangle.io/
 
 Push to `production` branch will deploy to https://app.bangle.io/
+
+## Custom Scripts
+
+The project includes several utility scripts in `packages/tooling/custom-scripts/scripts/` for maintaining code quality and managing dependencies. All scripts should be run using `bun`:
+
+### All-in-One Maintenance
+
+**Run comprehensive workspace maintenance**
+```bash
+bun packages/tooling/custom-scripts/scripts/maintenance-all.ts
+```
+**Recommended for regular maintenance.** This aggregate script runs the most common maintenance tasks in the optimal order:
+1. Adds missing workspace dependencies
+2. Removes unused dependencies  
+3. Formats all package.json files
+4. Validates workspace structure and dependencies
+
+### Dependency Management
+
+**Remove unused dependencies**
+```bash
+bun packages/tooling/custom-scripts/scripts/remove-unused-deps.ts
+```
+Automatically removes unused dependencies from package.json files across the workspace. Skips Node.js packages and ignores `@types/*` and `@bangle.dev/*` packages.
+
+**Add workspace dependencies**
+```bash
+bun packages/tooling/custom-scripts/scripts/add-workspace-dep.ts
+```
+Automatically adds missing workspace dependencies to package.json files based on actual imports in TypeScript source files.
+
+**Add miscellaneous dependencies**
+```bash
+bun packages/tooling/custom-scripts/scripts/add-misc-dep.ts
+```
+Adds whitelisted dependencies to packages that import them but don't have them declared in package.json.
+
+### Code Formatting and Validation
+
+**Format all package.json files**
+```bash
+bun packages/tooling/custom-scripts/scripts/format-package-json.ts
+```
+Standardizes and sorts all package.json files in the workspace according to project conventions.
+
+**Format all files**
+```bash
+bun packages/tooling/custom-scripts/scripts/format-all.ts
+```
+Runs the package.json formatter across the entire workspace.
+
+**Validate workspace**
+```bash
+bun packages/tooling/custom-scripts/scripts/validate-all.ts
+```
+Comprehensive validation of workspace structure, dependency rules, and package configurations. Ensures:
+- Browser packages don't depend on Node.js packages
+- Service packages follow dependency hierarchy
+- All dependencies are properly declared
+- Workspace dependency rules are respected
+
+### Theme Generation
+
+**CSS theme processor**
+```bash
+bun packages/tooling/custom-scripts/scripts/css-theme-gen.ts [input.css]
+```
+Processes CSS files with theme variables, converting colors to HSL format and validating light/dark theme consistency. Generates `.processed.css` output files.
