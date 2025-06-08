@@ -1,8 +1,6 @@
-import { Emitter } from '@bangle.io/mini-js-utils';
-import { expectType } from '@bangle.io/mini-js-utils';
+import { Emitter, expectType } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
-import { describe, expect, test } from 'vitest';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { RootEmitter } from '../index';
 
 test('works', () => {

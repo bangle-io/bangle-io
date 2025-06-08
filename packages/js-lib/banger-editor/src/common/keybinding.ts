@@ -1,4 +1,4 @@
-import { type Command, type Plugin, keymap } from '../pm';
+import { type Command, keymap, type Plugin } from '../pm';
 import { setPluginPriority } from './collection';
 import { getGlobalConfig } from './global-config';
 

@@ -1,9 +1,12 @@
 import { Logger } from '@bangle.io/logger';
 import type { BaseServiceCommonOptions } from '@bangle.io/types';
 import { vi } from 'vitest';
+
 export { default as waitForExpect } from 'wait-for-expect';
+
 import { RootEmitter } from '@bangle.io/root-emitter';
 import { createStore } from 'jotai';
+
 export * from './test-service-setup';
 
 export type MockLog = ReturnType<typeof getMockLog>;

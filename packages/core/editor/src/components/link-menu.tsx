@@ -12,7 +12,7 @@ import {
 } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import { Check, Copy, ExternalLink, Unlink } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,

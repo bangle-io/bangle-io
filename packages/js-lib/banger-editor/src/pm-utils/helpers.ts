@@ -1,18 +1,21 @@
 import {
+  DOMParser,
   type EditorState,
+  Fragment,
+  InputRule,
   type Mark,
   type MarkType,
+  NodeSelection,
   type NodeType,
-  PMNode,
   type ParseOptions,
+  Plugin,
+  PMNode,
+  type PMSelection,
   type ResolvedPos,
   type Schema,
   Slice,
+  type Transaction,
 } from '../pm';
-import { DOMParser, Fragment, NodeSelection, type PMSelection } from '../pm';
-import { Plugin, type Transaction } from '../pm';
-
-import { InputRule } from '../pm';
 import { setTextSelection } from './transforms';
 import type { Content, NodeTypeParam } from './types';
 

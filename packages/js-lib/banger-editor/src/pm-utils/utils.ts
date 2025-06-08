@@ -1,5 +1,4 @@
-import type { MarkType, PMNode } from '../pm';
-import type { EditorState } from '../pm';
+import type { EditorState, MarkType, PMNode } from '../pm';
 
 export function clampRange(
   start: number,

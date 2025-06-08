@@ -1,15 +1,7 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
-import { assertIsDefined } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
-import {
-  type TestCommandHandlerReturnType,
-  testCommandHandler,
-} from '@bangle.io/test-utils';
-import { WsPath } from '@bangle.io/ws-path';
 import { describe, expect, it, vi } from 'vitest';
-import { commandHandlers as defaultCommandHandlers } from '../index';
 import { setupTest } from './test-utils';
 
 describe('UI command handlers', () => {

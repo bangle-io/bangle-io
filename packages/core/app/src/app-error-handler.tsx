@@ -4,11 +4,7 @@ import type { RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
 import React, { useEffect } from 'react';
 
-export function AppErrorHandler({
-  rootEmitter,
-}: {
-  rootEmitter: RootEmitter;
-}) {
+export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
   const coreServices = useCoreServices();
   const logger = useLogger();
 

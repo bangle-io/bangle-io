@@ -1,7 +1,5 @@
 import type { PMNode } from '../pm';
-import { Plugin, PluginKey } from '../pm';
-
-import { Fragment, Slice } from '../pm';
+import { Fragment, Plugin, PluginKey, Slice } from '../pm';
 import { isNodeSelection } from '../pm-utils';
 import {
   getCurrentListType,
@@ -10,10 +8,10 @@ import {
   showDragHandle,
 } from './drag-handle-view';
 import {
-  type GlobalDragHandlePluginOptions,
-  ORDERED_LIST_TAG,
   absoluteRect,
+  type GlobalDragHandlePluginOptions,
   nodeDOMAtCoords,
+  ORDERED_LIST_TAG,
 } from './helpers';
 
 export const dragHandleEventsPluginKey = new PluginKey('drag-handle-events');

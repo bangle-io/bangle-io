@@ -1,12 +1,9 @@
 import { Slot } from '@radix-ui/react-slot';
-import { type VariantProps, cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeft } from 'lucide-react';
 import React from 'react';
-
-import { cn } from './cn';
-import { useIsMobile } from './use-mobile';
-
 import { Button } from './button';
+import { cn } from './cn';
 import { Input } from './input';
 import { Separator } from './separator';
 import { Sheet, SheetContent } from './sheet';
@@ -17,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './tooltip';
+import { useIsMobile } from './use-mobile';
 
 const SIDEBAR_WIDTH = '17rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';

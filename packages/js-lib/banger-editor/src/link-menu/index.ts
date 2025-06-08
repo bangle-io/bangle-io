@@ -2,10 +2,10 @@ import { collection } from '../common';
 import type { setupLink } from '../link';
 import { type Command, Plugin, PluginKey } from '../pm';
 import {
-  type VirtualElement,
   clampRange,
   createVirtualElementFromRange,
   setupScrollAndResizeHandlers,
+  type VirtualElement,
 } from '../pm-utils';
 import { store } from '../store';
 

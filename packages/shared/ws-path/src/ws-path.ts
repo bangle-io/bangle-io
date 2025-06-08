@@ -1,4 +1,5 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import * as validation from './validation';
 import {
   type ValidationError,
   type ValidationResult,
@@ -6,7 +7,6 @@ import {
   validateWsName,
   validateWsPath,
 } from './validation';
-import * as validation from './validation';
 
 /** Internal shape for parsed data. */
 interface WsPathData {
@@ -319,7 +319,7 @@ export class WsPath {
     const { wsName, filePath } = validationResult.data;
     const hasTrailingSlash = filePath.endsWith(WsPath.PATH_SEPARATOR);
 
-    let extension: string | undefined = undefined;
+    let extension: string | undefined;
     const segments = filePath.split(WsPath.PATH_SEPARATOR);
 
     const lastSegment = segments[segments.length - 1];

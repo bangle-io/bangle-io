@@ -1,10 +1,11 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.0-beta.6/schema.json",
   "files": {
-    "ignore": [
-      "missing-test-types.d.ts",
-      "packages/js-lib/color-scheme-manager/src/index.d.ts",
-      "packages/js-lib/color-scheme-manager/src/index.js"
+    "includes": [
+      "packages/**",
+      "!**/missing-test-types.d.ts",
+      "!**/packages/js-lib/color-scheme-manager/src/index.d.ts",
+      "!**/packages/js-lib/color-scheme-manager/src/index.js"
     ]
   },
   "vcs": {
@@ -20,41 +21,57 @@
     "lineEnding": "lf",
     "lineWidth": 80,
     "attributePosition": "auto",
-    "ignore": [
-      "**/.cache",
-      "**/.DS_Store",
-      "**/.idea",
-      "**/.vscode",
-      "**/.yarnrc.yml",
-      "**/*.hbs",
-      "**/*.md",
-      "**/build",
-      "**/CHANGELOG.md",
-      "**/coverage",
-      "**/dist",
-      "**/jsconfig-base.json",
-      "**/jsconfig.json",
-      "**/node_modules",
-      "**/npm-debug.log",
-      "**/tsconfig.json"
+    "includes": [
+      "**",
+      "!**/.cache",
+      "!**/.DS_Store",
+      "!**/.idea",
+      "!**/.vscode",
+      "!**/.yarnrc.yml",
+      "!**/*.hbs",
+      "!**/*.md",
+      "!**/build",
+      "!**/CHANGELOG.md",
+      "!**/coverage",
+      "!**/dist",
+      "!**/jsconfig-base.json",
+      "!**/jsconfig.json",
+      "!**/node_modules",
+      "!**/npm-debug.log",
+      "!**/tsconfig.json"
     ]
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "style": {
-        "useTemplate": "info"
+        "useTemplate": "info",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "noDuplicateElseIf": "error"
       },
       "nursery": {
         "useSortedClasses": "error",
-        "noDuplicateElseIf": "error"
+        "noFloatingPromises": "error"
       },
       "correctness": {
         "noUnusedVariables": "warn"
@@ -80,7 +97,7 @@
   },
   "overrides": [
     {
-      "include": [".vscode/**"],
+      "includes": ["**/.vscode/**"],
       "json": {
         "parser": {
           "allowComments": true,
@@ -89,11 +106,21 @@
       }
     },
     {
-      "include": ["packages/tooling/**"],
+      "includes": ["packages/tooling/**"],
       "linter": {
         "rules": {
           "suspicious": {
             "noExplicitAny": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.stories.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
           }
         }
       }

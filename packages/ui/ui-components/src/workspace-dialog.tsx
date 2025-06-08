@@ -1,6 +1,6 @@
 import type { WorkspaceStorageType } from '@bangle.io/types';
 import { Check, FolderOpen } from 'lucide-react';
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useEffect, useId, useReducer, useRef } from 'react';
 import { Button } from './button';
 import { cn } from './cn';
 import {
@@ -217,6 +217,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   defaultStorage,
 }) => {
   const { selected = defaultStorage, error } = state;
+  const titleId = useId();
 
   const handleSelectStorage = (storage: WorkspaceStorageType) => {
     dispatch({ type: 'UPDATE_SELECTED_STORAGE', storage });
@@ -232,11 +233,12 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   return (
     <>
       <DialogHeader className="mb-2">
-        <DialogTitle className="font-semibold text-lg">
+        <DialogTitle id={titleId} className="font-semibold text-lg">
           {t.app.dialogs.createWorkspace.selectTypeTitle}
         </DialogTitle>
       </DialogHeader>
-      <ul className="space-y-4" role="radiogroup">
+      {/* biome-ignore lint: Using ul as a container for radiogroup is a standard ARIA practice. */}
+      <ul className="space-y-4" role="radiogroup" aria-labelledby={titleId}>
         {storageTypes.map((config) => (
           <ListItem
             key={config.type}
@@ -283,6 +285,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   const { name, error } = state;
 
   const ref = useRef<HTMLInputElement>(null);
+  const workspaceNameId = useId();
 
   useEffect(() => {
     ref.current?.focus();
@@ -334,11 +337,11 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="workspaceName" className="text-right">
+          <Label htmlFor={workspaceNameId} className="text-right">
             {t.app.dialogs.createWorkspace.nameLabel}
           </Label>
           <Input
-            id="workspaceName"
+            id={workspaceNameId}
             ref={ref}
             value={name}
             onKeyDown={handleKeyDown}
@@ -513,7 +516,7 @@ const ListItem: React.FC<ListItemProps> = ({
           disabled && 'cursor-not-allowed opacity-50',
         )}
         disabled={disabled}
-        // biome-ignore lint/a11y/useSemanticElements: <explanation>
+        // biome-ignore lint: Using a button for custom styling and behavior while maintaining radio button semantics.
         role="radio"
       >
         <div className="flex items-center justify-between space-x-1">

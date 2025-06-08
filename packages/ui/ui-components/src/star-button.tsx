@@ -1,8 +1,7 @@
-import { Star as StarIcon } from 'lucide-react';
-import * as React from 'react';
-
 import { t } from '@bangle.io/translations';
+import { Star as StarIcon } from 'lucide-react';
 import type { ComponentPropsWithoutRef } from 'react';
+import * as React from 'react';
 import { Button } from './button';
 import { cn } from './cn';
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  type DependencyDefinition,
   collectRequiredDependencies,
+  type DependencyDefinition,
   recursiveInstantiate,
 } from '../recurse';
 

@@ -1,11 +1,10 @@
-import { NodeSelection, Plugin, PluginKey, TextSelection } from '../pm';
 import type { EditorView } from '../pm';
-import {} from '../pm';
+import { NodeSelection, Plugin, PluginKey, TextSelection } from '../pm';
 import { isNodeSelection } from '../pm-utils';
 import { createDragHandle } from './drag-handle-ui';
 import {
-  type GlobalDragHandlePluginOptions,
   calcNodePos,
+  type GlobalDragHandlePluginOptions,
   nodeDOMAtCoords,
   nodePosAtDOM,
 } from './helpers';

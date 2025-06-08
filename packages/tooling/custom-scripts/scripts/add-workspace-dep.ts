@@ -1,5 +1,9 @@
-import { makeLogger } from '../lib';
-import { collectAllDependencies, isAValidBanglePackage, setup } from '../lib';
+import {
+  collectAllDependencies,
+  isAValidBanglePackage,
+  makeLogger,
+  setup,
+} from '../lib';
 
 const logger = makeLogger('addWorkspaceDep');
 

@@ -1,4 +1,5 @@
 import { assertIsDefined } from '../common';
+import type { Command, EditorState, EditorView, Schema } from '../pm';
 import {
   Fragment,
   NodeSelection,
@@ -8,7 +9,6 @@ import {
   Slice,
   TextSelection,
 } from '../pm';
-import type { Command, EditorState, EditorView, Schema } from '../pm';
 import { mapChildren } from './helpers';
 import { findParentNodeOfType } from './selection';
 import { safeInsert } from './transforms';

@@ -19,7 +19,7 @@ export const safeRequestAnimationFrame =
   typeof window !== 'undefined' && window.requestAnimationFrame
     ? window.requestAnimationFrame
     : (callback: (r: number) => void) => {
-        const currTime = new Date().getTime();
+        const currTime = Date.now();
         const timeToCall = Math.max(0, 16 - (currTime - lastTime));
         const id = window.setTimeout(() => {
           callback(currTime + timeToCall);
@@ -98,7 +98,7 @@ function scrollIntoViewIfNeededPolyfill(
   element: HTMLElement,
   centerIfNeeded2?: boolean,
 ) {
-  // biome-ignore lint/style/noArguments: <explanation>
+  // biome-ignore lint: using arguments object for legacy compatibility
   const centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded2;
 
   // biome-ignore lint/style/noNonNullAssertion: <explanation>

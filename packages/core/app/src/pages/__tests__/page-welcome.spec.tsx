@@ -5,8 +5,7 @@ import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { renderWithServices } from '@bangle.io/test-utils';
 import { screen } from '@testing-library/react';
 import React, { act } from 'react';
-import { describe, expect, it } from 'vitest';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { PageWelcome } from '../page-welcome';
 
 describe('PageWelcome', () => {

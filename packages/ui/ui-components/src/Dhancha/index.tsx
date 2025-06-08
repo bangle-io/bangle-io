@@ -1,5 +1,6 @@
 import './Dhancha.css';
 
+import { cx } from '@bangle.io/base-utils';
 import type { ReactNode } from 'react';
 import React, {
   useCallback,
@@ -8,8 +9,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
-import { cx } from '@bangle.io/base-utils';
 
 import { useStickyNavigation } from './use-sticky-navigation';
 

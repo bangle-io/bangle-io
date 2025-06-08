@@ -1,4 +1,4 @@
-import { checkWidescreen, cx } from '@bangle.io/base-utils';
+import { checkWidescreen } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import {
   Breadcrumb,
@@ -106,7 +106,9 @@ function ToolbarLeftSection({
 
 function HomeBreadcrumb({
   coreServices,
-}: { coreServices: ReturnType<typeof useCoreServices> }) {
+}: {
+  coreServices: ReturnType<typeof useCoreServices>;
+}) {
   return (
     <Breadcrumb.Breadcrumb>
       <Breadcrumb.BreadcrumbList>

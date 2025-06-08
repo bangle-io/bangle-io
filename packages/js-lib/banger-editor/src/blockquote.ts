@@ -1,17 +1,16 @@
 import { nodes as schemaBasicNodes } from 'prosemirror-schema-basic';
 import { type CollectionType, collection, keybinding } from './common';
 import type { Command, NodeSpec, NodeType, Schema } from './pm';
-import { lift, wrapIn } from './pm';
-import { inputRules, wrappingInputRule } from './pm';
-import { findParentNodeOfType } from './pm-utils';
+import { inputRules, lift, wrapIn, wrappingInputRule } from './pm';
 import {
-  type KeyCode,
-  type PluginContext,
   defaultGetParagraphNodeType,
+  findParentNodeOfType,
   getNodeType,
   insertEmptyParagraphAboveNode,
   insertEmptyParagraphBelowNode,
+  type KeyCode,
   moveNode,
+  type PluginContext,
 } from './pm-utils';
 
 export type BlockquoteConfig = {

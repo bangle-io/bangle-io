@@ -29,7 +29,7 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/prosemirror-all": "2.0.0-alpha.18",
-    "jotai": "^2.12.4",
+    "jotai": "^2.12.5",
     "orderedmap": "^2.1.1",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-dropcursor": "^1.8.2",
@@ -44,7 +44,6 @@
     "prosemirror-state": "^1.4.3",
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.10.4",
-    "prosemirror-view": "^1.39.3"
-  },
-  "devDependencies": {}
+    "prosemirror-view": "^1.40.0"
+  }
 }

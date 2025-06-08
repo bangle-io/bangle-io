@@ -2,6 +2,7 @@ import stories from '@bangle.io/ui-components/src/workspace-dialog.stories.porta
 import { test as base, expect } from '@playwright/experimental-ct-react';
 import { createTest } from '@storybook/react/experimental-playwright';
 import React from 'react';
+
 const test = createTest(base);
 
 test('Default dialog shows storage options and navigates', async ({

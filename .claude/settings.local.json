@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(jq:*)"
+      "Bash(jq:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm biome check:*)"
     ],
     "deny": []
   }

@@ -1,8 +1,8 @@
 import { readFileAsText } from '@bangle.io/baby-fs';
 import {
+  assertIsDefined,
   BaseService,
   type BaseServiceContext,
-  assertIsDefined,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';

@@ -1,9 +1,10 @@
 import * as PMTestBuilder from 'prosemirror-test-builder';
 import type { PMNode } from '../pm';
-import { EditorView } from '../pm';
-import { EditorState, NodeSelection, TextSelection } from '../pm';
+import { EditorState, EditorView, NodeSelection, TextSelection } from '../pm';
 import { buildTestSchema } from './schema';
+
 export * from './schema';
+
 const { builders } = PMTestBuilder;
 
 type Tag = {

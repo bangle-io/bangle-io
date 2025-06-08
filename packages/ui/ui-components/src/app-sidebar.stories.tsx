@@ -11,7 +11,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import React from 'react';
+import React, { useId } from 'react';
 import { AppSidebar } from './app-sidebar';
 import {
   Breadcrumb,
@@ -408,7 +408,7 @@ const data = {
   ],
 };
 
-function AppSidebar2({
+function _AppSidebar2({
   workspaces,
   tree,
   navItems,
@@ -506,15 +506,16 @@ function Tree({ item }: { item: TreeItem }) {
 }
 
 function SearchForm({ ...props }: React.ComponentProps<'form'>) {
+  const searchId = useId();
   return (
     <form {...props}>
       <SidebarGroup className="py-0">
         <SidebarGroupContent className="relative">
-          <Label htmlFor="search" className="sr-only">
+          <Label htmlFor={searchId} className="sr-only">
             Search
           </Label>
           <SidebarInput
-            id="search"
+            id={searchId}
             placeholder="Search the docs..."
             className="pl-8"
           />
@@ -525,7 +526,7 @@ function SearchForm({ ...props }: React.ComponentProps<'form'>) {
   );
 }
 
-function VersionSwitcher({
+function _VersionSwitcher({
   versions,
   defaultVersion,
 }: {

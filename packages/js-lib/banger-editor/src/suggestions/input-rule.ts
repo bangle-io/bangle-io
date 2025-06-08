@@ -1,6 +1,4 @@
-import { InputRule } from '../pm';
-
-import { type EditorState, TextSelection } from '../pm';
+import { type EditorState, InputRule, TextSelection } from '../pm';
 
 // ProseMirror uses the Unicode Character 'OBJECT REPLACEMENT CHARACTER' (U+FFFC) as text representation for
 // leaf nodes, i.e. nodes that don't have any content or text property (e.g. hardBreak, emoji)

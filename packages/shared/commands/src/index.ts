@@ -1,7 +1,6 @@
 import { commandExcludedServices } from '@bangle.io/constants';
-import type { Command } from '@bangle.io/types';
-
 import type { Validator } from '@bangle.io/mini-js-utils';
+import type { Command } from '@bangle.io/types';
 import { uiCommands } from './ui-commands';
 import { wsCommands } from './ws-commands';
 

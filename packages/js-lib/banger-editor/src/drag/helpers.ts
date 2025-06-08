@@ -1,6 +1,4 @@
-import type { PMNode, Schema } from '../pm';
-import type { EditorState } from '../pm';
-import type { EditorView } from '../pm';
+import type { EditorState, EditorView, PMNode, Schema } from '../pm';
 
 export const ORDERED_LIST_TAG = 'OL';
 

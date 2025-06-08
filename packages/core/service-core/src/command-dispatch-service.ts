@@ -1,14 +1,14 @@
 import {
+  assertIsDefined,
   BaseError,
   BaseService,
   type BaseServiceContext,
-  assertIsDefined,
 } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
 import {
-  SERVICE_NAME,
   commandExcludedServices,
   commandKeyToContext,
+  SERVICE_NAME,
 } from '@bangle.io/constants';
 import type {
   Command,

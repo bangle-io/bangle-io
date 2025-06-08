@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Plugin, PluginKey } from '../../pm';
 import type { MarkSpec, NodeSpec } from '../../pm';
+import { Plugin, PluginKey } from '../../pm';
 
 import { collection, resolve, setPriority } from '../collection';
 

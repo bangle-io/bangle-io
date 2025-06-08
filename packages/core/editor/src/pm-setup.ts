@@ -1,17 +1,15 @@
 import {
-  EditorState,
-  EditorView,
-  type PMNode,
-  Plugin,
-  type ResolvedPos,
-  Schema,
-  markdownLoader,
-} from '@bangle.io/prosemirror-plugins';
-import {
   collection,
   createDocument,
+  EditorState,
+  EditorView,
   store as editorStore,
+  markdownLoader,
+  Plugin,
+  type PMNode,
+  type ResolvedPos,
   resolve,
+  Schema,
   setGlobalConfig,
 } from '@bangle.io/prosemirror-plugins';
 

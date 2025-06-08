@@ -43,7 +43,7 @@ export function testCommandHandler({
 }: TestCommandHandlerArgs): TestCommandHandlerReturnType {
   const testEnv = createTestEnvironment(testEnvArgs);
 
-  let commandDispatcher: CommandDispatchService | undefined = undefined;
+  let commandDispatcher: CommandDispatchService | undefined;
 
   const commandResults: Array<TestCommandResult> = [];
 

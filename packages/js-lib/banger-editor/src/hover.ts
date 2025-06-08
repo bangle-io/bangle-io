@@ -1,6 +1,11 @@
 import { collection } from './common';
-import { Plugin, PluginKey } from './pm';
-import { Decoration, DecorationSet, type EditorView } from './pm';
+import {
+  Decoration,
+  DecorationSet,
+  type EditorView,
+  Plugin,
+  PluginKey,
+} from './pm';
 
 export type HoverOptions = {
   /**

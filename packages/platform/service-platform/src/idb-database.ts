@@ -4,13 +4,13 @@ import {
   isAppError,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import {
   type BangleDbSchema,
   type DbRecord,
   getTable,
   idb,
   makeDbRecord,
+  TypedBroadcastBus,
 } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';

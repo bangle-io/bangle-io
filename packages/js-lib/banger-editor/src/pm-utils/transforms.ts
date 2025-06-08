@@ -1,6 +1,11 @@
 import type { Attrs, Mark, NodeType } from '../pm';
-import { Fragment, PMNode } from '../pm';
-import { NodeSelection, PMSelection, type Transaction } from '../pm';
+import {
+  Fragment,
+  NodeSelection,
+  PMNode,
+  PMSelection,
+  type Transaction,
+} from '../pm';
 
 import {
   canInsert,

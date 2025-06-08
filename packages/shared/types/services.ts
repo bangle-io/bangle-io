@@ -5,8 +5,8 @@ import type {
   Logger,
 } from '@bangle.io/base-utils';
 import type {
-  WorkspaceStorageType,
   commandExcludedServices,
+  WorkspaceStorageType,
 } from '@bangle.io/constants';
 import type { PmEditorService } from '@bangle.io/editor';
 import type {

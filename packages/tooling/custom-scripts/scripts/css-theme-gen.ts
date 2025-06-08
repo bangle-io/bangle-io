@@ -2,7 +2,7 @@ import path from 'node:path';
 import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
 import * as fse from 'fs-extra';
-import postcss, { type Rule, type Declaration } from 'postcss';
+import postcss, { type Declaration, type Rule } from 'postcss';
 
 extend([namesPlugin]);
 
@@ -191,5 +191,5 @@ if (require.main === module) {
     console.error('❌ No input file specified.');
     process.exit(1);
   }
-  processCssFile(inputFile);
+  void processCssFile(inputFile);
 }

@@ -1,12 +1,11 @@
 // index.commandExcludedServices@bangle.ioconstants
 // index.test.ts
 
-import { describe, expect, it } from 'vitest';
-
 import { assertIsDefined } from '@bangle.io/base-utils';
 import { commandExcludedServices } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
+import { describe, expect, it } from 'vitest';
 import { areAllValuesOptional, bangleAppCommands } from '../index';
 
 const allCommands: Command[] = bangleAppCommands;

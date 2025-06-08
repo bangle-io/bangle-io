@@ -35,7 +35,7 @@
     "test-storybook": "test-storybook"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.5.0",
+    "@vitejs/plugin-react": "^4.5.1",
     "react": "19.1.0"
   },
   "devDependencies": {
@@ -60,7 +60,7 @@
     "globby": "^14.1.0",
     "prop-types": "^15.8.1",
     "storybook": "^8.6.14",
-    "tailwindcss": "^4.1.7",
+    "tailwindcss": "^4.1.8",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^2.0.0",
     "vite": "^6.3.5"

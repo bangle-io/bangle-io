@@ -1,5 +1,5 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
-import { SERVICE_NAME, browserHistoryStateEvents } from '@bangle.io/constants';
+import { browserHistoryStateEvents, SERVICE_NAME } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/mini-js-utils';
 import type {
   AppRouteInfo,

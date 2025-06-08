@@ -187,7 +187,7 @@ div.ProseMirror {
     z-index: calc(infinity);
     outline: 2px solid hsl(var(--BV-pop));
     outline-offset: 1px;
-    border-radius: .375rem;
+    border-radius: 0.375rem;
   }
 
   /*
@@ -205,7 +205,6 @@ div.ProseMirror {
     margin-top: 0;
     margin-bottom: 0;
     margin-left: 32px;
-    margin-bottom: 0;
     position: relative;
     display: list-item;
     list-style: none;
@@ -282,7 +281,6 @@ div.ProseMirror {
       position: absolute;
       right: 100%;
       text-align: center;
-      width: 1.5em;
       width: 1lh;
 
       &,
@@ -297,7 +295,6 @@ div.ProseMirror {
       position: absolute;
       right: 100%;
       text-align: center;
-      width: 1.5em;
       width: 1lh;
     }
 

@@ -5,6 +5,6 @@ export * from './file-storage-memory';
 export * from './file-storage-nativefs';
 export * from './idb-database';
 export * from './memory-database';
-export * from './node-error-handler';
 export * from './memory-sync-database';
+export * from './node-error-handler';
 export * from './router';

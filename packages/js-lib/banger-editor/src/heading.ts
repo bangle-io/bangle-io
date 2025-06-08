@@ -1,26 +1,26 @@
+import { type CollectionType, collection, isMac, keybinding } from './common';
 import {
   type Command,
   type EditorState,
+  inputRules,
   type NodeSpec,
   type NodeType,
   type PMNode,
   type Schema,
   setBlockType,
+  textblockTypeInputRule,
 } from './pm';
-
-import { type CollectionType, collection, isMac, keybinding } from './common';
-import { inputRules, textblockTypeInputRule } from './pm';
-import { findParentNodeOfType } from './pm-utils';
 import {
-  type KeyCode,
-  type PluginContext,
   defaultGetParagraphNodeType,
+  findParentNodeOfType,
   getNodeType,
   insertEmptyParagraphAboveNode,
   insertEmptyParagraphBelowNode,
   jumpToEndOfNode,
   jumpToStartOfNode,
+  type KeyCode,
   moveNode,
+  type PluginContext,
 } from './pm-utils';
 
 export type HeadingConfig = {

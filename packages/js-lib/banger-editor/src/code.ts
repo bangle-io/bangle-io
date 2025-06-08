@@ -1,6 +1,8 @@
+import { type CollectionType, collection, keybinding } from './common';
 import {
   type Command,
   type EditorState,
+  inputRules,
   type MarkSpec,
   type MarkType,
   type Node,
@@ -9,9 +11,6 @@ import {
   type TextSelection,
   toggleMark,
 } from './pm';
-
-import { type CollectionType, collection, keybinding } from './common';
-import { inputRules } from './pm';
 import {
   getMarkType,
   isMarkActiveInSelection,

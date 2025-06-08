@@ -1,10 +1,10 @@
 import {
-  type VirtualElement,
   autoUpdate,
   computePosition,
   flip,
   offset,
   shift,
+  type VirtualElement,
 } from '@floating-ui/dom';
 import { useEffect, useRef } from 'react';
 
@@ -76,7 +76,7 @@ export function useFloatingPosition({
   return floatingRef;
 }
 
-function drawRectangle(el: VirtualElement) {
+function _drawRectangle(el: VirtualElement) {
   const rect = el.getBoundingClientRect();
   const RECTANGLE_ID = 'floating-debug-rectangle';
   let div = document.getElementById(RECTANGLE_ID);

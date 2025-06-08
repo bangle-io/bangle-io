@@ -1,7 +1,5 @@
-import { dropCursor } from './pm';
-import { gapCursor } from './pm';
-
 import { collection } from './common';
+import { dropCursor, gapCursor } from './pm';
 
 export interface DropCursorOptions {
   /**

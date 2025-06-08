@@ -1,5 +1,6 @@
-import { type Atom, type WritableAtom, createStore } from 'jotai';
+import { type Atom, createStore, type WritableAtom } from 'jotai';
 import { type EditorState, Plugin, PluginKey } from '../pm';
+
 export { atom } from 'jotai';
 
 export type Store = ReturnType<typeof createStore>;

@@ -1,21 +1,21 @@
-import { collection } from '../common';
 import type { Logger } from '../common';
+import { collection } from '../common';
 import type { Selection } from '../pm';
 import { inputRules } from '../pm';
 import { triggerInputRule } from './input-rule';
 import { suggestionKeymap } from './keymap';
 import {
-  type ReplacementContent,
   pluginSuggestion,
+  type ReplacementContent,
   removeSuggestMark,
   replaceSuggestMarkWith,
 } from './plugin-suggestion';
 import { suggestionsMark } from './suggestions-mark';
 
+export * from './input-rule';
+export * from './keymap';
 export * from './plugin-suggestion';
 export * from './suggestions-mark';
-export * from './keymap';
-export * from './input-rule';
 
 export type SuggestionConfig = {
   markName: string;

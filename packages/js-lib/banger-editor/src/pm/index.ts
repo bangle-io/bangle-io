@@ -1,35 +1,4 @@
-export type {
-  AttributeSpec,
-  DOMOutputSpec,
-  MarkSpec,
-  NodeSpec,
-  ParseOptions,
-  ParseRule,
-  SchemaSpec,
-  Attrs,
-} from 'prosemirror-model';
-
-export type {
-  MapResult,
-  Mapping,
-  StepMap as TransformStepMap,
-} from 'prosemirror-transform';
-
-export type {
-  DirectEditorProps,
-  EditorProps,
-  NodeView,
-  NodeViewConstructor,
-  DecorationAttrs,
-} from 'prosemirror-view';
-
-export type {
-  ListAttributes,
-  ListKind,
-} from 'prosemirror-flat-list';
-
-export type { Command } from 'prosemirror-state';
-
+export { default as OrderedMap } from 'orderedmap';
 export {
   autoJoin,
   baseKeymap,
@@ -40,6 +9,8 @@ export {
   joinBackward,
   joinDown,
   joinForward,
+  joinTextblockBackward,
+  joinTextblockForward,
   joinUp,
   lift,
   liftEmptyBlock,
@@ -50,20 +21,21 @@ export {
   selectNodeBackward,
   selectNodeForward,
   selectParentNode,
+  selectTextblockEnd,
+  selectTextblockStart,
   setBlockType,
   splitBlock,
+  splitBlockAs,
   splitBlockKeepMarks,
   toggleMark,
   wrapIn,
-  joinTextblockBackward,
-  joinTextblockForward,
-  selectTextblockEnd,
-  selectTextblockStart,
-  splitBlockAs,
 } from 'prosemirror-commands';
-
 export { dropCursor } from 'prosemirror-dropcursor';
 
+export type {
+  ListAttributes,
+  ListKind,
+} from 'prosemirror-flat-list';
 export {
   backspaceCommand,
   createDedentListCommand,
@@ -79,37 +51,42 @@ export {
   isListType,
   wrappingListInputRule,
 } from 'prosemirror-flat-list';
-
 export { GapCursor, gapCursor } from 'prosemirror-gapcursor';
-
 export {
-  history,
-  undo,
-  redo,
   closeHistory,
+  history,
+  redo,
   redoDepth,
   redoNoScroll,
+  undo,
   undoDepth,
   undoNoScroll,
 } from 'prosemirror-history';
-
 export {
-  InputRule,
   closeDoubleQuote,
   closeSingleQuote,
   ellipsis,
   emDash,
+  InputRule,
   inputRules,
-  smartQuotes,
   openDoubleQuote,
   openSingleQuote,
+  smartQuotes,
   textblockTypeInputRule,
   undoInputRule,
   wrappingInputRule,
 } from 'prosemirror-inputrules';
-
 export { keydownHandler, keymap } from 'prosemirror-keymap';
-
+export type {
+  AttributeSpec,
+  Attrs,
+  DOMOutputSpec,
+  MarkSpec,
+  NodeSpec,
+  ParseOptions,
+  ParseRule,
+  SchemaSpec,
+} from 'prosemirror-model';
 export {
   ContentMatch,
   DOMParser,
@@ -126,32 +103,34 @@ export {
   Schema,
   Slice,
 } from 'prosemirror-model';
+export {
+  marks,
+  nodes,
+  schema,
+} from 'prosemirror-schema-basic';
+export type { Command } from 'prosemirror-state';
 
 export {
   AllSelection,
   EditorState,
   NodeSelection,
   Plugin,
+  Plugin as PMPlugin,
   PluginKey,
   Selection,
   Selection as PMSelection,
   SelectionRange,
   TextSelection,
   Transaction,
-  Plugin as PMPlugin,
 } from 'prosemirror-state';
-
-export { default as OrderedMap } from 'orderedmap';
-
+export { builders } from 'prosemirror-test-builder';
+export type {
+  Mapping,
+  MapResult,
+  StepMap as TransformStepMap,
+} from 'prosemirror-transform';
 export {
   AddMarkStep,
-  RemoveMarkStep,
-  ReplaceAroundStep,
-  ReplaceStep,
-  Step,
-  StepMap,
-  StepResult,
-  Transform,
   canJoin,
   canSplit,
   dropPoint,
@@ -159,19 +138,24 @@ export {
   insertPoint,
   joinPoint,
   liftTarget,
+  RemoveMarkStep,
+  ReplaceAroundStep,
+  ReplaceStep,
   replaceStep,
+  Step,
+  StepMap,
+  StepResult,
+  Transform,
 } from 'prosemirror-transform';
-
+export type {
+  DecorationAttrs,
+  DirectEditorProps,
+  EditorProps,
+  NodeView,
+  NodeViewConstructor,
+} from 'prosemirror-view';
 export {
   Decoration,
   DecorationSet,
   EditorView,
 } from 'prosemirror-view';
-
-export { builders } from 'prosemirror-test-builder';
-
-export {
-  schema,
-  nodes,
-  marks,
-} from 'prosemirror-schema-basic';

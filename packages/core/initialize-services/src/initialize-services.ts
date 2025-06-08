@@ -4,15 +4,8 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import {
-  BrowserErrorHandlerService,
-  BrowserLocalStorageSyncDatabaseService,
-  BrowserRouterService,
-  FileStorageIndexedDB,
-  FileStorageNativeFs,
-  IdbDatabaseService,
-} from '@bangle.io/service-platform';
-
+import { PmEditorService } from '@bangle.io/editor';
+import { Container } from '@bangle.io/poor-mans-di';
 import {
   CommandDispatchService,
   CommandRegistryService,
@@ -28,10 +21,15 @@ import {
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-
-import { PmEditorService } from '@bangle.io/editor';
-import { Container } from '@bangle.io/poor-mans-di';
-import { HashStrategy } from '@bangle.io/service-platform';
+import {
+  BrowserErrorHandlerService,
+  BrowserLocalStorageSyncDatabaseService,
+  BrowserRouterService,
+  FileStorageIndexedDB,
+  FileStorageNativeFs,
+  HashStrategy,
+  IdbDatabaseService,
+} from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
   Command,

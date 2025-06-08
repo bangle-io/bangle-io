@@ -1,3 +1,4 @@
+import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import {
   ChevronsUpDown,
   GalleryVerticalEnd,
@@ -5,9 +6,10 @@ import {
   PlusIcon,
   Search,
 } from 'lucide-react';
-import React, { useMemo } from 'react';
+import React, { useId, useMemo } from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
-
+import { buildTree, type TreeItem } from './build-tree';
+import { cn } from './cn';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,14 +18,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './dropdown-menu';
-
-import { Label } from './label';
-
-import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import { Tree, type TreeProps } from './Tree';
-import { type TreeItem, buildTree } from './build-tree';
-import { cn } from './cn';
 import { KbdShortcut } from './kbd';
+import { Label } from './label';
 import {
   Sidebar,
   SidebarContent,
@@ -42,6 +38,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from './sidebar';
+import { Tree, type TreeProps } from './Tree';
 
 export type NavItem = {
   title: string;
@@ -317,19 +314,23 @@ function AppSidebarFooter({
 }
 
 function CommandButton({ onClick }: { onClick: () => void }) {
+  const commandButtonId = useId();
   return (
     <div
+      // biome-ignore lint/a11y/useSemanticElements: requires div wrapper for proper component styling integration
+      role="button"
+      tabIndex={0}
       onClick={onClick}
       onKeyUp={(e) => e.key === 'Enter' && onClick()}
       className="w-full cursor-pointer"
     >
       <SidebarGroup className="py-0">
         <SidebarGroupContent className="relative">
-          <Label htmlFor="command-button" className="sr-only">
+          <Label htmlFor={commandButtonId} className="sr-only">
             {t.app.common.searchLabel}
           </Label>
           <SidebarInput
-            id="command-button"
+            id={commandButtonId}
             placeholder={t.app.common.searchInputPlaceholder}
             className="pointer-events-none pr-8 pl-8"
             readOnly

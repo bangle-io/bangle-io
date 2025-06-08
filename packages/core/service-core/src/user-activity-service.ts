@@ -1,9 +1,9 @@
 import {
+  atomStorage,
   BaseService,
   type BaseServiceContext,
-  type Logger,
-  atomStorage,
   createAsyncAtom,
+  type Logger,
   throwAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
@@ -14,7 +14,7 @@ import type {
   ScopedEmitter,
 } from '@bangle.io/types';
 import type { WsPath } from '@bangle.io/ws-path';
-import { type PrimitiveAtom, atom } from 'jotai';
+import { atom, type PrimitiveAtom } from 'jotai';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 import type { WorkspaceStateService } from './workspace-state-service';
 
@@ -220,7 +220,7 @@ export class UserActivityService extends BaseService {
     this.config.emitter.on(
       'event::command:result',
       (result) => {
-        this._recordCommandResult(result);
+        void this._recordCommandResult(result);
       },
       this.abortSignal,
     );

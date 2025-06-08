@@ -12,10 +12,8 @@ import {
   CommandList,
 } from '@bangle.io/ui-components';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useAtom } from 'jotai';
-import { useAtomValue } from 'jotai';
-import React from 'react';
-import { useMemo, useRef } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import React, { useMemo, useRef } from 'react';
 
 /** A command dialog for searching and navigating to any file within the current workspace. */
 export function AllFilesDialog() {

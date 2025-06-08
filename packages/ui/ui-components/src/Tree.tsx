@@ -1,3 +1,4 @@
+import { WsPath } from '@bangle.io/ws-path';
 import {
   DndContext,
   type DragEndEvent,
@@ -12,9 +13,7 @@ import {
 } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronRight, FileIcon, Folder, MoreHorizontal } from 'lucide-react';
-import React, { useState, useCallback, useMemo } from 'react';
-
-import { WsPath } from '@bangle.io/ws-path';
+import React, { useCallback, useMemo, useState } from 'react';
 import type { TreeItem } from './build-tree';
 import { cn } from './cn';
 import {

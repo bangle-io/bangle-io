@@ -1,6 +1,8 @@
 {
   "name": "js-lib",
   "bangleWorkspaceConfig": {
-    "allowedWorkspaces": ["js-lib"]
+    "allowedWorkspaces": [
+      "js-lib"
+    ]
   }
 }

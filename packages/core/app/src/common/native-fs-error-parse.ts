@@ -4,6 +4,7 @@ import {
   NATIVE_BROWSER_USER_ABORTED_ERROR,
 } from '@bangle.io/baby-fs';
 import type { DirectoryPickResult } from '@bangle.io/ui-components';
+
 const ERROR_TYPES = {
   ERROR_PICKING_DIRECTORY: 'ERROR_PICKING_DIRECTORY',
   UNKNOWN: 'UNKNOWN_ERROR',

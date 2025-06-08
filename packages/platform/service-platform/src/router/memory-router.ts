@@ -7,7 +7,6 @@ import type {
   PageLifeCycleState,
   RouterState,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
 
 export class MemoryRouterService
   extends BaseService

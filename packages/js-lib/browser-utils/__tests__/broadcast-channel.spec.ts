@@ -1,11 +1,11 @@
 import { Logger } from '@bangle.io/logger';
 import {
-  type Mock,
   afterEach,
   beforeEach,
   describe,
   expect,
   it,
+  type Mock,
   vi,
 } from 'vitest';
 import {

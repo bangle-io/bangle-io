@@ -1,7 +1,7 @@
 import {
+  atomStorage,
   BaseService,
   type BaseServiceContext,
-  atomStorage,
   getEventSenderMetadata,
 } from '@bangle.io/base-utils';
 import type {
@@ -20,7 +20,7 @@ import type {
   DialogSingleInputProps,
   DialogSingleSelectProps,
 } from '@bangle.io/ui-components';
-import { type PrimitiveAtom, atom } from 'jotai';
+import { atom, type PrimitiveAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';

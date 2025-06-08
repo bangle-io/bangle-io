@@ -1,4 +1,13 @@
 import {
+  type CollectionType,
+  collection,
+  isMac,
+  keybinding,
+  PRIORITY,
+  setPriority,
+} from './common';
+import type { NodeSpec } from './pm';
+import {
   type Command,
   type DOMOutputSpec,
   type EditorState,
@@ -9,25 +18,16 @@ import {
   copyEmptyCommand,
   cutEmptyCommand,
   filterCommand,
+  findParentNodeOfType,
+  getNodeType,
   insertEmptyParagraphAboveNode,
   insertEmptyParagraphBelowNode,
   jumpToEndOfNode,
   jumpToStartOfNode,
+  type KeyCode,
   moveNode,
   parentHasDirectParentOfType,
 } from './pm-utils';
-
-import {
-  type CollectionType,
-  collection,
-  isMac,
-  keybinding,
-  setPriority,
-} from './common';
-import { PRIORITY } from './common';
-import type { NodeSpec } from './pm';
-import { findParentNodeOfType } from './pm-utils';
-import { type KeyCode, getNodeType } from './pm-utils';
 
 export type ParagraphConfig = {
   name?: string;

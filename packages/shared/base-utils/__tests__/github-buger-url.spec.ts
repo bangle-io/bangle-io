@@ -1,8 +1,7 @@
 // @vitest-environment happy-dom
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { makeTestLogger } from '@bangle.io/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getGithubUrl } from '../github-bug-url';
 import { throwAppError } from '../throw-app-error';
 

@@ -1,7 +1,6 @@
 import { collection } from './common';
 import type { EditorState } from './pm';
-import { Plugin, PluginKey } from './pm';
-import { Decoration, DecorationSet } from './pm';
+import { Decoration, DecorationSet, Plugin, PluginKey } from './pm';
 import { isDocEmpty } from './pm-utils';
 
 const key = new PluginKey('placeholder');

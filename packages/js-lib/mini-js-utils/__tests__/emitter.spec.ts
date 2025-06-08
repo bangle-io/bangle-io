@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { expectType } from '../index';
-
 import { Emitter } from '../emitter';
+import { expectType } from '../index';
 
 describe('Emitter', () => {
   let emitter: Emitter<any>;

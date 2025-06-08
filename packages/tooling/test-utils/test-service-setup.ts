@@ -1,4 +1,6 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import {
   CommandDispatchService,
   CommandRegistryService,
@@ -13,22 +15,24 @@ import {
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-
 // Use direct paths to avoid loading page-lifecycle
 import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
 import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
 import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
 import { MemoryRouterService } from '@bangle.io/service-platform/src/router/memory-router';
 
-import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-
 import { vi } from 'vitest';
+
 export type { Store } from '@bangle.io/types';
+
 import type { Store } from '@bangle.io/types';
+
 export { default as waitForExpect } from 'wait-for-expect';
+
 import { getEnabledCommands } from '@bangle.io/commands';
+
 export * from './test-service-setup';
+
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { PmEditorService } from '@bangle.io/editor';
 import { Container } from '@bangle.io/poor-mans-di';
@@ -94,7 +98,7 @@ export function createTestEnvironment({
     obj: Record<string, unknown>,
     prop: T,
   ): obj is Record<T, InstanceType<ServiceMapType[T]>> {
-    return Object.prototype.hasOwnProperty.call(obj, prop);
+    return Object.hasOwn(obj, prop);
   }
 
   const container = new Container(

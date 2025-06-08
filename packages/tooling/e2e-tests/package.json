@@ -39,17 +39,16 @@
     "@playwright/experimental-ct-react": "^1.52.0",
     "@playwright/test": "^1.52.0",
     "@storybook/react": "^8.6.14",
-    "@tailwindcss/vite": "^4.1.7",
-    "@types/node": "^22.15.21",
-    "@types/react": "^19.1.5",
+    "@tailwindcss/vite": "^4.1.8",
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.1.6",
     "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "tailwindcss": "^4.1.7",
+    "tailwindcss": "^4.1.8",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^2.0.0",
     "tsx": "^4.19.4"
-  },
-  "devDependencies": {}
+  }
 }

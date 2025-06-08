@@ -238,12 +238,10 @@ function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
           payload: { wsPath: file.wsPath },
         })}
       >
-        <>
-          <span>{file.label}</span>
-          {file.isCurrent && (
-            <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
-          )}
-        </>
+        <span>{file.label}</span>
+        {file.isCurrent && (
+          <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
+        )}
       </Breadcrumb.BreadcrumbLink>
     </DropdownMenu.DropdownMenuItem>
   );

@@ -1,5 +1,4 @@
-import { keybinding } from '../common';
-import { PRIORITY } from '../common';
+import { keybinding, PRIORITY } from '../common';
 import { store } from '../store';
 import {
   $suggestion,

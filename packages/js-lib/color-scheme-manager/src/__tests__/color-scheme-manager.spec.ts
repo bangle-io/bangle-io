@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type ThemeConfig, ThemeManager } from '../index';
 
 describe('ThemeManager', () => {

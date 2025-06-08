@@ -6,7 +6,7 @@ import { BaseError } from '@bangle.io/mini-js-utils';
 // ctimeMs is not supported by native browser fs, so only focusing on mTime
 export class BaseFileMetadata {
   mtimeMs: number;
-  constructor({ mtimeMs = new Date().getTime() } = {}) {
+  constructor({ mtimeMs = Date.now() } = {}) {
     this.mtimeMs = mtimeMs;
   }
 }

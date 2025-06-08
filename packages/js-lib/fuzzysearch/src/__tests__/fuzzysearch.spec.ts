@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
-  type ScoringFunction,
   defaultFuzzySearch,
   defaultScoringFunction,
   levenshteinDistance,
   levenshteinFuzzySearch,
   levenshteinScoringFunction,
   rankedFuzzySearch,
+  type ScoringFunction,
   substringFuzzySearch,
 } from '..';
 

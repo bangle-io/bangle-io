@@ -1,12 +1,11 @@
 import { type CollectionType, collection, keybinding } from './common';
-import type { Command, NodeType } from './pm';
+import type { Command, NodeSpec, NodeType, Schema } from './pm';
 import { InputRule, inputRules } from './pm';
-import type { NodeSpec, Schema } from './pm';
-import { safeInsert } from './pm-utils';
 import {
-  type PluginContext,
   defaultGetParagraphNodeType,
   getNodeType,
+  type PluginContext,
+  safeInsert,
 } from './pm-utils';
 
 export type HorizontalRuleConfig = {

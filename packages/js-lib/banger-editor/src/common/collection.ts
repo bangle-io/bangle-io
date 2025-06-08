@@ -1,4 +1,5 @@
 import type { MarkdownParser, MarkdownSerializer } from 'prosemirror-markdown';
+import type { Schema } from '../pm';
 import {
   type Command,
   type EditorState,
@@ -7,7 +8,6 @@ import {
   OrderedMap,
   PMPlugin,
 } from '../pm';
-import type { Schema } from '../pm';
 import { getGlobalConfig } from './global-config';
 
 export type CommandType = Command | ((...args: any[]) => Command);

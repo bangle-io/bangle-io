@@ -1,6 +1,8 @@
 {
   "name": "tooling",
   "bangleWorkspaceConfig": {
-    "allowedWorkspaces": ["*"]
+    "allowedWorkspaces": [
+      "*"
+    ]
   }
 }

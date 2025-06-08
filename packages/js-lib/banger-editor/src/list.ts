@@ -1,16 +1,13 @@
-import type { Command, EditorState, PMNode } from './pm';
-
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import {
   type CollectionType,
-  PRIORITY,
   collection,
   keybinding,
+  PRIORITY,
   setPriority,
 } from './common';
+import type { Command, EditorState, PMNode } from './pm';
 import {
-  type ListAttributes,
-  type ListKind,
   backspaceCommand,
   createDedentListCommand,
   createIndentListCommand,
@@ -21,12 +18,14 @@ import {
   createUnwrapListCommand,
   deleteCommand,
   enterCommand,
+  inputRules,
   isListNode,
   isListType,
+  type ListAttributes,
+  type ListKind,
   wrappingListInputRule,
 } from './pm';
-import { inputRules } from './pm';
-import { type PluginContext, findParentNode, getNodeType } from './pm-utils';
+import { findParentNode, getNodeType, type PluginContext } from './pm-utils';
 
 const LIST_KIND = {
   BULLET: 'bullet',

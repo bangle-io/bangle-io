@@ -1,5 +1,9 @@
-import { makeLogger, setDifference } from '../lib';
-import { isAValidBanglePackage, setup } from '../lib';
+import {
+  isAValidBanglePackage,
+  makeLogger,
+  setDifference,
+  setup,
+} from '../lib';
 
 const logger = makeLogger('removeUnusedDeps');
 
@@ -16,11 +20,7 @@ function main() {
 
 void main();
 
-const ignoredPackages = ({
-  depName,
-}: {
-  depName: string;
-}) => {
+const ignoredPackages = ({ depName }: { depName: string }) => {
   return depName.startsWith('@types/') || depName.startsWith('@bangle.dev/');
 };
 /**

@@ -1,5 +1,9 @@
-import { type PMNode, type ResolvedPos, TextSelection } from '../pm';
-import { PMSelection } from '../pm';
+import {
+  type PMNode,
+  PMSelection,
+  type ResolvedPos,
+  TextSelection,
+} from '../pm';
 
 import { equalNodeType, isNodeSelection } from './helpers';
 import type {

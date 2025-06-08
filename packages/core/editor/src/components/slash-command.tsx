@@ -20,10 +20,10 @@ import {
 } from 'date-fns';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, {
+  type ReactElement,
   useCallback,
   useEffect,
   useRef,
-  type ReactElement,
 } from 'react';
 
 import {

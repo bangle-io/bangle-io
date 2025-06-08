@@ -4,9 +4,9 @@ import path from 'node:path';
 import {
   type BanglePackageConfig,
   type BangleWorkspaceConfig,
-  KNOWN_PACKAGES,
   banglePackageConfigSchema,
   bangleWorkspaceConfigSchema,
+  KNOWN_PACKAGES,
 } from '../config';
 import { findAllExportedPaths } from './find-all-exported-paths';
 import { findAllImportedPackages } from './find-all-imported-paths';
@@ -102,7 +102,9 @@ export type SetupResult = {
 
 export async function setup({
   validatePackageConfig = true,
-}: { validatePackageConfig?: boolean } = {}): Promise<SetupResult> {
+}: {
+  validatePackageConfig?: boolean;
+} = {}): Promise<SetupResult> {
   const { globbySync } = await import('globby');
   const packages = globbySync('**/package.json', {
     cwd: path.join(root, 'packages'),

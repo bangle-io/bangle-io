@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { type TreeItem, buildTree } from '../build-tree';
+import { buildTree, type TreeItem } from '../build-tree';
 
 test('buildTree with multiple files and directories', () => {
   const wsPaths = [

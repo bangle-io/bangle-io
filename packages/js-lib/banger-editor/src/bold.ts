@@ -1,15 +1,12 @@
-import { keybinding } from './common';
-import { type CollectionType, collection } from './common';
-import { toggleMark } from './pm';
-import { inputRules } from './pm';
-import type { MarkSpec } from './pm';
-import type { Command, EditorState } from './pm';
+import { type CollectionType, collection, keybinding } from './common';
+import type { Command, EditorState, MarkSpec } from './pm';
+import { inputRules, toggleMark } from './pm';
 import {
-  type PluginContext,
   getMarkType,
   isMarkActiveInSelection,
   markInputRule,
   markPastePlugin,
+  type PluginContext,
 } from './pm-utils';
 
 export type BoldConfig = {

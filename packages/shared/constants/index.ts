@@ -57,10 +57,10 @@ export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
 
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
 
-export * from './command';
 export * from './browser-history-events';
-export * from './theme';
+export * from './command';
 export * from './routes';
+export * from './theme';
 
 // Note we are stuck with these names because of the indexeddb
 export const DATABASE_TABLE_NAME = {

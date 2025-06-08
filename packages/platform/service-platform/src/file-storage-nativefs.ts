@@ -1,15 +1,15 @@
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
-  NativeBrowserFileSystem,
   hasPermission,
+  NativeBrowserFileSystem,
   requestNativeBrowserFSPermission,
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
+  assertIsDefined,
   BaseService,
   type BaseServiceContext,
-  assertIsDefined,
   isWorkerGlobalScope,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -48,7 +48,7 @@ export class FileStorageNativeFs
   async hookMount(): Promise<void> {
     assertIsDefined(this.getRootDirHandle, 'getRootDirHandle');
     this.addCleanup(() => {
-      this.invalidateCache();
+      return this.invalidateCache();
     });
   }
 

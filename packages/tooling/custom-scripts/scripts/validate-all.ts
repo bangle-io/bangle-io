@@ -1,13 +1,13 @@
-import { KNOWN_PACKAGES, VITEST_PKG_NAME, serviceKindOrders } from '../config';
+import { KNOWN_PACKAGES, serviceKindOrders, VITEST_PKG_NAME } from '../config';
+import type { Package, Workspace } from '../lib';
 import {
-  type SetupResult,
   collectAllDependencies,
   isMainModule,
   makeLogger,
   makeThrowValidationError,
+  type SetupResult,
   setup,
 } from '../lib';
-import type { Package, Workspace } from '../lib';
 
 // bun packages/tooling/custom-scripts/scripts/validate-all.ts
 if (isMainModule(import.meta.url)) {

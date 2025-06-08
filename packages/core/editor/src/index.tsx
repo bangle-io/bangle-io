@@ -5,6 +5,7 @@ import { cx } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import React, { useCallback } from 'react';
 import { LinkMenu, SlashCommand } from './components';
+
 export { PmEditorService } from './pm-editor-service';
 
 export function Editor({

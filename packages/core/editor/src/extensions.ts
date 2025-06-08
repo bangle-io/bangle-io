@@ -1,16 +1,12 @@
 import type { Logger } from '@bangle.io/logger';
 import {
   setupActiveNode,
-  setupDragNode,
-  setupPlaceholder,
-  setupSuggestions,
-} from '@bangle.io/prosemirror-plugins';
-import {
   setupBase,
   setupBlockquote,
   setupBold,
   setupCode,
   setupCodeBlock,
+  setupDragNode,
   setupDropGapCursor,
   setupHardBreak,
   setupHeading,
@@ -22,7 +18,9 @@ import {
   setupLinkMenu,
   setupList,
   setupParagraph,
+  setupPlaceholder,
   setupStrike,
+  setupSuggestions,
   setupUnderline,
 } from '@bangle.io/prosemirror-plugins';
 import { funPlaceholder } from './utils';

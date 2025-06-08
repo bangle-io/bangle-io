@@ -1,8 +1,6 @@
 .*
 *.yaml
 
-biome.json
-vitest.config.ts
 local-ci-check.sh
 components.json
 RANT.md

@@ -107,13 +107,19 @@ function WorkspaceSidebar() {
   const [workspaceSidebarOpen, toggleWorkspaceSidebar] = useState(true);
 
   return workspaceSidebarOpen ? (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
+      role="button"
+      tabIndex={0}
       style={{
         backgroundColor: 'lightgreen',
       }}
       onClick={() => {
         toggleWorkspaceSidebar((r) => !r);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          toggleWorkspaceSidebar((r) => !r);
+        }
       }}
     >
       <div>{generateText({ lines: 10 })}</div>

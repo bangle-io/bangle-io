@@ -1,8 +1,8 @@
 import {
-  BaseService,
-  type BaseServiceContext,
   arrayEqual,
   atomWithCompare,
+  BaseService,
+  type BaseServiceContext,
   createAsyncAtom,
   wrapPromiseInAppErrorHandler,
 } from '@bangle.io/base-utils';

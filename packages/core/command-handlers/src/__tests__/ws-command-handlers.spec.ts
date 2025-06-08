@@ -2,7 +2,7 @@
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
 import { assertIsDefined } from '@bangle.io/base-utils';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
 describe('WS command handlers', () => {

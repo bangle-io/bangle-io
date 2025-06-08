@@ -1,9 +1,6 @@
 import path from 'node:path';
-
-import { rootPath } from '../config';
-import { PACKAGE_JSON_DEFAULTS } from '../config';
-import { isMainModule, makeLogger } from '../lib';
-import { type Package, setup } from '../lib';
+import { PACKAGE_JSON_DEFAULTS, rootPath } from '../config';
+import { isMainModule, makeLogger, type Package, setup } from '../lib';
 
 const logger = makeLogger('formatPackageJSON');
 

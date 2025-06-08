@@ -1,24 +1,25 @@
-import { Fragment, type MarkType, PMNode } from '../pm';
+import type { Logger } from '../common';
 import {
   type Command,
   type EditorState,
+  Fragment,
+  type MarkType,
   Plugin,
   PluginKey,
+  PMNode,
   Selection,
 } from '../pm';
-
-import type { Logger } from '../common';
 import {
-  type MarkScanResult,
-  type VirtualElement,
   clampRange,
+  createVirtualElementFromRange,
   findFirstMarkPosition,
   getMarkType,
   isTextSelection,
+  type MarkScanResult,
   safeInsert,
   setupScrollAndResizeHandlers,
+  type VirtualElement,
 } from '../pm-utils';
-import { createVirtualElementFromRange } from '../pm-utils';
 import { store } from '../store';
 
 export type Suggestion = {

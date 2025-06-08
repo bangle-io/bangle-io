@@ -31,7 +31,7 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/poor-mans-di": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "jotai": "^2.12.4"
+    "jotai": "^2.12.5"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

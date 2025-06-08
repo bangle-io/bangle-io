@@ -1,4 +1,9 @@
 import { useCoreServices } from '@bangle.io/context';
+import {
+  defaultFuzzySearch,
+  rankedFuzzySearch,
+  substringFuzzySearch,
+} from '@bangle.io/fuzzysearch';
 import type { Command } from '@bangle.io/types';
 import {
   CommandDialog,
@@ -10,15 +15,8 @@ import {
   CommandSeparator,
   KbdShortcut,
 } from '@bangle.io/ui-components';
-import { useAtom, useAtomValue } from 'jotai';
-
-import {
-  defaultFuzzySearch,
-  rankedFuzzySearch,
-  substringFuzzySearch,
-} from '@bangle.io/fuzzysearch';
-
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { useAtom, useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
@@ -166,7 +164,10 @@ function HomeRoute({
 function CommandRoute({
   baseItems,
   search,
-}: { baseItems: CommandItemProp[]; search: string }) {
+}: {
+  baseItems: CommandItemProp[];
+  search: string;
+}) {
   React.useEffect(() => {
     let unmounted = false;
     // for some reason scroll goes to the bottom when changing routes

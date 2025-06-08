@@ -1,6 +1,6 @@
 import { type CollectionType, collection, keybinding } from './common';
-import { toggleMark } from './pm';
 import type { Command, EditorState } from './pm';
+import { toggleMark } from './pm';
 import { isMarkActiveInSelection } from './pm-utils';
 
 export type UnderlineConfig = {
