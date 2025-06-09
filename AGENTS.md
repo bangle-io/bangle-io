@@ -35,7 +35,7 @@ packages:
   - 'packages/tooling/*'
 ```
 
-\*Remember\*\* to account for `gitignore` when working with the project. For example when `grep`ing for a file, remember to ignore `gitignore` files.
+\*Remember\*\* to account for `gitignore` when working with the project. For example when `grep`ing for a file, remember to use `git ls-files` to get the list of files to search.
 
 ### Workspace Hierarchy
 
