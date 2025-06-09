@@ -453,7 +453,7 @@ function _AppSidebar2({
           <SidebarGroupContent>
             <SidebarMenu>
               {tree.map((item, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                // biome-ignore lint/suspicious/noArrayIndexKey: demo array for storybook
                 <Tree key={index} item={item} />
               ))}
             </SidebarMenu>
@@ -495,7 +495,7 @@ function Tree({ item }: { item: TreeItem }) {
         <CollapsibleContent>
           <SidebarMenuSub>
             {items.map((subItem, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              // biome-ignore lint/suspicious/noArrayIndexKey: demo array for storybook
               <Tree key={index} item={subItem} />
             ))}
           </SidebarMenuSub>

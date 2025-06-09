@@ -64,7 +64,7 @@ export function moveNode(type: NodeType, dir: MoveDirection = 'UP'): Command {
     }
 
     const swapWith = isDown ? index + 1 : index - 1;
-    // If out of bounds, we can’t swap.
+    // If out of bounds, we can't swap.
     if (swapWith >= arr.length || swapWith < 0) {
       return false;
     }
@@ -72,16 +72,16 @@ export function moveNode(type: NodeType, dir: MoveDirection = 'UP'): Command {
     assertIsDefined(arr[swapWith], 'swapWithNode is undefined');
 
     const swapWithNodeSize = arr[swapWith].nodeSize;
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: ignore
     [arr[index]!, arr[swapWith]!] = [arr[swapWith]!, arr[index]!];
 
     let tr = state.tr;
 
-    // Replace the entire parent’s content (child array) with our reordered array.
+    // Replace the entire parent's content (child array) with our reordered array.
     const replaceStart = parentPos;
     const replaceEnd = $from.end(parentDepth);
 
-    // A Slice with openStart=0 and openEnd=0 means we’re inserting fully “closed” content (no extra open depth).
+    // A Slice with openStart=0 and openEnd=0 means we're inserting fully "closed" content (no extra open depth).
     const slice = new Slice(Fragment.fromArray(arr), 0, 0);
     tr = tr.step(new ReplaceStep(replaceStart, replaceEnd, slice, false));
 

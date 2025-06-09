@@ -86,9 +86,10 @@ export class Emitter<
     if (!this.destroyed) {
       this.paused = false;
       while (this.buffer.length > 0) {
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        const message = this.buffer.shift()!;
-        this.emit(message.event, message.payload);
+        const message = this.buffer.shift();
+        if (message) {
+          this.emit(message.event, message.payload);
+        }
       }
     }
     return this;

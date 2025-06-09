@@ -98,8 +98,10 @@ function AllFilesContent({ search, onClose }: AllFilesContentProps) {
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
-          const file = filteredFiles[virtualRow.index]!;
+          const file = filteredFiles[virtualRow.index];
+          if (!file) {
+            return null;
+          }
           return (
             <div
               key={file.id}

@@ -35,6 +35,8 @@ packages:
   - 'packages/tooling/*'
 ```
 
+\*Remember\*\* to account for `gitignore` when working with the project. For example when `grep`ing for a file, remember to ignore `gitignore` files.
+
 ### Workspace Hierarchy
 
 Lower layers must never import from higher layers. The hierarchy is enforced via `bangleWorkspaceConfig.allowedWorkspaces` in each workspace's parent `package.json`.

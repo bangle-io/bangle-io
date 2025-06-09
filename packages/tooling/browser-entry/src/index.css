@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* biome-ignore lint/correctness/noInvalidPositionAtImportRule: <explanation> */
 @import "tw-animate-css";
 
 @plugin 'tailwindcss-animate';
@@ -177,7 +176,7 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* biome-ignore lint/a11y/useGenericFontNames: <explanation> */
+  /* biome-ignore lint/a11y/useGenericFontNames: system font is needed for native look */
   @supports (font: -apple-system-body) and (-webkit-appearance: none) {
     [data-wrapper] {
       @apply min-[1800px]:border-t;

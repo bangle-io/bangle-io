@@ -94,10 +94,9 @@ function pluginInputRules(config: RequiredConfig) {
               // new paragraph
               insertParaAfter = true;
             } else {
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              const nextNode = state.doc.resolve($para.after()).nodeAfter!;
+              const nextNode = state.doc.resolve($para.after()).nodeAfter;
               // if the next node is a hr, then insert a new paragraph
-              insertParaAfter = nextNode.type === type;
+              insertParaAfter = nextNode ? nextNode.type === type : false;
             }
             return insertParaAfter
               ? safeInsert(
@@ -127,7 +126,6 @@ function insertHorizontalRule(config: RequiredConfig): Command {
     const { $from } = state.selection;
     const pos = $from.end();
 
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     const tr = safeInsert(type.createAndFill()!, pos)(state.tr);
     if (tr) {
       dispatch?.(tr);

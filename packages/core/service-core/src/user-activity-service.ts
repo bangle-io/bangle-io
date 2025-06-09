@@ -258,15 +258,14 @@ export class UserActivityService extends BaseService {
       return;
     }
 
-    this.logger.debug('Recording command activity', result);
     const wsName = this.store.get(this.workspaceState.$currentWsName);
 
     // Skip if no workspace is active
     if (!wsName) {
       return;
     }
-
     this.logger.debug('Recording command activity', result);
+
     await this.recordActivity(wsName, 'command', {
       commandId: result.command.id,
     });

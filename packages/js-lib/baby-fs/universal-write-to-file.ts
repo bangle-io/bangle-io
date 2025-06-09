@@ -52,8 +52,7 @@ export async function writeToFile(
   // for Safari 15.2 and later which support private fs
   // and it does not allow writing to fileHandle outside of worker
   if (
-    // biome-ignore lint/complexity/useOptionalChain: <explanation>
-    navigator &&
+    typeof navigator !== 'undefined' &&
     navigator.storage &&
     'getDirectory' in navigator.storage &&
     isSafari()
@@ -87,8 +86,12 @@ async function safariWorkerWrite({ path, content }: WritePayload) {
     }
   }
 
-  // biome-ignore lint/style/noNonNullAssertion: <explanation>
-  const fileHandle = await handle.getFileHandle(path[path.length - 1]!, {
+  const fileName = path[path.length - 1];
+  if (!fileName) {
+    throw new Error('Invalid path: no filename provided');
+  }
+
+  const fileHandle = await handle.getFileHandle(fileName, {
     create: false,
   });
 
@@ -108,5 +111,8 @@ async function safariWorkerWrite({ path, content }: WritePayload) {
 }
 
 function isSafari() {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
   return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 }

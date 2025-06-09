@@ -106,7 +106,7 @@ function generateText({ lines = 10 }) {
   return (
     <div>
       {Array.from({ length: lines }).map((_, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+        // biome-ignore lint/suspicious/noArrayIndexKey: demo array for storybook
         <div key={i} style={{ marginTop: '1rem' }}>
           Tabbed UI Premise: make it clear which file I am working on and
           improve the top level organization of the app. I think it is time to

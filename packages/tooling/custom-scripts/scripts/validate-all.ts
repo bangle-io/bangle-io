@@ -118,9 +118,9 @@ async function shouldOnlyUseDependenciesDefinedInPackageJSON(
     'shouldOnlyUseDependenciesDefinedInPackageJSON',
   );
   for (const [name, pkg] of packageMap.entries()) {
-    const deps = (
-      await pkg.getImportedPackages((file) => file.isTsSrcFile)
-    ).filter(
+    const deps = [
+      ...(await pkg.getImportedPackages((file) => file.isTsSrcFile)),
+    ].filter(
       (dep) =>
         !dep.startsWith('node:') &&
         !dep.startsWith('virtual:') &&
@@ -148,9 +148,9 @@ async function shouldOnlyUseDevDependenciesDefinedInPackageJSON(
   );
 
   for (const [name, pkg] of packageMap.entries()) {
-    const deps = (
-      await pkg.getImportedPackages((file) => file.isTestFile)
-    ).filter((dep) => !dep.startsWith('node:') && dep !== VITEST_PKG_NAME);
+    const deps = [
+      ...(await pkg.getImportedPackages((file) => file.isTestFile)),
+    ].filter((dep) => !dep.startsWith('node:') && dep !== VITEST_PKG_NAME);
 
     for (const dep of deps) {
       if (!pkg.devDependencies?.[dep] && !pkg.dependencies[dep]) {

@@ -6,10 +6,7 @@ export async function createFile(
   rootDirHandle: FileSystemDirectoryHandle,
   path: string | string[],
 ) {
-  if (typeof path === 'string') {
-    // biome-ignore lint/style/noParameterAssign: <explanation>
-    path = path.split('/');
-  }
+  const pathArray = typeof path === 'string' ? path.split('/') : path;
 
   const recurse = async (
     path: string[],
@@ -31,13 +28,13 @@ export async function createFile(
     return recurse(rest, newHandle);
   };
 
-  if (path[0] !== rootDirHandle.name) {
+  if (pathArray[0] !== rootDirHandle.name) {
     throw new Error(
-      `getFile Error: root parent ${path[0]} must be the rootDirHandle ${rootDirHandle.name}`,
+      `getFile Error: root parent ${pathArray[0]} must be the rootDirHandle ${rootDirHandle.name}`,
     );
   }
 
-  return recurse(path.slice(1), rootDirHandle);
+  return recurse(pathArray.slice(1), rootDirHandle);
 }
 
 export function readFileAsText(file: File | Blob): Promise<string> {

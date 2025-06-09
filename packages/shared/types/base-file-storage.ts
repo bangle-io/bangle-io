@@ -1,5 +1,4 @@
 type WsPath = string;
-type WsName = string;
 
 interface FileStat {
   /**

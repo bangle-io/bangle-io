@@ -158,7 +158,7 @@ export function defaultScoringFunction(
   let haystackIndex = 0;
 
   for (let i = 0; i < needleNorm.length; i++) {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // biome-ignore lint/style/noNonNullAssertion: ignore
     const char = needleNorm[i]!;
     haystackIndex = haystackNorm.indexOf(char, haystackIndex);
     if (haystackIndex === -1) {

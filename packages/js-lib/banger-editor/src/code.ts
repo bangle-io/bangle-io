@@ -151,8 +151,11 @@ function moveRight(config: RequiredConfig): Command {
     }
 
     const code = getMarkType(state.schema, name);
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    const $cursor = (state.selection as TextSelection).$cursor!;
+    const { $cursor } = state.selection as TextSelection;
+
+    if (!$cursor) {
+      return false;
+    }
 
     const storedMarks = state.tr.storedMarks;
 

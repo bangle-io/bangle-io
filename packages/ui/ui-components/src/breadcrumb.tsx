@@ -61,7 +61,7 @@ const BreadcrumbPage = React.forwardRef<
   HTMLSpanElement,
   React.ComponentPropsWithoutRef<'span'>
 >(({ className, ...props }, ref) => (
-  // biome-ignore lint/a11y/useFocusableInteractive: <explanation>
+  // biome-ignore lint/a11y/useFocusableInteractive: breadcrumb separator is decorative
   <span
     ref={ref}
     role="link"

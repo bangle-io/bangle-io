@@ -98,11 +98,13 @@ function scrollIntoViewIfNeededPolyfill(
   element: HTMLElement,
   centerIfNeeded2?: boolean,
 ) {
-  // biome-ignore lint: using arguments object for legacy compatibility
-  const centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded2;
+  const centerIfNeeded = centerIfNeeded2 !== false;
 
-  // biome-ignore lint/style/noNonNullAssertion: <explanation>
-  const parent = element.parentNode! as HTMLElement;
+  const parentNode = element.parentNode;
+  if (!parentNode) {
+    return;
+  }
+  const parent = parentNode as HTMLElement;
   const parentComputedStyle = window.getComputedStyle(parent, null);
   const parentBorderTopWidth = Number.parseInt(
     parentComputedStyle.getPropertyValue('border-top-width'),

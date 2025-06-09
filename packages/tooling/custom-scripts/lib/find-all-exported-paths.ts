@@ -6,10 +6,12 @@ export function findAllExportedPaths(sourceCode: string): string[] {
   let match: RegExpExecArray | null;
   const allPaths = new Set<string>();
 
-  // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+  // biome-ignore lint/suspicious/noAssignInExpressions: needed for regex exec loop
   while ((match = exportRegex.exec(sourceCode)) !== null) {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    allPaths.add(match[1]!);
+    const path = match[1];
+    if (path) {
+      allPaths.add(path);
+    }
   }
 
   return Array.from(allPaths);

@@ -64,7 +64,7 @@ export function MainContent() {
     >
       <div>
         Main content
-        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+        {/* biome-ignore lint/a11y/useButtonType: demo button for storybook */}
         <button
           onClick={() => {
             toggleNoteSidebar((r) => !r);
@@ -72,7 +72,7 @@ export function MainContent() {
         >
           Note Sidebar
         </button>
-        {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+        {/* biome-ignore lint/a11y/useButtonType: demo button for storybook */}
         <button
           onClick={() => {
             toggleWorkspaceSidebar((r) => !r);
@@ -131,7 +131,7 @@ function generateText({ lines = 10 }) {
   return (
     <div>
       {Array.from({ length: lines }).map((_, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+        // biome-ignore lint/suspicious/noArrayIndexKey: demo array for storybook
         <div key={i} style={{ marginTop: '1rem' }}>
           Tabbed UI Premise: make it clear which file I am working on and
           improve the top level organization of the app. I think it is time to

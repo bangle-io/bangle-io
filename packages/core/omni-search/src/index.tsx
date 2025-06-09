@@ -244,8 +244,10 @@ function FilteredRoute({
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
-          const item = filteredItems[virtualRow.index]!;
+          const item = filteredItems[virtualRow.index];
+          if (!item) {
+            return null;
+          }
           const key = item.id;
           return (
             <div

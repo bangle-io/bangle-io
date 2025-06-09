@@ -389,7 +389,7 @@ export class Package {
             const [scope, pkg] = forwardedPath.split('/');
             importedPackages.add([scope, pkg].join('/'));
           } else {
-            // biome-ignore lint/style/noNonNullAssertion: <explanation>
+            // biome-ignore lint/style/noNonNullAssertion: split result guaranteed to have at least one element
             importedPackages.add(forwardedPath.split('/')[0]!);
           }
         }

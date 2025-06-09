@@ -29,8 +29,6 @@ export async function formatPackageJSON({
           name,
           version,
           scripts,
-          repository,
-          author,
           dependencies,
           devDependencies,
           banglePackageConfig,

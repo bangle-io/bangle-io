@@ -7,7 +7,7 @@ export function findAllImportedPackages(sourceCode: string): string[] {
   const allPkg = new Set<string>();
 
   // Using a Set to avoid duplicate entries
-  // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+  // biome-ignore lint/suspicious/noAssignInExpressions: needed for regex exec loop
   while ((match = importRegex.exec(sourceCode)) !== null) {
     // Adding the captured group which is not null to the set
     if (match[1]) {

@@ -12,9 +12,7 @@ export function weakCache<R, T extends (arg: any) => R>(
       if (debugName) {
         console.debug(debugName, 'cache hit');
       }
-
-      // biome-ignore lint/style/noNonNullAssertion: we already checked above
-      return cache.get(arg)!;
+      return cache.get(arg) as R;
     }
     if (debugName) {
       console.debug(debugName, 'cache miss');
