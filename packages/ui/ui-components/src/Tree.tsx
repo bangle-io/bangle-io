@@ -33,15 +33,15 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
 } from './sidebar';
+import type { Action } from './types';
+
+export type ItemAction = Action<TreeItem>;
 
 interface TreeNodeProps {
   item: TreeItem;
   activeWsPaths: string[];
   onTreeItemClick: (item: TreeItem) => void;
-  onTreeItemRename: (item: TreeItem) => void;
-  onTreeItemDelete: (item: TreeItem) => void;
-  onTreeItemMove: (item: TreeItem) => void;
-  onTreeItemCreateNote: (item: TreeItem) => void;
+  getActionsForItem: (item: TreeItem) => ItemAction[];
   wsPathToHref?: (wsPath: string) => string;
 }
 
@@ -49,10 +49,7 @@ const TreeNode = function TreeNode({
   item,
   activeWsPaths,
   onTreeItemClick,
-  onTreeItemRename,
-  onTreeItemDelete,
-  onTreeItemMove,
-  onTreeItemCreateNote,
+  getActionsForItem,
   wsPathToHref,
 }: TreeNodeProps) {
   const isActive = activeWsPaths.includes(item.wsPath);
@@ -82,21 +79,10 @@ const TreeNode = function TreeNode({
     () => onTreeItemClick(item),
     [onTreeItemClick, item],
   );
-  const handleRename = useCallback(
-    () => onTreeItemRename(item),
-    [onTreeItemRename, item],
-  );
-  const handleDelete = useCallback(
-    () => onTreeItemDelete(item),
-    [onTreeItemDelete, item],
-  );
-  const handleMove = useCallback(
-    () => onTreeItemMove(item),
-    [onTreeItemMove, item],
-  );
-  const handleCreateNote = useCallback(
-    () => onTreeItemCreateNote(item),
-    [onTreeItemCreateNote, item],
+
+  const itemActions = useMemo(
+    () => getActionsForItem(item),
+    [getActionsForItem, item],
   );
 
   if (!item.isDir) {
@@ -168,24 +154,37 @@ const TreeNode = function TreeNode({
           )}
         </SidebarMenuButton>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuAction showOnHover>
-              <MoreHorizontal />
-            </SidebarMenuAction>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start">
-            <DropdownMenuItem onClick={handleRename}>
-              {t.app.components.tree.renameAction}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete}>
-              {t.app.components.tree.deleteAction}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleMove}>
-              {t.app.components.tree.moveAction}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {itemActions.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuAction showOnHover>
+                <MoreHorizontal />
+              </SidebarMenuAction>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="start">
+              {itemActions.map((action) => {
+                const IconComponent = action.Icon;
+                return (
+                  <DropdownMenuItem
+                    key={action.id}
+                    onClick={() => action.onClick(item)}
+                    disabled={action.disabled}
+                    className={
+                      action.variant === 'destructive'
+                        ? 'text-destructive'
+                        : undefined
+                    }
+                  >
+                    {IconComponent && (
+                      <IconComponent className="mr-2 h-4 w-4" />
+                    )}
+                    {action.label}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </SidebarMenuItem>
     );
   }
@@ -213,18 +212,37 @@ const TreeNode = function TreeNode({
         </CollapsibleTrigger>
 
         {/* Add dropdown menu for directories */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuAction showOnHover>
-              <MoreHorizontal />
-            </SidebarMenuAction>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start">
-            <DropdownMenuItem onClick={handleCreateNote}>
-              {t.app.components.tree.createNoteAction}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {itemActions.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuAction showOnHover>
+                <MoreHorizontal />
+              </SidebarMenuAction>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="start">
+              {itemActions.map((action) => {
+                const IconComponent = action.Icon;
+                return (
+                  <DropdownMenuItem
+                    key={action.id}
+                    onClick={() => action.onClick(item)}
+                    disabled={action.disabled}
+                    className={
+                      action.variant === 'destructive'
+                        ? 'text-destructive'
+                        : undefined
+                    }
+                  >
+                    {IconComponent && (
+                      <IconComponent className="mr-2 h-4 w-4" />
+                    )}
+                    {action.label}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
 
         <CollapsibleContent>
           <SidebarMenuSub>
@@ -233,10 +251,7 @@ const TreeNode = function TreeNode({
                 key={subItem.id}
                 item={subItem}
                 onTreeItemClick={onTreeItemClick}
-                onTreeItemDelete={onTreeItemDelete}
-                onTreeItemRename={onTreeItemRename}
-                onTreeItemMove={onTreeItemMove}
-                onTreeItemCreateNote={onTreeItemCreateNote}
+                getActionsForItem={getActionsForItem}
                 activeWsPaths={activeWsPaths}
                 wsPathToHref={wsPathToHref}
               />
@@ -252,10 +267,7 @@ export interface TreeProps {
   rootItem: TreeItem[];
   activeWsPaths: string[];
   onTreeItemClick: (item: TreeItem) => void;
-  onTreeItemDelete: (item: TreeItem) => void;
-  onTreeItemRename: (item: TreeItem) => void;
-  onTreeItemMove: (item: TreeItem) => void;
-  onTreeItemCreateNote: (item: TreeItem) => void;
+  getActionsForItem: (item: TreeItem) => ItemAction[];
   onFileDrop: (
     sourceItem: TreeItem,
     destinationItem: { isRoot: true } | TreeItem,
@@ -267,10 +279,7 @@ export function Tree({
   rootItem,
   activeWsPaths,
   onTreeItemClick,
-  onTreeItemDelete,
-  onTreeItemRename,
-  onTreeItemMove,
-  onTreeItemCreateNote,
+  getActionsForItem,
   onFileDrop,
   wsPathToHref,
 }: TreeProps) {
@@ -379,18 +388,13 @@ export function Tree({
       modifiers={useMemo(() => [restrictToVerticalAxis], [])}
       sensors={sensors}
     >
-      {/* Potential future location for an explicit root drop zone wrapper if needed */}
-      {/* <div ref={setRootRef} className={cn(isRootOver && 'bg-blue-100')}> */}
       {rootItem.map((item) => (
         <TreeNode
           key={item.id}
           item={item}
           activeWsPaths={activeWsPaths}
           onTreeItemClick={onTreeItemClick}
-          onTreeItemDelete={onTreeItemDelete}
-          onTreeItemRename={onTreeItemRename}
-          onTreeItemMove={onTreeItemMove}
-          onTreeItemCreateNote={onTreeItemCreateNote}
+          getActionsForItem={getActionsForItem}
           wsPathToHref={wsPathToHref}
         />
       ))}

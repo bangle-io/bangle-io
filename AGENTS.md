@@ -35,7 +35,11 @@ packages:
   - 'packages/tooling/*'
 ```
 
-\*Remember\*\* to account for `gitignore` when working with the project. For example when `grep`ing for a file, remember to use `git ls-files` to get the list of files to search.
+## Imports and exports
+
+- Most packages are named `@bangle.io/<dir-name>`. So for example the path `packages/core/app` is `@bangle.io/app`.
+- We use imports like `import { isNil } from '@bangle.io/mini-js-utils';` AND NOT of imports like `import { isNil } from '@bangle.io/mini-js-utils/src/is-nil';` or path imports like `import { isNil } from '../../mini-js-utils/is-nil';`.
+- We use the global `t` object for translations. That is defined in `@bangle.io/translations` package. Donot do an import of `t` as it is global.
 
 ### Workspace Hierarchy
 
@@ -198,6 +202,11 @@ pnpm --filter "@bangle.io/e2e-tests" run test --debug
 ```
 
 ---
+
+## TypeScript
+
+- Avoid using `any` and `unknown` types.
+- Avoid using `as` assertions.
 
 ## Translations
 

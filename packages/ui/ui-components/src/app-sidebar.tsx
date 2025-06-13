@@ -1,11 +1,5 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import {
-  ChevronsUpDown,
-  GalleryVerticalEnd,
-  Plus,
-  PlusIcon,
-  Search,
-} from 'lucide-react';
+import { ChevronsUpDown, GalleryVerticalEnd, Plus, Search } from 'lucide-react';
 import React, { useId, useMemo } from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
 import { buildTree, type TreeItem } from './build-tree';
@@ -38,7 +32,10 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from './sidebar';
-import { Tree, type TreeProps } from './Tree';
+import { type ItemAction, Tree, type TreeProps } from './Tree';
+import type { Action } from './types';
+
+export type { ItemAction, Action };
 
 export type NavItem = {
   title: string;
@@ -62,11 +59,7 @@ export type AppSidebarProps = {
   onSearchClick?: () => void;
   onTreeItemClick: (item: TreeItem) => void;
   activeWsPaths?: string[];
-  onNewFileClick: () => void;
-  onDeleteFileClick?: (item: TreeItem) => void;
-  onRenameFileClick?: (item: TreeItem) => void;
-  onMoveFileClick?: (item: TreeItem) => void;
-  onTreeItemCreateNote?: (item: TreeItem) => void;
+  getActionsForItem: (item: TreeItem) => ItemAction[];
   isTruncated?: boolean;
   onTruncatedClick?: () => void;
   onFileDrop?: TreeProps['onFileDrop'];
@@ -75,6 +68,7 @@ export type AppSidebarProps = {
   footerSubtitle?: string;
   wsPathToHref?: (wsPath: string) => string;
   wsNameToHref: (wsName: string) => string;
+  fileGroupActions?: Action[];
 };
 
 interface DropdownButtonProps {
@@ -150,11 +144,7 @@ export function AppSidebar({
   onSearchClick = () => {},
   activeWsPaths = [],
   onTreeItemClick,
-  onNewFileClick,
-  onDeleteFileClick = () => {},
-  onRenameFileClick = () => {},
-  onMoveFileClick = () => {},
-  onTreeItemCreateNote = () => {},
+  getActionsForItem,
   isTruncated = false,
   onTruncatedClick = () => {},
   onFileDrop = () => {},
@@ -163,6 +153,7 @@ export function AppSidebar({
   footerSubtitle,
   wsPathToHref,
   wsNameToHref,
+  fileGroupActions,
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined),
@@ -229,27 +220,23 @@ export function AppSidebar({
           >
             {t.app.components.appSidebar.filesLabel}
           </SidebarGroupLabel>
-          <SidebarGroupAction
-            title={t.app.components.appSidebar.newFileActionTitle}
-            onClick={() => {
-              onNewFileClick();
-            }}
-          >
-            <PlusIcon />
-            <span className="sr-only">
-              {t.app.components.appSidebar.newFileActionSr}
-            </span>
-          </SidebarGroupAction>
+          {fileGroupActions?.map(({ id, label, onClick, Icon }) => (
+            <SidebarGroupAction
+              key={id}
+              title={label}
+              onClick={() => onClick()}
+            >
+              {Icon && <Icon />}
+              <span className="sr-only">{label}</span>
+            </SidebarGroupAction>
+          ))}
           <SidebarGroupContent>
             <SidebarMenu>
               <Tree
                 rootItem={tree}
                 activeWsPaths={activeWsPaths}
                 onTreeItemClick={onTreeItemClick}
-                onTreeItemDelete={onDeleteFileClick}
-                onTreeItemRename={onRenameFileClick}
-                onTreeItemMove={onMoveFileClick}
-                onTreeItemCreateNote={onTreeItemCreateNote}
+                getActionsForItem={getActionsForItem}
                 onFileDrop={onFileDrop}
                 wsPathToHref={wsPathToHref}
               />

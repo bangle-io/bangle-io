@@ -21,6 +21,12 @@ bangel.io is an opensource local browser based note taking web app.
 - ShadCN
 - Jotai for state management
 
+## Imports and exports
+
+- Most packages are named `@bangle.io/<dir-name>`. So for example the path `packages/core/app` is `@bangle.io/app`.
+- We use imports like `import { isNil } from '@bangle.io/mini-js-utils';` AND NOT of imports like `import { isNil } from '@bangle.io/mini-js-utils/src/is-nil';` or path imports like `import { isNil } from '../../mini-js-utils/is-nil';`.
+- We use the global `t` object for translations. That is defined in `@bangle.io/translations` package. Donot do an import of `t` as it is global.
+
 ## Project Structure
 
 1. **core**: Business logic and the main bread and butter of the app.
@@ -71,6 +77,11 @@ The wsPath string has this convention:
 We use shadcn and tailwind. All UI components must not have any dependency on the rest the code, except for `ui` packages itself, `js-lib` or packages in the `packages/shared` directory. 
 
 Where possible try to reuse existing components, extend them and promote reuse. Try to follow conventions of existing compnents.
+
+## TypeScript
+
+- Avoid using `any` and `unknown` types.
+- Avoid using `as` assertions.
 
 ## Commands
 

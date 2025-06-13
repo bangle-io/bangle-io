@@ -9,3 +9,12 @@ export type ActionVariant = Extract<
   ButtonVariant,
   'default' | 'outline' | 'ghost'
 >;
+
+export interface Action<T = void> {
+  id: string;
+  label: string;
+  onClick: (payload: T) => void;
+  Icon?: React.ComponentType<{ className?: string }>;
+  disabled?: boolean;
+  variant?: 'default' | 'destructive';
+}

@@ -1,7 +1,9 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import {
+  type Action,
   DropdownMenu,
+  type ItemAction,
   KbdShortcut,
   Sidebar,
   AppSidebar as UIAppSidebar,
@@ -15,12 +17,16 @@ import {
   Folder,
   Github,
   MessageCircle,
+  Move,
   Paintbrush2,
+  Pencil,
   PlusIcon,
   Search,
+  Trash2,
   Twitter,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
+import type { TreeItem } from '@bangle.io/ui-components/src/build-tree';
 
 const MAX_WS_PATHS = 800;
 
@@ -42,6 +48,76 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const displayedWsPaths = useMemo(() => {
     return !isTruncated ? wsPaths : wsPaths.slice(0, MAX_WS_PATHS);
   }, [wsPaths, isTruncated]);
+
+  const fileGroupActions: Action<void>[] = [
+    {
+      id: 'new-file',
+      label: t.app.components.appSidebar.newFileActionTitle,
+      Icon: PlusIcon,
+      onClick: () => {
+        commandDispatcher.dispatch(
+          'command::ws:quick-new-note',
+          {
+            pathPrefix: undefined,
+          },
+          'ui',
+        );
+      },
+    },
+  ];
+
+  const getActionsForItem = useMemo(
+    () =>
+      (item: TreeItem): ItemAction[] => {
+        const actions: ItemAction[] = [];
+
+        if (!item.isDir) {
+          // File actions
+          actions.push({
+            id: 'rename',
+            label: 'Rename',
+            Icon: Pencil,
+            onClick: (item) => {
+              commandDispatcher.dispatch(
+                'command::ui:rename-note-dialog',
+                { wsPath: item.wsPath },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'move',
+            label: 'Move',
+            Icon: Move,
+            onClick: (item) => {
+              commandDispatcher.dispatch(
+                'command::ui:move-note-dialog',
+                { wsPath: item.wsPath },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'delete',
+            label: 'Delete',
+            Icon: Trash2,
+            variant: 'destructive' as const,
+            onClick: (item) => {
+              commandDispatcher.dispatch(
+                'command::ui:delete-note-dialog',
+                { wsPath: item.wsPath },
+                'ui',
+              );
+            },
+          });
+        }
+
+        return actions;
+      },
+    [commandDispatcher],
+  );
 
   return (
     <Sidebar.SidebarProvider
@@ -66,20 +142,6 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         onTreeItemClick={() => {}}
-        onTreeItemCreateNote={(item) => {
-          if (item.isDir && item.wsPath) {
-            const parent = WsPath.fromString(item.wsPath);
-            const path = parent?.path;
-
-            commandDispatcher.dispatch(
-              'command::ui:create-note-dialog',
-              {
-                prefillName: path,
-              },
-              'ui',
-            );
-          }
-        }}
         workspaces={workspaces.map((ws, _i) => ({
           name: ws.name,
           misc: ws.type,
@@ -99,10 +161,6 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         navItems={activeWsPaths.map((wsPath) => ({
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,
-          href: navigation.toUri({
-            route: 'editor',
-            payload: { wsPath: wsPath.wsPath },
-          }),
         }))}
         wsPathToHref={(wsPath) =>
           navigation.toUri({
@@ -127,36 +185,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         onSearchClick={() => {
           setOpenOmniSearch(true);
         }}
-        onNewFileClick={() => {
-          commandDispatcher.dispatch(
-            'command::ws:quick-new-note',
-            {
-              pathPrefix: undefined,
-            },
-            'ui',
-          );
-        }}
-        onDeleteFileClick={(item) => {
-          commandDispatcher.dispatch(
-            'command::ui:delete-note-dialog',
-            { wsPath: item.wsPath },
-            'ui',
-          );
-        }}
-        onRenameFileClick={(item) => {
-          commandDispatcher.dispatch(
-            'command::ui:rename-note-dialog',
-            { wsPath: item.wsPath },
-            'ui',
-          );
-        }}
-        onMoveFileClick={(item) => {
-          commandDispatcher.dispatch(
-            'command::ui:move-note-dialog',
-            { wsPath: item.wsPath },
-            'ui',
-          );
-        }}
+        fileGroupActions={fileGroupActions}
+        getActionsForItem={getActionsForItem}
         footerTitle={t.app.sidebar.footerTitle}
         footerChildren={
           <>
