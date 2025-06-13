@@ -1,16 +1,14 @@
 import { throwAppError } from '@bangle.io/base-utils';
-
-export const DEFAULT_NOTE_EXTENSION = '.md';
-export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
-export const VALID_NOTE_EXTENSIONS_SET = new Set(VALID_NOTE_EXTENSIONS);
-export const VALID_MARKDOWN_EXTENSIONS = ['.md', '.markdown'];
-export const VALID_MARKDOWN_EXTENSIONS_SET = new Set(VALID_MARKDOWN_EXTENSIONS);
+import {
+  DEFAULT_NOTE_EXTENSION,
+  PATH_SEPARATOR,
+  VALID_MARKDOWN_EXTENSIONS_SET,
+  VALID_NOTE_EXTENSIONS,
+} from './constants';
 
 type ValidationResult =
   | { isValid: true; wsName: string; filePath: string }
   | { isValid: false; reason: string; invalidPath: string };
-
-export const PATH_SEPARATOR = '/';
 
 export function breakPathIntoParts(path: string): string[] {
   return path.split(PATH_SEPARATOR);
@@ -30,7 +28,7 @@ export function pathJoin(...args: string[]): string {
       // Remove leading and trailing slashes from subsequent parts
       return part.replace(/^\/+|\/+$/g, '');
     })
-    .join('/');
+    .join(PATH_SEPARATOR);
 }
 
 export function getExtension(strInput: string): string | undefined {

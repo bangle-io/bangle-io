@@ -1,4 +1,11 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import {
+  DEFAULT_NOTE_EXTENSION,
+  PATH_SEPARATOR,
+  VALID_MARKDOWN_EXTENSIONS_SET,
+  VALID_NOTE_EXTENSIONS_SET,
+} from './constants';
+import { pathJoin } from './helpers';
 import * as validation from './validation';
 import {
   type ValidationError,
@@ -17,12 +24,7 @@ interface WsPathData {
   isDir: boolean;
 }
 
-// Constants for file types
-const DEFAULT_NOTE_EXTENSION = '.md';
-const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
-const VALID_NOTE_EXTENSIONS_SET = new Set(VALID_NOTE_EXTENSIONS);
-const VALID_MARKDOWN_EXTENSIONS = ['.md', '.markdown'];
-const VALID_MARKDOWN_EXTENSIONS_SET = new Set(VALID_MARKDOWN_EXTENSIONS);
+// Constants for file types are re-exported from './constants'
 
 type SafeParseResult<T extends WsPath = WsPath> = {
   ok: boolean;
@@ -87,7 +89,7 @@ export class WsPath {
   public static readonly pathJoin = pathJoin;
   public static readonly DEFAULT_NOTE_EXTENSION = DEFAULT_NOTE_EXTENSION;
   public static readonly VALID_NOTE_EXTENSIONS_SET = VALID_NOTE_EXTENSIONS_SET;
-  public static readonly PATH_SEPARATOR = '/';
+  public static readonly PATH_SEPARATOR = PATH_SEPARATOR;
   public static readonly validation = validation;
 
   public readonly wsPath: string;
@@ -755,18 +757,6 @@ export class WsDirPath extends WsPath {
 
     return WsFilePath.fromString(newPath);
   }
-}
-
-export function pathJoin(...args: string[]): string {
-  return args
-    .filter((part) => part !== '')
-    .map((part, index) => {
-      if (index === 0) {
-        return part.replace(/\/+$/, '');
-      }
-      return part.replace(/^\/+|\/+$/g, '');
-    })
-    .join(WsPath.PATH_SEPARATOR);
 }
 
 export function ensureEndsWith(str: string, suffix: string): string {

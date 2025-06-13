@@ -1,0 +1,6 @@
+export const DEFAULT_NOTE_EXTENSION = '.md';
+export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
+export const VALID_NOTE_EXTENSIONS_SET = new Set(VALID_NOTE_EXTENSIONS);
+export const VALID_MARKDOWN_EXTENSIONS = ['.md', '.markdown'];
+export const VALID_MARKDOWN_EXTENSIONS_SET = new Set(VALID_MARKDOWN_EXTENSIONS);
+export const PATH_SEPARATOR = '/';
